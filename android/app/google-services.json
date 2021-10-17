@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "328003399661",
+    "project_id": "bloc-novatech",
+    "storage_bucket": "bloc-novatech.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:328003399661:android:6e68a3b7e4203fdd4781e4",
+        "android_client_info": {
+          "package_name": "com.novatech.bloc"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "328003399661-ede7ab0u1s6pf8tgrsku39kn2lr8jf2j.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCHYHJAtSyF3AQBf73DlaKDht3QvjL6pTo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "328003399661-ede7ab0u1s6pf8tgrsku39kn2lr8jf2j.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
