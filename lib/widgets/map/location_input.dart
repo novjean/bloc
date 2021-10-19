@@ -50,6 +50,9 @@ class _LocationInputState extends State<LocationInput> {
 
   @override
   Widget build(BuildContext context) {
+    if(_previewImageUrl == null) {
+      _getCurrentUserLocation();
+    }
     return Column(
       children: [
         Container(
@@ -70,23 +73,23 @@ class _LocationInputState extends State<LocationInput> {
             width: double.infinity,
           ),
         ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            FlatButton.icon(
-              onPressed: _getCurrentUserLocation,
-              icon: Icon(Icons.location_on),
-              label: Text('Current Location'),
-              textColor: Theme.of(context).primaryColor,
-            ),
-            // FlatButton.icon(
-            //   onPressed: _selectOnMap,
-            //   icon: Icon(Icons.map),
-            //   label: Text('Select on Map'),
-            //   textColor: Theme.of(context).primaryColor,
-            // ),
-          ],
-        )
+        // Row(
+        //   mainAxisAlignment: MainAxisAlignment.center,
+        //   children: [
+        //     FlatButton.icon(
+        //       onPressed: _getCurrentUserLocation,
+        //       icon: Icon(Icons.location_on),
+        //       label: Text('Current Location'),
+        //       textColor: Theme.of(context).primaryColor,
+        //     ),
+        //     // FlatButton.icon(
+        //     //   onPressed: _selectOnMap,
+        //     //   icon: Icon(Icons.map),
+        //     //   label: Text('Select on Map'),
+        //     //   textColor: Theme.of(context).primaryColor,
+        //     // ),
+        //   ],
+        // )
       ],
     );
   }
