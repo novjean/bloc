@@ -1,3 +1,4 @@
+import 'package:bloc/widgets/map/location_input.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -38,11 +39,20 @@ class HomeScreen extends StatelessWidget {
           )
         ],
       ),
-      body: Container(
-        child: Center(
-          child: Text('Welcome to BLOC!'),
-        ),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          LocationInput(null),
+          SizedBox(
+            height: 10,
+          ),
+          Center(
+            child: Text('Welcome to BLOC!'),
+          ),
+        ],
       ),
+
+
     );
   }
 }
