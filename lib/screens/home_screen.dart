@@ -1,4 +1,4 @@
-import 'package:bloc/widgets/display_box.dart';
+import 'package:bloc/widgets/display_image_box.dart';
 import 'package:bloc/widgets/map/location_input.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -57,15 +57,17 @@ class HomeScreen extends StatelessWidget {
           SizedBox(
             height: 10,
           ),
-          DisplayBox(),
+          DisplayImageBox('manager', 'assets/images/textblock-manager.png'),
           SizedBox(
             height: 10,
           ),
-          Container(
-            child: Center(
-              child: Text('Owner block in progress'),
-            ),
-          ),
+          DisplayImageBox('owner', 'assets/images/textblock-owner.png'),
+
+          // Container(
+          //   child: Center(
+          //     child: Text('Owner block in progress'),
+          //   ),
+          // ),
         ],
       ),
     );
