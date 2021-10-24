@@ -7,6 +7,8 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final user = FirebaseAuth.instance.currentUser;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('BLOC'),
@@ -46,13 +48,29 @@ class HomeScreen extends StatelessWidget {
           SizedBox(
             height: 10,
           ),
-          Center(
-            child: Text('Welcome to BLOC!'),
+          Container(
+            child: Center(
+              child: Text('Welcome to BLOC!'),
+            ),
+          ),
+          SizedBox(
+            height: 10,
+          ),
+          Container(
+            child: Center(
+              child: Text('Manager block in progress'),
+            ),
+          ),
+          SizedBox(
+            height: 10,
+          ),
+          Container(
+            child: Center(
+              child: Text('Owner block in progress'),
+            ),
           ),
         ],
       ),
-
-
     );
   }
 }

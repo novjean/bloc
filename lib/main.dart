@@ -1,3 +1,5 @@
+import 'package:bloc/screens/manager_screen.dart';
+import 'package:bloc/screens/owner_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -21,37 +23,40 @@ class MyApp extends StatelessWidget {
     return FutureBuilder(
         // Initialize FlutterFire:
         future: _initialization,
-        builder: (context, appSnapshot) {
+        builder: (ctx, appSnapshot) {
           return MaterialApp(
-            title: 'BLOC',
-            theme: ThemeData(
-              primarySwatch: Colors.red,
-              backgroundColor: Colors.red,
-              accentColor: Colors.deepPurple,
-              accentColorBrightness: Brightness.dark,
-              buttonTheme: ButtonTheme.of(context).copyWith(
-                buttonColor: Colors.red,
-                textTheme: ButtonTextTheme.primary,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
+              title: 'BLOC',
+              theme: ThemeData(
+                primarySwatch: Colors.red,
+                backgroundColor: Colors.red,
+                accentColor: Colors.deepPurple,
+                accentColorBrightness: Brightness.dark,
+                buttonTheme: ButtonTheme.of(context).copyWith(
+                  buttonColor: Colors.red,
+                  textTheme: ButtonTextTheme.primary,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
                 ),
               ),
-            ),
-            home: appSnapshot.connectionState != ConnectionState.done
-                ? SplashScreen()
-                : StreamBuilder(
-                stream: FirebaseAuth.instance.authStateChanges(),
-                builder: (ctx, userSnapshot) {
-                  if (userSnapshot.connectionState ==
-                      ConnectionState.waiting) {
-                    return SplashScreen();
-                  }
-                  if (userSnapshot.hasData) {
-                    return HomeScreen();
-                  }
-                  return const AuthScreen();
-                }),
-          );
+              home: appSnapshot.connectionState != ConnectionState.done
+                  ? SplashScreen()
+                  : StreamBuilder(
+                      stream: FirebaseAuth.instance.authStateChanges(),
+                      builder: (ctx, userSnapshot) {
+                        if (userSnapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return SplashScreen();
+                        }
+                        if (userSnapshot.hasData) {
+                          return HomeScreen();
+                        }
+                        return const AuthScreen();
+                      }),
+              routes: {
+                ManagerScreen.routeName: (ctx) => ManagerScreen(),
+                OwnerScreen.routeName: (ctx) => OwnerScreen(),
+              });
         });
   }
 }
