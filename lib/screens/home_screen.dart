@@ -1,3 +1,4 @@
+import 'package:bloc/widgets/display_box.dart';
 import 'package:bloc/widgets/map/location_input.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -56,11 +57,7 @@ class HomeScreen extends StatelessWidget {
           SizedBox(
             height: 10,
           ),
-          Container(
-            child: Center(
-              child: Text('Manager block in progress'),
-            ),
-          ),
+          DisplayBox(),
           SizedBox(
             height: 10,
           ),
