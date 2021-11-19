@@ -1,5 +1,6 @@
 import 'package:bloc/screens/manager_screen.dart';
 import 'package:bloc/screens/owner_screen.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -49,7 +50,22 @@ class MyApp extends StatelessWidget {
                           return SplashScreen();
                         }
                         if (userSnapshot.hasData) {
-                          return HomeScreen();
+                          final user = FirebaseAuth.instance.currentUser;
+                          return FutureBuilder(
+                            future: FirebaseFirestore.instance.collection('users')
+                                .doc(user.uid).get(),
+                            builder: (ctx, snapshot) {
+                              if (snapshot.connectionState == ConnectionState.waiting) {
+                                return const Center(
+                                  child: CircularProgressIndicator(),
+                                );
+                              }
+                              final userData = snapshot.data;
+                              int clearanceLevel = userData['clearance_level'];
+                              return HomeScreen(clearanceLevel);
+                            },
+                          );
+                          // return HomeScreen();
                         }
                         return const AuthScreen();
                       }),

@@ -5,17 +5,19 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatelessWidget {
-  const HomeScreen({key}) : super(key: key);
+  final int mClearanceLevel;
 
-  void loadUser(String uid) async {
-    final userData = await FirebaseFirestore.instance.collection('users').doc(uid).get();
-    int clearanceLevel =  userData.data()['clearance_level'];
-  }
+  const HomeScreen(this.mClearanceLevel, {key}) : super(key: key);
+
+  // void loadUser(String uid) async {
+  //   final userData = await FirebaseFirestore.instance.collection('users').doc(uid).get();
+  //   int clearanceLevel =  userData.data()['clearance_level'];
+  // }
 
   @override
   Widget build(BuildContext context) {
-    final user = FirebaseAuth.instance.currentUser;
-    loadUser(user.uid);
+    // final user = FirebaseAuth.instance.currentUser;
+    // loadUser(user.uid);
 
     return Scaffold(
       appBar: AppBar(
@@ -68,16 +70,13 @@ class HomeScreen extends StatelessWidget {
           SizedBox(
             height: 10,
           ),
-          DisplayImageBox('owner', 'assets/images/textblock-owner.png'),
-
-          // Container(
-          //   child: Center(
-          //     child: Text('Owner block in progress'),
-          //   ),
-          // ),
+          mClearanceLevel > 5
+              ? DisplayImageBox('owner', 'assets/images/textblock-owner.png')
+              : SizedBox(
+                  height: 10,
+                ),
         ],
       ),
     );
   }
-
 }
