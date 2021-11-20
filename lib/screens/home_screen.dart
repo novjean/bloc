@@ -1,3 +1,4 @@
+import 'package:bloc/widgets/app_drawer.dart';
 import 'package:bloc/widgets/display_image_box.dart';
 import 'package:bloc/widgets/map/location_input.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -51,6 +52,7 @@ class HomeScreen extends StatelessWidget {
           )
         ],
       ),
+      drawer: AppDrawer(),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -66,11 +68,13 @@ class HomeScreen extends StatelessWidget {
           SizedBox(
             height: 10,
           ),
-          DisplayImageBox('manager', 'assets/images/textblock-manager.png'),
-          SizedBox(
-            height: 10,
-          ),
           mClearanceLevel > 5
+              ? DisplayImageBox(
+                  'manager', 'assets/images/textblock-manager.png')
+              : SizedBox(
+                  height: 10,
+                ),
+          mClearanceLevel > 7
               ? DisplayImageBox('owner', 'assets/images/textblock-owner.png')
               : SizedBox(
                   height: 10,
