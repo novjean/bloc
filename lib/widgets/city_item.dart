@@ -1,4 +1,5 @@
 import 'package:bloc/models/city.dart';
+import 'package:bloc/screens/city_detail_screen.dart';
 import 'package:flutter/material.dart';
 
 class CityItem extends StatelessWidget {
@@ -7,7 +8,7 @@ class CityItem extends StatelessWidget {
   final String cityName;
   final String imageUrl;
 
-  CityItem(this.tag, this.cityName, this.imageUrl, {this.key});
+  const CityItem(this.tag, this.cityName, this.imageUrl, {this.key});
 
   @override
   Widget build(BuildContext context) {
@@ -16,18 +17,17 @@ class CityItem extends StatelessWidget {
       child: GridTile(
         child: GestureDetector(
           onTap: () {
-            // Navigator.of(context).push(MaterialPageRoute(builder: (ctx) => ProductDetailScreen(title)),);
-            // Navigator.of(context).pushNamed(
-            //   ProductDetailScreen.routeName,
-            //   arguments: product.id,
-            // );
+            // Navigator.of(context).push(MaterialPageRoute(builder: (ctx) => CityDetailScreen(this.tag, this.cityName)),);
+            Navigator.of(context).pushNamed(
+              CityDetailScreen.routeName,
+              arguments: cityName,
+              );
           },
           child: Hero(
             // hero should be wired in with where we are animating to
             tag: tag,
             child: FadeInImage(
               placeholder: AssetImage('assets/images/product-placeholder.png'),
-              // image: AssetImage('assets/images/places-goa.jpeg'),
               image: NetworkImage(imageUrl),
               fit: BoxFit.cover,
             ),

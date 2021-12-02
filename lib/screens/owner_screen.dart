@@ -29,6 +29,7 @@ class OwnerScreen extends StatelessWidget {
             );
           }
           final cityDocs = snapshot.data.docs;
+
           return GridView.builder(
             // const keyword can be used so that it does not rebuild when the build method is called
             // useful for performance improvement

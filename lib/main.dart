@@ -1,3 +1,4 @@
+import 'package:bloc/screens/city_detail_screen.dart';
 import 'package:bloc/screens/manager_screen.dart';
 import 'package:bloc/screens/owner_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -72,6 +73,7 @@ class MyApp extends StatelessWidget {
               routes: {
                 ManagerScreen.routeName: (ctx) => ManagerScreen(),
                 OwnerScreen.routeName: (ctx) => OwnerScreen(),
+                CityDetailScreen.routeName: (ctx) => CityDetailScreen(),
               });
         });
   }
