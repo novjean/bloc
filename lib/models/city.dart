@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 
 class City {
   final String name;
-  final String ownerName;
+  final String ownerId;
+  final String imageUrl;
 
   City({
     @required this.name,
-    @required this.ownerName,
+    @required this.ownerId,
+    @required this.imageUrl,
   });
 }
