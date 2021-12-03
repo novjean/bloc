@@ -18,6 +18,15 @@ class CityDetailScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text(cityName),
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {},
+        child: Icon(Icons.add, color: Colors.black, size: 29,),
+        backgroundColor: Theme.of(context).primaryColor,
+        tooltip: 'New Bloc',
+        elevation: 5,
+        splashColor: Colors.grey,
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       body: Center(
         child: Text('We are here!'),
       ),

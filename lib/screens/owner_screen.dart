@@ -17,9 +17,18 @@ class OwnerScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Owner'),
+        title: const Text('Owner'),
       ),
       drawer: AppDrawer(),
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: () {},
+      //   child: Icon(Icons.add, color: Colors.white, size: 29,),
+      //   backgroundColor: Theme.of(context).primaryColor,
+      //   tooltip: 'Add City',
+      //   elevation: 5,
+      //   splashColor: Colors.grey,
+      // ),
+      // floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       body: StreamBuilder(
         stream: FirebaseFirestore.instance.collection('cities').snapshots(),
         builder: (ctx, snapshot) {

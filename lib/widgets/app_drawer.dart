@@ -1,5 +1,10 @@
+import 'package:bloc/screens/home_screen.dart';
+import 'package:bloc/screens/manager_screen.dart';
+import 'package:bloc/screens/owner_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+
+import '../main.dart';
 
 class AppDrawer extends StatelessWidget {
   const AppDrawer({Key key}) : super(key: key);
@@ -10,42 +15,46 @@ class AppDrawer extends StatelessWidget {
       child: Column(
         children: [
           AppBar(
-            title: Text('Hello Friend!'),
+            title: const Text('BLOC'),
             automaticallyImplyLeading: false,
           ),
-          Divider(),
           ListTile(
-            leading: Icon(Icons.shop),
-            title: Text('Food'),
+            leading: const Icon(Icons.smart_toy_sharp),
+            title: const Text('Home'),
             onTap: () {
-              Navigator.of(context).pushReplacementNamed('/');
+              Navigator.of(context).pushNamed(
+                HomeScreen.routeName,
+              );
             },
           ),
-          Divider(),
-          // ListTile(
-          //   leading: Icon(Icons.payment),
-          //   title: Text('Orders'),
-          //   onTap: () {
-          //     Navigator.of(context).pushReplacementNamed(OrdersScreen.routeName);
-          //     // custom animation per screen
-          //     // Navigator.of(context).pushReplacement(CustomRoute(
-          //     //   builder: (ctx) => OrdersScreen(),
-          //     // ));
-          //   },
-          // ),
-          // Divider(),
-          // ListTile(
-          //   leading: Icon(Icons.edit),
-          //   title: Text('Manage Products'),
-          //   onTap: () {
-          //     Navigator.of(context)
-          //         .pushReplacementNamed(UserProductsScreen.routeName);
-          //   },
-          // ),
-          // Divider(),
+          const Divider(),
+          MyApp.mClearanceLevel > 5
+              ? ListTile(
+                  leading: const Icon(Icons.adjust),
+                  title: const Text('Manager'),
+                  onTap: () {
+                    Navigator.of(context).pushNamed(
+                      ManagerScreen.routeName,
+                    );
+                  },
+                )
+              : const SizedBox.shrink(),
+          const Divider(),
+          MyApp.mClearanceLevel > 5
+              ? ListTile(
+                  leading: const Icon(Icons.account_circle),
+                  title: const Text('Owner'),
+                  onTap: () {
+                    Navigator.of(context).pushNamed(
+                      OwnerScreen.routeName,
+                    );
+                  },
+                )
+              : const SizedBox.shrink(),
+          const Divider(),
           ListTile(
-            leading: Icon(Icons.exit_to_app),
-            title: Text('Logout'),
+            leading: const Icon(Icons.exit_to_app),
+            title: const Text('Logout'),
             onTap: () {
               Navigator.of(context).pop();
               // the following line ensures that the home is what is the screen when app is opened

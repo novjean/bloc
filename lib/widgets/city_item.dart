@@ -1,4 +1,3 @@
-import 'package:bloc/models/city.dart';
 import 'package:bloc/screens/city_detail_screen.dart';
 import 'package:flutter/material.dart';
 

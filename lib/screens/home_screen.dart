@@ -5,10 +5,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-class HomeScreen extends StatelessWidget {
-  final int mClearanceLevel;
 
-  const HomeScreen(this.mClearanceLevel, {key}) : super(key: key);
+class HomeScreen extends StatelessWidget {
+  static const routeName = '/home-screen';
+
+   HomeScreen({key}) : super(key: key);
 
   // void loadUser(String uid) async {
   //   final userData = await FirebaseFirestore.instance.collection('users').doc(uid).get();
@@ -68,17 +69,6 @@ class HomeScreen extends StatelessWidget {
           SizedBox(
             height: 10,
           ),
-          mClearanceLevel > 5
-              ? DisplayImageBox(
-                  'manager', 'assets/images/textblock-manager.png')
-              : SizedBox(
-                  height: 10,
-                ),
-          mClearanceLevel > 7
-              ? DisplayImageBox('owner', 'assets/images/textblock-owner.png')
-              : SizedBox(
-                  height: 10,
-                ),
         ],
       ),
     );

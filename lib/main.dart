@@ -17,6 +17,8 @@ Future<void> main() async {
 class MyApp extends StatelessWidget {
   const MyApp({key}) : super(key: key);
 
+  static int mClearanceLevel;
+
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -62,8 +64,8 @@ class MyApp extends StatelessWidget {
                                 );
                               }
                               final userData = snapshot.data;
-                              int clearanceLevel = userData['clearance_level'];
-                              return HomeScreen(clearanceLevel);
+                              mClearanceLevel = userData['clearance_level'];
+                              return HomeScreen();
                             },
                           );
                           // return HomeScreen();
@@ -71,6 +73,7 @@ class MyApp extends StatelessWidget {
                         return const AuthScreen();
                       }),
               routes: {
+                HomeScreen.routeName: (ctx) => HomeScreen(),
                 ManagerScreen.routeName: (ctx) => ManagerScreen(),
                 OwnerScreen.routeName: (ctx) => OwnerScreen(),
                 CityDetailScreen.routeName: (ctx) => CityDetailScreen(),
