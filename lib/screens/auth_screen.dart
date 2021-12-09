@@ -61,6 +61,13 @@ class _AuthScreenState extends State<AuthScreen> {
           'image_url': url,
           'clearance_level': 1,
         });
+
+        Scaffold.of(ctx).showSnackBar(
+          SnackBar(
+            content: Text("Registered " + email),
+            backgroundColor: Theme.of(context).primaryColor,
+          ),
+        );
       }
     } on PlatformException catch (err) {
       var message = 'An error occurred, please check your credentials!';

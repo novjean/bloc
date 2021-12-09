@@ -1,3 +1,4 @@
+import 'package:bloc/screens/new_bloc_screen.dart';
 import 'package:flutter/material.dart';
 
 class CityDetailScreen extends StatelessWidget {
@@ -5,10 +6,6 @@ class CityDetailScreen extends StatelessWidget {
 
   // final String tag;
   // final String cityName;
-
-  // const CityDetailScreen({Key key}) : super(key: key);
-
-  // const CityDetailScreen({this.tag, this.cityName});
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +16,12 @@ class CityDetailScreen extends StatelessWidget {
         title: Text(cityName),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+          Navigator.of(context).pushNamed(
+            NewBlocScreen.routeName,
+            arguments: cityName,
+          );
+        },
         child: Icon(Icons.add, color: Colors.black, size: 29,),
         backgroundColor: Theme.of(context).primaryColor,
         tooltip: 'New Bloc',

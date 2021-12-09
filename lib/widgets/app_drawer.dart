@@ -56,11 +56,7 @@ class AppDrawer extends StatelessWidget {
             leading: const Icon(Icons.exit_to_app),
             title: const Text('Logout'),
             onTap: () {
-              Navigator.of(context).pop();
-              // the following line ensures that the home is what is the screen when app is opened
-              Navigator.of(context).pushReplacementNamed('/');
               FirebaseAuth.instance.signOut();
-              // Provider.of<Auth>(context, listen: false).logout();
             },
           ),
         ],
