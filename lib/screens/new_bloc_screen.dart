@@ -20,10 +20,9 @@ class NewBlocScreen extends StatefulWidget {
 
 class _NewBlocScreenState extends State<NewBlocScreen> {
   var logger = Logger();
-  final _auth = FirebaseAuth.instance;
   var _isLoading = false;
 
-  void _submitAuthForm(
+  void _submitNewBlocForm(
     String addressLine1,
     String addressLine2,
     String city,
@@ -31,31 +30,32 @@ class _NewBlocScreenState extends State<NewBlocScreen> {
     File image,
     BuildContext ctx,
   ) async {
-    logger.i('_submitAuthForm: ');
+    logger.i('_submitNewBlocForm called');
 
-    UserCredential authResult;
+    final user = FirebaseAuth.instance.currentUser;
     try {
       setState(() {
         _isLoading = true;
       });
 
-      var time = Timestamp.now();
+      // var time = Timestamp.now().toString();
+      var blocName = (city+addressLine1+pinCode).replaceAll(' ', '');
 
       // perform image upload here
       // this points to the root cloud storage bucket
       final ref = FirebaseStorage.instance
           .ref()
           .child('bloc_image')
-          .child(time.toString() + '.jpg'); // need to determine a unique id
+          .child(blocName+ '.jpg'); // need to determine a unique id
       await ref.putFile(image);
       final url = await ref.getDownloadURL();
 
       await FirebaseFirestore.instance
           .collection('blocs')
-          .doc(authResult.user.uid)
+          .doc(blocName)
           .set({
-        'blocId': time,
-        'ownerId': authResult.user.uid,
+        'blocId': blocName,
+        'ownerId': user.uid,
         'addressLine1': addressLine1,
         'addressLine2': addressLine2,
         'city': city,
@@ -69,11 +69,13 @@ class _NewBlocScreenState extends State<NewBlocScreen> {
           backgroundColor: Theme.of(ctx).errorColor,
         ),
       );
+      Navigator.of(context).pop();
     } on PlatformException catch (err) {
       var message = 'An error occurred, please check your credentials!';
 
       if (err.message != null) {
         message = err.message;
+        logger.e(message);
       }
 
       Scaffold.of(ctx).showSnackBar(
@@ -86,7 +88,7 @@ class _NewBlocScreenState extends State<NewBlocScreen> {
         _isLoading = false;
       });
     } catch (err) {
-      print(err);
+      logger.e(err);
       setState(() {
         _isLoading = false;
       });
@@ -101,7 +103,7 @@ class _NewBlocScreenState extends State<NewBlocScreen> {
       ),
       drawer: AppDrawer(),
       body: NewBlocForm(
-        _submitAuthForm,
+        _submitNewBlocForm,
         _isLoading,
       ),
     );

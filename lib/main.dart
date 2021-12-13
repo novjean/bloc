@@ -83,7 +83,6 @@ class MyApp extends StatelessWidget {
                           );
                           // return HomeScreen();
                         } else {
-
                           return const AuthScreen();
                         }
                       }),

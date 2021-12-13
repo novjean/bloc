@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:bloc/pickers/user_image_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
-// import 'package:loggy/loggy.dart';
 
 class NewBlocForm extends StatefulWidget {
   NewBlocForm(this.submitFn, this.isLoading);
@@ -37,7 +36,8 @@ class _NewBlocFormState extends State<NewBlocForm> {
     _userImageFile = image;
   }
 
-  void _trySubmit() {
+  void _trySubmitNewBloc() {
+    logger.i('trySubmit called');
     // this will trigger validator for all the text fields in the form
     final isValid = _formKey.currentState.validate();
     FocusScope.of(context).unfocus();
@@ -150,10 +150,7 @@ class _NewBlocFormState extends State<NewBlocForm> {
                 if (!widget.isLoading)
                   RaisedButton(
                     child: Text('Save'),
-                    onPressed: () {
-                      logger.i('save button clicked');
-                      // _trySubmit;
-                    }
+                    onPressed: _trySubmitNewBloc,
                   ),
                 if (!widget.isLoading)
                   FlatButton(

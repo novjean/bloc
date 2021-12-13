@@ -30,7 +30,7 @@ class CityDetailScreen extends StatelessWidget {
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       body: Center(
-        child: Text('We are here!'),
+        child: Text('List of Bloc outlets loading...'),
       ),
     );
   }
