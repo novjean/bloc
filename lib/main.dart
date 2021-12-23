@@ -1,3 +1,4 @@
+import 'package:bloc/screens/bloc_detail_screen.dart';
 import 'package:bloc/screens/city_detail_screen.dart';
 import 'package:bloc/screens/manager_screen.dart';
 import 'package:bloc/screens/new_bloc_screen.dart';
@@ -92,6 +93,7 @@ class MyApp extends StatelessWidget {
                 OwnerScreen.routeName: (ctx) => OwnerScreen(),
                 CityDetailScreen.routeName: (ctx) => CityDetailScreen(),
                 NewBlocScreen.routeName: (ctx) => NewBlocScreen(),
+                BlocDetailScreen.routeName: (ctx) => BlocDetailScreen(),
               });
         });
   }

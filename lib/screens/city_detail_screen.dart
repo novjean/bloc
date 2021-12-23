@@ -7,9 +7,6 @@ import 'package:flutter/material.dart';
 class CityDetailScreen extends StatelessWidget {
   static const routeName = '/city-detail';
 
-  // final String tag;
-  // final String cityName;
-
   @override
   Widget build(BuildContext context) {
     final cityName = ModalRoute.of(context).settings.arguments as String;

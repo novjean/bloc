@@ -1,3 +1,4 @@
+import 'package:bloc/screens/bloc_detail_screen.dart';
 import 'package:flutter/material.dart';
 
 class BlocItem extends StatelessWidget {
@@ -15,10 +16,10 @@ class BlocItem extends StatelessWidget {
       child: GridTile(
         child: GestureDetector(
           onTap: () {
-            // Navigator.of(context).pushNamed(
-            //   CityDetailScreen.routeName,
-            //   arguments: cityName,
-            // );
+            Navigator.of(context).pushNamed(
+              BlocDetailScreen.routeName,
+              arguments: addressLine1,
+            );
           },
           child: Hero(
             // hero should be wired in with where we are animating to

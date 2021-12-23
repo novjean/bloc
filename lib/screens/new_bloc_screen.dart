@@ -38,10 +38,9 @@ class _NewBlocScreenState extends State<NewBlocScreen> {
         _isLoading = true;
       });
 
-      // var time = Timestamp.now().toString();
+      var time = Timestamp.now().toString();
       var blocName = (city+addressLine1+pinCode).replaceAll(' ', '');
 
-      // perform image upload here
       // this points to the root cloud storage bucket
       final ref = FirebaseStorage.instance
           .ref()
@@ -61,6 +60,7 @@ class _NewBlocScreenState extends State<NewBlocScreen> {
         'city': city,
         'pinCode': pinCode,
         'imageUrl': url,
+        'createdAt': time,
       });
 
       Scaffold.of(ctx).showSnackBar(
