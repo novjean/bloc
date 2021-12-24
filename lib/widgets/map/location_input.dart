@@ -1,7 +1,7 @@
 import 'package:bloc/helpers/location_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:location/location.dart';
+// import 'package:location/location.dart';
 
 class LocationInput extends StatefulWidget {
   final Function onSelectPlace;
@@ -26,9 +26,8 @@ class _LocationInputState extends State<LocationInput> {
 
   Future<void> _getCurrentUserLocation() async {
     try {
-      final locData = await Location().getLocation();
-      _showPreview(locData.latitude, locData.longitude);
-      widget.onSelectPlace(locData.latitude,locData.longitude);
+      // final locData = await Location().getLocation();
+      // widget.onSelectPlace(locData.latitude,locData.longitude);
     } catch (error) {
       // can happen if the permission is not given
       print (error);
@@ -51,7 +50,7 @@ class _LocationInputState extends State<LocationInput> {
   @override
   Widget build(BuildContext context) {
     if(_previewImageUrl == null) {
-      _getCurrentUserLocation();
+      // _getCurrentUserLocation();
     }
     return Column(
       children: [
