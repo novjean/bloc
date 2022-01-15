@@ -24,7 +24,7 @@ Future<void> main() async {
 class MyApp extends StatelessWidget {
   const MyApp({key}) : super(key: key);
 
-  static int mClearanceLevel;
+  static int mClearanceLevel = 10;
 
   // This widget is the root of your application.
   @override
@@ -68,7 +68,7 @@ class MyApp extends StatelessWidget {
                           final user = FirebaseAuth.instance.currentUser;
                           return FutureBuilder(
                             future: FirebaseFirestore.instance.collection('users')
-                                .doc(user.uid).get(),
+                                .doc(user!.uid).get(),
                             builder: (ctx, snapshot) {
                               if (snapshot.connectionState == ConnectionState.waiting) {
                                 return const Center(
@@ -76,6 +76,7 @@ class MyApp extends StatelessWidget {
                                 );
                               }
                               final userData = snapshot.data;
+                              //todo: need to resolve this too
                               mClearanceLevel = userData['clearance_level'];
                               logger.i('user data received with clearance level ' + mClearanceLevel.toString());
 

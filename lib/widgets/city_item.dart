@@ -7,7 +7,7 @@ class CityItem extends StatelessWidget {
   final String cityName;
   final String imageUrl;
 
-  const CityItem(this.tag, this.cityName, this.imageUrl, {this.key});
+  const CityItem(this.tag, this.cityName, this.imageUrl, {required this.key});
 
   @override
   Widget build(BuildContext context) {

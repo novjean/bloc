@@ -13,7 +13,7 @@ class LocationInput extends StatefulWidget {
 }
 
 class _LocationInputState extends State<LocationInput> {
-  String _previewImageUrl;
+  late String _previewImageUrl;
 
   void _showPreview(double lat, double lng){
     final staticMapImageUrl = LocationHelper.generateLocationPreviewImage(

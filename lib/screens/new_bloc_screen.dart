@@ -12,7 +12,7 @@ import 'package:logger/logger.dart';
 class NewBlocScreen extends StatefulWidget {
   static const routeName = '/new-bloc-screen';
 
-  const NewBlocScreen({Key key}) : super(key: key);
+  const NewBlocScreen({Key? key}) : super(key: key);
 
   @override
   _NewBlocScreenState createState() => _NewBlocScreenState();
@@ -54,7 +54,7 @@ class _NewBlocScreenState extends State<NewBlocScreen> {
           .doc(blocName)
           .set({
         'blocId': blocName,
-        'ownerId': user.uid,
+        'ownerId': user!.uid,
         'addressLine1': addressLine1,
         'addressLine2': addressLine2,
         'city': city,
@@ -74,7 +74,7 @@ class _NewBlocScreenState extends State<NewBlocScreen> {
       var message = 'An error occurred, please check your credentials!';
 
       if (err.message != null) {
-        message = err.message;
+        message = err.message!;
         logger.e(message);
       }
 

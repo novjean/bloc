@@ -4,11 +4,11 @@ import 'package:flutter/material.dart';
 class BlocDetailScreen extends StatelessWidget {
   static const routeName = '/bloc-detail';
 
-  const BlocDetailScreen({Key key}) : super(key: key);
+  const BlocDetailScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final blocName = ModalRoute.of(context).settings.arguments as String;
+    final blocName = ModalRoute.of(context)!.settings.arguments as String;
 
     return Scaffold(
       appBar: AppBar(

@@ -46,7 +46,8 @@ class HomeScreen extends StatelessWidget {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          LocationInput(null),
+          //todo: need to find a solution for the one below
+          // LocationInput(null),
           SizedBox(
             height: 10,
           ),

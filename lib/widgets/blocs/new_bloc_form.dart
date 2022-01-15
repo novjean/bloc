@@ -39,7 +39,7 @@ class _NewBlocFormState extends State<NewBlocForm> {
   void _trySubmitNewBloc() {
     logger.i('trySubmit called');
     // this will trigger validator for all the text fields in the form
-    final isValid = _formKey.currentState.validate();
+    final isValid = _formKey.currentState!.validate();
     FocusScope.of(context).unfocus();
 
     if (_userImageFile == null) {
@@ -53,7 +53,7 @@ class _NewBlocFormState extends State<NewBlocForm> {
     }
 
     if (isValid) {
-      _formKey.currentState.save();
+      _formKey.currentState!.save();
       widget.submitFn(
         _addressLine1.trim(),
         _addressLine2.trim(),
@@ -84,7 +84,7 @@ class _NewBlocFormState extends State<NewBlocForm> {
                   textCapitalization: TextCapitalization.none,
                   enableSuggestions: false,
                   validator: (value) {
-                    if (value.isEmpty) {
+                    if (value!.isEmpty) {
                       return 'Please enter a valid address';
                     }
                     return null;
@@ -94,7 +94,7 @@ class _NewBlocFormState extends State<NewBlocForm> {
                     labelText: 'Address Line 1',
                   ),
                   onSaved: (value) {
-                    _addressLine1 = value;
+                    _addressLine1 = value!;
                   },
                 ),
                 TextFormField(
@@ -103,7 +103,7 @@ class _NewBlocFormState extends State<NewBlocForm> {
                     textCapitalization: TextCapitalization.none,
                     enableSuggestions: false,
                     validator: (value) {
-                      if (value.isEmpty) {
+                      if (value!.isEmpty) {
                         return 'Please enter a valid address';
                       }
                       return null;
@@ -112,13 +112,13 @@ class _NewBlocFormState extends State<NewBlocForm> {
                       labelText: 'Address Line 2',
                     ),
                     onSaved: (value) {
-                      _addressLine2 = value;
+                      _addressLine2 = value!;
                     },
                   ),
                 TextFormField(
                   key: ValueKey('city'),
                   validator: (value) {
-                    if (value.isEmpty) {
+                    if (value!.isEmpty) {
                       return 'Please enter a valid city';                    }
                     return null;
                   },
@@ -126,13 +126,13 @@ class _NewBlocFormState extends State<NewBlocForm> {
                     labelText: 'City',
                   ),
                   onSaved: (value) {
-                    _city = value;
+                    _city = value!;
                   },
                 ),
                 TextFormField(
                   key: ValueKey('pincode'),
                   validator: (value) {
-                    if (value.isEmpty) {
+                    if (value!.isEmpty) {
                       return 'Please enter a valid pin code';                    }
                     return null;
                   },
@@ -140,7 +140,7 @@ class _NewBlocFormState extends State<NewBlocForm> {
                     labelText: 'Pin Code',
                   ),
                   onSaved: (value) {
-                    _pinCode = value;
+                    _pinCode = value!;
                   },
                 ),
                 SizedBox(

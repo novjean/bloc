@@ -9,7 +9,7 @@ class CityDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cityName = ModalRoute.of(context).settings.arguments as String;
+    final cityName = ModalRoute.of(context)!.settings.arguments as String;
 
     return Scaffold(
       appBar: AppBar(
@@ -42,7 +42,7 @@ class CityDetailScreen extends StatelessWidget {
               child: CircularProgressIndicator(),
             );
           }
-          final blocDocs = snapshot.data.docs;
+          final blocDocs = snapshot.data!.docs;
 
           return GridView.builder(
             // const keyword can be used so that it does not rebuild when the build method is called

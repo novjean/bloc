@@ -25,7 +25,7 @@ class OwnerScreen extends StatelessWidget {
               child: CircularProgressIndicator(),
             );
           }
-          final cityDocs = snapshot.data.docs;
+          final cityDocs = snapshot.data!.docs;
 
           return GridView.builder(
             // const keyword can be used so that it does not rebuild when the build method is called

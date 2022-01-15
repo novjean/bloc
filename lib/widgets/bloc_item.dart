@@ -7,7 +7,7 @@ class BlocItem extends StatelessWidget {
   final String addressLine1;
   final String imageUrl;
 
-  const BlocItem(this.tag, this.addressLine1, this.imageUrl, {this.key});
+  const BlocItem(this.tag, this.addressLine1, this.imageUrl, {required this.key});
 
   @override
   Widget build(BuildContext context) {
