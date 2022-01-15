@@ -66,23 +66,56 @@ class MyApp extends StatelessWidget {
 
                         if (userSnapshot.hasData) {
                           final user = FirebaseAuth.instance.currentUser;
-                          return FutureBuilder(
-                            future: FirebaseFirestore.instance.collection('users')
-                                .doc(user!.uid).get(),
-                            builder: (ctx, snapshot) {
+
+                          CollectionReference users = FirebaseFirestore.instance.collection('users');
+
+                          return FutureBuilder<DocumentSnapshot>(
+                            future: users.doc(user!.uid).get(),
+                            builder:
+                                (BuildContext ctx, AsyncSnapshot<DocumentSnapshot> snapshot) {
+
                               if (snapshot.connectionState == ConnectionState.waiting) {
                                 return const Center(
                                   child: CircularProgressIndicator(),
                                 );
                               }
-                              final userData = snapshot.data;
-                              //todo: need to resolve this too
-                              mClearanceLevel = userData['clearance_level'];
-                              logger.i('user data received with clearance level ' + mClearanceLevel.toString());
 
-                              return HomeScreen();
+                              if (snapshot.hasError) {
+                                return Text("Something went wrong");
+                              }
+
+                              if (snapshot.hasData && !snapshot.data!.exists) {
+                                return Text("Document does not exist");
+                              }
+
+                              if (snapshot.connectionState == ConnectionState.done) {
+                                Map<String, dynamic> data = snapshot.data!.data() as Map<String, dynamic>;
+                                mClearanceLevel = data['clearance_level'];
+                                logger.i('user data received with clearance level ' + mClearanceLevel.toString());
+                                return HomeScreen();
+                                // return Text("Full Name: ${data['full_name']} ${data['last_name']}");
+                              }
+                              return Text("loading");
                             },
                           );
+
+                          // return FutureBuilder(
+                          //   future: FirebaseFirestore.instance.collection('users')
+                          //       .doc(user!.uid).get(),
+                          //   builder: (ctx, snapshot) {
+                          //     if (snapshot.connectionState == ConnectionState.waiting) {
+                          //       return const Center(
+                          //         child: CircularProgressIndicator(),
+                          //       );
+                          //     }
+                          //     final userData = snapshot.data;
+                          //     //todo: need to resolve this too
+                          //     mClearanceLevel = userData['clearance_level'];
+                          //     logger.i('user data received with clearance level ' + mClearanceLevel.toString());
+                          //
+                          //     return HomeScreen();
+                          //   },
+                          // );
                           // return HomeScreen();
                         } else {
                           return const AuthScreen();

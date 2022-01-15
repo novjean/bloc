@@ -11,13 +11,14 @@ class OwnerScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     logger.i('owner screen is loading...');
+    // final Stream<QuerySnapshot> _citiesStream = FirebaseFirestore.instance.collection('cities').snapshots();
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('Owner'),
       ),
       drawer: AppDrawer(),
-      body: StreamBuilder(
+      body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance.collection('cities').snapshots(),
         builder: (ctx, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -25,7 +26,10 @@ class OwnerScreen extends StatelessWidget {
               child: CircularProgressIndicator(),
             );
           }
-          final cityDocs = snapshot.data!.docs;
+
+          final cityDocs = snapshot.data!.docs.map as Map<String, dynamic>;
+
+          // Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
 
           return GridView.builder(
             // const keyword can be used so that it does not rebuild when the build method is called
@@ -42,7 +46,7 @@ class OwnerScreen extends StatelessWidget {
             // item builder defines how the grid should look
             itemBuilder: (ctx, index) => CityItem(
               cityDocs[index].id,
-              cityDocs[index].data()['name'],
+              cityDocs[index].data['name'],
               cityDocs[index].data()['imageUrl'],
               key: ValueKey(cityDocs[index].id),
             ),

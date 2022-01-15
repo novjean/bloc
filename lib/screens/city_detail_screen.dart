@@ -34,7 +34,7 @@ class CityDetailScreen extends StatelessWidget {
         splashColor: Colors.grey,
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-      body: StreamBuilder(
+      body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance.collection('blocs').snapshots(),
         builder: (ctx, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -42,7 +42,7 @@ class CityDetailScreen extends StatelessWidget {
               child: CircularProgressIndicator(),
             );
           }
-          final blocDocs = snapshot.data!.docs;
+          final blocDocs = snapshot.data!.docs.map as Map<String, dynamic>;
 
           return GridView.builder(
             // const keyword can be used so that it does not rebuild when the build method is called
