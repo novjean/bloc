@@ -13,7 +13,7 @@ class UserImagePicker extends StatefulWidget {
 }
 
 class _UserImagePickerState extends State<UserImagePicker> {
-  File _pickedImage;
+  late File _pickedImage;
 
   void _pickImage() async {
     final picker = ImagePicker();
@@ -23,9 +23,9 @@ class _UserImagePickerState extends State<UserImagePicker> {
       maxWidth: 150,
     );
     setState(() {
-      _pickedImage = File(pickedImageFile.path);
+      _pickedImage = File(pickedImageFile!.path);
     });
-    widget.imagePickFn(File(pickedImageFile.path));
+    widget.imagePickFn(File(pickedImageFile!.path));
   }
 
   @override

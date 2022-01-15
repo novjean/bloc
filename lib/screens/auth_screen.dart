@@ -44,7 +44,7 @@ class _AuthScreenState extends State<AuthScreen> {
         final ref = FirebaseStorage.instance
             .ref()
             .child('user_image')
-            .child(authResult.user.uid + '.jpg');
+            .child(authResult.user!.uid + '.jpg');
 
         // this is where teh uplod happens
         await ref.putFile(image);
@@ -53,9 +53,9 @@ class _AuthScreenState extends State<AuthScreen> {
 
         await FirebaseFirestore.instance
             .collection('users')
-            .doc(authResult.user.uid)
+            .doc(authResult.user!.uid)
             .set({
-          'user_id': authResult.user.uid,
+          'user_id': authResult.user!.uid,
           'username': username,
           'email': email,
           'image_url': url,
@@ -73,7 +73,7 @@ class _AuthScreenState extends State<AuthScreen> {
       var message = 'An error occurred, please check your credentials!';
 
       if (err.message != null) {
-        message = err.message;
+        message = err.message!;
       }
 
       Scaffold.of(ctx).showSnackBar(

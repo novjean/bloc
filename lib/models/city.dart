@@ -6,8 +6,8 @@ class City {
   final String imageUrl;
 
   City({
-    @required this.name,
-    @required this.ownerId,
-    @required this.imageUrl,
+    required this.name,
+    required this.ownerId,
+    required this.imageUrl,
   });
 }
