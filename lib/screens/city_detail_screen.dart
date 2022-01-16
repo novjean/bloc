@@ -10,6 +10,7 @@ class CityDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cityName = ModalRoute.of(context)!.settings.arguments as String;
+    final Stream<QuerySnapshot> _blocsStream = FirebaseFirestore.instance.collection('blocs').snapshots();
 
     return Scaffold(
       appBar: AppBar(
@@ -35,34 +36,29 @@ class CityDetailScreen extends StatelessWidget {
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       body: StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance.collection('blocs').snapshots(),
+        stream: _blocsStream,
         builder: (ctx, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(
               child: CircularProgressIndicator(),
             );
           }
-          final blocDocs = snapshot.data!.docs.map as Map<String, dynamic>;
-
-          return GridView.builder(
-            // const keyword can be used so that it does not rebuild when the build method is called
-            // useful for performance improvement
-            padding: const EdgeInsets.all(10.0),
-            itemCount: blocDocs.length,
-            // grid delegate describes how many grids should be there
+          return GridView(
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
+              crossAxisCount: 1,
               childAspectRatio: 3 / 2,
               crossAxisSpacing: 10,
               mainAxisSpacing: 10,
             ),
-            // item builder defines how the grid should look
-            itemBuilder: (ctx, index) => BlocItem(
-              blocDocs[index].id,
-              blocDocs[index].data()['addressLine1'],
-              blocDocs[index].data()['imageUrl'],
-              key: ValueKey(blocDocs[index].id),
-            ),
+            children: snapshot.data!.docs.map((DocumentSnapshot document) {
+              Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+              return BlocItem(
+                document.id,
+                data['addressLine1'],
+                data['imageUrl'],
+                key: ValueKey(document.id),
+              );
+            }).toList(),
           );
         },
       ),
