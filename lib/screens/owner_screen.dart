@@ -18,7 +18,7 @@ class OwnerScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Owner'),
       ),
-      drawer: AppDrawer(),
+      // drawer: AppDrawer(),
       body: StreamBuilder<QuerySnapshot>(
         stream: _citiesStream,
         builder: (ctx, snapshot) {

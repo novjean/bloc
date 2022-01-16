@@ -17,7 +17,7 @@ class CityDetailScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text(cityName),
       ),
-      drawer: AppDrawer(),
+      // drawer: AppDrawer(),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.of(context).pushNamed(

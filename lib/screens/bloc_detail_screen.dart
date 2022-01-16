@@ -14,7 +14,7 @@ class BlocDetailScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text(blocName),
       ),
-      drawer: AppDrawer(),
+      // drawer: AppDrawer(),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           // Navigator.of(context).pushNamed(
