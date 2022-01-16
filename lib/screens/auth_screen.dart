@@ -22,7 +22,7 @@ class _AuthScreenState extends State<AuthScreen> {
       String email,
       String password,
       String username,
-      File image,
+      File? image,
       bool isLogin,
       BuildContext ctx,
       ) async {
@@ -47,7 +47,7 @@ class _AuthScreenState extends State<AuthScreen> {
             .child(authResult.user!.uid + '.jpg');
 
         // this is where teh uplod happens
-        await ref.putFile(image);
+        await ref.putFile(image!);
 
         final url = await ref.getDownloadURL();
 
@@ -91,6 +91,12 @@ class _AuthScreenState extends State<AuthScreen> {
         _isLoading = false;
       });
     }
+  }
+
+  void _submitLogin(
+
+      ) async {
+
   }
 
   @override
