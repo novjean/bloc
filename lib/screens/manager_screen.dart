@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../db/database.dart';
+
 class ManagerScreen extends StatelessWidget {
   static const routeName = '/manager-screen';
 

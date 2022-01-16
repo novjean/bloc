@@ -9,6 +9,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 
+import 'db/database.dart';
+import 'db/entity/person.dart';
 import 'screens/auth_screen.dart';
 import 'screens/home_screen.dart';
 import 'screens/splash_screen.dart';
@@ -18,17 +20,24 @@ var logger = Logger(
 );
 
 Future<void> main() async {
-  runApp(MyApp());
+  WidgetsFlutterBinding.ensureInitialized();
+  final database = await $FloorAppDatabase.databaseBuilder('app_database.db').build();
+  final personDao = database.personDao;
+
+  runApp(MyApp(database));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({key}) : super(key: key);
+  AppDatabase database;
+  MyApp(this.database, {key}) : super(key: key);
 
   static int mClearanceLevel = 10;
 
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    _insertPerson(database);
+
     final Future<FirebaseApp> _initialization = Firebase.initializeApp();
 
     return FutureBuilder(
@@ -130,5 +139,15 @@ class MyApp extends StatelessWidget {
                 BlocDetailScreen.routeName: (ctx) => BlocDetailScreen(),
               });
         });
+  }
+
+  void _insertPerson(AppDatabase database) async {
+    final personDao = database.personDao;
+    final person = Person(1, 'Frank');
+
+    await personDao.insertPerson(person);
+    final result = await personDao.findAllPersons();
+
+    logger.i('result length is ' + result.length.toString());
   }
 }

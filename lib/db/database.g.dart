@@ -133,6 +133,6 @@ class _$PersonDao extends PersonDao {
 
   @override
   Future<void> insertPerson(Person person) async {
-    await _personInsertionAdapter.insert(person, OnConflictStrategy.abort);
+    await _personInsertionAdapter.insert(person, OnConflictStrategy.replace);
   }
 }
