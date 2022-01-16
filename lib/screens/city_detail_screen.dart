@@ -10,7 +10,8 @@ class CityDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cityName = ModalRoute.of(context)!.settings.arguments as String;
-    final Stream<QuerySnapshot> _blocsStream = FirebaseFirestore.instance.collection('blocs').snapshots();
+    final Stream<QuerySnapshot> _blocsStream =
+        FirebaseFirestore.instance.collection('blocs').snapshots();
 
     return Scaffold(
       appBar: AppBar(
@@ -51,7 +52,8 @@ class CityDetailScreen extends StatelessWidget {
               mainAxisSpacing: 10,
             ),
             children: snapshot.data!.docs.map((DocumentSnapshot document) {
-              Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+              Map<String, dynamic> data =
+                  document.data()! as Map<String, dynamic>;
               return BlocItem(
                 document.id,
                 data['addressLine1'],
