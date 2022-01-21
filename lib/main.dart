@@ -1,3 +1,5 @@
+import 'package:bloc/db/dao/bloc_dao.dart';
+import 'package:bloc/db/entity/user.dart' as blocUser;
 import 'package:bloc/screens/bloc_detail_screen.dart';
 import 'package:bloc/screens/city_detail_screen.dart';
 import 'package:bloc/screens/manager_screen.dart';
@@ -21,23 +23,21 @@ var logger = Logger(
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  final database = await $FloorAppDatabase.databaseBuilder('app_database.db').build();
-  final personDao = database.personDao;
-
-  runApp(MyApp(database));
+  final database = await $FloorAppDatabase.databaseBuilder('bloc_database.db').build();
+  final dao = database.blocDao;
+  runApp(MyApp(dao:dao));
 }
 
 class MyApp extends StatelessWidget {
-  AppDatabase database;
-  MyApp(this.database, {key}) : super(key: key);
-
   static int mClearanceLevel = 10;
+  final BlocDao dao;
+
+  MyApp({required this.dao});
 
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    _insertPerson(database);
-
+    // _insertPerson(dao);
     final Future<FirebaseApp> _initialization = Firebase.initializeApp();
 
     return FutureBuilder(
@@ -100,8 +100,17 @@ class MyApp extends StatelessWidget {
                               if (snapshot.connectionState == ConnectionState.done) {
                                 Map<String, dynamic> data = snapshot.data!.data() as Map<String, dynamic>;
                                 mClearanceLevel = data['clearance_level'];
+                                String userId = data['user_id'];
+                                String username = data['username'];
+                                String email = data['email'];
+                                String imageUrl = data['image_url'];
+
+
+                                final blocUser.User user = blocUser.User(userId, username,email,imageUrl,mClearanceLevel);
+                                _insertUser(dao,user);
+
                                 logger.i('user data received with clearance level ' + mClearanceLevel.toString());
-                                return HomeScreen();
+                                return HomeScreen(dao:dao, user:user);
                                 // return Text("Full Name: ${data['full_name']} ${data['last_name']}");
                               }
                               return Text("loading");
@@ -131,7 +140,7 @@ class MyApp extends StatelessWidget {
                         }
                       }),
               routes: {
-                HomeScreen.routeName: (ctx) => HomeScreen(),
+                // HomeScreen.routeName: (ctx) => HomeScreen(),
                 ManagerScreen.routeName: (ctx) => ManagerScreen(),
                 OwnerScreen.routeName: (ctx) => OwnerScreen(),
                 CityDetailScreen.routeName: (ctx) => CityDetailScreen(),
@@ -141,13 +150,8 @@ class MyApp extends StatelessWidget {
         });
   }
 
-  void _insertPerson(AppDatabase database) async {
-    final personDao = database.personDao;
-    final person = Person(1, 'Frank');
-
-    await personDao.insertPerson(person);
-    final result = await personDao.findAllPersons();
-
-    logger.i('result length is ' + result.length.toString());
+  void _insertUser(BlocDao dao, blocUser.User user) async {
+    logger.i("_insertUser()");
+    await dao.insertUser(user);
   }
 }

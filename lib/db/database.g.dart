@@ -61,12 +61,12 @@ class _$AppDatabase extends AppDatabase {
     changeListener = listener ?? StreamController<String>.broadcast();
   }
 
-  PersonDao? _personDaoInstance;
+  BlocDao? _blocDaoInstance;
 
   Future<sqflite.Database> open(String path, List<Migration> migrations,
       [Callback? callback]) async {
     final databaseOptions = sqflite.OpenDatabaseOptions(
-      version: 1,
+      version: 2,
       onConfigure: (database) async {
         await database.execute('PRAGMA foreign_keys = ON');
         await callback?.onConfigure?.call(database);
@@ -83,6 +83,8 @@ class _$AppDatabase extends AppDatabase {
       onCreate: (database, version) async {
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `Person` (`id` INTEGER NOT NULL, `name` TEXT NOT NULL, PRIMARY KEY (`id`))');
+        await database.execute(
+            'CREATE TABLE IF NOT EXISTS `User` (`userId` TEXT NOT NULL, `username` TEXT NOT NULL, `email` TEXT NOT NULL, `imageUrl` TEXT NOT NULL, `clearanceLevel` INTEGER NOT NULL, PRIMARY KEY (`userId`))');
 
         await callback?.onCreate?.call(database, version);
       },
@@ -91,20 +93,30 @@ class _$AppDatabase extends AppDatabase {
   }
 
   @override
-  PersonDao get personDao {
-    return _personDaoInstance ??= _$PersonDao(database, changeListener);
+  BlocDao get blocDao {
+    return _blocDaoInstance ??= _$BlocDao(database, changeListener);
   }
 }
 
-class _$PersonDao extends PersonDao {
-  _$PersonDao(this.database, this.changeListener)
+class _$BlocDao extends BlocDao {
+  _$BlocDao(this.database, this.changeListener)
       : _queryAdapter = QueryAdapter(database, changeListener),
         _personInsertionAdapter = InsertionAdapter(
             database,
             'Person',
             (Person item) =>
                 <String, Object?>{'id': item.id, 'name': item.name},
-            changeListener);
+            changeListener),
+        _userInsertionAdapter = InsertionAdapter(
+            database,
+            'User',
+            (User item) => <String, Object?>{
+                  'userId': item.userId,
+                  'username': item.username,
+                  'email': item.email,
+                  'imageUrl': item.imageUrl,
+                  'clearanceLevel': item.clearanceLevel
+                });
 
   final sqflite.DatabaseExecutor database;
 
@@ -113,6 +125,8 @@ class _$PersonDao extends PersonDao {
   final QueryAdapter _queryAdapter;
 
   final InsertionAdapter<Person> _personInsertionAdapter;
+
+  final InsertionAdapter<User> _userInsertionAdapter;
 
   @override
   Future<List<Person>> findAllPersons() async {
@@ -133,6 +147,11 @@ class _$PersonDao extends PersonDao {
 
   @override
   Future<void> insertPerson(Person person) async {
-    await _personInsertionAdapter.insert(person, OnConflictStrategy.replace);
+    await _personInsertionAdapter.insert(person, OnConflictStrategy.abort);
+  }
+
+  @override
+  Future<void> insertUser(User user) async {
+    await _userInsertionAdapter.insert(user, OnConflictStrategy.abort);
   }
 }

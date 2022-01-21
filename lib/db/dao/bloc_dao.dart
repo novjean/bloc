@@ -1,8 +1,10 @@
 import 'package:bloc/db/entity/person.dart';
 import 'package:floor/floor.dart';
 
+import '../entity/user.dart';
+
 @dao
-abstract class PersonDao {
+abstract class BlocDao {
   @Query('SELECT * FROM Person')
   Future<List<Person>> findAllPersons();
 
@@ -11,4 +13,7 @@ abstract class PersonDao {
 
   @insert
   Future<void> insertPerson(Person person);
+
+  @insert
+  Future<void> insertUser(User user);
 }

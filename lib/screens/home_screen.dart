@@ -1,12 +1,20 @@
+import 'package:bloc/db/dao/bloc_dao.dart';
+import 'package:bloc/db/entity/user.dart' as blocUser;
 import 'package:bloc/widgets/app_drawer.dart';
 import 'package:bloc/widgets/map/location_input.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:logger/logger.dart';
+
+import '../db/entity/person.dart';
 
 class HomeScreen extends StatelessWidget {
   static const routeName = '/home-screen';
+  var logger = Logger();
 
-  HomeScreen({key}) : super(key: key);
+  final BlocDao dao;
+  final blocUser.User user;
+  HomeScreen({key, required this.dao, required this.user}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -63,4 +71,10 @@ class HomeScreen extends StatelessWidget {
       ),
     );
   }
-}
+
+  void _insertPerson(BlocDao dao) async {
+    final person = Person(1, 'Frank');
+    await dao.insertPerson(person);
+    final result = await dao.findAllPersons();
+    logger.i('result length is ' + result.length.toString());
+  }}
