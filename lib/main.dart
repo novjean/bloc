@@ -1,3 +1,4 @@
+import 'package:bloc/db/bloc_repository.dart';
 import 'package:bloc/db/dao/bloc_dao.dart';
 import 'package:bloc/db/entity/user.dart' as blocUser;
 import 'package:bloc/screens/bloc_detail_screen.dart';
@@ -12,7 +13,6 @@ import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 
 import 'db/database.dart';
-import 'db/entity/person.dart';
 import 'screens/auth_screen.dart';
 import 'screens/home_screen.dart';
 import 'screens/splash_screen.dart';
@@ -34,10 +34,8 @@ class MyApp extends StatelessWidget {
 
   MyApp({required this.dao});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    // _insertPerson(dao);
     final Future<FirebaseApp> _initialization = Firebase.initializeApp();
 
     return FutureBuilder(
@@ -105,36 +103,16 @@ class MyApp extends StatelessWidget {
                                 String email = data['email'];
                                 String imageUrl = data['image_url'];
 
-
                                 final blocUser.User user = blocUser.User(userId, username,email,imageUrl,mClearanceLevel);
-                                _insertUser(dao,user);
+                                BlocRepository.insertUser(dao,user);
 
                                 logger.i('user data received with clearance level ' + mClearanceLevel.toString());
                                 return HomeScreen(dao:dao, user:user);
                                 // return Text("Full Name: ${data['full_name']} ${data['last_name']}");
                               }
-                              return Text("loading");
+                              return Text("loading...");
                             },
                           );
-
-                          // return FutureBuilder(
-                          //   future: FirebaseFirestore.instance.collection('users')
-                          //       .doc(user!.uid).get(),
-                          //   builder: (ctx, snapshot) {
-                          //     if (snapshot.connectionState == ConnectionState.waiting) {
-                          //       return const Center(
-                          //         child: CircularProgressIndicator(),
-                          //       );
-                          //     }
-                          //     final userData = snapshot.data;
-                          //     //todo: need to resolve this too
-                          //     mClearanceLevel = userData['clearance_level'];
-                          //     logger.i('user data received with clearance level ' + mClearanceLevel.toString());
-                          //
-                          //     return HomeScreen();
-                          //   },
-                          // );
-                          // return HomeScreen();
                         } else {
                           return const AuthScreen();
                         }
@@ -148,10 +126,5 @@ class MyApp extends StatelessWidget {
                 BlocDetailScreen.routeName: (ctx) => BlocDetailScreen(),
               });
         });
-  }
-
-  void _insertUser(BlocDao dao, blocUser.User user) async {
-    logger.i("_insertUser()");
-    await dao.insertUser(user);
   }
 }

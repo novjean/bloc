@@ -4,10 +4,13 @@ import 'package:bloc/screens/owner_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+import '../db/dao/bloc_dao.dart';
 import '../main.dart';
 
 class AppDrawer extends StatelessWidget {
-  const AppDrawer({Key? key}) : super(key: key);
+  final BlocDao dao;
+
+  AppDrawer({key, required this.dao}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -47,6 +50,7 @@ class AppDrawer extends StatelessWidget {
                   onTap: () {
                     Navigator.of(context).pushNamed(
                       OwnerScreen.routeName,
+                      arguments: dao,
                     );
                   },
                 )

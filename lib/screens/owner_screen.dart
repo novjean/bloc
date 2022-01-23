@@ -1,8 +1,12 @@
+import 'package:bloc/db/bloc_repository.dart';
+import 'package:bloc/db/dao/bloc_dao.dart';
 import 'package:bloc/widgets/app_drawer.dart';
 import 'package:bloc/widgets/city_item.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
+
+import '../db/entity/city.dart';
 
 class OwnerScreen extends StatelessWidget {
   static const routeName = '/owner-screen';
@@ -10,6 +14,8 @@ class OwnerScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final dao = ModalRoute.of(context)!.settings.arguments as BlocDao;
+
     logger.i('owner screen is loading...');
     final Stream<QuerySnapshot> _citiesStream =
         FirebaseFirestore.instance.collection('cities').snapshots();
@@ -27,16 +33,28 @@ class OwnerScreen extends StatelessWidget {
               child: CircularProgressIndicator(),
             );
           }
+          if (snapshot.hasError) {
+            return Text("Something went wrong");
+          }
+
           return GridView(
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 1,
+              crossAxisCount: 2,
               childAspectRatio: 3 / 2,
               crossAxisSpacing: 10,
               mainAxisSpacing: 10,
             ),
             children: snapshot.data!.docs.map((DocumentSnapshot document) {
-              Map<String, dynamic> data =
-                  document.data()! as Map<String, dynamic>;
+
+              Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+
+              String imageUrl = data['imageUrl'];
+              String name = data['name'];
+              String ownerId = data['owner_id'];
+              String cityId = document.id;
+              final City city = new City(cityId,name,ownerId,imageUrl);
+              BlocRepository.insertCity(dao,city);
+
               return CityItem(
                 document.id,
                 data['name'],

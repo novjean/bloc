@@ -66,7 +66,7 @@ class _$AppDatabase extends AppDatabase {
   Future<sqflite.Database> open(String path, List<Migration> migrations,
       [Callback? callback]) async {
     final databaseOptions = sqflite.OpenDatabaseOptions(
-      version: 2,
+      version: 3,
       onConfigure: (database) async {
         await database.execute('PRAGMA foreign_keys = ON');
         await callback?.onConfigure?.call(database);
@@ -85,6 +85,8 @@ class _$AppDatabase extends AppDatabase {
             'CREATE TABLE IF NOT EXISTS `Person` (`id` INTEGER NOT NULL, `name` TEXT NOT NULL, PRIMARY KEY (`id`))');
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `User` (`userId` TEXT NOT NULL, `username` TEXT NOT NULL, `email` TEXT NOT NULL, `imageUrl` TEXT NOT NULL, `clearanceLevel` INTEGER NOT NULL, PRIMARY KEY (`userId`))');
+        await database.execute(
+            'CREATE TABLE IF NOT EXISTS `City` (`id` TEXT NOT NULL, `name` TEXT NOT NULL, `ownerId` TEXT NOT NULL, `imageUrl` TEXT NOT NULL, PRIMARY KEY (`id`))');
 
         await callback?.onCreate?.call(database, version);
       },
@@ -116,6 +118,15 @@ class _$BlocDao extends BlocDao {
                   'email': item.email,
                   'imageUrl': item.imageUrl,
                   'clearanceLevel': item.clearanceLevel
+                }),
+        _cityInsertionAdapter = InsertionAdapter(
+            database,
+            'City',
+            (City item) => <String, Object?>{
+                  'id': item.id,
+                  'name': item.name,
+                  'ownerId': item.ownerId,
+                  'imageUrl': item.imageUrl
                 });
 
   final sqflite.DatabaseExecutor database;
@@ -127,6 +138,8 @@ class _$BlocDao extends BlocDao {
   final InsertionAdapter<Person> _personInsertionAdapter;
 
   final InsertionAdapter<User> _userInsertionAdapter;
+
+  final InsertionAdapter<City> _cityInsertionAdapter;
 
   @override
   Future<List<Person>> findAllPersons() async {
@@ -153,5 +166,10 @@ class _$BlocDao extends BlocDao {
   @override
   Future<void> insertUser(User user) async {
     await _userInsertionAdapter.insert(user, OnConflictStrategy.abort);
+  }
+
+  @override
+  Future<void> insertCity(City city) async {
+    await _cityInsertionAdapter.insert(city, OnConflictStrategy.abort);
   }
 }

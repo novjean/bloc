@@ -1,6 +1,7 @@
 import 'package:bloc/db/entity/person.dart';
 import 'package:floor/floor.dart';
 
+import '../entity/city.dart';
 import '../entity/user.dart';
 
 @dao
@@ -16,4 +17,8 @@ abstract class BlocDao {
 
   @insert
   Future<void> insertUser(User user);
+
+  @insert
+  Future<void> insertCity(City city);
+
 }

@@ -1,5 +1,4 @@
 import 'package:bloc/screens/new_bloc_screen.dart';
-import 'package:bloc/widgets/app_drawer.dart';
 import 'package:bloc/widgets/bloc_item.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -46,7 +45,7 @@ class CityDetailScreen extends StatelessWidget {
           }
           return GridView(
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 1,
+              crossAxisCount: 2,
               childAspectRatio: 3 / 2,
               crossAxisSpacing: 10,
               mainAxisSpacing: 10,

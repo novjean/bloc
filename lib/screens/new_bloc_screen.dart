@@ -101,7 +101,7 @@ class _NewBlocScreenState extends State<NewBlocScreen> {
       appBar: AppBar(
         title: const Text('Add New BLOC'),
       ),
-      drawer: AppDrawer(),
+      // drawer: AppDrawer(),
       body: NewBlocForm(
         _submitNewBlocForm,
         _isLoading,

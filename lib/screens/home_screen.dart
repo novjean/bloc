@@ -6,7 +6,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 
-import '../db/entity/person.dart';
 
 class HomeScreen extends StatelessWidget {
   static const routeName = '/home-screen';
@@ -50,7 +49,7 @@ class HomeScreen extends StatelessWidget {
           )
         ],
       ),
-      drawer: AppDrawer(),
+      drawer: AppDrawer(dao:dao),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -71,10 +70,4 @@ class HomeScreen extends StatelessWidget {
       ),
     );
   }
-
-  void _insertPerson(BlocDao dao) async {
-    final person = Person(1, 'Frank');
-    await dao.insertPerson(person);
-    final result = await dao.findAllPersons();
-    logger.i('result length is ' + result.length.toString());
-  }}
+}
