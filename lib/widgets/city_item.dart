@@ -1,13 +1,15 @@
 import 'package:bloc/screens/city_detail_screen.dart';
 import 'package:flutter/material.dart';
 
+import '../db/dao/bloc_dao.dart';
 import '../db/entity/city.dart';
 
 class CityItem extends StatelessWidget {
   final Key key;
   final City city;
+  final BlocDao dao;
 
-  const CityItem(this.city, {required this.key});
+  const CityItem(this.city, this.dao, {required this.key});
 
   @override
   Widget build(BuildContext context) {
@@ -16,11 +18,12 @@ class CityItem extends StatelessWidget {
       child: GridTile(
         child: GestureDetector(
           onTap: () {
-            // Navigator.of(context).push(MaterialPageRoute(builder: (ctx) => CityDetailScreen(this.tag, this.cityName)),);
-            Navigator.of(context).pushNamed(
-              CityDetailScreen.routeName,
-              arguments: city.name,
-              );
+            Navigator.of(context).push(MaterialPageRoute(builder: (ctx) => CityDetailScreen(dao:dao,
+                tag:city.id, cityName:city.name)),);
+            // Navigator.of(context).pushNamed(
+            //   CityDetailScreen.routeName,
+            //   arguments: dao,
+            //   );
           },
           child: Hero(
             // hero should be wired in with where we are animating to

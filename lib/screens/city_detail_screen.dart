@@ -1,14 +1,26 @@
+import 'package:bloc/db/bloc_repository.dart';
 import 'package:bloc/screens/new_bloc_screen.dart';
 import 'package:bloc/widgets/bloc_item.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
+import '../db/dao/bloc_dao.dart';
+import '../db/entity/bloc.dart';
+import '../utils/bloc_utils.dart';
+
 class CityDetailScreen extends StatelessWidget {
   static const routeName = '/city-detail';
+  BlocDao dao;
+  String tag;
+  String cityName;
+
+  CityDetailScreen(
+      {key, required this.dao, required this.tag, required this.cityName})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final cityName = ModalRoute.of(context)!.settings.arguments as String;
+    // final cityName = ModalRoute.of(context)!.settings.arguments as String;
     final Stream<QuerySnapshot> _blocsStream =
         FirebaseFirestore.instance.collection('blocs').snapshots();
 
@@ -44,7 +56,7 @@ class CityDetailScreen extends StatelessWidget {
             );
           }
           return GridView(
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
               childAspectRatio: 3 / 2,
               crossAxisSpacing: 10,
@@ -53,6 +65,10 @@ class CityDetailScreen extends StatelessWidget {
             children: snapshot.data!.docs.map((DocumentSnapshot document) {
               Map<String, dynamic> data =
                   document.data()! as Map<String, dynamic>;
+
+              final Bloc bloc = BlocUtils.getBloc(data);
+              BlocRepository.insertBloc(dao, bloc);
+
               return BlocItem(
                 document.id,
                 data['addressLine1'],

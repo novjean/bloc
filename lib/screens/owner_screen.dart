@@ -38,31 +38,23 @@ class OwnerScreen extends StatelessWidget {
           }
 
           return GridView(
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
               childAspectRatio: 3 / 2,
               crossAxisSpacing: 10,
               mainAxisSpacing: 10,
             ),
             children: snapshot.data!.docs.map((DocumentSnapshot document) {
-
-              Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-
+              Map<String, dynamic> data =
+                  document.data()! as Map<String, dynamic>;
               String imageUrl = data['imageUrl'];
               String name = data['name'];
               String ownerId = data['owner_id'];
               String cityId = document.id;
-              final City city = new City(cityId,name,ownerId,imageUrl);
-              BlocRepository.insertCity(dao,city);
+              final City city = City(cityId,name,ownerId,imageUrl);
+              BlocRepository.insertCity(dao, city);
 
-              return CityItem(city, key: ValueKey(document.id));
-
-              // return CityItem(
-              //   document.id,
-              //   data['name'],
-              //   data['imageUrl'],
-              //   key: ValueKey(document.id),
-              // );
+              return CityItem(city, dao, key: ValueKey(document.id));
             }).toList(),
           );
         },

@@ -3,6 +3,7 @@ import 'package:bloc/db/dao/bloc_dao.dart';
 import 'package:bloc/db/entity/user.dart';
 import 'package:logger/logger.dart';
 
+import 'entity/bloc.dart';
 import 'entity/city.dart';
 
 var logger = Logger(
@@ -11,15 +12,17 @@ var logger = Logger(
 
 class BlocRepository {
   static void insertUser(BlocDao dao, User user) async {
-    logger.i("insertUser()");
+    logger.i("insertUser(): " + user.username);
     await dao.insertUser(user);
   }
 
   static void insertCity(BlocDao dao, City city) async {
-    logger.i("insertCity()");
+    logger.i("insertCity(): " + city.name);
     await dao.insertCity(city);
   }
 
-
-
+  static void insertBloc(BlocDao dao, Bloc bloc) async {
+    logger.i("insertBloc(): " + bloc.addressLine1);
+    await dao.insertBloc(bloc);
+  }
 }

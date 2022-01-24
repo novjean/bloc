@@ -66,7 +66,7 @@ class _$AppDatabase extends AppDatabase {
   Future<sqflite.Database> open(String path, List<Migration> migrations,
       [Callback? callback]) async {
     final databaseOptions = sqflite.OpenDatabaseOptions(
-      version: 3,
+      version: 4,
       onConfigure: (database) async {
         await database.execute('PRAGMA foreign_keys = ON');
         await callback?.onConfigure?.call(database);
@@ -87,6 +87,8 @@ class _$AppDatabase extends AppDatabase {
             'CREATE TABLE IF NOT EXISTS `User` (`userId` TEXT NOT NULL, `username` TEXT NOT NULL, `email` TEXT NOT NULL, `imageUrl` TEXT NOT NULL, `clearanceLevel` INTEGER NOT NULL, PRIMARY KEY (`userId`))');
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `City` (`id` TEXT NOT NULL, `name` TEXT NOT NULL, `ownerId` TEXT NOT NULL, `imageUrl` TEXT NOT NULL, PRIMARY KEY (`id`))');
+        await database.execute(
+            'CREATE TABLE IF NOT EXISTS `Bloc` (`blocId` TEXT NOT NULL, `cityName` TEXT NOT NULL, `addressLine1` TEXT NOT NULL, `addressLine2` TEXT NOT NULL, `pinCode` TEXT NOT NULL, `imageUrl` TEXT NOT NULL, `ownerId` TEXT NOT NULL, `createdAt` TEXT NOT NULL, PRIMARY KEY (`blocId`))');
 
         await callback?.onCreate?.call(database, version);
       },
@@ -127,6 +129,19 @@ class _$BlocDao extends BlocDao {
                   'name': item.name,
                   'ownerId': item.ownerId,
                   'imageUrl': item.imageUrl
+                }),
+        _blocInsertionAdapter = InsertionAdapter(
+            database,
+            'Bloc',
+            (Bloc item) => <String, Object?>{
+                  'blocId': item.blocId,
+                  'cityName': item.cityName,
+                  'addressLine1': item.addressLine1,
+                  'addressLine2': item.addressLine2,
+                  'pinCode': item.pinCode,
+                  'imageUrl': item.imageUrl,
+                  'ownerId': item.ownerId,
+                  'createdAt': item.createdAt
                 });
 
   final sqflite.DatabaseExecutor database;
@@ -140,6 +155,8 @@ class _$BlocDao extends BlocDao {
   final InsertionAdapter<User> _userInsertionAdapter;
 
   final InsertionAdapter<City> _cityInsertionAdapter;
+
+  final InsertionAdapter<Bloc> _blocInsertionAdapter;
 
   @override
   Future<List<Person>> findAllPersons() async {
@@ -171,5 +188,10 @@ class _$BlocDao extends BlocDao {
   @override
   Future<void> insertCity(City city) async {
     await _cityInsertionAdapter.insert(city, OnConflictStrategy.abort);
+  }
+
+  @override
+  Future<void> insertBloc(Bloc bloc) async {
+    await _blocInsertionAdapter.insert(bloc, OnConflictStrategy.abort);
   }
 }
