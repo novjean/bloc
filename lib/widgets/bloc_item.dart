@@ -1,13 +1,15 @@
 import 'package:bloc/screens/bloc_detail_screen.dart';
 import 'package:flutter/material.dart';
 
+import '../db/dao/bloc_dao.dart';
+import '../db/entity/bloc.dart';
+
 class BlocItem extends StatelessWidget {
   final Key key;
-  final String tag;
-  final String addressLine1;
-  final String imageUrl;
+  final Bloc bloc;
+  final BlocDao dao;
 
-  const BlocItem(this.tag, this.addressLine1, this.imageUrl, {required this.key});
+  const BlocItem(this.bloc, this.dao, {required this.key});
 
   @override
   Widget build(BuildContext context) {
@@ -18,15 +20,15 @@ class BlocItem extends StatelessWidget {
           onTap: () {
             Navigator.of(context).pushNamed(
               BlocDetailScreen.routeName,
-              arguments: addressLine1,
+              arguments: bloc.addressLine1,
             );
           },
           child: Hero(
             // hero should be wired in with where we are animating to
-            tag: tag,
+            tag: bloc.id,
             child: FadeInImage(
               placeholder: AssetImage('assets/images/product-placeholder.png'),
-              image: NetworkImage(imageUrl),
+              image: NetworkImage(bloc.imageUrl),
               fit: BoxFit.cover,
             ),
           ),
@@ -34,7 +36,7 @@ class BlocItem extends StatelessWidget {
         footer: GridTileBar(
           backgroundColor: Colors.black87,
           title: Text(
-            addressLine1,
+            bloc.addressLine1,
             textAlign: TextAlign.center,
           ),
         ),

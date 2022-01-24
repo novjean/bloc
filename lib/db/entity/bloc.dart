@@ -3,7 +3,7 @@ import 'package:floor/floor.dart';
 @entity
 class Bloc {
   @primaryKey
-  final String blocId;
+  final String id;
   final String cityName;
   final String addressLine1;
   final String addressLine2;
@@ -12,7 +12,7 @@ class Bloc {
   final String ownerId;
   final String createdAt;
 
-  Bloc(this.blocId, this.cityName, this.addressLine1, this.addressLine2,
+  Bloc(this.id, this.cityName, this.addressLine1, this.addressLine2,
       this.pinCode, this.imageUrl, this.ownerId, this.createdAt);
 
 }

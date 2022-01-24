@@ -1,8 +1,8 @@
 import 'package:bloc/db/entity/bloc.dart';
 
 class BlocUtils{
-  static Bloc getBloc(Map<String, dynamic> data) {
-    String blocId = data['blocId'];
+  static Bloc getBloc(Map<String, dynamic> data, String docId) {
+    String id = docId;
     String cityName = data['city'];
     String addressLine1 = data['addressLine1'];
     String addressLine2 = data['addressLine2'];
@@ -11,7 +11,7 @@ class BlocUtils{
     String ownerId = data['ownerId'];
     String createdAt = data['createdAt'];
 
-    Bloc bloc = Bloc(blocId,cityName,addressLine1,addressLine2,pinCode,
+    Bloc bloc = Bloc(id,cityName,addressLine1,addressLine2,pinCode,
         imageUrl,ownerId,createdAt);
     return bloc;
   }

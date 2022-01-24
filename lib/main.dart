@@ -23,9 +23,10 @@ var logger = Logger(
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  final database = await $FloorAppDatabase.databaseBuilder('bloc_database.db').build();
+  final database =
+      await $FloorAppDatabase.databaseBuilder('bloc_database.db').build();
   final dao = database.blocDao;
-  runApp(MyApp(dao:dao));
+  runApp(MyApp(dao: dao));
 }
 
 class MyApp extends StatelessWidget {
@@ -74,14 +75,15 @@ class MyApp extends StatelessWidget {
                         if (userSnapshot.hasData) {
                           final user = FirebaseAuth.instance.currentUser;
 
-                          CollectionReference users = FirebaseFirestore.instance.collection('users');
+                          CollectionReference users =
+                              FirebaseFirestore.instance.collection('users');
 
                           return FutureBuilder<DocumentSnapshot>(
                             future: users.doc(user!.uid).get(),
-                            builder:
-                                (BuildContext ctx, AsyncSnapshot<DocumentSnapshot> snapshot) {
-
-                              if (snapshot.connectionState == ConnectionState.waiting) {
+                            builder: (BuildContext ctx,
+                                AsyncSnapshot<DocumentSnapshot> snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
                                 return const Center(
                                   child: CircularProgressIndicator(),
                                 );
@@ -95,19 +97,24 @@ class MyApp extends StatelessWidget {
                                 return Text("Document does not exist");
                               }
 
-                              if (snapshot.connectionState == ConnectionState.done) {
-                                Map<String, dynamic> data = snapshot.data!.data() as Map<String, dynamic>;
+                              if (snapshot.connectionState ==
+                                  ConnectionState.done) {
+                                Map<String, dynamic> data = snapshot.data!
+                                    .data() as Map<String, dynamic>;
                                 mClearanceLevel = data['clearance_level'];
                                 String userId = data['user_id'];
                                 String username = data['username'];
                                 String email = data['email'];
                                 String imageUrl = data['image_url'];
 
-                                final blocUser.User user = blocUser.User(userId, username,email,imageUrl,mClearanceLevel);
-                                BlocRepository.insertUser(dao,user);
+                                final blocUser.User user = blocUser.User(userId,
+                                    username, email, imageUrl, mClearanceLevel);
+                                BlocRepository.insertUser(dao, user);
 
-                                logger.i('user data received with clearance level ' + mClearanceLevel.toString());
-                                return HomeScreen(dao:dao, user:user);
+                                logger.i(
+                                    'user data received with clearance level ' +
+                                        mClearanceLevel.toString());
+                                return HomeScreen(dao: dao, user: user);
                                 // return Text("Full Name: ${data['full_name']} ${data['last_name']}");
                               }
                               return Text("loading...");
@@ -116,7 +123,8 @@ class MyApp extends StatelessWidget {
                         } else {
                           return const AuthScreen();
                         }
-                      }),
+                      },
+                    ),
               routes: {
                 // HomeScreen.routeName: (ctx) => HomeScreen(),
                 ManagerScreen.routeName: (ctx) => ManagerScreen(),

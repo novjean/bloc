@@ -66,15 +66,10 @@ class CityDetailScreen extends StatelessWidget {
               Map<String, dynamic> data =
                   document.data()! as Map<String, dynamic>;
 
-              final Bloc bloc = BlocUtils.getBloc(data);
+              final Bloc bloc = BlocUtils.getBloc(data, document.id);
               BlocRepository.insertBloc(dao, bloc);
 
-              return BlocItem(
-                document.id,
-                data['addressLine1'],
-                data['imageUrl'],
-                key: ValueKey(document.id),
-              );
+              return BlocItem(bloc, dao, key: ValueKey(document.id));
             }).toList(),
           );
         },
