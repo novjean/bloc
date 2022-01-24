@@ -1,13 +1,13 @@
 import 'package:bloc/screens/city_detail_screen.dart';
 import 'package:flutter/material.dart';
 
+import '../db/entity/city.dart';
+
 class CityItem extends StatelessWidget {
   final Key key;
-  final String tag;
-  final String cityName;
-  final String imageUrl;
+  final City city;
 
-  const CityItem(this.tag, this.cityName, this.imageUrl, {required this.key});
+  const CityItem(this.city, {required this.key});
 
   @override
   Widget build(BuildContext context) {
@@ -19,15 +19,15 @@ class CityItem extends StatelessWidget {
             // Navigator.of(context).push(MaterialPageRoute(builder: (ctx) => CityDetailScreen(this.tag, this.cityName)),);
             Navigator.of(context).pushNamed(
               CityDetailScreen.routeName,
-              arguments: cityName,
+              arguments: city.name,
               );
           },
           child: Hero(
             // hero should be wired in with where we are animating to
-            tag: tag,
+            tag: city.id,
             child: FadeInImage(
               placeholder: AssetImage('assets/images/product-placeholder.png'),
-              image: NetworkImage(imageUrl),
+              image: NetworkImage(city.imageUrl),
               fit: BoxFit.cover,
             ),
           ),
@@ -49,7 +49,7 @@ class CityItem extends StatelessWidget {
           // ),
           // child: Text('Never changes!'),,
           title: Text(
-            cityName,
+            city.name,
             textAlign: TextAlign.center,
           ),
           // trailing: IconButton(

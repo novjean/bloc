@@ -6,7 +6,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 
-
 class HomeScreen extends StatelessWidget {
   static const routeName = '/home-screen';
   var logger = Logger();

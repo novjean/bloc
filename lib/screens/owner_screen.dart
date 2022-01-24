@@ -55,12 +55,14 @@ class OwnerScreen extends StatelessWidget {
               final City city = new City(cityId,name,ownerId,imageUrl);
               BlocRepository.insertCity(dao,city);
 
-              return CityItem(
-                document.id,
-                data['name'],
-                data['imageUrl'],
-                key: ValueKey(document.id),
-              );
+              return CityItem(city, key: ValueKey(document.id));
+
+              // return CityItem(
+              //   document.id,
+              //   data['name'],
+              //   data['imageUrl'],
+              //   key: ValueKey(document.id),
+              // );
             }).toList(),
           );
         },
