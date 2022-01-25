@@ -9,11 +9,12 @@ class NewBlocForm extends StatefulWidget {
 
   final bool isLoading;
   final void Function(
+      String blocName,
       String addressLine1,
       String addressLine2,
       String city,
       String pinCode,
-      File image,
+      // File image,
       BuildContext ctx,
       ) submitFn;
 
@@ -26,15 +27,16 @@ class _NewBlocFormState extends State<NewBlocForm> {
 
   final _formKey = GlobalKey<FormState>();
   // var _isLogin = true;
+  String _blocName='';
   String _addressLine1 = '';
   String _addressLine2 = '';
   String _city = '';
   String _pinCode = '';
-  var _userImageFile;
-
-  void _pickedImage(File image) {
-    _userImageFile = image;
-  }
+  // var _userImageFile;
+  //
+  // void _pickedImage(File image) {
+  //   _userImageFile = image;
+  // }
 
   void _trySubmitNewBloc() {
     logger.i('trySubmit called');
@@ -42,24 +44,25 @@ class _NewBlocFormState extends State<NewBlocForm> {
     final isValid = _formKey.currentState!.validate();
     FocusScope.of(context).unfocus();
 
-    if (_userImageFile == null) {
-      Scaffold.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Please pick an image.'),
-          backgroundColor: Theme.of(context).errorColor,
-        ),
-      );
-      return;
-    }
+    // if (_userImageFile == null) {
+    //   Scaffold.of(context).showSnackBar(
+    //     SnackBar(
+    //       content: const Text('Please pick an image.'),
+    //       backgroundColor: Theme.of(context).errorColor,
+    //     ),
+    //   );
+    //   return;
+    // }
 
     if (isValid) {
       _formKey.currentState!.save();
       widget.submitFn(
+        _blocName.trim(),
         _addressLine1.trim(),
         _addressLine2.trim(),
         _city.trim(),
         _pinCode.trim(),
-        _userImageFile,
+        // _userImageFile,
         context,
       );
     }
@@ -68,20 +71,39 @@ class _NewBlocFormState extends State<NewBlocForm> {
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: EdgeInsets.all(20),
+      margin: const EdgeInsets.all(20),
       child: SingleChildScrollView(
         child: Padding(
-          padding: EdgeInsets.all(16),
+          padding: const EdgeInsets.all(16),
           child: Form(
             key: _formKey,
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                UserImagePicker(_pickedImage),
+                // UserImagePicker(_pickedImage),
                 TextFormField(
-                  key: ValueKey('address line 1'),
+                  key: const ValueKey('bloc_name'),
                   autocorrect: false,
-                  textCapitalization: TextCapitalization.none,
+                  textCapitalization: TextCapitalization.words,
+                  enableSuggestions: false,
+                  validator: (value) {
+                    if (value!.isEmpty) {
+                      return 'Please enter a valid name of the property';
+                    }
+                    return null;
+                  },
+                  keyboardType: TextInputType.text,
+                  decoration: const InputDecoration(
+                    labelText: 'Club Name',
+                  ),
+                  onSaved: (value) {
+                    _blocName = value!;
+                  },
+                ),
+                TextFormField(
+                  key: const ValueKey('address_line_1'),
+                  autocorrect: false,
+                  textCapitalization: TextCapitalization.words,
                   enableSuggestions: false,
                   validator: (value) {
                     if (value!.isEmpty) {
@@ -90,7 +112,7 @@ class _NewBlocFormState extends State<NewBlocForm> {
                     return null;
                   },
                   keyboardType: TextInputType.text,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     labelText: 'Address Line 1',
                   ),
                   onSaved: (value) {
@@ -98,9 +120,9 @@ class _NewBlocFormState extends State<NewBlocForm> {
                   },
                 ),
                 TextFormField(
-                    key: ValueKey('address line 2'),
+                    key: const ValueKey('address_line_2'),
                     autocorrect: true,
-                    textCapitalization: TextCapitalization.none,
+                    textCapitalization: TextCapitalization.words,
                     enableSuggestions: false,
                     validator: (value) {
                       if (value!.isEmpty) {
@@ -108,7 +130,7 @@ class _NewBlocFormState extends State<NewBlocForm> {
                       }
                       return null;
                     },
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       labelText: 'Address Line 2',
                     ),
                     onSaved: (value) {
@@ -116,13 +138,14 @@ class _NewBlocFormState extends State<NewBlocForm> {
                     },
                   ),
                 TextFormField(
-                  key: ValueKey('city'),
+                  key: const ValueKey('city'),
+                  textCapitalization: TextCapitalization.words,
                   validator: (value) {
                     if (value!.isEmpty) {
                       return 'Please enter a valid city';                    }
                     return null;
                   },
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     labelText: 'City',
                   ),
                   onSaved: (value) {
@@ -130,31 +153,31 @@ class _NewBlocFormState extends State<NewBlocForm> {
                   },
                 ),
                 TextFormField(
-                  key: ValueKey('pincode'),
+                  key: const ValueKey('pincode'),
                   validator: (value) {
                     if (value!.isEmpty) {
                       return 'Please enter a valid pin code';                    }
                     return null;
                   },
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     labelText: 'Pin Code',
                   ),
                   onSaved: (value) {
                     _pinCode = value!;
                   },
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 12,
                 ),
-                if (widget.isLoading) CircularProgressIndicator(),
+                if (widget.isLoading) const CircularProgressIndicator(),
                 if (!widget.isLoading)
                   RaisedButton(
-                    child: Text('Save'),
+                    child: const Text('Save'),
                     onPressed: _trySubmitNewBloc,
                   ),
                 if (!widget.isLoading)
                   FlatButton(
-                    child: Text('Cancel'),
+                    child: const Text('Cancel'),
                     textColor: Theme.of(context).primaryColor,
                     onPressed: () {
                       setState(() {

@@ -1,18 +1,21 @@
-import 'package:bloc/widgets/app_drawer.dart';
 import 'package:flutter/material.dart';
+
+import '../db/dao/bloc_dao.dart';
+import '../db/entity/bloc.dart';
 
 class BlocDetailScreen extends StatelessWidget {
   static const routeName = '/bloc-detail';
+  BlocDao dao;
+  Bloc bloc;
 
-  const BlocDetailScreen({Key? key}) : super(key: key);
+  BlocDetailScreen({key, required this.dao, required this.bloc})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final blocName = ModalRoute.of(context)!.settings.arguments as String;
-
     return Scaffold(
       appBar: AppBar(
-        title: Text(blocName),
+        title: Text(bloc.name),
       ),
       // drawer: AppDrawer(),
       floatingActionButton: FloatingActionButton(
@@ -33,7 +36,9 @@ class BlocDetailScreen extends StatelessWidget {
         splashColor: Colors.grey,
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-      body: Center(child: Text('Bloc detail loading...'),),
+      body: Center(
+        child: Text('Bloc detail loading...'),
+      ),
 
       // StreamBuilder(
       //   stream: FirebaseFirestore.instance.collection('blocs').snapshots(),

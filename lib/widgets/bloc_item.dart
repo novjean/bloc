@@ -18,17 +18,20 @@ class BlocItem extends StatelessWidget {
       child: GridTile(
         child: GestureDetector(
           onTap: () {
-            Navigator.of(context).pushNamed(
-              BlocDetailScreen.routeName,
-              arguments: bloc.addressLine1,
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                  builder: (ctx) => BlocDetailScreen(dao: dao, bloc: bloc)),
             );
           },
           child: Hero(
             // hero should be wired in with where we are animating to
             tag: bloc.id,
             child: FadeInImage(
-              placeholder: AssetImage('assets/images/product-placeholder.png'),
-              image: NetworkImage(bloc.imageUrl),
+              placeholder:
+                  const AssetImage('assets/images/product-placeholder.png'),
+              image: bloc.imageUrl != "url"
+                  ? NetworkImage(bloc.imageUrl)
+                  : NetworkImage("assets/images/product-placeholder.png"),
               fit: BoxFit.cover,
             ),
           ),
@@ -36,12 +39,11 @@ class BlocItem extends StatelessWidget {
         footer: GridTileBar(
           backgroundColor: Colors.black87,
           title: Text(
-            bloc.addressLine1,
+            bloc.name,
             textAlign: TextAlign.center,
           ),
         ),
       ),
     );
   }
-
 }

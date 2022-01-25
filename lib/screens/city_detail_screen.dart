@@ -6,34 +6,32 @@ import 'package:flutter/material.dart';
 
 import '../db/dao/bloc_dao.dart';
 import '../db/entity/bloc.dart';
+import '../db/entity/city.dart';
 import '../utils/bloc_utils.dart';
 
 class CityDetailScreen extends StatelessWidget {
   static const routeName = '/city-detail';
   BlocDao dao;
-  String tag;
-  String cityName;
+  City city;
 
-  CityDetailScreen(
-      {key, required this.dao, required this.tag, required this.cityName})
+  CityDetailScreen({key, required this.dao, required this.city})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    // final cityName = ModalRoute.of(context)!.settings.arguments as String;
     final Stream<QuerySnapshot> _blocsStream =
         FirebaseFirestore.instance.collection('blocs').snapshots();
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(cityName),
+        title: Text(city.name),
       ),
       // drawer: AppDrawer(),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.of(context).pushNamed(
             NewBlocScreen.routeName,
-            arguments: cityName,
+            arguments: city.name,
           );
         },
         child: Icon(
