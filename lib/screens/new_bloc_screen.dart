@@ -1,13 +1,14 @@
 import 'dart:io';
 
 import 'package:bloc/utils/string_utils.dart';
-import 'package:bloc/widgets/blocs/new_bloc_form.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:logger/logger.dart';
+
+import '../widgets/bloc/new_bloc_form.dart';
 
 class NewBlocScreen extends StatefulWidget {
   static const routeName = '/new-bloc-screen';
@@ -28,7 +29,7 @@ class _NewBlocScreenState extends State<NewBlocScreen> {
     String addressLine2,
     String city,
     String pinCode,
-    // File image,
+    File image,
     BuildContext ctx,
   ) async {
     logger.i('_submitNewBlocForm called');
@@ -40,29 +41,27 @@ class _NewBlocScreenState extends State<NewBlocScreen> {
       });
 
       var time = Timestamp.now().toString();
-      // var blocName = (city+addressLine1+pinCode).replaceAll(' ', '');
+
+      //determine the bloc identifier
+      String blocId = StringUtils.getRandomString(20);
 
       // this points to the root cloud storage bucket
-      // final ref = FirebaseStorage.instance
-      //     .ref()
-      //     .child('bloc_image')
-      //     .child(blocName+ '.jpg'); // need to determine a unique id
-      // await ref.putFile(image);
-      // final url = await ref.getDownloadURL();
+      final ref = FirebaseStorage.instance
+          .ref()
+          .child('bloc_image')
+          .child(blocId + '.jpg');
+      await ref.putFile(image);
+      final url = await ref.getDownloadURL();
 
-      //determine the document title and bloc Id
-      String docTitle = StringUtils.getRandomString(20);
-
-      await FirebaseFirestore.instance.collection('blocs')
-          .doc(docTitle).set({
-        'blocId': docTitle,
+      await FirebaseFirestore.instance.collection('blocs').doc(blocId).set({
+        'blocId': blocId,
         'name': blocName,
         'ownerId': user!.uid,
         'addressLine1': addressLine1,
         'addressLine2': addressLine2,
         'city': city,
         'pinCode': pinCode,
-        'imageUrl': "https://upload.wikimedia.org/wikipedia/commons/f/fa/Stamp_of_India_-_1976_-_Colnect_410550_-_1_-_Somanatha_Patan_Temple.jpeg",
+        'imageUrl': url,
         'createdAt': time,
       });
 

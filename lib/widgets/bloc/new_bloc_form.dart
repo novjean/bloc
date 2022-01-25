@@ -14,7 +14,7 @@ class NewBlocForm extends StatefulWidget {
       String addressLine2,
       String city,
       String pinCode,
-      // File image,
+      File image,
       BuildContext ctx,
       ) submitFn;
 
@@ -32,11 +32,11 @@ class _NewBlocFormState extends State<NewBlocForm> {
   String _addressLine2 = '';
   String _city = '';
   String _pinCode = '';
-  // var _userImageFile;
-  //
-  // void _pickedImage(File image) {
-  //   _userImageFile = image;
-  // }
+  late File _userImageFile;
+
+  void _pickedImage(File image) {
+    _userImageFile = image;
+  }
 
   void _trySubmitNewBloc() {
     logger.i('trySubmit called');
@@ -44,15 +44,15 @@ class _NewBlocFormState extends State<NewBlocForm> {
     final isValid = _formKey.currentState!.validate();
     FocusScope.of(context).unfocus();
 
-    // if (_userImageFile == null) {
-    //   Scaffold.of(context).showSnackBar(
-    //     SnackBar(
-    //       content: const Text('Please pick an image.'),
-    //       backgroundColor: Theme.of(context).errorColor,
-    //     ),
-    //   );
-    //   return;
-    // }
+    if (_userImageFile == null) {
+      Scaffold.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('Please pick an image.'),
+          backgroundColor: Theme.of(context).errorColor,
+        ),
+      );
+      return;
+    }
 
     if (isValid) {
       _formKey.currentState!.save();
@@ -62,7 +62,7 @@ class _NewBlocFormState extends State<NewBlocForm> {
         _addressLine2.trim(),
         _city.trim(),
         _pinCode.trim(),
-        // _userImageFile,
+        _userImageFile,
         context,
       );
     }
@@ -80,7 +80,7 @@ class _NewBlocFormState extends State<NewBlocForm> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                // UserImagePicker(_pickedImage),
+                UserImagePicker(_pickedImage),
                 TextFormField(
                   key: const ValueKey('bloc_name'),
                   autocorrect: false,

@@ -37,7 +37,7 @@ dependencies:
 #  google_maps_flutter: ^0.5.17
 #  firebase_messaging: ^10.0.0
 #  firebase_core_platform_interface: ^4.0.0
-  image_picker: ^0.8.4
+  image_picker: ^0.8.4+4
   logger: ^1.1.0
   # db management
   floor: ^1.2.0
