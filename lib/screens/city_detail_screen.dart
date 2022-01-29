@@ -19,8 +19,10 @@ class CityDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Stream<QuerySnapshot> _blocsStream =
-        FirebaseFirestore.instance.collection('blocs').snapshots();
+    final Stream<QuerySnapshot> _blocsStream = FirebaseFirestore.instance
+        .collection('blocs')
+        .where('city', isEqualTo: city.id)
+        .snapshots();
 
     return Scaffold(
       appBar: AppBar(
@@ -29,10 +31,13 @@ class CityDetailScreen extends StatelessWidget {
       // drawer: AppDrawer(),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.of(context).pushNamed(
-            NewBlocScreen.routeName,
-            arguments: city.name,
+          Navigator.of(context).push(
+            MaterialPageRoute(builder: (ctx) => NewBlocScreen(city: city)),
           );
+          // Navigator.of(context).pushNamed(
+          //   NewBlocScreen.routeName,
+          //   arguments: city.name,
+          // );
         },
         child: Icon(
           Icons.add,

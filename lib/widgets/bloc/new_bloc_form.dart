@@ -12,7 +12,7 @@ class NewBlocForm extends StatefulWidget {
       String blocName,
       String addressLine1,
       String addressLine2,
-      String city,
+      // String city,
       String pinCode,
       File image,
       BuildContext ctx,
@@ -30,7 +30,7 @@ class _NewBlocFormState extends State<NewBlocForm> {
   String _blocName='';
   String _addressLine1 = '';
   String _addressLine2 = '';
-  String _city = '';
+  // String _city = '';
   String _pinCode = '';
   late File _userImageFile;
 
@@ -60,7 +60,6 @@ class _NewBlocFormState extends State<NewBlocForm> {
         _blocName.trim(),
         _addressLine1.trim(),
         _addressLine2.trim(),
-        _city.trim(),
         _pinCode.trim(),
         _userImageFile,
         context,
@@ -80,7 +79,7 @@ class _NewBlocFormState extends State<NewBlocForm> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                UserImagePicker(_pickedImage),
+                UserImagePicker(_pickedImage,90,300),
                 TextFormField(
                   key: const ValueKey('bloc_name'),
                   autocorrect: false,
@@ -137,21 +136,21 @@ class _NewBlocFormState extends State<NewBlocForm> {
                       _addressLine2 = value!;
                     },
                   ),
-                TextFormField(
-                  key: const ValueKey('city'),
-                  textCapitalization: TextCapitalization.words,
-                  validator: (value) {
-                    if (value!.isEmpty) {
-                      return 'Please enter a valid city';                    }
-                    return null;
-                  },
-                  decoration: const InputDecoration(
-                    labelText: 'City',
-                  ),
-                  onSaved: (value) {
-                    _city = value!;
-                  },
-                ),
+                // TextFormField(
+                //   key: const ValueKey('city'),
+                //   textCapitalization: TextCapitalization.words,
+                //   validator: (value) {
+                //     if (value!.isEmpty) {
+                //       return 'Please enter a valid city';                    }
+                //     return null;
+                //   },
+                //   decoration: const InputDecoration(
+                //     labelText: 'City',
+                //   ),
+                //   onSaved: (value) {
+                //     _city = value!;
+                //   },
+                // ),
                 TextFormField(
                   key: const ValueKey('pincode'),
                   validator: (value) {

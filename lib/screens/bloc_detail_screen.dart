@@ -20,9 +20,9 @@ class BlocDetailScreen extends StatelessWidget {
       // drawer: AppDrawer(),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          // Navigator.of(context).pushNamed(
-          //   NewBlocScreen.routeName,
-          //   arguments: cityName,
+          // Navigator.of(context).push(
+          //   MaterialPageRoute(
+          //       builder: (ctx) => NewBlocServiceScreen()),
           // );
         },
         child: Icon(

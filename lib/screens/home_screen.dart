@@ -1,5 +1,6 @@
 import 'package:bloc/db/dao/bloc_dao.dart';
 import 'package:bloc/db/entity/user.dart' as blocUser;
+import 'package:bloc/utils/sync_utils.dart';
 import 'package:bloc/widgets/app_drawer.dart';
 import 'package:bloc/widgets/map/location_input.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -16,6 +17,9 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // SyncUtils syncUtils = SyncUtils(dao);
+    // syncUtils.loadData();
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('BLOC'),

@@ -15,5 +15,4 @@ class Bloc {
 
   Bloc(this.id, this.name, this.cityName, this.addressLine1, this.addressLine2,
       this.pinCode, this.imageUrl, this.ownerId, this.createdAt);
-
 }

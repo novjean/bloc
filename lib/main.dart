@@ -130,7 +130,7 @@ class MyApp extends StatelessWidget {
                 ManagerScreen.routeName: (ctx) => ManagerScreen(),
                 OwnerScreen.routeName: (ctx) => OwnerScreen(),
                 // CityDetailScreen.routeName: (ctx) => CityDetailScreen(),
-                NewBlocScreen.routeName: (ctx) => NewBlocScreen(),
+                // NewBlocScreen.routeName: (ctx) => NewBlocScreen(),
                 // BlocDetailScreen.routeName: (ctx) => BlocDetailScreen(),
               });
         });
