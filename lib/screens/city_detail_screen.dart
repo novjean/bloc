@@ -34,10 +34,6 @@ class CityDetailScreen extends StatelessWidget {
           Navigator.of(context).push(
             MaterialPageRoute(builder: (ctx) => NewBlocScreen(city: city)),
           );
-          // Navigator.of(context).pushNamed(
-          //   NewBlocScreen.routeName,
-          //   arguments: city.name,
-          // );
         },
         child: Icon(
           Icons.add,

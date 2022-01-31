@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../db/dao/bloc_dao.dart';
 import '../db/entity/bloc.dart';
+import 'new_bloc_service_screen.dart';
 
 class BlocDetailScreen extends StatelessWidget {
   static const routeName = '/bloc-detail';
@@ -13,6 +14,7 @@ class BlocDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       appBar: AppBar(
         title: Text(bloc.name),
@@ -20,10 +22,10 @@ class BlocDetailScreen extends StatelessWidget {
       // drawer: AppDrawer(),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          // Navigator.of(context).push(
-          //   MaterialPageRoute(
-          //       builder: (ctx) => NewBlocServiceScreen()),
-          // );
+          Navigator.of(context).push(
+            MaterialPageRoute(
+                builder: (ctx) => NewBlocServiceScreen(bloc:bloc)),
+          );
         },
         child: Icon(
           Icons.add,
