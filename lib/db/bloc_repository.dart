@@ -4,6 +4,7 @@ import 'package:bloc/db/entity/user.dart';
 import 'package:logger/logger.dart';
 
 import 'entity/bloc.dart';
+import 'entity/bloc_service.dart';
 import 'entity/city.dart';
 
 var logger = Logger(
@@ -22,7 +23,12 @@ class BlocRepository {
   }
 
   static void insertBloc(BlocDao dao, Bloc bloc) async {
-    logger.i("insertBloc(): " + bloc.addressLine1);
+    logger.i("insertBloc(): " + bloc.name);
     await dao.insertBloc(bloc);
+  }
+
+  static void insertBlocService(BlocDao dao, BlocService service) async {
+    logger.i("insertBlocService(): " + service.name);
+    await dao.insertBlocService(service);
   }
 }

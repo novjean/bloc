@@ -2,6 +2,7 @@ import 'package:bloc/db/entity/person.dart';
 import 'package:floor/floor.dart';
 
 import '../entity/bloc.dart';
+import '../entity/bloc_service.dart';
 import '../entity/city.dart';
 import '../entity/user.dart';
 
@@ -24,5 +25,8 @@ abstract class BlocDao {
 
   @insert
   Future<void> insertBloc(Bloc bloc);
+
+  @insert
+  Future<void> insertBlocService(BlocService service);
 
 }

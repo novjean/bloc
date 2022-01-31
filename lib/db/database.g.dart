@@ -145,6 +145,21 @@ class _$BlocDao extends BlocDao {
                   'imageUrl': item.imageUrl,
                   'ownerId': item.ownerId,
                   'createdAt': item.createdAt
+                }),
+        _blocServiceInsertionAdapter = InsertionAdapter(
+            database,
+            'BlocService',
+            (BlocService item) => <String, Object?>{
+                  'id': item.id,
+                  'name': item.name,
+                  'blocId': item.blocId,
+                  'type': item.type,
+                  'primaryNumber': item.primaryNumber,
+                  'secondaryNumber': item.secondaryNumber,
+                  'email': item.email,
+                  'imageUrl': item.imageUrl,
+                  'ownerId': item.ownerId,
+                  'createdAt': item.createdAt
                 });
 
   final sqflite.DatabaseExecutor database;
@@ -160,6 +175,8 @@ class _$BlocDao extends BlocDao {
   final InsertionAdapter<City> _cityInsertionAdapter;
 
   final InsertionAdapter<Bloc> _blocInsertionAdapter;
+
+  final InsertionAdapter<BlocService> _blocServiceInsertionAdapter;
 
   @override
   Future<List<Person>> findAllPersons() async {
@@ -196,5 +213,11 @@ class _$BlocDao extends BlocDao {
   @override
   Future<void> insertBloc(Bloc bloc) async {
     await _blocInsertionAdapter.insert(bloc, OnConflictStrategy.abort);
+  }
+
+  @override
+  Future<void> insertBlocService(BlocService service) async {
+    await _blocServiceInsertionAdapter.insert(
+        service, OnConflictStrategy.abort);
   }
 }

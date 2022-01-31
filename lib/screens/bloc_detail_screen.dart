@@ -1,7 +1,12 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
+import '../db/bloc_repository.dart';
 import '../db/dao/bloc_dao.dart';
 import '../db/entity/bloc.dart';
+import '../db/entity/bloc_service.dart';
+import '../utils/bloc_service_utils.dart';
+import '../widgets/bloc_service_item.dart';
 import 'new_bloc_service_screen.dart';
 
 class BlocDetailScreen extends StatelessWidget {
@@ -14,6 +19,10 @@ class BlocDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final Stream<QuerySnapshot> _servicesStream = FirebaseFirestore.instance
+        .collection('services')
+        .where('blocId', isEqualTo: bloc.id)
+        .snapshots();
 
     return Scaffold(
       appBar: AppBar(
@@ -38,42 +47,33 @@ class BlocDetailScreen extends StatelessWidget {
         splashColor: Colors.grey,
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-      body: Center(
-        child: Text('Bloc detail loading...'),
-      ),
+      body: StreamBuilder<QuerySnapshot>(
+        stream: _servicesStream,
+        builder: (ctx, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+          return GridView(
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              childAspectRatio: 3 / 2,
+              crossAxisSpacing: 10,
+              mainAxisSpacing: 10,
+            ),
+            children: snapshot.data!.docs.map((DocumentSnapshot document) {
+              Map<String, dynamic> data =
+              document.data()! as Map<String, dynamic>;
 
-      // StreamBuilder(
-      //   stream: FirebaseFirestore.instance.collection('blocs').snapshots(),
-      //   builder: (ctx, snapshot) {
-      //     if (snapshot.connectionState == ConnectionState.waiting) {
-      //       return const Center(
-      //         child: CircularProgressIndicator(),
-      //       );
-      //     }
-      //     final blocDocs = snapshot.data.docs;
-      //
-      //     return GridView.builder(
-      //       // const keyword can be used so that it does not rebuild when the build method is called
-      //       // useful for performance improvement
-      //       padding: const EdgeInsets.all(10.0),
-      //       itemCount: blocDocs.length,
-      //       // grid delegate describes how many grids should be there
-      //       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-      //         crossAxisCount: 2,
-      //         childAspectRatio: 3 / 2,
-      //         crossAxisSpacing: 10,
-      //         mainAxisSpacing: 10,
-      //       ),
-      //       // item builder defines how the grid should look
-      //       itemBuilder: (ctx, index) => BlocItem(
-      //         blocDocs[index].id,
-      //         blocDocs[index].data()['addressLine1'],
-      //         blocDocs[index].data()['imageUrl'],
-      //         key: ValueKey(blocDocs[index].id),
-      //       ),
-      //     );
-      //   },
-      // ),
+              final BlocService service = BlocServiceUtils.getBlocService(data, document.id);
+              BlocRepository.insertBlocService(dao, service);
+
+              return BlocServiceItem(service, dao, key: ValueKey(document.id));
+            }).toList(),
+          );
+        },
+      ),
     );
   }
 }
