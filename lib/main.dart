@@ -14,7 +14,7 @@ import 'package:logger/logger.dart';
 
 import 'db/database.dart';
 import 'screens/auth_screen.dart';
-import 'screens/home_screen.dart';
+import 'screens/main_screen.dart';
 import 'screens/splash_screen.dart';
 
 var logger = Logger(
@@ -114,7 +114,7 @@ class MyApp extends StatelessWidget {
                                 logger.i(
                                     'user data received with clearance level ' +
                                         mClearanceLevel.toString());
-                                return HomeScreen(dao: dao, user: user);
+                                return MainScreen(dao: dao, user: user);
                                 // return Text("Full Name: ${data['full_name']} ${data['last_name']}");
                               }
                               return Text("loading...");

@@ -80,9 +80,8 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-    - assets/images/textblock-manager.png
-    - assets/images/textblock-owner.png
-    - assets/images/product-placeholder.png
+    - assets/
+    - assets/images/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

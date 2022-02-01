@@ -1,4 +1,4 @@
-import 'package:bloc/screens/home_screen.dart';
+import 'package:bloc/screens/main_screen.dart';
 import 'package:bloc/screens/manager_screen.dart';
 import 'package:bloc/screens/owner_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -26,7 +26,7 @@ class AppDrawer extends StatelessWidget {
             title: const Text('Home'),
             onTap: () {
               Navigator.of(context).pushNamed(
-                HomeScreen.routeName,
+                MainScreen.routeName,
               );
             },
           ),
