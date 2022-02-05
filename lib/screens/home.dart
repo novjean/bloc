@@ -1,5 +1,12 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+import '../db/bloc_repository.dart';
+import '../db/entity/bloc.dart';
+import '../db/entity/bloc_service.dart';
+import '../utils/bloc_service_utils.dart';
+import '../utils/bloc_utils.dart';
 import '../utils/categories.dart';
 import '../utils/friends.dart';
 import '../utils/restaurants.dart';
@@ -13,9 +20,9 @@ class Home extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: (){
+      onTap: () {
         FocusScopeNode currentFocus = FocusScope.of(context);
-        if(!currentFocus.hasPrimaryFocus){
+        if (!currentFocus.hasPrimaryFocus) {
           currentFocus.unfocus();
         }
       },
@@ -25,6 +32,8 @@ class Home extends StatelessWidget {
           child: ListView(
             children: <Widget>[
               buildSearchBar(context),
+              SizedBox(height: 20.0),
+              buildBlocRow(context),
               SizedBox(height: 20.0),
               buildRestaurantRow('Trending Restaurants', context),
               SizedBox(height: 10.0),
@@ -42,6 +51,35 @@ class Home extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+
+  buildBlocRow(BuildContext context) {
+    final Stream<QuerySnapshot> _servicesStream = FirebaseFirestore.instance
+        .collection('blocs')
+        .snapshots();
+    return StreamBuilder<QuerySnapshot>(
+      stream: _servicesStream,
+      builder: (ctx, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+
+        String text="";
+        int count = snapshot.data!.docs.length;
+
+        for (DocumentSnapshot document in snapshot.data!.docs) {
+          Map<String, dynamic> data = document.data()! as Map<String,
+              dynamic>;
+          final Bloc bloc = BlocUtils.getBloc(data, document.id);
+          text += bloc.name;
+          if(--count==0)
+            return Text(text);
+        }
+        return Text('Loading.');
+      },
     );
   }
 
@@ -113,9 +151,7 @@ class Home extends StatelessWidget {
 
   buildSearchBar(BuildContext context) {
     return Container(
-        margin: EdgeInsets.fromLTRB(10, 5, 10, 0),
-        child: SearchCard()
-    );
+        margin: EdgeInsets.fromLTRB(10, 5, 10, 0), child: SearchCard());
   }
 
   buildCategoryList(BuildContext context) {
