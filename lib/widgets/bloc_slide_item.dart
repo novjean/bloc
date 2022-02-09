@@ -1,15 +1,18 @@
+import 'package:bloc/db/dao/bloc_dao.dart';
 import 'package:flutter/material.dart';
 
 import '../utils/const.dart';
 
-class SlideItem extends StatefulWidget {
+class BlocSlideItem extends StatefulWidget {
+  final BlocDao dao;
   final String img;
   final String title;
   final String address;
   final String rating;
 
-  SlideItem({
+  BlocSlideItem({
     Key? key,
+    required this.dao,
     required this.img,
     required this.title,
     required this.address,
@@ -17,10 +20,10 @@ class SlideItem extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _SlideItemState createState() => _SlideItemState();
+  _BlocSlideItemState createState() => _BlocSlideItemState();
 }
 
-class _SlideItemState extends State<SlideItem> {
+class _BlocSlideItemState extends State<BlocSlideItem> {
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -30,7 +33,7 @@ class _SlideItemState extends State<SlideItem> {
         width: MediaQuery.of(context).size.width / 1.2,
         child: Card(
           shape:
-          RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
           elevation: 3.0,
           child: Column(
             children: <Widget>[
@@ -44,11 +47,52 @@ class _SlideItemState extends State<SlideItem> {
                         topLeft: Radius.circular(10.0),
                         topRight: Radius.circular(10.0),
                       ),
-                      child: Image.asset(
-                        "${widget.img}",
-                        fit: BoxFit.cover,
+                      child: GridTile(
+                        child: GestureDetector(
+                          onTap: () {
+                            // Navigator.of(context).push(
+                            //   MaterialPageRoute(
+                            //       builder: (ctx) => CityDetailScreen(dao: dao, city: city)),
+                            // );
+                          },
+                          child: Hero(
+                            // hero should be wired in with where we are animating to
+                            tag: widget.img,
+                            child: FadeInImage(
+                              placeholder: AssetImage('assets/images/product-placeholder.png'),
+                              image: widget.img != "url"
+                                  ? NetworkImage(widget.img)
+                                  : NetworkImage(
+                                  "assets/images/product-placeholder.png"),
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
                       ),
                     ),
+
+                    // ClipRRect(
+                    //   borderRadius: BorderRadius.only(
+                    //     topLeft: Radius.circular(10.0),
+                    //     topRight: Radius.circular(10.0),
+                    //   ),
+                    //   child: Hero(
+                    //     tag: widget.img,
+                    //     child: FadeInImage(
+                    //       placeholder: const AssetImage(
+                    //           'assets/images/product-placeholder.png'),
+                    //       image: widget.img != "url"
+                    //           ? NetworkImage(widget.img)
+                    //           : NetworkImage(
+                    //               "assets/images/product-placeholder.png"),
+                    //       fit: BoxFit.cover,
+                    //     ),
+                    //   ),
+                    //   // Image.asset(
+                    //   //   "${widget.img}",
+                    //   //   fit: BoxFit.cover,
+                    //   // ),
+                    // ),
                   ),
                   Positioned(
                     top: 6.0,
@@ -134,4 +178,3 @@ class _SlideItemState extends State<SlideItem> {
     );
   }
 }
-

@@ -34,18 +34,17 @@ class _MainScreenState extends State<MainScreen> {
     Icons.person,
   ];
 
-  List pages = [
-    Home(),
-    Label(),
-    Add(),
-    Notifications(),
-    Profile(),
-  ];
-
   @override
   Widget build(BuildContext context) {
     // SyncUtils syncUtils = SyncUtils(dao);
     // syncUtils.loadData();
+    List pages = [
+      Home(dao:widget.dao),
+      Label(),
+      Add(),
+      Notifications(),
+      Profile(),
+    ];
 
     return Scaffold(
       appBar: AppBar(

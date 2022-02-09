@@ -3,20 +3,24 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../db/bloc_repository.dart';
+import '../db/dao/bloc_dao.dart';
 import '../db/entity/bloc.dart';
 import '../db/entity/bloc_service.dart';
-import '../utils/bloc_service_utils.dart';
 import '../utils/bloc_utils.dart';
 import '../utils/categories.dart';
 import '../utils/friends.dart';
 import '../utils/restaurants.dart';
 import '../widgets/category_item.dart';
 import '../widgets/search_card.dart';
-import '../widgets/slide_item.dart';
+import '../widgets/bloc_slide_item.dart';
 import 'categories.dart';
 import 'trending.dart';
 
 class Home extends StatelessWidget {
+  BlocDao dao;
+
+  Home({key, required this.dao}):super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -34,10 +38,8 @@ class Home extends StatelessWidget {
               buildSearchBar(context),
               SizedBox(height: 20.0),
               buildBlocRow(context),
-              SizedBox(height: 20.0),
-              buildRestaurantRow('Trending Restaurants', context),
-              SizedBox(height: 10.0),
-              buildRestaurantList(context),
+              // SizedBox(height: 20.0),
+              // buildRestaurantRow('Trending Restaurants', context),
               SizedBox(height: 10.0),
               buildCategoryRow('Category', context),
               SizedBox(height: 10.0),
@@ -67,18 +69,19 @@ class Home extends StatelessWidget {
           );
         }
 
-        String text="";
         int count = snapshot.data!.docs.length;
+        List blocs=List.empty(growable: true);
 
         for (DocumentSnapshot document in snapshot.data!.docs) {
-          Map<String, dynamic> data = document.data()! as Map<String,
-              dynamic>;
+          Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
           final Bloc bloc = BlocUtils.getBloc(data, document.id);
-          text += bloc.name;
+          BlocRepository.insertBloc(dao, bloc);
+
+          blocs.add(bloc);
           if(--count==0)
-            return Text(text);
+            return buildBlocList(context,blocs);
         }
-        return Text('Loading.');
+        return Text('Loading...');
       },
     );
   }
@@ -173,7 +176,7 @@ class Home extends StatelessWidget {
     );
   }
 
-  buildRestaurantList(BuildContext context) {
+  buildBlocList(BuildContext context, List blocs) {
     return Container(
       height: MediaQuery.of(context).size.height / 2.4,
       width: MediaQuery.of(context).size.width,
@@ -181,17 +184,18 @@ class Home extends StatelessWidget {
         primary: false,
         shrinkWrap: true,
         scrollDirection: Axis.horizontal,
-        itemCount: restaurants == null ? 0 : restaurants.length,
+        itemCount: blocs == null ? 0 : blocs.length,
         itemBuilder: (BuildContext context, int index) {
-          Map restaurant = restaurants[index];
+          Bloc bloc = blocs[index];
 
           return Padding(
             padding: const EdgeInsets.only(right: 10.0),
-            child: SlideItem(
-              img: restaurant["img"],
-              title: restaurant["title"],
-              address: restaurant["address"],
-              rating: restaurant["rating"],
+            child: BlocSlideItem(
+              dao: dao,
+              img: bloc.imageUrl,
+              title: bloc.name,
+              address: bloc.addressLine1,
+              rating: "3",
             ),
           );
         },
