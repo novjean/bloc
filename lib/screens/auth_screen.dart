@@ -93,12 +93,6 @@ class _AuthScreenState extends State<AuthScreen> {
     }
   }
 
-  void _submitLogin(
-
-      ) async {
-
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(

@@ -1,21 +1,20 @@
 import 'package:bloc/db/dao/bloc_dao.dart';
+import 'package:bloc/main.dart';
 import 'package:flutter/material.dart';
 
+import '../db/entity/bloc.dart';
+import '../screens/bloc_detail_screen.dart';
 import '../utils/const.dart';
 
 class BlocSlideItem extends StatefulWidget {
   final BlocDao dao;
-  final String img;
-  final String title;
-  final String address;
+  final Bloc bloc;
   final String rating;
 
   BlocSlideItem({
     Key? key,
     required this.dao,
-    required this.img,
-    required this.title,
-    required this.address,
+    required this.bloc,
     required this.rating,
   }) : super(key: key);
 
@@ -50,18 +49,18 @@ class _BlocSlideItemState extends State<BlocSlideItem> {
                       child: GridTile(
                         child: GestureDetector(
                           onTap: () {
-                            // Navigator.of(context).push(
-                            //   MaterialPageRoute(
-                            //       builder: (ctx) => CityDetailScreen(dao: dao, city: city)),
-                            // );
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                  builder: (ctx) => BlocDetailScreen(dao: widget.dao, bloc: widget.bloc)),
+                            );
                           },
                           child: Hero(
                             // hero should be wired in with where we are animating to
-                            tag: widget.img,
+                            tag: widget.bloc.id,
                             child: FadeInImage(
                               placeholder: AssetImage('assets/images/product-placeholder.png'),
-                              image: widget.img != "url"
-                                  ? NetworkImage(widget.img)
+                              image: widget.bloc.imageUrl != "url"
+                                  ? NetworkImage(widget.bloc.imageUrl)
                                   : NetworkImage(
                                   "assets/images/product-placeholder.png"),
                               fit: BoxFit.cover,
@@ -70,29 +69,6 @@ class _BlocSlideItemState extends State<BlocSlideItem> {
                         ),
                       ),
                     ),
-
-                    // ClipRRect(
-                    //   borderRadius: BorderRadius.only(
-                    //     topLeft: Radius.circular(10.0),
-                    //     topRight: Radius.circular(10.0),
-                    //   ),
-                    //   child: Hero(
-                    //     tag: widget.img,
-                    //     child: FadeInImage(
-                    //       placeholder: const AssetImage(
-                    //           'assets/images/product-placeholder.png'),
-                    //       image: widget.img != "url"
-                    //           ? NetworkImage(widget.img)
-                    //           : NetworkImage(
-                    //               "assets/images/product-placeholder.png"),
-                    //       fit: BoxFit.cover,
-                    //     ),
-                    //   ),
-                    //   // Image.asset(
-                    //   //   "${widget.img}",
-                    //   //   fit: BoxFit.cover,
-                    //   // ),
-                    // ),
                   ),
                   Positioned(
                     top: 6.0,
@@ -147,7 +123,7 @@ class _BlocSlideItemState extends State<BlocSlideItem> {
                 child: Container(
                   width: MediaQuery.of(context).size.width,
                   child: Text(
-                    "${widget.title}",
+                    "${widget.bloc.name}",
                     style: TextStyle(
                       fontSize: 20.0,
                       fontWeight: FontWeight.w800,
@@ -162,7 +138,7 @@ class _BlocSlideItemState extends State<BlocSlideItem> {
                 child: Container(
                   width: MediaQuery.of(context).size.width,
                   child: Text(
-                    "${widget.address}",
+                    "${widget.bloc.addressLine1}, ${widget.bloc.addressLine2}",
                     style: TextStyle(
                       fontSize: 12.0,
                       fontWeight: FontWeight.w300,

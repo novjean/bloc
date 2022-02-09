@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../db/dao/bloc_dao.dart';
 import '../db/entity/bloc_service.dart';
+import '../screens/bloc_service_detail_screen.dart';
 
 class BlocServiceItem extends StatelessWidget {
   final Key key;
@@ -17,10 +18,10 @@ class BlocServiceItem extends StatelessWidget {
       child: GridTile(
         child: GestureDetector(
           onTap: () {
-            // Navigator.of(context).push(
-            //   MaterialPageRoute(
-            //       builder: (ctx) => BlocServiceDetailScreen(dao: dao, service: service)),
-            // );
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                  builder: (ctx) => BlocServiceDetailScreen(dao: dao, service: service)),
+            );
           },
           child: Hero(
             // hero should be wired in with where we are animating to

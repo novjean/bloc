@@ -192,9 +192,7 @@ class Home extends StatelessWidget {
             padding: const EdgeInsets.only(right: 10.0),
             child: BlocSlideItem(
               dao: dao,
-              img: bloc.imageUrl,
-              title: bloc.name,
-              address: bloc.addressLine1,
+              bloc: bloc,
               rating: "3",
             ),
           );
