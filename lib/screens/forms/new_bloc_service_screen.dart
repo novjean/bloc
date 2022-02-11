@@ -8,36 +8,47 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:logger/logger.dart';
 
-import '../db/entity/city.dart';
-import '../widgets/bloc/new_bloc_form.dart';
+import '../../db/entity/bloc.dart';
+import '../../widgets/bloc/new_bloc_service_form.dart';
 
-class NewBlocScreen extends StatefulWidget {
-  static const routeName = '/new-bloc-screen';
-  City city;
+class NewBlocServiceScreen extends StatefulWidget {
+  static const routeName = '/new-bloc-service-screen';
+  Bloc bloc;
 
-  NewBlocScreen({key, required this.city}) : super(key: key);
+  NewBlocServiceScreen({key, required this.bloc}) : super(key: key);
 
   @override
-  _NewBlocScreenState createState() => _NewBlocScreenState(city:city);
+  State<StatefulWidget> createState() => _NewBlocServiceScreenState();
 }
 
-class _NewBlocScreenState extends State<NewBlocScreen> {
+class _NewBlocServiceScreenState extends State<NewBlocServiceScreen> {
   var logger = Logger();
   var _isLoading = false;
-  City city;
 
-  _NewBlocScreenState({required this.city});
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(widget.bloc.name + ' : Service Form'),
+      ),
+      // drawer: AppDrawer(),
+      body: NewBlocServiceForm(
+        _submitNewBlocServiceForm, _isLoading,
+        // _isLoading,
+      ),
+    );
+  }
 
-  void _submitNewBlocForm(
-    String blocName,
-    String addressLine1,
-    String addressLine2,
-    // String cityName,
-    String pinCode,
+  void _submitNewBlocServiceForm(
+    String serviceName,
+    String serviceType,
+    String primaryPhone,
+    String secondaryPhone,
+    String emailId,
     File image,
     BuildContext ctx,
   ) async {
-    logger.i('_submitNewBlocForm called');
+    logger.i('_submitNewBlocServiceForm called');
 
     final user = FirebaseAuth.instance.currentUser;
     try {
@@ -48,31 +59,32 @@ class _NewBlocScreenState extends State<NewBlocScreen> {
       var time = Timestamp.now().toString();
 
       //determine the bloc identifier
-      String blocId = StringUtils.getRandomString(20);
+      String blocServiceId = StringUtils.getRandomString(20);
 
       // this points to the root cloud storage bucket
       final ref = FirebaseStorage.instance
           .ref()
-          .child('bloc_image')
-          .child(blocId + '.jpg');
+          .child('bloc_service_image')
+          .child(blocServiceId + '.jpg');
       await ref.putFile(image);
       final url = await ref.getDownloadURL();
 
-      await FirebaseFirestore.instance.collection('blocs').doc(blocId).set({
-        'blocId': blocId,
-        'name': blocName,
-        'ownerId': user!.uid,
-        'addressLine1': addressLine1,
-        'addressLine2': addressLine2,
-        'city': city.id,
-        'pinCode': pinCode,
+      await FirebaseFirestore.instance.collection('services').doc(blocServiceId).set({
+        'id': blocServiceId,
+        'name': serviceName,
+        'blocId':widget.bloc.id,
+        'type': serviceType,
+        'primaryPhone': primaryPhone,
+        'secondaryPhone': secondaryPhone,
+        'emailId': emailId,
         'imageUrl': url,
+        'ownerId': user!.uid,
         'createdAt': time,
       });
 
       Scaffold.of(ctx).showSnackBar(
         SnackBar(
-          content: Text(addressLine1 + " is added to BLOC!"),
+          content: Text(serviceName + " is added to BLOC " + widget.bloc.name),
           backgroundColor: Theme.of(ctx).errorColor,
         ),
       );
@@ -100,19 +112,5 @@ class _NewBlocScreenState extends State<NewBlocScreen> {
         _isLoading = false;
       });
     }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Add New BLOC'),
-      ),
-      // drawer: AppDrawer(),
-      body: NewBlocForm(
-        _submitNewBlocForm,
-        _isLoading,
-      ),
-    );
   }
 }

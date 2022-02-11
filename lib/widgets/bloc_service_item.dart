@@ -20,7 +20,8 @@ class BlocServiceItem extends StatelessWidget {
           onTap: () {
             Navigator.of(context).push(
               MaterialPageRoute(
-                  builder: (ctx) => BlocServiceDetailScreen(dao: dao, service: service)),
+                  builder: (ctx) =>
+                      BlocServiceDetailScreen(dao: dao, service: service)),
             );
           },
           child: Hero(
@@ -28,7 +29,7 @@ class BlocServiceItem extends StatelessWidget {
             tag: service.id,
             child: FadeInImage(
               placeholder:
-              const AssetImage('assets/images/product-placeholder.png'),
+                  const AssetImage('assets/images/product-placeholder.png'),
               image: service.imageUrl != "url"
                   ? NetworkImage(service.imageUrl)
                   : NetworkImage("assets/images/product-placeholder.png"),

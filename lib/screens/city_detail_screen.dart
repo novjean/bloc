@@ -1,5 +1,5 @@
 import 'package:bloc/db/bloc_repository.dart';
-import 'package:bloc/screens/new_bloc_screen.dart';
+import 'package:bloc/screens/forms/new_bloc_screen.dart';
 import 'package:bloc/widgets/bloc_item.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';

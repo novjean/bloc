@@ -4,7 +4,7 @@ import 'package:bloc/db/entity/user.dart' as blocUser;
 import 'package:bloc/screens/bloc_detail_screen.dart';
 import 'package:bloc/screens/city_detail_screen.dart';
 import 'package:bloc/screens/manager_screen.dart';
-import 'package:bloc/screens/new_bloc_screen.dart';
+import 'package:bloc/screens/forms/new_bloc_screen.dart';
 import 'package:bloc/screens/owner_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';

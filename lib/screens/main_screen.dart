@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 
 import 'add.dart';
-import 'home.dart';
+import 'home_screen.dart';
 import 'label.dart';
 import 'notifications.dart';
 import 'profile.dart';
@@ -39,7 +39,7 @@ class _MainScreenState extends State<MainScreen> {
     // SyncUtils syncUtils = SyncUtils(dao);
     // syncUtils.loadData();
     List pages = [
-      Home(dao:widget.dao),
+      HomeScreen(dao:widget.dao),
       Label(),
       Add(),
       Notifications(),

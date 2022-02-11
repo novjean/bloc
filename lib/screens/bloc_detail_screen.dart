@@ -7,7 +7,7 @@ import '../db/entity/bloc.dart';
 import '../db/entity/bloc_service.dart';
 import '../utils/bloc_service_utils.dart';
 import '../widgets/bloc_service_item.dart';
-import 'new_bloc_service_screen.dart';
+import 'forms/new_bloc_service_screen.dart';
 
 class BlocDetailScreen extends StatelessWidget {
   static const routeName = '/bloc-detail';

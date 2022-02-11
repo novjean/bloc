@@ -16,10 +16,10 @@ import '../widgets/bloc_slide_item.dart';
 import 'categories.dart';
 import 'trending.dart';
 
-class Home extends StatelessWidget {
+class HomeScreen extends StatelessWidget {
   BlocDao dao;
 
-  Home({key, required this.dao}):super(key: key);
+  HomeScreen({key, required this.dao}):super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -42,8 +42,8 @@ class Home extends StatelessWidget {
               // buildRestaurantRow('Trending Restaurants', context),
               SizedBox(height: 10.0),
               buildCategoryRow('Category', context),
-              SizedBox(height: 10.0),
-              buildCategoryList(context),
+              // SizedBox(height: 10.0),
+              // buildCategoryList(context),
               SizedBox(height: 20.0),
               buildCategoryRow('Friends', context),
               SizedBox(height: 10.0),
