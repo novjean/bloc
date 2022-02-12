@@ -10,7 +10,6 @@ import '../utils/bloc_utils.dart';
 import '../utils/categories.dart';
 import '../utils/friends.dart';
 import '../utils/restaurants.dart';
-import '../widgets/category_item.dart';
 import '../widgets/search_card.dart';
 import '../widgets/bloc_slide_item.dart';
 import 'categories.dart';
@@ -42,8 +41,6 @@ class HomeScreen extends StatelessWidget {
               // buildRestaurantRow('Trending Restaurants', context),
               SizedBox(height: 10.0),
               buildCategoryRow('Category', context),
-              // SizedBox(height: 10.0),
-              // buildCategoryList(context),
               SizedBox(height: 20.0),
               buildCategoryRow('Friends', context),
               SizedBox(height: 10.0),
@@ -155,25 +152,6 @@ class HomeScreen extends StatelessWidget {
   buildSearchBar(BuildContext context) {
     return Container(
         margin: EdgeInsets.fromLTRB(10, 5, 10, 0), child: SearchCard());
-  }
-
-  buildCategoryList(BuildContext context) {
-    return Container(
-      height: MediaQuery.of(context).size.height / 6,
-      child: ListView.builder(
-        primary: false,
-        scrollDirection: Axis.horizontal,
-        shrinkWrap: true,
-        itemCount: categories == null ? 0 : categories.length,
-        itemBuilder: (BuildContext context, int index) {
-          Map cat = categories[index];
-
-          return CategoryItem(
-            cat: cat,
-          );
-        },
-      ),
-    );
   }
 
   buildBlocList(BuildContext context, List blocs) {

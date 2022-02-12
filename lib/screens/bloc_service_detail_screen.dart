@@ -1,8 +1,11 @@
 import 'package:bloc/db/entity/bloc_service.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
+import '../db/bloc_repository.dart';
 import '../db/dao/bloc_dao.dart';
-import '../utils/categories.dart';
+import '../db/entity/category.dart';
+import '../utils/category_utils.dart';
 import '../widgets/category_item.dart';
 import 'forms/new_service_category_screen.dart';
 
@@ -87,15 +90,46 @@ class BlocServiceDetailScreen extends StatelessWidget {
   }
 
   buildServiceCategories(BuildContext context) {
+    final Stream<QuerySnapshot> _catsStream = FirebaseFirestore.instance
+        .collection('categories')
+        .where('serviceId', isEqualTo: service.id)
+        .snapshots();
+    return StreamBuilder<QuerySnapshot>(
+      stream: _catsStream,
+      builder: (ctx, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+
+        int count = snapshot.data!.docs.length;
+        List categories=List.empty(growable: true);
+
+        for (DocumentSnapshot document in snapshot.data!.docs) {
+          Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+          final Category cat = CategoryUtils.getCategory(data, document.id);
+          BlocRepository.insertCategory(dao, cat);
+
+          categories.add(cat);
+          if(--count==0)
+            return displayCategoryList(context,categories);
+        }
+        return Text('Loading...');
+      },
+    );
+  }
+
+  displayCategoryList(BuildContext context, List cats) {
     return Container(
       height: MediaQuery.of(context).size.height / 6,
       child: ListView.builder(
         primary: false,
         scrollDirection: Axis.horizontal,
         shrinkWrap: true,
-        itemCount: categories == null ? 0 : categories.length,
+        itemCount: cats == null ? 0 : cats.length,
         itemBuilder: (BuildContext context, int index) {
-          Map cat = categories[index];
+          Category cat = cats[index];
 
           return CategoryItem(
             cat: cat,

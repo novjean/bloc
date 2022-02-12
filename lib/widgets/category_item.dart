@@ -1,7 +1,8 @@
+import 'package:bloc/db/entity/category.dart';
 import 'package:flutter/material.dart';
 
 class CategoryItem extends StatelessWidget {
-  final Map cat;
+  final Category cat;
 
   CategoryItem({required this.cat});
 
@@ -13,12 +14,22 @@ class CategoryItem extends StatelessWidget {
         borderRadius: BorderRadius.circular(8.0),
         child: Stack(
           children: <Widget>[
-            Image.asset(
-              cat["img"],
+            FadeInImage(
+              placeholder: AssetImage('assets/images/product-placeholder.png'),
               height: MediaQuery.of(context).size.height / 6,
               width: MediaQuery.of(context).size.height / 6,
+              image: cat.imageUrl != "url"
+                  ? NetworkImage(cat.imageUrl)
+                  : NetworkImage(
+                  "assets/images/product-placeholder.png"),
               fit: BoxFit.cover,
             ),
+            // Image.asset(
+            //   cat["img"],
+            //   height: MediaQuery.of(context).size.height / 6,
+            //   width: MediaQuery.of(context).size.height / 6,
+            //   fit: BoxFit.cover,
+            // ),
             Container(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
@@ -27,8 +38,8 @@ class CategoryItem extends StatelessWidget {
                   // Add one stop for each color. Stops should increase from 0 to 1
                   stops: [0.2, 0.7],
                   colors: [
-                    cat['color1'],
-                    cat['color2'],
+                    Color.fromARGB(100, 0, 0, 0),
+                    Color.fromARGB(100, 0, 0, 0),
                   ],
                   // stops: [0.0, 0.1],
                 ),
@@ -47,7 +58,7 @@ class CategoryItem extends StatelessWidget {
                 ),
                 child: Center(
                   child: Text(
-                    cat["name"],
+                    cat.name,
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 20,

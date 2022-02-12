@@ -1,3 +1,4 @@
+import 'package:bloc/db/entity/category.dart';
 import 'package:bloc/db/entity/person.dart';
 import 'package:floor/floor.dart';
 
@@ -28,5 +29,8 @@ abstract class BlocDao {
 
   @insert
   Future<void> insertBlocService(BlocService service);
+
+  @insert
+  Future<void> insertCategory(Category cat);
 
 }

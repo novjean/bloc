@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:bloc/db/entity/bloc_service.dart';
+import 'package:bloc/db/entity/category.dart';
 import 'package:floor/floor.dart';
 import 'package:sqflite/sqflite.dart' as sqflite;
 
@@ -11,8 +12,8 @@ import 'entity/user.dart';
 
 part 'database.g.dart'; // the generated code will be there
 
-@Database(version: 5, entities: [Person, User, City, Bloc,
-BlocService])
+@Database(version: 6, entities: [Person, User, City, Bloc,
+BlocService, Category])
 abstract class AppDatabase extends FloorDatabase {
   BlocDao get blocDao;
 }
