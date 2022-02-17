@@ -5,31 +5,33 @@ import 'package:logger/logger.dart';
 
 import '../../pickers/user_image_picker.dart';
 
-class NewServiceCategoryForm extends StatefulWidget{
-  NewServiceCategoryForm(this.submitFn, this.isLoading);
+class NewItemForm extends StatefulWidget{
+  NewItemForm(this.submitFn, this.isLoading);
 
   final bool isLoading;
   final void Function(
-      String catName,
-      String catType,
-      String sequence,
+      String itemName,
+      String itemType,
+      String itemDescription,
+      String itemPrice,
       File image,
       BuildContext ctx,
       ) submitFn;
 
   @override
-  State<StatefulWidget> createState() => _NewServiceCategoryFormState();
+  State<StatefulWidget> createState() => _NewItemFormState();
 }
 
-class _NewServiceCategoryFormState extends State<NewServiceCategoryForm> {
+class _NewItemFormState extends State<NewItemForm> {
   var logger = Logger();
 
   final _formKey = GlobalKey<FormState>();
 
   // var _isLogin = true;
-  String _catName = '';
-  String _catType = '';
-  String _catSequence = '';
+  String _itemName = '';
+  String _itemType = '';
+  String _itemDescription = '';
+  String _itemPrice ='';
   late File _userImageFile;
 
   void _pickedImage(File image) {
@@ -55,9 +57,10 @@ class _NewServiceCategoryFormState extends State<NewServiceCategoryForm> {
     if (isValid) {
       _formKey.currentState!.save();
       widget.submitFn(
-        _catName.trim(),
-        _catType.trim(),
-        _catSequence.trim(),
+        _itemName.trim(),
+        _itemType.trim(),
+        _itemDescription,
+        _itemPrice,
         _userImageFile,
         context,
       );
@@ -78,26 +81,27 @@ class _NewServiceCategoryFormState extends State<NewServiceCategoryForm> {
               children: [
                 UserImagePicker(_pickedImage, 90, 300),
                 TextFormField(
-                  key: const ValueKey('category_name'),
+                  key: const ValueKey('item_name'),
                   autocorrect: false,
                   textCapitalization: TextCapitalization.words,
                   enableSuggestions: false,
                   validator: (value) {
                     if (value!.isEmpty) {
-                      return 'Please enter a valid name of the service category.';
+                      return 'Please enter a valid name of the item.';
                     }
                     return null;
                   },
                   keyboardType: TextInputType.text,
                   decoration: const InputDecoration(
-                    labelText: 'Category Name',
+                    labelText: 'Item Name',
                   ),
                   onSaved: (value) {
-                    _catName = value!;
+                    _itemName = value!;
                   },
                 ),
+
                 TextFormField(
-                  key: const ValueKey('category_type'),
+                  key: const ValueKey('item_type'),
                   autocorrect: false,
                   textCapitalization: TextCapitalization.words,
                   enableSuggestions: false,
@@ -109,31 +113,52 @@ class _NewServiceCategoryFormState extends State<NewServiceCategoryForm> {
                   },
                   keyboardType: TextInputType.text,
                   decoration: const InputDecoration(
-                    labelText: 'Category Type',
+                    labelText: 'Item Type',
                   ),
                   onSaved: (value) {
-                    _catType = value!;
+                    _itemType = value!;
                   },
                 ),
                 TextFormField(
-                  key: const ValueKey('category_sequence'),
+                  key: const ValueKey('item_description'),
+                  autocorrect: false,
+                  textCapitalization: TextCapitalization.sentences,
+                  enableSuggestions: false,
+                  validator: (value) {
+                    if (value!.isEmpty) {
+                      return 'Please enter a valid description of item.';
+                    }
+                    return null;
+                  },
+                  keyboardType: TextInputType.text,
+                  decoration: const InputDecoration(
+                    labelText: 'Item Description',
+                  ),
+                  onSaved: (value) {
+                    _itemDescription = value!;
+                  },
+                ),
+
+                TextFormField(
+                  key: const ValueKey('item_price'),
                   autocorrect: false,
                   textCapitalization: TextCapitalization.none,
                   enableSuggestions: false,
                   validator: (value) {
                     if (value!.isEmpty) {
-                      return 'Please enter a valid type of service.';
+                      return 'Please enter a valid price for item.';
                     }
                     return null;
                   },
                   keyboardType: TextInputType.number,
                   decoration: const InputDecoration(
-                    labelText: 'Category Sequence',
+                    labelText: 'Item Price',
                   ),
                   onSaved: (value) {
-                    _catSequence = value!;
+                    _itemPrice = value!;
                   },
                 ),
+
                 const SizedBox(
                   height: 12,
                 ),

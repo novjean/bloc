@@ -1,7 +1,6 @@
+
 import 'dart:io';
 
-import 'package:bloc/db/entity/bloc_service.dart';
-import 'package:bloc/utils/string_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -9,19 +8,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:logger/logger.dart';
 
-import '../../widgets/bloc/new_service_category_form.dart';
+import '../../db/entity/bloc_service.dart';
+import '../../utils/string_utils.dart';
+import '../../widgets/bloc/new_item_form.dart';
 
-class NewServiceCategoryScreen extends StatefulWidget {
-  static const routeName = '/new-service-category-screen';
+class NewItemScreen extends StatefulWidget {
+  static const routeName = '/new-category-item-screen';
   BlocService service;
 
-  NewServiceCategoryScreen({key, required this.service}) : super(key: key);
+  NewItemScreen({key, required this.service}) : super(key: key);
 
   @override
-  State<StatefulWidget> createState() => _NewServiceCategoryScreenState();
+  State<StatefulWidget> createState() => _NewItemScreenState();
 }
 
-class _NewServiceCategoryScreenState extends State<NewServiceCategoryScreen> {
+class _NewItemScreenState extends State<NewItemScreen> {
   var logger = Logger();
   var _isLoading = false;
 
@@ -29,24 +30,25 @@ class _NewServiceCategoryScreenState extends State<NewServiceCategoryScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.service.name + ' : Category Form'),
+        title: Text(widget.service.name + ' : Category Item Form'),
       ),
       // drawer: AppDrawer(),
-      body: NewServiceCategoryForm(
-        _submitNewServiceCategoryForm, _isLoading,
+      body: NewItemForm(
+        _submitNewItemForm, _isLoading,
         // _isLoading,
       ),
     );
   }
 
-  void _submitNewServiceCategoryForm(
-      String catName,
-      String catType,
-      String sequence,
+  void _submitNewItemForm(
+      String itemName,
+      String itemType,
+      String itemDescription,
+      String itemPrice,
       File image,
       BuildContext ctx,
       ) async {
-    logger.i('_submitNewServiceCategoryForm called');
+    logger.i('_submitNewItemForm called');
 
     final user = FirebaseAuth.instance.currentUser;
     try {
@@ -57,30 +59,31 @@ class _NewServiceCategoryScreenState extends State<NewServiceCategoryScreen> {
       var time = Timestamp.now().toString();
 
       //determine the bloc identifier
-      String catId = StringUtils.getRandomString(20);
+      String itemId = StringUtils.getRandomString(20);
 
       // this points to the root cloud storage bucket
       final ref = FirebaseStorage.instance
           .ref()
-          .child('service_category_image')
-          .child(catId + '.jpg');
+          .child('item_image')
+          .child(itemId + '.jpg');
       await ref.putFile(image);
       final url = await ref.getDownloadURL();
 
-      await FirebaseFirestore.instance.collection('categories').doc(catId).set({
-        'id': catId,
-        'name': catName,
+      await FirebaseFirestore.instance.collection('items').doc(itemId).set({
+        'id': itemId,
+        'name': itemName,
+        'type': itemType,
+        'description': itemDescription,
+        'price': itemPrice,
         'serviceId':widget.service.id,
-        'type': catType,
         'imageUrl': url,
         'ownerId': user!.uid,
         'createdAt': time,
-        'sequence': sequence,
       });
 
       Scaffold.of(ctx).showSnackBar(
         SnackBar(
-          content: Text(catName + " is added to BLOC Service " + widget.service.name),
+          content: Text(itemName + " is added to BLOC Service " + widget.service.name),
           backgroundColor: Theme.of(ctx).errorColor,
         ),
       );

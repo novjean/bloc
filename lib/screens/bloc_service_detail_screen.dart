@@ -8,6 +8,7 @@ import '../db/entity/category.dart';
 import '../utils/category_utils.dart';
 import '../widgets/category_item.dart';
 import '../widgets/ui/expandable_fab.dart';
+import 'forms/new_item_screen.dart';
 import 'forms/new_service_category_screen.dart';
 
 class BlocServiceDetailScreen extends StatelessWidget {
@@ -60,7 +61,7 @@ class BlocServiceDetailScreen extends StatelessWidget {
               Navigator.of(context).push(
                 MaterialPageRoute(
                     builder: (ctx) =>
-                        NewServiceCategoryScreen(service: service)),
+                        NewItemScreen(service: service)),
               ),
             },
             icon: const Icon(Icons.insert_photo),

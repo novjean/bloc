@@ -1,17 +1,18 @@
 import 'package:floor/floor.dart';
 
 @entity
-class Category {
+class Item {
   @primaryKey
   final String id;
   final String name;
   final String type;
+  final String description;
+  final double price;
   final String serviceId;
   final String imageUrl;
   final String ownerId;
   final String createdAt;
-  final String sequence;
 
-  Category(this.id, this.name, this.type, this.serviceId, this.imageUrl,
-      this.ownerId, this.createdAt, this.sequence);
+  Item(this.id, this.name, this.type, this.description, this.price,
+      this.serviceId, this.imageUrl, this.ownerId, this.createdAt);
 }

@@ -66,7 +66,7 @@ class _$AppDatabase extends AppDatabase {
   Future<sqflite.Database> open(String path, List<Migration> migrations,
       [Callback? callback]) async {
     final databaseOptions = sqflite.OpenDatabaseOptions(
-      version: 6,
+      version: 7,
       onConfigure: (database) async {
         await database.execute('PRAGMA foreign_keys = ON');
         await callback?.onConfigure?.call(database);
@@ -92,7 +92,9 @@ class _$AppDatabase extends AppDatabase {
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `BlocService` (`id` TEXT NOT NULL, `name` TEXT NOT NULL, `blocId` TEXT NOT NULL, `type` TEXT NOT NULL, `primaryNumber` REAL NOT NULL, `secondaryNumber` REAL NOT NULL, `email` TEXT NOT NULL, `imageUrl` TEXT NOT NULL, `ownerId` TEXT NOT NULL, `createdAt` TEXT NOT NULL, PRIMARY KEY (`id`))');
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `Category` (`id` TEXT NOT NULL, `name` TEXT NOT NULL, `type` TEXT NOT NULL, `serviceId` TEXT NOT NULL, `imageUrl` TEXT NOT NULL, `ownerId` TEXT NOT NULL, `createdAt` TEXT NOT NULL, PRIMARY KEY (`id`))');
+            'CREATE TABLE IF NOT EXISTS `Category` (`id` TEXT NOT NULL, `name` TEXT NOT NULL, `type` TEXT NOT NULL, `serviceId` TEXT NOT NULL, `imageUrl` TEXT NOT NULL, `ownerId` TEXT NOT NULL, `createdAt` TEXT NOT NULL, `sequence` TEXT NOT NULL, PRIMARY KEY (`id`))');
+        await database.execute(
+            'CREATE TABLE IF NOT EXISTS `Item` (`id` TEXT NOT NULL, `name` TEXT NOT NULL, `type` TEXT NOT NULL, `description` TEXT NOT NULL, `price` REAL NOT NULL, `serviceId` TEXT NOT NULL, `imageUrl` TEXT NOT NULL, `ownerId` TEXT NOT NULL, `createdAt` TEXT NOT NULL, PRIMARY KEY (`id`))');
 
         await callback?.onCreate?.call(database, version);
       },
@@ -173,7 +175,8 @@ class _$BlocDao extends BlocDao {
                   'serviceId': item.serviceId,
                   'imageUrl': item.imageUrl,
                   'ownerId': item.ownerId,
-                  'createdAt': item.createdAt
+                  'createdAt': item.createdAt,
+                  'sequence': item.sequence
                 });
 
   final sqflite.DatabaseExecutor database;
