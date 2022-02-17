@@ -7,6 +7,7 @@ import '../db/dao/bloc_dao.dart';
 import '../db/entity/category.dart';
 import '../utils/category_utils.dart';
 import '../widgets/category_item.dart';
+import '../widgets/ui/expandable_fab.dart';
 import 'forms/new_service_category_screen.dart';
 
 class BlocServiceDetailScreen extends StatelessWidget {
@@ -22,22 +23,60 @@ class BlocServiceDetailScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text(service.name),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.of(context).push(
-            MaterialPageRoute(
-                builder: (ctx) => NewServiceCategoryScreen(service:service)),
-          );
-        },
-        child: Icon(
-          Icons.add,
-          color: Colors.black,
-          size: 29,
-        ),
-        backgroundColor: Theme.of(context).primaryColor,
-        tooltip: 'New Bloc',
-        elevation: 5,
-        splashColor: Colors.grey,
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: () {
+      //     Navigator.of(context).push(
+      //       MaterialPageRoute(
+      //           builder: (ctx) => NewServiceCategoryScreen(service:service)),
+      //     );
+      //   },
+      //   child: Icon(
+      //     Icons.add,
+      //     color: Colors.black,
+      //     size: 29,
+      //   ),
+      //   backgroundColor: Theme.of(context).primaryColor,
+      //   tooltip: 'New Bloc',
+      //   elevation: 5,
+      //   splashColor: Colors.grey,
+      // ),
+      floatingActionButton: ExpandableFab(
+        distance: 112.0,
+        children: [
+          ActionButton(
+            onPressed: () => {
+              // _showAction(context, 0)
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                    builder: (ctx) =>
+                        NewServiceCategoryScreen(service: service)),
+              ),
+            },
+            icon: const Icon(Icons.format_size),
+          ),
+          ActionButton(
+            onPressed: () => {
+              // _showAction(context, 1),
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                    builder: (ctx) =>
+                        NewServiceCategoryScreen(service: service)),
+              ),
+            },
+            icon: const Icon(Icons.insert_photo),
+          ),
+          ActionButton(
+            onPressed: () => {
+              // _showAction(context, 2),
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                    builder: (ctx) =>
+                        NewServiceCategoryScreen(service: service)),
+              ),
+            },
+            icon: const Icon(Icons.videocam),
+          ),
+        ],
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       body: Padding(
@@ -73,8 +112,8 @@ class BlocServiceDetailScreen extends StatelessWidget {
                     topRight: Radius.circular(10),
                   ),
                   child: FadeInImage(
-                    placeholder:
-                    const AssetImage('assets/images/product-placeholder.png'),
+                    placeholder: const AssetImage(
+                        'assets/images/product-placeholder.png'),
                     image: service.imageUrl != "url"
                         ? NetworkImage(service.imageUrl)
                         : NetworkImage("assets/images/product-placeholder.png"),
@@ -104,7 +143,7 @@ class BlocServiceDetailScreen extends StatelessWidget {
         }
 
         int count = snapshot.data!.docs.length;
-        List categories=List.empty(growable: true);
+        List categories = List.empty(growable: true);
 
         for (DocumentSnapshot document in snapshot.data!.docs) {
           Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
@@ -112,8 +151,7 @@ class BlocServiceDetailScreen extends StatelessWidget {
           BlocRepository.insertCategory(dao, cat);
 
           categories.add(cat);
-          if(--count==0)
-            return displayCategoryList(context,categories);
+          if (--count == 0) return displayCategoryList(context, categories);
         }
         return Text('Loading...');
       },
