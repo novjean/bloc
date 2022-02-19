@@ -75,7 +75,7 @@ class _NewServiceCategoryScreenState extends State<NewServiceCategoryScreen> {
         'imageUrl': url,
         'ownerId': user!.uid,
         'createdAt': time,
-        'sequence': sequence,
+        'sequence': int.parse(sequence),
       });
 
       Scaffold.of(ctx).showSnackBar(

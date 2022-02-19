@@ -13,7 +13,7 @@ import 'entity/user.dart';
 
 part 'database.g.dart'; // the generated code will be there
 
-@Database(version: 7, entities: [Person, User, City, Bloc,
+@Database(version: 8, entities: [Person, User, City, Bloc,
 BlocService, Category, Item])
 abstract class AppDatabase extends FloorDatabase {
   BlocDao get blocDao;

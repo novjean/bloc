@@ -1,21 +1,22 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:logger/logger.dart';
 
 import '../../pickers/user_image_picker.dart';
 
-class NewServiceCategoryForm extends StatefulWidget{
+class NewServiceCategoryForm extends StatefulWidget {
   NewServiceCategoryForm(this.submitFn, this.isLoading);
 
   final bool isLoading;
   final void Function(
-      String catName,
-      String catType,
-      String sequence,
-      File image,
-      BuildContext ctx,
-      ) submitFn;
+    String catName,
+    String catType,
+    String sequence,
+    File image,
+    BuildContext ctx,
+  ) submitFn;
 
   @override
   State<StatefulWidget> createState() => _NewServiceCategoryFormState();
@@ -57,7 +58,7 @@ class _NewServiceCategoryFormState extends State<NewServiceCategoryForm> {
       widget.submitFn(
         _catName.trim(),
         _catType.trim(),
-        _catSequence.trim(),
+        _catSequence,
         _userImageFile,
         context,
       );
@@ -120,9 +121,12 @@ class _NewServiceCategoryFormState extends State<NewServiceCategoryForm> {
                   autocorrect: false,
                   textCapitalization: TextCapitalization.none,
                   enableSuggestions: false,
+                  inputFormatters: <TextInputFormatter>[
+                    FilteringTextInputFormatter.digitsOnly
+                  ],
                   validator: (value) {
                     if (value!.isEmpty) {
-                      return 'Please enter a valid type of service.';
+                      return 'Please enter a valid sequence.';
                     }
                     return null;
                   },

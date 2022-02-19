@@ -24,23 +24,6 @@ class BlocServiceDetailScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text(service.name),
       ),
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: () {
-      //     Navigator.of(context).push(
-      //       MaterialPageRoute(
-      //           builder: (ctx) => NewServiceCategoryScreen(service:service)),
-      //     );
-      //   },
-      //   child: Icon(
-      //     Icons.add,
-      //     color: Colors.black,
-      //     size: 29,
-      //   ),
-      //   backgroundColor: Theme.of(context).primaryColor,
-      //   tooltip: 'New Bloc',
-      //   elevation: 5,
-      //   splashColor: Colors.grey,
-      // ),
       floatingActionButton: ExpandableFab(
         distance: 112.0,
         children: [
@@ -60,8 +43,7 @@ class BlocServiceDetailScreen extends StatelessWidget {
               // _showAction(context, 1),
               Navigator.of(context).push(
                 MaterialPageRoute(
-                    builder: (ctx) =>
-                        NewItemScreen(service: service)),
+                    builder: (ctx) => NewItemScreen(service: service)),
               ),
             },
             icon: const Icon(Icons.insert_photo),
@@ -132,6 +114,7 @@ class BlocServiceDetailScreen extends StatelessWidget {
   buildServiceCategories(BuildContext context) {
     final Stream<QuerySnapshot> _catsStream = FirebaseFirestore.instance
         .collection('categories')
+        // .orderBy('sequence', descending: true)
         .where('serviceId', isEqualTo: service.id)
         .snapshots();
     return StreamBuilder<QuerySnapshot>(
@@ -143,36 +126,52 @@ class BlocServiceDetailScreen extends StatelessWidget {
           );
         }
 
-        int count = snapshot.data!.docs.length;
-        List categories = List.empty(growable: true);
+        // if(count>0) {
+        //   snapshot.data!.docs.sort((a, b) => a['sequence'].compareTo(b['sequence']));
+        // }
 
-        for (DocumentSnapshot document in snapshot.data!.docs) {
+        for (int i = 0; i < snapshot.data!.docs.length; i++) {
+          DocumentSnapshot document = snapshot.data!.docs[i];
           Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
           final Category cat = CategoryUtils.getCategory(data, document.id);
           BlocRepository.insertCategory(dao, cat);
 
-          categories.add(cat);
-          if (--count == 0) return displayCategoryList(context, categories);
+          if (i==snapshot.data!.docs.length-1) {
+            return displayCategoryList(context);
+          }
         }
         return Text('Loading...');
       },
     );
   }
 
-  displayCategoryList(BuildContext context, List cats) {
+  displayCategoryList(BuildContext context) {
+    Stream<List<Category>> _catsStream = dao.getCategories();
+
     return Container(
       height: MediaQuery.of(context).size.height / 6,
-      child: ListView.builder(
-        primary: false,
-        scrollDirection: Axis.horizontal,
-        shrinkWrap: true,
-        itemCount: cats == null ? 0 : cats.length,
-        itemBuilder: (BuildContext context, int index) {
-          Category cat = cats[index];
+      child: StreamBuilder(
+        stream: _catsStream,
+        builder: (context, snapshot) {
+          if(snapshot.connectionState == ConnectionState.waiting){
+            return Text('Loading...');
+          } else {
+            List<Category> cats = snapshot.data! as List<Category>;
 
-          return CategoryItem(
-            cat: cat,
-          );
+            return ListView.builder(
+              primary: false,
+              scrollDirection: Axis.horizontal,
+              shrinkWrap: true,
+              itemCount: cats == null ? 0 : cats.length,
+              itemBuilder: (BuildContext ctx, int index) {
+                Category cat = cats[index];
+
+                return CategoryItem(
+                  cat: cat,
+                );
+              },
+            );
+          }
         },
       ),
     );

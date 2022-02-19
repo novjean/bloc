@@ -10,7 +10,7 @@ class Category {
   final String imageUrl;
   final String ownerId;
   final String createdAt;
-  final String sequence;
+  final int sequence;
 
   Category(this.id, this.name, this.type, this.serviceId, this.imageUrl,
       this.ownerId, this.createdAt, this.sequence);

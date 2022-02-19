@@ -9,7 +9,7 @@ class CategoryUtils {
     String imageUrl = data['imageUrl'];
     String ownerId = data['ownerId'];
     String createdAt = data['createdAt'];
-    String sequence = data['sequence'];
+    int sequence = data['sequence'];
 
     Category category =
         Category(id, name, type, serviceId, imageUrl, ownerId, createdAt, sequence);

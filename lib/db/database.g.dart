@@ -66,7 +66,7 @@ class _$AppDatabase extends AppDatabase {
   Future<sqflite.Database> open(String path, List<Migration> migrations,
       [Callback? callback]) async {
     final databaseOptions = sqflite.OpenDatabaseOptions(
-      version: 7,
+      version: 8,
       onConfigure: (database) async {
         await database.execute('PRAGMA foreign_keys = ON');
         await callback?.onConfigure?.call(database);
@@ -92,7 +92,7 @@ class _$AppDatabase extends AppDatabase {
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `BlocService` (`id` TEXT NOT NULL, `name` TEXT NOT NULL, `blocId` TEXT NOT NULL, `type` TEXT NOT NULL, `primaryNumber` REAL NOT NULL, `secondaryNumber` REAL NOT NULL, `email` TEXT NOT NULL, `imageUrl` TEXT NOT NULL, `ownerId` TEXT NOT NULL, `createdAt` TEXT NOT NULL, PRIMARY KEY (`id`))');
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `Category` (`id` TEXT NOT NULL, `name` TEXT NOT NULL, `type` TEXT NOT NULL, `serviceId` TEXT NOT NULL, `imageUrl` TEXT NOT NULL, `ownerId` TEXT NOT NULL, `createdAt` TEXT NOT NULL, `sequence` TEXT NOT NULL, PRIMARY KEY (`id`))');
+            'CREATE TABLE IF NOT EXISTS `Category` (`id` TEXT NOT NULL, `name` TEXT NOT NULL, `type` TEXT NOT NULL, `serviceId` TEXT NOT NULL, `imageUrl` TEXT NOT NULL, `ownerId` TEXT NOT NULL, `createdAt` TEXT NOT NULL, `sequence` INTEGER NOT NULL, PRIMARY KEY (`id`))');
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `Item` (`id` TEXT NOT NULL, `name` TEXT NOT NULL, `type` TEXT NOT NULL, `description` TEXT NOT NULL, `price` REAL NOT NULL, `serviceId` TEXT NOT NULL, `imageUrl` TEXT NOT NULL, `ownerId` TEXT NOT NULL, `createdAt` TEXT NOT NULL, PRIMARY KEY (`id`))');
 
@@ -177,7 +177,8 @@ class _$BlocDao extends BlocDao {
                   'ownerId': item.ownerId,
                   'createdAt': item.createdAt,
                   'sequence': item.sequence
-                });
+                },
+            changeListener);
 
   final sqflite.DatabaseExecutor database;
 
@@ -211,6 +212,23 @@ class _$BlocDao extends BlocDao {
             Person(row['id'] as int, row['name'] as String),
         arguments: [id],
         queryableName: 'Person',
+        isView: false);
+  }
+
+  @override
+  Stream<List<Category>> getCategories() {
+    return _queryAdapter.queryListStream(
+        'SELECT * FROM Category ORDER BY sequence ASC',
+        mapper: (Map<String, Object?> row) => Category(
+            row['id'] as String,
+            row['name'] as String,
+            row['type'] as String,
+            row['serviceId'] as String,
+            row['imageUrl'] as String,
+            row['ownerId'] as String,
+            row['createdAt'] as String,
+            row['sequence'] as int),
+        queryableName: 'Category',
         isView: false);
   }
 
