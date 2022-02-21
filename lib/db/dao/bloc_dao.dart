@@ -34,6 +34,6 @@ abstract class BlocDao {
   Future<void> insertCategory(Category cat);
 
   @Query('SELECT * FROM Category ORDER BY sequence ASC')
-  Stream<List<Category>> getCategories();
+  Stream<List<Category>> getCategoriesStream();
 
 }

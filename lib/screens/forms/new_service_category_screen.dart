@@ -9,13 +9,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:logger/logger.dart';
 
+import '../../db/dao/bloc_dao.dart';
 import '../../widgets/bloc/new_service_category_form.dart';
 
 class NewServiceCategoryScreen extends StatefulWidget {
   static const routeName = '/new-service-category-screen';
   BlocService service;
+  BlocDao dao;
 
-  NewServiceCategoryScreen({key, required this.service}) : super(key: key);
+  NewServiceCategoryScreen({key, required this.service, required this.dao}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _NewServiceCategoryScreenState();
@@ -33,7 +35,7 @@ class _NewServiceCategoryScreenState extends State<NewServiceCategoryScreen> {
       ),
       // drawer: AppDrawer(),
       body: NewServiceCategoryForm(
-        _submitNewServiceCategoryForm, _isLoading,
+        _submitNewServiceCategoryForm, widget.service.id, widget.dao,  _isLoading,
         // _isLoading,
       ),
     );

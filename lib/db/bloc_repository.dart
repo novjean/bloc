@@ -37,8 +37,4 @@ class BlocRepository {
     logger.i("insertCategory(): " + cat.name);
     await dao.insertCategory(cat);
   }
-
-  static void getCategories(BlocDao dao) async {
-    await dao.getCategories();
-  }
 }

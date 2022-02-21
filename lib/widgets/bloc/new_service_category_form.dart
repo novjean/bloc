@@ -4,12 +4,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:logger/logger.dart';
 
+import '../../db/dao/bloc_dao.dart';
+import '../../db/entity/category.dart';
 import '../../pickers/user_image_picker.dart';
 
 class NewServiceCategoryForm extends StatefulWidget {
-  NewServiceCategoryForm(this.submitFn, this.isLoading);
+  NewServiceCategoryForm(
+      this.submitFn, this.mServiceId, this.dao, this.isLoading);
 
   final bool isLoading;
+  final String mServiceId;
+  final BlocDao dao;
+
   final void Function(
     String catName,
     String catType,
@@ -97,25 +103,7 @@ class _NewServiceCategoryFormState extends State<NewServiceCategoryForm> {
                     _catName = value!;
                   },
                 ),
-                TextFormField(
-                  key: const ValueKey('category_type'),
-                  autocorrect: false,
-                  textCapitalization: TextCapitalization.words,
-                  enableSuggestions: false,
-                  validator: (value) {
-                    if (value!.isEmpty) {
-                      return 'Please enter a valid type of service.';
-                    }
-                    return null;
-                  },
-                  keyboardType: TextInputType.text,
-                  decoration: const InputDecoration(
-                    labelText: 'Category Type',
-                  ),
-                  onSaved: (value) {
-                    _catType = value!;
-                  },
-                ),
+                displayCategoryTypesDropdown(context),
                 TextFormField(
                   key: const ValueKey('category_sequence'),
                   autocorrect: false,
@@ -156,11 +144,73 @@ class _NewServiceCategoryFormState extends State<NewServiceCategoryForm> {
                         Navigator.of(context).pop();
                       });
                     },
-                  )
+                  ),
               ],
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  displayCategoryTypesDropdown(BuildContext context) {
+    Stream<List<Category>> _catsStream = widget.dao.getCategoriesStream();
+    return Container(
+      child: StreamBuilder(
+        stream: _catsStream,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Text('Loading category types...');
+          } else {
+            List<Category> cats = snapshot.data! as List<Category>;
+            List<String> _catTypes = List.empty(growable: true);
+
+            for (int i = 0; i < cats.length; i++) {
+              Category cat = cats[i];
+              if (i == 0) {
+                _catType = cat.name;
+              }
+              _catTypes.add(cat.name);
+            }
+            // final List _catTypes = _tempCatTypes;
+            _catType = 'Food';
+
+            return FormField<String>(
+              builder: (FormFieldState<String> state) {
+                return InputDecorator(
+                  key: const ValueKey('bloc_service_type'),
+                  decoration: InputDecoration(
+                      // labelStyle: textStyle,
+                      errorStyle:
+                          TextStyle(color: Colors.redAccent, fontSize: 16.0),
+                      hintText: 'Please select expense',
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(5.0))),
+                  isEmpty: _catType == '',
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton<String>(
+                      value: _catType,
+                      isDense: true,
+                      // onChanged: (String? value){},
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          _catType = newValue!;
+                          state.didChange(newValue);
+                        });
+                      },
+                      items: _catTypes.map((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                );
+              },
+            );
+          }
+        },
       ),
     );
   }

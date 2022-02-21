@@ -216,7 +216,7 @@ class _$BlocDao extends BlocDao {
   }
 
   @override
-  Stream<List<Category>> getCategories() {
+  Stream<List<Category>> getCategoriesStream() {
     return _queryAdapter.queryListStream(
         'SELECT * FROM Category ORDER BY sequence ASC',
         mapper: (Map<String, Object?> row) => Category(

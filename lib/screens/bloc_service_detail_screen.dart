@@ -33,10 +33,10 @@ class BlocServiceDetailScreen extends StatelessWidget {
               Navigator.of(context).push(
                 MaterialPageRoute(
                     builder: (ctx) =>
-                        NewServiceCategoryScreen(service: service)),
+                        NewServiceCategoryScreen(service: service, dao:dao)),
               ),
             },
-            icon: const Icon(Icons.format_size),
+            icon: const Icon(Icons.question_answer_outlined),
           ),
           ActionButton(
             onPressed: () => {
@@ -46,7 +46,7 @@ class BlocServiceDetailScreen extends StatelessWidget {
                     builder: (ctx) => NewItemScreen(service: service)),
               ),
             },
-            icon: const Icon(Icons.insert_photo),
+            icon: const Icon(Icons.fastfood),
           ),
           ActionButton(
             onPressed: () => {
@@ -54,10 +54,10 @@ class BlocServiceDetailScreen extends StatelessWidget {
               Navigator.of(context).push(
                 MaterialPageRoute(
                     builder: (ctx) =>
-                        NewServiceCategoryScreen(service: service)),
+                        NewServiceCategoryScreen(service: service, dao:dao)),
               ),
             },
-            icon: const Icon(Icons.videocam),
+            icon: const Icon(Icons.category_outlined),
           ),
         ],
       ),
@@ -146,7 +146,7 @@ class BlocServiceDetailScreen extends StatelessWidget {
   }
 
   displayCategoryList(BuildContext context) {
-    Stream<List<Category>> _catsStream = dao.getCategories();
+    Stream<List<Category>> _catsStream = dao.getCategoriesStream();
 
     return Container(
       height: MediaQuery.of(context).size.height / 6,

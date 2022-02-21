@@ -30,13 +30,21 @@ class _NewBlocServiceFormState extends State<NewBlocServiceForm> {
 
   // var _isLogin = true;
   String _serviceName = '';
-  String _serviceType = '';
+  String _serviceType = 'Bar';
   String _servicePrimaryPhone = '';
 
   // String _city = '';
   String _serviceSecondaryPhone = '';
   String _emailAddress = '';
   late File _userImageFile;
+
+  final _serviceTypes = [
+    "Bar",
+    "Dance Floor",
+    "Restaurant",
+    "Rooftop",
+    "Underground"
+  ];
 
   void _pickedImage(File image) {
     _userImageFile = image;
@@ -104,25 +112,59 @@ class _NewBlocServiceFormState extends State<NewBlocServiceForm> {
                     _serviceName = value!;
                   },
                 ),
-                TextFormField(
-                  key: const ValueKey('bloc_service_type'),
-                  autocorrect: false,
-                  textCapitalization: TextCapitalization.words,
-                  enableSuggestions: false,
-                  validator: (value) {
-                    if (value!.isEmpty) {
-                      return 'Please enter a valid type of service.';
-                    }
-                    return null;
-                  },
-                  keyboardType: TextInputType.text,
-                  decoration: const InputDecoration(
-                    labelText: 'Service Type',
-                  ),
-                  onSaved: (value) {
-                    _serviceType = value!;
+                FormField<String>(
+                  builder: (FormFieldState<String> state) {
+                    return InputDecorator(
+                      key: const ValueKey('bloc_service_type'),
+                      decoration: InputDecoration(
+                          // labelStyle: textStyle,
+                          errorStyle: TextStyle(
+                              color: Colors.redAccent, fontSize: 16.0),
+                          hintText: 'Please select expense',
+                          border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(5.0))),
+                      isEmpty: _serviceType == '',
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton<String>(
+                          value: _serviceType,
+                          isDense: true,
+                          // onChanged: (String? value){},
+                          onChanged: (String? newValue) {
+                            setState(() {
+                              _serviceType = newValue!;
+                              state.didChange(newValue);
+                            });
+                          },
+                          items: _serviceTypes.map((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(value),
+                            );
+                          }).toList(),
+                        ),
+                      ),
+                    );
                   },
                 ),
+                // TextFormField(
+                //   key: const ValueKey('bloc_service_type'),
+                //   autocorrect: false,
+                //   textCapitalization: TextCapitalization.words,
+                //   enableSuggestions: false,
+                //   validator: (value) {
+                //     if (value!.isEmpty) {
+                //       return 'Please enter a valid type of service.';
+                //     }
+                //     return null;
+                //   },
+                //   keyboardType: TextInputType.text,
+                //   decoration: const InputDecoration(
+                //     labelText: 'Service Type',
+                //   ),
+                //   onSaved: (value) {
+                //     _serviceType = value!;
+                //   },
+                // ),
                 TextFormField(
                   key: const ValueKey('primary_phone_number'),
                   autocorrect: false,
