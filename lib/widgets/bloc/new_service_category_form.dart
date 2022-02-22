@@ -154,7 +154,7 @@ class _NewServiceCategoryFormState extends State<NewServiceCategoryForm> {
   }
 
   displayCategoryTypesDropdown(BuildContext context) {
-    Stream<List<Category>> _catsStream = widget.dao.getCategoriesStream();
+    Stream<List<Category>> _catsStream = widget.dao.getCategories();
     return Container(
       child: StreamBuilder(
         stream: _catsStream,

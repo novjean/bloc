@@ -1,4 +1,5 @@
 import 'package:bloc/db/entity/category.dart';
+import 'package:bloc/db/entity/product.dart';
 import 'package:bloc/db/entity/person.dart';
 import 'package:floor/floor.dart';
 
@@ -34,6 +35,12 @@ abstract class BlocDao {
   Future<void> insertCategory(Category cat);
 
   @Query('SELECT * FROM Category ORDER BY sequence ASC')
-  Stream<List<Category>> getCategoriesStream();
+  Stream<List<Category>> getCategories();
+
+  @insert
+  Future<void> insertItem(Product item);
+
+  @Query('SELECT * FROM Item')
+  Stream<List<Product>> getItems();
 
 }

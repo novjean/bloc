@@ -66,7 +66,7 @@ class _$AppDatabase extends AppDatabase {
   Future<sqflite.Database> open(String path, List<Migration> migrations,
       [Callback? callback]) async {
     final databaseOptions = sqflite.OpenDatabaseOptions(
-      version: 8,
+      version: 9,
       onConfigure: (database) async {
         await database.execute('PRAGMA foreign_keys = ON');
         await callback?.onConfigure?.call(database);
@@ -94,7 +94,7 @@ class _$AppDatabase extends AppDatabase {
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `Category` (`id` TEXT NOT NULL, `name` TEXT NOT NULL, `type` TEXT NOT NULL, `serviceId` TEXT NOT NULL, `imageUrl` TEXT NOT NULL, `ownerId` TEXT NOT NULL, `createdAt` TEXT NOT NULL, `sequence` INTEGER NOT NULL, PRIMARY KEY (`id`))');
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `Item` (`id` TEXT NOT NULL, `name` TEXT NOT NULL, `type` TEXT NOT NULL, `description` TEXT NOT NULL, `price` REAL NOT NULL, `serviceId` TEXT NOT NULL, `imageUrl` TEXT NOT NULL, `ownerId` TEXT NOT NULL, `createdAt` TEXT NOT NULL, PRIMARY KEY (`id`))');
+            'CREATE TABLE IF NOT EXISTS `Product` (`id` TEXT NOT NULL, `name` TEXT NOT NULL, `type` TEXT NOT NULL, `description` TEXT NOT NULL, `price` INTEGER NOT NULL, `serviceId` TEXT NOT NULL, `imageUrl` TEXT NOT NULL, `ownerId` TEXT NOT NULL, `createdAt` TEXT NOT NULL, PRIMARY KEY (`id`))');
 
         await callback?.onCreate?.call(database, version);
       },
@@ -178,6 +178,21 @@ class _$BlocDao extends BlocDao {
                   'createdAt': item.createdAt,
                   'sequence': item.sequence
                 },
+            changeListener),
+        _productInsertionAdapter = InsertionAdapter(
+            database,
+            'Product',
+            (Product item) => <String, Object?>{
+                  'id': item.id,
+                  'name': item.name,
+                  'type': item.type,
+                  'description': item.description,
+                  'price': item.price,
+                  'serviceId': item.serviceId,
+                  'imageUrl': item.imageUrl,
+                  'ownerId': item.ownerId,
+                  'createdAt': item.createdAt
+                },
             changeListener);
 
   final sqflite.DatabaseExecutor database;
@@ -198,6 +213,8 @@ class _$BlocDao extends BlocDao {
 
   final InsertionAdapter<Category> _categoryInsertionAdapter;
 
+  final InsertionAdapter<Product> _productInsertionAdapter;
+
   @override
   Future<List<Person>> findAllPersons() async {
     return _queryAdapter.queryList('SELECT * FROM Person',
@@ -216,7 +233,7 @@ class _$BlocDao extends BlocDao {
   }
 
   @override
-  Stream<List<Category>> getCategoriesStream() {
+  Stream<List<Category>> getCategories() {
     return _queryAdapter.queryListStream(
         'SELECT * FROM Category ORDER BY sequence ASC',
         mapper: (Map<String, Object?> row) => Category(
@@ -229,6 +246,23 @@ class _$BlocDao extends BlocDao {
             row['createdAt'] as String,
             row['sequence'] as int),
         queryableName: 'Category',
+        isView: false);
+  }
+
+  @override
+  Stream<List<Product>> getItems() {
+    return _queryAdapter.queryListStream('SELECT * FROM Item',
+        mapper: (Map<String, Object?> row) => Product(
+            row['id'] as String,
+            row['name'] as String,
+            row['type'] as String,
+            row['description'] as String,
+            row['price'] as int,
+            row['serviceId'] as String,
+            row['imageUrl'] as String,
+            row['ownerId'] as String,
+            row['createdAt'] as String),
+        queryableName: 'Product',
         isView: false);
   }
 
@@ -261,5 +295,10 @@ class _$BlocDao extends BlocDao {
   @override
   Future<void> insertCategory(Category cat) async {
     await _categoryInsertionAdapter.insert(cat, OnConflictStrategy.abort);
+  }
+
+  @override
+  Future<void> insertItem(Product item) async {
+    await _productInsertionAdapter.insert(item, OnConflictStrategy.abort);
   }
 }

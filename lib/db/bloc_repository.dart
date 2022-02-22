@@ -1,6 +1,7 @@
 
 import 'package:bloc/db/dao/bloc_dao.dart';
 import 'package:bloc/db/entity/category.dart';
+import 'package:bloc/db/entity/product.dart';
 import 'package:bloc/db/entity/user.dart';
 import 'package:logger/logger.dart';
 
@@ -36,5 +37,10 @@ class BlocRepository {
   static void insertCategory(BlocDao dao, Category cat) async {
     logger.i("insertCategory(): " + cat.name);
     await dao.insertCategory(cat);
+  }
+
+  static void insertProduct(BlocDao dao, Product product) async {
+    logger.i("insertProduct(): " + product.name);
+    await dao.insertItem(product);
   }
 }

@@ -7,14 +7,14 @@ import 'package:sqflite/sqflite.dart' as sqflite;
 import 'dao/bloc_dao.dart';
 import 'entity/bloc.dart';
 import 'entity/city.dart';
-import 'entity/item.dart';
+import 'entity/product.dart';
 import 'entity/person.dart';
 import 'entity/user.dart';
 
 part 'database.g.dart'; // the generated code will be there
 
-@Database(version: 8, entities: [Person, User, City, Bloc,
-BlocService, Category, Item])
+@Database(version: 9, entities: [Person, User, City, Bloc,
+BlocService, Category, Product])
 abstract class AppDatabase extends FloorDatabase {
   BlocDao get blocDao;
 }

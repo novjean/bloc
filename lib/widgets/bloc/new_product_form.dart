@@ -5,8 +5,8 @@ import 'package:logger/logger.dart';
 
 import '../../pickers/user_image_picker.dart';
 
-class NewItemForm extends StatefulWidget{
-  NewItemForm(this.submitFn, this.isLoading);
+class NewProductForm extends StatefulWidget{
+  NewProductForm(this.submitFn, this.isLoading);
 
   final bool isLoading;
   final void Function(
@@ -19,10 +19,10 @@ class NewItemForm extends StatefulWidget{
       ) submitFn;
 
   @override
-  State<StatefulWidget> createState() => _NewItemFormState();
+  State<StatefulWidget> createState() => _NewProductFormState();
 }
 
-class _NewItemFormState extends State<NewItemForm> {
+class _NewProductFormState extends State<NewProductForm> {
   var logger = Logger();
 
   final _formKey = GlobalKey<FormState>();

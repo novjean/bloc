@@ -10,19 +10,19 @@ import 'package:logger/logger.dart';
 
 import '../../db/entity/bloc_service.dart';
 import '../../utils/string_utils.dart';
-import '../../widgets/bloc/new_item_form.dart';
+import '../../widgets/bloc/new_product_form.dart';
 
-class NewItemScreen extends StatefulWidget {
+class NewProductScreen extends StatefulWidget {
   static const routeName = '/new-category-item-screen';
   BlocService service;
 
-  NewItemScreen({key, required this.service}) : super(key: key);
+  NewProductScreen({key, required this.service}) : super(key: key);
 
   @override
-  State<StatefulWidget> createState() => _NewItemScreenState();
+  State<StatefulWidget> createState() => _NewProductScreenState();
 }
 
-class _NewItemScreenState extends State<NewItemScreen> {
+class _NewProductScreenState extends State<NewProductScreen> {
   var logger = Logger();
   var _isLoading = false;
 
@@ -33,7 +33,7 @@ class _NewItemScreenState extends State<NewItemScreen> {
         title: Text(widget.service.name + ' : Category Item Form'),
       ),
       // drawer: AppDrawer(),
-      body: NewItemForm(
+      body: NewProductForm(
         _submitNewItemForm, _isLoading,
         // _isLoading,
       ),
@@ -74,7 +74,7 @@ class _NewItemScreenState extends State<NewItemScreen> {
         'name': itemName,
         'type': itemType,
         'description': itemDescription,
-        'price': itemPrice,
+        'price': int.parse(itemPrice),
         'serviceId':widget.service.id,
         'imageUrl': url,
         'ownerId': user!.uid,

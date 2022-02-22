@@ -5,10 +5,14 @@ import 'package:flutter/material.dart';
 import '../db/bloc_repository.dart';
 import '../db/dao/bloc_dao.dart';
 import '../db/entity/category.dart';
+import '../db/entity/product.dart';
 import '../utils/category_utils.dart';
+import '../utils/product_utils.dart';
 import '../widgets/category_item.dart';
+import '../widgets/product_item.dart';
+import '../widgets/products_grid.dart';
 import '../widgets/ui/expandable_fab.dart';
-import 'forms/new_item_screen.dart';
+import 'forms/new_product_screen.dart';
 import 'forms/new_service_category_screen.dart';
 
 class BlocServiceDetailScreen extends StatelessWidget {
@@ -43,7 +47,7 @@ class BlocServiceDetailScreen extends StatelessWidget {
               // _showAction(context, 1),
               Navigator.of(context).push(
                 MaterialPageRoute(
-                    builder: (ctx) => NewItemScreen(service: service)),
+                    builder: (ctx) => NewProductScreen(service: service)),
               ),
             },
             icon: const Icon(Icons.fastfood),
@@ -70,8 +74,8 @@ class BlocServiceDetailScreen extends StatelessWidget {
             SizedBox(height: 20.0),
             buildServiceCategories(context),
             SizedBox(height: 20.0),
-            // buildBlocRow(context),
-            // SizedBox(height: 30.0),
+            buildServiceItems(context),
+            SizedBox(height: 30.0),
           ],
         ),
       ),
@@ -111,6 +115,7 @@ class BlocServiceDetailScreen extends StatelessWidget {
     );
   }
 
+  /** Categories List **/
   buildServiceCategories(BuildContext context) {
     final Stream<QuerySnapshot> _catsStream = FirebaseFirestore.instance
         .collection('categories')
@@ -146,7 +151,7 @@ class BlocServiceDetailScreen extends StatelessWidget {
   }
 
   displayCategoryList(BuildContext context) {
-    Stream<List<Category>> _catsStream = dao.getCategoriesStream();
+    Stream<List<Category>> _catsStream = dao.getCategories();
 
     return Container(
       height: MediaQuery.of(context).size.height / 6,
@@ -176,4 +181,98 @@ class BlocServiceDetailScreen extends StatelessWidget {
       ),
     );
   }
+
+  /** Items List **/
+  buildServiceItems(BuildContext context) {
+    final Stream<QuerySnapshot> _itemsStream = FirebaseFirestore.instance
+        .collection('items')
+    // .orderBy('sequence', descending: true)
+        .where('serviceId', isEqualTo: service.id)
+        .snapshots();
+
+    return Container(
+      height: MediaQuery.of(context).size.height,
+      child: StreamBuilder<QuerySnapshot>(
+        stream: _itemsStream,
+        builder: (ctx, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+
+          // if(count>0) {
+          //   snapshot.data!.docs.sort((a, b) => a['sequence'].compareTo(b['sequence']));
+          // }
+          List<Product> products=[];
+          for (int i = 0; i < snapshot.data!.docs.length; i++) {
+            DocumentSnapshot document = snapshot.data!.docs[i];
+            Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+            final Product product = ProductUtils.getProduct(data, document.id);
+            BlocRepository.insertProduct(dao, product);
+            products.add(product);
+
+            if (i==snapshot.data!.docs.length-1) {
+              return ProductsGrid(products);
+              // return displayItemsList(context, products);
+            }
+          }
+          return Text('Loading...');
+        },
+      ),
+    );
+  }
+
+  displayItemsList(BuildContext context, List<Product> products) {
+    return ProductsGrid(products);
+
+    // Stream<List<Product>> _itemsStream = dao.getItems();
+
+    // return Container(
+    //   height: 100,
+    //   child: StreamBuilder(
+    //     stream: _itemsStream,
+    //     builder: (context, snapshot) {
+    //       if(snapshot.connectionState == ConnectionState.waiting) {
+    //         return Text('Loading...');
+    //       } else {
+    //         List<Product> products = snapshot.data! as List<Product>;
+    //
+    //         return GridView.builder(
+    //           // const keyword can be used so that it does not rebuild when the build method is called
+    //           // useful for performance improvement
+    //           padding: const EdgeInsets.all(10.0),
+    //           itemCount: products.length,
+    //           // grid delegate describes how many grids should be there
+    //           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+    //             crossAxisCount: 1,
+    //             childAspectRatio: 3 / 2,
+    //             crossAxisSpacing: 10,
+    //             mainAxisSpacing: 10,
+    //           ),
+    //           // item builder defines how the grid should look
+    //           itemBuilder: (ctx, i) {
+    //             Product product = products[i];
+    //             return ProductItem(product:product);
+    //           },
+    //         );
+    //
+    //         // return ListView.builder(
+    //         //   primary: false,
+    //         //   scrollDirection: Axis.vertical,
+    //         //   shrinkWrap: true,
+    //         //   itemCount: items == null ? 0 : items.length,
+    //         //   itemBuilder: (BuildContext ctx, int index) {
+    //         //     Product item = items[index];
+    //         //     return ProductItem(
+    //         //       item: item,
+    //         //     );
+    //         //   },
+    //         // );
+    //       }
+    //     },
+    //   ),
+    // );
+  }
+
 }
