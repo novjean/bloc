@@ -11,24 +11,10 @@ class ProductsGrid extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
-    // return ListView.builder(
-    //   primary: false,
-    //   scrollDirection: Axis.horizontal,
-    //   shrinkWrap: true,
-    //   itemCount: products == null ? 0 : products.length,
-    //   itemBuilder: (BuildContext ctx, int index) {
-    //     Product product = products[index];
-    //
-    //     return ProductItem(
-    //       product: product,
-    //     );
-    //   },
-    // );
-
     return GridView.builder(
       // const keyword can be used so that it does not rebuild when the build method is called
       // useful for performance improvement
-      // padding: const EdgeInsets.all(10.0),
+      padding: const EdgeInsets.all(10.0),
       scrollDirection: Axis.vertical,
       itemCount: products.length,
       // grid delegate describes how many grids should be there
