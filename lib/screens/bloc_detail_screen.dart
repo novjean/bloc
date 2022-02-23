@@ -19,11 +19,6 @@ class BlocDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Stream<QuerySnapshot> _servicesStream = FirebaseFirestore.instance
-        .collection('services')
-        .where('blocId', isEqualTo: bloc.id)
-        .snapshots();
-
     return Scaffold(
       appBar: AppBar(
         title: Text(bloc.name),
@@ -47,7 +42,59 @@ class BlocDetailScreen extends StatelessWidget {
         splashColor: Colors.grey,
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-      body: StreamBuilder<QuerySnapshot>(
+      body: ListView(
+        children: [
+          buildBanner(context),
+          SizedBox(height: 20.0),
+          buildBlocs(context),
+          SizedBox(height: 20.0),
+        ],
+      ),
+    );
+  }
+
+  buildBanner(BuildContext context) {
+    return Card(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0.0)),
+      elevation: 3.0,
+      child: Column(
+        children: <Widget>[
+          Stack(
+            children: <Widget>[
+              Container(
+                height: MediaQuery.of(context).size.height / 5.5,
+                width: MediaQuery.of(context).size.width,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(0),
+                    topRight: Radius.circular(0),
+                  ),
+                  child: FadeInImage(
+                    placeholder: const AssetImage(
+                        'assets/images/product-placeholder.png'),
+                    image: bloc.imageUrl != "url"
+                        ? NetworkImage(bloc.imageUrl)
+                        : NetworkImage("assets/images/product-placeholder.png"),
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  buildBlocs(BuildContext context) {
+    final Stream<QuerySnapshot> _servicesStream = FirebaseFirestore.instance
+        .collection('services')
+        .where('blocId', isEqualTo: bloc.id)
+        .snapshots();
+    return Container(
+      height: MediaQuery.of(context).size.height,
+      padding: const EdgeInsets.fromLTRB(10.0, 0, 10.0, 0),
+      child: StreamBuilder<QuerySnapshot>(
         stream: _servicesStream,
         builder: (ctx, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -57,7 +104,7 @@ class BlocDetailScreen extends StatelessWidget {
           }
           return GridView(
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
+              crossAxisCount: 1,
               childAspectRatio: 3 / 2,
               crossAxisSpacing: 10,
               mainAxisSpacing: 10,

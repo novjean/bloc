@@ -70,7 +70,7 @@ class BlocServiceDetailScreen extends StatelessWidget {
         padding: const EdgeInsets.fromLTRB(10.0, 0, 10.0, 0),
         child: ListView(
           children: <Widget>[
-            buildServiceDisplayHeader(context),
+            buildBanner(context),
             SizedBox(height: 20.0),
             buildServiceCategories(context),
             SizedBox(height: 20.0),
@@ -82,7 +82,7 @@ class BlocServiceDetailScreen extends StatelessWidget {
     );
   }
 
-  buildServiceDisplayHeader(BuildContext context) {
+  buildBanner(BuildContext context) {
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
       elevation: 3.0,
