@@ -1,3 +1,4 @@
+import 'package:bloc/screens/product_detail_screen.dart';
 import 'package:flutter/material.dart';
 
 import '../db/entity/product.dart';
@@ -14,11 +15,9 @@ class ProductItem extends StatelessWidget {
       child: GridTile(
         child: GestureDetector(
           onTap: () {
-            // Navigator.of(context).push(MaterialPageRoute(builder: (ctx) => ProductDetailScreen(title)),);
-            // Navigator.of(context).pushNamed(
-            //   ProductDetailScreen.routeName,
-            //   arguments: product.id,
-            // );
+            Navigator.of(context).push(
+              MaterialPageRoute(builder: (ctx) => ProductDetailScreen(product: product)),
+            );
           },
           child: Hero(
             // hero should be wired in with where we are animating to

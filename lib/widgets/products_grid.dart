@@ -17,6 +17,7 @@ class ProductsGrid extends StatelessWidget{
       padding: const EdgeInsets.all(10.0),
       scrollDirection: Axis.vertical,
       itemCount: products.length,
+      physics: NeverScrollableScrollPhysics(),
       // grid delegate describes how many grids should be there
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 1,
