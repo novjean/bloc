@@ -1,3 +1,4 @@
+import 'package:bloc/widgets/ui/cover_photo.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -44,43 +45,10 @@ class BlocDetailScreen extends StatelessWidget {
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       body: ListView(
         children: [
-          buildBanner(context),
+          CoverPhoto(bloc.name, bloc.imageUrl),
           SizedBox(height: 20.0),
           buildBlocs(context),
           SizedBox(height: 20.0),
-        ],
-      ),
-    );
-  }
-
-  buildBanner(BuildContext context) {
-    return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0.0)),
-      elevation: 3.0,
-      child: Column(
-        children: <Widget>[
-          Stack(
-            children: <Widget>[
-              Container(
-                height: MediaQuery.of(context).size.height / 5.5,
-                width: MediaQuery.of(context).size.width,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(0),
-                    topRight: Radius.circular(0),
-                  ),
-                  child: FadeInImage(
-                    placeholder: const AssetImage(
-                        'assets/images/product-placeholder.png'),
-                    image: bloc.imageUrl != "url"
-                        ? NetworkImage(bloc.imageUrl)
-                        : NetworkImage("assets/images/product-placeholder.png"),
-                    fit: BoxFit.cover,
-                  ),
-                ),
-              ),
-            ],
-          ),
         ],
       ),
     );

@@ -1,4 +1,5 @@
 import 'package:bloc/db/entity/bloc_service.dart';
+import 'package:bloc/widgets/ui/cover_photo.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -66,54 +67,52 @@ class BlocServiceDetailScreen extends StatelessWidget {
         ],
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-      body: Padding(
-        padding: const EdgeInsets.fromLTRB(10.0, 0, 10.0, 0),
-        child: ListView(
-          children: <Widget>[
-            buildBanner(context),
-            SizedBox(height: 20.0),
-            buildServiceCategories(context),
-            SizedBox(height: 20.0),
-            buildServiceItems(context),
-            SizedBox(height: 30.0),
-          ],
-        ),
-      ),
-    );
-  }
-
-  buildBanner(BuildContext context) {
-    return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
-      elevation: 3.0,
-      child: Column(
+      body: ListView(
         children: <Widget>[
-          Stack(
-            children: <Widget>[
-              Container(
-                height: MediaQuery.of(context).size.height / 3.5,
-                width: MediaQuery.of(context).size.width,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(10),
-                    topRight: Radius.circular(10),
-                  ),
-                  child: FadeInImage(
-                    placeholder: const AssetImage(
-                        'assets/images/product-placeholder.png'),
-                    image: service.imageUrl != "url"
-                        ? NetworkImage(service.imageUrl)
-                        : NetworkImage("assets/images/product-placeholder.png"),
-                    fit: BoxFit.cover,
-                  ),
-                ),
-              ),
-            ],
-          ),
+          CoverPhoto(service.name, service.imageUrl),
+          // buildBanner(context),
+          SizedBox(height: 20.0),
+          buildServiceCategories(context),
+          SizedBox(height: 20.0),
+          buildServiceItems(context),
+          SizedBox(height: 30.0),
         ],
       ),
     );
   }
+
+  // buildBanner(BuildContext context) {
+  //   return Card(
+  //     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+  //     elevation: 3.0,
+  //     child: Column(
+  //       children: <Widget>[
+  //         Stack(
+  //           children: <Widget>[
+  //             Container(
+  //               height: MediaQuery.of(context).size.height / 3.5,
+  //               width: MediaQuery.of(context).size.width,
+  //               child: ClipRRect(
+  //                 borderRadius: BorderRadius.only(
+  //                   topLeft: Radius.circular(10),
+  //                   topRight: Radius.circular(10),
+  //                 ),
+  //                 child: FadeInImage(
+  //                   placeholder: const AssetImage(
+  //                       'assets/images/product-placeholder.png'),
+  //                   image: service.imageUrl != "url"
+  //                       ? NetworkImage(service.imageUrl)
+  //                       : NetworkImage("assets/images/product-placeholder.png"),
+  //                   fit: BoxFit.cover,
+  //                 ),
+  //               ),
+  //             ),
+  //           ],
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
   /** Categories List **/
   buildServiceCategories(BuildContext context) {
@@ -192,6 +191,7 @@ class BlocServiceDetailScreen extends StatelessWidget {
 
     return Container(
       height: MediaQuery.of(context).size.height,
+      padding: const EdgeInsets.fromLTRB(10.0, 0, 10.0, 0),
       child: StreamBuilder<QuerySnapshot>(
         stream: _itemsStream,
         builder: (ctx, snapshot) {
