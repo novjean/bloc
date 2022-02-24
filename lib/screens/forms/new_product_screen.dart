@@ -59,18 +59,18 @@ class _NewProductScreenState extends State<NewProductScreen> {
       var time = Timestamp.now().toString();
 
       //determine the bloc identifier
-      String itemId = StringUtils.getRandomString(20);
+      String productId = StringUtils.getRandomString(20);
 
       // this points to the root cloud storage bucket
       final ref = FirebaseStorage.instance
           .ref()
           .child('product_image')
-          .child(itemId + '.jpg');
+          .child(productId + '.jpg');
       await ref.putFile(image);
       final url = await ref.getDownloadURL();
 
-      await FirebaseFirestore.instance.collection('products').doc(itemId).set({
-        'id': itemId,
+      await FirebaseFirestore.instance.collection('products').doc(productId).set({
+        'id': productId,
         'name': productName,
         'type': productType,
         'description': productDescription,
