@@ -10,10 +10,10 @@ class NewProductForm extends StatefulWidget{
 
   final bool isLoading;
   final void Function(
-      String itemName,
-      String itemType,
-      String itemDescription,
-      String itemPrice,
+      String productName,
+      String productType,
+      String productDescription,
+      String productPrice,
       File image,
       BuildContext ctx,
       ) submitFn;
@@ -28,10 +28,10 @@ class _NewProductFormState extends State<NewProductForm> {
   final _formKey = GlobalKey<FormState>();
 
   // var _isLogin = true;
-  String _itemName = '';
-  String _itemType = '';
-  String _itemDescription = '';
-  String _itemPrice ='';
+  String _productName = '';
+  String _productType = '';
+  String _productDescription = '';
+  String _productPrice ='';
   late File _userImageFile;
 
   void _pickedImage(File image) {
@@ -57,10 +57,10 @@ class _NewProductFormState extends State<NewProductForm> {
     if (isValid) {
       _formKey.currentState!.save();
       widget.submitFn(
-        _itemName.trim(),
-        _itemType.trim(),
-        _itemDescription,
-        _itemPrice,
+        _productName.trim(),
+        _productType.trim(),
+        _productDescription,
+        _productPrice,
         _userImageFile,
         context,
       );
@@ -81,27 +81,27 @@ class _NewProductFormState extends State<NewProductForm> {
               children: [
                 UserImagePicker(_pickedImage, 90, 300),
                 TextFormField(
-                  key: const ValueKey('item_name'),
+                  key: const ValueKey('product_name'),
                   autocorrect: false,
                   textCapitalization: TextCapitalization.words,
                   enableSuggestions: false,
                   validator: (value) {
                     if (value!.isEmpty) {
-                      return 'Please enter a valid name of the item.';
+                      return 'Please enter a valid name for the product.';
                     }
                     return null;
                   },
                   keyboardType: TextInputType.text,
                   decoration: const InputDecoration(
-                    labelText: 'Item Name',
+                    labelText: 'Product Name',
                   ),
                   onSaved: (value) {
-                    _itemName = value!;
+                    _productName = value!;
                   },
                 ),
 
                 TextFormField(
-                  key: const ValueKey('item_type'),
+                  key: const ValueKey('product_type'),
                   autocorrect: false,
                   textCapitalization: TextCapitalization.words,
                   enableSuggestions: false,
@@ -113,49 +113,49 @@ class _NewProductFormState extends State<NewProductForm> {
                   },
                   keyboardType: TextInputType.text,
                   decoration: const InputDecoration(
-                    labelText: 'Item Type',
+                    labelText: 'Product Type',
                   ),
                   onSaved: (value) {
-                    _itemType = value!;
+                    _productType = value!;
                   },
                 ),
                 TextFormField(
-                  key: const ValueKey('item_description'),
+                  key: const ValueKey('product_description'),
                   autocorrect: false,
                   textCapitalization: TextCapitalization.sentences,
                   enableSuggestions: false,
                   validator: (value) {
                     if (value!.isEmpty) {
-                      return 'Please enter a valid description of item.';
+                      return 'Please enter a valid description of the product.';
                     }
                     return null;
                   },
                   keyboardType: TextInputType.text,
                   decoration: const InputDecoration(
-                    labelText: 'Item Description',
+                    labelText: 'Product Description',
                   ),
                   onSaved: (value) {
-                    _itemDescription = value!;
+                    _productDescription = value!;
                   },
                 ),
 
                 TextFormField(
-                  key: const ValueKey('item_price'),
+                  key: const ValueKey('product_price'),
                   autocorrect: false,
                   textCapitalization: TextCapitalization.none,
                   enableSuggestions: false,
                   validator: (value) {
                     if (value!.isEmpty) {
-                      return 'Please enter a valid price for item.';
+                      return 'Please enter a valid price for the product.';
                     }
                     return null;
                   },
                   keyboardType: TextInputType.number,
                   decoration: const InputDecoration(
-                    labelText: 'Item Price',
+                    labelText: 'Product Price',
                   ),
                   onSaved: (value) {
-                    _itemPrice = value!;
+                    _productPrice = value!;
                   },
                 ),
 

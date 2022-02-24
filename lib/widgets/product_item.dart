@@ -51,28 +51,28 @@ class ProductItem extends StatelessWidget {
             product.name,
             textAlign: TextAlign.center,
           ),
-          // trailing: IconButton(
-          //   icon: Icon(Icons.shopping_cart),
-          //   onPressed: () {
-          //     cart.addItem(product.id, product.price, product.title);
-          //
-          //     // info popup
-          //     // this captures the nearest widget that controls the page
-          //     ScaffoldMessenger.of(context).hideCurrentSnackBar();
-          //     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          //       content: Text('Added item to cart!'),
-          //       duration: Duration(seconds: 2),
-          //       action: SnackBarAction(
-          //         label: 'UNDO',
-          //         onPressed: () {
-          //           cart.removeSingleItem(product.id);
-          //         },
-          //       ),
-          //     ));
-          //     // Scaffold.of(context).openDrawer();
-          //   },
-          //   color: Theme.of(context).accentColor,
-          // ),
+          trailing: IconButton(
+            icon: Icon(Icons.shopping_cart),
+            onPressed: () {
+              // cart.addItem(product.id, product.price, product.title);
+
+              // info popup
+              // this captures the nearest widget that controls the page
+              ScaffoldMessenger.of(context).hideCurrentSnackBar();
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                content: Text('Added item to cart!'),
+                duration: Duration(seconds: 2),
+                action: SnackBarAction(
+                  label: 'UNDO',
+                  onPressed: () {
+                    // cart.removeSingleItem(product.id);
+                  },
+                ),
+              ));
+              // Scaffold.of(context).openDrawer();
+            },
+            color: Theme.of(context).accentColor,
+          ),
         ),
       ),
     );

@@ -30,21 +30,21 @@ class _NewProductScreenState extends State<NewProductScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.service.name + ' : Category Item Form'),
+        title: Text(widget.service.name + ' : New Product Form'),
       ),
       // drawer: AppDrawer(),
       body: NewProductForm(
-        _submitNewItemForm, _isLoading,
+        _submitNewProductForm, _isLoading,
         // _isLoading,
       ),
     );
   }
 
-  void _submitNewItemForm(
-      String itemName,
-      String itemType,
-      String itemDescription,
-      String itemPrice,
+  void _submitNewProductForm(
+      String productName,
+      String productType,
+      String productDescription,
+      String productPrice,
       File image,
       BuildContext ctx,
       ) async {
@@ -64,17 +64,17 @@ class _NewProductScreenState extends State<NewProductScreen> {
       // this points to the root cloud storage bucket
       final ref = FirebaseStorage.instance
           .ref()
-          .child('item_image')
+          .child('product_image')
           .child(itemId + '.jpg');
       await ref.putFile(image);
       final url = await ref.getDownloadURL();
 
-      await FirebaseFirestore.instance.collection('items').doc(itemId).set({
+      await FirebaseFirestore.instance.collection('products').doc(itemId).set({
         'id': itemId,
-        'name': itemName,
-        'type': itemType,
-        'description': itemDescription,
-        'price': int.parse(itemPrice),
+        'name': productName,
+        'type': productType,
+        'description': productDescription,
+        'price': int.parse(productPrice),
         'serviceId':widget.service.id,
         'imageUrl': url,
         'ownerId': user!.uid,
@@ -83,7 +83,7 @@ class _NewProductScreenState extends State<NewProductScreen> {
 
       Scaffold.of(ctx).showSnackBar(
         SnackBar(
-          content: Text(itemName + " is added to BLOC Service " + widget.service.name),
+          content: Text(productName + " is added to BLOC Service " + widget.service.name),
           backgroundColor: Theme.of(ctx).errorColor,
         ),
       );
