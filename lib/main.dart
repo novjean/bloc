@@ -16,6 +16,7 @@ import 'db/database.dart';
 import 'screens/auth_screen.dart';
 import 'screens/main_screen.dart';
 import 'screens/splash_screen.dart';
+import 'utils/constants.dart';
 
 var logger = Logger(
   printer: PrettyPrinter(),
@@ -44,7 +45,8 @@ class MyApp extends StatelessWidget {
         future: _initialization,
         builder: (ctx, appSnapshot) {
           return MaterialApp(
-              title: 'BLOC',
+              // debugShowCheckedModeBanner: false,
+              title: kAppTitle,
               theme: ThemeData(
                 primarySwatch: Colors.red,
                 backgroundColor: Colors.red,

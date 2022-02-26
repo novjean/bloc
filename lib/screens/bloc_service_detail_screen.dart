@@ -64,17 +64,33 @@ class BlocServiceDetailScreen extends StatelessWidget {
         ],
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-      body: ListView(
-        children: <Widget>[
-          CoverPhoto(service.name, service.imageUrl),
-          SizedBox(height: 20.0),
-          buildServiceCategories(context),
-          SizedBox(height: 20.0),
-          buildProducts(context),
-          SizedBox(height: 30.0),
-        ],
+      body: _buildBody(context, service),
+    );
+  }
+
+  Widget _buildBody(BuildContext context, BlocService service) {
+    return SingleChildScrollView(
+      child: Column(
+          children: [
+            CoverPhoto(service.name, service.imageUrl),
+            SizedBox(height: 20.0),
+            buildServiceCategories(context),
+            SizedBox(height: 20.0),
+            buildProducts(context),
+            SizedBox(height: 30.0),
+          ]
       ),
     );
+    // ListView(
+    //   children: <Widget>[
+    //     CoverPhoto(service.name, service.imageUrl),
+    //     SizedBox(height: 20.0),
+    //     buildServiceCategories(context),
+    //     SizedBox(height: 20.0),
+    //     buildProducts(context),
+    //     SizedBox(height: 30.0),
+    //   ],
+    // ),
   }
 
   /** Categories List **/
@@ -174,7 +190,7 @@ class BlocServiceDetailScreen extends StatelessWidget {
 
           if (i==snapshot.data!.docs.length-1) {
             // return ProductsList(products);
-            return ProductsGrid(products);
+            return ProductsGrid(products, dao);
           }
         }
         return Text('Streaming service products...');

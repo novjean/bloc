@@ -1,3 +1,4 @@
+import 'package:bloc/db/entity/cart_item.dart';
 import 'package:bloc/db/entity/category.dart';
 import 'package:bloc/db/entity/product.dart';
 import 'package:bloc/db/entity/person.dart';
@@ -38,9 +39,12 @@ abstract class BlocDao {
   Stream<List<Category>> getCategories();
 
   @insert
-  Future<void> insertItem(Product item);
+  Future<void> insertProduct(Product product);
 
-  @Query('SELECT * FROM Item')
-  Stream<List<Product>> getItems();
+  @Query('SELECT * FROM Product')
+  Stream<List<Product>> getProducts();
+
+  @insert
+  Future<void> insertCartItem(CartItem cartitem);
 
 }

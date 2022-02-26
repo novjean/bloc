@@ -82,19 +82,21 @@ class _$AppDatabase extends AppDatabase {
       },
       onCreate: (database, version) async {
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `Person` (`id` INTEGER NOT NULL, `name` TEXT NOT NULL, PRIMARY KEY (`id`))');
-        await database.execute(
-            'CREATE TABLE IF NOT EXISTS `User` (`userId` TEXT NOT NULL, `username` TEXT NOT NULL, `email` TEXT NOT NULL, `imageUrl` TEXT NOT NULL, `clearanceLevel` INTEGER NOT NULL, PRIMARY KEY (`userId`))');
-        await database.execute(
-            'CREATE TABLE IF NOT EXISTS `City` (`id` TEXT NOT NULL, `name` TEXT NOT NULL, `ownerId` TEXT NOT NULL, `imageUrl` TEXT NOT NULL, PRIMARY KEY (`id`))');
-        await database.execute(
             'CREATE TABLE IF NOT EXISTS `Bloc` (`id` TEXT NOT NULL, `name` TEXT NOT NULL, `cityName` TEXT NOT NULL, `addressLine1` TEXT NOT NULL, `addressLine2` TEXT NOT NULL, `pinCode` TEXT NOT NULL, `imageUrl` TEXT NOT NULL, `ownerId` TEXT NOT NULL, `createdAt` TEXT NOT NULL, PRIMARY KEY (`id`))');
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `BlocService` (`id` TEXT NOT NULL, `name` TEXT NOT NULL, `blocId` TEXT NOT NULL, `type` TEXT NOT NULL, `primaryNumber` REAL NOT NULL, `secondaryNumber` REAL NOT NULL, `email` TEXT NOT NULL, `imageUrl` TEXT NOT NULL, `ownerId` TEXT NOT NULL, `createdAt` TEXT NOT NULL, PRIMARY KEY (`id`))');
         await database.execute(
+            'CREATE TABLE IF NOT EXISTS `CartItem` (`id` TEXT NOT NULL, `cartNumber` INTEGER NOT NULL, `userId` TEXT NOT NULL, `productId` TEXT NOT NULL, `quantity` INTEGER NOT NULL, `createdAt` TEXT NOT NULL, PRIMARY KEY (`id`))');
+        await database.execute(
             'CREATE TABLE IF NOT EXISTS `Category` (`id` TEXT NOT NULL, `name` TEXT NOT NULL, `type` TEXT NOT NULL, `serviceId` TEXT NOT NULL, `imageUrl` TEXT NOT NULL, `ownerId` TEXT NOT NULL, `createdAt` TEXT NOT NULL, `sequence` INTEGER NOT NULL, PRIMARY KEY (`id`))');
         await database.execute(
+            'CREATE TABLE IF NOT EXISTS `City` (`id` TEXT NOT NULL, `name` TEXT NOT NULL, `ownerId` TEXT NOT NULL, `imageUrl` TEXT NOT NULL, PRIMARY KEY (`id`))');
+        await database.execute(
+            'CREATE TABLE IF NOT EXISTS `Person` (`id` INTEGER NOT NULL, `name` TEXT NOT NULL, PRIMARY KEY (`id`))');
+        await database.execute(
             'CREATE TABLE IF NOT EXISTS `Product` (`id` TEXT NOT NULL, `name` TEXT NOT NULL, `type` TEXT NOT NULL, `description` TEXT NOT NULL, `price` INTEGER NOT NULL, `serviceId` TEXT NOT NULL, `imageUrl` TEXT NOT NULL, `ownerId` TEXT NOT NULL, `createdAt` TEXT NOT NULL, PRIMARY KEY (`id`))');
+        await database.execute(
+            'CREATE TABLE IF NOT EXISTS `User` (`userId` TEXT NOT NULL, `username` TEXT NOT NULL, `email` TEXT NOT NULL, `imageUrl` TEXT NOT NULL, `clearanceLevel` INTEGER NOT NULL, PRIMARY KEY (`userId`))');
 
         await callback?.onCreate?.call(database, version);
       },
@@ -193,7 +195,18 @@ class _$BlocDao extends BlocDao {
                   'ownerId': item.ownerId,
                   'createdAt': item.createdAt
                 },
-            changeListener);
+            changeListener),
+        _cartItemInsertionAdapter = InsertionAdapter(
+            database,
+            'CartItem',
+            (CartItem item) => <String, Object?>{
+                  'id': item.id,
+                  'cartNumber': item.cartNumber,
+                  'userId': item.userId,
+                  'productId': item.productId,
+                  'quantity': item.quantity,
+                  'createdAt': item.createdAt
+                });
 
   final sqflite.DatabaseExecutor database;
 
@@ -214,6 +227,8 @@ class _$BlocDao extends BlocDao {
   final InsertionAdapter<Category> _categoryInsertionAdapter;
 
   final InsertionAdapter<Product> _productInsertionAdapter;
+
+  final InsertionAdapter<CartItem> _cartItemInsertionAdapter;
 
   @override
   Future<List<Person>> findAllPersons() async {
@@ -250,8 +265,8 @@ class _$BlocDao extends BlocDao {
   }
 
   @override
-  Stream<List<Product>> getItems() {
-    return _queryAdapter.queryListStream('SELECT * FROM Item',
+  Stream<List<Product>> getProducts() {
+    return _queryAdapter.queryListStream('SELECT * FROM Product',
         mapper: (Map<String, Object?> row) => Product(
             row['id'] as String,
             row['name'] as String,
@@ -298,7 +313,12 @@ class _$BlocDao extends BlocDao {
   }
 
   @override
-  Future<void> insertItem(Product item) async {
-    await _productInsertionAdapter.insert(item, OnConflictStrategy.abort);
+  Future<void> insertProduct(Product product) async {
+    await _productInsertionAdapter.insert(product, OnConflictStrategy.abort);
+  }
+
+  @override
+  Future<void> insertCartItem(CartItem cartitem) async {
+    await _cartItemInsertionAdapter.insert(cartitem, OnConflictStrategy.abort);
   }
 }

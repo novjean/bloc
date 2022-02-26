@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 
+import '../db/dao/bloc_dao.dart';
 import '../db/entity/product.dart';
-import 'new_product_item.dart';
+import 'product_item.dart';
 
 class ProductsGrid extends StatelessWidget{
   final List<Product> products;
+  final BlocDao dao;
 
-  ProductsGrid(this.products);
+  ProductsGrid(this.products, this.dao);
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +35,7 @@ class ProductsGrid extends StatelessWidget{
         // item builder defines how the grid should look
         itemBuilder: (ctx, i) {
           Product product = products[i];
-          return NewProductItem(product:product);
+          return ProductItem(product:product, dao:dao);
         },
       ),
     );

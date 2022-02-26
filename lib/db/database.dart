@@ -14,8 +14,16 @@ import 'entity/user.dart';
 
 part 'database.g.dart'; // the generated code will be there
 
-@Database(version: 10, entities: [CartItem, Person, User, City, Bloc,
-BlocService, Category, Product])
+@Database(version: 10, entities: [
+  Bloc,
+  BlocService,
+  CartItem,
+  Category,
+  City,
+  Person,
+  Product,
+  User
+])
 abstract class AppDatabase extends FloorDatabase {
   BlocDao get blocDao;
 }

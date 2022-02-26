@@ -1,147 +1,125 @@
-import 'package:bloc/screens/product_detail_screen.dart';
+import 'package:bloc/db/bloc_repository.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:logger/logger.dart';
 
+import '../db/dao/bloc_dao.dart';
+import '../db/entity/cart_item.dart';
 import '../db/entity/product.dart';
+import '../screens/product_detail_screen.dart';
+import '../utils/string_utils.dart';
 
 class ProductItem extends StatelessWidget {
   final Product product;
+  final BlocDao dao;
 
-  ProductItem({required this.product});
+  ProductItem({required this.product, required this.dao});
 
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(10),
-      child: GridTile(
-        child: GestureDetector(
-          onTap: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(builder: (ctx) => ProductDetailScreen(product: product)),
-            );
-          },
-          child: Hero(
-            // hero should be wired in with where we are animating to
-            tag: product.id,
-            child: FadeInImage(
-              placeholder: AssetImage('assets/images/product-placeholder.png'),
-              image: NetworkImage(product.imageUrl),
-              fit: BoxFit.cover,
-            ),
-          ),
-        ),
-        footer: GridTileBar(
-          backgroundColor: Colors.black87,
-          // leading is adding a widget at the beginning
-          // leading: Consumer<Product>(
-          //   builder: (ctx, product, child) => IconButton(
-          //     icon: Icon(
-          //       product.isFavorite ? Icons.favorite : Icons.favorite_border,
-          //     ),
-          //     onPressed: () {
-          //       product.toggleFavoriteStatus(authData.token, authData.userId);
-          //     },
-          //     // so if we had something that is constant,
-          //     // then point it to the child and it will not be reloaded
-          //     // label: child,
-          //     color: Theme.of(context).accentColor,
-          //   ),
-          //   child: Text('Never changes!'),
-          // ),
-          title: Text(
-            product.name,
-            textAlign: TextAlign.center,
-          ),
-          trailing: IconButton(
-            icon: Icon(Icons.shopping_cart),
-            onPressed: () {
-              // cart.addItem(product.id, product.price, product.title);
+    var logger = Logger();
+    Color primaryColor = Theme
+        .of(context)
+        .primaryColor;
 
-              // info popup
-              // this captures the nearest widget that controls the page
-              ScaffoldMessenger.of(context).hideCurrentSnackBar();
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                content: Text('Added item to cart!'),
-                duration: Duration(seconds: 2),
-                action: SnackBarAction(
-                  label: 'UNDO',
-                  onPressed: () {
-                    // cart.removeSingleItem(product.id);
-                  },
+    return Container(
+      margin: const EdgeInsets.only(bottom: 10.0),
+      child: GestureDetector(
+        onTap: () {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+                builder: (ctx) => ProductDetailScreen(product: product)),
+          );
+        },
+        child: Hero(
+          tag: product.id,
+          // 'detail_food$index',
+          child: Card(
+            child: Row(
+              children: <Widget>[
+                Container(
+                  height: 100,
+                  width: 100,
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                        image: NetworkImage(product.imageUrl),
+                        fit: BoxFit.cover
+                      // AssetImage(food['image']),
+                    ),
+                  ),
                 ),
-              ));
-              // Scaffold.of(context).openDrawer();
-            },
-            color: Theme.of(context).accentColor,
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: <Widget>[
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            Text(product.name),
+                            // Icon(Icons.delete_outline)
+                          ],
+                        ),
+                        Text('\u20B9 ${product.price}'),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: <Widget>[
+                            // IconButton(
+                            //   icon: Icon(Icons.remove),
+                            //   onPressed: () {
+                            //     logger.i('remove product from cart.');
+                            //   },
+                            // ),
+                            Container(
+                              color: primaryColor,
+                              margin: const EdgeInsets.symmetric(
+                                horizontal: 10.0,
+                              ),
+                              padding: const EdgeInsets.symmetric(
+                                vertical: 4.0,
+                                horizontal: 12.0,
+                              ),
+                              child: TextButton(
+                                child: Text('Add',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                    ),
+                                ),
+                                onPressed: () {
+                                  // add it to the cart
+                                  String id = StringUtils.getRandomString(20);
+                                  int cartNumber = 0;
+                                  final user = FirebaseAuth.instance.currentUser;
+                                  String userId = user!.uid;
+                                  String timestamp = Timestamp.now().toString();
+                                  CartItem cartitem = CartItem(id, cartNumber, userId, product.id, 1, timestamp);
+                                  BlocRepository.insertCartItem(dao, cartitem);
+                                },
+                              ),
+                            ),
+                            // IconButton(
+                            //   icon: Icon(Icons.add),
+                            //   color: primaryColor,
+                            //   onPressed: () {
+                            //     logger.i('add product to cart.');
+                            //   },
+                            // ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
     );
-
-    // return Padding(
-    //   padding: const EdgeInsets.only(right: 10.0),
-    //   child: ClipRRect(
-    //     borderRadius: BorderRadius.circular(8.0),
-    //     child: Stack(
-    //       children: <Widget>[
-    //         FadeInImage(
-    //           placeholder: AssetImage('assets/images/product-placeholder.png'),
-    //           height: MediaQuery.of(context).size.height / 4,
-    //           width: MediaQuery.of(context).size.height / 1,
-    //           image: item.imageUrl != "url"
-    //               ? NetworkImage(item.imageUrl)
-    //               : NetworkImage(
-    //               "assets/images/product-placeholder.png"),
-    //           fit: BoxFit.cover,
-    //         ),
-    //         // Image.asset(
-    //         //   cat["img"],
-    //         //   height: MediaQuery.of(context).size.height / 6,
-    //         //   width: MediaQuery.of(context).size.height / 6,
-    //         //   fit: BoxFit.cover,
-    //         // ),
-    //         Container(
-    //           decoration: BoxDecoration(
-    //             gradient: LinearGradient(
-    //               begin: Alignment.topCenter,
-    //               end: Alignment.bottomCenter,
-    //               // Add one stop for each color. Stops should increase from 0 to 1
-    //               stops: [0.2, 0.7],
-    //               colors: [
-    //                 Color.fromARGB(100, 0, 0, 0),
-    //                 Color.fromARGB(100, 0, 0, 0),
-    //               ],
-    //               // stops: [0.0, 0.1],
-    //             ),
-    //           ),
-    //           height: MediaQuery.of(context).size.height / 6,
-    //           width: MediaQuery.of(context).size.height / 6,
-    //         ),
-    //         Center(
-    //           child: Container(
-    //             height: MediaQuery.of(context).size.height / 6,
-    //             width: MediaQuery.of(context).size.height / 6,
-    //             padding: const EdgeInsets.all(1),
-    //             constraints: BoxConstraints(
-    //               minWidth: 20,
-    //               minHeight: 20,
-    //             ),
-    //             child: Center(
-    //               child: Text(
-    //                 item.name,
-    //                 style: TextStyle(
-    //                   color: Colors.white,
-    //                   fontSize: 20,
-    //                   fontWeight: FontWeight.bold,
-    //                 ),
-    //                 textAlign: TextAlign.center,
-    //               ),
-    //             ),
-    //           ),
-    //         ),
-    //       ],
-    //     ),
-    //   ),
-    // );
   }
 
 }
