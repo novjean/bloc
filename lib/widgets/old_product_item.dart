@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 
 import '../db/entity/product.dart';
 
-class ProductItem extends StatelessWidget {
+class OldProductItem extends StatelessWidget {
   final Product product;
 
-  ProductItem({required this.product});
+  OldProductItem({required this.product});
 
   @override
   Widget build(BuildContext context) {

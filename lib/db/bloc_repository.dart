@@ -49,4 +49,10 @@ class BlocRepository {
     logger.i("insertCartItem(): " + cartitem.id);
     await dao.insertCartItem(cartitem);
   }
+
+  static Future<List<Product>> getProducts(BlocDao dao) async {
+    logger.i("getProducts(): ");
+    Future<List<Product>> future = dao.getProducts();
+    return future;
+  }
 }

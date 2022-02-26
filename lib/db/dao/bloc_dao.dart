@@ -42,7 +42,7 @@ abstract class BlocDao {
   Future<void> insertProduct(Product product);
 
   @Query('SELECT * FROM Product')
-  Stream<List<Product>> getProducts();
+  Future<List<Product>> getProducts();
 
   @insert
   Future<void> insertCartItem(CartItem cartitem);

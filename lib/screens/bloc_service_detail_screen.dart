@@ -1,4 +1,5 @@
 import 'package:bloc/db/entity/bloc_service.dart';
+import 'package:bloc/widgets/old_product_item.dart';
 import 'package:bloc/widgets/ui/cover_photo.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +11,7 @@ import '../db/entity/product.dart';
 import '../utils/category_utils.dart';
 import '../utils/product_utils.dart';
 import '../widgets/category_item.dart';
+import '../widgets/product_item.dart';
 import '../widgets/products_grid.dart';
 import '../widgets/ui/expandable_fab.dart';
 import 'cart_screen.dart';
@@ -164,7 +166,6 @@ class BlocServiceDetailScreen extends StatelessWidget {
   buildProducts(BuildContext context) {
     final Stream<QuerySnapshot> _itemsStream = FirebaseFirestore.instance
         .collection('products')
-    // .orderBy('sequence', descending: true)
         .where('serviceId', isEqualTo: service.id)
         .snapshots();
 
@@ -177,9 +178,6 @@ class BlocServiceDetailScreen extends StatelessWidget {
           );
         }
 
-        // if(count>0) {
-        //   snapshot.data!.docs.sort((a, b) => a['sequence'].compareTo(b['sequence']));
-        // }
         List<Product> products=[];
         for (int i = 0; i < snapshot.data!.docs.length; i++) {
           DocumentSnapshot document = snapshot.data!.docs[i];
@@ -189,12 +187,40 @@ class BlocServiceDetailScreen extends StatelessWidget {
           products.add(product);
 
           if (i==snapshot.data!.docs.length-1) {
-            // return ProductsList(products);
-            return ProductsGrid(products, dao);
+            // return ProductsGrid(products, dao);
+            return displayProductsList(context);
           }
         }
         return Text('Streaming service products...');
       },
     );
+  }
+
+  displayProductsList(BuildContext context) {
+    Future<List<Product>> fProducts = BlocRepository.getProducts(dao);
+
+    return FutureBuilder(future: fProducts,
+        builder: (context, snapshot) {
+          if(snapshot.connectionState == ConnectionState.waiting){
+            return Text('Loading...');
+          } else {
+            List<Product> products = snapshot.data! as List<Product>;
+
+            return ListView.builder(
+              primary: false,
+              scrollDirection: Axis.vertical,
+              shrinkWrap: true,
+              itemCount: products == null ? 0 : products.length,
+              itemBuilder: (BuildContext ctx, int index) {
+                Product product = products[index];
+
+                return ProductItem(
+                  product: product,
+                  dao: dao,
+                );
+              },
+            );
+          }
+        });
   }
 }

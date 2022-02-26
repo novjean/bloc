@@ -194,8 +194,7 @@ class _$BlocDao extends BlocDao {
                   'imageUrl': item.imageUrl,
                   'ownerId': item.ownerId,
                   'createdAt': item.createdAt
-                },
-            changeListener),
+                }),
         _cartItemInsertionAdapter = InsertionAdapter(
             database,
             'CartItem',
@@ -265,8 +264,8 @@ class _$BlocDao extends BlocDao {
   }
 
   @override
-  Stream<List<Product>> getProducts() {
-    return _queryAdapter.queryListStream('SELECT * FROM Product',
+  Future<List<Product>> getProducts() async {
+    return _queryAdapter.queryList('SELECT * FROM Product',
         mapper: (Map<String, Object?> row) => Product(
             row['id'] as String,
             row['name'] as String,
@@ -276,9 +275,7 @@ class _$BlocDao extends BlocDao {
             row['serviceId'] as String,
             row['imageUrl'] as String,
             row['ownerId'] as String,
-            row['createdAt'] as String),
-        queryableName: 'Product',
-        isView: false);
+            row['createdAt'] as String));
   }
 
   @override
