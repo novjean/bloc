@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:logger/logger.dart';
 
 import '../db/dao/bloc_dao.dart';
@@ -98,6 +99,16 @@ class ProductItem extends StatelessWidget {
                                   String timestamp = Timestamp.now().toString();
                                   CartItem cartitem = CartItem(id, cartNumber, userId, product.id, 1, timestamp);
                                   BlocRepository.insertCartItem(dao, cartitem);
+
+                                  Fluttertoast.showToast(
+                                      msg: product.name + ' is added to cart.',
+                                      toastLength: Toast.LENGTH_SHORT,
+                                      gravity: ToastGravity.BOTTOM,
+                                      timeInSecForIosWeb: 1,
+                                      backgroundColor: Colors.grey,
+                                      textColor: Colors.white,
+                                      fontSize: 16.0
+                                  );
                                 },
                               ),
                             ),

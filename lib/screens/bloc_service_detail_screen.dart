@@ -1,5 +1,4 @@
 import 'package:bloc/db/entity/bloc_service.dart';
-import 'package:bloc/widgets/old_product_item.dart';
 import 'package:bloc/widgets/ui/cover_photo.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -12,7 +11,6 @@ import '../utils/category_utils.dart';
 import '../utils/product_utils.dart';
 import '../widgets/category_item.dart';
 import '../widgets/product_item.dart';
-import '../widgets/products_grid.dart';
 import '../widgets/ui/expandable_fab.dart';
 import 'cart_screen.dart';
 import 'forms/new_product_screen.dart';
@@ -39,7 +37,7 @@ class BlocServiceDetailScreen extends StatelessWidget {
               // _showAction(context, 0)
               Navigator.of(context).push(
                 MaterialPageRoute(
-                    builder: (ctx) => CartScreen(service: service, dao:dao)),
+                    builder: (ctx) => CartScreen(service: service, dao: dao)),
               ),
             },
             icon: const Icon(Icons.shopping_cart_outlined),
@@ -58,7 +56,8 @@ class BlocServiceDetailScreen extends StatelessWidget {
               // _showAction(context, 2),
               Navigator.of(context).push(
                 MaterialPageRoute(
-                    builder: (ctx) => NewServiceCategoryScreen(service: service, dao:dao)),
+                    builder: (ctx) =>
+                        NewServiceCategoryScreen(service: service, dao: dao)),
               ),
             },
             icon: const Icon(Icons.category_outlined),
@@ -73,26 +72,16 @@ class BlocServiceDetailScreen extends StatelessWidget {
   Widget _buildBody(BuildContext context, BlocService service) {
     return SingleChildScrollView(
       child: Column(
-          children: [
-            CoverPhoto(service.name, service.imageUrl),
-            SizedBox(height: 20.0),
-            buildServiceCategories(context),
-            SizedBox(height: 20.0),
-            buildProducts(context),
-            SizedBox(height: 30.0),
-          ]
+        children: [
+          CoverPhoto(service.name, service.imageUrl),
+          SizedBox(height: 20.0),
+          buildServiceCategories(context),
+          SizedBox(height: 20.0),
+          buildProducts(context),
+          SizedBox(height: 10.0),
+        ],
       ),
     );
-    // ListView(
-    //   children: <Widget>[
-    //     CoverPhoto(service.name, service.imageUrl),
-    //     SizedBox(height: 20.0),
-    //     buildServiceCategories(context),
-    //     SizedBox(height: 20.0),
-    //     buildProducts(context),
-    //     SizedBox(height: 30.0),
-    //   ],
-    // ),
   }
 
   /** Categories List **/
@@ -121,7 +110,7 @@ class BlocServiceDetailScreen extends StatelessWidget {
           final Category cat = CategoryUtils.getCategory(data, document.id);
           BlocRepository.insertCategory(dao, cat);
 
-          if (i==snapshot.data!.docs.length-1) {
+          if (i == snapshot.data!.docs.length - 1) {
             return displayCategoryList(context);
           }
         }
@@ -138,7 +127,7 @@ class BlocServiceDetailScreen extends StatelessWidget {
       child: StreamBuilder(
         stream: _catsStream,
         builder: (context, snapshot) {
-          if(snapshot.connectionState == ConnectionState.waiting){
+          if (snapshot.connectionState == ConnectionState.waiting) {
             return Text('Loading...');
           } else {
             List<Category> cats = snapshot.data! as List<Category>;
@@ -178,7 +167,7 @@ class BlocServiceDetailScreen extends StatelessWidget {
           );
         }
 
-        List<Product> products=[];
+        List<Product> products = [];
         for (int i = 0; i < snapshot.data!.docs.length; i++) {
           DocumentSnapshot document = snapshot.data!.docs[i];
           Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
@@ -186,7 +175,7 @@ class BlocServiceDetailScreen extends StatelessWidget {
           BlocRepository.insertProduct(dao, product);
           products.add(product);
 
-          if (i==snapshot.data!.docs.length-1) {
+          if (i == snapshot.data!.docs.length - 1) {
             // return ProductsGrid(products, dao);
             return displayProductsList(context);
           }
@@ -199,9 +188,10 @@ class BlocServiceDetailScreen extends StatelessWidget {
   displayProductsList(BuildContext context) {
     Future<List<Product>> fProducts = BlocRepository.getProducts(dao);
 
-    return FutureBuilder(future: fProducts,
+    return FutureBuilder(
+        future: fProducts,
         builder: (context, snapshot) {
-          if(snapshot.connectionState == ConnectionState.waiting){
+          if (snapshot.connectionState == ConnectionState.waiting) {
             return Text('Loading...');
           } else {
             List<Product> products = snapshot.data! as List<Product>;

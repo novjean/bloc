@@ -1,10 +1,7 @@
 import 'package:bloc/db/bloc_repository.dart';
 import 'package:bloc/db/dao/bloc_dao.dart';
 import 'package:bloc/db/entity/user.dart' as blocUser;
-import 'package:bloc/screens/bloc_detail_screen.dart';
-import 'package:bloc/screens/city_detail_screen.dart';
 import 'package:bloc/screens/manager_screen.dart';
-import 'package:bloc/screens/forms/new_bloc_screen.dart';
 import 'package:bloc/screens/owner_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -16,7 +13,7 @@ import 'db/database.dart';
 import 'screens/auth_screen.dart';
 import 'screens/main_screen.dart';
 import 'screens/splash_screen.dart';
-import 'utils/constants.dart';
+import 'utils/const.dart';
 
 var logger = Logger(
   printer: PrettyPrinter(),
@@ -45,7 +42,7 @@ class MyApp extends StatelessWidget {
         future: _initialization,
         builder: (ctx, appSnapshot) {
           return MaterialApp(
-              // debugShowCheckedModeBanner: false,
+              debugShowCheckedModeBanner: false,
               title: kAppTitle,
               theme: ThemeData(
                 primarySwatch: Colors.red,

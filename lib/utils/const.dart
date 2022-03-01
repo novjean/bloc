@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-class Constants {
-  static String appName = "Bloc";
+const String kAppTitle = 'BLOC';
 
+class Constants {
   //Colors for theme
   static Color lightPrimary = Color(0xfffcfcff);
   static Color darkPrimary = Colors.black;
