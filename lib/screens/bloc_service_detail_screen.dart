@@ -28,6 +28,19 @@ class BlocServiceDetailScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(service.name),
+        actions: [
+          IconButton(
+            icon: Icon(
+              Icons.shopping_cart,
+            ),
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                    builder: (ctx) => CartScreen(service: service, dao: dao)),
+              );
+            },
+          ),
+        ],
       ),
       floatingActionButton: ExpandableFab(
         distance: 112.0,
