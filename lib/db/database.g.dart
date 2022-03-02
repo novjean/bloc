@@ -279,6 +279,19 @@ class _$BlocDao extends BlocDao {
   }
 
   @override
+  Future<List<CartItem>> getCartItems(String userId) async {
+    return _queryAdapter.queryList('SELECT * FROM CartItem where userId=?1',
+        mapper: (Map<String, Object?> row) => CartItem(
+            row['id'] as String,
+            row['cartNumber'] as int,
+            row['userId'] as String,
+            row['productId'] as String,
+            row['quantity'] as int,
+            row['createdAt'] as String),
+        arguments: [userId]);
+  }
+
+  @override
   Future<void> insertPerson(Person person) async {
     await _personInsertionAdapter.insert(person, OnConflictStrategy.abort);
   }

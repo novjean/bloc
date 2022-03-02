@@ -47,4 +47,7 @@ abstract class BlocDao {
   @insert
   Future<void> insertCartItem(CartItem cartitem);
 
+  @Query('SELECT * FROM CartItem where userId=:userId')
+  Future<List<CartItem>> getCartItems(String userId);
+
 }

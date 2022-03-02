@@ -52,7 +52,13 @@ class BlocRepository {
 
   static Future<List<Product>> getProducts(BlocDao dao) async {
     logger.i("getProducts(): ");
-    Future<List<Product>> future = dao.getProducts();
-    return future;
+    Future<List<Product>> fProducts = dao.getProducts();
+    return fProducts;
+  }
+
+  static Future<List<CartItem>> getCartItems(BlocDao dao, String userId) {
+    logger.i("getProducts(): ");
+    Future<List<CartItem>> fCartItems = dao.getCartItems(userId);
+    return fCartItems;
   }
 }

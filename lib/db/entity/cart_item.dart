@@ -8,7 +8,7 @@ class CartItem {
   final int cartNumber;
   final String userId;
   final String productId;
-  final int quantity;
+  int quantity;
   final String createdAt;
 
   CartItem(this.id, this.cartNumber, this.userId, this.productId, this.quantity, this.createdAt);
