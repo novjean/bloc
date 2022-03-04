@@ -50,4 +50,7 @@ abstract class BlocDao {
   @Query('SELECT * FROM CartItem where userId=:userId')
   Future<List<CartItem>> getCartItems(String userId);
 
+  @Query('SELECT * FROM Product where id=:productId')
+  Future<Product?> getProduct(String productId);
+
 }

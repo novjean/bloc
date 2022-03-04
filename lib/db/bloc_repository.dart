@@ -15,39 +15,52 @@ var logger = Logger(
 );
 
 class BlocRepository {
+  /** User **/
   static void insertUser(BlocDao dao, User user) async {
     logger.i("insertUser(): " + user.username);
     await dao.insertUser(user);
   }
 
+  /** City **/
   static void insertCity(BlocDao dao, City city) async {
     logger.i("insertCity(): " + city.name);
     await dao.insertCity(city);
   }
 
+  /** Bloc **/
   static void insertBloc(BlocDao dao, Bloc bloc) async {
     logger.i("insertBloc(): " + bloc.name);
     await dao.insertBloc(bloc);
   }
 
+  /** Service **/
   static void insertBlocService(BlocDao dao, BlocService service) async {
     logger.i("insertBlocService(): " + service.name);
     await dao.insertBlocService(service);
   }
 
+  /** Category **/
   static void insertCategory(BlocDao dao, Category cat) async {
     logger.i("insertCategory(): " + cat.name);
     await dao.insertCategory(cat);
   }
 
-  static void insertProduct(BlocDao dao, Product product) async {
-    logger.i("insertProduct(): " + product.name);
-    await dao.insertProduct(product);
-  }
-
+  /** Cart Item **/
   static void insertCartItem(BlocDao dao, CartItem cartitem) async {
     logger.i("insertCartItem(): " + cartitem.id);
     await dao.insertCartItem(cartitem);
+  }
+
+  static Future<List<CartItem>> getCartItems(BlocDao dao, String userId) {
+    logger.i("getProducts(): ");
+    Future<List<CartItem>> fCartItems = dao.getCartItems(userId);
+    return fCartItems;
+  }
+
+  /** Product **/
+  static void insertProduct(BlocDao dao, Product product) async {
+    logger.i("insertProduct(): " + product.name);
+    await dao.insertProduct(product);
   }
 
   static Future<List<Product>> getProducts(BlocDao dao) async {
@@ -56,9 +69,8 @@ class BlocRepository {
     return fProducts;
   }
 
-  static Future<List<CartItem>> getCartItems(BlocDao dao, String userId) {
-    logger.i("getProducts(): ");
-    Future<List<CartItem>> fCartItems = dao.getCartItems(userId);
-    return fCartItems;
+  static Future<Product?> getProduct(BlocDao dao, String productId) async {
+    logger.i("getProduct(): " + productId);
+    return dao.getProduct(productId);
   }
 }

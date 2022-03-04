@@ -66,7 +66,7 @@ class _$AppDatabase extends AppDatabase {
   Future<sqflite.Database> open(String path, List<Migration> migrations,
       [Callback? callback]) async {
     final databaseOptions = sqflite.OpenDatabaseOptions(
-      version: 10,
+      version: 11,
       onConfigure: (database) async {
         await database.execute('PRAGMA foreign_keys = ON');
         await callback?.onConfigure?.call(database);
@@ -86,7 +86,7 @@ class _$AppDatabase extends AppDatabase {
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `BlocService` (`id` TEXT NOT NULL, `name` TEXT NOT NULL, `blocId` TEXT NOT NULL, `type` TEXT NOT NULL, `primaryNumber` REAL NOT NULL, `secondaryNumber` REAL NOT NULL, `email` TEXT NOT NULL, `imageUrl` TEXT NOT NULL, `ownerId` TEXT NOT NULL, `createdAt` TEXT NOT NULL, PRIMARY KEY (`id`))');
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `CartItem` (`id` TEXT NOT NULL, `cartNumber` INTEGER NOT NULL, `userId` TEXT NOT NULL, `productId` TEXT NOT NULL, `quantity` INTEGER NOT NULL, `createdAt` TEXT NOT NULL, PRIMARY KEY (`id`))');
+            'CREATE TABLE IF NOT EXISTS `CartItem` (`id` TEXT NOT NULL, `cartNumber` INTEGER NOT NULL, `userId` TEXT NOT NULL, `productId` TEXT NOT NULL, `productName` TEXT NOT NULL, `productPrice` INTEGER NOT NULL, `quantity` INTEGER NOT NULL, `createdAt` TEXT NOT NULL, PRIMARY KEY (`id`))');
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `Category` (`id` TEXT NOT NULL, `name` TEXT NOT NULL, `type` TEXT NOT NULL, `serviceId` TEXT NOT NULL, `imageUrl` TEXT NOT NULL, `ownerId` TEXT NOT NULL, `createdAt` TEXT NOT NULL, `sequence` INTEGER NOT NULL, PRIMARY KEY (`id`))');
         await database.execute(
@@ -203,6 +203,8 @@ class _$BlocDao extends BlocDao {
                   'cartNumber': item.cartNumber,
                   'userId': item.userId,
                   'productId': item.productId,
+                  'productName': item.productName,
+                  'productPrice': item.productPrice,
                   'quantity': item.quantity,
                   'createdAt': item.createdAt
                 });
@@ -286,9 +288,27 @@ class _$BlocDao extends BlocDao {
             row['cartNumber'] as int,
             row['userId'] as String,
             row['productId'] as String,
+            row['productName'] as String,
+            row['productPrice'] as int,
             row['quantity'] as int,
             row['createdAt'] as String),
         arguments: [userId]);
+  }
+
+  @override
+  Future<Product?> getProduct(String productId) async {
+    return _queryAdapter.query('SELECT * FROM Product where id=?1',
+        mapper: (Map<String, Object?> row) => Product(
+            row['id'] as String,
+            row['name'] as String,
+            row['type'] as String,
+            row['description'] as String,
+            row['price'] as int,
+            row['serviceId'] as String,
+            row['imageUrl'] as String,
+            row['ownerId'] as String,
+            row['createdAt'] as String),
+        arguments: [productId]);
   }
 
   @override

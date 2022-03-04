@@ -97,7 +97,7 @@ class ProductItem extends StatelessWidget {
                                   final user = FirebaseAuth.instance.currentUser;
                                   String userId = user!.uid;
                                   String timestamp = Timestamp.now().toString();
-                                  CartItem cartitem = CartItem(id, cartNumber, userId, product.id, 1, timestamp);
+                                  CartItem cartitem = CartItem(id, cartNumber, userId, product.id, product.name, product.price, 1, timestamp);
                                   BlocRepository.insertCartItem(dao, cartitem);
 
                                   Fluttertoast.showToast(

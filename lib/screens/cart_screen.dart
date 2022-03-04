@@ -7,6 +7,7 @@ import '../db/dao/bloc_dao.dart';
 import '../db/entity/bloc_service.dart';
 import '../db/entity/product.dart';
 import '../widgets/cart_block.dart';
+import '../widgets/new_cart_block.dart';
 import '../widgets/ui/cover_photo.dart';
 
 class CartScreen extends StatelessWidget {
@@ -61,7 +62,8 @@ Widget _invoiceDetailsItem(BlocDao dao) {
             itemCount: billItems == null ? 0 : billItems.length,
             itemBuilder: (BuildContext ctx, int index) {
               CartItem item = billItems[index];
-              return CartBlock(
+
+              return NewCartBlock(
                 cartItem: item,
                 dao: dao,
               );
@@ -69,18 +71,6 @@ Widget _invoiceDetailsItem(BlocDao dao) {
           );
         }
       });
-
-  // Expanded(
-  //     child: ListView.builder(
-  //       itemCount: cart.items.length,
-  //       itemBuilder: (ctx, i) => CartItem(
-  //         cart.items.values.toList()[i].id,
-  //         cart.items.values.toList()[i].title,
-  //         cart.items.values.toList()[i].price,
-  //         cart.items.values.toList()[i].quantity,
-  //         cart.items.keys.toList()[i],
-  //       ),
-  //     ))
 }
 
 List<CartItem> _createBill(List<CartItem> items) {
