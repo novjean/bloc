@@ -66,7 +66,7 @@ class _$AppDatabase extends AppDatabase {
   Future<sqflite.Database> open(String path, List<Migration> migrations,
       [Callback? callback]) async {
     final databaseOptions = sqflite.OpenDatabaseOptions(
-      version: 11,
+      version: 12,
       onConfigure: (database) async {
         await database.execute('PRAGMA foreign_keys = ON');
         await callback?.onConfigure?.call(database);
@@ -181,6 +181,19 @@ class _$BlocDao extends BlocDao {
                   'sequence': item.sequence
                 },
             changeListener),
+        _cartItemInsertionAdapter = InsertionAdapter(
+            database,
+            'CartItem',
+            (CartItem item) => <String, Object?>{
+                  'id': item.id,
+                  'cartNumber': item.cartNumber,
+                  'userId': item.userId,
+                  'productId': item.productId,
+                  'productName': item.productName,
+                  'productPrice': item.productPrice,
+                  'quantity': item.quantity,
+                  'createdAt': item.createdAt
+                }),
         _productInsertionAdapter = InsertionAdapter(
             database,
             'Product',
@@ -193,19 +206,6 @@ class _$BlocDao extends BlocDao {
                   'serviceId': item.serviceId,
                   'imageUrl': item.imageUrl,
                   'ownerId': item.ownerId,
-                  'createdAt': item.createdAt
-                }),
-        _cartItemInsertionAdapter = InsertionAdapter(
-            database,
-            'CartItem',
-            (CartItem item) => <String, Object?>{
-                  'id': item.id,
-                  'cartNumber': item.cartNumber,
-                  'userId': item.userId,
-                  'productId': item.productId,
-                  'productName': item.productName,
-                  'productPrice': item.productPrice,
-                  'quantity': item.quantity,
                   'createdAt': item.createdAt
                 });
 
@@ -227,9 +227,9 @@ class _$BlocDao extends BlocDao {
 
   final InsertionAdapter<Category> _categoryInsertionAdapter;
 
-  final InsertionAdapter<Product> _productInsertionAdapter;
-
   final InsertionAdapter<CartItem> _cartItemInsertionAdapter;
+
+  final InsertionAdapter<Product> _productInsertionAdapter;
 
   @override
   Future<List<Person>> findAllPersons() async {
@@ -266,21 +266,6 @@ class _$BlocDao extends BlocDao {
   }
 
   @override
-  Future<List<Product>> getProducts() async {
-    return _queryAdapter.queryList('SELECT * FROM Product',
-        mapper: (Map<String, Object?> row) => Product(
-            row['id'] as String,
-            row['name'] as String,
-            row['type'] as String,
-            row['description'] as String,
-            row['price'] as int,
-            row['serviceId'] as String,
-            row['imageUrl'] as String,
-            row['ownerId'] as String,
-            row['createdAt'] as String));
-  }
-
-  @override
   Future<List<CartItem>> getCartItems(String userId) async {
     return _queryAdapter.queryList('SELECT * FROM CartItem where userId=?1',
         mapper: (Map<String, Object?> row) => CartItem(
@@ -296,8 +281,23 @@ class _$BlocDao extends BlocDao {
   }
 
   @override
-  Future<Product?> getProduct(String productId) async {
-    return _queryAdapter.query('SELECT * FROM Product where id=?1',
+  Future<CartItem?> deleteCartItems(String prodId) async {
+    return _queryAdapter.query('DELETE FROM CartItem where productId=?1',
+        mapper: (Map<String, Object?> row) => CartItem(
+            row['id'] as String,
+            row['cartNumber'] as int,
+            row['userId'] as String,
+            row['productId'] as String,
+            row['productName'] as String,
+            row['productPrice'] as int,
+            row['quantity'] as int,
+            row['createdAt'] as String),
+        arguments: [prodId]);
+  }
+
+  @override
+  Future<List<Product>> getProducts() async {
+    return _queryAdapter.queryList('SELECT * FROM Product',
         mapper: (Map<String, Object?> row) => Product(
             row['id'] as String,
             row['name'] as String,
@@ -307,8 +307,7 @@ class _$BlocDao extends BlocDao {
             row['serviceId'] as String,
             row['imageUrl'] as String,
             row['ownerId'] as String,
-            row['createdAt'] as String),
-        arguments: [productId]);
+            row['createdAt'] as String));
   }
 
   @override
@@ -343,12 +342,12 @@ class _$BlocDao extends BlocDao {
   }
 
   @override
-  Future<void> insertProduct(Product product) async {
-    await _productInsertionAdapter.insert(product, OnConflictStrategy.abort);
+  Future<void> insertCartItem(CartItem cartitem) async {
+    await _cartItemInsertionAdapter.insert(cartitem, OnConflictStrategy.abort);
   }
 
   @override
-  Future<void> insertCartItem(CartItem cartitem) async {
-    await _cartItemInsertionAdapter.insert(cartitem, OnConflictStrategy.abort);
+  Future<void> insertProduct(Product product) async {
+    await _productInsertionAdapter.insert(product, OnConflictStrategy.abort);
   }
 }

@@ -38,19 +38,24 @@ abstract class BlocDao {
   @Query('SELECT * FROM Category ORDER BY sequence ASC')
   Stream<List<Category>> getCategories();
 
-  @insert
-  Future<void> insertProduct(Product product);
-
-  @Query('SELECT * FROM Product')
-  Future<List<Product>> getProducts();
-
+  /** Cart Items **/
   @insert
   Future<void> insertCartItem(CartItem cartitem);
 
   @Query('SELECT * FROM CartItem where userId=:userId')
   Future<List<CartItem>> getCartItems(String userId);
 
-  @Query('SELECT * FROM Product where id=:productId')
-  Future<Product?> getProduct(String productId);
+  @Query('DELETE FROM CartItem where productId=:prodId')
+  Future<CartItem?> deleteCartItems(String prodId);
+
+  /** Product **/
+  @insert
+  Future<void> insertProduct(Product product);
+
+  @Query('SELECT * FROM Product')
+  Future<List<Product>> getProducts();
+
+  // @Query('SELECT * FROM Product where id=:productId')
+  // Future<Product?> getProduct(String productId);
 
 }

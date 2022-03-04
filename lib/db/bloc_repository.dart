@@ -57,6 +57,11 @@ class BlocRepository {
     return fCartItems;
   }
 
+  static void deleteCartItems(BlocDao dao, String productId) {
+    logger.i("deleteCartItems(): " + productId);
+    dao.deleteCartItems(productId);
+  }
+
   /** Product **/
   static void insertProduct(BlocDao dao, Product product) async {
     logger.i("insertProduct(): " + product.name);
@@ -69,8 +74,8 @@ class BlocRepository {
     return fProducts;
   }
 
-  static Future<Product?> getProduct(BlocDao dao, String productId) async {
-    logger.i("getProduct(): " + productId);
-    return dao.getProduct(productId);
-  }
+  // static Future<Product?> getProduct(BlocDao dao, String productId) async {
+  //   logger.i("getProduct(): " + productId);
+  //   return dao.getProduct(productId);
+  // }
 }

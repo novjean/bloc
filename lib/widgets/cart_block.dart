@@ -1,7 +1,9 @@
+import 'package:bloc/db/bloc_repository.dart';
 import 'package:flutter/material.dart';
 
 import '../db/dao/bloc_dao.dart';
 import '../db/entity/cart_item.dart';
+import 'ui/Toaster.dart';
 
 class CartBlock extends StatelessWidget {
   CartItem cartItem;
@@ -57,6 +59,9 @@ class CartBlock extends StatelessWidget {
       },
       onDismissed: (direction) {
         //direction to check which direction the swipe is going to
+        BlocRepository.deleteCartItems(dao, cartItem.productId);
+        Toaster.shortToast(cartItem.productName + ' has been removed.');
+
         // Provider.of<Cart>(context, listen: false).removeItem(productId);
       },
       child: Card(
