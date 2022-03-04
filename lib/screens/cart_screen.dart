@@ -5,10 +5,7 @@ import 'package:flutter/material.dart';
 import '../db/bloc_repository.dart';
 import '../db/dao/bloc_dao.dart';
 import '../db/entity/bloc_service.dart';
-import '../db/entity/product.dart';
 import '../widgets/cart_block.dart';
-import '../widgets/cart_block.dart';
-import '../widgets/ui/cover_photo.dart';
 
 class CartScreen extends StatelessWidget {
   BlocDao dao;
@@ -27,20 +24,6 @@ class CartScreen extends StatelessWidget {
 }
 
 Widget _buildBody(BuildContext context, BlocService service, BlocDao dao) {
-  return SingleChildScrollView(
-    child: Column(
-      children: [
-        CoverPhoto(service.name, service.imageUrl),
-        SizedBox(height: 20.0),
-        _invoiceDetailsItem(dao),
-        SizedBox(height: 10),
-        _orderConfirmItem(context),
-      ],
-    ),
-  );
-}
-
-Widget _invoiceDetailsItem(BlocDao dao) {
   final user = FirebaseAuth.instance.currentUser;
   String userId = user!.uid;
   Future<List<CartItem>> fItems = BlocRepository.getCartItems(dao, userId);
@@ -52,25 +35,39 @@ Widget _invoiceDetailsItem(BlocDao dao) {
           return Text('Loading cart items...');
         } else {
           List<CartItem> items = snapshot.data! as List<CartItem>;
-
-          List<CartItem> billItems = _createBill(items);
-
-          return ListView.builder(
-            primary: false,
-            scrollDirection: Axis.vertical,
-            shrinkWrap: true,
-            itemCount: billItems == null ? 0 : billItems.length,
-            itemBuilder: (BuildContext ctx, int index) {
-              CartItem item = billItems[index];
-
-              return CartBlock(
-                cartItem: item,
-                dao: dao,
-              );
-            },
+          return SingleChildScrollView(
+            child: Column(
+              children: [
+                // CoverPhoto(service.name, service.imageUrl),
+                SizedBox(height: 20.0),
+                _displayCartItems(dao, items),
+                // _invoiceDetailsItem(dao),
+                SizedBox(height: 10),
+                _orderConfirmItem(context, items),
+              ],
+            ),
           );
         }
       });
+}
+
+Widget _displayCartItems(BlocDao dao, List<CartItem> items) {
+  List<CartItem> billItems = _createBill(items);
+
+  return ListView.builder(
+    primary: false,
+    scrollDirection: Axis.vertical,
+    shrinkWrap: true,
+    itemCount: billItems == null ? 0 : billItems.length,
+    itemBuilder: (BuildContext ctx, int index) {
+      CartItem item = billItems[index];
+
+      return CartBlock(
+        cartItem: item,
+        dao: dao,
+      );
+    },
+  );
 }
 
 List<CartItem> _createBill(List<CartItem> items) {
@@ -110,7 +107,9 @@ int getItemInBill(String productId, List<CartItem> bill) {
   return -1;
 }
 
-Widget _orderConfirmItem(BuildContext context) {
+Widget _orderConfirmItem(BuildContext context, List<CartItem> items) {
+  double _cartTotal = _calculateTotal(items);
+
   return Card(
     margin: EdgeInsets.all(15),
     child: Padding(
@@ -126,18 +125,26 @@ Widget _orderConfirmItem(BuildContext context) {
           ),
           // spacer is a special widget which takes up all the space it can
           Spacer(),
-          // Chip(
-          //   label: Text(
-          //     '\$${cart.totalAmount.toStringAsFixed(2)}',
-          //     style: TextStyle(
-          //         color:
-          //         Theme.of(context).primaryTextTheme.headline6.color),
-          //   ),
-          //   backgroundColor: Theme.of(context).primaryColor,
-          // ),
+          Chip(
+            label: Text(
+              '\u20B9${_cartTotal.toStringAsFixed(2)}',
+              style: TextStyle(
+                  color:
+                  Theme.of(context).cardColor),
+            ),
+            backgroundColor: Theme.of(context).primaryColor,
+          ),
           // OrderButton(cart: cart),
         ],
       ),
     ),
   );
+}
+
+double _calculateTotal(List<CartItem> items) {
+  double total = 0;
+  for(int i=0;i<items.length;i++){
+    total += items[i].productPrice;
+  }
+  return total;
 }
