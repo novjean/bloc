@@ -7,7 +7,7 @@ import '../db/dao/bloc_dao.dart';
 import '../db/entity/bloc_service.dart';
 import '../db/entity/product.dart';
 import '../widgets/cart_block.dart';
-import '../widgets/new_cart_block.dart';
+import '../widgets/cart_block.dart';
 import '../widgets/ui/cover_photo.dart';
 
 class CartScreen extends StatelessWidget {
@@ -63,7 +63,7 @@ Widget _invoiceDetailsItem(BlocDao dao) {
             itemBuilder: (BuildContext ctx, int index) {
               CartItem item = billItems[index];
 
-              return NewCartBlock(
+              return CartBlock(
                 cartItem: item,
                 dao: dao,
               );
