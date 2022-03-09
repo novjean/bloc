@@ -101,15 +101,6 @@ class ProductItem extends StatelessWidget {
                                   CartItem cartitem = CartItem(id, cartNumber, userId, product.id, product.name, product.price, 1, timestamp);
                                   BlocRepository.insertCartItem(dao, cartitem);
                                   Toaster.shortToast(product.name + ' is added to cart.');
-                                  // Fluttertoast.showToast(
-                                  //     msg: product.name + ' is added to cart.',
-                                  //     toastLength: Toast.LENGTH_SHORT,
-                                  //     gravity: ToastGravity.BOTTOM,
-                                  //     timeInSecForIosWeb: 1,
-                                  //     backgroundColor: Colors.grey,
-                                  //     textColor: Colors.white,
-                                  //     fontSize: 16.0
-                                  // );
                                 },
                               ),
                             ),

@@ -41,7 +41,6 @@ Widget _buildBody(BuildContext context, BlocService service, BlocDao dao) {
                 // CoverPhoto(service.name, service.imageUrl),
                 SizedBox(height: 20.0),
                 _displayCartItems(dao, items),
-                // _invoiceDetailsItem(dao),
                 SizedBox(height: 10),
                 _orderConfirmItem(context, items),
               ],
