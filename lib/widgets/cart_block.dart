@@ -1,8 +1,10 @@
 import 'package:bloc/db/bloc_repository.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../db/dao/bloc_dao.dart';
 import '../db/entity/cart_item.dart';
+import '../providers/cart.dart';
 import 'ui/Toaster.dart';
 
 class CartBlock extends StatelessWidget {
@@ -62,7 +64,7 @@ class CartBlock extends StatelessWidget {
         BlocRepository.deleteCartItems(dao, cartItem.productId);
         Toaster.shortToast(cartItem.productName + ' has been removed.');
 
-        // Provider.of<Cart>(context, listen: false).removeItem(productId);
+        Provider.of<Cart>(context, listen: false).removeItem(cartItem.productId);
       },
       child: Card(
         // symmetric is used to have different margins for left, right, top and bottom

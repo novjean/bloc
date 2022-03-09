@@ -6,10 +6,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:logger/logger.dart';
+import 'package:provider/provider.dart';
 
 import '../db/dao/bloc_dao.dart';
 import '../db/entity/cart_item.dart';
 import '../db/entity/product.dart';
+import '../providers/cart.dart';
 import '../screens/product_detail_screen.dart';
 import '../utils/string_utils.dart';
 
@@ -22,9 +24,9 @@ class ProductItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var logger = Logger();
-    Color primaryColor = Theme
-        .of(context)
-        .primaryColor;
+    final cart = Provider.of<Cart>(context, listen: false);
+
+    Color primaryColor = Theme.of(context).primaryColor;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 10.0),
@@ -46,10 +48,9 @@ class ProductItem extends StatelessWidget {
                   width: 100,
                   decoration: BoxDecoration(
                     image: DecorationImage(
-                        image: NetworkImage(product.imageUrl),
-                        fit: BoxFit.cover
-                      // AssetImage(food['image']),
-                    ),
+                        image: NetworkImage(product.imageUrl), fit: BoxFit.cover
+                        // AssetImage(food['image']),
+                        ),
                   ),
                 ),
                 Expanded(
@@ -86,21 +87,36 @@ class ProductItem extends StatelessWidget {
                                 horizontal: 12.0,
                               ),
                               child: TextButton(
-                                child: Text('Add',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                    ),
+                                child: Text(
+                                  'Add',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                  ),
                                 ),
                                 onPressed: () {
                                   // add it to the cart
                                   String id = StringUtils.getRandomString(20);
                                   int cartNumber = 0;
-                                  final user = FirebaseAuth.instance.currentUser;
+                                  final user =
+                                      FirebaseAuth.instance.currentUser;
                                   String userId = user!.uid;
                                   String timestamp = Timestamp.now().toString();
-                                  CartItem cartitem = CartItem(id, cartNumber, userId, product.id, product.name, product.price, 1, timestamp);
+                                  CartItem cartitem = CartItem(
+                                      id: id,
+                                      cartNumber: cartNumber,
+                                      userId : userId,
+                                      productId :product.id,
+                                      productName: product.name,
+                                      productPrice: double.parse(product.price.toString()),
+                                      quantity: 1,
+                                      createdAt: timestamp);
                                   BlocRepository.insertCartItem(dao, cartitem);
-                                  Toaster.shortToast(product.name + ' is added to cart.');
+
+                                  cart.addItem(id, cartNumber, userId, cartitem.productId,
+                                      cartitem.productName, cartitem.productPrice, cartitem.createdAt);
+
+                                  Toaster.shortToast(
+                                      product.name + ' is added to cart.');
                                 },
                               ),
                             ),
@@ -124,5 +140,4 @@ class ProductItem extends StatelessWidget {
       ),
     );
   }
-
 }

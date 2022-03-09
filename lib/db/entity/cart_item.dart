@@ -9,10 +9,17 @@ class CartItem {
   final String userId;
   final String productId;
   final String productName;
-  final int productPrice;
+  final double productPrice;
   int quantity;
   final String createdAt;
 
-  CartItem(this.id, this.cartNumber, this.userId, this.productId,
-      this.productName, this.productPrice, this.quantity, this.createdAt);
+  CartItem(
+      {required this.id,
+      required this.cartNumber,
+      required this.userId,
+      required this.productId,
+      required this.productName,
+      required this.productPrice,
+      required this.quantity,
+      required this.createdAt});
 }
