@@ -96,6 +96,7 @@ class ProductItem extends StatelessWidget {
                                 onPressed: () {
                                   // add it to the cart
                                   String id = StringUtils.getRandomString(20);
+                                  //todo: this needs to increment
                                   int cartNumber = 0;
                                   final user =
                                       FirebaseAuth.instance.currentUser;
@@ -104,16 +105,22 @@ class ProductItem extends StatelessWidget {
                                   CartItem cartitem = CartItem(
                                       id: id,
                                       cartNumber: cartNumber,
-                                      userId : userId,
-                                      productId :product.id,
+                                      userId: userId,
+                                      productId: product.id,
                                       productName: product.name,
-                                      productPrice: double.parse(product.price.toString()),
+                                      productPrice: double.parse(
+                                          product.price.toString()),
                                       quantity: 1,
                                       createdAt: timestamp);
-                                  BlocRepository.insertCartItem(dao, cartitem);
-
-                                  cart.addItem(id, cartNumber, userId, cartitem.productId,
-                                      cartitem.productName, cartitem.productPrice, cartitem.createdAt);
+                                  
+                                  cart.addItem(
+                                      id,
+                                      cartNumber,
+                                      userId,
+                                      cartitem.productId,
+                                      cartitem.productName,
+                                      cartitem.productPrice,
+                                      cartitem.createdAt);
 
                                   Toaster.shortToast(
                                       product.name + ' is added to cart.');

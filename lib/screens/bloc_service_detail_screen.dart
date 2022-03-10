@@ -14,7 +14,7 @@ import '../widgets/product_item.dart';
 import '../widgets/ui/expandable_fab.dart';
 import 'forms/new_product_screen.dart';
 import 'forms/new_service_category_screen.dart';
-import 'new_cart_screen.dart';
+import 'cart_screen.dart';
 
 class BlocServiceDetailScreen extends StatelessWidget {
   BlocDao dao;
@@ -36,7 +36,7 @@ class BlocServiceDetailScreen extends StatelessWidget {
             onPressed: () {
               Navigator.of(context).push(
                 MaterialPageRoute(
-                    builder: (ctx) => NewCartScreen(service: service, dao: dao)),
+                    builder: (ctx) => CartScreen(service: service, dao: dao)),
                 // builder: (ctx) => CartScreen(service: service, dao: dao)),
               );
             },
@@ -51,7 +51,7 @@ class BlocServiceDetailScreen extends StatelessWidget {
               // _showAction(context, 0)
               Navigator.of(context).push(
                 MaterialPageRoute(
-                    builder: (ctx) => NewCartScreen(service: service, dao: dao)),
+                    builder: (ctx) => CartScreen(service: service, dao: dao)),
               ),
             },
             icon: const Icon(Icons.shopping_cart_outlined),
@@ -88,11 +88,11 @@ class BlocServiceDetailScreen extends StatelessWidget {
       child: Column(
         children: [
           CoverPhoto(service.name, service.imageUrl),
-          SizedBox(height: 20.0),
+          SizedBox(height: 2.0),
           buildServiceCategories(context),
-          SizedBox(height: 20.0),
+          SizedBox(height: 5.0),
           buildProducts(context),
-          SizedBox(height: 10.0),
+          SizedBox(height: 50.0),
         ],
       ),
     );

@@ -8,6 +8,9 @@ class CoverPhoto extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double height = MediaQuery.of(context).size.height / 5.5;
+    double width = MediaQuery.of(context).size.width;
+
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0.0)),
       elevation: 3.0,
@@ -16,8 +19,8 @@ class CoverPhoto extends StatelessWidget {
           Stack(
             children: <Widget>[
               Container(
-                height: MediaQuery.of(context).size.height / 5.5,
-                width: MediaQuery.of(context).size.width,
+                height: height,
+                width: width,
                 child: ClipRRect(
                   borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(0),
@@ -32,6 +35,19 @@ class CoverPhoto extends StatelessWidget {
                     fit: BoxFit.cover,
                   ),
                 ),
+              ),
+              Container(
+                height: height,
+                width: width,
+                child: Center(
+                    child: Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 30,
+                    fontWeight: FontWeight.w800,
+                    color: Colors.white,
+                  ),
+                )),
               ),
             ],
           ),

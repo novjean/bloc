@@ -26,12 +26,15 @@ abstract class BlocDao {
   @insert
   Future<void> insertCity(City city);
 
+  /** Bloc **/
   @insert
   Future<void> insertBloc(Bloc bloc);
 
+  /** Service **/
   @insert
   Future<void> insertBlocService(BlocService service);
 
+  /** Category **/
   @insert
   Future<void> insertCategory(Category cat);
 
