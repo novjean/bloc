@@ -12,7 +12,6 @@ import '../utils/product_utils.dart';
 import '../widgets/category_item.dart';
 import '../widgets/product_item.dart';
 import '../widgets/ui/expandable_fab.dart';
-import 'cart_screen.dart';
 import 'forms/new_product_screen.dart';
 import 'forms/new_service_category_screen.dart';
 import 'new_cart_screen.dart';
