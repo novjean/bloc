@@ -58,6 +58,9 @@ abstract class BlocDao {
   @Query('SELECT * FROM Product')
   Future<List<Product>> getProducts();
 
+  @Query('SELECT * FROM Product where type=:catType')
+  Future<List<Product>> getProductsByCategory(String catType);
+
   // @Query('SELECT * FROM Product where id=:productId')
   // Future<Product?> getProduct(String productId);
 

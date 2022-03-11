@@ -74,6 +74,12 @@ class BlocRepository {
     return fProducts;
   }
 
+  static Future<List<Product>> getProductsByCategory(BlocDao dao, String catType) async {
+    logger.i("getProductsByCategory(): " + catType);
+    Future<List<Product>> fProducts = dao.getProductsByCategory(catType);
+    return fProducts;
+  }
+
   // static Future<Product?> getProduct(BlocDao dao, String productId) async {
   //   logger.i("getProduct(): " + productId);
   //   return dao.getProduct(productId);

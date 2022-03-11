@@ -11,6 +11,7 @@ import '../utils/category_utils.dart';
 import '../utils/product_utils.dart';
 import '../widgets/category_item.dart';
 import '../widgets/product_item.dart';
+import '../widgets/ui/Toaster.dart';
 import '../widgets/ui/expandable_fab.dart';
 import 'forms/new_product_screen.dart';
 import 'forms/new_service_category_screen.dart';
@@ -37,7 +38,6 @@ class BlocServiceDetailScreen extends StatelessWidget {
               Navigator.of(context).push(
                 MaterialPageRoute(
                     builder: (ctx) => CartScreen(service: service, dao: dao)),
-                // builder: (ctx) => CartScreen(service: service, dao: dao)),
               );
             },
           ),
@@ -154,8 +154,18 @@ class BlocServiceDetailScreen extends StatelessWidget {
               itemBuilder: (BuildContext ctx, int index) {
                 Category cat = cats[index];
 
-                return CategoryItem(
-                  cat: cat,
+                return GestureDetector(
+                  child: CategoryItem(
+                    cat: cat,
+                  ),
+                  onTap: () => {
+                    Toaster.shortToast("Category index : " + index.toString()),
+                    displayProductsList(context, index),
+                  }
+
+                      // Scaffold
+                      // .of(context)
+                      // .showSnackBar(SnackBar(content: Text(index.toString()))),
                 );
               },
             );
@@ -191,7 +201,7 @@ class BlocServiceDetailScreen extends StatelessWidget {
 
           if (i == snapshot.data!.docs.length - 1) {
             // return ProductsGrid(products, dao);
-            return displayProductsList(context);
+            return displayProductsList(context, -1);
           }
         }
         return Text('Streaming service products...');
@@ -199,8 +209,18 @@ class BlocServiceDetailScreen extends StatelessWidget {
     );
   }
 
-  displayProductsList(BuildContext context) {
-    Future<List<Product>> fProducts = BlocRepository.getProducts(dao);
+  displayProductsList(BuildContext context, int category) {
+    Future<List<Product>> fProducts;
+
+    if(category == -1){
+      fProducts = BlocRepository.getProductsByCategory(dao,"Food");
+    } else {
+      if(category==0) {
+        fProducts = BlocRepository.getProductsByCategory(dao,"Food");
+      } else {
+        fProducts = BlocRepository.getProductsByCategory(dao,"Alcohol");
+      }
+    }
 
     return FutureBuilder(
         future: fProducts,

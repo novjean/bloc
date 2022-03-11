@@ -311,6 +311,22 @@ class _$BlocDao extends BlocDao {
   }
 
   @override
+  Future<List<Product>> getProductsByCategory(String catType) async {
+    return _queryAdapter.queryList('SELECT * FROM Product where type=?1',
+        mapper: (Map<String, Object?> row) => Product(
+            row['id'] as String,
+            row['name'] as String,
+            row['type'] as String,
+            row['description'] as String,
+            row['price'] as int,
+            row['serviceId'] as String,
+            row['imageUrl'] as String,
+            row['ownerId'] as String,
+            row['createdAt'] as String),
+        arguments: [catType]);
+  }
+
+  @override
   Future<void> insertPerson(Person person) async {
     await _personInsertionAdapter.insert(person, OnConflictStrategy.abort);
   }
