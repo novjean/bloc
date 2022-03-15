@@ -17,7 +17,7 @@ import 'forms/new_product_screen.dart';
 import 'forms/new_service_category_screen.dart';
 import 'cart_screen.dart';
 
-class BlocServiceDetailScreen extends StatelessWidget {
+class BlocServiceDetailScreen extends StatefulWidget {
   BlocDao dao;
   BlocService service;
 
@@ -25,10 +25,44 @@ class BlocServiceDetailScreen extends StatelessWidget {
       : super(key: key);
 
   @override
+  State<BlocServiceDetailScreen> createState() =>
+      _BlocServiceDetailScreenState();
+}
+
+class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen> {
+  late Future<List<Product>> fProducts;
+  var _categorySelected = 0;
+  var _isInit = true;
+  var _isLoading = false;
+
+  @override
+  void didChangeDependencies() {
+    if (_isInit) {
+      setState(() {
+        _isLoading = true;
+      });
+      if (_categorySelected == 0) {
+        fProducts = BlocRepository.getProductsByCategory(widget.dao, "Food");
+        setState(() {
+          _isLoading = false;
+        });
+      } else {
+        fProducts = BlocRepository.getProductsByCategory(widget.dao, "Alcohol");
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+
+    _isInit = false;
+    super.didChangeDependencies();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(service.name),
+        title: Text(widget.service.name),
         actions: [
           IconButton(
             icon: Icon(
@@ -37,7 +71,8 @@ class BlocServiceDetailScreen extends StatelessWidget {
             onPressed: () {
               Navigator.of(context).push(
                 MaterialPageRoute(
-                    builder: (ctx) => CartScreen(service: service, dao: dao)),
+                    builder: (ctx) =>
+                        CartScreen(service: widget.service, dao: widget.dao)),
               );
             },
           ),
@@ -51,7 +86,8 @@ class BlocServiceDetailScreen extends StatelessWidget {
               // _showAction(context, 0)
               Navigator.of(context).push(
                 MaterialPageRoute(
-                    builder: (ctx) => CartScreen(service: service, dao: dao)),
+                    builder: (ctx) =>
+                        CartScreen(service: widget.service, dao: widget.dao)),
               ),
             },
             icon: const Icon(Icons.shopping_cart_outlined),
@@ -60,7 +96,8 @@ class BlocServiceDetailScreen extends StatelessWidget {
             onPressed: () => {
               Navigator.of(context).push(
                 MaterialPageRoute(
-                    builder: (ctx) => NewProductScreen(service: service)),
+                    builder: (ctx) =>
+                        NewProductScreen(service: widget.service)),
               ),
             },
             icon: const Icon(Icons.fastfood),
@@ -70,8 +107,8 @@ class BlocServiceDetailScreen extends StatelessWidget {
               // _showAction(context, 2),
               Navigator.of(context).push(
                 MaterialPageRoute(
-                    builder: (ctx) =>
-                        NewServiceCategoryScreen(service: service, dao: dao)),
+                    builder: (ctx) => NewServiceCategoryScreen(
+                        service: widget.service, dao: widget.dao)),
               ),
             },
             icon: const Icon(Icons.category_outlined),
@@ -79,7 +116,10 @@ class BlocServiceDetailScreen extends StatelessWidget {
         ],
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-      body: _buildBody(context, service),
+      body: _buildBody(context, widget.service),
+      // body: _isLoading
+      //     ? Center(child: CircularProgressIndicator())
+      //     : _buildBody(context, widget.service),
     );
   }
 
@@ -103,7 +143,7 @@ class BlocServiceDetailScreen extends StatelessWidget {
     final Stream<QuerySnapshot> _catsStream = FirebaseFirestore.instance
         .collection('categories')
         // .orderBy('sequence', descending: true)
-        .where('serviceId', isEqualTo: service.id)
+        .where('serviceId', isEqualTo: widget.service.id)
         .snapshots();
     return StreamBuilder<QuerySnapshot>(
       stream: _catsStream,
@@ -122,7 +162,7 @@ class BlocServiceDetailScreen extends StatelessWidget {
           DocumentSnapshot document = snapshot.data!.docs[i];
           Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
           final Category cat = CategoryUtils.getCategory(data, document.id);
-          BlocRepository.insertCategory(dao, cat);
+          BlocRepository.insertCategory(widget.dao, cat);
 
           if (i == snapshot.data!.docs.length - 1) {
             return displayCategoryList(context);
@@ -134,7 +174,7 @@ class BlocServiceDetailScreen extends StatelessWidget {
   }
 
   displayCategoryList(BuildContext context) {
-    Stream<List<Category>> _catsStream = dao.getCategories();
+    Stream<List<Category>> _catsStream = widget.dao.getCategories();
 
     return Container(
       height: MediaQuery.of(context).size.height / 6,
@@ -155,18 +195,22 @@ class BlocServiceDetailScreen extends StatelessWidget {
                 Category cat = cats[index];
 
                 return GestureDetector(
-                  child: CategoryItem(
-                    cat: cat,
-                  ),
-                  onTap: () => {
-                    Toaster.shortToast("Category index : " + index.toString()),
-                    displayProductsList(context, index),
-                  }
+                    child: CategoryItem(
+                      cat: cat,
+                    ),
+                    onTap: () => {
+                          setState(() {
+                            _categorySelected = index;
+                          }),
+                          Toaster.shortToast(
+                              "Category index : " + index.toString()),
+                          displayProductsList(context, index),
+                        }
 
-                      // Scaffold
-                      // .of(context)
-                      // .showSnackBar(SnackBar(content: Text(index.toString()))),
-                );
+                    // Scaffold
+                    // .of(context)
+                    // .showSnackBar(SnackBar(content: Text(index.toString()))),
+                    );
               },
             );
           }
@@ -179,7 +223,7 @@ class BlocServiceDetailScreen extends StatelessWidget {
   buildProducts(BuildContext context) {
     final Stream<QuerySnapshot> _itemsStream = FirebaseFirestore.instance
         .collection('products')
-        .where('serviceId', isEqualTo: service.id)
+        .where('serviceId', isEqualTo: widget.service.id)
         .snapshots();
 
     return StreamBuilder<QuerySnapshot>(
@@ -196,7 +240,7 @@ class BlocServiceDetailScreen extends StatelessWidget {
           DocumentSnapshot document = snapshot.data!.docs[i];
           Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
           final Product product = ProductUtils.getProduct(data, document.id);
-          BlocRepository.insertProduct(dao, product);
+          BlocRepository.insertProduct(widget.dao, product);
           products.add(product);
 
           if (i == snapshot.data!.docs.length - 1) {
@@ -210,16 +254,20 @@ class BlocServiceDetailScreen extends StatelessWidget {
   }
 
   displayProductsList(BuildContext context, int category) {
-    Future<List<Product>> fProducts;
+    // if (category == -1) {
+    //   fProducts = BlocRepository.getProductsByCategory(widget.dao, "Food");
+    // } else {
+    //   if (category == 0) {
+    //     fProducts = BlocRepository.getProductsByCategory(widget.dao, "Food");
+    //   } else {
+    //     fProducts = BlocRepository.getProductsByCategory(widget.dao, "Alcohol");
+    //   }
+    // }
 
-    if(category == -1){
-      fProducts = BlocRepository.getProductsByCategory(dao,"Food");
+    if (_categorySelected == 0) {
+      fProducts = BlocRepository.getProductsByCategory(widget.dao, "Food");
     } else {
-      if(category==0) {
-        fProducts = BlocRepository.getProductsByCategory(dao,"Food");
-      } else {
-        fProducts = BlocRepository.getProductsByCategory(dao,"Alcohol");
-      }
+      fProducts = BlocRepository.getProductsByCategory(widget.dao, "Alcohol");
     }
 
     return FutureBuilder(
@@ -240,7 +288,7 @@ class BlocServiceDetailScreen extends StatelessWidget {
 
                 return ProductItem(
                   product: product,
-                  dao: dao,
+                  dao: widget.dao,
                 );
               },
             );

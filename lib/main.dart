@@ -40,110 +40,113 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     final Future<FirebaseApp> _initialization = Firebase.initializeApp();
 
-    return MultiProvider(providers: [
-          ChangeNotifierProvider(
-            create: (ctx) => Cart(),
-          ),
-    ],
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (ctx) => Cart(),
+        ),
+      ],
       child: FutureBuilder(
-        // Initialize FlutterFire:
-        future: _initialization,
-        builder: (ctx, appSnapshot) {
-          return MaterialApp(
-              debugShowCheckedModeBanner: false,
-              title: kAppTitle,
-              theme: ThemeData(
-                primarySwatch: Colors.red,
-                backgroundColor: Colors.red,
-                accentColor: Colors.deepPurple,
-                accentColorBrightness: Brightness.dark,
-                buttonTheme: ButtonTheme.of(context).copyWith(
-                  buttonColor: Colors.red,
-                  textTheme: ButtonTextTheme.primary,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
+          // Initialize FlutterFire:
+          future: _initialization,
+          builder: (ctx, appSnapshot) {
+            return MaterialApp(
+                debugShowCheckedModeBanner: false,
+                title: kAppTitle,
+                theme: ThemeData(
+                  primarySwatch: Colors.red,
+                  backgroundColor: Colors.red,
+                  accentColor: Colors.deepPurple,
+                  accentColorBrightness: Brightness.dark,
+                  buttonTheme: ButtonTheme.of(context).copyWith(
+                    buttonColor: Colors.red,
+                    textTheme: ButtonTextTheme.primary,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
                   ),
                 ),
-              ),
-              home: appSnapshot.connectionState != ConnectionState.done
-                  ? SplashScreen()
-                  : StreamBuilder(
-                stream: FirebaseAuth.instance.authStateChanges(),
-                builder: (ctx, userSnapshot) {
-                  logger.i('checking for auth state changes...');
+                home: appSnapshot.connectionState != ConnectionState.done
+                    ? SplashScreen()
+                    : StreamBuilder(
+                        stream: FirebaseAuth.instance.authStateChanges(),
+                        builder: (ctx, userSnapshot) {
+                          logger.i('checking for auth state changes...');
 
-                  if (userSnapshot.connectionState ==
-                      ConnectionState.waiting) {
-                    return SplashScreen();
-                  }
+                          if (userSnapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return SplashScreen();
+                          }
 
-                  logger.i('user snapshot received...');
+                          logger.i('user snapshot received...');
 
-                  if (userSnapshot.hasData) {
-                    final user = FirebaseAuth.instance.currentUser;
+                          if (userSnapshot.hasData) {
+                            final user = FirebaseAuth.instance.currentUser;
 
-                    CollectionReference users =
-                    FirebaseFirestore.instance.collection('users');
+                            CollectionReference users =
+                                FirebaseFirestore.instance.collection('users');
 
-                    return FutureBuilder<DocumentSnapshot>(
-                      future: users.doc(user!.uid).get(),
-                      builder: (BuildContext ctx,
-                          AsyncSnapshot<DocumentSnapshot> snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return const Center(
-                            child: CircularProgressIndicator(),
-                          );
-                        }
+                            return FutureBuilder<DocumentSnapshot>(
+                              future: users.doc(user!.uid).get(),
+                              builder: (BuildContext ctx,
+                                  AsyncSnapshot<DocumentSnapshot> snapshot) {
+                                if (snapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                  return const Center(
+                                    child: CircularProgressIndicator(),
+                                  );
+                                }
 
-                        if (snapshot.hasError) {
-                          return Text("Something went wrong");
-                        }
+                                if (snapshot.hasError) {
+                                  return Text("Something went wrong");
+                                }
 
-                        if (snapshot.hasData && !snapshot.data!.exists) {
-                          return Text("Document does not exist");
-                        }
+                                if (snapshot.hasData &&
+                                    !snapshot.data!.exists) {
+                                  return Text("Document does not exist");
+                                }
 
-                        if (snapshot.connectionState ==
-                            ConnectionState.done) {
-                          Map<String, dynamic> data = snapshot.data!
-                              .data() as Map<String, dynamic>;
-                          mClearanceLevel = data['clearance_level'];
-                          String userId = data['user_id'];
-                          String username = data['username'];
-                          String email = data['email'];
-                          String imageUrl = data['image_url'];
+                                if (snapshot.connectionState ==
+                                    ConnectionState.done) {
+                                  Map<String, dynamic> data = snapshot.data!
+                                      .data() as Map<String, dynamic>;
+                                  mClearanceLevel = data['clearance_level'];
+                                  String userId = data['user_id'];
+                                  String username = data['username'];
+                                  String email = data['email'];
+                                  String imageUrl = data['image_url'];
 
-                          final blocUser.User user = blocUser.User(userId,
-                              username, email, imageUrl, mClearanceLevel);
-                          BlocRepository.insertUser(dao, user);
+                                  final blocUser.User user = blocUser.User(
+                                      userId,
+                                      username,
+                                      email,
+                                      imageUrl,
+                                      mClearanceLevel);
+                                  BlocRepository.insertUser(dao, user);
 
-                          logger.i(
-                              'user data received with clearance level ' +
-                                  mClearanceLevel.toString());
-                          return MainScreen(dao: dao, user: user);
-                          // return Text("Full Name: ${data['full_name']} ${data['last_name']}");
-                        }
-                        return Text("loading...");
-                      },
-                    );
-                  } else {
-                    return const AuthScreen();
-                  }
-                },
-              ),
-              routes: {
-                // HomeScreen.routeName: (ctx) => HomeScreen(),
-                ManagerScreen.routeName: (ctx) => ManagerScreen(),
-                OwnerScreen.routeName: (ctx) => OwnerScreen(),
-                // CityDetailScreen.routeName: (ctx) => CityDetailScreen(),
-                // NewBlocScreen.routeName: (ctx) => NewBlocScreen(),
-                // BlocDetailScreen.routeName: (ctx) => BlocDetailScreen(),
-              });
-        }),
+                                  logger.i(
+                                      'user data received with clearance level ' +
+                                          mClearanceLevel.toString());
+                                  return MainScreen(dao: dao, user: user);
+                                  // return Text("Full Name: ${data['full_name']} ${data['last_name']}");
+                                }
+                                return Text("loading...");
+                              },
+                            );
+                          } else {
+                            return const AuthScreen();
+                          }
+                        },
+                      ),
+                routes: {
+                  // HomeScreen.routeName: (ctx) => HomeScreen(),
+                  ManagerScreen.routeName: (ctx) => ManagerScreen(),
+                  OwnerScreen.routeName: (ctx) => OwnerScreen(),
+                  // CityDetailScreen.routeName: (ctx) => CityDetailScreen(),
+                  // NewBlocScreen.routeName: (ctx) => NewBlocScreen(),
+                  // BlocDetailScreen.routeName: (ctx) => BlocDetailScreen(),
+                });
+          }),
     );
-
-
-
   }
 }
