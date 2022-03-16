@@ -14,18 +14,38 @@ class OwnerScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final dao = ModalRoute.of(context)!.settings.arguments as BlocDao;
-
     logger.i('owner screen is loading...');
-    final Stream<QuerySnapshot> _citiesStream =
-        FirebaseFirestore.instance.collection('cities').snapshots();
+
+    final dao = ModalRoute.of(context)!.settings.arguments as BlocDao;
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('Owner'),
       ),
       // drawer: AppDrawer(),
-      body: StreamBuilder<QuerySnapshot>(
+      body: _buildBody(context, dao),
+    );
+  }
+
+  _buildBody(BuildContext context, BlocDao dao) {
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          buildCities(context, dao),
+          SizedBox(height: 10.0),
+        ],
+      ),
+    );
+  }
+
+  buildCities(BuildContext context, BlocDao dao) {
+    final Stream<QuerySnapshot> _citiesStream =
+        FirebaseFirestore.instance.collection('cities').snapshots();
+
+    return Container(
+      height: MediaQuery.of(context).size.height,
+      padding: EdgeInsets.all(5),
+      child: StreamBuilder<QuerySnapshot>(
         stream: _citiesStream,
         builder: (ctx, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -39,7 +59,7 @@ class OwnerScreen extends StatelessWidget {
 
           return GridView(
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
+              crossAxisCount: 1,
               childAspectRatio: 3 / 2,
               crossAxisSpacing: 10,
               mainAxisSpacing: 10,
@@ -51,7 +71,7 @@ class OwnerScreen extends StatelessWidget {
               String name = data['name'];
               String ownerId = data['owner_id'];
               String cityId = document.id;
-              final City city = City(cityId,name,ownerId,imageUrl);
+              final City city = City(cityId, name, ownerId, imageUrl);
               BlocRepository.insertCity(dao, city);
 
               return CityItem(city, dao, key: ValueKey(document.id));

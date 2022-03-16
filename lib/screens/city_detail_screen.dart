@@ -19,11 +19,6 @@ class CityDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Stream<QuerySnapshot> _blocsStream = FirebaseFirestore.instance
-        .collection('blocs')
-        .where('city', isEqualTo: city.id)
-        .snapshots();
-
     return Scaffold(
       appBar: AppBar(
         title: Text(city.name),
@@ -46,7 +41,31 @@ class CityDetailScreen extends StatelessWidget {
         splashColor: Colors.grey,
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-      body: StreamBuilder<QuerySnapshot>(
+      body: _buildBody(context,dao),
+    );
+  }
+
+  _buildBody(BuildContext context, BlocDao dao) {
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          buildBlocs(context, dao),
+          SizedBox(height: 10.0),
+        ],
+      ),
+    );
+  }
+
+  buildBlocs(BuildContext context, BlocDao dao) {
+    final Stream<QuerySnapshot> _blocsStream = FirebaseFirestore.instance
+        .collection('blocs')
+        .where('city', isEqualTo: city.id)
+        .snapshots();
+
+    return Container(
+      height: MediaQuery.of(context).size.height,
+      padding: EdgeInsets.all(5),
+      child: StreamBuilder<QuerySnapshot>(
         stream: _blocsStream,
         builder: (ctx, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -56,14 +75,14 @@ class CityDetailScreen extends StatelessWidget {
           }
           return GridView(
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
+              crossAxisCount: 1,
               childAspectRatio: 3 / 2,
               crossAxisSpacing: 10,
               mainAxisSpacing: 10,
             ),
             children: snapshot.data!.docs.map((DocumentSnapshot document) {
               Map<String, dynamic> data =
-                  document.data()! as Map<String, dynamic>;
+              document.data()! as Map<String, dynamic>;
 
               final Bloc bloc = BlocUtils.getBloc(data, document.id);
               BlocRepository.insertBloc(dao, bloc);

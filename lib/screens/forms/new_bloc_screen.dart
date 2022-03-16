@@ -18,15 +18,12 @@ class NewBlocScreen extends StatefulWidget {
   NewBlocScreen({key, required this.city}) : super(key: key);
 
   @override
-  _NewBlocScreenState createState() => _NewBlocScreenState(city:city);
+  _NewBlocScreenState createState() => _NewBlocScreenState();
 }
 
 class _NewBlocScreenState extends State<NewBlocScreen> {
   var logger = Logger();
   var _isLoading = false;
-  City city;
-
-  _NewBlocScreenState({required this.city});
 
   void _submitNewBlocForm(
     String blocName,
@@ -64,7 +61,7 @@ class _NewBlocScreenState extends State<NewBlocScreen> {
         'ownerId': user!.uid,
         'addressLine1': addressLine1,
         'addressLine2': addressLine2,
-        'city': city.id,
+        'city': widget.city.id,
         'pinCode': pinCode,
         'imageUrl': url,
         'createdAt': time,

@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 import '../db/dao/bloc_dao.dart';
 import '../db/entity/cart_item.dart';
 import '../providers/cart.dart';
-import 'ui/Toaster.dart';
+import 'ui/toaster.dart';
 
 class CartBlock extends StatelessWidget {
   CartItem cartItem;

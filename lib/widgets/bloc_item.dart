@@ -1,4 +1,5 @@
 import 'package:bloc/screens/bloc_detail_screen.dart';
+import 'package:bloc/screens/forms/edit_bloc_screen.dart';
 import 'package:flutter/material.dart';
 
 import '../db/dao/bloc_dao.dart';
@@ -41,6 +42,15 @@ class BlocItem extends StatelessWidget {
           title: Text(
             bloc.name,
             textAlign: TextAlign.center,
+          ),
+          trailing: IconButton(
+            icon: Icon(Icons.edit),
+            onPressed: () {
+              Navigator.of(context).push(
+                  MaterialPageRoute(builder: (ctx) => EditBlocScreen(bloc: bloc)),
+              );
+            },
+            color: Theme.of(context).primaryColor,
           ),
         ),
       ),

@@ -11,7 +11,7 @@ import '../utils/category_utils.dart';
 import '../utils/product_utils.dart';
 import '../widgets/category_item.dart';
 import '../widgets/product_item.dart';
-import '../widgets/ui/Toaster.dart';
+import '../widgets/ui/toaster.dart';
 import '../widgets/ui/expandable_fab.dart';
 import 'forms/new_product_screen.dart';
 import 'forms/new_service_category_screen.dart';
@@ -168,7 +168,7 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen> {
             return displayCategoryList(context);
           }
         }
-        return Text('Loading...');
+        return Text('Loading categories...');
       },
     );
   }
@@ -254,16 +254,6 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen> {
   }
 
   displayProductsList(BuildContext context, int category) {
-    // if (category == -1) {
-    //   fProducts = BlocRepository.getProductsByCategory(widget.dao, "Food");
-    // } else {
-    //   if (category == 0) {
-    //     fProducts = BlocRepository.getProductsByCategory(widget.dao, "Food");
-    //   } else {
-    //     fProducts = BlocRepository.getProductsByCategory(widget.dao, "Alcohol");
-    //   }
-    // }
-
     if (_categorySelected == 0) {
       fProducts = BlocRepository.getProductsByCategory(widget.dao, "Food");
     } else {

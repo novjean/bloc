@@ -1,5 +1,5 @@
 import 'package:bloc/db/bloc_repository.dart';
-import 'package:bloc/widgets/ui/Toaster.dart';
+import 'package:bloc/widgets/ui/toaster.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
