@@ -1,4 +1,5 @@
 import 'package:bloc/db/bloc_repository.dart';
+import 'package:bloc/helpers/firestore_helper.dart';
 import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
@@ -115,6 +116,9 @@ class _OrderButtonState extends State<OrderButton> {
               // need to store this in floor
               for(int i=0;i<widget.cart.items.length;i++){
                 BlocRepository.insertCartItem(widget.dao, widget.cart.items.values.elementAt(i));
+
+                // send it to firebase
+                FirestoreHelper.uploadCartItem(widget.cart.items.values.elementAt(i));
               }
 
               Toaster.shortToast("Order sent.");

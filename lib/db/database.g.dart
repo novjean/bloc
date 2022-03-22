@@ -92,8 +92,6 @@ class _$AppDatabase extends AppDatabase {
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `City` (`id` TEXT NOT NULL, `name` TEXT NOT NULL, `ownerId` TEXT NOT NULL, `imageUrl` TEXT NOT NULL, PRIMARY KEY (`id`))');
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `Person` (`id` INTEGER NOT NULL, `name` TEXT NOT NULL, PRIMARY KEY (`id`))');
-        await database.execute(
             'CREATE TABLE IF NOT EXISTS `Product` (`id` TEXT NOT NULL, `name` TEXT NOT NULL, `type` TEXT NOT NULL, `description` TEXT NOT NULL, `price` INTEGER NOT NULL, `serviceId` TEXT NOT NULL, `imageUrl` TEXT NOT NULL, `ownerId` TEXT NOT NULL, `createdAt` TEXT NOT NULL, PRIMARY KEY (`id`))');
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `User` (`userId` TEXT NOT NULL, `username` TEXT NOT NULL, `email` TEXT NOT NULL, `imageUrl` TEXT NOT NULL, `clearanceLevel` INTEGER NOT NULL, PRIMARY KEY (`userId`))');
@@ -113,12 +111,6 @@ class _$AppDatabase extends AppDatabase {
 class _$BlocDao extends BlocDao {
   _$BlocDao(this.database, this.changeListener)
       : _queryAdapter = QueryAdapter(database, changeListener),
-        _personInsertionAdapter = InsertionAdapter(
-            database,
-            'Person',
-            (Person item) =>
-                <String, Object?>{'id': item.id, 'name': item.name},
-            changeListener),
         _userInsertionAdapter = InsertionAdapter(
             database,
             'User',
@@ -215,8 +207,6 @@ class _$BlocDao extends BlocDao {
 
   final QueryAdapter _queryAdapter;
 
-  final InsertionAdapter<Person> _personInsertionAdapter;
-
   final InsertionAdapter<User> _userInsertionAdapter;
 
   final InsertionAdapter<City> _cityInsertionAdapter;
@@ -230,23 +220,6 @@ class _$BlocDao extends BlocDao {
   final InsertionAdapter<CartItem> _cartItemInsertionAdapter;
 
   final InsertionAdapter<Product> _productInsertionAdapter;
-
-  @override
-  Future<List<Person>> findAllPersons() async {
-    return _queryAdapter.queryList('SELECT * FROM Person',
-        mapper: (Map<String, Object?> row) =>
-            Person(row['id'] as int, row['name'] as String));
-  }
-
-  @override
-  Stream<Person?> findPersonById(int id) {
-    return _queryAdapter.queryStream('SELECT * FROM Person WHERE id = ?1',
-        mapper: (Map<String, Object?> row) =>
-            Person(row['id'] as int, row['name'] as String),
-        arguments: [id],
-        queryableName: 'Person',
-        isView: false);
-  }
 
   @override
   Stream<List<Category>> getCategories() {
@@ -324,11 +297,6 @@ class _$BlocDao extends BlocDao {
             row['ownerId'] as String,
             row['createdAt'] as String),
         arguments: [catType]);
-  }
-
-  @override
-  Future<void> insertPerson(Person person) async {
-    await _personInsertionAdapter.insert(person, OnConflictStrategy.abort);
   }
 
   @override
