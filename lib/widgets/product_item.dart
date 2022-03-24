@@ -18,8 +18,9 @@ import '../utils/string_utils.dart';
 class ProductItem extends StatelessWidget {
   final Product product;
   final BlocDao dao;
+  final String serviceId;
 
-  ProductItem({required this.product, required this.dao});
+  ProductItem({required this.serviceId, required this.product, required this.dao});
 
   @override
   Widget build(BuildContext context) {
@@ -104,6 +105,7 @@ class ProductItem extends StatelessWidget {
                                   String timestamp = Timestamp.now().toString();
                                   CartItem cartitem = CartItem(
                                       id: id,
+                                      serviceId: serviceId,
                                       cartNumber: cartNumber,
                                       userId: userId,
                                       productId: product.id,
@@ -112,9 +114,10 @@ class ProductItem extends StatelessWidget {
                                           product.price.toString()),
                                       quantity: 1,
                                       createdAt: timestamp);
-                                  
+
                                   cart.addItem(
                                       id,
+                                      serviceId,
                                       cartNumber,
                                       userId,
                                       cartitem.productId,

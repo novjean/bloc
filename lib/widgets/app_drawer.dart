@@ -40,10 +40,6 @@ class AppDrawer extends StatelessWidget {
                       MaterialPageRoute(
                           builder: (ctx) => ManagerScreen(dao:dao)),
                     );
-                    // Navigator.of(context).pushNamed(
-                    //   ManagerScreen.routeName,
-                    //   arguments: dao,
-                    // );
                   },
                 )
               : const SizedBox.shrink(),

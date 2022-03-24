@@ -3,13 +3,16 @@ import 'package:flutter/material.dart';
 import '../db/dao/bloc_dao.dart';
 import '../db/entity/bloc_service.dart';
 import '../screens/bloc_service_detail_screen.dart';
+import '../screens/manager_bloc_service_screen.dart';
 
 class BlocServiceItem extends StatelessWidget {
   final Key key;
   final BlocService service;
   final BlocDao dao;
+  final bool isManager;
 
-  const BlocServiceItem(this.service, this.dao, {required this.key});
+  const BlocServiceItem(this.service, this.isManager, this.dao,
+      {required this.key});
 
   @override
   Widget build(BuildContext context) {
@@ -20,8 +23,9 @@ class BlocServiceItem extends StatelessWidget {
           onTap: () {
             Navigator.of(context).push(
               MaterialPageRoute(
-                  builder: (ctx) =>
-                      BlocServiceDetailScreen(dao: dao, service: service)),
+                  builder: (ctx) => isManager
+                      ? ManagerBlocServiceScreen(dao: dao, service: service)
+                      : BlocServiceDetailScreen(dao: dao, service: service)),
             );
           },
           child: Hero(

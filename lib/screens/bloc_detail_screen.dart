@@ -84,7 +84,7 @@ class BlocDetailScreen extends StatelessWidget {
               final BlocService service = BlocServiceUtils.getBlocService(data, document.id);
               BlocRepository.insertBlocService(dao, service);
 
-              return BlocServiceItem(service, dao, key: ValueKey(document.id));
+              return BlocServiceItem(service, false, dao, key: ValueKey(document.id));
             }).toList(),
           );
         },

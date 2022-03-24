@@ -274,6 +274,7 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen> {
                 Product product = products[index];
 
                 return ProductItem(
+                  serviceId : widget.service.id,
                   product: product,
                   dao: widget.dao,
                 );

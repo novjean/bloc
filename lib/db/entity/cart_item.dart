@@ -5,6 +5,7 @@ import 'package:floor/floor.dart';
 class CartItem {
   @primaryKey
   final String id;
+  final String serviceId;
   final int cartNumber;
   final String userId;
   final String productId;
@@ -15,6 +16,7 @@ class CartItem {
 
   CartItem(
       {required this.id,
+        required this.serviceId,
       required this.cartNumber,
       required this.userId,
       required this.productId,
