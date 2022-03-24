@@ -36,9 +36,14 @@ class AppDrawer extends StatelessWidget {
                   leading: const Icon(Icons.adjust),
                   title: const Text('Manager'),
                   onTap: () {
-                    Navigator.of(context).pushNamed(
-                      ManagerScreen.routeName,
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                          builder: (ctx) => ManagerScreen(dao:dao)),
                     );
+                    // Navigator.of(context).pushNamed(
+                    //   ManagerScreen.routeName,
+                    //   arguments: dao,
+                    // );
                   },
                 )
               : const SizedBox.shrink(),

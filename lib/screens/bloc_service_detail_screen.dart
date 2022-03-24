@@ -117,9 +117,6 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen> {
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       body: _buildBody(context, widget.service),
-      // body: _isLoading
-      //     ? Center(child: CircularProgressIndicator())
-      //     : _buildBody(context, widget.service),
     );
   }
 

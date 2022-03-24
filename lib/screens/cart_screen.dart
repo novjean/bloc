@@ -118,6 +118,7 @@ class _OrderButtonState extends State<OrderButton> {
                 BlocRepository.insertCartItem(widget.dao, widget.cart.items.values.elementAt(i));
 
                 // send it to firebase
+                //todo: will need to check if the upload actually went through
                 FirestoreHelper.uploadCartItem(widget.cart.items.values.elementAt(i));
               }
 
