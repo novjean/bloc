@@ -8,7 +8,6 @@ import 'dao/bloc_dao.dart';
 import 'entity/bloc.dart';
 import 'entity/cart_item.dart';
 import 'entity/city.dart';
-import 'entity/order.dart';
 import 'entity/product.dart';
 import 'entity/user.dart';
 
@@ -22,7 +21,6 @@ part 'database.g.dart'; // the generated code will be there
   City,
   Product,
   User,
-  Order
 ])
 abstract class AppDatabase extends FloorDatabase {
   BlocDao get blocDao;

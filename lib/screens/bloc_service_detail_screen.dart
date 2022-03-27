@@ -261,26 +261,27 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen> {
         future: fProducts,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Text('Loading...');
-          } else {
-            List<Product> products = snapshot.data! as List<Product>;
-
-            return ListView.builder(
-              primary: false,
-              scrollDirection: Axis.vertical,
-              shrinkWrap: true,
-              itemCount: products == null ? 0 : products.length,
-              itemBuilder: (BuildContext ctx, int index) {
-                Product product = products[index];
-
-                return ProductItem(
-                  serviceId : widget.service.id,
-                  product: product,
-                  dao: widget.dao,
-                );
-              },
+            return const Center(
+              child: CircularProgressIndicator(),
             );
           }
+          List<Product> products = snapshot.data! as List<Product>;
+
+          return ListView.builder(
+            primary: false,
+            scrollDirection: Axis.vertical,
+            shrinkWrap: true,
+            itemCount: products == null ? 0 : products.length,
+            itemBuilder: (BuildContext ctx, int index) {
+              Product product = products[index];
+
+              return ProductItem(
+                serviceId : widget.service.id,
+                product: product,
+                dao: widget.dao,
+              );
+            },
+          );
         });
   }
 }

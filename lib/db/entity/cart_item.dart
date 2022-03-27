@@ -8,17 +8,19 @@ class CartItem {
   final String serviceId;
   final int cartNumber;
   final String userId;
+  // final String userName;
   final String productId;
   final String productName;
   final double productPrice;
   int quantity;
-  final String createdAt;
+  final int createdAt;
 
   CartItem(
       {required this.id,
-        required this.serviceId,
+      required this.serviceId,
       required this.cartNumber,
       required this.userId,
+      // required this.userName,
       required this.productId,
       required this.productName,
       required this.productPrice,

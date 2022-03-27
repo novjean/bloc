@@ -1,16 +1,8 @@
-import 'package:floor/floor.dart';
+import 'package:bloc/db/entity/cart_item.dart';
 
-@entity
 class Order {
-  @primaryKey
-  final String id;
-  final String orderNumber;
-  final String blocId;
-  final String blocName;
-  final String userId;
-  final int cartNumber;
-  final String createdAt;
+  final String customerId;
+  late final List<CartItem> cartItems=[];
 
-  Order(this.id, this.orderNumber, this.blocId, this.blocName, this.userId,
-      this.cartNumber, this.createdAt);
+  Order(this.customerId);
 }

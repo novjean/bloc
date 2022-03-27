@@ -102,7 +102,7 @@ class ProductItem extends StatelessWidget {
                                   final user =
                                       FirebaseAuth.instance.currentUser;
                                   String userId = user!.uid;
-                                  String timestamp = Timestamp.now().toString();
+                                  int timestamp = Timestamp.now().millisecondsSinceEpoch;
                                   CartItem cartitem = CartItem(
                                       id: id,
                                       serviceId: serviceId,

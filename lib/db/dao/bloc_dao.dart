@@ -37,8 +37,11 @@ abstract class BlocDao {
   @insert
   Future<void> insertCartItem(CartItem cartitem);
 
-  @Query('SELECT * FROM CartItem where userId=:userId')
-  Future<List<CartItem>> getCartItems(String userId);
+  @Query('SELECT * FROM CartItem where userId=:uId')
+  Future<List<CartItem>> getCartItems(String uId);
+
+  @Query('SELECT * FROM CartItem where serviceId=:sId ORDER BY userId ASC')
+  Future<List<CartItem>> getSortedCartItems(String sId);
 
   @Query('DELETE FROM CartItem where productId=:prodId')
   Future<CartItem?> deleteCartItems(String prodId);

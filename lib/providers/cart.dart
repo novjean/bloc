@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import '../db/entity/cart_item.dart';
@@ -21,7 +22,7 @@ class Cart with ChangeNotifier {
   }
 
   void addItem(String id, String serviceId, int cartNumber, String userId, String productId,
-      String productName, double productPrice, String timestamp) {
+      String productName, double productPrice, int timestamp) {
     if (_items.containsKey(productId)) {
       // change the quantity
       _items.update(

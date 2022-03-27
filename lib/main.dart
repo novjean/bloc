@@ -103,7 +103,9 @@ class MyApp extends StatelessWidget {
 
                                 if (snapshot.hasData &&
                                     !snapshot.data!.exists) {
-                                  return Text("Document does not exist");
+                                  logger.e('document does not exist');
+                                  return const AuthScreen();
+                                  // return Text("Document does not exist");
                                 }
 
                                 if (snapshot.connectionState ==

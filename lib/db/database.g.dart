@@ -86,7 +86,7 @@ class _$AppDatabase extends AppDatabase {
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `BlocService` (`id` TEXT NOT NULL, `name` TEXT NOT NULL, `blocId` TEXT NOT NULL, `type` TEXT NOT NULL, `primaryNumber` REAL NOT NULL, `secondaryNumber` REAL NOT NULL, `email` TEXT NOT NULL, `imageUrl` TEXT NOT NULL, `ownerId` TEXT NOT NULL, `createdAt` TEXT NOT NULL, PRIMARY KEY (`id`))');
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `CartItem` (`id` TEXT NOT NULL, `serviceId` TEXT NOT NULL, `cartNumber` INTEGER NOT NULL, `userId` TEXT NOT NULL, `productId` TEXT NOT NULL, `productName` TEXT NOT NULL, `productPrice` REAL NOT NULL, `quantity` INTEGER NOT NULL, `createdAt` TEXT NOT NULL, PRIMARY KEY (`id`))');
+            'CREATE TABLE IF NOT EXISTS `CartItem` (`id` TEXT NOT NULL, `serviceId` TEXT NOT NULL, `cartNumber` INTEGER NOT NULL, `userId` TEXT NOT NULL, `productId` TEXT NOT NULL, `productName` TEXT NOT NULL, `productPrice` REAL NOT NULL, `quantity` INTEGER NOT NULL, `createdAt` INTEGER NOT NULL, PRIMARY KEY (`id`))');
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `Category` (`id` TEXT NOT NULL, `name` TEXT NOT NULL, `type` TEXT NOT NULL, `serviceId` TEXT NOT NULL, `imageUrl` TEXT NOT NULL, `ownerId` TEXT NOT NULL, `createdAt` TEXT NOT NULL, `sequence` INTEGER NOT NULL, PRIMARY KEY (`id`))');
         await database.execute(
@@ -95,8 +95,6 @@ class _$AppDatabase extends AppDatabase {
             'CREATE TABLE IF NOT EXISTS `Product` (`id` TEXT NOT NULL, `name` TEXT NOT NULL, `type` TEXT NOT NULL, `description` TEXT NOT NULL, `price` INTEGER NOT NULL, `serviceId` TEXT NOT NULL, `imageUrl` TEXT NOT NULL, `ownerId` TEXT NOT NULL, `createdAt` TEXT NOT NULL, PRIMARY KEY (`id`))');
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `User` (`userId` TEXT NOT NULL, `username` TEXT NOT NULL, `email` TEXT NOT NULL, `imageUrl` TEXT NOT NULL, `clearanceLevel` INTEGER NOT NULL, PRIMARY KEY (`userId`))');
-        await database.execute(
-            'CREATE TABLE IF NOT EXISTS `Order` (`id` TEXT NOT NULL, `orderNumber` TEXT NOT NULL, `blocId` TEXT NOT NULL, `blocName` TEXT NOT NULL, `userId` TEXT NOT NULL, `cartNumber` INTEGER NOT NULL, `createdAt` TEXT NOT NULL, PRIMARY KEY (`id`))');
 
         await callback?.onCreate?.call(database, version);
       },
@@ -242,7 +240,7 @@ class _$BlocDao extends BlocDao {
   }
 
   @override
-  Future<List<CartItem>> getCartItems(String userId) async {
+  Future<List<CartItem>> getCartItems(String uId) async {
     return _queryAdapter.queryList('SELECT * FROM CartItem where userId=?1',
         mapper: (Map<String, Object?> row) => CartItem(
             id: row['id'] as String,
@@ -253,8 +251,25 @@ class _$BlocDao extends BlocDao {
             productName: row['productName'] as String,
             productPrice: row['productPrice'] as double,
             quantity: row['quantity'] as int,
-            createdAt: row['createdAt'] as String),
-        arguments: [userId]);
+            createdAt: row['createdAt'] as int),
+        arguments: [uId]);
+  }
+
+  @override
+  Future<List<CartItem>> getSortedCartItems(String sId) async {
+    return _queryAdapter.queryList(
+        'SELECT * FROM CartItem where serviceId=?1 ORDER BY userId ASC',
+        mapper: (Map<String, Object?> row) => CartItem(
+            id: row['id'] as String,
+            serviceId: row['serviceId'] as String,
+            cartNumber: row['cartNumber'] as int,
+            userId: row['userId'] as String,
+            productId: row['productId'] as String,
+            productName: row['productName'] as String,
+            productPrice: row['productPrice'] as double,
+            quantity: row['quantity'] as int,
+            createdAt: row['createdAt'] as int),
+        arguments: [sId]);
   }
 
   @override
@@ -269,7 +284,7 @@ class _$BlocDao extends BlocDao {
             productName: row['productName'] as String,
             productPrice: row['productPrice'] as double,
             quantity: row['quantity'] as int,
-            createdAt: row['createdAt'] as String),
+            createdAt: row['createdAt'] as int),
         arguments: [prodId]);
   }
 
