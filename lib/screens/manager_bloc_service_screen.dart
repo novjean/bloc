@@ -113,7 +113,7 @@ class ManagerBlocServiceScreen extends StatelessWidget {
                               Navigator.of(context).push(MaterialPageRoute(
                                   builder: (ctx) => OrdersScreen(
                                       serviceId: serviceId,
-                                      service: managerService,
+                                      managerService: managerService,
                                       dao: dao)))
                             }
                           else

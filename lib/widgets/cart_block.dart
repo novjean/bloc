@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import '../db/dao/bloc_dao.dart';
 import '../db/entity/cart_item.dart';
 import '../providers/cart.dart';
+import 'cart_block_item.dart';
 import 'ui/toaster.dart';
 
 class CartBlock extends StatelessWidget {
@@ -66,30 +67,7 @@ class CartBlock extends StatelessWidget {
 
         Provider.of<Cart>(context, listen: false).removeItem(cartItem.productId);
       },
-      child: Card(
-        // symmetric is used to have different margins for left, right, top and bottom
-        margin: EdgeInsets.symmetric(
-          horizontal: 15,
-          vertical: 4,
-        ),
-        child: Padding(
-          padding: EdgeInsets.all(8),
-          child: ListTile(
-            leading: CircleAvatar(
-              backgroundColor: Theme.of(context).highlightColor,
-              child: Padding(
-                padding: EdgeInsets.all(5),
-                child: FittedBox(
-                  child: Text('\u20B9${cartItem.productPrice}'),
-                ),
-              ),
-            ),
-            title: Text(cartItem.productName),
-            subtitle: Text('Total: \u20B9${(cartItem.productPrice * cartItem.quantity)}'),
-            trailing: Text('${cartItem.quantity} x'),
-          ),
-        ),
-      ),
+      child: CartBlockItem(cartItem)
     );
   }
 }

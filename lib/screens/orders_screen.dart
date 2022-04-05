@@ -1,4 +1,5 @@
 import 'package:bloc/db/entity/manager_service.dart';
+import 'package:bloc/screens/cart_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -10,19 +11,20 @@ import '../helpers/firestore_helper.dart';
 import '../utils/cart_item_utils.dart';
 import '../widgets/order_line_item.dart';
 import '../widgets/ui/Toaster.dart';
+import 'order_display_screen.dart';
 
 class OrdersScreen extends StatelessWidget {
   String serviceId;
   BlocDao dao;
-  ManagerService service;
+  ManagerService managerService;
 
-  OrdersScreen({required this.serviceId, required this.dao, required this.service});
+  OrdersScreen({required this.serviceId, required this.dao, required this.managerService});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(service.name),
+        title: Text(managerService.name),
         // actions: [
         //   IconButton(
         //     icon: Icon(
@@ -38,7 +40,7 @@ class OrdersScreen extends StatelessWidget {
         //   ),
         // ],
       ),
-      body: _buildBody(context, service),
+      body: _buildBody(context, managerService),
     );
   }
 
@@ -116,7 +118,11 @@ class OrdersScreen extends StatelessWidget {
                 onTap: () => {
                   Toaster.shortToast(
                       "Order index : " + index.toString()),
-
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                        builder: (ctx) =>
+                            OrderDisplayScreen(order: order)),
+                  ),
                 },
               );
 
