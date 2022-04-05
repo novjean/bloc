@@ -13,6 +13,7 @@ import '../utils/manager_utils.dart';
 import '../widgets/manager_service_item.dart';
 import '../widgets/order_item.dart';
 import '../widgets/ui/Toaster.dart';
+import 'orders_screen.dart';
 
 class ManagerBlocServiceScreen extends StatelessWidget {
   BlocDao dao;
@@ -67,14 +68,14 @@ class ManagerBlocServiceScreen extends StatelessWidget {
             BlocRepository.insertManagerService(dao, ms);
 
             if (i == snapshot.data!.docs.length - 1) {
-              return displayManagerServices(context);
+              return displayManagerServices(context, service.id);
             }
           }
           return Text('loading services...');
         });
   }
 
-  displayManagerServices(BuildContext context) {
+  displayManagerServices(BuildContext context, String serviceId) {
     Stream<List<ManagerService>> _stream = dao.getManagerServices();
 
     return Container(
@@ -85,7 +86,8 @@ class ManagerBlocServiceScreen extends StatelessWidget {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Text('Loading...');
           } else {
-            List<ManagerService> services = snapshot.data! as List<ManagerService>;
+            List<ManagerService> services =
+                snapshot.data! as List<ManagerService>;
 
             return ListView.builder(
               primary: false,
@@ -93,101 +95,44 @@ class ManagerBlocServiceScreen extends StatelessWidget {
               shrinkWrap: true,
               itemCount: services == null ? 0 : services.length,
               itemBuilder: (BuildContext ctx, int index) {
-                ManagerService service = services[index];
+                ManagerService managerService = services[index];
                 return GestureDetector(
                     child: ManagerServiceItem(
-                      service: service,
+                      managerService: managerService,
+                      serviceId: serviceId,
                     ),
                     onTap: () => {
-                      // setState(() {
-                      //   _categorySelected = index;
-                      // }),
-                      Toaster.shortToast(
-                          "Service index : " + index.toString()),
+                          // setState(() {
+                          //   _categorySelected = index;
+                          // }),
+                          Toaster.shortToast(
+                              "Service index : " + index.toString()),
 
-                      // displayProductsList(context, index),
-                    }
+                          if (index == 0)
+                            {
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (ctx) => OrdersScreen(
+                                      serviceId: serviceId,
+                                      service: managerService,
+                                      dao: dao)))
+                            }
+                          else
+                            {
+                              // needs implementation
+                            }
 
-                  // Scaffold
-                  // .of(context)
-                  // .showSnackBar(SnackBar(content: Text(index.toString()))),
-                );
+                          // displayProductsList(context, index),
+                        }
+
+                    // Scaffold
+                    // .of(context)
+                    // .showSnackBar(SnackBar(content: Text(index.toString()))),
+                    );
               },
             );
           }
         },
       ),
-
-    );
-  }
-
-
-
-  //unimplemented logic below
-  _buildOrders(BuildContext context) {
-    final Stream<QuerySnapshot> _cartStream =
-        FirestoreHelper.getCartItemsSnapshot(service.id);
-
-    return StreamBuilder<QuerySnapshot>(
-      stream: _cartStream,
-      builder: (ctx, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
-        }
-        List<CartItem> cartItems = [];
-        String custId = "";
-
-        for (int i = 0; i < snapshot.data!.docs.length; i++) {
-          DocumentSnapshot document = snapshot.data!.docs[i];
-          Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-          final CartItem ci = CartItemUtils.getCartItem(data, document.id);
-          BlocRepository.insertCartItem(dao, ci);
-          cartItems.add(ci);
-          custId = ci.userId;
-
-          if (i == snapshot.data!.docs.length - 1) {
-            return displayOrdersList(context, custId);
-          }
-        }
-
-        return Text('Loading cart items...');
-      },
-    );
-  }
-
-  displayOrdersList(BuildContext context, String custId) {
-    Future<List<CartItem>> fCartItems =
-        BlocRepository.getSortedCartItems(dao, service.id);
-
-    return FutureBuilder(
-      future: fCartItems,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Text('Loading...');
-        } else {
-          List<CartItem> cartItems = snapshot.data! as List<CartItem>;
-          List<Order> orders = CartItemUtils.extractOrders(cartItems);
-
-          return ListView.builder(
-            primary: false,
-            scrollDirection: Axis.vertical,
-            shrinkWrap: true,
-            itemCount: orders == null ? 0 : orders.length,
-            itemBuilder: (BuildContext ctx, int index) {
-              Order order = orders[index];
-
-              return OrderItem(
-                order: order,
-                // product: product,
-                dao: dao,
-              );
-            },
-          );
-        }
-        // return ListView.builder(itemBuilder: itemBuilder)
-      },
     );
   }
 }

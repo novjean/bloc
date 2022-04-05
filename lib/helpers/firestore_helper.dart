@@ -1,4 +1,5 @@
 import 'package:bloc/db/entity/cart_item.dart';
+import 'package:bloc/db/entity/manager_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -68,6 +69,7 @@ class FirestoreHelper {
     return FirebaseFirestore.instance.collection(USERS)
         .where('user_id', isEqualTo: customerId)
         .snapshots();  }
+
 
 
 }

@@ -1,18 +1,18 @@
-import 'package:bloc/db/entity/manager_service.dart';
 import 'package:flutter/material.dart';
 
-class ManagerServiceItem extends StatelessWidget{
-  final ManagerService managerService;
-  final String serviceId;
+import '../db/entity/order.dart';
 
-  ManagerServiceItem({required this.managerService, required this.serviceId});
+class OrderLineItem extends StatelessWidget {
+  final Order order;
+
+  OrderLineItem({required this.order});
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(10.0),
+      padding: const EdgeInsets.all(5.0),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(8.0),
+        borderRadius: BorderRadius.circular(5.0),
         child: Stack(
           children: <Widget>[
             // FadeInImage(
@@ -25,7 +25,12 @@ class ManagerServiceItem extends StatelessWidget{
             //       "assets/images/product-placeholder.png"),
             //   fit: BoxFit.cover,
             // ),
-
+            // Image.asset(
+            //   cat["img"],
+            //   height: MediaQuery.of(context).size.height / 6,
+            //   width: MediaQuery.of(context).size.height / 6,
+            //   fit: BoxFit.cover,
+            // ),
             Container(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
@@ -40,12 +45,12 @@ class ManagerServiceItem extends StatelessWidget{
                   // stops: [0.0, 0.1],
                 ),
               ),
-              height: MediaQuery.of(context).size.height / 6,
+              height: MediaQuery.of(context).size.height / 10,
               width: MediaQuery.of(context).size.width,
             ),
             Center(
               child: Container(
-                height: MediaQuery.of(context).size.height / 6,
+                height: MediaQuery.of(context).size.height / 10,
                 width: MediaQuery.of(context).size.width,
                 padding: const EdgeInsets.all(1),
                 constraints: BoxConstraints(
@@ -54,7 +59,7 @@ class ManagerServiceItem extends StatelessWidget{
                 ),
                 child: Center(
                   child: Text(
-                    managerService.name,
+                    order.total.toString(),
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 20,
@@ -70,5 +75,4 @@ class ManagerServiceItem extends StatelessWidget{
       ),
     );
   }
-
 }
