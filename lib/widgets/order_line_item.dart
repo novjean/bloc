@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 
 import '../db/entity/order.dart';
+import '../db/entity/user.dart';
 
 class OrderLineItem extends StatelessWidget {
   final Order order;
+  final User user;
 
-  OrderLineItem({required this.order});
+  OrderLineItem({required this.order, required this.user});
 
   @override
   Widget build(BuildContext context) {
@@ -59,7 +61,7 @@ class OrderLineItem extends StatelessWidget {
                 ),
                 child: Center(
                   child: Text(
-                    order.total.toString(),
+                    user.name,
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 20,

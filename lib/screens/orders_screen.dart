@@ -1,5 +1,4 @@
 import 'package:bloc/db/entity/manager_service.dart';
-import 'package:bloc/screens/cart_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -7,8 +6,10 @@ import '../db/bloc_repository.dart';
 import '../db/dao/bloc_dao.dart';
 import '../db/entity/cart_item.dart';
 import '../db/entity/order.dart';
+import '../db/entity/user.dart';
 import '../helpers/firestore_helper.dart';
 import '../utils/cart_item_utils.dart';
+import '../utils/user_utils.dart';
 import '../widgets/order_line_item.dart';
 import '../widgets/ui/Toaster.dart';
 import 'order_display_screen.dart';
@@ -18,7 +19,10 @@ class OrdersScreen extends StatelessWidget {
   BlocDao dao;
   ManagerService managerService;
 
-  OrdersScreen({required this.serviceId, required this.dao, required this.managerService});
+  OrdersScreen(
+      {required this.serviceId,
+      required this.dao,
+      required this.managerService});
 
   @override
   Widget build(BuildContext context) {
@@ -60,10 +64,11 @@ class OrdersScreen extends StatelessWidget {
   }
 
   buildOrders(BuildContext context) {
-    final Stream<QuerySnapshot> _stream = FirestoreHelper.getCartItemsSnapshot(serviceId);
+    final Stream<QuerySnapshot> _stream =
+        FirestoreHelper.getCartItemsSnapshot(serviceId);
 
     return StreamBuilder<QuerySnapshot>(
-      stream: _stream,
+        stream: _stream,
         builder: (ctx, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(
@@ -76,7 +81,8 @@ class OrdersScreen extends StatelessWidget {
 
           for (int i = 0; i < snapshot.data!.docs.length; i++) {
             DocumentSnapshot document = snapshot.data!.docs[i];
-            Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+            Map<String, dynamic> data =
+                document.data()! as Map<String, dynamic>;
             final CartItem ci = CartItemUtils.getCartItem(data, document.id);
             BlocRepository.insertCartItem(dao, ci);
             cartItems.add(ci);
@@ -88,57 +94,91 @@ class OrdersScreen extends StatelessWidget {
           }
           return Text('Loading cart items...');
         });
-
   }
 
   displayOrdersList(BuildContext context) {
     Future<List<CartItem>> fCartItems =
-    BlocRepository.getSortedCartItems(dao, serviceId);
+        BlocRepository.getSortedCartItems(dao, serviceId);
 
     return FutureBuilder(
       future: fCartItems,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Text('Loading...');
+          return Text('Loading orders...');
         } else {
           List<CartItem> cartItems = snapshot.data! as List<CartItem>;
           List<Order> orders = CartItemUtils.extractOrders(cartItems);
-
-          return ListView.builder(
-            primary: false,
-            scrollDirection: Axis.vertical,
-            shrinkWrap: true,
-            itemCount: orders == null ? 0 : orders.length,
-            itemBuilder: (BuildContext ctx, int index) {
-              Order order = orders[index];
-              return GestureDetector(
-                child: OrderLineItem (
-                  order:order
-                ),
-                onTap: () => {
-                  Toaster.shortToast(
-                      "Order index : " + index.toString()),
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                        builder: (ctx) =>
-                            OrderDisplayScreen(order: order)),
-                  ),
-                },
-              );
-
-              // Order order = orders[index];
-              //
-              // return OrderItem(
-              //   order: order,
-              //   // product: product,
-              //   dao: dao,
-              // );
-            },
-          );
+          return _displayOrderList(context, orders);
         }
-        // return ListView.builder(itemBuilder: itemBuilder)
       },
     );
   }
 
+  loadUser(BuildContext context, Order order) {
+    final Stream<QuerySnapshot> _stream =
+        FirestoreHelper.getUserSnapshot(order.customerId);
+    return StreamBuilder<QuerySnapshot>(
+        stream: _stream,
+        builder: (ctx, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+
+          for (int i = 0; i < snapshot.data!.docs.length; i++) {
+            DocumentSnapshot document = snapshot.data!.docs[i];
+            Map<String, dynamic> data =
+                document.data()! as Map<String, dynamic>;
+            final User user = UserUtils.getUser(data, document.id);
+
+            // BlocRepository.insertManagerService(dao, ms);
+
+            if (i == snapshot.data!.docs.length - 1) {
+              return GestureDetector(
+                child: OrderLineItem(user: user, order: order),
+                onTap: () => {
+                  // Toaster.shortToast(
+                  //     "Order index : " + index.toString()),
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                        builder: (ctx) => OrderDisplayScreen(order: order)),
+                  ),
+                },
+              );
+            }
+          }
+
+          return Text('loading users...');
+        });
+  }
+
+  Widget _displayOrderList(BuildContext context, List<Order> orders) {
+    return ListView.builder(
+      primary: false,
+      scrollDirection: Axis.vertical,
+      shrinkWrap: true,
+      itemCount: orders == null ? 0 : orders.length,
+      itemBuilder: (BuildContext ctx, int index) {
+        Order order = orders[index];
+
+        return loadUser(context, order);
+
+        //  return GestureDetector(
+        //           child: OrderLineItem (
+        //               order:order
+        //           ),
+        //           onTap: () => {
+        //             Toaster.shortToast(
+        //                 "Order index : " + index.toString()),
+        //             Navigator.of(context).push(
+        //               MaterialPageRoute(
+        //                   builder: (ctx) =>
+        //                       OrderDisplayScreen(order: order)),
+        //             ),
+        //           },
+        //         );
+      },
+    );
+  }
 }

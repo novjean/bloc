@@ -101,7 +101,6 @@ class OrderItem extends StatelessWidget {
   Widget testItem(BuildContext context, int cartItemsLength) {
     final Stream<QuerySnapshot> _userStream = FirestoreHelper.getUserSnapshot(order.customerId);
 
-
     return Container(
       height: (MediaQuery.of(context).size.height / 8) * cartItemsLength,
 
