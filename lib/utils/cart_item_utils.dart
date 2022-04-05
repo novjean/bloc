@@ -1,6 +1,5 @@
 import 'package:bloc/db/entity/cart_item.dart';
 import 'package:bloc/db/entity/order.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 class CartItemUtils {
   static CartItem getCartItem(Map<String, dynamic> data, String docId) {

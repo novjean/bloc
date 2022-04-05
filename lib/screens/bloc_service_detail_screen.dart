@@ -130,7 +130,7 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen> {
           buildServiceCategories(context),
           SizedBox(height: 5.0),
           buildProducts(context),
-          SizedBox(height: 50.0),
+          SizedBox(height: 20.0),
         ],
       ),
     );
