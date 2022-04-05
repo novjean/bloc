@@ -8,12 +8,13 @@ import 'dao/bloc_dao.dart';
 import 'entity/bloc.dart';
 import 'entity/cart_item.dart';
 import 'entity/city.dart';
+import 'entity/manager_service.dart';
 import 'entity/product.dart';
 import 'entity/user.dart';
 
 part 'database.g.dart'; // the generated code will be there
 
-@Database(version: 13, entities: [
+@Database(version: 15, entities: [
   Bloc,
   BlocService,
   CartItem,
@@ -21,6 +22,7 @@ part 'database.g.dart'; // the generated code will be there
   City,
   Product,
   User,
+  ManagerService,
 ])
 abstract class AppDatabase extends FloorDatabase {
   BlocDao get blocDao;

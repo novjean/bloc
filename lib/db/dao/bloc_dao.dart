@@ -1,5 +1,6 @@
 import 'package:bloc/db/entity/cart_item.dart';
 import 'package:bloc/db/entity/category.dart';
+import 'package:bloc/db/entity/manager_service.dart';
 import 'package:bloc/db/entity/product.dart';
 import 'package:floor/floor.dart';
 
@@ -55,6 +56,13 @@ abstract class BlocDao {
 
   @Query('SELECT * FROM Product where type=:catType')
   Future<List<Product>> getProductsByCategory(String catType);
+
+  /** Manager Service **/
+  @insert
+  Future<void> insertManagerService(ManagerService ms);
+
+  @Query('SELECT * FROM ManagerService ORDER BY sequence ASC')
+  Stream<List<ManagerService>> getManagerServices();
 
   // @Query('SELECT * FROM Product where id=:productId')
   // Future<Product?> getProduct(String productId);

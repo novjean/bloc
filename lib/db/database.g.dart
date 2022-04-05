@@ -66,7 +66,7 @@ class _$AppDatabase extends AppDatabase {
   Future<sqflite.Database> open(String path, List<Migration> migrations,
       [Callback? callback]) async {
     final databaseOptions = sqflite.OpenDatabaseOptions(
-      version: 13,
+      version: 15,
       onConfigure: (database) async {
         await database.execute('PRAGMA foreign_keys = ON');
         await callback?.onConfigure?.call(database);
@@ -94,7 +94,9 @@ class _$AppDatabase extends AppDatabase {
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `Product` (`id` TEXT NOT NULL, `name` TEXT NOT NULL, `type` TEXT NOT NULL, `description` TEXT NOT NULL, `price` INTEGER NOT NULL, `serviceId` TEXT NOT NULL, `imageUrl` TEXT NOT NULL, `ownerId` TEXT NOT NULL, `createdAt` TEXT NOT NULL, PRIMARY KEY (`id`))');
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `User` (`userId` TEXT NOT NULL, `username` TEXT NOT NULL, `email` TEXT NOT NULL, `imageUrl` TEXT NOT NULL, `clearanceLevel` INTEGER NOT NULL, PRIMARY KEY (`userId`))');
+            'CREATE TABLE IF NOT EXISTS `User` (`userId` TEXT NOT NULL, `username` TEXT NOT NULL, `email` TEXT NOT NULL, `imageUrl` TEXT NOT NULL, `clearanceLevel` INTEGER NOT NULL, `name` TEXT NOT NULL, PRIMARY KEY (`userId`))');
+        await database.execute(
+            'CREATE TABLE IF NOT EXISTS `ManagerService` (`id` TEXT NOT NULL, `name` TEXT NOT NULL, `sequence` INTEGER NOT NULL, PRIMARY KEY (`id`))');
 
         await callback?.onCreate?.call(database, version);
       },
@@ -119,7 +121,8 @@ class _$BlocDao extends BlocDao {
                   'username': item.username,
                   'email': item.email,
                   'imageUrl': item.imageUrl,
-                  'clearanceLevel': item.clearanceLevel
+                  'clearanceLevel': item.clearanceLevel,
+                  'name': item.name
                 }),
         _cityInsertionAdapter = InsertionAdapter(
             database,
@@ -200,7 +203,16 @@ class _$BlocDao extends BlocDao {
                   'imageUrl': item.imageUrl,
                   'ownerId': item.ownerId,
                   'createdAt': item.createdAt
-                });
+                }),
+        _managerServiceInsertionAdapter = InsertionAdapter(
+            database,
+            'ManagerService',
+            (ManagerService item) => <String, Object?>{
+                  'id': item.id,
+                  'name': item.name,
+                  'sequence': item.sequence
+                },
+            changeListener);
 
   final sqflite.DatabaseExecutor database;
 
@@ -221,6 +233,8 @@ class _$BlocDao extends BlocDao {
   final InsertionAdapter<CartItem> _cartItemInsertionAdapter;
 
   final InsertionAdapter<Product> _productInsertionAdapter;
+
+  final InsertionAdapter<ManagerService> _managerServiceInsertionAdapter;
 
   @override
   Stream<List<Category>> getCategories() {
@@ -320,6 +334,16 @@ class _$BlocDao extends BlocDao {
   }
 
   @override
+  Stream<List<ManagerService>> getManagerServices() {
+    return _queryAdapter.queryListStream(
+        'SELECT * FROM ManagerService ORDER BY sequence ASC',
+        mapper: (Map<String, Object?> row) => ManagerService(
+            row['id'] as String, row['name'] as String, row['sequence'] as int),
+        queryableName: 'ManagerService',
+        isView: false);
+  }
+
+  @override
   Future<void> insertUser(User user) async {
     await _userInsertionAdapter.insert(user, OnConflictStrategy.abort);
   }
@@ -353,5 +377,10 @@ class _$BlocDao extends BlocDao {
   @override
   Future<void> insertProduct(Product product) async {
     await _productInsertionAdapter.insert(product, OnConflictStrategy.abort);
+  }
+
+  @override
+  Future<void> insertManagerService(ManagerService ms) async {
+    await _managerServiceInsertionAdapter.insert(ms, OnConflictStrategy.abort);
   }
 }

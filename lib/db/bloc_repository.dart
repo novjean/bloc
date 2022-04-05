@@ -2,6 +2,7 @@
 import 'package:bloc/db/dao/bloc_dao.dart';
 import 'package:bloc/db/entity/cart_item.dart';
 import 'package:bloc/db/entity/category.dart';
+import 'package:bloc/db/entity/manager_service.dart';
 import 'package:bloc/db/entity/product.dart';
 import 'package:bloc/db/entity/user.dart';
 import 'package:logger/logger.dart';
@@ -84,6 +85,11 @@ class BlocRepository {
     logger.i("getProductsByCategory(): " + catType);
     Future<List<Product>> fProducts = dao.getProductsByCategory(catType);
     return fProducts;
+  }
+
+  static void insertManagerService(BlocDao dao, ManagerService ms) async {
+    logger.i("insertManagerService(): ");
+    await dao.insertManagerService(ms);
   }
 
 

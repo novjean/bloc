@@ -44,7 +44,9 @@ class CartItemUtils {
         userId = ci.userId;
         curOrder = Order(userId);
         curOrder.cartItems.add(ci);
+        curOrder.total += ci.productPrice * ci.quantity;
       } else {
+        curOrder.total += ci.productPrice * ci.quantity;
         curOrder.cartItems.add(ci);
       }
 

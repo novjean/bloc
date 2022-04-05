@@ -1,3 +1,4 @@
+import 'package:bloc/db/entity/manager_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -8,7 +9,10 @@ import '../db/entity/cart_item.dart';
 import '../db/entity/order.dart';
 import '../helpers/firestore_helper.dart';
 import '../utils/cart_item_utils.dart';
+import '../utils/manager_utils.dart';
+import '../widgets/manager_service_item.dart';
 import '../widgets/order_item.dart';
+import '../widgets/ui/Toaster.dart';
 
 class ManagerBlocServiceScreen extends StatelessWidget {
   BlocDao dao;
@@ -28,19 +32,101 @@ class ManagerBlocServiceScreen extends StatelessWidget {
     );
   }
 
-  _buildBody(BuildContext context) {
+  Widget _buildBody(BuildContext context) {
     return SingleChildScrollView(
       child: Column(
         children: [
-          _buildOrders(context),
+          SizedBox(height: 2.0),
+          _buildManagerServices(context),
+          // _buildOrders(context),
           SizedBox(height: 10.0),
         ],
       ),
     );
   }
 
+  _buildManagerServices(BuildContext context) {
+    final Stream<QuerySnapshot> _managerStream =
+        FirestoreHelper.getManagerServicesSnapshot();
+
+    return StreamBuilder<QuerySnapshot>(
+        stream: _managerStream,
+        builder: (ctx, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+
+          for (int i = 0; i < snapshot.data!.docs.length; i++) {
+            DocumentSnapshot document = snapshot.data!.docs[i];
+            Map<String, dynamic> data =
+                document.data()! as Map<String, dynamic>;
+            final ManagerService ms =
+                ManagerUtils.getManagerService(data, document.id);
+            BlocRepository.insertManagerService(dao, ms);
+
+            if (i == snapshot.data!.docs.length - 1) {
+              return displayManagerServices(context);
+            }
+          }
+          return Text('loading services...');
+        });
+  }
+
+  displayManagerServices(BuildContext context) {
+    Stream<List<ManagerService>> _stream = dao.getManagerServices();
+
+    return Container(
+      height: MediaQuery.of(context).size.height,
+      child: StreamBuilder(
+        stream: _stream,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Text('Loading...');
+          } else {
+            List<ManagerService> services = snapshot.data! as List<ManagerService>;
+
+            return ListView.builder(
+              primary: false,
+              scrollDirection: Axis.vertical,
+              shrinkWrap: true,
+              itemCount: services == null ? 0 : services.length,
+              itemBuilder: (BuildContext ctx, int index) {
+                ManagerService service = services[index];
+                return GestureDetector(
+                    child: ManagerServiceItem(
+                      service: service,
+                    ),
+                    onTap: () => {
+                      // setState(() {
+                      //   _categorySelected = index;
+                      // }),
+                      Toaster.shortToast(
+                          "Service index : " + index.toString()),
+
+                      // displayProductsList(context, index),
+                    }
+
+                  // Scaffold
+                  // .of(context)
+                  // .showSnackBar(SnackBar(content: Text(index.toString()))),
+                );
+              },
+            );
+          }
+        },
+      ),
+
+    );
+  }
+
+
+
+  //unimplemented logic below
   _buildOrders(BuildContext context) {
-    final Stream<QuerySnapshot> _cartStream = FirestoreHelper.getCartItemsSnapshot(service.id);
+    final Stream<QuerySnapshot> _cartStream =
+        FirestoreHelper.getCartItemsSnapshot(service.id);
 
     return StreamBuilder<QuerySnapshot>(
       stream: _cartStream,
@@ -51,7 +137,7 @@ class ManagerBlocServiceScreen extends StatelessWidget {
           );
         }
         List<CartItem> cartItems = [];
-        String custId ="";
+        String custId = "";
 
         for (int i = 0; i < snapshot.data!.docs.length; i++) {
           DocumentSnapshot document = snapshot.data!.docs[i];
@@ -72,7 +158,8 @@ class ManagerBlocServiceScreen extends StatelessWidget {
   }
 
   displayOrdersList(BuildContext context, String custId) {
-    Future<List<CartItem>> fCartItems = BlocRepository.getSortedCartItems(dao,service.id);
+    Future<List<CartItem>> fCartItems =
+        BlocRepository.getSortedCartItems(dao, service.id);
 
     return FutureBuilder(
       future: fCartItems,
@@ -92,9 +179,9 @@ class ManagerBlocServiceScreen extends StatelessWidget {
               Order order = orders[index];
 
               return OrderItem(
-                order : order
+                order: order,
                 // product: product,
-                // dao: widget.dao,
+                dao: dao,
               );
             },
           );
@@ -103,5 +190,4 @@ class ManagerBlocServiceScreen extends StatelessWidget {
       },
     );
   }
-
 }

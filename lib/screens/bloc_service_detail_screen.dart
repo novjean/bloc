@@ -1,4 +1,5 @@
 import 'package:bloc/db/entity/bloc_service.dart';
+import 'package:bloc/helpers/firestore_helper.dart';
 import 'package:bloc/widgets/ui/cover_photo.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -137,11 +138,8 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen> {
 
   /** Categories List **/
   buildServiceCategories(BuildContext context) {
-    final Stream<QuerySnapshot> _catsStream = FirebaseFirestore.instance
-        .collection('categories')
-        // .orderBy('sequence', descending: true)
-        .where('serviceId', isEqualTo: widget.service.id)
-        .snapshots();
+    final Stream<QuerySnapshot> _catsStream = FirestoreHelper.getCategorySnapshot(widget.service.id);
+
     return StreamBuilder<QuerySnapshot>(
       stream: _catsStream,
       builder: (ctx, snapshot) {
@@ -150,10 +148,6 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen> {
             child: CircularProgressIndicator(),
           );
         }
-
-        // if(count>0) {
-        //   snapshot.data!.docs.sort((a, b) => a['sequence'].compareTo(b['sequence']));
-        // }
 
         for (int i = 0; i < snapshot.data!.docs.length; i++) {
           DocumentSnapshot document = snapshot.data!.docs[i];

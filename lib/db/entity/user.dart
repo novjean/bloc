@@ -8,7 +8,8 @@ class User {
   final String email;
   final String imageUrl;
   final int clearanceLevel;
+  final String name;
 
   User(this.userId, this.username, this.email, this.imageUrl,
-      this.clearanceLevel);
+      this.clearanceLevel, this.name);
 }

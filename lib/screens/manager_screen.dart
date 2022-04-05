@@ -77,31 +77,5 @@ class ManagerScreen extends StatelessWidget {
         },
       ),
     );
-
-    // return StreamBuilder<QuerySnapshot>(stream: _blocsStream, builder: (ctx, snapshot) {
-    //   if (snapshot.connectionState == ConnectionState.waiting) {
-    //     return const Center(
-    //       child: CircularProgressIndicator(),
-    //     );
-    //   }
-    //
-    //   // for (int i = 0; i < snapshot.data!.docs.length; i++) {
-    //   //   DocumentSnapshot document = snapshot.data!.docs[i];
-    //   //   Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-    //   //
-    //   //   final BlocService service = BlocServiceUtils.getBlocService(data, document.id);
-    //   //   // BlocRepository.insertCategory(widget.dao, cat);
-    //   //
-    //   //   // if (i == snapshot.data!.docs.length - 1) {
-    //   //   //   // return displayCategoryList(context);
-    //   //   //   return Text(service.name);
-    //   //   // }
-    //   //
-    //   //
-    //   // }
-    //
-    //   return Text('Loading services...');
-    //
-    // });
   }
 }
