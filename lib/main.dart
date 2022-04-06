@@ -1,8 +1,9 @@
 import 'package:bloc/db/bloc_repository.dart';
 import 'package:bloc/db/dao/bloc_dao.dart';
 import 'package:bloc/db/entity/user.dart' as blocUser;
-import 'package:bloc/screens/manager_screen.dart';
+import 'package:bloc/helpers/firestore_helper.dart';
 import 'package:bloc/screens/owner_screen.dart';
+import 'package:bloc/utils/user_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -91,8 +92,7 @@ class MyApp extends StatelessWidget {
                           if (userSnapshot.hasData) {
                             final user = FirebaseAuth.instance.currentUser;
 
-                            CollectionReference users =
-                                FirebaseFirestore.instance.collection('users');
+                            CollectionReference users = FirestoreHelper.getUsersCollection();
 
                             return FutureBuilder<DocumentSnapshot>(
                               future: users.doc(user!.uid).get(),
@@ -120,20 +120,22 @@ class MyApp extends StatelessWidget {
                                     ConnectionState.done) {
                                   Map<String, dynamic> data = snapshot.data!
                                       .data() as Map<String, dynamic>;
-                                  mClearanceLevel = data['clearance_level'];
-                                  String userId = data['user_id'];
-                                  String username = data['username'];
-                                  String email = data['email'];
-                                  String imageUrl = data['image_url'];
-                                  String name = data['name'];
+                                  final blocUser.User user = UserUtils.getUser(data);
 
-                                  final blocUser.User user = blocUser.User(
-                                      userId: userId,
-                                      username: username,
-                                      email: email,
-                                      imageUrl: imageUrl,
-                                      clearanceLevel : mClearanceLevel,
-                                      name: name);
+                                  mClearanceLevel = user.clearanceLevel;
+                                  // String userId = data['user_id'];
+                                  // String username = data['username'];
+                                  // String email = data['email'];
+                                  // String imageUrl = data['image_url'];
+                                  // String name = data['name'];
+                                  //
+                                  // final blocUser.User user = blocUser.User(
+                                  //     userId: userId,
+                                  //     username: username,
+                                  //     email: email,
+                                  //     imageUrl: imageUrl,
+                                  //     clearanceLevel : mClearanceLevel,
+                                  //     name: name);
                                   BlocRepository.insertUser(dao, user);
 
                                   logger.i(

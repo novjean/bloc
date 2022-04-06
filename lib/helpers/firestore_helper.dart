@@ -70,6 +70,8 @@ class FirestoreHelper {
         .where('user_id', isEqualTo: customerId)
         .snapshots();  }
 
-
+  static CollectionReference<Object?> getUsersCollection() {
+    return FirebaseFirestore.instance.collection(USERS);
+  }
 
 }

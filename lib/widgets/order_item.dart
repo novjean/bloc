@@ -122,7 +122,7 @@ class OrderItem extends StatelessWidget {
             ),
             children: snapshot.data!.docs.map((DocumentSnapshot document) {
               Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-              final User user  = UserUtils.getUser(data, document.id);
+              final User user  = UserUtils.getUser(data);
               BlocRepository.insertUser(dao, user);
 
               return billBlock(context,user, cartItemsLength);

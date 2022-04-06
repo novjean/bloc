@@ -130,7 +130,7 @@ class OrdersScreen extends StatelessWidget {
             DocumentSnapshot document = snapshot.data!.docs[i];
             Map<String, dynamic> data =
                 document.data()! as Map<String, dynamic>;
-            final User user = UserUtils.getUser(data, document.id);
+            final User user = UserUtils.getUser(data);
 
             // BlocRepository.insertManagerService(dao, ms);
 

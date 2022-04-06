@@ -1,7 +1,12 @@
 // import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:logger/logger.dart';
 
-import '../db/entity/user.dart';
+import '../db/entity/user.dart' as blocUser;
+import '../helpers/firestore_helper.dart';
+import '../utils/user_utils.dart';
 import '../widgets/profile/numbers_widget.dart';
 import '../widgets/profile_widget.dart';
 import '../widgets/ui/button_widget.dart';
@@ -15,6 +20,8 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+  var logger = Logger();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -23,38 +30,58 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   _buildBody(BuildContext context) {
-    final User user = User(userId:'userId',
-        username:'username',
-        email:'email',
-        imageUrl:'https://images.unsplash.com/photo-1554151228-14d9def656e4?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=333&q=80',
-        clearanceLevel:9,
-        name:'Nova K');
+    final fbUser = FirebaseAuth.instance.currentUser;
+    CollectionReference users = FirestoreHelper.getUsersCollection();
 
-    return ListView(
-      physics: BouncingScrollPhysics(),
-      children: [
-        const SizedBox(height: 15),
-        ProfileWidget(
-          imagePath: user.imageUrl,
-          onClicked: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(builder: (context) => EditProfilePage()),
+    return FutureBuilder<DocumentSnapshot>(
+        future: users.doc(fbUser!.uid).get(),
+        builder: (ctx, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: CircularProgressIndicator(),
             );
-          },
-        ),
-        const SizedBox(height: 24),
-        buildName(user),
-        const SizedBox(height: 24),
-        Center(child: buildUpgradeButton()),
-        const SizedBox(height: 24),
-        NumbersWidget(),
-        const SizedBox(height: 48),
-        buildAbout(user),
-      ],
-    );
+          }
+          if (snapshot.hasError) {
+            return Text("user loading went wrong");
+          }
+          if (snapshot.hasData && !snapshot.data!.exists) {
+            logger.e('document does not exist');
+            // return const AuthScreen();
+            // return Text("Document does not exist");
+          }
+
+          if (snapshot.connectionState == ConnectionState.done) {
+            Map<String, dynamic> data = snapshot.data!.data() as Map<String, dynamic>;
+            final blocUser.User user = UserUtils.getUser(data);
+
+            return ListView(
+              physics: BouncingScrollPhysics(),
+              children: [
+                const SizedBox(height: 15),
+                ProfileWidget(
+                  imagePath: user.imageUrl,
+                  onClicked: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(builder: (context) => EditProfilePage()),
+                    );
+                  },
+                ),
+                const SizedBox(height: 24),
+                buildName(user),
+                const SizedBox(height: 24),
+                Center(child: buildUpgradeButton()),
+                const SizedBox(height: 24),
+                NumbersWidget(),
+                const SizedBox(height: 48),
+                buildAbout(user),
+              ],
+            );
+          }
+          return Text('Loading profile page...');
+        });
   }
 
-  Widget buildName(User user) => Column(
+  Widget buildName(blocUser.User user) => Column(
     children: [
       Text(
         user.name,
@@ -73,7 +100,7 @@ class _ProfilePageState extends State<ProfilePage> {
     onClicked: () {},
   );
 
-  Widget buildAbout(User user) => Container(
+  Widget buildAbout(blocUser.User user) => Container(
     padding: EdgeInsets.symmetric(horizontal: 48),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,

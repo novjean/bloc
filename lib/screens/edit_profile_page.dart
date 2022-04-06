@@ -1,6 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-import '../db/entity/user.dart';
+import '../db/entity/user.dart' as blocUser;
+import '../helpers/firestore_helper.dart';
 import '../widgets/profile_widget.dart';
 import '../widgets/ui/textfield_widget.dart';
 
@@ -17,7 +20,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
   );
 
   _buildBody(BuildContext context) {
-    final User user = User(userId:'userId',
+    final blocUser.User user = blocUser.User(userId:'userId',
         username:'username',
         email:'novjean9@gmail.com',
         imageUrl:'https://images.unsplash.com/photo-1554151228-14d9def656e4?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=333&q=80',
