@@ -120,12 +120,12 @@ class MyApp extends StatelessWidget {
                                   String name = data['name'];
 
                                   final blocUser.User user = blocUser.User(
-                                      userId,
-                                      username,
-                                      email,
-                                      imageUrl,
-                                      mClearanceLevel,
-                                      name);
+                                      userId: userId,
+                                      username: username,
+                                      email: email,
+                                      imageUrl: imageUrl,
+                                      clearanceLevel : mClearanceLevel,
+                                      name: name);
                                   BlocRepository.insertUser(dao, user);
 
                                   logger.i(

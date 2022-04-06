@@ -16,12 +16,6 @@ var logger = Logger(
 );
 
 class BlocRepository {
-  /** User **/
-  static void insertUser(BlocDao dao, User user) async {
-    logger.i("insertUser(): " + user.username);
-    await dao.insertUser(user);
-  }
-
   /** City **/
   static void insertCity(BlocDao dao, City city) async {
     await dao.insertCity(city);
@@ -40,6 +34,20 @@ class BlocRepository {
   /** Category **/
   static void insertCategory(BlocDao dao, Category cat) async {
     await dao.insertCategory(cat);
+  }
+
+  static Stream<List<Category>> getCategories(BlocDao dao) {
+    return dao.getCategories();
+  }
+
+  static Future<List<Category>> getCategoriesFuture(BlocDao dao) async {
+    logger.i("getCategoriesFuture(): ");
+    Future<List<Category>> fCats = dao.getCategoriesFuture();
+    return fCats;
+  }
+
+  static void clearCategories(BlocDao dao) {
+    dao.clearCategories();
   }
 
   /** Cart Item **/
@@ -64,6 +72,12 @@ class BlocRepository {
     dao.deleteCartItems(productId);
   }
 
+  /** Manager Service **/
+  static void insertManagerService(BlocDao dao, ManagerService ms) async {
+    logger.i("insertManagerService(): ");
+    await dao.insertManagerService(ms);
+  }
+
   /** Product **/
   static void insertProduct(BlocDao dao, Product product) async {
     await dao.insertProduct(product);
@@ -81,31 +95,13 @@ class BlocRepository {
     return fProducts;
   }
 
-  static void insertManagerService(BlocDao dao, ManagerService ms) async {
-    logger.i("insertManagerService(): ");
-    await dao.insertManagerService(ms);
-  }
-
-  static Stream<List<Category>> getCategories(BlocDao dao) {
-    return dao.getCategories();
-  }
-
-  static Future<List<Category>> getCategoriesFuture(BlocDao dao) async {
-    logger.i("getCategoriesFuture(): ");
-    Future<List<Category>> fCats = dao.getCategoriesFuture();
-    return fCats;
-  }
-
-  static void clearCategories(BlocDao dao) {
-    dao.clearCategories();
-  }
-
   static void clearProducts(BlocDao dao) {
     dao.clearProducts();
   }
 
-  // static Future<Product?> getProduct(BlocDao dao, String productId) async {
-  //   logger.i("getProduct(): " + productId);
-  //   return dao.getProduct(productId);
-  // }
+  /** User **/
+  static void insertUser(BlocDao dao, User user) async {
+    logger.i("insertUser(): " + user.username);
+    await dao.insertUser(user);
+  }
 }

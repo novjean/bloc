@@ -10,6 +10,11 @@ class User {
   final int clearanceLevel;
   final String name;
 
-  User(this.userId, this.username, this.email, this.imageUrl,
-      this.clearanceLevel, this.name);
+  User(
+      {required this.userId,
+      required this.username,
+      required this.email,
+      required this.imageUrl,
+      required this.clearanceLevel,
+      required this.name});
 }

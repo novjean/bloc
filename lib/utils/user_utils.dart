@@ -9,12 +9,12 @@ class UserUtils {
     int clearanceLevel = data['clearance_level'];
     String imageUrl = data['image_url'];
 
-    final User user = User(userId,
-        username,
-        email,
-        imageUrl,
-        clearanceLevel,
-        name);
+    final User user = User(userId:userId,
+        username:username,
+        email:email,
+        imageUrl:imageUrl,
+        clearanceLevel:clearanceLevel,
+        name:name);
     return user;
   }
 }

@@ -9,7 +9,7 @@ import 'add.dart';
 import 'home_screen.dart';
 import 'label.dart';
 import 'notifications.dart';
-import 'profile.dart';
+import 'profile_page.dart';
 
 class MainScreen extends StatefulWidget {
   static const routeName = '/home-screen';
@@ -43,7 +43,7 @@ class _MainScreenState extends State<MainScreen> {
       Label(),
       Add(),
       Notifications(),
-      Profile(),
+      ProfilePage(),
     ];
 
     return Scaffold(

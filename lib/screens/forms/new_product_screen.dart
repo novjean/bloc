@@ -41,27 +41,6 @@ class _NewProductScreenState extends State<NewProductScreen> {
     );
   }
 
-  // Widget _navigateToNewProductScreen() {
-  //   Future<List<Category>> fCategories = BlocRepository.getCategoriesFuture(widget.dao);
-  //
-  //   return FutureBuilder(future: fCategories,
-  //       builder: (ctx,snapshot) {
-  //         if (snapshot.connectionState == ConnectionState.waiting) {
-  //           return Text('Loading categories items...');
-  //         }
-  //
-  //         List<Category> categories = snapshot.data! as List<Category>;
-  //         Navigator.of(context).push(
-  //           MaterialPageRoute(
-  //               builder: (ctx) =>
-  //                   NewProductScreen(service: widget.service)),
-  //         );
-  //
-  //         return Text('loading categories...');
-  //       }
-  //   );
-  // }
-
   _buildBody(BuildContext context) {
     Future<List<Category>> _future = BlocRepository.getCategoriesFuture(widget.dao);
 
@@ -77,17 +56,9 @@ class _NewProductScreenState extends State<NewProductScreen> {
             _submitNewProductForm, _isLoading, categories
             // _isLoading,
           );
-
-          // List<Order> orders = CartItemUtils.extractOrders(cartItems);
-          // return _displayOrderList(context, orders);
         }
       },
     );
-
-    // return NewProductForm(
-    //   _submitNewProductForm, _isLoading,
-    //   // _isLoading,
-    // );
   }
 
   void _submitNewProductForm(
