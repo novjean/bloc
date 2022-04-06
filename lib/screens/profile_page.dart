@@ -5,6 +5,7 @@ import '../db/entity/user.dart';
 import '../widgets/profile/numbers_widget.dart';
 import '../widgets/profile_widget.dart';
 import '../widgets/ui/button_widget.dart';
+import 'edit_profile_page.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({Key? key}) : super(key: key);
@@ -32,9 +33,9 @@ class _ProfilePageState extends State<ProfilePage> {
           ProfileWidget(
             imagePath: user.imageUrl,
             onClicked: () {
-              // Navigator.of(context).push(
-              //   MaterialPageRoute(builder: (context) => EditProfilePage()),
-              // );
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) => EditProfilePage()),
+              );
             },
           ),
           const SizedBox(height: 24),
