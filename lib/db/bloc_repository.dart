@@ -24,31 +24,26 @@ class BlocRepository {
 
   /** City **/
   static void insertCity(BlocDao dao, City city) async {
-    logger.i("insertCity(): " + city.name);
     await dao.insertCity(city);
   }
 
   /** Bloc **/
   static void insertBloc(BlocDao dao, Bloc bloc) async {
-    logger.i("insertBloc(): " + bloc.name);
     await dao.insertBloc(bloc);
   }
 
   /** Service **/
   static void insertBlocService(BlocDao dao, BlocService service) async {
-    logger.i("insertBlocService(): " + service.name);
     await dao.insertBlocService(service);
   }
 
   /** Category **/
   static void insertCategory(BlocDao dao, Category cat) async {
-    logger.i("insertCategory(): " + cat.name);
     await dao.insertCategory(cat);
   }
 
   /** Cart Item **/
   static void insertCartItem(BlocDao dao, CartItem cartitem) async {
-    logger.i("insertCartItem(): " + cartitem.id);
     await dao.insertCartItem(cartitem);
   }
 
@@ -71,7 +66,6 @@ class BlocRepository {
 
   /** Product **/
   static void insertProduct(BlocDao dao, Product product) async {
-    logger.i("insertProduct(): " + product.name);
     await dao.insertProduct(product);
   }
 
@@ -92,6 +86,23 @@ class BlocRepository {
     await dao.insertManagerService(ms);
   }
 
+  static Stream<List<Category>> getCategories(BlocDao dao) {
+    return dao.getCategories();
+  }
+
+  static Future<List<Category>> getCategoriesFuture(BlocDao dao) async {
+    logger.i("getCategoriesFuture(): ");
+    Future<List<Category>> fCats = dao.getCategoriesFuture();
+    return fCats;
+  }
+
+  static void clearCategories(BlocDao dao) {
+    dao.clearCategories();
+  }
+
+  static void clearProducts(BlocDao dao) {
+    dao.clearProducts();
+  }
 
   // static Future<Product?> getProduct(BlocDao dao, String productId) async {
   //   logger.i("getProduct(): " + productId);

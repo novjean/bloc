@@ -1,12 +1,14 @@
 import 'dart:io';
 
+import 'package:bloc/db/entity/category.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 
 import '../../pickers/user_image_picker.dart';
 
 class NewProductForm extends StatefulWidget{
-  NewProductForm(this.submitFn, this.isLoading);
+  List<Category> categories;
+  NewProductForm(this.submitFn, this.isLoading, this.categories);
 
   final bool isLoading;
   final void Function(
@@ -19,7 +21,7 @@ class NewProductForm extends StatefulWidget{
       ) submitFn;
 
   @override
-  State<StatefulWidget> createState() => _NewProductFormState();
+  State<NewProductForm> createState() => _NewProductFormState();
 }
 
 class _NewProductFormState extends State<NewProductForm> {
@@ -29,10 +31,33 @@ class _NewProductFormState extends State<NewProductForm> {
 
   // var _isLogin = true;
   String _productName = '';
-  String _productType = '';
+  late String _productType = getFirstCategoryName();
   String _productDescription = '';
   String _productPrice ='';
   late File _userImageFile;
+
+  late final _productTypes = getCategoryTypes();
+
+  // [
+  //   "Bar",
+  //   "Dance Floor",
+  //   "Restaurant",
+  //   "Rooftop",
+  //   "Underground"
+  // ];
+
+  List<String> getCategoryTypes() {
+    List<String> catsList = [];
+    for(Category category in widget.categories){
+      catsList.add(category.name);
+    }
+    return catsList;
+  }
+
+  String getFirstCategoryName() {
+    return widget.categories[0].name;
+  }
+
 
   void _pickedImage(File image) {
     _userImageFile = image;
@@ -100,25 +125,61 @@ class _NewProductFormState extends State<NewProductForm> {
                   },
                 ),
 
-                TextFormField(
-                  key: const ValueKey('product_type'),
-                  autocorrect: false,
-                  textCapitalization: TextCapitalization.words,
-                  enableSuggestions: false,
-                  validator: (value) {
-                    if (value!.isEmpty) {
-                      return 'Please enter a valid type of service.';
-                    }
-                    return null;
-                  },
-                  keyboardType: TextInputType.text,
-                  decoration: const InputDecoration(
-                    labelText: 'Product Type',
-                  ),
-                  onSaved: (value) {
-                    _productType = value!;
+                FormField<String>(
+                  builder: (FormFieldState<String> state) {
+                    return InputDecorator(
+                      key: const ValueKey('bloc_service_type'),
+                      decoration: InputDecoration(
+                        // labelStyle: textStyle,
+                          errorStyle: TextStyle(
+                              color: Colors.redAccent, fontSize: 16.0),
+                          hintText: 'Please select bloc type',
+                          border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(5.0))),
+                      isEmpty: _productType == '',
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton<String>(
+                          value: _productType,
+                          isDense: true,
+                          // onChanged: (String? value){},
+                          onChanged: (String? newValue) {
+                            setState(() {
+                              _productType = newValue!;
+                              state.didChange(newValue);
+                            });
+                          },
+                          items: _productTypes.map((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(value),
+                            );
+                          }).toList(),
+                        ),
+                      ),
+                    );
                   },
                 ),
+
+                // TextFormField(
+                //   key: const ValueKey('product_type'),
+                //   autocorrect: false,
+                //   textCapitalization: TextCapitalization.words,
+                //   enableSuggestions: false,
+                //   validator: (value) {
+                //     if (value!.isEmpty) {
+                //       return 'Please enter a valid type of service.';
+                //     }
+                //     return null;
+                //   },
+                //   keyboardType: TextInputType.text,
+                //   decoration: const InputDecoration(
+                //     labelText: 'Product Type',
+                //   ),
+                //   onSaved: (value) {
+                //     _productType = value!;
+                //   },
+                // ),
+
                 TextFormField(
                   key: const ValueKey('product_description'),
                   autocorrect: false,

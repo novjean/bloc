@@ -8,16 +8,19 @@ class CategoryItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double height = MediaQuery.of(context).size.height / 8;
+    double width = MediaQuery.of(context).size.width / 2.1;
+
     return Padding(
-      padding: const EdgeInsets.only(right: 10.0),
+      padding: const EdgeInsets.all(5.0),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(8.0),
+        borderRadius: BorderRadius.circular(10.0),
         child: Stack(
           children: <Widget>[
             FadeInImage(
               placeholder: AssetImage('assets/images/product-placeholder.png'),
-              height: MediaQuery.of(context).size.height / 6,
-              width: MediaQuery.of(context).size.height / 6,
+              height: height,
+              width: width,
               image: cat.imageUrl != "url"
                   ? NetworkImage(cat.imageUrl)
                   : NetworkImage(
@@ -44,13 +47,13 @@ class CategoryItem extends StatelessWidget {
                   // stops: [0.0, 0.1],
                 ),
               ),
-              height: MediaQuery.of(context).size.height / 6,
-              width: MediaQuery.of(context).size.height / 6,
+              height: height,
+              width: width,
             ),
             Center(
               child: Container(
-                height: MediaQuery.of(context).size.height / 6,
-                width: MediaQuery.of(context).size.height / 6,
+                height: height,
+                width: width,
                 padding: const EdgeInsets.all(1),
                 constraints: BoxConstraints(
                   minWidth: 20,

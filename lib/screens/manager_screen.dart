@@ -1,7 +1,6 @@
 import 'package:bloc/db/entity/bloc_service.dart';
 import 'package:bloc/helpers/firestore_helper.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../db/bloc_repository.dart';

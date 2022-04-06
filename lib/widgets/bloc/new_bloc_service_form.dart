@@ -120,7 +120,7 @@ class _NewBlocServiceFormState extends State<NewBlocServiceForm> {
                           // labelStyle: textStyle,
                           errorStyle: TextStyle(
                               color: Colors.redAccent, fontSize: 16.0),
-                          hintText: 'Please select expense',
+                          hintText: 'Please select bloc type',
                           border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(5.0))),
                       isEmpty: _serviceType == '',
@@ -146,6 +146,7 @@ class _NewBlocServiceFormState extends State<NewBlocServiceForm> {
                     );
                   },
                 ),
+
                 // TextFormField(
                 //   key: const ValueKey('bloc_service_type'),
                 //   autocorrect: false,

@@ -254,6 +254,26 @@ class _$BlocDao extends BlocDao {
   }
 
   @override
+  Future<List<Category>> getCategoriesFuture() async {
+    return _queryAdapter.queryList(
+        'SELECT * FROM Category ORDER BY sequence ASC',
+        mapper: (Map<String, Object?> row) => Category(
+            row['id'] as String,
+            row['name'] as String,
+            row['type'] as String,
+            row['serviceId'] as String,
+            row['imageUrl'] as String,
+            row['ownerId'] as String,
+            row['createdAt'] as String,
+            row['sequence'] as int));
+  }
+
+  @override
+  Future<void> clearCategories() async {
+    await _queryAdapter.queryNoReturn('DELETE FROM Category');
+  }
+
+  @override
   Future<List<CartItem>> getCartItems(String uId) async {
     return _queryAdapter.queryList('SELECT * FROM CartItem where userId=?1',
         mapper: (Map<String, Object?> row) => CartItem(
@@ -331,6 +351,11 @@ class _$BlocDao extends BlocDao {
             row['ownerId'] as String,
             row['createdAt'] as String),
         arguments: [catType]);
+  }
+
+  @override
+  Future<void> clearProducts() async {
+    await _queryAdapter.queryNoReturn('DELETE FROM Product');
   }
 
   @override

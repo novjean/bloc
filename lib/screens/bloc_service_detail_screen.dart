@@ -98,7 +98,7 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen> {
               Navigator.of(context).push(
                 MaterialPageRoute(
                     builder: (ctx) =>
-                        NewProductScreen(service: widget.service)),
+                        NewProductScreen(service: widget.service, dao:widget.dao)),
               ),
             },
             icon: const Icon(Icons.fastfood),
@@ -128,9 +128,9 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen> {
           CoverPhoto(service.name, service.imageUrl),
           SizedBox(height: 2.0),
           buildServiceCategories(context),
-          SizedBox(height: 5.0),
+          SizedBox(height: 2.0),
           buildProducts(context),
-          SizedBox(height: 20.0),
+          SizedBox(height: 10.0),
         ],
       ),
     );
@@ -149,6 +149,10 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen> {
           );
         }
 
+        if(snapshot.data!.docs.length >0){
+          BlocRepository.clearCategories(widget.dao);
+        }
+
         for (int i = 0; i < snapshot.data!.docs.length; i++) {
           DocumentSnapshot document = snapshot.data!.docs[i];
           Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
@@ -165,7 +169,7 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen> {
   }
 
   displayCategoryList(BuildContext context) {
-    Stream<List<Category>> _catsStream = widget.dao.getCategories();
+    Stream<List<Category>> _catsStream = BlocRepository.getCategories(widget.dao);
 
     return Container(
       height: MediaQuery.of(context).size.height / 6,
@@ -226,6 +230,10 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen> {
           );
         }
 
+        if(snapshot.data!.docs.length>0) {
+          BlocRepository.clearProducts(widget.dao);
+        }
+
         List<Product> products = [];
         for (int i = 0; i < snapshot.data!.docs.length; i++) {
           DocumentSnapshot document = snapshot.data!.docs[i];
@@ -279,3 +287,4 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen> {
         });
   }
 }
+

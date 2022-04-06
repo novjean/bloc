@@ -8,15 +8,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:logger/logger.dart';
 
+import '../../db/bloc_repository.dart';
+import '../../db/dao/bloc_dao.dart';
 import '../../db/entity/bloc_service.dart';
+import '../../db/entity/category.dart';
 import '../../utils/string_utils.dart';
 import '../../widgets/bloc/new_product_form.dart';
 
 class NewProductScreen extends StatefulWidget {
   static const routeName = '/new-category-item-screen';
   BlocService service;
+  BlocDao dao;
 
-  NewProductScreen({key, required this.service}) : super(key: key);
+  NewProductScreen({key, required this.service, required this.dao}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _NewProductScreenState();
@@ -33,11 +37,57 @@ class _NewProductScreenState extends State<NewProductScreen> {
         title: Text(widget.service.name + ' : New Product Form'),
       ),
       // drawer: AppDrawer(),
-      body: NewProductForm(
-        _submitNewProductForm, _isLoading,
-        // _isLoading,
-      ),
+      body: _buildBody(context),
     );
+  }
+
+  // Widget _navigateToNewProductScreen() {
+  //   Future<List<Category>> fCategories = BlocRepository.getCategoriesFuture(widget.dao);
+  //
+  //   return FutureBuilder(future: fCategories,
+  //       builder: (ctx,snapshot) {
+  //         if (snapshot.connectionState == ConnectionState.waiting) {
+  //           return Text('Loading categories items...');
+  //         }
+  //
+  //         List<Category> categories = snapshot.data! as List<Category>;
+  //         Navigator.of(context).push(
+  //           MaterialPageRoute(
+  //               builder: (ctx) =>
+  //                   NewProductScreen(service: widget.service)),
+  //         );
+  //
+  //         return Text('loading categories...');
+  //       }
+  //   );
+  // }
+
+  _buildBody(BuildContext context) {
+    Future<List<Category>> _future = BlocRepository.getCategoriesFuture(widget.dao);
+
+    return FutureBuilder(
+      future: _future,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Text('Loading categories...');
+        } else {
+          List<Category> categories = snapshot.data! as List<Category>;
+
+          return NewProductForm(
+            _submitNewProductForm, _isLoading, categories
+            // _isLoading,
+          );
+
+          // List<Order> orders = CartItemUtils.extractOrders(cartItems);
+          // return _displayOrderList(context, orders);
+        }
+      },
+    );
+
+    // return NewProductForm(
+    //   _submitNewProductForm, _isLoading,
+    //   // _isLoading,
+    // );
   }
 
   void _submitNewProductForm(
