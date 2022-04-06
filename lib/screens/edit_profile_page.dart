@@ -10,17 +10,21 @@ class EditProfilePage extends StatefulWidget {
 }
 
 class _EditProfilePageState extends State<EditProfilePage> {
-  final User user = User(userId:'userId',
-      username:'username',
-      email:'email',
-      imageUrl:'https://images.unsplash.com/photo-1554151228-14d9def656e4?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=333&q=80',
-      clearanceLevel:9,
-      name:'Nova K');
-
   @override
   Widget build(BuildContext context) => Scaffold(
     appBar: AppBar(title: Text('BLOC'),),
-    body: ListView(
+    body: _buildBody(context),
+  );
+
+  _buildBody(BuildContext context) {
+    final User user = User(userId:'userId',
+        username:'username',
+        email:'novjean9@gmail.com',
+        imageUrl:'https://images.unsplash.com/photo-1554151228-14d9def656e4?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=333&q=80',
+        clearanceLevel:9,
+        name:'Nova K');
+
+    return ListView(
       padding: EdgeInsets.symmetric(horizontal: 32),
       physics: BouncingScrollPhysics(),
       children: [
@@ -50,6 +54,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
           onChanged: (about) {},
         ),
       ],
-    ),
-  );
+    );
+  }
 }
+

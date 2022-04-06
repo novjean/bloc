@@ -7,6 +7,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
@@ -23,6 +24,13 @@ var logger = Logger(
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // disabling landscape until all ui issues are resolved
+  await SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
+
   final database =
       await $FloorAppDatabase.databaseBuilder('bloc_database.db').build();
   final dao = database.blocDao;

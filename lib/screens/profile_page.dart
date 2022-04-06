@@ -17,7 +17,12 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
-    // pull in the user
+    return Scaffold(
+      body: _buildBody(context),
+    );
+  }
+
+  _buildBody(BuildContext context) {
     final User user = User(userId:'userId',
         username:'username',
         email:'email',
@@ -25,29 +30,27 @@ class _ProfilePageState extends State<ProfilePage> {
         clearanceLevel:9,
         name:'Nova K');
 
-    return Scaffold(
-      body: ListView(
-        physics: BouncingScrollPhysics(),
-        children: [
-          const SizedBox(height: 15),
-          ProfileWidget(
-            imagePath: user.imageUrl,
-            onClicked: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) => EditProfilePage()),
-              );
-            },
-          ),
-          const SizedBox(height: 24),
-          buildName(user),
-          const SizedBox(height: 24),
-          Center(child: buildUpgradeButton()),
-          const SizedBox(height: 24),
-          NumbersWidget(),
-          const SizedBox(height: 48),
-          buildAbout(user),
-        ],
-      ),
+    return ListView(
+      physics: BouncingScrollPhysics(),
+      children: [
+        const SizedBox(height: 15),
+        ProfileWidget(
+          imagePath: user.imageUrl,
+          onClicked: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(builder: (context) => EditProfilePage()),
+            );
+          },
+        ),
+        const SizedBox(height: 24),
+        buildName(user),
+        const SizedBox(height: 24),
+        Center(child: buildUpgradeButton()),
+        const SizedBox(height: 24),
+        NumbersWidget(),
+        const SizedBox(height: 48),
+        buildAbout(user),
+      ],
     );
   }
 
@@ -87,5 +90,6 @@ class _ProfilePageState extends State<ProfilePage> {
       ],
     ),
   );
-
 }
+
+

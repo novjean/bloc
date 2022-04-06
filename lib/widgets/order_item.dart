@@ -113,10 +113,6 @@ class OrderItem extends StatelessWidget {
             );
           }
 
-          // return ListView.builder(itemBuilder: (BuildContext ctx, int index) {
-
-          // });
-
           return GridView(
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 1,
