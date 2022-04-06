@@ -36,8 +36,7 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // SyncUtils syncUtils = SyncUtils(dao);
-    // syncUtils.loadData();
+
     List pages = [
       HomeScreen(dao:widget.dao),
       Label(),
