@@ -2,7 +2,7 @@ import '../db/entity/user.dart';
 
 class UserUtils {
   static User getUser(Map<String, dynamic> data) {
-    String userId = data['user_id'];;
+    String userId = data['user_id'];
     String name = data['name'];
     String username = data['username'];
     String email = data['email'];

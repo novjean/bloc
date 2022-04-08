@@ -62,7 +62,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   imagePath: user.imageUrl,
                   onClicked: () {
                     Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => EditProfilePage()),
+                      MaterialPageRoute(builder: (context) => EditProfilePage(user)),
                     );
                   },
                 ),

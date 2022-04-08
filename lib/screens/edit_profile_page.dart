@@ -1,13 +1,14 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-import '../db/entity/user.dart' as blocUser;
-import '../helpers/firestore_helper.dart';
+import '../db/entity/user.dart';
 import '../widgets/profile_widget.dart';
 import '../widgets/ui/textfield_widget.dart';
 
 class EditProfilePage extends StatefulWidget {
+  User user;
+
+  EditProfilePage(this.user);
+
   @override
   _EditProfilePageState createState() => _EditProfilePageState();
 }
@@ -20,34 +21,31 @@ class _EditProfilePageState extends State<EditProfilePage> {
   );
 
   _buildBody(BuildContext context) {
-    final blocUser.User user = blocUser.User(userId:'userId',
-        username:'username',
-        email:'novjean9@gmail.com',
-        imageUrl:'https://images.unsplash.com/photo-1554151228-14d9def656e4?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=333&q=80',
-        clearanceLevel:9,
-        name:'Nova K');
-
     return ListView(
       padding: EdgeInsets.symmetric(horizontal: 32),
       physics: BouncingScrollPhysics(),
       children: [
         const SizedBox(height: 15),
         ProfileWidget(
-          imagePath: user.imageUrl,
+          imagePath: widget.user.imageUrl,
           isEdit: true,
-          onClicked: () async {},
+          onClicked: () async {
+            
+          },
         ),
         const SizedBox(height: 24),
         TextFieldWidget(
           label: 'Full Name',
-          text: user.name,
+          text: widget.user.name,
           onChanged: (name) {},
         ),
         const SizedBox(height: 24),
         TextFieldWidget(
           label: 'Email',
-          text: user.email,
-          onChanged: (email) {},
+          text: widget.user.email,
+          onChanged: (email) {
+
+          },
         ),
         const SizedBox(height: 24),
         TextFieldWidget(
