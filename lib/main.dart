@@ -13,6 +13,7 @@ import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
 import 'db/database.dart';
+import 'db/experimental/user_preferences.dart';
 import 'providers/cart.dart';
 import 'screens/auth_screen.dart';
 import 'screens/main_screen.dart';
@@ -31,6 +32,8 @@ Future<void> main() async {
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
+
+  await UserPreferences.init();
 
   final database =
       await $FloorAppDatabase.databaseBuilder('bloc_database.db').build();
@@ -123,19 +126,6 @@ class MyApp extends StatelessWidget {
                                   final blocUser.User user = UserUtils.getUser(data);
 
                                   mClearanceLevel = user.clearanceLevel;
-                                  // String userId = data['user_id'];
-                                  // String username = data['username'];
-                                  // String email = data['email'];
-                                  // String imageUrl = data['image_url'];
-                                  // String name = data['name'];
-                                  //
-                                  // final blocUser.User user = blocUser.User(
-                                  //     userId: userId,
-                                  //     username: username,
-                                  //     email: email,
-                                  //     imageUrl: imageUrl,
-                                  //     clearanceLevel : mClearanceLevel,
-                                  //     name: name);
                                   BlocRepository.insertUser(dao, user);
 
                                   logger.i(

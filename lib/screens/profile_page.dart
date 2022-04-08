@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 
 import '../db/entity/user.dart' as blocUser;
+import '../db/experimental/user_preferences.dart';
 import '../helpers/firestore_helper.dart';
 import '../utils/user_utils.dart';
 import '../widgets/profile/numbers_widget.dart';
@@ -25,7 +26,37 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _buildBody(context),
+      body: _buildTestBody(context),
+
+      // body: _buildBody(context),
+    );
+  }
+
+  _buildTestBody(BuildContext context) {
+    final user = UserPreferences.getUser();
+
+    return ListView(
+      physics: BouncingScrollPhysics(),
+      children: [
+        const SizedBox(height: 15),
+        ProfileWidget(
+          imagePath: user.imageUrl,
+          onClicked: () async {
+            await Navigator.of(context).push(
+              MaterialPageRoute(builder: (context) => EditProfilePage(user)),
+            );
+            setState(() {});
+          },
+        ),
+        const SizedBox(height: 24),
+        buildName(user),
+        const SizedBox(height: 24),
+        Center(child: buildUpgradeButton()),
+        const SizedBox(height: 24),
+        NumbersWidget(),
+        const SizedBox(height: 48),
+        buildAbout(user),
+      ],
     );
   }
 
