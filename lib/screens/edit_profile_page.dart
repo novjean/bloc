@@ -1,4 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:path/path.dart';
+import 'package:path_provider/path_provider.dart';
 
 import '../db/entity/user.dart';
 import '../db/experimental/user_preferences.dart';
@@ -16,6 +21,15 @@ class EditProfilePage extends StatefulWidget {
 }
 
 class _EditProfilePageState extends State<EditProfilePage> {
+  late User user;
+
+  @override
+  void initState() {
+    super.initState();
+
+    user = UserPreferences.getUser();
+  }
+
   @override
   Widget build(BuildContext context) => Scaffold(
     appBar: AppBar(title: Text('BLOC'),),
@@ -23,8 +37,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
   );
 
   _buildBody(BuildContext context) {
-    User user = widget.user;
-
     return ListView(
       padding: EdgeInsets.symmetric(horizontal: 32),
       physics: BouncingScrollPhysics(),
@@ -34,7 +46,16 @@ class _EditProfilePageState extends State<EditProfilePage> {
           imagePath: user.imageUrl,
           isEdit: true,
           onClicked: () async {
-            
+            final image = await ImagePicker().pickImage(source: ImageSource.gallery);
+            if (image == null) return;
+
+            final directory = await getApplicationDocumentsDirectory();
+            final name = basename(image.path);
+            final imageFile = File('${directory.path}/$name');
+            final newImage =
+            await File(image.path).copy(imageFile.path);
+
+            setState(() => user = user.copy(imageUrl: newImage.path));
           },
         ),
         const SizedBox(height: 24),
