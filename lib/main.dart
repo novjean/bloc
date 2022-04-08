@@ -127,6 +127,7 @@ class MyApp extends StatelessWidget {
 
                                   mClearanceLevel = user.clearanceLevel;
                                   BlocRepository.insertUser(dao, user);
+                                  UserPreferences.setUser(user);
 
                                   logger.i(
                                       'user data received with clearance level ' +
