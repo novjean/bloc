@@ -36,8 +36,6 @@ class _EditImagePickerState extends State<EditImagePicker> {
 
   @override
   Widget build(BuildContext context) {
-    // _pickedImage = File(widget.imageUrl);
-
     return Column(
       children: [
         photoCaptured?

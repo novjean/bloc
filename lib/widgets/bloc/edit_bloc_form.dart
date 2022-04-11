@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:bloc/pickers/user_image_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 
@@ -16,7 +15,6 @@ class EditBlocForm extends StatefulWidget {
       String blocName,
       String addressLine1,
       String addressLine2,
-      // String city,
       String pinCode,
       File image,
       BuildContext ctx,
@@ -33,11 +31,9 @@ class _EditBlocFormState extends State<EditBlocForm> {
   _EditBlocFormState({required this.bloc});
 
   final _formKey = GlobalKey<FormState>();
-  // var _isLogin = true;
   String _blocName= '';
   String _addressLine1 = '';
   String _addressLine2 = '';
-  // String _city = '';
   String _pinCode = '';
   late File _userImageFile;
 
@@ -76,13 +72,6 @@ class _EditBlocFormState extends State<EditBlocForm> {
 
   @override
   Widget build(BuildContext context) {
-    // _blocName= widget.bloc.name;
-    // _addressLine1 = widget.bloc.addressLine1;
-    // _addressLine2 = widget.bloc.addressLine2;
-    // // String _city = '';
-    // _pinCode = widget.bloc.pinCode;
-    // _userImageFile = File(widget.bloc.imageUrl);
-
     return Card(
       margin: const EdgeInsets.all(20),
       child: SingleChildScrollView(

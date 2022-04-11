@@ -9,6 +9,8 @@ import '../db/bloc_repository.dart';
 import '../db/dao/bloc_dao.dart';
 import '../db/entity/user.dart';
 import '../db/experimental/user_preferences.dart';
+import '../helpers/firestorage_helper.dart';
+import '../helpers/firestore_helper.dart';
 import '../widgets/button_widget.dart';
 import '../widgets/profile_widget.dart';
 import '../widgets/ui/textfield_widget.dart';
@@ -25,6 +27,8 @@ class EditProfilePage extends StatefulWidget {
 
 class _EditProfilePageState extends State<EditProfilePage> {
   late User user;
+  bool isPhotoChanged = false;
+  late String oldImageUrl;
 
   @override
   void initState() {
@@ -49,16 +53,21 @@ class _EditProfilePageState extends State<EditProfilePage> {
           imagePath: user.imageUrl,
           isEdit: true,
           onClicked: () async {
-            final image = await ImagePicker().pickImage(source: ImageSource.gallery);
+            final image = await ImagePicker().pickImage(
+                source: ImageSource.gallery,
+                imageQuality: 90, maxWidth: 300);
             if (image == null) return;
 
             final directory = await getApplicationDocumentsDirectory();
             final name = basename(image.path);
             final imageFile = File('${directory.path}/$name');
-            final newImage =
-            await File(image.path).copy(imageFile.path);
+            final newImage = await File(image.path).copy(imageFile.path);
 
-            setState(() => user = user.copy(imageUrl: newImage.path));
+            setState(() {
+              oldImageUrl = user.imageUrl;
+              user = user.copy(imageUrl: newImage.path);
+              isPhotoChanged = true;
+            });
           },
         ),
         const SizedBox(height: 24),
@@ -86,7 +95,13 @@ class _EditProfilePageState extends State<EditProfilePage> {
           onClicked: () {
             UserPreferences.setUser(user);
 
+            if(isPhotoChanged){
+              FirestorageHelper.deleteFile(oldImageUrl);
+            }
+
             BlocRepository.updateUser(widget.dao, user);
+
+            FirestoreHelper.updateUser(user);
 
             Navigator.of(context).pop();
           },
