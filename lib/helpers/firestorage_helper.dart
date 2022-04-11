@@ -4,7 +4,6 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/services.dart';
 import 'package:logger/logger.dart';
 
-import '../utils/string_utils.dart';
 import '../widgets/ui/Toaster.dart';
 
 class FirestorageHelper {
@@ -31,8 +30,6 @@ class FirestorageHelper {
 
   static uploadFile(String directory, String docId, File file) async {
     logger.d("uploadFile : " + file.path);
-
-    // String docId = StringUtils.getRandomString(20);
 
     final ref = FirebaseStorage.instance
         .ref()
