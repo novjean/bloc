@@ -42,7 +42,7 @@ class _MainScreenState extends State<MainScreen> {
       Label(),
       Add(),
       Notifications(),
-      ProfilePage(),
+      ProfilePage(dao: widget.dao),
     ];
 
     return Scaffold(

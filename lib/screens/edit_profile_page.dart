@@ -5,6 +5,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 
+import '../db/bloc_repository.dart';
+import '../db/dao/bloc_dao.dart';
 import '../db/entity/user.dart';
 import '../db/experimental/user_preferences.dart';
 import '../widgets/button_widget.dart';
@@ -13,8 +15,9 @@ import '../widgets/ui/textfield_widget.dart';
 
 class EditProfilePage extends StatefulWidget {
   User user;
+  BlocDao dao;
 
-  EditProfilePage(this.user);
+  EditProfilePage({key, required this.user, required this.dao}):super(key: key);
 
   @override
   _EditProfilePageState createState() => _EditProfilePageState();
@@ -82,6 +85,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
           text: 'Save',
           onClicked: () {
             UserPreferences.setUser(user);
+
+            BlocRepository.updateUser(widget.dao, user);
+
             Navigator.of(context).pop();
           },
         ),

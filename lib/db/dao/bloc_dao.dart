@@ -12,8 +12,11 @@ import '../entity/user.dart';
 @dao
 abstract class BlocDao {
   /** User **/
-  @insert
+  @Insert(onConflict: OnConflictStrategy.replace)
   Future<void> insertUser(User user);
+
+  @Update(onConflict: OnConflictStrategy.replace)
+  Future<void> updateUser(User user);
 
   /** City **/
   @insert

@@ -24,7 +24,6 @@ class UserPreferences {
 
   static Future setUser(User user) async {
     final json = jsonEncode(user.toJson());
-
     await _preferences.setString(_keyUser, json);
   }
 

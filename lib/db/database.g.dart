@@ -212,7 +212,19 @@ class _$BlocDao extends BlocDao {
                   'name': item.name,
                   'sequence': item.sequence
                 },
-            changeListener);
+            changeListener),
+        _userUpdateAdapter = UpdateAdapter(
+            database,
+            'User',
+            ['userId'],
+            (User item) => <String, Object?>{
+                  'userId': item.userId,
+                  'username': item.username,
+                  'email': item.email,
+                  'imageUrl': item.imageUrl,
+                  'clearanceLevel': item.clearanceLevel,
+                  'name': item.name
+                });
 
   final sqflite.DatabaseExecutor database;
 
@@ -235,6 +247,8 @@ class _$BlocDao extends BlocDao {
   final InsertionAdapter<Product> _productInsertionAdapter;
 
   final InsertionAdapter<ManagerService> _managerServiceInsertionAdapter;
+
+  final UpdateAdapter<User> _userUpdateAdapter;
 
   @override
   Stream<List<Category>> getCategories() {
@@ -370,7 +384,7 @@ class _$BlocDao extends BlocDao {
 
   @override
   Future<void> insertUser(User user) async {
-    await _userInsertionAdapter.insert(user, OnConflictStrategy.abort);
+    await _userInsertionAdapter.insert(user, OnConflictStrategy.replace);
   }
 
   @override
@@ -407,5 +421,10 @@ class _$BlocDao extends BlocDao {
   @override
   Future<void> insertManagerService(ManagerService ms) async {
     await _managerServiceInsertionAdapter.insert(ms, OnConflictStrategy.abort);
+  }
+
+  @override
+  Future<void> updateUser(User user) async {
+    await _userUpdateAdapter.update(user, OnConflictStrategy.replace);
   }
 }

@@ -104,4 +104,8 @@ class BlocRepository {
     logger.i("insertUser(): " + user.username);
     await dao.insertUser(user);
   }
+  static void updateUser(BlocDao dao, User user) async {
+    logger.i("updateUser(): " + user.username);
+    await dao.updateUser(user);
+  }
 }

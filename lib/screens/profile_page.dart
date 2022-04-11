@@ -1,20 +1,18 @@
-// import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 
+import '../db/dao/bloc_dao.dart';
 import '../db/entity/user.dart' as blocUser;
 import '../db/experimental/user_preferences.dart';
-import '../helpers/firestore_helper.dart';
-import '../utils/user_utils.dart';
 import '../widgets/profile/numbers_widget.dart';
 import '../widgets/profile_widget.dart';
 import '../widgets/ui/button_widget.dart';
 import 'edit_profile_page.dart';
 
 class ProfilePage extends StatefulWidget {
-  const ProfilePage({Key? key}) : super(key: key);
+  BlocDao dao;
+
+  ProfilePage({key, required this.dao}):super(key: key);
 
   @override
   State<ProfilePage> createState() => _ProfilePageState();
@@ -26,13 +24,11 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _buildTestBody(context),
-
-      // body: _buildBody(context),
+      body: _buildBody(context),
     );
   }
 
-  _buildTestBody(BuildContext context) {
+  _buildBody(BuildContext context) {
     final user = UserPreferences.getUser();
 
     return ListView(
@@ -43,7 +39,7 @@ class _ProfilePageState extends State<ProfilePage> {
           imagePath: user.imageUrl,
           onClicked: () async {
             await Navigator.of(context).push(
-              MaterialPageRoute(builder: (context) => EditProfilePage(user)),
+              MaterialPageRoute(builder: (context) => EditProfilePage(user: user, dao: widget.dao)),
             );
             setState(() {});
           },
@@ -51,65 +47,13 @@ class _ProfilePageState extends State<ProfilePage> {
         const SizedBox(height: 24),
         buildName(user),
         const SizedBox(height: 24),
-        Center(child: buildUpgradeButton()),
+        Center(child: buildContactButton()),
         const SizedBox(height: 24),
         NumbersWidget(),
         const SizedBox(height: 48),
         buildAbout(user),
       ],
     );
-  }
-
-  _buildBody(BuildContext context) {
-    final fbUser = FirebaseAuth.instance.currentUser;
-    CollectionReference users = FirestoreHelper.getUsersCollection();
-
-    return FutureBuilder<DocumentSnapshot>(
-        future: users.doc(fbUser!.uid).get(),
-        builder: (ctx, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-          if (snapshot.hasError) {
-            return Text("user loading went wrong");
-          }
-          if (snapshot.hasData && !snapshot.data!.exists) {
-            logger.e('document does not exist');
-            // return const AuthScreen();
-            // return Text("Document does not exist");
-          }
-
-          if (snapshot.connectionState == ConnectionState.done) {
-            Map<String, dynamic> data = snapshot.data!.data() as Map<String, dynamic>;
-            final blocUser.User user = UserUtils.getUser(data);
-
-            return ListView(
-              physics: BouncingScrollPhysics(),
-              children: [
-                const SizedBox(height: 15),
-                ProfileWidget(
-                  imagePath: user.imageUrl,
-                  onClicked: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => EditProfilePage(user)),
-                    );
-                  },
-                ),
-                const SizedBox(height: 24),
-                buildName(user),
-                const SizedBox(height: 24),
-                Center(child: buildUpgradeButton()),
-                const SizedBox(height: 24),
-                NumbersWidget(),
-                const SizedBox(height: 48),
-                buildAbout(user),
-              ],
-            );
-          }
-          return Text('Loading profile page...');
-        });
   }
 
   Widget buildName(blocUser.User user) => Column(
@@ -126,7 +70,7 @@ class _ProfilePageState extends State<ProfilePage> {
     ],
   );
 
-  Widget buildUpgradeButton() => ButtonWidget(
+  Widget buildContactButton() => ButtonWidget(
     text: 'Contact',
     onClicked: () {},
   );
@@ -142,7 +86,7 @@ class _ProfilePageState extends State<ProfilePage> {
         ),
         const SizedBox(height: 16),
         Text(
-          'Baby girl, I lovuuu!!!',
+          'This is where I write about me.',
           style: TextStyle(fontSize: 16, height: 1.4),
         ),
       ],
