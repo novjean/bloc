@@ -54,7 +54,6 @@ class _NewProductScreenState extends State<NewProductScreen> {
 
           return NewProductForm(
             _submitNewProductForm, _isLoading, categories
-            // _isLoading,
           );
         }
       },

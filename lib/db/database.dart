@@ -10,6 +10,7 @@ import 'entity/cart_item.dart';
 import 'entity/city.dart';
 import 'entity/manager_service.dart';
 import 'entity/product.dart';
+import 'entity/service_table.dart';
 import 'entity/user.dart';
 
 part 'database.g.dart'; // the generated code will be there
@@ -23,6 +24,7 @@ part 'database.g.dart'; // the generated code will be there
   Product,
   User,
   ManagerService,
+  ServiceTable,
 ])
 abstract class AppDatabase extends FloorDatabase {
   BlocDao get blocDao;

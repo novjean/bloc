@@ -8,7 +8,7 @@ import 'package:path_provider/path_provider.dart';
 import '../db/bloc_repository.dart';
 import '../db/dao/bloc_dao.dart';
 import '../db/entity/user.dart';
-import '../db/experimental/user_preferences.dart';
+import '../db/shared_preferences/user_preferences.dart';
 import '../helpers/firestorage_helper.dart';
 import '../helpers/firestore_helper.dart';
 import '../widgets/button_widget.dart';
@@ -100,7 +100,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
             }
 
             BlocRepository.updateUser(widget.dao, user);
-
             FirestoreHelper.updateUser(user);
 
             Navigator.of(context).pop();

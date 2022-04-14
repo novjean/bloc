@@ -13,7 +13,7 @@ import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
 import 'db/database.dart';
-import 'db/experimental/user_preferences.dart';
+import 'db/shared_preferences/user_preferences.dart';
 import 'providers/cart.dart';
 import 'screens/auth_screen.dart';
 import 'screens/main_screen.dart';
@@ -133,7 +133,6 @@ class MyApp extends StatelessWidget {
                                       'user data received with clearance level ' +
                                           mClearanceLevel.toString());
                                   return MainScreen(dao: dao, user: user);
-                                  // return Text("Full Name: ${data['full_name']} ${data['last_name']}");
                                 }
                                 return Text("loading...");
                               },

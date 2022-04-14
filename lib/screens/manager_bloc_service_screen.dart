@@ -8,11 +8,9 @@ import '../db/entity/bloc_service.dart';
 import '../db/entity/cart_item.dart';
 import '../db/entity/order.dart';
 import '../helpers/firestore_helper.dart';
-import '../utils/cart_item_utils.dart';
 import '../utils/manager_utils.dart';
 import '../widgets/manager_service_item.dart';
-import '../widgets/order_item.dart';
-import '../widgets/ui/Toaster.dart';
+import 'manager/tables_management_screen.dart';
 import 'orders_screen.dart';
 
 class ManagerBlocServiceScreen extends StatelessWidget {
@@ -26,7 +24,7 @@ class ManagerBlocServiceScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Owner'),
+        title: const Text('Manager Services'),
       ),
       // drawer: AppDrawer(),
       body: _buildBody(context),
@@ -93,7 +91,7 @@ class ManagerBlocServiceScreen extends StatelessWidget {
               primary: false,
               scrollDirection: Axis.vertical,
               shrinkWrap: true,
-              itemCount: services == null ? 0 : services.length,
+              itemCount: services.length,
               itemBuilder: (BuildContext ctx, int index) {
                 ManagerService managerService = services[index];
                 return GestureDetector(
@@ -101,33 +99,40 @@ class ManagerBlocServiceScreen extends StatelessWidget {
                       managerService: managerService,
                       serviceId: serviceId,
                     ),
-                    onTap: () => {
-                          // setState(() {
-                          //   _categorySelected = index;
-                          // }),
-                          Toaster.shortToast(
-                              "Service index : " + index.toString()),
+                    onTap: () {
+                      {
+                        logger.d('manager service index selected : ' +
+                            index.toString());
 
-                          if (index == 0)
+                        switch (index) {
+                          case 0:
                             {
                               Navigator.of(context).push(MaterialPageRoute(
                                   builder: (ctx) => OrdersScreen(
                                       serviceId: serviceId,
                                       managerService: managerService,
-                                      dao: dao)))
+                                      dao: dao)));
+                              break;
                             }
-                          else
+                          case 1:
                             {
-                              // needs implementation
+                              logger.d('completed orders service selected.');
+                              break;
                             }
-
-                          // displayProductsList(context, index),
+                          case 2:
+                            {
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (ctx) => TablesManagementScreen(
+                                      serviceId: serviceId,
+                                      managerService: managerService,
+                                      dao: dao)));
+                              logger.d('tables management service selected.');
+                              break;
+                            }
+                          default:
                         }
-
-                    // Scaffold
-                    // .of(context)
-                    // .showSnackBar(SnackBar(content: Text(index.toString()))),
-                    );
+                      }
+                    });
               },
             );
           }
@@ -136,3 +141,4 @@ class ManagerBlocServiceScreen extends StatelessWidget {
     );
   }
 }
+

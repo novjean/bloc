@@ -1,10 +1,12 @@
 import 'dart:io';
 
 import 'package:bloc/db/entity/cart_item.dart';
+import 'package:bloc/db/entity/service_table.dart';
 import 'package:bloc/db/entity/user.dart' as blocUser;
 import 'package:bloc/helpers/firestorage_helper.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:logger/logger.dart';
 
@@ -17,6 +19,7 @@ class FirestoreHelper {
   static String CITIES = 'cities';
   static String MANAGER_SERVICES = 'manager_services';
   static String SERVICES = 'services';
+  static String TABLES = 'tables';
   static String USERS = 'users';
 
   /** Blocs **/
@@ -121,5 +124,13 @@ class FirestoreHelper {
     } catch (err) {
       logger.e(err);
     }
+  }
+
+  /** Tables **/
+  static Stream<QuerySnapshot<Object?>> getTablesSnapshot(String serviceId) {
+    return FirebaseFirestore.instance
+        .collection(TABLES)
+        .where('serviceId', isEqualTo: serviceId)
+        .snapshots();
   }
 }

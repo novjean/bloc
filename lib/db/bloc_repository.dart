@@ -4,6 +4,7 @@ import 'package:bloc/db/entity/cart_item.dart';
 import 'package:bloc/db/entity/category.dart';
 import 'package:bloc/db/entity/manager_service.dart';
 import 'package:bloc/db/entity/product.dart';
+import 'package:bloc/db/entity/service_table.dart';
 import 'package:bloc/db/entity/user.dart';
 import 'package:logger/logger.dart';
 
@@ -107,5 +108,11 @@ class BlocRepository {
   static void updateUser(BlocDao dao, User user) async {
     logger.i("updateUser(): " + user.username);
     await dao.updateUser(user);
+  }
+
+  /** Service Table **/
+  static void insertServiceTable(BlocDao dao, ServiceTable serviceTable) async {
+    logger.i('insertServiceTable(): ');
+    await dao.insertServiceTable(serviceTable);
   }
 }

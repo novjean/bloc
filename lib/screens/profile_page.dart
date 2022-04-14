@@ -3,7 +3,7 @@ import 'package:logger/logger.dart';
 
 import '../db/dao/bloc_dao.dart';
 import '../db/entity/user.dart' as blocUser;
-import '../db/experimental/user_preferences.dart';
+import '../db/shared_preferences/user_preferences.dart';
 import '../widgets/profile/numbers_widget.dart';
 import '../widgets/profile_widget.dart';
 import '../widgets/ui/button_widget.dart';

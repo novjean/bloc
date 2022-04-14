@@ -97,6 +97,8 @@ class _$AppDatabase extends AppDatabase {
             'CREATE TABLE IF NOT EXISTS `User` (`userId` TEXT NOT NULL, `username` TEXT NOT NULL, `email` TEXT NOT NULL, `imageUrl` TEXT NOT NULL, `clearanceLevel` INTEGER NOT NULL, `name` TEXT NOT NULL, PRIMARY KEY (`userId`))');
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `ManagerService` (`id` TEXT NOT NULL, `name` TEXT NOT NULL, `sequence` INTEGER NOT NULL, PRIMARY KEY (`id`))');
+        await database.execute(
+            'CREATE TABLE IF NOT EXISTS `ServiceTable` (`id` TEXT NOT NULL, `serviceId` TEXT NOT NULL, `tableNumber` INTEGER NOT NULL, `capacity` INTEGER NOT NULL, `isOccupied` INTEGER NOT NULL, PRIMARY KEY (`id`))');
 
         await callback?.onCreate?.call(database, version);
       },
@@ -213,6 +215,16 @@ class _$BlocDao extends BlocDao {
                   'sequence': item.sequence
                 },
             changeListener),
+        _serviceTableInsertionAdapter = InsertionAdapter(
+            database,
+            'ServiceTable',
+            (ServiceTable item) => <String, Object?>{
+                  'id': item.id,
+                  'serviceId': item.serviceId,
+                  'tableNumber': item.tableNumber,
+                  'capacity': item.capacity,
+                  'isOccupied': item.isOccupied ? 1 : 0
+                }),
         _userUpdateAdapter = UpdateAdapter(
             database,
             'User',
@@ -247,6 +259,8 @@ class _$BlocDao extends BlocDao {
   final InsertionAdapter<Product> _productInsertionAdapter;
 
   final InsertionAdapter<ManagerService> _managerServiceInsertionAdapter;
+
+  final InsertionAdapter<ServiceTable> _serviceTableInsertionAdapter;
 
   final UpdateAdapter<User> _userUpdateAdapter;
 
@@ -389,38 +403,46 @@ class _$BlocDao extends BlocDao {
 
   @override
   Future<void> insertCity(City city) async {
-    await _cityInsertionAdapter.insert(city, OnConflictStrategy.abort);
+    await _cityInsertionAdapter.insert(city, OnConflictStrategy.replace);
   }
 
   @override
   Future<void> insertBloc(Bloc bloc) async {
-    await _blocInsertionAdapter.insert(bloc, OnConflictStrategy.abort);
+    await _blocInsertionAdapter.insert(bloc, OnConflictStrategy.replace);
   }
 
   @override
   Future<void> insertBlocService(BlocService service) async {
     await _blocServiceInsertionAdapter.insert(
-        service, OnConflictStrategy.abort);
+        service, OnConflictStrategy.replace);
   }
 
   @override
   Future<void> insertCategory(Category cat) async {
-    await _categoryInsertionAdapter.insert(cat, OnConflictStrategy.abort);
+    await _categoryInsertionAdapter.insert(cat, OnConflictStrategy.replace);
   }
 
   @override
   Future<void> insertCartItem(CartItem cartitem) async {
-    await _cartItemInsertionAdapter.insert(cartitem, OnConflictStrategy.abort);
+    await _cartItemInsertionAdapter.insert(
+        cartitem, OnConflictStrategy.replace);
   }
 
   @override
   Future<void> insertProduct(Product product) async {
-    await _productInsertionAdapter.insert(product, OnConflictStrategy.abort);
+    await _productInsertionAdapter.insert(product, OnConflictStrategy.replace);
   }
 
   @override
   Future<void> insertManagerService(ManagerService ms) async {
-    await _managerServiceInsertionAdapter.insert(ms, OnConflictStrategy.abort);
+    await _managerServiceInsertionAdapter.insert(
+        ms, OnConflictStrategy.replace);
+  }
+
+  @override
+  Future<void> insertServiceTable(ServiceTable serviceTable) async {
+    await _serviceTableInsertionAdapter.insert(
+        serviceTable, OnConflictStrategy.replace);
   }
 
   @override

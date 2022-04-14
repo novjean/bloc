@@ -2,6 +2,7 @@ import 'package:bloc/db/entity/cart_item.dart';
 import 'package:bloc/db/entity/category.dart';
 import 'package:bloc/db/entity/manager_service.dart';
 import 'package:bloc/db/entity/product.dart';
+import 'package:bloc/db/entity/service_table.dart';
 import 'package:floor/floor.dart';
 
 import '../entity/bloc.dart';
@@ -19,19 +20,19 @@ abstract class BlocDao {
   Future<void> updateUser(User user);
 
   /** City **/
-  @insert
+  @Insert(onConflict: OnConflictStrategy.replace)
   Future<void> insertCity(City city);
 
   /** Bloc **/
-  @insert
+  @Insert(onConflict: OnConflictStrategy.replace)
   Future<void> insertBloc(Bloc bloc);
 
   /** Service **/
-  @insert
+  @Insert(onConflict: OnConflictStrategy.replace)
   Future<void> insertBlocService(BlocService service);
 
   /** Category **/
-  @insert
+  @Insert(onConflict: OnConflictStrategy.replace)
   Future<void> insertCategory(Category cat);
 
   @Query('SELECT * FROM Category ORDER BY sequence ASC')
@@ -44,7 +45,7 @@ abstract class BlocDao {
   Future<void> clearCategories();
 
   /** Cart Items **/
-  @insert
+  @Insert(onConflict: OnConflictStrategy.replace)
   Future<void> insertCartItem(CartItem cartitem);
 
   @Query('SELECT * FROM CartItem where userId=:uId')
@@ -57,7 +58,7 @@ abstract class BlocDao {
   Future<CartItem?> deleteCartItems(String prodId);
 
   /** Product **/
-  @insert
+  @Insert(onConflict: OnConflictStrategy.replace)
   Future<void> insertProduct(Product product);
 
   @Query('SELECT * FROM Product')
@@ -70,11 +71,15 @@ abstract class BlocDao {
   Future<void> clearProducts();
 
   /** Manager Service **/
-  @insert
+  @Insert(onConflict: OnConflictStrategy.replace)
   Future<void> insertManagerService(ManagerService ms);
 
   @Query('SELECT * FROM ManagerService ORDER BY sequence ASC')
   Stream<List<ManagerService>> getManagerServices();
+
+  /** Service Table **/
+  @Insert(onConflict: OnConflictStrategy.replace)
+  Future<void> insertServiceTable(ServiceTable serviceTable);
 
 
   // @Query('SELECT * FROM Product where id=:productId')

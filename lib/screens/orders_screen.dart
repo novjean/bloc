@@ -54,7 +54,7 @@ class OrdersScreen extends StatelessWidget {
         children: [
           // CoverPhoto(service.name, service.imageUrl),
           SizedBox(height: 2.0),
-          buildOrders(context),
+          _buildOrders(context),
           SizedBox(height: 5.0),
           // buildProducts(context),
           // SizedBox(height: 50.0),
@@ -63,7 +63,7 @@ class OrdersScreen extends StatelessWidget {
     );
   }
 
-  buildOrders(BuildContext context) {
+  _buildOrders(BuildContext context) {
     final Stream<QuerySnapshot> _stream =
         FirestoreHelper.getCartItemsSnapshot(serviceId);
 

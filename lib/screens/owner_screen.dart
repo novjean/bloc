@@ -1,7 +1,6 @@
 import 'package:bloc/db/bloc_repository.dart';
 import 'package:bloc/db/dao/bloc_dao.dart';
 import 'package:bloc/helpers/firestore_helper.dart';
-import 'package:bloc/widgets/app_drawer.dart';
 import 'package:bloc/widgets/city_item.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
