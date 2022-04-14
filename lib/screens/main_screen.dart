@@ -5,9 +5,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 
-import 'add.dart';
+import 'offers_screen.dart';
 import 'home_screen.dart';
-import 'label.dart';
+import 'event_screen.dart';
 import 'notifications.dart';
 import 'profile_page.dart';
 
@@ -39,8 +39,8 @@ class _MainScreenState extends State<MainScreen> {
 
     List pages = [
       HomeScreen(dao:widget.dao),
-      Label(),
-      Add(),
+      EventScreen(),
+      OfferScreen(),
       Notifications(),
       ProfilePage(dao: widget.dao),
     ];
