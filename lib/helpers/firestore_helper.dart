@@ -14,6 +14,7 @@ class FirestoreHelper {
   static var logger = Logger();
 
   static String BLOCS = 'blocs';
+  static String CHATS = 'chats';
   static String CATEGORIES = 'categories';
   static String CART_ITEMS = 'cartItems';
   static String CITIES = 'cities';
@@ -131,6 +132,14 @@ class FirestoreHelper {
     return FirebaseFirestore.instance
         .collection(TABLES)
         .where('serviceId', isEqualTo: serviceId)
+        .snapshots();
+  }
+
+  /** Chats **/
+  static Stream<QuerySnapshot<Object?>> getChatsSnapshot() {
+    return FirebaseFirestore.instance
+        .collection(CHATS)
+        .orderBy('createdAt', descending: true)
         .snapshots();
   }
 }

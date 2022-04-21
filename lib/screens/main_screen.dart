@@ -41,7 +41,7 @@ class _MainScreenState extends State<MainScreen> {
       HomeScreen(dao:widget.dao),
       EventScreen(),
       OfferScreen(),
-      ChatScreen(),
+      ChatScreen(dao: widget.dao),
       ProfilePage(dao: widget.dao),
     ];
 
