@@ -139,7 +139,7 @@ class FirestoreHelper {
   static Stream<QuerySnapshot<Object?>> getChatsSnapshot() {
     return FirebaseFirestore.instance
         .collection(CHATS)
-        .orderBy('createdAt', descending: true)
+        .orderBy('createdAt', descending: false)
         .snapshots();
   }
 }

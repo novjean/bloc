@@ -17,7 +17,6 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> {
   @override
   void initState() {
-    super.initState();
     // disabling this as it is only for ios
     final fbm = FirebaseMessaging.instance;
     fbm.requestPermission();
@@ -30,6 +29,7 @@ class _ChatScreenState extends State<ChatScreen> {
       return;
     });
     fbm.subscribeToTopic('chat');
+    super.initState();
   }
 
   @override
