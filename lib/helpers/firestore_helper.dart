@@ -89,7 +89,7 @@ class FirestoreHelper {
     return FirebaseFirestore.instance
         .collection(SERVICES)
         // .orderBy('sequence', descending: true)
-        .where('ownerId', isEqualTo: user!.uid)
+        // .where('ownerId', isEqualTo: user!.uid)
         .snapshots();
   }
 
