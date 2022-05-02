@@ -8,7 +8,7 @@ import 'package:logger/logger.dart';
 import 'offers_screen.dart';
 import 'home_screen.dart';
 import 'event_screen.dart';
-import 'notifications.dart';
+import 'chat_screen.dart';
 import 'profile_page.dart';
 
 class MainScreen extends StatefulWidget {
@@ -41,7 +41,7 @@ class _MainScreenState extends State<MainScreen> {
       HomeScreen(dao:widget.dao),
       EventScreen(),
       OfferScreen(),
-      Notifications(),
+      ChatScreen(dao: widget.dao),
       ProfilePage(dao: widget.dao),
     ];
 

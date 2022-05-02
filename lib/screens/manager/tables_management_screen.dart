@@ -94,23 +94,19 @@ class TablesManagementScreen extends StatelessWidget {
 
   _displayServiceTables(
       BuildContext context, List<ServiceTable> serviceTables) {
-
     return Container(
       height: MediaQuery.of(context).size.height,
       child: ListView.builder(
           itemCount: serviceTables.length,
           scrollDirection: Axis.vertical,
           itemBuilder: (ctx, index) {
-
             return GestureDetector(
                 child: ServiceTableItem(
                   serviceTable: serviceTables[index],
                 ),
                 onTap: () {
-                  {
-                    logger.d('manager service index selected : ' +
-                        index.toString());
-                  }
+                  logger.d(
+                      'manager service index selected : ' + index.toString());
                 });
           }),
     );
