@@ -19,6 +19,7 @@ class FirestoreHelper {
   static String CART_ITEMS = 'cartItems';
   static String CITIES = 'cities';
   static String MANAGER_SERVICES = 'manager_services';
+  static String PRODUCTS = 'products';
   static String SERVICES = 'services';
   static String TABLES = 'tables';
   static String USERS = 'users';
@@ -141,5 +142,24 @@ class FirestoreHelper {
         .collection(CHATS)
         .orderBy('createdAt', descending: false)
         .snapshots();
+  }
+
+  /** Products **/
+  static void updateProduct(String productId, File image) async {
+    try {
+      final url = await FirestorageHelper.uploadFile(
+          FirestorageHelper.PRODUCT_IMAGES, productId, image);
+
+      await FirebaseFirestore.instance
+          .collection(PRODUCTS)
+          .doc(productId)
+          .update({'imageUrl': url})
+          .then((value) => print("Product image updated."))
+          .catchError((error) => print("Failed to update product image: $error"));
+    } on PlatformException catch (err) {
+      logger.e(err.message);
+    } catch (err) {
+      logger.e(err);
+    }
   }
 }

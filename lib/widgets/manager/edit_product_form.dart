@@ -1,19 +1,19 @@
 import 'dart:io';
 
-import 'package:bloc/db/entity/category.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 
-import '../../pickers/user_image_picker.dart';
+import '../../db/entity/bloc.dart';
+import '../../db/entity/product.dart';
+import '../../pickers/edit_image_picker.dart';
 
-class NewProductForm extends StatefulWidget{
-  List<Category> categories;
-  NewProductForm(this.submitFn, this.isLoading, this.categories);
+class EditProductForm extends StatefulWidget {
+  EditProductForm(this.product, this.submitFn, this.isLoading);
 
+  final Product product;
   final bool isLoading;
   final void Function(
       String productName,
-      String productType,
       String productDescription,
       String productPrice,
       File image,
@@ -21,34 +21,35 @@ class NewProductForm extends StatefulWidget{
       ) submitFn;
 
   @override
-  State<NewProductForm> createState() => _NewProductFormState();
+  _EditProductFormState createState() => _EditProductFormState();
 }
 
-class _NewProductFormState extends State<NewProductForm> {
+class _EditProductFormState extends State<EditProductForm> {
   var logger = Logger();
 
   final _formKey = GlobalKey<FormState>();
 
   // var _isLogin = true;
   String _productName = '';
-  late String _productType = getFirstCategoryName();
+  // late String _productType = getFirstCategoryName();
+  String _productType = '';
   String _productDescription = '';
   String _productPrice ='';
   late File _userImageFile;
 
-  late final _productTypes = getCategoryTypes();
+  // late final _productTypes = getCategoryTypes();
 
-  List<String> getCategoryTypes() {
-    List<String> catsList = [];
-    for(Category category in widget.categories){
-      catsList.add(category.name);
-    }
-    return catsList;
-  }
+  // List<String> getCategoryTypes() {
+  //   List<String> catsList = [];
+  //   for(Category category in widget.categories){
+  //     catsList.add(category.name);
+  //   }
+  //   return catsList;
+  // }
 
-  String getFirstCategoryName() {
-    return widget.categories[0].name;
-  }
+  // String getFirstCategoryName() {
+  //   return widget.categories[0].name;
+  // }
 
 
   void _pickedImage(File image) {
@@ -75,7 +76,7 @@ class _NewProductFormState extends State<NewProductForm> {
       _formKey.currentState!.save();
       widget.submitFn(
         _productName.trim(),
-        _productType.trim(),
+        // _productType.trim(),
         _productDescription,
         _productPrice,
         _userImageFile,
@@ -86,6 +87,11 @@ class _NewProductFormState extends State<NewProductForm> {
 
   @override
   Widget build(BuildContext context) {
+    _productName = widget.product.name;
+    _productDescription = widget.product.description;
+    _productPrice = widget.product.price.toString();
+    _productType = widget.product.type;
+
     return Card(
       margin: const EdgeInsets.all(20),
       child: SingleChildScrollView(
@@ -96,9 +102,10 @@ class _NewProductFormState extends State<NewProductForm> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                UserImagePicker(_pickedImage, 90, 300),
+                EditImagePicker(_pickedImage, widget.product.imageUrl,90,300),
                 TextFormField(
                   key: const ValueKey('product_name'),
+                  initialValue: _productName,
                   autocorrect: false,
                   textCapitalization: TextCapitalization.words,
                   enableSuggestions: false,
@@ -117,63 +124,25 @@ class _NewProductFormState extends State<NewProductForm> {
                   },
                 ),
 
-                FormField<String>(
-                  builder: (FormFieldState<String> state) {
-                    return InputDecorator(
-                      key: const ValueKey('bloc_service_type'),
-                      decoration: InputDecoration(
-                        // labelStyle: textStyle,
-                          errorStyle: TextStyle(
-                              color: Colors.redAccent, fontSize: 16.0),
-                          hintText: 'Please select bloc type',
-                          border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(5.0))),
-                      isEmpty: _productType == '',
-                      child: DropdownButtonHideUnderline(
-                        child: DropdownButton<String>(
-                          value: _productType,
-                          isDense: true,
-                          // onChanged: (String? value){},
-                          onChanged: (String? newValue) {
-                            setState(() {
-                              _productType = newValue!;
-                              state.didChange(newValue);
-                            });
-                          },
-                          items: _productTypes.map((String value) {
-                            return DropdownMenuItem<String>(
-                              value: value,
-                              child: Text(value),
-                            );
-                          }).toList(),
-                        ),
-                      ),
-                    );
+                TextFormField(
+                  key: const ValueKey('product_type'),
+                  initialValue: _productType,
+                  enabled: false,
+                  autocorrect: false,
+                  textCapitalization: TextCapitalization.words,
+                  enableSuggestions: false,
+                  keyboardType: TextInputType.text,
+                  decoration: const InputDecoration(
+                    labelText: 'Product Type',
+                  ),
+                  onSaved: (value) {
+                    _productType = value!;
                   },
                 ),
 
-                // TextFormField(
-                //   key: const ValueKey('product_type'),
-                //   autocorrect: false,
-                //   textCapitalization: TextCapitalization.words,
-                //   enableSuggestions: false,
-                //   validator: (value) {
-                //     if (value!.isEmpty) {
-                //       return 'Please enter a valid type of service.';
-                //     }
-                //     return null;
-                //   },
-                //   keyboardType: TextInputType.text,
-                //   decoration: const InputDecoration(
-                //     labelText: 'Product Type',
-                //   ),
-                //   onSaved: (value) {
-                //     _productType = value!;
-                //   },
-                // ),
-
                 TextFormField(
                   key: const ValueKey('product_description'),
+                  initialValue: _productDescription,
                   autocorrect: false,
                   textCapitalization: TextCapitalization.sentences,
                   enableSuggestions: false,
@@ -194,6 +163,7 @@ class _NewProductFormState extends State<NewProductForm> {
 
                 TextFormField(
                   key: const ValueKey('product_price'),
+                  initialValue: _productPrice,
                   autocorrect: false,
                   textCapitalization: TextCapitalization.none,
                   enableSuggestions: false,

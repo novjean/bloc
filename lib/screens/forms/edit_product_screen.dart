@@ -8,43 +8,44 @@ import 'package:flutter/services.dart';
 import 'package:logger/logger.dart';
 
 import '../../db/entity/bloc.dart';
+import '../../db/entity/product.dart';
 import '../../helpers/firestore_helper.dart';
 import '../../widgets/bloc/edit_bloc_form.dart';
+import '../../widgets/manager/edit_product_form.dart';
 
-class EditBlocScreen extends StatefulWidget {
+class EditProductScreen extends StatefulWidget {
   static const routeName = '/edit-bloc-form-screen';
-  Bloc bloc;
+  Product product;
 
-  EditBlocScreen({key, required this.bloc}) : super(key: key);
+  EditProductScreen({key, required this.product}) : super(key: key);
 
   @override
-  _EditBlocScreenState createState() => _EditBlocScreenState();
+  _EditProductScreenState createState() => _EditProductScreenState();
 
 }
 
-class _EditBlocScreenState extends State<EditBlocScreen> {
+class _EditProductScreenState extends State<EditProductScreen> {
   var logger = Logger();
   var _isLoading = false;
 
-  void _submitBlocForm(
-      String blocName,
-      String addressLine1,
-      String addressLine2,
-      String pinCode,
+  void _submitProductForm(
+      String productName,
+      // String productType,
+      String productDescription,
+      String productPrice,
       File image,
       BuildContext ctx,
       ) async {
-    logger.i('_submitBlocForm called');
+    logger.i('_submitProductForm called');
 
     setState(() {
       _isLoading = true;
     });
 
-    var time = Timestamp.now().toString();
-    String blocId = widget.bloc.id;
+    String productId = widget.product.id;
 
-    FirestorageHelper.deleteFile(widget.bloc.imageUrl);
-    FirestoreHelper.updateBloc(blocId, image);
+    FirestorageHelper.deleteFile(widget.product.imageUrl);
+    FirestoreHelper.updateProduct(productId, image);
 
     Navigator.of(context).pop();
   }
@@ -53,12 +54,12 @@ class _EditBlocScreenState extends State<EditBlocScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Edit BLOC'),
+        title: const Text('Edit Product'),
       ),
       // drawer: AppDrawer(),
-      body: EditBlocForm(
-        widget.bloc,
-        _submitBlocForm,
+      body: EditProductForm(
+        widget.product,
+        _submitProductForm,
         _isLoading,
       ),
     );

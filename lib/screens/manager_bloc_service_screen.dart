@@ -10,6 +10,7 @@ import '../db/entity/order.dart';
 import '../helpers/firestore_helper.dart';
 import '../utils/manager_utils.dart';
 import '../widgets/manager_service_item.dart';
+import 'manager/price_management_screen.dart';
 import 'manager/tables_management_screen.dart';
 import 'orders_screen.dart';
 
@@ -129,6 +130,16 @@ class ManagerBlocServiceScreen extends StatelessWidget {
                               logger.d('tables management service selected.');
                               break;
                             }
+                          case 3:
+                            {
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (ctx) => PriceManagementScreen(
+                                      serviceId: serviceId,
+                                      managerService: managerService,
+                                      dao: dao)));
+                              logger.d('price management service selected.');
+                              break;
+                            }
                           default:
                         }
                       }
@@ -141,4 +152,3 @@ class ManagerBlocServiceScreen extends StatelessWidget {
     );
   }
 }
-

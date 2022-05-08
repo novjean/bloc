@@ -1,24 +1,21 @@
+import 'package:bloc/screens/forms/edit_product_screen.dart';
 import 'package:bloc/widgets/ui/toaster.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
-import '../db/dao/bloc_dao.dart';
-import '../db/entity/cart_item.dart';
-import '../db/entity/product.dart';
-import '../providers/cart.dart';
-import '../screens/product_detail_screen.dart';
-import '../utils/string_utils.dart';
+import '../../db/dao/bloc_dao.dart';
+import '../../db/entity/product.dart';
+import '../../providers/cart.dart';
+import '../../screens/product_detail_screen.dart';
 
-class ProductItem extends StatelessWidget {
+class ManageProductItem extends StatelessWidget {
   final Product product;
   final BlocDao dao;
   final String serviceId;
 
-  ProductItem({required this.serviceId, required this.product, required this.dao});
+  ManageProductItem({required this.serviceId, required this.product, required this.dao});
 
   @override
   Widget build(BuildContext context) {
@@ -48,8 +45,8 @@ class ProductItem extends StatelessWidget {
                   decoration: BoxDecoration(
                     image: DecorationImage(
                         image: NetworkImage(product.imageUrl), fit: BoxFit.cover
-                        // AssetImage(food['image']),
-                        ),
+                      // AssetImage(food['image']),
+                    ),
                   ),
                 ),
                 Expanded(
@@ -87,54 +84,28 @@ class ProductItem extends StatelessWidget {
                               ),
                               child: TextButton(
                                 child: Text(
-                                  'Add',
+                                  'Modify',
                                   style: TextStyle(
                                     color: Colors.white,
                                   ),
                                 ),
                                 onPressed: () {
-                                  // add it to the cart
-                                  String id = StringUtils.getRandomString(20);
-                                  //todo: this needs to increment
-                                  int cartNumber = 0;
-                                  final user =
-                                      FirebaseAuth.instance.currentUser;
-                                  String userId = user!.uid;
-                                  int timestamp = Timestamp.now().millisecondsSinceEpoch;
-                                  CartItem cartitem = CartItem(
-                                      id: id,
-                                      serviceId: serviceId,
-                                      cartNumber: cartNumber,
-                                      userId: userId,
-                                      productId: product.id,
-                                      productName: product.name,
-                                      productPrice: double.parse(
-                                          product.price.toString()),
-                                      quantity: 1,
-                                      createdAt: timestamp);
-
-                                  cart.addItem(
-                                      id,
-                                      serviceId,
-                                      cartNumber,
-                                      userId,
-                                      cartitem.productId,
-                                      cartitem.productName,
-                                      cartitem.productPrice,
-                                      cartitem.createdAt);
-
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(builder: (ctx) => EditProductScreen(product: product)),
+                                  );
                                   Toaster.shortToast(
-                                      product.name + ' is added to cart.');
+                                      product.name + ' is clicked to be modified.');
                                 },
                               ),
                             ),
-                            // IconButton(
-                            //   icon: Icon(Icons.add),
-                            //   color: primaryColor,
-                            //   onPressed: () {
-                            //     logger.i('add product to cart.');
-                            //   },
-                            // ),
+                            IconButton(
+                              icon: Icon(Icons.local_drink_rounded),
+                              color: primaryColor,
+                              onPressed: () {
+                                Toaster.shortToast(
+                                    product.name + ' is clicked for offer.');
+                              },
+                            ),
                           ],
                         ),
                       ],

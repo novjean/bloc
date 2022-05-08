@@ -68,7 +68,7 @@ class _NewProductScreenState extends State<NewProductScreen> {
       File image,
       BuildContext ctx,
       ) async {
-    logger.i('_submitNewItemForm called');
+    logger.i('_submitNewProductForm called');
 
     final user = FirebaseAuth.instance.currentUser;
     try {
