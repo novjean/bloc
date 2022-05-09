@@ -16,6 +16,7 @@ class UserPreferences {
     email:'test',
     imageUrl: 'test',
     clearanceLevel: 0,
+    phoneNumber: 0,
     name:'test',
   );
 

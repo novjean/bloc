@@ -8,6 +8,7 @@ class User {
   final String email;
   final String imageUrl;
   final int clearanceLevel;
+  final int phoneNumber;
   final String name;
 
   const User(
@@ -16,6 +17,7 @@ class User {
       required this.email,
       required this.imageUrl,
       required this.clearanceLevel,
+      required this.phoneNumber,
       required this.name});
 
   User copy({
@@ -24,6 +26,7 @@ class User {
     String? email,
     String? imageUrl,
     int? clearanceLevel,
+    int? phoneNumber,
     String? name,
   }) =>
       User(
@@ -32,24 +35,27 @@ class User {
         email: email ?? this.email,
         imageUrl: imageUrl ?? this.imageUrl,
         clearanceLevel: clearanceLevel ?? this.clearanceLevel,
+        phoneNumber: phoneNumber ?? this.phoneNumber,
         name: name ?? this.name,
       );
 
   Map<String, dynamic> toJson() => {
-    'userId': userId,
-    'username': username,
-    'email': email,
-    'imageUrl': imageUrl,
-    'clearanceLevel': clearanceLevel,
-    'name': name,
-  };
+        'userId': userId,
+        'username': username,
+        'email': email,
+        'imageUrl': imageUrl,
+        'clearanceLevel': clearanceLevel,
+        'phoneNumber': phoneNumber,
+        'name': name,
+      };
 
   static User fromJson(Map<String, dynamic> json) => User(
-    userId: json['userId'],
-    username: json['username'],
-    email: json['email'],
-    imageUrl: json['imageUrl'],
-    clearanceLevel: json['clearanceLevel'],
-    name: json['name'],
-  );
+        userId: json['userId'],
+        username: json['username'],
+        email: json['email'],
+        imageUrl: json['imageUrl'],
+        clearanceLevel: json['clearanceLevel'],
+        phoneNumber: json['phoneNumber'],
+        name: json['name'],
+      );
 }

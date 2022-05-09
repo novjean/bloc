@@ -94,7 +94,7 @@ class _$AppDatabase extends AppDatabase {
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `Product` (`id` TEXT NOT NULL, `name` TEXT NOT NULL, `type` TEXT NOT NULL, `description` TEXT NOT NULL, `price` INTEGER NOT NULL, `serviceId` TEXT NOT NULL, `imageUrl` TEXT NOT NULL, `ownerId` TEXT NOT NULL, `createdAt` TEXT NOT NULL, PRIMARY KEY (`id`))');
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `User` (`userId` TEXT NOT NULL, `username` TEXT NOT NULL, `email` TEXT NOT NULL, `imageUrl` TEXT NOT NULL, `clearanceLevel` INTEGER NOT NULL, `name` TEXT NOT NULL, PRIMARY KEY (`userId`))');
+            'CREATE TABLE IF NOT EXISTS `User` (`userId` TEXT NOT NULL, `username` TEXT NOT NULL, `email` TEXT NOT NULL, `imageUrl` TEXT NOT NULL, `clearanceLevel` INTEGER NOT NULL, `phoneNumber` INTEGER NOT NULL, `name` TEXT NOT NULL, PRIMARY KEY (`userId`))');
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `ManagerService` (`id` TEXT NOT NULL, `name` TEXT NOT NULL, `sequence` INTEGER NOT NULL, PRIMARY KEY (`id`))');
         await database.execute(
@@ -124,6 +124,7 @@ class _$BlocDao extends BlocDao {
                   'email': item.email,
                   'imageUrl': item.imageUrl,
                   'clearanceLevel': item.clearanceLevel,
+                  'phoneNumber': item.phoneNumber,
                   'name': item.name
                 }),
         _cityInsertionAdapter = InsertionAdapter(
@@ -235,6 +236,7 @@ class _$BlocDao extends BlocDao {
                   'email': item.email,
                   'imageUrl': item.imageUrl,
                   'clearanceLevel': item.clearanceLevel,
+                  'phoneNumber': item.phoneNumber,
                   'name': item.name
                 });
 
