@@ -1,6 +1,7 @@
 import 'package:bloc/db/bloc_repository.dart';
 import 'package:bloc/db/dao/bloc_dao.dart';
 import 'package:bloc/db/entity/manager_service.dart';
+import 'package:bloc/screens/manager/seats_management.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -88,7 +89,7 @@ class TablesManagementScreen extends StatelessWidget {
               return _displayServiceTables(context, serviceTables);
             }
           }
-          return Text('Loading cart items...');
+          return Text('Loading tables...');
         });
   }
 
@@ -105,6 +106,13 @@ class TablesManagementScreen extends StatelessWidget {
                   serviceTable: serviceTables[index],
                 ),
                 onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                        builder: (ctx) => SeatsManagementScreen(
+                            serviceId: serviceId,
+                            dao: dao,
+                            serviceTable: serviceTables[index])),
+                  );
                   logger.d(
                       'manager service index selected : ' + index.toString());
                 });
