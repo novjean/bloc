@@ -9,6 +9,8 @@ import '../widgets/profile_widget.dart';
 import '../widgets/ui/button_widget.dart';
 import 'edit_profile_page.dart';
 
+import 'package:barcode_widget/barcode_widget.dart';
+
 class ProfilePage extends StatefulWidget {
   BlocDao dao;
 
@@ -20,6 +22,8 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   var logger = Logger();
+  bool _showQr = false;
+  String _buttonText = 'QR Code';
 
   @override
   Widget build(BuildContext context) {
@@ -35,6 +39,15 @@ class _ProfilePageState extends State<ProfilePage> {
       physics: BouncingScrollPhysics(),
       children: [
         const SizedBox(height: 15),
+        _showQr ?
+        Center(
+            child: BarcodeWidget(
+              barcode: Barcode.qrCode(), // Barcode type and settings
+              data: user.userId, // Content
+              width: 128,
+              height: 128,
+            )
+        ):
         ProfileWidget(
           imagePath: user.imageUrl,
           onClicked: () async {
@@ -47,11 +60,13 @@ class _ProfilePageState extends State<ProfilePage> {
         const SizedBox(height: 24),
         buildName(user),
         const SizedBox(height: 24),
-        Center(child: buildContactButton()),
+        buildContactButton(),
         const SizedBox(height: 24),
         NumbersWidget(),
         const SizedBox(height: 48),
         buildAbout(user),
+        const SizedBox(height: 48),
+
       ],
     );
   }
@@ -70,9 +85,20 @@ class _ProfilePageState extends State<ProfilePage> {
     ],
   );
 
-  Widget buildContactButton() => ButtonWidget(
-    text: 'Contact',
-    onClicked: () {},
+  Widget buildContactButton() => Center(
+    child: ButtonWidget(
+      text: _buttonText,
+      onClicked: () {
+        setState(() {
+          _showQr = !_showQr;
+          if(!_showQr){
+            _buttonText = 'QR Code';
+          } else {
+            _buttonText = 'Profile Photo';
+          }
+        });
+      },
+    ),
   );
 
   Widget buildAbout(blocUser.User user) => Container(

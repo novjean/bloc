@@ -42,15 +42,19 @@ dependencies:
   # db management
   floor: ^1.2.0
 
+  # ui
   fluttertoast: ^8.0.9
 
   # persist locally data
   shared_preferences: ^2.0.5
-
   provider: ^6.0.2
 
   # store image
   path_provider: ^2.0.1
+
+  # barcode scanner
+  #  barcode: ^2.2.0
+  barcode_widget: ^2.0.2
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
