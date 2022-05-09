@@ -9,9 +9,7 @@ import '../db/entity/order.dart';
 import '../db/entity/user.dart';
 import '../helpers/firestore_helper.dart';
 import '../utils/cart_item_utils.dart';
-import '../utils/user_utils.dart';
 import '../widgets/order_line_item.dart';
-import '../widgets/ui/Toaster.dart';
 import 'order_display_screen.dart';
 
 class OrdersScreen extends StatelessWidget {
@@ -130,7 +128,7 @@ class OrdersScreen extends StatelessWidget {
             DocumentSnapshot document = snapshot.data!.docs[i];
             Map<String, dynamic> data =
                 document.data()! as Map<String, dynamic>;
-            final User user = UserUtils.getUser(data);
+            final User user = User.fromJson(data);
 
             // BlocRepository.insertManagerService(dao, ms);
 

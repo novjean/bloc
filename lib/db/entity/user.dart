@@ -40,22 +40,22 @@ class User {
       );
 
   Map<String, dynamic> toJson() => {
-        'userId': userId,
+        'user_id': userId,
         'username': username,
         'email': email,
-        'imageUrl': imageUrl,
-        'clearanceLevel': clearanceLevel,
-        'phoneNumber': phoneNumber,
+        'image_url': imageUrl,
+        'clearance_level': clearanceLevel,
+        'phone_number': phoneNumber,
         'name': name,
       };
 
   static User fromJson(Map<String, dynamic> json) => User(
-        userId: json['userId'],
+        userId: json['user_id'],
         username: json['username'],
         email: json['email'],
-        imageUrl: json['imageUrl'],
-        clearanceLevel: json['clearanceLevel'],
-        phoneNumber: json['phoneNumber'],
+        imageUrl: json['image_url'],
+        clearanceLevel: json['clearance_level'],
+        phoneNumber: json['phone_number'],
         name: json['name'],
       );
 }

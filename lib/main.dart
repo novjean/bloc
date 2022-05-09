@@ -3,7 +3,6 @@ import 'package:bloc/db/dao/bloc_dao.dart';
 import 'package:bloc/db/entity/user.dart' as blocUser;
 import 'package:bloc/helpers/firestore_helper.dart';
 import 'package:bloc/screens/owner_screen.dart';
-import 'package:bloc/utils/user_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -123,7 +122,7 @@ class MyApp extends StatelessWidget {
                                     ConnectionState.done) {
                                   Map<String, dynamic> data = snapshot.data!
                                       .data() as Map<String, dynamic>;
-                                  final blocUser.User user = UserUtils.getUser(data);
+                                  final blocUser.User user = blocUser.User.fromJson(data);
 
                                   mClearanceLevel = user.clearanceLevel;
                                   BlocRepository.insertUser(dao, user);
