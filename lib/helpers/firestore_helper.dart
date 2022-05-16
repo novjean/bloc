@@ -194,4 +194,11 @@ class FirestoreHelper {
       logger.e(err);
     }
   }
-}
+
+  static Stream<QuerySnapshot<Object?>> getSeats(String serviceId, int tableNumber) {
+    return FirebaseFirestore.instance
+        .collection(SEATS)
+        .where('serviceId', isEqualTo: serviceId)
+        .where('tableNumber', isEqualTo: tableNumber)
+        .snapshots();
+  }}

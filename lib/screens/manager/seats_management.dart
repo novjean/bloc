@@ -62,9 +62,7 @@ class _SeatsManagementScreenState extends State<SeatsManagementScreen> {
           //     style: TextStyle(fontSize: 20)),
           // CoverPhoto(service.name, service.imageUrl),
           SizedBox(height: 2.0),
-          // _seatsFilled == 0 ? _displayAddButton(context) :
           _pullSeats(context),
-          // _loadSeats(context),
           SizedBox(height: 5.0),
           // _buildSeatsList(context),
         ],
@@ -74,7 +72,7 @@ class _SeatsManagementScreenState extends State<SeatsManagementScreen> {
 
   _pullSeats(BuildContext context) {
     final Stream<QuerySnapshot> _stream =
-        FirestoreHelper.getSeatsSnapshotByTableNumber(widget.serviceTable.tableNumber);
+        FirestoreHelper.getSeats(widget.serviceId, widget.serviceTable.tableNumber);
     return StreamBuilder<QuerySnapshot>(
         stream: _stream,
         builder: (ctx, snapshot) {
@@ -178,6 +176,9 @@ class _SeatsManagementScreenState extends State<SeatsManagementScreen> {
     // setState to update our non-existent appearance.
     if (!mounted) return;
 
+    if(scanCustId.compareTo('-1')==0){
+      return;
+    }
     // update seat in floor
     BlocRepository.updateCustInSeat(widget.dao, seat.id, scanCustId);
     BlocRepository.updateTableOccupyStatus(widget.dao, seat.serviceId, seat.tableNumber, true);
