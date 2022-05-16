@@ -1,11 +1,10 @@
+import 'package:bloc/db/entity/seat.dart';
 import 'package:flutter/material.dart';
 
-import '../db/entity/service_table.dart';
+class SeatItem extends StatelessWidget {
+  final Seat seat;
 
-class ServiceTableItem extends StatelessWidget {
-  final ServiceTable serviceTable;
-
-  ServiceTableItem({required this.serviceTable});
+  SeatItem({required this.seat});
 
   @override
   Widget build(BuildContext context) {
@@ -58,10 +57,7 @@ class ServiceTableItem extends StatelessWidget {
                 ),
                 child: Center(
                   child: Text(
-                    'Table number: ' +
-                        serviceTable.tableNumber.toString() +
-                        ' . Seats: ' +
-                        serviceTable.capacity.toString(),
+                    'Seat Cust ID: ' + seat.custId,
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 20,

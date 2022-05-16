@@ -2,6 +2,7 @@ import 'package:bloc/db/entity/cart_item.dart';
 import 'package:bloc/db/entity/category.dart';
 import 'package:bloc/db/entity/manager_service.dart';
 import 'package:bloc/db/entity/product.dart';
+import 'package:bloc/db/entity/seat.dart';
 import 'package:bloc/db/entity/service_table.dart';
 import 'package:floor/floor.dart';
 
@@ -80,6 +81,21 @@ abstract class BlocDao {
   /** Service Table **/
   @Insert(onConflict: OnConflictStrategy.replace)
   Future<void> insertServiceTable(ServiceTable serviceTable);
+
+  @Query("UPDATE ServiceTable SET isOccupied = :occupyStatus WHERE serviceId = :serviceId "
+      "and tableNumber=:tableNumber")
+  Future<void> updateTableOccupied(String serviceId, int tableNumber, bool occupyStatus);
+
+  /** Seat **/
+  @Insert(onConflict: OnConflictStrategy.replace)
+  Future<void> insertSeat(Seat seat);
+
+  @Query("UPDATE Seat SET custId = :custId WHERE id = :seatId")
+  Future<void> updateCustInSeat(String seatId, String custId);
+
+  @Query('SELECT * FROM Seat where serviceId=:serviceId and tableNumber=:tableNumber')
+  Future<List<Seat>> getSeats(String serviceId, int tableNumber);
+
 
 
   // @Query('SELECT * FROM Product where id=:productId')

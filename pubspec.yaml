@@ -53,8 +53,8 @@ dependencies:
   path_provider: ^2.0.1
 
   # barcode scanner
-  #  barcode: ^2.2.0
   barcode_widget: ^2.0.2
+  flutter_barcode_scanner: ^2.0.0
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.

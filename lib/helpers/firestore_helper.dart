@@ -1,12 +1,11 @@
 import 'dart:io';
 
 import 'package:bloc/db/entity/cart_item.dart';
-import 'package:bloc/db/entity/service_table.dart';
+import 'package:bloc/db/entity/seat.dart';
 import 'package:bloc/db/entity/user.dart' as blocUser;
 import 'package:bloc/helpers/firestorage_helper.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:logger/logger.dart';
 
@@ -21,6 +20,7 @@ class FirestoreHelper {
   static String MANAGER_SERVICES = 'manager_services';
   static String PRODUCTS = 'products';
   static String SERVICES = 'services';
+  static String SEATS = 'seats';
   static String TABLES = 'tables';
   static String USERS = 'users';
 
@@ -156,6 +156,38 @@ class FirestoreHelper {
           .update({'imageUrl': url})
           .then((value) => print("Product image updated."))
           .catchError((error) => print("Failed to update product image: $error"));
+    } on PlatformException catch (err) {
+      logger.e(err.message);
+    } catch (err) {
+      logger.e(err);
+    }
+  }
+
+  /** Seats **/
+  static Stream<QuerySnapshot<Object?>> getSeatsSnapshotByTableNumber(int tableNumber) {
+    return FirebaseFirestore.instance
+        .collection(SEATS)
+        .where('tableNumber', isEqualTo: tableNumber)
+        .snapshots();
+  }
+
+  static void uploadSeat(Seat seat) async {
+    await FirebaseFirestore.instance.collection(SEATS).doc(seat.id).set({
+      'id': seat.id,
+      'custId': seat.custId,
+      'serviceId': seat.serviceId,
+      'tableNumber': seat.tableNumber,
+    });
+  }
+
+  static void updateSeat(String seatId, String custId) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection(SEATS)
+          .doc(seatId)
+          .update({'custId': custId})
+          .then((value) => print("seat is occupied by cust id: " + custId))
+          .catchError((error) => print("Failed to update seat with cust: $error"));
     } on PlatformException catch (err) {
       logger.e(err.message);
     } catch (err) {

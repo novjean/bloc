@@ -99,6 +99,8 @@ class _$AppDatabase extends AppDatabase {
             'CREATE TABLE IF NOT EXISTS `ManagerService` (`id` TEXT NOT NULL, `name` TEXT NOT NULL, `sequence` INTEGER NOT NULL, PRIMARY KEY (`id`))');
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `ServiceTable` (`id` TEXT NOT NULL, `serviceId` TEXT NOT NULL, `tableNumber` INTEGER NOT NULL, `capacity` INTEGER NOT NULL, `isOccupied` INTEGER NOT NULL, PRIMARY KEY (`id`))');
+        await database.execute(
+            'CREATE TABLE IF NOT EXISTS `Seat` (`id` TEXT NOT NULL, `custId` TEXT NOT NULL, `serviceId` TEXT NOT NULL, `tableNumber` INTEGER NOT NULL, PRIMARY KEY (`id`))');
 
         await callback?.onCreate?.call(database, version);
       },
@@ -226,6 +228,15 @@ class _$BlocDao extends BlocDao {
                   'capacity': item.capacity,
                   'isOccupied': item.isOccupied ? 1 : 0
                 }),
+        _seatInsertionAdapter = InsertionAdapter(
+            database,
+            'Seat',
+            (Seat item) => <String, Object?>{
+                  'id': item.id,
+                  'custId': item.custId,
+                  'serviceId': item.serviceId,
+                  'tableNumber': item.tableNumber
+                }),
         _userUpdateAdapter = UpdateAdapter(
             database,
             'User',
@@ -263,6 +274,8 @@ class _$BlocDao extends BlocDao {
   final InsertionAdapter<ManagerService> _managerServiceInsertionAdapter;
 
   final InsertionAdapter<ServiceTable> _serviceTableInsertionAdapter;
+
+  final InsertionAdapter<Seat> _seatInsertionAdapter;
 
   final UpdateAdapter<User> _userUpdateAdapter;
 
@@ -399,6 +412,33 @@ class _$BlocDao extends BlocDao {
   }
 
   @override
+  Future<void> updateTableOccupied(
+      String serviceId, int tableNumber, bool occupyStatus) async {
+    await _queryAdapter.queryNoReturn(
+        'UPDATE ServiceTable SET isOccupied = ?3 WHERE serviceId = ?1 and tableNumber=?2',
+        arguments: [serviceId, tableNumber, occupyStatus ? 1 : 0]);
+  }
+
+  @override
+  Future<void> updateCustInSeat(String seatId, String custId) async {
+    await _queryAdapter.queryNoReturn(
+        'UPDATE Seat SET custId = ?2 WHERE id = ?1',
+        arguments: [seatId, custId]);
+  }
+
+  @override
+  Future<List<Seat>> getSeats(String serviceId, int tableNumber) async {
+    return _queryAdapter.queryList(
+        'SELECT * FROM Seat where serviceId=?1 and tableNumber=?2',
+        mapper: (Map<String, Object?> row) => Seat(
+            id: row['id'] as String,
+            serviceId: row['serviceId'] as String,
+            tableNumber: row['tableNumber'] as int,
+            custId: row['custId'] as String),
+        arguments: [serviceId, tableNumber]);
+  }
+
+  @override
   Future<void> insertUser(User user) async {
     await _userInsertionAdapter.insert(user, OnConflictStrategy.replace);
   }
@@ -445,6 +485,11 @@ class _$BlocDao extends BlocDao {
   Future<void> insertServiceTable(ServiceTable serviceTable) async {
     await _serviceTableInsertionAdapter.insert(
         serviceTable, OnConflictStrategy.replace);
+  }
+
+  @override
+  Future<void> insertSeat(Seat seat) async {
+    await _seatInsertionAdapter.insert(seat, OnConflictStrategy.replace);
   }
 
   @override

@@ -4,6 +4,7 @@ import 'package:bloc/db/entity/cart_item.dart';
 import 'package:bloc/db/entity/category.dart';
 import 'package:bloc/db/entity/manager_service.dart';
 import 'package:bloc/db/entity/product.dart';
+import 'package:bloc/db/entity/seat.dart';
 import 'package:bloc/db/entity/service_table.dart';
 import 'package:bloc/db/entity/user.dart';
 import 'package:logger/logger.dart';
@@ -115,4 +116,29 @@ class BlocRepository {
     logger.i('insertServiceTable(): ');
     await dao.insertServiceTable(serviceTable);
   }
+
+  static void updateTableOccupyStatus(BlocDao dao, String serviceId, int tableNumber, bool occupyStatus) async {
+    logger.i('updateTableOccupied(): ');
+    await dao.updateTableOccupied(serviceId, tableNumber, occupyStatus);
+  }
+
+  /** Seat **/
+  static void insertSeat(BlocDao dao, Seat seat) async {
+    logger.i('insertSeat(): ');
+    await dao.insertSeat(seat);
+  }
+
+  static void updateCustInSeat(BlocDao dao, String seatId, String custId) async {
+    logger.i('updateCustInSeat(): ');
+    await dao.updateCustInSeat(seatId, custId);
+  }
+
+  static Future<List<Seat>> getSeats(BlocDao dao, String serviceId, int tableNumber) {
+    logger.i('getSeats() for table : ' + tableNumber.toString());
+
+    Future<List<Seat>> fSeats = dao.getSeats(serviceId, tableNumber);
+    return fSeats;
+
+  }
+
 }
