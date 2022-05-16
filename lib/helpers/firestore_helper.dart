@@ -136,6 +136,21 @@ class FirestoreHelper {
         .snapshots();
   }
 
+  static void updateServiceTable(String serviceTableId, bool isOccupied) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection(TABLES)
+          .doc(serviceTableId)
+          .update({'isOccupied': isOccupied})
+          .then((value) => print("Table is occupied : " + serviceTableId))
+          .catchError((error) => print("Failed to set isOccupy table: $error"));
+    } on PlatformException catch (err) {
+      logger.e(err.message);
+    } catch (err) {
+      logger.e(err);
+    }
+  }
+
   /** Chats **/
   static Stream<QuerySnapshot<Object?>> getChatsSnapshot() {
     return FirebaseFirestore.instance
@@ -201,4 +216,6 @@ class FirestoreHelper {
         .where('serviceId', isEqualTo: serviceId)
         .where('tableNumber', isEqualTo: tableNumber)
         .snapshots();
-  }}
+  }
+
+}

@@ -185,6 +185,7 @@ class _SeatsManagementScreenState extends State<SeatsManagementScreen> {
 
     seat.custId = scanCustId;
     FirestoreHelper.updateSeat(seat.id, scanCustId);
+    FirestoreHelper.updateServiceTable(widget.serviceTable.id, true);
 
     setState(() {
       widget.serviceTable.isOccupied = true;
