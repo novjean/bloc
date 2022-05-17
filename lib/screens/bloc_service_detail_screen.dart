@@ -2,12 +2,14 @@ import 'package:bloc/db/entity/bloc_service.dart';
 import 'package:bloc/helpers/firestore_helper.dart';
 import 'package:bloc/widgets/ui/cover_photo.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../db/bloc_repository.dart';
 import '../db/dao/bloc_dao.dart';
 import '../db/entity/category.dart';
 import '../db/entity/product.dart';
+import '../db/entity/seat.dart';
 import '../utils/category_utils.dart';
 import '../utils/product_utils.dart';
 import '../widgets/category_item.dart';
@@ -33,6 +35,7 @@ class BlocServiceDetailScreen extends StatefulWidget {
 class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen> {
   late Future<List<Product>> fProducts;
   var _categorySelected = 0;
+  var _mTableNumber = 0;
   var _isInit = true;
   var _isLoading = false;
 
@@ -72,8 +75,10 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen> {
             onPressed: () {
               Navigator.of(context).push(
                 MaterialPageRoute(
-                    builder: (ctx) =>
-                        CartScreen(service: widget.service, dao: widget.dao)),
+                    builder: (ctx) => CartScreen(
+                        service: widget.service,
+                        dao: widget.dao,
+                        tableNumber: _mTableNumber)),
               );
             },
           ),
@@ -87,8 +92,10 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen> {
               // _showAction(context, 0)
               Navigator.of(context).push(
                 MaterialPageRoute(
-                    builder: (ctx) =>
-                        CartScreen(service: widget.service, dao: widget.dao)),
+                    builder: (ctx) => CartScreen(
+                        service: widget.service,
+                        dao: widget.dao,
+                        tableNumber: _mTableNumber)),
               ),
             },
             icon: const Icon(Icons.shopping_cart_outlined),
@@ -97,8 +104,8 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen> {
             onPressed: () => {
               Navigator.of(context).push(
                 MaterialPageRoute(
-                    builder: (ctx) =>
-                        NewProductScreen(service: widget.service, dao:widget.dao)),
+                    builder: (ctx) => NewProductScreen(
+                        service: widget.service, dao: widget.dao)),
               ),
             },
             icon: const Icon(Icons.fastfood),
@@ -125,7 +132,9 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen> {
     return SingleChildScrollView(
       child: Column(
         children: [
-          CoverPhoto(service.name, service.imageUrl),
+          SizedBox(height: 2.0),
+          _searchTableNumber(context),
+          // CoverPhoto(service.name, service.imageUrl),
           SizedBox(height: 2.0),
           buildServiceCategories(context),
           SizedBox(height: 2.0),
@@ -138,7 +147,8 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen> {
 
   /** Categories List **/
   buildServiceCategories(BuildContext context) {
-    final Stream<QuerySnapshot> _catsStream = FirestoreHelper.getCategorySnapshot(widget.service.id);
+    final Stream<QuerySnapshot> _catsStream =
+        FirestoreHelper.getCategorySnapshot(widget.service.id);
 
     return StreamBuilder<QuerySnapshot>(
       stream: _catsStream,
@@ -149,7 +159,7 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen> {
           );
         }
 
-        if(snapshot.data!.docs.length >0){
+        if (snapshot.data!.docs.length > 0) {
           BlocRepository.clearCategories(widget.dao);
         }
 
@@ -169,7 +179,8 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen> {
   }
 
   displayCategoryList(BuildContext context) {
-    Stream<List<Category>> _catsStream = BlocRepository.getCategories(widget.dao);
+    Stream<List<Category>> _catsStream =
+        BlocRepository.getCategories(widget.dao);
 
     return Container(
       height: MediaQuery.of(context).size.height / 6,
@@ -230,7 +241,7 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen> {
           );
         }
 
-        if(snapshot.data!.docs.length>0) {
+        if (snapshot.data!.docs.length > 0) {
           BlocRepository.clearProducts(widget.dao);
         }
 
@@ -278,7 +289,7 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen> {
               Product product = products[index];
 
               return ProductItem(
-                serviceId : widget.service.id,
+                serviceId: widget.service.id,
                 product: product,
                 dao: widget.dao,
               );
@@ -286,5 +297,57 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen> {
           );
         });
   }
-}
 
+  _searchTableNumber(BuildContext context) {
+    final user = FirebaseAuth.instance.currentUser;
+
+    final Stream<QuerySnapshot> _stream =
+        FirestoreHelper.findTableNumber(widget.service.id, user!.uid);
+    return StreamBuilder<QuerySnapshot>(
+        stream: _stream,
+        builder: (ctx, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+
+          List<Seat> seats = [];
+          if (snapshot.data!.docs.length > 0) {
+            for (int i = 0; i < snapshot.data!.docs.length; i++) {
+              DocumentSnapshot document = snapshot.data!.docs[i];
+              Map<String, dynamic> data =
+                  document.data()! as Map<String, dynamic>;
+              final Seat seat = Seat.fromJson(data);
+              BlocRepository.insertSeat(widget.dao, seat);
+              seats.add(seat);
+
+              if (i == snapshot.data!.docs.length - 1) {
+                _mTableNumber = seat.tableNumber;
+                return Card(
+                  margin: EdgeInsets.all(1),
+                  child: Padding(
+                    padding: EdgeInsets.all(10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Table Number : ' + seat.tableNumber.toString(),
+                          style: TextStyle(
+                            fontSize: 16,
+                          ),
+                        ),
+                        // spacer is a special widget which takes up all the space it can
+                        Spacer(),
+                      ],
+                    ),
+                  ),
+                );
+                // return _displayTableNumber(context, seats);
+              }
+            }
+          }
+          return Text('Table number: Unassigned');
+        });
+  }
+}

@@ -15,7 +15,7 @@ class FirestoreHelper {
   static String BLOCS = 'blocs';
   static String CHATS = 'chats';
   static String CATEGORIES = 'categories';
-  static String CART_ITEMS = 'cartItems';
+  static String CART_ITEMS = 'cart_items';
   static String CITIES = 'cities';
   static String MANAGER_SERVICES = 'manager_services';
   static String PRODUCTS = 'products';
@@ -221,6 +221,14 @@ class FirestoreHelper {
         .collection(SEATS)
         .where('serviceId', isEqualTo: serviceId)
         .where('tableNumber', isEqualTo: tableNumber)
+        .snapshots();
+  }
+
+  static Stream<QuerySnapshot<Object?>> findTableNumber(String serviceId, String custId) {
+    return FirebaseFirestore.instance
+        .collection(SEATS)
+        .where('serviceId', isEqualTo: serviceId)
+        .where('custId', isEqualTo: custId)
         .snapshots();
   }
 

@@ -81,7 +81,7 @@ class OrdersScreen extends StatelessWidget {
             DocumentSnapshot document = snapshot.data!.docs[i];
             Map<String, dynamic> data =
                 document.data()! as Map<String, dynamic>;
-            final CartItem ci = CartItemUtils.getCartItem(data, document.id);
+            final CartItem ci = CartItem.fromJson(data);
             BlocRepository.insertCartItem(dao, ci);
             cartItems.add(ci);
             custId = ci.userId;

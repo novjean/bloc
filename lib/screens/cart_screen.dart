@@ -16,8 +16,13 @@ class CartScreen extends StatelessWidget {
 
   BlocDao dao;
   BlocService service;
+  int tableNumber;
 
-  CartScreen({key, required this.dao, required this.service})
+  CartScreen(
+      {key,
+      required this.dao,
+      required this.service,
+      required this.tableNumber})
       : super(key: key);
 
   @override
@@ -113,18 +118,20 @@ class _OrderButtonState extends State<OrderButton> {
               setState(() {
                 _isLoading = true;
               });
-              
+
               // need to store this in floor
-              for(int i=0;i<widget.cart.items.length;i++){
-                BlocRepository.insertCartItem(widget.dao, widget.cart.items.values.elementAt(i));
+              for (int i = 0; i < widget.cart.items.length; i++) {
+                BlocRepository.insertCartItem(
+                    widget.dao, widget.cart.items.values.elementAt(i));
 
                 // send it to firebase
                 //todo: will need to check if the upload actually went through
-                FirestoreHelper.uploadCartItem(widget.cart.items.values.elementAt(i));
+                FirestoreHelper.uploadCartItem(
+                    widget.cart.items.values.elementAt(i));
               }
 
               Toaster.shortToast("Order sent.");
-              
+
               // await Provider.of<Orders>(context, listen: false).addOrder(
               //   widget.cart.items.values.toList(),
               //   widget.cart.totalAmount,
