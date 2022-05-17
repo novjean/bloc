@@ -1,5 +1,4 @@
 import 'package:bloc/utils/string_utils.dart';
-import 'package:bloc/widgets/button_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -25,31 +24,27 @@ class SeatsManagementScreen extends StatefulWidget {
 }
 
 class _SeatsManagementScreenState extends State<SeatsManagementScreen> {
-  String _scanBarcode = 'Unknown';
-  int _seatsFilled = 0;
-  List<Seat> mSeats = [];
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
           title: Text(
               'Table Number : ' + widget.serviceTable.tableNumber.toString())),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // scanQR();
-        },
-        child: Icon(
-          Icons.add,
-          color: Colors.black,
-          size: 29,
-        ),
-        backgroundColor: Theme.of(context).primaryColor,
-        tooltip: 'New Seat',
-        elevation: 5,
-        splashColor: Colors.grey,
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: () {
+      //     // scanQR();
+      //   },
+      //   child: Icon(
+      //     Icons.add,
+      //     color: Colors.black,
+      //     size: 29,
+      //   ),
+      //   backgroundColor: Theme.of(context).primaryColor,
+      //   tooltip: 'New Seat',
+      //   elevation: 5,
+      //   splashColor: Colors.grey,
+      // ),
+      // floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       body: _buildBody(context, widget.serviceTable),
     );
   }
@@ -58,13 +53,9 @@ class _SeatsManagementScreenState extends State<SeatsManagementScreen> {
     return SingleChildScrollView(
       child: Column(
         children: [
-          // Text('Scan result : $_scanBarcode\n',
-          //     style: TextStyle(fontSize: 20)),
-          // CoverPhoto(service.name, service.imageUrl),
           SizedBox(height: 2.0),
           _pullSeats(context),
           SizedBox(height: 5.0),
-          // _buildSeatsList(context),
         ],
       ),
     );
@@ -150,6 +141,30 @@ class _SeatsManagementScreenState extends State<SeatsManagementScreen> {
 
                   if(!seat.custId.isEmpty){
                     logger.i('seat is occupied.');
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: Text("AlertDialog"),
+                          content: Text("Would you like to make the seat available?"),
+                          actions: [
+                            TextButton(
+                              child: Text("Yes"),
+                              onPressed:  () {
+                                FirestoreHelper.updateSeat(seat.id, '');
+                                Navigator.of(context).pop();
+                              },
+                            ),
+                            TextButton(
+                              child: Text("No"),
+                              onPressed:  () {
+                                Navigator.of(context).pop();
+                              },
+                            )
+                          ],
+                        );
+                      },
+                    );
                   } else {
                     scanQR(seat);
                   }
@@ -189,7 +204,6 @@ class _SeatsManagementScreenState extends State<SeatsManagementScreen> {
 
     setState(() {
       widget.serviceTable.isOccupied = true;
-      _scanBarcode = scanCustId;
     });
   }
 }

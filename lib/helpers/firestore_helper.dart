@@ -128,29 +128,6 @@ class FirestoreHelper {
     }
   }
 
-  /** Tables **/
-  static Stream<QuerySnapshot<Object?>> getTablesSnapshot(String serviceId) {
-    return FirebaseFirestore.instance
-        .collection(TABLES)
-        .where('serviceId', isEqualTo: serviceId)
-        .snapshots();
-  }
-
-  static void updateServiceTable(String serviceTableId, bool isOccupied) async {
-    try {
-      await FirebaseFirestore.instance
-          .collection(TABLES)
-          .doc(serviceTableId)
-          .update({'isOccupied': isOccupied})
-          .then((value) => print("Table is occupied : " + serviceTableId))
-          .catchError((error) => print("Failed to set isOccupy table: $error"));
-    } on PlatformException catch (err) {
-      logger.e(err.message);
-    } catch (err) {
-      logger.e(err);
-    }
-  }
-
   /** Chats **/
   static Stream<QuerySnapshot<Object?>> getChatsSnapshot() {
     return FirebaseFirestore.instance
@@ -171,6 +148,29 @@ class FirestoreHelper {
           .update({'imageUrl': url})
           .then((value) => print("Product image updated."))
           .catchError((error) => print("Failed to update product image: $error"));
+    } on PlatformException catch (err) {
+      logger.e(err.message);
+    } catch (err) {
+      logger.e(err);
+    }
+  }
+
+  /** Tables **/
+  static Stream<QuerySnapshot<Object?>> getTablesSnapshot(String serviceId) {
+    return FirebaseFirestore.instance
+        .collection(TABLES)
+        .where('serviceId', isEqualTo: serviceId)
+        .snapshots();
+  }
+
+  static void updateServiceTable(String serviceTableId, bool isOccupied) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection(TABLES)
+          .doc(serviceTableId)
+          .update({'isOccupied': isOccupied})
+          .then((value) => print("Table is occupied : " + serviceTableId))
+          .catchError((error) => print("Failed to set isOccupy table: $error"));
     } on PlatformException catch (err) {
       logger.e(err.message);
     } catch (err) {
@@ -201,7 +201,13 @@ class FirestoreHelper {
           .collection(SEATS)
           .doc(seatId)
           .update({'custId': custId})
-          .then((value) => print("seat is occupied by cust id: " + custId))
+          .then((value) {
+            if(custId.isEmpty) {
+              logger.d("seat is now free : " + seatId);
+            } else {
+              print("seat is occupied by cust id: " + custId);
+            }
+          })
           .catchError((error) => print("Failed to update seat with cust: $error"));
     } on PlatformException catch (err) {
       logger.e(err.message);

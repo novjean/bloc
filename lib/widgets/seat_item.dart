@@ -57,7 +57,7 @@ class SeatItem extends StatelessWidget {
                 ),
                 child: Center(
                   child: Text(
-                    'Seat Cust ID: ' + seat.custId,
+                    seat.custId.isEmpty?'Available':seat.custId,
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 20,
