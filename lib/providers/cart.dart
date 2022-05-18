@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import '../db/entity/cart_item.dart';
@@ -21,7 +20,7 @@ class Cart with ChangeNotifier {
     return total;
   }
 
-  void addItem(String id, String serviceId, int cartNumber, String userId, String productId,
+  void addItem(String id, String serviceId, int tableNumber, int cartNumber, String userId, String productId,
       String productName, double productPrice, int timestamp) {
     if (_items.containsKey(productId)) {
       // change the quantity
@@ -30,6 +29,7 @@ class Cart with ChangeNotifier {
           (existingCartItem) => CartItem(
               id: existingCartItem.id,
               serviceId: existingCartItem.serviceId,
+              tableNumber: existingCartItem.tableNumber,
               cartNumber: existingCartItem.cartNumber,
               userId: existingCartItem.userId,
               productId: existingCartItem.productId,
@@ -43,6 +43,7 @@ class Cart with ChangeNotifier {
           () => CartItem(
               id: id,
               serviceId: serviceId,
+              tableNumber: tableNumber,
               cartNumber: cartNumber,
               userId: userId,
               productId: productId,
@@ -69,6 +70,7 @@ class Cart with ChangeNotifier {
           (existingCartItem) => CartItem(
               id: existingCartItem.id,
               serviceId: existingCartItem.serviceId,
+              tableNumber: existingCartItem.tableNumber,
               cartNumber: existingCartItem.cartNumber,
               userId: existingCartItem.userId,
               productId: existingCartItem.productId,

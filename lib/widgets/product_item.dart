@@ -17,8 +17,9 @@ class ProductItem extends StatelessWidget {
   final Product product;
   final BlocDao dao;
   final String serviceId;
+  final int tableNumber;
 
-  ProductItem({required this.serviceId, required this.product, required this.dao});
+  ProductItem({required this.serviceId, required this.product, required this.dao, required this.tableNumber});
 
   @override
   Widget build(BuildContext context) {
@@ -104,6 +105,7 @@ class ProductItem extends StatelessWidget {
                                   CartItem cartitem = CartItem(
                                       id: id,
                                       serviceId: serviceId,
+                                      tableNumber: tableNumber,
                                       cartNumber: cartNumber,
                                       userId: userId,
                                       productId: product.id,
@@ -116,6 +118,7 @@ class ProductItem extends StatelessWidget {
                                   cart.addItem(
                                       id,
                                       serviceId,
+                                      tableNumber,
                                       cartNumber,
                                       userId,
                                       cartitem.productId,

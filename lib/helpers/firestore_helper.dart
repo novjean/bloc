@@ -48,6 +48,7 @@ class FirestoreHelper {
     await FirebaseFirestore.instance.collection(CART_ITEMS).doc(cart.id).set({
       'cartId': cart.id,
       'serviceId': cart.serviceId,
+      'tableNumber':cart.tableNumber,
       'cartNumber': cart.cartNumber,
       'userId': cart.userId,
       'productId': cart.productId,
@@ -62,6 +63,7 @@ class FirestoreHelper {
     return FirebaseFirestore.instance
         .collection(CART_ITEMS)
         .where('serviceId', isEqualTo: serviceId)
+        // .orderBy('tableNumber', descending: true)
         .snapshots();
   }
 

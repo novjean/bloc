@@ -5,6 +5,7 @@ class CartItem {
   @primaryKey
   final String id;
   final String serviceId;
+  final int tableNumber;
   final int cartNumber;
   final String userId;
   final String productId;
@@ -16,6 +17,7 @@ class CartItem {
   CartItem(
       {required this.id,
       required this.serviceId,
+      required this.tableNumber,
       required this.cartNumber,
       required this.userId,
       required this.productId,
@@ -25,26 +27,27 @@ class CartItem {
       required this.createdAt});
 
   static CartItem fromJson(Map<String, dynamic> json) => CartItem(
-    id: json['cartId'],
-    serviceId: json['serviceId'],
-    cartNumber: json['cartNumber'],
-    userId: json['userId'],
-    productId: json['productId'],
-    productName: json['productName'],
-    productPrice: json['productPrice'],
-    quantity: json['quantity'],
-    createdAt: json['createdAt']
-  );
+      id: json['cartId'],
+      serviceId: json['serviceId'],
+      tableNumber: json['tableNumber'],
+      cartNumber: json['cartNumber'],
+      userId: json['userId'],
+      productId: json['productId'],
+      productName: json['productName'],
+      productPrice: json['productPrice'],
+      quantity: json['quantity'],
+      createdAt: json['createdAt']);
 
   Map<String, dynamic> toJson() => {
-    'cartId': id,
-    'serviceId': serviceId,
-    'cartNumber': cartNumber,
-    'userId': userId,
-    'productId': productId,
-    'productName': productName,
-    'productPrice': productPrice,
-    'quantity': quantity,
-    'createdAt': createdAt
-  };
+        'cartId': id,
+        'serviceId': serviceId,
+        'tableNumber': tableNumber,
+        'cartNumber': cartNumber,
+        'userId': userId,
+        'productId': productId,
+        'productName': productName,
+        'productPrice': productPrice,
+        'quantity': quantity,
+        'createdAt': createdAt
+      };
 }

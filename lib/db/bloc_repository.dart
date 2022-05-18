@@ -53,8 +53,8 @@ class BlocRepository {
   }
 
   /** Cart Item **/
-  static void insertCartItem(BlocDao dao, CartItem cartitem) async {
-    await dao.insertCartItem(cartitem);
+  static void insertCartItem(BlocDao dao, CartItem cartitem) {
+    dao.insertCartItem(cartitem);
   }
 
   static Future<List<CartItem>> getCartItems(BlocDao dao, String userId) {

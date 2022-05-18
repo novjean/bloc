@@ -16,7 +16,7 @@ import 'entity/user.dart';
 
 part 'database.g.dart'; // the generated code will be there
 
-@Database(version: 15, entities: [
+@Database(version: 16, entities: [
   Bloc,
   BlocService,
   CartItem,

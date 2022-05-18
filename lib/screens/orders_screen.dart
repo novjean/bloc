@@ -27,20 +27,6 @@ class OrdersScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(managerService.name),
-        // actions: [
-        //   IconButton(
-        //     icon: Icon(
-        //       Icons.shopping_cart,
-        //     ),
-        //     onPressed: () {
-        //       Navigator.of(context).push(
-        //         MaterialPageRoute(
-        //             builder: (ctx) =>
-        //                 CartScreen(service: widget.service, dao: widget.dao)),
-        //       );
-        //     },
-        //   ),
-        // ],
       ),
       body: _buildBody(context, managerService),
     );
@@ -54,8 +40,6 @@ class OrdersScreen extends StatelessWidget {
           SizedBox(height: 2.0),
           _buildOrders(context),
           SizedBox(height: 5.0),
-          // buildProducts(context),
-          // SizedBox(height: 50.0),
         ],
       ),
     );
@@ -74,25 +58,77 @@ class OrdersScreen extends StatelessWidget {
             );
           }
 
-          List<CartItem> cartItems = [];
-          String custId = "";
+          if (snapshot.data!.docs.isNotEmpty) {
+            List<CartItem> cartItems = [];
+            for (int i = 0; i < snapshot.data!.docs.length; i++) {
+              DocumentSnapshot document = snapshot.data!.docs[i];
+              Map<String, dynamic> data =
+                  document.data()! as Map<String, dynamic>;
+              final CartItem ci = CartItem.fromJson(data);
+              BlocRepository.insertCartItem(dao, ci);
+              cartItems.add(ci);
 
-          for (int i = 0; i < snapshot.data!.docs.length; i++) {
-            DocumentSnapshot document = snapshot.data!.docs[i];
-            Map<String, dynamic> data =
-                document.data()! as Map<String, dynamic>;
-            final CartItem ci = CartItem.fromJson(data);
-            BlocRepository.insertCartItem(dao, ci);
-            cartItems.add(ci);
-            custId = ci.userId;
-
-            if (i == snapshot.data!.docs.length - 1) {
-              return displayOrdersList(context);
+              if (i == snapshot.data!.docs.length - 1) {
+                return displayOrdersList(context);
+              }
             }
+          } else {
+            return Center(child: Text('No orders to display!'));
           }
+
           return Text('Loading cart items...');
         });
   }
+
+  // _displayOrdersListNew(BuildContext context, List<CartItem> seats) {
+  //   return Container(
+  //     height: MediaQuery.of(context).size.height,
+  //     child: ListView.builder(
+  //         itemCount: seats.length,
+  //         scrollDirection: Axis.vertical,
+  //         itemBuilder: (ctx, index) {
+  //           return GestureDetector(
+  //               child: SeatItem(
+  //                 seat: seats[index],
+  //               ),
+  //               onTap: () {
+  //                 Seat seat = seats[index];
+  //
+  //                 if(!seat.custId.isEmpty){
+  //                   logger.i('seat is occupied.');
+  //                   showDialog(
+  //                     context: context,
+  //                     builder: (BuildContext context) {
+  //                       return AlertDialog(
+  //                         title: Text("AlertDialog"),
+  //                         content: Text("Would you like to make the seat available?"),
+  //                         actions: [
+  //                           TextButton(
+  //                             child: Text("Yes"),
+  //                             onPressed:  () {
+  //                               FirestoreHelper.updateSeat(seat.id, '');
+  //                               Navigator.of(context).pop();
+  //                             },
+  //                           ),
+  //                           TextButton(
+  //                             child: Text("No"),
+  //                             onPressed:  () {
+  //                               Navigator.of(context).pop();
+  //                             },
+  //                           )
+  //                         ],
+  //                       );
+  //                     },
+  //                   );
+  //                 } else {
+  //                   scanQR(seat);
+  //                 }
+  //                 logger.d(
+  //                     'seat selected : ' + seat.id);
+  //               });
+  //         }),
+  //   );
+  // }
 
   displayOrdersList(BuildContext context) {
     Future<List<CartItem>> fCartItems =
@@ -159,23 +195,7 @@ class OrdersScreen extends StatelessWidget {
       itemCount: orders == null ? 0 : orders.length,
       itemBuilder: (BuildContext ctx, int index) {
         Order order = orders[index];
-
         return loadUser(context, order);
-
-        //  return GestureDetector(
-        //           child: OrderLineItem (
-        //               order:order
-        //           ),
-        //           onTap: () => {
-        //             Toaster.shortToast(
-        //                 "Order index : " + index.toString()),
-        //             Navigator.of(context).push(
-        //               MaterialPageRoute(
-        //                   builder: (ctx) =>
-        //                       OrderDisplayScreen(order: order)),
-        //             ),
-        //           },
-        //         );
       },
     );
   }

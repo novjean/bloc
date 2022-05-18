@@ -292,6 +292,7 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen> {
                 serviceId: widget.service.id,
                 product: product,
                 dao: widget.dao,
+                tableNumber: _mTableNumber
               );
             },
           );
