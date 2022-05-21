@@ -55,6 +55,9 @@ abstract class BlocDao {
   @Query('SELECT * FROM CartItem where serviceId=:sId ORDER BY userId ASC')
   Future<List<CartItem>> getSortedCartItems(String sId);
 
+  @Query('SELECT * FROM CartItem where serviceId=:sId ORDER BY tableNumber ASC')
+  Future<List<CartItem>> getCartItemsByTableNumber(String sId);
+
   @Query('DELETE FROM CartItem where productId=:prodId')
   Future<CartItem?> deleteCartItems(String prodId);
 

@@ -1,5 +1,6 @@
 import 'package:bloc/db/bloc_repository.dart';
 import 'package:bloc/helpers/firestore_helper.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
@@ -120,6 +121,9 @@ class _OrderButtonState extends State<OrderButton> {
                 _isLoading = true;
               });
 
+              // keeping this here for fixed timestamp throughout the cart
+              Timestamp timestamp = Timestamp.now();
+              int millisecondsSinceEpoch = timestamp.millisecondsSinceEpoch;
               // need to store this in floor
               for (int i = 0; i < widget.cart.items.length; i++) {
                 BlocRepository.insertCartItem(
@@ -128,15 +132,11 @@ class _OrderButtonState extends State<OrderButton> {
                 // send it to firebase
                 //todo: will need to check if the upload actually went through
                 FirestoreHelper.uploadCartItem(
-                    widget.cart.items.values.elementAt(i));
+                    widget.cart.items.values.elementAt(i), timestamp, millisecondsSinceEpoch);
               }
 
               Toaster.shortToast("Order sent.");
 
-              // await Provider.of<Orders>(context, listen: false).addOrder(
-              //   widget.cart.items.values.toList(),
-              //   widget.cart.totalAmount,
-              // );
               setState(() {
                 _isLoading = false;
               });

@@ -44,7 +44,7 @@ class FirestoreHelper {
   }
 
   /** Cart Items **/
-  static void uploadCartItem(CartItem cart) async {
+  static void uploadCartItem(CartItem cart, Timestamp timestamp, int millisecondsSinceEpoch) async {
     await FirebaseFirestore.instance.collection(CART_ITEMS).doc(cart.id).set({
       'cartId': cart.id,
       'serviceId': cart.serviceId,
@@ -55,7 +55,8 @@ class FirestoreHelper {
       'productName': cart.productName,
       'productPrice': cart.productPrice,
       'quantity': cart.quantity,
-      'createdAt': cart.createdAt
+      'createdAt': millisecondsSinceEpoch,
+      'timestamp' : timestamp,
     });
   }
 
@@ -63,7 +64,7 @@ class FirestoreHelper {
     return FirebaseFirestore.instance
         .collection(CART_ITEMS)
         .where('serviceId', isEqualTo: serviceId)
-        // .orderBy('tableNumber', descending: true)
+        .orderBy('tableNumber', descending: true)
         .snapshots();
   }
 
@@ -131,6 +132,20 @@ class FirestoreHelper {
   }
 
   /** Chats **/
+  static void sendChatMessage(String enteredMessage) async {
+    final user = FirebaseAuth.instance.currentUser;
+
+    final userData = await FirebaseFirestore.instance.collection(USERS).doc(user!.uid).get();
+    FirebaseFirestore.instance.collection(CHATS).add({
+      'text': enteredMessage,
+      // timestamp available through cloud firestore
+      'createdAt': Timestamp.now(),
+      'userId': user.uid,
+      'username': userData.data()!['username'],
+      'userImage': userData.data()!['image_url']
+    });
+  }
+
   static Stream<QuerySnapshot<Object?>> getChatsSnapshot() {
     return FirebaseFirestore.instance
         .collection(CHATS)

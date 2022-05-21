@@ -63,6 +63,13 @@ class BlocRepository {
     return fCartItems;
   }
 
+  static Future<List<CartItem>> getCartItemsByTableNumber(BlocDao dao, String serviceId) {
+    logger.i("getCartItemsByTableNumber(): ");
+    Future<List<CartItem>> fCartItems = dao.getCartItemsByTableNumber(serviceId);
+    return fCartItems;
+  }
+
+
   static Future<List<CartItem>> getSortedCartItems(BlocDao dao,String serviceId) {
     logger.i("getSortedCartItems(): ");
     Future<List<CartItem>> fCartItems = dao.getSortedCartItems(serviceId);
@@ -140,5 +147,6 @@ class BlocRepository {
     return fSeats;
 
   }
+
 
 }
