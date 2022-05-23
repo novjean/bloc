@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../db/bloc_repository.dart';
 import '../db/dao/bloc_dao.dart';
+import '../db/entity/bill.dart';
 import '../db/entity/cart_item.dart';
 import '../db/entity/order.dart';
 import '../db/entity/user.dart';
@@ -11,6 +12,7 @@ import '../helpers/firestore_helper.dart';
 import '../utils/cart_item_utils.dart';
 import '../widgets/order_line_item.dart';
 import '../widgets/order_table_item.dart';
+import 'bill_screen.dart';
 import 'order_display_screen.dart';
 
 class OrdersScreen extends StatelessWidget {
@@ -97,8 +99,13 @@ class OrdersScreen extends StatelessWidget {
           return Text('Loading orders by table number...');
         } else {
           List<CartItem> cartItems = snapshot.data! as List<CartItem>;
-          List<Order> orders = CartItemUtils.extractOrders(cartItems);
-          return _displayOrderTables(context, orders);
+          if(cartItems.length > 0){
+            List<Order> orders = CartItemUtils.extractOrders(cartItems);
+            return _displayOrderTables(context, orders);
+          } else {
+            return Text('No pending orders');
+          }
+
         }
       },
     );
@@ -118,12 +125,13 @@ class OrdersScreen extends StatelessWidget {
                 onTap: () {
                   Order order = orders[index];
 
-                  // Bill bill = CartItemUtils.extractBill(order);
-                  
+                  Bill bill = CartItemUtils.extractBill(order.cartItems);
+
                   Navigator.of(context).push(
                     MaterialPageRoute(
-                        builder: (ctx) => OrderDisplayScreen(order: order)),
+                        builder: (ctx) => BillScreen(bill: bill)),
                   );
+
                   logger.d('Order selected : ' + order.customerId);
                 });
           }),

@@ -64,7 +64,7 @@ class FirestoreHelper {
     return FirebaseFirestore.instance
         .collection(CART_ITEMS)
         .where('serviceId', isEqualTo: serviceId)
-        .orderBy('tableNumber', descending: true)
+        // .orderBy('timestamp', descending: true)
         .snapshots();
   }
 
