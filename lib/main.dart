@@ -65,9 +65,9 @@ class MyApp extends StatelessWidget {
                 debugShowCheckedModeBanner: false,
                 title: kAppTitle,
                 theme: ThemeData(
-                  primarySwatch: Colors.red,
+                  primarySwatch: Colors.grey,
                   backgroundColor: Colors.red,
-                  accentColor: Colors.deepPurple,
+                  accentColor: Colors.black,
                   accentColorBrightness: Brightness.dark,
                   buttonTheme: ButtonTheme.of(context).copyWith(
                     buttonColor: Colors.red,

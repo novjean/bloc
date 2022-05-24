@@ -63,15 +63,6 @@ class BillScreen extends StatelessWidget {
     ).toList());
   }
 
-  // Widget buildCartItems(BuildContext context) {
-  //   return ListView.builder(
-  //       itemCount: order.cartItems.length,
-  //       itemBuilder: (ctx, i) {
-  //         CartItem cartItem = order.cartItems[i];
-  //         return CartBlockItem(cartItem);
-  //       });
-  // }
-
   Widget TotalBox(BuildContext context) {
     return Card(
       margin: EdgeInsets.all(15),
@@ -100,7 +91,7 @@ class BillScreen extends StatelessWidget {
               ),
               backgroundColor: Theme.of(context).primaryColor,
             ),
-            // OrderButton(cart: cart, dao: dao),
+            CompletedButton(bill: bill),
           ],
         ),
       ),
@@ -114,6 +105,54 @@ class BillScreen extends StatelessWidget {
       total += order.total;
     }
     return total;
+  }
+}
+
+class CompletedButton extends StatefulWidget {
+  final Bill bill;
+
+  CompletedButton({key, required this.bill}) : super(key: key);
+
+  @override
+  _CompletedButtonState createState() => _CompletedButtonState();
+}
+
+class _CompletedButtonState extends State<CompletedButton> {
+  var _isLoading = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return FlatButton(
+      child: _isLoading ? CircularProgressIndicator() : Text('COMPLETED'),
+      onPressed: (widget.bill.orders.length <= 0 || _isLoading)
+          ? null : () async {
+        setState(() {
+          _isLoading = true;
+        });
+
+        // keeping this here for fixed timestamp throughout the cart
+        // Timestamp timestamp = Timestamp.now();
+        // int millisecondsSinceEpoch = timestamp.millisecondsSinceEpoch;
+        // // need to store this in floor
+        // for (int i = 0; i < widget.cart.items.length; i++) {
+        //   BlocRepository.insertCartItem(
+        //       widget.dao, widget.cart.items.values.elementAt(i));
+        //
+        //   // send it to firebase
+        //   //todo: will need to check if the upload actually went through
+        //   FirestoreHelper.uploadCartItem(
+        //       widget.cart.items.values.elementAt(i), timestamp, millisecondsSinceEpoch);
+        // }
+        //
+        // Toaster.shortToast("Order sent.");
+
+        setState(() {
+          _isLoading = false;
+        });
+        // widget.cart.clear();
+      },
+      textColor: Theme.of(context).primaryColor,
+    );
   }
 }
 
