@@ -113,7 +113,8 @@ class ProductItem extends StatelessWidget {
                                       productPrice: double.parse(
                                           product.price.toString()),
                                       quantity: 1,
-                                      createdAt: timestamp);
+                                      createdAt: timestamp,
+                                      isCompleted: false);
 
                                   cart.addItem(
                                       id,
@@ -124,7 +125,7 @@ class ProductItem extends StatelessWidget {
                                       cartitem.productId,
                                       cartitem.productName,
                                       cartitem.productPrice,
-                                      cartitem.createdAt);
+                                      cartitem.createdAt, false);
 
                                   Toaster.shortToast(
                                       product.name + ' is added to cart.');

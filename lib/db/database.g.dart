@@ -86,7 +86,7 @@ class _$AppDatabase extends AppDatabase {
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `BlocService` (`id` TEXT NOT NULL, `name` TEXT NOT NULL, `blocId` TEXT NOT NULL, `type` TEXT NOT NULL, `primaryNumber` REAL NOT NULL, `secondaryNumber` REAL NOT NULL, `email` TEXT NOT NULL, `imageUrl` TEXT NOT NULL, `ownerId` TEXT NOT NULL, `createdAt` TEXT NOT NULL, PRIMARY KEY (`id`))');
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `CartItem` (`id` TEXT NOT NULL, `serviceId` TEXT NOT NULL, `tableNumber` INTEGER NOT NULL, `cartNumber` INTEGER NOT NULL, `userId` TEXT NOT NULL, `productId` TEXT NOT NULL, `productName` TEXT NOT NULL, `productPrice` REAL NOT NULL, `quantity` INTEGER NOT NULL, `createdAt` INTEGER NOT NULL, PRIMARY KEY (`id`))');
+            'CREATE TABLE IF NOT EXISTS `CartItem` (`id` TEXT NOT NULL, `serviceId` TEXT NOT NULL, `tableNumber` INTEGER NOT NULL, `cartNumber` INTEGER NOT NULL, `userId` TEXT NOT NULL, `productId` TEXT NOT NULL, `productName` TEXT NOT NULL, `productPrice` REAL NOT NULL, `quantity` INTEGER NOT NULL, `isCompleted` INTEGER NOT NULL, `createdAt` INTEGER NOT NULL, PRIMARY KEY (`id`))');
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `Category` (`id` TEXT NOT NULL, `name` TEXT NOT NULL, `type` TEXT NOT NULL, `serviceId` TEXT NOT NULL, `imageUrl` TEXT NOT NULL, `ownerId` TEXT NOT NULL, `createdAt` TEXT NOT NULL, `sequence` INTEGER NOT NULL, PRIMARY KEY (`id`))');
         await database.execute(
@@ -194,6 +194,7 @@ class _$BlocDao extends BlocDao {
                   'productName': item.productName,
                   'productPrice': item.productPrice,
                   'quantity': item.quantity,
+                  'isCompleted': item.isCompleted ? 1 : 0,
                   'createdAt': item.createdAt
                 }),
         _productInsertionAdapter = InsertionAdapter(
@@ -330,6 +331,7 @@ class _$BlocDao extends BlocDao {
             productName: row['productName'] as String,
             productPrice: row['productPrice'] as double,
             quantity: row['quantity'] as int,
+            isCompleted: (row['isCompleted'] as int) != 0,
             createdAt: row['createdAt'] as int),
         arguments: [uId]);
   }
@@ -348,6 +350,7 @@ class _$BlocDao extends BlocDao {
             productName: row['productName'] as String,
             productPrice: row['productPrice'] as double,
             quantity: row['quantity'] as int,
+            isCompleted: (row['isCompleted'] as int) != 0,
             createdAt: row['createdAt'] as int),
         arguments: [sId]);
   }
@@ -366,6 +369,7 @@ class _$BlocDao extends BlocDao {
             productName: row['productName'] as String,
             productPrice: row['productPrice'] as double,
             quantity: row['quantity'] as int,
+            isCompleted: (row['isCompleted'] as int) != 0,
             createdAt: row['createdAt'] as int),
         arguments: [sId]);
   }
@@ -383,6 +387,7 @@ class _$BlocDao extends BlocDao {
             productName: row['productName'] as String,
             productPrice: row['productPrice'] as double,
             quantity: row['quantity'] as int,
+            isCompleted: (row['isCompleted'] as int) != 0,
             createdAt: row['createdAt'] as int),
         arguments: [prodId]);
   }

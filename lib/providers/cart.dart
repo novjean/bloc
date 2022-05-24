@@ -21,7 +21,7 @@ class Cart with ChangeNotifier {
   }
 
   void addItem(String id, String serviceId, int tableNumber, int cartNumber, String userId, String productId,
-      String productName, double productPrice, int timestamp) {
+      String productName, double productPrice, int timestamp, bool isCompleted) {
     if (_items.containsKey(productId)) {
       // change the quantity
       _items.update(
@@ -36,7 +36,8 @@ class Cart with ChangeNotifier {
               productName: existingCartItem.productName,
               productPrice: existingCartItem.productPrice,
               quantity: existingCartItem.quantity + 1,
-              createdAt: existingCartItem.createdAt));
+              createdAt: existingCartItem.createdAt,
+              isCompleted: existingCartItem.isCompleted));
     } else {
       _items.putIfAbsent(
           productId,
@@ -50,7 +51,8 @@ class Cart with ChangeNotifier {
               productName: productName,
               productPrice: productPrice,
               quantity: 1,
-              createdAt: timestamp));
+              createdAt: timestamp,
+              isCompleted: isCompleted));
     }
     notifyListeners();
   }
@@ -77,7 +79,8 @@ class Cart with ChangeNotifier {
               productName: existingCartItem.productName,
               productPrice: existingCartItem.productPrice,
               quantity: existingCartItem.quantity - 1,
-              createdAt: existingCartItem.createdAt));
+              createdAt: existingCartItem.createdAt,
+              isCompleted: existingCartItem.isCompleted));
     } else {
       _items.remove(productId);
     }
