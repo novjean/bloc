@@ -2,7 +2,10 @@ import 'package:bloc/widgets/cart_block_item.dart';
 import 'package:flutter/material.dart';
 
 import '../db/entity/bill.dart';
+import '../db/entity/cart_item.dart';
 import '../db/entity/order.dart';
+import '../helpers/firestore_helper.dart';
+import '../widgets/ui/Toaster.dart';
 
 class BillScreen extends StatelessWidget {
   Bill bill;
@@ -130,21 +133,17 @@ class _CompletedButtonState extends State<CompletedButton> {
           _isLoading = true;
         });
 
-        // keeping this here for fixed timestamp throughout the cart
-        // Timestamp timestamp = Timestamp.now();
-        // int millisecondsSinceEpoch = timestamp.millisecondsSinceEpoch;
-        // // need to store this in floor
-        // for (int i = 0; i < widget.cart.items.length; i++) {
-        //   BlocRepository.insertCartItem(
-        //       widget.dao, widget.cart.items.values.elementAt(i));
-        //
-        //   // send it to firebase
-        //   //todo: will need to check if the upload actually went through
-        //   FirestoreHelper.uploadCartItem(
-        //       widget.cart.items.values.elementAt(i), timestamp, millisecondsSinceEpoch);
-        // }
-        //
-        // Toaster.shortToast("Order sent.");
+        // mark all cart items as completed
+        List<CartItem> _cartItems = [];
+        for(Order order in widget.bill.orders) {
+          _cartItems.addAll(order.cartItems);
+        }
+
+        for(int i=0;i<_cartItems.length;i++) {
+          FirestoreHelper.updateCartItemAsCompleted(_cartItems[i]);
+        }
+
+        Toaster.shortToast("Order is marked as completed.");
 
         setState(() {
           _isLoading = false;

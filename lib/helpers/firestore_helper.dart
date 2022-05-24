@@ -57,6 +57,7 @@ class FirestoreHelper {
       'quantity': cart.quantity,
       'createdAt': millisecondsSinceEpoch,
       'timestamp' : timestamp,
+      'isCompleted': false,
     });
   }
 
@@ -66,6 +67,23 @@ class FirestoreHelper {
         .where('serviceId', isEqualTo: serviceId)
         // .orderBy('timestamp', descending: true)
         .snapshots();
+  }
+
+  static void updateCartItemAsCompleted(CartItem cart) async {
+    await FirebaseFirestore.instance.collection(CART_ITEMS).doc(cart.id).set({
+      'cartId': cart.id,
+      'serviceId': cart.serviceId,
+      'tableNumber':cart.tableNumber,
+      'cartNumber': cart.cartNumber,
+      'userId': cart.userId,
+      'productId': cart.productId,
+      'productName': cart.productName,
+      'productPrice': cart.productPrice,
+      'quantity': cart.quantity,
+      'createdAt': cart.createdAt,
+      'timestamp' : Timestamp.fromMillisecondsSinceEpoch(cart.createdAt),
+      'isCompleted': true,
+    });
   }
 
   /** Category **/
