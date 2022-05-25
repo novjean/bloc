@@ -375,6 +375,22 @@ class _$BlocDao extends BlocDao {
   }
 
   @override
+  Future<List<CartItem>> getPendingCartItemsByTableNumber(String sId) async {
+    return _queryAdapter.queryList(
+        'SELECT * FROM CartItem where serviceId=?1 and isCompleted=0 ORDER BY tableNumber ASC',
+        mapper: (Map<String, Object?> row) => CartItem(id: row['id'] as String, serviceId: row['serviceId'] as String, tableNumber: row['tableNumber'] as int, cartNumber: row['cartNumber'] as int, userId: row['userId'] as String, productId: row['productId'] as String, productName: row['productName'] as String, productPrice: row['productPrice'] as double, quantity: row['quantity'] as int, isCompleted: (row['isCompleted'] as int) != 0, createdAt: row['createdAt'] as int),
+        arguments: [sId]);
+  }
+
+  @override
+  Future<List<CartItem>> getCompletedCartItemsByTableNumber(String sId) async {
+    return _queryAdapter.queryList(
+        'SELECT * FROM CartItem where serviceId=?1 and isCompleted=1 ORDER BY tableNumber ASC',
+        mapper: (Map<String, Object?> row) => CartItem(id: row['id'] as String, serviceId: row['serviceId'] as String, tableNumber: row['tableNumber'] as int, cartNumber: row['cartNumber'] as int, userId: row['userId'] as String, productId: row['productId'] as String, productName: row['productName'] as String, productPrice: row['productPrice'] as double, quantity: row['quantity'] as int, isCompleted: (row['isCompleted'] as int) != 0, createdAt: row['createdAt'] as int),
+        arguments: [sId]);
+  }
+
+  @override
   Future<CartItem?> deleteCartItems(String prodId) async {
     return _queryAdapter.query('DELETE FROM CartItem where productId=?1',
         mapper: (Map<String, Object?> row) => CartItem(

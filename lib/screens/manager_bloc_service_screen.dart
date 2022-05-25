@@ -12,7 +12,8 @@ import '../utils/manager_utils.dart';
 import '../widgets/manager_service_item.dart';
 import 'manager/price_management_screen.dart';
 import 'manager/tables_management_screen.dart';
-import 'orders_screen.dart';
+import 'orders_completed_screen.dart';
+import 'orders_pending_screen.dart';
 
 class ManagerBlocServiceScreen extends StatelessWidget {
   BlocDao dao;
@@ -109,7 +110,7 @@ class ManagerBlocServiceScreen extends StatelessWidget {
                           case 0:
                             {
                               Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (ctx) => OrdersScreen(
+                                  builder: (ctx) => OrdersPendingScreen(
                                       serviceId: serviceId,
                                       managerService: managerService,
                                       dao: dao)));
@@ -117,7 +118,11 @@ class ManagerBlocServiceScreen extends StatelessWidget {
                             }
                           case 1:
                             {
-                              logger.d('completed orders service selected.');
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (ctx) => OrdersCompletedScreen(
+                                      serviceId: serviceId,
+                                      managerService: managerService,
+                                      dao: dao)));
                               break;
                             }
                           case 2:

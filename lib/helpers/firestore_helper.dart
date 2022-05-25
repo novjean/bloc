@@ -61,11 +61,12 @@ class FirestoreHelper {
     });
   }
 
-  static Stream<QuerySnapshot<Object?>> getCartItemsSnapshot(String serviceId) {
+  static Stream<QuerySnapshot<Object?>> getCartItemsSnapshot(String serviceId, bool isCompleted) {
     return FirebaseFirestore.instance
         .collection(CART_ITEMS)
         .where('serviceId', isEqualTo: serviceId)
-        // .orderBy('timestamp', descending: true)
+        .where('isCompleted', isEqualTo: isCompleted)
+        // .orderBy('timestamp', descending: true) // createdAt could be used i guess
         .snapshots();
   }
 
