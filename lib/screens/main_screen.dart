@@ -100,15 +100,15 @@ class _MainScreenState extends State<MainScreen> {
         color: Theme.of(context).primaryColor,
         shape: CircularNotchedRectangle(),
       ),
-      floatingActionButtonAnimator: FloatingActionButtonAnimator.scaling,
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: FloatingActionButton(
-        elevation: 10.0,
-        child: Icon(
-          Icons.add,
-        ),
-        onPressed: () => _pageController.jumpToPage(2),
-      ),
+      // floatingActionButtonAnimator: FloatingActionButtonAnimator.scaling,
+      // floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      // floatingActionButton: FloatingActionButton(
+      //   elevation: 10.0,
+      //   child: Icon(
+      //     Icons.add,
+      //   ),
+      //   onPressed: () => _pageController.jumpToPage(2),
+      // ),
     );
   }
 
