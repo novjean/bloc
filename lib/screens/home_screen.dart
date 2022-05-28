@@ -9,7 +9,7 @@ import '../utils/friends.dart';
 import '../widgets/search_card.dart';
 import '../widgets/bloc_slide_item.dart';
 import 'categories.dart';
-import 'trending.dart';
+import 'experimental/trending.dart';
 
 class HomeScreen extends StatelessWidget {
   BlocDao dao;
@@ -36,12 +36,12 @@ class HomeScreen extends StatelessWidget {
               // SizedBox(height: 20.0),
               // buildRestaurantRow('Trending Restaurants', context),
               SizedBox(height: 10.0),
-              // buildCategoryRow('Category', context),
-              // SizedBox(height: 20.0),
-              // buildCategoryRow('Friends', context),
-              // SizedBox(height: 10.0),
-              // buildFriendsList(),
-              // SizedBox(height: 30.0),
+              buildCategoryRow('Category', context),
+              SizedBox(height: 20.0),
+              buildCategoryRow('Friends', context),
+              SizedBox(height: 10.0),
+              buildFriendsList(),
+              SizedBox(height: 30.0),
             ],
           ),
         ),

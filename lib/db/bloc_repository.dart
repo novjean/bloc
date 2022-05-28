@@ -124,6 +124,11 @@ class BlocRepository {
     logger.i("insertUser(): " + user.username);
     await dao.insertUser(user);
   }
+  static Future<User?> getUser(BlocDao dao, String userId) async {
+    Future<User?> user = dao.getUser(userId);
+    return user;
+  }
+
   static void updateUser(BlocDao dao, User user) async {
     logger.i("updateUser(): " + user.username);
     await dao.updateUser(user);

@@ -1,9 +1,10 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 
-import '../db/dao/bloc_dao.dart';
-import '../widgets/chat/messages.dart';
-import '../widgets/chat/new_message.dart';
+import '../../db/dao/bloc_dao.dart';
+import '../../widgets/chat/messages.dart';
+import '../../widgets/chat/new_message.dart';
+
 
 class ChatScreen extends StatefulWidget {
   BlocDao dao;

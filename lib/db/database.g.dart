@@ -282,6 +282,20 @@ class _$BlocDao extends BlocDao {
   final UpdateAdapter<User> _userUpdateAdapter;
 
   @override
+  Future<User?> getUser(String uId) async {
+    return _queryAdapter.query('SELECT * FROM User where userId=?1',
+        mapper: (Map<String, Object?> row) => User(
+            userId: row['userId'] as String,
+            username: row['username'] as String,
+            email: row['email'] as String,
+            imageUrl: row['imageUrl'] as String,
+            clearanceLevel: row['clearanceLevel'] as int,
+            phoneNumber: row['phoneNumber'] as int,
+            name: row['name'] as String),
+        arguments: [uId]);
+  }
+
+  @override
   Stream<List<Category>> getCategories() {
     return _queryAdapter.queryListStream(
         'SELECT * FROM Category ORDER BY sequence ASC',

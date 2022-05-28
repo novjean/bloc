@@ -17,6 +17,9 @@ abstract class BlocDao {
   @Insert(onConflict: OnConflictStrategy.replace)
   Future<void> insertUser(User user);
 
+  @Query('SELECT * FROM User where userId=:uId')
+  Future<User?> getUser(String uId);
+
   @Update(onConflict: OnConflictStrategy.replace)
   Future<void> updateUser(User user);
 

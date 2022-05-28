@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import '../utils/restaurants.dart';
-import '../widgets/search_card.dart';
-import '../widgets/trending_item.dart';
+import '../../utils/restaurants.dart';
+import '../../widgets/search_card.dart';
+import '../../widgets/trending_item.dart';
 
 class Trending extends StatelessWidget {
   @override
