@@ -38,14 +38,14 @@ class SearchCard extends StatelessWidget {
               Icons.search,
               color: Colors.black,
             ),
-            suffixIcon: Icon(
-              Icons.filter_list,
-              color: Colors.black,
-            ),
-            hintStyle: TextStyle(
-              fontSize: 15.0,
-              color: Colors.black,
-            ),
+            // suffixIcon: Icon(
+            //   Icons.filter_list,
+            //   color: Colors.black,
+            // ),
+            // hintStyle: TextStyle(
+            //   fontSize: 15.0,
+            //   color: Colors.black,
+            // ),
           ),
           maxLines: 1,
           controller: _searchControl,
