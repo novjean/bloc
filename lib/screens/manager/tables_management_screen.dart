@@ -37,7 +37,7 @@ class TablesManagementScreen extends StatelessWidget {
           size: 29,
         ),
         backgroundColor: Theme.of(context).primaryColor,
-        tooltip: 'New Bloc',
+        tooltip: 'New Table',
         elevation: 5,
         splashColor: Colors.grey,
       ),
@@ -82,8 +82,6 @@ class TablesManagementScreen extends StatelessWidget {
             final ServiceTable serviceTable = ServiceTable.fromJson(data);
             BlocRepository.insertServiceTable(dao, serviceTable);
             serviceTables.add(serviceTable);
-
-            // return Text('table : ' + table.tableNumber.toString());
 
             if (i == snapshot.data!.docs.length - 1) {
               return _displayServiceTables(context, serviceTables);

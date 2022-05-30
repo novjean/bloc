@@ -66,7 +66,7 @@ class _$AppDatabase extends AppDatabase {
   Future<sqflite.Database> open(String path, List<Migration> migrations,
       [Callback? callback]) async {
     final databaseOptions = sqflite.OpenDatabaseOptions(
-      version: 16,
+      version: 17,
       onConfigure: (database) async {
         await database.execute('PRAGMA foreign_keys = ON');
         await callback?.onConfigure?.call(database);
@@ -98,7 +98,7 @@ class _$AppDatabase extends AppDatabase {
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `ManagerService` (`id` TEXT NOT NULL, `name` TEXT NOT NULL, `sequence` INTEGER NOT NULL, PRIMARY KEY (`id`))');
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `ServiceTable` (`id` TEXT NOT NULL, `serviceId` TEXT NOT NULL, `tableNumber` INTEGER NOT NULL, `capacity` INTEGER NOT NULL, `isOccupied` INTEGER NOT NULL, PRIMARY KEY (`id`))');
+            'CREATE TABLE IF NOT EXISTS `ServiceTable` (`id` TEXT NOT NULL, `serviceId` TEXT NOT NULL, `tableNumber` INTEGER NOT NULL, `capacity` INTEGER NOT NULL, `isOccupied` INTEGER NOT NULL, `colorStatus` INTEGER NOT NULL, PRIMARY KEY (`id`))');
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `Seat` (`id` TEXT NOT NULL, `custId` TEXT NOT NULL, `serviceId` TEXT NOT NULL, `tableNumber` INTEGER NOT NULL, PRIMARY KEY (`id`))');
 
@@ -228,7 +228,8 @@ class _$BlocDao extends BlocDao {
                   'serviceId': item.serviceId,
                   'tableNumber': item.tableNumber,
                   'capacity': item.capacity,
-                  'isOccupied': item.isOccupied ? 1 : 0
+                  'isOccupied': item.isOccupied ? 1 : 0,
+                  'colorStatus': item.colorStatus
                 }),
         _seatInsertionAdapter = InsertionAdapter(
             database,
@@ -405,20 +406,8 @@ class _$BlocDao extends BlocDao {
   }
 
   @override
-  Future<CartItem?> deleteCartItems(String prodId) async {
-    return _queryAdapter.query('DELETE FROM CartItem where productId=?1',
-        mapper: (Map<String, Object?> row) => CartItem(
-            id: row['id'] as String,
-            serviceId: row['serviceId'] as String,
-            tableNumber: row['tableNumber'] as int,
-            cartNumber: row['cartNumber'] as int,
-            userId: row['userId'] as String,
-            productId: row['productId'] as String,
-            productName: row['productName'] as String,
-            productPrice: row['productPrice'] as double,
-            quantity: row['quantity'] as int,
-            isCompleted: (row['isCompleted'] as int) != 0,
-            createdAt: row['createdAt'] as int),
+  Future<void> deleteCartItems(String prodId) async {
+    await _queryAdapter.queryNoReturn('DELETE FROM CartItem where productId=?1',
         arguments: [prodId]);
   }
 
@@ -493,6 +482,12 @@ class _$BlocDao extends BlocDao {
             tableNumber: row['tableNumber'] as int,
             custId: row['custId'] as String),
         arguments: [serviceId, tableNumber]);
+  }
+
+  @override
+  Future<void> deleteSeats(int tableNumber) async {
+    await _queryAdapter.queryNoReturn('DELETE FROM Seat where tableNumber=?1',
+        arguments: [tableNumber]);
   }
 
   @override

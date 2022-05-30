@@ -49,19 +49,15 @@ class _NewServiceTableScreenState extends State<NewServiceTableScreen> {
         serviceId: widget.serviceId,
         tableNumber: tableNumber,
         capacity: capacity,
-        isOccupied: false);
+        isOccupied: false,
+        colorStatus: 1
+    );
 
     try {
       await FirebaseFirestore.instance
           .collection(FirestoreHelper.TABLES)
           .doc(table.id)
-          .set({
-        'id': table.id,
-        'serviceId': table.serviceId,
-        'tableNumber': table.tableNumber,
-        'capacity': table.capacity,
-        'isOccupied': table.isOccupied,
-      });
+          .set(table.toJson());
 
       Scaffold.of(ctx).showSnackBar(
         SnackBar(

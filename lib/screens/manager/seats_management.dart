@@ -12,6 +12,9 @@ import '../../helpers/firestore_helper.dart';
 import '../../widgets/seat_item.dart';
 
 class SeatsManagementScreen extends StatefulWidget {
+  static final int TABLE_GREEN = 1;
+  static final int TABLE_RED = 2;
+
   String serviceId;
   BlocDao dao;
   ServiceTable serviceTable;
@@ -75,6 +78,10 @@ class _SeatsManagementScreenState extends State<SeatsManagementScreen> {
 
           List<Seat> seats = [];
           if (snapshot.data!.docs.length > 0) {
+            // we received the seats from api
+            // lets delete what is there in floor
+            BlocRepository.deleteSeats(widget.dao, widget.serviceTable.tableNumber);
+
             for (int i = 0; i < snapshot.data!.docs.length; i++) {
               DocumentSnapshot document = snapshot.data!.docs[i];
               Map<String, dynamic> data =
@@ -88,7 +95,7 @@ class _SeatsManagementScreenState extends State<SeatsManagementScreen> {
               }
             }
           } else {
-            // seats are not defined in floor, adding them
+            // seats are not defined for table, adding them
             for(int i=0;i<widget.serviceTable.capacity; i++){
               Seat seat = Seat(
                   custId: "",
@@ -99,6 +106,7 @@ class _SeatsManagementScreenState extends State<SeatsManagementScreen> {
               BlocRepository.insertSeat(widget.dao, seat);
               FirestoreHelper.uploadSeat(seat);
             }
+            Navigator.of(context).pop(true);
             return _displaySeats(context, seats);
           }
 
@@ -106,24 +114,24 @@ class _SeatsManagementScreenState extends State<SeatsManagementScreen> {
         });
   }
 
-  _loadSeats(BuildContext context) {
-    Future<List<Seat>> fSeats = BlocRepository.getSeats(widget.dao, widget.serviceId, widget.serviceTable.tableNumber);
-
-    return FutureBuilder(
-      future: fSeats,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Text('Loading seats...');
-        } else {
-          List<Seat> seats = snapshot.data! as List<Seat>;
-          if(seats.isEmpty){
-            return _pullSeats(context);
-          }
-          return _displaySeats(context, seats);
-        }
-      },
-    );
-  }
+  // _loadSeats(BuildContext context) {
+  //   Future<List<Seat>> fSeats = BlocRepository.getSeats(widget.dao, widget.serviceId, widget.serviceTable.tableNumber);
+  //
+  //   return FutureBuilder(
+  //     future: fSeats,
+  //     builder: (context, snapshot) {
+  //       if (snapshot.connectionState == ConnectionState.waiting) {
+  //         return Text('Loading seats...');
+  //       } else {
+  //         List<Seat> seats = snapshot.data! as List<Seat>;
+  //         if(seats.isEmpty){
+  //           return _pullSeats(context);
+  //         }
+  //         return _displaySeats(context, seats);
+  //       }
+  //     },
+  //   );
+  // }
 
   _displaySeats(BuildContext context, List<Seat> seats) {
     return Container(
@@ -145,7 +153,7 @@ class _SeatsManagementScreenState extends State<SeatsManagementScreen> {
                       context: context,
                       builder: (BuildContext context) {
                         return AlertDialog(
-                          title: Text("AlertDialog"),
+                          title: Text("Seat Availability"),
                           content: Text("Would you like to make the seat available?"),
                           actions: [
                             TextButton(

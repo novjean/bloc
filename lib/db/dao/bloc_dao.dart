@@ -68,7 +68,7 @@ abstract class BlocDao {
   Future<List<CartItem>> getCompletedCartItemsByTableNumber(String sId);
 
   @Query('DELETE FROM CartItem where productId=:prodId')
-  Future<CartItem?> deleteCartItems(String prodId);
+  Future<void> deleteCartItems(String prodId);
 
   /** Product **/
   @Insert(onConflict: OnConflictStrategy.replace)
@@ -108,6 +108,8 @@ abstract class BlocDao {
   @Query('SELECT * FROM Seat where serviceId=:serviceId and tableNumber=:tableNumber')
   Future<List<Seat>> getSeats(String serviceId, int tableNumber);
 
+  @Query('DELETE FROM Seat where tableNumber=:tableNumber')
+  Future<void> deleteSeats(int tableNumber);
 
 
   // @Query('SELECT * FROM Product where id=:productId')

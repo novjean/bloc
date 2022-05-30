@@ -164,5 +164,11 @@ class BlocRepository {
 
   }
 
+  static void deleteSeats(BlocDao dao, int tableNumber) async {
+    logger.i('deleteSeats() for table : ' + tableNumber.toString());
+
+    await dao.deleteSeats(tableNumber);
+  }
+
 
 }

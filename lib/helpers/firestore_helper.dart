@@ -9,6 +9,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
 import 'package:logger/logger.dart';
 
+import '../db/entity/service_table.dart';
+
 class FirestoreHelper {
   static var logger = Logger();
 

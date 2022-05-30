@@ -1,3 +1,4 @@
+import 'package:bloc/screens/manager/seats_management.dart';
 import 'package:flutter/material.dart';
 
 import '../db/entity/service_table.dart';
@@ -38,8 +39,10 @@ class ServiceTableItem extends StatelessWidget {
                   // Add one stop for each color. Stops should increase from 0 to 1
                   stops: [0.2, 0.7],
                   colors: [
-                    Color.fromARGB(100, 0, 0, 0),
-                    Color.fromARGB(100, 0, 0, 0),
+                    Colors.grey,
+                    serviceTable.colorStatus==SeatsManagementScreen.TABLE_GREEN?Colors.greenAccent:Colors.redAccent,
+                    // Color.fromARGB(100, 0, 0, 0),
+                    // Color.fromARGB(100, 0, 0, 0),
                   ],
                   // stops: [0.0, 0.1],
                 ),

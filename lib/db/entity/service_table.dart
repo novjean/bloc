@@ -8,6 +8,7 @@ class ServiceTable {
   int tableNumber;
   int capacity;
   bool isOccupied;
+  int colorStatus;
 
   ServiceTable({
     required this.id,
@@ -15,6 +16,7 @@ class ServiceTable {
     required this.tableNumber,
     required this.capacity,
     required this.isOccupied,
+    required this.colorStatus,
   });
 
   static ServiceTable fromJson(Map<String, dynamic> json) => ServiceTable(
@@ -23,6 +25,7 @@ class ServiceTable {
     tableNumber: json['tableNumber'],
     capacity: json['capacity'],
     isOccupied: json['isOccupied'],
+    colorStatus: json['colorStatus'],
   );
 
   Map<String, dynamic> toJson() => {
@@ -31,5 +34,6 @@ class ServiceTable {
     'tableNumber': tableNumber,
     'capacity': capacity,
     'isOccupied': isOccupied,
+    'colorStatus': colorStatus,
   };
 }
