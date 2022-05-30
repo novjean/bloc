@@ -458,6 +458,14 @@ class _$BlocDao extends BlocDao {
   }
 
   @override
+  Future<List<ServiceTable>> getTables(String serviceId) async {
+    return _queryAdapter.queryList(
+        'SELECT * FROM ServiceTable where serviceId=?1 ORDER BY tableNumber ASC',
+        mapper: (Map<String, Object?> row) => ServiceTable(id: row['id'] as String, serviceId: row['serviceId'] as String, tableNumber: row['tableNumber'] as int, capacity: row['capacity'] as int, isOccupied: (row['isOccupied'] as int) != 0, colorStatus: row['colorStatus'] as int),
+        arguments: [serviceId]);
+  }
+
+  @override
   Future<void> updateTableOccupied(
       String serviceId, int tableNumber, bool occupyStatus) async {
     await _queryAdapter.queryNoReturn(

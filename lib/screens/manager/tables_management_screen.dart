@@ -87,7 +87,7 @@ class TablesManagementScreen extends StatelessWidget {
               return _displayServiceTables(context, serviceTables);
             }
           }
-          return Text('Loading tables...');
+          return Text('Pulling tables...');
         });
   }
 
@@ -103,18 +103,63 @@ class TablesManagementScreen extends StatelessWidget {
                 child: ServiceTableItem(
                   serviceTable: serviceTables[index],
                 ),
+                onDoubleTap: () {
+                  logger.d('double tap selected : ' + index.toString());
+                  FirestoreHelper.changeTableColor(serviceTables[index]);
+                },
                 onTap: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                        builder: (ctx) => SeatsManagementScreen(
-                            serviceId: serviceId,
-                            dao: dao,
-                            serviceTable: serviceTables[index])),
-                  );
-                  logger.d(
-                      'manager service index selected : ' + index.toString());
+                  logger.d('tap selected : ' + index.toString());
+                  showOptionsDialog(context, serviceTables[index]);
                 });
           }),
     );
   }
+
+  showOptionsDialog(BuildContext context, ServiceTable _table) {
+    // set up the AlertDialog for Table options
+    AlertDialog alert = AlertDialog(
+      title: Text("Table Options"),
+      content: Text("Please select what action would you like to perform."),
+      actions: [
+        TextButton(
+          child: Text("Cancel"),
+          onPressed:  () {
+            Navigator.of(context).pop();
+          },
+        ),
+        TextButton(
+          child: Text("Change Color"),
+          onPressed:  () {
+            Navigator.of(context).pop();
+
+            FirestoreHelper.changeTableColor(_table);
+          },
+        ),
+        TextButton(
+          child: Text("Manage Seat"),
+          onPressed:  () {
+            Navigator.of(context).pop();
+
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                  builder: (context) => SeatsManagementScreen(
+                      serviceId: serviceId,
+                      dao: dao,
+                      serviceTable: _table)),
+            );
+          },
+        ),
+      ],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
+
+
 }

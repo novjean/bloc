@@ -94,6 +94,9 @@ abstract class BlocDao {
   @Insert(onConflict: OnConflictStrategy.replace)
   Future<void> insertServiceTable(ServiceTable serviceTable);
 
+  @Query('SELECT * FROM ServiceTable where serviceId=:serviceId ORDER BY tableNumber ASC')
+  Future<List<ServiceTable>> getTables(String serviceId);
+
   @Query("UPDATE ServiceTable SET isOccupied = :occupyStatus WHERE serviceId = :serviceId "
       "and tableNumber=:tableNumber")
   Future<void> updateTableOccupied(String serviceId, int tableNumber, bool occupyStatus);
@@ -110,7 +113,6 @@ abstract class BlocDao {
 
   @Query('DELETE FROM Seat where tableNumber=:tableNumber')
   Future<void> deleteSeats(int tableNumber);
-
 
   // @Query('SELECT * FROM Product where id=:productId')
   // Future<Product?> getProduct(String productId);

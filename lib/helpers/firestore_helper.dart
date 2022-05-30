@@ -4,6 +4,7 @@ import 'package:bloc/db/entity/cart_item.dart';
 import 'package:bloc/db/entity/seat.dart';
 import 'package:bloc/db/entity/user.dart' as blocUser;
 import 'package:bloc/helpers/firestorage_helper.dart';
+import 'package:bloc/screens/manager/seats_management.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
@@ -46,11 +47,12 @@ class FirestoreHelper {
   }
 
   /** Cart Items **/
-  static void uploadCartItem(CartItem cart, Timestamp timestamp, int millisecondsSinceEpoch) async {
+  static void uploadCartItem(
+      CartItem cart, Timestamp timestamp, int millisecondsSinceEpoch) async {
     await FirebaseFirestore.instance.collection(CART_ITEMS).doc(cart.id).set({
       'cartId': cart.id,
       'serviceId': cart.serviceId,
-      'tableNumber':cart.tableNumber,
+      'tableNumber': cart.tableNumber,
       'cartNumber': cart.cartNumber,
       'userId': cart.userId,
       'productId': cart.productId,
@@ -58,12 +60,13 @@ class FirestoreHelper {
       'productPrice': cart.productPrice,
       'quantity': cart.quantity,
       'createdAt': millisecondsSinceEpoch,
-      'timestamp' : timestamp,
+      'timestamp': timestamp,
       'isCompleted': false,
     });
   }
 
-  static Stream<QuerySnapshot<Object?>> getCartItemsSnapshot(String serviceId, bool isCompleted) {
+  static Stream<QuerySnapshot<Object?>> getCartItemsSnapshot(
+      String serviceId, bool isCompleted) {
     return FirebaseFirestore.instance
         .collection(CART_ITEMS)
         .where('serviceId', isEqualTo: serviceId)
@@ -76,7 +79,7 @@ class FirestoreHelper {
     await FirebaseFirestore.instance.collection(CART_ITEMS).doc(cart.id).set({
       'cartId': cart.id,
       'serviceId': cart.serviceId,
-      'tableNumber':cart.tableNumber,
+      'tableNumber': cart.tableNumber,
       'cartNumber': cart.cartNumber,
       'userId': cart.userId,
       'productId': cart.productId,
@@ -84,7 +87,7 @@ class FirestoreHelper {
       'productPrice': cart.productPrice,
       'quantity': cart.quantity,
       'createdAt': cart.createdAt,
-      'timestamp' : Timestamp.fromMillisecondsSinceEpoch(cart.createdAt),
+      'timestamp': Timestamp.fromMillisecondsSinceEpoch(cart.createdAt),
       'isCompleted': true,
     });
   }
@@ -156,7 +159,8 @@ class FirestoreHelper {
   static void sendChatMessage(String enteredMessage) async {
     final user = FirebaseAuth.instance.currentUser;
 
-    final userData = await FirebaseFirestore.instance.collection(USERS).doc(user!.uid).get();
+    final userData =
+        await FirebaseFirestore.instance.collection(USERS).doc(user!.uid).get();
     FirebaseFirestore.instance.collection(CHATS).add({
       'text': enteredMessage,
       // timestamp available through cloud firestore
@@ -185,7 +189,8 @@ class FirestoreHelper {
           .doc(productId)
           .update({'imageUrl': url})
           .then((value) => print("Product image updated."))
-          .catchError((error) => print("Failed to update product image: $error"));
+          .catchError(
+              (error) => print("Failed to update product image: $error"));
     } on PlatformException catch (err) {
       logger.e(err.message);
     } catch (err) {
@@ -216,8 +221,29 @@ class FirestoreHelper {
     }
   }
 
+  static void changeTableColor(ServiceTable table) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection(TABLES)
+          .doc(table.id)
+          .update({
+            'colorStatus':
+                table.colorStatus == SeatsManagementScreen.TABLE_GREEN
+                    ? SeatsManagementScreen.TABLE_RED
+                    : SeatsManagementScreen.TABLE_GREEN
+          })
+          .then((value) => print("Table color status changed for: " + table.id))
+          .catchError((error) => print("Failed to change table color: $error"));
+    } on PlatformException catch (err) {
+      logger.e(err.message);
+    } catch (err) {
+      logger.e(err);
+    }
+  }
+
   /** Seats **/
-  static Stream<QuerySnapshot<Object?>> getSeatsSnapshotByTableNumber(int tableNumber) {
+  static Stream<QuerySnapshot<Object?>> getSeatsSnapshotByTableNumber(
+      int tableNumber) {
     return FirebaseFirestore.instance
         .collection(SEATS)
         .where('tableNumber', isEqualTo: tableNumber)
@@ -238,15 +264,14 @@ class FirestoreHelper {
       await FirebaseFirestore.instance
           .collection(SEATS)
           .doc(seatId)
-          .update({'custId': custId})
-          .then((value) {
-            if(custId.isEmpty) {
-              logger.d("seat is now free : " + seatId);
-            } else {
-              print("seat is occupied by cust id: " + custId);
-            }
-          })
-          .catchError((error) => print("Failed to update seat with cust: $error"));
+          .update({'custId': custId}).then((value) {
+        if (custId.isEmpty) {
+          logger.d("seat is now free : " + seatId);
+        } else {
+          print("seat is occupied by cust id: " + custId);
+        }
+      }).catchError(
+              (error) => print("Failed to update seat with cust: $error"));
     } on PlatformException catch (err) {
       logger.e(err.message);
     } catch (err) {
@@ -254,7 +279,8 @@ class FirestoreHelper {
     }
   }
 
-  static Stream<QuerySnapshot<Object?>> getSeats(String serviceId, int tableNumber) {
+  static Stream<QuerySnapshot<Object?>> getSeats(
+      String serviceId, int tableNumber) {
     return FirebaseFirestore.instance
         .collection(SEATS)
         .where('serviceId', isEqualTo: serviceId)
@@ -262,12 +288,12 @@ class FirestoreHelper {
         .snapshots();
   }
 
-  static Stream<QuerySnapshot<Object?>> findTableNumber(String serviceId, String custId) {
+  static Stream<QuerySnapshot<Object?>> findTableNumber(
+      String serviceId, String custId) {
     return FirebaseFirestore.instance
         .collection(SEATS)
         .where('serviceId', isEqualTo: serviceId)
         .where('custId', isEqualTo: custId)
         .snapshots();
   }
-
 }

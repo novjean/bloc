@@ -41,8 +41,6 @@ class ServiceTableItem extends StatelessWidget {
                   colors: [
                     Colors.grey,
                     serviceTable.colorStatus==SeatsManagementScreen.TABLE_GREEN?Colors.greenAccent:Colors.redAccent,
-                    // Color.fromARGB(100, 0, 0, 0),
-                    // Color.fromARGB(100, 0, 0, 0),
                   ],
                   // stops: [0.0, 0.1],
                 ),

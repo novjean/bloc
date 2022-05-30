@@ -135,6 +135,12 @@ class BlocRepository {
   }
 
   /** Service Table **/
+  static Future<List<ServiceTable>> getServiceTables(BlocDao dao, String serviceId) async {
+    logger.i('getServiceTables(): ');
+    Future<List<ServiceTable>> fTables =  dao.getTables(serviceId);
+    return fTables;
+  }
+
   static void insertServiceTable(BlocDao dao, ServiceTable serviceTable) async {
     logger.i('insertServiceTable(): ');
     await dao.insertServiceTable(serviceTable);
@@ -158,17 +164,15 @@ class BlocRepository {
 
   static Future<List<Seat>> getSeats(BlocDao dao, String serviceId, int tableNumber) {
     logger.i('getSeats() for table : ' + tableNumber.toString());
-
     Future<List<Seat>> fSeats = dao.getSeats(serviceId, tableNumber);
     return fSeats;
-
   }
 
   static void deleteSeats(BlocDao dao, int tableNumber) async {
     logger.i('deleteSeats() for table : ' + tableNumber.toString());
-
     await dao.deleteSeats(tableNumber);
   }
+
 
 
 }
