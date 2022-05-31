@@ -29,7 +29,6 @@ class _NewBlocScreenState extends State<NewBlocScreen> {
     String blocName,
     String addressLine1,
     String addressLine2,
-    // String cityName,
     String pinCode,
     File image,
     BuildContext ctx,

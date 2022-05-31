@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import '../db/bloc_repository.dart';
 import '../db/dao/bloc_dao.dart';
 import '../db/entity/bloc.dart';
-import '../utils/bloc_utils.dart';
 import '../utils/friends.dart';
 import '../widgets/search_card.dart';
 import '../widgets/bloc_slide_item.dart';
@@ -14,7 +13,7 @@ import 'experimental/trending.dart';
 class HomeScreen extends StatelessWidget {
   BlocDao dao;
 
-  HomeScreen({key, required this.dao}):super(key: key);
+  HomeScreen({key, required this.dao}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -50,9 +49,8 @@ class HomeScreen extends StatelessWidget {
   }
 
   buildBlocRow(BuildContext context) {
-    final Stream<QuerySnapshot> _servicesStream = FirebaseFirestore.instance
-        .collection('blocs')
-        .snapshots();
+    final Stream<QuerySnapshot> _servicesStream =
+        FirebaseFirestore.instance.collection('blocs').snapshots();
     return StreamBuilder<QuerySnapshot>(
       stream: _servicesStream,
       builder: (ctx, snapshot) {
@@ -63,18 +61,17 @@ class HomeScreen extends StatelessWidget {
         }
 
         int count = snapshot.data!.docs.length;
-        List blocs=List.empty(growable: true);
+        List blocs = List.empty(growable: true);
 
         for (DocumentSnapshot document in snapshot.data!.docs) {
           Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-          final Bloc bloc = BlocUtils.getBloc(data, document.id);
+          final Bloc bloc = Bloc.fromMap(data);
           BlocRepository.insertBloc(dao, bloc);
 
           blocs.add(bloc);
-          if(--count==0)
-            return buildBlocList(context,blocs);
+          if (--count == 0) return buildBlocList(context, blocs);
         }
-        return Text('Loading...');
+        return Text('Loading blocs...');
       },
     );
   }

@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import '../db/dao/bloc_dao.dart';
 import '../db/entity/bloc.dart';
 import '../db/entity/city.dart';
-import '../utils/bloc_utils.dart';
 
 class CityDetailScreen extends StatelessWidget {
   static const routeName = '/city-detail';
@@ -41,7 +40,7 @@ class CityDetailScreen extends StatelessWidget {
         splashColor: Colors.grey,
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-      body: _buildBody(context,dao),
+      body: _buildBody(context, dao),
     );
   }
 
@@ -82,9 +81,9 @@ class CityDetailScreen extends StatelessWidget {
             ),
             children: snapshot.data!.docs.map((DocumentSnapshot document) {
               Map<String, dynamic> data =
-              document.data()! as Map<String, dynamic>;
+                  document.data()! as Map<String, dynamic>;
 
-              final Bloc bloc = BlocUtils.getBloc(data, document.id);
+              final Bloc bloc = Bloc.fromMap(data);
               BlocRepository.insertBloc(dao, bloc);
 
               return BlocItem(bloc, dao, key: ValueKey(document.id));
