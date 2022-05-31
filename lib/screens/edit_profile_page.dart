@@ -11,8 +11,8 @@ import '../db/entity/user.dart';
 import '../db/shared_preferences/user_preferences.dart';
 import '../helpers/firestorage_helper.dart';
 import '../helpers/firestore_helper.dart';
-import '../widgets/button_widget.dart';
 import '../widgets/profile_widget.dart';
+import '../widgets/ui/button_widget.dart';
 import '../widgets/ui/textfield_widget.dart';
 
 class EditProfilePage extends StatefulWidget {

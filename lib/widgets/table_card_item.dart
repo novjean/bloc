@@ -1,4 +1,5 @@
 import 'package:bloc/utils/string_utils.dart';
+import 'package:bloc/widgets/ui/button_widget.dart';
 import 'package:bloc/widgets/ui/toaster.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -6,7 +7,6 @@ import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 
 import '../db/entity/user.dart';
 import '../db/shared_preferences/user_preferences.dart';
-import 'button_widget.dart';
 
 class TableCardItem extends StatefulWidget {
   String seatId;
@@ -29,40 +29,31 @@ class _TableCardItemState extends State<TableCardItem> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              widget.tableNumber ==-1 ? 'Table : Unassigned' : 'Table : ' + widget.tableNumber.toString(),
+              widget.tableNumber == -1
+                  ? 'Table : Unassigned'
+                  : 'Table : ' + widget.tableNumber.toString(),
               style: TextStyle(
-                fontSize: 20,
+                fontSize: 16,
               ),
             ),
             // spacer is a special widget which takes up all the space it can
             Spacer(),
-            widget.tableNumber == -1 ?
-            ButtonWidget(
-              text: 'Scan Table',
-              onClicked: () {
-                Toaster.shortToast('scan clicked');
+            widget.tableNumber == -1
+                ? ButtonWidget(
+                    text: 'Scan Table',
+                    onClicked: () {
+                      Toaster.shortToast('Scanning for table QR code...');
 
-                User user = UserPreferences.getUser();
-                scanTableQR(user);
-                },
-            ) :
-            ButtonWidget(
-              text: 'Color',
-              onClicked: () {
-                Toaster.shortToast('button clicked');
-
-                // UserPreferences.setUser(user);
-                //
-                // if(isPhotoChanged){
-                //   FirestorageHelper.deleteFile(oldImageUrl);
-                // }
-                //
-                // BlocRepository.updateUser(widget.dao, user);
-                // FirestoreHelper.updateUser(user);
-
-                // Navigator.of(context).pop();
-              },
-            ),
+                      User user = UserPreferences.getUser();
+                      scanTableQR(user);
+                    },
+                  )
+                : ButtonWidget(
+                    text: 'Community Table',
+                    onClicked: () {
+                      Toaster.shortToast('Joining community table.');
+                    },
+                  ),
           ],
         ),
       ),
@@ -85,11 +76,11 @@ class _TableCardItemState extends State<TableCardItem> {
     // setState to update our non-existent appearance.
     if (!mounted) return;
 
-    if(scanTableId.compareTo('-1')==0){
+    if (scanTableId.compareTo('-1') == 0) {
       return;
     }
 
-    if(user.userId.isEmpty){
+    if (user.userId.isEmpty) {
       Toaster.shortToast('not signed in yet.');
     } else {
       Toaster.shortToast('signed in, time to find seats for the table.');

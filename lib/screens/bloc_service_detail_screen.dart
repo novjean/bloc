@@ -325,37 +325,11 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen> {
 
               if (i == snapshot.data!.docs.length - 1) {
                 _mTableNumber = seat.tableNumber;
-
-                return Card(
-                  margin: EdgeInsets.all(1),
-                  child: Padding(
-                    padding: EdgeInsets.all(10),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        TableCardItem(seat.id, seat.tableNumber),
-                        // Text(
-                        //   'Table Number : ' + seat.tableNumber.toString(),
-                        //   style: TextStyle(
-                        //     fontSize: 16,
-                        //   ),
-                        // )
-                        // spacer is a special widget which takes up all the space it can
-                        // Spacer(),
-                      ],
-                    ),
-                  ),
-                );
-                // return _displayTableNumber(context, seats);
+                return TableCardItem(seat.id, seat.tableNumber);
               }
             }
           } else {
             return TableCardItem('', -1);
-
-              // Text('Table number: Unassigned',
-              //   style: TextStyle(
-              //     fontSize: 16,
-              //   ));
           }
           return Text('loading table number...');
         });
