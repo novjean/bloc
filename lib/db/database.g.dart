@@ -66,7 +66,7 @@ class _$AppDatabase extends AppDatabase {
   Future<sqflite.Database> open(String path, List<Migration> migrations,
       [Callback? callback]) async {
     final databaseOptions = sqflite.OpenDatabaseOptions(
-      version: 18,
+      version: 19,
       onConfigure: (database) async {
         await database.execute('PRAGMA foreign_keys = ON');
         await callback?.onConfigure?.call(database);
@@ -100,7 +100,7 @@ class _$AppDatabase extends AppDatabase {
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `ServiceTable` (`id` TEXT NOT NULL, `serviceId` TEXT NOT NULL, `tableNumber` INTEGER NOT NULL, `capacity` INTEGER NOT NULL, `isOccupied` INTEGER NOT NULL, `colorStatus` INTEGER NOT NULL, PRIMARY KEY (`id`))');
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `Seat` (`id` TEXT NOT NULL, `custId` TEXT NOT NULL, `serviceId` TEXT NOT NULL, `tableNumber` INTEGER NOT NULL, PRIMARY KEY (`id`))');
+            'CREATE TABLE IF NOT EXISTS `Seat` (`id` TEXT NOT NULL, `custId` TEXT NOT NULL, `serviceId` TEXT NOT NULL, `tableId` TEXT NOT NULL, `tableNumber` INTEGER NOT NULL, PRIMARY KEY (`id`))');
 
         await callback?.onCreate?.call(database, version);
       },
@@ -238,6 +238,7 @@ class _$BlocDao extends BlocDao {
                   'id': item.id,
                   'custId': item.custId,
                   'serviceId': item.serviceId,
+                  'tableId': item.tableId,
                   'tableNumber': item.tableNumber
                 }),
         _userUpdateAdapter = UpdateAdapter(
@@ -488,6 +489,7 @@ class _$BlocDao extends BlocDao {
             id: row['id'] as String,
             serviceId: row['serviceId'] as String,
             tableNumber: row['tableNumber'] as int,
+            tableId: row['tableId'] as String,
             custId: row['custId'] as String),
         arguments: [serviceId, tableNumber]);
   }

@@ -35,7 +35,9 @@ Future<void> main() async {
   await UserPreferences.init();
 
   final database =
-      await $FloorAppDatabase.databaseBuilder('bloc_database.db').build();
+      await $FloorAppDatabase.databaseBuilder('bloc_database.db')
+          .addMigrations([migration18to19])
+          .build();
   final dao = database.blocDao;
 
   runApp(MyApp(dao: dao));

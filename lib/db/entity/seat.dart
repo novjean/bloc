@@ -7,12 +7,14 @@ class Seat {
   String id;
   String custId;
   String serviceId;
+  String tableId;
   int tableNumber;
 
   Seat({
     required this.id,
     required this.serviceId,
     required this.tableNumber,
+    required this.tableId,
     required this.custId,
   });
 
@@ -20,6 +22,7 @@ class Seat {
     id: json['id'],
     serviceId: json['serviceId'],
     tableNumber: json['tableNumber'],
+    tableId: json['tableId'],
     custId: json['custId'],
   );
 
@@ -27,6 +30,7 @@ class Seat {
     'id': id,
     'serviceId': serviceId,
     'tableNumber': tableNumber,
+    'tableId': tableId,
     'custId': custId,
   };
 }

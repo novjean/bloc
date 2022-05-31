@@ -1,5 +1,6 @@
 import 'package:bloc/db/entity/bloc_service.dart';
 import 'package:bloc/helpers/firestore_helper.dart';
+import 'package:bloc/widgets/table_card_item.dart';
 import 'package:bloc/widgets/ui/cover_photo.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -289,11 +290,10 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen> {
               Product product = products[index];
 
               return ProductItem(
-                serviceId: widget.service.id,
-                product: product,
-                dao: widget.dao,
-                tableNumber: _mTableNumber
-              );
+                  serviceId: widget.service.id,
+                  product: product,
+                  dao: widget.dao,
+                  tableNumber: _mTableNumber);
             },
           );
         });
@@ -325,6 +325,7 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen> {
 
               if (i == snapshot.data!.docs.length - 1) {
                 _mTableNumber = seat.tableNumber;
+
                 return Card(
                   margin: EdgeInsets.all(1),
                   child: Padding(
@@ -332,14 +333,15 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
-                          'Table Number : ' + seat.tableNumber.toString(),
-                          style: TextStyle(
-                            fontSize: 16,
-                          ),
-                        ),
+                        TableCardItem(seat.id, seat.tableNumber),
+                        // Text(
+                        //   'Table Number : ' + seat.tableNumber.toString(),
+                        //   style: TextStyle(
+                        //     fontSize: 16,
+                        //   ),
+                        // )
                         // spacer is a special widget which takes up all the space it can
-                        Spacer(),
+                        // Spacer(),
                       ],
                     ),
                   ),
@@ -347,8 +349,15 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen> {
                 // return _displayTableNumber(context, seats);
               }
             }
+          } else {
+            return TableCardItem('', -1);
+
+              // Text('Table number: Unassigned',
+              //   style: TextStyle(
+              //     fontSize: 16,
+              //   ));
           }
-          return Text('Table number: Unassigned');
+          return Text('loading table number...');
         });
   }
 }

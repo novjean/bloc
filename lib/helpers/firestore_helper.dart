@@ -251,12 +251,8 @@ class FirestoreHelper {
   }
 
   static void uploadSeat(Seat seat) async {
-    await FirebaseFirestore.instance.collection(SEATS).doc(seat.id).set({
-      'id': seat.id,
-      'custId': seat.custId,
-      'serviceId': seat.serviceId,
-      'tableNumber': seat.tableNumber,
-    });
+    await FirebaseFirestore.instance.collection(SEATS).doc(seat.id).set(
+        seat.toJson());
   }
 
   static void updateSeat(String seatId, String custId) async {

@@ -101,37 +101,18 @@ class _SeatsManagementScreenState extends State<SeatsManagementScreen> {
                   custId: "",
                   id: StringUtils.getRandomString(20),
                   serviceId: widget.serviceId,
+                  tableId: widget.serviceTable.id,
                   tableNumber: widget.serviceTable.tableNumber);
               seats.add(seat);
               BlocRepository.insertSeat(widget.dao, seat);
               FirestoreHelper.uploadSeat(seat);
             }
-            Navigator.of(context).pop(true);
             return _displaySeats(context, seats);
           }
 
           return Text('Pulling seats...');
         });
   }
-
-  // _loadSeats(BuildContext context) {
-  //   Future<List<Seat>> fSeats = BlocRepository.getSeats(widget.dao, widget.serviceId, widget.serviceTable.tableNumber);
-  //
-  //   return FutureBuilder(
-  //     future: fSeats,
-  //     builder: (context, snapshot) {
-  //       if (snapshot.connectionState == ConnectionState.waiting) {
-  //         return Text('Loading seats...');
-  //       } else {
-  //         List<Seat> seats = snapshot.data! as List<Seat>;
-  //         if(seats.isEmpty){
-  //           return _pullSeats(context);
-  //         }
-  //         return _displaySeats(context, seats);
-  //       }
-  //     },
-  //   );
-  // }
 
   _displaySeats(BuildContext context, List<Seat> seats) {
     return Container(

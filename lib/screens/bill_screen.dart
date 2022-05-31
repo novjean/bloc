@@ -37,8 +37,6 @@ class BillScreen extends StatelessWidget {
         itemCount: bill.orders.length,
         itemBuilder: (ctx, i) {
           Order order = bill.orders[i];
-
-
           return Padding(
             padding: const EdgeInsets.all(10.0),
             child: Column(
@@ -70,7 +68,7 @@ class BillScreen extends StatelessWidget {
     return Card(
       margin: EdgeInsets.all(15),
       child: Padding(
-        padding: EdgeInsets.all(8),
+        padding: EdgeInsets.all(5),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
