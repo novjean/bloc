@@ -325,11 +325,11 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen> {
 
               if (i == snapshot.data!.docs.length - 1) {
                 _mTableNumber = seat.tableNumber;
-                return TableCardItem(seat.id, seat.tableNumber);
+                return TableCardItem(seat.id, seat.tableNumber, seat.tableId);
               }
             }
           } else {
-            return TableCardItem('', -1);
+            return TableCardItem('', -1, '');
           }
           return Text('loading table number...');
         });

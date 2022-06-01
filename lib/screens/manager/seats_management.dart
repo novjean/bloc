@@ -33,21 +33,6 @@ class _SeatsManagementScreenState extends State<SeatsManagementScreen> {
       appBar: AppBar(
           title: Text(
               'Table Number : ' + widget.serviceTable.tableNumber.toString())),
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: () {
-      //     // scanQR();
-      //   },
-      //   child: Icon(
-      //     Icons.add,
-      //     color: Colors.black,
-      //     size: 29,
-      //   ),
-      //   backgroundColor: Theme.of(context).primaryColor,
-      //   tooltip: 'New Seat',
-      //   elevation: 5,
-      //   splashColor: Colors.grey,
-      // ),
-      // floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       body: _buildBody(context, widget.serviceTable),
     );
   }
@@ -189,7 +174,7 @@ class _SeatsManagementScreenState extends State<SeatsManagementScreen> {
 
     seat.custId = scanCustId;
     FirestoreHelper.updateSeat(seat.id, scanCustId);
-    FirestoreHelper.updateServiceTable(widget.serviceTable.id, true);
+    FirestoreHelper.pushServiceTableIsOccupied(widget.serviceTable.id, true);
 
     setState(() {
       widget.serviceTable.isOccupied = true;

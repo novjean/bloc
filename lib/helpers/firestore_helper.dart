@@ -206,7 +206,8 @@ class FirestoreHelper {
         .snapshots();
   }
 
-  static void updateServiceTable(String serviceTableId, bool isOccupied) async {
+  static void pushServiceTableIsOccupied(
+      String serviceTableId, bool isOccupied) async {
     try {
       await FirebaseFirestore.instance
           .collection(TABLES)
@@ -242,17 +243,26 @@ class FirestoreHelper {
   }
 
   /** Seats **/
-  static Stream<QuerySnapshot<Object?>> getSeatsSnapshotByTableNumber(
-      int tableNumber) {
+  // static Stream<QuerySnapshot<Object?>> getSeatsSnapshotByTableNumber(
+  //     int tableNumber) {
+  //   return FirebaseFirestore.instance
+  //       .collection(SEATS)
+  //       .where('tableNumber', isEqualTo: tableNumber)
+  //       .snapshots();
+  // }
+
+  static Stream<QuerySnapshot<Object?>> getSeatsByTableId(String tableId) {
     return FirebaseFirestore.instance
         .collection(SEATS)
-        .where('tableNumber', isEqualTo: tableNumber)
+        .where('tableId', isEqualTo: tableId)
         .snapshots();
   }
 
   static void uploadSeat(Seat seat) async {
-    await FirebaseFirestore.instance.collection(SEATS).doc(seat.id).set(
-        seat.toJson());
+    await FirebaseFirestore.instance
+        .collection(SEATS)
+        .doc(seat.id)
+        .set(seat.toJson());
   }
 
   static void updateSeat(String seatId, String custId) async {

@@ -11,13 +11,13 @@ class UserPreferences {
   static const _keyUser = 'user';
 
   static const myUser = User(
-    userId: 'test',
-    username: 'test',
-    email:'test',
-    imageUrl: 'test',
+    userId: '',
+    username: '',
+    email:'',
+    imageUrl: '',
     clearanceLevel: 0,
     phoneNumber: 0,
-    name:'test',
+    name:'',
   );
 
   static Future init() async =>
