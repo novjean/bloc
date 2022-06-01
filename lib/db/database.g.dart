@@ -88,7 +88,7 @@ class _$AppDatabase extends AppDatabase {
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `CartItem` (`id` TEXT NOT NULL, `serviceId` TEXT NOT NULL, `tableNumber` INTEGER NOT NULL, `cartNumber` INTEGER NOT NULL, `userId` TEXT NOT NULL, `productId` TEXT NOT NULL, `productName` TEXT NOT NULL, `productPrice` REAL NOT NULL, `quantity` INTEGER NOT NULL, `isCompleted` INTEGER NOT NULL, `createdAt` INTEGER NOT NULL, PRIMARY KEY (`id`))');
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `Category` (`id` TEXT NOT NULL, `name` TEXT NOT NULL, `type` TEXT NOT NULL, `serviceId` TEXT NOT NULL, `imageUrl` TEXT NOT NULL, `ownerId` TEXT NOT NULL, `createdAt` TEXT NOT NULL, `sequence` INTEGER NOT NULL, PRIMARY KEY (`id`))');
+            'CREATE TABLE IF NOT EXISTS `Category` (`id` TEXT NOT NULL, `name` TEXT NOT NULL, `type` TEXT NOT NULL, `serviceId` TEXT NOT NULL, `imageUrl` TEXT NOT NULL, `ownerId` TEXT NOT NULL, `createdAt` INTEGER NOT NULL, `sequence` INTEGER NOT NULL, PRIMARY KEY (`id`))');
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `City` (`id` TEXT NOT NULL, `name` TEXT NOT NULL, `ownerId` TEXT NOT NULL, `imageUrl` TEXT NOT NULL, PRIMARY KEY (`id`))');
         await database.execute(
@@ -302,14 +302,14 @@ class _$BlocDao extends BlocDao {
     return _queryAdapter.queryListStream(
         'SELECT * FROM Category ORDER BY sequence ASC',
         mapper: (Map<String, Object?> row) => Category(
-            row['id'] as String,
-            row['name'] as String,
-            row['type'] as String,
-            row['serviceId'] as String,
-            row['imageUrl'] as String,
-            row['ownerId'] as String,
-            row['createdAt'] as String,
-            row['sequence'] as int),
+            id: row['id'] as String,
+            name: row['name'] as String,
+            type: row['type'] as String,
+            serviceId: row['serviceId'] as String,
+            imageUrl: row['imageUrl'] as String,
+            ownerId: row['ownerId'] as String,
+            createdAt: row['createdAt'] as int,
+            sequence: row['sequence'] as int),
         queryableName: 'Category',
         isView: false);
   }
@@ -319,14 +319,14 @@ class _$BlocDao extends BlocDao {
     return _queryAdapter.queryList(
         'SELECT * FROM Category ORDER BY sequence ASC',
         mapper: (Map<String, Object?> row) => Category(
-            row['id'] as String,
-            row['name'] as String,
-            row['type'] as String,
-            row['serviceId'] as String,
-            row['imageUrl'] as String,
-            row['ownerId'] as String,
-            row['createdAt'] as String,
-            row['sequence'] as int));
+            id: row['id'] as String,
+            name: row['name'] as String,
+            type: row['type'] as String,
+            serviceId: row['serviceId'] as String,
+            imageUrl: row['imageUrl'] as String,
+            ownerId: row['ownerId'] as String,
+            createdAt: row['createdAt'] as int,
+            sequence: row['sequence'] as int));
   }
 
   @override

@@ -11,7 +11,6 @@ import '../db/dao/bloc_dao.dart';
 import '../db/entity/category.dart';
 import '../db/entity/product.dart';
 import '../db/entity/seat.dart';
-import '../utils/category_utils.dart';
 import '../utils/product_utils.dart';
 import '../widgets/category_item.dart';
 import '../widgets/product_item.dart';
@@ -155,23 +154,23 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen> {
       stream: _catsStream,
       builder: (ctx, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
+          print('loading categories...');
         }
 
         if (snapshot.data!.docs.length > 0) {
           BlocRepository.clearCategories(widget.dao);
         }
 
+        List<Category> _categories = [];
         for (int i = 0; i < snapshot.data!.docs.length; i++) {
           DocumentSnapshot document = snapshot.data!.docs[i];
           Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-          final Category cat = CategoryUtils.getCategory(data, document.id);
+          final Category cat = Category.fromMap(data);
           BlocRepository.insertCategory(widget.dao, cat);
+          _categories.add(cat);
 
           if (i == snapshot.data!.docs.length - 1) {
-            return displayCategoryList(context);
+            return _displayCategories(context, _categories);
           }
         }
         return Text('Loading categories...');
@@ -179,50 +178,27 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen> {
     );
   }
 
-  displayCategoryList(BuildContext context) {
-    Stream<List<Category>> _catsStream =
-        BlocRepository.getCategories(widget.dao);
-
+  _displayCategories(BuildContext context, List<Category> categories) {
     return Container(
-      height: MediaQuery.of(context).size.height / 6,
-      child: StreamBuilder(
-        stream: _catsStream,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Text('Loading...');
-          } else {
-            List<Category> cats = snapshot.data! as List<Category>;
-
-            return ListView.builder(
-              primary: false,
-              scrollDirection: Axis.horizontal,
-              shrinkWrap: true,
-              itemCount: cats == null ? 0 : cats.length,
-              itemBuilder: (BuildContext ctx, int index) {
-                Category cat = cats[index];
-
-                return GestureDetector(
-                    child: CategoryItem(
-                      cat: cat,
-                    ),
-                    onTap: () => {
-                          setState(() {
-                            _categorySelected = index;
-                          }),
-                          Toaster.shortToast(
-                              "Category index : " + index.toString()),
-                          displayProductsList(context, index),
-                        }
-
-                    // Scaffold
-                    // .of(context)
-                    // .showSnackBar(SnackBar(content: Text(index.toString()))),
-                    );
-              },
-            );
-          }
-        },
-      ),
+      // this height has to match with category item container height
+      height: MediaQuery.of(context).size.height / 8,
+      child: ListView.builder(
+          itemCount: categories.length,
+          scrollDirection: Axis.horizontal,
+          itemBuilder: (ctx, index) {
+            return GestureDetector(
+                child: CategoryItem(
+                  cat: categories[index],
+                ),
+                onTap: () {
+                  setState(() {
+                    _categorySelected = index;
+                  });
+                  Toaster.shortToast(
+                      "Category index : " + index.toString());
+                  displayProductsList(context, index);
+                });
+          }),
     );
   }
 
@@ -308,9 +284,7 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen> {
         stream: _stream,
         builder: (ctx, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
+            print('loading table number...');
           }
 
           List<Seat> seats = [];
@@ -335,3 +309,4 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen> {
         });
   }
 }
+

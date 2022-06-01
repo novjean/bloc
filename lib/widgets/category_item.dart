@@ -9,10 +9,10 @@ class CategoryItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height / 8;
-    double width = MediaQuery.of(context).size.width / 2.1;
+    double width = MediaQuery.of(context).size.width / 2;
 
     return Padding(
-      padding: const EdgeInsets.all(5.0),
+      padding: const EdgeInsets.only(left: 2, right: 2),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(10.0),
         child: Stack(
@@ -39,7 +39,7 @@ class CategoryItem extends StatelessWidget {
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   // Add one stop for each color. Stops should increase from 0 to 1
-                  stops: [0.2, 0.7],
+                  // stops: [0.2, 0.7],
                   colors: [
                     Color.fromARGB(100, 0, 0, 0),
                     Color.fromARGB(100, 0, 0, 0),
