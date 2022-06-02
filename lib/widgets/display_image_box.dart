@@ -1,5 +1,5 @@
-import 'package:bloc/screens/manager_screen.dart';
-import 'package:bloc/screens/owner_screen.dart';
+import 'package:bloc/screens/manager/manager_main_screen.dart';
+import 'package:bloc/screens/owner/owner_screen.dart';
 import 'package:flutter/material.dart';
 
 class DisplayImageBox extends StatelessWidget {
@@ -18,7 +18,7 @@ class DisplayImageBox extends StatelessWidget {
           onTap: () {
             Navigator.of(context).pushNamed(
               imageTitle == 'manager'
-                  ? ManagerScreen.routeName
+                  ? ManagerMainScreen.routeName
                   : OwnerScreen.routeName,
               // arguments: product.id,
             );

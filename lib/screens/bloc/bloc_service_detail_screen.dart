@@ -1,4 +1,5 @@
 import 'package:bloc/db/entity/bloc_service.dart';
+import 'package:bloc/db/entity/service_table.dart';
 import 'package:bloc/helpers/firestore_helper.dart';
 import 'package:bloc/widgets/table_card_item.dart';
 import 'package:bloc/widgets/ui/cover_photo.dart';
@@ -6,18 +7,18 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-import '../db/bloc_repository.dart';
-import '../db/dao/bloc_dao.dart';
-import '../db/entity/category.dart';
-import '../db/entity/product.dart';
-import '../db/entity/seat.dart';
-import '../utils/product_utils.dart';
-import '../widgets/category_item.dart';
-import '../widgets/product_item.dart';
-import '../widgets/ui/toaster.dart';
-import '../widgets/ui/expandable_fab.dart';
-import 'forms/new_product_screen.dart';
-import 'forms/new_service_category_screen.dart';
+import '../../db/bloc_repository.dart';
+import '../../db/dao/bloc_dao.dart';
+import '../../db/entity/category.dart';
+import '../../db/entity/product.dart';
+import '../../db/entity/seat.dart';
+import '../../utils/product_utils.dart';
+import '../../widgets/category_item.dart';
+import '../../widgets/product_item.dart';
+import '../../widgets/ui/toaster.dart';
+import '../../widgets/ui/expandable_fab.dart';
+import '../forms/new_product_screen.dart';
+import '../forms/new_service_category_screen.dart';
 import 'cart_screen.dart';
 
 class BlocServiceDetailScreen extends StatefulWidget {
@@ -36,6 +37,7 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen> {
   late Future<List<Product>> fProducts;
   var _categorySelected = 0;
   var _mTableNumber = 0;
+  var _mTable;
   var _isInit = true;
   var _isLoading = false;
 
@@ -155,6 +157,7 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen> {
       builder: (ctx, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           print('loading categories...');
+          return SizedBox();
         }
 
         if (snapshot.data!.docs.length > 0) {
@@ -285,6 +288,7 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen> {
         builder: (ctx, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             print('loading table number...');
+            return SizedBox();
           }
 
           List<Seat> seats = [];
@@ -298,6 +302,7 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen> {
               seats.add(seat);
 
               if (i == snapshot.data!.docs.length - 1) {
+                _findTable(seat.tableId);
                 _mTableNumber = seat.tableNumber;
                 return TableCardItem(seat.id, seat.tableNumber, seat.tableId);
               }
@@ -307,6 +312,32 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen> {
           }
           return Text('loading table number...');
         });
+  }
+
+  void _findTable(String tableId) {
+    FirebaseFirestore.instance
+        .collection(FirestoreHelper.TABLES)
+        .where('id', isEqualTo: tableId)
+        .get()
+        .then(
+          (result) {
+        if (result.docs.isNotEmpty) {
+          for (int i = 0; i < result.docs.length; i++) {
+            DocumentSnapshot document = result.docs[i];
+            Map<String, dynamic> data =
+            document.data()! as Map<String, dynamic>;
+            final ServiceTable _table = ServiceTable.fromJson(data);
+
+            setState(() {
+              _mTable = _table;
+            });
+          }
+        } else {
+          print ('table could not be found for ' + tableId);
+        }
+      },
+      onError: (e) => print("Error searching for table : $e"),
+    );
   }
 }
 

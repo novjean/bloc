@@ -5,12 +5,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 
-import 'chat/chat_home_screen.dart';
-import 'offers_screen.dart';
+import 'experimental/offers_screen.dart';
 import 'home_screen.dart';
-import 'event_screen.dart';
+import 'events/event_screen.dart';
 import 'chat/chat_screen.dart';
-import 'profile_page.dart';
+import 'profile/profile_page.dart';
 
 class MainScreen extends StatefulWidget {
   static const routeName = '/home-screen';

@@ -2,16 +2,14 @@ import 'package:bloc/db/entity/manager_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-import '../db/bloc_repository.dart';
-import '../db/dao/bloc_dao.dart';
-import '../db/entity/bloc_service.dart';
-import '../db/entity/cart_item.dart';
-import '../db/entity/order.dart';
-import '../helpers/firestore_helper.dart';
-import '../utils/manager_utils.dart';
-import '../widgets/manager_service_item.dart';
-import 'manager/price_management_screen.dart';
-import 'manager/tables_management_screen.dart';
+import '../../db/bloc_repository.dart';
+import '../../db/dao/bloc_dao.dart';
+import '../../db/entity/bloc_service.dart';
+import '../../helpers/firestore_helper.dart';
+import '../../utils/manager_utils.dart';
+import '../../widgets/manager_service_item.dart';
+import 'price_management_screen.dart';
+import 'tables_management_screen.dart';
 import 'orders_completed_screen.dart';
 import 'orders_pending_screen.dart';
 

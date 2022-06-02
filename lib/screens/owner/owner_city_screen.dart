@@ -4,16 +4,16 @@ import 'package:bloc/widgets/bloc_item.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-import '../db/dao/bloc_dao.dart';
-import '../db/entity/bloc.dart';
-import '../db/entity/city.dart';
+import '../../db/dao/bloc_dao.dart';
+import '../../db/entity/bloc.dart';
+import '../../db/entity/city.dart';
 
-class CityDetailScreen extends StatelessWidget {
+class OwnerCityScreen extends StatelessWidget {
   static const routeName = '/city-detail';
   BlocDao dao;
   City city;
 
-  CityDetailScreen({key, required this.dao, required this.city})
+  OwnerCityScreen({key, required this.dao, required this.city})
       : super(key: key);
 
   @override

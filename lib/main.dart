@@ -2,7 +2,7 @@ import 'package:bloc/db/bloc_repository.dart';
 import 'package:bloc/db/dao/bloc_dao.dart';
 import 'package:bloc/db/entity/user.dart' as blocUser;
 import 'package:bloc/helpers/firestore_helper.dart';
-import 'package:bloc/screens/owner_screen.dart';
+import 'package:bloc/screens/owner/owner_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -16,7 +16,7 @@ import 'db/shared_preferences/user_preferences.dart';
 import 'providers/cart.dart';
 import 'screens/auth_screen.dart';
 import 'screens/main_screen.dart';
-import 'screens/splash_screen.dart';
+import 'screens/ui/splash_screen.dart';
 import 'utils/const.dart';
 
 var logger = Logger(

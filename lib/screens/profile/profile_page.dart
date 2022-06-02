@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 
-import '../db/dao/bloc_dao.dart';
-import '../db/entity/user.dart' as blocUser;
-import '../db/shared_preferences/user_preferences.dart';
-import '../widgets/profile/numbers_widget.dart';
-import '../widgets/profile_widget.dart';
-import '../widgets/ui/button_widget.dart';
+import '../../db/dao/bloc_dao.dart';
+import '../../db/entity/user.dart' as blocUser;
+import '../../db/shared_preferences/user_preferences.dart';
+import '../../widgets/profile/numbers_widget.dart';
+import '../../widgets/profile_widget.dart';
+import '../../widgets/ui/button_widget.dart';
 import 'edit_profile_page.dart';
 
 import 'package:barcode_widget/barcode_widget.dart';

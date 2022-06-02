@@ -3,16 +3,16 @@ import 'package:bloc/helpers/firestore_helper.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-import '../db/bloc_repository.dart';
-import '../db/dao/bloc_dao.dart';
-import '../utils/bloc_service_utils.dart';
-import '../widgets/bloc_service_item.dart';
+import '../../db/bloc_repository.dart';
+import '../../db/dao/bloc_dao.dart';
+import '../../utils/bloc_service_utils.dart';
+import '../../widgets/bloc_service_item.dart';
 
-class ManagerScreen extends StatelessWidget {
+class ManagerMainScreen extends StatelessWidget {
   static const routeName = '/manager-screen';
   BlocDao dao;
 
-  ManagerScreen({key, required this.dao}) : super(key: key);
+  ManagerMainScreen({key, required this.dao}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

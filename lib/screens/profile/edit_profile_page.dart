@@ -5,15 +5,15 @@ import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 
-import '../db/bloc_repository.dart';
-import '../db/dao/bloc_dao.dart';
-import '../db/entity/user.dart';
-import '../db/shared_preferences/user_preferences.dart';
-import '../helpers/firestorage_helper.dart';
-import '../helpers/firestore_helper.dart';
-import '../widgets/profile_widget.dart';
-import '../widgets/ui/button_widget.dart';
-import '../widgets/ui/textfield_widget.dart';
+import '../../db/bloc_repository.dart';
+import '../../db/dao/bloc_dao.dart';
+import '../../db/entity/user.dart';
+import '../../db/shared_preferences/user_preferences.dart';
+import '../../helpers/firestorage_helper.dart';
+import '../../helpers/firestore_helper.dart';
+import '../../widgets/profile_widget.dart';
+import '../../widgets/ui/button_widget.dart';
+import '../../widgets/ui/textfield_widget.dart';
 
 class EditProfilePage extends StatefulWidget {
   User user;

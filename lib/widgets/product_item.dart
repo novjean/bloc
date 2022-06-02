@@ -9,7 +9,7 @@ import '../db/dao/bloc_dao.dart';
 import '../db/entity/cart_item.dart';
 import '../db/entity/product.dart';
 import '../providers/cart.dart';
-import '../screens/product_detail_screen.dart';
+import '../screens/bloc/product_detail_screen.dart';
 import '../utils/string_utils.dart';
 
 class ProductItem extends StatelessWidget {

@@ -1,6 +1,6 @@
 import 'package:bloc/screens/main_screen.dart';
-import 'package:bloc/screens/manager_screen.dart';
-import 'package:bloc/screens/owner_screen.dart';
+import 'package:bloc/screens/manager/manager_main_screen.dart';
+import 'package:bloc/screens/owner/owner_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -38,7 +38,7 @@ class AppDrawer extends StatelessWidget {
                   onTap: () {
                     Navigator.of(context).push(
                       MaterialPageRoute(
-                          builder: (ctx) => ManagerScreen(dao:dao)),
+                          builder: (ctx) => ManagerMainScreen(dao:dao)),
                     );
                   },
                 )

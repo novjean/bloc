@@ -7,7 +7,7 @@ import '../db/entity/bloc.dart';
 import '../utils/friends.dart';
 import '../widgets/search_card.dart';
 import '../widgets/bloc_slide_item.dart';
-import 'categories.dart';
+import 'experimental/categories.dart';
 import 'experimental/trending.dart';
 
 class HomeScreen extends StatelessWidget {

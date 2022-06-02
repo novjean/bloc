@@ -5,12 +5,12 @@ import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
 
-import '../db/dao/bloc_dao.dart';
-import '../db/entity/bloc_service.dart';
-import '../db/entity/cart_item.dart';
-import '../providers/cart.dart' show Cart;
-import '../widgets/cart_block.dart';
-import '../widgets/ui/toaster.dart';
+import '../../db/dao/bloc_dao.dart';
+import '../../db/entity/bloc_service.dart';
+import '../../db/entity/cart_item.dart';
+import '../../providers/cart.dart' show Cart;
+import '../../widgets/cart_block.dart';
+import '../../widgets/ui/toaster.dart';
 
 class CartScreen extends StatelessWidget {
   static const routeName = '/cart';

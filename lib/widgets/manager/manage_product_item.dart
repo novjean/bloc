@@ -8,7 +8,7 @@ import 'package:provider/provider.dart';
 import '../../db/dao/bloc_dao.dart';
 import '../../db/entity/product.dart';
 import '../../providers/cart.dart';
-import '../../screens/product_detail_screen.dart';
+import '../../screens/bloc/product_detail_screen.dart';
 
 class ManageProductItem extends StatelessWidget {
   final Product product;

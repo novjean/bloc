@@ -1,4 +1,4 @@
-import 'package:bloc/screens/city_detail_screen.dart';
+import 'package:bloc/screens/owner/owner_city_screen.dart';
 import 'package:flutter/material.dart';
 
 import '../db/dao/bloc_dao.dart';
@@ -20,7 +20,7 @@ class CityItem extends StatelessWidget {
           onTap: () {
             Navigator.of(context).push(
               MaterialPageRoute(
-                  builder: (ctx) => CityDetailScreen(dao: dao, city: city)),
+                  builder: (ctx) => OwnerCityScreen(dao: dao, city: city)),
             );
           },
           child: Hero(

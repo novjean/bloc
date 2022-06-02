@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../db/entity/product.dart';
+import '../../db/entity/product.dart';
 
 class ProductDetailScreen extends StatelessWidget {
   static const routeName = '/product-detail';

@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../db/dao/bloc_dao.dart';
 import '../db/entity/bloc_service.dart';
-import '../screens/bloc_service_detail_screen.dart';
-import '../screens/manager_bloc_service_screen.dart';
+import '../screens/bloc/bloc_service_detail_screen.dart';
+import '../screens/manager/manager_bloc_service_screen.dart';
 
 class BlocServiceItem extends StatelessWidget {
   final Key key;

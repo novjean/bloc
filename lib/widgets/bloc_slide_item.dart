@@ -3,7 +3,7 @@ import 'package:bloc/main.dart';
 import 'package:flutter/material.dart';
 
 import '../db/entity/bloc.dart';
-import '../screens/bloc_detail_screen.dart';
+import '../screens/bloc/bloc_detail_screen.dart';
 import '../utils/const.dart';
 
 class BlocSlideItem extends StatefulWidget {

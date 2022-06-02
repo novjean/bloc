@@ -6,7 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 
-import '../db/entity/city.dart';
+import '../../db/entity/city.dart';
 
 class OwnerScreen extends StatelessWidget {
   static const routeName = '/owner-screen';

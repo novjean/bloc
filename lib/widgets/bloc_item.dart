@@ -1,4 +1,4 @@
-import 'package:bloc/screens/bloc_detail_screen.dart';
+import 'package:bloc/screens/bloc/bloc_detail_screen.dart';
 import 'package:bloc/screens/forms/edit_bloc_screen.dart';
 import 'package:flutter/material.dart';
 

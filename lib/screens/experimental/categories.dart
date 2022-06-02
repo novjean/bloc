@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../utils/categories.dart';
+import '../../utils/categories.dart';
 
 class Categories extends StatefulWidget {
   @override
