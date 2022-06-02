@@ -94,7 +94,7 @@ class FirestoreHelper {
   }
 
   /** Category **/
-  static Stream<QuerySnapshot<Object?>> getCategorySnapshot(String serviceId) {
+  static Stream<QuerySnapshot<Object?>> getCategories(String serviceId) {
     return FirebaseFirestore.instance
         .collection(CATEGORIES)
         .where('serviceId', isEqualTo: serviceId)

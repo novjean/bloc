@@ -150,7 +150,7 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen> {
   /** Categories List **/
   buildServiceCategories(BuildContext context) {
     final Stream<QuerySnapshot> _catsStream =
-        FirestoreHelper.getCategorySnapshot(widget.service.id);
+        FirestoreHelper.getCategories(widget.service.id);
 
     return StreamBuilder<QuerySnapshot>(
       stream: _catsStream,

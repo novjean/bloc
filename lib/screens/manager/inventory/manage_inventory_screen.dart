@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import '../../../db/dao/bloc_dao.dart';
 import '../../../db/entity/manager_service.dart';
 import '../../../helpers/firestore_helper.dart';
+import 'manage_category_screen.dart';
 
 class ManageInventoryScreen extends StatelessWidget{
   String serviceId;
@@ -90,11 +91,11 @@ class ManageInventoryScreen extends StatelessWidget{
                             dao: dao)));
                     print('manage inventory screen selected.');
                   } else {
-                    // Navigator.of(context).push(MaterialPageRoute(
-                    //     builder: (ctx) => ManageCategoryScreen(
-                    //         serviceId: serviceId,
-                    //         managerService: managerService,
-                    //         dao: dao)));
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (ctx) => ManageCategoryScreen(
+                            serviceId: serviceId,
+                            // managerService: managerService,
+                            dao: dao)));
                     print('manage category screen selected.');
                   }
                 });
