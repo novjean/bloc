@@ -9,16 +9,15 @@ import '../../../utils/product_utils.dart';
 import '../../../widgets/manager/manage_product_item.dart';
 import '../../../widgets/product_item.dart';
 
-class ManagePriceScreen extends StatefulWidget{
+class ManagePriceScreen extends StatefulWidget {
   String serviceId;
   BlocDao dao;
   ManagerService managerService;
 
-
   ManagePriceScreen(
       {required this.serviceId,
-        required this.dao,
-        required this.managerService});
+      required this.dao,
+      required this.managerService});
 
   @override
   State<ManagePriceScreen> createState() => _ManagePriceScreenState();
@@ -160,7 +159,7 @@ class _ManagePriceScreenState extends State<ManagePriceScreen> {
               Product product = products[index];
 
               return ManageProductItem(
-                serviceId : widget.serviceId,
+                serviceId: widget.serviceId,
                 product: product,
                 dao: widget.dao,
               );

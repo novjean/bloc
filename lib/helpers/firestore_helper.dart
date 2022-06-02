@@ -20,6 +20,7 @@ class FirestoreHelper {
   static String CATEGORIES = 'categories';
   static String CART_ITEMS = 'cart_items';
   static String CITIES = 'cities';
+  static String INVENTORY_OPTIONS = 'inventory_options';
   static String MANAGER_SERVICES = 'manager_services';
   static String PRODUCTS = 'products';
   static String SERVICES = 'services';
@@ -243,14 +244,6 @@ class FirestoreHelper {
   }
 
   /** Seats **/
-  // static Stream<QuerySnapshot<Object?>> getSeatsSnapshotByTableNumber(
-  //     int tableNumber) {
-  //   return FirebaseFirestore.instance
-  //       .collection(SEATS)
-  //       .where('tableNumber', isEqualTo: tableNumber)
-  //       .snapshots();
-  // }
-
   static Stream<QuerySnapshot<Object?>> getSeatsByTableId(String tableId) {
     return FirebaseFirestore.instance
         .collection(SEATS)
@@ -300,6 +293,14 @@ class FirestoreHelper {
         .collection(SEATS)
         .where('serviceId', isEqualTo: serviceId)
         .where('custId', isEqualTo: custId)
+        .snapshots();
+  }
+
+  /** Inventory Options **/
+  static Stream<QuerySnapshot<Object?>> getInventoryOptions() {
+    return FirebaseFirestore.instance
+        .collection(INVENTORY_OPTIONS)
+        .orderBy('sequence', descending: true)
         .snapshots();
   }
 }
