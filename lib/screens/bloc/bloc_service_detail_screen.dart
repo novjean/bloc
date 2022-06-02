@@ -197,8 +197,7 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen> {
                   setState(() {
                     _categorySelected = index;
                   });
-                  Toaster.shortToast(
-                      "Category index : " + index.toString());
+                  Toaster.shortToast("Category index : " + index.toString());
                   displayProductsList(context, index);
                 });
           }),
@@ -320,12 +319,12 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen> {
         .where('id', isEqualTo: tableId)
         .get()
         .then(
-          (result) {
+      (result) {
         if (result.docs.isNotEmpty) {
           for (int i = 0; i < result.docs.length; i++) {
             DocumentSnapshot document = result.docs[i];
             Map<String, dynamic> data =
-            document.data()! as Map<String, dynamic>;
+                document.data()! as Map<String, dynamic>;
             final ServiceTable _table = ServiceTable.fromJson(data);
 
             setState(() {
@@ -333,11 +332,10 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen> {
             });
           }
         } else {
-          print ('table could not be found for ' + tableId);
+          print('table could not be found for ' + tableId);
         }
       },
       onError: (e) => print("Error searching for table : $e"),
     );
   }
 }
-

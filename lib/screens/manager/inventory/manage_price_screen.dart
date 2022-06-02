@@ -1,30 +1,30 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-import '../../db/bloc_repository.dart';
-import '../../db/dao/bloc_dao.dart';
-import '../../db/entity/manager_service.dart';
-import '../../db/entity/product.dart';
-import '../../utils/product_utils.dart';
-import '../../widgets/manager/manage_product_item.dart';
-import '../../widgets/product_item.dart';
+import '../../../db/bloc_repository.dart';
+import '../../../db/dao/bloc_dao.dart';
+import '../../../db/entity/manager_service.dart';
+import '../../../db/entity/product.dart';
+import '../../../utils/product_utils.dart';
+import '../../../widgets/manager/manage_product_item.dart';
+import '../../../widgets/product_item.dart';
 
-class PriceManagementScreen extends StatefulWidget{
+class ManagePriceScreen extends StatefulWidget{
   String serviceId;
   BlocDao dao;
   ManagerService managerService;
 
 
-  PriceManagementScreen(
+  ManagePriceScreen(
       {required this.serviceId,
         required this.dao,
         required this.managerService});
 
   @override
-  State<PriceManagementScreen> createState() => _PriceManagementScreenState();
+  State<ManagePriceScreen> createState() => _ManagePriceScreenState();
 }
 
-class _PriceManagementScreenState extends State<PriceManagementScreen> {
+class _ManagePriceScreenState extends State<ManagePriceScreen> {
   late Future<List<Product>> fProducts;
   var _categorySelected = 0;
   var _isInit = true;

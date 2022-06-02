@@ -8,7 +8,7 @@ import '../../db/entity/bloc_service.dart';
 import '../../helpers/firestore_helper.dart';
 import '../../utils/manager_utils.dart';
 import '../../widgets/manager_service_item.dart';
-import 'price_management_screen.dart';
+import 'inventory/manage_price_screen.dart';
 import 'tables_management_screen.dart';
 import 'orders_completed_screen.dart';
 import 'orders_pending_screen.dart';
@@ -136,7 +136,7 @@ class ManagerBlocServiceScreen extends StatelessWidget {
                           case 3:
                             {
                               Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (ctx) => PriceManagementScreen(
+                                  builder: (ctx) => ManagePriceScreen(
                                       serviceId: serviceId,
                                       managerService: managerService,
                                       dao: dao)));

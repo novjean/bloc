@@ -96,8 +96,8 @@ class FirestoreHelper {
   static Stream<QuerySnapshot<Object?>> getCategorySnapshot(String serviceId) {
     return FirebaseFirestore.instance
         .collection(CATEGORIES)
-        // .orderBy('sequence', descending: true)
         .where('serviceId', isEqualTo: serviceId)
+        .orderBy('sequence', descending: false)
         .snapshots();
   }
 
