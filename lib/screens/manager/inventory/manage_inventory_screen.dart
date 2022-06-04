@@ -83,20 +83,22 @@ class ManageInventoryScreen extends StatelessWidget{
                 onTap: () {
                   InventoryOption _sInvOption = _invOptions[index];
 
-                  if(_sInvOption.title.contains('Price')){
+                  if(_sInvOption.title.contains('Products')){
                     Navigator.of(context).push(MaterialPageRoute(
                         builder: (ctx) => ManagePriceScreen(
                             serviceId: serviceId,
                             managerService: managerService,
                             dao: dao)));
                     print('manage inventory screen selected.');
-                  } else {
+                  } else if(_sInvOption.title.contains('Categories')) {
                     Navigator.of(context).push(MaterialPageRoute(
                         builder: (ctx) => ManageCategoryScreen(
                             serviceId: serviceId,
                             // managerService: managerService,
                             dao: dao)));
                     print('manage category screen selected.');
+                  } else {
+                    print('Undefined inventory option!');
                   }
                 });
           }),

@@ -35,6 +35,7 @@ class BlocServiceDetailScreen extends StatefulWidget {
 
 class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen> {
   late Future<List<Product>> fProducts;
+  late Category _sCategory;
   var _categorySelected = 0;
   var _mTableNumber = 0;
   var _mTable;
@@ -86,46 +87,46 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen> {
           ),
         ],
       ),
-      floatingActionButton: ExpandableFab(
-        distance: 112.0,
-        children: [
-          ActionButton(
-            onPressed: () => {
-              // _showAction(context, 0)
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                    builder: (ctx) => CartScreen(
-                        service: widget.service,
-                        dao: widget.dao,
-                        tableNumber: _mTableNumber)),
-              ),
-            },
-            icon: const Icon(Icons.shopping_cart_outlined),
-          ),
-          ActionButton(
-            onPressed: () => {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                    builder: (ctx) => NewProductScreen(
-                        service: widget.service, dao: widget.dao)),
-              ),
-            },
-            icon: const Icon(Icons.fastfood),
-          ),
-          ActionButton(
-            onPressed: () => {
-              // _showAction(context, 2),
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                    builder: (ctx) => NewServiceCategoryScreen(
-                        service: widget.service, dao: widget.dao)),
-              ),
-            },
-            icon: const Icon(Icons.category_outlined),
-          ),
-        ],
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+      // floatingActionButton: ExpandableFab(
+      //   distance: 112.0,
+      //   children: [
+      //     ActionButton(
+      //       onPressed: () => {
+      //         // _showAction(context, 0)
+      //         Navigator.of(context).push(
+      //           MaterialPageRoute(
+      //               builder: (ctx) => CartScreen(
+      //                   service: widget.service,
+      //                   dao: widget.dao,
+      //                   tableNumber: _mTableNumber)),
+      //         ),
+      //       },
+      //       icon: const Icon(Icons.shopping_cart_outlined),
+      //     ),
+      //     ActionButton(
+      //       onPressed: () => {
+      //         Navigator.of(context).push(
+      //           MaterialPageRoute(
+      //               builder: (ctx) => NewProductScreen(
+      //                   service: widget.service, dao: widget.dao)),
+      //         ),
+      //       },
+      //       icon: const Icon(Icons.fastfood),
+      //     ),
+      //     ActionButton(
+      //       onPressed: () => {
+      //         // _showAction(context, 2),
+      //         // Navigator.of(context).push(
+      //         //   MaterialPageRoute(
+      //         //       builder: (ctx) => NewServiceCategoryScreen(
+      //         //           service: widget.service, dao: widget.dao)),
+      //         // ),
+      //       },
+      //       icon: const Icon(Icons.category_outlined),
+      //     ),
+      //   ],
+      // ),
+      // floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       body: _buildBody(context, widget.service),
     );
   }
@@ -195,10 +196,11 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen> {
                 ),
                 onTap: () {
                   setState(() {
+                    _sCategory = categories[index];
                     _categorySelected = index;
                   });
-                  Toaster.shortToast("Category index : " + index.toString());
-                  displayProductsList(context, index);
+                  print(_sCategory.name + ' category is selected');
+                  displayProductsList(context, categories[index].id);
                 });
           }),
     );
@@ -234,7 +236,7 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen> {
 
           if (i == snapshot.data!.docs.length - 1) {
             // return ProductsGrid(products, dao);
-            return displayProductsList(context, -1);
+            return displayProductsList(context,'');
           }
         }
         return Text('Streaming service products...');
@@ -242,7 +244,7 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen> {
     );
   }
 
-  displayProductsList(BuildContext context, int category) {
+  displayProductsList(BuildContext context, String categoryId) {
     if (_categorySelected == 0) {
       fProducts = BlocRepository.getProductsByCategory(widget.dao, "Food");
     } else {

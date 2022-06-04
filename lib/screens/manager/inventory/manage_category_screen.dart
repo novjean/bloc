@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 
 import '../../../db/dao/bloc_dao.dart';
 import '../../../helpers/firestore_helper.dart';
+import '../../forms/new_service_category_screen.dart';
 
 class ManageCategoryScreen extends StatelessWidget {
   String serviceId;
@@ -21,7 +22,25 @@ class ManageCategoryScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Inventory | Category'),
       ),
-      // drawer: AppDrawer(),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+                builder: (ctx) => NewServiceCategoryScreen(
+                    serviceId: serviceId, dao: dao)),
+          );
+        },
+        child: Icon(
+          Icons.add,
+          color: Colors.black,
+          size: 29,
+        ),
+        backgroundColor: Theme.of(context).primaryColor,
+        tooltip: 'New Bloc',
+        elevation: 5,
+        splashColor: Colors.grey,
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       body: _buildBody(context),
     );
   }

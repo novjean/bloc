@@ -55,25 +55,7 @@ class _ManagePriceScreenState extends State<ManagePriceScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(widget.managerService.name)),
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: () {
-      //     Navigator.of(context).push(
-      //       MaterialPageRoute(
-      //           builder: (ctx) => NewServiceTableScreen(serviceId: serviceId)),
-      //     );
-      //   },
-      //   child: Icon(
-      //     Icons.add,
-      //     color: Colors.black,
-      //     size: 29,
-      //   ),
-      //   backgroundColor: Theme.of(context).primaryColor,
-      //   tooltip: 'New Bloc',
-      //   elevation: 5,
-      //   splashColor: Colors.grey,
-      // ),
-      // floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+      appBar: AppBar(title: Text('Inventory | Products')),
       body: _buildBody(context, widget.managerService),
     );
   }

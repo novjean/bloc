@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:bloc/db/entity/bloc_service.dart';
+import 'package:bloc/helpers/firestore_helper.dart';
 import 'package:bloc/utils/string_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -14,10 +14,10 @@ import '../../widgets/bloc/new_service_category_form.dart';
 
 class NewServiceCategoryScreen extends StatefulWidget {
   static const routeName = '/new-service-category-screen';
-  BlocService service;
+  String serviceId;
   BlocDao dao;
 
-  NewServiceCategoryScreen({key, required this.service, required this.dao}) : super(key: key);
+  NewServiceCategoryScreen({key, required this.serviceId, required this.dao}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _NewServiceCategoryScreenState();
@@ -31,11 +31,11 @@ class _NewServiceCategoryScreenState extends State<NewServiceCategoryScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.service.name + ' : Category Form'),
+        title: Text('Category | Add'),
       ),
       // drawer: AppDrawer(),
       body: NewServiceCategoryForm(
-        _submitNewServiceCategoryForm, widget.service.id, widget.dao,  _isLoading,
+        _submitNewServiceCategoryForm, widget.serviceId, widget.dao,  _isLoading,
         // _isLoading,
       ),
     );
@@ -56,8 +56,6 @@ class _NewServiceCategoryScreenState extends State<NewServiceCategoryScreen> {
         _isLoading = true;
       });
 
-      var time = Timestamp.now().toString();
-
       //determine the bloc identifier
       String catId = StringUtils.getRandomString(20);
 
@@ -69,20 +67,20 @@ class _NewServiceCategoryScreenState extends State<NewServiceCategoryScreen> {
       await ref.putFile(image);
       final url = await ref.getDownloadURL();
 
-      await FirebaseFirestore.instance.collection('categories').doc(catId).set({
+      FirebaseFirestore.instance.collection(FirestoreHelper.CATEGORIES).doc(catId).set({
         'id': catId,
         'name': catName,
-        'serviceId':widget.service.id,
+        'serviceId':widget.serviceId,
         'type': catType,
         'imageUrl': url,
         'ownerId': user!.uid,
-        'createdAt': time,
+        'createdAt': Timestamp.now().millisecondsSinceEpoch,
         'sequence': int.parse(sequence),
       });
 
       Scaffold.of(ctx).showSnackBar(
         SnackBar(
-          content: Text(catName + " is added to BLOC Service " + widget.service.name),
+          content: Text(catName + " is successfully added."),
           backgroundColor: Theme.of(ctx).errorColor,
         ),
       );
