@@ -41,22 +41,10 @@ class ManageCategoryScreen extends StatelessWidget {
         splashColor: Colors.grey,
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-      body: _buildBody(context),
+      body: _buildCategories(context),
     );
   }
-
-  Widget _buildBody(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          SizedBox(height: 2.0),
-          _buildCategories(context),
-          SizedBox(height: 10.0),
-        ],
-      ),
-    );
-  }
-
+  
   _buildCategories(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
         stream: FirestoreHelper.getCategories(serviceId),
@@ -96,22 +84,6 @@ class ManageCategoryScreen extends StatelessWidget {
                 onTap: () {
                   Category _sCategory = _categories[index];
                   print(_sCategory.name + ' is selected');
-
-                  // if(_sInvOption.title.contains('Price')){
-                  //   Navigator.of(context).push(MaterialPageRoute(
-                  //       builder: (ctx) => ManagePriceScreen(
-                  //           serviceId: serviceId,
-                  //           managerService: managerService,
-                  //           dao: dao)));
-                  //   print('manage inventory screen selected.');
-                  // } else {
-                  //   Navigator.of(context).push(MaterialPageRoute(
-                  //       builder: (ctx) => ManageCategoryScreen(
-                  //           serviceId: serviceId,
-                  //           managerService: managerService,
-                  //           dao: dao)));
-                  //   print('manage category screen selected.');
-                  // }
                 });
           }),
     );

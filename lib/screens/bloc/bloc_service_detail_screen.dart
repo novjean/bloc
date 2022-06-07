@@ -28,9 +28,9 @@ class BlocServiceDetailScreen extends StatefulWidget {
 }
 
 class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen> {
-  late Future<List<Product>> fProducts;
-  late Category _sCategory;
-  var _categorySelected = 0;
+  // late Future<List<Product>> fProducts;
+  // var _categorySelected = 0;
+  String _categoryName = 'Food';
   var _mTableNumber = 0;
   var _mTable;
   var _isInit = true;
@@ -42,17 +42,17 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen> {
       setState(() {
         _isLoading = true;
       });
-      if (_categorySelected == 0) {
-        fProducts = BlocRepository.getProductsByCategory(widget.dao, "Food");
-        setState(() {
-          _isLoading = false;
-        });
-      } else {
-        fProducts = BlocRepository.getProductsByCategory(widget.dao, "Alcohol");
-        setState(() {
-          _isLoading = false;
-        });
-      }
+      // if (_categorySelected == 0) {
+      //   fProducts = BlocRepository.getProductsByCategory(widget.dao, "Food");
+      //   setState(() {
+      //     _isLoading = false;
+      //   });
+      // } else {
+      //   fProducts = BlocRepository.getProductsByCategory(widget.dao, "Alcohol");
+      //   setState(() {
+      //     _isLoading = false;
+      //   });
+      // }
     }
 
     _isInit = false;
@@ -135,7 +135,7 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen> {
           SizedBox(height: 2.0),
           buildServiceCategories(context),
           SizedBox(height: 2.0),
-          buildProducts(context),
+          buildProducts(context, 'Food'),
           SizedBox(height: 10.0),
         ],
       ),
@@ -190,25 +190,21 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen> {
                 ),
                 onTap: () {
                   setState(() {
-                    _sCategory = categories[index];
-                    _categorySelected = index;
+                    // _sCategory = categories[index];
+                    _categoryName = categories[index].name;
+                    print(_categoryName + ' category is selected');
                   });
-                  print(_sCategory.name + ' category is selected');
-                  displayProductsList(context, categories[index].id);
+                  // displayProductsList(context, categories[index].id);
                 });
           }),
     );
   }
 
   /** Items List **/
-  buildProducts(BuildContext context) {
-    final Stream<QuerySnapshot> _itemsStream = FirebaseFirestore.instance
-        .collection('products')
-        .where('serviceId', isEqualTo: widget.service.id)
-        .snapshots();
-
+  buildProducts(BuildContext context, String category) {
     return StreamBuilder<QuerySnapshot>(
-      stream: _itemsStream,
+      stream: FirestoreHelper.getProductsByCategory(
+          widget.service.id, _categoryName),
       builder: (ctx, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(
@@ -229,49 +225,118 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen> {
           products.add(product);
 
           if (i == snapshot.data!.docs.length - 1) {
-            // return ProductsGrid(products, dao);
-            return displayProductsList(context,'');
+            return _displayProductsList(context, products);
           }
         }
-        return Text('Streaming service products...');
+        return Center(child: Text('No products found!'));
       },
     );
   }
 
-  displayProductsList(BuildContext context, String categoryId) {
-    if (_categorySelected == 0) {
-      fProducts = BlocRepository.getProductsByCategory(widget.dao, "Food");
-    } else {
-      fProducts = BlocRepository.getProductsByCategory(widget.dao, "Alcohol");
-    }
+  _displayProductsList(BuildContext context, List<Product> _products) {
+    return Container(
+      height: MediaQuery.of(context).size.height,
+      child: ListView.builder(
+          itemCount: _products.length,
+          scrollDirection: Axis.vertical,
+          itemBuilder: (ctx, index) {
+            return GestureDetector(
+                child: ProductItem(
+                    serviceId: widget.service.id,
+                    product: _products[index],
+                    dao: widget.dao,
+                    tableNumber: _mTableNumber),
+                onTap: () {
+                  Product _sProduct = _products[index];
+                  print(_sProduct.name + ' is selected');
 
-    return FutureBuilder(
-        future: fProducts,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-          List<Product> products = snapshot.data! as List<Product>;
+                  // if(_sInvOption.title.contains('Price')){
+                  //   Navigator.of(context).push(MaterialPageRoute(
+                  //       builder: (ctx) => ManagePriceScreen(
+                  //           serviceId: serviceId,
+                  //           managerService: managerService,
+                  //           dao: dao)));
+                  //   print('manage inventory screen selected.');
+                  // } else {
+                  //   Navigator.of(context).push(MaterialPageRoute(
+                  //       builder: (ctx) => ManageCategoryScreen(
+                  //           serviceId: serviceId,
+                  //           managerService: managerService,
+                  //           dao: dao)));
+                  //   print('manage category screen selected.');
+                  // }
+                });
+          }),
+    );
 
-          return ListView.builder(
-            primary: false,
-            scrollDirection: Axis.vertical,
-            shrinkWrap: true,
-            itemCount: products == null ? 0 : products.length,
-            itemBuilder: (BuildContext ctx, int index) {
-              Product product = products[index];
-
-              return ProductItem(
-                  serviceId: widget.service.id,
-                  product: product,
-                  dao: widget.dao,
-                  tableNumber: _mTableNumber);
-            },
-          );
-        });
+    // if (_categorySelected == 0) {
+    //   fProducts = BlocRepository.getProductsByCategory(widget.dao, "Food");
+    // } else {
+    //   fProducts = BlocRepository.getProductsByCategory(widget.dao, "Alcohol");
+    // }
+    //
+    // return FutureBuilder(
+    //     future: fProducts,
+    //     builder: (context, snapshot) {
+    //       if (snapshot.connectionState == ConnectionState.waiting) {
+    //         return const Center(
+    //           child: CircularProgressIndicator(),
+    //         );
+    //       }
+    //       List<Product> products = snapshot.data! as List<Product>;
+    //
+    //       return ListView.builder(
+    //         primary: false,
+    //         scrollDirection: Axis.vertical,
+    //         shrinkWrap: true,
+    //         itemCount: products == null ? 0 : products.length,
+    //         itemBuilder: (BuildContext ctx, int index) {
+    //           Product product = products[index];
+    //
+    //           return ProductItem(
+    //               serviceId: widget.service.id,
+    //               product: product,
+    //               dao: widget.dao,
+    //               tableNumber: _mTableNumber);
+    //         },
+    //       );
+    //     });
   }
+
+  // displayProductsList(BuildContext context, String categoryId) {
+  //   if (_categorySelected == 0) {
+  //     fProducts = BlocRepository.getProductsByCategory(widget.dao, "Food");
+  //   } else {
+  //     fProducts = BlocRepository.getProductsByCategory(widget.dao, "Alcohol");
+  //   }
+  //
+  //   return FutureBuilder(
+  //       future: fProducts,
+  //       builder: (context, snapshot) {
+  //         if (snapshot.connectionState == ConnectionState.waiting) {
+  //           return const Center(
+  //             child: CircularProgressIndicator(),
+  //           );
+  //         }
+  //         List<Product> products = snapshot.data! as List<Product>;
+  //
+  //         return ListView.builder(
+  //           primary: false,
+  //           scrollDirection: Axis.vertical,
+  //           shrinkWrap: true,
+  //           itemCount: products == null ? 0 : products.length,
+  //           itemBuilder: (BuildContext ctx, int index) {
+  //             Product product = products[index];
+  //
+  //             return ProductItem(
+  //                 serviceId: widget.service.id,
+  //                 product: product,
+  //                 dao: widget.dao,
+  //                 tableNumber: _mTableNumber);
+  //           },
+  //         );
+  //       });
+  // }
 
   _searchTableNumber(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser;

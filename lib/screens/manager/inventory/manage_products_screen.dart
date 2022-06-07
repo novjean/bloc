@@ -13,9 +13,10 @@ class ManageProductsScreen extends StatelessWidget {
   BlocDao dao;
   ManagerService managerService;
 
-  ManageProductsScreen({required this.serviceId,
-    required this.dao,
-    required this.managerService});
+  ManageProductsScreen(
+      {required this.serviceId,
+      required this.dao,
+      required this.managerService});
 
   @override
   Widget build(BuildContext context) {
@@ -27,8 +28,8 @@ class ManageProductsScreen extends StatelessWidget {
         onPressed: () {
           Navigator.of(context).push(
             MaterialPageRoute(
-                builder: (ctx) => NewProductScreen(
-                    serviceId: serviceId, dao: dao)),
+                builder: (ctx) =>
+                    NewProductScreen(serviceId: serviceId, dao: dao)),
           );
         },
         child: Icon(

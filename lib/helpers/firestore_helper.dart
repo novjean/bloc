@@ -188,6 +188,16 @@ class FirestoreHelper {
         .snapshots();
   }
 
+  static getProductsByCategory(String serviceId, String _category) {
+    return FirebaseFirestore.instance
+        .collection(PRODUCTS)
+        .where('serviceId', isEqualTo: serviceId)
+        .where('category', isEqualTo: _category)
+
+    // .orderBy('sequence', descending: false)
+        .snapshots();
+  }
+
   static void updateProduct(String productId, File image) async {
     try {
       final url = await FirestorageHelper.uploadFile(
@@ -311,5 +321,34 @@ class FirestoreHelper {
         .orderBy('sequence', descending: true)
         .snapshots();
   }
+
+
+  /** Reference **/
+  // _buildProducts(BuildContext context, String _category) {
+  //   FirebaseFirestore.instance
+  //       .collection(FirestoreHelper.PRODUCTS)
+  //       .where('serviceId', isEqualTo: widget.service.id)
+  //       .where('category', isEqualTo: _category)
+  //       .get()
+  //       .then(
+  //         (res) {
+  //       print("Successfully completed");
+  //       List<Product> products = [];
+  //       for (int i = 0; i < res.docs.length; i++) {
+  //         DocumentSnapshot document = res.docs[i];
+  //         Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+  //         final Product product = Product.fromMap(data);
+  //         BlocRepository.insertProduct(widget.dao, product);
+  //         products.add(product);
+  //
+  //         if (i == res.docs.length - 1) {
+  //           // _displayProductsList(context, products);
+  //         }
+  //       }
+  //     },
+  //     onError: (e) => print("Error completing: $e"),
+  //   );
+  // }
+
 
 }
