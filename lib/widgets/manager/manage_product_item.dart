@@ -93,8 +93,7 @@ class ManageProductItem extends StatelessWidget {
                                   Navigator.of(context).push(
                                     MaterialPageRoute(builder: (ctx) => EditProductScreen(product: product)),
                                   );
-                                  Toaster.shortToast(
-                                      product.name + ' is clicked to be modified.');
+                                  print(product.name + ' is clicked to be modified.');
                                 },
                               ),
                             ),
@@ -102,8 +101,7 @@ class ManageProductItem extends StatelessWidget {
                               icon: Icon(Icons.local_drink_rounded),
                               color: primaryColor,
                               onPressed: () {
-                                Toaster.shortToast(
-                                    product.name + ' is clicked for offer.');
+                                print(product.name + ' is clicked for offer.');
                               },
                             ),
                           ],

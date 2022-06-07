@@ -1,5 +1,4 @@
 import 'package:bloc/db/entity/inventory_option.dart';
-import 'package:bloc/screens/manager/inventory/manage_price_screen.dart';
 import 'package:bloc/widgets/ui/listview_block.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -8,6 +7,7 @@ import '../../../db/dao/bloc_dao.dart';
 import '../../../db/entity/manager_service.dart';
 import '../../../helpers/firestore_helper.dart';
 import 'manage_category_screen.dart';
+import 'manage_products_screen.dart';
 
 class ManageInventoryScreen extends StatelessWidget{
   String serviceId;
@@ -85,7 +85,7 @@ class ManageInventoryScreen extends StatelessWidget{
 
                   if(_sInvOption.title.contains('Products')){
                     Navigator.of(context).push(MaterialPageRoute(
-                        builder: (ctx) => ManagePriceScreen(
+                        builder: (ctx) => ManageProductsScreen(
                             serviceId: serviceId,
                             managerService: managerService,
                             dao: dao)));

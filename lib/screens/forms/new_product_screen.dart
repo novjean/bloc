@@ -17,10 +17,10 @@ import '../../widgets/bloc/new_product_form.dart';
 
 class NewProductScreen extends StatefulWidget {
   static const routeName = '/new-category-item-screen';
-  BlocService service;
+  String serviceId;
   BlocDao dao;
 
-  NewProductScreen({key, required this.service, required this.dao}) : super(key: key);
+  NewProductScreen({key, required this.serviceId, required this.dao}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _NewProductScreenState();
@@ -34,7 +34,7 @@ class _NewProductScreenState extends State<NewProductScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.service.name + ' : New Product Form'),
+        title: Text('Product | Add'),
       ),
       // drawer: AppDrawer(),
       body: _buildBody(context),
@@ -62,7 +62,8 @@ class _NewProductScreenState extends State<NewProductScreen> {
 
   void _submitNewProductForm(
       String productName,
-      String productType,
+      String categoryType,
+      String productCategory,
       String productDescription,
       String productPrice,
       File image,
@@ -92,21 +93,22 @@ class _NewProductScreenState extends State<NewProductScreen> {
       await FirebaseFirestore.instance.collection('products').doc(productId).set({
         'id': productId,
         'name': productName,
-        'type': productType,
+        'type': categoryType,
+        'category' : productCategory,
         'description': productDescription,
         'price': int.parse(productPrice),
-        'serviceId':widget.service.id,
+        'serviceId':widget.serviceId,
         'imageUrl': url,
         'ownerId': user!.uid,
         'createdAt': time,
       });
 
-      Scaffold.of(ctx).showSnackBar(
-        SnackBar(
-          content: Text(productName + " is added to BLOC Service " + widget.service.name),
-          backgroundColor: Theme.of(ctx).errorColor,
-        ),
-      );
+      // Scaffold.of(ctx).showSnackBar(
+      //   SnackBar(
+      //     content: Text(productName + " is added"),
+      //     backgroundColor: Theme.of(ctx).primaryColor,
+      //   ),
+      // );
       Navigator.of(context).pop();
     } on PlatformException catch (err) {
       var message = 'An error occurred, please check your credentials!';

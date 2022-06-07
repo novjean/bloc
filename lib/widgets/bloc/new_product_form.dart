@@ -13,7 +13,8 @@ class NewProductForm extends StatefulWidget{
   final bool isLoading;
   final void Function(
       String productName,
-      String productType,
+      String categoryType,
+      String productCategory,
       String productDescription,
       String productPrice,
       File image,
@@ -31,32 +32,41 @@ class _NewProductFormState extends State<NewProductForm> {
 
   // var _isLogin = true;
   String _productName = '';
-  late String _productType = getFirstCategoryName();
+  late String _productCategory = getFirstCategoryName();
   String _productDescription = '';
   String _productPrice ='';
   late File _userImageFile;
 
-  late final _productTypes = getCategoryTypes();
+  late final _productCategories = getCategoryTypes();
 
   List<String> getCategoryTypes() {
-    List<String> catsList = [];
+    List<String> _categories = [];
     for(Category category in widget.categories){
-      catsList.add(category.name);
+      _categories.add(category.name);
     }
-    return catsList;
+    return _categories;
   }
 
   String getFirstCategoryName() {
     return widget.categories[0].name;
   }
 
+  String _categoryType = 'Alcohol';
+  late final _categoryTypes = _getCategoryTypes();
+  List<String> _getCategoryTypes() {
+    List<String> _categoryTypes = [];
+    _categoryTypes.add('Alcohol');
+    _categoryTypes.add('Food');
+    _categoryType = _categoryTypes[0];
+    return _categoryTypes;
+  }
 
   void _pickedImage(File image) {
     _userImageFile = image;
   }
 
-  void _trySubmit() {
-    logger.i('trySubmit called');
+  void _trySubmitNewProduct() {
+    logger.i('_trySubmitNewProduct called');
     // this will trigger validator for all the text fields in the form
     final isValid = _formKey.currentState!.validate();
     FocusScope.of(context).unfocus();
@@ -75,7 +85,8 @@ class _NewProductFormState extends State<NewProductForm> {
       _formKey.currentState!.save();
       widget.submitFn(
         _productName.trim(),
-        _productType.trim(),
+        _categoryType.trim(),
+        _productCategory.trim(),
         _productDescription,
         _productPrice,
         _userImageFile,
@@ -116,31 +127,28 @@ class _NewProductFormState extends State<NewProductForm> {
                     _productName = value!;
                   },
                 ),
-
                 FormField<String>(
                   builder: (FormFieldState<String> state) {
                     return InputDecorator(
-                      key: const ValueKey('bloc_service_type'),
+                      key: const ValueKey('category_type'),
                       decoration: InputDecoration(
-                        // labelStyle: textStyle,
                           errorStyle: TextStyle(
                               color: Colors.redAccent, fontSize: 16.0),
-                          hintText: 'Please select bloc type',
+                          hintText: 'Please select category type',
                           border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(5.0))),
-                      isEmpty: _productType == '',
+                      isEmpty: _categoryType == '',
                       child: DropdownButtonHideUnderline(
                         child: DropdownButton<String>(
-                          value: _productType,
+                          value: _categoryType,
                           isDense: true,
-                          // onChanged: (String? value){},
                           onChanged: (String? newValue) {
                             setState(() {
-                              _productType = newValue!;
+                              _categoryType = newValue!;
                               state.didChange(newValue);
                             });
                           },
-                          items: _productTypes.map((String value) {
+                          items: _categoryTypes.map((String value) {
                             return DropdownMenuItem<String>(
                               value: value,
                               child: Text(value),
@@ -151,26 +159,42 @@ class _NewProductFormState extends State<NewProductForm> {
                     );
                   },
                 ),
+                SizedBox(height: 2.0),
 
-                // TextFormField(
-                //   key: const ValueKey('product_type'),
-                //   autocorrect: false,
-                //   textCapitalization: TextCapitalization.words,
-                //   enableSuggestions: false,
-                //   validator: (value) {
-                //     if (value!.isEmpty) {
-                //       return 'Please enter a valid type of service.';
-                //     }
-                //     return null;
-                //   },
-                //   keyboardType: TextInputType.text,
-                //   decoration: const InputDecoration(
-                //     labelText: 'Product Type',
-                //   ),
-                //   onSaved: (value) {
-                //     _productType = value!;
-                //   },
-                // ),
+                FormField<String>(
+                  builder: (FormFieldState<String> state) {
+                    return InputDecorator(
+                      key: const ValueKey('product_category'),
+                      decoration: InputDecoration(
+                          errorStyle: TextStyle(
+                              color: Colors.redAccent, fontSize: 16.0),
+                          hintText: 'Please select product category',
+                          border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(5.0))),
+                      isEmpty: _productCategory == '',
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton<String>(
+                          value: _productCategory,
+                          isDense: true,
+                          onChanged: (String? newValue) {
+                            setState(() {
+                              _productCategory = newValue!;
+                              state.didChange(newValue);
+                            });
+                          },
+                          items: _productCategories.map((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(value),
+                            );
+                          }).toList(),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+                SizedBox(height: 2.0),
+
 
                 TextFormField(
                   key: const ValueKey('product_description'),
@@ -219,7 +243,7 @@ class _NewProductFormState extends State<NewProductForm> {
                 if (!widget.isLoading)
                   RaisedButton(
                     child: const Text('Save'),
-                    onPressed: _trySubmit,
+                    onPressed: _trySubmitNewProduct,
                   ),
                 if (!widget.isLoading)
                   FlatButton(

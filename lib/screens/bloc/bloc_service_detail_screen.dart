@@ -2,7 +2,6 @@ import 'package:bloc/db/entity/bloc_service.dart';
 import 'package:bloc/db/entity/service_table.dart';
 import 'package:bloc/helpers/firestore_helper.dart';
 import 'package:bloc/widgets/table_card_item.dart';
-import 'package:bloc/widgets/ui/cover_photo.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -12,13 +11,8 @@ import '../../db/dao/bloc_dao.dart';
 import '../../db/entity/category.dart';
 import '../../db/entity/product.dart';
 import '../../db/entity/seat.dart';
-import '../../utils/product_utils.dart';
 import '../../widgets/category_item.dart';
 import '../../widgets/product_item.dart';
-import '../../widgets/ui/toaster.dart';
-import '../../widgets/ui/expandable_fab.dart';
-import '../forms/new_product_screen.dart';
-import '../forms/new_service_category_screen.dart';
 import 'cart_screen.dart';
 
 class BlocServiceDetailScreen extends StatefulWidget {
@@ -230,7 +224,7 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen> {
         for (int i = 0; i < snapshot.data!.docs.length; i++) {
           DocumentSnapshot document = snapshot.data!.docs[i];
           Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-          final Product product = ProductUtils.getProduct(data, document.id);
+          final Product product = Product.fromMap(data);
           BlocRepository.insertProduct(widget.dao, product);
           products.add(product);
 

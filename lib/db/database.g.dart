@@ -92,7 +92,7 @@ class _$AppDatabase extends AppDatabase {
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `City` (`id` TEXT NOT NULL, `name` TEXT NOT NULL, `ownerId` TEXT NOT NULL, `imageUrl` TEXT NOT NULL, PRIMARY KEY (`id`))');
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `Product` (`id` TEXT NOT NULL, `name` TEXT NOT NULL, `type` TEXT NOT NULL, `description` TEXT NOT NULL, `price` INTEGER NOT NULL, `serviceId` TEXT NOT NULL, `imageUrl` TEXT NOT NULL, `ownerId` TEXT NOT NULL, `createdAt` TEXT NOT NULL, PRIMARY KEY (`id`))');
+            'CREATE TABLE IF NOT EXISTS `Product` (`id` TEXT NOT NULL, `name` TEXT NOT NULL, `type` TEXT NOT NULL, `category` TEXT NOT NULL, `description` TEXT NOT NULL, `price` INTEGER NOT NULL, `serviceId` TEXT NOT NULL, `imageUrl` TEXT NOT NULL, `ownerId` TEXT NOT NULL, `createdAt` TEXT NOT NULL, PRIMARY KEY (`id`))');
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `User` (`userId` TEXT NOT NULL, `username` TEXT NOT NULL, `email` TEXT NOT NULL, `imageUrl` TEXT NOT NULL, `clearanceLevel` INTEGER NOT NULL, `phoneNumber` INTEGER NOT NULL, `name` TEXT NOT NULL, PRIMARY KEY (`userId`))');
         await database.execute(
@@ -204,6 +204,7 @@ class _$BlocDao extends BlocDao {
                   'id': item.id,
                   'name': item.name,
                   'type': item.type,
+                  'category': item.category,
                   'description': item.description,
                   'price': item.price,
                   'serviceId': item.serviceId,
@@ -416,30 +417,32 @@ class _$BlocDao extends BlocDao {
   Future<List<Product>> getProducts() async {
     return _queryAdapter.queryList('SELECT * FROM Product',
         mapper: (Map<String, Object?> row) => Product(
-            row['id'] as String,
-            row['name'] as String,
-            row['type'] as String,
-            row['description'] as String,
-            row['price'] as int,
-            row['serviceId'] as String,
-            row['imageUrl'] as String,
-            row['ownerId'] as String,
-            row['createdAt'] as String));
+            id: row['id'] as String,
+            name: row['name'] as String,
+            type: row['type'] as String,
+            category: row['category'] as String,
+            description: row['description'] as String,
+            price: row['price'] as int,
+            serviceId: row['serviceId'] as String,
+            imageUrl: row['imageUrl'] as String,
+            ownerId: row['ownerId'] as String,
+            createdAt: row['createdAt'] as String));
   }
 
   @override
   Future<List<Product>> getProductsByCategory(String catType) async {
     return _queryAdapter.queryList('SELECT * FROM Product where type=?1',
         mapper: (Map<String, Object?> row) => Product(
-            row['id'] as String,
-            row['name'] as String,
-            row['type'] as String,
-            row['description'] as String,
-            row['price'] as int,
-            row['serviceId'] as String,
-            row['imageUrl'] as String,
-            row['ownerId'] as String,
-            row['createdAt'] as String),
+            id: row['id'] as String,
+            name: row['name'] as String,
+            type: row['type'] as String,
+            category: row['category'] as String,
+            description: row['description'] as String,
+            price: row['price'] as int,
+            serviceId: row['serviceId'] as String,
+            imageUrl: row['imageUrl'] as String,
+            ownerId: row['ownerId'] as String,
+            createdAt: row['createdAt'] as String),
         arguments: [catType]);
   }
 

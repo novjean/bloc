@@ -180,6 +180,14 @@ class FirestoreHelper {
   }
 
   /** Products **/
+  static getProducts(String serviceId) {
+    return FirebaseFirestore.instance
+        .collection(PRODUCTS)
+        .where('serviceId', isEqualTo: serviceId)
+        // .orderBy('sequence', descending: false)
+        .snapshots();
+  }
+
   static void updateProduct(String productId, File image) async {
     try {
       final url = await FirestorageHelper.uploadFile(
@@ -303,4 +311,5 @@ class FirestoreHelper {
         .orderBy('sequence', descending: true)
         .snapshots();
   }
+
 }
