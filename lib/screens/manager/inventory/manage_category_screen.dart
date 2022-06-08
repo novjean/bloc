@@ -44,7 +44,7 @@ class ManageCategoryScreen extends StatelessWidget {
       body: _buildCategories(context),
     );
   }
-  
+
   _buildCategories(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
         stream: FirestoreHelper.getCategories(serviceId),

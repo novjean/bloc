@@ -32,7 +32,7 @@ class _SeatsManagementScreenState extends State<SeatsManagementScreen> {
     return Scaffold(
       appBar: AppBar(
           title: Text(
-              'Table Number : ' + widget.serviceTable.tableNumber.toString())),
+              'Seat Management | Table ' + widget.serviceTable.tableNumber.toString())),
       body: _buildBody(context, widget.serviceTable),
     );
   }
