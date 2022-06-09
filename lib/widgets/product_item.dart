@@ -13,14 +13,24 @@ import '../providers/cart.dart';
 import '../screens/bloc/product_detail_screen.dart';
 import '../utils/string_utils.dart';
 
-class ProductItem extends StatelessWidget {
+class ProductItem extends StatefulWidget {
   final Product product;
   final BlocDao dao;
   final String serviceId;
   final int tableNumber;
+  int addCount = 1;
 
-  ProductItem({required this.serviceId, required this.product, required this.dao, required this.tableNumber});
+  ProductItem(
+      {required this.serviceId,
+      required this.product,
+      required this.dao,
+      required this.tableNumber});
 
+  @override
+  State<ProductItem> createState() => _ProductItemState();
+}
+
+class _ProductItemState extends State<ProductItem> {
   @override
   Widget build(BuildContext context) {
     var logger = Logger();
@@ -34,12 +44,11 @@ class ProductItem extends StatelessWidget {
         onTap: () {
           Navigator.of(context).push(
             MaterialPageRoute(
-                builder: (ctx) => ProductDetailScreen(product: product)),
+                builder: (ctx) => ProductDetailScreen(product: widget.product)),
           );
         },
         child: Hero(
-          tag: product.id,
-          // 'detail_food$index',
+          tag: widget.product.id,
           child: Card(
             child: Row(
               children: <Widget>[
@@ -48,14 +57,16 @@ class ProductItem extends StatelessWidget {
                   width: 100,
                   decoration: BoxDecoration(
                     image: DecorationImage(
-                        image: NetworkImage(product.imageUrl), fit: BoxFit.cover
+                        image: NetworkImage(widget.product.imageUrl),
+                        fit: BoxFit.cover
                         // AssetImage(food['image']),
                         ),
                   ),
                 ),
                 Expanded(
                   child: Padding(
-                    padding: const EdgeInsets.only(left: 9, right: 0, top: 0, bottom: 0),
+                    padding: const EdgeInsets.only(
+                        left: 9, right: 0, top: 0, bottom: 0),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -63,72 +74,95 @@ class ProductItem extends StatelessWidget {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
-                            Text(product.name),
+                            Text(widget.product.name, style: TextStyle(fontSize: 18)),
                             // Icon(Icons.delete_outline)
                           ],
                         ),
-                        Text('\u20B9 ${product.price}'),
+                        SizedBox(height: 2),
+                        Text('\u20B9 ${widget.product.price}'),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: <Widget>[
                             IconButton(
                               icon: Icon(Icons.remove),
                               onPressed: () {
-                                logger.i('remove product from cart.');
+                                setState(() {
+                                  if (widget.addCount > 1) {
+                                    widget.addCount--;
+                                    print('decrement add count to ' +
+                                        widget.addCount.toString());
+                                  } else {
+                                    print('add count is at ' +
+                                        widget.addCount.toString());
+                                  }
+                                });
                               },
                             ),
                             Container(
-                              // color: primaryColor,
-                              margin: const EdgeInsets.symmetric(
-                                horizontal: 1.0,
-                              ),
-                              padding: const EdgeInsets.symmetric(
-                                vertical: 4.0,
-                                horizontal: 2.0,
-                              ),
-                              child: ButtonWidget(text: 'Add', onClicked: () {
-                                // add it to the cart
-                                String id = StringUtils.getRandomString(20);
-                                //todo: this needs to increment
-                                int cartNumber = 0;
-                                final user =
-                                    FirebaseAuth.instance.currentUser;
-                                String userId = user!.uid;
-                                int timestamp = Timestamp.now().millisecondsSinceEpoch;
-                                CartItem cartitem = CartItem(
-                                    id: id,
-                                    serviceId: serviceId,
-                                    tableNumber: tableNumber,
-                                    cartNumber: cartNumber,
-                                    userId: userId,
-                                    productId: product.id,
-                                    productName: product.name,
-                                    productPrice: double.parse(
-                                        product.price.toString()),
-                                    quantity: 1,
-                                    createdAt: timestamp,
-                                    isCompleted: false);
+                                // color: primaryColor,
+                                margin: const EdgeInsets.symmetric(
+                                  horizontal: 1.0,
+                                ),
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 4.0,
+                                  horizontal: 2.0,
+                                ),
+                                child: ButtonWidget(
+                                  text: widget.addCount == 1
+                                      ? 'Add'
+                                      : 'Add ' + widget.addCount.toString(),
+                                  onClicked: () {
+                                    // add it to the cart
+                                    String id = StringUtils.getRandomString(20);
+                                    //todo: this needs to increment
+                                    int cartNumber = 0;
+                                    final user =
+                                        FirebaseAuth.instance.currentUser;
+                                    String userId = user!.uid;
+                                    int timestamp =
+                                        Timestamp.now().millisecondsSinceEpoch;
+                                    CartItem cartitem = CartItem(
+                                        id: id,
+                                        serviceId: widget.serviceId,
+                                        tableNumber: widget.tableNumber,
+                                        cartNumber: cartNumber,
+                                        userId: userId,
+                                        productId: widget.product.id,
+                                        productName: widget.product.name,
+                                        productPrice: double.parse(
+                                            widget.product.price.toString()),
+                                        quantity: widget.addCount,
+                                        createdAt: timestamp,
+                                        isCompleted: false);
 
-                                cart.addItem(
-                                    id,
-                                    serviceId,
-                                    tableNumber,
-                                    cartNumber,
-                                    userId,
-                                    cartitem.productId,
-                                    cartitem.productName,
-                                    cartitem.productPrice,
-                                    cartitem.createdAt, false);
+                                    cart.addItem(
+                                        id,
+                                        widget.serviceId,
+                                        widget.tableNumber,
+                                        cartNumber,
+                                        userId,
+                                        cartitem.productId,
+                                        cartitem.productName,
+                                        cartitem.productPrice,
+                                        cartitem.quantity,
+                                        cartitem.createdAt,
+                                        false);
 
-                                Toaster.shortToast(
-                                    product.name + ' is added to cart.');
-                              },)
-                            ),
+                                    widget.addCount = 1;
+
+                                    Toaster.shortToast(widget.product.name +
+                                        ' is added to cart.');
+                                  },
+                                )),
                             IconButton(
                               icon: Icon(Icons.add),
                               color: primaryColor,
                               onPressed: () {
-                                logger.i('add product to cart.');
+                                setState(() {
+                                  widget.addCount++;
+                                });
+                                print('increment add count to ' +
+                                    widget.addCount.toString());
                               },
                             ),
                           ],

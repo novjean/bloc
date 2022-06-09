@@ -21,7 +21,7 @@ class Cart with ChangeNotifier {
   }
 
   void addItem(String id, String serviceId, int tableNumber, int cartNumber, String userId, String productId,
-      String productName, double productPrice, int timestamp, bool isCompleted) {
+      String productName, double productPrice, int quantity, int timestamp, bool isCompleted) {
     if (_items.containsKey(productId)) {
       // change the quantity
       _items.update(
@@ -35,7 +35,7 @@ class Cart with ChangeNotifier {
               productId: existingCartItem.productId,
               productName: existingCartItem.productName,
               productPrice: existingCartItem.productPrice,
-              quantity: existingCartItem.quantity + 1,
+              quantity: existingCartItem.quantity + quantity,
               createdAt: existingCartItem.createdAt,
               isCompleted: existingCartItem.isCompleted));
     } else {
@@ -50,7 +50,7 @@ class Cart with ChangeNotifier {
               productId: productId,
               productName: productName,
               productPrice: productPrice,
-              quantity: 1,
+              quantity: quantity,
               createdAt: timestamp,
               isCompleted: isCompleted));
     }

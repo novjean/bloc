@@ -30,7 +30,7 @@ class BlocServiceDetailScreen extends StatefulWidget {
 class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen> {
   // late Future<List<Product>> fProducts;
   // var _categorySelected = 0;
-  String _categoryName = 'Food';
+  String _categoryName = 'Beer';
   var _mTableNumber = 0;
   var _mTable;
   var _isInit = true;
