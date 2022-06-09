@@ -1,3 +1,4 @@
+import 'package:bloc/widgets/ui/button_widget.dart';
 import 'package:bloc/widgets/ui/toaster.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -28,7 +29,7 @@ class ProductItem extends StatelessWidget {
     Color primaryColor = Theme.of(context).primaryColor;
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 10.0),
+      margin: const EdgeInsets.only(bottom: 1.0),
       child: GestureDetector(
         onTap: () {
           Navigator.of(context).push(
@@ -54,7 +55,7 @@ class ProductItem extends StatelessWidget {
                 ),
                 Expanded(
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    padding: const EdgeInsets.only(left: 9, right: 0, top: 0, bottom: 0),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -70,74 +71,66 @@ class ProductItem extends StatelessWidget {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: <Widget>[
-                            // IconButton(
-                            //   icon: Icon(Icons.remove),
-                            //   onPressed: () {
-                            //     logger.i('remove product from cart.');
-                            //   },
-                            // ),
+                            IconButton(
+                              icon: Icon(Icons.remove),
+                              onPressed: () {
+                                logger.i('remove product from cart.');
+                              },
+                            ),
                             Container(
-                              color: primaryColor,
+                              // color: primaryColor,
                               margin: const EdgeInsets.symmetric(
-                                horizontal: 10.0,
+                                horizontal: 1.0,
                               ),
                               padding: const EdgeInsets.symmetric(
                                 vertical: 4.0,
-                                horizontal: 12.0,
+                                horizontal: 2.0,
                               ),
-                              child: TextButton(
-                                child: Text(
-                                  'Add',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                  ),
-                                ),
-                                onPressed: () {
-                                  // add it to the cart
-                                  String id = StringUtils.getRandomString(20);
-                                  //todo: this needs to increment
-                                  int cartNumber = 0;
-                                  final user =
-                                      FirebaseAuth.instance.currentUser;
-                                  String userId = user!.uid;
-                                  int timestamp = Timestamp.now().millisecondsSinceEpoch;
-                                  CartItem cartitem = CartItem(
-                                      id: id,
-                                      serviceId: serviceId,
-                                      tableNumber: tableNumber,
-                                      cartNumber: cartNumber,
-                                      userId: userId,
-                                      productId: product.id,
-                                      productName: product.name,
-                                      productPrice: double.parse(
-                                          product.price.toString()),
-                                      quantity: 1,
-                                      createdAt: timestamp,
-                                      isCompleted: false);
+                              child: ButtonWidget(text: 'Add', onClicked: () {
+                                // add it to the cart
+                                String id = StringUtils.getRandomString(20);
+                                //todo: this needs to increment
+                                int cartNumber = 0;
+                                final user =
+                                    FirebaseAuth.instance.currentUser;
+                                String userId = user!.uid;
+                                int timestamp = Timestamp.now().millisecondsSinceEpoch;
+                                CartItem cartitem = CartItem(
+                                    id: id,
+                                    serviceId: serviceId,
+                                    tableNumber: tableNumber,
+                                    cartNumber: cartNumber,
+                                    userId: userId,
+                                    productId: product.id,
+                                    productName: product.name,
+                                    productPrice: double.parse(
+                                        product.price.toString()),
+                                    quantity: 1,
+                                    createdAt: timestamp,
+                                    isCompleted: false);
 
-                                  cart.addItem(
-                                      id,
-                                      serviceId,
-                                      tableNumber,
-                                      cartNumber,
-                                      userId,
-                                      cartitem.productId,
-                                      cartitem.productName,
-                                      cartitem.productPrice,
-                                      cartitem.createdAt, false);
+                                cart.addItem(
+                                    id,
+                                    serviceId,
+                                    tableNumber,
+                                    cartNumber,
+                                    userId,
+                                    cartitem.productId,
+                                    cartitem.productName,
+                                    cartitem.productPrice,
+                                    cartitem.createdAt, false);
 
-                                  Toaster.shortToast(
-                                      product.name + ' is added to cart.');
-                                },
-                              ),
+                                Toaster.shortToast(
+                                    product.name + ' is added to cart.');
+                              },)
                             ),
-                            // IconButton(
-                            //   icon: Icon(Icons.add),
-                            //   color: primaryColor,
-                            //   onPressed: () {
-                            //     logger.i('add product to cart.');
-                            //   },
-                            // ),
+                            IconButton(
+                              icon: Icon(Icons.add),
+                              color: primaryColor,
+                              onPressed: () {
+                                logger.i('add product to cart.');
+                              },
+                            ),
                           ],
                         ),
                       ],

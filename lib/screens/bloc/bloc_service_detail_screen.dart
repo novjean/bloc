@@ -126,19 +126,80 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen> {
   }
 
   Widget _buildBody(BuildContext context, BlocService service) {
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          SizedBox(height: 2.0),
-          _searchTableNumber(context),
-          // CoverPhoto(service.name, service.imageUrl),
-          SizedBox(height: 2.0),
-          buildServiceCategories(context),
-          SizedBox(height: 2.0),
-          buildProducts(context, 'Food'),
-          SizedBox(height: 10.0),
-        ],
-      ),
+    return Column(
+      children: [
+        SizedBox(height: 2.0),
+        _searchTableNumber(context),
+        // CoverPhoto(service.name, service.imageUrl),
+        SizedBox(height: 2.0),
+        buildServiceCategories(context),
+        SizedBox(height: 2.0),
+        buildProducts(context, 'Beer'),
+        SizedBox(height: 0.0),
+      ],
+    );
+  }
+
+  /** Table Info **/
+  _searchTableNumber(BuildContext context) {
+    final user = FirebaseAuth.instance.currentUser;
+
+    final Stream<QuerySnapshot> _stream =
+    FirestoreHelper.findTableNumber(widget.service.id, user!.uid);
+    return StreamBuilder<QuerySnapshot>(
+        stream: _stream,
+        builder: (ctx, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            print('loading table number...');
+            return SizedBox();
+          }
+
+          List<Seat> seats = [];
+          if (snapshot.data!.docs.length > 0) {
+            for (int i = 0; i < snapshot.data!.docs.length; i++) {
+              DocumentSnapshot document = snapshot.data!.docs[i];
+              Map<String, dynamic> data =
+              document.data()! as Map<String, dynamic>;
+              final Seat seat = Seat.fromJson(data);
+              BlocRepository.insertSeat(widget.dao, seat);
+              seats.add(seat);
+
+              if (i == snapshot.data!.docs.length - 1) {
+                _findTable(seat.tableId);
+                _mTableNumber = seat.tableNumber;
+                return TableCardItem(seat.id, seat.tableNumber, seat.tableId);
+              }
+            }
+          } else {
+            return TableCardItem('', -1, '');
+          }
+          return Text('loading table number...');
+        });
+  }
+
+  void _findTable(String tableId) {
+    FirebaseFirestore.instance
+        .collection(FirestoreHelper.TABLES)
+        .where('id', isEqualTo: tableId)
+        .get()
+        .then(
+          (result) {
+        if (result.docs.isNotEmpty) {
+          for (int i = 0; i < result.docs.length; i++) {
+            DocumentSnapshot document = result.docs[i];
+            Map<String, dynamic> data =
+            document.data()! as Map<String, dynamic>;
+            final ServiceTable _table = ServiceTable.fromJson(data);
+
+            setState(() {
+              _mTable = _table;
+            });
+          }
+        } else {
+          print('table could not be found for ' + tableId);
+        }
+      },
+      onError: (e) => print("Error searching for table : $e"),
     );
   }
 
@@ -200,7 +261,7 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen> {
     );
   }
 
-  /** Items List **/
+  /** Products List **/
   buildProducts(BuildContext context, String category) {
     return StreamBuilder<QuerySnapshot>(
       stream: FirestoreHelper.getProductsByCategory(
@@ -234,8 +295,8 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen> {
   }
 
   _displayProductsList(BuildContext context, List<Product> _products) {
-    return Container(
-      height: MediaQuery.of(context).size.height,
+    return Expanded(
+      // height: MediaQuery.of(context).size.height,
       child: ListView.builder(
           itemCount: _products.length,
           scrollDirection: Axis.vertical,
@@ -338,65 +399,4 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen> {
   //       });
   // }
 
-  _searchTableNumber(BuildContext context) {
-    final user = FirebaseAuth.instance.currentUser;
-
-    final Stream<QuerySnapshot> _stream =
-        FirestoreHelper.findTableNumber(widget.service.id, user!.uid);
-    return StreamBuilder<QuerySnapshot>(
-        stream: _stream,
-        builder: (ctx, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            print('loading table number...');
-            return SizedBox();
-          }
-
-          List<Seat> seats = [];
-          if (snapshot.data!.docs.length > 0) {
-            for (int i = 0; i < snapshot.data!.docs.length; i++) {
-              DocumentSnapshot document = snapshot.data!.docs[i];
-              Map<String, dynamic> data =
-                  document.data()! as Map<String, dynamic>;
-              final Seat seat = Seat.fromJson(data);
-              BlocRepository.insertSeat(widget.dao, seat);
-              seats.add(seat);
-
-              if (i == snapshot.data!.docs.length - 1) {
-                _findTable(seat.tableId);
-                _mTableNumber = seat.tableNumber;
-                return TableCardItem(seat.id, seat.tableNumber, seat.tableId);
-              }
-            }
-          } else {
-            return TableCardItem('', -1, '');
-          }
-          return Text('loading table number...');
-        });
-  }
-
-  void _findTable(String tableId) {
-    FirebaseFirestore.instance
-        .collection(FirestoreHelper.TABLES)
-        .where('id', isEqualTo: tableId)
-        .get()
-        .then(
-      (result) {
-        if (result.docs.isNotEmpty) {
-          for (int i = 0; i < result.docs.length; i++) {
-            DocumentSnapshot document = result.docs[i];
-            Map<String, dynamic> data =
-                document.data()! as Map<String, dynamic>;
-            final ServiceTable _table = ServiceTable.fromJson(data);
-
-            setState(() {
-              _mTable = _table;
-            });
-          }
-        } else {
-          print('table could not be found for ' + tableId);
-        }
-      },
-      onError: (e) => print("Error searching for table : $e"),
-    );
-  }
 }
