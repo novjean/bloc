@@ -58,6 +58,11 @@ class ManageProductsScreen extends StatelessWidget {
           }
 
           List<Product> _products = [];
+
+          if(!snapshot.hasData){
+            return Center(child: Text('No products found!'));
+          }
+
           for (int i = 0; i < snapshot.data!.docs.length; i++) {
             DocumentSnapshot document = snapshot.data!.docs[i];
             Map<String, dynamic> map = document.data()! as Map<String, dynamic>;

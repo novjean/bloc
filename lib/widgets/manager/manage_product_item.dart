@@ -1,11 +1,9 @@
+import 'package:bloc/widgets/ui/button_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:logger/logger.dart';
-import 'package:provider/provider.dart';
 
 import '../../db/dao/bloc_dao.dart';
 import '../../db/entity/product.dart';
-import '../../providers/cart.dart';
 import '../../screens/bloc/product_detail_screen.dart';
 import '../../screens/manager/inventory/edit_product_screen.dart';
 
@@ -18,9 +16,6 @@ class ManageProductItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var logger = Logger();
-    final cart = Provider.of<Cart>(context, listen: false);
-
     Color primaryColor = Theme.of(context).primaryColor;
 
     return Container(
@@ -72,30 +67,14 @@ class ManageProductItem extends StatelessWidget {
                             //     logger.i('remove product from cart.');
                             //   },
                             // ),
-                            
-                            Container(
-                              color: primaryColor,
-                              margin: const EdgeInsets.symmetric(
-                                horizontal: 10.0,
-                              ),
-                              padding: const EdgeInsets.symmetric(
-                                vertical: 4.0,
-                                horizontal: 12.0,
-                              ),
-                              child: TextButton(
-                                child: Text(
-                                  'Modify',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                  ),
-                                ),
-                                onPressed: () {
-                                  Navigator.of(context).push(
-                                    MaterialPageRoute(builder: (ctx) => EditProductScreen(product: product)),
-                                  );
-                                  print(product.name + ' is clicked to be modified.');
-                                },
-                              ),
+                            ButtonWidget(
+                              text: 'Edit',
+                              onClicked: () {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(builder: (ctx) => EditProductScreen(product: product)),
+                                );
+                                print(product.name + ' is clicked to be modified.');
+                              },
                             ),
                             IconButton(
                               icon: Icon(Icons.local_drink_rounded),

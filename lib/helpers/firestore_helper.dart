@@ -185,7 +185,7 @@ class FirestoreHelper {
     return FirebaseFirestore.instance
         .collection(PRODUCTS)
         .where('serviceId', isEqualTo: serviceId)
-        // .orderBy('sequence', descending: false)
+        .orderBy('name', descending: false)
         .snapshots();
   }
 
