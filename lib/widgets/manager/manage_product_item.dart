@@ -1,5 +1,3 @@
-import 'package:bloc/screens/forms/edit_product_screen.dart';
-import 'package:bloc/widgets/ui/toaster.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
@@ -9,6 +7,7 @@ import '../../db/dao/bloc_dao.dart';
 import '../../db/entity/product.dart';
 import '../../providers/cart.dart';
 import '../../screens/bloc/product_detail_screen.dart';
+import '../../screens/manager/inventory/edit_product_screen.dart';
 
 class ManageProductItem extends StatelessWidget {
   final Product product;
@@ -73,6 +72,7 @@ class ManageProductItem extends StatelessWidget {
                             //     logger.i('remove product from cart.');
                             //   },
                             // ),
+                            
                             Container(
                               color: primaryColor,
                               margin: const EdgeInsets.symmetric(

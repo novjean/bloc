@@ -39,7 +39,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: Text('BLOC'),),
+    appBar: AppBar(title: Text('BLOC | Edit Profile'),),
     body: _buildBody(context),
   );
 

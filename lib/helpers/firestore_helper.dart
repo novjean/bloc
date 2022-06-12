@@ -10,6 +10,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
 import 'package:logger/logger.dart';
 
+import '../db/entity/product.dart';
 import '../db/entity/service_table.dart';
 
 class FirestoreHelper {
@@ -210,6 +211,22 @@ class FirestoreHelper {
           .then((value) => print("Product image updated."))
           .catchError(
               (error) => print("Failed to update product image: $error"));
+    } on PlatformException catch (err) {
+      logger.e(err.message);
+    } catch (err) {
+      logger.e(err);
+    }
+  }
+
+  static void updateProductTest(Product product) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection(PRODUCTS)
+          .doc(product.id)
+          .update(product.toMap())
+          .then((value) => print("Product updated."))
+          .catchError(
+              (error) => print("Failed to update product : $error"));
     } on PlatformException catch (err) {
       logger.e(err.message);
     } catch (err) {
