@@ -66,7 +66,7 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen> {
         title: Text(widget.service.name),
         actions: [
           IconButton(
-            icon: Icon(
+            icon: const Icon(
               Icons.shopping_cart,
             ),
             onPressed: () {
@@ -128,14 +128,14 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen> {
   Widget _buildBody(BuildContext context, BlocService service) {
     return Column(
       children: [
-        SizedBox(height: 2.0),
+        const SizedBox(height: 2.0),
         _searchTableNumber(context),
         // CoverPhoto(service.name, service.imageUrl),
-        SizedBox(height: 2.0),
+        const SizedBox(height: 2.0),
         buildServiceCategories(context),
-        SizedBox(height: 2.0),
+        const SizedBox(height: 2.0),
         buildProducts(context, 'Beer'),
-        SizedBox(height: 0.0),
+        const SizedBox(height: 0.0),
       ],
     );
   }
@@ -151,7 +151,7 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen> {
         builder: (ctx, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             print('loading table number...');
-            return SizedBox();
+            return const SizedBox();
           }
 
           List<Seat> seats = [];
@@ -273,7 +273,7 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen> {
           );
         }
 
-        if (snapshot.data!.docs.length > 0) {
+        if (snapshot.data!.docs.isNotEmpty) {
           BlocRepository.clearProducts(widget.dao);
         }
 
@@ -289,7 +289,7 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen> {
             return _displayProductsList(context, products);
           }
         }
-        return Center(child: Text('No products found!'));
+        return const Expanded(child: Center(child: Text('No products found!')));
       },
     );
   }
