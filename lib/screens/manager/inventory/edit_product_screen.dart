@@ -121,6 +121,28 @@ class _EditProductScreenState extends State<EditProductScreen> {
           },
         ),
         const SizedBox(height: 24),
+        Row(
+          children: <Widget>[
+            SizedBox(
+              width: 0,
+            ), //SizedBox
+            Text(
+              'Available : ',
+              style: TextStyle(fontSize: 17.0),
+            ), //Text
+            SizedBox(width: 10), //SizedBox
+            /** Checkbox Widget **/
+            Checkbox(
+              value: widget.product.isAvailable,
+              onChanged: (value) {
+                setState(() {
+                  widget.product = widget.product.copyWith(isAvailable: value);
+                });
+              },
+            ), //Checkbox
+          ], //<Widget>[]
+        ),
+        const SizedBox(height: 24),
         ButtonWidget(
           text: 'Save',
           onClicked: () {

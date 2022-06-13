@@ -13,6 +13,7 @@ class Product {
   final String imageUrl;
   final String ownerId;
   final String createdAt;
+  final bool isAvailable;
 
 //<editor-fold desc="Data Methods">
 
@@ -27,6 +28,7 @@ class Product {
     required this.imageUrl,
     required this.ownerId,
     required this.createdAt,
+    required this.isAvailable,
   });
 
   @override
@@ -43,7 +45,9 @@ class Product {
           serviceId == other.serviceId &&
           imageUrl == other.imageUrl &&
           ownerId == other.ownerId &&
-          createdAt == other.createdAt);
+          createdAt == other.createdAt &&
+          isAvailable == other.isAvailable
+      );
 
   @override
   int get hashCode =>
@@ -56,7 +60,8 @@ class Product {
       serviceId.hashCode ^
       imageUrl.hashCode ^
       ownerId.hashCode ^
-      createdAt.hashCode;
+      createdAt.hashCode ^
+      isAvailable.hashCode;
 
   @override
   String toString() {
@@ -71,6 +76,7 @@ class Product {
         ' imageUrl: $imageUrl,' +
         ' ownerId: $ownerId,' +
         ' createdAt: $createdAt,' +
+        ' isAvailable: $isAvailable,' +
         '}';
   }
 
@@ -85,6 +91,7 @@ class Product {
     String? imageUrl,
     String? ownerId,
     String? createdAt,
+    bool? isAvailable,
   }) {
     return Product(
       id: id ?? this.id,
@@ -97,6 +104,7 @@ class Product {
       imageUrl: imageUrl ?? this.imageUrl,
       ownerId: ownerId ?? this.ownerId,
       createdAt: createdAt ?? this.createdAt,
+      isAvailable: isAvailable ?? this.isAvailable,
     );
   }
 
@@ -112,6 +120,7 @@ class Product {
       'imageUrl': this.imageUrl,
       'ownerId': this.ownerId,
       'createdAt': this.createdAt,
+      'isAvailable': this.isAvailable,
     };
   }
 
@@ -137,6 +146,7 @@ class Product {
       imageUrl: map['imageUrl'] as String,
       ownerId: map['ownerId'] as String,
       createdAt: map['createdAt'] as String,
+      isAvailable: map['isAvailable'] as bool,
     );
   }
 

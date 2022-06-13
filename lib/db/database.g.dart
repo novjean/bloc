@@ -92,7 +92,7 @@ class _$AppDatabase extends AppDatabase {
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `City` (`id` TEXT NOT NULL, `name` TEXT NOT NULL, `ownerId` TEXT NOT NULL, `imageUrl` TEXT NOT NULL, PRIMARY KEY (`id`))');
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `Product` (`id` TEXT NOT NULL, `name` TEXT NOT NULL, `type` TEXT NOT NULL, `category` TEXT NOT NULL, `description` TEXT NOT NULL, `price` REAL NOT NULL, `serviceId` TEXT NOT NULL, `imageUrl` TEXT NOT NULL, `ownerId` TEXT NOT NULL, `createdAt` TEXT NOT NULL, PRIMARY KEY (`id`))');
+            'CREATE TABLE IF NOT EXISTS `Product` (`id` TEXT NOT NULL, `name` TEXT NOT NULL, `type` TEXT NOT NULL, `category` TEXT NOT NULL, `description` TEXT NOT NULL, `price` REAL NOT NULL, `serviceId` TEXT NOT NULL, `imageUrl` TEXT NOT NULL, `ownerId` TEXT NOT NULL, `createdAt` TEXT NOT NULL, `isAvailable` INTEGER NOT NULL, PRIMARY KEY (`id`))');
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `User` (`userId` TEXT NOT NULL, `username` TEXT NOT NULL, `email` TEXT NOT NULL, `imageUrl` TEXT NOT NULL, `clearanceLevel` INTEGER NOT NULL, `phoneNumber` INTEGER NOT NULL, `name` TEXT NOT NULL, PRIMARY KEY (`userId`))');
         await database.execute(
@@ -210,7 +210,8 @@ class _$BlocDao extends BlocDao {
                   'serviceId': item.serviceId,
                   'imageUrl': item.imageUrl,
                   'ownerId': item.ownerId,
-                  'createdAt': item.createdAt
+                  'createdAt': item.createdAt,
+                  'isAvailable': item.isAvailable ? 1 : 0
                 }),
         _managerServiceInsertionAdapter = InsertionAdapter(
             database,
@@ -426,7 +427,8 @@ class _$BlocDao extends BlocDao {
             serviceId: row['serviceId'] as String,
             imageUrl: row['imageUrl'] as String,
             ownerId: row['ownerId'] as String,
-            createdAt: row['createdAt'] as String));
+            createdAt: row['createdAt'] as String,
+            isAvailable: (row['isAvailable'] as int) != 0));
   }
 
   @override
@@ -442,7 +444,8 @@ class _$BlocDao extends BlocDao {
             serviceId: row['serviceId'] as String,
             imageUrl: row['imageUrl'] as String,
             ownerId: row['ownerId'] as String,
-            createdAt: row['createdAt'] as String),
+            createdAt: row['createdAt'] as String,
+            isAvailable: (row['isAvailable'] as int) != 0),
         arguments: [catType]);
   }
 

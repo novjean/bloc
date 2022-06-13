@@ -57,7 +57,7 @@ class ManageProductItem extends StatelessWidget {
                             // Icon(Icons.delete_outline)
                           ],
                         ),
-                        Text('\u20B9 ${product.price}'),
+                        Text('\u20B9 ${product.price.toStringAsFixed(2)}'),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: <Widget>[
