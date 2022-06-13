@@ -194,6 +194,7 @@ class FirestoreHelper {
         .collection(PRODUCTS)
         .where('serviceId', isEqualTo: serviceId)
         .where('category', isEqualTo: _category)
+        .where('isAvailable', isEqualTo: true)
 
     // .orderBy('sequence', descending: false)
         .snapshots();

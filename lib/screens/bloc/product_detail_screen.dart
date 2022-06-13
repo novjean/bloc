@@ -35,7 +35,7 @@ class ProductDetailScreen extends StatelessWidget {
           ),
           SizedBox(height: 5.0),
           Text(
-            '\u20B9${product.price}',
+            '\u20B9${product.price.toStringAsFixed(2)}',
             style: TextStyle(
               color: Theme.of(context).primaryColor,
               fontSize: 20,

@@ -8,25 +8,24 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:logger/logger.dart';
 
-import '../../db/bloc_repository.dart';
-import '../../db/dao/bloc_dao.dart';
-import '../../db/entity/bloc_service.dart';
-import '../../db/entity/category.dart';
-import '../../utils/string_utils.dart';
-import '../../widgets/bloc/new_product_form.dart';
+import '../../../db/bloc_repository.dart';
+import '../../../db/dao/bloc_dao.dart';
+import '../../../db/entity/category.dart';
+import '../../../utils/string_utils.dart';
+import '../../../widgets/bloc/new_product_form.dart';
 
-class NewProductScreen extends StatefulWidget {
+class AddProductScreen extends StatefulWidget {
   static const routeName = '/new-category-item-screen';
   String serviceId;
   BlocDao dao;
 
-  NewProductScreen({key, required this.serviceId, required this.dao}) : super(key: key);
+  AddProductScreen({key, required this.serviceId, required this.dao}) : super(key: key);
 
   @override
-  State<StatefulWidget> createState() => _NewProductScreenState();
+  State<StatefulWidget> createState() => _AddProductScreenState();
 }
 
-class _NewProductScreenState extends State<NewProductScreen> {
+class _AddProductScreenState extends State<AddProductScreen> {
   var logger = Logger();
   var _isLoading = false;
 
@@ -101,6 +100,7 @@ class _NewProductScreenState extends State<NewProductScreen> {
         'imageUrl': url,
         'ownerId': user!.uid,
         'createdAt': time,
+        'isAvailable':false,
       });
 
       // Scaffold.of(ctx).showSnackBar(

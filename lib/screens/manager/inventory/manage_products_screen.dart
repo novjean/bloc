@@ -1,4 +1,4 @@
-import 'package:bloc/screens/forms/new_product_screen.dart';
+import 'package:bloc/screens/manager/inventory/add_product_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -29,7 +29,7 @@ class ManageProductsScreen extends StatelessWidget {
           Navigator.of(context).push(
             MaterialPageRoute(
                 builder: (ctx) =>
-                    NewProductScreen(serviceId: serviceId, dao: dao)),
+                    AddProductScreen(serviceId: serviceId, dao: dao)),
           );
         },
         child: Icon(
