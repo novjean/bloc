@@ -148,7 +148,9 @@ class _ProductItemState extends State<ProductItem> {
                                         cartitem.createdAt,
                                         false);
 
-                                    widget.addCount = 1;
+                                    setState(() {
+                                      widget.addCount = 1;
+                                    });
 
                                     Toaster.shortToast(widget.product.name +
                                         ' is added to cart.');
