@@ -79,7 +79,7 @@ class _ProductItemState extends State<ProductItem> {
                           ],
                         ),
                         SizedBox(height: 2),
-                        Text('\u20B9 ${widget.product.price}'),
+                        Text('\u20B9 ${widget.product.price.toStringAsFixed(2)}'),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: <Widget>[

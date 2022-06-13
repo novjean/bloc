@@ -116,7 +116,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
             labelText: 'Product Price',
           ),
           onChanged: (value) {
-            int? newPrice = int.tryParse(value);
+            double? newPrice = double.tryParse(value);
             widget.product = widget.product.copyWith(price: newPrice);
           },
         ),

@@ -37,21 +37,6 @@ class _EditProductFormState extends State<EditProductForm> {
   String _productPrice ='';
   late File _userImageFile;
 
-  // late final _productTypes = getCategoryTypes();
-
-  // List<String> getCategoryTypes() {
-  //   List<String> catsList = [];
-  //   for(Category category in widget.categories){
-  //     catsList.add(category.name);
-  //   }
-  //   return catsList;
-  // }
-
-  // String getFirstCategoryName() {
-  //   return widget.categories[0].name;
-  // }
-
-
   void _pickedImage(File image) {
     _userImageFile = image;
   }

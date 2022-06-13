@@ -8,6 +8,9 @@ class CartBlockItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String price = cartItem.productPrice.toStringAsFixed(2);
+    String total = (cartItem.productPrice * cartItem.quantity).toStringAsFixed(2);
+
     return Card(
       // symmetric is used to have different margins for left, right, top and bottom
       margin: EdgeInsets.symmetric(
@@ -22,12 +25,12 @@ class CartBlockItem extends StatelessWidget {
             child: Padding(
               padding: EdgeInsets.all(5),
               child: FittedBox(
-                child: Text('\u20B9${cartItem.productPrice}'),
+                child: Text('\u20B9' + price),
               ),
             ),
           ),
           title: Text(cartItem.productName),
-          subtitle: Text('Total: \u20B9${(cartItem.productPrice * cartItem.quantity)}'),
+          subtitle: Text('Total: \u20B9' + total),
           trailing: Text('${cartItem.quantity} x'),
         ),
       ),

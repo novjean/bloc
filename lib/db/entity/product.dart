@@ -8,7 +8,7 @@ class Product {
   final String type;
   final String category;
   final String description;
-  final int price;
+  final double price;
   final String serviceId;
   final String imageUrl;
   final String ownerId;
@@ -80,7 +80,7 @@ class Product {
     String? type,
     String? category,
     String? description,
-    int? price,
+    double? price,
     String? serviceId,
     String? imageUrl,
     String? ownerId,
@@ -116,13 +116,23 @@ class Product {
   }
 
   factory Product.fromMap(Map<String, dynamic> map) {
+    double price = 0.0;
+    int intPrice = 0;
+
+    try{
+      price = (map['price'] as double);
+    } catch(err) {
+      intPrice = map['price'] as int;
+      price = intPrice.toDouble();
+    }
+    
     return Product(
       id: map['id'] as String,
       name: map['name'] as String,
       type: map['type'] as String,
       category: map['category'] as String,
       description: map['description'] as String,
-      price: map['price'] as int,
+      price: price,
       serviceId: map['serviceId'] as String,
       imageUrl: map['imageUrl'] as String,
       ownerId: map['ownerId'] as String,

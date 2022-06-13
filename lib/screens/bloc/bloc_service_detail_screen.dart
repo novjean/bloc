@@ -296,7 +296,6 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen> {
 
   _displayProductsList(BuildContext context, List<Product> _products) {
     return Expanded(
-      // height: MediaQuery.of(context).size.height,
       child: ListView.builder(
           itemCount: _products.length,
           scrollDirection: Axis.vertical,
@@ -310,22 +309,6 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen> {
                 onTap: () {
                   Product _sProduct = _products[index];
                   print(_sProduct.name + ' is selected');
-
-                  // if(_sInvOption.title.contains('Price')){
-                  //   Navigator.of(context).push(MaterialPageRoute(
-                  //       builder: (ctx) => ManagePriceScreen(
-                  //           serviceId: serviceId,
-                  //           managerService: managerService,
-                  //           dao: dao)));
-                  //   print('manage inventory screen selected.');
-                  // } else {
-                  //   Navigator.of(context).push(MaterialPageRoute(
-                  //       builder: (ctx) => ManageCategoryScreen(
-                  //           serviceId: serviceId,
-                  //           managerService: managerService,
-                  //           dao: dao)));
-                  //   print('manage category screen selected.');
-                  // }
                 });
           }),
     );

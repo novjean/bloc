@@ -92,7 +92,7 @@ class _$AppDatabase extends AppDatabase {
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `City` (`id` TEXT NOT NULL, `name` TEXT NOT NULL, `ownerId` TEXT NOT NULL, `imageUrl` TEXT NOT NULL, PRIMARY KEY (`id`))');
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `Product` (`id` TEXT NOT NULL, `name` TEXT NOT NULL, `type` TEXT NOT NULL, `category` TEXT NOT NULL, `description` TEXT NOT NULL, `price` INTEGER NOT NULL, `serviceId` TEXT NOT NULL, `imageUrl` TEXT NOT NULL, `ownerId` TEXT NOT NULL, `createdAt` TEXT NOT NULL, PRIMARY KEY (`id`))');
+            'CREATE TABLE IF NOT EXISTS `Product` (`id` TEXT NOT NULL, `name` TEXT NOT NULL, `type` TEXT NOT NULL, `category` TEXT NOT NULL, `description` TEXT NOT NULL, `price` REAL NOT NULL, `serviceId` TEXT NOT NULL, `imageUrl` TEXT NOT NULL, `ownerId` TEXT NOT NULL, `createdAt` TEXT NOT NULL, PRIMARY KEY (`id`))');
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `User` (`userId` TEXT NOT NULL, `username` TEXT NOT NULL, `email` TEXT NOT NULL, `imageUrl` TEXT NOT NULL, `clearanceLevel` INTEGER NOT NULL, `phoneNumber` INTEGER NOT NULL, `name` TEXT NOT NULL, PRIMARY KEY (`userId`))');
         await database.execute(
@@ -422,7 +422,7 @@ class _$BlocDao extends BlocDao {
             type: row['type'] as String,
             category: row['category'] as String,
             description: row['description'] as String,
-            price: row['price'] as int,
+            price: row['price'] as double,
             serviceId: row['serviceId'] as String,
             imageUrl: row['imageUrl'] as String,
             ownerId: row['ownerId'] as String,
@@ -438,7 +438,7 @@ class _$BlocDao extends BlocDao {
             type: row['type'] as String,
             category: row['category'] as String,
             description: row['description'] as String,
-            price: row['price'] as int,
+            price: row['price'] as double,
             serviceId: row['serviceId'] as String,
             imageUrl: row['imageUrl'] as String,
             ownerId: row['ownerId'] as String,
