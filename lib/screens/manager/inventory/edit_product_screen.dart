@@ -1,8 +1,10 @@
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:logger/logger.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -43,6 +45,8 @@ class _EditProductScreenState extends State<EditProductScreen> {
   );
 
   _buildBody(BuildContext context) {
+    var logger = Logger();
+
     return ListView(
       padding: EdgeInsets.symmetric(horizontal: 32),
       physics: BouncingScrollPhysics(),
@@ -131,7 +135,6 @@ class _EditProductScreenState extends State<EditProductScreen> {
               style: TextStyle(fontSize: 17.0),
             ), //Text
             SizedBox(width: 10), //SizedBox
-            /** Checkbox Widget **/
             Checkbox(
               value: widget.product.isAvailable,
               onChanged: (value) {
@@ -148,6 +151,15 @@ class _EditProductScreenState extends State<EditProductScreen> {
           onClicked: () {
             if(isPhotoChanged){
               widget.product = widget.product.copyWith(imageUrl: newImageUrl);
+            }
+
+            int timestamp = Timestamp.now().millisecondsSinceEpoch;
+            if(widget.product.price>widget.product.priceHighest){
+              widget.product = widget.product.copyWith(priceHighest: widget.product.price);
+              widget.product = widget.product.copyWith(priceHighestTime: timestamp);
+            } else if (widget.product.price<widget.product.priceLowest) {
+              widget.product = widget.product.copyWith(priceLowest: widget.product.price);
+              widget.product = widget.product.copyWith(priceLowestTime: timestamp);
             }
 
             FirestoreHelper.updateProductTest(widget.product);
