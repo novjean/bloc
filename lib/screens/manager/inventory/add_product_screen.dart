@@ -1,4 +1,3 @@
-
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -11,6 +10,7 @@ import 'package:logger/logger.dart';
 import '../../../db/bloc_repository.dart';
 import '../../../db/dao/bloc_dao.dart';
 import '../../../db/entity/category.dart';
+import '../../../helpers/firestore_helper.dart';
 import '../../../utils/string_utils.dart';
 import '../../../widgets/bloc/new_product_form.dart';
 
@@ -19,7 +19,8 @@ class AddProductScreen extends StatefulWidget {
   String serviceId;
   BlocDao dao;
 
-  AddProductScreen({key, required this.serviceId, required this.dao}) : super(key: key);
+  AddProductScreen({key, required this.serviceId, required this.dao})
+      : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _AddProductScreenState();
@@ -41,7 +42,8 @@ class _AddProductScreenState extends State<AddProductScreen> {
   }
 
   _buildBody(BuildContext context) {
-    Future<List<Category>> _future = BlocRepository.getCategoriesFuture(widget.dao);
+    Future<List<Category>> _future =
+        BlocRepository.getCategoriesFuture(widget.dao);
 
     return FutureBuilder(
       future: _future,
@@ -51,23 +53,21 @@ class _AddProductScreenState extends State<AddProductScreen> {
         } else {
           List<Category> categories = snapshot.data! as List<Category>;
 
-          return NewProductForm(
-            _submitNewProductForm, _isLoading, categories
-          );
+          return NewProductForm(_submitNewProductForm, _isLoading, categories);
         }
       },
     );
   }
 
   void _submitNewProductForm(
-      String productName,
-      String categoryType,
-      String productCategory,
-      String productDescription,
-      String productPrice,
-      File image,
-      BuildContext ctx,
-      ) async {
+    String productName,
+    String categoryType,
+    String productCategory,
+    String productDescription,
+    String productPrice,
+    File image,
+    BuildContext ctx,
+  ) async {
     logger.i('_submitNewProductForm called');
 
     final user = FirebaseAuth.instance.currentUser;
@@ -89,26 +89,25 @@ class _AddProductScreenState extends State<AddProductScreen> {
       await ref.putFile(image);
       final url = await ref.getDownloadURL();
 
-      await FirebaseFirestore.instance.collection('products').doc(productId).set({
-        'id': productId,
-        'name': productName,
-        'type': categoryType,
-        'category' : productCategory,
-        'description': productDescription,
-        'price': int.parse(productPrice),
-        'serviceId':widget.serviceId,
-        'imageUrl': url,
-        'ownerId': user!.uid,
-        'createdAt': time,
-        'isAvailable':false,
-      });
+      FirestoreHelper.insertProduct(
+          productId,
+          productName,
+          categoryType,
+          productCategory,
+          productDescription,
+          productPrice,
+          widget.serviceId,
+          url,
+          user!.uid,
+          time,
+          false);
 
-      // Scaffold.of(ctx).showSnackBar(
-      //   SnackBar(
-      //     content: Text(productName + " is added"),
-      //     backgroundColor: Theme.of(ctx).primaryColor,
-      //   ),
-      // );
+      Scaffold.of(ctx).showSnackBar(
+        SnackBar(
+          content: Text(productName + " is added"),
+          backgroundColor: Theme.of(ctx).primaryColor,
+        ),
+      );
       Navigator.of(context).pop();
     } on PlatformException catch (err) {
       var message = 'An error occurred, please check your credentials!';

@@ -181,6 +181,39 @@ class FirestoreHelper {
   }
 
   /** Products **/
+  static void insertProduct(
+      String productId,
+      String productName,
+      String categoryType,
+      String productCategory,
+      String productDescription,
+      String productPrice,
+      String serviceId,
+      String imageUrl,
+      String userId,
+      String time,
+      bool bool) async {
+    try{
+      await FirebaseFirestore.instance.collection(PRODUCTS).doc(productId).set({
+        'id': productId,
+        'name': productName,
+        'type': categoryType,
+        'category': productCategory,
+        'description': productDescription,
+        'price': int.parse(productPrice),
+        'serviceId': serviceId,
+        'imageUrl': imageUrl,
+        'ownerId': userId,
+        'createdAt': time,
+        'isAvailable': false,
+      });
+    } on PlatformException catch (err) {
+      logger.e(err.message);
+    } catch (err) {
+      logger.e(err);
+    }
+  }
+
   static getProducts(String serviceId) {
     return FirebaseFirestore.instance
         .collection(PRODUCTS)
@@ -195,12 +228,11 @@ class FirestoreHelper {
         .where('serviceId', isEqualTo: serviceId)
         .where('category', isEqualTo: _category)
         .where('isAvailable', isEqualTo: true)
-
-    // .orderBy('sequence', descending: false)
+        // .orderBy('sequence', descending: false)
         .snapshots();
   }
 
-  static void updateProduct(String productId, File image) async {
+  static void updateProductImage(String productId, File image) async {
     try {
       final url = await FirestorageHelper.uploadFile(
           FirestorageHelper.PRODUCT_IMAGES, productId, image);
@@ -226,8 +258,7 @@ class FirestoreHelper {
           .doc(product.id)
           .update(product.toMap())
           .then((value) => print("Product updated."))
-          .catchError(
-              (error) => print("Failed to update product : $error"));
+          .catchError((error) => print("Failed to update product : $error"));
     } on PlatformException catch (err) {
       logger.e(err.message);
     } catch (err) {
@@ -340,33 +371,31 @@ class FirestoreHelper {
         .snapshots();
   }
 
-
-  /** Reference **/
-  // _buildProducts(BuildContext context, String _category) {
-  //   FirebaseFirestore.instance
-  //       .collection(FirestoreHelper.PRODUCTS)
-  //       .where('serviceId', isEqualTo: widget.service.id)
-  //       .where('category', isEqualTo: _category)
-  //       .get()
-  //       .then(
-  //         (res) {
-  //       print("Successfully completed");
-  //       List<Product> products = [];
-  //       for (int i = 0; i < res.docs.length; i++) {
-  //         DocumentSnapshot document = res.docs[i];
-  //         Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-  //         final Product product = Product.fromMap(data);
-  //         BlocRepository.insertProduct(widget.dao, product);
-  //         products.add(product);
-  //
-  //         if (i == res.docs.length - 1) {
-  //           // _displayProductsList(context, products);
-  //         }
-  //       }
-  //     },
-  //     onError: (e) => print("Error completing: $e"),
-  //   );
-  // }
-
+/** Reference **/
+// _buildProducts(BuildContext context, String _category) {
+//   FirebaseFirestore.instance
+//       .collection(FirestoreHelper.PRODUCTS)
+//       .where('serviceId', isEqualTo: widget.service.id)
+//       .where('category', isEqualTo: _category)
+//       .get()
+//       .then(
+//         (res) {
+//       print("Successfully completed");
+//       List<Product> products = [];
+//       for (int i = 0; i < res.docs.length; i++) {
+//         DocumentSnapshot document = res.docs[i];
+//         Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+//         final Product product = Product.fromMap(data);
+//         BlocRepository.insertProduct(widget.dao, product);
+//         products.add(product);
+//
+//         if (i == res.docs.length - 1) {
+//           // _displayProductsList(context, products);
+//         }
+//       }
+//     },
+//     onError: (e) => print("Error completing: $e"),
+//   );
+// }
 
 }
