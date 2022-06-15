@@ -74,12 +74,34 @@ class _ProductItemState extends State<ProductItem> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
-                            Text(widget.product.name, style: TextStyle(fontSize: 18)),
+                            Text(widget.product.name,
+                                style: TextStyle(
+                                    fontSize: 17, fontWeight: FontWeight.bold)),
+                            Text(
+                                '\u20B9 ${widget.product.price.toStringAsFixed(2)}',
+                                style: TextStyle(
+                                    fontSize: 18, fontWeight: FontWeight.bold)),
                             // Icon(Icons.delete_outline)
                           ],
                         ),
-                        SizedBox(height: 2),
-                        Text('\u20B9 ${widget.product.price.toStringAsFixed(2)}'),
+                        SizedBox(height: 5),
+                        Row(
+                          children: [
+                            Text(
+                                '\u20B9 ${widget.product.priceLowest.toStringAsFixed(2)}',
+                                style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.green)),
+                            Text(' | '),
+                            Text(
+                                '\u20B9 ${widget.product.priceHighest.toStringAsFixed(2)}',
+                                style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.redAccent)),
+                          ],
+                        ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: <Widget>[
