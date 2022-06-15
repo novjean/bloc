@@ -12,7 +12,7 @@ class Product {
   final String serviceId;
   final String imageUrl;
   final String ownerId;
-  final String createdAt;
+  final int createdAt;
   final bool isAvailable;
   final double priceHighest;
   final double priceLowest;
@@ -109,7 +109,7 @@ class Product {
     String? serviceId,
     String? imageUrl,
     String? ownerId,
-    String? createdAt,
+    int? createdAt,
     bool? isAvailable,
     double? priceHighest,
     double? priceLowest,
@@ -193,7 +193,7 @@ class Product {
       serviceId: map['serviceId'] as String,
       imageUrl: map['imageUrl'] as String,
       ownerId: map['ownerId'] as String,
-      createdAt: map['createdAt'] as String,
+      createdAt: map['createdAt'] as int,
       isAvailable: map['isAvailable'] as bool,
       priceHighest: priceHighest,
       priceLowest: priceLowest,

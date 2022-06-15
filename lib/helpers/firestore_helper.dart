@@ -191,7 +191,6 @@ class FirestoreHelper {
       String serviceId,
       String imageUrl,
       String userId,
-      String time,
       bool bool) async {
     double price = 0.0;
 
@@ -215,7 +214,7 @@ class FirestoreHelper {
         'serviceId': serviceId,
         'imageUrl': imageUrl,
         'ownerId': userId,
-        'createdAt': time,
+        'createdAt': timeMilliSec,
         'isAvailable': false,
         'priceHighest': price,
         'priceLowest': price,

@@ -76,8 +76,6 @@ class _AddProductScreenState extends State<AddProductScreen> {
         _isLoading = true;
       });
 
-      var time = Timestamp.now().toString();
-
       //determine the bloc identifier
       String productId = StringUtils.getRandomString(20);
 
@@ -99,7 +97,6 @@ class _AddProductScreenState extends State<AddProductScreen> {
           widget.serviceId,
           url,
           user!.uid,
-          time,
           false);
 
       Scaffold.of(ctx).showSnackBar(
