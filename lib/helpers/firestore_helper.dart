@@ -193,6 +193,17 @@ class FirestoreHelper {
       String userId,
       String time,
       bool bool) async {
+    double price = 0.0;
+
+    try{
+      price = double.parse(productPrice);
+    } catch(err) {
+      int intPrice = int.parse(productPrice);
+      price = intPrice.toDouble();
+    }
+
+    int timeMilliSec = Timestamp.now().millisecondsSinceEpoch;
+    
     try{
       await FirebaseFirestore.instance.collection(PRODUCTS).doc(productId).set({
         'id': productId,
@@ -200,12 +211,16 @@ class FirestoreHelper {
         'type': categoryType,
         'category': productCategory,
         'description': productDescription,
-        'price': int.parse(productPrice),
+        'price': price,
         'serviceId': serviceId,
         'imageUrl': imageUrl,
         'ownerId': userId,
         'createdAt': time,
         'isAvailable': false,
+        'priceHighest': price,
+        'priceLowest': price,
+        'priceHighestTime': timeMilliSec,
+        'priceLowestTime': timeMilliSec,
       });
     } on PlatformException catch (err) {
       logger.e(err.message);

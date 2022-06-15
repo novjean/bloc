@@ -14,6 +14,10 @@ class Product {
   final String ownerId;
   final String createdAt;
   final bool isAvailable;
+  final double priceHighest;
+  final double priceLowest;
+  final int priceHighestTime;
+  final int priceLowestTime;
 
 //<editor-fold desc="Data Methods">
 
@@ -29,6 +33,10 @@ class Product {
     required this.ownerId,
     required this.createdAt,
     required this.isAvailable,
+    required this.priceHighest,
+    required this.priceLowest,
+    required this.priceHighestTime,
+    required this.priceLowestTime,
   });
 
   @override
@@ -46,8 +54,11 @@ class Product {
           imageUrl == other.imageUrl &&
           ownerId == other.ownerId &&
           createdAt == other.createdAt &&
-          isAvailable == other.isAvailable
-      );
+          isAvailable == other.isAvailable &&
+          priceHighest == other.priceHighest &&
+          priceLowest == other.priceLowest &&
+          priceHighestTime == other.priceHighestTime &&
+          priceLowestTime == other.priceLowestTime);
 
   @override
   int get hashCode =>
@@ -61,7 +72,11 @@ class Product {
       imageUrl.hashCode ^
       ownerId.hashCode ^
       createdAt.hashCode ^
-      isAvailable.hashCode;
+      isAvailable.hashCode ^
+      priceHighest.hashCode ^
+      priceLowest.hashCode ^
+      priceHighestTime.hashCode ^
+      priceLowestTime.hashCode;
 
   @override
   String toString() {
@@ -77,6 +92,10 @@ class Product {
         ' ownerId: $ownerId,' +
         ' createdAt: $createdAt,' +
         ' isAvailable: $isAvailable,' +
+        ' priceHighest: $priceHighest,' +
+        ' priceLowest: $priceLowest,' +
+        ' priceHighestTime: $priceHighestTime,' +
+        ' priceLowestTime: $priceLowestTime,' +
         '}';
   }
 
@@ -92,6 +111,10 @@ class Product {
     String? ownerId,
     String? createdAt,
     bool? isAvailable,
+    double? priceHighest,
+    double? priceLowest,
+    int? priceHighestTime,
+    int? priceLowestTime,
   }) {
     return Product(
       id: id ?? this.id,
@@ -105,6 +128,10 @@ class Product {
       ownerId: ownerId ?? this.ownerId,
       createdAt: createdAt ?? this.createdAt,
       isAvailable: isAvailable ?? this.isAvailable,
+      priceHighest: priceHighest ?? this.priceHighest,
+      priceLowest: priceLowest ?? this.priceLowest,
+      priceHighestTime: priceHighestTime ?? this.priceHighestTime,
+      priceLowestTime: priceLowestTime ?? this.priceLowestTime,
     );
   }
 
@@ -121,12 +148,18 @@ class Product {
       'ownerId': this.ownerId,
       'createdAt': this.createdAt,
       'isAvailable': this.isAvailable,
+      'priceHighest': this.priceHighest,
+      'priceLowest': this.priceLowest,
+      'priceHighestTime': this.priceHighestTime,
+      'priceLowestTime': this.priceLowestTime,
     };
   }
 
   factory Product.fromMap(Map<String, dynamic> map) {
     double price = 0.0;
     int intPrice = 0;
+    double priceHighest = 0.0;
+    double priceLowest = 0.0;
 
     try{
       price = (map['price'] as double);
@@ -134,7 +167,22 @@ class Product {
       intPrice = map['price'] as int;
       price = intPrice.toDouble();
     }
-    
+
+    try{
+      priceHighest = (map['priceHighest'] as double);
+    } catch(err) {
+      intPrice = map['priceHighest'] as int;
+      priceHighest = intPrice.toDouble();
+    }
+
+    try{
+      priceLowest = (map['priceLowest'] as double);
+    } catch(err) {
+      intPrice = map['priceLowest'] as int;
+      priceLowest = intPrice.toDouble();
+    }
+
+
     return Product(
       id: map['id'] as String,
       name: map['name'] as String,
@@ -147,6 +195,10 @@ class Product {
       ownerId: map['ownerId'] as String,
       createdAt: map['createdAt'] as String,
       isAvailable: map['isAvailable'] as bool,
+      priceHighest: priceHighest,
+      priceLowest: priceLowest,
+      priceHighestTime: map['priceHighestTime'] as int,
+      priceLowestTime: map['priceLowestTime'] as int,
     );
   }
 
