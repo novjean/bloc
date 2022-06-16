@@ -4,7 +4,7 @@ import 'package:bloc/db/entity/cart_item.dart';
 import 'package:bloc/db/entity/seat.dart';
 import 'package:bloc/db/entity/user.dart' as blocUser;
 import 'package:bloc/helpers/firestorage_helper.dart';
-import 'package:bloc/screens/manager/seats_management.dart';
+import 'package:bloc/screens/manager/tables/seats_management.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
@@ -288,14 +288,14 @@ class FirestoreHelper {
         .snapshots();
   }
 
-  static void pushServiceTableIsOccupied(
-      String serviceTableId, bool isOccupied) async {
+  static void setTableOccupyStatus(
+      String tableId, bool isOccupied) async {
     try {
       await FirebaseFirestore.instance
           .collection(TABLES)
-          .doc(serviceTableId)
+          .doc(tableId)
           .update({'isOccupied': isOccupied})
-          .then((value) => print("Table is occupied : " + serviceTableId))
+          .then((value) => print("Table is occupied : " + tableId))
           .catchError((error) => print("Failed to set isOccupy table: $error"));
     } on PlatformException catch (err) {
       logger.e(err.message);

@@ -9,7 +9,7 @@ import '../../helpers/firestore_helper.dart';
 import '../../utils/manager_utils.dart';
 import '../../widgets/manager_service_item.dart';
 import 'inventory/manage_inventory_screen.dart';
-import 'tables_management_screen.dart';
+import 'tables/tables_management_screen.dart';
 import 'orders_completed_screen.dart';
 import 'orders_pending_screen.dart';
 

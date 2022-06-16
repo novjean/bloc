@@ -1,14 +1,14 @@
 import 'package:bloc/db/bloc_repository.dart';
 import 'package:bloc/db/dao/bloc_dao.dart';
 import 'package:bloc/db/entity/manager_service.dart';
-import 'package:bloc/screens/manager/seats_management.dart';
+import 'package:bloc/screens/manager/tables/seats_management.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-import '../../db/entity/service_table.dart';
-import '../../helpers/firestore_helper.dart';
-import '../../widgets/service_table_item.dart';
-import '../forms/new_service_table_screen.dart';
+import '../../../db/entity/service_table.dart';
+import '../../../helpers/firestore_helper.dart';
+import '../../../widgets/service_table_item.dart';
+import '../../forms/new_service_table_screen.dart';
 
 class TablesManagementScreen extends StatelessWidget {
   String serviceId;
@@ -136,7 +136,7 @@ class TablesManagementScreen extends StatelessWidget {
           },
         ),
         TextButton(
-          child: Text("Manage Seat"),
+          child: Text("Manage Seats"),
           onPressed:  () {
             Navigator.of(context).pop();
 

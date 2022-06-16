@@ -52,12 +52,7 @@ class _TableCardItemState extends State<TableCardItem> {
                       scanTableQR(user);
                     },
                   )
-                : ButtonWidget(
-                    text: 'Community Table',
-                    onClicked: () {
-                      Toaster.shortToast('Joining community table.');
-                    },
-                  ),
+                : _displayTableType() ,
           ],
         ),
       ),
@@ -86,7 +81,7 @@ class _TableCardItemState extends State<TableCardItem> {
 
     if (!user.userId.isEmpty) {
       // set the table as occupied
-      FirestoreHelper.pushServiceTableIsOccupied(scanTableId, true);
+      FirestoreHelper.setTableOccupyStatus(scanTableId, true);
 
       // find the seats associated with this table
       FirebaseFirestore.instance
@@ -127,5 +122,14 @@ class _TableCardItemState extends State<TableCardItem> {
     } else {
       Toaster.shortToast('not signed in, write go to log in logic here!');
     }
+  }
+
+  _displayTableType() {
+    return ButtonWidget(
+      text: 'Community Table',
+      onClicked: () {
+        Toaster.shortToast('Joining community table.');
+      },
+    );
   }
 }
