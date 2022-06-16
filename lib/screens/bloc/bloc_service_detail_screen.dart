@@ -165,7 +165,10 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen> {
               seats.add(seat);
 
               if (i == snapshot.data!.docs.length - 1) {
-                _findTable(seat.tableId);
+                if(_mTableNumber == 0) {
+                  // this is needed or else we will hit a loop in loading
+                  _findTable(seat.tableId);
+                }
                 _mTableNumber = seat.tableNumber;
                 return TableCardItem(seat.id, seat.tableNumber, seat.tableId);
               }
