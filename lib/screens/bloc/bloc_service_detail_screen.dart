@@ -35,6 +35,12 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen> {
   var _mTable;
   var _isInit = true;
   var _isLoading = false;
+  late Widget _categoriesWidget;
+
+  @override
+  void initState() {
+    _categoriesWidget = buildServiceCategories(context);
+  }
 
   @override
   void didChangeDependencies() {
@@ -132,7 +138,8 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen> {
         _searchTableNumber(context),
         // CoverPhoto(service.name, service.imageUrl),
         const SizedBox(height: 2.0),
-        buildServiceCategories(context),
+        // buildServiceCategories(context),
+        _categoriesWidget,
         const SizedBox(height: 2.0),
         buildProducts(context, 'Beer'),
         const SizedBox(height: 0.0),
@@ -242,6 +249,7 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen> {
 
   _displayCategories(BuildContext context, List<Category> categories) {
     return Container(
+      key: UniqueKey(),
       // this height has to match with category item container height
       height: MediaQuery.of(context).size.height / 8,
       child: ListView.builder(
