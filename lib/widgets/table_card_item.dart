@@ -15,8 +15,9 @@ class TableCardItem extends StatefulWidget {
   String seatId;
   int tableNumber;
   String tableId;
+  bool isCommunity;
 
-  TableCardItem(this.seatId, this.tableNumber, this.tableId);
+  TableCardItem(this.seatId, this.tableNumber, this.tableId, this.isCommunity);
 
   @override
   State<TableCardItem> createState() => _TableCardItemState();
@@ -125,10 +126,11 @@ class _TableCardItemState extends State<TableCardItem> {
   }
 
   _displayTableType() {
+    String tableType = widget.isCommunity?'Community':'Private';
     return ButtonWidget(
-      text: 'Community Table',
+      text: tableType,
       onClicked: () {
-        Toaster.shortToast('Joining community table.');
+        Toaster.shortToast('You are sitting in a ' + tableType + ' table');
       },
     );
   }

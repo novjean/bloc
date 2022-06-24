@@ -18,13 +18,15 @@ class ProductItem extends StatefulWidget {
   final BlocDao dao;
   final String serviceId;
   final int tableNumber;
+  final bool isCommunity;
   int addCount = 1;
 
   ProductItem(
       {required this.serviceId,
       required this.product,
       required this.dao,
-      required this.tableNumber});
+      required this.tableNumber,
+      required this.isCommunity});
 
   @override
   State<ProductItem> createState() => _ProductItemState();
@@ -85,7 +87,7 @@ class _ProductItemState extends State<ProductItem> {
                           ],
                         ),
                         SizedBox(height: 5),
-                        Row(
+                        widget.isCommunity? Row(
                           children: [
                             Text(
                                 '\u20B9 ${widget.product.priceLowest.toStringAsFixed(2)}',
@@ -101,7 +103,7 @@ class _ProductItemState extends State<ProductItem> {
                                     fontWeight: FontWeight.bold,
                                     color: Colors.redAccent)),
                           ],
-                        ),
+                        ):SizedBox(height: 0),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: <Widget>[
