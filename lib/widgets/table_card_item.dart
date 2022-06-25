@@ -54,6 +54,12 @@ class _TableCardItemState extends State<TableCardItem> {
                     },
                   )
                 : _displayTableType() ,
+            Spacer(),
+            ButtonWidget(text: 'SOS', onClicked: () {
+              Toaster.shortToast('I need help!');
+              //need to send notification here
+
+            }),
           ],
         ),
       ),

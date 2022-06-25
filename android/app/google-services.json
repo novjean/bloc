@@ -29,6 +29,13 @@
             {
               "client_id": "328003399661-ede7ab0u1s6pf8tgrsku39kn2lr8jf2j.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "328003399661-82of5hp7sf8qd8r478csnq53k8sr5oup.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.novatech.bloc"
+              }
             }
           ]
         }
