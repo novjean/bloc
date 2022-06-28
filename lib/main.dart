@@ -20,7 +20,7 @@ import 'providers/cart.dart';
 import 'screens/auth_screen.dart';
 import 'screens/main_screen.dart';
 import 'screens/ui/splash_screen.dart';
-import 'utils/const.dart';
+import 'utils/constants.dart';
 
 var logger = Logger(
   printer: PrettyPrinter(),

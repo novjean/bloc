@@ -12,6 +12,8 @@ import 'package:logger/logger.dart';
 
 import '../db/entity/product.dart';
 import '../db/entity/service_table.dart';
+import '../db/entity/sos.dart';
+import '../utils/string_utils.dart';
 
 class FirestoreHelper {
   static var logger = Logger();
@@ -26,6 +28,7 @@ class FirestoreHelper {
   static String PRODUCTS = 'products';
   static String SERVICES = 'services';
   static String SEATS = 'seats';
+  static String SOS = 'sos';
   static String TABLES = 'tables';
   static String USERS = 'users';
 
@@ -49,8 +52,8 @@ class FirestoreHelper {
   }
 
   /** Cart Items **/
-  static void uploadCartItem(
-      CartItem cart, Timestamp timestamp, int millisecondsSinceEpoch) async {
+  static void uploadCartItem(CartItem cart, Timestamp timestamp,
+      int millisecondsSinceEpoch) async {
     await FirebaseFirestore.instance.collection(CART_ITEMS).doc(cart.id).set({
       'cartId': cart.id,
       'serviceId': cart.serviceId,
@@ -67,13 +70,13 @@ class FirestoreHelper {
     });
   }
 
-  static Stream<QuerySnapshot<Object?>> getCartItemsSnapshot(
-      String serviceId, bool isCompleted) {
+  static Stream<QuerySnapshot<Object?>> getCartItemsSnapshot(String serviceId,
+      bool isCompleted) {
     return FirebaseFirestore.instance
         .collection(CART_ITEMS)
         .where('serviceId', isEqualTo: serviceId)
         .where('isCompleted', isEqualTo: isCompleted)
-        // .orderBy('timestamp', descending: true) // createdAt could be used i guess
+    // .orderBy('timestamp', descending: true) // createdAt could be used i guess
         .snapshots();
   }
 
@@ -119,8 +122,8 @@ class FirestoreHelper {
 
     return FirebaseFirestore.instance
         .collection(SERVICES)
-        // .orderBy('sequence', descending: true)
-        // .where('ownerId', isEqualTo: user!.uid)
+    // .orderBy('sequence', descending: true)
+    // .where('ownerId', isEqualTo: user!.uid)
         .snapshots();
   }
 
@@ -145,9 +148,9 @@ class FirestoreHelper {
           .collection(USERS)
           .doc(user.userId)
           .update({
-            'name': user.name,
-            'image_url': fileUrl,
-          })
+        'name': user.name,
+        'image_url': fileUrl,
+      })
           .then((value) => print("user image updated."))
           .catchError((error) => print("failed to update user image: $error"));
     } on PlatformException catch (err) {
@@ -162,7 +165,7 @@ class FirestoreHelper {
     final user = FirebaseAuth.instance.currentUser;
 
     final userData =
-        await FirebaseFirestore.instance.collection(USERS).doc(user!.uid).get();
+    await FirebaseFirestore.instance.collection(USERS).doc(user!.uid).get();
     FirebaseFirestore.instance.collection(CHATS).add({
       'text': enteredMessage,
       // timestamp available through cloud firestore
@@ -181,8 +184,7 @@ class FirestoreHelper {
   }
 
   /** Products **/
-  static void insertProduct(
-      String productId,
+  static void insertProduct(String productId,
       String productName,
       String categoryType,
       String productCategory,
@@ -194,16 +196,18 @@ class FirestoreHelper {
       bool bool) async {
     double price = 0.0;
 
-    try{
+    try {
       price = double.parse(productPrice);
-    } catch(err) {
+    } catch (err) {
       int intPrice = int.parse(productPrice);
       price = intPrice.toDouble();
     }
 
-    int timeMilliSec = Timestamp.now().millisecondsSinceEpoch;
-    
-    try{
+    int timeMilliSec = Timestamp
+        .now()
+        .millisecondsSinceEpoch;
+
+    try {
       await FirebaseFirestore.instance.collection(PRODUCTS).doc(productId).set({
         'id': productId,
         'name': productName,
@@ -242,7 +246,7 @@ class FirestoreHelper {
         .where('serviceId', isEqualTo: serviceId)
         .where('category', isEqualTo: _category)
         .where('isAvailable', isEqualTo: true)
-        // .orderBy('sequence', descending: false)
+    // .orderBy('sequence', descending: false)
         .snapshots();
   }
 
@@ -288,8 +292,7 @@ class FirestoreHelper {
         .snapshots();
   }
 
-  static void setTableOccupyStatus(
-      String tableId, bool isOccupied) async {
+  static void setTableOccupyStatus(String tableId, bool isOccupied) async {
     try {
       await FirebaseFirestore.instance
           .collection(TABLES)
@@ -310,11 +313,11 @@ class FirestoreHelper {
           .collection(TABLES)
           .doc(table.id)
           .update({
-            'colorStatus':
-                table.colorStatus == SeatsManagementScreen.TABLE_GREEN
-                    ? SeatsManagementScreen.TABLE_RED
-                    : SeatsManagementScreen.TABLE_GREEN
-          })
+        'colorStatus':
+        table.colorStatus == SeatsManagementScreen.TABLE_GREEN
+            ? SeatsManagementScreen.TABLE_RED
+            : SeatsManagementScreen.TABLE_GREEN
+      })
           .then((value) => print("Table color status changed for: " + table.id))
           .catchError((error) => print("Failed to change table color: $error"));
     } on PlatformException catch (err) {
@@ -359,8 +362,8 @@ class FirestoreHelper {
     }
   }
 
-  static Stream<QuerySnapshot<Object?>> getSeats(
-      String serviceId, int tableNumber) {
+  static Stream<QuerySnapshot<Object?>> getSeats(String serviceId,
+      int tableNumber) {
     return FirebaseFirestore.instance
         .collection(SEATS)
         .where('serviceId', isEqualTo: serviceId)
@@ -368,8 +371,8 @@ class FirestoreHelper {
         .snapshots();
   }
 
-  static Stream<QuerySnapshot<Object?>> findTableNumber(
-      String serviceId, String custId) {
+  static Stream<QuerySnapshot<Object?>> findTableNumber(String serviceId,
+      String custId) {
     return FirebaseFirestore.instance
         .collection(SEATS)
         .where('serviceId', isEqualTo: serviceId)
@@ -383,6 +386,26 @@ class FirestoreHelper {
         .collection(INVENTORY_OPTIONS)
         .orderBy('sequence', descending: true)
         .snapshots();
+  }
+
+  /** SOS **/
+  static void sendSOSMessage(String? token, String name, int phoneNumber,
+      int tableNumber, String tableId, String seatId) async {
+    int timeMilliSec = Timestamp
+        .now()
+        .millisecondsSinceEpoch;
+
+    Sos sos = Sos(
+        id: StringUtils.getRandomString(20),
+        token: token,
+        name: name,
+        phoneNumber: phoneNumber,
+        tableNumber: tableNumber,
+        tableId: tableId,
+        seatId: seatId,
+        timestamp: timeMilliSec);
+
+    FirebaseFirestore.instance.collection(SOS).doc(sos.id).set(sos.toMap());
   }
 
 /** Reference **/

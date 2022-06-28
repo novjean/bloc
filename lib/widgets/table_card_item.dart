@@ -1,10 +1,13 @@
-import 'package:bloc/utils/string_utils.dart';
+import 'dart:convert';
+
 import 'package:bloc/widgets/ui/button_widget.dart';
 import 'package:bloc/widgets/ui/toaster.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
+import 'package:http/http.dart' as http;
+
 
 import '../db/entity/seat.dart';
 import '../db/entity/user.dart';
@@ -16,8 +19,9 @@ class TableCardItem extends StatefulWidget {
   int tableNumber;
   String tableId;
   bool isCommunity;
+  String? _token;
 
-  TableCardItem(this.seatId, this.tableNumber, this.tableId, this.isCommunity);
+  TableCardItem(this.seatId, this.tableNumber, this.tableId, this.isCommunity, this._token);
 
   @override
   State<TableCardItem> createState() => _TableCardItemState();
@@ -56,14 +60,54 @@ class _TableCardItemState extends State<TableCardItem> {
                 : _displayTableType() ,
             Spacer(),
             ButtonWidget(text: 'SOS', onClicked: () {
-              Toaster.shortToast('I need help!');
-              //need to send notification here
-
+              Toaster.shortToast('I need help!' + widget._token!);
+              sendSOSMessage();
             }),
           ],
         ),
       ),
     );
+  }
+
+  Future<void> sendSOSMessage() async {
+    if (widget._token == null) {
+      print('Unable to send FCM message, no token exists.');
+      return;
+    }
+
+    User user = UserPreferences.getUser();
+    FirestoreHelper.sendSOSMessage(widget._token, user.name, user.phoneNumber, widget.tableNumber, widget.tableId, widget.seatId);
+
+    // try {
+    //   await http.post(
+    //     Uri.parse('https://api.rnfirebase.io/messaging/send'),
+    //     headers: <String, String>{
+    //       'Content-Type': 'application/json; charset=UTF-8',
+    //     },
+    //     body: constructFCMPayload(widget._token),
+    //   );
+    //   print('FCM request for device sent!');
+    // } catch (e) {
+    //   print(e);
+    // }
+  }
+
+  // Crude counter to make messages unique
+  int _messageCount = 0;
+  /// The API endpoint here accepts a raw FCM payload for demonstration purposes.
+  String constructFCMPayload(String? token) {
+    _messageCount++;
+    return jsonEncode({
+      'token': token,
+      'data': {
+        'via': 'FlutterFire Cloud Messaging!!!',
+        'count': _messageCount.toString(),
+      },
+      'notification': {
+        'title': 'Hello FlutterFire!',
+        'body': 'This notification (#$_messageCount) was created via FCM!',
+      },
+    });
   }
 
   Future<void> scanTableQR(User user) async {

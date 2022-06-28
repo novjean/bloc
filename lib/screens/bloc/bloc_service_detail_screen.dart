@@ -11,7 +11,9 @@ import '../../db/dao/bloc_dao.dart';
 import '../../db/entity/category.dart';
 import '../../db/entity/product.dart';
 import '../../db/entity/seat.dart';
+import '../../helpers/token_monitor.dart';
 import '../../widgets/category_item.dart';
+import '../../widgets/experimental/meta_card.dart';
 import '../../widgets/product_item.dart';
 import 'cart_screen.dart';
 
@@ -35,6 +37,7 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen> {
   var _isLoading = false;
   late Widget _categoriesWidget;
   var _isCommunity = false;
+  String? _token;
 
   @override
   void initState() {
@@ -130,6 +133,12 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen> {
 
     return Column(
       children: [
+        // TokenMonitor((token) {
+        //   _token = token;
+        //   return token == null
+        //       ? const CircularProgressIndicator()
+        //       : Text(token, style: const TextStyle(fontSize: 12));
+        // }),
         const SizedBox(height: 2.0),
         _searchTableNumber(context),
         // CoverPhoto(service.name, service.imageUrl),
@@ -174,12 +183,19 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen> {
                   _mTableNumber = seat.tableNumber;
                   return Text('table number is ' + _mTableNumber.toString());
                 } else {
-                  return TableCardItem(seat.id, seat.tableNumber, seat.tableId, _isCommunity);
+                  return TokenMonitor((token) {
+                    _token = token;
+                    return token == null
+                        ? const CircularProgressIndicator()
+                        : TableCardItem(seat.id, seat.tableNumber, seat.tableId, _isCommunity, _token);
+                  });
+
+                  // return TableCardItem(seat.id, seat.tableNumber, seat.tableId, _isCommunity, _token);
                 }
               }
             }
           } else {
-            return TableCardItem('', -1, '', _isCommunity);
+            return TableCardItem('', -1, '', _isCommunity, _token);
           }
           return Text('loading table number...');
         });

@@ -7,6 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:logger/logger.dart';
 
+import '../db/shared_preferences/user_preferences.dart';
+import '../../db/entity/user.dart' as blocUser;
 import '../main.dart';
 import 'experimental/offers_screen.dart';
 import 'home_screen.dart';
@@ -145,8 +147,6 @@ class _MainScreenState extends State<MainScreen> {
         );
       }
 
-
-
     });
     FirebaseMessaging.onMessageOpenedApp.listen((message) {
       print('A new onMessageOpenedApp event was published!');
@@ -158,6 +158,10 @@ class _MainScreenState extends State<MainScreen> {
       return;
     });
     fbm.subscribeToTopic('chat');
+
+    blocUser.User user = UserPreferences.getUser();
+    if(user.clearanceLevel>9)
+    fbm.subscribeToTopic('sos');
   }
 
   @override

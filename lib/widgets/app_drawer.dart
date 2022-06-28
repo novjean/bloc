@@ -1,6 +1,8 @@
+import 'package:bloc/db/shared_preferences/user_preferences.dart';
 import 'package:bloc/screens/main_screen.dart';
 import 'package:bloc/screens/manager/manager_main_screen.dart';
 import 'package:bloc/screens/owner/owner_screen.dart';
+import 'package:bloc/utils/constants.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -25,13 +27,14 @@ class AppDrawer extends StatelessWidget {
             leading: const Icon(Icons.smart_toy_sharp),
             title: const Text('Home'),
             onTap: () {
-              Navigator.of(context).pushNamed(
-                MainScreen.routeName,
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                    builder: (ctx) => MainScreen(dao:dao, user: UserPreferences.getUser(),)),
               );
             },
           ),
           const Divider(),
-          MyApp.mClearanceLevel > 5
+          MyApp.mClearanceLevel > Constants.MANAGER_LEVEL
               ? ListTile(
                   leading: const Icon(Icons.adjust),
                   title: const Text('Manager'),
@@ -44,7 +47,7 @@ class AppDrawer extends StatelessWidget {
                 )
               : const SizedBox.shrink(),
           const Divider(),
-          MyApp.mClearanceLevel > 5
+          MyApp.mClearanceLevel > Constants.OWNER_LEVEL
               ? ListTile(
                   leading: const Icon(Icons.account_circle),
                   title: const Text('Owner'),

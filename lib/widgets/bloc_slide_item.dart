@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../db/entity/bloc.dart';
 import '../screens/bloc/bloc_detail_screen.dart';
-import '../utils/const.dart';
+import '../utils/constants.dart';
 
 class BlocSlideItem extends StatefulWidget {
   final BlocDao dao;

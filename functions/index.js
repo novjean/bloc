@@ -3,7 +3,9 @@ const admin = require('firebase-admin');
 
 admin.initializeApp();
 
-exports.myFunction = functions.firestore
+exports.chatFunction = functions
+    .region('asia-south1')
+    .firestore
     .document('chats/{message}')
     .onCreate((snapshot, context) => {
       console.log(snapshot.data());
@@ -11,6 +13,21 @@ exports.myFunction = functions.firestore
         notification: {
           title: snapshot.data().username,
           body: snapshot.data().text,
+          clickAction: 'FLUTTER_NOTIFICATION_CLICK',
+        },
+      });
+    });
+
+exports.sosFunction = functions
+    .region('asia-south1')
+    .firestore
+    .document('sos/{help}')
+    .onCreate((snapshot, context) => {
+      console.log(snapshot.data());
+      return admin.messaging().sendToTopic('sos', {
+        notification: {
+          title: 'SOS : Table ' + snapshot.data().tableNumber.toString(),
+          body: snapshot.data().name,
           clickAction: 'FLUTTER_NOTIFICATION_CLICK',
         },
       });
