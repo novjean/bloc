@@ -139,7 +139,7 @@ class _MainScreenState extends State<MainScreen> {
               channel.description,
               // TODO add a proper drawable resource to android, for now using
               //      one that already exists in example app.
-              icon: 'launch_background',
+              icon: '@mipmap/launcher_icon',
             ),
           ),
         );
