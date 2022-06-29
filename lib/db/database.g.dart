@@ -94,7 +94,7 @@ class _$AppDatabase extends AppDatabase {
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `Product` (`id` TEXT NOT NULL, `name` TEXT NOT NULL, `type` TEXT NOT NULL, `category` TEXT NOT NULL, `description` TEXT NOT NULL, `price` REAL NOT NULL, `serviceId` TEXT NOT NULL, `imageUrl` TEXT NOT NULL, `ownerId` TEXT NOT NULL, `createdAt` INTEGER NOT NULL, `isAvailable` INTEGER NOT NULL, `priceHighest` REAL NOT NULL, `priceLowest` REAL NOT NULL, `priceHighestTime` INTEGER NOT NULL, `priceLowestTime` INTEGER NOT NULL, `priceCommunity` REAL NOT NULL, PRIMARY KEY (`id`))');
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `User` (`userId` TEXT NOT NULL, `username` TEXT NOT NULL, `email` TEXT NOT NULL, `imageUrl` TEXT NOT NULL, `clearanceLevel` INTEGER NOT NULL, `phoneNumber` INTEGER NOT NULL, `name` TEXT NOT NULL, PRIMARY KEY (`userId`))');
+            'CREATE TABLE IF NOT EXISTS `User` (`id` TEXT NOT NULL, `username` TEXT NOT NULL, `email` TEXT NOT NULL, `imageUrl` TEXT NOT NULL, `clearanceLevel` INTEGER NOT NULL, `phoneNumber` INTEGER NOT NULL, `name` TEXT NOT NULL, PRIMARY KEY (`id`))');
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `ManagerService` (`id` TEXT NOT NULL, `name` TEXT NOT NULL, `sequence` INTEGER NOT NULL, PRIMARY KEY (`id`))');
         await database.execute(
@@ -121,7 +121,7 @@ class _$BlocDao extends BlocDao {
             database,
             'User',
             (User item) => <String, Object?>{
-                  'userId': item.userId,
+                  'id': item.id,
                   'username': item.username,
                   'email': item.email,
                   'imageUrl': item.imageUrl,
@@ -251,9 +251,9 @@ class _$BlocDao extends BlocDao {
         _userUpdateAdapter = UpdateAdapter(
             database,
             'User',
-            ['userId'],
+            ['id'],
             (User item) => <String, Object?>{
-                  'userId': item.userId,
+                  'id': item.id,
                   'username': item.username,
                   'email': item.email,
                   'imageUrl': item.imageUrl,
@@ -294,7 +294,7 @@ class _$BlocDao extends BlocDao {
   Future<User?> getUser(String uId) async {
     return _queryAdapter.query('SELECT * FROM User where userId=?1',
         mapper: (Map<String, Object?> row) => User(
-            userId: row['userId'] as String,
+            id: row['id'] as String,
             username: row['username'] as String,
             email: row['email'] as String,
             imageUrl: row['imageUrl'] as String,

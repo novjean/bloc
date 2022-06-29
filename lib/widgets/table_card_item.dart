@@ -130,7 +130,7 @@ class _TableCardItemState extends State<TableCardItem> {
       return;
     }
 
-    if (!user.userId.isEmpty) {
+    if (!user.id.isEmpty) {
       // set the table as occupied
       FirestoreHelper.setTableOccupyStatus(scanTableId, true);
 
@@ -151,7 +151,7 @@ class _TableCardItemState extends State<TableCardItem> {
               // BlocRepository.insertSeat(widget.dao, seat);
 
               if (seat.custId.isEmpty) {
-                FirestoreHelper.updateSeat(seat.id, user.userId);
+                FirestoreHelper.updateSeat(seat.id, user.id);
                 break;
               }
 

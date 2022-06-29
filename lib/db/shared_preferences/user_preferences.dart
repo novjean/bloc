@@ -11,7 +11,7 @@ class UserPreferences {
   static const _keyUser = 'user';
 
   static const myUser = User(
-    userId: '',
+    id: '',
     username: '',
     email:'',
     imageUrl: '',
@@ -24,14 +24,14 @@ class UserPreferences {
       _preferences = await SharedPreferences.getInstance();
 
   static Future setUser(User user) async {
-    final json = jsonEncode(user.toJson());
+    final json = jsonEncode(user.toMap());
     await _preferences.setString(_keyUser, json);
   }
 
   static User getUser() {
     final json = _preferences.getString(_keyUser);
 
-    return json == null ? myUser : User.fromJson(jsonDecode(json));
+    return json == null ? myUser : User.fromMap(jsonDecode(json));
   }
 
 }

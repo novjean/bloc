@@ -142,11 +142,11 @@ class FirestoreHelper {
   static void updateUser(blocUser.User user) async {
     try {
       final fileUrl = await FirestorageHelper.uploadFile(
-          FirestorageHelper.USERS, user.userId, File(user.imageUrl));
+          FirestorageHelper.USERS, user.id, File(user.imageUrl));
 
       await FirebaseFirestore.instance
           .collection(USERS)
-          .doc(user.userId)
+          .doc(user.id)
           .update({
         'name': user.name,
         'image_url': fileUrl,

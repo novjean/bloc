@@ -186,7 +186,7 @@ class MyApp extends StatelessWidget {
                                     ConnectionState.done) {
                                   Map<String, dynamic> data = snapshot.data!
                                       .data() as Map<String, dynamic>;
-                                  final blocUser.User user = blocUser.User.fromJson(data);
+                                  final blocUser.User user = blocUser.User.fromMap(data);
 
                                   mClearanceLevel = user.clearanceLevel;
                                   BlocRepository.insertUser(dao, user);
