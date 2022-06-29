@@ -98,7 +98,7 @@ Future<void> main() async {
 
   final database =
       await $FloorAppDatabase.databaseBuilder('bloc_database.db')
-          .addMigrations([migration18to19])
+          .addMigrations([migration18to19, migration19to20])
           .build();
   final dao = database.blocDao;
 

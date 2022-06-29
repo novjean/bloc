@@ -18,6 +18,7 @@ class Product {
   final double priceLowest;
   final int priceHighestTime;
   final int priceLowestTime;
+  final double priceCommunity;
 
 //<editor-fold desc="Data Methods">
 
@@ -37,6 +38,7 @@ class Product {
     required this.priceLowest,
     required this.priceHighestTime,
     required this.priceLowestTime,
+    required this.priceCommunity,
   });
 
   @override
@@ -76,7 +78,8 @@ class Product {
       priceHighest.hashCode ^
       priceLowest.hashCode ^
       priceHighestTime.hashCode ^
-      priceLowestTime.hashCode;
+      priceLowestTime.hashCode ^
+      priceCommunity.hashCode;
 
   @override
   String toString() {
@@ -96,6 +99,7 @@ class Product {
         ' priceLowest: $priceLowest,' +
         ' priceHighestTime: $priceHighestTime,' +
         ' priceLowestTime: $priceLowestTime,' +
+        ' priceCommunity: $priceCommunity,' +
         '}';
   }
 
@@ -115,6 +119,7 @@ class Product {
     double? priceLowest,
     int? priceHighestTime,
     int? priceLowestTime,
+    double? priceCommunity,
   }) {
     return Product(
       id: id ?? this.id,
@@ -132,6 +137,7 @@ class Product {
       priceLowest: priceLowest ?? this.priceLowest,
       priceHighestTime: priceHighestTime ?? this.priceHighestTime,
       priceLowestTime: priceLowestTime ?? this.priceLowestTime,
+      priceCommunity: priceCommunity ?? this.priceCommunity,
     );
   }
 
@@ -152,6 +158,7 @@ class Product {
       'priceLowest': this.priceLowest,
       'priceHighestTime': this.priceHighestTime,
       'priceLowestTime': this.priceLowestTime,
+      'priceCommunity': this.priceCommunity,
     };
   }
 
@@ -160,6 +167,7 @@ class Product {
     int intPrice = 0;
     double priceHighest = 0.0;
     double priceLowest = 0.0;
+    double priceCommunity = 0.0;
 
     try{
       price = (map['price'] as double);
@@ -182,6 +190,12 @@ class Product {
       priceLowest = intPrice.toDouble();
     }
 
+    try{
+      priceCommunity = (map['priceCommunity'] as double);
+    } catch(err) {
+      intPrice = map['priceCommunity'] as int;
+      priceCommunity = intPrice.toDouble();
+    }
 
     return Product(
       id: map['id'] as String,
@@ -199,6 +213,7 @@ class Product {
       priceLowest: priceLowest,
       priceHighestTime: map['priceHighestTime'] as int,
       priceLowestTime: map['priceLowestTime'] as int,
+      priceCommunity: priceCommunity,
     );
   }
 
