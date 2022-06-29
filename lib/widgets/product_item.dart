@@ -155,8 +155,11 @@ class _ProductItemState extends State<ProductItem> {
                                         userId: userId,
                                         productId: widget.product.id,
                                         productName: widget.product.name,
-                                        productPrice: double.parse(
-                                            widget.product.price.toString()),
+                                        productPrice: double.parse(widget
+                                                .isCommunity
+                                            ? widget.product.priceCommunity
+                                                .toString()
+                                            : widget.product.price.toString()),
                                         quantity: widget.addCount,
                                         createdAt: timestamp,
                                         isCompleted: false);
