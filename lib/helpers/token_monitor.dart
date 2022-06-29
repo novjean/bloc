@@ -1,7 +1,11 @@
 // ignore_for_file: require_trailing_commas
 
+import 'package:bloc/db/shared_preferences/user_preferences.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+
+import '../db/entity/user.dart';
+import 'firestore_helper.dart';
 
 /// Manages & returns the users FCM token.
 ///
@@ -24,6 +28,9 @@ class _TokenMonitor extends State<TokenMonitor> {
     print('FCM Token: $token');
     setState(() {
       _token = token;
+
+      User user = UserPreferences.getUser();
+      FirestoreHelper.updateUserFcmToken(user.id, token);
     });
   }
 

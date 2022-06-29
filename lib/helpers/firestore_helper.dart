@@ -128,12 +128,12 @@ class FirestoreHelper {
   }
 
   /** User **/
-  static Stream<QuerySnapshot<Object?>> getUserSnapshot(String customerId) {
-    return FirebaseFirestore.instance
-        .collection(USERS)
-        .where('user_id', isEqualTo: customerId)
-        .snapshots();
-  }
+  // static Stream<QuerySnapshot<Object?>> getUserSnapshot(String customerId) {
+  //   return FirebaseFirestore.instance
+  //       .collection(USERS)
+  //       .where('id', isEqualTo: customerId)
+  //       .snapshots();
+  // }
 
   static CollectionReference<Object?> getUsersCollection() {
     return FirebaseFirestore.instance.collection(USERS);
@@ -149,7 +149,7 @@ class FirestoreHelper {
           .doc(user.id)
           .update({
         'name': user.name,
-        'image_url': fileUrl,
+        'imageUrl': fileUrl,
       })
           .then((value) => print("user image updated."))
           .catchError((error) => print("failed to update user image: $error"));
@@ -159,6 +159,24 @@ class FirestoreHelper {
       logger.e(err);
     }
   }
+
+  static void updateUserFcmToken(String userId, String? token) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection(USERS)
+          .doc(userId)
+          .update({
+        'fcmToken': token,
+      })
+          .then((value) => print(userId + " user fcm token updated to : " + token!))
+          .catchError((error) => print("failed to update user fcm token: $error"));
+    } on PlatformException catch (err) {
+      logger.e(err.message);
+    } catch (err) {
+      logger.e(err);
+    }
+  }
+
 
   /** Chats **/
   static void sendChatMessage(String enteredMessage) async {
@@ -172,7 +190,7 @@ class FirestoreHelper {
       'createdAt': Timestamp.now(),
       'userId': user.uid,
       'username': userData.data()!['username'],
-      'userImage': userData.data()!['image_url']
+      'userImage': userData.data()!['imageUrl']
     });
   }
 

@@ -18,6 +18,7 @@ class UserPreferences {
     clearanceLevel: 0,
     phoneNumber: 0,
     name:'',
+    fcmToken:''
   );
 
   static Future init() async =>

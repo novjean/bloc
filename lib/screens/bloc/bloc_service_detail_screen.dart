@@ -13,7 +13,6 @@ import '../../db/entity/product.dart';
 import '../../db/entity/seat.dart';
 import '../../helpers/token_monitor.dart';
 import '../../widgets/category_item.dart';
-import '../../widgets/experimental/meta_card.dart';
 import '../../widgets/product_item.dart';
 import 'cart_screen.dart';
 
@@ -189,8 +188,6 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen> {
                         ? const CircularProgressIndicator()
                         : TableCardItem(seat.id, seat.tableNumber, seat.tableId, _isCommunity, _token);
                   });
-
-                  // return TableCardItem(seat.id, seat.tableNumber, seat.tableId, _isCommunity, _token);
                 }
               }
             }

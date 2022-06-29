@@ -10,6 +10,7 @@ class User {
   final int clearanceLevel;
   final int phoneNumber;
   final String name;
+  final String fcmToken;
 
 //<editor-fold desc="Data Methods">
 
@@ -21,6 +22,7 @@ class User {
     required this.clearanceLevel,
     required this.phoneNumber,
     required this.name,
+    required this.fcmToken,
   });
 
   @override
@@ -34,7 +36,8 @@ class User {
           imageUrl == other.imageUrl &&
           clearanceLevel == other.clearanceLevel &&
           phoneNumber == other.phoneNumber &&
-          name == other.name);
+          name == other.name &&
+          fcmToken == other.fcmToken);
 
   @override
   int get hashCode =>
@@ -44,7 +47,8 @@ class User {
       imageUrl.hashCode ^
       clearanceLevel.hashCode ^
       phoneNumber.hashCode ^
-      name.hashCode;
+      name.hashCode ^
+      fcmToken.hashCode;
 
   @override
   String toString() {
@@ -56,6 +60,7 @@ class User {
         ' clearanceLevel: $clearanceLevel,' +
         ' phoneNumber: $phoneNumber,' +
         ' name: $name,' +
+        ' fcmToken: $fcmToken,' +
         '}';
   }
 
@@ -67,6 +72,7 @@ class User {
     int? clearanceLevel,
     int? phoneNumber,
     String? name,
+    String? fcmToken,
   }) {
     return User(
       id: id ?? this.id,
@@ -76,6 +82,7 @@ class User {
       clearanceLevel: clearanceLevel ?? this.clearanceLevel,
       phoneNumber: phoneNumber ?? this.phoneNumber,
       name: name ?? this.name,
+      fcmToken: fcmToken ?? this.fcmToken,
     );
   }
 
@@ -88,6 +95,7 @@ class User {
       'clearanceLevel': this.clearanceLevel,
       'phoneNumber': this.phoneNumber,
       'name': this.name,
+      'fcmToken': this.fcmToken,
     };
   }
 
@@ -100,6 +108,7 @@ class User {
       clearanceLevel: map['clearanceLevel'] as int,
       phoneNumber: map['phoneNumber'] as int,
       name: map['name'] as String,
+      fcmToken: map['fcmToken'] as String,
     );
   }
 
