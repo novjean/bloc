@@ -1,5 +1,6 @@
 import 'package:bloc/db/dao/bloc_dao.dart';
 import 'package:bloc/db/entity/user.dart' as blocUser;
+import 'package:bloc/utils/constants.dart';
 import 'package:bloc/widgets/app_drawer.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -160,8 +161,9 @@ class _MainScreenState extends State<MainScreen> {
     fbm.subscribeToTopic('chat');
 
     blocUser.User user = UserPreferences.getUser();
-    if(user.clearanceLevel>9)
-    fbm.subscribeToTopic('sos');
+    if(user.clearanceLevel>Constants.MANAGER_LEVEL){
+      fbm.subscribeToTopic('sos');
+    }
   }
 
   @override
