@@ -125,6 +125,28 @@ class _EditProductScreenState extends State<EditProductScreen> {
           },
         ),
         const SizedBox(height: 24),
+        TextFormField(
+          key: const ValueKey('product_price_community'),
+          initialValue: widget.product.priceCommunity.toString(),
+          autocorrect: false,
+          textCapitalization: TextCapitalization.none,
+          enableSuggestions: false,
+          validator: (value) {
+            if (value!.isEmpty) {
+              return 'Please enter a valid community price for the product.';
+            }
+            return null;
+          },
+          keyboardType: TextInputType.number,
+          decoration: const InputDecoration(
+            labelText: 'Community Price',
+          ),
+          onChanged: (value) {
+            double? newPrice = double.tryParse(value);
+            widget.product = widget.product.copyWith(priceCommunity: newPrice);
+          },
+        ),
+        const SizedBox(height: 24),
         Row(
           children: <Widget>[
             SizedBox(
@@ -154,11 +176,11 @@ class _EditProductScreenState extends State<EditProductScreen> {
             }
 
             int timestamp = Timestamp.now().millisecondsSinceEpoch;
-            if(widget.product.price>widget.product.priceHighest){
-              widget.product = widget.product.copyWith(priceHighest: widget.product.price);
+            if(widget.product.priceCommunity>widget.product.priceHighest){
+              widget.product = widget.product.copyWith(priceHighest: widget.product.priceCommunity);
               widget.product = widget.product.copyWith(priceHighestTime: timestamp);
-            } else if (widget.product.price<widget.product.priceLowest) {
-              widget.product = widget.product.copyWith(priceLowest: widget.product.price);
+            } else if (widget.product.priceCommunity<widget.product.priceLowest) {
+              widget.product = widget.product.copyWith(priceLowest: widget.product.priceCommunity);
               widget.product = widget.product.copyWith(priceLowestTime: timestamp);
             }
 
