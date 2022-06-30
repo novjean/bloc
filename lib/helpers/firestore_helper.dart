@@ -128,12 +128,25 @@ class FirestoreHelper {
   }
 
   /** User **/
-  // static Stream<QuerySnapshot<Object?>> getUserSnapshot(String customerId) {
-  //   return FirebaseFirestore.instance
-  //       .collection(USERS)
-  //       .where('id', isEqualTo: customerId)
-  //       .snapshots();
-  // }
+  static Future<void> insertUser(String email, String password, File? image, String username) async {
+
+    final _auth = FirebaseAuth.instance;
+    UserCredential authResult = await _auth.createUserWithEmailAndPassword(
+        email: email, password: password);
+
+    final url = await FirestorageHelper.uploadFile(
+        FirestorageHelper.USERS, authResult.user!.uid, image!);
+
+    blocUser.User user = blocUser.User(
+        id: authResult.user!.uid,
+        name: 'Superstar', phoneNumber: 0,clearanceLevel: 1, email: email,fcmToken: '',imageUrl: url,username: username );
+
+    await FirebaseFirestore.instance
+        .collection(USERS)
+        .doc(authResult.user!.uid)
+        .set(user.toMap());
+  }
+
 
   static Stream<QuerySnapshot<Object?>> getUsers(int clearanceLevel) {
     return FirebaseFirestore.instance
