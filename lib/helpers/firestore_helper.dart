@@ -135,6 +135,14 @@ class FirestoreHelper {
   //       .snapshots();
   // }
 
+  static Stream<QuerySnapshot<Object?>> getUsers(int clearanceLevel) {
+    return FirebaseFirestore.instance
+        .collection(USERS)
+        .where('clearanceLevel', isLessThan: clearanceLevel)
+        // .orderBy('sequence', descending: false)
+        .snapshots();
+  }
+
   static CollectionReference<Object?> getUsersCollection() {
     return FirebaseFirestore.instance.collection(USERS);
   }

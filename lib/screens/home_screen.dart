@@ -1,9 +1,12 @@
+import 'package:bloc/db/entity/user.dart';
+import 'package:bloc/utils/constants.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import '../db/bloc_repository.dart';
 import '../db/dao/bloc_dao.dart';
 import '../db/entity/bloc.dart';
+import '../helpers/firestore_helper.dart';
 import '../utils/friends.dart';
 import '../widgets/search_card.dart';
 import '../widgets/bloc_slide_item.dart';
@@ -34,12 +37,12 @@ class HomeScreen extends StatelessWidget {
               buildBlocRow(context),
               // SizedBox(height: 20.0),
               // buildRestaurantRow('Trending Restaurants', context),
-              SizedBox(height: 10.0),
-              buildCategoryRow('Category', context),
+              // SizedBox(height: 10.0),
+              // buildCategoryRow('Category', context),
               SizedBox(height: 20.0),
-              buildCategoryRow('Friends', context),
+              buildCategoryRow('Superstars', context),
               SizedBox(height: 10.0),
-              buildFriendsList(),
+              buildSuperstarsList(context),
               SizedBox(height: 30.0),
             ],
           ),
@@ -122,7 +125,7 @@ class HomeScreen extends StatelessWidget {
         ),
         FlatButton(
           child: Text(
-            "See all (9)",
+            "See all",
             style: TextStyle(
               color: Theme.of(context).accentColor,
             ),
@@ -172,21 +175,51 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  buildFriendsList() {
+  buildSuperstarsList(BuildContext context){
+    return StreamBuilder<QuerySnapshot>(
+      stream: FirestoreHelper.getUsers(Constants.MANAGER_LEVEL),
+      builder: (ctx, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          print('loading superstars...');
+          return SizedBox();
+        }
+
+        // if (snapshot.data!.docs.length > 0) {
+        //   BlocRepository.clearCategories(widget.dao);
+        // }
+
+        List<User> _users = [];
+        for (int i = 0; i < snapshot.data!.docs.length; i++) {
+          DocumentSnapshot document = snapshot.data!.docs[i];
+          Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+          final User user = User.fromMap(data);
+          // BlocRepository.insertCategory(widget.dao, cat);
+          _users.add(user);
+
+          if (i == snapshot.data!.docs.length - 1) {
+            return _displaySuperstarsList(context, _users);
+          }
+        }
+        return Text('Loading categories...');
+      },
+    );
+  }
+
+  _displaySuperstarsList(BuildContext context, List<User> users) {
     return Container(
       height: 50.0,
       child: ListView.builder(
         primary: false,
         scrollDirection: Axis.horizontal,
         shrinkWrap: true,
-        itemCount: friends == null ? 0 : friends.length,
+        itemCount: users.length,
         itemBuilder: (BuildContext context, int index) {
-          String img = friends[index];
+          String img = users[index].imageUrl;
 
           return Padding(
             padding: const EdgeInsets.only(right: 5.0),
             child: CircleAvatar(
-              backgroundImage: AssetImage(
+              backgroundImage: NetworkImage(
                 img,
               ),
               radius: 25.0,
