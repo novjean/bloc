@@ -7,7 +7,6 @@ import '../db/bloc_repository.dart';
 import '../db/dao/bloc_dao.dart';
 import '../db/entity/bloc.dart';
 import '../helpers/firestore_helper.dart';
-import '../utils/friends.dart';
 import '../widgets/search_card.dart';
 import '../widgets/bloc_slide_item.dart';
 import 'experimental/categories.dart';
