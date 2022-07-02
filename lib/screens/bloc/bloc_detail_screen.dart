@@ -81,7 +81,7 @@ class BlocDetailScreen extends StatelessWidget {
               Map<String, dynamic> data =
               document.data()! as Map<String, dynamic>;
 
-              final BlocService service = BlocServiceUtils.getBlocService(data, document.id);
+              final BlocService service = BlocService.fromMap(data);
               BlocRepository.insertBlocService(dao, service);
 
               return BlocServiceItem(service, false, dao, key: ValueKey(document.id));

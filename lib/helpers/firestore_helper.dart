@@ -33,6 +33,13 @@ class FirestoreHelper {
   static String USERS = 'users';
 
   /** Blocs **/
+  static getBloc(String blocId) {
+    return FirebaseFirestore.instance
+        .collection(SERVICES)
+        .where('blocId', isEqualTo: blocId)
+        .snapshots();
+  }
+
   static void updateBloc(String blocId, File image) async {
     try {
       final url = await FirestorageHelper.uploadFile(
@@ -446,6 +453,7 @@ class FirestoreHelper {
 
     FirebaseFirestore.instance.collection(SOS).doc(sos.id).set(sos.toMap());
   }
+
 
 /** Reference **/
 // _buildProducts(BuildContext context, String _category) {

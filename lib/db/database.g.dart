@@ -84,7 +84,7 @@ class _$AppDatabase extends AppDatabase {
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `Bloc` (`id` TEXT NOT NULL, `name` TEXT NOT NULL, `city` TEXT NOT NULL, `addressLine1` TEXT NOT NULL, `addressLine2` TEXT NOT NULL, `pinCode` TEXT NOT NULL, `imageUrl` TEXT NOT NULL, `ownerId` TEXT NOT NULL, `createdAt` TEXT NOT NULL, PRIMARY KEY (`id`))');
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `BlocService` (`id` TEXT NOT NULL, `name` TEXT NOT NULL, `blocId` TEXT NOT NULL, `type` TEXT NOT NULL, `primaryNumber` REAL NOT NULL, `secondaryNumber` REAL NOT NULL, `email` TEXT NOT NULL, `imageUrl` TEXT NOT NULL, `ownerId` TEXT NOT NULL, `createdAt` TEXT NOT NULL, PRIMARY KEY (`id`))');
+            'CREATE TABLE IF NOT EXISTS `BlocService` (`id` TEXT NOT NULL, `name` TEXT NOT NULL, `blocId` TEXT NOT NULL, `type` TEXT NOT NULL, `primaryPhone` REAL NOT NULL, `secondaryPhone` REAL NOT NULL, `emailId` TEXT NOT NULL, `imageUrl` TEXT NOT NULL, `ownerId` TEXT NOT NULL, `createdAt` TEXT NOT NULL, PRIMARY KEY (`id`))');
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `CartItem` (`id` TEXT NOT NULL, `serviceId` TEXT NOT NULL, `tableNumber` INTEGER NOT NULL, `cartNumber` INTEGER NOT NULL, `userId` TEXT NOT NULL, `productId` TEXT NOT NULL, `productName` TEXT NOT NULL, `productPrice` REAL NOT NULL, `quantity` INTEGER NOT NULL, `isCompleted` INTEGER NOT NULL, `createdAt` INTEGER NOT NULL, PRIMARY KEY (`id`))');
         await database.execute(
@@ -161,9 +161,9 @@ class _$BlocDao extends BlocDao {
                   'name': item.name,
                   'blocId': item.blocId,
                   'type': item.type,
-                  'primaryNumber': item.primaryNumber,
-                  'secondaryNumber': item.secondaryNumber,
-                  'email': item.email,
+                  'primaryPhone': item.primaryPhone,
+                  'secondaryPhone': item.secondaryPhone,
+                  'emailId': item.emailId,
                   'imageUrl': item.imageUrl,
                   'ownerId': item.ownerId,
                   'createdAt': item.createdAt
