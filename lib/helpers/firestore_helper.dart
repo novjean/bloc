@@ -59,8 +59,8 @@ class FirestoreHelper {
   }
 
   /** Cart Items **/
-  static void uploadCartItem(CartItem cart, Timestamp timestamp,
-      int millisecondsSinceEpoch) async {
+  static void uploadCartItem(
+      CartItem cart, Timestamp timestamp, int millisecondsSinceEpoch) async {
     await FirebaseFirestore.instance.collection(CART_ITEMS).doc(cart.id).set({
       'cartId': cart.id,
       'serviceId': cart.serviceId,
@@ -77,13 +77,13 @@ class FirestoreHelper {
     });
   }
 
-  static Stream<QuerySnapshot<Object?>> getCartItemsSnapshot(String serviceId,
-      bool isCompleted) {
+  static Stream<QuerySnapshot<Object?>> getCartItemsSnapshot(
+      String serviceId, bool isCompleted) {
     return FirebaseFirestore.instance
         .collection(CART_ITEMS)
         .where('serviceId', isEqualTo: serviceId)
         .where('isCompleted', isEqualTo: isCompleted)
-    // .orderBy('timestamp', descending: true) // createdAt could be used i guess
+        // .orderBy('timestamp', descending: true) // createdAt could be used i guess
         .snapshots();
   }
 
@@ -129,14 +129,14 @@ class FirestoreHelper {
 
     return FirebaseFirestore.instance
         .collection(SERVICES)
-    // .orderBy('sequence', descending: true)
-    // .where('ownerId', isEqualTo: user!.uid)
+        // .orderBy('sequence', descending: true)
+        // .where('ownerId', isEqualTo: user!.uid)
         .snapshots();
   }
 
   /** User **/
-  static Future<void> insertUser(String email, String password, File? image, String username) async {
-
+  static Future<void> insertUser(
+      String email, String password, File? image, String username) async {
     final _auth = FirebaseAuth.instance;
     UserCredential authResult = await _auth.createUserWithEmailAndPassword(
         email: email, password: password);
@@ -146,7 +146,13 @@ class FirestoreHelper {
 
     blocUser.User user = blocUser.User(
         id: authResult.user!.uid,
-        name: 'Superstar', phoneNumber: 0,clearanceLevel: 1, email: email,fcmToken: '',imageUrl: url,username: username );
+        name: 'Superstar',
+        phoneNumber: 0,
+        clearanceLevel: 1,
+        email: email,
+        fcmToken: '',
+        imageUrl: url,
+        username: username);
 
     await FirebaseFirestore.instance
         .collection(USERS)
@@ -154,6 +160,12 @@ class FirestoreHelper {
         .set(user.toMap());
   }
 
+  static insertPhoneUser(blocUser.User user) async {
+    await FirebaseFirestore.instance
+        .collection(USERS)
+        .doc(user.id)
+        .set(user.toMap());
+  }
 
   static Stream<QuerySnapshot<Object?>> getUsers(int clearanceLevel) {
     return FirebaseFirestore.instance
@@ -176,9 +188,9 @@ class FirestoreHelper {
           .collection(USERS)
           .doc(user.id)
           .update({
-        'name': user.name,
-        'imageUrl': fileUrl,
-      })
+            'name': user.name,
+            'imageUrl': fileUrl,
+          })
           .then((value) => print("user image updated."))
           .catchError((error) => print("failed to update user image: $error"));
     } on PlatformException catch (err) {
@@ -194,10 +206,12 @@ class FirestoreHelper {
           .collection(USERS)
           .doc(userId)
           .update({
-        'fcmToken': token,
-      })
-          .then((value) => print(userId + " user fcm token updated to : " + token!))
-          .catchError((error) => print("failed to update user fcm token: $error"));
+            'fcmToken': token,
+          })
+          .then((value) =>
+              print(userId + " user fcm token updated to : " + token!))
+          .catchError(
+              (error) => print("failed to update user fcm token: $error"));
     } on PlatformException catch (err) {
       logger.e(err.message);
     } catch (err) {
@@ -205,13 +219,12 @@ class FirestoreHelper {
     }
   }
 
-
   /** Chats **/
   static void sendChatMessage(String enteredMessage) async {
     final user = FirebaseAuth.instance.currentUser;
 
     final userData =
-    await FirebaseFirestore.instance.collection(USERS).doc(user!.uid).get();
+        await FirebaseFirestore.instance.collection(USERS).doc(user!.uid).get();
     FirebaseFirestore.instance.collection(CHATS).add({
       'text': enteredMessage,
       // timestamp available through cloud firestore
@@ -230,7 +243,8 @@ class FirestoreHelper {
   }
 
   /** Products **/
-  static void insertProduct(String productId,
+  static void insertProduct(
+      String productId,
       String productName,
       String categoryType,
       String productCategory,
@@ -249,9 +263,7 @@ class FirestoreHelper {
       price = intPrice.toDouble();
     }
 
-    int timeMilliSec = Timestamp
-        .now()
-        .millisecondsSinceEpoch;
+    int timeMilliSec = Timestamp.now().millisecondsSinceEpoch;
 
     try {
       await FirebaseFirestore.instance.collection(PRODUCTS).doc(productId).set({
@@ -292,7 +304,7 @@ class FirestoreHelper {
         .where('serviceId', isEqualTo: serviceId)
         .where('category', isEqualTo: _category)
         .where('isAvailable', isEqualTo: true)
-    // .orderBy('sequence', descending: false)
+        // .orderBy('sequence', descending: false)
         .snapshots();
   }
 
@@ -359,11 +371,11 @@ class FirestoreHelper {
           .collection(TABLES)
           .doc(table.id)
           .update({
-        'colorStatus':
-        table.colorStatus == SeatsManagementScreen.TABLE_GREEN
-            ? SeatsManagementScreen.TABLE_RED
-            : SeatsManagementScreen.TABLE_GREEN
-      })
+            'colorStatus':
+                table.colorStatus == SeatsManagementScreen.TABLE_GREEN
+                    ? SeatsManagementScreen.TABLE_RED
+                    : SeatsManagementScreen.TABLE_GREEN
+          })
           .then((value) => print("Table color status changed for: " + table.id))
           .catchError((error) => print("Failed to change table color: $error"));
     } on PlatformException catch (err) {
@@ -408,8 +420,8 @@ class FirestoreHelper {
     }
   }
 
-  static Stream<QuerySnapshot<Object?>> getSeats(String serviceId,
-      int tableNumber) {
+  static Stream<QuerySnapshot<Object?>> getSeats(
+      String serviceId, int tableNumber) {
     return FirebaseFirestore.instance
         .collection(SEATS)
         .where('serviceId', isEqualTo: serviceId)
@@ -417,8 +429,8 @@ class FirestoreHelper {
         .snapshots();
   }
 
-  static Stream<QuerySnapshot<Object?>> findTableNumber(String serviceId,
-      String custId) {
+  static Stream<QuerySnapshot<Object?>> findTableNumber(
+      String serviceId, String custId) {
     return FirebaseFirestore.instance
         .collection(SEATS)
         .where('serviceId', isEqualTo: serviceId)
@@ -437,9 +449,7 @@ class FirestoreHelper {
   /** SOS **/
   static void sendSOSMessage(String? token, String name, int phoneNumber,
       int tableNumber, String tableId, String seatId) async {
-    int timeMilliSec = Timestamp
-        .now()
-        .millisecondsSinceEpoch;
+    int timeMilliSec = Timestamp.now().millisecondsSinceEpoch;
 
     Sos sos = Sos(
         id: StringUtils.getRandomString(20),
@@ -453,7 +463,6 @@ class FirestoreHelper {
 
     FirebaseFirestore.instance.collection(SOS).doc(sos.id).set(sos.toMap());
   }
-
 
 /** Reference **/
 // _buildProducts(BuildContext context, String _category) {

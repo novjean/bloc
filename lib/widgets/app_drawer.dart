@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 
 import '../db/dao/bloc_dao.dart';
 import '../main.dart';
+import '../screens/login_screen.dart';
 
 class AppDrawer extends StatelessWidget {
   final BlocDao dao;
@@ -34,7 +35,7 @@ class AppDrawer extends StatelessWidget {
             },
           ),
           const Divider(),
-          MyApp.mClearanceLevel > Constants.MANAGER_LEVEL
+          UserPreferences.myUser.clearanceLevel > Constants.MANAGER_LEVEL
               ? ListTile(
                   leading: const Icon(Icons.adjust),
                   title: const Text('Manager'),
@@ -47,7 +48,7 @@ class AppDrawer extends StatelessWidget {
                 )
               : const SizedBox.shrink(),
           const Divider(),
-          MyApp.mClearanceLevel > Constants.OWNER_LEVEL
+          UserPreferences.myUser.clearanceLevel > Constants.OWNER_LEVEL
               ? ListTile(
                   leading: const Icon(Icons.account_circle),
                   title: const Text('Owner'),
@@ -65,6 +66,11 @@ class AppDrawer extends StatelessWidget {
             title: const Text('Logout'),
             onTap: () {
               FirebaseAuth.instance.signOut();
+              Navigator.of(context).pushReplacement(
+                MaterialPageRoute(
+                    builder: (context) =>
+                        LoginScreen(dao: dao)),
+              );
             },
           ),
         ],

@@ -1,0 +1,283 @@
+import 'package:bloc/helpers/firestore_helper.dart';
+import 'package:bloc/db/entity/user.dart' as blocUser;
+import 'package:bloc/screens/main_screen.dart';
+
+import 'package:bloc/utils/string_utils.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+
+import '../db/bloc_repository.dart';
+import '../db/dao/bloc_dao.dart';
+import '../db/shared_preferences/user_preferences.dart';
+import '../widgets/ui/Toaster.dart';
+
+class LoginScreen extends StatelessWidget {
+  BlocDao dao;
+
+  LoginScreen({key, required this.dao}) : super(key: key);
+
+  final _phoneController = TextEditingController();
+  final _codeController = TextEditingController();
+
+  Future registerUser(String strMobile, BuildContext context) async {
+    FirebaseAuth _auth = FirebaseAuth.instance;
+
+    try {
+      _auth.verifyPhoneNumber(
+          phoneNumber: strMobile,
+          timeout: Duration(seconds: 120),
+          verificationCompleted: (AuthCredential authCredential) {
+            _auth.signInWithCredential(authCredential).then((result) async {
+              Toaster.shortToast('login: verification completed!');
+
+              // UserCredential result =
+              //     await _auth.signInWithCredential(authCredential);
+              User? user = result.user;
+
+              if(user!=null){
+
+                // CollectionReference users = FirestoreHelper.getUsersCollection();
+
+                // FutureBuilder<DocumentSnapshot>(
+                //   future: users.doc(user.uid).get(),
+                //   builder: (BuildContext ctx,
+                //       AsyncSnapshot<DocumentSnapshot> snapshot) {
+                //     if (snapshot.connectionState ==
+                //         ConnectionState.waiting) {
+                //       return const Center(
+                //         child: CircularProgressIndicator(),
+                //       );
+                //     }
+                //
+                //     if (snapshot.hasError) {
+                //       return Text("Something went wrong");
+                //     }
+                //
+                //     if (snapshot.hasData &&
+                //         !snapshot.data!.exists) {
+                //       blocUser.User registeredUser = blocUser.User(
+                //           id: user.uid,
+                //           name: 'Superstar',
+                //           clearanceLevel: 1,
+                //           phoneNumber: StringUtils.getNumberOnly(strMobile),
+                //           fcmToken: '',
+                //           email: '',
+                //           imageUrl: '',
+                //           username: '');
+                //
+                //       FirestoreHelper.insertPhoneUser(registeredUser);
+                //       print(strMobile + ' is registered with bloc!');
+                //       BlocRepository.insertUser(dao, registeredUser);
+                //       UserPreferences.setUser(registeredUser);
+                //
+                //       Navigator.of(context).push(
+                //         MaterialPageRoute(
+                //             builder: (context) =>
+                //                 MainScreen(user: registeredUser, dao: dao)),
+                //       );
+                //     }
+                //
+                //     if (snapshot.connectionState ==
+                //         ConnectionState.done) {
+                //       Map<String, dynamic> data = snapshot.data!
+                //           .data() as Map<String, dynamic>;
+                //       final blocUser.User regUser = blocUser.User.fromMap(data);
+                //
+                //       // mClearanceLevel = user.clearanceLevel;
+                //       BlocRepository.insertUser(dao, regUser);
+                //       UserPreferences.setUser(regUser);
+                //
+                //       Navigator.of(context).pushReplacement(
+                //         MaterialPageRoute(
+                //             builder: (context) =>
+                //                 MainScreen(user: regUser, dao: dao)),
+                //       );
+                //     }
+                //     return Text("loading user...");
+                //   },
+                // );
+
+
+                // blocUser.User registeredUser = blocUser.User(
+                //     id: user.uid,
+                //     name: 'Superstar',
+                //     clearanceLevel: 1,
+                //     phoneNumber: StringUtils.getNumberOnly(strMobile),
+                //     fcmToken: '',
+                //     email: '',
+                //     imageUrl: '',
+                //     username: '');
+                //
+                // await FirestoreHelper.insertPhoneUser(registeredUser);
+                // print(strMobile + ' is registered with bloc!');
+                // BlocRepository.insertUser(dao, registeredUser);
+                // UserPreferences.setUser(registeredUser);
+                //
+                // await Navigator.of(context).pushReplacement(
+                //   MaterialPageRoute(
+                //       builder: (context) =>
+                //           MainScreen(user: registeredUser, dao: dao)),
+                // );
+              } else {
+                print(strMobile + ' registration failed, user could not be retrieved!');
+              }
+            }).catchError((e) {
+              print(e);
+            });
+          },
+          verificationFailed: (FirebaseAuthException authException) {
+            print(authException.message);
+          },
+          codeSent: (String verificationId, int? forceResendingToken) {
+            showDialog(
+                context: context,
+                barrierDismissible: false,
+                builder: (context) {
+                  return AlertDialog(
+                    title: Text("Give the code?"),
+                    content: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        TextField(
+                          controller: _codeController,
+                        ),
+                      ],
+                    ),
+                    actions: <Widget>[
+                      FlatButton(
+                        child: Text("Confirm"),
+                        textColor: Colors.white,
+                        color: Colors.blue,
+                        onPressed: () async {
+                          final code = _codeController.text.trim();
+                          AuthCredential credential =
+                              PhoneAuthProvider.credential(
+                                  verificationId: verificationId,
+                                  smsCode: code);
+                          UserCredential result =
+                              await _auth.signInWithCredential(credential);
+                          User? user = result.user;
+
+                          if(user!=null){
+                            blocUser.User registeredUser = blocUser.User(
+                                id: user.uid,
+                                name: 'Superstar',
+                                clearanceLevel: 1,
+                                phoneNumber: StringUtils.getNumberOnly(strMobile),
+                                fcmToken: '',
+                                email: '',
+                                imageUrl: '',
+                                username: '');
+
+                            await FirestoreHelper.insertPhoneUser(registeredUser);
+                            print(strMobile + ' is registered with bloc!');
+                            BlocRepository.insertUser(dao, registeredUser);
+                            UserPreferences.setUser(registeredUser);
+
+                            await Navigator.of(context).push(
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      MainScreen(user: registeredUser, dao: dao)),
+                            );
+                          } else {
+                            print(strMobile + ' registration failed, user could not be retrieved!');
+                          }
+                        },
+                      )
+                    ],
+                  );
+                });
+          },
+          codeAutoRetrievalTimeout: (String verificationId) {
+            verificationId = verificationId;
+            print(verificationId);
+            print("Timeout");
+          });
+    } catch (e) {
+      print("failed to verify phone number: ${e}");
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        body: Container(
+      padding: EdgeInsets.all(32),
+      child: Form(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Text(
+              "Login",
+              style: TextStyle(
+                  color: Colors.lightBlue,
+                  fontSize: 36,
+                  fontWeight: FontWeight.w500),
+            ),
+
+            SizedBox(
+              height: 16,
+            ),
+
+            TextFormField(
+              decoration: InputDecoration(
+                  enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(8)),
+                      borderSide: BorderSide(color: Colors.grey.shade200)),
+                  focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(8)),
+                      borderSide: BorderSide(color: Colors.grey.shade300)),
+                  filled: true,
+                  fillColor: Colors.grey[100],
+                  hintText: "Phone Number"),
+              controller: _phoneController,
+            ),
+
+            SizedBox(
+              height: 16,
+            ),
+
+            // TextFormField(
+            //   decoration: InputDecoration(
+            //       enabledBorder: OutlineInputBorder(
+            //           borderRadius: BorderRadius.all(Radius.circular(8)),
+            //           borderSide: BorderSide(color: Colors.grey.shade200)
+            //       ),
+            //       focusedBorder: OutlineInputBorder(
+            //           borderRadius: BorderRadius.all(Radius.circular(8)),
+            //           borderSide: BorderSide(color: Colors.grey.shade300)
+            //       ),
+            //       filled: true,
+            //       fillColor: Colors.grey[100],
+            //       hintText: "Password"
+            //
+            //   ),
+            //
+            //   controller: _passController,
+            // ),
+            //
+            // SizedBox(height: 16,),
+
+            Container(
+              width: double.infinity,
+              child: FlatButton(
+                child: Text("Login"),
+                textColor: Colors.white,
+                padding: EdgeInsets.all(16),
+                onPressed: () {
+                  //code for sign in
+                  final phone = _phoneController.text.trim();
+
+                  registerUser(phone, context);
+                },
+                color: Colors.blue,
+              ),
+            )
+          ],
+        ),
+      ),
+    ));
+  }
+}

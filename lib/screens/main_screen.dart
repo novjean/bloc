@@ -1,5 +1,6 @@
 import 'package:bloc/db/dao/bloc_dao.dart';
 import 'package:bloc/db/entity/user.dart' as blocUser;
+import 'package:bloc/screens/login_screen.dart';
 import 'package:bloc/utils/constants.dart';
 import 'package:bloc/widgets/app_drawer.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -78,6 +79,12 @@ class _MainScreenState extends State<MainScreen> {
             onChanged: (itemIdentifier) {
               if (itemIdentifier == 'logout') {
                 FirebaseAuth.instance.signOut();
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          LoginScreen(dao: widget.dao)),
+                );
+
               }
             },
           )

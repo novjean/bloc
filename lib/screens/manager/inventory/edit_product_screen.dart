@@ -34,8 +34,6 @@ class _EditProductScreenState extends State<EditProductScreen> {
   @override
   void initState() {
     super.initState();
-
-    // user = UserPreferences.getUser();
   }
 
   @override

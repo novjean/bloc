@@ -18,6 +18,7 @@ import 'db/shared_preferences/user_preferences.dart';
 import 'firebase_options.dart';
 import 'providers/cart.dart';
 import 'screens/auth_screen.dart';
+import 'screens/login_screen.dart';
 import 'screens/main_screen.dart';
 import 'screens/ui/splash_screen.dart';
 import 'utils/constants.dart';
@@ -143,66 +144,70 @@ class MyApp extends StatelessWidget {
                 ),
                 home: appSnapshot.connectionState != ConnectionState.done
                     ? SplashScreen()
-                    : StreamBuilder(
-                        stream: FirebaseAuth.instance.authStateChanges(),
-                        builder: (ctx, userSnapshot) {
-                          logger.i('checking for auth state changes...');
+                    : LoginScreen(dao: dao),
 
-                          if (userSnapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return SplashScreen();
-                          }
-
-                          logger.i('user snapshot received...');
-
-                          if (userSnapshot.hasData) {
-                            final user = FirebaseAuth.instance.currentUser;
-
-                            CollectionReference users = FirestoreHelper.getUsersCollection();
-
-                            return FutureBuilder<DocumentSnapshot>(
-                              future: users.doc(user!.uid).get(),
-                              builder: (BuildContext ctx,
-                                  AsyncSnapshot<DocumentSnapshot> snapshot) {
-                                if (snapshot.connectionState ==
-                                    ConnectionState.waiting) {
-                                  return const Center(
-                                    child: CircularProgressIndicator(),
-                                  );
-                                }
-
-                                if (snapshot.hasError) {
-                                  return Text("Something went wrong");
-                                }
-
-                                if (snapshot.hasData &&
-                                    !snapshot.data!.exists) {
-                                  return const AuthScreen();
-                                }
-
-                                if (snapshot.connectionState ==
-                                    ConnectionState.done) {
-                                  Map<String, dynamic> data = snapshot.data!
-                                      .data() as Map<String, dynamic>;
-                                  final blocUser.User user = blocUser.User.fromMap(data);
-
-                                  mClearanceLevel = user.clearanceLevel;
-                                  BlocRepository.insertUser(dao, user);
-                                  UserPreferences.setUser(user);
-
-                                  logger.i(
-                                      'user data received with clearance level ' +
-                                          mClearanceLevel.toString());
-                                  return MainScreen(dao: dao, user: user);
-                                }
-                                return Text("loading...");
-                              },
-                            );
-                          } else {
-                            return const AuthScreen();
-                          }
-                        },
-                      ),
+                // StreamBuilder(
+                //         stream: FirebaseAuth.instance.authStateChanges(),
+                //         builder: (ctx, userSnapshot) {
+                //           logger.i('checking for auth state changes...');
+                //
+                //           if (userSnapshot.connectionState ==
+                //               ConnectionState.waiting) {
+                //             return SplashScreen();
+                //           }
+                //
+                //           logger.i('user snapshot received...');
+                //
+                //           if (userSnapshot.hasData) {
+                //             final user = FirebaseAuth.instance.currentUser;
+                //
+                //             CollectionReference users = FirestoreHelper.getUsersCollection();
+                //
+                //             return FutureBuilder<DocumentSnapshot>(
+                //               future: users.doc(user!.uid).get(),
+                //               builder: (BuildContext ctx,
+                //                   AsyncSnapshot<DocumentSnapshot> snapshot) {
+                //                 if (snapshot.connectionState ==
+                //                     ConnectionState.waiting) {
+                //                   return const Center(
+                //                     child: CircularProgressIndicator(),
+                //                   );
+                //                 }
+                //
+                //                 if (snapshot.hasError) {
+                //                   return Text("Something went wrong");
+                //                 }
+                //
+                //                 if (snapshot.hasData &&
+                //                     !snapshot.data!.exists) {
+                //                   // return const AuthScreen();
+                //                   return LoginScreen(dao: dao);
+                //                 }
+                //
+                //                 if (snapshot.connectionState ==
+                //                     ConnectionState.done) {
+                //                   Map<String, dynamic> data = snapshot.data!
+                //                       .data() as Map<String, dynamic>;
+                //                   final blocUser.User user = blocUser.User.fromMap(data);
+                //
+                //                   mClearanceLevel = user.clearanceLevel;
+                //                   BlocRepository.insertUser(dao, user);
+                //                   UserPreferences.setUser(user);
+                //
+                //                   logger.i(
+                //                       'user data received with clearance level ' +
+                //                           mClearanceLevel.toString());
+                //                   return MainScreen(dao: dao, user: user);
+                //                 }
+                //                 return Text("loading...");
+                //               },
+                //             );
+                //           } else {
+                //             // return const AuthScreen();
+                //             return LoginScreen(dao: dao);
+                //           }
+                //         },
+                //       ),
                 routes: {
                   // HomeScreen.routeName: (ctx) => HomeScreen(),
                   // ManagerScreen.routeName: (ctx) => ManagerScreen(),
