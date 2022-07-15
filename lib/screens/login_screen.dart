@@ -170,8 +170,8 @@ class LoginScreen extends StatelessWidget {
                                 imageUrl: '',
                                 username: '');
 
-                            await FirestoreHelper.insertPhoneUser(registeredUser);
-                            print(strMobile + ' is registered with bloc!');
+                            // await FirestoreHelper.insertPhoneUser(registeredUser);
+                            // print(strMobile + ' is registered with bloc!');
                             BlocRepository.insertUser(dao, registeredUser);
                             UserPreferences.setUser(registeredUser);
 
