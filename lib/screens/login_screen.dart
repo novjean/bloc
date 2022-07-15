@@ -1,6 +1,7 @@
 import 'package:bloc/helpers/firestore_helper.dart';
 import 'package:bloc/db/entity/user.dart' as blocUser;
 import 'package:bloc/screens/main_screen.dart';
+import 'package:bloc/screens/ui/splash_screen.dart';
 
 import 'package:bloc/utils/string_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -202,7 +203,67 @@ class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Container(
+        body: StreamBuilder(
+          stream: FirebaseAuth.instance.authStateChanges(),
+          builder: (ctx, userSnapshot) {
+            logger.i('checking for auth state changes...');
+
+            if (userSnapshot.connectionState == ConnectionState.waiting) {
+              return SplashScreen();
+            }
+
+            logger.i('user snapshot received...');
+
+            if(userSnapshot.hasData) {
+              final user = FirebaseAuth.instance.currentUser;
+
+              CollectionReference users = FirestoreHelper.getUsersCollection();
+
+              return FutureBuilder<DocumentSnapshot>(
+                future: users.doc(user!.uid).get(),
+                builder: (BuildContext ctx,
+                    AsyncSnapshot<DocumentSnapshot> snapshot) {
+                  if (snapshot.connectionState ==
+                      ConnectionState.waiting) {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+
+                  if (snapshot.hasError) {
+                    return Text("Something went wrong");
+                  }
+
+                  if (snapshot.hasData &&
+                      !snapshot.data!.exists) {
+                     return LoginWidget(context);
+                  }
+
+                  if (snapshot.connectionState ==
+                      ConnectionState.done) {
+                    Map<String, dynamic> data = snapshot.data!
+                        .data() as Map<String, dynamic>;
+                    final blocUser.User user = blocUser.User.fromMap(data);
+
+                    BlocRepository.insertUser(dao, user);
+                    UserPreferences.setUser(user);
+
+                    return MainScreen(dao: dao, user: user);
+                  }
+                  return Text("loading...");
+                },
+              );
+
+            } else {
+              return LoginWidget(context);
+            }
+          },
+        ));
+
+
+  }
+  Widget LoginWidget(BuildContext context) {
+    return Container(
       padding: EdgeInsets.all(32),
       child: Form(
         child: Column(
@@ -278,6 +339,6 @@ class LoginScreen extends StatelessWidget {
           ],
         ),
       ),
-    ));
+    );
   }
 }
