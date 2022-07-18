@@ -25,25 +25,20 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   void initState() {
     super.initState();
+    TokenMonitor((token) {
+      _token = token;
+      return token == null
+          ? const CircularProgressIndicator()
+          : Text(token, style: const TextStyle(fontSize: 12));
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body:
-
-      Container(
+      body: Container(
         child: Column(
           children: [
-            MetaCard(
-              'FCM Token',
-              TokenMonitor((token) {
-                _token = token;
-                return token == null
-                    ? const CircularProgressIndicator()
-                    : Text(token, style: const TextStyle(fontSize: 12));
-              }),
-            ),
             Expanded(
               child: Messages(),
             ),

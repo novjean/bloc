@@ -36,8 +36,7 @@ class LoginScreen extends StatelessWidget {
               //     await _auth.signInWithCredential(authCredential);
               User? user = result.user;
 
-              if(user!=null){
-
+              if (user != null) {
                 // CollectionReference users = FirestoreHelper.getUsersCollection();
 
                 // FutureBuilder<DocumentSnapshot>(
@@ -99,7 +98,6 @@ class LoginScreen extends StatelessWidget {
                 //   },
                 // );
 
-
                 // blocUser.User registeredUser = blocUser.User(
                 //     id: user.uid,
                 //     name: 'Superstar',
@@ -121,7 +119,8 @@ class LoginScreen extends StatelessWidget {
                 //           MainScreen(user: registeredUser, dao: dao)),
                 // );
               } else {
-                print(strMobile + ' registration failed, user could not be retrieved!');
+                print(strMobile +
+                    ' registration failed, user could not be retrieved!');
               }
             }).catchError((e) {
               print(e);
@@ -136,7 +135,7 @@ class LoginScreen extends StatelessWidget {
                 barrierDismissible: false,
                 builder: (context) {
                   return AlertDialog(
-                    title: Text("Give the code?"),
+                    title: Text("Please enter the OTP sent?"),
                     content: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
@@ -160,30 +159,33 @@ class LoginScreen extends StatelessWidget {
                               await _auth.signInWithCredential(credential);
                           User? user = result.user;
 
-                          if(user!=null){
+                          if (user != null) {
                             blocUser.User registeredUser = blocUser.User(
                                 id: user.uid,
                                 name: 'Superstar',
                                 clearanceLevel: 1,
-                                phoneNumber: StringUtils.getNumberOnly(strMobile),
+                                phoneNumber:
+                                    StringUtils.getNumberOnly(strMobile),
                                 fcmToken: '',
                                 email: '',
                                 imageUrl: '',
                                 username: '');
 
-                            // await FirestoreHelper.insertPhoneUser(registeredUser);
-                            // print(strMobile + ' is registered with bloc!');
-                            BlocRepository.insertUser(dao, registeredUser);
-                            UserPreferences.setUser(registeredUser);
-
                             await Navigator.of(context).push(
                               MaterialPageRoute(
-                                  builder: (context) =>
-                                      MainScreen(user: registeredUser, dao: dao)),
+                                  builder: (context) => MainScreen(
+                                      user: registeredUser, dao: dao)),
                             );
                           } else {
-                            print(strMobile + ' registration failed, user could not be retrieved!');
+                            print(strMobile +
+                                ' registration failed, user could not be retrieved!');
                           }
+                        },
+                      ),
+                      TextButton(
+                        child: const Text("Cancel"),
+                        onPressed: () {
+                          Navigator.of(context).pop();
                         },
                       )
                     ],
@@ -204,66 +206,62 @@ class LoginScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         body: StreamBuilder(
-          stream: FirebaseAuth.instance.authStateChanges(),
-          builder: (ctx, userSnapshot) {
-            logger.i('checking for auth state changes...');
+      stream: FirebaseAuth.instance.authStateChanges(),
+      builder: (ctx, userSnapshot) {
+        logger.i('checking for auth state changes...');
 
-            if (userSnapshot.connectionState == ConnectionState.waiting) {
-              return SplashScreen();
-            }
+        if (userSnapshot.connectionState == ConnectionState.waiting) {
+          return SplashScreen();
+        }
 
-            logger.i('user snapshot received...');
+        logger.i('user snapshot received...');
 
-            if(userSnapshot.hasData) {
-              final user = FirebaseAuth.instance.currentUser;
+        if (userSnapshot.hasData) {
+          final user = FirebaseAuth.instance.currentUser;
 
-              CollectionReference users = FirestoreHelper.getUsersCollection();
+          CollectionReference users = FirestoreHelper.getUsersCollection();
 
-              return FutureBuilder<DocumentSnapshot>(
-                future: users.doc(user!.uid).get(),
-                builder: (BuildContext ctx,
-                    AsyncSnapshot<DocumentSnapshot> snapshot) {
-                  if (snapshot.connectionState ==
-                      ConnectionState.waiting) {
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  }
+          return FutureBuilder<DocumentSnapshot>(
+            future: users.doc(user!.uid).get(),
+            builder:
+                (BuildContext ctx, AsyncSnapshot<DocumentSnapshot> snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
 
-                  if (snapshot.hasError) {
-                    return Text("Something went wrong");
-                  }
+              if (snapshot.hasError) {
+                return Text("Something went wrong");
+              }
 
-                  if (snapshot.hasData &&
-                      !snapshot.data!.exists) {
-                     return LoginWidget(context);
-                  }
+              if (snapshot.hasData && !snapshot.data!.exists) {
+                return LoginWidget(context);
+              }
 
-                  if (snapshot.connectionState ==
-                      ConnectionState.done) {
-                    Map<String, dynamic> data = snapshot.data!
-                        .data() as Map<String, dynamic>;
-                    final blocUser.User user = blocUser.User.fromMap(data);
+              if (snapshot.connectionState == ConnectionState.done) {
+                Map<String, dynamic> data =
+                    snapshot.data!.data() as Map<String, dynamic>;
+                final blocUser.User user = blocUser.User.fromMap(data);
 
-                    BlocRepository.insertUser(dao, user);
-                    UserPreferences.setUser(user);
+                BlocRepository.insertUser(dao, user);
+                UserPreferences.setUser(user);
 
-                    return MainScreen(dao: dao, user: user);
-                  }
-                  return Text("loading...");
-                },
-              );
-
-            } else {
-              return LoginWidget(context);
-            }
-          },
-        ));
-
-
+                return MainScreen(dao: dao, user: user);
+              }
+              return Text("loading...");
+            },
+          );
+        } else {
+          return LoginWidget(context);
+        }
+      },
+    ));
   }
+
   Widget LoginWidget(BuildContext context) {
     return Container(
+      color: Theme.of(context).backgroundColor,
       padding: EdgeInsets.all(32),
       child: Form(
         child: Column(
@@ -273,7 +271,7 @@ class LoginScreen extends StatelessWidget {
             Text(
               "Login",
               style: TextStyle(
-                  color: Colors.lightBlue,
+                  color: Theme.of(context).primaryColor,
                   fontSize: 36,
                   fontWeight: FontWeight.w500),
             ),
@@ -283,6 +281,7 @@ class LoginScreen extends StatelessWidget {
             ),
 
             TextFormField(
+              keyboardType: TextInputType.numberWithOptions(decimal: true),
               decoration: InputDecoration(
                   enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(8)),
@@ -329,11 +328,11 @@ class LoginScreen extends StatelessWidget {
                 padding: EdgeInsets.all(16),
                 onPressed: () {
                   //code for sign in
-                  final phone = _phoneController.text.trim();
+                  final phone = "+" + _phoneController.text.trim();
 
                   registerUser(phone, context);
                 },
-                color: Colors.blue,
+                color: Theme.of(context).accentColor,
               ),
             )
           ],

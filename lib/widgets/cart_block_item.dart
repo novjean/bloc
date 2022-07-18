@@ -22,13 +22,13 @@ class CartBlockItem extends StatelessWidget {
             child: Padding(
               padding: EdgeInsets.all(5),
               child: FittedBox(
-                child: Text('\u20B9' + cartItem.productPrice.toStringAsFixed(2)),
+                child: Text('${cartItem.quantity} x'),
               ),
             ),
           ),
           title: Text(cartItem.productName),
-          subtitle: Text('Total: \u20B9' + (cartItem.productPrice * cartItem.quantity).toStringAsFixed(2)),
-          trailing: Text('${cartItem.quantity} x'),
+          subtitle: Text('Price: \u20B9' + cartItem.productPrice.toStringAsFixed(2)),
+          trailing: Text('\u20B9' + (cartItem.productPrice * cartItem.quantity).toStringAsFixed(2)),
         ),
       ),
     );

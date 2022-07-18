@@ -1,3 +1,4 @@
+import 'package:bloc/db/bloc_repository.dart';
 import 'package:bloc/db/dao/bloc_dao.dart';
 import 'package:bloc/db/entity/user.dart' as blocUser;
 import 'package:bloc/screens/login_screen.dart';
@@ -18,6 +19,7 @@ import 'experimental/offers_screen.dart';
 import 'home_screen.dart';
 import 'events/event_screen.dart';
 import 'chat/chat_screen.dart';
+import 'profile/edit_profile_page.dart';
 import 'profile/profile_page.dart';
 
 class MainScreen extends StatefulWidget {
@@ -64,6 +66,14 @@ class _MainScreenState extends State<MainScreen> {
           FirestoreHelper.insertPhoneUser(widget.user);
           print(widget.user.phoneNumber.toString() +
               ' is now registered with bloc!');
+
+          BlocRepository.insertUser(widget.dao, widget.user);
+          UserPreferences.setUser(widget.user);
+
+          // lets grab more user details
+          Navigator.of(context).push(
+            MaterialPageRoute(builder: (context) => EditProfilePage(user: widget.user, dao: widget.dao)),
+          );
         } else {
           List<blocUser.User> users = [];
 
@@ -72,7 +82,7 @@ class _MainScreenState extends State<MainScreen> {
             Map<String, dynamic> data =
                 document.data()! as Map<String, dynamic>;
             final blocUser.User user = blocUser.User.fromMap(data);
-            // BlocRepository.insertProduct(widget.dao, product);
+            BlocRepository.insertUser(widget.dao, user);
             users.add(user);
 
             if (i == res.docs.length - 1) {
@@ -164,6 +174,11 @@ class _MainScreenState extends State<MainScreen> {
             ],
             onChanged: (itemIdentifier) {
               if (itemIdentifier == 'logout') {
+                UserPreferences.resetUser();
+
+                // clear out local DB
+                BlocRepository.clearUsers(widget.dao);
+
                 FirebaseAuth.instance.signOut();
                 Navigator.of(context).pushReplacement(
                   MaterialPageRoute(

@@ -100,7 +100,6 @@ Future<void> main() async {
 }
 
 class MyApp extends StatelessWidget {
-  static int mClearanceLevel = 10;
   final BlocDao dao;
 
   MyApp({required this.dao});
@@ -123,9 +122,10 @@ class MyApp extends StatelessWidget {
                 debugShowCheckedModeBanner: false,
                 title: kAppTitle,
                 theme: ThemeData(
-                  primarySwatch: Colors.grey,
-                  backgroundColor: Colors.red,
-                  accentColor: Colors.black,
+                  primarySwatch: Colors.yellow,
+                  backgroundColor: Colors.black54,
+                  highlightColor: Colors.black,
+                  accentColor: Colors.grey,
                   accentColorBrightness: Brightness.dark,
                   buttonTheme: ButtonTheme.of(context).copyWith(
                     buttonColor: Colors.red,

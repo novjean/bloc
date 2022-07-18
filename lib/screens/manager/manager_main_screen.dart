@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 
 import '../../db/bloc_repository.dart';
 import '../../db/dao/bloc_dao.dart';
-import '../../utils/bloc_service_utils.dart';
 import '../../widgets/bloc_service_item.dart';
 
 class ManagerMainScreen extends StatelessWidget {

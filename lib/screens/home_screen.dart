@@ -31,7 +31,7 @@ class HomeScreen extends StatelessWidget {
           padding: const EdgeInsets.fromLTRB(10.0, 0, 10.0, 0),
           child: ListView(
             children: <Widget>[
-              buildSearchBar(context),
+              // buildSearchBar(context),
               SizedBox(height: 20.0),
               buildBlocRow(context),
               // SizedBox(height: 20.0),
@@ -51,10 +51,8 @@ class HomeScreen extends StatelessWidget {
   }
 
   buildBlocRow(BuildContext context) {
-    final Stream<QuerySnapshot> _servicesStream =
-        FirebaseFirestore.instance.collection('blocs').snapshots();
     return StreamBuilder<QuerySnapshot>(
-      stream: _servicesStream,
+      stream: FirestoreHelper.getBlocs(),
       builder: (ctx, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(

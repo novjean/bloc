@@ -6,6 +6,7 @@ import 'package:bloc/utils/constants.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+import '../db/bloc_repository.dart';
 import '../db/dao/bloc_dao.dart';
 import '../main.dart';
 import '../screens/login_screen.dart';
@@ -17,6 +18,8 @@ class AppDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final user = UserPreferences.getUser();
+
     return Drawer(
       child: Column(
         children: [
@@ -35,7 +38,7 @@ class AppDrawer extends StatelessWidget {
             },
           ),
           const Divider(),
-          UserPreferences.myUser.clearanceLevel > Constants.MANAGER_LEVEL
+          user.clearanceLevel > Constants.MANAGER_LEVEL
               ? ListTile(
                   leading: const Icon(Icons.adjust),
                   title: const Text('Manager'),
@@ -48,7 +51,7 @@ class AppDrawer extends StatelessWidget {
                 )
               : const SizedBox.shrink(),
           const Divider(),
-          UserPreferences.myUser.clearanceLevel > Constants.OWNER_LEVEL
+          user.clearanceLevel > Constants.OWNER_LEVEL
               ? ListTile(
                   leading: const Icon(Icons.account_circle),
                   title: const Text('Owner'),
@@ -61,15 +64,21 @@ class AppDrawer extends StatelessWidget {
                 )
               : const SizedBox.shrink(),
           const Divider(),
+          Spacer(),
+          const Divider(),
           ListTile(
             leading: const Icon(Icons.exit_to_app),
             title: const Text('Logout'),
             onTap: () {
+              UserPreferences.resetUser();
+
+              // clear out local DB
+              BlocRepository.clearUsers(dao);
+
               FirebaseAuth.instance.signOut();
               Navigator.of(context).pushReplacement(
                 MaterialPageRoute(
-                    builder: (context) =>
-                        LoginScreen(dao: dao)),
+                    builder: (context) => LoginScreen(dao: dao)),
               );
             },
           ),

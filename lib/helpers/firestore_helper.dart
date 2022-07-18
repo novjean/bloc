@@ -33,6 +33,10 @@ class FirestoreHelper {
   static String USERS = 'users';
 
   /** Blocs **/
+  static getBlocs(){
+    return FirebaseFirestore.instance.collection(BLOCS).snapshots();
+  }
+
   static getBloc(String blocId) {
     return FirebaseFirestore.instance
         .collection(SERVICES)

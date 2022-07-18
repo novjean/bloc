@@ -134,6 +134,11 @@ class BlocRepository {
     await dao.updateUser(user);
   }
 
+  static void clearUsers(BlocDao dao) {
+    logger.i("clearUsers()");
+    dao.clearUsers();
+  }
+
   /** Service Table **/
   static Future<List<ServiceTable>> getServiceTables(BlocDao dao, String serviceId) async {
     logger.i('getServiceTables(): ');

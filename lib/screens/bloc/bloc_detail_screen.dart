@@ -1,3 +1,4 @@
+import 'package:bloc/helpers/firestore_helper.dart';
 import 'package:bloc/widgets/ui/cover_photo.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -25,24 +26,24 @@ class BlocDetailScreen extends StatelessWidget {
         title: Text(bloc.name),
       ),
       // drawer: AppDrawer(),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.of(context).push(
-            MaterialPageRoute(
-                builder: (ctx) => NewBlocServiceScreen(bloc:bloc)),
-          );
-        },
-        child: Icon(
-          Icons.add,
-          color: Colors.black,
-          size: 29,
-        ),
-        backgroundColor: Theme.of(context).primaryColor,
-        tooltip: 'New Bloc',
-        elevation: 5,
-        splashColor: Colors.grey,
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: () {
+      //     Navigator.of(context).push(
+      //       MaterialPageRoute(
+      //           builder: (ctx) => NewBlocServiceScreen(bloc:bloc)),
+      //     );
+      //   },
+      //   child: Icon(
+      //     Icons.add,
+      //     color: Colors.black,
+      //     size: 29,
+      //   ),
+      //   backgroundColor: Theme.of(context).primaryColor,
+      //   tooltip: 'New Bloc',
+      //   elevation: 5,
+      //   splashColor: Colors.grey,
+      // ),
+      // floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       body: ListView(
         children: [
           CoverPhoto(bloc.name, bloc.imageUrl),
@@ -55,15 +56,11 @@ class BlocDetailScreen extends StatelessWidget {
   }
 
   buildBlocs(BuildContext context) {
-    final Stream<QuerySnapshot> _servicesStream = FirebaseFirestore.instance
-        .collection('services')
-        .where('blocId', isEqualTo: bloc.id)
-        .snapshots();
     return Container(
       height: MediaQuery.of(context).size.height,
       padding: const EdgeInsets.fromLTRB(10.0, 0, 10.0, 0),
       child: StreamBuilder<QuerySnapshot>(
-        stream: _servicesStream,
+        stream: FirestoreHelper.getBloc(bloc.id),
         builder: (ctx, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(

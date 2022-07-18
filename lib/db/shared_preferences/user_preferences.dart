@@ -1,4 +1,3 @@
-
 import 'dart:convert';
 
 import 'package:shared_preferences/shared_preferences.dart';
@@ -10,16 +9,15 @@ class UserPreferences {
 
   static const _keyUser = 'user';
 
-  static const myUser = User(
-    id: '',
-    username: '',
-    email:'',
-    imageUrl: '',
-    clearanceLevel: 0,
-    phoneNumber: 0,
-    name:'',
-    fcmToken:''
-  );
+  static var myUser = User(
+      id: '',
+      username: '',
+      email: '',
+      imageUrl:'',
+      clearanceLevel: 0,
+      phoneNumber: 0,
+      name: '',
+      fcmToken: '');
 
   static Future init() async =>
       _preferences = await SharedPreferences.getInstance();
@@ -35,4 +33,15 @@ class UserPreferences {
     return json == null ? myUser : User.fromMap(jsonDecode(json));
   }
 
+  static void resetUser() {
+    setUser(User(
+        id: '',
+        username: '',
+        email: '',
+        imageUrl: '',
+        clearanceLevel: 0,
+        phoneNumber: 0,
+        name: '',
+        fcmToken: ''));
+  }
 }

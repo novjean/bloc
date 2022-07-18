@@ -308,6 +308,11 @@ class _$BlocDao extends BlocDao {
   }
 
   @override
+  Future<void> clearUsers() async {
+    await _queryAdapter.queryNoReturn('DELETE FROM User');
+  }
+
+  @override
   Stream<List<Category>> getCategories() {
     return _queryAdapter.queryListStream(
         'SELECT * FROM Category ORDER BY sequence ASC',
