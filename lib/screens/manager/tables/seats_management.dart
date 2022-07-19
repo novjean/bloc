@@ -4,12 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 
-import '../../db/bloc_repository.dart';
-import '../../db/dao/bloc_dao.dart';
-import '../../db/entity/seat.dart';
-import '../../db/entity/service_table.dart';
-import '../../helpers/firestore_helper.dart';
-import '../../widgets/seat_item.dart';
+import '../../../db/bloc_repository.dart';
+import '../../../db/dao/bloc_dao.dart';
+import '../../../db/entity/seat.dart';
+import '../../../db/entity/service_table.dart';
+import '../../../helpers/firestore_helper.dart';
+import '../../../widgets/seat_item.dart';
 
 class SeatsManagementScreen extends StatefulWidget {
   static final int TABLE_GREEN = 1;
@@ -126,6 +126,22 @@ class _SeatsManagementScreenState extends State<SeatsManagementScreen> {
                               child: Text("Yes"),
                               onPressed:  () {
                                 FirestoreHelper.updateSeat(seat.id, '');
+
+                                //check if all seats are empty, and mark table as not occupied
+                                bool isOccupied = false;
+                                for(Seat s in seats){
+                                  if(s.id == seat.id){
+                                    continue;
+                                  }
+                                  if(s.custId.isNotEmpty){
+                                    isOccupied = true;
+                                    break;
+                                  }
+                                }
+                                if(!isOccupied){
+                                  FirestoreHelper.setTableOccupyStatus(seat.tableId, false);
+                                }
+
                                 Navigator.of(context).pop();
                               },
                             ),
@@ -174,7 +190,7 @@ class _SeatsManagementScreenState extends State<SeatsManagementScreen> {
 
     seat.custId = scanCustId;
     FirestoreHelper.updateSeat(seat.id, scanCustId);
-    FirestoreHelper.pushServiceTableIsOccupied(widget.serviceTable.id, true);
+    FirestoreHelper.setTableOccupyStatus(widget.serviceTable.id, true);
 
     setState(() {
       widget.serviceTable.isOccupied = true;

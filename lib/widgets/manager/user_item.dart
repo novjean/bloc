@@ -1,12 +1,12 @@
 import 'package:bloc/screens/manager/tables/seats_management.dart';
 import 'package:flutter/material.dart';
 
-import '../db/entity/service_table.dart';
+import '../../db/entity/user.dart';
 
-class ServiceTableItem extends StatelessWidget {
-  final ServiceTable serviceTable;
+class UserItem extends StatelessWidget {
+  final User user;
 
-  ServiceTableItem({required this.serviceTable});
+  UserItem({required this.user});
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +40,8 @@ class ServiceTableItem extends StatelessWidget {
                   stops: [0.2, 0.7],
                   colors: [
                     Colors.grey,
-                    serviceTable.colorStatus==SeatsManagementScreen.TABLE_GREEN?Colors.greenAccent:Colors.redAccent,
+                    Colors.white,
+                    // serviceTable.colorStatus==SeatsManagementScreen.TABLE_GREEN?Colors.greenAccent:Colors.redAccent,
                   ],
                   // stops: [0.0, 0.1],
                 ),
@@ -59,12 +60,10 @@ class ServiceTableItem extends StatelessWidget {
                 ),
                 child: Center(
                   child: Text(
-                    'Table number: ' +
-                        serviceTable.tableNumber.toString() +
-                        ' . Seats: ' +
-                        serviceTable.capacity.toString(),
+                    'Name : ' +
+                        user.name,
                     style: TextStyle(
-                      color: Colors.white,
+                      color: Colors.black,
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
                     ),

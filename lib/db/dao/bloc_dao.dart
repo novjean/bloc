@@ -23,6 +23,9 @@ abstract class BlocDao {
   @Update(onConflict: OnConflictStrategy.replace)
   Future<void> updateUser(User user);
 
+  @Query('DELETE FROM User')
+  Future<void> clearUsers();
+
   /** City **/
   @Insert(onConflict: OnConflictStrategy.replace)
   Future<void> insertCity(City city);
@@ -113,6 +116,7 @@ abstract class BlocDao {
 
   @Query('DELETE FROM Seat where tableNumber=:tableNumber')
   Future<void> deleteSeats(int tableNumber);
+
 
   // @Query('SELECT * FROM Product where id=:productId')
   // Future<Product?> getProduct(String productId);

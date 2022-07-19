@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../utils/const.dart';
+import '../utils/constants.dart';
 
 class TrendingItem extends StatefulWidget {
 

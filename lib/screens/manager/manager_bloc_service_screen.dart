@@ -1,5 +1,6 @@
 import 'package:bloc/db/entity/manager_service.dart';
 import 'package:bloc/screens/manager/orders/manage_orders_screen.dart';
+
 import 'package:bloc/screens/manager/users/users_management.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -84,10 +85,11 @@ class ManagerBlocServiceScreen extends StatelessWidget {
                     case 'Orders':
                       {
                         Navigator.of(context).push(MaterialPageRoute(
-                            builder: (ctx) => ManageOrdersScreen(
-                                serviceId: blocService.id,
-                                managerService: _managerService,
-                                dao: dao)));
+                            builder: (ctx) =>
+                                ManageOrdersScreen(
+                                    serviceId: blocService.id,
+                                    managerService: _managerService,
+                                    dao: dao)));
                         logger.d('manage inventory screen selected.');
                         break;
                       }

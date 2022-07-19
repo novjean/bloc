@@ -1,9 +1,13 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 import '../../db/dao/bloc_dao.dart';
+import '../../helpers/token_monitor.dart';
+import '../../main.dart';
 import '../../widgets/chat/messages.dart';
 import '../../widgets/chat/new_message.dart';
+import '../../widgets/experimental/meta_card.dart';
 
 
 class ChatScreen extends StatefulWidget {
@@ -16,22 +20,17 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
+  String? _token;
+
   @override
   void initState() {
     super.initState();
-
-    // disabling this as it is only for ios
-    final fbm = FirebaseMessaging.instance;
-    fbm.requestPermission();
-    FirebaseMessaging.onMessage.listen((message) {
-      print(message);
-      return;
+    TokenMonitor((token) {
+      _token = token;
+      return token == null
+          ? const CircularProgressIndicator()
+          : Text(token, style: const TextStyle(fontSize: 12));
     });
-    FirebaseMessaging.onMessageOpenedApp.listen((message) {
-      print(message);
-      return;
-    });
-    fbm.subscribeToTopic('chat');
   }
 
   @override
@@ -43,7 +42,7 @@ class _ChatScreenState extends State<ChatScreen> {
             Expanded(
               child: Messages(),
             ),
-            NewMessage(),
+            NewMessage(_token),
           ],
         ),
       ),
