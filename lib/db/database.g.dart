@@ -471,7 +471,9 @@ class _$BlocDao extends BlocDao {
     return _queryAdapter.queryListStream(
         'SELECT * FROM ManagerService ORDER BY sequence ASC',
         mapper: (Map<String, Object?> row) => ManagerService(
-            row['id'] as String, row['name'] as String, row['sequence'] as int),
+            id: row['id'] as String,
+            name: row['name'] as String,
+            sequence: row['sequence'] as int),
         queryableName: 'ManagerService',
         isView: false);
   }

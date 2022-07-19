@@ -4,7 +4,7 @@ import 'package:bloc/db/entity/cart_item.dart';
 import 'package:bloc/db/entity/seat.dart';
 import 'package:bloc/db/entity/user.dart' as blocUser;
 import 'package:bloc/helpers/firestorage_helper.dart';
-import 'package:bloc/screens/manager/seats_management.dart';
+import 'package:bloc/screens/manager/tables/seats_management.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
@@ -12,6 +12,8 @@ import 'package:logger/logger.dart';
 
 import '../db/entity/product.dart';
 import '../db/entity/service_table.dart';
+import '../db/entity/sos.dart';
+import '../utils/string_utils.dart';
 
 class FirestoreHelper {
   static var logger = Logger();
@@ -23,13 +25,26 @@ class FirestoreHelper {
   static String CITIES = 'cities';
   static String INVENTORY_OPTIONS = 'inventory_options';
   static String MANAGER_SERVICES = 'manager_services';
+  static String MANAGER_SERVICE_OPTIONS = 'manager_service_options';
   static String PRODUCTS = 'products';
   static String SERVICES = 'services';
   static String SEATS = 'seats';
+  static String SOS = 'sos';
   static String TABLES = 'tables';
   static String USERS = 'users';
 
   /** Blocs **/
+  static getBlocs() {
+    return FirebaseFirestore.instance.collection(BLOCS).snapshots();
+  }
+
+  static getBloc(String blocId) {
+    return FirebaseFirestore.instance
+        .collection(SERVICES)
+        .where('blocId', isEqualTo: blocId)
+        .snapshots();
+  }
+
   static void updateBloc(String blocId, File image) async {
     try {
       final url = await FirestorageHelper.uploadFile(
@@ -110,7 +125,10 @@ class FirestoreHelper {
 
   /** Manager Services **/
   static Stream<QuerySnapshot<Object?>> getManagerServicesSnapshot() {
-    return FirebaseFirestore.instance.collection(MANAGER_SERVICES).snapshots();
+    return FirebaseFirestore.instance
+        .collection(MANAGER_SERVICES)
+        .orderBy('sequence', descending: false)
+        .snapshots();
   }
 
   /** Services **/
@@ -125,10 +143,43 @@ class FirestoreHelper {
   }
 
   /** User **/
-  static Stream<QuerySnapshot<Object?>> getUserSnapshot(String customerId) {
+  static Future<void> insertUser(
+      String email, String password, File? image, String username) async {
+    final _auth = FirebaseAuth.instance;
+    UserCredential authResult = await _auth.createUserWithEmailAndPassword(
+        email: email, password: password);
+
+    final url = await FirestorageHelper.uploadFile(
+        FirestorageHelper.USERS, authResult.user!.uid, image!);
+
+    blocUser.User user = blocUser.User(
+        id: authResult.user!.uid,
+        name: 'Superstar',
+        phoneNumber: 0,
+        clearanceLevel: 1,
+        email: email,
+        fcmToken: '',
+        imageUrl: url,
+        username: username);
+
+    await FirebaseFirestore.instance
+        .collection(USERS)
+        .doc(authResult.user!.uid)
+        .set(user.toMap());
+  }
+
+  static insertPhoneUser(blocUser.User user) async {
+    await FirebaseFirestore.instance
+        .collection(USERS)
+        .doc(user.id)
+        .set(user.toMap());
+  }
+
+  static Stream<QuerySnapshot<Object?>> getUsers(int clearanceLevel) {
     return FirebaseFirestore.instance
         .collection(USERS)
-        .where('user_id', isEqualTo: customerId)
+        .where('clearanceLevel', isLessThan: clearanceLevel)
+        // .orderBy('sequence', descending: false)
         .snapshots();
   }
 
@@ -139,17 +190,36 @@ class FirestoreHelper {
   static void updateUser(blocUser.User user) async {
     try {
       final fileUrl = await FirestorageHelper.uploadFile(
-          FirestorageHelper.USERS, user.userId, File(user.imageUrl));
+          FirestorageHelper.USERS, user.id, File(user.imageUrl));
 
       await FirebaseFirestore.instance
           .collection(USERS)
-          .doc(user.userId)
+          .doc(user.id)
           .update({
             'name': user.name,
-            'image_url': fileUrl,
+            'imageUrl': fileUrl,
           })
           .then((value) => print("user image updated."))
           .catchError((error) => print("failed to update user image: $error"));
+    } on PlatformException catch (err) {
+      logger.e(err.message);
+    } catch (err) {
+      logger.e(err);
+    }
+  }
+
+  static void updateUserFcmToken(String userId, String? token) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection(USERS)
+          .doc(userId)
+          .update({
+            'fcmToken': token,
+          })
+          .then((value) =>
+              print(userId + " user fcm token updated to : " + token!))
+          .catchError(
+              (error) => print("failed to update user fcm token: $error"));
     } on PlatformException catch (err) {
       logger.e(err.message);
     } catch (err) {
@@ -169,7 +239,7 @@ class FirestoreHelper {
       'createdAt': Timestamp.now(),
       'userId': user.uid,
       'username': userData.data()!['username'],
-      'userImage': userData.data()!['image_url']
+      'userImage': userData.data()!['imageUrl']
     });
   }
 
@@ -194,16 +264,16 @@ class FirestoreHelper {
       bool bool) async {
     double price = 0.0;
 
-    try{
+    try {
       price = double.parse(productPrice);
-    } catch(err) {
+    } catch (err) {
       int intPrice = int.parse(productPrice);
       price = intPrice.toDouble();
     }
 
     int timeMilliSec = Timestamp.now().millisecondsSinceEpoch;
-    
-    try{
+
+    try {
       await FirebaseFirestore.instance.collection(PRODUCTS).doc(productId).set({
         'id': productId,
         'name': productName,
@@ -288,14 +358,13 @@ class FirestoreHelper {
         .snapshots();
   }
 
-  static void pushServiceTableIsOccupied(
-      String serviceTableId, bool isOccupied) async {
+  static void setTableOccupyStatus(String tableId, bool isOccupied) async {
     try {
       await FirebaseFirestore.instance
           .collection(TABLES)
-          .doc(serviceTableId)
+          .doc(tableId)
           .update({'isOccupied': isOccupied})
-          .then((value) => print("Table is occupied : " + serviceTableId))
+          .then((value) => print("Table is occupied : " + tableId))
           .catchError((error) => print("Failed to set isOccupy table: $error"));
     } on PlatformException catch (err) {
       logger.e(err.message);
@@ -382,6 +451,33 @@ class FirestoreHelper {
     return FirebaseFirestore.instance
         .collection(INVENTORY_OPTIONS)
         .orderBy('sequence', descending: true)
+        .snapshots();
+  }
+
+  /** SOS **/
+  static void sendSOSMessage(String? token, String name, int phoneNumber,
+      int tableNumber, String tableId, String seatId) async {
+    int timeMilliSec = Timestamp.now().millisecondsSinceEpoch;
+
+    Sos sos = Sos(
+        id: StringUtils.getRandomString(20),
+        token: token,
+        name: name,
+        phoneNumber: phoneNumber,
+        tableNumber: tableNumber,
+        tableId: tableId,
+        seatId: seatId,
+        timestamp: timeMilliSec);
+
+    FirebaseFirestore.instance.collection(SOS).doc(sos.id).set(sos.toMap());
+  }
+
+  /** Manager Service Options **/
+  static Stream<QuerySnapshot<Object?>> getManagerServiceOptions(String service) {
+    return FirebaseFirestore.instance
+        .collection(MANAGER_SERVICE_OPTIONS)
+        .where('service', isEqualTo: service)
+        .orderBy('sequence', descending: false)
         .snapshots();
   }
 

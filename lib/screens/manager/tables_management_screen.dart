@@ -23,7 +23,7 @@ class TablesManagementScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(managerService.name)),
+      appBar: AppBar(title: Text('Manager | ' + managerService.name)),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.of(context).push(

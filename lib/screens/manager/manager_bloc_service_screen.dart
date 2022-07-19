@@ -1,4 +1,6 @@
 import 'package:bloc/db/entity/manager_service.dart';
+import 'package:bloc/screens/manager/orders/manage_orders_screen.dart';
+import 'package:bloc/screens/manager/users/users_management.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -6,25 +8,22 @@ import '../../db/bloc_repository.dart';
 import '../../db/dao/bloc_dao.dart';
 import '../../db/entity/bloc_service.dart';
 import '../../helpers/firestore_helper.dart';
-import '../../utils/manager_utils.dart';
-import '../../widgets/manager_service_item.dart';
+import '../../widgets/ui/listview_block.dart';
 import 'inventory/manage_inventory_screen.dart';
-import 'tables_management_screen.dart';
-import 'orders_completed_screen.dart';
-import 'orders_pending_screen.dart';
+import 'tables/tables_management_screen.dart';
 
 class ManagerBlocServiceScreen extends StatelessWidget {
   BlocDao dao;
-  BlocService service;
+  BlocService blocService;
 
-  ManagerBlocServiceScreen({key, required this.dao, required this.service})
+  ManagerBlocServiceScreen({key, required this.dao, required this.blocService})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Manager Services'),
+        title: const Text('Manager | Services'),
       ),
       // drawer: AppDrawer(),
       body: _buildBody(context),
@@ -32,24 +31,18 @@ class ManagerBlocServiceScreen extends StatelessWidget {
   }
 
   Widget _buildBody(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          SizedBox(height: 2.0),
-          _buildManagerServices(context),
-          // _buildOrders(context),
-          SizedBox(height: 10.0),
-        ],
-      ),
+    return Column(
+      children: [
+        SizedBox(height: 2.0),
+        _buildManagerServices(context),
+        SizedBox(height: 10.0),
+      ],
     );
   }
 
   _buildManagerServices(BuildContext context) {
-    final Stream<QuerySnapshot> _managerStream =
-        FirestoreHelper.getManagerServicesSnapshot();
-
     return StreamBuilder<QuerySnapshot>(
-        stream: _managerStream,
+        stream: FirestoreHelper.getManagerServicesSnapshot(),
         builder: (ctx, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(
@@ -57,101 +50,78 @@ class ManagerBlocServiceScreen extends StatelessWidget {
             );
           }
 
+          List<ManagerService> _managerServices = [];
           for (int i = 0; i < snapshot.data!.docs.length; i++) {
             DocumentSnapshot document = snapshot.data!.docs[i];
             Map<String, dynamic> data =
                 document.data()! as Map<String, dynamic>;
-            final ManagerService ms =
-                ManagerUtils.getManagerService(data, document.id);
+            final ManagerService ms = ManagerService.fromMap(data);
+            _managerServices.add(ms);
             BlocRepository.insertManagerService(dao, ms);
 
             if (i == snapshot.data!.docs.length - 1) {
-              return displayManagerServices(context, service.id);
+              return _displayManagerServices(context, _managerServices);
             }
           }
           return Text('loading services...');
         });
   }
 
-  displayManagerServices(BuildContext context, String serviceId) {
-    Stream<List<ManagerService>> _stream = dao.getManagerServices();
+  _displayManagerServices(BuildContext context, List<ManagerService> _managerServices) {
+    return Expanded(
+      child: ListView.builder(
+          itemCount: _managerServices.length,
+          scrollDirection: Axis.vertical,
+          itemBuilder: (ctx, index) {
+            ManagerService _managerService = _managerServices[index];
 
-    return Container(
-      height: MediaQuery.of(context).size.height,
-      child: StreamBuilder(
-        stream: _stream,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Text('Loading...');
-          } else {
-            List<ManagerService> services =
-                snapshot.data! as List<ManagerService>;
-
-            return ListView.builder(
-              primary: false,
-              scrollDirection: Axis.vertical,
-              shrinkWrap: true,
-              itemCount: services.length,
-              itemBuilder: (BuildContext ctx, int index) {
-                ManagerService managerService = services[index];
-                return GestureDetector(
-                    child: ManagerServiceItem(
-                      managerService: managerService,
-                      serviceId: serviceId,
-                    ),
-                    onTap: () {
+            return GestureDetector(
+                child: ListViewBlock(
+                  title: _managerServices[index].name,
+                ),
+                onTap: () {
+                  switch (_managerServices[index].name) {
+                    case 'Orders':
                       {
-                        logger.d('manager service index selected : ' +
-                            index.toString());
-
-                        switch (index) {
-                          case 0:
-                            {
-                              Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (ctx) => OrdersPendingScreen(
-                                      serviceId: serviceId,
-                                      managerService: managerService,
-                                      dao: dao)));
-                              break;
-                            }
-                          case 1:
-                            {
-                              Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (ctx) => OrdersCompletedScreen(
-                                      serviceId: serviceId,
-                                      managerService: managerService,
-                                      dao: dao)));
-                              break;
-                            }
-                          case 2:
-                            {
-                              Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (ctx) => TablesManagementScreen(
-                                      serviceId: serviceId,
-                                      managerService: managerService,
-                                      dao: dao)));
-                              logger.d('tables management service selected.');
-                              break;
-                            }
-                          case 3:
-                            {
-                              Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (ctx) => ManageInventoryScreen(
-                                      serviceId: serviceId,
-                                      managerService: managerService,
-                                      dao: dao)));
-                              logger.d('manage inventory screen selected.');
-                              break;
-                            }
-                          default:
-                        }
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (ctx) => ManageOrdersScreen(
+                                serviceId: blocService.id,
+                                managerService: _managerService,
+                                dao: dao)));
+                        logger.d('manage inventory screen selected.');
+                        break;
                       }
-                    });
-              },
-            );
-          }
-        },
-      ),
+                    case 'Inventory':
+                      {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (ctx) => ManageInventoryScreen(
+                                serviceId: blocService.id,
+                                managerService: _managerService,
+                                dao: dao)));
+                        logger.d('manage inventory screen selected.');
+                        break;
+                      }
+                    case 'Tables':
+                      {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (ctx) => TablesManagementScreen(
+                                serviceId: blocService.id,
+                                managerService: _managerService,
+                                dao: dao)));
+                        logger.d('tables management service selected.');
+                        break;
+                      }
+                    case 'Users':
+                      {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (ctx) => UsersManagementScreen()));
+                        logger.d('manage users screen selected.');
+                        break;
+                      }
+                    default:
+                  }
+                });
+          }),
     );
   }
 }

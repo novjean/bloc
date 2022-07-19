@@ -20,7 +20,7 @@ class ManagerMainScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Manager Home'),
+        title: Text('Manager | Home'),
       ),
       body: _buildBody(context),
     );

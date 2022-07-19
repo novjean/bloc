@@ -1,50 +1,53 @@
-import 'package:floor/floor.dart';
-
-@entity
-class ManagerService {
-  @primaryKey
-  final String id;
-  final String name;
-  final int sequence;
+class ManagerServiceOption {
+  String id;
+  String name;
+  int sequence;
+  String service;
 
 //<editor-fold desc="Data Methods">
 
-  const ManagerService({
+  ManagerServiceOption({
     required this.id,
     required this.name,
     required this.sequence,
+    required this.service,
   });
 
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      (other is ManagerService &&
+      (other is ManagerServiceOption &&
           runtimeType == other.runtimeType &&
           id == other.id &&
           name == other.name &&
-          sequence == other.sequence);
+          sequence == other.sequence &&
+          service == other.service);
 
   @override
-  int get hashCode => id.hashCode ^ name.hashCode ^ sequence.hashCode;
+  int get hashCode =>
+      id.hashCode ^ name.hashCode ^ sequence.hashCode ^ service.hashCode;
 
   @override
   String toString() {
-    return 'ManagerService{' +
+    return 'ManagerServiceOption{' +
         ' id: $id,' +
         ' name: $name,' +
         ' sequence: $sequence,' +
+        ' service: $service,' +
         '}';
   }
 
-  ManagerService copyWith({
+  ManagerServiceOption copyWith({
     String? id,
     String? name,
     int? sequence,
+    String? service,
   }) {
-    return ManagerService(
+    return ManagerServiceOption(
       id: id ?? this.id,
       name: name ?? this.name,
       sequence: sequence ?? this.sequence,
+      service: service ?? this.service,
     );
   }
 
@@ -53,14 +56,16 @@ class ManagerService {
       'id': this.id,
       'name': this.name,
       'sequence': this.sequence,
+      'service': this.service,
     };
   }
 
-  factory ManagerService.fromMap(Map<String, dynamic> map) {
-    return ManagerService(
+  factory ManagerServiceOption.fromMap(Map<String, dynamic> map) {
+    return ManagerServiceOption(
       id: map['id'] as String,
       name: map['name'] as String,
       sequence: map['sequence'] as int,
+      service: map['service'] as String,
     );
   }
 

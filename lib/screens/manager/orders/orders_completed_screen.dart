@@ -2,15 +2,15 @@ import 'package:bloc/db/entity/manager_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-import '../../db/bloc_repository.dart';
-import '../../db/dao/bloc_dao.dart';
-import '../../db/entity/bill.dart';
-import '../../db/entity/cart_item.dart';
-import '../../db/entity/order.dart';
-import '../../helpers/firestore_helper.dart';
-import '../../utils/cart_item_utils.dart';
-import '../../widgets/order_table_item.dart';
-import 'bill_screen.dart';
+import '../../../db/bloc_repository.dart';
+import '../../../db/dao/bloc_dao.dart';
+import '../../../db/entity/bill.dart';
+import '../../../db/entity/cart_item.dart';
+import '../../../db/entity/order.dart';
+import '../../../helpers/firestore_helper.dart';
+import '../../../utils/cart_item_utils.dart';
+import '../../../widgets/order_table_item.dart';
+import '../bill_screen.dart';
 
 class OrdersCompletedScreen extends StatelessWidget {
   String serviceId;
@@ -26,7 +26,7 @@ class OrdersCompletedScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(managerService.name),
+        title: Text(managerService.name + ' | Completed'),
       ),
       body: _buildBody(context, managerService),
     );
@@ -46,8 +46,7 @@ class OrdersCompletedScreen extends StatelessWidget {
   }
 
   _pullCartItems(BuildContext context) {
-    final Stream<QuerySnapshot> _stream =
-    FirestoreHelper.getCartItemsSnapshot(serviceId, true);
+    final Stream<QuerySnapshot> _stream = FirestoreHelper.getCartItemsSnapshot(serviceId, true);
 
     return StreamBuilder<QuerySnapshot>(
         stream: _stream,
