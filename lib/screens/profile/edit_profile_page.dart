@@ -65,7 +65,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
             setState(() {
               oldImageUrl = user.imageUrl;
-              user = user.copy(imageUrl: newImage.path);
+              user = user.copyWith(imageUrl: newImage.path);
               isPhotoChanged = true;
             });
           },
@@ -74,13 +74,13 @@ class _EditProfilePageState extends State<EditProfilePage> {
         TextFieldWidget(
           label: 'Full Name',
           text: user.name,
-          onChanged: (name) => user = user.copy(name: name),
+          onChanged: (name) => user = user.copyWith(name: name),
         ),
         const SizedBox(height: 24),
         TextFieldWidget(
           label: 'Email',
           text: user.email,
-          onChanged: (email) => user = user.copy(email: email),
+          onChanged: (email) => user = user.copyWith(email: email),
         ),
         const SizedBox(height: 24),
         TextFieldWidget(

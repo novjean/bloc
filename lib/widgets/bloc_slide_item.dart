@@ -1,10 +1,12 @@
 import 'package:bloc/db/dao/bloc_dao.dart';
-import 'package:bloc/main.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import '../db/entity/bloc.dart';
+import '../db/entity/bloc_service.dart';
+import '../helpers/firestore_helper.dart';
 import '../screens/bloc/bloc_detail_screen.dart';
-import '../utils/const.dart';
+import '../screens/bloc/bloc_service_detail_screen.dart';
 
 class BlocSlideItem extends StatefulWidget {
   final BlocDao dao;
@@ -49,6 +51,7 @@ class _BlocSlideItemState extends State<BlocSlideItem> {
                       child: GridTile(
                         child: GestureDetector(
                           onTap: () {
+                            // return _loadBloc(context, widget.bloc.id);
                             Navigator.of(context).push(
                               MaterialPageRoute(
                                   builder: (ctx) => BlocDetailScreen(dao: widget.dao, bloc: widget.bloc)),
@@ -153,4 +156,36 @@ class _BlocSlideItemState extends State<BlocSlideItem> {
       ),
     );
   }
+
+  // _loadBloc(BuildContext context, String blocId) {
+  //   return StreamBuilder<QuerySnapshot>(
+  //       stream: FirestoreHelper.getBloc(blocId),
+  //       builder: (context, snapshot) {
+  //         if (snapshot.connectionState == ConnectionState.waiting) {
+  //           return const Center(
+  //             child: CircularProgressIndicator(),
+  //           );
+  //         }
+  //
+  //         List<BlocService> _blocServices = [];
+  //
+  //         for (int i = 0; i < snapshot.data!.docs.length; i++) {
+  //           DocumentSnapshot document = snapshot.data!.docs[i];
+  //           Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+  //           final BlocService _blocService = BlocService.fromMap(data);
+  //           // BlocRepository.insertServiceTable(dao, serviceTable);
+  //           _blocServices.add(_blocService);
+  //
+  //           if (i == snapshot.data!.docs.length - 1) {
+  //             Navigator.of(context).push(
+  //               MaterialPageRoute(
+  //                   builder: (ctx) => BlocServiceDetailScreen(dao: widget.dao, service: _blocService)),
+  //             );
+  //             // return _displayUsers(context, _users);
+  //           }
+  //         }
+  //         return Text('Pulling bloc services...');
+  //       }
+  //   );
+  // }
 }

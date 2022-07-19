@@ -18,13 +18,15 @@ class ProductItem extends StatefulWidget {
   final BlocDao dao;
   final String serviceId;
   final int tableNumber;
+  final bool isCommunity;
   int addCount = 1;
 
   ProductItem(
       {required this.serviceId,
       required this.product,
       required this.dao,
-      required this.tableNumber});
+      required this.tableNumber,
+      required this.isCommunity});
 
   @override
   State<ProductItem> createState() => _ProductItemState();
@@ -78,30 +80,32 @@ class _ProductItemState extends State<ProductItem> {
                                 style: TextStyle(
                                     fontSize: 17, fontWeight: FontWeight.bold)),
                             Text(
-                                '\u20B9 ${widget.product.price.toStringAsFixed(2)}',
+                                '\u20B9 ${widget.isCommunity ? widget.product.priceCommunity.toStringAsFixed(2) : widget.product.price.toStringAsFixed(2)}',
                                 style: TextStyle(
                                     fontSize: 18, fontWeight: FontWeight.bold)),
                             // Icon(Icons.delete_outline)
                           ],
                         ),
                         SizedBox(height: 5),
-                        Row(
-                          children: [
-                            Text(
-                                '\u20B9 ${widget.product.priceLowest.toStringAsFixed(2)}',
-                                style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.green)),
-                            Text(' | '),
-                            Text(
-                                '\u20B9 ${widget.product.priceHighest.toStringAsFixed(2)}',
-                                style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.redAccent)),
-                          ],
-                        ),
+                        widget.isCommunity
+                            ? Row(
+                                children: [
+                                  Text(
+                                      '\u20B9 ${widget.product.priceLowest.toStringAsFixed(2)}',
+                                      style: TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.green)),
+                                  Text(' | '),
+                                  Text(
+                                      '\u20B9 ${widget.product.priceHighest.toStringAsFixed(2)}',
+                                      style: TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.redAccent)),
+                                ],
+                              )
+                            : SizedBox(height: 0),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: <Widget>[
@@ -151,8 +155,11 @@ class _ProductItemState extends State<ProductItem> {
                                         userId: userId,
                                         productId: widget.product.id,
                                         productName: widget.product.name,
-                                        productPrice: double.parse(
-                                            widget.product.price.toString()),
+                                        productPrice: double.parse(widget
+                                                .isCommunity
+                                            ? widget.product.priceCommunity
+                                                .toString()
+                                            : widget.product.price.toString()),
                                         quantity: widget.addCount,
                                         createdAt: timestamp,
                                         isCompleted: false);

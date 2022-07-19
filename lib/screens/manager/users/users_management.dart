@@ -1,35 +1,33 @@
 import 'package:bloc/db/bloc_repository.dart';
-import 'package:bloc/db/dao/bloc_dao.dart';
-import 'package:bloc/db/entity/manager_service.dart';
-import 'package:bloc/screens/manager/seats_management.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-import '../../db/entity/service_table.dart';
-import '../../helpers/firestore_helper.dart';
-import '../../widgets/service_table_item.dart';
-import '../forms/new_service_table_screen.dart';
+import '../../../db/entity/service_table.dart';
+import '../../../db/entity/user.dart';
+import '../../../helpers/firestore_helper.dart';
+import '../../../utils/constants.dart';
+import '../../../widgets/manager/user_item.dart';
 
-class TablesManagementScreen extends StatelessWidget {
-  String serviceId;
-  BlocDao dao;
-  ManagerService managerService;
+class UsersManagementScreen extends StatelessWidget {
+  // String serviceId;
+  // BlocDao dao;
+  // ManagerService managerService;
 
-  TablesManagementScreen(
-      {required this.serviceId,
-      required this.dao,
-      required this.managerService});
+  UsersManagementScreen();
+      // {required this.serviceId,
+      //   required this.dao,
+      //   required this.managerService});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(managerService.name)),
+      appBar: AppBar(title: Text('Manager | Users')),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.of(context).push(
-            MaterialPageRoute(
-                builder: (ctx) => NewServiceTableScreen(serviceId: serviceId)),
-          );
+          // Navigator.of(context).push(
+          //   MaterialPageRoute(
+          //       builder: (ctx) => NewServiceTableScreen(serviceId: serviceId)),
+          // );
         },
         child: Icon(
           Icons.add,
@@ -42,30 +40,25 @@ class TablesManagementScreen extends StatelessWidget {
         splashColor: Colors.grey,
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-      body: _buildBody(context, managerService),
+      body: _buildBody(context),
     );
   }
 
-  _buildBody(BuildContext context, ManagerService managerService) {
+  _buildBody(BuildContext context) {
     return SingleChildScrollView(
       child: Column(
         children: [
-          // CoverPhoto(service.name, service.imageUrl),
           SizedBox(height: 2.0),
-          _buildTables(context),
+          _buildUsers(context),
           SizedBox(height: 5.0),
-          // buildProducts(context),
-          // SizedBox(height: 50.0),
         ],
       ),
     );
   }
 
-  _buildTables(BuildContext context) {
-    final Stream<QuerySnapshot> _stream =
-        FirestoreHelper.getTablesSnapshot(serviceId);
+  _buildUsers(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
-        stream: _stream,
+        stream: FirestoreHelper.getUsers(Constants.MANAGER_LEVEL),
         builder: (ctx, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(
@@ -73,43 +66,44 @@ class TablesManagementScreen extends StatelessWidget {
             );
           }
 
-          List<ServiceTable> serviceTables = [];
+          List<User> _users = [];
 
           for (int i = 0; i < snapshot.data!.docs.length; i++) {
             DocumentSnapshot document = snapshot.data!.docs[i];
             Map<String, dynamic> data =
-                document.data()! as Map<String, dynamic>;
-            final ServiceTable serviceTable = ServiceTable.fromJson(data);
-            BlocRepository.insertServiceTable(dao, serviceTable);
-            serviceTables.add(serviceTable);
+            document.data()! as Map<String, dynamic>;
+            final User _user = User.fromMap(data);
+            // BlocRepository.insertServiceTable(dao, serviceTable);
+            _users.add(_user);
 
             if (i == snapshot.data!.docs.length - 1) {
-              return _displayServiceTables(context, serviceTables);
+              return _displayUsers(context, _users);
             }
           }
-          return Text('Pulling tables...');
+          return Text('Pulling users...');
         });
   }
 
-  _displayServiceTables(
-      BuildContext context, List<ServiceTable> serviceTables) {
+  _displayUsers(
+      BuildContext context, List<User> users) {
     return Container(
       height: MediaQuery.of(context).size.height,
       child: ListView.builder(
-          itemCount: serviceTables.length,
+          itemCount: users.length,
           scrollDirection: Axis.vertical,
           itemBuilder: (ctx, index) {
             return GestureDetector(
-                child: ServiceTableItem(
-                  serviceTable: serviceTables[index],
+
+                child: UserItem(
+                  user: users[index],
                 ),
                 onDoubleTap: () {
                   logger.d('double tap selected : ' + index.toString());
-                  FirestoreHelper.changeTableColor(serviceTables[index]);
+                  // FirestoreHelper.changeTableColor(serviceTables[index]);
                 },
                 onTap: () {
                   logger.d('tap selected : ' + index.toString());
-                  showOptionsDialog(context, serviceTables[index]);
+                  // showOptionsDialog(context, serviceTables[index]);
                 });
           }),
     );
@@ -136,17 +130,17 @@ class TablesManagementScreen extends StatelessWidget {
           },
         ),
         TextButton(
-          child: Text("Manage Seat"),
+          child: Text("Manage Seats"),
           onPressed:  () {
             Navigator.of(context).pop();
 
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                  builder: (context) => SeatsManagementScreen(
-                      serviceId: serviceId,
-                      dao: dao,
-                      serviceTable: _table)),
-            );
+            // Navigator.of(context).push(
+            //   MaterialPageRoute(
+            //       builder: (context) => SeatsManagementScreen(
+            //           serviceId: serviceId,
+            //           dao: dao,
+            //           serviceTable: _table)),
+            // );
           },
         ),
       ],
@@ -160,6 +154,4 @@ class TablesManagementScreen extends StatelessWidget {
       },
     );
   }
-
-
 }

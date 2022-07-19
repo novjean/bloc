@@ -14,6 +14,22 @@
       },
       "oauth_client": [
         {
+          "client_id": "328003399661-3akfgi2ero4sfqihq7h8571nf2a0m8l8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.novatech.bloc",
+            "certificate_hash": "87d571b334aa171f889d9c030d80d256ff5da80d"
+          }
+        },
+        {
+          "client_id": "328003399661-vfsefip2kfced7e56rda17k4rtd3p59i.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.novatech.bloc",
+            "certificate_hash": "60180178f66d255ce65f89abedef7d135b1ad2f9"
+          }
+        },
+        {
           "client_id": "328003399661-ede7ab0u1s6pf8tgrsku39kn2lr8jf2j.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -29,6 +45,13 @@
             {
               "client_id": "328003399661-ede7ab0u1s6pf8tgrsku39kn2lr8jf2j.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "328003399661-82of5hp7sf8qd8r478csnq53k8sr5oup.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.novatech.bloc"
+              }
             }
           ]
         }

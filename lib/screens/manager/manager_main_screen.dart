@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 
 import '../../db/bloc_repository.dart';
 import '../../db/dao/bloc_dao.dart';
-import '../../utils/bloc_service_utils.dart';
 import '../../widgets/bloc_service_item.dart';
 
 class ManagerMainScreen extends StatelessWidget {
@@ -67,7 +66,7 @@ class ManagerMainScreen extends StatelessWidget {
               Map<String, dynamic> data =
               document.data()! as Map<String, dynamic>;
 
-              final BlocService service = BlocServiceUtils.getBlocService(data, document.id);
+              final BlocService service = BlocService.fromMap(data);
               BlocRepository.insertBlocService(dao, service);
 
               return BlocServiceItem(service, true, dao, key: ValueKey(document.id));

@@ -43,7 +43,7 @@ class _ProfilePageState extends State<ProfilePage> {
         Center(
             child: BarcodeWidget(
               barcode: Barcode.qrCode(), // Barcode type and settings
-              data: user.userId, // Content
+              data: user.id, // Content
               width: 128,
               height: 128,
             )

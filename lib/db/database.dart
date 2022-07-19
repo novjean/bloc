@@ -16,7 +16,7 @@ import 'entity/user.dart';
 
 part 'database.g.dart'; // the generated code will be there
 
-@Database(version: 19, entities: [
+@Database(version: 20, entities: [
   Bloc,
   BlocService,
   CartItem,
@@ -34,6 +34,10 @@ abstract class AppDatabase extends FloorDatabase {
 
 final migration18to19 = Migration(18, 19, (database) async {
   await database.execute('ALTER TABLE Seat ADD COLUMN tableId TEXT');
+});
+
+final migration19to20 = Migration(19, 20, (database) async {
+  await database.execute('ALTER TABLE Product ADD COLUMN priceCommunity DOUBLE');
 });
 
 // flutter packages pub run build_runner build

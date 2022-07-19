@@ -11,6 +11,7 @@ import '../../db/dao/bloc_dao.dart';
 import '../../db/entity/category.dart';
 import '../../db/entity/product.dart';
 import '../../db/entity/seat.dart';
+import '../../helpers/token_monitor.dart';
 import '../../widgets/category_item.dart';
 import '../../widgets/product_item.dart';
 import 'cart_screen.dart';
@@ -28,13 +29,19 @@ class BlocServiceDetailScreen extends StatefulWidget {
 }
 
 class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen> {
-  // late Future<List<Product>> fProducts;
-  // var _categorySelected = 0;
   String _categoryName = 'Beer';
   var _mTableNumber = 0;
-  var _mTable;
+  late ServiceTable _mTable;
   var _isInit = true;
   var _isLoading = false;
+  late Widget _categoriesWidget;
+  var _isCommunity = false;
+  String? _token;
+
+  @override
+  void initState() {
+    _categoriesWidget = buildServiceCategories(context);
+  }
 
   @override
   void didChangeDependencies() {
@@ -42,17 +49,6 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen> {
       setState(() {
         _isLoading = true;
       });
-      // if (_categorySelected == 0) {
-      //   fProducts = BlocRepository.getProductsByCategory(widget.dao, "Food");
-      //   setState(() {
-      //     _isLoading = false;
-      //   });
-      // } else {
-      //   fProducts = BlocRepository.getProductsByCategory(widget.dao, "Alcohol");
-      //   setState(() {
-      //     _isLoading = false;
-      //   });
-      // }
     }
 
     _isInit = false;
@@ -126,13 +122,28 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen> {
   }
 
   Widget _buildBody(BuildContext context, BlocService service) {
+    try {
+      if (_mTable.colorStatus == 2) {
+        _isCommunity = true;
+      }
+    } catch (err) {
+      print(err);
+    }
+
     return Column(
       children: [
+        // TokenMonitor((token) {
+        //   _token = token;
+        //   return token == null
+        //       ? const CircularProgressIndicator()
+        //       : Text(token, style: const TextStyle(fontSize: 12));
+        // }),
         const SizedBox(height: 2.0),
         _searchTableNumber(context),
         // CoverPhoto(service.name, service.imageUrl),
         const SizedBox(height: 2.0),
-        buildServiceCategories(context),
+        // buildServiceCategories(context),
+        _categoriesWidget,
         const SizedBox(height: 2.0),
         buildProducts(context, 'Beer'),
         const SizedBox(height: 0.0),
@@ -145,7 +156,7 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen> {
     final user = FirebaseAuth.instance.currentUser;
 
     final Stream<QuerySnapshot> _stream =
-    FirestoreHelper.findTableNumber(widget.service.id, user!.uid);
+        FirestoreHelper.findTableNumber(widget.service.id, user!.uid);
     return StreamBuilder<QuerySnapshot>(
         stream: _stream,
         builder: (ctx, snapshot) {
@@ -159,19 +170,29 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen> {
             for (int i = 0; i < snapshot.data!.docs.length; i++) {
               DocumentSnapshot document = snapshot.data!.docs[i];
               Map<String, dynamic> data =
-              document.data()! as Map<String, dynamic>;
+                  document.data()! as Map<String, dynamic>;
               final Seat seat = Seat.fromJson(data);
               BlocRepository.insertSeat(widget.dao, seat);
               seats.add(seat);
 
               if (i == snapshot.data!.docs.length - 1) {
-                _findTable(seat.tableId);
-                _mTableNumber = seat.tableNumber;
-                return TableCardItem(seat.id, seat.tableNumber, seat.tableId);
+                if (_mTableNumber == 0) {
+                  // this is needed or else we will hit a loop in loading
+                  _findTable(seat.tableId);
+                  _mTableNumber = seat.tableNumber;
+                  return Text('table number is ' + _mTableNumber.toString());
+                } else {
+                  return TokenMonitor((token) {
+                    _token = token;
+                    return token == null
+                        ? const CircularProgressIndicator()
+                        : TableCardItem(seat.id, seat.tableNumber, seat.tableId, _isCommunity, _token);
+                  });
+                }
               }
             }
           } else {
-            return TableCardItem('', -1, '');
+            return TableCardItem('', -1, '', _isCommunity, _token);
           }
           return Text('loading table number...');
         });
@@ -183,12 +204,12 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen> {
         .where('id', isEqualTo: tableId)
         .get()
         .then(
-          (result) {
+      (result) {
         if (result.docs.isNotEmpty) {
           for (int i = 0; i < result.docs.length; i++) {
             DocumentSnapshot document = result.docs[i];
             Map<String, dynamic> data =
-            document.data()! as Map<String, dynamic>;
+                document.data()! as Map<String, dynamic>;
             final ServiceTable _table = ServiceTable.fromJson(data);
 
             setState(() {
@@ -239,6 +260,7 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen> {
 
   _displayCategories(BuildContext context, List<Category> categories) {
     return Container(
+      key: UniqueKey(),
       // this height has to match with category item container height
       height: MediaQuery.of(context).size.height / 8,
       child: ListView.builder(
@@ -302,10 +324,12 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen> {
           itemBuilder: (ctx, index) {
             return GestureDetector(
                 child: ProductItem(
-                    serviceId: widget.service.id,
-                    product: _products[index],
-                    dao: widget.dao,
-                    tableNumber: _mTableNumber),
+                  serviceId: widget.service.id,
+                  product: _products[index],
+                  dao: widget.dao,
+                  tableNumber: _mTableNumber,
+                  isCommunity: _isCommunity,
+                ),
                 onTap: () {
                   Product _sProduct = _products[index];
                   print(_sProduct.name + ' is selected');
@@ -347,39 +371,39 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen> {
     //     });
   }
 
-  // displayProductsList(BuildContext context, String categoryId) {
-  //   if (_categorySelected == 0) {
-  //     fProducts = BlocRepository.getProductsByCategory(widget.dao, "Food");
-  //   } else {
-  //     fProducts = BlocRepository.getProductsByCategory(widget.dao, "Alcohol");
-  //   }
-  //
-  //   return FutureBuilder(
-  //       future: fProducts,
-  //       builder: (context, snapshot) {
-  //         if (snapshot.connectionState == ConnectionState.waiting) {
-  //           return const Center(
-  //             child: CircularProgressIndicator(),
-  //           );
-  //         }
-  //         List<Product> products = snapshot.data! as List<Product>;
-  //
-  //         return ListView.builder(
-  //           primary: false,
-  //           scrollDirection: Axis.vertical,
-  //           shrinkWrap: true,
-  //           itemCount: products == null ? 0 : products.length,
-  //           itemBuilder: (BuildContext ctx, int index) {
-  //             Product product = products[index];
-  //
-  //             return ProductItem(
-  //                 serviceId: widget.service.id,
-  //                 product: product,
-  //                 dao: widget.dao,
-  //                 tableNumber: _mTableNumber);
-  //           },
-  //         );
-  //       });
-  // }
+// displayProductsList(BuildContext context, String categoryId) {
+//   if (_categorySelected == 0) {
+//     fProducts = BlocRepository.getProductsByCategory(widget.dao, "Food");
+//   } else {
+//     fProducts = BlocRepository.getProductsByCategory(widget.dao, "Alcohol");
+//   }
+//
+//   return FutureBuilder(
+//       future: fProducts,
+//       builder: (context, snapshot) {
+//         if (snapshot.connectionState == ConnectionState.waiting) {
+//           return const Center(
+//             child: CircularProgressIndicator(),
+//           );
+//         }
+//         List<Product> products = snapshot.data! as List<Product>;
+//
+//         return ListView.builder(
+//           primary: false,
+//           scrollDirection: Axis.vertical,
+//           shrinkWrap: true,
+//           itemCount: products == null ? 0 : products.length,
+//           itemBuilder: (BuildContext ctx, int index) {
+//             Product product = products[index];
+//
+//             return ProductItem(
+//                 serviceId: widget.service.id,
+//                 product: product,
+//                 dao: widget.dao,
+//                 tableNumber: _mTableNumber);
+//           },
+//         );
+//       });
+// }
 
 }

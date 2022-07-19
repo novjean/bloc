@@ -65,7 +65,7 @@ class CartBlock extends StatelessWidget {
         BlocRepository.deleteCartItems(dao, cartItem.productId);
         Toaster.shortToast(cartItem.productName + ' has been removed.');
 
-        Provider.of<Cart>(context, listen: false).removeItem(cartItem.productId);
+        Provider.of<Cart>(context, listen: false).removeItem(Cart.getCartKey(cartItem.productId, cartItem.productPrice));
       },
       child: CartBlockItem(cartItem)
     );

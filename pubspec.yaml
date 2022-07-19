@@ -30,11 +30,14 @@ dependencies:
   flutter:
     sdk: flutter
   cloud_firestore: ^3.1.6
-  firebase_core: ^1.0.0
+  firebase_core: ^1.18.0
   firebase_auth: ^1.0.0
   firebase_storage: ^8.0.0
-  firebase_messaging: ^10.0.0
-  firebase_core_platform_interface: ^4.0.0
+  firebase_messaging: ^11.4.2
+  firebase_core_platform_interface: ^4.4.1
+
+  flutter_local_notifications: ^8.2.0
+  http: ^0.13.0
 
   image_picker: ^0.8.4+4
   logger: ^1.1.0
@@ -62,6 +65,9 @@ dependencies:
 
 #  location: ^4.3.0
 #  google_maps_flutter: ^0.5.17
+
+dependency_overrides:
+  plugin_platform_interface: ^2.0.0
 
 dev_dependencies:
   flutter_test:

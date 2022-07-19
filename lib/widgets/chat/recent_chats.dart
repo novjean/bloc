@@ -1,11 +1,9 @@
-import 'package:bloc/db/bloc_repository.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import '../../db/dao/bloc_dao.dart';
 import '../../db/entity/chat.dart';
 import '../../db/entity/message.dart';
-import '../../db/entity/user.dart';
 import '../../db/shared_preferences/user_preferences.dart';
 import '../../helpers/firestore_helper.dart';
 

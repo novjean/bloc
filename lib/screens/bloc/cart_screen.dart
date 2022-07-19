@@ -36,26 +36,31 @@ class CartScreen extends StatelessWidget {
       body: Column(
         children: [
           Expanded(
-              child: ListView.builder(
-                  itemCount: cart.items.length,
-                  itemBuilder: (ctx, i) => CartBlock(
-                        cartItem: CartItem(
-                          id: cart.items.values.toList()[i].id,
-                          serviceId: cart.items.values.toList()[i].serviceId,
-                          tableNumber: cart.items.values.toList()[i].tableNumber,
-                          cartNumber: cart.items.values.toList()[i].cartNumber,
-                          userId: cart.items.values.toList()[i].userId,
-                          productId: cart.items.values.toList()[i].productId,
-                          productName:
-                              cart.items.values.toList()[i].productName,
-                          productPrice:
-                              cart.items.values.toList()[i].productPrice,
-                          quantity: cart.items.values.toList()[i].quantity,
-                          createdAt: cart.items.values.toList()[i].createdAt,
-                          isCompleted: cart.items.values.toList()[i].isCompleted,
-                        ),
-                        dao: dao,
-                      ))),
+            child: cart.items.length == 0
+                ? Center(
+                    child: Text('No items in the cart!'),
+                  )
+                : ListView.builder(
+                    itemCount: cart.items.length,
+                    itemBuilder: (ctx, i) => CartBlock(
+                      cartItem: CartItem(
+                        id: cart.items.values.toList()[i].id,
+                        serviceId: cart.items.values.toList()[i].serviceId,
+                        tableNumber: cart.items.values.toList()[i].tableNumber,
+                        cartNumber: cart.items.values.toList()[i].cartNumber,
+                        userId: cart.items.values.toList()[i].userId,
+                        productId: cart.items.values.toList()[i].productId,
+                        productName: cart.items.values.toList()[i].productName,
+                        productPrice:
+                            cart.items.values.toList()[i].productPrice,
+                        quantity: cart.items.values.toList()[i].quantity,
+                        createdAt: cart.items.values.toList()[i].createdAt,
+                        isCompleted: cart.items.values.toList()[i].isCompleted,
+                      ),
+                      dao: dao,
+                    ),
+                  ),
+          ),
           SizedBox(
             height: 10,
           ),
@@ -133,7 +138,9 @@ class _OrderButtonState extends State<OrderButton> {
                 // send it to firebase
                 //todo: will need to check if the upload actually went through
                 FirestoreHelper.uploadCartItem(
-                    widget.cart.items.values.elementAt(i), timestamp, millisecondsSinceEpoch);
+                    widget.cart.items.values.elementAt(i),
+                    timestamp,
+                    millisecondsSinceEpoch);
               }
 
               Toaster.shortToast("Order sent.");
