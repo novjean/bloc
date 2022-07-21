@@ -1,3 +1,4 @@
+import 'package:bloc/db/entity/cart_item.dart';
 import 'package:bloc/db/entity/seat.dart';
 import 'package:flutter/material.dart';
 

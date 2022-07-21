@@ -3,11 +3,49 @@ import 'package:bloc/db/entity/cart_item.dart';
 import 'package:bloc/db/entity/order.dart';
 
 class CartItemUtils {
-  static List<Order> extractOrders(List<CartItem> cartItems) {
+
+  static List<Order> extractOrdersByTableNumber(List<CartItem> cartItems) {
+    List<Order> orders = [];
+    int tableNumber = cartItems[0].tableNumber;
+
+    Order curOrder = Order();
+    curOrder.tableNumber = tableNumber;
+    curOrder.customerId = cartItems[0].userId;
+
+    for (int i = 0; i < cartItems.length; i++) {
+      CartItem ci = cartItems[i];
+
+      if (tableNumber != ci.tableNumber) {
+        if (i != 0) {
+          orders.add(curOrder);
+        }
+        tableNumber = ci.tableNumber;
+        curOrder = Order();
+        curOrder.customerId = ci.userId;
+        curOrder.tableNumber = tableNumber;
+        curOrder.cartItems.add(ci);
+        curOrder.total += ci.productPrice * ci.quantity;
+      } else {
+        curOrder.total += ci.productPrice * ci.quantity;
+        curOrder.cartItems.add(ci);
+      }
+
+      if (i == cartItems.length - 1) {
+        orders.add(curOrder);
+        break;
+      }
+    }
+    return orders;
+  }
+
+  static List<Order> extractOrdersByUserId(List<CartItem> cartItems) {
     List<Order> orders = [];
     String userId = cartItems[0].userId;
+    int tableNumber = cartItems[0].tableNumber;
 
-    Order curOrder = Order(userId);
+    Order curOrder = Order();
+    curOrder.customerId = userId;
+    curOrder.tableNumber = tableNumber;
 
     for (int i = 0; i < cartItems.length; i++) {
       CartItem ci = cartItems[i];
@@ -17,7 +55,9 @@ class CartItemUtils {
           orders.add(curOrder);
         }
         userId = ci.userId;
-        curOrder = Order(userId);
+        curOrder = Order();
+        curOrder.customerId=userId;
+        curOrder.tableNumber = ci.tableNumber;
         curOrder.cartItems.add(ci);
         curOrder.total += ci.productPrice * ci.quantity;
       } else {
@@ -41,7 +81,8 @@ class CartItemUtils {
     int curCreatedAt = cartItems[0].createdAt;
 
     List<Order> orders = [];
-    Order curOrder = Order(userId);
+    Order curOrder = Order();
+    curOrder.customerId = userId;
     curOrder.number = orderNumber;
     for (int i = 0; i < cartItems.length; i++) {
       CartItem ci = cartItems[i];
@@ -51,7 +92,8 @@ class CartItemUtils {
           orders.add(curOrder);
         }
         curCreatedAt = ci.createdAt;
-        curOrder = Order(userId);
+        curOrder = Order();
+        curOrder.customerId = userId;
         curOrder.number = ++orderNumber;
         curOrder.cartItems.add(ci);
         curOrder.total += ci.productPrice * ci.quantity;

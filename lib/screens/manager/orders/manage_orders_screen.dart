@@ -1,4 +1,3 @@
-import 'package:bloc/db/entity/inventory_option.dart';
 import 'package:bloc/db/entity/manager_service_option.dart';
 import 'package:bloc/widgets/ui/listview_block.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';

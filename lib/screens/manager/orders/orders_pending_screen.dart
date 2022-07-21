@@ -99,7 +99,7 @@ class OrdersPendingScreen extends StatelessWidget {
             return Text('No pending orders.');
           List<CartItem> cartItems = snapshot.data! as List<CartItem>;
           if(cartItems.length > 0){
-            List<Order> orders = CartItemUtils.extractOrders(cartItems);
+            List<Order> orders = CartItemUtils.extractOrdersByUserId(cartItems);
             return _displayOrderTables(context, orders);
           } else {
             return Text('No pending orders');

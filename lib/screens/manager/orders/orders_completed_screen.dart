@@ -77,10 +77,10 @@ class OrdersCompletedScreen extends StatelessWidget {
               }
             }
           } else {
-            return Center(child: Text('No orders to display!'));
+            return Expanded(child: Center(child: Text('No completed orders to display.')));
           }
 
-          return Text('Loading cart items...');
+          return Expanded(child: Center(child:Text('Loading cart items...')));
         });
   }
 
@@ -92,16 +92,16 @@ class OrdersCompletedScreen extends StatelessWidget {
       future: fCartItems,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Text('Loading orders by table number...');
+          return Expanded(child: Center(child: Text('Loading orders by table number...'),));
         } else {
           List<CartItem> cartItems = snapshot.data! as List<CartItem>;
           if(cartItems.length > 0){
-            List<Order> orders = CartItemUtils.extractOrders(cartItems);
+            // List<Order> orders = CartItemUtils.extractOrdersByUserId(cartItems);
+            List<Order> orders = CartItemUtils.extractOrdersByTableNumber(cartItems);
             return _displayOrderTables(context, orders);
           } else {
-            return Text('No completed orders.');
+            return Expanded(child: Center(child: Text('No completed orders.')),);
           }
-
         }
       },
     );
