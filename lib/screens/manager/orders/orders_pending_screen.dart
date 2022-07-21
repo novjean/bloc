@@ -9,10 +9,12 @@ import '../../../db/entity/cart_item.dart';
 import '../../../db/entity/order.dart';
 import '../../../helpers/firestore_helper.dart';
 import '../../../utils/cart_item_utils.dart';
+import '../../../widgets/manager/orders/order_item.dart';
 import '../../../widgets/order_table_item.dart';
+import '../../../widgets/ui/sized_listview_block.dart';
 import '../bill_screen.dart';
 
-class OrdersPendingScreen extends StatelessWidget {
+class OrdersPendingScreen extends StatefulWidget {
   String serviceId;
   BlocDao dao;
   ManagerService managerService;
@@ -23,34 +25,39 @@ class OrdersPendingScreen extends StatelessWidget {
       required this.managerService});
 
   @override
+  State<OrdersPendingScreen> createState() => _OrdersPendingScreenState();
+}
+
+class _OrdersPendingScreenState extends State<OrdersPendingScreen> {
+  String _optionName = 'Table';
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(managerService.name + ' | Pending'),
+        title: Text(widget.managerService.name + ' | Pending'),
       ),
-      body: _buildBody(context, managerService),
+      body: _buildBody(context, widget.managerService),
     );
   }
 
   _buildBody(BuildContext context, ManagerService service) {
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          // CoverPhoto(service.name, service.imageUrl),
-          SizedBox(height: 2.0),
-          _pullCartItems(context),
-          SizedBox(height: 5.0),
-        ],
-      ),
+    return Column(
+      children: [
+        SizedBox(height: 2.0),
+        _displayDisplayOption(context),
+        SizedBox(height: 2.0),
+        const Divider(),
+        SizedBox(height: 2.0),
+        _pullCartItems(context),
+        SizedBox(height: 5.0),
+      ],
     );
   }
 
   _pullCartItems(BuildContext context) {
-    final Stream<QuerySnapshot> _stream =
-        FirestoreHelper.getCartItemsSnapshot(serviceId, false);
-
     return StreamBuilder<QuerySnapshot>(
-        stream: _stream,
+        stream: FirestoreHelper.getCartItemsSnapshot(widget.serviceId, false),
         builder: (ctx, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(
@@ -59,8 +66,7 @@ class OrdersPendingScreen extends StatelessWidget {
           }
 
           if (snapshot.data == null) {
-            return _displayOrdersListByTableNumber(context);
-            // return displayOrdersList(context);
+            return _displayOrdersList(context);
           }
 
           if (snapshot.data!.docs.isNotEmpty) {
@@ -70,133 +76,104 @@ class OrdersPendingScreen extends StatelessWidget {
               Map<String, dynamic> data =
                   document.data()! as Map<String, dynamic>;
               final CartItem ci = CartItem.fromMap(data);
-              BlocRepository.insertCartItem(dao, ci);
+              BlocRepository.insertCartItem(widget.dao, ci);
               cartItems.add(ci);
 
               if (i == snapshot.data!.docs.length - 1) {
-                return _displayOrdersListByTableNumber(context);
+                return _displayOrdersList(context);
               }
             }
           } else {
-            return Center(child: Text('No orders to display!'));
+            return Expanded(
+                child: Center(child: Text('No orders to display!')));
           }
 
-          return Text('Loading cart items...');
+          return Expanded(child: Center(child: Text('Loading cart items...')));
         });
   }
 
-  _displayOrdersListByTableNumber(BuildContext context) {
-    Future<List<CartItem>> fCartItems =
-        BlocRepository.getPendingCartItemsByTableNumber(dao, serviceId);
-
+  _displayOrdersList(BuildContext context) {
     return FutureBuilder(
-      future: fCartItems,
+      future: BlocRepository.getPendingCartItemsByTableNumber(
+          widget.dao, widget.serviceId),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Text('Loading orders by table number...');
+          return Expanded(
+              child: Center(child: Text('Loading orders by table number...')));
         } else {
-          if(snapshot.data == null )
-            return Text('No pending orders.');
+          if (snapshot.data == null)
+            return Expanded(child: Center(child: Text('No pending orders.')));
           List<CartItem> cartItems = snapshot.data! as List<CartItem>;
-          if(cartItems.length > 0){
-            List<Order> orders = CartItemUtils.extractOrdersByUserId(cartItems);
-            return _displayOrderTables(context, orders);
+          if (cartItems.length > 0) {
+            List<Order> orders = _optionName == 'Table'
+                ? CartItemUtils.extractOrdersByTableNumber(cartItems)
+                : CartItemUtils.extractOrdersByUserId(cartItems);
+            return _displayOrdersListByType(context, orders);
           } else {
-            return Text('No pending orders');
+            return Expanded(
+              child: Center(child: Text('No pending orders')),
+            );
           }
         }
       },
     );
   }
 
-  _displayOrderTables(BuildContext context, List<Order> orders) {
-    return Container(
-      height: MediaQuery.of(context).size.height,
+  _displayOrdersListByType(BuildContext context, List<Order> orders) {
+    return Expanded(
       child: ListView.builder(
           itemCount: orders.length,
           scrollDirection: Axis.vertical,
           itemBuilder: (ctx, index) {
             return GestureDetector(
-                child: OrderTableItem(
+                child: OrderItem(
                   order: orders[index],
+                  displayOption: _optionName,
                 ),
                 onTap: () {
                   Order order = orders[index];
+                  logger.d('Order selected for cust id : ' +
+                      order.customerId +
+                      ", table num: " +
+                      order.tableNumber.toString());
+
                   Bill bill = CartItemUtils.extractBill(order.cartItems);
                   Navigator.of(context).push(
-                    MaterialPageRoute(
-                        builder: (ctx) => BillScreen(bill: bill)),
+                    MaterialPageRoute(builder: (ctx) => BillScreen(bill: bill)),
                   );
                 });
           }),
     );
   }
 
-  // displayOrdersList(BuildContext context) {
-  //   Future<List<CartItem>> fCartItems =
-  //       BlocRepository.getSortedCartItems(dao, serviceId);
-  //
-  //   return FutureBuilder(
-  //     future: fCartItems,
-  //     builder: (context, snapshot) {
-  //       if (snapshot.connectionState == ConnectionState.waiting) {
-  //         return Text('Loading orders...');
-  //       } else {
-  //         List<CartItem> cartItems = snapshot.data! as List<CartItem>;
-  //         List<Order> orders = CartItemUtils.extractOrders(cartItems);
-  //         return _displayOrderList(context, orders);
-  //       }
-  //     },
-  //   );
-  // }
-  //
-  // Widget _displayOrderList(BuildContext context, List<Order> orders) {
-  //   return ListView.builder(
-  //     primary: false,
-  //     scrollDirection: Axis.vertical,
-  //     shrinkWrap: true,
-  //     itemCount: orders == null ? 0 : orders.length,
-  //     itemBuilder: (BuildContext ctx, int index) {
-  //       Order order = orders[index];
-  //       return loadUser(context, order);
-  //     },
-  //   );
-  // }
-  //
-  // loadUser(BuildContext context, Order order) {
-  //   final Stream<QuerySnapshot> _stream =
-  //       FirestoreHelper.getUserSnapshot(order.customerId);
-  //   return StreamBuilder<QuerySnapshot>(
-  //       stream: _stream,
-  //       builder: (ctx, snapshot) {
-  //         if (snapshot.connectionState == ConnectionState.waiting) {
-  //           return const Center(
-  //             child: CircularProgressIndicator(),
-  //           );
-  //         }
-  //
-  //         for (int i = 0; i < snapshot.data!.docs.length; i++) {
-  //           DocumentSnapshot document = snapshot.data!.docs[i];
-  //           Map<String, dynamic> data =
-  //               document.data()! as Map<String, dynamic>;
-  //           final User user = User.fromJson(data);
-  //
-  //           if (i == snapshot.data!.docs.length - 1) {
-  //             return GestureDetector(
-  //               child: OrderLineItem(user: user, order: order),
-  //               onTap: () => {
-  //                 // Toaster.shortToast(
-  //                 //     "Order index : " + index.toString()),
-  //                 Navigator.of(context).push(
-  //                   MaterialPageRoute(
-  //                       builder: (ctx) => OrderDisplayScreen(order: order)),
-  //                 ),
-  //               },
-  //             );
-  //           }
-  //         }
-  //
-  //         return Text('loading users...');
-  //       });
-  // }
+  _displayDisplayOption(BuildContext context) {
+    List<String> _options = ['Table', 'Customer'];
+    double containerHeight = MediaQuery.of(context).size.height / 20;
+
+    return SizedBox(
+      key: UniqueKey(),
+      // this height has to match with category item container height
+      height: containerHeight,
+      child: ListView.builder(
+          itemCount: _options.length,
+          scrollDirection: Axis.horizontal,
+          itemBuilder: (ctx, index) {
+            return GestureDetector(
+                child: SizedListViewBlock(
+                  title: _options[index],
+                  height: containerHeight,
+                  width: MediaQuery.of(context).size.width / 2,
+                ),
+                onTap: () {
+                  setState(() {
+                    // _sCategory = categories[index];
+                    _optionName = _options[index];
+                    print(_optionName + ' order display option is selected.');
+                  });
+                  // displayProductsList(context, categories[index].id);
+                });
+          }),
+    );
+  }
+
 }

@@ -1,13 +1,9 @@
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 import '../../db/dao/bloc_dao.dart';
 import '../../helpers/token_monitor.dart';
-import '../../main.dart';
 import '../../widgets/chat/messages.dart';
 import '../../widgets/chat/new_message.dart';
-import '../../widgets/experimental/meta_card.dart';
 
 
 class ChatScreen extends StatefulWidget {
