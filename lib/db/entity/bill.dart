@@ -1,8 +1,8 @@
-import 'order.dart';
+import 'bloc_order.dart';
 
 class Bill {
   String custId;
-  List<Order> orders;
+  List<BlocOrder> orders;
 
   Bill(this.custId, this.orders);
 }

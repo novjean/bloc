@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-import '../db/entity/order.dart';
+import '../db/entity/bloc_order.dart';
 import '../db/entity/user.dart';
 
 class OrderLineItem extends StatelessWidget {
-  final Order order;
+  final BlocOrder order;
   final User user;
 
   OrderLineItem({required this.order, required this.user});

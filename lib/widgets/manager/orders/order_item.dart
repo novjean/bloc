@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-import '../../../db/entity/order.dart';
+import '../../../db/entity/bloc_order.dart';
 
 class OrderItem extends StatelessWidget {
-  final Order order;
+  final BlocOrder order;
   final String displayOption;
 
   OrderItem({required this.order, required this.displayOption});

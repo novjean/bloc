@@ -1,14 +1,14 @@
 import 'package:bloc/db/entity/bill.dart';
 import 'package:bloc/db/entity/cart_item.dart';
-import 'package:bloc/db/entity/order.dart';
+import 'package:bloc/db/entity/bloc_order.dart';
 
 class CartItemUtils {
 
-  static List<Order> extractOrdersByTableNumber(List<CartItem> cartItems) {
-    List<Order> orders = [];
+  static List<BlocOrder> extractOrdersByTableNumber(List<CartItem> cartItems) {
+    List<BlocOrder> orders = [];
     int tableNumber = cartItems[0].tableNumber;
 
-    Order curOrder = Order();
+    BlocOrder curOrder = BlocOrder();
     curOrder.tableNumber = tableNumber;
     curOrder.customerId = cartItems[0].userId;
 
@@ -20,7 +20,7 @@ class CartItemUtils {
           orders.add(curOrder);
         }
         tableNumber = ci.tableNumber;
-        curOrder = Order();
+        curOrder = BlocOrder();
         curOrder.customerId = ci.userId;
         curOrder.tableNumber = tableNumber;
         curOrder.cartItems.add(ci);
@@ -38,12 +38,12 @@ class CartItemUtils {
     return orders;
   }
 
-  static List<Order> extractOrdersByUserId(List<CartItem> cartItems) {
-    List<Order> orders = [];
+  static List<BlocOrder> extractOrdersByUserId(List<CartItem> cartItems) {
+    List<BlocOrder> orders = [];
     String userId = cartItems[0].userId;
     int tableNumber = cartItems[0].tableNumber;
 
-    Order curOrder = Order();
+    BlocOrder curOrder = BlocOrder();
     curOrder.customerId = userId;
     curOrder.tableNumber = tableNumber;
 
@@ -55,7 +55,7 @@ class CartItemUtils {
           orders.add(curOrder);
         }
         userId = ci.userId;
-        curOrder = Order();
+        curOrder = BlocOrder();
         curOrder.customerId=userId;
         curOrder.tableNumber = ci.tableNumber;
         curOrder.cartItems.add(ci);
@@ -80,8 +80,8 @@ class CartItemUtils {
     int orderNumber = 1;
     int curCreatedAt = cartItems[0].createdAt;
 
-    List<Order> orders = [];
-    Order curOrder = Order();
+    List<BlocOrder> orders = [];
+    BlocOrder curOrder = BlocOrder();
     curOrder.customerId = userId;
     curOrder.number = orderNumber;
     for (int i = 0; i < cartItems.length; i++) {
@@ -92,7 +92,7 @@ class CartItemUtils {
           orders.add(curOrder);
         }
         curCreatedAt = ci.createdAt;
-        curOrder = Order();
+        curOrder = BlocOrder();
         curOrder.customerId = userId;
         curOrder.number = ++orderNumber;
         curOrder.cartItems.add(ci);

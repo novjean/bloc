@@ -2,10 +2,10 @@ import 'package:bloc/db/entity/cart_item.dart';
 import 'package:bloc/db/entity/seat.dart';
 import 'package:flutter/material.dart';
 
-import '../db/entity/order.dart';
+import '../db/entity/bloc_order.dart';
 
 class OrderTableItem extends StatelessWidget {
-  final Order order;
+  final BlocOrder order;
 
   OrderTableItem({required this.order});
 

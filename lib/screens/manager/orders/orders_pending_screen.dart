@@ -6,7 +6,7 @@ import '../../../db/bloc_repository.dart';
 import '../../../db/dao/bloc_dao.dart';
 import '../../../db/entity/bill.dart';
 import '../../../db/entity/cart_item.dart';
-import '../../../db/entity/order.dart';
+import '../../../db/entity/bloc_order.dart';
 import '../../../helpers/firestore_helper.dart';
 import '../../../utils/cart_item_utils.dart';
 import '../../../widgets/manager/orders/order_item.dart';
@@ -105,7 +105,7 @@ class _OrdersPendingScreenState extends State<OrdersPendingScreen> {
             return Expanded(child: Center(child: Text('No pending orders.')));
           List<CartItem> cartItems = snapshot.data! as List<CartItem>;
           if (cartItems.length > 0) {
-            List<Order> orders = _optionName == 'Table'
+            List<BlocOrder> orders = _optionName == 'Table'
                 ? CartItemUtils.extractOrdersByTableNumber(cartItems)
                 : CartItemUtils.extractOrdersByUserId(cartItems);
             return _displayOrdersListByType(context, orders);
@@ -119,7 +119,7 @@ class _OrdersPendingScreenState extends State<OrdersPendingScreen> {
     );
   }
 
-  _displayOrdersListByType(BuildContext context, List<Order> orders) {
+  _displayOrdersListByType(BuildContext context, List<BlocOrder> orders) {
     return Expanded(
       child: ListView.builder(
           itemCount: orders.length,
@@ -131,7 +131,7 @@ class _OrdersPendingScreenState extends State<OrdersPendingScreen> {
                   displayOption: _optionName,
                 ),
                 onTap: () {
-                  Order order = orders[index];
+                  BlocOrder order = orders[index];
                   logger.d('Order selected for cust id : ' +
                       order.customerId +
                       ", table num: " +

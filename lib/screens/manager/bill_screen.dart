@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../../db/entity/bill.dart';
 import '../../db/entity/cart_item.dart';
-import '../../db/entity/order.dart';
+import '../../db/entity/bloc_order.dart';
 import '../../helpers/firestore_helper.dart';
 import '../../widgets/ui/Toaster.dart';
 
@@ -36,7 +36,7 @@ class BillScreen extends StatelessWidget {
     return ListView.builder(
         itemCount: bill.orders.length,
         itemBuilder: (ctx, i) {
-          Order order = bill.orders[i];
+          BlocOrder order = bill.orders[i];
           return Padding(
             padding: const EdgeInsets.all(10.0),
             child: Column(
@@ -102,7 +102,7 @@ class BillScreen extends StatelessWidget {
   _calculateTotal() {
     double total = 0;
 
-    for(Order order in bill.orders){
+    for(BlocOrder order in bill.orders){
       total += order.total;
     }
     return total;
@@ -133,7 +133,7 @@ class _CompletedButtonState extends State<CompletedButton> {
 
         // mark all cart items as completed
         List<CartItem> _cartItems = [];
-        for(Order order in widget.bill.orders) {
+        for(BlocOrder order in widget.bill.orders) {
           _cartItems.addAll(order.cartItems);
         }
 
