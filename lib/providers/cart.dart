@@ -20,8 +20,19 @@ class Cart with ChangeNotifier {
     return total;
   }
 
-  void addItem(String id, String serviceId, int tableNumber, int cartNumber, String userId, String productId,
-      String productName, double productPrice, int quantity, int timestamp, bool isCompleted) {
+  void addItem(
+      String id,
+      String serviceId,
+      int tableNumber,
+      int cartNumber,
+      String userId,
+      String productId,
+      String productName,
+      double productPrice,
+      bool isCommunity,
+      int quantity,
+      int timestamp,
+      bool isCompleted) {
     String key = getCartKey(productId, productPrice);
     if (_items.containsKey(key)) {
       // change the quantity
@@ -36,6 +47,7 @@ class Cart with ChangeNotifier {
               productId: existingCartItem.productId,
               productName: existingCartItem.productName,
               productPrice: existingCartItem.productPrice,
+              isCommunity: existingCartItem.isCommunity,
               quantity: existingCartItem.quantity + quantity,
               createdAt: existingCartItem.createdAt,
               isCompleted: existingCartItem.isCompleted));
@@ -51,6 +63,7 @@ class Cart with ChangeNotifier {
               productId: productId,
               productName: productName,
               productPrice: productPrice,
+              isCommunity: isCommunity,
               quantity: quantity,
               createdAt: timestamp,
               isCompleted: isCompleted));
@@ -94,6 +107,6 @@ class Cart with ChangeNotifier {
   }
 
   static String getCartKey(String productId, double productPrice) {
-    return productId+productPrice.toStringAsFixed(0);
+    return productId + productPrice.toStringAsFixed(0);
   }
 }

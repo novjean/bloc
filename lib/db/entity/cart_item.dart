@@ -11,6 +11,7 @@ class CartItem {
   final String productId;
   final String productName;
   final double productPrice;
+  final bool isCommunity;
   int quantity;
   bool isCompleted;
   final int createdAt;
@@ -26,6 +27,7 @@ class CartItem {
     required this.productId,
     required this.productName,
     required this.productPrice,
+    required this.isCommunity,
     required this.quantity,
     required this.isCompleted,
     required this.createdAt,
@@ -44,6 +46,7 @@ class CartItem {
               productId == other.productId &&
               productName == other.productName &&
               productPrice == other.productPrice &&
+              isCommunity == other.isCommunity &&
               quantity == other.quantity &&
               isCompleted == other.isCompleted &&
               createdAt == other.createdAt
@@ -60,6 +63,7 @@ class CartItem {
       productId.hashCode ^
       productName.hashCode ^
       productPrice.hashCode ^
+      isCommunity.hashCode ^
       quantity.hashCode ^
       isCompleted.hashCode ^
       createdAt.hashCode;
@@ -76,6 +80,7 @@ class CartItem {
         ' productId: $productId,' +
         ' productName: $productName,' +
         ' productPrice: $productPrice,' +
+        ' isCommunity: $isCommunity,' +
         ' quantity: $quantity,' +
         ' isCompleted: $isCompleted,' +
         ' createdAt: $createdAt,' +
@@ -92,6 +97,7 @@ class CartItem {
     String? productId,
     String? productName,
     double? productPrice,
+    bool? isCommunity,
     int? quantity,
     bool? isCompleted,
     int? createdAt,
@@ -105,6 +111,7 @@ class CartItem {
       productId: productId ?? this.productId,
       productName: productName ?? this.productName,
       productPrice: productPrice ?? this.productPrice,
+      isCommunity: isCommunity ?? this.isCommunity,
       quantity: quantity ?? this.quantity,
       isCompleted: isCompleted ?? this.isCompleted,
       createdAt: createdAt ?? this.createdAt,
@@ -122,6 +129,7 @@ class CartItem {
       'productId': this.productId,
       'productName': this.productName,
       'productPrice': this.productPrice,
+      'isCommunity': this.isCommunity,
       'quantity': this.quantity,
       'isCompleted': this.isCompleted,
       'createdAt': this.createdAt,
@@ -138,6 +146,7 @@ class CartItem {
       productId: map['productId'] as String,
       productName: map['productName'] as String,
       productPrice: map['productPrice'] as double,
+      isCommunity: map['isCommunity'] as bool,
       quantity: map['quantity'] as int,
       isCompleted: map['isCompleted'] as bool,
       createdAt: map['createdAt'] as int,

@@ -160,6 +160,7 @@ class _ProductItemState extends State<ProductItem> {
                                             ? widget.product.priceCommunity
                                                 .toString()
                                             : widget.product.price.toString()),
+                                        isCommunity: widget.isCommunity,
                                         quantity: widget.addCount,
                                         createdAt: timestamp,
                                         isCompleted: false);
@@ -173,6 +174,7 @@ class _ProductItemState extends State<ProductItem> {
                                         cartitem.productId,
                                         cartitem.productName,
                                         cartitem.productPrice,
+                                        widget.isCommunity,
                                         cartitem.quantity,
                                         cartitem.createdAt,
                                         false);

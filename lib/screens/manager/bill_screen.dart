@@ -1,9 +1,11 @@
+import 'package:bloc/utils/string_utils.dart';
 import 'package:bloc/widgets/cart_block_item.dart';
 import 'package:flutter/material.dart';
 
 import '../../db/entity/bill.dart';
 import '../../db/entity/cart_item.dart';
 import '../../db/entity/bloc_order.dart';
+import '../../db/entity/order.dart';
 import '../../helpers/firestore_helper.dart';
 import '../../widgets/ui/Toaster.dart';
 
@@ -146,7 +148,9 @@ class _CompletedButtonState extends State<CompletedButton> {
         Toaster.shortToast("Order is marked as completed.");
 
         // this is where we send the order information to firebase
-        // Order order = Order
+        String orderId = StringUtils.getRandomString(20);
+        // need to know if cart item is community
+        // Order order = Order(id: orderId,customerId: _cartItems[0].userId,blocId: _cartItems[0].serviceId, isCommunity: _cartItems[0].)
 
         setState(() {
           _isLoading = false;
