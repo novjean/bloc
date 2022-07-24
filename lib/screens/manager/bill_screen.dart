@@ -9,8 +9,10 @@ import '../../widgets/ui/Toaster.dart';
 
 class BillScreen extends StatelessWidget {
   Bill bill;
+  // todo: this is what we going to use for invoice button creation in the future
+  bool isPending;
 
-  BillScreen({required this.bill});
+  BillScreen({required this.bill, required this.isPending});
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +46,7 @@ class BillScreen extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
 
               children: [
-                Text('Order number : ' + order.number.toString()),
+                Text('Order number : ' + order.sequence.toString()),
                 renderCartItems(order.cartItems),
                 // OrderCardItem(order),
               ],
@@ -92,7 +94,7 @@ class BillScreen extends StatelessWidget {
               ),
               backgroundColor: Theme.of(context).primaryColor,
             ),
-            CompletedButton(bill: bill),
+            isPending?CompletedButton(bill: bill):SizedBox(),
           ],
         ),
       ),
@@ -142,6 +144,9 @@ class _CompletedButtonState extends State<CompletedButton> {
         }
 
         Toaster.shortToast("Order is marked as completed.");
+
+        // this is where we send the order information to firebase
+        // Order order = Order
 
         setState(() {
           _isLoading = false;

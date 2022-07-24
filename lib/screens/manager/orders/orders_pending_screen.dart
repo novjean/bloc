@@ -139,7 +139,7 @@ class _OrdersPendingScreenState extends State<OrdersPendingScreen> {
 
                   Bill bill = CartItemUtils.extractBill(order.cartItems);
                   Navigator.of(context).push(
-                    MaterialPageRoute(builder: (ctx) => BillScreen(bill: bill)),
+                    MaterialPageRoute(builder: (ctx) => BillScreen(bill: bill, isPending: true,)),
                   );
                 });
           }),

@@ -83,7 +83,7 @@ class CartItemUtils {
     List<BlocOrder> orders = [];
     BlocOrder curOrder = BlocOrder();
     curOrder.customerId = userId;
-    curOrder.number = orderNumber;
+    curOrder.sequence = orderNumber;
     for (int i = 0; i < cartItems.length; i++) {
       CartItem ci = cartItems[i];
 
@@ -94,7 +94,7 @@ class CartItemUtils {
         curCreatedAt = ci.createdAt;
         curOrder = BlocOrder();
         curOrder.customerId = userId;
-        curOrder.number = ++orderNumber;
+        curOrder.sequence = ++orderNumber;
         curOrder.cartItems.add(ci);
         curOrder.total += ci.productPrice * ci.quantity;
       } else {

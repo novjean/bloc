@@ -142,7 +142,7 @@ class _OrdersCompletedScreenState extends State<OrdersCompletedScreen> {
 
                   Bill bill = CartItemUtils.extractBill(order.cartItems);
                   Navigator.of(context).push(
-                    MaterialPageRoute(builder: (ctx) => BillScreen(bill: bill)),
+                    MaterialPageRoute(builder: (ctx) => BillScreen(bill: bill, isPending: false,)),
                   );
                 });
           }),

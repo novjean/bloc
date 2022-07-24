@@ -1,7 +1,7 @@
 import 'package:bloc/db/entity/cart_item.dart';
 
 class BlocOrder {
-  late int number;
+  late int sequence;
   late final String customerId;
   late final List<CartItem> cartItems=[];
   double total = 0;
