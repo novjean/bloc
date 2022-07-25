@@ -92,6 +92,17 @@ class FirestoreHelper {
         .snapshots();
   }
 
+  static Stream<QuerySnapshot<Object?>> getCartItemsCommunity(
+      String serviceId, bool isCompleted) {
+    return FirebaseFirestore.instance
+        .collection(CART_ITEMS)
+        .where('serviceId', isEqualTo: serviceId)
+        .where('isCompleted', isEqualTo: isCompleted)
+        .where('isCommunity', isEqualTo: true)
+    // .orderBy('timestamp', descending: true) // createdAt could be used i guess
+        .snapshots();
+  }
+
   static void updateCartItemAsCompleted(CartItem cart) async {
     await FirebaseFirestore.instance.collection(CART_ITEMS).doc(cart.id).set({
       'cartId': cart.id,

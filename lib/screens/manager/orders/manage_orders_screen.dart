@@ -1,4 +1,5 @@
 import 'package:bloc/db/entity/manager_service_option.dart';
+import 'package:bloc/screens/manager/orders/orders_community_bar_screen.dart';
 import 'package:bloc/widgets/ui/listview_block.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -84,7 +85,13 @@ class ManageOrdersScreen extends StatelessWidget{
                 onTap: () {
                   ManagerServiceOption _option = _options[index];
 
-                  if(_option.name.contains('Completed')){
+                  if(_option.name.contains('Community Bar')){
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (ctx) => OrdersCommunityBarScreen(
+                            serviceId: serviceId,
+                            managerService: managerService,
+                            dao: dao)));
+                  } else if(_option.name.contains('Completed')){
                     Navigator.of(context).push(MaterialPageRoute(
                         builder: (ctx) => OrdersCompletedScreen(
                             serviceId: serviceId,

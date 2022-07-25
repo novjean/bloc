@@ -10,7 +10,6 @@ import '../../../db/entity/bloc_order.dart';
 import '../../../helpers/firestore_helper.dart';
 import '../../../utils/cart_item_utils.dart';
 import '../../../widgets/manager/orders/order_item.dart';
-import '../../../widgets/order_table_item.dart';
 import '../../../widgets/ui/sized_listview_block.dart';
 import '../bill_screen.dart';
 
