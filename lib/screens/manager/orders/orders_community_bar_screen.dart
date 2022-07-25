@@ -1,5 +1,5 @@
 import 'package:bloc/db/entity/manager_service.dart';
-import 'package:bloc/widgets/cart_block_item.dart';
+import 'package:bloc/screens/manager/orders/community_offer_screen.dart';
 import 'package:bloc/widgets/manager/orders/manage_running_community_item.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -24,7 +24,7 @@ class OrdersCommunityBarScreen extends StatefulWidget {
 }
 
 class _OrdersCommunityBarScreenState extends State<OrdersCommunityBarScreen> {
-  String _optionName = 'Table';
+  // String _optionName = 'Table';
 
   @override
   Widget build(BuildContext context) {
@@ -105,9 +105,9 @@ class _OrdersCommunityBarScreenState extends State<OrdersCommunityBarScreen> {
                   logger.d('clicked cart item : ' + _cartItem.toString());
 
                   // Bill bill = CartItemUtils.extractBill(order.cartItems);
-                  // Navigator.of(context).push(
-                  //   MaterialPageRoute(builder: (ctx) => BillScreen(bill: bill, isPending: true,)),
-                  // );
+                  Navigator.of(context).push(
+                    MaterialPageRoute(builder: (ctx) => CommunityOfferScreen(cartItem: _cartItem)),
+                  );
                 });
           }),
     );
@@ -117,7 +117,6 @@ class _OrdersCommunityBarScreenState extends State<OrdersCommunityBarScreen> {
     for(CartItem cartItem in cartItems){
       if(cartItem.productId == ci.productId){
         return true;
-
       }
     }
     return false;

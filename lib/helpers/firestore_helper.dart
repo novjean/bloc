@@ -309,6 +309,13 @@ class FirestoreHelper {
     }
   }
 
+  static Future<QuerySnapshot<Map<String, dynamic>>> pullProduct(String productId) {
+    return FirebaseFirestore.instance
+        .collection(FirestoreHelper.PRODUCTS)
+        .where('id', isEqualTo: productId)
+        .get();
+  }
+
   static getProducts(String serviceId) {
     return FirebaseFirestore.instance
         .collection(PRODUCTS)
@@ -346,7 +353,16 @@ class FirestoreHelper {
     }
   }
 
-  static void updateProductTest(Product product) async {
+  static void updateProduct(Product product) async {
+    int timestamp = Timestamp.now().millisecondsSinceEpoch;
+    if(product.priceCommunity>product.priceHighest){
+      product = product.copyWith(priceHighest: product.priceCommunity);
+      product = product.copyWith(priceHighestTime: timestamp);
+    } else if (product.priceCommunity<product.priceLowest) {
+      product = product.copyWith(priceLowest: product.priceCommunity);
+      product = product.copyWith(priceLowestTime: timestamp);
+    }
+
     try {
       await FirebaseFirestore.instance
           .collection(PRODUCTS)

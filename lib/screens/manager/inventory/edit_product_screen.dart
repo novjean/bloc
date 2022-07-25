@@ -173,16 +173,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
               widget.product = widget.product.copyWith(imageUrl: newImageUrl);
             }
 
-            int timestamp = Timestamp.now().millisecondsSinceEpoch;
-            if(widget.product.priceCommunity>widget.product.priceHighest){
-              widget.product = widget.product.copyWith(priceHighest: widget.product.priceCommunity);
-              widget.product = widget.product.copyWith(priceHighestTime: timestamp);
-            } else if (widget.product.priceCommunity<widget.product.priceLowest) {
-              widget.product = widget.product.copyWith(priceLowest: widget.product.priceCommunity);
-              widget.product = widget.product.copyWith(priceLowestTime: timestamp);
-            }
-
-            FirestoreHelper.updateProductTest(widget.product);
+            FirestoreHelper.updateProduct(widget.product);
 
             Navigator.of(context).pop();
           },
