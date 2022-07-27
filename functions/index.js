@@ -32,3 +32,18 @@ exports.sosFunction = functions
         },
       });
     });
+
+//exports.offersFunction = functions
+//    .region('asia-south1')
+//    .firestore
+//    .document('offers/{document}')
+//    .onCreate((snapshot, context) => {
+//      console.log(snapshot.data());
+//      return admin.messaging().sendToTopic('offer', {
+//        notification: {
+//          title: 'Offer : Something ' + snapshot.data().tableNumber.toString(),
+//          body: snapshot.data().name,
+//          clickAction: 'FLUTTER_NOTIFICATION_CLICK',
+//        },
+//      });
+//    });

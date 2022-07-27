@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
@@ -17,7 +16,6 @@ import '../../../widgets/ui/textfield_widget.dart';
 
 class EditProductScreen extends StatefulWidget {
   Product product;
-  // BlocDao dao;
 
   EditProductScreen({key, required this.product}):super(key: key);
 

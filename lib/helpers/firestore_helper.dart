@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:bloc/db/entity/cart_item.dart';
+import 'package:bloc/db/entity/offer.dart';
 import 'package:bloc/db/entity/seat.dart';
 import 'package:bloc/db/entity/user.dart' as blocUser;
 import 'package:bloc/helpers/firestorage_helper.dart';
@@ -26,6 +27,7 @@ class FirestoreHelper {
   static String INVENTORY_OPTIONS = 'inventory_options';
   static String MANAGER_SERVICES = 'manager_services';
   static String MANAGER_SERVICE_OPTIONS = 'manager_service_options';
+  static String OFFERS = 'offers';
   static String PRODUCTS = 'products';
   static String SERVICES = 'services';
   static String SEATS = 'seats';
@@ -506,6 +508,11 @@ class FirestoreHelper {
         .where('service', isEqualTo: service)
         .orderBy('sequence', descending: false)
         .snapshots();
+  }
+
+  /** Offers **/
+  static void insertOffer(Offer offer) {
+    FirebaseFirestore.instance.collection(OFFERS).doc(offer.id).set(offer.toMap());
   }
 
 /** Reference **/

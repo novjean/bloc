@@ -1,10 +1,13 @@
 import 'package:bloc/db/entity/cart_item.dart';
 import 'package:bloc/db/entity/product.dart';
+import 'package:bloc/utils/string_utils.dart';
 import 'package:bloc/widgets/ui/center_text_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
+import '../../../db/entity/offer.dart';
 import '../../../helpers/firestore_helper.dart';
+import '../../../utils/number_utils.dart';
 import '../../../widgets/ui/button_widget.dart';
 import '../../../widgets/ui/textfield_widget.dart';
 
@@ -19,6 +22,9 @@ class CommunityOfferScreen extends StatefulWidget {
 
 class _CommunityOfferScreenState extends State<CommunityOfferScreen> {
   late Product? _product;
+  late double _priceDifference;
+  late double _oldPriceCommunity;
+
   bool _isLoading = true;
 
   @override
@@ -42,6 +48,8 @@ class _CommunityOfferScreenState extends State<CommunityOfferScreen> {
   void setProduct(Product? product) {
     setState(() {
       _product = product;
+      _priceDifference = _product!.priceCommunity - _product!.price;
+      _oldPriceCommunity = _product!.priceCommunity;
       _isLoading = false;
     });
   }
@@ -62,28 +70,6 @@ class _CommunityOfferScreenState extends State<CommunityOfferScreen> {
       physics: BouncingScrollPhysics(),
       children: [
         const SizedBox(height: 15),
-        // ProfileWidget(
-        //   imagePath: user.imageUrl,
-        //   isEdit: true,
-        //   onClicked: () async {
-        //     final image = await ImagePicker().pickImage(
-        //         source: ImageSource.gallery,
-        //         imageQuality: 90, maxWidth: 300);
-        //     if (image == null) return;
-        //
-        //     final directory = await getApplicationDocumentsDirectory();
-        //     final name = basename(image.path);
-        //     final imageFile = File('${directory.path}/$name');
-        //     final newImage = await File(image.path).copy(imageFile.path);
-        //
-        //     setState(() {
-        //       oldImageUrl = user.imageUrl;
-        //       user = user.copyWith(imageUrl: newImage.path);
-        //       isPhotoChanged = true;
-        //     });
-        //   },
-        // ),
-        // const SizedBox(height:24),
         TextFieldWidget(
           label: 'Product Name',
           text: _product!.name,
@@ -100,23 +86,93 @@ class _CommunityOfferScreenState extends State<CommunityOfferScreen> {
         ),
         const SizedBox(height: 24),
         TextFieldWidget(
+          label: 'Price Difference',
+          text: _priceDifference.toStringAsFixed(2),
+          onChanged: (value) {},
+        ),
+        const SizedBox(height: 24),
+        // TextFieldWidget(
+        //   label: 'Offer %',
+        //   text: _offerPercentage.toStringAsFixed(2),
+        //   onChanged: (value) {
+        //     double? offerPercentage = double.tryParse(value);
+        //     // double curPrice = _product!.priceCommunity;
+        //     // double discount = curPrice * (offerPercentage!/100);
+        //     // double newPrice = curPrice - discount;
+        //     // _product = _product!.copyWith(priceCommunity: newPrice);
+        //   },
+        // ),
+        // const SizedBox(height: 24),
+        TextFieldWidget(
           label: 'Lowest Price',
           text: _product!.priceLowest.toStringAsFixed(2),
-          onChanged: (value) {},
+          onChanged: (value) {
+            double? newPrice = double.tryParse(value);
+            _product = _product!.copyWith(priceLowest: newPrice);
+          },
         ),
         const SizedBox(height: 24),
         TextFieldWidget(
           label: 'Highest Price',
           text: _product!.priceHighest.toStringAsFixed(2),
-          onChanged: (value) {},
+          onChanged: (value) {
+            double? newPrice = double.tryParse(value);
+            _product = _product!.copyWith(priceHighest: newPrice);
+          },
         ),
         const SizedBox(height: 24),
         ButtonWidget(
           text: 'Save',
           onClicked: () {
-            FirestoreHelper.updateProduct(_product!);
+            // check if a price change has been taken place
+            if(_product!.priceCommunity >= _oldPriceCommunity){
+              //the price has not changed or gone up
+              // todo: notify users that the price is expected to go up, so buy quick
+              FirestoreHelper.updateProduct(_product!);
+              Navigator.of(context).pop();
+            } else {
+              double discountPercent = 100 - NumberUtils.getPercentage(_product!.priceCommunity, _oldPriceCommunity);
 
-            Navigator.of(context).pop();
+              // todo: we will need to ask for the time or pull it in from one of the fields
+
+              showDialog(
+                context: context,
+                builder: (BuildContext ctx) {
+                  return AlertDialog(
+                    title: Text("Offer Confirm"),
+                    content: Text(discountPercent.toStringAsFixed(0) + "% discount has been offered. Is this correct?"),
+                    actions: [
+                      TextButton(
+                        child: Text("Yes"),
+                        onPressed: () {
+                          FirestoreHelper.updateProduct(_product!);
+
+                          //now we need to notify from here
+                          String offerId = StringUtils.getRandomString(20);
+                          int creationMilliSec = Timestamp.now().millisecondsSinceEpoch;
+                          int endMilliSec = creationMilliSec + (60000 *5);
+
+                          Offer offer = Offer(id: offerId, blocId: _product!.serviceId, productId: _product!.id,
+                              productName: _product!.name, isCommunity: true, discountPercent: discountPercent, newPrice: _product!.priceCommunity,
+                          creationTime: creationMilliSec, endTime: endMilliSec);
+                          FirestoreHelper.insertOffer(offer);
+
+
+                          Navigator.of(ctx).pop();
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                      TextButton(
+                        child: Text("Cancel"),
+                        onPressed: () {
+                          Navigator.of(ctx).pop();
+                        },
+                      )
+                    ],
+                  );
+                },
+              );
+            }
           },
         ),
       ],
