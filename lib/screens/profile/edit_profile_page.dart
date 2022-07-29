@@ -100,7 +100,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
             }
 
             BlocRepository.updateUser(widget.dao, user);
-            FirestoreHelper.updateUser(user);
+            FirestoreHelper.updateUser(user, isPhotoChanged);
 
             Navigator.of(context).pop();
           },

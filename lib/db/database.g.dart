@@ -94,7 +94,7 @@ class _$AppDatabase extends AppDatabase {
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `Product` (`id` TEXT NOT NULL, `name` TEXT NOT NULL, `type` TEXT NOT NULL, `category` TEXT NOT NULL, `description` TEXT NOT NULL, `price` REAL NOT NULL, `serviceId` TEXT NOT NULL, `imageUrl` TEXT NOT NULL, `ownerId` TEXT NOT NULL, `createdAt` INTEGER NOT NULL, `isAvailable` INTEGER NOT NULL, `priceHighest` REAL NOT NULL, `priceLowest` REAL NOT NULL, `priceHighestTime` INTEGER NOT NULL, `priceLowestTime` INTEGER NOT NULL, `priceCommunity` REAL NOT NULL, PRIMARY KEY (`id`))');
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `User` (`id` TEXT NOT NULL, `username` TEXT NOT NULL, `email` TEXT NOT NULL, `imageUrl` TEXT NOT NULL, `clearanceLevel` INTEGER NOT NULL, `phoneNumber` INTEGER NOT NULL, `name` TEXT NOT NULL, `fcmToken` TEXT NOT NULL, PRIMARY KEY (`id`))');
+            'CREATE TABLE IF NOT EXISTS `User` (`id` TEXT NOT NULL, `username` TEXT NOT NULL, `email` TEXT NOT NULL, `imageUrl` TEXT NOT NULL, `clearanceLevel` INTEGER NOT NULL, `phoneNumber` INTEGER NOT NULL, `name` TEXT NOT NULL, `fcmToken` TEXT NOT NULL, `blocId` TEXT NOT NULL, PRIMARY KEY (`id`))');
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `ManagerService` (`id` TEXT NOT NULL, `name` TEXT NOT NULL, `sequence` INTEGER NOT NULL, PRIMARY KEY (`id`))');
         await database.execute(
@@ -128,7 +128,8 @@ class _$BlocDao extends BlocDao {
                   'clearanceLevel': item.clearanceLevel,
                   'phoneNumber': item.phoneNumber,
                   'name': item.name,
-                  'fcmToken': item.fcmToken
+                  'fcmToken': item.fcmToken,
+                  'blocId': item.blocId
                 }),
         _cityInsertionAdapter = InsertionAdapter(
             database,
@@ -262,7 +263,8 @@ class _$BlocDao extends BlocDao {
                   'clearanceLevel': item.clearanceLevel,
                   'phoneNumber': item.phoneNumber,
                   'name': item.name,
-                  'fcmToken': item.fcmToken
+                  'fcmToken': item.fcmToken,
+                  'blocId': item.blocId
                 });
 
   final sqflite.DatabaseExecutor database;
@@ -304,7 +306,8 @@ class _$BlocDao extends BlocDao {
             clearanceLevel: row['clearanceLevel'] as int,
             phoneNumber: row['phoneNumber'] as int,
             name: row['name'] as String,
-            fcmToken: row['fcmToken'] as String),
+            fcmToken: row['fcmToken'] as String,
+            blocId: row['blocId'] as String),
         arguments: [uId]);
   }
 

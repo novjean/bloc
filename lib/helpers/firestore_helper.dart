@@ -182,7 +182,8 @@ class FirestoreHelper {
         email: email,
         fcmToken: '',
         imageUrl: url,
-        username: username);
+        username: username,
+        blocId: '');
 
     await FirebaseFirestore.instance
         .collection(USERS)
@@ -209,20 +210,25 @@ class FirestoreHelper {
     return FirebaseFirestore.instance.collection(USERS);
   }
 
-  static void updateUser(blocUser.User user) async {
+  static void updateUser(blocUser.User user, bool isPhotoChanged) async {
+    if(isPhotoChanged){
+      var fileUrl = user.imageUrl;
+      try{
+        fileUrl = await FirestorageHelper.uploadFile(
+            FirestorageHelper.USERS, user.id, File(user.imageUrl));
+        user = user.copyWith(imageUrl: fileUrl);
+      } catch (err) {
+        logger.e(err);
+      }
+    }
+    
     try {
-      final fileUrl = await FirestorageHelper.uploadFile(
-          FirestorageHelper.USERS, user.id, File(user.imageUrl));
-
       await FirebaseFirestore.instance
           .collection(USERS)
           .doc(user.id)
-          .update({
-            'name': user.name,
-            'imageUrl': fileUrl,
-          })
-          .then((value) => print("user image updated."))
-          .catchError((error) => print("failed to update user image: $error"));
+          .update(user.toMap())
+          .then((value) => print("user has been updated in firebase."))
+          .catchError((error) => print("failed updating user in firebase. error: " + error));
     } on PlatformException catch (err) {
       logger.e(err.message);
     } catch (err) {

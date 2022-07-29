@@ -8,11 +8,13 @@ import '../../db/dao/bloc_dao.dart';
 import '../../db/entity/captain_service.dart';
 import '../../helpers/firestore_helper.dart';
 import '../../widgets/ui/listview_block.dart';
+import '../manager/orders/manage_orders_screen.dart';
 
 class CaptainMainScreen extends StatelessWidget {
   BlocDao dao;
+  String workBlocId;
 
-  CaptainMainScreen({key, required this.dao}) : super(key: key);
+  CaptainMainScreen({key, required this.dao, required this.workBlocId}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -81,7 +83,7 @@ class CaptainMainScreen extends StatelessWidget {
                         // Navigator.of(context).push(MaterialPageRoute(
                         //     builder: (ctx) =>
                         //         ManageOrdersScreen(
-                        //             serviceId: blocService.id,
+                        //             serviceId: workBlocId,
                         //             managerService: captainService,
                         //             dao: dao)));
                         logger.d('manage inventory screen selected.');

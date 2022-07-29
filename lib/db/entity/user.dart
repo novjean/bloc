@@ -11,6 +11,7 @@ class User {
   final int phoneNumber;
   final String name;
   final String fcmToken;
+  final String blocId;
 
 //<editor-fold desc="Data Methods">
 
@@ -23,6 +24,7 @@ class User {
     required this.phoneNumber,
     required this.name,
     required this.fcmToken,
+    required this.blocId,
   });
 
   @override
@@ -37,7 +39,8 @@ class User {
           clearanceLevel == other.clearanceLevel &&
           phoneNumber == other.phoneNumber &&
           name == other.name &&
-          fcmToken == other.fcmToken);
+          fcmToken == other.fcmToken &&
+          blocId == other.blocId);
 
   @override
   int get hashCode =>
@@ -48,7 +51,8 @@ class User {
       clearanceLevel.hashCode ^
       phoneNumber.hashCode ^
       name.hashCode ^
-      fcmToken.hashCode;
+      fcmToken.hashCode ^
+      blocId.hashCode;
 
   @override
   String toString() {
@@ -61,6 +65,7 @@ class User {
         ' phoneNumber: $phoneNumber,' +
         ' name: $name,' +
         ' fcmToken: $fcmToken,' +
+        ' blocId: $blocId,' +
         '}';
   }
 
@@ -73,6 +78,7 @@ class User {
     int? phoneNumber,
     String? name,
     String? fcmToken,
+    String? blocId,
   }) {
     return User(
       id: id ?? this.id,
@@ -83,6 +89,7 @@ class User {
       phoneNumber: phoneNumber ?? this.phoneNumber,
       name: name ?? this.name,
       fcmToken: fcmToken ?? this.fcmToken,
+      blocId: blocId ?? this.blocId,
     );
   }
 
@@ -96,6 +103,7 @@ class User {
       'phoneNumber': this.phoneNumber,
       'name': this.name,
       'fcmToken': this.fcmToken,
+      'blocId': this.blocId,
     };
   }
 
@@ -109,6 +117,7 @@ class User {
       phoneNumber: map['phoneNumber'] as int,
       name: map['name'] as String,
       fcmToken: map['fcmToken'] as String,
+      blocId: map['blocId'] as String,
     );
   }
 

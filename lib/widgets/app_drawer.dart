@@ -34,22 +34,28 @@ class AppDrawer extends StatelessWidget {
             onTap: () {
               Navigator.of(context).push(
                 MaterialPageRoute(
-                    builder: (ctx) => MainScreen(dao:dao, user: UserPreferences.getUser(),)),
+                    builder: (ctx) => MainScreen(
+                          dao: dao,
+                          user: UserPreferences.getUser(),
+                        )),
               );
             },
           ),
           const Divider(),
           user.clearanceLevel > Constants.CAPTAIN_LEVEL
               ? ListTile(
-            leading: const Icon(Icons.adjust),
-            title: const Text('Captain'),
-            onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                    builder: (ctx) => CaptainMainScreen(dao:dao)),
-              );
-            },
-          )
+                  leading: const Icon(Icons.adjust),
+                  title: const Text('Captain'),
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                          builder: (ctx) => CaptainMainScreen(
+                                dao: dao,
+                                workBlocId: user.blocId,
+                              )),
+                    );
+                  },
+                )
               : const SizedBox.shrink(),
           const Divider(),
           user.clearanceLevel > Constants.MANAGER_LEVEL
@@ -59,7 +65,7 @@ class AppDrawer extends StatelessWidget {
                   onTap: () {
                     Navigator.of(context).push(
                       MaterialPageRoute(
-                          builder: (ctx) => ManagerMainScreen(dao:dao)),
+                          builder: (ctx) => ManagerMainScreen(dao: dao)),
                     );
                   },
                 )
@@ -91,8 +97,7 @@ class AppDrawer extends StatelessWidget {
 
               FirebaseAuth.instance.signOut();
               Navigator.of(context).pushReplacement(
-                MaterialPageRoute(
-                    builder: (context) => LoginScreen(dao: dao)),
+                MaterialPageRoute(builder: (context) => LoginScreen(dao: dao)),
               );
             },
           ),
