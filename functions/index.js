@@ -1,6 +1,9 @@
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 
+// firebase deploy should be called after
+// defining the function
+
 admin.initializeApp();
 
 exports.chatFunction = functions
@@ -33,17 +36,17 @@ exports.sosFunction = functions
       });
     });
 
-//exports.offersFunction = functions
-//    .region('asia-south1')
-//    .firestore
-//    .document('offers/{document}')
-//    .onCreate((snapshot, context) => {
-//      console.log(snapshot.data());
-//      return admin.messaging().sendToTopic('offer', {
-//        notification: {
-//          title: 'Offer : Something ' + snapshot.data().tableNumber.toString(),
-//          body: snapshot.data().name,
-//          clickAction: 'FLUTTER_NOTIFICATION_CLICK',
-//        },
-//      });
-//    });
+exports.offerFunction = functions
+    .region('asia-south1')
+    .firestore
+    .document('offers/{document}')
+    .onCreate((snapshot, context) => {
+      console.log(snapshot.data());
+      return admin.messaging().sendToTopic('offer', {
+        notification: {
+          title: 'Offer : ' + snapshot.data().productName + ' for 5 minutes!',
+          body: snapshot.data().productName + ' is on offer now! Grab one now!',
+          clickAction: 'FLUTTER_NOTIFICATION_CLICK',
+        },
+      });
+    });

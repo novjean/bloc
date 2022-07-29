@@ -157,7 +157,6 @@ class _CommunityOfferScreenState extends State<CommunityOfferScreen> {
                           creationTime: creationMilliSec, endTime: endMilliSec);
                           FirestoreHelper.insertOffer(offer);
 
-
                           Navigator.of(ctx).pop();
                           Navigator.of(context).pop();
                         },

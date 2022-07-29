@@ -131,11 +131,13 @@ class _MainScreenState extends State<MainScreen> {
       return;
     });
     fbm.subscribeToTopic('chat');
+    fbm.subscribeToTopic('offer');
 
     blocUser.User user = UserPreferences.getUser();
     if (user.clearanceLevel > Constants.MANAGER_LEVEL) {
       fbm.subscribeToTopic('sos');
     }
+
   }
 
   @override
