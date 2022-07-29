@@ -1,4 +1,3 @@
-import 'package:bloc/db/entity/manager_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -16,12 +15,12 @@ import '../bill_screen.dart';
 class OrdersPendingScreen extends StatefulWidget {
   String serviceId;
   BlocDao dao;
-  ManagerService managerService;
+  String titleHead;
 
   OrdersPendingScreen(
       {required this.serviceId,
       required this.dao,
-      required this.managerService});
+      required this.titleHead});
 
   @override
   State<OrdersPendingScreen> createState() => _OrdersPendingScreenState();
@@ -34,13 +33,13 @@ class _OrdersPendingScreenState extends State<OrdersPendingScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.managerService.name + ' | Pending'),
+        title: Text(widget.titleHead + ' | Pending'),
       ),
-      body: _buildBody(context, widget.managerService),
+      body: _buildBody(context),
     );
   }
 
-  _buildBody(BuildContext context, ManagerService service) {
+  _buildBody(BuildContext context) {
     return Column(
       children: [
         SizedBox(height: 2.0),

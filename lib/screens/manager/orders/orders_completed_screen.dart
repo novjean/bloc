@@ -16,12 +16,12 @@ import '../bill_screen.dart';
 class OrdersCompletedScreen extends StatefulWidget {
   String serviceId;
   BlocDao dao;
-  ManagerService managerService;
+  String titleHead;
 
   OrdersCompletedScreen(
       {required this.serviceId,
       required this.dao,
-      required this.managerService});
+      required this.titleHead});
 
   @override
   State<OrdersCompletedScreen> createState() => _OrdersCompletedScreenState();
@@ -34,13 +34,13 @@ class _OrdersCompletedScreenState extends State<OrdersCompletedScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.managerService.name + ' | Completed'),
+        title: Text(widget.titleHead + ' | Completed'),
       ),
-      body: _buildBody(context, widget.managerService),
+      body: _buildBody(context),
     );
   }
 
-  _buildBody(BuildContext context, ManagerService service) {
+  _buildBody(BuildContext context) {
     return Column(
       children: [
         // CoverPhoto(service.name, service.imageUrl),

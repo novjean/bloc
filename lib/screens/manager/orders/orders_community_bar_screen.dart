@@ -1,4 +1,3 @@
-import 'package:bloc/db/entity/manager_service.dart';
 import 'package:bloc/screens/manager/orders/community_offer_screen.dart';
 import 'package:bloc/widgets/manager/orders/manage_running_community_item.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -12,12 +11,12 @@ import '../../../helpers/firestore_helper.dart';
 class OrdersCommunityBarScreen extends StatefulWidget {
   String serviceId;
   BlocDao dao;
-  ManagerService managerService;
+  String titleHead;
 
   OrdersCommunityBarScreen(
       {required this.serviceId,
         required this.dao,
-        required this.managerService});
+        required this.titleHead});
 
   @override
   State<OrdersCommunityBarScreen> createState() => _OrdersCommunityBarScreenState();
@@ -30,13 +29,13 @@ class _OrdersCommunityBarScreenState extends State<OrdersCommunityBarScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.managerService.name + ' | Community'),
+        title: Text(widget.titleHead + ' | Community'),
       ),
-      body: _buildBody(context, widget.managerService),
+      body: _buildBody(context),
     );
   }
 
-  _buildBody(BuildContext context, ManagerService service) {
+  _buildBody(BuildContext context) {
     return Column(
       children: [
         // SizedBox(height: 2.0),

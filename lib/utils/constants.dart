@@ -47,7 +47,8 @@ class Constants {
     ),
   );
 
-  static int OWNER_LEVEL = 8;
+  static int OWNER_LEVEL = 7;
   static int MANAGER_LEVEL = 5;
+  static int CAPTAIN_LEVEL = 3;
   static int USER_LEVEL = 1;
 }

@@ -5,7 +5,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import '../../../db/dao/bloc_dao.dart';
-import '../../../db/entity/manager_service.dart';
 import '../../../helpers/firestore_helper.dart';
 import '../../../widgets/ui/Toaster.dart';
 import 'orders_completed_screen.dart';
@@ -14,12 +13,12 @@ import 'orders_pending_screen.dart';
 class ManageOrdersScreen extends StatelessWidget{
   String serviceId;
   BlocDao dao;
-  ManagerService managerService;
+  String serviceName;
 
   ManageOrdersScreen({
     required this.serviceId,
     required this.dao,
-    required this.managerService,
+    required this.serviceName,
   });
 
   @override
@@ -89,19 +88,19 @@ class ManageOrdersScreen extends StatelessWidget{
                     Navigator.of(context).push(MaterialPageRoute(
                         builder: (ctx) => OrdersCommunityBarScreen(
                             serviceId: serviceId,
-                            managerService: managerService,
+                            titleHead: serviceName,
                             dao: dao)));
                   } else if(_option.name.contains('Completed')){
                     Navigator.of(context).push(MaterialPageRoute(
                         builder: (ctx) => OrdersCompletedScreen(
                             serviceId: serviceId,
-                            managerService: managerService,
+                            titleHead: serviceName,
                             dao: dao)));
                   } else if(_option.name.contains('Pending')) {
                     Navigator.of(context).push(MaterialPageRoute(
                         builder: (ctx) => OrdersPendingScreen(
                             serviceId: serviceId,
-                            managerService: managerService,
+                            titleHead: serviceName,
                             dao: dao)));
                   } else if(_option.name.contains('Community Bar')) {
                     Toaster.shortToast('Community bar is yet to be implemented!');

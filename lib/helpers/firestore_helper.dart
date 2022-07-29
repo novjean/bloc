@@ -21,6 +21,7 @@ class FirestoreHelper {
 
   static String BLOCS = 'blocs';
   static String CHATS = 'chats';
+  static String CAPTAIN_SERVICES = 'captain_services';
   static String CATEGORIES = 'categories';
   static String CART_ITEMS = 'cart_items';
   static String CITIES = 'cities';
@@ -140,6 +141,14 @@ class FirestoreHelper {
   static Stream<QuerySnapshot<Object?>> getManagerServicesSnapshot() {
     return FirebaseFirestore.instance
         .collection(MANAGER_SERVICES)
+        .orderBy('sequence', descending: false)
+        .snapshots();
+  }
+
+  /** Captain Services **/
+  static Stream<QuerySnapshot<Object?>> getCaptainServices() {
+    return FirebaseFirestore.instance
+        .collection(CAPTAIN_SERVICES)
         .orderBy('sequence', descending: false)
         .snapshots();
   }

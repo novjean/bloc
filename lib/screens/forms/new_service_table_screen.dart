@@ -57,7 +57,7 @@ class _NewServiceTableScreenState extends State<NewServiceTableScreen> {
       await FirebaseFirestore.instance
           .collection(FirestoreHelper.TABLES)
           .doc(table.id)
-          .set(table.toJson());
+          .set(table.toMap());
 
       Scaffold.of(ctx).showSnackBar(
         SnackBar(

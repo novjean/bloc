@@ -79,7 +79,7 @@ class TablesManagementScreen extends StatelessWidget {
             DocumentSnapshot document = snapshot.data!.docs[i];
             Map<String, dynamic> data =
                 document.data()! as Map<String, dynamic>;
-            final ServiceTable serviceTable = ServiceTable.fromJson(data);
+            final ServiceTable serviceTable = ServiceTable.fromMap(data);
             BlocRepository.insertServiceTable(dao, serviceTable);
             serviceTables.add(serviceTable);
 

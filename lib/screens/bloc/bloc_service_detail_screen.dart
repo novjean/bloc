@@ -210,7 +210,7 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen> {
             DocumentSnapshot document = result.docs[i];
             Map<String, dynamic> data =
                 document.data()! as Map<String, dynamic>;
-            final ServiceTable _table = ServiceTable.fromJson(data);
+            final ServiceTable _table = ServiceTable.fromMap(data);
 
             setState(() {
               _mTable = _table;

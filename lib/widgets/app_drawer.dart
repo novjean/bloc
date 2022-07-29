@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import '../db/bloc_repository.dart';
 import '../db/dao/bloc_dao.dart';
 import '../main.dart';
+import '../screens/captain/captain_main_screen.dart';
 import '../screens/login_screen.dart';
 
 class AppDrawer extends StatelessWidget {
@@ -37,6 +38,19 @@ class AppDrawer extends StatelessWidget {
               );
             },
           ),
+          const Divider(),
+          user.clearanceLevel > Constants.CAPTAIN_LEVEL
+              ? ListTile(
+            leading: const Icon(Icons.adjust),
+            title: const Text('Captain'),
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                    builder: (ctx) => CaptainMainScreen(dao:dao)),
+              );
+            },
+          )
+              : const SizedBox.shrink(),
           const Divider(),
           user.clearanceLevel > Constants.MANAGER_LEVEL
               ? ListTile(
