@@ -16,12 +16,12 @@ class DisplayImageBox extends StatelessWidget {
       child: GridTile(
         child: GestureDetector(
           onTap: () {
-            Navigator.of(context).pushNamed(
-              imageTitle == 'manager'
-                  ? ManagerMainScreen.routeName
-                  : OwnerScreen.routeName,
-              // arguments: product.id,
-            );
+            // Navigator.of(context).pushNamed(
+            //   imageTitle == 'manager'
+            //       ? ManagerMainScreen.routeName
+            //       : OwnerScreen.routeName,
+            //   // arguments: product.id,
+            // );
           },
           child: Hero(
             // hero should be wired in with where we are animating to

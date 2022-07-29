@@ -183,7 +183,7 @@ class FirestoreHelper {
         fcmToken: '',
         imageUrl: url,
         username: username,
-        blocId: '');
+        blocServiceId: '');
 
     await FirebaseFirestore.instance
         .collection(USERS)
@@ -221,7 +221,7 @@ class FirestoreHelper {
         logger.e(err);
       }
     }
-    
+
     try {
       await FirebaseFirestore.instance
           .collection(USERS)

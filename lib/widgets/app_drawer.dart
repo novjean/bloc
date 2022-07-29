@@ -32,7 +32,7 @@ class AppDrawer extends StatelessWidget {
             leading: const Icon(Icons.smart_toy_sharp),
             title: const Text('Home'),
             onTap: () {
-              Navigator.of(context).push(
+              Navigator.of(context).pushReplacement(
                 MaterialPageRoute(
                     builder: (ctx) => MainScreen(
                           dao: dao,
@@ -51,7 +51,7 @@ class AppDrawer extends StatelessWidget {
                       MaterialPageRoute(
                           builder: (ctx) => CaptainMainScreen(
                                 dao: dao,
-                                workBlocId: user.blocId,
+                                blocServiceId: user.blocServiceId,
                               )),
                     );
                   },
@@ -76,9 +76,9 @@ class AppDrawer extends StatelessWidget {
                   leading: const Icon(Icons.account_circle),
                   title: const Text('Owner'),
                   onTap: () {
-                    Navigator.of(context).pushNamed(
-                      OwnerScreen.routeName,
-                      arguments: dao,
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                          builder: (ctx) => OwnerScreen(dao: dao)),
                     );
                   },
                 )

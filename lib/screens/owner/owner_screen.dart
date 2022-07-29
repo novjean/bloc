@@ -10,13 +10,14 @@ import '../../db/entity/city.dart';
 
 class OwnerScreen extends StatelessWidget {
   static const routeName = '/owner-screen';
-  var logger = Logger();
+  BlocDao dao;
+
+  OwnerScreen({key, required this.dao}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    var logger = Logger();
     logger.i('owner screen is loading...');
-
-    final dao = ModalRoute.of(context)!.settings.arguments as BlocDao;
 
     return Scaffold(
       appBar: AppBar(

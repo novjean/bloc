@@ -169,7 +169,7 @@ class LoginScreen extends StatelessWidget {
                                 fcmToken: '',
                                 email: '',
                                 imageUrl: '',
-                                username: '', blocId: '');
+                                username: '', blocServiceId: '');
 
                             await Navigator.of(context).push(
                               MaterialPageRoute(
