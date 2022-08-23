@@ -137,7 +137,6 @@ class _MainScreenState extends State<MainScreen> {
     if (user.clearanceLevel > Constants.MANAGER_LEVEL) {
       fbm.subscribeToTopic('sos');
     }
-
   }
 
   @override

@@ -44,7 +44,7 @@ exports.offerFunction = functions
       console.log(snapshot.data());
       return admin.messaging().sendToTopic('offer', {
         notification: {
-          title: 'Offer : ' + snapshot.data().productName + ' for 5 minutes!',
+          title: 'Offer : ' + snapshot.data().productName + ' for limited time!',
           body: snapshot.data().productName + ' is on offer now! Grab one now!',
           clickAction: 'FLUTTER_NOTIFICATION_CLICK',
         },

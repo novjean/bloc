@@ -32,7 +32,7 @@ class _CommunityOfferScreenState extends State<CommunityOfferScreen> {
     super.initState();
 
     FirestoreHelper.pullProduct(widget.cartItem.productId).then((res) {
-      print("Successfully retrieved product ");
+      print("Successfully retrieved product");
       for (int i = 0; i < res.docs.length; i++) {
         DocumentSnapshot document = res.docs[i];
         Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
@@ -121,6 +121,7 @@ class _CommunityOfferScreenState extends State<CommunityOfferScreen> {
           },
         ),
         const SizedBox(height: 24),
+
         ButtonWidget(
           text: 'Save',
           onClicked: () {
@@ -144,17 +145,32 @@ class _CommunityOfferScreenState extends State<CommunityOfferScreen> {
                     actions: [
                       TextButton(
                         child: Text("Yes"),
-                        onPressed: () {
+                        onPressed: () async {
                           FirestoreHelper.updateProduct(_product!);
 
                           //now we need to notify from here
                           String offerId = StringUtils.getRandomString(20);
                           int creationMilliSec = Timestamp.now().millisecondsSinceEpoch;
-                          int endMilliSec = creationMilliSec + (60000 *5);
+
+                          DateTime initialDate = DateTime.now();
+                          DateTime? pickedDay = await showDatePicker(
+                            context: context,
+                            initialDate: initialDate,
+                            lastDate: DateTime(2025),
+                            firstDate: initialDate,
+                          );
+
+                          TimeOfDay initialTime = TimeOfDay.now();
+                          TimeOfDay? pickedTime = await showTimePicker(
+                            context: context,
+                            initialTime: initialTime,
+                          );
+
+                          DateTime endDT = DateTime(pickedDay!.year, pickedDay!.month, pickedDay!.day, pickedTime!.hour, pickedTime!.minute);
 
                           Offer offer = Offer(id: offerId, blocId: _product!.serviceId, productId: _product!.id,
                               productName: _product!.name, isCommunity: true, discountPercent: discountPercent, newPrice: _product!.priceCommunity,
-                          creationTime: creationMilliSec, endTime: endMilliSec);
+                          creationTime: creationMilliSec, endTime: endDT.millisecondsSinceEpoch);
                           FirestoreHelper.insertOffer(offer);
 
                           Navigator.of(ctx).pop();
