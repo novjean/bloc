@@ -10,22 +10,24 @@ import '../../../widgets/ui/Toaster.dart';
 import 'orders_completed_screen.dart';
 import 'orders_pending_screen.dart';
 
-class ManageOrdersScreen extends StatelessWidget{
+class ManageOrdersScreen extends StatelessWidget {
   String serviceId;
   BlocDao dao;
   String serviceName;
+  String userTitle;
 
   ManageOrdersScreen({
     required this.serviceId,
     required this.dao,
     required this.serviceName,
+    required this.userTitle,
   });
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Manager | Orders'),
+        title: Text(userTitle + ' | Orders'),
       ),
       // drawer: AppDrawer(),
       body: _buildBody(context),
@@ -57,9 +59,9 @@ class ManageOrdersScreen extends StatelessWidget{
           List<ManagerServiceOption> _serviceOptions = [];
           for (int i = 0; i < snapshot.data!.docs.length; i++) {
             DocumentSnapshot document = snapshot.data!.docs[i];
-            Map<String, dynamic> map =
-            document.data()! as Map<String, dynamic>;
-            final ManagerServiceOption _option = ManagerServiceOption.fromMap(map);
+            Map<String, dynamic> map = document.data()! as Map<String, dynamic>;
+            final ManagerServiceOption _option =
+                ManagerServiceOption.fromMap(map);
             _serviceOptions.add(_option);
 
             if (i == snapshot.data!.docs.length - 1) {
@@ -70,7 +72,8 @@ class ManageOrdersScreen extends StatelessWidget{
         });
   }
 
-  _displayServiceOptions(BuildContext context, List<ManagerServiceOption> _options) {
+  _displayServiceOptions(
+      BuildContext context, List<ManagerServiceOption> _options) {
     return Container(
       height: MediaQuery.of(context).size.height,
       child: ListView.builder(
@@ -84,26 +87,27 @@ class ManageOrdersScreen extends StatelessWidget{
                 onTap: () {
                   ManagerServiceOption _option = _options[index];
 
-                  if(_option.name.contains('Community Bar')){
+                  if (_option.name.contains('Community Bar')) {
                     Navigator.of(context).push(MaterialPageRoute(
                         builder: (ctx) => OrdersCommunityBarScreen(
                             serviceId: serviceId,
                             titleHead: serviceName,
                             dao: dao)));
-                  } else if(_option.name.contains('Completed')){
+                  } else if (_option.name.contains('Completed')) {
                     Navigator.of(context).push(MaterialPageRoute(
                         builder: (ctx) => OrdersCompletedScreen(
                             serviceId: serviceId,
                             titleHead: serviceName,
                             dao: dao)));
-                  } else if(_option.name.contains('Pending')) {
+                  } else if (_option.name.contains('Pending')) {
                     Navigator.of(context).push(MaterialPageRoute(
                         builder: (ctx) => OrdersPendingScreen(
                             serviceId: serviceId,
                             titleHead: serviceName,
                             dao: dao)));
-                  } else if(_option.name.contains('Community Bar')) {
-                    Toaster.shortToast('Community bar is yet to be implemented!');
+                  } else if (_option.name.contains('Community Bar')) {
+                    Toaster.shortToast(
+                        'Community bar is yet to be implemented!');
                     print('community bar order option selected!');
                   } else {
                     print('Undefined order service option!');
@@ -112,6 +116,4 @@ class ManageOrdersScreen extends StatelessWidget{
           }),
     );
   }
-
-
 }

@@ -69,6 +69,8 @@ class ManagerBlocServiceScreen extends StatelessWidget {
   }
 
   _displayManagerServices(BuildContext context, List<ManagerService> _managerServices) {
+    String userTitle = 'Manager';
+
     return Expanded(
       child: ListView.builder(
           itemCount: _managerServices.length,
@@ -89,7 +91,7 @@ class ManagerBlocServiceScreen extends StatelessWidget {
                                 ManageOrdersScreen(
                                     serviceId: blocService.id,
                                     serviceName: _managerService.name,
-                                    dao: dao)));
+                                    dao: dao, userTitle: userTitle,)));
                         logger.d('manage inventory screen selected.');
                         break;
                       }
@@ -107,9 +109,9 @@ class ManagerBlocServiceScreen extends StatelessWidget {
                       {
                         Navigator.of(context).push(MaterialPageRoute(
                             builder: (ctx) => TablesManagementScreen(
-                                serviceId: blocService.id,
-                                managerService: _managerService,
-                                dao: dao)));
+                                blocServiceId: blocService.id,
+                                serviceName: _managerService.name,
+                                dao: dao, userTitle: userTitle,)));
                         logger.d('tables management service selected.');
                         break;
                       }

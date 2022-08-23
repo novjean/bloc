@@ -11,24 +11,27 @@ import '../../../widgets/service_table_item.dart';
 import '../../forms/new_service_table_screen.dart';
 
 class TablesManagementScreen extends StatelessWidget {
-  String serviceId;
   BlocDao dao;
-  ManagerService managerService;
+  String blocServiceId;
+  String serviceName;
+  String userTitle;
 
   TablesManagementScreen(
-      {required this.serviceId,
+      {required this.blocServiceId,
       required this.dao,
-      required this.managerService});
+      required this.serviceName,
+      required this.userTitle});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Manager | ' + managerService.name)),
+      appBar: AppBar(title: Text(userTitle + ' | ' + serviceName)),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.of(context).push(
             MaterialPageRoute(
-                builder: (ctx) => NewServiceTableScreen(serviceId: serviceId)),
+                builder: (ctx) =>
+                    NewServiceTableScreen(serviceId: blocServiceId)),
           );
         },
         child: Icon(
@@ -42,11 +45,11 @@ class TablesManagementScreen extends StatelessWidget {
         splashColor: Colors.grey,
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-      body: _buildBody(context, managerService),
+      body: _buildBody(context),
     );
   }
 
-  _buildBody(BuildContext context, ManagerService managerService) {
+  _buildBody(BuildContext context) {
     return SingleChildScrollView(
       child: Column(
         children: [
@@ -63,7 +66,7 @@ class TablesManagementScreen extends StatelessWidget {
 
   _buildTables(BuildContext context) {
     final Stream<QuerySnapshot> _stream =
-        FirestoreHelper.getTablesSnapshot(serviceId);
+        FirestoreHelper.getTablesSnapshot(blocServiceId);
     return StreamBuilder<QuerySnapshot>(
         stream: _stream,
         builder: (ctx, snapshot) {
@@ -123,13 +126,13 @@ class TablesManagementScreen extends StatelessWidget {
       actions: [
         TextButton(
           child: Text("Cancel"),
-          onPressed:  () {
+          onPressed: () {
             Navigator.of(context).pop();
           },
         ),
         TextButton(
           child: Text("Change Color"),
-          onPressed:  () {
+          onPressed: () {
             Navigator.of(context).pop();
 
             FirestoreHelper.changeTableColor(_table);
@@ -137,13 +140,13 @@ class TablesManagementScreen extends StatelessWidget {
         ),
         TextButton(
           child: Text("Manage Seats"),
-          onPressed:  () {
+          onPressed: () {
             Navigator.of(context).pop();
 
             Navigator.of(context).push(
               MaterialPageRoute(
                   builder: (context) => SeatsManagementScreen(
-                      serviceId: serviceId,
+                      serviceId: blocServiceId,
                       dao: dao,
                       serviceTable: _table)),
             );
@@ -160,6 +163,4 @@ class TablesManagementScreen extends StatelessWidget {
       },
     );
   }
-
-
 }
