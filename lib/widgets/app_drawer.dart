@@ -47,6 +47,7 @@ class AppDrawer extends StatelessWidget {
                   leading: const Icon(Icons.adjust),
                   title: const Text('Captain'),
                   onTap: () {
+                    print('captain of bloc id : ' + user.blocServiceId);
                     Navigator.of(context).push(
                       MaterialPageRoute(
                           builder: (ctx) => CaptainMainScreen(

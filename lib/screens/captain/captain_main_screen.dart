@@ -1,4 +1,3 @@
-
 import 'package:bloc/screens/manager/users/users_management.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -14,7 +13,8 @@ class CaptainMainScreen extends StatelessWidget {
   BlocDao dao;
   String blocServiceId;
 
-  CaptainMainScreen({key, required this.dao, required this.blocServiceId}) : super(key: key);
+  CaptainMainScreen({key, required this.dao, required this.blocServiceId})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -81,11 +81,10 @@ class CaptainMainScreen extends StatelessWidget {
                     case 'Orders':
                       {
                         Navigator.of(context).push(MaterialPageRoute(
-                            builder: (ctx) =>
-                                ManageOrdersScreen(
-                                    serviceId: blocServiceId,
-                                    serviceName: captainService.name,
-                                    dao: dao)));
+                            builder: (ctx) => ManageOrdersScreen(
+                                serviceId: blocServiceId,
+                                serviceName: captainService.name,
+                                dao: dao)));
                         logger.d('manage inventory screen selected.');
                         break;
                       }
