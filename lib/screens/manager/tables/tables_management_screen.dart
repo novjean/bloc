@@ -106,6 +106,7 @@ class TablesManagementScreen extends StatelessWidget {
                 child: ServiceTableItem(
                   serviceTable: serviceTables[index],
                 ),
+                // chick my frever love
                 onDoubleTap: () {
                   logger.d('double tap selected : ' + index.toString());
                   FirestoreHelper.changeTableColor(serviceTables[index]);

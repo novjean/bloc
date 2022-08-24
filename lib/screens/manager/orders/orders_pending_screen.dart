@@ -43,8 +43,7 @@ class _OrdersPendingScreenState extends State<OrdersPendingScreen> {
     return Column(
       children: [
         SizedBox(height: 2.0),
-        _displayDisplayOption(context),
-        SizedBox(height: 2.0),
+        _displayOptions(context),
         const Divider(),
         SizedBox(height: 2.0),
         _pullCartItems(context),
@@ -144,7 +143,7 @@ class _OrdersPendingScreenState extends State<OrdersPendingScreen> {
     );
   }
 
-  _displayDisplayOption(BuildContext context) {
+  _displayOptions(BuildContext context) {
     List<String> _options = ['Table', 'Customer'];
     double containerHeight = MediaQuery.of(context).size.height / 20;
 

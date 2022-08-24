@@ -7,8 +7,9 @@ import '../../../db/entity/manager_service.dart';
 import '../../../db/entity/product.dart';
 import '../../../helpers/firestore_helper.dart';
 import '../../../widgets/manager/manage_product_item.dart';
+import '../../../widgets/ui/sized_listview_block.dart';
 
-class ManageProductsScreen extends StatelessWidget {
+class ManageProductsScreen extends StatefulWidget {
   String serviceId;
   BlocDao dao;
   ManagerService managerService;
@@ -17,6 +18,13 @@ class ManageProductsScreen extends StatelessWidget {
       {required this.serviceId,
       required this.dao,
       required this.managerService});
+
+  @override
+  State<ManageProductsScreen> createState() => _ManageProductsScreenState();
+}
+
+class _ManageProductsScreenState extends State<ManageProductsScreen> {
+  String _selectedType = 'Alcohol';
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +37,7 @@ class ManageProductsScreen extends StatelessWidget {
           Navigator.of(context).push(
             MaterialPageRoute(
                 builder: (ctx) =>
-                    AddProductScreen(serviceId: serviceId, dao: dao)),
+                    AddProductScreen(serviceId: widget.serviceId, dao: widget.dao)),
           );
         },
         child: Icon(
@@ -43,13 +51,26 @@ class ManageProductsScreen extends StatelessWidget {
         splashColor: Colors.grey,
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-      body: _buildProducts(context),
+      body: _buildBody(context),
+    );
+  }
+
+  _buildBody(BuildContext context) {
+    return Column(
+      children: [
+        const SizedBox(height: 2.0),
+        _displayOptions(context),
+        const Divider(),
+        const SizedBox(height: 2.0),
+        _buildProducts(context),
+        const SizedBox(height: 5.0),
+      ],
     );
   }
 
   _buildProducts(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
-        stream: FirestoreHelper.getProducts(serviceId),
+        stream: FirestoreHelper.getProductsByType(widget.serviceId, _selectedType),
         builder: (ctx, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(
@@ -70,45 +91,57 @@ class ManageProductsScreen extends StatelessWidget {
             _products.add(_product);
 
             if (i == snapshot.data!.docs.length - 1) {
-              return _displayProducts(context, _products);
+              return _displayProductsList(context, _products);
             }
           }
           return Center(child: Text('loading products...'));
         });
   }
 
-  _displayProducts(BuildContext context, List<Product> _products) {
-    return Container(
-      height: MediaQuery.of(context).size.height,
+  _displayProductsList(BuildContext context, List<Product> _products) {
+    return Expanded(
       child: ListView.builder(
           itemCount: _products.length,
           scrollDirection: Axis.vertical,
           itemBuilder: (ctx, index) {
             return GestureDetector(
                 child: ManageProductItem(
-                  serviceId: serviceId,
+                  serviceId: widget.serviceId,
                   product: _products[index],
-                  dao: dao,
+                  dao: widget.dao,
                 ),
                 onTap: () {
                   Product _sProduct = _products[index];
                   print(_sProduct.name + ' is selected');
+                });
+          }),
+    );
+  }
 
-                  // if(_sInvOption.title.contains('Price')){
-                  //   Navigator.of(context).push(MaterialPageRoute(
-                  //       builder: (ctx) => ManagePriceScreen(
-                  //           serviceId: serviceId,
-                  //           managerService: managerService,
-                  //           dao: dao)));
-                  //   print('manage inventory screen selected.');
-                  // } else {
-                  //   Navigator.of(context).push(MaterialPageRoute(
-                  //       builder: (ctx) => ManageCategoryScreen(
-                  //           serviceId: serviceId,
-                  //           managerService: managerService,
-                  //           dao: dao)));
-                  //   print('manage category screen selected.');
-                  // }
+  _displayOptions(BuildContext context) {
+    List<String> _options = ['Alcohol', 'Food'];
+    double containerHeight = MediaQuery.of(context).size.height / 20;
+
+    return SizedBox(
+      key: UniqueKey(),
+      // this height has to match with category item container height
+      height: containerHeight,
+      child: ListView.builder(
+          itemCount: _options.length,
+          scrollDirection: Axis.horizontal,
+          itemBuilder: (ctx, index) {
+            return GestureDetector(
+                child: SizedListViewBlock(
+                  title: _options[index],
+                  height: containerHeight,
+                  width: MediaQuery.of(context).size.width / 2,
+                ),
+                onTap: () {
+                  setState(() {
+                    // _sCategory = categories[index];
+                    _selectedType = _options[index];
+                    print(_selectedType + ' products display option is selected.');
+                  });
                 });
           }),
     );

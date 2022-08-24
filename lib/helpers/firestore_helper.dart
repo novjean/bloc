@@ -341,11 +341,21 @@ class FirestoreHelper {
         .snapshots();
   }
 
-  static getProductsByCategory(String serviceId, String _category) {
+  static getProductsByType(String serviceId, String type) {
     return FirebaseFirestore.instance
         .collection(PRODUCTS)
         .where('serviceId', isEqualTo: serviceId)
-        .where('category', isEqualTo: _category)
+        .where('type', isEqualTo: type)
+        .where('isAvailable', isEqualTo: true)
+    // .orderBy('sequence', descending: false)
+        .snapshots();
+  }
+
+  static getProductsByCategory(String serviceId, String category) {
+    return FirebaseFirestore.instance
+        .collection(PRODUCTS)
+        .where('serviceId', isEqualTo: serviceId)
+        .where('category', isEqualTo: category)
         .where('isAvailable', isEqualTo: true)
         // .orderBy('sequence', descending: false)
         .snapshots();
