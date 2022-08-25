@@ -122,7 +122,7 @@ class MyApp extends StatelessWidget {
                 debugShowCheckedModeBanner: false,
                 title: kAppTitle,
                 theme: ThemeData(
-                  primarySwatch: Colors.yellow,
+                  primarySwatch: Colors.red,
                   backgroundColor: Colors.black54,
                   highlightColor: Colors.black,
                   accentColor: Colors.grey,

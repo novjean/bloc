@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:bloc/db/entity/service_table.dart';
+import 'package:bloc/helpers/firestore_helper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class TablePreferences {
@@ -14,7 +15,7 @@ class TablePreferences {
       tableNumber: 0,
       capacity: 0,
       isOccupied: false,
-      colorStatus: 0);
+      type: FirestoreHelper.TABLE_COMMUNITY_COLOR_STATUS);
 
   static Future init() async =>
       _preferences = await SharedPreferences.getInstance();
@@ -37,6 +38,6 @@ class TablePreferences {
         tableNumber: 0,
         capacity: 0,
         isOccupied: false,
-        colorStatus: 0));
+        type: 0));
   }
 }

@@ -128,8 +128,7 @@ class _TablesManagementScreenState extends State<TablesManagementScreen> {
 
   _displayServiceTables(
       BuildContext context, List<ServiceTable> serviceTables) {
-    return Container(
-      height: MediaQuery.of(context).size.height,
+    return Expanded(
       child: ListView.builder(
           itemCount: serviceTables.length,
           scrollDirection: Axis.vertical,

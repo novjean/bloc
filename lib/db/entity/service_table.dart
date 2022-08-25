@@ -8,7 +8,7 @@ class ServiceTable {
   int tableNumber;
   int capacity;
   bool isOccupied;
-  int colorStatus;
+  int type;
 
 //<editor-fold desc="Data Methods">
 
@@ -18,7 +18,7 @@ class ServiceTable {
     required this.tableNumber,
     required this.capacity,
     required this.isOccupied,
-    required this.colorStatus,
+    required this.type,
   });
 
   @override
@@ -31,7 +31,7 @@ class ServiceTable {
           tableNumber == other.tableNumber &&
           capacity == other.capacity &&
           isOccupied == other.isOccupied &&
-          colorStatus == other.colorStatus);
+          type == other.type);
 
   @override
   int get hashCode =>
@@ -40,7 +40,7 @@ class ServiceTable {
       tableNumber.hashCode ^
       capacity.hashCode ^
       isOccupied.hashCode ^
-      colorStatus.hashCode;
+      type.hashCode;
 
   @override
   String toString() {
@@ -50,7 +50,7 @@ class ServiceTable {
         ' tableNumber: $tableNumber,' +
         ' capacity: $capacity,' +
         ' isOccupied: $isOccupied,' +
-        ' colorStatus: $colorStatus,' +
+        ' type: $type,' +
         '}';
   }
 
@@ -60,7 +60,7 @@ class ServiceTable {
     int? tableNumber,
     int? capacity,
     bool? isOccupied,
-    int? colorStatus,
+    int? type,
   }) {
     return ServiceTable(
       id: id ?? this.id,
@@ -68,7 +68,7 @@ class ServiceTable {
       tableNumber: tableNumber ?? this.tableNumber,
       capacity: capacity ?? this.capacity,
       isOccupied: isOccupied ?? this.isOccupied,
-      colorStatus: colorStatus ?? this.colorStatus,
+      type: type ?? this.type,
     );
   }
 
@@ -79,7 +79,7 @@ class ServiceTable {
       'tableNumber': this.tableNumber,
       'capacity': this.capacity,
       'isOccupied': this.isOccupied,
-      'colorStatus': this.colorStatus,
+      'type': this.type,
     };
   }
 
@@ -90,7 +90,7 @@ class ServiceTable {
       tableNumber: map['tableNumber'] as int,
       capacity: map['capacity'] as int,
       isOccupied: map['isOccupied'] as bool,
-      colorStatus: map['colorStatus'] as int,
+      type: map['type'] as int,
     );
   }
 

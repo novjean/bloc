@@ -12,9 +12,6 @@ import '../../../helpers/firestore_helper.dart';
 import '../../../widgets/seat_item.dart';
 
 class SeatsManagementScreen extends StatefulWidget {
-  static final int TABLE_GREEN = 1;
-  static final int TABLE_RED = 2;
-
   String serviceId;
   BlocDao dao;
   ServiceTable serviceTable;
