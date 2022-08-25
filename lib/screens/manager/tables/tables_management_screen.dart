@@ -1,6 +1,5 @@
 import 'package:bloc/db/bloc_repository.dart';
 import 'package:bloc/db/dao/bloc_dao.dart';
-import 'package:bloc/db/entity/manager_service.dart';
 import 'package:bloc/screens/manager/tables/seats_management.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -8,9 +7,10 @@ import 'package:flutter/material.dart';
 import '../../../db/entity/service_table.dart';
 import '../../../helpers/firestore_helper.dart';
 import '../../../widgets/service_table_item.dart';
+import '../../../widgets/ui/sized_listview_block.dart';
 import '../../forms/new_service_table_screen.dart';
 
-class TablesManagementScreen extends StatelessWidget {
+class TablesManagementScreen extends StatefulWidget {
   BlocDao dao;
   String blocServiceId;
   String serviceName;
@@ -23,15 +23,22 @@ class TablesManagementScreen extends StatelessWidget {
       required this.userTitle});
 
   @override
+  State<TablesManagementScreen> createState() => _TablesManagementScreenState();
+}
+
+class _TablesManagementScreenState extends State<TablesManagementScreen> {
+  String _selectedType = 'Community';
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(userTitle + ' | ' + serviceName)),
+      appBar: AppBar(title: Text(widget.userTitle + ' | ' + widget.serviceName)),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.of(context).push(
             MaterialPageRoute(
                 builder: (ctx) =>
-                    NewServiceTableScreen(serviceId: blocServiceId)),
+                    NewServiceTableScreen(serviceId: widget.blocServiceId)),
           );
         },
         child: Icon(
@@ -50,25 +57,50 @@ class TablesManagementScreen extends StatelessWidget {
   }
 
   _buildBody(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          // CoverPhoto(service.name, service.imageUrl),
-          SizedBox(height: 2.0),
-          _buildTables(context),
-          SizedBox(height: 5.0),
-          // buildProducts(context),
-          // SizedBox(height: 50.0),
-        ],
-      ),
+    return Column(
+      children: [
+        const SizedBox(height: 2.0),
+        _displayOptions(context),
+        const Divider(),
+        SizedBox(height: 2.0),
+        _buildTables(context),
+        SizedBox(height: 2.0),
+      ],
+    );
+  }
+
+  _displayOptions(BuildContext context) {
+    List<String> _options = ['Community', 'Private'];
+    double containerHeight = MediaQuery.of(context).size.height / 20;
+
+    return SizedBox(
+      key: UniqueKey(),
+      // this height has to match with category item container height
+      height: containerHeight,
+      child: ListView.builder(
+          itemCount: _options.length,
+          scrollDirection: Axis.horizontal,
+          itemBuilder: (ctx, index) {
+            return GestureDetector(
+                child: SizedListViewBlock(
+                  title: _options[index],
+                  height: containerHeight,
+                  width: MediaQuery.of(context).size.width / 2,
+                ),
+                onTap: () {
+                  setState(() {
+                    // _sCategory = categories[index];
+                    _selectedType = _options[index];
+                    print(_selectedType + ' tables display option is selected.');
+                  });
+                });
+          }),
     );
   }
 
   _buildTables(BuildContext context) {
-    final Stream<QuerySnapshot> _stream =
-        FirestoreHelper.getTablesSnapshot(blocServiceId);
     return StreamBuilder<QuerySnapshot>(
-        stream: _stream,
+        stream: FirestoreHelper.getTablesByType(widget.blocServiceId, _selectedType),
         builder: (ctx, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(
@@ -83,7 +115,7 @@ class TablesManagementScreen extends StatelessWidget {
             Map<String, dynamic> data =
                 document.data()! as Map<String, dynamic>;
             final ServiceTable serviceTable = ServiceTable.fromMap(data);
-            BlocRepository.insertServiceTable(dao, serviceTable);
+            BlocRepository.insertServiceTable(widget.dao, serviceTable);
             serviceTables.add(serviceTable);
 
             if (i == snapshot.data!.docs.length - 1) {
@@ -147,8 +179,8 @@ class TablesManagementScreen extends StatelessWidget {
             Navigator.of(context).push(
               MaterialPageRoute(
                   builder: (context) => SeatsManagementScreen(
-                      serviceId: blocServiceId,
-                      dao: dao,
+                      serviceId: widget.blocServiceId,
+                      dao: widget.dao,
                       serviceTable: _table)),
             );
           },

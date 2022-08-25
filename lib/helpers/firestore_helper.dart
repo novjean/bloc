@@ -36,6 +36,9 @@ class FirestoreHelper {
   static String TABLES = 'tables';
   static String USERS = 'users';
 
+  static int TABLE_COMMUNITY_COLOR_STATUS = 1;
+  static int TABLE_PRIVATE_COLOR_STATUS = 1;
+
   /** Blocs **/
   static getBlocs() {
     return FirebaseFirestore.instance.collection(BLOCS).snapshots();
@@ -405,10 +408,23 @@ class FirestoreHelper {
   }
 
   /** Tables **/
-  static Stream<QuerySnapshot<Object?>> getTablesSnapshot(String serviceId) {
+  static Stream<QuerySnapshot<Object?>> getTables(String serviceId) {
     return FirebaseFirestore.instance
         .collection(TABLES)
         .where('serviceId', isEqualTo: serviceId)
+        .snapshots();
+  }
+
+  static Stream<QuerySnapshot<Object?>> getTablesByType(String serviceId, String tableType) {
+    int colorType = TABLE_COMMUNITY_COLOR_STATUS;
+    if(tableType == 'Private') {
+      colorType = TABLE_PRIVATE_COLOR_STATUS;
+    }
+
+    return FirebaseFirestore.instance
+        .collection(TABLES)
+        .where('serviceId', isEqualTo: serviceId)
+        .where('type', isEqualTo: colorType)
         .snapshots();
   }
 

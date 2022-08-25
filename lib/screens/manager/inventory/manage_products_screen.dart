@@ -63,7 +63,7 @@ class _ManageProductsScreenState extends State<ManageProductsScreen> {
         const Divider(),
         const SizedBox(height: 2.0),
         _buildProducts(context),
-        const SizedBox(height: 5.0),
+        const SizedBox(height: 2.0),
       ],
     );
   }
