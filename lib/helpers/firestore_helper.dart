@@ -105,7 +105,7 @@ class FirestoreHelper {
         .where('serviceId', isEqualTo: serviceId)
         .where('isCompleted', isEqualTo: isCompleted)
         .where('isCommunity', isEqualTo: true)
-    // .orderBy('timestamp', descending: true) // createdAt could be used i guess
+        // .orderBy('timestamp', descending: true) // createdAt could be used i guess
         .snapshots();
   }
 
@@ -214,9 +214,9 @@ class FirestoreHelper {
   }
 
   static void updateUser(blocUser.User user, bool isPhotoChanged) async {
-    if(isPhotoChanged){
+    if (isPhotoChanged) {
       var fileUrl = user.imageUrl;
-      try{
+      try {
         fileUrl = await FirestorageHelper.uploadFile(
             FirestorageHelper.USERS, user.id, File(user.imageUrl));
         user = user.copyWith(imageUrl: fileUrl);
@@ -231,7 +231,8 @@ class FirestoreHelper {
           .doc(user.id)
           .update(user.toMap())
           .then((value) => print("user has been updated in firebase."))
-          .catchError((error) => print("failed updating user in firebase. error: " + error));
+          .catchError((error) =>
+              print("failed updating user in firebase. error: " + error));
     } on PlatformException catch (err) {
       logger.e(err.message);
     } catch (err) {
@@ -329,7 +330,8 @@ class FirestoreHelper {
     }
   }
 
-  static Future<QuerySnapshot<Map<String, dynamic>>> pullProduct(String productId) {
+  static Future<QuerySnapshot<Map<String, dynamic>>> pullProduct(
+      String productId) {
     return FirebaseFirestore.instance
         .collection(FirestoreHelper.PRODUCTS)
         .where('id', isEqualTo: productId)
@@ -350,7 +352,7 @@ class FirestoreHelper {
         .where('serviceId', isEqualTo: serviceId)
         .where('type', isEqualTo: type)
         .where('isAvailable', isEqualTo: true)
-    // .orderBy('sequence', descending: false)
+        // .orderBy('sequence', descending: false)
         .snapshots();
   }
 
@@ -385,10 +387,10 @@ class FirestoreHelper {
 
   static void updateProduct(Product product) async {
     int timestamp = Timestamp.now().millisecondsSinceEpoch;
-    if(product.priceCommunity>product.priceHighest){
+    if (product.priceCommunity > product.priceHighest) {
       product = product.copyWith(priceHighest: product.priceCommunity);
       product = product.copyWith(priceHighestTime: timestamp);
-    } else if (product.priceCommunity<product.priceLowest) {
+    } else if (product.priceCommunity < product.priceLowest) {
       product = product.copyWith(priceLowest: product.priceCommunity);
       product = product.copyWith(priceLowestTime: timestamp);
     }
@@ -415,9 +417,10 @@ class FirestoreHelper {
         .snapshots();
   }
 
-  static Stream<QuerySnapshot<Object?>> getTablesByType(String serviceId, String tableType) {
+  static Stream<QuerySnapshot<Object?>> getTablesByType(
+      String serviceId, String tableType) {
     int colorType = TABLE_COMMUNITY_COLOR_STATUS;
-    if(tableType == 'Private') {
+    if (tableType == 'Private') {
       colorType = TABLE_PRIVATE_COLOR_STATUS;
     }
 
@@ -443,16 +446,33 @@ class FirestoreHelper {
     }
   }
 
+  static void setTableType(ServiceTable table, int newType) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection(TABLES)
+          .doc(table.id)
+          .update({'type': newType})
+          .then((value) => print("table " +
+              table.tableNumber.toString() +
+              " type changed to type id " +
+              newType.toString()))
+          .catchError((error) => print("Failed to change table color: $error"));
+    } on PlatformException catch (err) {
+      logger.e(err.message);
+    } catch (err) {
+      logger.e(err);
+    }
+  }
+
   static void changeTableColor(ServiceTable table) async {
     try {
       await FirebaseFirestore.instance
           .collection(TABLES)
           .doc(table.id)
           .update({
-            'type':
-                table.type == FirestoreHelper.TABLE_COMMUNITY_COLOR_STATUS
-                    ? FirestoreHelper.TABLE_PRIVATE_COLOR_STATUS
-                    : FirestoreHelper.TABLE_COMMUNITY_COLOR_STATUS
+            'type': table.type == FirestoreHelper.TABLE_COMMUNITY_COLOR_STATUS
+                ? FirestoreHelper.TABLE_PRIVATE_COLOR_STATUS
+                : FirestoreHelper.TABLE_COMMUNITY_COLOR_STATUS
           })
           .then((value) => print("Table color status changed for: " + table.id))
           .catchError((error) => print("Failed to change table color: $error"));
@@ -543,7 +563,8 @@ class FirestoreHelper {
   }
 
   /** Manager Service Options **/
-  static Stream<QuerySnapshot<Object?>> getManagerServiceOptions(String service) {
+  static Stream<QuerySnapshot<Object?>> getManagerServiceOptions(
+      String service) {
     return FirebaseFirestore.instance
         .collection(MANAGER_SERVICE_OPTIONS)
         .where('service', isEqualTo: service)
@@ -553,7 +574,10 @@ class FirestoreHelper {
 
   /** Offers **/
   static void insertOffer(Offer offer) {
-    FirebaseFirestore.instance.collection(OFFERS).doc(offer.id).set(offer.toMap());
+    FirebaseFirestore.instance
+        .collection(OFFERS)
+        .doc(offer.id)
+        .set(offer.toMap());
   }
 
 /** Reference **/

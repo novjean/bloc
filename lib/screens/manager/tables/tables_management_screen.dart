@@ -144,55 +144,62 @@ class _TablesManagementScreenState extends State<TablesManagementScreen> {
                 },
                 onTap: () {
                   logger.d('tap selected : ' + index.toString());
-                  showOptionsDialog(context, serviceTables[index]);
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                        builder: (context) => SeatsManagementScreen(
+                            serviceId: widget.blocServiceId,
+                            dao: widget.dao,
+                            serviceTable: serviceTables[index])),
+                  );
+                  // showOptionsDialog(context, serviceTables[index]);
                 });
           }),
     );
   }
 
-  showOptionsDialog(BuildContext context, ServiceTable _table) {
-    // set up the AlertDialog for Table options
-    AlertDialog alert = AlertDialog(
-      title: Text("Table Options"),
-      content: Text("Please select what action would you like to perform."),
-      actions: [
-        TextButton(
-          child: Text("Cancel"),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-        ),
-        TextButton(
-          child: Text("Change Color"),
-          onPressed: () {
-            Navigator.of(context).pop();
-
-            FirestoreHelper.changeTableColor(_table);
-          },
-        ),
-        TextButton(
-          child: Text("Manage Seats"),
-          onPressed: () {
-            Navigator.of(context).pop();
-
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                  builder: (context) => SeatsManagementScreen(
-                      serviceId: widget.blocServiceId,
-                      dao: widget.dao,
-                      serviceTable: _table)),
-            );
-          },
-        ),
-      ],
-    );
-
-    // show the dialog
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return alert;
-      },
-    );
-  }
+  // showOptionsDialog(BuildContext context, ServiceTable _table) {
+  //   // set up the AlertDialog for Table options
+  //   AlertDialog alert = AlertDialog(
+  //     title: Text("Table Options"),
+  //     content: Text("Please select what action would you like to perform."),
+  //     actions: [
+  //       TextButton(
+  //         child: Text("Cancel"),
+  //         onPressed: () {
+  //           Navigator.of(context).pop();
+  //         },
+  //       ),
+  //       TextButton(
+  //         child: Text("Change Color"),
+  //         onPressed: () {
+  //           Navigator.of(context).pop();
+  //
+  //           FirestoreHelper.changeTableColor(_table);
+  //         },
+  //       ),
+  //       TextButton(
+  //         child: Text("Manage Seats"),
+  //         onPressed: () {
+  //           Navigator.of(context).pop();
+  //
+  //           Navigator.of(context).push(
+  //             MaterialPageRoute(
+  //                 builder: (context) => SeatsManagementScreen(
+  //                     serviceId: widget.blocServiceId,
+  //                     dao: widget.dao,
+  //                     serviceTable: _table)),
+  //           );
+  //         },
+  //       ),
+  //     ],
+  //   );
+  //
+  //   // show the dialog
+  //   showDialog(
+  //     context: context,
+  //     builder: (BuildContext context) {
+  //       return alert;
+  //     },
+  //   );
+  // }
 }

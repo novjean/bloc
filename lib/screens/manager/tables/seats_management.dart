@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
+import 'package:toggle_switch/toggle_switch.dart';
 
 import '../../../db/bloc_repository.dart';
 import '../../../db/dao/bloc_dao.dart';
@@ -35,14 +36,15 @@ class _SeatsManagementScreenState extends State<SeatsManagementScreen> {
   }
 
   _buildBody(BuildContext context, ServiceTable serviceTable) {
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          SizedBox(height: 2.0),
-          _pullSeats(context),
-          SizedBox(height: 5.0),
-        ],
-      ),
+    return Column(
+      children: [
+        SizedBox(height: 2.0),
+        tableTypeToggle(context, serviceTable),
+
+        SizedBox(height: 2.0),
+        _pullSeats(context),
+        SizedBox(height: 2.0),
+      ],
     );
   }
 
@@ -97,8 +99,7 @@ class _SeatsManagementScreenState extends State<SeatsManagementScreen> {
   }
 
   _displaySeats(BuildContext context, List<Seat> seats) {
-    return Container(
-      height: MediaQuery.of(context).size.height,
+    return Expanded(
       child: ListView.builder(
           itemCount: seats.length,
           scrollDirection: Axis.vertical,
@@ -192,5 +193,52 @@ class _SeatsManagementScreenState extends State<SeatsManagementScreen> {
     setState(() {
       widget.serviceTable.isOccupied = true;
     });
+  }
+
+  tableTypeToggle(BuildContext context, ServiceTable serviceTable) {
+    int initialTableTypeIndex;
+    if(serviceTable.type == FirestoreHelper.TABLE_COMMUNITY_COLOR_STATUS){
+      initialTableTypeIndex = 0;
+    } else {
+      initialTableTypeIndex = 1;
+    }
+    List<String> types = ['Community', 'Private'];
+
+    return Card(
+      margin: EdgeInsets.all(10),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text('Type: '),
+          Spacer(),
+          ToggleSwitch(
+            minWidth: 90.0,
+            minHeight: 50.0,
+            fontSize: 16.0,
+            initialLabelIndex: initialTableTypeIndex,
+            activeBgColor: [Colors.green],
+            activeFgColor: Colors.white,
+            inactiveBgColor: Colors.grey,
+            inactiveFgColor: Colors.grey[900],
+            totalSwitches: 2,
+            labels: types,
+            onToggle: (index) {
+              String selectedType = types.elementAt(index!);
+              int tableType = 0;
+
+              if(index == 0 ){
+                tableType = FirestoreHelper.TABLE_COMMUNITY_COLOR_STATUS;
+              } else {
+                tableType = FirestoreHelper.TABLE_PRIVATE_COLOR_STATUS;
+              }
+
+              print('switched to: ' + selectedType);
+              FirestoreHelper.setTableType(serviceTable, tableType);
+            },
+          ),
+
+        ],
+      ),
+    );
   }
 }
