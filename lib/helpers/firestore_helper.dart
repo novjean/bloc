@@ -36,8 +36,8 @@ class FirestoreHelper {
   static String TABLES = 'tables';
   static String USERS = 'users';
 
-  static int TABLE_PRIVATE_COLOR_STATUS = 1;
-  static int TABLE_COMMUNITY_COLOR_STATUS = 2;
+  static int TABLE_PRIVATE_TYPE_ID = 1;
+  static int TABLE_COMMUNITY_TYPE_ID = 2;
 
   /** Blocs **/
   static getBlocs() {
@@ -419,9 +419,9 @@ class FirestoreHelper {
 
   static Stream<QuerySnapshot<Object?>> getTablesByType(
       String serviceId, String tableType) {
-    int colorType = TABLE_COMMUNITY_COLOR_STATUS;
+    int colorType = TABLE_COMMUNITY_TYPE_ID;
     if (tableType == 'Private') {
-      colorType = TABLE_PRIVATE_COLOR_STATUS;
+      colorType = TABLE_PRIVATE_TYPE_ID;
     }
 
     return FirebaseFirestore.instance
@@ -470,9 +470,9 @@ class FirestoreHelper {
           .collection(TABLES)
           .doc(table.id)
           .update({
-            'type': table.type == FirestoreHelper.TABLE_COMMUNITY_COLOR_STATUS
-                ? FirestoreHelper.TABLE_PRIVATE_COLOR_STATUS
-                : FirestoreHelper.TABLE_COMMUNITY_COLOR_STATUS
+            'type': table.type == FirestoreHelper.TABLE_COMMUNITY_TYPE_ID
+                ? FirestoreHelper.TABLE_PRIVATE_TYPE_ID
+                : FirestoreHelper.TABLE_COMMUNITY_TYPE_ID
           })
           .then((value) => print("Table color status changed for: " + table.id))
           .catchError((error) => print("Failed to change table color: $error"));

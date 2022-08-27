@@ -15,7 +15,7 @@ class TablePreferences {
       tableNumber: 0,
       capacity: 0,
       isOccupied: false,
-      type: FirestoreHelper.TABLE_COMMUNITY_COLOR_STATUS);
+      type: FirestoreHelper.TABLE_COMMUNITY_TYPE_ID);
 
   static Future init() async =>
       _preferences = await SharedPreferences.getInstance();

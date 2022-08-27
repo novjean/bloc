@@ -123,7 +123,7 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen> {
 
   Widget _buildBody(BuildContext context, BlocService service) {
     try {
-      if (_mTable.type == FirestoreHelper.TABLE_COMMUNITY_COLOR_STATUS) {
+      if (_mTable.type == FirestoreHelper.TABLE_COMMUNITY_TYPE_ID) {
         _isCommunity = true;
       }
     } catch (err) {

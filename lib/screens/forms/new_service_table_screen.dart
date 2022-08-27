@@ -50,7 +50,7 @@ class _NewServiceTableScreenState extends State<NewServiceTableScreen> {
         tableNumber: tableNumber,
         capacity: capacity,
         isOccupied: false,
-        type: FirestoreHelper.TABLE_PRIVATE_COLOR_STATUS
+        type: FirestoreHelper.TABLE_PRIVATE_TYPE_ID
     );
 
     try {

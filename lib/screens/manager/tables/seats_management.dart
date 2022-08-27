@@ -197,7 +197,7 @@ class _SeatsManagementScreenState extends State<SeatsManagementScreen> {
 
   tableTypeToggle(BuildContext context, ServiceTable serviceTable) {
     int initialTableTypeIndex;
-    if(serviceTable.type == FirestoreHelper.TABLE_COMMUNITY_COLOR_STATUS){
+    if(serviceTable.type == FirestoreHelper.TABLE_COMMUNITY_TYPE_ID){
       initialTableTypeIndex = 0;
     } else {
       initialTableTypeIndex = 1;
@@ -223,16 +223,10 @@ class _SeatsManagementScreenState extends State<SeatsManagementScreen> {
             totalSwitches: 2,
             labels: types,
             onToggle: (index) {
-              String selectedType = types.elementAt(index!);
-              int tableType = 0;
-
-              if(index == 0 ){
-                tableType = FirestoreHelper.TABLE_COMMUNITY_COLOR_STATUS;
-              } else {
-                tableType = FirestoreHelper.TABLE_PRIVATE_COLOR_STATUS;
+              int tableType = FirestoreHelper.TABLE_COMMUNITY_TYPE_ID;
+              if(index == 1 ){
+                tableType = FirestoreHelper.TABLE_PRIVATE_TYPE_ID;
               }
-
-              print('switched to: ' + selectedType);
               FirestoreHelper.setTableType(serviceTable, tableType);
             },
           ),
