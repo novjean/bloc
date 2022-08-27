@@ -152,6 +152,8 @@ class _TableCardItemState extends State<TableCardItem> {
 
               if (seat.custId.isEmpty) {
                 FirestoreHelper.updateSeat(seat.id, user.id);
+                // here we update the user's bloc service id
+                FirestoreHelper.updateUserBlocId(user.id, seat.serviceId);
                 break;
               }
 

@@ -135,136 +135,12 @@ class FirestoreHelper {
         .snapshots();
   }
 
-  /** Cities **/
-  static Stream<QuerySnapshot<Object?>> getCitiesSnapshot() {
-    return FirebaseFirestore.instance.collection(CITIES).snapshots();
-  }
-
-  /** Manager Services **/
-  static Stream<QuerySnapshot<Object?>> getManagerServicesSnapshot() {
-    return FirebaseFirestore.instance
-        .collection(MANAGER_SERVICES)
-        .orderBy('sequence', descending: false)
-        .snapshots();
-  }
-
   /** Captain Services **/
   static Stream<QuerySnapshot<Object?>> getCaptainServices() {
     return FirebaseFirestore.instance
         .collection(CAPTAIN_SERVICES)
         .orderBy('sequence', descending: false)
         .snapshots();
-  }
-
-  /** Services **/
-  static Stream<QuerySnapshot> getServicesSnapshot() {
-    final user = FirebaseAuth.instance.currentUser;
-
-    return FirebaseFirestore.instance
-        .collection(SERVICES)
-        // .orderBy('sequence', descending: true)
-        // .where('ownerId', isEqualTo: user!.uid)
-        .snapshots();
-  }
-
-  /** User **/
-  static Future<void> insertUser(
-      String email, String password, File? image, String username) async {
-    final _auth = FirebaseAuth.instance;
-    UserCredential authResult = await _auth.createUserWithEmailAndPassword(
-        email: email, password: password);
-
-    final url = await FirestorageHelper.uploadFile(
-        FirestorageHelper.USERS, authResult.user!.uid, image!);
-
-    blocUser.User user = blocUser.User(
-        id: authResult.user!.uid,
-        name: 'Superstar',
-        phoneNumber: 0,
-        clearanceLevel: 1,
-        email: email,
-        fcmToken: '',
-        imageUrl: url,
-        username: username,
-        blocServiceId: '');
-
-    await FirebaseFirestore.instance
-        .collection(USERS)
-        .doc(authResult.user!.uid)
-        .set(user.toMap());
-  }
-
-  static insertPhoneUser(blocUser.User user) async {
-    await FirebaseFirestore.instance
-        .collection(USERS)
-        .doc(user.id)
-        .set(user.toMap());
-  }
-
-  static Stream<QuerySnapshot<Object?>> getUsers(int clearanceLevel) {
-    return FirebaseFirestore.instance
-        .collection(USERS)
-        .where('clearanceLevel', isLessThan: clearanceLevel)
-        // .orderBy('sequence', descending: false)
-        .snapshots();
-  }
-
-  static Stream<QuerySnapshot<Object?>> getUsersInRange(int lowLevel, int highLevel) {
-    return FirebaseFirestore.instance
-        .collection(USERS)
-        .where('clearanceLevel', whereIn: [lowLevel, highLevel])
-        // .orderBy('sequence', descending: false)
-        .snapshots();
-  }
-
-  static CollectionReference<Object?> getUsersCollection() {
-    return FirebaseFirestore.instance.collection(USERS);
-  }
-
-  static void updateUser(blocUser.User user, bool isPhotoChanged) async {
-    if (isPhotoChanged) {
-      var fileUrl = user.imageUrl;
-      try {
-        fileUrl = await FirestorageHelper.uploadFile(
-            FirestorageHelper.USERS, user.id, File(user.imageUrl));
-        user = user.copyWith(imageUrl: fileUrl);
-      } catch (err) {
-        logger.e(err);
-      }
-    }
-
-    try {
-      await FirebaseFirestore.instance
-          .collection(USERS)
-          .doc(user.id)
-          .update(user.toMap())
-          .then((value) => print("user has been updated in firebase."))
-          .catchError((error) =>
-              print("failed updating user in firebase. error: " + error));
-    } on PlatformException catch (err) {
-      logger.e(err.message);
-    } catch (err) {
-      logger.e(err);
-    }
-  }
-
-  static void updateUserFcmToken(String userId, String? token) async {
-    try {
-      await FirebaseFirestore.instance
-          .collection(USERS)
-          .doc(userId)
-          .update({
-            'fcmToken': token,
-          })
-          .then((value) =>
-              print(userId + " user fcm token updated to : " + token!))
-          .catchError(
-              (error) => print("failed to update user fcm token: $error"));
-    } on PlatformException catch (err) {
-      logger.e(err.message);
-    } catch (err) {
-      logger.e(err);
-    }
   }
 
   /** Chats **/
@@ -288,6 +164,45 @@ class FirestoreHelper {
         .collection(CHATS)
         .orderBy('createdAt', descending: false)
         .snapshots();
+  }
+
+  /** Cities **/
+  static Stream<QuerySnapshot<Object?>> getCitiesSnapshot() {
+    return FirebaseFirestore.instance.collection(CITIES).snapshots();
+  }
+
+  /** Inventory Options **/
+  static Stream<QuerySnapshot<Object?>> getInventoryOptions() {
+    return FirebaseFirestore.instance
+        .collection(INVENTORY_OPTIONS)
+        .orderBy('sequence', descending: true)
+        .snapshots();
+  }
+
+  /** Manager Services **/
+  static Stream<QuerySnapshot<Object?>> getManagerServicesSnapshot() {
+    return FirebaseFirestore.instance
+        .collection(MANAGER_SERVICES)
+        .orderBy('sequence', descending: false)
+        .snapshots();
+  }
+
+  /** Manager Service Options **/
+  static Stream<QuerySnapshot<Object?>> getManagerServiceOptions(
+      String service) {
+    return FirebaseFirestore.instance
+        .collection(MANAGER_SERVICE_OPTIONS)
+        .where('service', isEqualTo: service)
+        .orderBy('sequence', descending: false)
+        .snapshots();
+  }
+
+  /** Offers **/
+  static void insertOffer(Offer offer) {
+    FirebaseFirestore.instance
+        .collection(OFFERS)
+        .doc(offer.id)
+        .set(offer.toMap());
   }
 
   /** Products **/
@@ -417,6 +332,88 @@ class FirestoreHelper {
     }
   }
 
+  /** Seats **/
+  static Stream<QuerySnapshot<Object?>> getSeatsByTableId(String tableId) {
+    return FirebaseFirestore.instance
+        .collection(SEATS)
+        .where('tableId', isEqualTo: tableId)
+        .snapshots();
+  }
+
+  static void uploadSeat(Seat seat) async {
+    await FirebaseFirestore.instance
+        .collection(SEATS)
+        .doc(seat.id)
+        .set(seat.toJson());
+  }
+
+  static void updateSeat(String seatId, String custId) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection(SEATS)
+          .doc(seatId)
+          .update({'custId': custId}).then((value) {
+        if (custId.isEmpty) {
+          logger.d("seat is now free : " + seatId);
+        } else {
+          print("seat is occupied by cust id: " + custId);
+        }
+      }).catchError(
+              (error) => print("Failed to update seat with cust: $error"));
+    } on PlatformException catch (err) {
+      logger.e(err.message);
+    } catch (err) {
+      logger.e(err);
+    }
+  }
+
+  static Stream<QuerySnapshot<Object?>> getSeats(
+      String serviceId, int tableNumber) {
+    return FirebaseFirestore.instance
+        .collection(SEATS)
+        .where('serviceId', isEqualTo: serviceId)
+        .where('tableNumber', isEqualTo: tableNumber)
+        .snapshots();
+  }
+
+  static Stream<QuerySnapshot<Object?>> findTableNumber(
+      String serviceId, String custId) {
+    return FirebaseFirestore.instance
+        .collection(SEATS)
+        .where('serviceId', isEqualTo: serviceId)
+        .where('custId', isEqualTo: custId)
+        .snapshots();
+  }
+
+  /** Services **/
+  static Stream<QuerySnapshot> getServicesSnapshot() {
+    final user = FirebaseAuth.instance.currentUser;
+
+    return FirebaseFirestore.instance
+        .collection(SERVICES)
+        // .orderBy('sequence', descending: true)
+        // .where('ownerId', isEqualTo: user!.uid)
+        .snapshots();
+  }
+
+  /** SOS **/
+  static void sendSOSMessage(String? token, String name, int phoneNumber,
+      int tableNumber, String tableId, String seatId) async {
+    int timeMilliSec = Timestamp.now().millisecondsSinceEpoch;
+
+    Sos sos = Sos(
+        id: StringUtils.getRandomString(20),
+        token: token,
+        name: name,
+        phoneNumber: phoneNumber,
+        tableNumber: tableNumber,
+        tableId: tableId,
+        seatId: seatId,
+        timestamp: timeMilliSec);
+
+    FirebaseFirestore.instance.collection(SOS).doc(sos.id).set(sos.toMap());
+  }
+
   /** Tables **/
   static Stream<QuerySnapshot<Object?>> getTables(String serviceId) {
     return FirebaseFirestore.instance
@@ -491,34 +488,81 @@ class FirestoreHelper {
     }
   }
 
-  /** Seats **/
-  static Stream<QuerySnapshot<Object?>> getSeatsByTableId(String tableId) {
+  /** User **/
+  static Future<void> insertUser(
+      String email, String password, File? image, String username) async {
+    final _auth = FirebaseAuth.instance;
+    UserCredential authResult = await _auth.createUserWithEmailAndPassword(
+        email: email, password: password);
+
+    final url = await FirestorageHelper.uploadFile(
+        FirestorageHelper.USERS, authResult.user!.uid, image!);
+
+    blocUser.User user = blocUser.User(
+        id: authResult.user!.uid,
+        name: 'Superstar',
+        phoneNumber: 0,
+        clearanceLevel: 1,
+        email: email,
+        fcmToken: '',
+        imageUrl: url,
+        username: username,
+        blocServiceId: '');
+
+    await FirebaseFirestore.instance
+        .collection(USERS)
+        .doc(authResult.user!.uid)
+        .set(user.toMap());
+  }
+
+  static insertPhoneUser(blocUser.User user) async {
+    await FirebaseFirestore.instance
+        .collection(USERS)
+        .doc(user.id)
+        .set(user.toMap());
+  }
+
+  static Stream<QuerySnapshot<Object?>> getUsers(int clearanceLevel) {
     return FirebaseFirestore.instance
-        .collection(SEATS)
-        .where('tableId', isEqualTo: tableId)
+        .collection(USERS)
+        .where('clearanceLevel', isLessThan: clearanceLevel)
+        // .orderBy('sequence', descending: false)
         .snapshots();
   }
 
-  static void uploadSeat(Seat seat) async {
-    await FirebaseFirestore.instance
-        .collection(SEATS)
-        .doc(seat.id)
-        .set(seat.toJson());
+  static Stream<QuerySnapshot<Object?>> getUsersInRange(
+      int lowLevel, int highLevel) {
+    return FirebaseFirestore.instance
+        .collection(USERS)
+        .where('clearanceLevel', whereIn: [lowLevel, highLevel])
+        // .orderBy('sequence', descending: false)
+        .snapshots();
   }
 
-  static void updateSeat(String seatId, String custId) async {
+  static CollectionReference<Object?> getUsersCollection() {
+    return FirebaseFirestore.instance.collection(USERS);
+  }
+
+  static void updateUser(blocUser.User user, bool isPhotoChanged) async {
+    if (isPhotoChanged) {
+      var fileUrl = user.imageUrl;
+      try {
+        fileUrl = await FirestorageHelper.uploadFile(
+            FirestorageHelper.USERS, user.id, File(user.imageUrl));
+        user = user.copyWith(imageUrl: fileUrl);
+      } catch (err) {
+        logger.e(err);
+      }
+    }
+
     try {
       await FirebaseFirestore.instance
-          .collection(SEATS)
-          .doc(seatId)
-          .update({'custId': custId}).then((value) {
-        if (custId.isEmpty) {
-          logger.d("seat is now free : " + seatId);
-        } else {
-          print("seat is occupied by cust id: " + custId);
-        }
-      }).catchError(
-              (error) => print("Failed to update seat with cust: $error"));
+          .collection(USERS)
+          .doc(user.id)
+          .update(user.toMap())
+          .then((value) => print("user has been updated in firebase."))
+          .catchError((error) =>
+              print("failed updating user in firebase. error: " + error));
     } on PlatformException catch (err) {
       logger.e(err.message);
     } catch (err) {
@@ -526,66 +570,42 @@ class FirestoreHelper {
     }
   }
 
-  static Stream<QuerySnapshot<Object?>> getSeats(
-      String serviceId, int tableNumber) {
-    return FirebaseFirestore.instance
-        .collection(SEATS)
-        .where('serviceId', isEqualTo: serviceId)
-        .where('tableNumber', isEqualTo: tableNumber)
-        .snapshots();
+  static void updateUserFcmToken(String userId, String? token) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection(USERS)
+          .doc(userId)
+          .update({
+            'fcmToken': token,
+          })
+          .then((value) =>
+              print(userId + " user fcm token updated to : " + token!))
+          .catchError(
+              (error) => print("failed to update user fcm token: $error"));
+    } on PlatformException catch (err) {
+      logger.e(err.message);
+    } catch (err) {
+      logger.e(err);
+    }
   }
 
-  static Stream<QuerySnapshot<Object?>> findTableNumber(
-      String serviceId, String custId) {
-    return FirebaseFirestore.instance
-        .collection(SEATS)
-        .where('serviceId', isEqualTo: serviceId)
-        .where('custId', isEqualTo: custId)
-        .snapshots();
-  }
-
-  /** Inventory Options **/
-  static Stream<QuerySnapshot<Object?>> getInventoryOptions() {
-    return FirebaseFirestore.instance
-        .collection(INVENTORY_OPTIONS)
-        .orderBy('sequence', descending: true)
-        .snapshots();
-  }
-
-  /** SOS **/
-  static void sendSOSMessage(String? token, String name, int phoneNumber,
-      int tableNumber, String tableId, String seatId) async {
-    int timeMilliSec = Timestamp.now().millisecondsSinceEpoch;
-
-    Sos sos = Sos(
-        id: StringUtils.getRandomString(20),
-        token: token,
-        name: name,
-        phoneNumber: phoneNumber,
-        tableNumber: tableNumber,
-        tableId: tableId,
-        seatId: seatId,
-        timestamp: timeMilliSec);
-
-    FirebaseFirestore.instance.collection(SOS).doc(sos.id).set(sos.toMap());
-  }
-
-  /** Manager Service Options **/
-  static Stream<QuerySnapshot<Object?>> getManagerServiceOptions(
-      String service) {
-    return FirebaseFirestore.instance
-        .collection(MANAGER_SERVICE_OPTIONS)
-        .where('service', isEqualTo: service)
-        .orderBy('sequence', descending: false)
-        .snapshots();
-  }
-
-  /** Offers **/
-  static void insertOffer(Offer offer) {
-    FirebaseFirestore.instance
-        .collection(OFFERS)
-        .doc(offer.id)
-        .set(offer.toMap());
+  static void updateUserBlocId(String userId, String blocServiceId) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection(USERS)
+          .doc(userId)
+          .update({
+            'blocServiceId': blocServiceId,
+          })
+          .then((value) => print(
+              userId + " user bloc service id updated to : " + blocServiceId!))
+          .catchError((error) =>
+              print("failed to update user bloc service id : $error"));
+    } on PlatformException catch (err) {
+      logger.e(err.message);
+    } catch (err) {
+      logger.e(err);
+    }
   }
 
 /** Reference **/

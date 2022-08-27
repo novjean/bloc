@@ -124,6 +124,9 @@ class _SeatsManagementScreenState extends State<SeatsManagementScreen> {
                               onPressed:  () {
                                 FirestoreHelper.updateSeat(seat.id, '');
 
+                                // remove the user's bloc service id field
+                                FirestoreHelper.updateUserBlocId(seat.custId, '');
+
                                 //check if all seats are empty, and mark table as not occupied
                                 bool isOccupied = false;
                                 for(Seat s in seats){
