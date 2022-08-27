@@ -209,6 +209,14 @@ class FirestoreHelper {
         .snapshots();
   }
 
+  static Stream<QuerySnapshot<Object?>> getUsersInRange(int lowLevel, int highLevel) {
+    return FirebaseFirestore.instance
+        .collection(USERS)
+        .where('clearanceLevel', whereIn: [lowLevel, highLevel])
+        // .orderBy('sequence', descending: false)
+        .snapshots();
+  }
+
   static CollectionReference<Object?> getUsersCollection() {
     return FirebaseFirestore.instance.collection(USERS);
   }

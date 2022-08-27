@@ -40,7 +40,6 @@ class _SeatsManagementScreenState extends State<SeatsManagementScreen> {
       children: [
         SizedBox(height: 2.0),
         tableTypeToggle(context, serviceTable),
-
         SizedBox(height: 2.0),
         _pullSeats(context),
         SizedBox(height: 2.0),

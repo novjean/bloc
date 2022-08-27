@@ -7,16 +7,21 @@ import '../../../db/entity/user.dart';
 import '../../../helpers/firestore_helper.dart';
 import '../../../utils/constants.dart';
 import '../../../widgets/manager/user_item.dart';
+import '../../../widgets/ui/sized_listview_block.dart';
 
-class UsersManagementScreen extends StatelessWidget {
+class UsersManagementScreen extends StatefulWidget {
   // String serviceId;
   // BlocDao dao;
   // ManagerService managerService;
 
   UsersManagementScreen();
-      // {required this.serviceId,
-      //   required this.dao,
-      //   required this.managerService});
+
+  @override
+  State<UsersManagementScreen> createState() => _UsersManagementScreenState();
+}
+
+class _UsersManagementScreenState extends State<UsersManagementScreen> {
+  String _selectedType = 'Captain';
 
   @override
   Widget build(BuildContext context) {
@@ -45,20 +50,61 @@ class UsersManagementScreen extends StatelessWidget {
   }
 
   _buildBody(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          SizedBox(height: 2.0),
-          _buildUsers(context),
-          SizedBox(height: 5.0),
-        ],
-      ),
+    return Column(
+      children: [
+        const SizedBox(height: 2.0),
+        _displayOptions(context),
+        const Divider(),
+        SizedBox(height: 2.0),
+        _buildUsers(context),
+        SizedBox(height: 2.0),
+      ],
+    );
+  }
+
+  _displayOptions(BuildContext context) {
+    List<String> _options = ['Captain', 'Customers'];
+    double containerHeight = MediaQuery.of(context).size.height / 20;
+
+    return SizedBox(
+      key: UniqueKey(),
+      // this height has to match with category item container height
+      height: containerHeight,
+      child: ListView.builder(
+          itemCount: _options.length,
+          scrollDirection: Axis.horizontal,
+          itemBuilder: (ctx, index) {
+            return GestureDetector(
+                child: SizedListViewBlock(
+                  title: _options[index],
+                  height: containerHeight,
+                  width: MediaQuery.of(context).size.width / 2,
+                ),
+                onTap: () {
+                  setState(() {
+                    // _sCategory = categories[index];
+                    _selectedType = _options[index];
+                    print(_selectedType + ' tables display option is selected.');
+                  });
+                });
+          }),
     );
   }
 
   _buildUsers(BuildContext context) {
+    int lowLevel = 0;
+    int highLevel = 9;
+
+    if(_selectedType == 'Captain'){
+      lowLevel = Constants.CAPTAIN_LEVEL;
+      highLevel = Constants.MANAGER_LEVEL-1;
+    } else {
+      lowLevel = Constants.USER_LEVEL;
+      highLevel = Constants.CAPTAIN_LEVEL-1;
+    }
+
     return StreamBuilder<QuerySnapshot>(
-        stream: FirestoreHelper.getUsers(Constants.MANAGER_LEVEL),
+        stream: FirestoreHelper.getUsersInRange(lowLevel, highLevel),
         builder: (ctx, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(
@@ -86,8 +132,7 @@ class UsersManagementScreen extends StatelessWidget {
 
   _displayUsers(
       BuildContext context, List<User> users) {
-    return Container(
-      height: MediaQuery.of(context).size.height,
+    return Expanded(
       child: ListView.builder(
           itemCount: users.length,
           scrollDirection: Axis.vertical,
@@ -109,49 +154,49 @@ class UsersManagementScreen extends StatelessWidget {
     );
   }
 
-  showOptionsDialog(BuildContext context, ServiceTable _table) {
-    // set up the AlertDialog for Table options
-    AlertDialog alert = AlertDialog(
-      title: Text("Table Options"),
-      content: Text("Please select what action would you like to perform."),
-      actions: [
-        TextButton(
-          child: Text("Cancel"),
-          onPressed:  () {
-            Navigator.of(context).pop();
-          },
-        ),
-        TextButton(
-          child: Text("Change Color"),
-          onPressed:  () {
-            Navigator.of(context).pop();
-
-            FirestoreHelper.changeTableColor(_table);
-          },
-        ),
-        TextButton(
-          child: Text("Manage Seats"),
-          onPressed:  () {
-            Navigator.of(context).pop();
-
-            // Navigator.of(context).push(
-            //   MaterialPageRoute(
-            //       builder: (context) => SeatsManagementScreen(
-            //           serviceId: serviceId,
-            //           dao: dao,
-            //           serviceTable: _table)),
-            // );
-          },
-        ),
-      ],
-    );
-
-    // show the dialog
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return alert;
-      },
-    );
-  }
+  // showOptionsDialog(BuildContext context, ServiceTable _table) {
+  //   // set up the AlertDialog for Table options
+  //   AlertDialog alert = AlertDialog(
+  //     title: Text("Table Options"),
+  //     content: Text("Please select what action would you like to perform."),
+  //     actions: [
+  //       TextButton(
+  //         child: Text("Cancel"),
+  //         onPressed:  () {
+  //           Navigator.of(context).pop();
+  //         },
+  //       ),
+  //       TextButton(
+  //         child: Text("Change Color"),
+  //         onPressed:  () {
+  //           Navigator.of(context).pop();
+  //
+  //           FirestoreHelper.changeTableColor(_table);
+  //         },
+  //       ),
+  //       TextButton(
+  //         child: Text("Manage Seats"),
+  //         onPressed:  () {
+  //           Navigator.of(context).pop();
+  //
+  //           // Navigator.of(context).push(
+  //           //   MaterialPageRoute(
+  //           //       builder: (context) => SeatsManagementScreen(
+  //           //           serviceId: serviceId,
+  //           //           dao: dao,
+  //           //           serviceTable: _table)),
+  //           // );
+  //         },
+  //       ),
+  //     ],
+  //   );
+  //
+  //   // show the dialog
+  //   showDialog(
+  //     context: context,
+  //     builder: (BuildContext context) {
+  //       return alert;
+  //     },
+  //   );
+  // }
 }
