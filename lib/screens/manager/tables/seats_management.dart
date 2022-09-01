@@ -9,7 +9,9 @@ import '../../../db/bloc_repository.dart';
 import '../../../db/dao/bloc_dao.dart';
 import '../../../db/entity/seat.dart';
 import '../../../db/entity/service_table.dart';
+import '../../../db/entity/user.dart';
 import '../../../helpers/firestore_helper.dart';
+import '../../../utils/constants.dart';
 import '../../../widgets/seat_item.dart';
 
 class SeatsManagementScreen extends StatefulWidget {
@@ -25,12 +27,102 @@ class SeatsManagementScreen extends StatefulWidget {
 }
 
 class _SeatsManagementScreenState extends State<SeatsManagementScreen> {
+  late Widget captainSelectWidget;
+  late String _tableCaptain = '';
+
+  @override
+  void initState() {
+    captainSelectWidget = pullCaptainUsers(context);
+  }
+
+  pullCaptainUsers(BuildContext context) {
+    return StreamBuilder<QuerySnapshot>(
+        stream: FirestoreHelper.getUsersInRange(
+            Constants.CAPTAIN_LEVEL, Constants.MANAGER_LEVEL - 1),
+        builder: (ctx, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+
+          List<User> _users = [];
+          List<String> _userNames = [];
+
+          for (int i = 0; i < snapshot.data!.docs.length; i++) {
+            DocumentSnapshot document = snapshot.data!.docs[i];
+            Map<String, dynamic> data =
+                document.data()! as Map<String, dynamic>;
+            final User _user = User.fromMap(data);
+            // BlocRepository.insertServiceTable(dao, serviceTable);
+            _users.add(_user);
+            _userNames.add(_user.name);
+
+            if (i == snapshot.data!.docs.length - 1) {
+              _tableCaptain = _users.elementAt(0).name;
+
+              return Card(
+                margin: const EdgeInsets.all(20),
+                child: SingleChildScrollView(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Form(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text('Captain:'),
+                          SizedBox(height: 2.0),
+                          FormField<String>(
+                            builder: (FormFieldState<String> state) {
+                              return InputDecorator(
+                                key: const ValueKey('table_captain'),
+                                decoration: InputDecoration(
+                                    errorStyle:
+                                        TextStyle(color: Colors.redAccent, fontSize: 16.0),
+                                    hintText: 'Please select captain',
+                                    border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(5.0))),
+                                isEmpty: _tableCaptain == '',
+                                child: DropdownButtonHideUnderline(
+                                  child: DropdownButton<String>(
+                                    value: _tableCaptain,
+                                    isDense: true,
+                                    onChanged: (String? newValue) {
+                                      setState(() {
+                                        _tableCaptain = newValue!;
+                                        state.didChange(newValue);
+                                      });
+                                    },
+                                    items: _userNames.map((String value) {
+                                      return DropdownMenuItem<String>(
+                                        value: value,
+                                        child: Text(value),
+                                      );
+                                    }).toList(),
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              );
+              // return _displayUsers(context, _users);
+            }
+          }
+          return Text('Pulling captain users...');
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          title: Text(
-              'Seat Management | Table ' + widget.serviceTable.tableNumber.toString())),
+          title: Text('Seat Management | Table ' +
+              widget.serviceTable.tableNumber.toString())),
       body: _buildBody(context, widget.serviceTable),
     );
   }
@@ -38,6 +130,8 @@ class _SeatsManagementScreenState extends State<SeatsManagementScreen> {
   _buildBody(BuildContext context, ServiceTable serviceTable) {
     return Column(
       children: [
+        SizedBox(height: 2.0),
+        captainSelectWidget,
         SizedBox(height: 2.0),
         tableTypeToggle(context, serviceTable),
         SizedBox(height: 2.0),
@@ -48,8 +142,8 @@ class _SeatsManagementScreenState extends State<SeatsManagementScreen> {
   }
 
   _pullSeats(BuildContext context) {
-    final Stream<QuerySnapshot> _stream =
-        FirestoreHelper.getSeats(widget.serviceId, widget.serviceTable.tableNumber);
+    final Stream<QuerySnapshot> _stream = FirestoreHelper.getSeats(
+        widget.serviceId, widget.serviceTable.tableNumber);
     return StreamBuilder<QuerySnapshot>(
         stream: _stream,
         builder: (ctx, snapshot) {
@@ -63,7 +157,8 @@ class _SeatsManagementScreenState extends State<SeatsManagementScreen> {
           if (snapshot.data!.docs.length > 0) {
             // we received the seats from api
             // lets delete what is there in floor
-            BlocRepository.deleteSeats(widget.dao, widget.serviceTable.tableNumber);
+            BlocRepository.deleteSeats(
+                widget.dao, widget.serviceTable.tableNumber);
 
             for (int i = 0; i < snapshot.data!.docs.length; i++) {
               DocumentSnapshot document = snapshot.data!.docs[i];
@@ -79,7 +174,7 @@ class _SeatsManagementScreenState extends State<SeatsManagementScreen> {
             }
           } else {
             // seats are not defined for table, adding them
-            for(int i=0;i<widget.serviceTable.capacity; i++){
+            for (int i = 0; i < widget.serviceTable.capacity; i++) {
               Seat seat = Seat(
                   custId: "",
                   id: StringUtils.getRandomString(20),
@@ -110,36 +205,39 @@ class _SeatsManagementScreenState extends State<SeatsManagementScreen> {
                 onTap: () {
                   Seat seat = seats[index];
 
-                  if(!seat.custId.isEmpty){
+                  if (!seat.custId.isEmpty) {
                     logger.i('seat is occupied.');
                     showDialog(
                       context: context,
                       builder: (BuildContext context) {
                         return AlertDialog(
                           title: Text("Seat Availability"),
-                          content: Text("Would you like to make the seat available?"),
+                          content: Text(
+                              "Would you like to make the seat available?"),
                           actions: [
                             TextButton(
                               child: Text("Yes"),
-                              onPressed:  () {
+                              onPressed: () {
                                 FirestoreHelper.updateSeat(seat.id, '');
 
                                 // remove the user's bloc service id field
-                                FirestoreHelper.updateUserBlocId(seat.custId, '');
+                                FirestoreHelper.updateUserBlocId(
+                                    seat.custId, '');
 
                                 //check if all seats are empty, and mark table as not occupied
                                 bool isOccupied = false;
-                                for(Seat s in seats){
-                                  if(s.id == seat.id){
+                                for (Seat s in seats) {
+                                  if (s.id == seat.id) {
                                     continue;
                                   }
-                                  if(s.custId.isNotEmpty){
+                                  if (s.custId.isNotEmpty) {
                                     isOccupied = true;
                                     break;
                                   }
                                 }
-                                if(!isOccupied){
-                                  FirestoreHelper.setTableOccupyStatus(seat.tableId, false);
+                                if (!isOccupied) {
+                                  FirestoreHelper.setTableOccupyStatus(
+                                      seat.tableId, false);
                                 }
 
                                 Navigator.of(context).pop();
@@ -147,7 +245,7 @@ class _SeatsManagementScreenState extends State<SeatsManagementScreen> {
                             ),
                             TextButton(
                               child: Text("No"),
-                              onPressed:  () {
+                              onPressed: () {
                                 Navigator.of(context).pop();
                               },
                             )
@@ -158,8 +256,7 @@ class _SeatsManagementScreenState extends State<SeatsManagementScreen> {
                   } else {
                     scanQR(seat);
                   }
-                  logger.d(
-                      'seat selected : ' + seat.id);
+                  logger.d('seat selected : ' + seat.id);
                 });
           }),
     );
@@ -181,12 +278,13 @@ class _SeatsManagementScreenState extends State<SeatsManagementScreen> {
     // setState to update our non-existent appearance.
     if (!mounted) return;
 
-    if(scanCustId.compareTo('-1')==0){
+    if (scanCustId.compareTo('-1') == 0) {
       return;
     }
     // update seat in floor
     BlocRepository.updateCustInSeat(widget.dao, seat.id, scanCustId);
-    BlocRepository.updateTableOccupyStatus(widget.dao, seat.serviceId, seat.tableNumber, true);
+    BlocRepository.updateTableOccupyStatus(
+        widget.dao, seat.serviceId, seat.tableNumber, true);
 
     seat.custId = scanCustId;
     FirestoreHelper.updateSeat(seat.id, scanCustId);
@@ -199,7 +297,7 @@ class _SeatsManagementScreenState extends State<SeatsManagementScreen> {
 
   tableTypeToggle(BuildContext context, ServiceTable serviceTable) {
     int initialTableTypeIndex;
-    if(serviceTable.type == FirestoreHelper.TABLE_COMMUNITY_TYPE_ID){
+    if (serviceTable.type == FirestoreHelper.TABLE_COMMUNITY_TYPE_ID) {
       initialTableTypeIndex = 0;
     } else {
       initialTableTypeIndex = 1;
@@ -229,13 +327,12 @@ class _SeatsManagementScreenState extends State<SeatsManagementScreen> {
             labels: types,
             onToggle: (index) {
               int tableType = FirestoreHelper.TABLE_COMMUNITY_TYPE_ID;
-              if(index == 1 ){
+              if (index == 1) {
                 tableType = FirestoreHelper.TABLE_PRIVATE_TYPE_ID;
               }
               FirestoreHelper.setTableType(serviceTable, tableType);
             },
           ),
-
         ],
       ),
     );
