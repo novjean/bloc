@@ -16,6 +16,7 @@ class TablePreferences {
       tableNumber: 0,
       capacity: 0,
       isOccupied: false,
+      isActive: true,
       type: FirestoreHelper.TABLE_COMMUNITY_TYPE_ID);
 
   static Future init() async =>
@@ -36,9 +37,11 @@ class TablePreferences {
     setTable(ServiceTable(
         id: '',
         serviceId: '',
+        captainId: '',
         tableNumber: 0,
         capacity: 0,
         isOccupied: false,
+        isActive: true,
         type: 0));
   }
 }

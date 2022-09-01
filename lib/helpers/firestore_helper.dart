@@ -452,7 +452,7 @@ class FirestoreHelper {
   }
 
   static void setTableType(ServiceTable table, int newType) async {
-    try { 
+    try {
       await FirebaseFirestore.instance
           .collection(TABLES)
           .doc(table.id)

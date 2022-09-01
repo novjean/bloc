@@ -9,6 +9,7 @@ class ServiceTable {
   int tableNumber;
   int capacity;
   bool isOccupied;
+  bool isActive;
   int type;
 
 //<editor-fold desc="Data Methods">
@@ -20,6 +21,7 @@ class ServiceTable {
     required this.tableNumber,
     required this.capacity,
     required this.isOccupied,
+    required this.isActive,
     required this.type,
   });
 
@@ -34,6 +36,7 @@ class ServiceTable {
           tableNumber == other.tableNumber &&
           capacity == other.capacity &&
           isOccupied == other.isOccupied &&
+          isActive == other.isActive &&
           type == other.type);
 
   @override
@@ -44,6 +47,7 @@ class ServiceTable {
       tableNumber.hashCode ^
       capacity.hashCode ^
       isOccupied.hashCode ^
+      isActive.hashCode ^
       type.hashCode;
 
   @override
@@ -55,6 +59,7 @@ class ServiceTable {
         ' tableNumber: $tableNumber,' +
         ' capacity: $capacity,' +
         ' isOccupied: $isOccupied,' +
+        ' isActive: $isActive,' +
         ' type: $type,' +
         '}';
   }
@@ -66,6 +71,7 @@ class ServiceTable {
     int? tableNumber,
     int? capacity,
     bool? isOccupied,
+    bool? isActive,
     int? type,
   }) {
     return ServiceTable(
@@ -75,6 +81,7 @@ class ServiceTable {
       tableNumber: tableNumber ?? this.tableNumber,
       capacity: capacity ?? this.capacity,
       isOccupied: isOccupied ?? this.isOccupied,
+      isActive: isActive ?? this.isActive,
       type: type ?? this.type,
     );
   }
@@ -87,6 +94,7 @@ class ServiceTable {
       'tableNumber': this.tableNumber,
       'capacity': this.capacity,
       'isOccupied': this.isOccupied,
+      'isActive': this.isActive,
       'type': this.type,
     };
   }
@@ -99,6 +107,7 @@ class ServiceTable {
       tableNumber: map['tableNumber'] as int,
       capacity: map['capacity'] as int,
       isOccupied: map['isOccupied'] as bool,
+      isActive: map['isActive'] as bool,
       type: map['type'] as int,
     );
   }

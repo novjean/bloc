@@ -36,6 +36,7 @@ class _NewServiceTableScreenState extends State<NewServiceTableScreen> {
     int tableNumber,
     int capacity,
     String captainId,
+    bool isActive,
     BuildContext ctx,
   ) async {
     logger.i('_submitTableForm called');
@@ -52,6 +53,7 @@ class _NewServiceTableScreenState extends State<NewServiceTableScreen> {
         tableNumber: tableNumber,
         capacity: capacity,
         isOccupied: false,
+        isActive: isActive,
         type: FirestoreHelper.TABLE_PRIVATE_TYPE_ID
     );
 

@@ -12,6 +12,7 @@ class NewServiceTableForm extends StatefulWidget  {
       int tableNumber,
       int capacity,
       String captainId,
+      bool isActive,
       BuildContext ctx,
       ) submitFn;
 
@@ -28,6 +29,7 @@ class _NewServiceTableFormState extends State<NewServiceTableForm> {
   int _tableNumber=  0;
   int _capacity = 1;
   String _captainId = '';
+  bool isActive = true;
 
   late Widget captainSelectWidget;
   late String _tableCaptain = '';
@@ -138,6 +140,7 @@ class _NewServiceTableFormState extends State<NewServiceTableForm> {
         _tableNumber,
         _capacity,
         _captainId,
+        isActive,
         context,
       );
     }
@@ -193,8 +196,29 @@ class _NewServiceTableFormState extends State<NewServiceTableForm> {
                     _capacity = int.parse(value!);
                   },
                 ),
+                Row(
+                  children: <Widget>[
+                    SizedBox(
+                      width: 0,
+                    ), //SizedBox
+                    Text(
+                      'Available : ',
+                      style: TextStyle(fontSize: 17.0),
+                    ), //Text
+                    SizedBox(width: 10), //SizedBox
+                    Checkbox(
+                      value: isActive,
+                      onChanged: (value) {
+                        setState(() {
+                          isActive =  value!;
+                        });
+                      },
+                    ), //Checkbox
+                  ], //<Widget>[]
+                ),
+
                 const SizedBox(
-                  height: 12,
+                  height: 12
                 ),
                 captainSelectWidget,
                 if (widget.isLoading) const CircularProgressIndicator(),
