@@ -486,6 +486,24 @@ class FirestoreHelper {
     }
   }
 
+  static void setTableActiveStatus(String tableId, bool isActive) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection(TABLES)
+          .doc(tableId)
+          .update({'isActive': isActive})
+          .then((value) =>
+          print("table id " + tableId + " has active status of " + isActive.toString()))
+          .catchError(
+              (error) => print("Failed to set isActive to table : $error"));
+    } on PlatformException catch (err) {
+      logger.e(err.message);
+    } catch (err) {
+      logger.e(err);
+    }
+  }
+
+
   static void changeTableColor(ServiceTable table) async {
     try {
       await FirebaseFirestore.instance

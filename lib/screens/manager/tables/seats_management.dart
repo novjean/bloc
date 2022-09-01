@@ -145,6 +145,9 @@ class _SeatsManagementScreenState extends State<SeatsManagementScreen> {
         SizedBox(height: 2.0),
         captainSelectWidget,
         SizedBox(height: 2.0),
+        isActiveWidget(),
+        SizedBox(height: 2.0),
+
         tableTypeToggle(context, serviceTable),
         SizedBox(height: 2.0),
         _pullSeats(context),
@@ -348,5 +351,30 @@ class _SeatsManagementScreenState extends State<SeatsManagementScreen> {
         ],
       ),
     );
+  }
+
+  isActiveWidget() {
+    return Row(
+      children: <Widget>[
+        SizedBox(
+          width: 0,
+        ), //SizedBox
+        Text(
+          'Available : ',
+          style: TextStyle(fontSize: 17.0),
+        ), //Text
+        SizedBox(width: 10), //SizedBox
+        Checkbox(
+          value: widget.serviceTable.isActive,
+          onChanged: (value) {
+            setState(() {
+              widget.serviceTable.isActive =  value!;
+              FirestoreHelper.setTableActiveStatus(widget.serviceTable.id, value);
+            });
+          },
+        ), //Checkbox
+      ], //<Widget>[]
+    );
+
   }
 }
