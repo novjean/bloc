@@ -98,7 +98,7 @@ class _$AppDatabase extends AppDatabase {
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `ManagerService` (`id` TEXT NOT NULL, `name` TEXT NOT NULL, `sequence` INTEGER NOT NULL, PRIMARY KEY (`id`))');
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `ServiceTable` (`id` TEXT NOT NULL, `serviceId` TEXT NOT NULL, `tableNumber` INTEGER NOT NULL, `capacity` INTEGER NOT NULL, `isOccupied` INTEGER NOT NULL, `type` INTEGER NOT NULL, PRIMARY KEY (`id`))');
+            'CREATE TABLE IF NOT EXISTS `ServiceTable` (`id` TEXT NOT NULL, `serviceId` TEXT NOT NULL, `captainId` TEXT NOT NULL, `tableNumber` INTEGER NOT NULL, `capacity` INTEGER NOT NULL, `isOccupied` INTEGER NOT NULL, `type` INTEGER NOT NULL, PRIMARY KEY (`id`))');
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `Seat` (`id` TEXT NOT NULL, `custId` TEXT NOT NULL, `serviceId` TEXT NOT NULL, `tableId` TEXT NOT NULL, `tableNumber` INTEGER NOT NULL, PRIMARY KEY (`id`))');
 
@@ -236,6 +236,7 @@ class _$BlocDao extends BlocDao {
             (ServiceTable item) => <String, Object?>{
                   'id': item.id,
                   'serviceId': item.serviceId,
+                  'captainId': item.captainId,
                   'tableNumber': item.tableNumber,
                   'capacity': item.capacity,
                   'isOccupied': item.isOccupied ? 1 : 0,
@@ -500,7 +501,7 @@ class _$BlocDao extends BlocDao {
   Future<List<ServiceTable>> getTables(String serviceId) async {
     return _queryAdapter.queryList(
         'SELECT * FROM ServiceTable where serviceId=?1 ORDER BY tableNumber ASC',
-        mapper: (Map<String, Object?> row) => ServiceTable(id: row['id'] as String, serviceId: row['serviceId'] as String, tableNumber: row['tableNumber'] as int, capacity: row['capacity'] as int, isOccupied: (row['isOccupied'] as int) != 0, type: row['type'] as int),
+        mapper: (Map<String, Object?> row) => ServiceTable(id: row['id'] as String, serviceId: row['serviceId'] as String, captainId: row['captainId'] as String, tableNumber: row['tableNumber'] as int, capacity: row['capacity'] as int, isOccupied: (row['isOccupied'] as int) != 0, type: row['type'] as int),
         arguments: [serviceId]);
   }
 

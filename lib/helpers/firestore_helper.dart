@@ -452,7 +452,7 @@ class FirestoreHelper {
   }
 
   static void setTableType(ServiceTable table, int newType) async {
-    try {
+    try { 
       await FirebaseFirestore.instance
           .collection(TABLES)
           .doc(table.id)
@@ -462,6 +462,23 @@ class FirestoreHelper {
               " type changed to type id " +
               newType.toString()))
           .catchError((error) => print("Failed to change table color: $error"));
+    } on PlatformException catch (err) {
+      logger.e(err.message);
+    } catch (err) {
+      logger.e(err);
+    }
+  }
+
+  static void setTableCaptain(String tableId, String userId) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection(TABLES)
+          .doc(tableId)
+          .update({'captainId': userId})
+          .then((value) =>
+              print("table id " + tableId + " has captain id " + userId))
+          .catchError(
+              (error) => print("Failed to set captain to table : $error"));
     } on PlatformException catch (err) {
       logger.e(err.message);
     } catch (err) {

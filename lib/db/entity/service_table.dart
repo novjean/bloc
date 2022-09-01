@@ -5,6 +5,7 @@ class ServiceTable {
   @primaryKey
   String id;
   String serviceId;
+  String captainId;
   int tableNumber;
   int capacity;
   bool isOccupied;
@@ -15,6 +16,7 @@ class ServiceTable {
   ServiceTable({
     required this.id,
     required this.serviceId,
+    required this.captainId,
     required this.tableNumber,
     required this.capacity,
     required this.isOccupied,
@@ -28,6 +30,7 @@ class ServiceTable {
           runtimeType == other.runtimeType &&
           id == other.id &&
           serviceId == other.serviceId &&
+          captainId == other.captainId &&
           tableNumber == other.tableNumber &&
           capacity == other.capacity &&
           isOccupied == other.isOccupied &&
@@ -37,6 +40,7 @@ class ServiceTable {
   int get hashCode =>
       id.hashCode ^
       serviceId.hashCode ^
+      captainId.hashCode ^
       tableNumber.hashCode ^
       capacity.hashCode ^
       isOccupied.hashCode ^
@@ -47,6 +51,7 @@ class ServiceTable {
     return 'ServiceTable{' +
         ' id: $id,' +
         ' serviceId: $serviceId,' +
+        ' captainId: $captainId,' +
         ' tableNumber: $tableNumber,' +
         ' capacity: $capacity,' +
         ' isOccupied: $isOccupied,' +
@@ -57,6 +62,7 @@ class ServiceTable {
   ServiceTable copyWith({
     String? id,
     String? serviceId,
+    String? captainId,
     int? tableNumber,
     int? capacity,
     bool? isOccupied,
@@ -65,6 +71,7 @@ class ServiceTable {
     return ServiceTable(
       id: id ?? this.id,
       serviceId: serviceId ?? this.serviceId,
+      captainId: captainId ?? this.captainId,
       tableNumber: tableNumber ?? this.tableNumber,
       capacity: capacity ?? this.capacity,
       isOccupied: isOccupied ?? this.isOccupied,
@@ -76,6 +83,7 @@ class ServiceTable {
     return {
       'id': this.id,
       'serviceId': this.serviceId,
+      'captainId': this.captainId,
       'tableNumber': this.tableNumber,
       'capacity': this.capacity,
       'isOccupied': this.isOccupied,
@@ -87,6 +95,7 @@ class ServiceTable {
     return ServiceTable(
       id: map['id'] as String,
       serviceId: map['serviceId'] as String,
+      captainId: map['captainId'] as String,
       tableNumber: map['tableNumber'] as int,
       capacity: map['capacity'] as int,
       isOccupied: map['isOccupied'] as bool,

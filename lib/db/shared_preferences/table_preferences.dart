@@ -12,6 +12,7 @@ class TablePreferences {
   static var myTable = ServiceTable(
       id: '',
       serviceId: '',
+      captainId: '',
       tableNumber: 0,
       capacity: 0,
       isOccupied: false,

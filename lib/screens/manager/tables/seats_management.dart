@@ -32,10 +32,10 @@ class _SeatsManagementScreenState extends State<SeatsManagementScreen> {
 
   @override
   void initState() {
-    captainSelectWidget = pullCaptainUsers(context);
+    captainSelectWidget = buildCaptainUsers(context);
   }
 
-  pullCaptainUsers(BuildContext context) {
+  buildCaptainUsers(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
         stream: FirestoreHelper.getUsersInRange(
             Constants.CAPTAIN_LEVEL, Constants.MANAGER_LEVEL - 1),
@@ -54,12 +54,18 @@ class _SeatsManagementScreenState extends State<SeatsManagementScreen> {
             Map<String, dynamic> data =
                 document.data()! as Map<String, dynamic>;
             final User _user = User.fromMap(data);
-            // BlocRepository.insertServiceTable(dao, serviceTable);
             _users.add(_user);
             _userNames.add(_user.name);
 
+            if(widget.serviceTable.captainId == _user.id){
+              _tableCaptain = _user.name;
+            }
+
             if (i == snapshot.data!.docs.length - 1) {
-              _tableCaptain = _users.elementAt(0).name;
+              if(_tableCaptain.isEmpty){
+                _tableCaptain = 'Unassigned';
+                _userNames.add(_tableCaptain);
+              }
 
               return Card(
                 margin: const EdgeInsets.all(20),
@@ -90,6 +96,12 @@ class _SeatsManagementScreenState extends State<SeatsManagementScreen> {
                                     onChanged: (String? newValue) {
                                       setState(() {
                                         _tableCaptain = newValue!;
+                                        for(User user in _users){
+                                          if(user.name.contains(newValue)){
+                                            FirestoreHelper.setTableCaptain(widget.serviceTable.id, user.id);
+                                          }
+                                        }
+
                                         state.didChange(newValue);
                                       });
                                     },

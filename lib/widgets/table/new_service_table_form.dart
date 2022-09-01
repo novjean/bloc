@@ -1,11 +1,17 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
+
+import '../../db/entity/user.dart';
+import '../../helpers/firestore_helper.dart';
+import '../../utils/constants.dart';
 
 class NewServiceTableForm extends StatefulWidget  {
   final bool isLoading;
   final void Function(
       int tableNumber,
       int capacity,
+      String captainId,
       BuildContext ctx,
       ) submitFn;
 
@@ -21,6 +27,104 @@ class _NewServiceTableFormState extends State<NewServiceTableForm> {
   final _formKey = GlobalKey<FormState>();
   int _tableNumber=  0;
   int _capacity = 1;
+  String _captainId = '';
+
+  late Widget captainSelectWidget;
+  late String _tableCaptain = '';
+
+  @override
+  void initState() {
+    captainSelectWidget = buildCaptainUsers(context);
+  }
+
+  buildCaptainUsers(BuildContext context) {
+    return StreamBuilder<QuerySnapshot>(
+        stream: FirestoreHelper.getUsersInRange(
+            Constants.CAPTAIN_LEVEL, Constants.MANAGER_LEVEL - 1),
+        builder: (ctx, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+
+          List<User> _users = [];
+          List<String> _userNames = [];
+
+          for (int i = 0; i < snapshot.data!.docs.length; i++) {
+            DocumentSnapshot document = snapshot.data!.docs[i];
+            Map<String, dynamic> data =
+            document.data()! as Map<String, dynamic>;
+            final User _user = User.fromMap(data);
+            // BlocRepository.insertServiceTable(dao, serviceTable);
+            _users.add(_user);
+            _userNames.add(_user.name);
+
+            if (i == snapshot.data!.docs.length - 1) {
+              _tableCaptain = _users.elementAt(0).name;
+              _captainId = _users.elementAt(0).id;
+
+              return Card(
+                margin: const EdgeInsets.all(20),
+                child: SingleChildScrollView(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Form(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text('Captain:'),
+                          SizedBox(height: 2.0),
+                          FormField<String>(
+                            builder: (FormFieldState<String> state) {
+                              return InputDecorator(
+                                key: const ValueKey('table_captain'),
+                                decoration: InputDecoration(
+                                    errorStyle:
+                                    TextStyle(color: Colors.redAccent, fontSize: 16.0),
+                                    hintText: 'Please select captain',
+                                    border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(5.0))),
+                                isEmpty: _tableCaptain == '',
+                                child: DropdownButtonHideUnderline(
+                                  child: DropdownButton<String>(
+                                    value: _tableCaptain,
+                                    isDense: true,
+                                    onChanged: (String? newValue) {
+                                      setState(() {
+                                        _tableCaptain = newValue!;
+
+                                        for(User user in _users){
+                                          if(user.name.contains(newValue)){
+                                            _captainId = user.id;
+                                          }
+                                        }
+                                        state.didChange(newValue);
+                                      });
+                                    },
+                                    items: _userNames.map((String value) {
+                                      return DropdownMenuItem<String>(
+                                        value: value,
+                                        child: Text(value),
+                                      );
+                                    }).toList(),
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              );
+              // return _displayUsers(context, _users);
+            }
+          }
+          return Text('Pulling captain users...');
+        });
+  }
 
   void _trySubmitNewTable() {
     logger.i('trySubmit called');
@@ -33,6 +137,7 @@ class _NewServiceTableFormState extends State<NewServiceTableForm> {
       widget.submitFn(
         _tableNumber,
         _capacity,
+        _captainId,
         context,
       );
     }
@@ -91,6 +196,7 @@ class _NewServiceTableFormState extends State<NewServiceTableForm> {
                 const SizedBox(
                   height: 12,
                 ),
+                captainSelectWidget,
                 if (widget.isLoading) const CircularProgressIndicator(),
                 if (!widget.isLoading)
                   RaisedButton(

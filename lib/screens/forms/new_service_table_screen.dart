@@ -35,6 +35,7 @@ class _NewServiceTableScreenState extends State<NewServiceTableScreen> {
   void _submitTableForm(
     int tableNumber,
     int capacity,
+    String captainId,
     BuildContext ctx,
   ) async {
     logger.i('_submitTableForm called');
@@ -43,10 +44,11 @@ class _NewServiceTableScreenState extends State<NewServiceTableScreen> {
       _isLoading = true;
     });
 
-    String tableid = StringUtils.getRandomString(20);
+    String tableId = StringUtils.getRandomString(20);
     ServiceTable table = ServiceTable(
-        id: tableid,
+        id: tableId,
         serviceId: widget.serviceId,
+        captainId: captainId,
         tableNumber: tableNumber,
         capacity: capacity,
         isOccupied: false,
