@@ -598,7 +598,7 @@ class FirestoreHelper {
             'blocServiceId': blocServiceId,
           })
           .then((value) => print(
-              userId + " user bloc service id updated to : " + blocServiceId!))
+              userId + " user bloc service id updated to : " + blocServiceId))
           .catchError((error) =>
               print("failed to update user bloc service id : $error"));
     } on PlatformException catch (err) {

@@ -166,7 +166,7 @@ class _CommunityOfferScreenState extends State<CommunityOfferScreen> {
                             initialTime: initialTime,
                           );
 
-                          DateTime endDT = DateTime(pickedDay!.year, pickedDay!.month, pickedDay!.day, pickedTime!.hour, pickedTime!.minute);
+                          DateTime endDT = DateTime(pickedDay!.year, pickedDay.month, pickedDay.day, pickedTime!.hour, pickedTime.minute);
 
                           Offer offer = Offer(id: offerId, blocId: _product!.serviceId, productId: _product!.id,
                               productName: _product!.name, isCommunity: true, discountPercent: discountPercent, newPrice: _product!.priceCommunity,

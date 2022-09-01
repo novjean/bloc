@@ -211,7 +211,10 @@ class _SeatsManagementScreenState extends State<SeatsManagementScreen> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text('Type: '),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text('Type: ', style: TextStyle(fontSize: 21)),
+          ),
           Spacer(),
           ToggleSwitch(
             minWidth: 90.0,
