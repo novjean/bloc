@@ -37,10 +37,10 @@ class ServiceTableItem extends StatelessWidget {
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   // Add one stop for each color. Stops should increase from 0 to 1
-                  stops: [0.2, 0.7],
+                  stops: [1.0],
                   colors: [
-                    Colors.grey,
-                    serviceTable.isOccupied?Colors.redAccent:Colors.greenAccent,
+                    serviceTable.isActive ? (serviceTable.isOccupied?Colors.redAccent:Colors.greenAccent)
+                        : Colors.grey,
                   ],
                   // stops: [0.0, 0.1],
                 ),
