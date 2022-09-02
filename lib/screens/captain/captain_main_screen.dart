@@ -64,8 +64,7 @@ class CaptainMainScreen extends StatelessWidget {
         });
   }
 
-  _displayCaptainServices(
-      BuildContext context, List<CaptainService> captainServices) {
+  _displayCaptainServices(BuildContext context, List<CaptainService> captainServices) {
     String userTitle = 'Captain';
     return Expanded(
       child: ListView.builder(
@@ -84,9 +83,11 @@ class CaptainMainScreen extends StatelessWidget {
                       {
                         Navigator.of(context).push(MaterialPageRoute(
                             builder: (ctx) => ManageOrdersScreen(
-                                serviceId: blocServiceId,
-                                serviceName: captainService.name,
-                                dao: dao, userTitle: userTitle,)));
+                                  serviceId: blocServiceId,
+                                  serviceName: captainService.name,
+                                  dao: dao,
+                                  userTitle: userTitle,
+                                )));
                         logger.d('manage inventory screen selected.');
                         break;
                       }
@@ -94,9 +95,11 @@ class CaptainMainScreen extends StatelessWidget {
                       {
                         Navigator.of(context).push(MaterialPageRoute(
                             builder: (ctx) => TablesManagementScreen(
-                              blocServiceId: blocServiceId,
-                              serviceName: captainService.name,
-                              dao: dao, userTitle: userTitle,)));
+                                  blocServiceId: blocServiceId,
+                                  serviceName: captainService.name,
+                                  dao: dao,
+                                  userTitle: userTitle,
+                                )));
                         logger.d('manage inventory screen selected.');
                         break;
                       }
@@ -107,7 +110,7 @@ class CaptainMainScreen extends StatelessWidget {
                         //         serviceId: blocService.id,
                         //         managerService: captainService,
                         //         dao: dao)));
-                        logger.d('tables management service selected.');
+                        logger.d('revenue service selected.');
                         break;
                       }
                     case 'Profile':

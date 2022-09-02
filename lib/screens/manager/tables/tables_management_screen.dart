@@ -1,11 +1,13 @@
 import 'package:bloc/db/bloc_repository.dart';
 import 'package:bloc/db/dao/bloc_dao.dart';
+import 'package:bloc/db/shared_preferences/user_preferences.dart';
 import 'package:bloc/screens/manager/tables/seats_management.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import '../../../db/entity/service_table.dart';
 import '../../../helpers/firestore_helper.dart';
+import '../../../utils/constants.dart';
 import '../../../widgets/service_table_item.dart';
 import '../../../widgets/ui/sized_listview_block.dart';
 import '../../forms/new_service_table_screen.dart';
@@ -99,8 +101,16 @@ class _TablesManagementScreenState extends State<TablesManagementScreen> {
   }
 
   _buildTables(BuildContext context) {
+    final user = UserPreferences.getUser();
+    final Stream<QuerySnapshot<Object?>> stream;
+    if(user.clearanceLevel>=Constants.CAPTAIN_LEVEL && user.clearanceLevel<Constants.MANAGER_LEVEL){
+      stream = FirestoreHelper.getTablesByTypeAndUser(widget.blocServiceId, user.id, _selectedType);
+    } else {
+      stream = FirestoreHelper.getTablesByType(widget.blocServiceId, _selectedType);
+    }
+
     return StreamBuilder<QuerySnapshot>(
-        stream: FirestoreHelper.getTablesByType(widget.blocServiceId, _selectedType),
+        stream: stream,
         builder: (ctx, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(

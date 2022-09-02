@@ -20,6 +20,7 @@ class FirestoreHelper {
   static var logger = Logger();
 
   static String BLOCS = 'blocs';
+  static String BOOKINGS = 'bookings';
   static String CHATS = 'chats';
   static String CAPTAIN_SERVICES = 'captain_services';
   static String CATEGORIES = 'categories';
@@ -68,6 +69,8 @@ class FirestoreHelper {
       logger.e(err);
     }
   }
+
+  /** Bookings **/
 
   /** Cart Items **/
   static void uploadCartItem(
@@ -422,8 +425,21 @@ class FirestoreHelper {
         .snapshots();
   }
 
-  static Stream<QuerySnapshot<Object?>> getTablesByType(
-      String serviceId, String tableType) {
+  static Stream<QuerySnapshot<Object?>> getTablesByTypeAndUser(String serviceId, String userId, String tableType) {
+    int colorType = TABLE_COMMUNITY_TYPE_ID;
+    if (tableType == 'Private') {
+      colorType = TABLE_PRIVATE_TYPE_ID;
+    }
+
+    return FirebaseFirestore.instance
+        .collection(TABLES)
+        .where('serviceId', isEqualTo: serviceId)
+        .where('captainId', isEqualTo: userId)
+        .where('type', isEqualTo: colorType)
+        .snapshots();
+  }
+
+  static Stream<QuerySnapshot<Object?>> getTablesByType(String serviceId, String tableType) {
     int colorType = TABLE_COMMUNITY_TYPE_ID;
     if (tableType == 'Private') {
       colorType = TABLE_PRIVATE_TYPE_ID;

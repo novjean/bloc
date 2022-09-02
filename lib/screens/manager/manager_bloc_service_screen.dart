@@ -10,6 +10,7 @@ import '../../db/dao/bloc_dao.dart';
 import '../../db/entity/bloc_service.dart';
 import '../../helpers/firestore_helper.dart';
 import '../../widgets/ui/listview_block.dart';
+import 'bookings/bookings_screen.dart';
 import 'inventory/manage_inventory_screen.dart';
 import 'tables/tables_management_screen.dart';
 
@@ -112,6 +113,16 @@ class ManagerBlocServiceScreen extends StatelessWidget {
                                 blocServiceId: blocService.id,
                                 serviceName: _managerService.name,
                                 dao: dao, userTitle: userTitle,)));
+                        logger.d('tables management service selected.');
+                        break;
+                      }
+                    case 'Bookings':
+                      {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (ctx) => BookingsScreen(
+                              blocServiceId: blocService.id,
+                              serviceName: _managerService.name,
+                              dao: dao, userTitle: userTitle,)));
                         logger.d('tables management service selected.');
                         break;
                       }
