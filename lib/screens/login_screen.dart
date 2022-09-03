@@ -22,6 +22,168 @@ class LoginScreen extends StatelessWidget {
   final _phoneController = TextEditingController();
   final _codeController = TextEditingController();
 
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        body: StreamBuilder(
+      stream: FirebaseAuth.instance.authStateChanges(),
+      builder: (ctx, userSnapshot) {
+        logger.i('checking for auth state changes...');
+
+        if (userSnapshot.connectionState == ConnectionState.waiting) {
+          return SplashScreen();
+        }
+
+        logger.i('user snapshot received...');
+
+        if (userSnapshot.hasData) {
+          final user = FirebaseAuth.instance.currentUser;
+
+          CollectionReference users = FirestoreHelper.getUsersCollection();
+
+          return FutureBuilder<DocumentSnapshot>(
+            future: users.doc(user!.uid).get(),
+            builder:
+                (BuildContext ctx, AsyncSnapshot<DocumentSnapshot> snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+
+              if (snapshot.hasError) {
+                return Text("Something went wrong");
+              }
+
+              if (snapshot.hasData && !snapshot.data!.exists) {
+                return LoginWidget(context);
+              }
+
+              if (snapshot.connectionState == ConnectionState.done) {
+                Map<String, dynamic> data =
+                    snapshot.data!.data() as Map<String, dynamic>;
+                final blocUser.User user = blocUser.User.fromMap(data);
+
+                BlocRepository.insertUser(dao, user);
+                UserPreferences.setUser(user);
+
+                return MainScreen(dao: dao, user: user);
+              }
+              return Text("loading...");
+            },
+          );
+        } else {
+          return LoginWidget(context);
+        }
+      },
+    ));
+  }
+
+  Widget LoginWidget(BuildContext context) {
+    return Container(
+      color: Theme.of(context).backgroundColor,
+      padding: EdgeInsets.all(32),
+      child: Form(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Text(
+              "Login",
+              style: TextStyle(
+                  color: Theme.of(context).primaryColor,
+                  fontSize: 36,
+                  fontWeight: FontWeight.w500),
+            ),
+
+            SizedBox(
+              height: 24,
+            ),
+
+            TextFormField(
+              keyboardType: TextInputType.numberWithOptions(decimal: true),
+              decoration: InputDecoration(
+                  enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(8)),
+                      borderSide: BorderSide(color: Colors.grey.shade200)),
+                  focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(8)),
+                      borderSide: BorderSide(color: Colors.grey.shade300)),
+                  filled: true,
+                  fillColor: Colors.grey[100],
+                  hintText: "Phone Number"),
+              controller: _phoneController,
+            ),
+
+            SizedBox(
+              height: 24,
+            ),
+
+            Container(
+              width: double.infinity,
+              child: FlatButton(
+                child: Text("Login"),
+                textColor: Colors.white,
+                padding: EdgeInsets.all(16),
+                onPressed: () {
+                  //code for sign in
+                  final phone = "+91" + _phoneController.text.trim();
+                  registerUser(phone, context);
+                },
+                color: Theme.of(context).accentColor,
+              ),
+            ),
+            SizedBox(height: 24,),
+            Container(
+              width: double.infinity,
+              child: FlatButton(
+                child: Text("Register"),
+                textColor: Colors.white,
+                padding: EdgeInsets.all(16),
+                onPressed: () async {
+                  final providers = [
+                    // AuthUiProvider.anonymous,
+                    // AuthUiProvider.email,
+                    AuthUiProvider.phone,
+                    // AuthUiProvider.apple,
+                    // AuthUiProvider.github,
+                    // AuthUiProvider.google,
+                    // AuthUiProvider.microsoft,
+                    // AuthUiProvider.yahoo,
+                  ];
+
+                  final result = await FlutterAuthUi.startUi(
+                    items: providers,
+                    tosAndPrivacyPolicy: TosAndPrivacyPolicy(
+                      tosUrl: "https://www.google.com",
+                      privacyPolicyUrl: "https://www.google.com",
+                    ),
+                    androidOption: const AndroidOption(
+                      enableSmartLock: false, // default true
+                      showLogo: true, // default false
+                      overrideTheme: true, // default false
+                    ),
+                    emailAuthOption: const EmailAuthOption(
+                      requireDisplayName: true,
+                      // default true
+                      enableMailLink: false,
+                      // default false
+                      handleURL: '',
+                      androidPackageName: '',
+                      androidMinimumVersion: '',
+                    ),
+                  );
+                  debugPrint(result.toString());
+                },
+                color: Theme.of(context).accentColor,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Future registerUser(String strMobile, BuildContext context) async {
     FirebaseAuth _auth = FirebaseAuth.instance;
 
@@ -152,12 +314,11 @@ class LoginScreen extends StatelessWidget {
                         color: Colors.blue,
                         onPressed: () async {
                           final code = _codeController.text.trim();
-                          AuthCredential credential =
-                              PhoneAuthProvider.credential(
-                                  verificationId: verificationId,
-                                  smsCode: code);
-                          UserCredential result =
-                              await _auth.signInWithCredential(credential);
+
+                          AuthCredential credential = PhoneAuthProvider.credential(
+                              verificationId: verificationId,
+                              smsCode: code);
+                          UserCredential result = await _auth.signInWithCredential(credential);
                           User? user = result.user;
 
                           if (user != null) {
@@ -166,7 +327,7 @@ class LoginScreen extends StatelessWidget {
                                 name: 'Superstar',
                                 clearanceLevel: 1,
                                 phoneNumber:
-                                    StringUtils.getNumberOnly(strMobile),
+                                StringUtils.getNumberOnly(strMobile),
                                 fcmToken: '',
                                 email: '',
                                 imageUrl: '',
@@ -202,257 +363,4 @@ class LoginScreen extends StatelessWidget {
       print("failed to verify phone number: ${e}");
     }
   }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-        body: StreamBuilder(
-      stream: FirebaseAuth.instance.authStateChanges(),
-      builder: (ctx, userSnapshot) {
-        logger.i('checking for auth state changes...');
-
-        if (userSnapshot.connectionState == ConnectionState.waiting) {
-          return SplashScreen();
-        }
-
-        logger.i('user snapshot received...');
-
-        if (userSnapshot.hasData) {
-          final user = FirebaseAuth.instance.currentUser;
-
-          CollectionReference users = FirestoreHelper.getUsersCollection();
-
-          return FutureBuilder<DocumentSnapshot>(
-            future: users.doc(user!.uid).get(),
-            builder:
-                (BuildContext ctx, AsyncSnapshot<DocumentSnapshot> snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
-              }
-
-              if (snapshot.hasError) {
-                return Text("Something went wrong");
-              }
-
-              if (snapshot.hasData && !snapshot.data!.exists) {
-                return LoginWidget(context);
-              }
-
-              if (snapshot.connectionState == ConnectionState.done) {
-                Map<String, dynamic> data =
-                    snapshot.data!.data() as Map<String, dynamic>;
-                final blocUser.User user = blocUser.User.fromMap(data);
-
-                BlocRepository.insertUser(dao, user);
-                UserPreferences.setUser(user);
-
-                return MainScreen(dao: dao, user: user);
-              }
-              return Text("loading...");
-            },
-          );
-        } else {
-          return LoginWidget(context);
-        }
-      },
-    ));
-  }
-
-  Widget LoginWidget(BuildContext context) {
-    return Container(
-      color: Theme.of(context).backgroundColor,
-      padding: EdgeInsets.all(32),
-      child: Form(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              "Login",
-              style: TextStyle(
-                  color: Theme.of(context).primaryColor,
-                  fontSize: 36,
-                  fontWeight: FontWeight.w500),
-            ),
-
-            SizedBox(
-              height: 24,
-            ),
-
-            TextFormField(
-              keyboardType: TextInputType.numberWithOptions(decimal: true),
-              decoration: InputDecoration(
-                  enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(8)),
-                      borderSide: BorderSide(color: Colors.grey.shade200)),
-                  focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(8)),
-                      borderSide: BorderSide(color: Colors.grey.shade300)),
-                  filled: true,
-                  fillColor: Colors.grey[100],
-                  hintText: "Phone Number"),
-              controller: _phoneController,
-            ),
-
-            SizedBox(
-              height: 24,
-            ),
-
-            // TextFormField(
-            //   decoration: InputDecoration(
-            //       enabledBorder: OutlineInputBorder(
-            //           borderRadius: BorderRadius.all(Radius.circular(8)),
-            //           borderSide: BorderSide(color: Colors.grey.shade200)
-            //       ),
-            //       focusedBorder: OutlineInputBorder(
-            //           borderRadius: BorderRadius.all(Radius.circular(8)),
-            //           borderSide: BorderSide(color: Colors.grey.shade300)
-            //       ),
-            //       filled: true,
-            //       fillColor: Colors.grey[100],
-            //       hintText: "Password"
-            //
-            //   ),
-            //
-            //   controller: _passController,
-            // ),
-            //
-            // SizedBox(height: 16,),
-
-            Container(
-              width: double.infinity,
-              child: FlatButton(
-                child: Text("Login"),
-                textColor: Colors.white,
-                padding: EdgeInsets.all(16),
-                onPressed: () {
-                  //code for sign in
-                  final phone = "+91" + _phoneController.text.trim();
-
-                  registerUser(phone, context);
-                },
-                color: Theme.of(context).accentColor,
-              ),
-            ),
-
-            SizedBox(height: 24,),
-            Container(
-              width: double.infinity,
-              child: FlatButton(
-                child: Text("Register"),
-                textColor: Colors.white,
-                padding: EdgeInsets.all(16),
-                onPressed: () async {
-                  //code for sign in
-                  // final phone = "+91" + _phoneController.text.trim();
-                  // registerUser(phone, context);
-
-                  final providers = [
-                    // AuthUiProvider.anonymous,
-                    // AuthUiProvider.email,
-                    AuthUiProvider.phone,
-                    // AuthUiProvider.apple,
-                    // AuthUiProvider.github,
-                    // AuthUiProvider.google,
-                    // AuthUiProvider.microsoft,
-                    // AuthUiProvider.yahoo,
-                  ];
-
-                  final result = await FlutterAuthUi.startUi(
-                    items: providers,
-                    tosAndPrivacyPolicy: TosAndPrivacyPolicy(
-                      tosUrl: "https://www.google.com",
-                      privacyPolicyUrl: "https://www.google.com",
-                    ),
-                    androidOption: const AndroidOption(
-                      enableSmartLock: false, // default true
-                      showLogo: true, // default false
-                      overrideTheme: true, // default false
-                    ),
-                    emailAuthOption: const EmailAuthOption(
-                      requireDisplayName: true,
-                      // default true
-                      enableMailLink: false,
-                      // default false
-                      handleURL: '',
-                      androidPackageName: '',
-                      androidMinimumVersion: '',
-                    ),
-                  );
-                  debugPrint(result.toString());
-
-
-                },
-                color: Theme.of(context).accentColor,
-              ),
-            ),
-
-          ],
-        ),
-      ),
-    );
-  }
-
-  // _showFlutterUILogin(BuildContext context) {
-  //   return Column(
-  //     children: [
-  //       Expanded(
-  //         child: Center(
-  //           child: Column(
-  //             children: [
-  //               ElevatedButton(
-  //                 child: const Text("start ui"),
-  //                 onPressed: () async {
-  //                   final providers = [
-  //                     AuthUiProvider.anonymous,
-  //                     AuthUiProvider.email,
-  //                     AuthUiProvider.phone,
-  //                     AuthUiProvider.apple,
-  //                     AuthUiProvider.github,
-  //                     AuthUiProvider.google,
-  //                     AuthUiProvider.microsoft,
-  //                     AuthUiProvider.yahoo,
-  //                   ];
-  //
-  //                   final result = await FlutterAuthUi.startUi(
-  //                     items: providers,
-  //                     tosAndPrivacyPolicy: TosAndPrivacyPolicy(
-  //                       tosUrl: "https://www.google.com",
-  //                       privacyPolicyUrl: "https://www.google.com",
-  //                     ),
-  //                     androidOption: const AndroidOption(
-  //                       enableSmartLock: false, // default true
-  //                       showLogo: true, // default false
-  //                       overrideTheme: true, // default false
-  //                     ),
-  //                     emailAuthOption: const EmailAuthOption(
-  //                       requireDisplayName: true,
-  //                       // default true
-  //                       enableMailLink: false,
-  //                       // default false
-  //                       handleURL: '',
-  //                       androidPackageName: '',
-  //                       androidMinimumVersion: '',
-  //                     ),
-  //                   );
-  //                   debugPrint(result.toString());
-  //                 },
-  //               ),
-  //               ElevatedButton(
-  //                 onPressed: () async {
-  //                   // await FlutterAuthUi.signOut();
-  //                   debugPrint('Signed out !');
-  //                 },
-  //                 child: const Text('sign out'),
-  //               ),
-  //             ],
-  //           ),
-  //         ),
-  //       ),
-  //     ],
-  //   );
-  // }
-
 }

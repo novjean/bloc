@@ -1,8 +1,31 @@
 PODS:
+  - AppAuth (1.5.0):
+    - AppAuth/Core (= 1.5.0)
+    - AppAuth/ExternalUserAgent (= 1.5.0)
+  - AppAuth/Core (1.5.0)
+  - AppAuth/ExternalUserAgent (1.5.0):
+    - AppAuth/Core
   - cloud_firestore (3.1.6):
     - Firebase/Firestore (= 8.15.0)
     - firebase_core
     - Flutter
+  - FBAEMKit (11.2.1):
+    - FBAEMKit/AEM (= 11.2.1)
+  - FBAEMKit/AEM (11.2.1):
+    - FBSDKCoreKit_Basics (~> 11.2.1)
+  - FBSDKCoreKit (11.2.1):
+    - FBSDKCoreKit/Core (= 11.2.1)
+  - FBSDKCoreKit/Core (11.2.1):
+    - FBAEMKit (~> 11.2.1)
+    - FBSDKCoreKit_Basics (~> 11.2.1)
+  - FBSDKCoreKit_Basics (11.2.1):
+    - FBSDKCoreKit_Basics/Basics (= 11.2.1)
+  - FBSDKCoreKit_Basics/Basics (11.2.1)
+  - FBSDKLoginKit (11.2.1):
+    - FBSDKLoginKit/Login (= 11.2.1)
+  - FBSDKLoginKit/Login (11.2.1):
+    - FBSDKCoreKit (~> 11.2.1)
+    - FBSDKCoreKit_Basics (~> 11.2.1)
   - Firebase/Auth (8.15.0):
     - Firebase/CoreOnly
     - FirebaseAuth (~> 8.15.0)
@@ -32,11 +55,19 @@ PODS:
     - Firebase/Storage (= 8.15.0)
     - firebase_core
     - Flutter
+  - FirebaseAnonymousAuthUI (11.0.3):
+    - FirebaseAuth (~> 8.0)
+    - FirebaseAuthUI
+    - FirebaseCore
   - FirebaseAuth (8.15.0):
     - FirebaseCore (~> 8.0)
     - GoogleUtilities/AppDelegateSwizzler (~> 7.7)
     - GoogleUtilities/Environment (~> 7.7)
     - GTMSessionFetcher/Core (~> 1.5)
+  - FirebaseAuthUI (11.0.3):
+    - FirebaseAuth (~> 8.0)
+    - FirebaseCore
+    - GoogleUtilities/UserDefaults
   - FirebaseCore (8.15.0):
     - FirebaseCoreDiagnostics (~> 8.0)
     - GoogleUtilities/Environment (~> 7.7)
@@ -46,6 +77,17 @@ PODS:
     - GoogleUtilities/Environment (~> 7.7)
     - GoogleUtilities/Logger (~> 7.7)
     - nanopb (~> 2.30908.0)
+  - FirebaseEmailAuthUI (11.0.3):
+    - FirebaseAuth (~> 8.0)
+    - FirebaseAuthUI
+    - FirebaseCore
+    - GoogleUtilities/UserDefaults
+  - FirebaseFacebookAuthUI (11.1.3):
+    - FBSDKCoreKit_Basics
+    - FBSDKLoginKit (~> 11.0)
+    - FirebaseAuth
+    - FirebaseAuthUI
+    - FirebaseCore
   - FirebaseFirestore (8.15.0):
     - FirebaseFirestore/AutodetectLeveldb (= 8.15.0)
   - FirebaseFirestore/AutodetectLeveldb (8.15.0):
@@ -54,6 +96,12 @@ PODS:
   - FirebaseFirestore/Base (8.15.0)
   - FirebaseFirestore/WithLeveldb (8.15.0):
     - FirebaseFirestore/Base
+  - FirebaseGoogleAuthUI (11.0.3):
+    - FirebaseAuth (~> 8.0)
+    - FirebaseAuthUI
+    - FirebaseCore
+    - GoogleSignIn (~> 5.0)
+    - GoogleUtilities/UserDefaults
   - FirebaseInstallations (8.15.0):
     - FirebaseCore (~> 8.0)
     - GoogleUtilities/Environment (~> 7.7)
@@ -68,10 +116,41 @@ PODS:
     - GoogleUtilities/Reachability (~> 7.7)
     - GoogleUtilities/UserDefaults (~> 7.7)
     - nanopb (~> 2.30908.0)
+  - FirebaseOAuthUI (11.1.3):
+    - FirebaseAuth (~> 8.0)
+    - FirebaseAuthUI
+  - FirebasePhoneAuthUI (11.0.3):
+    - FirebaseAuth (~> 8.0)
+    - FirebaseAuthUI
+    - FirebaseCore
+    - GoogleUtilities/UserDefaults
   - FirebaseStorage (8.15.0):
     - FirebaseCore (~> 8.0)
     - GTMSessionFetcher/Core (~> 1.5)
+  - FirebaseUI/Anonymous (11.0.3):
+    - FirebaseAnonymousAuthUI (~> 11.0)
+  - FirebaseUI/Auth (11.0.3):
+    - FirebaseAuthUI (~> 11.0)
+  - FirebaseUI/Email (11.0.3):
+    - FirebaseEmailAuthUI (~> 11.0)
+  - FirebaseUI/Facebook (11.0.3):
+    - FirebaseFacebookAuthUI (~> 11.0)
+  - FirebaseUI/Google (11.0.3):
+    - FirebaseGoogleAuthUI (~> 11.0)
+  - FirebaseUI/OAuth (11.0.3):
+    - FirebaseOAuthUI (~> 11.0)
+  - FirebaseUI/Phone (11.0.3):
+    - FirebasePhoneAuthUI (~> 11.0)
   - Flutter (1.0.0)
+  - flutter_auth_ui (2.2.2):
+    - FirebaseUI/Anonymous (~> 11.0)
+    - FirebaseUI/Auth (~> 11.0)
+    - FirebaseUI/Email (~> 11.0)
+    - FirebaseUI/Facebook (~> 11.0)
+    - FirebaseUI/Google (~> 11.0)
+    - FirebaseUI/OAuth (~> 11.0)
+    - FirebaseUI/Phone (~> 11.0)
+    - Flutter
   - flutter_barcode_scanner (2.0.0):
     - Flutter
   - flutter_local_notifications (0.0.1):
@@ -86,6 +165,10 @@ PODS:
     - GoogleUtilities/Environment (~> 7.7)
     - nanopb (< 2.30910.0, >= 2.30908.0)
     - PromisesObjC (< 3.0, >= 1.2)
+  - GoogleSignIn (5.0.2):
+    - AppAuth (~> 1.2)
+    - GTMAppAuth (~> 1.0)
+    - GTMSessionFetcher/Core (~> 1.1)
   - GoogleUtilities/AppDelegateSwizzler (7.7.0):
     - GoogleUtilities/Environment
     - GoogleUtilities/Logger
@@ -103,6 +186,9 @@ PODS:
     - GoogleUtilities/Logger
   - GoogleUtilities/UserDefaults (7.7.0):
     - GoogleUtilities/Logger
+  - GTMAppAuth (1.3.0):
+    - AppAuth/Core (~> 1.4)
+    - GTMSessionFetcher/Core (~> 1.5)
   - GTMSessionFetcher/Core (1.7.2)
   - image_picker (0.0.1):
     - Flutter
@@ -129,6 +215,7 @@ DEPENDENCIES:
   - firebase_storage (from `.symlinks/plugins/firebase_storage/ios`)
   - FirebaseFirestore (from `https://github.com/invertase/firestore-ios-sdk-frameworks.git`, tag `8.15.0`)
   - Flutter (from `Flutter`)
+  - flutter_auth_ui (from `.symlinks/plugins/flutter_auth_ui/ios`)
   - flutter_barcode_scanner (from `.symlinks/plugins/flutter_barcode_scanner/ios`)
   - flutter_local_notifications (from `.symlinks/plugins/flutter_local_notifications/ios`)
   - fluttertoast (from `.symlinks/plugins/fluttertoast/ios`)
@@ -139,16 +226,31 @@ DEPENDENCIES:
 
 SPEC REPOS:
   trunk:
+    - AppAuth
+    - FBAEMKit
+    - FBSDKCoreKit
+    - FBSDKCoreKit_Basics
+    - FBSDKLoginKit
     - Firebase
+    - FirebaseAnonymousAuthUI
     - FirebaseAuth
+    - FirebaseAuthUI
     - FirebaseCore
     - FirebaseCoreDiagnostics
+    - FirebaseEmailAuthUI
+    - FirebaseFacebookAuthUI
+    - FirebaseGoogleAuthUI
     - FirebaseInstallations
     - FirebaseMessaging
+    - FirebaseOAuthUI
+    - FirebasePhoneAuthUI
     - FirebaseStorage
+    - FirebaseUI
     - FMDB
     - GoogleDataTransport
+    - GoogleSignIn
     - GoogleUtilities
+    - GTMAppAuth
     - GTMSessionFetcher
     - nanopb
     - PromisesObjC
@@ -170,6 +272,8 @@ EXTERNAL SOURCES:
     :tag: 8.15.0
   Flutter:
     :path: Flutter
+  flutter_auth_ui:
+    :path: ".symlinks/plugins/flutter_auth_ui/ios"
   flutter_barcode_scanner:
     :path: ".symlinks/plugins/flutter_barcode_scanner/ios"
   flutter_local_notifications:
@@ -191,26 +295,42 @@ CHECKOUT OPTIONS:
     :tag: 8.15.0
 
 SPEC CHECKSUMS:
+  AppAuth: 80317d99ac7ff2801a2f18ff86b48cd315ed465d
   cloud_firestore: 9f701d5e335717e294fa65d3e2648cf0473f3bec
+  FBAEMKit: 5de0a7aaa854eec69bb5be20795952a63d38a5f6
+  FBSDKCoreKit: bf655f808b040ed66a72b9922911b39d703e64f4
+  FBSDKCoreKit_Basics: 73ebe3a27eb688ac5b5aa7e99f68992993042115
+  FBSDKLoginKit: 2e76831ef08d356b8f9150ea51cce865074ea304
   Firebase: 5f8193dff4b5b7c5d5ef72ae54bb76c08e2b841d
   firebase_auth: 09005c587c0b450a3adcaad285129f1e32713142
   firebase_core: b14c1cfa29b9eb316345f74d1489328283825d6d
   firebase_messaging: 5374d57b2ca7a5efe1a150500b9a2451ca9ff5af
   firebase_storage: cb4ab5b139caa2889f37368cd7a55b8899ad2ebe
+  FirebaseAnonymousAuthUI: 64de9383870378e8f16ef428d73e8c18e74ce5cc
   FirebaseAuth: 3e73bf8abf4fbb40f8b421f361f4cc48ee57388c
+  FirebaseAuthUI: 5ae57e5a3ffb821f89491f1b5da9efbdf99ce7cd
   FirebaseCore: 5743c5785c074a794d35f2fff7ecc254a91e08b1
   FirebaseCoreDiagnostics: 92e07a649aeb66352b319d43bdd2ee3942af84cb
+  FirebaseEmailAuthUI: 10586bc5b460a2e02172a2ee6d267eca60cbe684
+  FirebaseFacebookAuthUI: 4110202288720f9a74be9c1aa2d3308a39589566
   FirebaseFirestore: cb361b7f8f225a225c9f11b8d42066baebb1630c
+  FirebaseGoogleAuthUI: b73b9fad6b1e3f7baeb8189fc7b3a6eb6fa1430d
   FirebaseInstallations: 40bd9054049b2eae9a2c38ef1c3dd213df3605cd
   FirebaseMessaging: 5e5118a2383b3531e730d974680954c679ca0a13
+  FirebaseOAuthUI: 2cac38e94a39f9d930a7ffc30fbad1683b4e0b62
+  FirebasePhoneAuthUI: ee72e8b968bf39420c3af4f8cf810c7f755f032f
   FirebaseStorage: 8019af461599b2c3bc61c6a5dbdfa3d2de66a4d9
+  FirebaseUI: d2777b3abcb3fa40ea9eea9e40db5a154df608d3
   Flutter: 50d75fe2f02b26cc09d224853bb45737f8b3214a
+  flutter_auth_ui: 9ad8520e9c4ddfa8ecc9a84c9fbb6fbda094bab9
   flutter_barcode_scanner: 7a1144744c28dc0c57a8de7218ffe5ec59a9e4bf
   flutter_local_notifications: 0c0b1ae97e741e1521e4c1629a459d04b9aec743
   fluttertoast: 16fbe6039d06a763f3533670197d01fc73459037
   FMDB: 2ce00b547f966261cd18927a3ddb07cb6f3db82a
   GoogleDataTransport: 5fffe35792f8b96ec8d6775f5eccd83c998d5a3b
+  GoogleSignIn: 7137d297ddc022a7e0aa4619c86d72c909fa7213
   GoogleUtilities: e0913149f6b0625b553d70dae12b49fc62914fd1
+  GTMAppAuth: 4d8f864896f3646f0c33baf38a28362f4c601e15
   GTMSessionFetcher: 5595ec75acf5be50814f81e9189490412bad82ba
   image_picker: 9aa50e1d8cdacdbed739e925b7eea16d014367e6
   nanopb: a0ba3315591a9ae0a16a309ee504766e90db0c96
