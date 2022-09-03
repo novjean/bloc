@@ -11,8 +11,13 @@
          Flutter UI initializes, as well as behind your Flutter UI while its
          running.
          
-         This Theme is only used starting with V2 of Flutter's Android embedding. -->
+         This Theme is on ly used starting with V2 of Flutter's Android embedding. -->
     <style name="NormalTheme" parent="@android:style/Theme.Light.NoTitleBar">
         <item name="android:windowBackground">?android:colorBackground</item>
+    </style>
+    <style name="flutter_auth_ui_style">
+        <item name="colorPrimary">#f44336</item>
+        <item name="colorPrimaryDark">#981208</item>
+        <item name="colorAccent">#ff1744</item>
     </style>
 </resources>

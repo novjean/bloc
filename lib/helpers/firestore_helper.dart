@@ -5,7 +5,6 @@ import 'package:bloc/db/entity/offer.dart';
 import 'package:bloc/db/entity/seat.dart';
 import 'package:bloc/db/entity/user.dart' as blocUser;
 import 'package:bloc/helpers/firestorage_helper.dart';
-import 'package:bloc/screens/manager/tables/seats_management.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';

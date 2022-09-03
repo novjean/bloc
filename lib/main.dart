@@ -4,6 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_auth_ui/flutter_auth_ui.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
@@ -48,7 +49,9 @@ const bool kIsWeb = identical(0, 0.0);
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
 
   // Set the background messaging handler early on, as a named top-level function
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
@@ -69,7 +72,7 @@ Future<void> main() async {
     /// default FCM channel to enable heads up notifications.
     await flutterLocalNotificationsPlugin
         .resolvePlatformSpecificImplementation<
-        AndroidFlutterLocalNotificationsPlugin>()
+            AndroidFlutterLocalNotificationsPlugin>()
         ?.createNotificationChannel(channel);
 
     /// Update the iOS foreground notification presentation options to allow
@@ -90,10 +93,9 @@ Future<void> main() async {
 
   await UserPreferences.init();
 
-  final database =
-      await $FloorAppDatabase.databaseBuilder('bloc_database.db')
-          .addMigrations([migration18to19, migration19to20])
-          .build();
+  final database = await $FloorAppDatabase
+      .databaseBuilder('bloc_database.db')
+      .addMigrations([migration18to19, migration19to20]).build();
   final dao = database.blocDao;
 
   runApp(MyApp(dao: dao));
@@ -123,7 +125,7 @@ class MyApp extends StatelessWidget {
                 title: kAppTitle,
                 theme: ThemeData(
                   primarySwatch: Colors.red,
-                  backgroundColor: Colors.black54,
+                  backgroundColor: Color.fromRGBO(48, 48, 48, 1.0),
                   highlightColor: Colors.black,
                   accentColor: Colors.grey,
                   accentColorBrightness: Brightness.dark,
@@ -138,15 +140,84 @@ class MyApp extends StatelessWidget {
                 home: appSnapshot.connectionState != ConnectionState.done
                     ? SplashScreen()
                     : LoginScreen(dao: dao),
-                routes: {
-                  // HomeScreen.routeName: (ctx) => HomeScreen(),
-                  // ManagerScreen.routeName: (ctx) => ManagerScreen(),
-                  // OwnerScreen.routeName: (ctx) => OwnerScreen(),
-                  // CityDetailScreen.routeName: (ctx) => CityDetailScreen(),
-                  // NewBlocScreen.routeName: (ctx) => NewBlocScreen(),
-                  // BlocDetailScreen.routeName: (ctx) => BlocDetailScreen(),
-                });
+
+                // routes: {
+                // HomeScreen.routeName: (ctx) => HomeScreen(),
+                // ManagerScreen.routeName: (ctx) => ManagerScreen(),
+                // OwnerScreen.routeName: (ctx) => OwnerScreen(),
+                // CityDetailScreen.routeName: (ctx) => CityDetailScreen(),
+                // NewBlocScreen.routeName: (ctx) => NewBlocScreen(),
+                // BlocDetailScreen.routeName: (ctx) => BlocDetailScreen(),
+                // }
+                );
           }),
     );
   }
+
 }
+
+
+// class MyApp extends StatelessWidget {
+//   const MyApp({Key? key}) : super(key: key);
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return MaterialApp(
+//       home: Scaffold(
+//         appBar: AppBar(
+//           title: const Text('Plugin example app'),
+//         ),
+//         body: Center(
+//           child: Column(
+//             children: [
+//               ElevatedButton(
+//                 child: const Text("start ui"),
+//                 onPressed: () async {
+//                   final providers = [
+//                     AuthUiProvider.anonymous,
+//                     AuthUiProvider.email,
+//                     AuthUiProvider.phone,
+//                     AuthUiProvider.apple,
+//                     AuthUiProvider.github,
+//                     AuthUiProvider.google,
+//                     AuthUiProvider.microsoft,
+//                     AuthUiProvider.yahoo,
+//                   ];
+//
+//                   final result = await FlutterAuthUi.startUi(
+//                     items: providers,
+//                     tosAndPrivacyPolicy: const TosAndPrivacyPolicy(
+//                       tosUrl: "https://www.google.com",
+//                       privacyPolicyUrl: "https://www.google.com",
+//                     ),
+//                     androidOption: const AndroidOption(
+//                       enableSmartLock: false, // default true
+//                       showLogo: true, // default false
+//                       overrideTheme: true, // default false
+//                     ),
+//                     emailAuthOption: const EmailAuthOption(
+//                       requireDisplayName: true,
+//                       // default true
+//                       enableMailLink: false,
+//                       // default false
+//                       handleURL: '',
+//                       androidPackageName: '',
+//                       androidMinimumVersion: '',
+//                     ),
+//                   );
+//                   debugPrint(result.toString());
+//                 },
+//               ),
+//               ElevatedButton(
+//                 onPressed: () async {
+//                   await FlutterAuthUi.signOut();
+//                   debugPrint('Signed out !');
+//                 },
+//                 child: const Text('sign out'),
+//               ),
+//             ],
+//           ),
+//         ),
+//       ),
+//     );
+//   }

@@ -7,6 +7,7 @@ import 'package:bloc/utils/string_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_auth_ui/flutter_auth_ui.dart';
 
 import '../db/bloc_repository.dart';
 import '../db/dao/bloc_dao.dart';
@@ -277,7 +278,7 @@ class LoginScreen extends StatelessWidget {
             ),
 
             SizedBox(
-              height: 16,
+              height: 24,
             ),
 
             TextFormField(
@@ -296,7 +297,7 @@ class LoginScreen extends StatelessWidget {
             ),
 
             SizedBox(
-              height: 16,
+              height: 24,
             ),
 
             // TextFormField(
@@ -334,10 +335,124 @@ class LoginScreen extends StatelessWidget {
                 },
                 color: Theme.of(context).accentColor,
               ),
-            )
+            ),
+
+            SizedBox(height: 24,),
+            Container(
+              width: double.infinity,
+              child: FlatButton(
+                child: Text("Register"),
+                textColor: Colors.white,
+                padding: EdgeInsets.all(16),
+                onPressed: () async {
+                  //code for sign in
+                  // final phone = "+91" + _phoneController.text.trim();
+                  // registerUser(phone, context);
+
+                  final providers = [
+                    // AuthUiProvider.anonymous,
+                    // AuthUiProvider.email,
+                    AuthUiProvider.phone,
+                    // AuthUiProvider.apple,
+                    // AuthUiProvider.github,
+                    // AuthUiProvider.google,
+                    // AuthUiProvider.microsoft,
+                    // AuthUiProvider.yahoo,
+                  ];
+
+                  final result = await FlutterAuthUi.startUi(
+                    items: providers,
+                    tosAndPrivacyPolicy: TosAndPrivacyPolicy(
+                      tosUrl: "https://www.google.com",
+                      privacyPolicyUrl: "https://www.google.com",
+                    ),
+                    androidOption: const AndroidOption(
+                      enableSmartLock: false, // default true
+                      showLogo: true, // default false
+                      overrideTheme: true, // default false
+                    ),
+                    emailAuthOption: const EmailAuthOption(
+                      requireDisplayName: true,
+                      // default true
+                      enableMailLink: false,
+                      // default false
+                      handleURL: '',
+                      androidPackageName: '',
+                      androidMinimumVersion: '',
+                    ),
+                  );
+                  debugPrint(result.toString());
+
+
+                },
+                color: Theme.of(context).accentColor,
+              ),
+            ),
+
           ],
         ),
       ),
     );
   }
+
+  // _showFlutterUILogin(BuildContext context) {
+  //   return Column(
+  //     children: [
+  //       Expanded(
+  //         child: Center(
+  //           child: Column(
+  //             children: [
+  //               ElevatedButton(
+  //                 child: const Text("start ui"),
+  //                 onPressed: () async {
+  //                   final providers = [
+  //                     AuthUiProvider.anonymous,
+  //                     AuthUiProvider.email,
+  //                     AuthUiProvider.phone,
+  //                     AuthUiProvider.apple,
+  //                     AuthUiProvider.github,
+  //                     AuthUiProvider.google,
+  //                     AuthUiProvider.microsoft,
+  //                     AuthUiProvider.yahoo,
+  //                   ];
+  //
+  //                   final result = await FlutterAuthUi.startUi(
+  //                     items: providers,
+  //                     tosAndPrivacyPolicy: TosAndPrivacyPolicy(
+  //                       tosUrl: "https://www.google.com",
+  //                       privacyPolicyUrl: "https://www.google.com",
+  //                     ),
+  //                     androidOption: const AndroidOption(
+  //                       enableSmartLock: false, // default true
+  //                       showLogo: true, // default false
+  //                       overrideTheme: true, // default false
+  //                     ),
+  //                     emailAuthOption: const EmailAuthOption(
+  //                       requireDisplayName: true,
+  //                       // default true
+  //                       enableMailLink: false,
+  //                       // default false
+  //                       handleURL: '',
+  //                       androidPackageName: '',
+  //                       androidMinimumVersion: '',
+  //                     ),
+  //                   );
+  //                   debugPrint(result.toString());
+  //                 },
+  //               ),
+  //               ElevatedButton(
+  //                 onPressed: () async {
+  //                   // await FlutterAuthUi.signOut();
+  //                   debugPrint('Signed out !');
+  //                 },
+  //                 child: const Text('sign out'),
+  //               ),
+  //             ],
+  //           ),
+  //         ),
+  //       ),
+  //     ],
+  //   );
+  // }
+
 }
