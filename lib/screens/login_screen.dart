@@ -8,6 +8,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_auth_ui/flutter_auth_ui.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import '../db/bloc_repository.dart';
 import '../db/dao/bloc_dao.dart';
@@ -41,37 +42,53 @@ class LoginScreen extends StatelessWidget {
 
           CollectionReference users = FirestoreHelper.getUsersCollection();
 
-          return FutureBuilder<DocumentSnapshot>(
-            future: users.doc(user!.uid).get(),
-            builder:
-                (BuildContext ctx, AsyncSnapshot<DocumentSnapshot> snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
-              }
+          if(user!.uid.isEmpty){
+            return LoginWidget(context);
+          } else {
+            return FutureBuilder<DocumentSnapshot>(
+              future: users.doc(user!.uid).get(),
+              builder:
+                  (BuildContext ctx, AsyncSnapshot<DocumentSnapshot> snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
 
-              if (snapshot.hasError) {
-                return Text("Something went wrong");
-              }
+                if (snapshot.hasError) {
+                  Toaster.shortToast('login failed, please try again!');
+                  return LoginWidget(context);
+                }
 
-              if (snapshot.hasData && !snapshot.data!.exists) {
-                return LoginWidget(context);
-              }
+                if (snapshot.hasData && !snapshot.data!.exists) {
+                  print('firebase registration complete, user received, registering in bloc.');
+                  blocUser.User registeredUser = blocUser.User(
+                      id: user.uid,
+                      name: 'Superstar',
+                      clearanceLevel: 1,
+                      phoneNumber: StringUtils.getNumberOnly(user.phoneNumber!),
+                      fcmToken: '',
+                      email: '',
+                      imageUrl: '',
+                      username: '', blocServiceId: '',);
 
-              if (snapshot.connectionState == ConnectionState.done) {
-                Map<String, dynamic> data =
-                    snapshot.data!.data() as Map<String, dynamic>;
-                final blocUser.User user = blocUser.User.fromMap(data);
+                  return MainScreen(dao: dao, user: registeredUser);
+                }
 
-                BlocRepository.insertUser(dao, user);
-                UserPreferences.setUser(user);
+                if (snapshot.connectionState == ConnectionState.done) {
+                  Map<String, dynamic> data =
+                  snapshot.data!.data() as Map<String, dynamic>;
+                  final blocUser.User user = blocUser.User.fromMap(data);
 
-                return MainScreen(dao: dao, user: user);
-              }
-              return Text("loading...");
-            },
-          );
+                  BlocRepository.insertUser(dao, user);
+                  UserPreferences.setUser(user);
+
+                  return MainScreen(dao: dao, user: user);
+                }
+                return Text("loading...");
+              },
+            );
+          }
         } else {
           return LoginWidget(context);
         }
@@ -192,102 +209,7 @@ class LoginScreen extends StatelessWidget {
           phoneNumber: strMobile,
           timeout: Duration(seconds: 120),
           verificationCompleted: (AuthCredential authCredential) {
-            _auth.signInWithCredential(authCredential).then((result) async {
-              Toaster.shortToast('login: verification completed!');
-
-              // UserCredential result =
-              //     await _auth.signInWithCredential(authCredential);
-              User? user = result.user;
-
-              if (user != null) {
-                // CollectionReference users = FirestoreHelper.getUsersCollection();
-
-                // FutureBuilder<DocumentSnapshot>(
-                //   future: users.doc(user.uid).get(),
-                //   builder: (BuildContext ctx,
-                //       AsyncSnapshot<DocumentSnapshot> snapshot) {
-                //     if (snapshot.connectionState ==
-                //         ConnectionState.waiting) {
-                //       return const Center(
-                //         child: CircularProgressIndicator(),
-                //       );
-                //     }
-                //
-                //     if (snapshot.hasError) {
-                //       return Text("Something went wrong");
-                //     }
-                //
-                //     if (snapshot.hasData &&
-                //         !snapshot.data!.exists) {
-                //       blocUser.User registeredUser = blocUser.User(
-                //           id: user.uid,
-                //           name: 'Superstar',
-                //           clearanceLevel: 1,
-                //           phoneNumber: StringUtils.getNumberOnly(strMobile),
-                //           fcmToken: '',
-                //           email: '',
-                //           imageUrl: '',
-                //           username: '');
-                //
-                //       FirestoreHelper.insertPhoneUser(registeredUser);
-                //       print(strMobile + ' is registered with bloc!');
-                //       BlocRepository.insertUser(dao, registeredUser);
-                //       UserPreferences.setUser(registeredUser);
-                //
-                //       Navigator.of(context).push(
-                //         MaterialPageRoute(
-                //             builder: (context) =>
-                //                 MainScreen(user: registeredUser, dao: dao)),
-                //       );
-                //     }
-                //
-                //     if (snapshot.connectionState ==
-                //         ConnectionState.done) {
-                //       Map<String, dynamic> data = snapshot.data!
-                //           .data() as Map<String, dynamic>;
-                //       final blocUser.User regUser = blocUser.User.fromMap(data);
-                //
-                //       // mClearanceLevel = user.clearanceLevel;
-                //       BlocRepository.insertUser(dao, regUser);
-                //       UserPreferences.setUser(regUser);
-                //
-                //       Navigator.of(context).pushReplacement(
-                //         MaterialPageRoute(
-                //             builder: (context) =>
-                //                 MainScreen(user: regUser, dao: dao)),
-                //       );
-                //     }
-                //     return Text("loading user...");
-                //   },
-                // );
-
-                // blocUser.User registeredUser = blocUser.User(
-                //     id: user.uid,
-                //     name: 'Superstar',
-                //     clearanceLevel: 1,
-                //     phoneNumber: StringUtils.getNumberOnly(strMobile),
-                //     fcmToken: '',
-                //     email: '',
-                //     imageUrl: '',
-                //     username: '');
-                //
-                // await FirestoreHelper.insertPhoneUser(registeredUser);
-                // print(strMobile + ' is registered with bloc!');
-                // BlocRepository.insertUser(dao, registeredUser);
-                // UserPreferences.setUser(registeredUser);
-                //
-                // await Navigator.of(context).pushReplacement(
-                //   MaterialPageRoute(
-                //       builder: (context) =>
-                //           MainScreen(user: registeredUser, dao: dao)),
-                // );
-              } else {
-                print(strMobile +
-                    ' registration failed, user could not be retrieved!');
-              }
-            }).catchError((e) {
-              print(e);
-            });
+            Toaster.shortToast('login: verification completed!');
           },
           verificationFailed: (FirebaseAuthException authException) {
             print(authException.message);
@@ -311,7 +233,7 @@ class LoginScreen extends StatelessWidget {
                       FlatButton(
                         child: Text("Confirm"),
                         textColor: Colors.white,
-                        color: Colors.blue,
+                        color: Theme.of(context).accentColor,
                         onPressed: () async {
                           final code = _codeController.text.trim();
 
@@ -319,29 +241,32 @@ class LoginScreen extends StatelessWidget {
                               verificationId: verificationId,
                               smsCode: code);
                           UserCredential result = await _auth.signInWithCredential(credential);
-                          User? user = result.user;
+                          // this will get picked up on top where the user changes are being looked into
 
-                          if (user != null) {
-                            blocUser.User registeredUser = blocUser.User(
-                                id: user.uid,
-                                name: 'Superstar',
-                                clearanceLevel: 1,
-                                phoneNumber:
-                                StringUtils.getNumberOnly(strMobile),
-                                fcmToken: '',
-                                email: '',
-                                imageUrl: '',
-                                username: '', blocServiceId: '');
+                          Navigator.of(context).pop();
 
-                            await Navigator.of(context).push(
-                              MaterialPageRoute(
-                                  builder: (context) => MainScreen(
-                                      user: registeredUser, dao: dao)),
-                            );
-                          } else {
-                            print(strMobile +
-                                ' registration failed, user could not be retrieved!');
-                          }
+                          // User? user = result.user;
+                          //
+                          // if (user != null) {
+                          //   blocUser.User registeredUser = blocUser.User(
+                          //       id: user.uid,
+                          //       name: 'Superstar',
+                          //       clearanceLevel: 1,
+                          //       phoneNumber: StringUtils.getNumberOnly(strMobile),
+                          //       fcmToken: '',
+                          //       email: '',
+                          //       imageUrl: '',
+                          //       username: '', blocServiceId: '',);
+                          //
+                          //   await Navigator.of(context).push(
+                          //     MaterialPageRoute(
+                          //         builder: (context) => MainScreen(
+                          //             user: registeredUser, dao: dao)),
+                          //   );
+                          // } else {
+                          //   print(strMobile +
+                          //       ' registration failed, user could not be retrieved!');
+                          // }
                         },
                       ),
                       TextButton(
@@ -356,8 +281,7 @@ class LoginScreen extends StatelessWidget {
           },
           codeAutoRetrievalTimeout: (String verificationId) {
             verificationId = verificationId;
-            print(verificationId);
-            print("Timeout");
+            print('codeAutoRetrievalTimeout: auto timed out');
           });
     } catch (e) {
       print("failed to verify phone number: ${e}");
