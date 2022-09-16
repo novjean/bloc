@@ -42,11 +42,11 @@ class LoginScreen extends StatelessWidget {
 
           CollectionReference users = FirestoreHelper.getUsersCollection();
 
-          if(user!.uid.isEmpty){
+          if (user!.uid.isEmpty) {
             return LoginWidget(context);
           } else {
             return FutureBuilder<DocumentSnapshot>(
-              future: users.doc(user!.uid).get(),
+              future: users.doc(user.uid).get(),
               builder:
                   (BuildContext ctx, AsyncSnapshot<DocumentSnapshot> snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
@@ -61,23 +61,26 @@ class LoginScreen extends StatelessWidget {
                 }
 
                 if (snapshot.hasData && !snapshot.data!.exists) {
-                  print('firebase registration complete, user received, registering in bloc.');
+                  print(
+                      'firebase registration complete, user received, registering in bloc.');
                   blocUser.User registeredUser = blocUser.User(
-                      id: user.uid,
-                      name: 'Superstar',
-                      clearanceLevel: 1,
-                      phoneNumber: StringUtils.getNumberOnly(user.phoneNumber!),
-                      fcmToken: '',
-                      email: '',
-                      imageUrl: '',
-                      username: '', blocServiceId: '',);
+                    id: user.uid,
+                    name: 'Superstar',
+                    clearanceLevel: 1,
+                    phoneNumber: StringUtils.getNumberOnly(user.phoneNumber!),
+                    fcmToken: '',
+                    email: '',
+                    imageUrl: '',
+                    username: '',
+                    blocServiceId: '',
+                  );
 
                   return MainScreen(dao: dao, user: registeredUser);
                 }
 
                 if (snapshot.connectionState == ConnectionState.done) {
                   Map<String, dynamic> data =
-                  snapshot.data!.data() as Map<String, dynamic>;
+                      snapshot.data!.data() as Map<String, dynamic>;
                   final blocUser.User user = blocUser.User.fromMap(data);
 
                   BlocRepository.insertUser(dao, user);
@@ -112,11 +115,9 @@ class LoginScreen extends StatelessWidget {
                   fontSize: 36,
                   fontWeight: FontWeight.w500),
             ),
-
             SizedBox(
               height: 24,
             ),
-
             TextFormField(
               keyboardType: TextInputType.numberWithOptions(decimal: true),
               decoration: InputDecoration(
@@ -131,11 +132,7 @@ class LoginScreen extends StatelessWidget {
                   hintText: "Phone Number"),
               controller: _phoneController,
             ),
-
-            SizedBox(
-              height: 24,
-            ),
-
+            SizedBox(height: 72),
             Container(
               width: double.infinity,
               child: FlatButton(
@@ -150,7 +147,9 @@ class LoginScreen extends StatelessWidget {
                 color: Theme.of(context).accentColor,
               ),
             ),
-            SizedBox(height: 24,),
+            SizedBox(
+              height: 24,
+            ),
             Container(
               width: double.infinity,
               child: FlatButton(
@@ -237,10 +236,12 @@ class LoginScreen extends StatelessWidget {
                         onPressed: () async {
                           final code = _codeController.text.trim();
 
-                          AuthCredential credential = PhoneAuthProvider.credential(
-                              verificationId: verificationId,
-                              smsCode: code);
-                          UserCredential result = await _auth.signInWithCredential(credential);
+                          AuthCredential credential =
+                              PhoneAuthProvider.credential(
+                                  verificationId: verificationId,
+                                  smsCode: code);
+                          UserCredential result =
+                              await _auth.signInWithCredential(credential);
                           // this will get picked up on top where the user changes are being looked into
 
                           Navigator.of(context).pop();
