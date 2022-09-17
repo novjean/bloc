@@ -111,6 +111,14 @@ class FirestoreHelper {
         .snapshots();
   }
 
+  static Stream<QuerySnapshot<Object?>> getUserCartItems(String userId) {
+    return FirebaseFirestore.instance
+        .collection(CART_ITEMS)
+        .where('userId', isEqualTo: userId)
+    // .orderBy('timestamp', descending: true) // createdAt could be used i guess
+        .snapshots();
+  }
+
   static void updateCartItemAsCompleted(CartItem cart) async {
     await FirebaseFirestore.instance.collection(CART_ITEMS).doc(cart.id).set({
       'cartId': cart.id,
@@ -657,6 +665,8 @@ class FirestoreHelper {
       logger.e(err);
     }
   }
+
+
 
 /** Reference **/
 // _buildProducts(BuildContext context, String _category) {

@@ -11,6 +11,7 @@ import '../db/dao/bloc_dao.dart';
 import '../main.dart';
 import '../screens/captain/captain_main_screen.dart';
 import '../screens/login_screen.dart';
+import '../screens/user/order_history_screen.dart';
 
 class AppDrawer extends StatelessWidget {
   final BlocDao dao;
@@ -42,6 +43,17 @@ class AppDrawer extends StatelessWidget {
             },
           ),
           const Divider(),
+          ListTile(
+            leading: const Icon(Icons.history),
+            title: const Text('Orders'),
+            onTap: () {
+              Navigator.of(context).pushReplacement(
+                MaterialPageRoute(
+                    builder: (ctx) => OrderHistoryScreen()),
+              );
+            },
+          ),
+          const Divider(),
           user.clearanceLevel > Constants.CAPTAIN_LEVEL
               ? ListTile(
                   leading: const Icon(Icons.adjust),
@@ -61,7 +73,7 @@ class AppDrawer extends StatelessWidget {
           const Divider(),
           user.clearanceLevel > Constants.MANAGER_LEVEL
               ? ListTile(
-                  leading: const Icon(Icons.adjust),
+                  leading: const Icon(Icons.account_circle_outlined),
                   title: const Text('Manager'),
                   onTap: () {
                     Navigator.of(context).push(
@@ -74,7 +86,7 @@ class AppDrawer extends StatelessWidget {
           const Divider(),
           user.clearanceLevel > Constants.OWNER_LEVEL
               ? ListTile(
-                  leading: const Icon(Icons.account_circle),
+                  leading: const Icon(Icons.play_circle_outlined),
                   title: const Text('Owner'),
                   onTap: () {
                     Navigator.of(context).push(

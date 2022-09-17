@@ -1,4 +1,3 @@
-import 'package:bloc/db/entity/manager_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -73,8 +72,7 @@ class _OrdersCompletedScreenState extends State<OrdersCompletedScreen> {
             List<CartItem> cartItems = [];
             for (int i = 0; i < snapshot.data!.docs.length; i++) {
               DocumentSnapshot document = snapshot.data!.docs[i];
-              Map<String, dynamic> data =
-                  document.data()! as Map<String, dynamic>;
+              Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
               final CartItem ci = CartItem.fromMap(data);
               BlocRepository.insertCartItem(widget.dao, ci);
               cartItems.add(ci);
@@ -87,7 +85,6 @@ class _OrdersCompletedScreenState extends State<OrdersCompletedScreen> {
             return Expanded(
                 child: Center(child: Text('No completed orders to display.')));
           }
-
           return Expanded(child: Center(child: Text('Loading cart items...')));
         });
   }
