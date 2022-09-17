@@ -47,7 +47,7 @@ class AppDrawer extends StatelessWidget {
             leading: const Icon(Icons.history),
             title: const Text('Orders'),
             onTap: () {
-              Navigator.of(context).pushReplacement(
+              Navigator.of(context).push(
                 MaterialPageRoute(
                     builder: (ctx) => OrderHistoryScreen()),
               );
