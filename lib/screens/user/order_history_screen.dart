@@ -20,23 +20,18 @@ class OrderHistoryScreen extends StatelessWidget {
   _buildBody(BuildContext context) {
     return Column(
       children: [
-        // CoverPhoto(service.name, service.imageUrl),
-        // SizedBox(height: 2.0),
-        // _displayDisplayOption(context),
-        // SizedBox(height: 2.0),
-        // const Divider(),
         SizedBox(height: 2.0),
-        _pullUserCartItems(context),
+        _pullUserCompletedCartItems(context),
         SizedBox(height: 5.0),
       ],
     );
   }
 
-  _pullUserCartItems(BuildContext context){
+  _pullUserCompletedCartItems(BuildContext context){
     final User user = UserPreferences.getUser();
 
     return StreamBuilder<QuerySnapshot>(
-      stream: FirestoreHelper.getUserCartItems(user.id),
+      stream: FirestoreHelper.getUserCartItems(user.id, true),
       builder: (ctx, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(
@@ -44,8 +39,14 @@ class OrderHistoryScreen extends StatelessWidget {
           );
         }
 
-        if (snapshot.data!.docs.isNotEmpty) {
+        if (snapshot.hasData) {
           List<CartItem> cartItems = [];
+
+          if(snapshot.data!.docs.length==0){
+            return Expanded(
+                child: Center(child: Text('No past orders.')));
+          }
+
           for (int i = 0; i < snapshot.data!.docs.length; i++) {
             DocumentSnapshot document = snapshot.data!.docs[i];
             Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
@@ -67,7 +68,6 @@ class OrderHistoryScreen extends StatelessWidget {
   }
 
   _displayOrdersList(BuildContext context, List<CartItem> cartItems) {
-    // going to save the bill id and we will be back here
     // List<Bill> bills = CartItemUtils.extractBills(cartItems);
     return Center(child: Text('Loaded cart items count : ' + cartItems.length.toString()),);
   }

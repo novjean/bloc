@@ -21,8 +21,9 @@ class Cart with ChangeNotifier {
   }
 
   void addItem(
-      String id,
+      String cartId,
       String serviceId,
+      String billId,
       int tableNumber,
       int cartNumber,
       String userId,
@@ -39,8 +40,9 @@ class Cart with ChangeNotifier {
       _items.update(
           key,
           (existingCartItem) => CartItem(
-              id: existingCartItem.id,
+              cartId: existingCartItem.cartId,
               serviceId: existingCartItem.serviceId,
+              billId: existingCartItem.billId,
               tableNumber: existingCartItem.tableNumber,
               cartNumber: existingCartItem.cartNumber,
               userId: existingCartItem.userId,
@@ -50,13 +52,14 @@ class Cart with ChangeNotifier {
               isCommunity: existingCartItem.isCommunity,
               quantity: existingCartItem.quantity + quantity,
               createdAt: existingCartItem.createdAt,
-              isCompleted: existingCartItem.isCompleted));
+              isCompleted: existingCartItem.isCompleted,));
     } else {
       _items.putIfAbsent(
           key,
           () => CartItem(
-              id: id,
+              cartId: cartId,
               serviceId: serviceId,
+              billId: billId,
               tableNumber: tableNumber,
               cartNumber: cartNumber,
               userId: userId,

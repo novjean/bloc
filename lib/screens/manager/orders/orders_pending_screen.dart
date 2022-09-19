@@ -70,8 +70,7 @@ class _OrdersPendingScreenState extends State<OrdersPendingScreen> {
             List<CartItem> cartItems = [];
             for (int i = 0; i < snapshot.data!.docs.length; i++) {
               DocumentSnapshot document = snapshot.data!.docs[i];
-              Map<String, dynamic> data =
-                  document.data()! as Map<String, dynamic>;
+              Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
               final CartItem ci = CartItem.fromMap(data);
               BlocRepository.insertCartItem(widget.dao, ci);
               cartItems.add(ci);
@@ -98,8 +97,10 @@ class _OrdersPendingScreenState extends State<OrdersPendingScreen> {
           return Expanded(
               child: Center(child: Text('Loading orders by table number...')));
         } else {
-          if (snapshot.data == null)
+          if (snapshot.data == null) {
             return Expanded(child: Center(child: Text('No pending orders.')));
+          }
+
           List<CartItem> cartItems = snapshot.data! as List<CartItem>;
           if (cartItems.length > 0) {
             List<BlocOrder> orders = _optionName == 'Table'

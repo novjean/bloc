@@ -64,28 +64,30 @@ class _OrdersCompletedScreenState extends State<OrdersCompletedScreen> {
             );
           }
 
-          if (snapshot.data == null) {
-            return _displayOrdersList(context);
-          }
+          if(snapshot.hasData){
+            if (snapshot.data!.docs.isNotEmpty) {
+              List<CartItem> cartItems = [];
+              for (int i = 0; i < snapshot.data!.docs.length; i++) {
+                DocumentSnapshot document = snapshot.data!.docs[i];
+                Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+                final CartItem ci = CartItem.fromMap(data);
+                BlocRepository.insertCartItem(widget.dao, ci);
+                cartItems.add(ci);
 
-          if (snapshot.data!.docs.isNotEmpty) {
-            List<CartItem> cartItems = [];
-            for (int i = 0; i < snapshot.data!.docs.length; i++) {
-              DocumentSnapshot document = snapshot.data!.docs[i];
-              Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-              final CartItem ci = CartItem.fromMap(data);
-              BlocRepository.insertCartItem(widget.dao, ci);
-              cartItems.add(ci);
-
-              if (i == snapshot.data!.docs.length - 1) {
-                return _displayOrdersList(context);
+                if (i == snapshot.data!.docs.length - 1) {
+                  return _displayOrdersList(context);
+                }
               }
+            } else {
+              return Expanded(
+                  child: Center(child: Text('No completed orders to display.')));
             }
           } else {
             return Expanded(
                 child: Center(child: Text('No completed orders to display.')));
           }
-          return Expanded(child: Center(child: Text('Loading cart items...')));
+
+          return Expanded(child: Center(child: Text('Loading completed cart items...')));
         });
   }
 
@@ -132,8 +134,7 @@ class _OrdersCompletedScreenState extends State<OrdersCompletedScreen> {
                 ),
                 onTap: () {
                   BlocOrder order = orders[index];
-                  logger.d('Order selected for cust id : ' +
-                      order.customerId +
+                  logger.d('Order selected for cust id : ' + order.customerId +
                       ", table num: " +
                       order.tableNumber.toString());
 

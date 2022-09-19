@@ -86,7 +86,7 @@ class _$AppDatabase extends AppDatabase {
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `BlocService` (`id` TEXT NOT NULL, `name` TEXT NOT NULL, `blocId` TEXT NOT NULL, `type` TEXT NOT NULL, `primaryPhone` REAL NOT NULL, `secondaryPhone` REAL NOT NULL, `emailId` TEXT NOT NULL, `imageUrl` TEXT NOT NULL, `ownerId` TEXT NOT NULL, `createdAt` TEXT NOT NULL, PRIMARY KEY (`id`))');
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `CartItem` (`id` TEXT NOT NULL, `serviceId` TEXT NOT NULL, `tableNumber` INTEGER NOT NULL, `cartNumber` INTEGER NOT NULL, `userId` TEXT NOT NULL, `productId` TEXT NOT NULL, `productName` TEXT NOT NULL, `productPrice` REAL NOT NULL, `isCommunity` INTEGER NOT NULL, `quantity` INTEGER NOT NULL, `isCompleted` INTEGER NOT NULL, `createdAt` INTEGER NOT NULL, PRIMARY KEY (`id`))');
+            'CREATE TABLE IF NOT EXISTS `CartItem` (`cartId` TEXT NOT NULL, `serviceId` TEXT NOT NULL, `billId` TEXT NOT NULL, `tableNumber` INTEGER NOT NULL, `cartNumber` INTEGER NOT NULL, `userId` TEXT NOT NULL, `productId` TEXT NOT NULL, `productName` TEXT NOT NULL, `productPrice` REAL NOT NULL, `isCommunity` INTEGER NOT NULL, `quantity` INTEGER NOT NULL, `isCompleted` INTEGER NOT NULL, `createdAt` INTEGER NOT NULL, PRIMARY KEY (`cartId`))');
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `Category` (`id` TEXT NOT NULL, `name` TEXT NOT NULL, `type` TEXT NOT NULL, `serviceId` TEXT NOT NULL, `imageUrl` TEXT NOT NULL, `ownerId` TEXT NOT NULL, `createdAt` INTEGER NOT NULL, `sequence` INTEGER NOT NULL, PRIMARY KEY (`id`))');
         await database.execute(
@@ -187,8 +187,9 @@ class _$BlocDao extends BlocDao {
             database,
             'CartItem',
             (CartItem item) => <String, Object?>{
-                  'id': item.id,
+                  'cartId': item.cartId,
                   'serviceId': item.serviceId,
+                  'billId': item.billId,
                   'tableNumber': item.tableNumber,
                   'cartNumber': item.cartNumber,
                   'userId': item.userId,
@@ -359,8 +360,9 @@ class _$BlocDao extends BlocDao {
   Future<List<CartItem>> getCartItems(String uId) async {
     return _queryAdapter.queryList('SELECT * FROM CartItem where userId=?1',
         mapper: (Map<String, Object?> row) => CartItem(
-            id: row['id'] as String,
+            cartId: row['cartId'] as String,
             serviceId: row['serviceId'] as String,
+            billId: row['billId'] as String,
             tableNumber: row['tableNumber'] as int,
             cartNumber: row['cartNumber'] as int,
             userId: row['userId'] as String,
@@ -379,8 +381,9 @@ class _$BlocDao extends BlocDao {
     return _queryAdapter.queryList(
         'SELECT * FROM CartItem where serviceId=?1 ORDER BY userId ASC',
         mapper: (Map<String, Object?> row) => CartItem(
-            id: row['id'] as String,
+            cartId: row['cartId'] as String,
             serviceId: row['serviceId'] as String,
+            billId: row['billId'] as String,
             tableNumber: row['tableNumber'] as int,
             cartNumber: row['cartNumber'] as int,
             userId: row['userId'] as String,
@@ -399,8 +402,9 @@ class _$BlocDao extends BlocDao {
     return _queryAdapter.queryList(
         'SELECT * FROM CartItem where serviceId=?1 ORDER BY tableNumber ASC',
         mapper: (Map<String, Object?> row) => CartItem(
-            id: row['id'] as String,
+            cartId: row['cartId'] as String,
             serviceId: row['serviceId'] as String,
+            billId: row['billId'] as String,
             tableNumber: row['tableNumber'] as int,
             cartNumber: row['cartNumber'] as int,
             userId: row['userId'] as String,
@@ -418,7 +422,7 @@ class _$BlocDao extends BlocDao {
   Future<List<CartItem>> getPendingCartItemsByTableNumber(String sId) async {
     return _queryAdapter.queryList(
         'SELECT * FROM CartItem where serviceId=?1 and isCompleted=0 ORDER BY tableNumber ASC',
-        mapper: (Map<String, Object?> row) => CartItem(id: row['id'] as String, serviceId: row['serviceId'] as String, tableNumber: row['tableNumber'] as int, cartNumber: row['cartNumber'] as int, userId: row['userId'] as String, productId: row['productId'] as String, productName: row['productName'] as String, productPrice: row['productPrice'] as double, isCommunity: (row['isCommunity'] as int) != 0, quantity: row['quantity'] as int, isCompleted: (row['isCompleted'] as int) != 0, createdAt: row['createdAt'] as int),
+        mapper: (Map<String, Object?> row) => CartItem(cartId: row['cartId'] as String, serviceId: row['serviceId'] as String, billId: row['billId'] as String, tableNumber: row['tableNumber'] as int, cartNumber: row['cartNumber'] as int, userId: row['userId'] as String, productId: row['productId'] as String, productName: row['productName'] as String, productPrice: row['productPrice'] as double, isCommunity: (row['isCommunity'] as int) != 0, quantity: row['quantity'] as int, isCompleted: (row['isCompleted'] as int) != 0, createdAt: row['createdAt'] as int),
         arguments: [sId]);
   }
 
@@ -426,7 +430,7 @@ class _$BlocDao extends BlocDao {
   Future<List<CartItem>> getCompletedCartItemsByTableNumber(String sId) async {
     return _queryAdapter.queryList(
         'SELECT * FROM CartItem where serviceId=?1 and isCompleted=1 ORDER BY tableNumber ASC',
-        mapper: (Map<String, Object?> row) => CartItem(id: row['id'] as String, serviceId: row['serviceId'] as String, tableNumber: row['tableNumber'] as int, cartNumber: row['cartNumber'] as int, userId: row['userId'] as String, productId: row['productId'] as String, productName: row['productName'] as String, productPrice: row['productPrice'] as double, isCommunity: (row['isCommunity'] as int) != 0, quantity: row['quantity'] as int, isCompleted: (row['isCompleted'] as int) != 0, createdAt: row['createdAt'] as int),
+        mapper: (Map<String, Object?> row) => CartItem(cartId: row['cartId'] as String, serviceId: row['serviceId'] as String, billId: row['billId'] as String, tableNumber: row['tableNumber'] as int, cartNumber: row['cartNumber'] as int, userId: row['userId'] as String, productId: row['productId'] as String, productName: row['productName'] as String, productPrice: row['productPrice'] as double, isCommunity: (row['isCommunity'] as int) != 0, quantity: row['quantity'] as int, isCompleted: (row['isCompleted'] as int) != 0, createdAt: row['createdAt'] as int),
         arguments: [sId]);
   }
 

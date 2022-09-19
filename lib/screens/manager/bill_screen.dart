@@ -96,7 +96,7 @@ class BillScreen extends StatelessWidget {
               ),
               backgroundColor: Theme.of(context).primaryColor,
             ),
-            isPending?CompletedButton(bill: bill):SizedBox(),
+            isPending?CompletedButton(bill: bill):GenerateBillButton(bill: bill),
           ],
         ),
       ),
@@ -141,14 +141,73 @@ class _CompletedButtonState extends State<CompletedButton> {
           _cartItems.addAll(order.cartItems);
         }
 
+        //todo: this can be used for order id logic later on
+        // String billId = StringUtils.getRandomString(20);
+
         for(int i=0;i<_cartItems.length;i++) {
+          // _cartItems[i].billId = billId;
           FirestoreHelper.updateCartItemAsCompleted(_cartItems[i]);
         }
 
+        print('Order has been marked as completed.');
         Toaster.shortToast("Order is marked as completed.");
 
         // this is where we send the order information to firebase
-        String orderId = StringUtils.getRandomString(20);
+        // String orderId = StringUtils.getRandomString(20);
+        // need to know if cart item is community
+        // Order order = Order(id: orderId,customerId: _cartItems[0].userId,blocId: _cartItems[0].serviceId, isCommunity: _cartItems[0].)
+
+        setState(() {
+          _isLoading = false;
+        });
+        // widget.cart.clear();
+      },
+      textColor: Theme.of(context).primaryColor,
+    );
+  }
+}
+
+class GenerateBillButton extends StatefulWidget {
+  final Bill bill;
+
+  GenerateBillButton({key, required this.bill}) : super(key: key);
+
+  @override
+  _GenerateBillButtonState createState() => _GenerateBillButtonState();
+}
+
+class _GenerateBillButtonState extends State<GenerateBillButton> {
+  var _isLoading = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return FlatButton(
+      child: _isLoading ? CircularProgressIndicator() : Text('GENERATE BILL'),
+      onPressed: (widget.bill.orders.length <= 0 || _isLoading)
+          ? null : () async {
+        setState(() {
+          _isLoading = true;
+        });
+
+        // mark all cart items as completed
+        List<CartItem> _cartItems = [];
+        for(BlocOrder order in widget.bill.orders) {
+          _cartItems.addAll(order.cartItems);
+        }
+
+        //generate bill id
+        String billId = StringUtils.getRandomString(20);
+
+        for(int i=0;i<_cartItems.length;i++) {
+          _cartItems[i].billId = billId;
+          FirestoreHelper.updateCartItemBillId(_cartItems[i]);
+        }
+
+        print("Bill is generated with id : " + billId);
+        Toaster.shortToast('Bill has been generated.');
+
+        // this is where we send the order information to firebase
+        // String orderId = StringUtils.getRandomString(20);
         // need to know if cart item is community
         // Order order = Order(id: orderId,customerId: _cartItems[0].userId,blocId: _cartItems[0].serviceId, isCommunity: _cartItems[0].)
 

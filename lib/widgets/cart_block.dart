@@ -18,7 +18,7 @@ class CartBlock extends StatelessWidget {
   Widget build(BuildContext context) {
     return Dismissible(
       // the key is important to manage
-      key: ValueKey(cartItem.id),
+      key: ValueKey(cartItem.cartId),
       background: Container(
         color: Theme.of(context).errorColor,
         child: Icon(

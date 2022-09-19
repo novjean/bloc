@@ -139,7 +139,7 @@ class _ProductItemState extends State<ProductItem> {
                                       : 'Add ' + widget.addCount.toString(),
                                   onClicked: () {
                                     // add it to the cart
-                                    String id = StringUtils.getRandomString(20);
+                                    String cartId = StringUtils.getRandomString(20);
                                     //todo: this needs to increment
                                     int cartNumber = 0;
                                     final user =
@@ -147,9 +147,10 @@ class _ProductItemState extends State<ProductItem> {
                                     String userId = user!.uid;
                                     int timestamp =
                                         Timestamp.now().millisecondsSinceEpoch;
-                                    CartItem cartitem = CartItem(
-                                        id: id,
+                                    CartItem cartItem = CartItem(
+                                        cartId: cartId,
                                         serviceId: widget.serviceId,
+                                        billId: '',
                                         tableNumber: widget.tableNumber,
                                         cartNumber: cartNumber,
                                         userId: userId,
@@ -166,17 +167,18 @@ class _ProductItemState extends State<ProductItem> {
                                         isCompleted: false);
 
                                     cart.addItem(
-                                        id,
+                                        cartId,
                                         widget.serviceId,
+                                        cartItem.billId,
                                         widget.tableNumber,
                                         cartNumber,
                                         userId,
-                                        cartitem.productId,
-                                        cartitem.productName,
-                                        cartitem.productPrice,
+                                        cartItem.productId,
+                                        cartItem.productName,
+                                        cartItem.productPrice,
                                         widget.isCommunity,
-                                        cartitem.quantity,
-                                        cartitem.createdAt,
+                                        cartItem.quantity,
+                                        cartItem.createdAt,
                                         false);
 
                                     setState(() {

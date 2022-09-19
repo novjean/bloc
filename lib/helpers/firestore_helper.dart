@@ -15,6 +15,11 @@ import '../db/entity/service_table.dart';
 import '../db/entity/sos.dart';
 import '../utils/string_utils.dart';
 
+/**
+ * Tips:
+ * 1. when the stream builder querying is being run more than once, create an index in firebase db
+ * 2.
+ * **/
 class FirestoreHelper {
   static var logger = Logger();
 
@@ -74,9 +79,13 @@ class FirestoreHelper {
   /** Cart Items **/
   static void uploadCartItem(
       CartItem cart, Timestamp timestamp, int millisecondsSinceEpoch) async {
-    await FirebaseFirestore.instance.collection(CART_ITEMS).doc(cart.id).set({
-      'cartId': cart.id,
+    await FirebaseFirestore.instance
+        .collection(CART_ITEMS)
+        .doc(cart.cartId)
+        .set({
+      'cartId': cart.cartId,
       'serviceId': cart.serviceId,
+      'billId': cart.billId,
       'tableNumber': cart.tableNumber,
       'cartNumber': cart.cartNumber,
       'userId': cart.userId,
@@ -87,6 +96,7 @@ class FirestoreHelper {
       'createdAt': millisecondsSinceEpoch,
       'timestamp': timestamp,
       'isCompleted': false,
+      'isCommunity': cart.isCommunity,
     });
   }
 
@@ -111,29 +121,52 @@ class FirestoreHelper {
         .snapshots();
   }
 
-  static Stream<QuerySnapshot<Object?>> getUserCartItems(String userId) {
+  static Stream<QuerySnapshot<Object?>> getUserCartItems(
+      String userId, bool isCompleted) {
     return FirebaseFirestore.instance
         .collection(CART_ITEMS)
         .where('userId', isEqualTo: userId)
-    // .orderBy('timestamp', descending: true) // createdAt could be used i guess
+        .where('isCompleted', isEqualTo: isCompleted)
+        .orderBy('createdAt', descending: false)
         .snapshots();
   }
 
   static void updateCartItemAsCompleted(CartItem cart) async {
-    await FirebaseFirestore.instance.collection(CART_ITEMS).doc(cart.id).set({
-      'cartId': cart.id,
-      'serviceId': cart.serviceId,
-      'tableNumber': cart.tableNumber,
-      'cartNumber': cart.cartNumber,
-      'userId': cart.userId,
-      'productId': cart.productId,
-      'productName': cart.productName,
-      'productPrice': cart.productPrice,
-      'quantity': cart.quantity,
-      'createdAt': cart.createdAt,
-      'timestamp': Timestamp.fromMillisecondsSinceEpoch(cart.createdAt),
-      'isCompleted': true,
-    });
+    try {
+      await FirebaseFirestore.instance
+          .collection(CART_ITEMS)
+          .doc(cart.cartId)
+          .update({
+            'isCompleted': true,
+          })
+          .then((value) =>
+              print("cart item " + cart.cartId + " marked as complete."))
+          .catchError((error) =>
+              print("Failed to update cart item completed : $error"));
+    } on PlatformException catch (err) {
+      logger.e(err.message);
+    } catch (err) {
+      logger.e(err);
+    }
+  }
+
+  static void updateCartItemBillId(CartItem cart) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection(CART_ITEMS)
+          .doc(cart.cartId)
+          .update({
+        'billId': cart.billId,
+      })
+          .then((value) =>
+          print("cart item " + cart.cartId + " is part of bill id : " + cart.billId))
+          .catchError((error) =>
+          print("Failed to update bill id for cart item : $error"));
+    } on PlatformException catch (err) {
+      logger.e(err.message);
+    } catch (err) {
+      logger.e(err);
+    }
   }
 
   /** Category **/
@@ -432,7 +465,8 @@ class FirestoreHelper {
         .snapshots();
   }
 
-  static Stream<QuerySnapshot<Object?>> getTablesByTypeAndUser(String serviceId, String userId, String tableType) {
+  static Stream<QuerySnapshot<Object?>> getTablesByTypeAndUser(
+      String serviceId, String userId, String tableType) {
     int colorType = TABLE_COMMUNITY_TYPE_ID;
     if (tableType == 'Private') {
       colorType = TABLE_PRIVATE_TYPE_ID;
@@ -446,7 +480,8 @@ class FirestoreHelper {
         .snapshots();
   }
 
-  static Stream<QuerySnapshot<Object?>> getTablesByType(String serviceId, String tableType) {
+  static Stream<QuerySnapshot<Object?>> getTablesByType(
+      String serviceId, String tableType) {
     int colorType = TABLE_COMMUNITY_TYPE_ID;
     if (tableType == 'Private') {
       colorType = TABLE_PRIVATE_TYPE_ID;
@@ -515,8 +550,10 @@ class FirestoreHelper {
           .collection(TABLES)
           .doc(tableId)
           .update({'isActive': isActive})
-          .then((value) =>
-          print("table id " + tableId + " has active status of " + isActive.toString()))
+          .then((value) => print("table id " +
+              tableId +
+              " has active status of " +
+              isActive.toString()))
           .catchError(
               (error) => print("Failed to set isActive to table : $error"));
     } on PlatformException catch (err) {
@@ -525,7 +562,6 @@ class FirestoreHelper {
       logger.e(err);
     }
   }
-
 
   static void changeTableColor(ServiceTable table) async {
     try {
@@ -665,8 +701,6 @@ class FirestoreHelper {
       logger.e(err);
     }
   }
-
-
 
 /** Reference **/
 // _buildProducts(BuildContext context, String _category) {

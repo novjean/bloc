@@ -110,7 +110,7 @@ class CartItemUtils {
     Bill bill = Bill(userId, orders);
     return bill;
   }
-
+  
   // static Bill extractPendingOrders(List<CartItem> cartItems) {
   //   cartItems.sort((a, b) => a.createdAt.compareTo(b.createdAt));
   //

@@ -44,8 +44,9 @@ class CartScreen extends StatelessWidget {
                     itemCount: cart.items.length,
                     itemBuilder: (ctx, i) => CartBlock(
                       cartItem: CartItem(
-                        id: cart.items.values.toList()[i].id,
+                        cartId: cart.items.values.toList()[i].cartId,
                         serviceId: cart.items.values.toList()[i].serviceId,
+                        billId: cart.items.values.toList()[i].billId,
                         tableNumber: cart.items.values.toList()[i].tableNumber,
                         cartNumber: cart.items.values.toList()[i].cartNumber,
                         userId: cart.items.values.toList()[i].userId,
@@ -130,7 +131,7 @@ class _OrderButtonState extends State<OrderButton> {
 
               // keeping this here for fixed timestamp throughout the cart
               Timestamp timestamp = Timestamp.now();
-              int millisecondsSinceEpoch = timestamp.millisecondsSinceEpoch;
+              final int millisecondsSinceEpoch = timestamp.millisecondsSinceEpoch;
               // need to store this in floor
               for (int i = 0; i < widget.cart.items.length; i++) {
                 BlocRepository.insertCartItem(

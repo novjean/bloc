@@ -3,8 +3,9 @@ import 'package:floor/floor.dart';
 @entity
 class CartItem {
   @primaryKey
-  final String id;
+  final String cartId;
   final String serviceId;
+  String billId;
   final int tableNumber;
   final int cartNumber;
   final String userId;
@@ -19,8 +20,9 @@ class CartItem {
 //<editor-fold desc="Data Methods">
 
   CartItem({
-    required this.id,
+    required this.cartId,
     required this.serviceId,
+    required this.billId,
     required this.tableNumber,
     required this.cartNumber,
     required this.userId,
@@ -33,30 +35,30 @@ class CartItem {
     required this.createdAt,
   });
 
-// Ca@override
+  @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-          (other is CartItem &&
-              runtimeType == other.runtimeType &&
-              id == other.id &&
-              serviceId == other.serviceId &&
-              tableNumber == other.tableNumber &&
-              cartNumber == other.cartNumber &&
-              userId == other.userId &&
-              productId == other.productId &&
-              productName == other.productName &&
-              productPrice == other.productPrice &&
-              isCommunity == other.isCommunity &&
-              quantity == other.quantity &&
-              isCompleted == other.isCompleted &&
-              createdAt == other.createdAt
-          );
-
+      (other is CartItem &&
+          runtimeType == other.runtimeType &&
+          cartId == other.cartId &&
+          serviceId == other.serviceId &&
+          billId == other.billId &&
+          tableNumber == other.tableNumber &&
+          cartNumber == other.cartNumber &&
+          userId == other.userId &&
+          productId == other.productId &&
+          productName == other.productName &&
+          productPrice == other.productPrice &&
+          isCommunity == other.isCommunity &&
+          quantity == other.quantity &&
+          isCompleted == other.isCompleted &&
+          createdAt == other.createdAt);
 
   @override
   int get hashCode =>
-      id.hashCode ^
+      cartId.hashCode ^
       serviceId.hashCode ^
+      billId.hashCode ^
       tableNumber.hashCode ^
       cartNumber.hashCode ^
       userId.hashCode ^
@@ -68,12 +70,12 @@ class CartItem {
       isCompleted.hashCode ^
       createdAt.hashCode;
 
-
   @override
   String toString() {
     return 'CartItem{' +
-        ' id: $id,' +
+        ' cartId: $cartId,' +
         ' serviceId: $serviceId,' +
+        ' billId: $billId,' +
         ' tableNumber: $tableNumber,' +
         ' cartNumber: $cartNumber,' +
         ' userId: $userId,' +
@@ -87,10 +89,10 @@ class CartItem {
         '}';
   }
 
-
   CartItem copyWith({
-    String? id,
+    String? cartId,
     String? serviceId,
+    String? billId,
     int? tableNumber,
     int? cartNumber,
     String? userId,
@@ -103,8 +105,9 @@ class CartItem {
     int? createdAt,
   }) {
     return CartItem(
-      id: id ?? this.id,
+      cartId: cartId ?? this.cartId,
       serviceId: serviceId ?? this.serviceId,
+      billId: billId ?? this.billId,
       tableNumber: tableNumber ?? this.tableNumber,
       cartNumber: cartNumber ?? this.cartNumber,
       userId: userId ?? this.userId,
@@ -118,11 +121,11 @@ class CartItem {
     );
   }
 
-
   Map<String, dynamic> toMap() {
     return {
-      'cartId': this.id,
+      'cartId': this.cartId,
       'serviceId': this.serviceId,
+      'billId': this.billId,
       'tableNumber': this.tableNumber,
       'cartNumber': this.cartNumber,
       'userId': this.userId,
@@ -138,8 +141,9 @@ class CartItem {
 
   factory CartItem.fromMap(Map<String, dynamic> map) {
     return CartItem(
-      id: map['cartId'] as String,
+      cartId: map['cartId'] as String,
       serviceId: map['serviceId'] as String,
+      billId: map['billId'] as String,
       tableNumber: map['tableNumber'] as int,
       cartNumber: map['cartNumber'] as int,
       userId: map['userId'] as String,
@@ -153,6 +157,5 @@ class CartItem {
     );
   }
 
-  //</editor-fold>
-
+//</editor-fold>
 }
