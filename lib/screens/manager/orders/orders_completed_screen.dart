@@ -18,9 +18,7 @@ class OrdersCompletedScreen extends StatefulWidget {
   String titleHead;
 
   OrdersCompletedScreen(
-      {required this.serviceId,
-      required this.dao,
-      required this.titleHead});
+      {required this.serviceId, required this.dao, required this.titleHead});
 
   @override
   State<OrdersCompletedScreen> createState() => _OrdersCompletedScreenState();
@@ -42,21 +40,21 @@ class _OrdersCompletedScreenState extends State<OrdersCompletedScreen> {
   _buildBody(BuildContext context) {
     return Column(
       children: [
-        // CoverPhoto(service.name, service.imageUrl),
         SizedBox(height: 2.0),
         _displayDisplayOption(context),
         SizedBox(height: 2.0),
         const Divider(),
         SizedBox(height: 2.0),
-        _pullCartItems(context),
+        _pullCartItemsTest(context),
         SizedBox(height: 5.0),
       ],
     );
   }
 
-  _pullCartItems(BuildContext context) {
+  _pullCartItemsTest(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
-        stream: FirestoreHelper.getCartItemsSnapshot(widget.serviceId, true),
+        stream: FirestoreHelper.getCartItemsByCompleteBilled(
+            widget.serviceId, true, false),
         builder: (ctx, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(
@@ -64,61 +62,45 @@ class _OrdersCompletedScreenState extends State<OrdersCompletedScreen> {
             );
           }
 
-          if(snapshot.hasData){
+          if (snapshot.hasData) {
             if (snapshot.data!.docs.isNotEmpty) {
               List<CartItem> cartItems = [];
               for (int i = 0; i < snapshot.data!.docs.length; i++) {
                 DocumentSnapshot document = snapshot.data!.docs[i];
-                Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+                Map<String, dynamic> data =
+                    document.data()! as Map<String, dynamic>;
                 final CartItem ci = CartItem.fromMap(data);
-                BlocRepository.insertCartItem(widget.dao, ci);
+                // BlocRepository.insertCartItem(widget.dao, ci);
                 cartItems.add(ci);
 
                 if (i == snapshot.data!.docs.length - 1) {
-                  return _displayOrdersList(context);
+                  return _displayOrdersList(context, cartItems);
                 }
               }
             } else {
               return Expanded(
-                  child: Center(child: Text('No completed orders to display.')));
+                  child:
+                      Center(child: Text('No completed orders to display.')));
             }
           } else {
             return Expanded(
                 child: Center(child: Text('No completed orders to display.')));
           }
 
-          return Expanded(child: Center(child: Text('Loading completed cart items...')));
+          return Expanded(
+              child: Center(child: Text('Loading completed cart items...')));
         });
   }
 
-  _displayOrdersList(BuildContext context) {
-    return FutureBuilder(
-      future: BlocRepository.getCompletedCartItemsByTableNumber(
-          widget.dao, widget.serviceId),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Expanded(
-              child: Center(
-            child: Text('Loading orders by table number...'),
-          ));
-        } else {
-          if (snapshot.data == null)
-            return Expanded(child: Center(child: Text('No completed orders.')));
-
-          List<CartItem> cartItems = snapshot.data! as List<CartItem>;
-          if (cartItems.length > 0) {
-            List<BlocOrder> orders = _optionName == 'Table'
-                ? CartItemUtils.extractOrdersByTableNumber(cartItems)
-                : CartItemUtils.extractOrdersByUserId(cartItems);
-            return _displayOrdersListByType(context, orders);
-          } else {
-            return Expanded(
-              child: Center(child: Text('No completed orders.')),
-            );
-          }
-        }
-      },
-    );
+  _displayOrdersList(BuildContext context, List<CartItem> cartItems) {
+    if (cartItems.length > 0) {
+      List<BlocOrder> orders = _optionName == 'Table'
+          ? CartItemUtils.extractOrdersByTableNumber(cartItems)
+          : CartItemUtils.extractOrdersByUserId(cartItems);
+      return _displayOrdersListByType(context, orders);
+    } else {
+      return Expanded(child: Center(child: Text('No completed orders.')));
+    }
   }
 
   _displayOrdersListByType(BuildContext context, List<BlocOrder> orders) {
@@ -134,13 +116,18 @@ class _OrdersCompletedScreenState extends State<OrdersCompletedScreen> {
                 ),
                 onTap: () {
                   BlocOrder order = orders[index];
-                  logger.d('Order selected for cust id : ' + order.customerId +
+                  logger.d('Order selected for cust id : ' +
+                      order.customerId +
                       ", table num: " +
                       order.tableNumber.toString());
 
                   Bill bill = CartItemUtils.extractBill(order.cartItems);
                   Navigator.of(context).push(
-                    MaterialPageRoute(builder: (ctx) => BillScreen(bill: bill, isPending: false,)),
+                    MaterialPageRoute(
+                        builder: (ctx) => BillScreen(
+                              bill: bill,
+                              isPending: false,
+                            )),
                   );
                 });
           }),
@@ -167,11 +154,9 @@ class _OrdersCompletedScreenState extends State<OrdersCompletedScreen> {
                 ),
                 onTap: () {
                   setState(() {
-                    // _sCategory = categories[index];
                     _optionName = _options[index];
                     print(_optionName + ' order display option is selected.');
                   });
-                  // displayProductsList(context, categories[index].id);
                 });
           }),
     );

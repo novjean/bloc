@@ -11,7 +11,6 @@ import '../../widgets/ui/Toaster.dart';
 
 class BillScreen extends StatelessWidget {
   Bill bill;
-  // todo: this is what we going to use for invoice button creation in the future
   bool isPending;
 
   BillScreen({required this.bill, required this.isPending});
@@ -199,8 +198,7 @@ class _GenerateBillButtonState extends State<GenerateBillButton> {
         String billId = StringUtils.getRandomString(20);
 
         for(int i=0;i<_cartItems.length;i++) {
-          _cartItems[i].billId = billId;
-          FirestoreHelper.updateCartItemBillId(_cartItems[i]);
+          FirestoreHelper.updateCartItemBilled(_cartItems[i].cartId, billId);
         }
 
         print("Bill is generated with id : " + billId);

@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import '../../../db/dao/bloc_dao.dart';
 import '../../../helpers/firestore_helper.dart';
 import '../../../widgets/ui/Toaster.dart';
+import 'orders_billed_screen.dart';
 import 'orders_completed_screen.dart';
 import 'orders_pending_screen.dart';
 
@@ -102,6 +103,12 @@ class ManageOrdersScreen extends StatelessWidget {
                   } else if (_option.name.contains('Pending')) {
                     Navigator.of(context).push(MaterialPageRoute(
                         builder: (ctx) => OrdersPendingScreen(
+                            serviceId: serviceId,
+                            titleHead: serviceName,
+                            dao: dao)));
+                  } else if (_option.name.contains('Billed')) {
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (ctx) => OrdersBilledScreen(
                             serviceId: serviceId,
                             titleHead: serviceName,
                             dao: dao)));

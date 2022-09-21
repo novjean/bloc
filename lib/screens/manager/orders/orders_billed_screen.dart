@@ -12,26 +12,26 @@ import '../../../widgets/manager/orders/order_item.dart';
 import '../../../widgets/ui/sized_listview_block.dart';
 import '../bill_screen.dart';
 
-class OrdersPendingScreen extends StatefulWidget {
+class OrdersBilledScreen extends StatefulWidget {
   String serviceId;
   BlocDao dao;
   String titleHead;
 
-  OrdersPendingScreen(
+  OrdersBilledScreen(
       {required this.serviceId, required this.dao, required this.titleHead});
 
   @override
-  State<OrdersPendingScreen> createState() => _OrdersPendingScreenState();
+  State<OrdersBilledScreen> createState() => _OrdersBilledScreenState();
 }
 
-class _OrdersPendingScreenState extends State<OrdersPendingScreen> {
+class _OrdersBilledScreenState extends State<OrdersBilledScreen> {
   String _optionName = 'Table';
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.titleHead + ' | Pending'),
+        title: Text(widget.titleHead + ' | Billed'),
       ),
       body: _buildBody(context),
     );
@@ -41,7 +41,8 @@ class _OrdersPendingScreenState extends State<OrdersPendingScreen> {
     return Column(
       children: [
         SizedBox(height: 2.0),
-        _displayOptions(context),
+        _displayDisplayOption(context),
+        SizedBox(height: 2.0),
         const Divider(),
         SizedBox(height: 2.0),
         _pullCartItems(context),
@@ -53,7 +54,7 @@ class _OrdersPendingScreenState extends State<OrdersPendingScreen> {
   _pullCartItems(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
         stream: FirestoreHelper.getCartItemsByCompleteBilled(
-            widget.serviceId, false, false),
+            widget.serviceId, true, true),
         builder: (ctx, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(
@@ -74,19 +75,20 @@ class _OrdersPendingScreenState extends State<OrdersPendingScreen> {
 
                 if (i == snapshot.data!.docs.length - 1) {
                   return _displayOrdersList(context, cartItems);
+                  // return _displayOrdersList(context);
                 }
               }
             } else {
               return Expanded(
-                  child: Center(child: Text('No pending orders to display.')));
+                  child: Center(child: Text('No billed orders to display.')));
             }
           } else {
             return Expanded(
-                child: Center(child: Text('No pending orders to display.')));
+                child: Center(child: Text('No billed orders to display.')));
           }
 
           return Expanded(
-              child: Center(child: Text('Loading pending cart items...')));
+              child: Center(child: Text('Loading billed cart items...')));
         });
   }
 
@@ -97,7 +99,8 @@ class _OrdersPendingScreenState extends State<OrdersPendingScreen> {
           : CartItemUtils.extractOrdersByUserId(cartItems);
       return _displayOrdersListByType(context, orders);
     } else {
-      return Expanded(child: Center(child: Text('No pending orders.')));
+      return Expanded(
+          child: Center(child: Text('No billed orders to display.')));
     }
   }
 
@@ -124,7 +127,7 @@ class _OrdersPendingScreenState extends State<OrdersPendingScreen> {
                     MaterialPageRoute(
                         builder: (ctx) => BillScreen(
                               bill: bill,
-                              isPending: true,
+                              isPending: false,
                             )),
                   );
                 });
@@ -132,7 +135,7 @@ class _OrdersPendingScreenState extends State<OrdersPendingScreen> {
     );
   }
 
-  _displayOptions(BuildContext context) {
+  _displayDisplayOption(BuildContext context) {
     List<String> _options = ['Table', 'Customer'];
     double containerHeight = MediaQuery.of(context).size.height / 20;
 

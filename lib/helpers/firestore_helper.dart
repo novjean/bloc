@@ -122,6 +122,17 @@ class FirestoreHelper {
         .snapshots();
   }
 
+  static Stream<QuerySnapshot<Object?>> getCartItemsByCompleteBilled(
+      String serviceId, bool isCompleted, bool isBilled) {
+    return FirebaseFirestore.instance
+        .collection(CART_ITEMS)
+        .where('serviceId', isEqualTo: serviceId)
+        .where('isCompleted', isEqualTo: isCompleted)
+        .where('isBilled', isEqualTo: isBilled)
+        .orderBy('createdAt', descending: true) // createdAt could be used i guess
+        .snapshots();
+  }
+
   static Stream<QuerySnapshot<Object?>> getUserCartItems(
       String userId, bool isCompleted) {
     return FirebaseFirestore.instance
@@ -151,16 +162,17 @@ class FirestoreHelper {
     }
   }
 
-  static void updateCartItemBillId(CartItem cart) async {
+  static void updateCartItemBilled(String cartId, String billId) async {
     try {
       await FirebaseFirestore.instance
           .collection(CART_ITEMS)
-          .doc(cart.cartId)
+          .doc(cartId)
           .update({
-        'billId': cart.billId,
+        'billId': billId,
+        'isBilled': true,
       })
           .then((value) =>
-          print("cart item " + cart.cartId + " is part of bill id : " + cart.billId))
+          print("cart item " + cartId + " is part of bill id : " + billId))
           .catchError((error) =>
           print("Failed to update bill id for cart item : $error"));
     } on PlatformException catch (err) {
