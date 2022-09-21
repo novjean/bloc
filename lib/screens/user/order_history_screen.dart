@@ -68,8 +68,15 @@ class OrderHistoryScreen extends StatelessWidget {
   }
 
   _displayOrdersList(BuildContext context, List<CartItem> cartItems) {
-    // List<Bill> bills = CartItemUtils.extractBills(cartItems);
-    return Center(child: Text('Loaded cart items count : ' + cartItems.length.toString()),);
+    List<Bill> bills = CartItemUtils.extractBills(cartItems);
+    // return Center(child: Text('Loaded cart items count : ' + cartItems.length.toString()),);
+
+    return Column(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisSize: MainAxisSize.min, children: bills.map<Widget>((bill) =>
+            Flexible(
+              child: Text('Bill : ' + bill.orders.length.toString()),
+            )
+        ).toList());
   }
 
 }

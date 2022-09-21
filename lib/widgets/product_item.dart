@@ -164,7 +164,7 @@ class _ProductItemState extends State<ProductItem> {
                                         isCommunity: widget.isCommunity,
                                         quantity: widget.addCount,
                                         createdAt: timestamp,
-                                        isCompleted: false);
+                                        isCompleted: false, isBilled: false);
 
                                     cart.addItem(
                                         cartId,
@@ -172,14 +172,15 @@ class _ProductItemState extends State<ProductItem> {
                                         cartItem.billId,
                                         widget.tableNumber,
                                         cartNumber,
-                                        userId,
+                                        cartItem.userId,
                                         cartItem.productId,
                                         cartItem.productName,
                                         cartItem.productPrice,
                                         widget.isCommunity,
                                         cartItem.quantity,
                                         cartItem.createdAt,
-                                        false);
+                                        cartItem.isCompleted,
+                                        cartItem.isBilled);
 
                                     setState(() {
                                       widget.addCount = 1;

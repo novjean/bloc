@@ -15,6 +15,7 @@ class CartItem {
   final bool isCommunity;
   int quantity;
   bool isCompleted;
+  bool isBilled;
   final int createdAt;
 
 //<editor-fold desc="Data Methods">
@@ -32,6 +33,7 @@ class CartItem {
     required this.isCommunity,
     required this.quantity,
     required this.isCompleted,
+    required this.isBilled,
     required this.createdAt,
   });
 
@@ -52,6 +54,7 @@ class CartItem {
           isCommunity == other.isCommunity &&
           quantity == other.quantity &&
           isCompleted == other.isCompleted &&
+          isBilled == other.isBilled &&
           createdAt == other.createdAt);
 
   @override
@@ -68,6 +71,7 @@ class CartItem {
       isCommunity.hashCode ^
       quantity.hashCode ^
       isCompleted.hashCode ^
+      isBilled.hashCode ^
       createdAt.hashCode;
 
   @override
@@ -85,6 +89,7 @@ class CartItem {
         ' isCommunity: $isCommunity,' +
         ' quantity: $quantity,' +
         ' isCompleted: $isCompleted,' +
+        ' isBilled: $isBilled,' +
         ' createdAt: $createdAt,' +
         '}';
   }
@@ -102,6 +107,7 @@ class CartItem {
     bool? isCommunity,
     int? quantity,
     bool? isCompleted,
+    bool? isBilled,
     int? createdAt,
   }) {
     return CartItem(
@@ -117,6 +123,7 @@ class CartItem {
       isCommunity: isCommunity ?? this.isCommunity,
       quantity: quantity ?? this.quantity,
       isCompleted: isCompleted ?? this.isCompleted,
+      isBilled: isBilled ?? this.isBilled,
       createdAt: createdAt ?? this.createdAt,
     );
   }
@@ -135,6 +142,7 @@ class CartItem {
       'isCommunity': this.isCommunity,
       'quantity': this.quantity,
       'isCompleted': this.isCompleted,
+      'isBilled': this.isBilled,
       'createdAt': this.createdAt,
     };
   }
@@ -153,6 +161,7 @@ class CartItem {
       isCommunity: map['isCommunity'] as bool,
       quantity: map['quantity'] as int,
       isCompleted: map['isCompleted'] as bool,
+      isBilled: map['isBilled'] as bool,
       createdAt: map['createdAt'] as int,
     );
   }

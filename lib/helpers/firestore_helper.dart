@@ -97,6 +97,7 @@ class FirestoreHelper {
       'timestamp': timestamp,
       'isCompleted': false,
       'isCommunity': cart.isCommunity,
+      'isBilled' : cart.isBilled,
     });
   }
 

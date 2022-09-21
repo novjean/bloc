@@ -33,7 +33,8 @@ class Cart with ChangeNotifier {
       bool isCommunity,
       int quantity,
       int timestamp,
-      bool isCompleted) {
+      bool isCompleted,
+      bool isBilled) {
     String key = getCartKey(productId, productPrice);
     if (_items.containsKey(key)) {
       // change the quantity
@@ -52,7 +53,8 @@ class Cart with ChangeNotifier {
               isCommunity: existingCartItem.isCommunity,
               quantity: existingCartItem.quantity + quantity,
               createdAt: existingCartItem.createdAt,
-              isCompleted: existingCartItem.isCompleted,));
+              isCompleted: existingCartItem.isCompleted,
+          isBilled: existingCartItem.isBilled));
     } else {
       _items.putIfAbsent(
           key,
@@ -69,7 +71,7 @@ class Cart with ChangeNotifier {
               isCommunity: isCommunity,
               quantity: quantity,
               createdAt: timestamp,
-              isCompleted: isCompleted));
+              isCompleted: isCompleted, isBilled: isBilled));
     }
     notifyListeners();
   }

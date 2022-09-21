@@ -110,6 +110,29 @@ class CartItemUtils {
     Bill bill = Bill(userId, orders);
     return bill;
   }
+
+  static List<Bill> extractBills(List<CartItem> cartItems) {
+    List<Bill> bills = [];
+    List<CartItem> billCartItems = [];
+    String curBillId = '';
+
+    for(int i=0;i<cartItems.length; i++){
+      CartItem ci = cartItems[i];
+      if(curBillId.isEmpty){
+        curBillId = ci.billId;
+      }
+
+      if(curBillId.compareTo(ci.billId)==0){
+        billCartItems.add(ci);
+      } else {
+        Bill bill = extractBill(billCartItems);
+        bills.add(bill);
+        curBillId = '';
+        billCartItems.clear();
+      }
+    }
+    return bills;
+  }
   
   // static Bill extractPendingOrders(List<CartItem> cartItems) {
   //   cartItems.sort((a, b) => a.createdAt.compareTo(b.createdAt));
