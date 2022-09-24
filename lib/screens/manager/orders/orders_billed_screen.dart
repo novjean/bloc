@@ -9,6 +9,7 @@ import '../../../db/entity/bloc_order.dart';
 import '../../../helpers/firestore_helper.dart';
 import '../../../utils/cart_item_utils.dart';
 import '../../../widgets/manager/orders/order_item.dart';
+import '../../../widgets/manager/orders/order_item_billed.dart';
 import '../../../widgets/ui/sized_listview_block.dart';
 import '../bill_screen.dart';
 
@@ -25,7 +26,7 @@ class OrdersBilledScreen extends StatefulWidget {
 }
 
 class _OrdersBilledScreenState extends State<OrdersBilledScreen> {
-  String _optionName = 'Table';
+  // String _optionName = 'Table';
 
   @override
   Widget build(BuildContext context) {
@@ -40,10 +41,10 @@ class _OrdersBilledScreenState extends State<OrdersBilledScreen> {
   _buildBody(BuildContext context) {
     return Column(
       children: [
-        SizedBox(height: 2.0),
-        _displayDisplayOption(context),
-        SizedBox(height: 2.0),
-        const Divider(),
+        // SizedBox(height: 2.0),
+        // _displayDisplayOption(context),
+        // SizedBox(height: 2.0),
+        // const Divider(),
         SizedBox(height: 2.0),
         _pullCartItems(context),
         SizedBox(height: 5.0),
@@ -94,9 +95,7 @@ class _OrdersBilledScreenState extends State<OrdersBilledScreen> {
 
   _displayOrdersList(BuildContext context, List<CartItem> cartItems) {
     if (cartItems.length > 0) {
-      List<BlocOrder> orders = _optionName == 'Table'
-          ? CartItemUtils.extractOrdersByTableNumber(cartItems)
-          : CartItemUtils.extractOrdersByUserId(cartItems);
+      List<BlocOrder> orders = CartItemUtils.extractOrdersByTime(cartItems);
       return _displayOrdersListByType(context, orders);
     } else {
       return Expanded(
@@ -111,9 +110,8 @@ class _OrdersBilledScreenState extends State<OrdersBilledScreen> {
           scrollDirection: Axis.vertical,
           itemBuilder: (ctx, index) {
             return GestureDetector(
-                child: OrderItem(
+                child: OrderItemBilled(
                   order: orders[index],
-                  displayOption: _optionName,
                 ),
                 onTap: () {
                   BlocOrder order = orders[index];
@@ -135,31 +133,31 @@ class _OrdersBilledScreenState extends State<OrdersBilledScreen> {
     );
   }
 
-  _displayDisplayOption(BuildContext context) {
-    List<String> _options = ['Table', 'Customer'];
-    double containerHeight = MediaQuery.of(context).size.height / 20;
-
-    return SizedBox(
-      key: UniqueKey(),
-      // this height has to match with category item container height
-      height: containerHeight,
-      child: ListView.builder(
-          itemCount: _options.length,
-          scrollDirection: Axis.horizontal,
-          itemBuilder: (ctx, index) {
-            return GestureDetector(
-                child: SizedListViewBlock(
-                  title: _options[index],
-                  height: containerHeight,
-                  width: MediaQuery.of(context).size.width / 2,
-                ),
-                onTap: () {
-                  setState(() {
-                    _optionName = _options[index];
-                    print(_optionName + ' order display option is selected.');
-                  });
-                });
-          }),
-    );
-  }
+  // _displayDisplayOption(BuildContext context) {
+  //   List<String> _options = ['Table', 'Customer'];
+  //   double containerHeight = MediaQuery.of(context).size.height / 20;
+  //
+  //   return SizedBox(
+  //     key: UniqueKey(),
+  //     // this height has to match with category item container height
+  //     height: containerHeight,
+  //     child: ListView.builder(
+  //         itemCount: _options.length,
+  //         scrollDirection: Axis.horizontal,
+  //         itemBuilder: (ctx, index) {
+  //           return GestureDetector(
+  //               child: SizedListViewBlock(
+  //                 title: _options[index],
+  //                 height: containerHeight,
+  //                 width: MediaQuery.of(context).size.width / 2,
+  //               ),
+  //               onTap: () {
+  //                 setState(() {
+  //                   _optionName = _options[index];
+  //                   print(_optionName + ' order display option is selected.');
+  //                 });
+  //               });
+  //         }),
+  //   );
+  // }
 }

@@ -8,7 +8,7 @@ class CartItemUtils {
     List<BlocOrder> orders = [];
     int tableNumber = cartItems[0].tableNumber;
 
-    BlocOrder curOrder = BlocOrder();
+    BlocOrder curOrder = BlocOrder(createdAt: cartItems[0].createdAt);
     curOrder.tableNumber = tableNumber;
     curOrder.customerId = cartItems[0].userId;
 
@@ -20,7 +20,7 @@ class CartItemUtils {
           orders.add(curOrder);
         }
         tableNumber = ci.tableNumber;
-        curOrder = BlocOrder();
+        curOrder = BlocOrder(createdAt: ci.createdAt);
         curOrder.customerId = ci.userId;
         curOrder.tableNumber = tableNumber;
         curOrder.cartItems.add(ci);
@@ -43,7 +43,7 @@ class CartItemUtils {
     String userId = cartItems[0].userId;
     int tableNumber = cartItems[0].tableNumber;
 
-    BlocOrder curOrder = BlocOrder();
+    BlocOrder curOrder = BlocOrder(createdAt: cartItems[0].createdAt);
     curOrder.customerId = userId;
     curOrder.tableNumber = tableNumber;
 
@@ -55,8 +55,42 @@ class CartItemUtils {
           orders.add(curOrder);
         }
         userId = ci.userId;
-        curOrder = BlocOrder();
+        curOrder = BlocOrder(createdAt: ci.createdAt);
         curOrder.customerId=userId;
+        curOrder.tableNumber = ci.tableNumber;
+        curOrder.cartItems.add(ci);
+        curOrder.total += ci.productPrice * ci.quantity;
+      } else {
+        curOrder.total += ci.productPrice * ci.quantity;
+        curOrder.cartItems.add(ci);
+      }
+
+      if (i == cartItems.length - 1) {
+        orders.add(curOrder);
+        break;
+      }
+    }
+    return orders;
+  }
+
+  static List<BlocOrder> extractOrdersByTime(List<CartItem> cartItems) {
+    List<BlocOrder> orders = [];
+    int createdAt  = cartItems[0].createdAt;
+
+    BlocOrder curOrder = BlocOrder(createdAt: cartItems[0].createdAt);
+    curOrder.customerId = cartItems[0].userId;
+    curOrder.tableNumber = cartItems[0].tableNumber;
+
+    for (int i=0;i< cartItems.length; i++){
+      CartItem ci = cartItems[i];
+
+      if(createdAt!=ci.createdAt){
+        if (i != 0) {
+          orders.add(curOrder);
+        }
+        createdAt = ci.createdAt;
+        curOrder = BlocOrder(createdAt: ci.createdAt);
+        curOrder.customerId = ci.userId;
         curOrder.tableNumber = ci.tableNumber;
         curOrder.cartItems.add(ci);
         curOrder.total += ci.productPrice * ci.quantity;
@@ -81,7 +115,7 @@ class CartItemUtils {
     int curCreatedAt = cartItems[0].createdAt;
 
     List<BlocOrder> orders = [];
-    BlocOrder curOrder = BlocOrder();
+    BlocOrder curOrder = BlocOrder(createdAt: curCreatedAt);
     curOrder.customerId = userId;
     curOrder.sequence = orderNumber;
     for (int i = 0; i < cartItems.length; i++) {
@@ -92,7 +126,7 @@ class CartItemUtils {
           orders.add(curOrder);
         }
         curCreatedAt = ci.createdAt;
-        curOrder = BlocOrder();
+        curOrder = BlocOrder(createdAt: curCreatedAt);
         curOrder.customerId = userId;
         curOrder.sequence = ++orderNumber;
         curOrder.cartItems.add(ci);
@@ -133,42 +167,5 @@ class CartItemUtils {
     }
     return bills;
   }
-  
-  // static Bill extractPendingOrders(List<CartItem> cartItems) {
-  //   cartItems.sort((a, b) => a.createdAt.compareTo(b.createdAt));
-  //
-  //   String userId = cartItems[0].userId;
-  //   int orderNumber = 1;
-  //   int curCreatedAt = cartItems[0].createdAt;
-  //
-  //   List<Order> orders = [];
-  //   Order curOrder = Order(userId);
-  //   curOrder.number = orderNumber;
-  //   for (int i = 0; i < cartItems.length; i++) {
-  //     CartItem ci = cartItems[i];
-  //     if(ci.isCompleted)
-  //       continue;
-  //
-  //     if (curCreatedAt != ci.createdAt) {
-  //       if (i != 0) {
-  //         orders.add(curOrder);
-  //       }
-  //       curCreatedAt = ci.createdAt;
-  //       curOrder = Order(userId);
-  //       curOrder.number = ++orderNumber;
-  //       curOrder.cartItems.add(ci);
-  //       curOrder.total += ci.productPrice * ci.quantity;
-  //     } else {
-  //       curOrder.total += ci.productPrice * ci.quantity;
-  //       curOrder.cartItems.add(ci);
-  //     }
-  //
-  //     if (i == cartItems.length - 1) {
-  //       orders.add(curOrder);
-  //       break;
-  //     }
-  //   }
-  //   Bill bill = Bill(userId, orders);
-  //   return bill;
-  // }
+
 }

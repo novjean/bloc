@@ -6,6 +6,7 @@ class BlocOrder {
   late final List<CartItem> cartItems=[];
   double total = 0;
   late final int tableNumber;
+  final int createdAt;
 
-  BlocOrder();
+  BlocOrder({required this.createdAt});
 }
