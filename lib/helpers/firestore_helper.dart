@@ -133,6 +133,18 @@ class FirestoreHelper {
         .snapshots();
   }
 
+  static Future<QuerySnapshot<Object?>> pullCartItemsByCompleteBilled(
+      String serviceId, bool isCompleted, bool isBilled) {
+    return FirebaseFirestore.instance
+        .collection(CART_ITEMS)
+        .where('serviceId', isEqualTo: serviceId)
+        .where('isCompleted', isEqualTo: isCompleted)
+        .where('isBilled', isEqualTo: isBilled)
+        .orderBy('createdAt', descending: true) // createdAt could be used i guess
+        .get();
+  }
+
+
   static Stream<QuerySnapshot<Object?>> getUserCartItems(
       String userId, bool isCompleted) {
     return FirebaseFirestore.instance

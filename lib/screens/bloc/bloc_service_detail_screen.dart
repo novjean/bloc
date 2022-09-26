@@ -77,46 +77,6 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen> {
           ),
         ],
       ),
-      // floatingActionButton: ExpandableFab(
-      //   distance: 112.0,
-      //   children: [
-      //     ActionButton(
-      //       onPressed: () => {
-      //         // _showAction(context, 0)
-      //         Navigator.of(context).push(
-      //           MaterialPageRoute(
-      //               builder: (ctx) => CartScreen(
-      //                   service: widget.service,
-      //                   dao: widget.dao,
-      //                   tableNumber: _mTableNumber)),
-      //         ),
-      //       },
-      //       icon: const Icon(Icons.shopping_cart_outlined),
-      //     ),
-      //     ActionButton(
-      //       onPressed: () => {
-      //         Navigator.of(context).push(
-      //           MaterialPageRoute(
-      //               builder: (ctx) => NewProductScreen(
-      //                   service: widget.service, dao: widget.dao)),
-      //         ),
-      //       },
-      //       icon: const Icon(Icons.fastfood),
-      //     ),
-      //     ActionButton(
-      //       onPressed: () => {
-      //         // _showAction(context, 2),
-      //         // Navigator.of(context).push(
-      //         //   MaterialPageRoute(
-      //         //       builder: (ctx) => NewServiceCategoryScreen(
-      //         //           service: widget.service, dao: widget.dao)),
-      //         // ),
-      //       },
-      //       icon: const Icon(Icons.category_outlined),
-      //     ),
-      //   ],
-      // ),
-      // floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       body: _buildBody(context, widget.service),
     );
   }
@@ -132,12 +92,6 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen> {
 
     return Column(
       children: [
-        // TokenMonitor((token) {
-        //   _token = token;
-        //   return token == null
-        //       ? const CircularProgressIndicator()
-        //       : Text(token, style: const TextStyle(fontSize: 12));
-        // }),
         const SizedBox(height: 2.0),
         _searchTableNumber(context),
         // CoverPhoto(service.name, service.imageUrl),
@@ -186,7 +140,8 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen> {
                     _token = token;
                     return token == null
                         ? const CircularProgressIndicator()
-                        : TableCardItem(seat.id, seat.tableNumber, seat.tableId, _isCommunity, _token);
+                        : TableCardItem(seat.id, seat.tableNumber, seat.tableId,
+                            _isCommunity, _token);
                   });
                 }
               }
@@ -336,39 +291,5 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen> {
                 });
           }),
     );
-
-    // if (_categorySelected == 0) {
-    //   fProducts = BlocRepository.getProductsByCategory(widget.dao, "Food");
-    // } else {
-    //   fProducts = BlocRepository.getProductsByCategory(widget.dao, "Alcohol");
-    // }
-    //
-    // return FutureBuilder(
-    //     future: fProducts,
-    //     builder: (context, snapshot) {
-    //       if (snapshot.connectionState == ConnectionState.waiting) {
-    //         return const Center(
-    //           child: CircularProgressIndicator(),
-    //         );
-    //       }
-    //       List<Product> products = snapshot.data! as List<Product>;
-    //
-    //       return ListView.builder(
-    //         primary: false,
-    //         scrollDirection: Axis.vertical,
-    //         shrinkWrap: true,
-    //         itemCount: products == null ? 0 : products.length,
-    //         itemBuilder: (BuildContext ctx, int index) {
-    //           Product product = products[index];
-    //
-    //           return ProductItem(
-    //               serviceId: widget.service.id,
-    //               product: product,
-    //               dao: widget.dao,
-    //               tableNumber: _mTableNumber);
-    //         },
-    //       );
-    //     });
   }
-
 }
