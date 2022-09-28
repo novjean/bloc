@@ -31,7 +31,7 @@ class _BlocSlideItemState extends State<BlocSlideItem> {
       padding: EdgeInsets.only(top: 5.0, bottom: 5.0),
       child: Container(
         height: MediaQuery.of(context).size.height / 2.9,
-        width: MediaQuery.of(context).size.width / 1.2,
+        width: MediaQuery.of(context).size.width,
         child: Card(
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
@@ -51,7 +51,6 @@ class _BlocSlideItemState extends State<BlocSlideItem> {
                       child: GridTile(
                         child: GestureDetector(
                           onTap: () {
-                            // return _loadBloc(context, widget.bloc.id);
                             Navigator.of(context).push(
                               MaterialPageRoute(
                                   builder: (ctx) => BlocDetailScreen(dao: widget.dao, bloc: widget.bloc)),

@@ -28,7 +28,7 @@ class HomeScreen extends StatelessWidget {
       },
       child: Scaffold(
         body: Padding(
-          padding: const EdgeInsets.fromLTRB(10.0, 0, 10.0, 0),
+          padding: const EdgeInsets.fromLTRB(0.0, 0, 0.0, 0),
           child: ListView(
             children: <Widget>[
               // buildSearchBar(context),
@@ -39,7 +39,7 @@ class HomeScreen extends StatelessWidget {
               // SizedBox(height: 10.0),
               // buildCategoryRow('Category', context),
               SizedBox(height: 20.0),
-              buildCategoryRow('Superstars', context),
+              buildSuperstarsTitleRow('Superstars', context),
               SizedBox(height: 10.0),
               buildSuperstarsList(context),
               SizedBox(height: 30.0),
@@ -66,7 +66,7 @@ class HomeScreen extends StatelessWidget {
           DocumentSnapshot document = snapshot.data!.docs[i];
           Map<String, dynamic> map = document.data()! as Map<String, dynamic>;
           final Bloc bloc = Bloc.fromMap(map);
-          BlocRepository.insertBloc(dao, bloc);
+          // BlocRepository.insertBloc(dao, bloc);
 
           if (bloc.isActive) {
             blocs.add(bloc);
@@ -114,36 +114,40 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  buildCategoryRow(String category, BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: <Widget>[
-        Text(
-          "$category",
-          style: TextStyle(
-            fontSize: 20.0,
-            fontWeight: FontWeight.w800,
-          ),
-        ),
-        FlatButton(
-          child: Text(
-            "See all",
+  buildSuperstarsTitleRow(String category, BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 10, right: 10),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          Text(
+            "$category",
             style: TextStyle(
-              color: Theme.of(context).accentColor,
+              fontSize: 20.0,
+              fontWeight: FontWeight.w800,
             ),
           ),
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (BuildContext context) {
-                  return Categories();
-                },
-              ),
-            );
-          },
-        ),
-      ],
+          // FlatButton(
+          //   child: Text(
+          //     "See all",
+          //     style: TextStyle(
+          //       color: Theme.of(context).accentColor,
+          //     ),
+          //   ),
+          //   onPressed: () {
+          //     Navigator.push(
+          //       context,
+          //       MaterialPageRoute(
+          //         builder: (BuildContext context) {
+                      //todo: need to navigate to show list of users or friends
+          //           return Categories();
+          //         },
+          //       ),
+          //     );
+          //   },
+          // ),
+        ],
+      ),
     );
   }
 
@@ -206,6 +210,7 @@ class HomeScreen extends StatelessWidget {
 
   _displaySuperstarsList(BuildContext context, List<User> users) {
     return Container(
+      padding: const EdgeInsets.only(left: 10, right: 10),
       height: 50.0,
       child: ListView.builder(
         primary: false,
