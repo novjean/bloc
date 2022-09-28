@@ -12,6 +12,7 @@ class Bloc {
   final String imageUrl;
   final String ownerId;
   final String createdAt;
+  final bool isActive;
 
 //<editor-fold desc="Data Methods">
 
@@ -25,6 +26,7 @@ class Bloc {
     required this.imageUrl,
     required this.ownerId,
     required this.createdAt,
+    required this.isActive,
   });
 
   @override
@@ -40,7 +42,8 @@ class Bloc {
           pinCode == other.pinCode &&
           imageUrl == other.imageUrl &&
           ownerId == other.ownerId &&
-          createdAt == other.createdAt);
+          createdAt == other.createdAt &&
+          isActive == other.isActive);
 
   @override
   int get hashCode =>
@@ -52,7 +55,8 @@ class Bloc {
       pinCode.hashCode ^
       imageUrl.hashCode ^
       ownerId.hashCode ^
-      createdAt.hashCode;
+      createdAt.hashCode ^
+      isActive.hashCode;
 
   @override
   String toString() {
@@ -66,6 +70,7 @@ class Bloc {
         ' imageUrl: $imageUrl,' +
         ' ownerId: $ownerId,' +
         ' createdAt: $createdAt,' +
+        ' isActive: $isActive,' +
         '}';
   }
 
@@ -79,6 +84,7 @@ class Bloc {
     String? imageUrl,
     String? ownerId,
     String? createdAt,
+    bool? isActive,
   }) {
     return Bloc(
       id: id ?? this.id,
@@ -90,6 +96,7 @@ class Bloc {
       imageUrl: imageUrl ?? this.imageUrl,
       ownerId: ownerId ?? this.ownerId,
       createdAt: createdAt ?? this.createdAt,
+      isActive: isActive ?? this.isActive,
     );
   }
 
@@ -104,6 +111,7 @@ class Bloc {
       'imageUrl': this.imageUrl,
       'ownerId': this.ownerId,
       'createdAt': this.createdAt,
+      'isActive': this.isActive,
     };
   }
 
@@ -118,6 +126,7 @@ class Bloc {
       imageUrl: map['imageUrl'] as String,
       ownerId: map['ownerId'] as String,
       createdAt: map['createdAt'] as String,
+      isActive: map['isActive'] as bool,
     );
   }
 

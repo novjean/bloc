@@ -41,14 +41,11 @@ class ManagerMainScreen extends StatelessWidget {
   }
 
   buildBlocServices(BuildContext context) {
-    final Stream<QuerySnapshot> _servicesStream =
-        FirestoreHelper.getServicesSnapshot();
-
     return Container(
       height: MediaQuery.of(context).size.height,
       padding: const EdgeInsets.fromLTRB(10.0, 0, 10.0, 0),
       child: StreamBuilder<QuerySnapshot>(
-        stream: _servicesStream,
+        stream: FirestoreHelper.getAllBlocServices(),
         builder: (ctx, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(

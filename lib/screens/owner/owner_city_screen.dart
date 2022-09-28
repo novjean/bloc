@@ -1,4 +1,5 @@
 import 'package:bloc/db/bloc_repository.dart';
+import 'package:bloc/helpers/firestore_helper.dart';
 import 'package:bloc/screens/forms/new_bloc_screen.dart';
 import 'package:bloc/widgets/bloc_item.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -20,7 +21,7 @@ class OwnerCityScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(city.name),
+        title: Text('Owner | ' + city.name),
       ),
       // drawer: AppDrawer(),
       floatingActionButton: FloatingActionButton(
@@ -58,14 +59,14 @@ class OwnerCityScreen extends StatelessWidget {
   buildBlocs(BuildContext context, BlocDao dao) {
     final Stream<QuerySnapshot> _blocsStream = FirebaseFirestore.instance
         .collection('blocs')
-        .where('city', isEqualTo: city.id)
+        .where('cityId', isEqualTo: city.id)
         .snapshots();
 
     return Container(
       height: MediaQuery.of(context).size.height,
       padding: EdgeInsets.all(5),
       child: StreamBuilder<QuerySnapshot>(
-        stream: _blocsStream,
+        stream: FirestoreHelper.getBlocsByCityId(city.id),
         builder: (ctx, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(

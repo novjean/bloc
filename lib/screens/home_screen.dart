@@ -60,18 +60,37 @@ class HomeScreen extends StatelessWidget {
           );
         }
 
-        int count = snapshot.data!.docs.length;
-        List blocs = List.empty(growable: true);
+        List<Bloc> blocs = [];
 
-        for (DocumentSnapshot document in snapshot.data!.docs) {
-          Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-          final Bloc bloc = Bloc.fromMap(data);
+        for(int i=0; i<snapshot.data!.docs.length; i++){
+          DocumentSnapshot document = snapshot.data!.docs[i];
+          Map<String, dynamic> map = document.data()! as Map<String, dynamic>;
+          final Bloc bloc = Bloc.fromMap(map);
           BlocRepository.insertBloc(dao, bloc);
 
-          blocs.add(bloc);
-          if (--count == 0) return buildBlocList(context, blocs);
+          if(bloc.isActive){
+            blocs.add(bloc);
+          }
+
+          if(i==snapshot.data!.docs.length-1){
+            return buildBlocList(context, blocs);
+          }
         }
         return Text('Loading blocs...');
+
+        // int count = snapshot.data!.docs.length;
+
+        // for (DocumentSnapshot document in snapshot.data!.docs) {
+        //   Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+        //   final Bloc bloc = Bloc.fromMap(data);
+        //   BlocRepository.insertBloc(dao, bloc);
+        //
+        //   if(bloc.isActive){
+        //     blocs.add(bloc);
+        //   }
+        //
+        //   if (--count == 0) return buildBlocList(context, blocs);
+        // }
       },
     );
   }

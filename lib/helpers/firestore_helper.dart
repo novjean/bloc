@@ -49,21 +49,21 @@ class FirestoreHelper {
     return FirebaseFirestore.instance.collection(BLOCS).snapshots();
   }
 
-  static getBloc(String blocId) {
+  static getBlocsByCityId(String cityId) {
     return FirebaseFirestore.instance
-        .collection(SERVICES)
-        .where('blocId', isEqualTo: blocId)
+        .collection(BLOCS)
+        .where('cityId', isEqualTo: cityId)
         .snapshots();
   }
 
-  static void updateBloc(String blocId, File image) async {
+  static void updateBloc(String id, File image) async {
     try {
       final url = await FirestorageHelper.uploadFile(
-          FirestorageHelper.BLOCS, blocId, image);
+          FirestorageHelper.BLOCS, id, image);
 
       await FirebaseFirestore.instance
           .collection(BLOCS)
-          .doc(blocId)
+          .doc(id)
           .update({'imageUrl': url})
           .then((value) => print("Bloc image updated."))
           .catchError((error) => print("Failed to update bloc image: $error"));
@@ -454,7 +454,14 @@ class FirestoreHelper {
   }
 
   /** Services **/
-  static Stream<QuerySnapshot> getServicesSnapshot() {
+  static getBlocServices(String blocId) {
+    return FirebaseFirestore.instance
+        .collection(SERVICES)
+        .where('blocId', isEqualTo: blocId)
+        .snapshots();
+  }
+
+  static Stream<QuerySnapshot> getAllBlocServices() {
     final user = FirebaseAuth.instance.currentUser;
 
     return FirebaseFirestore.instance

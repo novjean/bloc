@@ -60,7 +60,7 @@ class BlocDetailScreen extends StatelessWidget {
       height: MediaQuery.of(context).size.height,
       padding: const EdgeInsets.fromLTRB(10.0, 0, 10.0, 0),
       child: StreamBuilder<QuerySnapshot>(
-        stream: FirestoreHelper.getBloc(bloc.id),
+        stream: FirestoreHelper.getBlocServices(bloc.id),
         builder: (ctx, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(
