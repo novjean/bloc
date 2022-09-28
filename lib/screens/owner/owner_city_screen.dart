@@ -57,11 +57,6 @@ class OwnerCityScreen extends StatelessWidget {
   }
 
   buildBlocs(BuildContext context, BlocDao dao) {
-    final Stream<QuerySnapshot> _blocsStream = FirebaseFirestore.instance
-        .collection('blocs')
-        .where('cityId', isEqualTo: city.id)
-        .snapshots();
-
     return Container(
       height: MediaQuery.of(context).size.height,
       padding: EdgeInsets.all(5),

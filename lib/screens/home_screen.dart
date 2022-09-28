@@ -62,35 +62,21 @@ class HomeScreen extends StatelessWidget {
 
         List<Bloc> blocs = [];
 
-        for(int i=0; i<snapshot.data!.docs.length; i++){
+        for (int i = 0; i < snapshot.data!.docs.length; i++) {
           DocumentSnapshot document = snapshot.data!.docs[i];
           Map<String, dynamic> map = document.data()! as Map<String, dynamic>;
           final Bloc bloc = Bloc.fromMap(map);
           BlocRepository.insertBloc(dao, bloc);
 
-          if(bloc.isActive){
+          if (bloc.isActive) {
             blocs.add(bloc);
           }
 
-          if(i==snapshot.data!.docs.length-1){
+          if (i == snapshot.data!.docs.length - 1) {
             return buildBlocList(context, blocs);
           }
         }
         return Text('Loading blocs...');
-
-        // int count = snapshot.data!.docs.length;
-
-        // for (DocumentSnapshot document in snapshot.data!.docs) {
-        //   Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-        //   final Bloc bloc = Bloc.fromMap(data);
-        //   BlocRepository.insertBloc(dao, bloc);
-        //
-        //   if(bloc.isActive){
-        //     blocs.add(bloc);
-        //   }
-        //
-        //   if (--count == 0) return buildBlocList(context, blocs);
-        // }
       },
     );
   }
@@ -191,32 +177,29 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  buildSuperstarsList(BuildContext context){
+  buildSuperstarsList(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
       stream: FirestoreHelper.getUsers(Constants.MANAGER_LEVEL),
       builder: (ctx, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          print('loading superstars...');
+          print('loading users...');
           return SizedBox();
         }
-
-        // if (snapshot.data!.docs.length > 0) {
-        //   BlocRepository.clearCategories(widget.dao);
-        // }
 
         List<User> _users = [];
         for (int i = 0; i < snapshot.data!.docs.length; i++) {
           DocumentSnapshot document = snapshot.data!.docs[i];
           Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
           final User user = User.fromMap(data);
-          // BlocRepository.insertCategory(widget.dao, cat);
-          _users.add(user);
+          if (user.imageUrl.isNotEmpty) {
+            _users.add(user);
+          }
 
           if (i == snapshot.data!.docs.length - 1) {
             return _displaySuperstarsList(context, _users);
           }
         }
-        return Text('Loading categories...');
+        return Text('Loading users...');
       },
     );
   }
