@@ -5,7 +5,7 @@ class Bloc {
   @primaryKey
   final String id;
   final String name;
-  final String city;
+  final String cityId;
   final String addressLine1;
   final String addressLine2;
   final String pinCode;
@@ -15,10 +15,10 @@ class Bloc {
 
 //<editor-fold desc="Data Methods">
 
-  Bloc({
+  const Bloc({
     required this.id,
     required this.name,
-    required this.city,
+    required this.cityId,
     required this.addressLine1,
     required this.addressLine2,
     required this.pinCode,
@@ -34,7 +34,7 @@ class Bloc {
           runtimeType == other.runtimeType &&
           id == other.id &&
           name == other.name &&
-          city == other.city &&
+          cityId == other.cityId &&
           addressLine1 == other.addressLine1 &&
           addressLine2 == other.addressLine2 &&
           pinCode == other.pinCode &&
@@ -46,7 +46,7 @@ class Bloc {
   int get hashCode =>
       id.hashCode ^
       name.hashCode ^
-      city.hashCode ^
+      cityId.hashCode ^
       addressLine1.hashCode ^
       addressLine2.hashCode ^
       pinCode.hashCode ^
@@ -59,7 +59,7 @@ class Bloc {
     return 'Bloc{' +
         ' id: $id,' +
         ' name: $name,' +
-        ' cityId: $city,' +
+        ' cityId: $cityId,' +
         ' addressLine1: $addressLine1,' +
         ' addressLine2: $addressLine2,' +
         ' pinCode: $pinCode,' +
@@ -72,7 +72,7 @@ class Bloc {
   Bloc copyWith({
     String? id,
     String? name,
-    String? city,
+    String? cityId,
     String? addressLine1,
     String? addressLine2,
     String? pinCode,
@@ -83,7 +83,7 @@ class Bloc {
     return Bloc(
       id: id ?? this.id,
       name: name ?? this.name,
-      city: city ?? this.city,
+      cityId: cityId ?? this.cityId,
       addressLine1: addressLine1 ?? this.addressLine1,
       addressLine2: addressLine2 ?? this.addressLine2,
       pinCode: pinCode ?? this.pinCode,
@@ -95,9 +95,9 @@ class Bloc {
 
   Map<String, dynamic> toMap() {
     return {
-      'blocId': this.id,
+      'id': this.id,
       'name': this.name,
-      'city': this.city,
+      'cityId': this.cityId,
       'addressLine1': this.addressLine1,
       'addressLine2': this.addressLine2,
       'pinCode': this.pinCode,
@@ -109,9 +109,9 @@ class Bloc {
 
   factory Bloc.fromMap(Map<String, dynamic> map) {
     return Bloc(
-      id: map['blocId'] as String,
+      id: map['id'] as String,
       name: map['name'] as String,
-      city: map['city'] as String,
+      cityId: map['cityId'] as String,
       addressLine1: map['addressLine1'] as String,
       addressLine2: map['addressLine2'] as String,
       pinCode: map['pinCode'] as String,
