@@ -28,7 +28,7 @@ class _OrdersBilledScreenState extends State<OrdersBilledScreen> {
 
   @override
   void initState() {
-    FirestoreHelper.pullCartItemsByCompleteBilled(widget.serviceId, true, true)
+    FirestoreHelper.pullBilledCartItemsByBloc(widget.serviceId, true, true)
         .then((res) {
       print("Successfully retrieved cart items");
       List<CartItem> _cartItems = [];

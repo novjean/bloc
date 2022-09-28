@@ -133,7 +133,7 @@ class FirestoreHelper {
         .snapshots();
   }
 
-  static Future<QuerySnapshot<Object?>> pullCartItemsByCompleteBilled(
+  static Future<QuerySnapshot<Object?>> pullBilledCartItemsByBloc(
       String serviceId, bool isCompleted, bool isBilled) {
     return FirebaseFirestore.instance
         .collection(CART_ITEMS)
