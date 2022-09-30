@@ -49,8 +49,7 @@ class AppDrawer extends StatelessWidget {
             onTap: () {
               Navigator.of(context).push(
                 MaterialPageRoute(
-                  //todo: change hardcoded
-                    builder: (ctx) => OrderHistoryScreen(serviceId: 'UVU4XPqTYr3U0YhQzEhg')),
+                    builder: (ctx) => OrderHistoryScreen()),
               );
             },
           ),

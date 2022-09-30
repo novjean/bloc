@@ -172,8 +172,7 @@ class FirestoreHelper {
         .collection(CART_ITEMS)
         .where('userId', isEqualTo: userId)
         .where('isCompleted', isEqualTo: isCompleted)
-        .orderBy('createdAt',
-        descending: true) // createdAt could be used i guess
+        .orderBy('createdAt', descending: true) // createdAt could be used i guess
         .get();
   }
 
