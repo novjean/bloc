@@ -17,7 +17,8 @@ class UserPreferences {
       clearanceLevel: 0,
       phoneNumber: 0,
       name: '',
-      fcmToken: '', blocServiceId: '');
+      fcmToken: '',
+      blocServiceId: '');
 
   static Future init() async =>
       _preferences = await SharedPreferences.getInstance();
@@ -42,6 +43,7 @@ class UserPreferences {
         clearanceLevel: 0,
         phoneNumber: 0,
         name: '',
-        fcmToken: '', blocServiceId: ''));
+        fcmToken: '',
+        blocServiceId: ''));
   }
 }

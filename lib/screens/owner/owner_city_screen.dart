@@ -80,7 +80,7 @@ class OwnerCityScreen extends StatelessWidget {
                   document.data()! as Map<String, dynamic>;
 
               final Bloc bloc = Bloc.fromMap(data);
-              // BlocRepository.insertBloc(dao, bloc);
+              BlocRepository.insertBloc(dao, bloc);
 
               return BlocItem(bloc, dao, key: ValueKey(document.id));
             }).toList(),

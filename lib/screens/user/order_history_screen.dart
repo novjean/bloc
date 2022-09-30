@@ -22,21 +22,29 @@ class OrderHistoryScreen extends StatefulWidget {
 }
 
 class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
-  late List<CartItem?> cartItems;
-  late List<BlocOrder> orders;
-  bool _isLoading = true;
+  late List<CartItem?> billedCartItems;
+  late List<BlocOrder> billedOrders;
+
+  late List<CartItem?> completedCartItems;
+  late List<BlocOrder> completedOrders;
+
+  bool _isPastLoading = true;
+  bool _isOngoingLoading = true;
 
   @override
   void initState() {
-    FirestoreHelper.pullBilledCartItemsByBloc(widget.serviceId, true, true)
+    final user = UserPreferences.getUser();
+
+    FirestoreHelper.pullBilledCartItemsByUser(user.id, true, true)
         .then((res) {
-      print("Successfully retrieved cart items");
-      List<CartItem> _cartItems = [];
+      print("Successfully retrieved cart items by bloc");
+      List<CartItem> _billedCartItems = [];
+
       if (res.docs.length == 0) {
         setState(() {
-          cartItems = [];
-          orders = [];
-          _isLoading = false;
+          billedCartItems = [];
+          billedOrders = [];
+          _isPastLoading = false;
         });
       }
 
@@ -44,12 +52,13 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
         DocumentSnapshot document = res.docs[i];
         Map<String, dynamic> map = document.data()! as Map<String, dynamic>;
         final CartItem cartItem = CartItem.fromMap(map);
-        _cartItems.add(cartItem);
+        _billedCartItems.add(cartItem);
+
         if (i == res.docs.length - 1) {
           setState(() {
-            cartItems = _cartItems;
-            orders = CartItemUtils.extractOrdersByTime(_cartItems);
-            _isLoading = false;
+            billedCartItems = _billedCartItems;
+            billedOrders = CartItemUtils.extractOrdersByTime(_billedCartItems);
+            _isPastLoading = false;
           });
         }
       }
@@ -60,44 +69,92 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text('My Orders'),),
-      body:  _isLoading
-          ? CenterTextWidget(text: 'Loading orders...')
-          : ListView.builder(
-          itemCount: orders.length,
-          scrollDirection: Axis.vertical,
-          itemBuilder: (ctx, index) {
-            String title = 'Order ID: ' + orders[index].createdAt.toString();
-
-            String collapsed = '';
-            String expanded = '';
-
-            for(int i=0; i<orders[index].cartItems.length; i++) {
-              CartItem item = orders[index].cartItems[i];
-
-              if(i<2){
-                collapsed += item.productName + ' x ' + item.quantity.toString() + '\n';
-              }
-              expanded += item.productName + ' x ' + item.quantity.toString() + '\n';
-
-              if(i==orders[index].cartItems.length-1){
-                expanded += '\n\n' + 'Total : ' + orders[index].total.toString();
-              }
-            }
-
-            return OrderCard(title: title, collapsed: collapsed, expanded: expanded, imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/3/34/LaceUp-Invoicing-851_%C3%97_360.jpg');
-          })
+      body:  _buildBody(context)
     );
   }
 
   _buildBody(BuildContext context) {
     return Column(
       children: [
-        SizedBox(height: 2.0),
-        _pullUserCompletedCartItems(context),
         SizedBox(height: 5.0),
+        buildSectionTitleRow('Ongoing Orders', context),
+        SizedBox(height: 2.0),
+        _isOngoingLoading ? Text('Loading ongoing orders...') : _displayBilledOrders(context),
+        SizedBox(height: 2.0),
+        buildSectionTitleRow('Past Orders', context),
+        SizedBox(height: 2.0),
+        _isPastLoading ? Text('Loading past orders...') : _displayBilledOrders(context),
+        SizedBox(height: 2.0),
       ],
     );
   }
+
+  buildSectionTitleRow(String category, BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 25, right: 10),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          Text(
+            "$category",
+            style: TextStyle(
+              fontSize: 20.0,
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+          // FlatButton(
+          //   child: Text(
+          //     "See all",
+          //     style: TextStyle(
+          //       color: Theme.of(context).accentColor,
+          //     ),
+          //   ),
+          //   onPressed: () {
+          //     Navigator.push(
+          //       context,
+          //       MaterialPageRoute(
+          //         builder: (BuildContext context) {
+          //todo: need to navigate to show list of users or friends
+          //           return Categories();
+          //         },
+          //       ),
+          //     );
+          //   },
+          // ),
+        ],
+      ),
+    );
+  }
+
+  _displayBilledOrders(BuildContext context) {
+    return Expanded(
+      child: ListView.builder(
+          itemCount: billedOrders.length,
+          scrollDirection: Axis.vertical,
+          itemBuilder: (ctx, index) {
+            String title = 'Order ID: ' + billedOrders[index].createdAt.toString();
+
+            String collapsed = '';
+            String expanded = '';
+
+            for(int i=0; i<billedOrders[index].cartItems.length; i++) {
+              CartItem item = billedOrders[index].cartItems[i];
+
+              if(i<2){
+                collapsed += item.productName + ' x ' + item.quantity.toString() + '\n';
+              }
+              expanded += item.productName + ' x ' + item.quantity.toString() + '\n';
+
+              if(i==billedOrders[index].cartItems.length-1){
+                expanded += '\n\n' + 'Total : ' + billedOrders[index].total.toString();
+              }
+            }
+
+            return OrderCard(title: title, collapsed: collapsed, expanded: expanded, imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/3/34/LaceUp-Invoicing-851_%C3%97_360.jpg');
+          }),
+    );
+  }
+
 
   _pullUserCompletedCartItems(BuildContext context){
     final User user = UserPreferences.getUser();

@@ -24,9 +24,9 @@ class BlocRepository {
   }
 
   /** Bloc **/
-  // static void insertBloc(BlocDao dao, Bloc bloc) async {
-  //   await dao.insertBloc(bloc);
-  // }
+  static void insertBloc(BlocDao dao, Bloc bloc) async {
+    await dao.insertBloc(bloc);
+  }
 
   /** Service **/
   static void insertBlocService(BlocDao dao, BlocService service) async {

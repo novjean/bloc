@@ -29,7 +29,6 @@ class Messages extends StatelessWidget {
             Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
             final Chat chat = Chat.fromJson(data);
             chats.add(chat);
-            // BlocRepository.insertBloc(dao, bloc);
 
             if (i == chatSnapshot.data!.docs.length - 1) {
               return _displayChats(context, chats);

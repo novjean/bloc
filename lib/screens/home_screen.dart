@@ -9,7 +9,6 @@ import '../db/entity/bloc.dart';
 import '../helpers/firestore_helper.dart';
 import '../widgets/search_card.dart';
 import '../widgets/bloc_slide_item.dart';
-import 'experimental/categories.dart';
 import 'experimental/trending.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -66,7 +65,7 @@ class HomeScreen extends StatelessWidget {
           DocumentSnapshot document = snapshot.data!.docs[i];
           Map<String, dynamic> map = document.data()! as Map<String, dynamic>;
           final Bloc bloc = Bloc.fromMap(map);
-          // BlocRepository.insertBloc(dao, bloc);
+          BlocRepository.insertBloc(dao, bloc);
 
           if (bloc.isActive) {
             blocs.add(bloc);

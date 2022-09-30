@@ -97,7 +97,7 @@ class FirestoreHelper {
       'timestamp': timestamp,
       'isCompleted': false,
       'isCommunity': cart.isCommunity,
-      'isBilled' : cart.isBilled,
+      'isBilled': cart.isBilled,
     });
   }
 
@@ -129,21 +129,53 @@ class FirestoreHelper {
         .where('serviceId', isEqualTo: serviceId)
         .where('isCompleted', isEqualTo: isCompleted)
         .where('isBilled', isEqualTo: isBilled)
-        .orderBy('createdAt', descending: true) // createdAt could be used i guess
+        .orderBy('createdAt',
+            descending: true) // createdAt could be used i guess
         .snapshots();
   }
 
   static Future<QuerySnapshot<Object?>> pullBilledCartItemsByBloc(
-      String serviceId, bool isCompleted, bool isBilled) {
+    String serviceId,
+    bool isCompleted,
+    bool isBilled,
+  ) {
     return FirebaseFirestore.instance
         .collection(CART_ITEMS)
         .where('serviceId', isEqualTo: serviceId)
         .where('isCompleted', isEqualTo: isCompleted)
         .where('isBilled', isEqualTo: isBilled)
-        .orderBy('createdAt', descending: true) // createdAt could be used i guess
+        .orderBy('createdAt',
+            descending: true) // createdAt could be used i guess
         .get();
   }
 
+  static Future<QuerySnapshot<Object?>> pullBilledCartItemsByUser(
+    String userId,
+    bool isCompleted,
+    bool isBilled,
+  ) {
+    return FirebaseFirestore.instance
+        .collection(CART_ITEMS)
+        .where('userId', isEqualTo: userId)
+        .where('isCompleted', isEqualTo: isCompleted)
+        .where('isBilled', isEqualTo: isBilled)
+        .orderBy('createdAt',
+            descending: true) // createdAt could be used i guess
+        .get();
+  }
+
+  static Future<QuerySnapshot<Object?>> pullCompletedCartItemsByUser(
+      String userId,
+      bool isCompleted,
+      ) {
+    return FirebaseFirestore.instance
+        .collection(CART_ITEMS)
+        .where('userId', isEqualTo: userId)
+        .where('isCompleted', isEqualTo: isCompleted)
+        .orderBy('createdAt',
+        descending: true) // createdAt could be used i guess
+        .get();
+  }
 
   static Stream<QuerySnapshot<Object?>> getUserCartItems(
       String userId, bool isCompleted) {
@@ -180,13 +212,13 @@ class FirestoreHelper {
           .collection(CART_ITEMS)
           .doc(cartId)
           .update({
-        'billId': billId,
-        'isBilled': true,
-      })
+            'billId': billId,
+            'isBilled': true,
+          })
           .then((value) =>
-          print("cart item " + cartId + " is part of bill id : " + billId))
+              print("cart item " + cartId + " is part of bill id : " + billId))
           .catchError((error) =>
-          print("Failed to update bill id for cart item : $error"));
+              print("Failed to update bill id for cart item : $error"));
     } on PlatformException catch (err) {
       logger.e(err.message);
     } catch (err) {
