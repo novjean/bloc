@@ -108,7 +108,7 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
         _isOngoingLoading
             ? Text('Loading ongoing orders...')
             : completedOrders.isNotEmpty
-                ? _displayOngoingOrders(context)
+                ? _displayOngoingOrder(context)
                 : Text('No current orders!'),
         SizedBox(height: 2.0),
         buildSectionTitleRow('Past Orders', context),
@@ -141,45 +141,48 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
     );
   }
 
-  _displayOngoingOrders(BuildContext context) {
-    return Expanded(
-      child: ListView.builder(
-          itemCount: completedOrders.length,
-          scrollDirection: Axis.vertical,
-          itemBuilder: (ctx, index) {
-            String title =
-                'Order ID: ' + completedOrders[index].createdAt.toString();
+  _displayOngoingOrder(BuildContext context) {
+    BlocOrder order = completedOrders[0];
 
-            String collapsed = '';
-            String expanded = '';
+    String title =
+        'Order ID: ' + completedOrders[0].createdAt.toString();
 
-            for (int i = 0; i < completedOrders[index].cartItems.length; i++) {
-              CartItem item = completedOrders[index].cartItems[i];
+    String collapsed = '';
+    String expanded = '';
 
-              if (i < 2) {
-                collapsed +=
-                    item.productName + ' x ' + item.quantity.toString() + '\n';
-              }
-              expanded +=
-                  item.productName + ' x ' + item.quantity.toString() + '\n';
+    for (int i = 0; i < order.cartItems.length; i++) {
+      CartItem item = order.cartItems[i];
 
-              if (i == completedOrders[index].cartItems.length - 1) {
-                expanded += '\n\n' +
-                    'Total : ' +
-                    completedOrders[index].total.toString();
-              }
-            }
+      if (i < 2) {
+        collapsed +=
+            item.productName + ' x ' + item.quantity.toString() + '\n';
+      }
+      expanded +=
+          item.productName + ' x ' + item.quantity.toString() + '\n';
 
-            return OrderCard(
-                title: title,
-                collapsed: collapsed,
-                expanded: expanded,
-                imageUrl:
-                    'https://upload.wikimedia.org/wikipedia/commons/3/34/LaceUp-Invoicing-851_%C3%97_360.jpg');
-          }),
-    );
+      if (i == order.cartItems.length - 1) {
+        expanded += '\n\nTotal : ' + order.total.toString();
+      }
+    }
+
+    return OrderCard(
+        title: title,
+        collapsed: collapsed,
+        expanded: expanded,
+        imageUrl:
+        'https://upload.wikimedia.org/wikipedia/commons/3/34/LaceUp-Invoicing-851_%C3%97_360.jpg');
+
+
+    // return Expanded(
+    //   child: ListView.builder(
+    //       itemCount: completedOrders.length,
+    //       scrollDirection: Axis.vertical,
+    //       itemBuilder: (ctx, index) {
+    //
+    //       }),
+    // );
   }
-
+  
   _displayBilledOrders(BuildContext context) {
     return Expanded(
       child: ListView.builder(
