@@ -2,6 +2,7 @@ import 'package:bloc/helpers/firestore_helper.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
+import '../../db/entity/bill.dart';
 import '../../db/entity/bloc_order.dart';
 import '../../db/entity/cart_item.dart';
 import '../../db/shared_preferences/user_preferences.dart';
@@ -18,6 +19,8 @@ class OrderHistoryScreen extends StatefulWidget {
 class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
   late List<CartItem?> billedCartItems;
   late List<BlocOrder> billedOrders;
+
+  late List<Bill> billedBills;
 
   late List<CartItem?> completedCartItems;
   late List<BlocOrder> completedOrders;
@@ -61,8 +64,10 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
           setState(() {
             if (_billedCartItems.isNotEmpty) {
               billedCartItems = _billedCartItems;
-              billedOrders =
-                  CartItemUtils.extractOrdersByTime(_billedCartItems);
+              billedOrders = CartItemUtils.extractOrdersByTime(_billedCartItems);
+
+              billedBills = CartItemUtils.extractBills(_billedCartItems);
+
             } else {
               billedCartItems = [];
               billedOrders = [];
@@ -70,8 +75,8 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
 
             if (_completedCartItems.isNotEmpty) {
               completedCartItems = _completedCartItems;
-              completedOrders =
-                  CartItemUtils.extractOrdersByTime(_completedCartItems);
+              completedOrders = CartItemUtils.createOngoingOrdersBill(_completedCartItems);
+              // completedOrders = CartItemUtils.extractOrdersByTime(_completedCartItems);
             } else {
               completedCartItems = [];
               completedOrders = [];

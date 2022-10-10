@@ -194,7 +194,7 @@ class _GenerateBillButtonState extends State<GenerateBillButton> {
           _cartItems.addAll(order.cartItems);
         }
 
-        //generate bill id
+        //todo: should consider changing this to time
         String billId = StringUtils.getRandomString(20);
 
         for(int i=0;i<_cartItems.length;i++) {
