@@ -1,5 +1,7 @@
 import 'package:bloc/db/entity/user.dart';
 import 'package:bloc/utils/constants.dart';
+import 'package:bloc/widgets/profile/numbers_widget.dart';
+import 'package:bloc/widgets/ui/button_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -33,7 +35,8 @@ class HomeScreen extends StatelessWidget {
               // buildSearchBar(context),
               SizedBox(height: 20.0),
               buildBlocRow(context),
-              // SizedBox(height: 20.0),
+              SizedBox(height: 20.0),
+              buildServicesRow(context),
               // buildRestaurantRow('Trending Restaurants', context),
               // SizedBox(height: 10.0),
               // buildCategoryRow('Category', context),
@@ -77,6 +80,17 @@ class HomeScreen extends StatelessWidget {
         }
         return Text('Loading blocs...');
       },
+    );
+  }
+
+  buildServicesRow(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        // NumbersWidget(),
+        ButtonWidget(text: 'Book A Table', onClicked: () {
+        }),
+      ],
     );
   }
 
