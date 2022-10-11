@@ -1,4 +1,5 @@
 import 'package:bloc/db/entity/user.dart';
+import 'package:bloc/screens/user/book_table_screen.dart';
 import 'package:bloc/utils/constants.dart';
 import 'package:bloc/widgets/profile/numbers_widget.dart';
 import 'package:bloc/widgets/ui/button_widget.dart';
@@ -15,6 +16,7 @@ import 'experimental/trending.dart';
 
 class HomeScreen extends StatelessWidget {
   BlocDao dao;
+  late List<Bloc> mBlocs;
 
   HomeScreen({key, required this.dao}) : super(key: key);
 
@@ -63,6 +65,7 @@ class HomeScreen extends StatelessWidget {
         }
 
         List<Bloc> blocs = [];
+        mBlocs = [];
 
         for (int i = 0; i < snapshot.data!.docs.length; i++) {
           DocumentSnapshot document = snapshot.data!.docs[i];
@@ -75,6 +78,7 @@ class HomeScreen extends StatelessWidget {
           }
 
           if (i == snapshot.data!.docs.length - 1) {
+            mBlocs = blocs;
             return buildBlocList(context, blocs);
           }
         }
@@ -88,7 +92,10 @@ class HomeScreen extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         // NumbersWidget(),
-        ButtonWidget(text: 'Book A Table', onClicked: () {
+        ButtonWidget(text: 'Book A Table', onClicked: () async {
+          await Navigator.of(context).push(
+            MaterialPageRoute(builder: (context) => BookTableScreen(blocs: mBlocs,)),
+          );
         }),
       ],
     );
