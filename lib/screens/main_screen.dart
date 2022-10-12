@@ -122,6 +122,7 @@ class _MainScreenState extends State<MainScreen> {
         );
       }
     });
+
     FirebaseMessaging.onMessageOpenedApp.listen((message) {
       print('A new onMessageOpenedApp event was published!');
       Navigator.of(context).push(

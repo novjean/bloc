@@ -9,10 +9,9 @@ import '../../screens/manager/inventory/edit_product_screen.dart';
 
 class ManageProductItem extends StatelessWidget {
   final Product product;
-  final BlocDao dao;
   final String serviceId;
 
-  ManageProductItem({required this.serviceId, required this.product, required this.dao});
+  ManageProductItem({required this.serviceId, required this.product});
 
   @override
   Widget build(BuildContext context) {
@@ -38,14 +37,15 @@ class ManageProductItem extends StatelessWidget {
                   width: 100,
                   decoration: BoxDecoration(
                     image: DecorationImage(
-                        image: NetworkImage(product.imageUrl), fit: BoxFit.cover
-                      // AssetImage(food['image']),
+                      image: NetworkImage(product.imageUrl),
+                      fit: BoxFit.cover,
                     ),
                   ),
                 ),
                 Expanded(
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    padding: const EdgeInsets.only(
+                        left: 9, right: 0, top: 0, bottom: 0),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -53,11 +53,34 @@ class ManageProductItem extends StatelessWidget {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
-                            Text(product.name),
-                            // Icon(Icons.delete_outline)
+                            Text(product.name,
+                                style: TextStyle(
+                                    fontSize: 17, fontWeight: FontWeight.bold)),
+                            Text('\u20B9 ${product.price.toStringAsFixed(2)}',
+                                style: TextStyle(
+                                    fontSize: 18, fontWeight: FontWeight.bold)),
                           ],
                         ),
-                        Text('\u20B9 ${product.price.toStringAsFixed(2)}'),
+                        SizedBox(height: 5),
+
+                        Row(
+                          children: [
+                            Text(
+                                '\u20B9 ${product.priceLowest.toStringAsFixed(2)}',
+                                style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.green)),
+                            Text(' | '),
+                            Text(
+                                '\u20B9 ${product.priceHighest.toStringAsFixed(2)}',
+                                style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.redAccent)),
+                          ],
+                        ),
+
                         Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: <Widget>[
@@ -71,13 +94,16 @@ class ManageProductItem extends StatelessWidget {
                               text: 'Edit',
                               onClicked: () {
                                 Navigator.of(context).push(
-                                  MaterialPageRoute(builder: (ctx) => EditProductScreen(product: product)),
+                                  MaterialPageRoute(
+                                      builder: (ctx) =>
+                                          EditProductScreen(product: product)),
                                 );
-                                print(product.name + ' is clicked to be modified.');
+                                print(product.name +
+                                    ' is clicked to be modified.');
                               },
                             ),
                             IconButton(
-                              icon: Icon(Icons.local_drink_rounded),
+                              icon: Icon(Icons.whatshot),
                               color: primaryColor,
                               onPressed: () {
                                 print(product.name + ' is clicked for offer.');

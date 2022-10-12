@@ -68,6 +68,35 @@ class _ManageProductsScreenState extends State<ManageProductsScreen> {
     );
   }
 
+  _displayOptions(BuildContext context) {
+    List<String> _options = ['Alcohol', 'Food'];
+    double containerHeight = MediaQuery.of(context).size.height / 20;
+
+    return SizedBox(
+      key: UniqueKey(),
+      // this height has to match with category item container height
+      height: containerHeight,
+      child: ListView.builder(
+          itemCount: _options.length,
+          scrollDirection: Axis.horizontal,
+          itemBuilder: (ctx, index) {
+            return GestureDetector(
+                child: SizedListViewBlock(
+                  title: _options[index],
+                  height: containerHeight,
+                  width: MediaQuery.of(context).size.width / 2,
+                ),
+                onTap: () {
+                  setState(() {
+                    // _sCategory = categories[index];
+                    _selectedType = _options[index];
+                    print(_selectedType + ' products display option is selected.');
+                  });
+                });
+          }),
+    );
+  }
+
   _buildProducts(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
         stream: FirestoreHelper.getProductsByType(widget.serviceId, _selectedType),
@@ -108,7 +137,6 @@ class _ManageProductsScreenState extends State<ManageProductsScreen> {
                 child: ManageProductItem(
                   serviceId: widget.serviceId,
                   product: _products[index],
-                  dao: widget.dao,
                 ),
                 onTap: () {
                   Product _sProduct = _products[index];
@@ -118,32 +146,4 @@ class _ManageProductsScreenState extends State<ManageProductsScreen> {
     );
   }
 
-  _displayOptions(BuildContext context) {
-    List<String> _options = ['Alcohol', 'Food'];
-    double containerHeight = MediaQuery.of(context).size.height / 20;
-
-    return SizedBox(
-      key: UniqueKey(),
-      // this height has to match with category item container height
-      height: containerHeight,
-      child: ListView.builder(
-          itemCount: _options.length,
-          scrollDirection: Axis.horizontal,
-          itemBuilder: (ctx, index) {
-            return GestureDetector(
-                child: SizedListViewBlock(
-                  title: _options[index],
-                  height: containerHeight,
-                  width: MediaQuery.of(context).size.width / 2,
-                ),
-                onTap: () {
-                  setState(() {
-                    // _sCategory = categories[index];
-                    _selectedType = _options[index];
-                    print(_selectedType + ' products display option is selected.');
-                  });
-                });
-          }),
-    );
-  }
 }
