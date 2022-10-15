@@ -67,7 +67,7 @@ class LoginScreen extends StatelessWidget {
                     id: user.uid,
                     name: 'Superstar',
                     clearanceLevel: 1,
-                    phoneNumber: StringUtils.getNumberOnly(user.phoneNumber!),
+                    phoneNumber: StringUtils.getInt(user.phoneNumber!),
                     fcmToken: '',
                     email: '',
                     imageUrl: '',

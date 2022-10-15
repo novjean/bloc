@@ -1,3 +1,4 @@
+import 'package:bloc/screens/manager/inventory/add_product_offer_screen.dart';
 import 'package:bloc/widgets/ui/button_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -107,6 +108,10 @@ class ManageProductItem extends StatelessWidget {
                               color: primaryColor,
                               onPressed: () {
                                 print(product.name + ' is clicked for offer.');
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                      builder: (ctx) => AddProductOfferScreen(product: product)),
+                                );
                               },
                             ),
                           ],

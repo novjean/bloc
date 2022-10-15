@@ -3,22 +3,30 @@ class Offer {
   final String blocId;
   final String productId;
   final String productName;
-  final bool isCommunity;
-  final double discountPercent;
-  final double newPrice;
+  final String description;
+  final bool isPrivateOffer;
+  final bool isCommunityOffer;
+  final double offerPercent;
+  final double offerPricePrivate;
+  final double offerPriceCommunity;
+  bool isActive;
   final int creationTime;
   final int endTime;
 
 //<editor-fold desc="Data Methods">
 
-  const Offer({
+  Offer({
     required this.id,
     required this.blocId,
     required this.productId,
     required this.productName,
-    required this.isCommunity,
-    required this.discountPercent,
-    required this.newPrice,
+    required this.description,
+    required this.isPrivateOffer,
+    required this.isCommunityOffer,
+    required this.offerPercent,
+    required this.offerPricePrivate,
+    required this.offerPriceCommunity,
+    required this.isActive,
     required this.creationTime,
     required this.endTime,
   });
@@ -32,9 +40,13 @@ class Offer {
           blocId == other.blocId &&
           productId == other.productId &&
           productName == other.productName &&
-          isCommunity == other.isCommunity &&
-          discountPercent == other.discountPercent &&
-          newPrice == other.newPrice &&
+          description == other.description &&
+          isPrivateOffer == other.isPrivateOffer &&
+          isCommunityOffer == other.isCommunityOffer &&
+          offerPercent == other.offerPercent &&
+          offerPricePrivate == other.offerPricePrivate &&
+          offerPriceCommunity == other.offerPriceCommunity &&
+          isActive == other.isActive &&
           creationTime == other.creationTime &&
           endTime == other.endTime);
 
@@ -44,9 +56,13 @@ class Offer {
       blocId.hashCode ^
       productId.hashCode ^
       productName.hashCode ^
-      isCommunity.hashCode ^
-      discountPercent.hashCode ^
-      newPrice.hashCode ^
+      description.hashCode ^
+      isPrivateOffer.hashCode ^
+      isCommunityOffer.hashCode ^
+      offerPercent.hashCode ^
+      offerPricePrivate.hashCode ^
+      offerPriceCommunity.hashCode ^
+      isActive.hashCode ^
       creationTime.hashCode ^
       endTime.hashCode;
 
@@ -57,9 +73,13 @@ class Offer {
         ' blocId: $blocId,' +
         ' productId: $productId,' +
         ' productName: $productName,' +
-        ' isCommunity: $isCommunity,' +
-        ' discountPercent: $discountPercent,' +
-        ' newPrice: $newPrice,' +
+        ' description: $description,' +
+        ' isPrivateOffer: $isPrivateOffer,' +
+        ' isCommunityOffer: $isCommunityOffer,' +
+        ' offerPercent: $offerPercent,' +
+        ' offerPricePrivate: $offerPricePrivate,' +
+        ' offerPriceCommunity: $offerPriceCommunity,' +
+        ' isActive: $isActive,' +
         ' creationTime: $creationTime,' +
         ' endTime: $endTime,' +
         '}';
@@ -70,9 +90,13 @@ class Offer {
     String? blocId,
     String? productId,
     String? productName,
-    bool? isCommunity,
-    double? discountPercent,
-    double? newPrice,
+    String? description,
+    bool? isPrivateOffer,
+    bool? isCommunityOffer,
+    double? offerPercent,
+    double? offerPricePrivate,
+    double? offerPriceCommunity,
+    bool? isActive,
     int? creationTime,
     int? endTime,
   }) {
@@ -81,9 +105,13 @@ class Offer {
       blocId: blocId ?? this.blocId,
       productId: productId ?? this.productId,
       productName: productName ?? this.productName,
-      isCommunity: isCommunity ?? this.isCommunity,
-      discountPercent: discountPercent ?? this.discountPercent,
-      newPrice: newPrice ?? this.newPrice,
+      description: description ?? this.description,
+      isPrivateOffer: isPrivateOffer ?? this.isPrivateOffer,
+      isCommunityOffer: isCommunityOffer ?? this.isCommunityOffer,
+      offerPercent: offerPercent ?? this.offerPercent,
+      offerPricePrivate: offerPricePrivate ?? this.offerPricePrivate,
+      offerPriceCommunity: offerPriceCommunity ?? this.offerPriceCommunity,
+      isActive: isActive ?? this.isActive,
       creationTime: creationTime ?? this.creationTime,
       endTime: endTime ?? this.endTime,
     );
@@ -95,9 +123,13 @@ class Offer {
       'blocId': this.blocId,
       'productId': this.productId,
       'productName': this.productName,
-      'isCommunity': this.isCommunity,
-      'discountPercent': this.discountPercent,
-      'newPrice': this.newPrice,
+      'description': this.description,
+      'isPrivateOffer': this.isPrivateOffer,
+      'isCommunityOffer': this.isCommunityOffer,
+      'offerPercent': this.offerPercent,
+      'offerPricePrivate': this.offerPricePrivate,
+      'offerPriceCommunity': this.offerPriceCommunity,
+      'isActive': this.isActive,
       'creationTime': this.creationTime,
       'endTime': this.endTime,
     };
@@ -109,9 +141,13 @@ class Offer {
       blocId: map['blocId'] as String,
       productId: map['productId'] as String,
       productName: map['productName'] as String,
-      isCommunity: map['isCommunity'] as bool,
-      discountPercent: map['discountPercent'] as double,
-      newPrice: map['newPrice'] as double,
+      description: map['description'] as String,
+      isPrivateOffer: map['isPrivateOffer'] as bool,
+      isCommunityOffer: map['isCommunityOffer'] as bool,
+      offerPercent: map['offerPercent'] as double,
+      offerPricePrivate: map['offerPricePrivate'] as double,
+      offerPriceCommunity: map['offerPriceCommunity'] as double,
+      isActive: map['isActive'] as bool,
       creationTime: map['creationTime'] as int,
       endTime: map['endTime'] as int,
     );

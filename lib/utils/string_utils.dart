@@ -9,9 +9,15 @@ class StringUtils {
       String.fromCharCodes(Iterable.generate(
           length, (_) => _chars.codeUnitAt(_rnd.nextInt(_chars.length))));
 
-  static int getNumberOnly(String word) {
+  static int getInt(String word) {
     String aStr = word.replaceAll(new RegExp(r'[^0-9]'),'');
-    int aInt = int.parse(aStr);
-    return aInt;
+    int value = int.parse(aStr);
+    return value;
+  }
+
+  static double getDouble(String word) {
+    String aStr = word.replaceAll(new RegExp(r'[^0-9]'),'');
+    double value = double.parse(aStr);
+    return value;
   }
 }

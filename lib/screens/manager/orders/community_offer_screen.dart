@@ -126,13 +126,15 @@ class _CommunityOfferScreenState extends State<CommunityOfferScreen> {
           text: 'Save',
           onClicked: () {
             // check if a price change has been taken place
-            if(_product!.priceCommunity >= _oldPriceCommunity){
+            if (_product!.priceCommunity >= _oldPriceCommunity) {
               //the price has not changed or gone up
               // todo: notify users that the price is expected to go up, so buy quick
               FirestoreHelper.updateProduct(_product!);
               Navigator.of(context).pop();
             } else {
-              double discountPercent = 100 - NumberUtils.getPercentage(_product!.priceCommunity, _oldPriceCommunity);
+              double discountPercent = 100 -
+                  NumberUtils.getPercentage(
+                      _product!.priceCommunity, _oldPriceCommunity);
 
               // todo: we will need to ask for the time or pull it in from one of the fields
 
@@ -141,16 +143,19 @@ class _CommunityOfferScreenState extends State<CommunityOfferScreen> {
                 builder: (BuildContext ctx) {
                   return AlertDialog(
                     title: Text("Offer Confirm"),
-                    content: Text(discountPercent.toStringAsFixed(0) + "% discount has been offered. Is this correct?"),
+                    content: Text(discountPercent.toStringAsFixed(0) +
+                        "% discount has been offered. Is this correct?"),
                     actions: [
                       TextButton(
                         child: Text("Yes"),
                         onPressed: () async {
-                          FirestoreHelper.updateProduct(_product!);
+                          // we should not change the price directly, instead use offer object
+                          // FirestoreHelper.updateProduct(_product!);
 
                           //now we need to notify from here
                           String offerId = StringUtils.getRandomString(20);
-                          int creationMilliSec = Timestamp.now().millisecondsSinceEpoch;
+                          int creationMilliSec =
+                              Timestamp.now().millisecondsSinceEpoch;
 
                           DateTime initialDate = DateTime.now();
                           DateTime? pickedDay = await showDatePicker(
@@ -166,11 +171,27 @@ class _CommunityOfferScreenState extends State<CommunityOfferScreen> {
                             initialTime: initialTime,
                           );
 
-                          DateTime endDT = DateTime(pickedDay!.year, pickedDay.month, pickedDay.day, pickedTime!.hour, pickedTime.minute);
+                          DateTime endDT = DateTime(
+                              pickedDay!.year,
+                              pickedDay.month,
+                              pickedDay.day,
+                              pickedTime!.hour,
+                              pickedTime.minute);
 
-                          Offer offer = Offer(id: offerId, blocId: _product!.serviceId, productId: _product!.id,
-                              productName: _product!.name, isCommunity: true, discountPercent: discountPercent, newPrice: _product!.priceCommunity,
-                          creationTime: creationMilliSec, endTime: endDT.millisecondsSinceEpoch);
+                          Offer offer = Offer(
+                              id: offerId,
+                              blocId: _product!.serviceId,
+                              productId: _product!.id,
+                              productName: _product!.name,
+                              isCommunityOffer: true,
+                              isPrivateOffer: false,
+                              offerPercent: discountPercent,
+                              offerPriceCommunity: _product!.priceCommunity,
+                              offerPricePrivate: _product!.price,
+                              isActive: true,
+                              description: 'Community offer, from us to you!', // need to figure out a good logic for this
+                              creationTime: creationMilliSec,
+                              endTime: endDT.millisecondsSinceEpoch);
                           FirestoreHelper.insertOffer(offer);
 
                           Navigator.of(ctx).pop();
