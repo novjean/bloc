@@ -25,6 +25,7 @@ class UserPreferences {
 
   static Future setUser(User user) async {
     final json = jsonEncode(user.toMap());
+    myUser = user;
     await _preferences.setString(_keyUser, json);
   }
 
@@ -45,5 +46,9 @@ class UserPreferences {
         name: '',
         fcmToken: '',
         blocServiceId: ''));
+  }
+
+  static void setUserFcmToken(String token) {
+    myUser.fcmToken = token;
   }
 }

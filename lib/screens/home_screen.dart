@@ -1,7 +1,6 @@
 import 'package:bloc/db/entity/user.dart';
 import 'package:bloc/screens/user/book_table_screen.dart';
 import 'package:bloc/utils/constants.dart';
-import 'package:bloc/widgets/profile/numbers_widget.dart';
 import 'package:bloc/widgets/ui/button_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -9,7 +8,9 @@ import 'package:flutter/material.dart';
 import '../db/bloc_repository.dart';
 import '../db/dao/bloc_dao.dart';
 import '../db/entity/bloc.dart';
+import '../db/shared_preferences/user_preferences.dart';
 import '../helpers/firestore_helper.dart';
+import '../helpers/token_monitor.dart';
 import '../widgets/search_card.dart';
 import '../widgets/bloc_slide_item.dart';
 import 'experimental/trending.dart';
@@ -46,7 +47,23 @@ class HomeScreen extends StatelessWidget {
               buildSuperstarsTitleRow('Superstars', context),
               SizedBox(height: 10.0),
               buildSuperstarsList(context),
-              SizedBox(height: 30.0),
+              SizedBox(height: 1.0),
+              TokenMonitor((token) {
+                if(token!=null){
+                  User user = UserPreferences.myUser;
+                  if(user.id.isNotEmpty) {
+                    if (UserPreferences.myUser.fcmToken.isEmpty ||
+                        UserPreferences.myUser.fcmToken != token) {
+                      UserPreferences.setUserFcmToken(token);
+                      FirestoreHelper.updateUserFcmToken(
+                          UserPreferences.myUser.id, token);
+                    } else {
+                      print('fcm token has not changed: ' + token);
+                    }
+                  }
+                }
+                return const Spacer();
+              })
             ],
           ),
         ),
@@ -92,11 +109,16 @@ class HomeScreen extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         // NumbersWidget(),
-        ButtonWidget(text: 'Book A Table', onClicked: () async {
-          await Navigator.of(context).push(
-            MaterialPageRoute(builder: (context) => BookTableScreen(blocs: mBlocs,)),
-          );
-        }),
+        ButtonWidget(
+            text: 'Book A Table',
+            onClicked: () async {
+              await Navigator.of(context).push(
+                MaterialPageRoute(
+                    builder: (context) => BookTableScreen(
+                          blocs: mBlocs,
+                        )),
+              );
+            }),
       ],
     );
   }
@@ -159,7 +181,7 @@ class HomeScreen extends StatelessWidget {
           //       context,
           //       MaterialPageRoute(
           //         builder: (BuildContext context) {
-                      //todo: need to navigate to show list of users or friends
+          //todo: need to navigate to show list of users or friends
           //           return Categories();
           //         },
           //       ),

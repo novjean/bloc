@@ -10,12 +10,12 @@ class User {
   final int clearanceLevel;
   final int phoneNumber;
   final String name;
-  final String fcmToken;
+  String fcmToken;
   final String blocServiceId;
 
 //<editor-fold desc="Data Methods">
 
-  const User({
+  User({
     required this.id,
     required this.username,
     required this.email,

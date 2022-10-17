@@ -11,10 +11,13 @@ import '../../db/dao/bloc_dao.dart';
 import '../../db/entity/category.dart';
 import '../../db/entity/product.dart';
 import '../../db/entity/seat.dart';
-import '../../helpers/token_monitor.dart';
+import '../../db/shared_preferences/user_preferences.dart';
 import '../../widgets/category_item.dart';
 import '../../widgets/product_item.dart';
+import '../../widgets/ui/Toaster.dart';
 import 'cart_screen.dart';
+import 'package:bloc/db/entity/user.dart' as blocUser;
+
 
 class BlocServiceDetailScreen extends StatefulWidget {
   BlocDao dao;
@@ -30,28 +33,100 @@ class BlocServiceDetailScreen extends StatefulWidget {
 
 class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen> {
   String _categoryName = 'Beer';
-  var _mTableNumber = 0;
-  late ServiceTable _mTable;
-  var _isInit = true;
-  var _isLoading = false;
+
+  late ServiceTable mTable;
+  late Seat mSeat;
+
+  // var _isInit = true;
+  var _isLoading = true;
+  var _isTableDetailsLoading = true;
   late Widget _categoriesWidget;
   var _isCommunity = false;
-  String? _token;
 
   @override
   void initState() {
     _categoriesWidget = buildServiceCategories(context);
+
+    final user = FirebaseAuth.instance.currentUser;
+
+    FirebaseFirestore.instance
+        .collection(FirestoreHelper.SEATS)
+        .where('serviceId', isEqualTo: widget.service.blocId)
+        .where('custId', isEqualTo: user!.uid)
+        .get()
+        .then((res) {
+      print("Successfully retrieved seat of user " + user.uid);
+
+      if (res.docs.isEmpty) {
+        // the user has not selected a table yet
+        // notify user to scan the table
+
+        ServiceTable dummyTable = ServiceTable(
+            id: 'dummy_table',
+            captainId: '',
+            capacity: 0,
+            isActive: false,
+            isOccupied: false,
+            serviceId: widget.service.blocId,
+            tableNumber: -1,
+            type: FirestoreHelper.TABLE_PRIVATE_TYPE_ID);
+
+        Seat dummySeat = Seat(
+            tableNumber: -1,
+            serviceId: widget.service.blocId,
+            id: 'dummy_seat',
+            custId: user.uid,
+            tableId: 'dummy_table');
+
+        setState(() {
+          _isTableDetailsLoading = false;
+          _isLoading = false;
+          mTable = dummyTable;
+          mSeat = dummySeat;
+        });
+      } else {
+        // we should receive only 1 seat for a user
+        for (int i = 0; i < res.docs.length; i++) {
+          DocumentSnapshot document = res.docs[i];
+          Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+          final Seat userSeat = Seat.fromMap(data);
+          mSeat = userSeat;
+          BlocRepository.insertSeat(widget.dao, userSeat);
+
+          if (i == res.docs.length - 1) {
+            FirebaseFirestore.instance
+                .collection(FirestoreHelper.TABLES)
+                .where('id', isEqualTo: userSeat.tableId)
+                .get()
+                .then(
+              (result) {
+                if (result.docs.isNotEmpty) {
+                  for (int i = 0; i < result.docs.length; i++) {
+                    DocumentSnapshot document = result.docs[i];
+                    Map<String, dynamic> data =
+                        document.data()! as Map<String, dynamic>;
+                    final ServiceTable _table = ServiceTable.fromMap(data);
+
+                    setState(() {
+                      _isTableDetailsLoading = false;
+                      _isLoading = false;
+                      mTable = _table;
+                    });
+                  }
+                } else {
+                  print('table could not be found for ' + userSeat.tableId);
+                }
+              },
+              onError: (e) => print("Error searching for table : $e"),
+            );
+          }
+        }
+      }
+    });
   }
 
   @override
   void didChangeDependencies() {
-    if (_isInit) {
-      setState(() {
-        _isLoading = true;
-      });
-    }
-
-    _isInit = false;
     super.didChangeDependencies();
   }
 
@@ -63,6 +138,25 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen> {
         actions: [
           IconButton(
             icon: const Icon(
+              Icons.back_hand_outlined,
+            ),
+            onPressed: () {
+              Toaster.shortToast('We are sending someone from our team towards tour table.');
+
+              // blocUser.User user = UserPreferences.getUser();
+              blocUser.User user = UserPreferences.myUser;
+
+              FirestoreHelper.sendSOSMessage(
+                  user.fcmToken,
+                  user.name,
+                  user.phoneNumber,
+                  mTable.tableNumber,
+                  mTable.id,
+                  mSeat.id);
+            },
+          ),
+          IconButton(
+            icon: const Icon(
               Icons.shopping_cart,
             ),
             onPressed: () {
@@ -71,19 +165,21 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen> {
                     builder: (ctx) => CartScreen(
                         service: widget.service,
                         dao: widget.dao,
-                        tableNumber: _mTableNumber)),
+                        tableNumber: mTable.tableNumber)),
               );
             },
           ),
         ],
       ),
-      body: _buildBody(context, widget.service),
+      body: _isLoading
+          ? Center(child: Text('Loading the menu...'))
+          : _buildBody(context, widget.service),
     );
   }
 
   Widget _buildBody(BuildContext context, BlocService service) {
     try {
-      if (_mTable.type == FirestoreHelper.TABLE_COMMUNITY_TYPE_ID) {
+      if (mTable.type == FirestoreHelper.TABLE_COMMUNITY_TYPE_ID) {
         _isCommunity = true;
       }
     } catch (err) {
@@ -93,91 +189,106 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen> {
     return Column(
       children: [
         const SizedBox(height: 2.0),
-        _searchTableNumber(context),
-        // CoverPhoto(service.name, service.imageUrl),
+        _isTableDetailsLoading
+            ? TextFormField(
+                key: const ValueKey('table_loading'),
+                initialValue: 'Loading Table Info ...',
+                enabled: false,
+                autocorrect: false,
+                textCapitalization: TextCapitalization.words,
+                enableSuggestions: false,
+                keyboardType: TextInputType.text,
+              )
+            : TableCardItem(
+          tableId: mTable.id,
+          tableNumber: mTable.tableNumber,
+          isCommunity: _isCommunity,
+          seatId: mSeat.id,
+        ),
         const SizedBox(height: 2.0),
         // buildServiceCategories(context),
         _categoriesWidget,
         const SizedBox(height: 2.0),
         buildProducts(context, 'Beer'),
-        const SizedBox(height: 0.0),
+        const SizedBox(height: 1.0),
       ],
     );
   }
 
   /** Table Info **/
-  _searchTableNumber(BuildContext context) {
-    final user = FirebaseAuth.instance.currentUser;
 
-    final Stream<QuerySnapshot> _stream =
-        FirestoreHelper.findTableNumber(widget.service.id, user!.uid);
-    return StreamBuilder<QuerySnapshot>(
-        stream: _stream,
-        builder: (ctx, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            print('loading table number...');
-            return const SizedBox();
-          }
+  // _searchTableNumber(BuildContext context) {
+  //   final user = FirebaseAuth.instance.currentUser;
+  //
+  //   final Stream<QuerySnapshot> _stream =
+  //       FirestoreHelper.findTableNumber(widget.service.id, user!.uid);
+  //   return StreamBuilder<QuerySnapshot>(
+  //       stream: _stream,
+  //       builder: (ctx, snapshot) {
+  //         if (snapshot.connectionState == ConnectionState.waiting) {
+  //           print('loading table number...');
+  //           return const SizedBox();
+  //         }
+  //
+  //         List<Seat> seats = [];
+  //         if (snapshot.data!.docs.length > 0) {
+  //           for (int i = 0; i < snapshot.data!.docs.length; i++) {
+  //             DocumentSnapshot document = snapshot.data!.docs[i];
+  //             Map<String, dynamic> data =
+  //                 document.data()! as Map<String, dynamic>;
+  //             final Seat seat = Seat.fromMap(data);
+  //             BlocRepository.insertSeat(widget.dao, seat);
+  //             seats.add(seat);
+  //
+  //             if (i == snapshot.data!.docs.length - 1) {
+  //               if (_mTableNumber == 0) {
+  //                 // this is needed or else we will hit a loop in loading
+  //                 _findTable(seat.tableId);
+  //                 _mTableNumber = seat.tableNumber;
+  //                 return Text('table number is ' + _mTableNumber.toString());
+  //               } else {
+  //                 return TokenMonitor((token) {
+  //                   _token = token;
+  //                   return token == null
+  //                       ? const CircularProgressIndicator()
+  //                       : TableCardItem(seat.id, seat.tableNumber, seat.tableId,
+  //                           _isCommunity, _token);
+  //                 });
+  //               }
+  //             }
+  //           }
+  //         } else {
+  //           return TableCardItem('', -1, '', _isCommunity, _token);
+  //         }
+  //         return Text('loading table number...');
+  //       });
+  // }
 
-          List<Seat> seats = [];
-          if (snapshot.data!.docs.length > 0) {
-            for (int i = 0; i < snapshot.data!.docs.length; i++) {
-              DocumentSnapshot document = snapshot.data!.docs[i];
-              Map<String, dynamic> data =
-                  document.data()! as Map<String, dynamic>;
-              final Seat seat = Seat.fromJson(data);
-              BlocRepository.insertSeat(widget.dao, seat);
-              seats.add(seat);
-
-              if (i == snapshot.data!.docs.length - 1) {
-                if (_mTableNumber == 0) {
-                  // this is needed or else we will hit a loop in loading
-                  _findTable(seat.tableId);
-                  _mTableNumber = seat.tableNumber;
-                  return Text('table number is ' + _mTableNumber.toString());
-                } else {
-                  return TokenMonitor((token) {
-                    _token = token;
-                    return token == null
-                        ? const CircularProgressIndicator()
-                        : TableCardItem(seat.id, seat.tableNumber, seat.tableId,
-                            _isCommunity, _token);
-                  });
-                }
-              }
-            }
-          } else {
-            return TableCardItem('', -1, '', _isCommunity, _token);
-          }
-          return Text('loading table number...');
-        });
-  }
-
-  void _findTable(String tableId) {
-    FirebaseFirestore.instance
-        .collection(FirestoreHelper.TABLES)
-        .where('id', isEqualTo: tableId)
-        .get()
-        .then(
-      (result) {
-        if (result.docs.isNotEmpty) {
-          for (int i = 0; i < result.docs.length; i++) {
-            DocumentSnapshot document = result.docs[i];
-            Map<String, dynamic> data =
-                document.data()! as Map<String, dynamic>;
-            final ServiceTable _table = ServiceTable.fromMap(data);
-
-            setState(() {
-              _mTable = _table;
-            });
-          }
-        } else {
-          print('table could not be found for ' + tableId);
-        }
-      },
-      onError: (e) => print("Error searching for table : $e"),
-    );
-  }
+  // void _findTable(String tableId) {
+  //   FirebaseFirestore.instance
+  //       .collection(FirestoreHelper.TABLES)
+  //       .where('id', isEqualTo: tableId)
+  //       .get()
+  //       .then(
+  //     (result) {
+  //       if (result.docs.isNotEmpty) {
+  //         for (int i = 0; i < result.docs.length; i++) {
+  //           DocumentSnapshot document = result.docs[i];
+  //           Map<String, dynamic> data =
+  //               document.data()! as Map<String, dynamic>;
+  //           final ServiceTable _table = ServiceTable.fromMap(data);
+  //
+  //           setState(() {
+  //             _mTable = _table;
+  //           });
+  //         }
+  //       } else {
+  //         print('table could not be found for ' + tableId);
+  //       }
+  //     },
+  //     onError: (e) => print("Error searching for table : $e"),
+  //   );
+  // }
 
   /** Categories List **/
   buildServiceCategories(BuildContext context) {
@@ -254,17 +365,25 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen> {
           BlocRepository.clearProducts(widget.dao);
         }
 
-        List<Product> products = [];
-        for (int i = 0; i < snapshot.data!.docs.length; i++) {
-          DocumentSnapshot document = snapshot.data!.docs[i];
-          Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-          final Product product = Product.fromMap(data);
-          BlocRepository.insertProduct(widget.dao, product);
-          products.add(product);
+        // here we should check if there are offers
 
-          if (i == snapshot.data!.docs.length - 1) {
-            return _displayProductsList(context, products);
+        if (snapshot.hasData) {
+          List<Product> products = [];
+          for (int i = 0; i < snapshot.data!.docs.length; i++) {
+            DocumentSnapshot document = snapshot.data!.docs[i];
+            Map<String, dynamic> data =
+                document.data()! as Map<String, dynamic>;
+            final Product product = Product.fromMap(data);
+            BlocRepository.insertProduct(widget.dao, product);
+            products.add(product);
+
+            if (i == snapshot.data!.docs.length - 1) {
+              return _displayProductsList(context, products);
+            }
           }
+        } else {
+          return const Expanded(
+              child: Center(child: Text('No products found!')));
         }
         return const Expanded(child: Center(child: Text('No products found!')));
       },
@@ -282,7 +401,7 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen> {
                   serviceId: widget.service.id,
                   product: _products[index],
                   dao: widget.dao,
-                  tableNumber: _mTableNumber,
+                  tableNumber: mTable.tableNumber,
                   isCommunity: _isCommunity,
                 ),
                 onTap: () {

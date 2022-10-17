@@ -14,6 +14,7 @@ import 'package:logger/logger.dart';
 import '../db/shared_preferences/user_preferences.dart';
 import '../../db/entity/user.dart' as blocUser;
 import '../helpers/firestore_helper.dart';
+import '../helpers/token_monitor.dart';
 import '../main.dart';
 import 'experimental/offers_screen.dart';
 import 'home_screen.dart';
@@ -97,7 +98,7 @@ class _MainScreenState extends State<MainScreen> {
               " : $e"),
     );
 
-    // disabling this as it is only for ios
+    //the following lines are essential for notification to work in iOS
     final fbm = FirebaseMessaging.instance;
     fbm.requestPermission();
 

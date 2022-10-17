@@ -179,7 +179,7 @@ class _SeatsManagementScreenState extends State<SeatsManagementScreen> {
               DocumentSnapshot document = snapshot.data!.docs[i];
               Map<String, dynamic> data =
                   document.data()! as Map<String, dynamic>;
-              final Seat seat = Seat.fromJson(data);
+              final Seat seat = Seat.fromMap(data);
               BlocRepository.insertSeat(widget.dao, seat);
               seats.add(seat);
 

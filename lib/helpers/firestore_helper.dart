@@ -443,7 +443,7 @@ class FirestoreHelper {
     await FirebaseFirestore.instance
         .collection(SEATS)
         .doc(seat.id)
-        .set(seat.toJson());
+        .set(seat.toMap());
   }
 
   static void updateSeat(String seatId, String custId) async {

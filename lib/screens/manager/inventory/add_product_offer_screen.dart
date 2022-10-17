@@ -217,7 +217,7 @@ class _AddProductOfferScreenState extends State<AddProductOfferScreen> {
 
             double newPricePrivate = widget.product.price;
             if(isPrivateOffer) {
-              newPricePrivate = widget.product!.price - (widget.product.price * (offerPercent/100));
+              newPricePrivate = widget.product.price - (widget.product.price * (offerPercent/100));
             }
 
             // lets keep the end time to be irrelevant for now

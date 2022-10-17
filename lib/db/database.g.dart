@@ -536,10 +536,10 @@ class _$BlocDao extends BlocDao {
         'SELECT * FROM Seat where serviceId=?1 and tableNumber=?2',
         mapper: (Map<String, Object?> row) => Seat(
             id: row['id'] as String,
+            custId: row['custId'] as String,
             serviceId: row['serviceId'] as String,
-            tableNumber: row['tableNumber'] as int,
             tableId: row['tableId'] as String,
-            custId: row['custId'] as String),
+            tableNumber: row['tableNumber'] as int),
         arguments: [serviceId, tableNumber]);
   }
 
