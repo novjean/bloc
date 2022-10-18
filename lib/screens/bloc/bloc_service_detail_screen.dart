@@ -18,7 +18,6 @@ import '../../widgets/ui/Toaster.dart';
 import 'cart_screen.dart';
 import 'package:bloc/db/entity/user.dart' as blocUser;
 
-
 class BlocServiceDetailScreen extends StatefulWidget {
   BlocDao dao;
   BlocService service;
@@ -31,31 +30,32 @@ class BlocServiceDetailScreen extends StatefulWidget {
       _BlocServiceDetailScreenState();
 }
 
-class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen> {
+class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen>
+    with WidgetsBindingObserver {
+  static String _TAG = 'BlocServiceDetailScreen';
+
   String _categoryName = 'Beer';
 
   late ServiceTable mTable;
   late Seat mSeat;
 
-  // var _isInit = true;
   var _isLoading = true;
   var _isTableDetailsLoading = true;
+  var _isCustomerSeated = false;
+
   late Widget _categoriesWidget;
   var _isCommunity = false;
 
   @override
   void initState() {
+    super.initState();
+    WidgetsBinding.instance?.addObserver(this);
     _categoriesWidget = buildServiceCategories(context);
 
-    final user = FirebaseAuth.instance.currentUser;
+    blocUser.User user = UserPreferences.myUser;
 
-    FirebaseFirestore.instance
-        .collection(FirestoreHelper.SEATS)
-        .where('serviceId', isEqualTo: widget.service.blocId)
-        .where('custId', isEqualTo: user!.uid)
-        .get()
-        .then((res) {
-      print("Successfully retrieved seat of user " + user.uid);
+    FirestoreHelper.pullCustomerSeat(widget.service.id, user.id).then((res) {
+      print("Successfully retrieved seat of user " + user.id);
 
       if (res.docs.isEmpty) {
         // the user has not selected a table yet
@@ -75,7 +75,7 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen> {
             tableNumber: -1,
             serviceId: widget.service.blocId,
             id: 'dummy_seat',
-            custId: user.uid,
+            custId: user.id,
             tableId: 'dummy_table');
 
         setState(() {
@@ -83,6 +83,7 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen> {
           _isLoading = false;
           mTable = dummyTable;
           mSeat = dummySeat;
+          _isCustomerSeated = false;
         });
       } else {
         // we should receive only 1 seat for a user
@@ -111,6 +112,7 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen> {
                       _isTableDetailsLoading = false;
                       _isLoading = false;
                       mTable = _table;
+                      _isCustomerSeated = true;
                     });
                   }
                 } else {
@@ -123,6 +125,23 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen> {
         }
       }
     });
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance?.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      // user returned to our app
+    } else if (state == AppLifecycleState.inactive) {
+      // app is inactive
+    } else if (state == AppLifecycleState.paused) {
+      // user is about quit our app temporally
+    }
   }
 
   @override
@@ -141,18 +160,13 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen> {
               Icons.back_hand_outlined,
             ),
             onPressed: () {
-              Toaster.shortToast('We are sending someone from our team towards tour table.');
+              Toaster.shortToast(
+                  'We are sending someone from our team towards tour table.');
 
-              // blocUser.User user = UserPreferences.getUser();
               blocUser.User user = UserPreferences.myUser;
 
-              FirestoreHelper.sendSOSMessage(
-                  user.fcmToken,
-                  user.name,
-                  user.phoneNumber,
-                  mTable.tableNumber,
-                  mTable.id,
-                  mSeat.id);
+              FirestoreHelper.sendSOSMessage(user.fcmToken, user.name,
+                  user.phoneNumber, mTable.tableNumber, mTable.id, mSeat.id);
             },
           ),
           IconButton(
@@ -178,12 +192,8 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen> {
   }
 
   Widget _buildBody(BuildContext context, BlocService service) {
-    try {
-      if (mTable.type == FirestoreHelper.TABLE_COMMUNITY_TYPE_ID) {
-        _isCommunity = true;
-      }
-    } catch (err) {
-      print(err);
+    if (mTable.type == FirestoreHelper.TABLE_COMMUNITY_TYPE_ID) {
+      _isCommunity = true;
     }
 
     return Column(
@@ -199,12 +209,14 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen> {
                 enableSuggestions: false,
                 keyboardType: TextInputType.text,
               )
-            : TableCardItem(
-          tableId: mTable.id,
-          tableNumber: mTable.tableNumber,
-          isCommunity: _isCommunity,
-          seatId: mSeat.id,
-        ),
+            : _isCustomerSeated
+                ? TableCardItem(
+                    tableId: mTable.id,
+                    tableNumber: mTable.tableNumber,
+                    isCommunity: _isCommunity,
+                    seatId: mSeat.id,
+                  )
+                : _searchTableNumber(context),
         const SizedBox(height: 2.0),
         // buildServiceCategories(context),
         _categoriesWidget,
@@ -216,79 +228,72 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen> {
   }
 
   /** Table Info **/
+  _searchTableNumber(BuildContext context) {
+    final user = FirebaseAuth.instance.currentUser;
 
-  // _searchTableNumber(BuildContext context) {
-  //   final user = FirebaseAuth.instance.currentUser;
-  //
-  //   final Stream<QuerySnapshot> _stream =
-  //       FirestoreHelper.findTableNumber(widget.service.id, user!.uid);
-  //   return StreamBuilder<QuerySnapshot>(
-  //       stream: _stream,
-  //       builder: (ctx, snapshot) {
-  //         if (snapshot.connectionState == ConnectionState.waiting) {
-  //           print('loading table number...');
-  //           return const SizedBox();
-  //         }
-  //
-  //         List<Seat> seats = [];
-  //         if (snapshot.data!.docs.length > 0) {
-  //           for (int i = 0; i < snapshot.data!.docs.length; i++) {
-  //             DocumentSnapshot document = snapshot.data!.docs[i];
-  //             Map<String, dynamic> data =
-  //                 document.data()! as Map<String, dynamic>;
-  //             final Seat seat = Seat.fromMap(data);
-  //             BlocRepository.insertSeat(widget.dao, seat);
-  //             seats.add(seat);
-  //
-  //             if (i == snapshot.data!.docs.length - 1) {
-  //               if (_mTableNumber == 0) {
-  //                 // this is needed or else we will hit a loop in loading
-  //                 _findTable(seat.tableId);
-  //                 _mTableNumber = seat.tableNumber;
-  //                 return Text('table number is ' + _mTableNumber.toString());
-  //               } else {
-  //                 return TokenMonitor((token) {
-  //                   _token = token;
-  //                   return token == null
-  //                       ? const CircularProgressIndicator()
-  //                       : TableCardItem(seat.id, seat.tableNumber, seat.tableId,
-  //                           _isCommunity, _token);
-  //                 });
-  //               }
-  //             }
-  //           }
-  //         } else {
-  //           return TableCardItem('', -1, '', _isCommunity, _token);
-  //         }
-  //         return Text('loading table number...');
-  //       });
-  // }
+    return StreamBuilder<QuerySnapshot>(
+        stream: FirestoreHelper.findTableNumber(widget.service.id, user!.uid),
+        builder: (ctx, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            print('loading table number...');
+            return const SizedBox();
+          }
 
-  // void _findTable(String tableId) {
-  //   FirebaseFirestore.instance
-  //       .collection(FirestoreHelper.TABLES)
-  //       .where('id', isEqualTo: tableId)
-  //       .get()
-  //       .then(
-  //     (result) {
-  //       if (result.docs.isNotEmpty) {
-  //         for (int i = 0; i < result.docs.length; i++) {
-  //           DocumentSnapshot document = result.docs[i];
-  //           Map<String, dynamic> data =
-  //               document.data()! as Map<String, dynamic>;
-  //           final ServiceTable _table = ServiceTable.fromMap(data);
-  //
-  //           setState(() {
-  //             _mTable = _table;
-  //           });
-  //         }
-  //       } else {
-  //         print('table could not be found for ' + tableId);
-  //       }
-  //     },
-  //     onError: (e) => print("Error searching for table : $e"),
-  //   );
-  // }
+          List<Seat> seats = [];
+          if (snapshot.data!.docs.length > 0) {
+            for (int i = 0; i < snapshot.data!.docs.length; i++) {
+              DocumentSnapshot document = snapshot.data!.docs[i];
+              Map<String, dynamic> data =
+                  document.data()! as Map<String, dynamic>;
+              final Seat seat = Seat.fromMap(data);
+              BlocRepository.insertSeat(widget.dao, seat);
+              seats.add(seat);
+
+              if (i == snapshot.data!.docs.length - 1) {
+                mSeat = seat;
+
+                FirebaseFirestore.instance
+                    .collection(FirestoreHelper.TABLES)
+                    .where('id', isEqualTo: seat.tableId)
+                    .get()
+                    .then(
+                  (result) {
+                    if (result.docs.isNotEmpty) {
+                      for (int i = 0; i < result.docs.length; i++) {
+                        DocumentSnapshot document = result.docs[i];
+                        Map<String, dynamic> data =
+                            document.data()! as Map<String, dynamic>;
+                        final ServiceTable _table = ServiceTable.fromMap(data);
+
+                        setState(() {
+                          mTable = _table;
+                          _isTableDetailsLoading = false;
+                          _isCustomerSeated = true;
+                        });
+                      }
+                    } else {
+                      print('table could not be found for ' + seat.tableId);
+                    }
+                  },
+                  onError: (e) => print("Error searching for table : $e"),
+                );
+                return SizedBox();
+              }
+            }
+          } else {
+            // this will display the table card item with the dummy values
+            return TableCardItem(
+              tableId: mTable.id,
+              tableNumber: mTable.tableNumber,
+              isCommunity: _isCommunity,
+              seatId: mSeat.id,
+            );
+          }
+          return SizedBox();
+        });
+  }
+
+  void _findTable(String tableId) {}
 
   /** Categories List **/
   buildServiceCategories(BuildContext context) {

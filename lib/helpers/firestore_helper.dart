@@ -439,6 +439,14 @@ class FirestoreHelper {
         .snapshots();
   }
 
+  static Future<QuerySnapshot<Map<String, dynamic>>>  pullCustomerSeat(String blocId, String userId) {
+    return FirebaseFirestore.instance
+        .collection(FirestoreHelper.SEATS)
+        .where('serviceId', isEqualTo: blocId)
+        .where('custId', isEqualTo: userId)
+        .get();
+  }
+
   static void uploadSeat(Seat seat) async {
     await FirebaseFirestore.instance
         .collection(SEATS)
