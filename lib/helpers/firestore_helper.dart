@@ -529,6 +529,13 @@ class FirestoreHelper {
   }
 
   /** Tables **/
+  static Future<QuerySnapshot<Map<String, dynamic>>>  pullSeatTable(String tableId) {
+    return FirebaseFirestore.instance
+        .collection(FirestoreHelper.TABLES)
+        .where('id', isEqualTo: tableId)
+        .get();
+  }
+
   static Stream<QuerySnapshot<Object?>> getTables(String serviceId) {
     return FirebaseFirestore.instance
         .collection(TABLES)

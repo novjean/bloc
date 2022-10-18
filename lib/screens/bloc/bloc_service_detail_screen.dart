@@ -3,7 +3,6 @@ import 'package:bloc/db/entity/service_table.dart';
 import 'package:bloc/helpers/firestore_helper.dart';
 import 'package:bloc/widgets/table_card_item.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../../db/bloc_repository.dart';
@@ -55,7 +54,7 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen>
     blocUser.User user = UserPreferences.myUser;
 
     FirestoreHelper.pullCustomerSeat(widget.service.id, user.id).then((res) {
-      print("Successfully retrieved seat of user " + user.id);
+      print("Successfully retrieved seat of user " + user.name);
 
       if (res.docs.isEmpty) {
         // the user has not selected a table yet
@@ -79,10 +78,10 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen>
             tableId: 'dummy_table');
 
         setState(() {
-          _isTableDetailsLoading = false;
-          _isLoading = false;
           mTable = dummyTable;
           mSeat = dummySeat;
+          _isTableDetailsLoading = false;
+          _isLoading = false;
           _isCustomerSeated = false;
         });
       } else {
@@ -95,11 +94,7 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen>
           BlocRepository.insertSeat(widget.dao, userSeat);
 
           if (i == res.docs.length - 1) {
-            FirebaseFirestore.instance
-                .collection(FirestoreHelper.TABLES)
-                .where('id', isEqualTo: userSeat.tableId)
-                .get()
-                .then(
+            FirestoreHelper.pullSeatTable(userSeat.tableId).then(
               (result) {
                 if (result.docs.isNotEmpty) {
                   for (int i = 0; i < result.docs.length; i++) {
@@ -109,9 +104,9 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen>
                     final ServiceTable _table = ServiceTable.fromMap(data);
 
                     setState(() {
+                      mTable = _table;
                       _isTableDetailsLoading = false;
                       _isLoading = false;
-                      mTable = _table;
                       _isCustomerSeated = true;
                     });
                   }
@@ -135,6 +130,7 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen>
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
+    // keeping this here, could be useful
     if (state == AppLifecycleState.resumed) {
       // user returned to our app
     } else if (state == AppLifecycleState.inactive) {
@@ -229,10 +225,9 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen>
 
   /** Table Info **/
   _searchTableNumber(BuildContext context) {
-    final user = FirebaseAuth.instance.currentUser;
-
     return StreamBuilder<QuerySnapshot>(
-        stream: FirestoreHelper.findTableNumber(widget.service.id, user!.uid),
+        stream: FirestoreHelper.findTableNumber(
+            widget.service.id, UserPreferences.myUser.id),
         builder: (ctx, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             print('loading table number...');
@@ -251,12 +246,7 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen>
 
               if (i == snapshot.data!.docs.length - 1) {
                 mSeat = seat;
-
-                FirebaseFirestore.instance
-                    .collection(FirestoreHelper.TABLES)
-                    .where('id', isEqualTo: seat.tableId)
-                    .get()
-                    .then(
+                FirestoreHelper.pullSeatTable(seat.tableId).then(
                   (result) {
                     if (result.docs.isNotEmpty) {
                       for (int i = 0; i < result.docs.length; i++) {
@@ -292,8 +282,6 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen>
           return SizedBox();
         });
   }
-
-  void _findTable(String tableId) {}
 
   /** Categories List **/
   buildServiceCategories(BuildContext context) {
@@ -370,7 +358,7 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen>
           BlocRepository.clearProducts(widget.dao);
         }
 
-        // here we should check if there are offers
+        // here we should check if there are offers running
 
         if (snapshot.hasData) {
           List<Product> products = [];
