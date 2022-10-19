@@ -437,6 +437,23 @@ class FirestoreHelper {
     }
   }
 
+  static void setProductOfferRunning(String productId, bool isOfferRunning) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection(PRODUCTS)
+          .doc(productId)
+          .update({'isOfferRunning': isOfferRunning})
+          .then((value) => print("Product id " + productId + " is set to offer " + isOfferRunning.toString()))
+          .catchError(
+              (error) => print("Failed to update product offer status: $error"));
+    } on PlatformException catch (err) {
+      logger.e(err.message);
+    } catch (err) {
+      logger.e(err);
+    }
+  }
+
+
   /** Seats **/
   static Stream<QuerySnapshot<Object?>> getSeatsByTableId(String tableId) {
     return FirebaseFirestore.instance

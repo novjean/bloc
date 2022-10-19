@@ -239,6 +239,8 @@ class _AddProductOfferScreenState extends State<AddProductOfferScreen> {
                 endTime: creationMilliSec);
             FirestoreHelper.insertOffer(offer);
 
+            FirestoreHelper.setProductOfferRunning(widget.product.id, true);
+
             Navigator.of(context).pop();
           },
         ),
