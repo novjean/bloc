@@ -7,6 +7,7 @@ import 'package:bloc/db/entity/user.dart' as blocUser;
 import 'package:bloc/helpers/firestorage_helper.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:logger/logger.dart';
 
@@ -328,23 +329,28 @@ class FirestoreHelper {
     int timeMilliSec = Timestamp.now().millisecondsSinceEpoch;
 
     try {
-      await FirebaseFirestore.instance.collection(PRODUCTS).doc(productId).set({
-        'id': productId,
-        'name': productName,
-        'type': categoryType,
-        'category': productCategory,
-        'description': productDescription,
-        'price': price,
-        'serviceId': serviceId,
-        'imageUrl': imageUrl,
-        'ownerId': userId,
-        'createdAt': timeMilliSec,
-        'isAvailable': false,
-        'priceHighest': price,
-        'priceLowest': price,
-        'priceHighestTime': timeMilliSec,
-        'priceLowestTime': timeMilliSec,
-      });
+      Product product = Product(
+        id: productId,
+        name: productName,
+        type: categoryType,
+        category: productCategory,
+        description: productDescription,
+        price: price,
+        serviceId: serviceId,
+        imageUrl: imageUrl,
+        ownerId: userId,
+        createdAt: timeMilliSec,
+        isAvailable: false,
+        priceHighest: price,
+        priceLowest: price,
+        priceCommunity: price,
+        priceHighestTime: timeMilliSec,
+        priceLowestTime: timeMilliSec,
+        isOfferRunning: false
+      );
+
+      await FirebaseFirestore.instance.collection(PRODUCTS).doc(productId).set(product.toMap());
+
     } on PlatformException catch (err) {
       logger.e(err.message);
     } catch (err) {

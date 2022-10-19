@@ -19,6 +19,7 @@ class Product {
   final int priceHighestTime;
   final int priceLowestTime;
   final double priceCommunity;
+  final bool isOfferRunning;
 
 //<editor-fold desc="Data Methods">
 
@@ -39,6 +40,7 @@ class Product {
     required this.priceHighestTime,
     required this.priceLowestTime,
     required this.priceCommunity,
+    required this.isOfferRunning,
   });
 
   @override
@@ -60,7 +62,10 @@ class Product {
           priceHighest == other.priceHighest &&
           priceLowest == other.priceLowest &&
           priceHighestTime == other.priceHighestTime &&
-          priceLowestTime == other.priceLowestTime);
+          priceLowestTime == other.priceLowestTime &&
+          priceCommunity == other.priceCommunity &&
+          isOfferRunning == other.isOfferRunning
+      );
 
   @override
   int get hashCode =>
@@ -79,7 +84,8 @@ class Product {
       priceLowest.hashCode ^
       priceHighestTime.hashCode ^
       priceLowestTime.hashCode ^
-      priceCommunity.hashCode;
+      priceCommunity.hashCode ^
+      isOfferRunning.hashCode;
 
   @override
   String toString() {
@@ -100,6 +106,7 @@ class Product {
         ' priceHighestTime: $priceHighestTime,' +
         ' priceLowestTime: $priceLowestTime,' +
         ' priceCommunity: $priceCommunity,' +
+        ' isOfferRunning: $isOfferRunning' +
         '}';
   }
 
@@ -120,6 +127,7 @@ class Product {
     int? priceHighestTime,
     int? priceLowestTime,
     double? priceCommunity,
+    bool? isOfferRunning,
   }) {
     return Product(
       id: id ?? this.id,
@@ -138,6 +146,7 @@ class Product {
       priceHighestTime: priceHighestTime ?? this.priceHighestTime,
       priceLowestTime: priceLowestTime ?? this.priceLowestTime,
       priceCommunity: priceCommunity ?? this.priceCommunity,
+      isOfferRunning: isOfferRunning ?? this.isOfferRunning,
     );
   }
 
@@ -159,6 +168,7 @@ class Product {
       'priceHighestTime': this.priceHighestTime,
       'priceLowestTime': this.priceLowestTime,
       'priceCommunity': this.priceCommunity,
+      'isOfferRunning': this.isOfferRunning,
     };
   }
 
@@ -214,6 +224,7 @@ class Product {
       priceHighestTime: map['priceHighestTime'] as int,
       priceLowestTime: map['priceLowestTime'] as int,
       priceCommunity: priceCommunity,
+      isOfferRunning: map['isOfferRunning'] as bool,
     );
   }
 
