@@ -225,7 +225,7 @@ class _AddProductOfferScreenState extends State<AddProductOfferScreen> {
             // later on work on automation.
             Offer offer = Offer(
                 id: offerId,
-                blocId: widget.product.serviceId,
+                blocServiceId: widget.product.serviceId,
                 productId: widget.product.id,
                 productName: widget.product.name,
                 offerPercent: offerPercent,

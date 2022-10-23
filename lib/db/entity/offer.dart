@@ -1,6 +1,6 @@
 class Offer {
   final String id;
-  final String blocId;
+  final String blocServiceId;
   final String productId;
   final String productName;
   final String description;
@@ -17,7 +17,7 @@ class Offer {
 
   Offer({
     required this.id,
-    required this.blocId,
+    required this.blocServiceId,
     required this.productId,
     required this.productName,
     required this.description,
@@ -37,7 +37,7 @@ class Offer {
       (other is Offer &&
           runtimeType == other.runtimeType &&
           id == other.id &&
-          blocId == other.blocId &&
+          blocServiceId == other.blocServiceId &&
           productId == other.productId &&
           productName == other.productName &&
           description == other.description &&
@@ -53,7 +53,7 @@ class Offer {
   @override
   int get hashCode =>
       id.hashCode ^
-      blocId.hashCode ^
+      blocServiceId.hashCode ^
       productId.hashCode ^
       productName.hashCode ^
       description.hashCode ^
@@ -70,7 +70,7 @@ class Offer {
   String toString() {
     return 'Offer{' +
         ' id: $id,' +
-        ' blocId: $blocId,' +
+        ' blocId: $blocServiceId,' +
         ' productId: $productId,' +
         ' productName: $productName,' +
         ' description: $description,' +
@@ -102,7 +102,7 @@ class Offer {
   }) {
     return Offer(
       id: id ?? this.id,
-      blocId: blocId ?? this.blocId,
+      blocServiceId: blocId ?? this.blocServiceId,
       productId: productId ?? this.productId,
       productName: productName ?? this.productName,
       description: description ?? this.description,
@@ -120,7 +120,7 @@ class Offer {
   Map<String, dynamic> toMap() {
     return {
       'id': this.id,
-      'blocId': this.blocId,
+      'blocServiceId': this.blocServiceId,
       'productId': this.productId,
       'productName': this.productName,
       'description': this.description,
@@ -138,7 +138,7 @@ class Offer {
   factory Offer.fromMap(Map<String, dynamic> map) {
     return Offer(
       id: map['id'] as String,
-      blocId: map['blocId'] as String,
+      blocServiceId: map['blocServiceId'] as String,
       productId: map['productId'] as String,
       productName: map['productName'] as String,
       description: map['description'] as String,

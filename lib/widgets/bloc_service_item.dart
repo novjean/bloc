@@ -25,7 +25,7 @@ class BlocServiceItem extends StatelessWidget {
               MaterialPageRoute(
                   builder: (ctx) => isManager
                       ? ManagerBlocServiceScreen(dao: dao, blocService: service)
-                      : BlocServiceDetailScreen(dao: dao, service: service)),
+                      : BlocServiceDetailScreen(dao: dao, blocService: service)),
             );
           },
           child: Hero(

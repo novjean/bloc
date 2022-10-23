@@ -305,6 +305,13 @@ class FirestoreHelper {
         .set(offer.toMap());
   }
 
+  static Future<QuerySnapshot<Map<String, dynamic>>> pullOffers(String blocServiceId) {
+    return FirebaseFirestore.instance
+        .collection(FirestoreHelper.OFFERS)
+        .where('blocServiceId', isEqualTo: blocServiceId)
+        .get();
+  }
+
   /** Products **/
   static void insertProduct(
       String productId,
@@ -462,7 +469,7 @@ class FirestoreHelper {
         .snapshots();
   }
 
-  static Future<QuerySnapshot<Map<String, dynamic>>>  pullCustomerSeat(String blocId, String userId) {
+  static Future<QuerySnapshot<Map<String, dynamic>>> pullCustomerSeat(String blocId, String userId) {
     return FirebaseFirestore.instance
         .collection(FirestoreHelper.SEATS)
         .where('serviceId', isEqualTo: blocId)

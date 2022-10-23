@@ -8,6 +8,7 @@ import 'package:provider/provider.dart';
 
 import '../db/dao/bloc_dao.dart';
 import '../db/entity/cart_item.dart';
+import '../db/entity/offer.dart';
 import '../db/entity/product.dart';
 import '../providers/cart.dart';
 import '../screens/bloc/product_detail_screen.dart';
@@ -19,6 +20,8 @@ class ProductItem extends StatefulWidget {
   final String serviceId;
   final int tableNumber;
   final bool isCommunity;
+  final bool isOnOffer;
+  final Offer offer;
   int addCount = 1;
 
   ProductItem(
@@ -26,7 +29,9 @@ class ProductItem extends StatefulWidget {
       required this.product,
       required this.dao,
       required this.tableNumber,
-      required this.isCommunity});
+      required this.isCommunity,
+      required this.isOnOffer,
+      required this.offer});
 
   @override
   State<ProductItem> createState() => _ProductItemState();
@@ -78,15 +83,26 @@ class _ProductItemState extends State<ProductItem> {
                           children: <Widget>[
                             Text(widget.product.name,
                                 style: TextStyle(
-                                    fontSize: 17, fontWeight: FontWeight.bold)),
-                            Text(
-                                '\u20B9 ${widget.isCommunity ? widget.product.priceCommunity.toStringAsFixed(2) : widget.product.price.toStringAsFixed(2)}',
-                                style: TextStyle(
-                                    fontSize: 18, fontWeight: FontWeight.bold)),
+                                  fontSize: 17,
+                                  fontWeight: FontWeight.bold,
+                                )),
+
+                            //check if offer
+                            widget.isOnOffer
+                                ? Text(
+                                    '\u20B9 ${widget.isCommunity ? widget.offer.offerPriceCommunity.toStringAsFixed(2) : widget.offer.offerPricePrivate.toStringAsFixed(2)}',
+                                    style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold))
+                                : Text(
+                                    '\u20B9 ${widget.isCommunity ? widget.product.priceCommunity.toStringAsFixed(2) : widget.product.price.toStringAsFixed(2)}',
+                                    style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold)),
                             // Icon(Icons.delete_outline)
                           ],
                         ),
-                        SizedBox(height: 5),
+                        SizedBox(height: 2),
                         widget.isCommunity
                             ? Row(
                                 children: [
@@ -103,9 +119,39 @@ class _ProductItemState extends State<ProductItem> {
                                           fontSize: 14,
                                           fontWeight: FontWeight.bold,
                                           color: Colors.redAccent)),
+                                  widget.isOnOffer
+                                      ? Text(
+                                          ' | ' +
+                                              widget.offer.offerPercent
+                                                  .toStringAsFixed(0) +
+                                              '% off',
+                                          style: TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.blue),
+                                        )
+                                      : SizedBox(height: 0),
                                 ],
                               )
-                            : SizedBox(height: 0),
+                            : widget.isOnOffer
+                                ? Text(
+                                    ' | ' +
+                                        widget.offer.offerPercent
+                                            .toStringAsFixed(0) +
+                                        '% off',
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.blue),
+                                  )
+                                : SizedBox(height: 0),
+                        SizedBox(height: 2),
+                        Text(
+                            StringUtils.firstFewWords(
+                                    widget.product.description) +
+                                '...',
+                            style:
+                                TextStyle(fontSize: 14, color: Colors.black54)),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: <Widget>[
@@ -139,7 +185,8 @@ class _ProductItemState extends State<ProductItem> {
                                       : 'Add ' + widget.addCount.toString(),
                                   onClicked: () {
                                     // add it to the cart
-                                    String cartId = StringUtils.getRandomString(20);
+                                    String cartId =
+                                        StringUtils.getRandomString(20);
                                     //todo: this needs to increment
                                     int cartNumber = 0;
                                     final user =
@@ -164,7 +211,8 @@ class _ProductItemState extends State<ProductItem> {
                                         isCommunity: widget.isCommunity,
                                         quantity: widget.addCount,
                                         createdAt: timestamp,
-                                        isCompleted: false, isBilled: false);
+                                        isCompleted: false,
+                                        isBilled: false);
 
                                     cart.addItem(
                                         cartId,

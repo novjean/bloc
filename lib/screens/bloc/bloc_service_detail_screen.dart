@@ -1,5 +1,6 @@
 import 'package:bloc/db/entity/bloc_service.dart';
 import 'package:bloc/db/entity/service_table.dart';
+import 'package:bloc/helpers/dummy.dart';
 import 'package:bloc/helpers/firestore_helper.dart';
 import 'package:bloc/widgets/table_card_item.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -8,6 +9,7 @@ import 'package:flutter/material.dart';
 import '../../db/bloc_repository.dart';
 import '../../db/dao/bloc_dao.dart';
 import '../../db/entity/category.dart';
+import '../../db/entity/offer.dart';
 import '../../db/entity/product.dart';
 import '../../db/entity/seat.dart';
 import '../../db/shared_preferences/user_preferences.dart';
@@ -19,9 +21,9 @@ import 'package:bloc/db/entity/user.dart' as blocUser;
 
 class BlocServiceDetailScreen extends StatefulWidget {
   BlocDao dao;
-  BlocService service;
+  BlocService blocService;
 
-  BlocServiceDetailScreen({key, required this.dao, required this.service})
+  BlocServiceDetailScreen({key, required this.dao, required this.blocService})
       : super(key: key);
 
   @override
@@ -37,6 +39,8 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen>
 
   late ServiceTable mTable;
   late Seat mSeat;
+  
+  List<Offer> mOffers = [];
 
   var _isLoading = true;
   var _isTableDetailsLoading = true;
@@ -53,7 +57,7 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen>
 
     blocUser.User user = UserPreferences.myUser;
 
-    FirestoreHelper.pullCustomerSeat(widget.service.id, user.id).then((res) {
+    FirestoreHelper.pullCustomerSeat(widget.blocService.id, user.id).then((res) {
       print("Successfully retrieved seat of user " + user.name);
 
       if (res.docs.isEmpty) {
@@ -66,13 +70,13 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen>
             capacity: 0,
             isActive: false,
             isOccupied: false,
-            serviceId: widget.service.blocId,
+            serviceId: widget.blocService.id,
             tableNumber: -1,
             type: FirestoreHelper.TABLE_PRIVATE_TYPE_ID);
 
         Seat dummySeat = Seat(
             tableNumber: -1,
-            serviceId: widget.service.blocId,
+            serviceId: widget.blocService.id,
             id: 'dummy_seat',
             custId: user.id,
             tableId: 'dummy_table');
@@ -120,6 +124,19 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen>
         }
       }
     });
+    
+    FirestoreHelper.pullOffers(widget.blocService.id).then((res) {
+      print("Successfully retrieved offers at bloc " + widget.blocService.name);
+
+      if(res.docs.isNotEmpty){
+        for (int i = 0; i < res.docs.length; i++) {
+          DocumentSnapshot document = res.docs[i];
+          Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+          final Offer offer = Offer.fromMap(data);
+          mOffers.add(offer);
+        }
+      }
+    });
   }
 
   @override
@@ -149,7 +166,7 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.service.name),
+        title: Text(widget.blocService.name),
         actions: [
           IconButton(
             icon: const Icon(
@@ -173,7 +190,7 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen>
               Navigator.of(context).push(
                 MaterialPageRoute(
                     builder: (ctx) => CartScreen(
-                        service: widget.service,
+                        service: widget.blocService,
                         dao: widget.dao,
                         tableNumber: mTable.tableNumber)),
               );
@@ -183,7 +200,7 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen>
       ),
       body: _isLoading
           ? Center(child: Text('Loading the menu...'))
-          : _buildBody(context, widget.service),
+          : _buildBody(context, widget.blocService),
     );
   }
 
@@ -219,15 +236,21 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen>
         const SizedBox(height: 2.0),
         buildProducts(context, 'Beer'),
         const SizedBox(height: 1.0),
+        _updateOffers(context)
       ],
     );
+  }
+
+  /** Offer Update **/
+  _updateOffers(BuildContext context){
+    return const SizedBox();
   }
 
   /** Table Info **/
   _searchTableNumber(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
         stream: FirestoreHelper.findTableNumber(
-            widget.service.id, UserPreferences.myUser.id),
+            widget.blocService.id, UserPreferences.myUser.id),
         builder: (ctx, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             print('loading table number...');
@@ -286,7 +309,7 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen>
   /** Categories List **/
   buildServiceCategories(BuildContext context) {
     final Stream<QuerySnapshot> _catsStream =
-        FirestoreHelper.getCategories(widget.service.id);
+        FirestoreHelper.getCategories(widget.blocService.id);
 
     return StreamBuilder<QuerySnapshot>(
       stream: _catsStream,
@@ -346,7 +369,7 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen>
   buildProducts(BuildContext context, String category) {
     return StreamBuilder<QuerySnapshot>(
       stream: FirestoreHelper.getProductsByCategory(
-          widget.service.id, _categoryName),
+          widget.blocService.id, _categoryName),
       builder: (ctx, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(
@@ -384,18 +407,34 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen>
   }
 
   _displayProductsList(BuildContext context, List<Product> _products) {
+    bool isProductOnOffer;
+    Offer productOffer = Dummy.getDummyOffer();
+
     return Expanded(
       child: ListView.builder(
           itemCount: _products.length,
           scrollDirection: Axis.vertical,
           itemBuilder: (ctx, index) {
+            //lets check if the product is on offer
+            isProductOnOffer = false;
+
+            for(Offer offer in mOffers) {
+              if(offer.productId == _products[index].id){
+                isProductOnOffer = true;
+                productOffer = offer;
+                break;
+              }
+            }
+
             return GestureDetector(
                 child: ProductItem(
-                  serviceId: widget.service.id,
+                  serviceId: widget.blocService.id,
                   product: _products[index],
                   dao: widget.dao,
                   tableNumber: mTable.tableNumber,
                   isCommunity: _isCommunity,
+                  isOnOffer: isProductOnOffer,
+                  offer: productOffer,
                 ),
                 onTap: () {
                   Product _sProduct = _products[index];

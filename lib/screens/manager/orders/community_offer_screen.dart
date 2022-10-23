@@ -180,7 +180,7 @@ class _CommunityOfferScreenState extends State<CommunityOfferScreen> {
 
                           Offer offer = Offer(
                               id: offerId,
-                              blocId: _product!.serviceId,
+                              blocServiceId: _product!.serviceId,
                               productId: _product!.id,
                               productName: _product!.name,
                               isCommunityOffer: true,
