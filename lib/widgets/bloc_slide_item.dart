@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import '../db/entity/bloc.dart';
 import '../db/entity/bloc_service.dart';
 import '../helpers/firestore_helper.dart';
-import '../screens/bloc/bloc_detail_screen.dart';
 import '../screens/bloc/bloc_service_detail_screen.dart';
 
 class BlocSlideItem extends StatefulWidget {
@@ -30,7 +29,7 @@ class _BlocSlideItemState extends State<BlocSlideItem> {
     return Padding(
       padding: EdgeInsets.only(top: 5.0, bottom: 5.0),
       child: Container(
-        height: MediaQuery.of(context).size.height / 2.9,
+        height: MediaQuery.of(context).size.height / 3,
         width: MediaQuery.of(context).size.width,
         child: Card(
           shape:
@@ -51,10 +50,35 @@ class _BlocSlideItemState extends State<BlocSlideItem> {
                       child: GridTile(
                         child: GestureDetector(
                           onTap: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                  builder: (ctx) => BlocDetailScreen(dao: widget.dao, bloc: widget.bloc)),
-                            );
+
+                            FirestoreHelper.pullBlocService(widget.bloc.id).then((res) {
+                              print("Successfully retrieved bloc services of bloc " + widget.bloc.name);
+
+                              if (res.docs.isEmpty){
+                                print('No bloc services is present here, should not be displaying this');
+                              } else {
+                                if(res.docs.length == 1){
+                                  DocumentSnapshot document = res.docs[0];
+                                  Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+                                  final BlocService blocService = BlocService.fromMap(data);
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                        builder: (ctx) => BlocServiceDetailScreen(dao: widget.dao, blocService: blocService)),
+                                  );
+                                } else {
+                                  print('not allowing this operation for now, futre implementation maybe.');
+                                  // for (int i = 0; i < res.docs.length; i++){
+                                  //   DocumentSnapshot document = res.docs[i];
+                                  //   Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+                                  //   final BlocService blocService = BlocService.fromMap(data);
+                                  //   Navigator.of(context).push(
+                                  //     MaterialPageRoute(
+                                  //         builder: (ctx) => BlocServiceDetailScreen(dao: widget.dao, blocService: blocService)),
+                                  //   );
+                                  // }
+                                }
+                              }
+                            });
                           },
                           child: Hero(
                             // hero should be wired in with where we are animating to
@@ -142,49 +166,17 @@ class _BlocSlideItemState extends State<BlocSlideItem> {
                   child: Text(
                     "${widget.bloc.addressLine1}, ${widget.bloc.addressLine2}",
                     style: TextStyle(
-                      fontSize: 12.0,
+                      fontSize: 14.0,
                       fontWeight: FontWeight.w300,
                     ),
                   ),
                 ),
               ),
-              SizedBox(height: 10.0),
+              SizedBox(height: 0.0),
             ],
           ),
         ),
       ),
     );
   }
-
-  // _loadBloc(BuildContext context, String blocId) {
-  //   return StreamBuilder<QuerySnapshot>(
-  //       stream: FirestoreHelper.getBloc(blocId),
-  //       builder: (context, snapshot) {
-  //         if (snapshot.connectionState == ConnectionState.waiting) {
-  //           return const Center(
-  //             child: CircularProgressIndicator(),
-  //           );
-  //         }
-  //
-  //         List<BlocService> _blocServices = [];
-  //
-  //         for (int i = 0; i < snapshot.data!.docs.length; i++) {
-  //           DocumentSnapshot document = snapshot.data!.docs[i];
-  //           Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-  //           final BlocService _blocService = BlocService.fromMap(data);
-  //           // BlocRepository.insertServiceTable(dao, serviceTable);
-  //           _blocServices.add(_blocService);
-  //
-  //           if (i == snapshot.data!.docs.length - 1) {
-  //             Navigator.of(context).push(
-  //               MaterialPageRoute(
-  //                   builder: (ctx) => BlocServiceDetailScreen(dao: widget.dao, service: _blocService)),
-  //             );
-  //             // return _displayUsers(context, _users);
-  //           }
-  //         }
-  //         return Text('Pulling bloc services...');
-  //       }
-  //   );
-  // }
 }

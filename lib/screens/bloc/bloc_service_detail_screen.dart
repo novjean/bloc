@@ -64,22 +64,8 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen>
         // the user has not selected a table yet
         // notify user to scan the table
 
-        ServiceTable dummyTable = ServiceTable(
-            id: 'dummy_table',
-            captainId: '',
-            capacity: 0,
-            isActive: false,
-            isOccupied: false,
-            serviceId: widget.blocService.id,
-            tableNumber: -1,
-            type: FirestoreHelper.TABLE_PRIVATE_TYPE_ID);
-
-        Seat dummySeat = Seat(
-            tableNumber: -1,
-            serviceId: widget.blocService.id,
-            id: 'dummy_seat',
-            custId: user.id,
-            tableId: 'dummy_table');
+        ServiceTable dummyTable = Dummy.getDummyTable(widget.blocService.id);
+        Seat dummySeat = Dummy.getDummySeat(widget.blocService.id, user.id);
 
         setState(() {
           mTable = dummyTable;

@@ -210,13 +210,10 @@ class HomeScreen extends StatelessWidget {
         itemBuilder: (BuildContext context, int index) {
           Bloc bloc = blocs[index];
 
-          return Padding(
-            padding: const EdgeInsets.only(right: 10.0),
-            child: BlocSlideItem(
-              dao: dao,
-              bloc: bloc,
-              rating: "3",
-            ),
+          return BlocSlideItem(
+            dao: dao,
+            bloc: bloc,
+            rating: "3",
           );
         },
       ),

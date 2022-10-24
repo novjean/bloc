@@ -36,7 +36,7 @@ class FirestoreHelper {
   static String MANAGER_SERVICE_OPTIONS = 'manager_service_options';
   static String OFFERS = 'offers';
   static String PRODUCTS = 'products';
-  static String SERVICES = 'services';
+  static String BLOC_SERVICES = 'services';
   static String SEATS = 'seats';
   static String SOS = 'sos';
   static String TABLES = 'tables';
@@ -73,6 +73,31 @@ class FirestoreHelper {
     } catch (err) {
       logger.e(err);
     }
+  }
+
+  /** Bloc Services **/
+  static Future<QuerySnapshot<Object?>> pullBlocService(String blocId) {
+    return FirebaseFirestore.instance
+        .collection(BLOC_SERVICES)
+        .where('blocId', isEqualTo: blocId)
+        .get();
+  }
+
+  static getBlocServices(String blocId) {
+    return FirebaseFirestore.instance
+        .collection(BLOC_SERVICES)
+        .where('blocId', isEqualTo: blocId)
+        .snapshots();
+  }
+
+  static Stream<QuerySnapshot> getAllBlocServices() {
+    final user = FirebaseAuth.instance.currentUser;
+
+    return FirebaseFirestore.instance
+        .collection(BLOC_SERVICES)
+    // .orderBy('sequence', descending: true)
+    // .where('ownerId', isEqualTo: user!.uid)
+        .snapshots();
   }
 
   /** Bookings **/
@@ -522,24 +547,6 @@ class FirestoreHelper {
         .snapshots();
   }
 
-  /** Services **/
-  static getBlocServices(String blocId) {
-    return FirebaseFirestore.instance
-        .collection(SERVICES)
-        .where('blocId', isEqualTo: blocId)
-        .snapshots();
-  }
-
-  static Stream<QuerySnapshot> getAllBlocServices() {
-    final user = FirebaseAuth.instance.currentUser;
-
-    return FirebaseFirestore.instance
-        .collection(SERVICES)
-        // .orderBy('sequence', descending: true)
-        // .where('ownerId', isEqualTo: user!.uid)
-        .snapshots();
-  }
-
   /** SOS **/
   static void sendSOSMessage(String? token, String name, int phoneNumber,
       int tableNumber, String tableId, String seatId) async {
@@ -809,6 +816,7 @@ class FirestoreHelper {
       logger.e(err);
     }
   }
+
 
 /** Reference **/
 // _buildProducts(BuildContext context, String _category) {

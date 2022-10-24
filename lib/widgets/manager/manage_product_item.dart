@@ -3,7 +3,6 @@ import 'package:bloc/widgets/ui/button_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import '../../db/dao/bloc_dao.dart';
 import '../../db/entity/product.dart';
 import '../../screens/bloc/product_detail_screen.dart';
 import '../../screens/manager/inventory/edit_product_screen.dart';
