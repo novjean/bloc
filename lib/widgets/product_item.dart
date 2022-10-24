@@ -60,7 +60,7 @@ class _ProductItemState extends State<ProductItem> {
             child: Row(
               children: <Widget>[
                 Container(
-                  height: 100,
+                  height: 170,
                   width: 100,
                   decoration: BoxDecoration(
                     image: DecorationImage(
@@ -73,7 +73,7 @@ class _ProductItemState extends State<ProductItem> {
                 Expanded(
                   child: Padding(
                     padding: const EdgeInsets.only(
-                        left: 9, right: 0, top: 0, bottom: 0),
+                        left: 10, right: 10, top: 1, bottom: 1),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -116,7 +116,7 @@ class _ProductItemState extends State<ProductItem> {
                                   Text(
                                       '\u20B9 ${widget.product.priceHighest.toStringAsFixed(2)}',
                                       style: TextStyle(
-                                          fontSize: 14,
+                                          fontSize: 15,
                                           fontWeight: FontWeight.bold,
                                           color: Colors.redAccent)),
                                   widget.isOnOffer
@@ -126,7 +126,7 @@ class _ProductItemState extends State<ProductItem> {
                                                   .toStringAsFixed(0) +
                                               '% off',
                                           style: TextStyle(
-                                              fontSize: 14,
+                                              fontSize: 15,
                                               fontWeight: FontWeight.bold,
                                               color: Colors.blue),
                                         )
@@ -140,7 +140,7 @@ class _ProductItemState extends State<ProductItem> {
                                             .toStringAsFixed(0) +
                                         '% off',
                                     style: TextStyle(
-                                        fontSize: 14,
+                                        fontSize: 15,
                                         fontWeight: FontWeight.bold,
                                         color: Colors.blue),
                                   )
@@ -148,10 +148,10 @@ class _ProductItemState extends State<ProductItem> {
                         SizedBox(height: 2),
                         Text(
                             StringUtils.firstFewWords(
-                                    widget.product.description) +
+                                    widget.product.description, 15) +
                                 '...',
                             style:
-                                TextStyle(fontSize: 14, color: Colors.black54)),
+                                TextStyle(fontSize: 15, color: Colors.black54)),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: <Widget>[

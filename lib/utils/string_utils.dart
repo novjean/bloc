@@ -21,11 +21,11 @@ class StringUtils {
     return value;
   }
 
-  static String firstFewWords(String bigSentence){
+  static String firstFewWords(String bigSentence, int numOfWords){
 
     int startIndex = 0, indexOfSpace = 0;
 
-    for(int i = 0; i < 20; i++){
+    for(int i = 0; i < numOfWords; i++){
       indexOfSpace = bigSentence.indexOf(' ', startIndex);
       if(indexOfSpace == -1){     //-1 is when character is not found
         return bigSentence;
