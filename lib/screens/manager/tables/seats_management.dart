@@ -1,3 +1,4 @@
+import 'package:barcode_widget/barcode_widget.dart';
 import 'package:bloc/utils/string_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -143,6 +144,13 @@ class _SeatsManagementScreenState extends State<SeatsManagementScreen> {
     return Column(
       children: [
         SizedBox(height: 2.0),
+        BarcodeWidget(
+          barcode: Barcode.qrCode(), // Barcode type and settings
+          data: serviceTable.id, // Content
+          width: 128,
+          height: 128,
+        ),
+        SizedBox(height: 2.0),
         captainSelectWidget,
         SizedBox(height: 2.0),
         isActiveWidget(),
@@ -152,6 +160,7 @@ class _SeatsManagementScreenState extends State<SeatsManagementScreen> {
         SizedBox(height: 2.0),
         _pullSeats(context),
         SizedBox(height: 2.0),
+
       ],
     );
   }
