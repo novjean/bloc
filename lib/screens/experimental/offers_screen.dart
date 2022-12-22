@@ -5,10 +5,16 @@ class OfferScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Center(
-        child: Text('Offers'),
-      ),
+    return Scaffold(
+      body:  _buildBody(context),
+    );
+  }
+
+  Widget _buildBody(BuildContext context){
+    return Column(
+      children: [
+        Center(child:Text('Work in progress!')),
+      ],
     );
   }
 }

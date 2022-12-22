@@ -300,7 +300,7 @@ class FirestoreHelper {
   static Stream<QuerySnapshot<Object?>> getInventoryOptions() {
     return FirebaseFirestore.instance
         .collection(INVENTORY_OPTIONS)
-        .orderBy('sequence', descending: true)
+        .orderBy('sequence', descending: false)
         .snapshots();
   }
 
@@ -335,6 +335,25 @@ class FirestoreHelper {
         .collection(FirestoreHelper.OFFERS)
         .where('blocServiceId', isEqualTo: blocServiceId)
         .get();
+  }
+
+  static Stream<QuerySnapshot<Object?>> getOffers(String blocServiceId) {
+    return FirebaseFirestore.instance
+        .collection(OFFERS)
+        .where('blocServiceId', isEqualTo: blocServiceId)
+        .snapshots();
+  }
+
+  static Stream<QuerySnapshot<Object?>> getActiveOffers(String blocServiceId, bool isActive) {
+    return FirebaseFirestore.instance
+        .collection(OFFERS)
+        .where('blocServiceId', isEqualTo: blocServiceId)
+        .where('isActive', isEqualTo: isActive)
+        .snapshots();
+  }
+
+  static void deleteOffer(String docId){
+    FirebaseFirestore.instance.collection(OFFERS).doc(docId).delete();
   }
 
   /** Products **/

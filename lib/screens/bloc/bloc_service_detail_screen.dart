@@ -45,6 +45,7 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen>
   var _isLoading = true;
   var _isTableDetailsLoading = true;
   var _isCustomerSeated = false;
+  var _isMenuLoaded = false;
 
   late Widget _categoriesWidget;
   var _isCommunity = false;
@@ -229,7 +230,39 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen>
 
   /** Offer Update **/
   _updateOffers(BuildContext context){
-    return const SizedBox();
+
+    return StreamBuilder<QuerySnapshot>(
+      stream: FirestoreHelper.getActiveOffers(widget.blocService.id, true),
+      builder: (ctx, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          print('loading offers...');
+          return SizedBox();
+        }
+
+        // if (snapshot.data!.docs.length > 0) {
+        //   BlocRepository.clearCategories(widget.dao);
+        // }
+
+        mOffers.clear();
+
+        List<Offer> _offers = [];
+        for (int i = 0; i < snapshot.data!.docs.length; i++) {
+          DocumentSnapshot document = snapshot.data!.docs[i];
+          Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+          final Offer offer = Offer.fromMap(data);
+          _offers.add(offer);
+
+          if (i == snapshot.data!.docs.length - 1) {
+            // here we need to check if any new offers has come
+            // then somehow force a refresh of the menu items
+            mOffers.addAll(_offers);
+
+            return SizedBox();
+          }
+        }
+        return SizedBox();
+      },
+    );
   }
 
   /** Table Info **/
@@ -344,6 +377,7 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen>
                     // _sCategory = categories[index];
                     _categoryName = categories[index].name;
                     print(_categoryName + ' category is selected');
+
                   });
                   // displayProductsList(context, categories[index].id);
                 });
@@ -411,6 +445,10 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen>
                 break;
               }
             }
+
+            // if (index == _products.length-1) {
+            //   _isMenuLoaded = true;
+            // }
 
             return GestureDetector(
                 child: ProductItem(

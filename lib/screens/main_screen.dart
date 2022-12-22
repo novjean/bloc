@@ -145,8 +145,8 @@ class _MainScreenState extends State<MainScreen> {
   Widget build(BuildContext context) {
     List pages = [
       HomeScreen(dao: widget.dao),
-      EventScreen(),
       OfferScreen(),
+      EventScreen(),
       ChatScreen(dao: widget.dao),
       ProfilePage(dao: widget.dao),
     ];

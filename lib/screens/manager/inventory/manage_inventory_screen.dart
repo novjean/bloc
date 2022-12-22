@@ -7,6 +7,7 @@ import '../../../db/dao/bloc_dao.dart';
 import '../../../db/entity/manager_service.dart';
 import '../../../helpers/firestore_helper.dart';
 import 'manage_category_screen.dart';
+import 'manage_offers_screen.dart';
 import 'manage_products_screen.dart';
 
 class ManageInventoryScreen extends StatelessWidget{
@@ -97,7 +98,14 @@ class ManageInventoryScreen extends StatelessWidget{
                             // managerService: managerService,
                             dao: dao)));
                     print('manage category screen selected.');
-                  } else {
+                  } else if(_sInvOption.title.contains('Offers')) {
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (ctx) => ManageOffersScreen(
+                            serviceId: serviceId,
+                            dao: dao)));
+                    print('manage category screen selected.');
+                  }
+                  else {
                     print('Undefined inventory option!');
                   }
                 });
