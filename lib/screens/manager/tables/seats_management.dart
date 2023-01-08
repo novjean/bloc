@@ -78,7 +78,7 @@ class _SeatsManagementScreenState extends State<SeatsManagementScreen> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Text('Captain:'),
-                          SizedBox(height: 2.0),
+                          SizedBox(height: 4.0),
                           FormField<String>(
                             builder: (FormFieldState<String> state) {
                               return InputDecorator(
