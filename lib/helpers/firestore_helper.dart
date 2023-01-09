@@ -750,6 +750,13 @@ class FirestoreHelper {
         .set(user.toMap());
   }
 
+  static Future<QuerySnapshot<Map<String, dynamic>>> pullUser(String userId) {
+    return FirebaseFirestore.instance
+        .collection(USERS)
+        .where('id', isEqualTo: userId)
+        .get();
+  }
+
   static Stream<QuerySnapshot<Object?>> getUsers(int clearanceLevel) {
     return FirebaseFirestore.instance
         .collection(USERS)

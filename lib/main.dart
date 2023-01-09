@@ -141,7 +141,7 @@ class MyApp extends StatelessWidget {
                 home: appSnapshot.connectionState != ConnectionState.done
                     ? SplashScreen()
                     // : LoginScreen(dao:dao)
-                    : TestLoginScreen(),
+                    : TestLoginScreen(dao:dao),
 
                 // routes: {
                 // HomeScreen.routeName: (ctx) => HomeScreen(),

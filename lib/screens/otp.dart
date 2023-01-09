@@ -1,20 +1,31 @@
+import 'package:bloc/db/entity/user.dart' as blocUser;
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:pinput/pinput.dart';
 
+import '../db/bloc_repository.dart';
+import '../db/dao/bloc_dao.dart';
+import '../db/shared_preferences/user_preferences.dart';
+import '../helpers/firestore_helper.dart';
+import '../utils/string_utils.dart';
+import '../widgets/ui/Toaster.dart';
+import 'main_screen.dart';
+
 class OTPScreen extends StatefulWidget {
   final String phone;
+  final BlocDao dao;
 
-  OTPScreen(this.phone);
+  OTPScreen(this.phone, this.dao);
 
   @override
   State<OTPScreen> createState() => _OTPScreenState();
 }
 
 class _OTPScreenState extends State<OTPScreen> {
-  late String _verificationCode;
-  final TextEditingController _pinPutController = TextEditingController();
-  final FocusNode _pinPutFocusNode = FocusNode();
+  // late String _verificationCode;
+  // final TextEditingController _pinPutController = TextEditingController();
+  // final FocusNode _pinPutFocusNode = FocusNode();
 
   final BoxDecoration pinPutDecoration = BoxDecoration(
       color: const Color.fromRGBO(43, 46, 66, 1),
@@ -26,55 +37,42 @@ class _OTPScreenState extends State<OTPScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('OTP Verificaition')),
-      body: Column(children: [
+      appBar: AppBar(title: Text('OTP Verification')),
+      body:Column(children: [
+
         Container(
             margin: EdgeInsets.only(top: 40),
             child: Center(
                 child: Text(
-              'Verify +91-${widget.phone}',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 26),
-            ))),
-        FractionallySizedBox(
-            widthFactor: 1,
-            child: PinputExample(
-              phone: widget.phone,
-            )),
+                  'Verify +91-${widget.phone}',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 26),
+                ))),
 
-        // Padding(
-        //   padding: const EdgeInsets.all(30),
-        //   child: PinPut(
-        //     fieldsCount: 6,
-        //     textStyle: const TextStyle(fontSize: 25, color: Colors.white),
-        //     eachFieldWidth: 40,
-        //     eachFieldHeight: 55,
-        //     // onSubmit: (String pin) => _showSnackBar(pin),
-        //     focusNode: _pinPutFocusNode,
-        //     controller: _pinPutController,
-        //     submittedFieldDecoration: pinPutDecoration,
-        //     selectedFieldDecoration: pinPutDecoration,
-        //     followingFieldDecoration: pinPutDecoration,
-        //     pinAnimationType: PinAnimationType.fade,
-        //   ),
-        // ),
-      ]),
+        Container(
+          margin: EdgeInsets.only(top: 40),
+          child: FractionallySizedBox(
+              widthFactor: 1,
+              child: PinputExample(
+                phone: widget.phone,
+                dao: widget.dao,
+              )),
+        ),
+      ])
     );
   }
 }
 
 class PinputExample extends StatefulWidget {
-  // const PinputExample({Key? key, this.phone}) : super(key: key);
-  PinputExample({key, required this.phone}) : super(key: key);
+  PinputExample({key, required this.phone, required this.dao}) : super(key: key);
 
   String phone;
+  BlocDao dao;
 
   @override
   State<PinputExample> createState() => _PinputExampleState();
 }
 
 class _PinputExampleState extends State<PinputExample> {
-  final GlobalKey<ScaffoldState> _scaffoldkey = GlobalKey<ScaffoldState>();
-
   final pinController = TextEditingController();
   final focusNode = FocusNode();
   final formKey = GlobalKey<FormState>();
@@ -102,7 +100,7 @@ class _PinputExampleState extends State<PinputExample> {
               .signInWithCredential(credential)
               .then((value) async {
             if (value.user != null) {
-              print('user logged in');
+              print('signInWithCredential: user logged in');
             }
           });
         },
@@ -177,14 +175,51 @@ class _PinputExampleState extends State<PinputExample> {
                           verificationId: _verificationCode, smsCode: pin))
                       .then((value) async {
                     if (value.user != null) {
-                      print('pass to home');
+                      print('user is in firebase auth. checking for bloc registration...');
+
+                      FirestoreHelper.pullUser(value.user!.uid).then((res) {
+                        print("Successfully retrieved bloc user for id " + value.user!.uid);
+
+                        if(res.docs.isEmpty){
+                          print('user is not already registered in bloc, registering...');
+
+                          blocUser.User registeredUser = blocUser.User(
+                            id: value.user!.uid,
+                            name: 'Superstar',
+                            clearanceLevel: 1,
+                            phoneNumber: StringUtils.getInt(value.user!.phoneNumber!),
+                            fcmToken: '',
+                            email: '',
+                            imageUrl: '',
+                            username: '',
+                            blocServiceId: '',
+                          );
+
+                          Navigator.of(context).pushReplacement(
+                              MaterialPageRoute(builder: (context)=> MainScreen(dao: widget.dao, user: registeredUser))
+                          );
+                        } else {
+                          debugPrint('user is a bloc member. navigating to main...');
+
+                          DocumentSnapshot document = res.docs[0];
+                          Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+
+                          final blocUser.User user = blocUser.User.fromMap(data);
+
+                          BlocRepository.insertUser(widget.dao, user);
+                          UserPreferences.setUser(user);
+
+                          Navigator.of(context).pushReplacement(
+                              MaterialPageRoute(builder: (context)=> MainScreen(dao: widget.dao, user: user))
+                          );
+                        }
+
+                      });
                     }
                   });
                 } catch (e) {
                   FocusScope.of(context).unfocus();
-                  _scaffoldkey.currentState?.showSnackBar(SnackBar(
-                    content: Text('Invalid OTP'),
-                  ));
+                  Toaster.shortToast('Invalid OTP');
                 }
               },
               onChanged: (value) {
@@ -219,12 +254,12 @@ class _PinputExampleState extends State<PinputExample> {
               ),
             ),
           ),
-          TextButton(
-            onPressed: () async {
-              formKey.currentState!.validate();
-            },
-            child: const Text('Validate'),
-          ),
+          // TextButton(
+          //   onPressed: () async {
+          //     formKey.currentState!.validate();
+          //   },
+          //   child: const Text('Validate'),
+          // ),
         ],
       ),
     );

@@ -2,6 +2,7 @@ import 'package:bloc/db/bloc_repository.dart';
 import 'package:bloc/db/dao/bloc_dao.dart';
 import 'package:bloc/db/entity/user.dart' as blocUser;
 import 'package:bloc/screens/login_screen.dart';
+import 'package:bloc/screens/test_login_screen.dart';
 import 'package:bloc/utils/constants.dart';
 import 'package:bloc/widgets/app_drawer.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -185,7 +186,7 @@ class _MainScreenState extends State<MainScreen> {
                 FirebaseAuth.instance.signOut();
                 Navigator.of(context).pushReplacement(
                   MaterialPageRoute(
-                      builder: (context) => LoginScreen(dao: widget.dao)),
+                      builder: (context) => TestLoginScreen(dao: widget.dao)),
                 );
               }
             },

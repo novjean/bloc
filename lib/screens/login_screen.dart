@@ -26,77 +26,78 @@ class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: StreamBuilder(
-      stream: FirebaseAuth.instance.authStateChanges(),
-      builder: (ctx, userSnapshot) {
-        logger.i('checking for auth state changes...');
+      body: StreamBuilder(
+        stream: FirebaseAuth.instance.authStateChanges(),
+        builder: (ctx, userSnapshot) {
+          logger.i('checking for auth state changes...');
 
-        if (userSnapshot.connectionState == ConnectionState.waiting) {
-          return SplashScreen();
-        }
-
-        logger.i('user snapshot received...');
-
-        if (userSnapshot.hasData) {
-          final user = FirebaseAuth.instance.currentUser;
-
-          CollectionReference users = FirestoreHelper.getUsersCollection();
-
-          if (user!.uid.isEmpty) {
-            return LoginWidget(context);
-          } else {
-            return FutureBuilder<DocumentSnapshot>(
-              future: users.doc(user.uid).get(),
-              builder:
-                  (BuildContext ctx, AsyncSnapshot<DocumentSnapshot> snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
-                }
-
-                if (snapshot.hasError) {
-                  Toaster.shortToast('login failed, please try again!');
-                  return LoginWidget(context);
-                }
-
-                if (snapshot.hasData && !snapshot.data!.exists) {
-                  print(
-                      'firebase registration complete, user received, registering in bloc.');
-                  blocUser.User registeredUser = blocUser.User(
-                    id: user.uid,
-                    name: 'Superstar',
-                    clearanceLevel: 1,
-                    phoneNumber: StringUtils.getInt(user.phoneNumber!),
-                    fcmToken: '',
-                    email: '',
-                    imageUrl: '',
-                    username: '',
-                    blocServiceId: '',
-                  );
-
-                  return MainScreen(dao: dao, user: registeredUser);
-                }
-
-                if (snapshot.connectionState == ConnectionState.done) {
-                  Map<String, dynamic> data =
-                      snapshot.data!.data() as Map<String, dynamic>;
-                  final blocUser.User user = blocUser.User.fromMap(data);
-
-                  BlocRepository.insertUser(dao, user);
-                  UserPreferences.setUser(user);
-
-                  return MainScreen(dao: dao, user: user);
-                }
-                return Text("loading...");
-              },
-            );
+          if (userSnapshot.connectionState == ConnectionState.waiting) {
+            return SplashScreen();
           }
-        } else {
-          return LoginWidget(context);
-        }
-      },
-    ));
+
+          logger.i('user snapshot received...');
+
+          if (userSnapshot.hasData) {
+            final user = FirebaseAuth.instance.currentUser;
+
+            CollectionReference users = FirestoreHelper.getUsersCollection();
+
+            if (user!.uid.isEmpty) {
+              return LoginWidget(context);
+            } else {
+              return FutureBuilder<DocumentSnapshot>(
+                future: users.doc(user.uid).get(),
+                builder: (BuildContext ctx,
+                    AsyncSnapshot<DocumentSnapshot> snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+
+                  if (snapshot.hasError) {
+                    Toaster.shortToast('login failed, please try again!');
+                    return LoginWidget(context);
+                  }
+
+                  if (snapshot.hasData && !snapshot.data!.exists) {
+                    print(
+                        'firebase registration complete, user received, registering in bloc.');
+                    blocUser.User registeredUser = blocUser.User(
+                      id: user.uid,
+                      name: 'Superstar',
+                      clearanceLevel: 1,
+                      phoneNumber: StringUtils.getInt(user.phoneNumber!),
+                      fcmToken: '',
+                      email: '',
+                      imageUrl: '',
+                      username: '',
+                      blocServiceId: '',
+                    );
+
+                    return MainScreen(dao: dao, user: registeredUser);
+                  }
+
+                  if (snapshot.connectionState == ConnectionState.done) {
+                    Map<String, dynamic> data =
+                        snapshot.data!.data() as Map<String, dynamic>;
+                    final blocUser.User user = blocUser.User.fromMap(data);
+
+                    BlocRepository.insertUser(dao, user);
+                    UserPreferences.setUser(user);
+
+                    return MainScreen(dao: dao, user: user);
+                  }
+                  return Text("loading...");
+                },
+              );
+            }
+          } else {
+            return LoginWidget(context);
+          }
+        },
+      ),
+    );
   }
 
   Widget LoginWidget(BuildContext context) {
