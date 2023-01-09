@@ -1,5 +1,6 @@
 import 'package:bloc/db/dao/bloc_dao.dart';
 import 'package:bloc/screens/owner/owner_screen.dart';
+import 'package:bloc/screens/test_login_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -139,7 +140,8 @@ class MyApp extends StatelessWidget {
                 ),
                 home: appSnapshot.connectionState != ConnectionState.done
                     ? SplashScreen()
-                    : LoginScreen(dao: dao),
+                    // : LoginScreen(dao:dao)
+                    : TestLoginScreen(),
 
                 // routes: {
                 // HomeScreen.routeName: (ctx) => HomeScreen(),
