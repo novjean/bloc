@@ -31,15 +31,17 @@ class HomeScreen extends StatelessWidget {
         }
       },
       child: Scaffold(
+        backgroundColor: Theme.of(context).backgroundColor,
+
         body: Padding(
           padding: const EdgeInsets.fromLTRB(0.0, 0, 0.0, 0),
           child: ListView(
             children: <Widget>[
               // buildSearchBar(context),
-              SizedBox(height: 20.0),
+              SizedBox(height: 10.0),
               buildBlocRow(context),
-              SizedBox(height: 20.0),
-              buildServicesRow(context),
+              // SizedBox(height: 20.0),
+              // buildBookTableRow(context),
               // buildRestaurantRow('Trending Restaurants', context),
               // SizedBox(height: 10.0),
               // buildCategoryRow('Category', context),
@@ -104,58 +106,29 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  buildServicesRow(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        // NumbersWidget(),
-        ButtonWidget(
-            text: 'Book A Table',
-            onClicked: () async {
-              await Navigator.of(context).push(
-                MaterialPageRoute(
-                    builder: (context) => BookTableScreen(
-                          blocs: mBlocs,
-                        )),
-              );
-            }),
-      ],
+  buildBlocList(BuildContext context, List blocs) {
+    return Container(
+      height: MediaQuery.of(context).size.height / 2.4,
+      width: MediaQuery.of(context).size.width,
+      child: ListView.builder(
+        primary: false,
+        shrinkWrap: true,
+        scrollDirection: Axis.horizontal,
+        itemCount: blocs == null ? 0 : blocs.length,
+        itemBuilder: (BuildContext context, int index) {
+          Bloc bloc = blocs[index];
+
+          return BlocSlideItem(
+            dao: dao,
+            bloc: bloc,
+            rating: "3",
+          );
+        },
+      ),
     );
   }
 
-  buildRestaurantRow(String restaurant, BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: <Widget>[
-        Text(
-          "$restaurant",
-          style: TextStyle(
-            fontSize: 20.0,
-            fontWeight: FontWeight.w800,
-          ),
-        ),
-        FlatButton(
-          child: Text(
-            "See all (9)",
-            style: TextStyle(
-              color: Theme.of(context).accentColor,
-            ),
-          ),
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (BuildContext context) {
-                  return Trending();
-                },
-              ),
-            );
-          },
-        ),
-      ],
-    );
-  }
-
+  /** Optional **/
   buildSuperstarsTitleRow(String category, BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(left: 10, right: 10),
@@ -165,8 +138,9 @@ class HomeScreen extends StatelessWidget {
           Text(
             "$category",
             style: TextStyle(
+              color: Theme.of(context).primaryColor,
               fontSize: 20.0,
-              fontWeight: FontWeight.w800,
+              fontWeight: FontWeight.bold,
             ),
           ),
           // FlatButton(
@@ -189,33 +163,6 @@ class HomeScreen extends StatelessWidget {
           //   },
           // ),
         ],
-      ),
-    );
-  }
-
-  buildSearchBar(BuildContext context) {
-    return Container(
-        margin: EdgeInsets.fromLTRB(10, 5, 10, 0), child: SearchCard());
-  }
-
-  buildBlocList(BuildContext context, List blocs) {
-    return Container(
-      height: MediaQuery.of(context).size.height / 2.4,
-      width: MediaQuery.of(context).size.width,
-      child: ListView.builder(
-        primary: false,
-        shrinkWrap: true,
-        scrollDirection: Axis.horizontal,
-        itemCount: blocs == null ? 0 : blocs.length,
-        itemBuilder: (BuildContext context, int index) {
-          Bloc bloc = blocs[index];
-
-          return BlocSlideItem(
-            dao: dao,
-            bloc: bloc,
-            rating: "3",
-          );
-        },
       ),
     );
   }
@@ -272,4 +219,64 @@ class HomeScreen extends StatelessWidget {
       ),
     );
   }
+
+  /** Non functional **/
+  buildBookTableRow(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        // NumbersWidget(),
+        ButtonWidget(
+            text: 'Book A Table',
+            onClicked: () async {
+              await Navigator.of(context).push(
+                MaterialPageRoute(
+                    builder: (context) => BookTableScreen(
+                      blocs: mBlocs,
+                    )),
+              );
+            }),
+      ],
+    );
+  }
+
+  /** Unimplemented **/
+  buildRestaurantRow(String restaurant, BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: <Widget>[
+        Text(
+          "$restaurant",
+          style: TextStyle(
+            fontSize: 20.0,
+            fontWeight: FontWeight.w800,
+          ),
+        ),
+        FlatButton(
+          child: Text(
+            "See all (9)",
+            style: TextStyle(
+              color: Theme.of(context).accentColor,
+            ),
+          ),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (BuildContext context) {
+                  return Trending();
+                },
+              ),
+            );
+          },
+        ),
+      ],
+    );
+  }
+
+  buildSearchBar(BuildContext context) {
+    return Container(
+        margin: EdgeInsets.fromLTRB(10, 5, 10, 0), child: SearchCard());
+  }
+
 }

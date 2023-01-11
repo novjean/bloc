@@ -125,10 +125,15 @@ class MyApp extends StatelessWidget {
                   primaryColor: Color.fromRGBO(255,193,7,1),
                   primaryColorLight: Color.fromRGBO(255,235,59,1),
                   backgroundColor: Color.fromRGBO(38, 50, 56, 1.0),
-
+                  focusColor: Color.fromRGBO(31, 31, 33, 1.0),
                   shadowColor: Color.fromRGBO(158, 158, 158, 1.0),
-                  primarySwatch: Colors.red,
-                  highlightColor: Colors.black,
+
+                  highlightColor: Color.fromRGBO(31, 31, 33, 1.0),
+                  bottomAppBarColor: Color.fromRGBO(255, 255, 255, 1.0),
+
+                  // app bar and buttons by default
+                  primarySwatch: Colors.amber,
+
                   accentColor: Colors.grey,
                   accentColorBrightness: Brightness.dark,
                   buttonTheme: ButtonTheme.of(context).copyWith(

@@ -40,8 +40,7 @@ class _MainScreenState extends State<MainScreen> {
 
   List icons = [
     Icons.home,
-    Icons.label,
-    Icons.add,
+    Icons.whatshot_sharp,
     Icons.notifications,
     Icons.person,
   ];
@@ -124,7 +123,7 @@ class _MainScreenState extends State<MainScreen> {
     });
 
     FirebaseMessaging.onMessageOpenedApp.listen((message) {
-      print('A new onMessageOpenedApp event was published!');
+      debugPrint('A new onMessageOpenedApp event was published!');
       Navigator.of(context).push(
         MaterialPageRoute(builder: (ctx) => ChatScreen(dao: widget.dao)),
       );
@@ -144,13 +143,14 @@ class _MainScreenState extends State<MainScreen> {
   Widget build(BuildContext context) {
     List pages = [
       HomeScreen(dao: widget.dao),
-      OfferScreen(),
+      // OfferScreen(),
       EventScreen(),
       ChatScreen(dao: widget.dao),
       ProfilePage(dao: widget.dao),
     ];
 
     return Scaffold(
+      backgroundColor: Theme.of(context).backgroundColor,
       appBar: AppBar(
         title: const Text('BLOC'),
         actions: [
@@ -196,7 +196,7 @@ class _MainScreenState extends State<MainScreen> {
         physics: NeverScrollableScrollPhysics(),
         controller: _pageController,
         onPageChanged: onPageChanged,
-        children: List.generate(5, (index) => pages[index]),
+        children: List.generate(4, (index) => pages[index]),
       ),
       bottomNavigationBar: BottomAppBar(
         child: Row(
@@ -206,8 +206,8 @@ class _MainScreenState extends State<MainScreen> {
             // SizedBox(width: 7),
             buildTabIcon(0),
             buildTabIcon(1),
+            buildTabIcon(2),
             buildTabIcon(3),
-            buildTabIcon(4),
             // SizedBox(width: 7),
           ],
         ),
@@ -240,16 +240,16 @@ class _MainScreenState extends State<MainScreen> {
 
   buildTabIcon(int index) {
     return Container(
-      margin:
-          EdgeInsets.fromLTRB(index == 3 ? 30 : 0, 0, index == 1 ? 30 : 0, 0),
+      // margin:
+      //     EdgeInsets.fromLTRB(index == 3 ? 0 : 0, 0, index == 1 ? 30 : 0, 0),
       child: IconButton(
         icon: Icon(
           icons[index],
           size: 24.0,
         ),
         color: _page == index
-            ? Theme.of(context).accentColor
-            : Theme.of(context).textTheme.caption!.color,
+            ? Theme.of(context).focusColor
+            : Theme.of(context).shadowColor,
         onPressed: () => _pageController.jumpToPage(index),
       ),
     );

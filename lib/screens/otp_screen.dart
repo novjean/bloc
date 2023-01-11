@@ -167,7 +167,7 @@ class _OTPVerifyState extends State<OTPVerify> {
             _verificationCode = verificationId;
           });
         },
-        timeout: Duration(seconds: 60));
+        timeout: Duration(seconds: 120));
   }
 
   @override
