@@ -77,7 +77,7 @@ class _OTPScreenState extends State<OTPScreen> {
                 margin: EdgeInsets.only(top: 0),
                 child: FractionallySizedBox(
                     widthFactor: 1,
-                    child: PinputExample(
+                    child: OTPVerify(
                       phone: widget.phone,
                       dao: widget.dao,
                     )),
@@ -111,18 +111,18 @@ class _OTPScreenState extends State<OTPScreen> {
   }
 }
 
-class PinputExample extends StatefulWidget {
-  PinputExample({key, required this.phone, required this.dao})
+class OTPVerify extends StatefulWidget {
+  OTPVerify({key, required this.phone, required this.dao})
       : super(key: key);
 
   String phone;
   BlocDao dao;
 
   @override
-  State<PinputExample> createState() => _PinputExampleState();
+  State<OTPVerify> createState() => _OTPVerifyState();
 }
 
-class _PinputExampleState extends State<PinputExample> {
+class _OTPVerifyState extends State<OTPVerify> {
   final pinController = TextEditingController();
   final focusNode = FocusNode();
   final formKey = GlobalKey<FormState>();
