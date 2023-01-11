@@ -23,47 +23,97 @@ class OTPScreen extends StatefulWidget {
 }
 
 class _OTPScreenState extends State<OTPScreen> {
-  // late String _verificationCode;
-  // final TextEditingController _pinPutController = TextEditingController();
-  // final FocusNode _pinPutFocusNode = FocusNode();
-
-  final BoxDecoration pinPutDecoration = BoxDecoration(
-      color: const Color.fromRGBO(43, 46, 66, 1),
-      borderRadius: BorderRadius.circular(10),
-      border: Border.all(
-        color: const Color.fromRGBO(126, 203, 224, 1),
-      ));
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('OTP Verification')),
-      body:Column(children: [
-
-        Container(
-            margin: EdgeInsets.only(top: 40),
-            child: Center(
-                child: Text(
-                  'Verify +91-${widget.phone}',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 26),
-                ))),
-
-        Container(
-          margin: EdgeInsets.only(top: 40),
-          child: FractionallySizedBox(
-              widthFactor: 1,
-              child: PinputExample(
-                phone: widget.phone,
-                dao: widget.dao,
-              )),
-        ),
-      ])
-    );
+        backgroundColor: Theme.of(context).backgroundColor,
+        body: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Container(
+                  margin: EdgeInsets.only(top: 100),
+                  child: Column(
+                    children: [
+                      Container(
+                        child: Center(
+                          child: Text(
+                            'BLOC',
+                            style: TextStyle(
+                              color: Theme.of(context).primaryColor,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 25,
+                              fontSize: 72,
+                            ),
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 40.0),
+                        child: Center(
+                            child: Text(
+                          'Verify +91-${widget.phone}',
+                          style: TextStyle(
+                            color: Theme.of(context).primaryColorLight,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 26,
+                          ),
+                        )),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 20.0),
+                        child: Center(
+                            child: Text(
+                          'Enter the six digit code you received',
+                          style: TextStyle(
+                            color: Theme.of(context).primaryColorLight,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20,
+                          ),
+                        )),
+                      ),
+                    ],
+                  )),
+              Container(
+                margin: EdgeInsets.only(top: 0),
+                child: FractionallySizedBox(
+                    widthFactor: 1,
+                    child: PinputExample(
+                      phone: widget.phone,
+                      dao: widget.dao,
+                    )),
+              ),
+              Container(
+                margin: EdgeInsets.only(left: 20, right: 20, bottom: 40),
+                width: double.infinity,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    primary: Theme.of(context).primaryColor,
+                    onPrimary: Colors.white,
+                    shadowColor: Colors.white30,
+                    elevation: 3,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(32.0)),
+                    minimumSize: Size(100, 60), //////// HERE
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    // Navigator.of(context).push(MaterialPageRoute(
+                    //     builder: (context) =>
+                    //         OTPScreen(_controller.text, widget.dao)));
+                  },
+                  child: Text(
+                    'Back',
+                    style: TextStyle(fontSize: 20),
+                  ),
+                ),
+              )
+            ]));
   }
 }
 
 class PinputExample extends StatefulWidget {
-  PinputExample({key, required this.phone, required this.dao}) : super(key: key);
+  PinputExample({key, required this.phone, required this.dao})
+      : super(key: key);
 
   String phone;
   BlocDao dao;
@@ -122,16 +172,16 @@ class _PinputExampleState extends State<PinputExample> {
 
   @override
   Widget build(BuildContext context) {
-    const focusedBorderColor = Color.fromRGBO(23, 171, 144, 1);
-    const fillColor = Color.fromRGBO(243, 246, 249, 0);
-    const borderColor = Color.fromRGBO(23, 171, 144, 0.4);
+    const focusedBorderColor = Color.fromRGBO(255,235,59,1);
+    const fillColor = Color.fromRGBO(38, 50, 56, 1.0);
+    const borderColor = Color.fromRGBO(255,193,7,1);
 
     final defaultPinTheme = PinTheme(
       width: 56,
       height: 56,
       textStyle: const TextStyle(
         fontSize: 22,
-        color: Color.fromRGBO(30, 60, 87, 1),
+        color: Color.fromRGBO(255,235,59,1),
       ),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(19),
@@ -156,11 +206,11 @@ class _PinputExampleState extends State<PinputExample> {
                   AndroidSmsAutofillMethod.smsUserConsentApi,
               listenForMultipleSmsOnAndroid: true,
               defaultPinTheme: defaultPinTheme,
-              validator: (value) {
+              // validator: (value) {
                 // print('code is ' + _verificationCode);
                 // return value == _verificationCode ? null : 'Pin is incorrect';
-                return '';
-              },
+                // return '';
+              // },
               // onClipboardFound: (value) {
               //   debugPrint('onClipboardFound: $value');
               //   pinController.setText(value);
@@ -169,25 +219,30 @@ class _PinputExampleState extends State<PinputExample> {
               onCompleted: (pin) async {
                 debugPrint('onCompleted: $pin');
 
+                Toaster.shortToast('Verifying ...');
                 try {
                   await FirebaseAuth.instance
                       .signInWithCredential(PhoneAuthProvider.credential(
                           verificationId: _verificationCode, smsCode: pin))
                       .then((value) async {
                     if (value.user != null) {
-                      print('user is in firebase auth. checking for bloc registration...');
+                      print(
+                          'user is in firebase auth. checking for bloc registration...');
 
                       FirestoreHelper.pullUser(value.user!.uid).then((res) {
-                        print("Successfully retrieved bloc user for id " + value.user!.uid);
+                        print("Successfully retrieved bloc user for id " +
+                            value.user!.uid);
 
-                        if(res.docs.isEmpty){
-                          print('user is not already registered in bloc, registering...');
+                        if (res.docs.isEmpty) {
+                          print(
+                              'user is not already registered in bloc, registering...');
 
                           blocUser.User registeredUser = blocUser.User(
                             id: value.user!.uid,
                             name: 'Superstar',
                             clearanceLevel: 1,
-                            phoneNumber: StringUtils.getInt(value.user!.phoneNumber!),
+                            phoneNumber:
+                                StringUtils.getInt(value.user!.phoneNumber!),
                             fcmToken: '',
                             email: '',
                             imageUrl: '',
@@ -196,24 +251,28 @@ class _PinputExampleState extends State<PinputExample> {
                           );
 
                           Navigator.of(context).pushReplacement(
-                              MaterialPageRoute(builder: (context)=> MainScreen(dao: widget.dao, user: registeredUser))
-                          );
+                              MaterialPageRoute(
+                                  builder: (context) => MainScreen(
+                                      dao: widget.dao, user: registeredUser)));
                         } else {
-                          debugPrint('user is a bloc member. navigating to main...');
+                          debugPrint(
+                              'user is a bloc member. navigating to main...');
 
                           DocumentSnapshot document = res.docs[0];
-                          Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+                          Map<String, dynamic> data =
+                              document.data()! as Map<String, dynamic>;
 
-                          final blocUser.User user = blocUser.User.fromMap(data);
+                          final blocUser.User user =
+                              blocUser.User.fromMap(data);
 
                           BlocRepository.insertUser(widget.dao, user);
                           UserPreferences.setUser(user);
 
                           Navigator.of(context).pushReplacement(
-                              MaterialPageRoute(builder: (context)=> MainScreen(dao: widget.dao, user: user))
-                          );
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      MainScreen(dao: widget.dao, user: user)));
                         }
-
                       });
                     }
                   });

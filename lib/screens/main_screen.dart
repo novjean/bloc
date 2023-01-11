@@ -2,7 +2,6 @@ import 'package:bloc/db/bloc_repository.dart';
 import 'package:bloc/db/dao/bloc_dao.dart';
 import 'package:bloc/db/entity/user.dart' as blocUser;
 import 'package:bloc/screens/login_screen.dart';
-import 'package:bloc/screens/test_login_screen.dart';
 import 'package:bloc/utils/constants.dart';
 import 'package:bloc/widgets/app_drawer.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -15,7 +14,6 @@ import 'package:logger/logger.dart';
 import '../db/shared_preferences/user_preferences.dart';
 import '../../db/entity/user.dart' as blocUser;
 import '../helpers/firestore_helper.dart';
-import '../helpers/token_monitor.dart';
 import '../main.dart';
 import 'experimental/offers_screen.dart';
 import 'home_screen.dart';
@@ -186,7 +184,7 @@ class _MainScreenState extends State<MainScreen> {
                 FirebaseAuth.instance.signOut();
                 Navigator.of(context).pushReplacement(
                   MaterialPageRoute(
-                      builder: (context) => TestLoginScreen(dao: widget.dao)),
+                      builder: (context) => LoginScreen(dao: widget.dao)),
                 );
               }
             },

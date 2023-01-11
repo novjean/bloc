@@ -1,11 +1,9 @@
 import 'package:bloc/db/dao/bloc_dao.dart';
-import 'package:bloc/screens/owner/owner_screen.dart';
-import 'package:bloc/screens/test_login_screen.dart';
+import 'package:bloc/screens/login_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_auth_ui/flutter_auth_ui.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
@@ -14,7 +12,6 @@ import 'db/database.dart';
 import 'db/shared_preferences/user_preferences.dart';
 import 'firebase_options.dart';
 import 'providers/cart.dart';
-import 'screens/login_screen.dart';
 import 'screens/ui/splash_screen.dart';
 import 'utils/constants.dart';
 
@@ -125,8 +122,12 @@ class MyApp extends StatelessWidget {
                 debugShowCheckedModeBanner: false,
                 title: kAppTitle,
                 theme: ThemeData(
+                  primaryColor: Color.fromRGBO(255,193,7,1),
+                  primaryColorLight: Color.fromRGBO(255,235,59,1),
+                  backgroundColor: Color.fromRGBO(38, 50, 56, 1.0),
+
+                  shadowColor: Color.fromRGBO(158, 158, 158, 1.0),
                   primarySwatch: Colors.red,
-                  backgroundColor: Color.fromRGBO(48, 48, 48, 1.0),
                   highlightColor: Colors.black,
                   accentColor: Colors.grey,
                   accentColorBrightness: Brightness.dark,
@@ -141,7 +142,7 @@ class MyApp extends StatelessWidget {
                 home: appSnapshot.connectionState != ConnectionState.done
                     ? SplashScreen()
                     // : LoginScreen(dao:dao)
-                    : TestLoginScreen(dao:dao),
+                    : LoginScreen(dao:dao),
 
                 // routes: {
                 // HomeScreen.routeName: (ctx) => HomeScreen(),

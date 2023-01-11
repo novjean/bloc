@@ -1,41 +1,43 @@
-import 'package:bloc/helpers/firestore_helper.dart';
+import 'package:bloc/screens/otp_screen.dart';
 import 'package:bloc/db/entity/user.dart' as blocUser;
-import 'package:bloc/screens/main_screen.dart';
-import 'package:bloc/screens/ui/splash_screen.dart';
 
-import 'package:bloc/utils/string_utils.dart';
+import 'package:bloc/screens/ui/splash_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_auth_ui/flutter_auth_ui.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 
 import '../db/bloc_repository.dart';
 import '../db/dao/bloc_dao.dart';
 import '../db/shared_preferences/user_preferences.dart';
-import '../widgets/ui/Toaster.dart';
+import '../helpers/firestore_helper.dart';
+import 'main_screen.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
   BlocDao dao;
 
   LoginScreen({key, required this.dao}) : super(key: key);
 
-  final _phoneController = TextEditingController();
-  final _codeController = TextEditingController();
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  TextEditingController _controller = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).backgroundColor,
       body: StreamBuilder(
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (ctx, userSnapshot) {
-          logger.i('checking for auth state changes...');
+          print('checking for auth state changes...');
 
           if (userSnapshot.connectionState == ConnectionState.waiting) {
             return SplashScreen();
           }
 
-          logger.i('user snapshot received...');
+          print('user snapshot received...');
 
           if (userSnapshot.hasData) {
             final user = FirebaseAuth.instance.currentUser;
@@ -43,7 +45,7 @@ class LoginScreen extends StatelessWidget {
             CollectionReference users = FirestoreHelper.getUsersCollection();
 
             if (user!.uid.isEmpty) {
-              return LoginWidget(context);
+              return SignInWidget();
             } else {
               return FutureBuilder<DocumentSnapshot>(
                 future: users.doc(user.uid).get(),
@@ -56,26 +58,13 @@ class LoginScreen extends StatelessWidget {
                   }
 
                   if (snapshot.hasError) {
-                    Toaster.shortToast('login failed, please try again!');
-                    return LoginWidget(context);
+                    logger.e('snapshot has error: ' + snapshot.error.toString());
+                    return SignInWidget();
                   }
 
                   if (snapshot.hasData && !snapshot.data!.exists) {
-                    print(
-                        'firebase registration complete, user received, registering in bloc.');
-                    blocUser.User registeredUser = blocUser.User(
-                      id: user.uid,
-                      name: 'Superstar',
-                      clearanceLevel: 1,
-                      phoneNumber: StringUtils.getInt(user.phoneNumber!),
-                      fcmToken: '',
-                      email: '',
-                      imageUrl: '',
-                      username: '',
-                      blocServiceId: '',
-                    );
-
-                    return MainScreen(dao: dao, user: registeredUser);
+                    // user not registered in bloc, will be picked up in OTP screen
+                    return Center(child: Text("Loading..."));
                   }
 
                   if (snapshot.connectionState == ConnectionState.done) {
@@ -83,210 +72,92 @@ class LoginScreen extends StatelessWidget {
                         snapshot.data!.data() as Map<String, dynamic>;
                     final blocUser.User user = blocUser.User.fromMap(data);
 
-                    BlocRepository.insertUser(dao, user);
+                    BlocRepository.insertUser(widget.dao, user);
                     UserPreferences.setUser(user);
 
-                    return MainScreen(dao: dao, user: user);
+                    return MainScreen(dao: widget.dao, user: user);
                   }
-                  return Text("loading...");
+                  return Center(child: Text("Loading..."));
                 },
               );
             }
           } else {
-            return LoginWidget(context);
+            return SignInWidget();
           }
         },
       ),
+
+      // SignInWidget()
     );
   }
 
-  Widget LoginWidget(BuildContext context) {
-    return Container(
-      color: Theme.of(context).backgroundColor,
-      padding: EdgeInsets.all(32),
-      child: Form(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              "Login",
+  Widget SignInWidget() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Container(
+          margin: EdgeInsets.only(top: 200),
+          child: Center(
+            child: Text(
+              'BLOC',
               style: TextStyle(
-                  color: Theme.of(context).primaryColor,
-                  fontSize: 36,
-                  fontWeight: FontWeight.w500),
-            ),
-            SizedBox(
-              height: 24,
-            ),
-            TextFormField(
-              keyboardType: TextInputType.numberWithOptions(decimal: true),
-              decoration: InputDecoration(
-                  enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(8)),
-                      borderSide: BorderSide(color: Colors.grey.shade200)),
-                  focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(8)),
-                      borderSide: BorderSide(color: Colors.grey.shade300)),
-                  filled: true,
-                  fillColor: Colors.grey[100],
-                  hintText: "Phone Number"),
-              controller: _phoneController,
-            ),
-            SizedBox(height: 72),
-            Container(
-              width: double.infinity,
-              child: FlatButton(
-                child: Text("Login"),
-                textColor: Colors.white,
-                padding: EdgeInsets.all(16),
-                onPressed: () {
-                  //code for sign in
-                  final phone = "+91" + _phoneController.text.trim();
-                  registerUser(phone, context);
-                },
-                color: Theme.of(context).accentColor,
+                color: Theme.of(context).primaryColor,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 25,
+                fontSize: 72,
               ),
             ),
-            SizedBox(
-              height: 24,
-            ),
-            Container(
-              width: double.infinity,
-              child: FlatButton(
-                child: Text("Register"),
-                textColor: Colors.white,
-                padding: EdgeInsets.all(16),
-                onPressed: () async {
-                  final providers = [
-                    // AuthUiProvider.anonymous,
-                    // AuthUiProvider.email,
-                    AuthUiProvider.phone,
-                    // AuthUiProvider.apple,
-                    // AuthUiProvider.github,
-                    // AuthUiProvider.google,
-                    // AuthUiProvider.microsoft,
-                    // AuthUiProvider.yahoo,
-                  ];
-
-                  final result = await FlutterAuthUi.startUi(
-                    items: providers,
-                    tosAndPrivacyPolicy: TosAndPrivacyPolicy(
-                      tosUrl: "https://www.google.com",
-                      privacyPolicyUrl: "https://www.google.com",
-                    ),
-                    androidOption: const AndroidOption(
-                      enableSmartLock: false, // default true
-                      showLogo: true, // default false
-                      overrideTheme: true, // default false
-                    ),
-                    emailAuthOption: const EmailAuthOption(
-                      requireDisplayName: true,
-                      // default true
-                      enableMailLink: false,
-                      // default false
-                      handleURL: '',
-                      androidPackageName: '',
-                      androidMinimumVersion: '',
-                    ),
-                  );
-                  debugPrint(result.toString());
-                },
-                color: Theme.of(context).accentColor,
-              ),
-            ),
-          ],
+          ),
         ),
-      ),
+        Container(
+          margin: EdgeInsets.only(top: 0, right: 20, left: 20),
+          child: TextField(
+            decoration: InputDecoration(
+              enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(8)),
+                  borderSide: BorderSide(color: Colors.grey.shade200)),
+              focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(8)),
+                  borderSide: BorderSide(color: Colors.grey.shade300)),
+              filled: true,
+              hintText: 'Phone Number',
+              fillColor: Colors.grey[100],
+              prefix: Padding(
+                padding: EdgeInsets.all(4),
+                child: Text('+91'),
+              ),
+            ),
+            style: TextStyle(fontSize: 20.0, height: 1.0, color: Colors.black),
+            maxLength: 10,
+            keyboardType: TextInputType.number,
+            controller: _controller,
+          ),
+        ),
+        Container(
+          margin: EdgeInsets.only(left: 20, right: 20, bottom: 40),
+          width: double.infinity,
+          child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              primary: Theme.of(context).primaryColor,
+              onPrimary: Colors.white,
+              shadowColor: Theme.of(context).shadowColor,
+              elevation: 3,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(32.0)),
+              minimumSize: Size(100, 60), //////// HERE
+            ),
+            onPressed: () {
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) =>
+                      OTPScreen(_controller.text, widget.dao)));
+            },
+            child: Text(
+              'Next',
+              style: TextStyle(fontSize: 20),
+            ),
+          ),
+        )
+      ],
     );
-  }
-
-  Future registerUser(String strMobile, BuildContext context) async {
-    FirebaseAuth _auth = FirebaseAuth.instance;
-
-    try {
-      _auth.verifyPhoneNumber(
-          phoneNumber: strMobile,
-          timeout: Duration(seconds: 120),
-          verificationCompleted: (AuthCredential authCredential) {
-            Toaster.shortToast('login: verification completed!');
-          },
-          verificationFailed: (FirebaseAuthException authException) {
-            print(authException.message);
-          },
-          codeSent: (String verificationId, int? forceResendingToken) {
-            showDialog(
-                context: context,
-                barrierDismissible: false,
-                builder: (context) {
-                  return AlertDialog(
-                    title: Text("Please enter the OTP sent?"),
-                    content: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        TextField(
-                          controller: _codeController,
-                        ),
-                      ],
-                    ),
-                    actions: <Widget>[
-                      FlatButton(
-                        child: Text("Confirm"),
-                        textColor: Colors.white,
-                        color: Theme.of(context).accentColor,
-                        onPressed: () async {
-                          final code = _codeController.text.trim();
-
-                          AuthCredential credential =
-                              PhoneAuthProvider.credential(
-                                  verificationId: verificationId,
-                                  smsCode: code);
-                          UserCredential result =
-                              await _auth.signInWithCredential(credential);
-                          // this will get picked up on top where the user changes are being looked into
-
-                          Navigator.of(context).pop();
-
-                          // User? user = result.user;
-                          //
-                          // if (user != null) {
-                          //   blocUser.User registeredUser = blocUser.User(
-                          //       id: user.uid,
-                          //       name: 'Superstar',
-                          //       clearanceLevel: 1,
-                          //       phoneNumber: StringUtils.getNumberOnly(strMobile),
-                          //       fcmToken: '',
-                          //       email: '',
-                          //       imageUrl: '',
-                          //       username: '', blocServiceId: '',);
-                          //
-                          //   await Navigator.of(context).push(
-                          //     MaterialPageRoute(
-                          //         builder: (context) => MainScreen(
-                          //             user: registeredUser, dao: dao)),
-                          //   );
-                          // } else {
-                          //   print(strMobile +
-                          //       ' registration failed, user could not be retrieved!');
-                          // }
-                        },
-                      ),
-                      TextButton(
-                        child: const Text("Cancel"),
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                      )
-                    ],
-                  );
-                });
-          },
-          codeAutoRetrievalTimeout: (String verificationId) {
-            verificationId = verificationId;
-            print('codeAutoRetrievalTimeout: auto timed out');
-          });
-    } catch (e) {
-      print("failed to verify phone number: ${e}");
-    }
   }
 }
