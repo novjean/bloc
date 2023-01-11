@@ -15,7 +15,6 @@ import '../db/shared_preferences/user_preferences.dart';
 import '../../db/entity/user.dart' as blocUser;
 import '../helpers/firestore_helper.dart';
 import '../main.dart';
-import 'experimental/offers_screen.dart';
 import 'home_screen.dart';
 import 'events/event_screen.dart';
 import 'chat/chat_screen.dart';

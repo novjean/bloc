@@ -2,10 +2,10 @@ import 'package:bloc/db/dao/bloc_dao.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-import '../db/entity/bloc.dart';
-import '../db/entity/bloc_service.dart';
-import '../helpers/firestore_helper.dart';
-import '../screens/bloc/bloc_service_detail_screen.dart';
+import '../../db/entity/bloc.dart';
+import '../../db/entity/bloc_service.dart';
+import '../../helpers/firestore_helper.dart';
+import '../../screens/bloc/bloc_service_detail_screen.dart';
 
 class BlocSlideItem extends StatefulWidget {
   final BlocDao dao;
@@ -27,7 +27,7 @@ class _BlocSlideItemState extends State<BlocSlideItem> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.only(top: 5.0, bottom: 5.0),
+      padding: EdgeInsets.only(top: 0.0, bottom: 0.0),
       child: Container(
         height: MediaQuery.of(context).size.height / 3,
         width: MediaQuery.of(context).size.width,

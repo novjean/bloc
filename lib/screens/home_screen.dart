@@ -1,25 +1,59 @@
 import 'package:bloc/db/entity/user.dart';
 import 'package:bloc/screens/user/book_table_screen.dart';
 import 'package:bloc/utils/constants.dart';
-import 'package:bloc/widgets/ui/button_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-import '../db/bloc_repository.dart';
 import '../db/dao/bloc_dao.dart';
 import '../db/entity/bloc.dart';
 import '../db/shared_preferences/user_preferences.dart';
 import '../helpers/firestore_helper.dart';
 import '../helpers/token_monitor.dart';
 import '../widgets/search_card.dart';
-import '../widgets/bloc_slide_item.dart';
+import '../widgets/home/bloc_slide_item.dart';
+import '../widgets/ui/button_widget.dart';
 import 'experimental/trending.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   BlocDao dao;
-  late List<Bloc> mBlocs;
 
   HomeScreen({key, required this.dao}) : super(key: key);
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  late List<Bloc> mBlocs;
+  var _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+
+    FirestoreHelper.pullBlocs().then((res) {
+      print("Successfully pulled in blocs.");
+
+      if (res.docs.isNotEmpty) {
+        // found blocs
+        List<Bloc> blocs = [];
+        for (int i = 0; i < res.docs.length; i++) {
+          DocumentSnapshot document = res.docs[i];
+          Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+          final Bloc bloc = Bloc.fromMap(data);
+          blocs.add(bloc);
+
+          setState(() {
+            mBlocs = blocs;
+            _isLoading = false;
+          });
+        }
+      } else {
+        print('no blocs found!!!');
+        //todo: need to re-attempt or check internet connection
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,14 +66,15 @@ class HomeScreen extends StatelessWidget {
       },
       child: Scaffold(
         backgroundColor: Theme.of(context).backgroundColor,
-
         body: Padding(
           padding: const EdgeInsets.fromLTRB(0.0, 0, 0.0, 0),
-          child: ListView(
+          child: Column(
             children: <Widget>[
               // buildSearchBar(context),
               SizedBox(height: 10.0),
-              buildBlocRow(context),
+              _isLoading
+                  ? Center(child: Text('Loading blocs...'))
+                  : _displayBlocs(context),
               // SizedBox(height: 20.0),
               // buildBookTableRow(context),
               // buildRestaurantRow('Trending Restaurants', context),
@@ -51,9 +86,9 @@ class HomeScreen extends StatelessWidget {
               buildSuperstarsList(context),
               SizedBox(height: 1.0),
               TokenMonitor((token) {
-                if(token!=null){
+                if (token != null) {
                   User user = UserPreferences.myUser;
-                  if(user.id.isNotEmpty) {
+                  if (user.id.isNotEmpty) {
                     if (UserPreferences.myUser.fcmToken.isEmpty ||
                         UserPreferences.myUser.fcmToken != token) {
                       UserPreferences.setUserFcmToken(token);
@@ -73,60 +108,46 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  buildBlocRow(BuildContext context) {
-    return StreamBuilder<QuerySnapshot>(
-      stream: FirestoreHelper.getBlocs(),
-      builder: (ctx, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
-        }
-
-        List<Bloc> blocs = [];
-        mBlocs = [];
-
-        for (int i = 0; i < snapshot.data!.docs.length; i++) {
-          DocumentSnapshot document = snapshot.data!.docs[i];
-          Map<String, dynamic> map = document.data()! as Map<String, dynamic>;
-          final Bloc bloc = Bloc.fromMap(map);
-          BlocRepository.insertBloc(dao, bloc);
-
-          if (bloc.isActive) {
-            blocs.add(bloc);
-          }
-
-          if (i == snapshot.data!.docs.length - 1) {
-            mBlocs = blocs;
-            return buildBlocList(context, blocs);
-          }
-        }
-        return Text('Loading blocs...');
-      },
-    );
-  }
-
-  buildBlocList(BuildContext context, List blocs) {
-    return Container(
-      height: MediaQuery.of(context).size.height / 2.4,
-      width: MediaQuery.of(context).size.width,
+  _displayBlocs(context) {
+    return Expanded(
       child: ListView.builder(
-        primary: false,
-        shrinkWrap: true,
-        scrollDirection: Axis.horizontal,
-        itemCount: blocs == null ? 0 : blocs.length,
-        itemBuilder: (BuildContext context, int index) {
-          Bloc bloc = blocs[index];
+          itemCount: mBlocs.length,
+          scrollDirection: Axis.horizontal,
+          itemBuilder: (ctx, index) {
+            Bloc bloc = mBlocs[index];
 
-          return BlocSlideItem(
-            dao: dao,
-            bloc: bloc,
-            rating: "3",
-          );
-        },
-      ),
+            return GestureDetector(
+              child: BlocSlideItem(
+                dao: widget.dao,
+                bloc: bloc,
+                rating: "5",
+              ),
+            );
+          }),
     );
   }
+
+  // buildBlocList(BuildContext context) {
+  //   return Container(
+  //     height: MediaQuery.of(context).size.height / 3.0,
+  //     width: MediaQuery.of(context).size.width,
+  //     child: ListView.builder(
+  //       primary: false,
+  //       shrinkWrap: true,
+  //       scrollDirection: Axis.horizontal,
+  //       itemCount: mBlocs.length,
+  //       itemBuilder: (BuildContext context, int index) {
+  //         Bloc bloc = mBlocs[index];
+  //
+  //         return BlocSlideItem(
+  //           dao: widget.dao,
+  //           bloc: bloc,
+  //           rating: "5",
+  //         );
+  //       },
+  //     ),
+  //   );
+  // }
 
   /** Optional **/
   buildSuperstarsTitleRow(String category, BuildContext context) {
@@ -232,8 +253,8 @@ class HomeScreen extends StatelessWidget {
               await Navigator.of(context).push(
                 MaterialPageRoute(
                     builder: (context) => BookTableScreen(
-                      blocs: mBlocs,
-                    )),
+                          blocs: mBlocs,
+                        )),
               );
             }),
       ],
@@ -278,5 +299,4 @@ class HomeScreen extends StatelessWidget {
     return Container(
         margin: EdgeInsets.fromLTRB(10, 5, 10, 0), child: SearchCard());
   }
-
 }

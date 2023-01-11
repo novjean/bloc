@@ -46,6 +46,14 @@ class FirestoreHelper {
   static int TABLE_COMMUNITY_TYPE_ID = 2;
 
   /** Blocs **/
+  static Future<QuerySnapshot<Object?>> pullBlocs() {
+    return FirebaseFirestore.instance
+        .collection(BLOCS)
+        .where('isActive', isEqualTo: true)
+        .get();
+  }
+
+
   static getBlocs() {
     return FirebaseFirestore.instance.collection(BLOCS).snapshots();
   }
