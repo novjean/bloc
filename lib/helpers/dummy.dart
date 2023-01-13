@@ -1,11 +1,14 @@
 import 'package:bloc/db/entity/service_table.dart';
+import 'package:bloc/utils/string_utils.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../db/entity/offer.dart';
+import '../db/entity/product.dart';
 import '../db/entity/seat.dart';
 import 'firestore_helper.dart';
 
 class Dummy {
-  static Offer getDummyOffer(){
+  static Offer getDummyOffer() {
     Offer productOffer = new Offer(
         blocServiceId: '',
         creationTime: 0,
@@ -19,12 +22,11 @@ class Dummy {
         offerPriceCommunity: 0,
         offerPricePrivate: 0,
         productId: '',
-        productName: ''
-    );
+        productName: '');
     return productOffer;
   }
 
-  static ServiceTable getDummyTable(String blocServiceId){
+  static ServiceTable getDummyTable(String blocServiceId) {
     ServiceTable dummyTable = ServiceTable(
         id: 'dummy_table',
         captainId: '',
@@ -37,7 +39,7 @@ class Dummy {
     return dummyTable;
   }
 
-  static Seat getDummySeat(String blocServiceId, String userId){
+  static Seat getDummySeat(String blocServiceId, String userId) {
     Seat dummySeat = Seat(
         tableNumber: -1,
         serviceId: blocServiceId,
@@ -45,5 +47,31 @@ class Dummy {
         custId: userId,
         tableId: 'dummy_table');
     return dummySeat;
+  }
+
+  static getDummyProduct(String blocServiceId, String userId) {
+    int time = Timestamp.now().millisecondsSinceEpoch;
+
+    Product dummyProduct = Product(
+      serviceId: blocServiceId,
+      ownerId: userId,
+      name: '',
+      imageUrl: '',
+      createdAt: time,
+      id: StringUtils.getRandomString(20),
+      description: '',
+      category: 'Beer',
+      isAvailable: false,
+      isOfferRunning: false,
+      price: 0,
+      priceCommunity: 0,
+      priceHighest: 0,
+      priceHighestTime: time,
+      priceLowestTime: time,
+      type: 'Alcohol',
+      priceLowest: 0,
+    );
+
+    return dummyProduct;
   }
 }

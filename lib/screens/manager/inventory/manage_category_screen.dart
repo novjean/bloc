@@ -79,7 +79,7 @@ class ManageCategoryScreen extends StatelessWidget {
           itemBuilder: (ctx, index) {
             return GestureDetector(
                 child: ListViewBlock(
-                  title: _categories[index].name,
+                  title: _categories[index].sequence.toString() + ' : ' + _categories[index].name,
                 ),
                 onTap: () {
                   Category _sCategory = _categories[index];

@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:bloc/db/entity/bloc_service.dart';
 import 'package:bloc/db/entity/service_table.dart';
 import 'package:bloc/helpers/dummy.dart';
@@ -35,15 +37,20 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen>
     with WidgetsBindingObserver {
   static String _TAG = 'BlocServiceDetailScreen';
 
-  String _categoryName = 'Beer';
+  String _sCategoryType = 'Alcohol';
 
   late ServiceTable mTable;
   late Seat mSeat;
-  
+
   List<Offer> mOffers = [];
+  List<Category> mCategories = [];
+  List<Category> mCategoryTypes = [];
+  List<Category> mAlcoholSubCategories = [];
+  List<Category> mFoodSubCategories = [];
 
   var _isLoading = true;
   var _isTableDetailsLoading = true;
+  var _isCategoriesLoading = true;
   var _isCustomerSeated = false;
   var _isMenuLoaded = false;
 
@@ -54,11 +61,34 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen>
   void initState() {
     super.initState();
     WidgetsBinding.instance?.addObserver(this);
-    _categoriesWidget = buildServiceCategories(context);
+    // _categoriesWidget = buildServiceCategories(context);
 
     blocUser.User user = UserPreferences.myUser;
 
-    FirestoreHelper.pullCustomerSeat(widget.blocService.id, user.id).then((res) {
+    FirestoreHelper.pullCategories(widget.blocService.id).then((res) {
+      print("Successfully retrieved categories...");
+
+      if (res.docs.isNotEmpty) {
+        List<Category> _categories = [];
+        for (int i = 0; i < res.docs.length; i++) {
+          DocumentSnapshot document = res.docs[i];
+          Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+          final Category category = Category.fromMap(data);
+          BlocRepository.insertCategory(widget.dao, category);
+          _categories.add(category);
+        }
+
+        setState(() {
+          mCategories = _categories;
+          _isCategoriesLoading = false;
+        });
+      } else {
+        print('no categories found!');
+      }
+    });
+
+    FirestoreHelper.pullCustomerSeat(widget.blocService.id, user.id)
+        .then((res) {
       print("Successfully retrieved seat of user " + user.name);
 
       if (res.docs.isEmpty) {
@@ -111,11 +141,11 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen>
         }
       }
     });
-    
+
     FirestoreHelper.pullOffers(widget.blocService.id).then((res) {
       print("Successfully retrieved offers at bloc " + widget.blocService.name);
 
-      if(res.docs.isNotEmpty){
+      if (res.docs.isNotEmpty) {
         for (int i = 0; i < res.docs.length; i++) {
           DocumentSnapshot document = res.docs[i];
           Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
@@ -218,8 +248,9 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen>
                   )
                 : _searchTableNumber(context),
         const SizedBox(height: 2.0),
+        _isCategoriesLoading ? SizedBox() : _displayCategories(context),
         // buildServiceCategories(context),
-        _categoriesWidget,
+        // _categoriesWidget,
         const SizedBox(height: 2.0),
         buildProducts(context, 'Beer'),
         const SizedBox(height: 1.0),
@@ -229,8 +260,7 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen>
   }
 
   /** Offer Update **/
-  _updateOffers(BuildContext context){
-
+  _updateOffers(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
       stream: FirestoreHelper.getActiveOffers(widget.blocService.id, true),
       builder: (ctx, snapshot) {
@@ -351,7 +381,7 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen>
           _categories.add(cat);
 
           if (i == snapshot.data!.docs.length - 1) {
-            return _displayCategories(context, _categories);
+            return _displayCategories(context);
           }
         }
         return Text('Loading categories...');
@@ -359,25 +389,40 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen>
     );
   }
 
-  _displayCategories(BuildContext context, List<Category> categories) {
+  _displayCategories(BuildContext context) {
+    mCategoryTypes.clear();
+    mAlcoholSubCategories.clear();
+    mFoodSubCategories.clear();
+
+    for (Category cat in mCategories) {
+      if (cat.name == 'Food' || cat.name == 'Alcohol') {
+        mCategoryTypes.add(cat);
+      } else {
+        if (cat.type == 'Food') {
+          mFoodSubCategories.add(cat);
+        } else {
+          mAlcoholSubCategories.add(cat);
+        }
+      }
+    }
+
     return Container(
       key: UniqueKey(),
       // this height has to match with category item container height
       height: MediaQuery.of(context).size.height / 8,
       child: ListView.builder(
-          itemCount: categories.length,
+          itemCount: mCategoryTypes.length,
           scrollDirection: Axis.horizontal,
           itemBuilder: (ctx, index) {
             return GestureDetector(
                 child: CategoryItem(
-                  cat: categories[index],
+                  cat: mCategoryTypes[index],
                 ),
                 onTap: () {
                   setState(() {
                     // _sCategory = categories[index];
-                    _categoryName = categories[index].name;
-                    print(_categoryName + ' category is selected');
-
+                    _sCategoryType = mCategoryTypes[index].name;
+                    print(_sCategoryType + ' category type is selected');
                   });
                   // displayProductsList(context, categories[index].id);
                 });
@@ -388,8 +433,8 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen>
   /** Products List **/
   buildProducts(BuildContext context, String category) {
     return StreamBuilder<QuerySnapshot>(
-      stream: FirestoreHelper.getProductsByCategory(
-          widget.blocService.id, _categoryName),
+      stream: FirestoreHelper.getProductsByCategoryType(
+          widget.blocService.id, _sCategoryType),
       builder: (ctx, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(
@@ -400,8 +445,6 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen>
         if (snapshot.data!.docs.isNotEmpty) {
           BlocRepository.clearProducts(widget.dao);
         }
-
-        // here we should check if there are offers running
 
         if (snapshot.hasData) {
           List<Product> products = [];
@@ -426,20 +469,33 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen>
     );
   }
 
-  _displayProductsList(BuildContext context, List<Product> _products) {
+  _displayProductsList(BuildContext context, List<Product> _categoryProducts) {
     bool isProductOnOffer;
     Offer productOffer = Dummy.getDummyOffer();
+    String categoryTitle = '';
+    bool isCategoryChange;
+
+    List<Product> subProducts = [];
+    for (Category sub in _sCategoryType == 'Food'
+        ? mFoodSubCategories
+        : mAlcoholSubCategories) {
+      for (Product product in _categoryProducts) {
+        if (product.category == sub.name) {
+          subProducts.add(product);
+        }
+      }
+    }
 
     return Expanded(
       child: ListView.builder(
-          itemCount: _products.length,
+          itemCount: subProducts.length,
           scrollDirection: Axis.vertical,
           itemBuilder: (ctx, index) {
             //lets check if the product is on offer
             isProductOnOffer = false;
 
-            for(Offer offer in mOffers) {
-              if(offer.productId == _products[index].id){
+            for (Offer offer in mOffers) {
+              if (offer.productId == subProducts[index].id) {
                 isProductOnOffer = true;
                 productOffer = offer;
                 break;
@@ -450,20 +506,56 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen>
             //   _isMenuLoaded = true;
             // }
 
-            return GestureDetector(
-                child: ProductItem(
-                  serviceId: widget.blocService.id,
-                  product: _products[index],
-                  dao: widget.dao,
-                  tableNumber: mTable.tableNumber,
-                  isCommunity: _isCommunity,
-                  isOnOffer: isProductOnOffer,
-                  offer: productOffer,
-                ),
-                onTap: () {
-                  Product _sProduct = _products[index];
-                  print(_sProduct.name + ' is selected');
-                });
+            Product product = subProducts[index];
+
+            if (index == 0) {
+              isCategoryChange = true;
+              categoryTitle = product.category;
+            } else {
+              if (categoryTitle != product.category) {
+                categoryTitle = product.category;
+                isCategoryChange = true;
+              } else {
+                isCategoryChange = false;
+              }
+            }
+
+            return Column(
+              children: [
+                isCategoryChange
+                    ? Column(
+                        children: <Widget>[
+                          SizedBox(
+                            width: double.infinity,
+                            child: Container(
+                              padding: EdgeInsets.only(top: 8.0, bottom: 8, right: 20),
+                              color: Theme.of(context).primaryColor,
+                              child: Text(
+                                categoryTitle,
+                                textAlign: TextAlign.right,
+                                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                          ),
+                        ],
+                      )
+                    : SizedBox(),
+                GestureDetector(
+                    child: ProductItem(
+                      serviceId: widget.blocService.id,
+                      product: subProducts[index],
+                      dao: widget.dao,
+                      tableNumber: mTable.tableNumber,
+                      isCommunity: _isCommunity,
+                      isOnOffer: isProductOnOffer,
+                      offer: productOffer,
+                    ),
+                    onTap: () {
+                      Product _sProduct = subProducts[index];
+                      print(_sProduct.name + ' is selected');
+                    }),
+              ],
+            );
           }),
     );
   }

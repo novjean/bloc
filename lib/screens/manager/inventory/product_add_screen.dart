@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:bloc/utils/string_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -15,26 +16,35 @@ import '../../../widgets/profile_widget.dart';
 import '../../../widgets/ui/button_widget.dart';
 import '../../../widgets/ui/textfield_widget.dart';
 
-class EditProductScreen extends StatefulWidget {
+class ProductAddScreen extends StatefulWidget {
   Product product;
+  String blocServiceId;
 
-  EditProductScreen({key, required this.product}) : super(key: key);
+  ProductAddScreen({key, required this.blocServiceId, required this.product}) : super(key: key);
 
   @override
-  _EditProductScreenState createState() => _EditProductScreenState();
+  _ProductAddScreenState createState() => _ProductAddScreenState();
 }
 
-class _EditProductScreenState extends State<EditProductScreen> {
+class _ProductAddScreenState extends State<ProductAddScreen> {
   // late User user;
   bool isPhotoChanged = false;
   late String oldImageUrl;
   late String newImageUrl;
 
-  List<Category> subCategories = [];
+  List<Category> alcoholCategories = [];
+  List<Category> foodCategories = [];
+
+  List<String> catTypeNames = [];
+  List<String> catNames = [];
+
+  List<String> catAlcoholNames = [];
+  List<String> catFoodNames = [];
+
   List<String> subCatsList = [];
   bool _isCategoriesLoading = true;
   late String _productCategory;
-
+  late String _productType;
 
   @override
   void initState() {
@@ -45,25 +55,48 @@ class _EditProductScreenState extends State<EditProductScreen> {
 
       if (res.docs.isNotEmpty) {
         _productCategory = widget.product.category;
+        _productType = widget.product.type;
 
-        List<Category> _categories = [];
-        List<String> _catsStringList = [];
+        List<String> _catAlcoholNames = [];
+        List<String> _catFoodNames = [];
+        List<String> _catNames = [];
+
         for (int i = 0; i < res.docs.length; i++) {
           DocumentSnapshot document = res.docs[i];
           Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
           final Category category = Category.fromMap(data);
-          if(category.name=='Alcohol' || category.name=='Food')
+          if (category.name == 'Alcohol' || category.name == 'Food') {
+            catTypeNames.add(category.name);
             continue;
-
-          if (widget.product.type == category.type) {
-            _categories.add(category);
-            _catsStringList.add(category.name);
           }
+
+          if (category.type == 'Alcohol' || category.type == 'Food') {
+            // alcoholCategories.add(category);
+            _catNames.add(category.name);
+          }
+
+          if (category.type == 'Alcohol') {
+            // alcoholCategories.add(category);
+            _catAlcoholNames.add(category.name);
+          } else if (category.type == 'Food') {
+            _catFoodNames.add(category.name);
+            // foodCategories.add(category);
+          }
+
+          // if (widget.product.type == category.type) {
+          //   _categories.add(category);
+          //   _catsStringList.add(category.name);
+          // }
         }
 
         setState(() {
-          subCategories = _categories;
-          subCatsList = _catsStringList;
+          catAlcoholNames = _catAlcoholNames;
+          catFoodNames = _catFoodNames;
+          catNames = _catNames;
+
+
+          // subCategories = _categories;
+          // subCatsList = _catsStringList;
           _isCategoriesLoading = false;
         });
       } else {
@@ -117,23 +150,45 @@ class _EditProductScreenState extends State<EditProductScreen> {
               ),
               const SizedBox(height: 24),
               TextFieldWidget(
-                label: 'Product Name',
+                label: 'Name',
                 text: widget.product.name,
                 onChanged: (name) =>
                     widget.product = widget.product.copyWith(name: name),
               ),
               const SizedBox(height: 24),
-              TextFormField(
-                key: const ValueKey('product_type'),
-                initialValue: widget.product.type,
-                enabled: false,
-                autocorrect: false,
-                textCapitalization: TextCapitalization.words,
-                enableSuggestions: false,
-                keyboardType: TextInputType.text,
-                decoration: const InputDecoration(
-                  labelText: 'Product Type',
-                ),
+              FormField<String>(
+                builder: (FormFieldState<String> state) {
+                  return InputDecorator(
+                    key: const ValueKey('product_type'),
+                    decoration: InputDecoration(
+                        errorStyle:
+                        TextStyle(color: Theme.of(context).errorColor, fontSize: 16.0),
+                        hintText: 'Please select product type',
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(5.0))),
+                    isEmpty: _productType == '',
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton<String>(
+                        value: _productType,
+                        isDense: true,
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            _productType = newValue!;
+                            widget.product =
+                                widget.product.copyWith(type: newValue);
+                                state.didChange(newValue);
+                          });
+                        },
+                        items: catTypeNames.map((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList(),
+                      ),
+                    ),
+                  );
+                },
               ),
               const SizedBox(height: 24),
               FormField<String>(
@@ -141,8 +196,8 @@ class _EditProductScreenState extends State<EditProductScreen> {
                   return InputDecorator(
                     key: const ValueKey('product_category'),
                     decoration: InputDecoration(
-                        errorStyle: TextStyle(
-                            color: Colors.redAccent, fontSize: 16.0),
+                        errorStyle:
+                            TextStyle(color: Theme.of(context).errorColor, fontSize: 16.0),
                         hintText: 'Please select product category',
                         border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(5.0))),
@@ -154,32 +209,22 @@ class _EditProductScreenState extends State<EditProductScreen> {
                         onChanged: (String? newValue) {
                           setState(() {
                             _productCategory = newValue!;
-                            widget.product = widget.product.copyWith(category: newValue);
+                            widget.product =
+                                widget.product.copyWith(category: newValue);
                             // state.didChange(newValue);
                           });
                         },
-                        items: subCatsList.map((String value) {
+                        items: catNames.map((String value) {
                           return DropdownMenuItem<String>(
                             value: value,
                             child: Text(value),
                           );
-                        }).toList(),
+                        }).toList()
                       ),
                     ),
                   );
                 },
               ),
-              // DropdownButton<String>(
-              //   items: subCatsList.map((String value) {
-              //     return DropdownMenuItem<String>(
-              //       value: value,
-              //       child: Text(value),
-              //     );
-              //   }).toList(),
-              //   onChanged: (sCategory) {
-              //
-              //   },
-              // ),
               const SizedBox(height: 24),
               TextFieldWidget(
                 label: 'Description',
@@ -204,7 +249,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
                 },
                 keyboardType: TextInputType.number,
                 decoration: const InputDecoration(
-                  labelText: 'Product Price',
+                  labelText: 'Price',
                 ),
                 onChanged: (value) {
                   double? newPrice = double.tryParse(value);
@@ -213,7 +258,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
               ),
               const SizedBox(height: 24),
               TextFormField(
-                key: const ValueKey('product_price_community'),
+                key: const ValueKey('product_community_price'),
                 initialValue: widget.product.priceCommunity.toString(),
                 autocorrect: false,
                 textCapitalization: TextCapitalization.none,
@@ -230,11 +275,79 @@ class _EditProductScreenState extends State<EditProductScreen> {
                 ),
                 onChanged: (value) {
                   double? newPrice = double.tryParse(value);
-                  widget.product =
-                      widget.product.copyWith(priceCommunity: newPrice);
+                  widget.product = widget.product.copyWith(priceCommunity: newPrice);
                 },
               ),
               const SizedBox(height: 24),
+              TextFormField(
+                key: const ValueKey('product_community_price_lowest'),
+                initialValue: widget.product.priceCommunity.toString(),
+                autocorrect: false,
+                textCapitalization: TextCapitalization.none,
+                enableSuggestions: false,
+                validator: (value) {
+                  if (value!.isEmpty) {
+                    return 'Please enter a valid lowest community price for the product.';
+                  }
+                  return null;
+                },
+                keyboardType: TextInputType.number,
+                decoration: const InputDecoration(
+                  labelText: 'Community Lowest Price',
+                ),
+                onChanged: (value) {
+                  double? newPrice = double.tryParse(value);
+                  widget.product = widget.product.copyWith(priceLowest: newPrice);
+                  widget.product = widget.product.copyWith(priceLowestTime: Timestamp.now().millisecondsSinceEpoch);
+                },
+              ),
+              const SizedBox(height: 24),
+              TextFormField(
+                key: const ValueKey('product_community_price_highest'),
+                initialValue: widget.product.priceCommunity.toString(),
+                autocorrect: false,
+                textCapitalization: TextCapitalization.none,
+                enableSuggestions: false,
+                validator: (value) {
+                  if (value!.isEmpty) {
+                    return 'Please enter a valid highest community price for the product.';
+                  }
+                  return null;
+                },
+                keyboardType: TextInputType.number,
+                decoration: const InputDecoration(
+                  labelText: 'Community Highest Price',
+                ),
+                onChanged: (value) {
+                  double? newPrice = double.tryParse(value);
+                  widget.product = widget.product.copyWith(priceHighest: newPrice);
+                  widget.product = widget.product.copyWith(priceHighestTime: Timestamp.now().millisecondsSinceEpoch);
+                },
+              ),
+              const SizedBox(height: 24),
+              // TextFormField(
+              //   key: const ValueKey('product_sequence'),
+              //   initialValue: widget.product.priceCommunity.toString(),
+              //   autocorrect: false,
+              //   textCapitalization: TextCapitalization.none,
+              //   enableSuggestions: false,
+              //   validator: (value) {
+              //     if (value!.isEmpty) {
+              //       return 'Please enter a valid community price for the product.';
+              //     }
+              //     return null;
+              //   },
+              //   keyboardType: TextInputType.number,
+              //   decoration: const InputDecoration(
+              //     labelText: 'Community Price',
+              //   ),
+              //   onChanged: (value) {
+              //     double? newPrice = double.tryParse(value);
+              //     widget.product =
+              //         widget.product.copyWith(priceCommunity: newPrice);
+              //   },
+              // ),
+              // const SizedBox(height: 24),
               Row(
                 children: <Widget>[
                   SizedBox(
@@ -265,7 +378,9 @@ class _EditProductScreenState extends State<EditProductScreen> {
                         widget.product.copyWith(imageUrl: newImageUrl);
                   }
 
-                  FirestoreHelper.updateProduct(widget.product);
+                  FirestoreHelper.pushProduct(widget.product);
+
+                  // FirestoreHelper.updateProduct(widget.product);
 
                   Navigator.of(context).pop();
                 },

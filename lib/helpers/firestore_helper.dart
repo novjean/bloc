@@ -260,6 +260,14 @@ class FirestoreHelper {
   }
 
   /** Category **/
+  static pullCategories(String blocServiceId) {
+    return FirebaseFirestore.instance
+        .collection(CATEGORIES)
+        .where('serviceId', isEqualTo: blocServiceId)
+        .orderBy('sequence', descending: false)
+        .get();
+  }
+
   static Stream<QuerySnapshot<Object?>> getCategories(String serviceId) {
     return FirebaseFirestore.instance
         .collection(CATEGORIES)
@@ -365,6 +373,16 @@ class FirestoreHelper {
   }
 
   /** Products **/
+  static void pushProduct(Product product) async {
+    try {
+      await FirebaseFirestore.instance.collection(PRODUCTS).doc(product.id).set(product.toMap());
+    } on PlatformException catch (err) {
+      logger.e(err.message);
+    } catch (err) {
+      logger.e(err);
+    }
+  }
+
   static void insertProduct(
       String productId,
       String productName,
@@ -449,9 +467,19 @@ class FirestoreHelper {
         .where('serviceId', isEqualTo: serviceId)
         .where('category', isEqualTo: category)
         .where('isAvailable', isEqualTo: true)
+        .snapshots();
+  }
+
+  static getProductsByCategoryType(String blocServiceId, String type) {
+    return FirebaseFirestore.instance
+        .collection(PRODUCTS)
+        .where('serviceId', isEqualTo: blocServiceId)
+        .where('type', isEqualTo: type)
+        .where('isAvailable', isEqualTo: true)
         // .orderBy('sequence', descending: false)
         .snapshots();
   }
+
 
   static void updateProductImage(String productId, File image) async {
     try {

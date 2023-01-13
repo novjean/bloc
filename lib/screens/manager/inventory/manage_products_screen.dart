@@ -1,4 +1,7 @@
+import 'package:bloc/db/shared_preferences/user_preferences.dart';
+import 'package:bloc/helpers/dummy.dart';
 import 'package:bloc/screens/manager/inventory/add_product_screen.dart';
+import 'package:bloc/screens/manager/inventory/product_add_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -37,7 +40,8 @@ class _ManageProductsScreenState extends State<ManageProductsScreen> {
           Navigator.of(context).push(
             MaterialPageRoute(
                 builder: (ctx) =>
-                    AddProductScreen(serviceId: widget.serviceId, dao: widget.dao)),
+                    ProductAddScreen(blocServiceId: widget.serviceId,
+                      product: Dummy.getDummyProduct(widget.serviceId, UserPreferences.myUser.id),)),
           );
         },
         child: Icon(
