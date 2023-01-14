@@ -47,7 +47,7 @@ class BlocItem extends StatelessWidget {
             icon: Icon(Icons.edit),
             onPressed: () {
               Navigator.of(context).push(
-                  MaterialPageRoute(builder: (ctx) => BlocAddEditScreen(bloc: bloc)),
+                  MaterialPageRoute(builder: (ctx) => BlocAddEditScreen(bloc: bloc, task: 'Edit',)),
               );
             },
             color: Theme.of(context).primaryColor,

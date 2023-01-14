@@ -28,7 +28,7 @@ class OwnerCityScreen extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.of(context).push(
-            MaterialPageRoute(builder: (ctx) => BlocAddEditScreen(bloc: Dummy.getDummyBloc(city.id),)),
+            MaterialPageRoute(builder: (ctx) => BlocAddEditScreen(bloc: Dummy.getDummyBloc(city.id),task: 'Add',)),
           );
         },
         child: Icon(

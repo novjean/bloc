@@ -1,4 +1,5 @@
 import 'package:bloc/helpers/firestore_helper.dart';
+import 'package:bloc/screens/owner/bloc_service_add_edit_screen.dart';
 import 'package:bloc/widgets/ui/cover_photo.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -7,7 +8,9 @@ import '../../db/bloc_repository.dart';
 import '../../db/dao/bloc_dao.dart';
 import '../../db/entity/bloc.dart';
 import '../../db/entity/bloc_service.dart';
+import '../../helpers/dummy.dart';
 import '../../widgets/bloc_service_item.dart';
+import '../forms/new_bloc_service_screen.dart';
 
 class BlocDetailScreen extends StatelessWidget {
   static const routeName = '/bloc-detail';
@@ -24,24 +27,25 @@ class BlocDetailScreen extends StatelessWidget {
         title: Text(bloc.name),
       ),
       // drawer: AppDrawer(),
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: () {
-      //     Navigator.of(context).push(
-      //       MaterialPageRoute(
-      //           builder: (ctx) => NewBlocServiceScreen(bloc:bloc)),
-      //     );
-      //   },
-      //   child: Icon(
-      //     Icons.add,
-      //     color: Colors.black,
-      //     size: 29,
-      //   ),
-      //   backgroundColor: Theme.of(context).primaryColor,
-      //   tooltip: 'New Bloc',
-      //   elevation: 5,
-      //   splashColor: Colors.grey,
-      // ),
-      // floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+                builder: (ctx) => BlocServiceAddEditScreen(
+                    blocService: Dummy.getDummyBlocService(bloc.id), task: 'Add',)),
+          );
+        },
+        child: Icon(
+          Icons.add,
+          color: Colors.black,
+          size: 29,
+        ),
+        backgroundColor: Theme.of(context).primaryColor,
+        tooltip: 'New Bloc Service',
+        elevation: 5,
+        splashColor: Colors.grey,
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       body: ListView(
         children: [
           CoverPhoto(bloc.name, bloc.imageUrl),
@@ -74,12 +78,13 @@ class BlocDetailScreen extends StatelessWidget {
             ),
             children: snapshot.data!.docs.map((DocumentSnapshot document) {
               Map<String, dynamic> data =
-              document.data()! as Map<String, dynamic>;
+                  document.data()! as Map<String, dynamic>;
 
               final BlocService service = BlocService.fromMap(data);
               BlocRepository.insertBlocService(dao, service);
 
-              return BlocServiceItem(service, false, dao, key: ValueKey(document.id));
+              return BlocServiceItem(service, false, dao,
+                  key: ValueKey(document.id));
             }).toList(),
           );
         },

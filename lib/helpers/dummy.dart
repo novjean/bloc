@@ -3,6 +3,7 @@ import 'package:bloc/utils/string_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../db/entity/bloc.dart';
+import '../db/entity/bloc_service.dart';
 import '../db/entity/offer.dart';
 import '../db/entity/product.dart';
 import '../db/entity/seat.dart';
@@ -93,5 +94,22 @@ class Dummy {
         pinCode: '');
 
     return dummyBloc;
+  }
+
+  static getDummyBlocService(String blocId) {
+    BlocService dummyBlocService = BlocService(
+      ownerId: UserPreferences.myUser.id,
+      name: '',
+      imageUrl: '',
+      createdAt: Timestamp.now().millisecondsSinceEpoch.toString(),
+      type: '',
+      id: StringUtils.getRandomString(20),
+      blocId: blocId,
+      emailId: '',
+      primaryPhone: 0,
+      secondaryPhone: 0,
+    );
+
+    return dummyBlocService;
   }
 }

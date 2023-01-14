@@ -14,8 +14,9 @@ import '../../db/entity/bloc.dart';
 
 class BlocAddEditScreen extends StatefulWidget {
   Bloc bloc;
+  String task;
 
-  BlocAddEditScreen({key, required this.bloc})
+  BlocAddEditScreen({key, required this.bloc, required this.task})
       : super(key: key);
 
   @override

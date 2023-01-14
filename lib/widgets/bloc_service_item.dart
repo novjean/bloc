@@ -4,6 +4,7 @@ import '../db/dao/bloc_dao.dart';
 import '../db/entity/bloc_service.dart';
 import '../screens/bloc/bloc_service_detail_screen.dart';
 import '../screens/manager/manager_bloc_service_screen.dart';
+import '../screens/owner/bloc_service_add_edit_screen.dart';
 
 class BlocServiceItem extends StatelessWidget {
   final Key key;
@@ -47,6 +48,15 @@ class BlocServiceItem extends StatelessWidget {
             service.name,
             textAlign: TextAlign.center,
           ),
+            trailing: IconButton(
+              icon: Icon(Icons.edit),
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (ctx) => BlocServiceAddEditScreen(blocService: service,task: 'Edit',)),
+                );
+              },
+              color: Theme.of(context).primaryColor,
+            )
         ),
       ),
     );

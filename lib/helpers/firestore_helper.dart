@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:bloc/db/entity/bloc.dart';
+import 'package:bloc/db/entity/bloc_service.dart';
 import 'package:bloc/db/entity/cart_item.dart';
 import 'package:bloc/db/entity/offer.dart';
 import 'package:bloc/db/entity/seat.dart';
@@ -94,6 +95,16 @@ class FirestoreHelper {
   }
 
   /** Bloc Services **/
+  static void pushBlocService(BlocService blocService) async {
+    try {
+      await FirebaseFirestore.instance.collection(BLOC_SERVICES).doc(blocService.id).set(blocService.toMap());
+    } on PlatformException catch (err) {
+      logger.e(err.message);
+    } catch (err) {
+      logger.e(err);
+    }
+  }
+
   static Future<QuerySnapshot<Object?>> pullBlocService(String blocId) {
     return FirebaseFirestore.instance
         .collection(BLOC_SERVICES)
@@ -888,7 +899,6 @@ class FirestoreHelper {
       logger.e(err);
     }
   }
-
 
 
 /** Reference **/

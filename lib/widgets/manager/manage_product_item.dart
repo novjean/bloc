@@ -1,11 +1,9 @@
 import 'package:bloc/screens/manager/inventory/add_product_offer_screen.dart';
 import 'package:bloc/widgets/ui/button_widget.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../../db/entity/product.dart';
 import '../../screens/bloc/product_detail_screen.dart';
-import '../../screens/manager/inventory/edit_product_screen.dart';
 import '../../screens/manager/inventory/product_add_edit_screen.dart';
 
 class ManageProductItem extends StatelessWidget {
