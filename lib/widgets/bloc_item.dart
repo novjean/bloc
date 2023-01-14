@@ -1,9 +1,9 @@
 import 'package:bloc/screens/bloc/bloc_detail_screen.dart';
-import 'package:bloc/screens/forms/edit_bloc_screen.dart';
 import 'package:flutter/material.dart';
 
 import '../db/dao/bloc_dao.dart';
 import '../db/entity/bloc.dart';
+import '../screens/owner/bloc_add_edit_screen.dart';
 
 class BlocItem extends StatelessWidget {
   final Key key;
@@ -47,7 +47,7 @@ class BlocItem extends StatelessWidget {
             icon: Icon(Icons.edit),
             onPressed: () {
               Navigator.of(context).push(
-                  MaterialPageRoute(builder: (ctx) => EditBlocScreen(bloc: bloc)),
+                  MaterialPageRoute(builder: (ctx) => BlocAddEditScreen(bloc: bloc)),
               );
             },
             color: Theme.of(context).primaryColor,

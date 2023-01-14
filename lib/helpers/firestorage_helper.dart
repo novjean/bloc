@@ -10,7 +10,7 @@ class FirestorageHelper {
   static var logger = Logger();
 
   static String USERS = 'user_image';
-  static String BLOCS = 'bloc_image';
+  static String BLOCS_IMAGES = 'bloc_image';
   static String PRODUCT_IMAGES = 'product_image';
 
 

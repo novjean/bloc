@@ -1,6 +1,5 @@
 import 'package:bloc/db/bloc_repository.dart';
 import 'package:bloc/helpers/firestore_helper.dart';
-import 'package:bloc/screens/forms/new_bloc_screen.dart';
 import 'package:bloc/widgets/bloc_item.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -8,6 +7,8 @@ import 'package:flutter/material.dart';
 import '../../db/dao/bloc_dao.dart';
 import '../../db/entity/bloc.dart';
 import '../../db/entity/city.dart';
+import '../../helpers/dummy.dart';
+import 'bloc_add_edit_screen.dart';
 
 class OwnerCityScreen extends StatelessWidget {
   static const routeName = '/city-detail';
@@ -27,7 +28,7 @@ class OwnerCityScreen extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.of(context).push(
-            MaterialPageRoute(builder: (ctx) => NewBlocScreen(city: city)),
+            MaterialPageRoute(builder: (ctx) => BlocAddEditScreen(bloc: Dummy.getDummyBloc(city.id),)),
           );
         },
         child: Icon(

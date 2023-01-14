@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:bloc/db/entity/bloc.dart';
 import 'package:bloc/db/entity/cart_item.dart';
 import 'package:bloc/db/entity/offer.dart';
 import 'package:bloc/db/entity/seat.dart';
@@ -46,13 +47,22 @@ class FirestoreHelper {
   static int TABLE_COMMUNITY_TYPE_ID = 2;
 
   /** Blocs **/
+  static void pushBloc(Bloc bloc) async {
+    try {
+      await FirebaseFirestore.instance.collection(BLOCS).doc(bloc.id).set(bloc.toMap());
+    } on PlatformException catch (err) {
+      logger.e(err.message);
+    } catch (err) {
+      logger.e(err);
+    }
+  }
+
   static Future<QuerySnapshot<Object?>> pullBlocs() {
     return FirebaseFirestore.instance
         .collection(BLOCS)
         .where('isActive', isEqualTo: true)
         .get();
   }
-
 
   static getBlocs() {
     return FirebaseFirestore.instance.collection(BLOCS).snapshots();
@@ -68,7 +78,7 @@ class FirestoreHelper {
   static void updateBloc(String id, File image) async {
     try {
       final url = await FirestorageHelper.uploadFile(
-          FirestorageHelper.BLOCS, id, image);
+          FirestorageHelper.BLOCS_IMAGES, id, image);
 
       await FirebaseFirestore.instance
           .collection(BLOCS)
@@ -878,6 +888,7 @@ class FirestoreHelper {
       logger.e(err);
     }
   }
+
 
 
 /** Reference **/

@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import '../../db/entity/product.dart';
 import '../../screens/bloc/product_detail_screen.dart';
 import '../../screens/manager/inventory/edit_product_screen.dart';
+import '../../screens/manager/inventory/product_add_edit_screen.dart';
 
 class ManageProductItem extends StatelessWidget {
   final Product product;
@@ -96,7 +97,7 @@ class ManageProductItem extends StatelessWidget {
                                 Navigator.of(context).push(
                                   MaterialPageRoute(
                                       builder: (ctx) =>
-                                          EditProductScreen(product: product)),
+                                          ProductAddEditScreen(product: product, task: 'Edit',)),
                                 );
                                 print(product.name +
                                     ' is clicked to be modified.');

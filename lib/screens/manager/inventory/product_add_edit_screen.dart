@@ -15,18 +15,18 @@ import '../../../widgets/profile_widget.dart';
 import '../../../widgets/ui/button_widget.dart';
 import '../../../widgets/ui/textfield_widget.dart';
 
-class ProductAddScreen extends StatefulWidget {
+class ProductAddEditScreen extends StatefulWidget {
   Product product;
-  String blocServiceId;
+  String task;
 
-  ProductAddScreen({key, required this.blocServiceId, required this.product})
+  ProductAddEditScreen({key, required this.product, required this.task})
       : super(key: key);
 
   @override
-  _ProductAddScreenState createState() => _ProductAddScreenState();
+  _ProductAddEditScreenState createState() => _ProductAddEditScreenState();
 }
 
-class _ProductAddScreenState extends State<ProductAddScreen> {
+class _ProductAddEditScreenState extends State<ProductAddEditScreen> {
   bool isPhotoChanged = false;
   late String oldImageUrl;
   late String newImageUrl;
@@ -99,7 +99,7 @@ class _ProductAddScreenState extends State<ProductAddScreen> {
   @override
   Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(
-          title: Text('Product | Add'),
+          title: Text('Product | ' + widget.task),
         ),
         body: _buildBody(context),
       );
@@ -121,7 +121,7 @@ class _ProductAddScreenState extends State<ProductAddScreen> {
                   final image = await ImagePicker().pickImage(
                       source: ImageSource.gallery,
                       imageQuality: 90,
-                      maxWidth: 300);
+                      maxWidth: 500);
                   if (image == null) return;
 
                   final directory = await getApplicationDocumentsDirectory();
@@ -161,7 +161,7 @@ class _ProductAddScreenState extends State<ProductAddScreen> {
                     isEmpty: _productType == '',
                     child: DropdownButtonHideUnderline(
                       child: DropdownButton<String>(
-                        value: _productType,
+                        value: widget.product.type,
                         isDense: true,
                         onChanged: (String? newValue) {
                           setState(() {
@@ -202,7 +202,7 @@ class _ProductAddScreenState extends State<ProductAddScreen> {
                               isEmpty: _sCategoryFood == '',
                               child: DropdownButtonHideUnderline(
                                 child: DropdownButton<String>(
-                                    value: _sCategoryFood,
+                                    value: widget.product.category,
                                     isDense: true,
                                     onChanged: (String? newValue) {
                                       setState(() {
@@ -243,7 +243,7 @@ class _ProductAddScreenState extends State<ProductAddScreen> {
                               isEmpty: _sCategoryAlcohol == '',
                               child: DropdownButtonHideUnderline(
                                 child: DropdownButton<String>(
-                                    value: _sCategoryAlcohol,
+                                    value: widget.product.category,
                                     isDense: true,
                                     onChanged: (String? newValue) {
                                       setState(() {
@@ -324,7 +324,7 @@ class _ProductAddScreenState extends State<ProductAddScreen> {
               const SizedBox(height: 24),
               TextFormField(
                 key: const ValueKey('product_community_price_lowest'),
-                initialValue: widget.product.priceCommunity.toString(),
+                initialValue: widget.product.priceLowest.toString(),
                 autocorrect: false,
                 textCapitalization: TextCapitalization.none,
                 enableSuggestions: false,
@@ -349,7 +349,7 @@ class _ProductAddScreenState extends State<ProductAddScreen> {
               const SizedBox(height: 24),
               TextFormField(
                 key: const ValueKey('product_community_price_highest'),
-                initialValue: widget.product.priceCommunity.toString(),
+                initialValue: widget.product.priceHighest.toString(),
                 autocorrect: false,
                 textCapitalization: TextCapitalization.none,
                 enableSuggestions: false,
