@@ -8,7 +8,7 @@ class CategoryItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double height = MediaQuery.of(context).size.height / 8;
+    double height = MediaQuery.of(context).size.height / 14;
     double width = MediaQuery.of(context).size.width / 2;
 
     return Padding(

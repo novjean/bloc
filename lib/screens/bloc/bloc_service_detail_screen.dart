@@ -53,16 +53,13 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen>
   var _isTableDetailsLoading = true;
   var _isCategoriesLoading = true;
   var _isCustomerSeated = false;
-  var _isMenuLoaded = false;
 
-  late Widget _categoriesWidget;
   var _isCommunity = false;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance?.addObserver(this);
-    // _categoriesWidget = buildServiceCategories(context);
 
     blocUser.User user = UserPreferences.myUser;
 
@@ -250,8 +247,6 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen>
                 : _searchTableNumber(context),
         const SizedBox(height: 2.0),
         _isCategoriesLoading ? SizedBox() : _displayCategories(context),
-        // buildServiceCategories(context),
-        // _categoriesWidget,
         const SizedBox(height: 2.0),
         buildProducts(context, 'Beer'),
         const SizedBox(height: 1.0),
@@ -269,10 +264,6 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen>
           print('loading offers...');
           return SizedBox();
         }
-
-        // if (snapshot.data!.docs.length > 0) {
-        //   BlocRepository.clearCategories(widget.dao);
-        // }
 
         mOffers.clear();
 
@@ -357,39 +348,6 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen>
   }
 
   /** Categories List **/
-  buildServiceCategories(BuildContext context) {
-    final Stream<QuerySnapshot> _catsStream =
-        FirestoreHelper.getCategories(widget.blocService.id);
-
-    return StreamBuilder<QuerySnapshot>(
-      stream: _catsStream,
-      builder: (ctx, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          print('loading categories...');
-          return SizedBox();
-        }
-
-        if (snapshot.data!.docs.length > 0) {
-          BlocRepository.clearCategories(widget.dao);
-        }
-
-        List<Category> _categories = [];
-        for (int i = 0; i < snapshot.data!.docs.length; i++) {
-          DocumentSnapshot document = snapshot.data!.docs[i];
-          Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-          final Category cat = Category.fromMap(data);
-          BlocRepository.insertCategory(widget.dao, cat);
-          _categories.add(cat);
-
-          if (i == snapshot.data!.docs.length - 1) {
-            return _displayCategories(context);
-          }
-        }
-        return Text('Loading categories...');
-      },
-    );
-  }
-
   _displayCategories(BuildContext context) {
     mCategoryTypes.clear();
     mAlcoholSubCategories.clear();
@@ -410,7 +368,7 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen>
     return Container(
       key: UniqueKey(),
       // this height has to match with category item container height
-      height: MediaQuery.of(context).size.height / 8,
+      height: MediaQuery.of(context).size.height / 14,
       child: ListView.builder(
           itemCount: mCategoryTypes.length,
           scrollDirection: Axis.horizontal,
