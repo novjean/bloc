@@ -1,0 +1,148 @@
+class Party {
+  final String id;
+  final String name;
+  final String description;
+  final String blocServiceId;
+  final String imageUrl;
+  final String instagramUrl;
+  final String ticketUrl;
+  final double createdAt;
+  final double startTime;
+  final double endTime;
+  final String ownerId;
+  final bool isActive;
+
+//<editor-fold desc="Data Methods">
+
+  const Party({
+    required this.id,
+    required this.name,
+    required this.description,
+    required this.blocServiceId,
+    required this.imageUrl,
+    required this.instagramUrl,
+    required this.ticketUrl,
+    required this.createdAt,
+    required this.startTime,
+    required this.endTime,
+    required this.ownerId,
+    required this.isActive,
+  });
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is Party &&
+          runtimeType == other.runtimeType &&
+          id == other.id &&
+          name == other.name &&
+          description == other.description &&
+          blocServiceId == other.blocServiceId &&
+          imageUrl == other.imageUrl &&
+          instagramUrl == other.instagramUrl &&
+          ticketUrl == other.ticketUrl &&
+          createdAt == other.createdAt &&
+          startTime == other.startTime &&
+          endTime == other.endTime &&
+          ownerId == other.ownerId &&
+          isActive == other.isActive);
+
+  @override
+  int get hashCode =>
+      id.hashCode ^
+      name.hashCode ^
+      description.hashCode ^
+      blocServiceId.hashCode ^
+      imageUrl.hashCode ^
+      instagramUrl.hashCode ^
+      ticketUrl.hashCode ^
+      createdAt.hashCode ^
+      startTime.hashCode ^
+      endTime.hashCode ^
+      ownerId.hashCode ^
+      isActive.hashCode;
+
+  @override
+  String toString() {
+    return 'Party{' +
+        ' id: $id,' +
+        ' name: $name,' +
+        ' description: $description,' +
+        ' blocServiceId: $blocServiceId,' +
+        ' imageUrl: $imageUrl,' +
+        ' instagramUrl: $instagramUrl,' +
+        ' ticketUrl: $ticketUrl,' +
+        ' createdAt: $createdAt,' +
+        ' startTime: $startTime,' +
+        ' endTime: $endTime,' +
+        ' ownerId: $ownerId,' +
+        ' isActive: $isActive,' +
+        '}';
+  }
+
+  Party copyWith({
+    String? id,
+    String? name,
+    String? description,
+    String? blocServiceId,
+    String? imageUrl,
+    String? instagramUrl,
+    String? ticketUrl,
+    double? createdAt,
+    double? startTime,
+    double? endTime,
+    String? ownerId,
+    bool? isActive,
+  }) {
+    return Party(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      description: description ?? this.description,
+      blocServiceId: blocServiceId ?? this.blocServiceId,
+      imageUrl: imageUrl ?? this.imageUrl,
+      instagramUrl: instagramUrl ?? this.instagramUrl,
+      ticketUrl: ticketUrl ?? this.ticketUrl,
+      createdAt: createdAt ?? this.createdAt,
+      startTime: startTime ?? this.startTime,
+      endTime: endTime ?? this.endTime,
+      ownerId: ownerId ?? this.ownerId,
+      isActive: isActive ?? this.isActive,
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': this.id,
+      'name': this.name,
+      'description': this.description,
+      'blocServiceId': this.blocServiceId,
+      'imageUrl': this.imageUrl,
+      'instagramUrl': this.instagramUrl,
+      'ticketUrl': this.ticketUrl,
+      'createdAt': this.createdAt,
+      'startTime': this.startTime,
+      'endTime': this.endTime,
+      'ownerId': this.ownerId,
+      'isActive': this.isActive,
+    };
+  }
+
+  factory Party.fromMap(Map<String, dynamic> map) {
+    return Party(
+      id: map['id'] as String,
+      name: map['name'] as String,
+      description: map['description'] as String,
+      blocServiceId: map['blocServiceId'] as String,
+      imageUrl: map['imageUrl'] as String,
+      instagramUrl: map['instagramUrl'] as String,
+      ticketUrl: map['ticketUrl'] as String,
+      createdAt: map['createdAt'] as double,
+      startTime: map['startTime'] as double,
+      endTime: map['endTime'] as double,
+      ownerId: map['ownerId'] as String,
+      isActive: map['isActive'] as bool,
+    );
+  }
+
+//</editor-fold>
+}
