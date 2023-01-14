@@ -7,6 +7,7 @@ import 'package:bloc/helpers/firestore_helper.dart';
 import 'package:bloc/widgets/table_card_item.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 
 import '../../db/bloc_repository.dart';
 import '../../db/dao/bloc_dao.dart';
@@ -424,7 +425,6 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen>
                     _sCategoryType = mCategoryTypes[index].name;
                     print(_sCategoryType + ' category type is selected');
                   });
-                  // displayProductsList(context, categories[index].id);
                 });
           }),
     );
@@ -475,13 +475,28 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen>
     String categoryTitle = '';
     bool isCategoryChange;
 
+    LinkedHashMap map = new LinkedHashMap<int, String>();
+
     List<Product> subProducts = [];
+    String curCategory = '';
+
     for (Category sub in _sCategoryType == 'Food'
         ? mFoodSubCategories
         : mAlcoholSubCategories) {
       for (Product product in _categoryProducts) {
         if (product.category == sub.name) {
           subProducts.add(product);
+
+          // category determination logic
+          if(subProducts.length == 1){
+            map.putIfAbsent(subProducts.length-1, () => product.category);
+            curCategory = product.category;
+          } else {
+            if(curCategory!=product.category){
+              map.putIfAbsent(subProducts.length-1, () => product.category);
+              curCategory = product.category;
+            }
+          }
         }
       }
     }
@@ -502,22 +517,11 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen>
               }
             }
 
-            // if (index == _products.length-1) {
-            //   _isMenuLoaded = true;
-            // }
-
-            Product product = subProducts[index];
-
-            if (index == 0) {
+            if(map.containsKey(index)){
               isCategoryChange = true;
-              categoryTitle = product.category;
+              categoryTitle = map[index];
             } else {
-              if (categoryTitle != product.category) {
-                categoryTitle = product.category;
-                isCategoryChange = true;
-              } else {
-                isCategoryChange = false;
-              }
+              isCategoryChange = false;
             }
 
             return Column(
@@ -528,12 +532,14 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen>
                           SizedBox(
                             width: double.infinity,
                             child: Container(
-                              padding: EdgeInsets.only(top: 8.0, bottom: 8, right: 20),
+                              padding: EdgeInsets.only(
+                                  top: 8.0, bottom: 8, right: 20),
                               color: Theme.of(context).primaryColor,
                               child: Text(
                                 categoryTitle,
                                 textAlign: TextAlign.right,
-                                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                                style: TextStyle(
+                                    fontSize: 22, fontWeight: FontWeight.bold),
                               ),
                             ),
                           ),

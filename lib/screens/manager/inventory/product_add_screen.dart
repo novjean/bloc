@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:bloc/utils/string_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -20,28 +19,26 @@ class ProductAddScreen extends StatefulWidget {
   Product product;
   String blocServiceId;
 
-  ProductAddScreen({key, required this.blocServiceId, required this.product}) : super(key: key);
+  ProductAddScreen({key, required this.blocServiceId, required this.product})
+      : super(key: key);
 
   @override
   _ProductAddScreenState createState() => _ProductAddScreenState();
 }
 
 class _ProductAddScreenState extends State<ProductAddScreen> {
-  // late User user;
   bool isPhotoChanged = false;
   late String oldImageUrl;
   late String newImageUrl;
-
-  List<Category> alcoholCategories = [];
-  List<Category> foodCategories = [];
 
   List<String> catTypeNames = [];
   List<String> catNames = [];
 
   List<String> catAlcoholNames = [];
   List<String> catFoodNames = [];
+  late String _sCategoryAlcohol;
+  late String _sCategoryFood;
 
-  List<String> subCatsList = [];
   bool _isCategoriesLoading = true;
   late String _productCategory;
   late String _productType;
@@ -71,32 +68,26 @@ class _ProductAddScreenState extends State<ProductAddScreen> {
           }
 
           if (category.type == 'Alcohol' || category.type == 'Food') {
-            // alcoholCategories.add(category);
             _catNames.add(category.name);
           }
 
           if (category.type == 'Alcohol') {
-            // alcoholCategories.add(category);
             _catAlcoholNames.add(category.name);
+            if (_catAlcoholNames.length == 1) {
+              _sCategoryAlcohol = category.name;
+            }
           } else if (category.type == 'Food') {
             _catFoodNames.add(category.name);
-            // foodCategories.add(category);
+            if (_catFoodNames.length == 1) {
+              _sCategoryFood = category.name;
+            }
           }
-
-          // if (widget.product.type == category.type) {
-          //   _categories.add(category);
-          //   _catsStringList.add(category.name);
-          // }
         }
 
         setState(() {
           catAlcoholNames = _catAlcoholNames;
           catFoodNames = _catFoodNames;
           catNames = _catNames;
-
-
-          // subCategories = _categories;
-          // subCatsList = _catsStringList;
           _isCategoriesLoading = false;
         });
       } else {
@@ -108,7 +99,7 @@ class _ProductAddScreenState extends State<ProductAddScreen> {
   @override
   Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(
-          title: Text('Product | Edit'),
+          title: Text('Product | Add'),
         ),
         body: _buildBody(context),
       );
@@ -161,8 +152,9 @@ class _ProductAddScreenState extends State<ProductAddScreen> {
                   return InputDecorator(
                     key: const ValueKey('product_type'),
                     decoration: InputDecoration(
-                        errorStyle:
-                        TextStyle(color: Theme.of(context).errorColor, fontSize: 16.0),
+                        errorStyle: TextStyle(
+                            color: Theme.of(context).errorColor,
+                            fontSize: 16.0),
                         hintText: 'Please select product type',
                         border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(5.0))),
@@ -176,7 +168,7 @@ class _ProductAddScreenState extends State<ProductAddScreen> {
                             _productType = newValue!;
                             widget.product =
                                 widget.product.copyWith(type: newValue);
-                                state.didChange(newValue);
+                            state.didChange(newValue);
                           });
                         },
                         items: catTypeNames.map((String value) {
@@ -190,41 +182,91 @@ class _ProductAddScreenState extends State<ProductAddScreen> {
                   );
                 },
               ),
-              const SizedBox(height: 24),
-              FormField<String>(
-                builder: (FormFieldState<String> state) {
-                  return InputDecorator(
-                    key: const ValueKey('product_category'),
-                    decoration: InputDecoration(
-                        errorStyle:
-                            TextStyle(color: Theme.of(context).errorColor, fontSize: 16.0),
-                        hintText: 'Please select product category',
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(5.0))),
-                    isEmpty: _productCategory == '',
-                    child: DropdownButtonHideUnderline(
-                      child: DropdownButton<String>(
-                        value: _productCategory,
-                        isDense: true,
-                        onChanged: (String? newValue) {
-                          setState(() {
-                            _productCategory = newValue!;
-                            widget.product =
-                                widget.product.copyWith(category: newValue);
-                            // state.didChange(newValue);
-                          });
-                        },
-                        items: catNames.map((String value) {
-                          return DropdownMenuItem<String>(
-                            value: value,
-                            child: Text(value),
-                          );
-                        }).toList()
-                      ),
+
+              _productType == 'Food'
+                  ? Column(
+                      children: [
+                        const SizedBox(height: 24),
+                        FormField<String>(
+                          builder: (FormFieldState<String> state) {
+                            return InputDecorator(
+                              key: const ValueKey('product_category_food'),
+                              decoration: InputDecoration(
+                                  errorStyle: TextStyle(
+                                      color: Theme.of(context).errorColor,
+                                      fontSize: 16.0),
+                                  hintText: 'Please select product category',
+                                  border: OutlineInputBorder(
+                                      borderRadius:
+                                          BorderRadius.circular(5.0))),
+                              isEmpty: _sCategoryFood == '',
+                              child: DropdownButtonHideUnderline(
+                                child: DropdownButton<String>(
+                                    value: _sCategoryFood,
+                                    isDense: true,
+                                    onChanged: (String? newValue) {
+                                      setState(() {
+                                        _productCategory = newValue!;
+                                        _sCategoryFood = _productCategory;
+                                        widget.product = widget.product
+                                            .copyWith(category: newValue);
+                                        // state.didChange(newValue);
+                                      });
+                                    },
+                                    items: catFoodNames.map((String value) {
+                                      return DropdownMenuItem<String>(
+                                        value: value,
+                                        child: Text(value),
+                                      );
+                                    }).toList()),
+                              ),
+                            );
+                          },
+                        ),
+                      ],
+                    )
+                  : Column(
+                      children: [
+                        const SizedBox(height: 24),
+                        FormField<String>(
+                          builder: (FormFieldState<String> state) {
+                            return InputDecorator(
+                              key: const ValueKey('product_category_alcohol'),
+                              decoration: InputDecoration(
+                                  errorStyle: TextStyle(
+                                      color: Theme.of(context).errorColor,
+                                      fontSize: 16.0),
+                                  hintText: 'Please select product category',
+                                  border: OutlineInputBorder(
+                                      borderRadius:
+                                          BorderRadius.circular(5.0))),
+                              isEmpty: _sCategoryAlcohol == '',
+                              child: DropdownButtonHideUnderline(
+                                child: DropdownButton<String>(
+                                    value: _sCategoryAlcohol,
+                                    isDense: true,
+                                    onChanged: (String? newValue) {
+                                      setState(() {
+                                        _productCategory = newValue!;
+                                        _sCategoryAlcohol = _productCategory;
+                                        widget.product = widget.product
+                                            .copyWith(category: newValue);
+                                        // state.didChange(newValue);
+                                      });
+                                    },
+                                    items: catAlcoholNames.map((String value) {
+                                      return DropdownMenuItem<String>(
+                                        value: value,
+                                        child: Text(value),
+                                      );
+                                    }).toList()),
+                              ),
+                            );
+                          },
+                        ),
+                      ],
                     ),
-                  );
-                },
-              ),
+
               const SizedBox(height: 24),
               TextFieldWidget(
                 label: 'Description',
@@ -275,7 +317,8 @@ class _ProductAddScreenState extends State<ProductAddScreen> {
                 ),
                 onChanged: (value) {
                   double? newPrice = double.tryParse(value);
-                  widget.product = widget.product.copyWith(priceCommunity: newPrice);
+                  widget.product =
+                      widget.product.copyWith(priceCommunity: newPrice);
                 },
               ),
               const SizedBox(height: 24),
@@ -297,8 +340,10 @@ class _ProductAddScreenState extends State<ProductAddScreen> {
                 ),
                 onChanged: (value) {
                   double? newPrice = double.tryParse(value);
-                  widget.product = widget.product.copyWith(priceLowest: newPrice);
-                  widget.product = widget.product.copyWith(priceLowestTime: Timestamp.now().millisecondsSinceEpoch);
+                  widget.product =
+                      widget.product.copyWith(priceLowest: newPrice);
+                  widget.product = widget.product.copyWith(
+                      priceLowestTime: Timestamp.now().millisecondsSinceEpoch);
                 },
               ),
               const SizedBox(height: 24),
@@ -320,8 +365,10 @@ class _ProductAddScreenState extends State<ProductAddScreen> {
                 ),
                 onChanged: (value) {
                   double? newPrice = double.tryParse(value);
-                  widget.product = widget.product.copyWith(priceHighest: newPrice);
-                  widget.product = widget.product.copyWith(priceHighestTime: Timestamp.now().millisecondsSinceEpoch);
+                  widget.product =
+                      widget.product.copyWith(priceHighest: newPrice);
+                  widget.product = widget.product.copyWith(
+                      priceHighestTime: Timestamp.now().millisecondsSinceEpoch);
                 },
               ),
               const SizedBox(height: 24),
