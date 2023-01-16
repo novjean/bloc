@@ -72,7 +72,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         snapshot.data!.data() as Map<String, dynamic>;
                     final blocUser.User user = blocUser.User.fromMap(data);
 
-                    BlocRepository.insertUser(widget.dao, user);
+                    // BlocRepository.insertUser(widget.dao, user);
                     UserPreferences.setUser(user);
 
                     return MainScreen(dao: widget.dao, user: user);

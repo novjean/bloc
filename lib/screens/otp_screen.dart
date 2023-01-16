@@ -265,7 +265,7 @@ class _OTPVerifyState extends State<OTPVerify> {
                           final blocUser.User user =
                               blocUser.User.fromMap(data);
 
-                          BlocRepository.insertUser(widget.dao, user);
+                          // BlocRepository.insertUser(widget.dao, user);
                           UserPreferences.setUser(user);
 
                           Navigator.of(context).pushReplacement(

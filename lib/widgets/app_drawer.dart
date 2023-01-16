@@ -106,7 +106,7 @@ class AppDrawer extends StatelessWidget {
               UserPreferences.resetUser();
 
               // clear out local DB
-              BlocRepository.clearUsers(dao);
+              // BlocRepository.clearUsers(dao);
 
               FirebaseAuth.instance.signOut();
               Navigator.of(context).pushReplacement(

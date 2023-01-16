@@ -19,14 +19,14 @@ var logger = Logger(
 
 class BlocRepository {
   /** City **/
-  static void insertCity(BlocDao dao, City city) async {
-    await dao.insertCity(city);
-  }
+  // static void insertCity(BlocDao dao, City city) async {
+  //   await dao.insertCity(city);
+  // }
 
   /** Bloc **/
-  static void insertBloc(BlocDao dao, Bloc bloc) async {
-    await dao.insertBloc(bloc);
-  }
+  // static void insertBloc(BlocDao dao, Bloc bloc) async {
+  //   await dao.insertBloc(bloc);
+  // }
 
   /** Service **/
   static void insertBlocService(BlocDao dao, BlocService service) async {
@@ -120,41 +120,41 @@ class BlocRepository {
   }
 
   /** User **/
-  static void insertUser(BlocDao dao, User user) async {
-    logger.i("insertUser(): " + user.username);
-    await dao.insertUser(user);
-  }
-  static Future<User?> getUser(BlocDao dao, String userId) async {
-    Future<User?> user = dao.getUser(userId);
-    return user;
-  }
+  // static void insertUser(BlocDao dao, User user) async {
+  //   logger.i("insertUser(): " + user.username);
+  //   await dao.insertUser(user);
+  // }
+  // static Future<User?> getUser(BlocDao dao, String userId) async {
+  //   Future<User?> user = dao.getUser(userId);
+  //   return user;
+  // }
 
-  static void updateUser(BlocDao dao, User user) async {
-    logger.i("updateUser(): " + user.username);
-    await dao.updateUser(user);
-  }
+  // static void updateUser(BlocDao dao, User user) async {
+  //   logger.i("updateUser(): " + user.username);
+  //   await dao.updateUser(user);
+  // }
 
-  static void clearUsers(BlocDao dao) {
-    logger.i("clearUsers()");
-    dao.clearUsers();
-  }
+  // static void clearUsers(BlocDao dao) {
+  //   logger.i("clearUsers()");
+  //   dao.clearUsers();
+  // }
 
   /** Service Table **/
-  static Future<List<ServiceTable>> getServiceTables(BlocDao dao, String serviceId) async {
-    logger.i('getServiceTables(): ');
-    Future<List<ServiceTable>> fTables =  dao.getTables(serviceId);
-    return fTables;
-  }
+  // static Future<List<ServiceTable>> getServiceTables(BlocDao dao, String serviceId) async {
+  //   logger.i('getServiceTables(): ');
+  //   Future<List<ServiceTable>> fTables =  dao.getTables(serviceId);
+  //   return fTables;
+  // }
 
-  static void insertServiceTable(BlocDao dao, ServiceTable serviceTable) async {
-    logger.i('insertServiceTable(): ');
-    await dao.insertServiceTable(serviceTable);
-  }
+  // static void insertServiceTable(BlocDao dao, ServiceTable serviceTable) async {
+  //   logger.i('insertServiceTable(): ');
+  //   await dao.insertServiceTable(serviceTable);
+  // }
 
-  static void updateTableOccupyStatus(BlocDao dao, String serviceId, int tableNumber, bool occupyStatus) async {
-    logger.i('updateTableOccupied(): ');
-    await dao.updateTableOccupied(serviceId, tableNumber, occupyStatus);
-  }
+  // static void updateTableOccupyStatus(BlocDao dao, String serviceId, int tableNumber, bool occupyStatus) async {
+  //   logger.i('updateTableOccupied(): ');
+  //   await dao.updateTableOccupied(serviceId, tableNumber, occupyStatus);
+  // }
 
   /** Seat **/
   static void insertSeat(BlocDao dao, Seat seat) async {

@@ -117,44 +117,6 @@ class _$AppDatabase extends AppDatabase {
 class _$BlocDao extends BlocDao {
   _$BlocDao(this.database, this.changeListener)
       : _queryAdapter = QueryAdapter(database, changeListener),
-        _userInsertionAdapter = InsertionAdapter(
-            database,
-            'User',
-            (User item) => <String, Object?>{
-                  'id': item.id,
-                  'username': item.username,
-                  'email': item.email,
-                  'imageUrl': item.imageUrl,
-                  'clearanceLevel': item.clearanceLevel,
-                  'phoneNumber': item.phoneNumber,
-                  'name': item.name,
-                  'fcmToken': item.fcmToken,
-                  'blocServiceId': item.blocServiceId
-                }),
-        _cityInsertionAdapter = InsertionAdapter(
-            database,
-            'City',
-            (City item) => <String, Object?>{
-                  'id': item.id,
-                  'name': item.name,
-                  'ownerId': item.ownerId,
-                  'imageUrl': item.imageUrl
-                }),
-        _blocInsertionAdapter = InsertionAdapter(
-            database,
-            'Bloc',
-            (Bloc item) => <String, Object?>{
-                  'id': item.id,
-                  'name': item.name,
-                  'cityId': item.cityId,
-                  'addressLine1': item.addressLine1,
-                  'addressLine2': item.addressLine2,
-                  'pinCode': item.pinCode,
-                  'imageUrl': item.imageUrl,
-                  'ownerId': item.ownerId,
-                  'createdAt': item.createdAt,
-                  'isActive': item.isActive ? 1 : 0
-                }),
         _blocServiceInsertionAdapter = InsertionAdapter(
             database,
             'BlocService',
@@ -234,19 +196,6 @@ class _$BlocDao extends BlocDao {
                   'sequence': item.sequence
                 },
             changeListener),
-        _serviceTableInsertionAdapter = InsertionAdapter(
-            database,
-            'ServiceTable',
-            (ServiceTable item) => <String, Object?>{
-                  'id': item.id,
-                  'serviceId': item.serviceId,
-                  'captainId': item.captainId,
-                  'tableNumber': item.tableNumber,
-                  'capacity': item.capacity,
-                  'isOccupied': item.isOccupied ? 1 : 0,
-                  'isActive': item.isActive ? 1 : 0,
-                  'type': item.type
-                }),
         _seatInsertionAdapter = InsertionAdapter(
             database,
             'Seat',
@@ -256,21 +205,6 @@ class _$BlocDao extends BlocDao {
                   'serviceId': item.serviceId,
                   'tableId': item.tableId,
                   'tableNumber': item.tableNumber
-                }),
-        _userUpdateAdapter = UpdateAdapter(
-            database,
-            'User',
-            ['id'],
-            (User item) => <String, Object?>{
-                  'id': item.id,
-                  'username': item.username,
-                  'email': item.email,
-                  'imageUrl': item.imageUrl,
-                  'clearanceLevel': item.clearanceLevel,
-                  'phoneNumber': item.phoneNumber,
-                  'name': item.name,
-                  'fcmToken': item.fcmToken,
-                  'blocServiceId': item.blocServiceId
                 });
 
   final sqflite.DatabaseExecutor database;
@@ -278,12 +212,6 @@ class _$BlocDao extends BlocDao {
   final StreamController<String> changeListener;
 
   final QueryAdapter _queryAdapter;
-
-  final InsertionAdapter<User> _userInsertionAdapter;
-
-  final InsertionAdapter<City> _cityInsertionAdapter;
-
-  final InsertionAdapter<Bloc> _blocInsertionAdapter;
 
   final InsertionAdapter<BlocService> _blocServiceInsertionAdapter;
 
@@ -295,32 +223,7 @@ class _$BlocDao extends BlocDao {
 
   final InsertionAdapter<ManagerService> _managerServiceInsertionAdapter;
 
-  final InsertionAdapter<ServiceTable> _serviceTableInsertionAdapter;
-
   final InsertionAdapter<Seat> _seatInsertionAdapter;
-
-  final UpdateAdapter<User> _userUpdateAdapter;
-
-  @override
-  Future<User?> getUser(String uId) async {
-    return _queryAdapter.query('SELECT * FROM User where userId=?1',
-        mapper: (Map<String, Object?> row) => User(
-            id: row['id'] as String,
-            username: row['username'] as String,
-            email: row['email'] as String,
-            imageUrl: row['imageUrl'] as String,
-            clearanceLevel: row['clearanceLevel'] as int,
-            phoneNumber: row['phoneNumber'] as int,
-            name: row['name'] as String,
-            fcmToken: row['fcmToken'] as String,
-            blocServiceId: row['blocServiceId'] as String),
-        arguments: [uId]);
-  }
-
-  @override
-  Future<void> clearUsers() async {
-    await _queryAdapter.queryNoReturn('DELETE FROM User');
-  }
 
   @override
   Stream<List<Category>> getCategories() {
@@ -511,22 +414,6 @@ class _$BlocDao extends BlocDao {
   }
 
   @override
-  Future<List<ServiceTable>> getTables(String serviceId) async {
-    return _queryAdapter.queryList(
-        'SELECT * FROM ServiceTable where serviceId=?1 ORDER BY tableNumber ASC',
-        mapper: (Map<String, Object?> row) => ServiceTable(id: row['id'] as String, serviceId: row['serviceId'] as String, captainId: row['captainId'] as String, tableNumber: row['tableNumber'] as int, capacity: row['capacity'] as int, isOccupied: (row['isOccupied'] as int) != 0, isActive: (row['isActive'] as int) != 0, type: row['type'] as int),
-        arguments: [serviceId]);
-  }
-
-  @override
-  Future<void> updateTableOccupied(
-      String serviceId, int tableNumber, bool occupyStatus) async {
-    await _queryAdapter.queryNoReturn(
-        'UPDATE ServiceTable SET isOccupied = ?3 WHERE serviceId = ?1 and tableNumber=?2',
-        arguments: [serviceId, tableNumber, occupyStatus ? 1 : 0]);
-  }
-
-  @override
   Future<void> updateCustInSeat(String seatId, String custId) async {
     await _queryAdapter.queryNoReturn(
         'UPDATE Seat SET custId = ?2 WHERE id = ?1',
@@ -550,21 +437,6 @@ class _$BlocDao extends BlocDao {
   Future<void> deleteSeats(int tableNumber) async {
     await _queryAdapter.queryNoReturn('DELETE FROM Seat where tableNumber=?1',
         arguments: [tableNumber]);
-  }
-
-  @override
-  Future<void> insertUser(User user) async {
-    await _userInsertionAdapter.insert(user, OnConflictStrategy.replace);
-  }
-
-  @override
-  Future<void> insertCity(City city) async {
-    await _cityInsertionAdapter.insert(city, OnConflictStrategy.replace);
-  }
-
-  @override
-  Future<void> insertBloc(Bloc bloc) async {
-    await _blocInsertionAdapter.insert(bloc, OnConflictStrategy.replace);
   }
 
   @override
@@ -596,18 +468,7 @@ class _$BlocDao extends BlocDao {
   }
 
   @override
-  Future<void> insertServiceTable(ServiceTable serviceTable) async {
-    await _serviceTableInsertionAdapter.insert(
-        serviceTable, OnConflictStrategy.replace);
-  }
-
-  @override
   Future<void> insertSeat(Seat seat) async {
     await _seatInsertionAdapter.insert(seat, OnConflictStrategy.replace);
-  }
-
-  @override
-  Future<void> updateUser(User user) async {
-    await _userUpdateAdapter.update(user, OnConflictStrategy.replace);
   }
 }

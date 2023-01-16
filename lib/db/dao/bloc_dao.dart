@@ -14,25 +14,25 @@ import '../entity/user.dart';
 @dao
 abstract class BlocDao {
   /** User **/
-  @Insert(onConflict: OnConflictStrategy.replace)
-  Future<void> insertUser(User user);
+  // @Insert(onConflict: OnConflictStrategy.replace)
+  // Future<void> insertUser(User user);
 
-  @Query('SELECT * FROM User where userId=:uId')
-  Future<User?> getUser(String uId);
+  // @Query('SELECT * FROM User where userId=:uId')
+  // Future<User?> getUser(String uId);
 
-  @Update(onConflict: OnConflictStrategy.replace)
-  Future<void> updateUser(User user);
-
-  @Query('DELETE FROM User')
-  Future<void> clearUsers();
+  // @Update(onConflict: OnConflictStrategy.replace)
+  // Future<void> updateUser(User user);
+  //
+  // @Query('DELETE FROM User')
+  // Future<void> clearUsers();
 
   /** City **/
-  @Insert(onConflict: OnConflictStrategy.replace)
-  Future<void> insertCity(City city);
+  // @Insert(onConflict: OnConflictStrategy.replace)
+  // Future<void> insertCity(City city);
 
   /** Bloc **/
-  @Insert(onConflict: OnConflictStrategy.replace)
-  Future<void> insertBloc(Bloc bloc);
+  // @Insert(onConflict: OnConflictStrategy.replace)
+  // Future<void> insertBloc(Bloc bloc);
 
   /** Service **/
   @Insert(onConflict: OnConflictStrategy.replace)
@@ -94,15 +94,15 @@ abstract class BlocDao {
   Stream<List<ManagerService>> getManagerServices();
 
   /** Service Table **/
-  @Insert(onConflict: OnConflictStrategy.replace)
-  Future<void> insertServiceTable(ServiceTable serviceTable);
-
-  @Query('SELECT * FROM ServiceTable where serviceId=:serviceId ORDER BY tableNumber ASC')
-  Future<List<ServiceTable>> getTables(String serviceId);
-
-  @Query("UPDATE ServiceTable SET isOccupied = :occupyStatus WHERE serviceId = :serviceId "
-      "and tableNumber=:tableNumber")
-  Future<void> updateTableOccupied(String serviceId, int tableNumber, bool occupyStatus);
+  // @Insert(onConflict: OnConflictStrategy.replace)
+  // Future<void> insertServiceTable(ServiceTable serviceTable);
+  //
+  // @Query('SELECT * FROM ServiceTable where serviceId=:serviceId ORDER BY tableNumber ASC')
+  // Future<List<ServiceTable>> getTables(String serviceId);
+  //
+  // @Query("UPDATE ServiceTable SET isOccupied = :occupyStatus WHERE serviceId = :serviceId "
+  //     "and tableNumber=:tableNumber")
+  // Future<void> updateTableOccupied(String serviceId, int tableNumber, bool occupyStatus);
 
   /** Seat **/
   @Insert(onConflict: OnConflictStrategy.replace)

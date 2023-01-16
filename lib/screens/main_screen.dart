@@ -65,7 +65,7 @@ class _MainScreenState extends State<MainScreen> {
           print(widget.user.phoneNumber.toString() +
               ' is now registered with bloc!');
 
-          BlocRepository.insertUser(widget.dao, widget.user);
+          // BlocRepository.insertUser(widget.dao, widget.user);
           UserPreferences.setUser(widget.user);
 
           // lets grab more user details
@@ -80,7 +80,7 @@ class _MainScreenState extends State<MainScreen> {
             Map<String, dynamic> data =
                 document.data()! as Map<String, dynamic>;
             final blocUser.User user = blocUser.User.fromMap(data);
-            BlocRepository.insertUser(widget.dao, user);
+            // BlocRepository.insertUser(widget.dao, user);
             users.add(user);
 
             if (i == res.docs.length - 1) {
@@ -178,7 +178,7 @@ class _MainScreenState extends State<MainScreen> {
                 UserPreferences.resetUser();
 
                 // clear out local DB
-                BlocRepository.clearUsers(widget.dao);
+                // BlocRepository.clearUsers(widget.dao);
 
                 FirebaseAuth.instance.signOut();
                 Navigator.of(context).pushReplacement(

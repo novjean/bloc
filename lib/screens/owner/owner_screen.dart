@@ -72,8 +72,8 @@ class OwnerScreen extends StatelessWidget {
               String ownerId = data['owner_id'];
               String cityId = document.id;
               final City city = City(cityId, name, ownerId, imageUrl);
-              BlocRepository.insertCity(dao, city);
-
+              // BlocRepository.insertCity(dao, city);
+              //
               return CityItem(city, dao, key: ValueKey(document.id));
             }).toList(),
           );

@@ -99,7 +99,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
               FirestorageHelper.deleteFile(oldImageUrl);
             }
 
-            BlocRepository.updateUser(widget.dao, user);
+            // BlocRepository.updateUser(widget.dao, user);
             FirestoreHelper.updateUser(user, isPhotoChanged);
 
             Navigator.of(context).pop();

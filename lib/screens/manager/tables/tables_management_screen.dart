@@ -125,7 +125,7 @@ class _TablesManagementScreenState extends State<TablesManagementScreen> {
             Map<String, dynamic> data =
                 document.data()! as Map<String, dynamic>;
             final ServiceTable serviceTable = ServiceTable.fromMap(data);
-            BlocRepository.insertServiceTable(widget.dao, serviceTable);
+            // BlocRepository.insertServiceTable(widget.dao, serviceTable);
             serviceTables.add(serviceTable);
 
             if (i == snapshot.data!.docs.length - 1) {
