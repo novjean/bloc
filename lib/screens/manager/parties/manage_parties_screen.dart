@@ -114,6 +114,8 @@ class _ManagePartiesScreenState extends State<ManagePartiesScreen> {
                 onTap: () {
                   Party _sParty = _parties[index];
                   print(_sParty.name + ' is selected');
+
+                  PartyAddEditScreen(party: _sParty, task: 'Edit');
                 });
           }),
     );

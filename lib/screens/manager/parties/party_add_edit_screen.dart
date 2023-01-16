@@ -34,9 +34,13 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
   List<String> blocServiceNames = [];
   late String _sBlocServiceName;
   late String _sBlocServiceId;
-
   bool _isBlocServicesLoading = true;
 
+  DateTime sStartDateTime = DateTime.now();
+  DateTime sEndDateTime = DateTime.now();
+
+  TimeOfDay _sTimeOfDay = TimeOfDay.now();
+  bool _isStartDateBeingSet = true;
 
   @override
   void initState() {
@@ -46,9 +50,6 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
       print("successfully pulled in all bloc services... ");
 
       if (res.docs.isNotEmpty) {
-        // _productCategory = widget.party.;
-        // _productType = widget.party.type;
-
         List<BlocService> _blocServices = [];
         List<String> _blocServiceNames = [];
 
@@ -57,7 +58,7 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
           Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
           final BlocService blocService = BlocService.fromMap(data);
 
-          if(i==0){
+          if (i == 0) {
             _sBlocServiceId = blocService.id;
             _sBlocServiceName = blocService.name;
           }
@@ -79,268 +80,345 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(
-      title: Text('Party | ' + widget.task),
-    ),
-    body: _buildBody(context),
-  );
+        appBar: AppBar(
+          title: Text('Party | ' + widget.task),
+        ),
+        body: _buildBody(context),
+      );
+
+  Future<void> _selectDate(BuildContext context, DateTime initDate) async {
+    final DateTime? _sDate = await showDatePicker(
+        context: context,
+        initialDate: initDate,
+        firstDate: DateTime(2023, 1),
+        lastDate: DateTime(2101));
+    if (_sDate != null) {
+      _selectTime(context);
+
+      setState(() {
+        DateTime _sDateTime = DateTime(_sDate.year, _sDate.month, _sDate.day,
+            _sTimeOfDay.hour, _sTimeOfDay.minute);
+
+        // from here we decide what field to put it into
+        if (_isStartDateBeingSet) {
+          sStartDateTime = _sDateTime;
+          widget.party = widget.party
+              .copyWith(startTime: sStartDateTime.millisecondsSinceEpoch);
+        } else {
+          sEndDateTime = _sDateTime;
+          widget.party = widget.party
+              .copyWith(endTime: sEndDateTime.millisecondsSinceEpoch);
+        }
+      });
+    }
+  }
+
+  Future<TimeOfDay> _selectTime(BuildContext context) async {
+    TimeOfDay initialTime = TimeOfDay.now();
+
+    TimeOfDay? pickedTime = await showTimePicker(
+      context: context,
+      initialTime: initialTime,
+    );
+
+    _sTimeOfDay = pickedTime!;
+    return _sTimeOfDay;
+  }
+
+  Widget dateTimeContainer(BuildContext context, String type) {
+    DateTime dateTime = type=='Start' ? sStartDateTime:sEndDateTime;
+
+    return Container(
+      decoration: BoxDecoration(
+          border: Border.all(
+            color: Colors.black38,
+          ),
+          borderRadius: BorderRadius.all(Radius.circular(20))),
+      padding: EdgeInsets.only(left: 10, top: 5, right: 5, bottom: 5),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text("${dateTime.toLocal()}".split(' ')[0], style: TextStyle(
+            fontSize: 18,
+          )),
+          SizedBox(
+            height: 20.0,
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              primary: Theme.of(context).primaryColor,
+              onPrimary: Colors.white,
+              shadowColor: Theme.of(context).shadowColor,
+              elevation: 3,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(32.0)),
+              minimumSize: Size(50, 50), //////// HERE
+            ),
+            onPressed: () {
+              if(type == 'Start'){
+                _isStartDateBeingSet = true;
+              } else {
+                _isStartDateBeingSet = false;
+              }
+              _selectDate(context, dateTime);
+            },
+            child: Text(type + ' Date & Time'),
+          ),
+        ],
+      ),
+    );
+
+  }
 
   _buildBody(BuildContext context) {
-    return
-      _isBlocServicesLoading
+    return _isBlocServicesLoading
         ? Center(
-      child: Text('Loading...'),
-    )
-        :
-    ListView(
-      padding: EdgeInsets.symmetric(horizontal: 32),
-      physics: BouncingScrollPhysics(),
-      children: [
-        const SizedBox(height: 15),
-        ProfileWidget(
-          imagePath: widget.party.imageUrl,
-          isEdit: true,
-          onClicked: () async {
-            final image = await ImagePicker().pickImage(
-                source: ImageSource.gallery,
-                imageQuality: 90,
-                maxWidth: 500);
-            if (image == null) return;
+            child: Text('Loading...'),
+          )
+        : ListView(
+            padding: EdgeInsets.symmetric(horizontal: 32),
+            physics: BouncingScrollPhysics(),
+            children: [
+              const SizedBox(height: 15),
+              ProfileWidget(
+                imagePath: widget.party.imageUrl,
+                isEdit: true,
+                onClicked: () async {
+                  final image = await ImagePicker().pickImage(
+                      source: ImageSource.gallery,
+                      imageQuality: 90,
+                      maxWidth: 500);
+                  if (image == null) return;
 
-            final directory = await getApplicationDocumentsDirectory();
-            final name = basename(image.path);
-            final imageFile = File('${directory.path}/$name');
-            final newImage = await File(image.path).copy(imageFile.path);
+                  final directory = await getApplicationDocumentsDirectory();
+                  final name = basename(image.path);
+                  final imageFile = File('${directory.path}/$name');
+                  final newImage = await File(image.path).copy(imageFile.path);
 
-            setState(() async {
-              oldImageUrl = widget.party.imageUrl;
-              newImageUrl = await FirestorageHelper.uploadFile(
-                  FirestorageHelper.PARTY_IMAGES,
-                  widget.party.id,
-                  newImage);
-              isPhotoChanged = true;
-            });
-          },
-        ),
-        const SizedBox(height: 24),
-        TextFieldWidget(
-          label: 'Name',
-          text: widget.party.name,
-          onChanged: (name) =>
-          widget.party = widget.party.copyWith(name: name),
-        ),
+                  setState(() async {
+                    oldImageUrl = widget.party.imageUrl;
+                    newImageUrl = await FirestorageHelper.uploadFile(
+                        FirestorageHelper.PARTY_IMAGES,
+                        widget.party.id,
+                        newImage);
+                    isPhotoChanged = true;
+                  });
+                },
+              ),
+              const SizedBox(height: 24),
+              TextFieldWidget(
+                label: 'Name',
+                text: widget.party.name,
+                onChanged: (name) =>
+                    widget.party = widget.party.copyWith(name: name),
+              ),
 
-        // _productType == 'Food'
-        //     ? Column(
-        //   children: [
-        //     const SizedBox(height: 24),
-        //     FormField<String>(
-        //       builder: (FormFieldState<String> state) {
-        //         return InputDecorator(
-        //           key: const ValueKey('product_category_food'),
-        //           decoration: InputDecoration(
-        //               errorStyle: TextStyle(
-        //                   color: Theme.of(context).errorColor,
-        //                   fontSize: 16.0),
-        //               hintText: 'Please select product category',
-        //               border: OutlineInputBorder(
-        //                   borderRadius:
-        //                   BorderRadius.circular(5.0))),
-        //           isEmpty: _sCategoryFood == '',
-        //           child: DropdownButtonHideUnderline(
-        //             child: DropdownButton<String>(
-        //                 value: widget.party.category,
-        //                 isDense: true,
-        //                 onChanged: (String? newValue) {
-        //                   setState(() {
-        //                     _productCategory = newValue!;
-        //                     _sCategoryFood = _productCategory;
-        //                     widget.party = widget.party
-        //                         .copyWith(category: newValue);
-        //                     // state.didChange(newValue);
-        //                   });
-        //                 },
-        //                 items: catFoodNames.map((String value) {
-        //                   return DropdownMenuItem<String>(
-        //                     value: value,
-        //                     child: Text(value),
-        //                   );
-        //                 }).toList()),
-        //           ),
-        //         );
-        //       },
-        //     ),
-        //   ],
-        // )
-        //     : Column(
-        //   children: [
-        //     const SizedBox(height: 24),
-        //     FormField<String>(
-        //       builder: (FormFieldState<String> state) {
-        //         return InputDecorator(
-        //           key: const ValueKey('product_category_alcohol'),
-        //           decoration: InputDecoration(
-        //               errorStyle: TextStyle(
-        //                   color: Theme.of(context).errorColor,
-        //                   fontSize: 16.0),
-        //               hintText: 'Please select product category',
-        //               border: OutlineInputBorder(
-        //                   borderRadius:
-        //                   BorderRadius.circular(5.0))),
-        //           isEmpty: _sCategoryAlcohol == '',
-        //           child: DropdownButtonHideUnderline(
-        //             child: DropdownButton<String>(
-        //                 value: widget.party.category,
-        //                 isDense: true,
-        //                 onChanged: (String? newValue) {
-        //                   setState(() {
-        //                     _productCategory = newValue!;
-        //                     _sCategoryAlcohol = _productCategory;
-        //                     widget.party = widget.party
-        //                         .copyWith(category: newValue);
-        //                     // state.didChange(newValue);
-        //                   });
-        //                 },
-        //                 items: catAlcoholNames.map((String value) {
-        //                   return DropdownMenuItem<String>(
-        //                     value: value,
-        //                     child: Text(value),
-        //                   );
-        //                 }).toList()),
-        //           ),
-        //         );
-        //       },
-        //     ),
-        //   ],
-        // ),
+              // _productType == 'Food'
+              //     ? Column(
+              //   children: [
+              //     const SizedBox(height: 24),
+              //     FormField<String>(
+              //       builder: (FormFieldState<String> state) {
+              //         return InputDecorator(
+              //           key: const ValueKey('product_category_food'),
+              //           decoration: InputDecoration(
+              //               errorStyle: TextStyle(
+              //                   color: Theme.of(context).errorColor,
+              //                   fontSize: 16.0),
+              //               hintText: 'Please select product category',
+              //               border: OutlineInputBorder(
+              //                   borderRadius:
+              //                   BorderRadius.circular(5.0))),
+              //           isEmpty: _sCategoryFood == '',
+              //           child: DropdownButtonHideUnderline(
+              //             child: DropdownButton<String>(
+              //                 value: widget.party.category,
+              //                 isDense: true,
+              //                 onChanged: (String? newValue) {
+              //                   setState(() {
+              //                     _productCategory = newValue!;
+              //                     _sCategoryFood = _productCategory;
+              //                     widget.party = widget.party
+              //                         .copyWith(category: newValue);
+              //                     // state.didChange(newValue);
+              //                   });
+              //                 },
+              //                 items: catFoodNames.map((String value) {
+              //                   return DropdownMenuItem<String>(
+              //                     value: value,
+              //                     child: Text(value),
+              //                   );
+              //                 }).toList()),
+              //           ),
+              //         );
+              //       },
+              //     ),
+              //   ],
+              // )
+              //     : Column(
+              //   children: [
+              //     const SizedBox(height: 24),
+              //     FormField<String>(
+              //       builder: (FormFieldState<String> state) {
+              //         return InputDecorator(
+              //           key: const ValueKey('product_category_alcohol'),
+              //           decoration: InputDecoration(
+              //               errorStyle: TextStyle(
+              //                   color: Theme.of(context).errorColor,
+              //                   fontSize: 16.0),
+              //               hintText: 'Please select product category',
+              //               border: OutlineInputBorder(
+              //                   borderRadius:
+              //                   BorderRadius.circular(5.0))),
+              //           isEmpty: _sCategoryAlcohol == '',
+              //           child: DropdownButtonHideUnderline(
+              //             child: DropdownButton<String>(
+              //                 value: widget.party.category,
+              //                 isDense: true,
+              //                 onChanged: (String? newValue) {
+              //                   setState(() {
+              //                     _productCategory = newValue!;
+              //                     _sCategoryAlcohol = _productCategory;
+              //                     widget.party = widget.party
+              //                         .copyWith(category: newValue);
+              //                     // state.didChange(newValue);
+              //                   });
+              //                 },
+              //                 items: catAlcoholNames.map((String value) {
+              //                   return DropdownMenuItem<String>(
+              //                     value: value,
+              //                     child: Text(value),
+              //                   );
+              //                 }).toList()),
+              //           ),
+              //         );
+              //       },
+              //     ),
+              //   ],
+              // ),
 
-        const SizedBox(height: 24),
-        TextFieldWidget(
-          label: 'Description',
-          text: widget.party.description,
-          maxLines: 5,
-          onChanged: (value) {
-            widget.party = widget.party.copyWith(description: value);
-          },
-        ),
+              const SizedBox(height: 24),
+              TextFieldWidget(
+                label: 'Description',
+                text: widget.party.description,
+                maxLines: 5,
+                onChanged: (value) {
+                  widget.party = widget.party.copyWith(description: value);
+                },
+              ),
 
-        const SizedBox(height: 24),
-        FormField<String>(
-          builder: (FormFieldState<String> state) {
-            return InputDecorator(
-              key: const ValueKey('bloc_service_id'),
-              decoration: InputDecoration(
-                  errorStyle: TextStyle(
-                      color: Theme.of(context).errorColor,
-                      fontSize: 16.0),
-                  hintText: 'Please select bloc service',
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(5.0))),
-              isEmpty: _sBlocServiceName == '',
-              child: DropdownButtonHideUnderline(
-                child: DropdownButton<String>(
-                  value: _sBlocServiceName,
-                  isDense: true,
-                  onChanged: (String? newValue) {
-                    setState(() {
+              const SizedBox(height: 24),
+              FormField<String>(
+                builder: (FormFieldState<String> state) {
+                  return InputDecorator(
+                    key: const ValueKey('bloc_service_id'),
+                    decoration: InputDecoration(
+                        errorStyle: TextStyle(
+                            color: Theme.of(context).errorColor,
+                            fontSize: 16.0),
+                        hintText: 'Please select bloc service',
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(5.0))),
+                    isEmpty: _sBlocServiceName == '',
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton<String>(
+                        value: _sBlocServiceName,
+                        isDense: true,
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            _sBlocServiceName = newValue!;
 
-                      _sBlocServiceName = newValue!;
+                            for (BlocService service in blocServices) {
+                              if (service.name == _sBlocServiceName) {
+                                _sBlocServiceId = service.id;
+                              }
+                            }
 
-                      for(BlocService service in blocServices){
-                        if(service.name == _sBlocServiceName){
-                          _sBlocServiceId = service.id;
-                        }
-                      }
-
-                      widget.party = widget.party
+                            widget.party = widget.party
                                 .copyWith(blocServiceId: _sBlocServiceId);
                             state.didChange(newValue);
-                    });
-                  },
-                  items: blocServiceNames.map((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
-                ),
+                          });
+                        },
+                        items: blocServiceNames.map((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList(),
+                      ),
+                    ),
+                  );
+                },
               ),
-            );
-          },
-        ),
 
-        const SizedBox(height: 24),
-        TextFieldWidget(
-          label: 'Instagram URL',
-          text: widget.party.instagramUrl,
-          maxLines: 1,
-          onChanged: (value) {
-            widget.party = widget.party.copyWith(instagramUrl: value);
-          },
-        ),
+              const SizedBox(height: 24),
+              TextFieldWidget(
+                label: 'Instagram URL',
+                text: widget.party.instagramUrl,
+                maxLines: 1,
+                onChanged: (value) {
+                  widget.party = widget.party.copyWith(instagramUrl: value);
+                },
+              ),
 
-        const SizedBox(height: 24),
-        TextFieldWidget(
-          label: 'Ticket URL',
-          text: widget.party.ticketUrl,
-          maxLines: 1,
-          onChanged: (value) {
-            widget.party = widget.party.copyWith(ticketUrl: value);
-          },
-        ),
+              const SizedBox(height: 24),
+              TextFieldWidget(
+                label: 'Ticket URL',
+                text: widget.party.ticketUrl,
+                maxLines: 1,
+                onChanged: (value) {
+                  widget.party = widget.party.copyWith(ticketUrl: value);
+                },
+              ),
 
-        const SizedBox(height: 24),
-        Row(
-          children: <Widget>[
-            SizedBox(
-              width: 0,
-            ), //SizedBox
-            Text(
-              'Available : ',
-              style: TextStyle(fontSize: 17.0),
-            ), //Text
-            SizedBox(width: 10), //SizedBox
-            Checkbox(
-              value: widget.party.isActive,
-              onChanged: (value) {
-                setState(() {
-                  widget.party =
-                      widget.party.copyWith(isActive: value);
-                });
-              },
-            ), //Checkbox
-          ], //<Widget>[]
-        ),
-        const SizedBox(height: 24),
+              const SizedBox(height: 24),
+              Row(
+                children: <Widget>[
+                  SizedBox(
+                    width: 0,
+                  ), //SizedBox
+                  Text(
+                    'Available : ',
+                    style: TextStyle(fontSize: 17.0),
+                  ), //Text
+                  SizedBox(width: 10), //SizedBox
+                  Checkbox(
+                    value: widget.party.isActive,
+                    onChanged: (value) {
+                      setState(() {
+                        widget.party = widget.party.copyWith(isActive: value);
+                      });
+                    },
+                  ), //Checkbox
+                ], //<Widget>[]
+              ),
+              const SizedBox(height: 24),
+              dateTimeContainer(context, 'Start'),
 
-        // Column(children: [
-        //   Text("${selectedDate.toLocal()}".split(' ')[0]),
-        //   SizedBox(height: 20.0,),
-        //   RaisedButton(
-        //     onPressed: () => _selectDate(context),
-        //     child: Text('Select date'),
-        //   ),
-        // ],),
+              const SizedBox(height: 24),
+              dateTimeContainer(context, 'End'),
 
-        ButtonWidget(
-          text: 'Save',
-          onClicked: () {
-            if (isPhotoChanged) {
-              widget.party =
-                  widget.party.copyWith(imageUrl: newImageUrl);
-            }
+              const SizedBox(height: 24),
+              ButtonWidget(
+                text: 'Save',
+                onClicked: () {
+                  if (isPhotoChanged) {
+                    widget.party = widget.party.copyWith(imageUrl: newImageUrl);
+                  }
 
-            if(widget.party.blocServiceId.isEmpty){
-              widget.party =
-                  widget.party.copyWith(blocServiceId: _sBlocServiceId);
-            }
+                  if (widget.party.blocServiceId.isEmpty) {
+                    widget.party =
+                        widget.party.copyWith(blocServiceId: _sBlocServiceId);
+                  }
 
-            FirestoreHelper.pushParty(widget.party);
+                  FirestoreHelper.pushParty(widget.party);
 
-            Navigator.of(context).pop();
-          },
-        ),
-      ],
-    );
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
   }
 }
+
+
