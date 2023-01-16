@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../db/dao/bloc_dao.dart';
 import '../db/entity/bloc_service.dart';
 import '../screens/bloc/bloc_service_detail_screen.dart';
-import '../screens/manager/manager_bloc_service_screen.dart';
+import '../screens/manager/manager_services_screen.dart';
 import '../screens/owner/bloc_service_add_edit_screen.dart';
 
 class BlocServiceItem extends StatelessWidget {
@@ -25,7 +25,7 @@ class BlocServiceItem extends StatelessWidget {
             Navigator.of(context).push(
               MaterialPageRoute(
                   builder: (ctx) => isManager
-                      ? ManagerBlocServiceScreen(dao: dao, blocService: service)
+                      ? ManagerServicesScreen(dao: dao, blocService: service)
                       : BlocServiceDetailScreen(dao: dao, blocService: service)),
             );
           },

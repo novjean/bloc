@@ -4,6 +4,7 @@ import 'package:bloc/db/entity/bloc.dart';
 import 'package:bloc/db/entity/bloc_service.dart';
 import 'package:bloc/db/entity/cart_item.dart';
 import 'package:bloc/db/entity/offer.dart';
+import 'package:bloc/db/entity/party.dart';
 import 'package:bloc/db/entity/seat.dart';
 import 'package:bloc/db/entity/user.dart' as blocUser;
 import 'package:bloc/helpers/firestorage_helper.dart';
@@ -37,6 +38,7 @@ class FirestoreHelper {
   static String MANAGER_SERVICES = 'manager_services';
   static String MANAGER_SERVICE_OPTIONS = 'manager_service_options';
   static String OFFERS = 'offers';
+  static String PARTIES = 'parties';
   static String PRODUCTS = 'products';
   static String BLOC_SERVICES = 'services';
   static String SEATS = 'seats';
@@ -46,6 +48,7 @@ class FirestoreHelper {
 
   static int TABLE_PRIVATE_TYPE_ID = 1;
   static int TABLE_COMMUNITY_TYPE_ID = 2;
+
 
   /** Blocs **/
   static void pushBloc(Bloc bloc) async {
@@ -104,6 +107,13 @@ class FirestoreHelper {
       logger.e(err);
     }
   }
+
+  static pullAllBlocServices() {
+    return FirebaseFirestore.instance
+        .collection(BLOC_SERVICES)
+        .get();
+  }
+
 
   static Future<QuerySnapshot<Object?>> pullBlocService(String blocId) {
     return FirebaseFirestore.instance
@@ -392,6 +402,25 @@ class FirestoreHelper {
   static void deleteOffer(String docId){
     FirebaseFirestore.instance.collection(OFFERS).doc(docId).delete();
   }
+
+  /** Party **/
+  static void pushParty(Party party) async {
+    try {
+      await FirebaseFirestore.instance.collection(PARTIES).doc(party.id).set(party.toMap());
+    } on PlatformException catch (err) {
+      logger.e(err.message);
+    } catch (err) {
+      logger.e(err);
+    }
+  }
+
+  static getParties(String blocServiceId) {
+    return FirebaseFirestore.instance
+        .collection(PARTIES)
+        .where('blocServiceId', isEqualTo: blocServiceId)
+        .snapshots();
+  }
+
 
   /** Products **/
   static void pushProduct(Product product) async {
@@ -899,7 +928,6 @@ class FirestoreHelper {
       logger.e(err);
     }
   }
-
 
 /** Reference **/
 // _buildProducts(BuildContext context, String _category) {

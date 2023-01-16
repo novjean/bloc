@@ -13,6 +13,7 @@ class FirestorageHelper {
   static String BLOCS_IMAGES = 'bloc_image';
   static String BLOCS_SERVICES_IMAGES = 'bloc_service_image';
   static String PRODUCT_IMAGES = 'product_image';
+  static String PARTY_IMAGES = 'party_image';
 
   static Future<bool> deleteFile(String fileUrl) async {
     final firebaseStorage = FirebaseStorage.instance;

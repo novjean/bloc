@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../db/entity/bloc.dart';
 import '../db/entity/bloc_service.dart';
 import '../db/entity/offer.dart';
+import '../db/entity/party.dart';
 import '../db/entity/product.dart';
 import '../db/entity/seat.dart';
 import '../db/shared_preferences/user_preferences.dart';
@@ -112,4 +113,24 @@ class Dummy {
 
     return dummyBlocService;
   }
+
+  static getDummyParty(String blocId) {
+    Party dummyParty = Party(
+      id: StringUtils.getRandomString(20),
+      createdAt: Timestamp.now().millisecondsSinceEpoch,
+      imageUrl: '',
+      name: '',
+      ownerId: UserPreferences.myUser.id,
+      isActive: false,
+      description: '',
+      blocServiceId: '',
+      endTime: 0,
+      instagramUrl: '',
+      startTime: 0,
+      ticketUrl: ''
+    );
+
+    return dummyParty;
+  }
+
 }

@@ -1,5 +1,6 @@
 import 'package:bloc/db/entity/manager_service.dart';
 import 'package:bloc/screens/manager/orders/manage_orders_screen.dart';
+import 'package:bloc/screens/manager/parties/manage_parties_screen.dart';
 
 import 'package:bloc/screens/manager/users/users_management.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -14,11 +15,11 @@ import 'bookings/bookings_screen.dart';
 import 'inventory/manage_inventory_screen.dart';
 import 'tables/tables_management_screen.dart';
 
-class ManagerBlocServiceScreen extends StatelessWidget {
+class ManagerServicesScreen extends StatelessWidget {
   BlocDao dao;
   BlocService blocService;
 
-  ManagerBlocServiceScreen({key, required this.dao, required this.blocService})
+  ManagerServicesScreen({key, required this.dao, required this.blocService})
       : super(key: key);
 
   @override
@@ -114,6 +115,16 @@ class ManagerBlocServiceScreen extends StatelessWidget {
                                 serviceName: _managerService.name,
                                 dao: dao, userTitle: userTitle,)));
                         logger.d('tables management service selected.');
+                        break;
+                      }
+                    case 'Party':
+                      {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (ctx) => ManagePartiesScreen(
+                              serviceId: blocService.id,
+                              managerService: _managerService,
+                              dao: dao,)));
+                        logger.d('parties management service selected.');
                         break;
                       }
                     case 'Bookings':

@@ -6,9 +6,9 @@ class Party {
   final String imageUrl;
   final String instagramUrl;
   final String ticketUrl;
-  final double createdAt;
-  final double startTime;
-  final double endTime;
+  final int createdAt;
+  final int startTime;
+  final int endTime;
   final String ownerId;
   final bool isActive;
 
@@ -88,9 +88,9 @@ class Party {
     String? imageUrl,
     String? instagramUrl,
     String? ticketUrl,
-    double? createdAt,
-    double? startTime,
-    double? endTime,
+    int? createdAt,
+    int? startTime,
+    int? endTime,
     String? ownerId,
     bool? isActive,
   }) {
@@ -136,9 +136,9 @@ class Party {
       imageUrl: map['imageUrl'] as String,
       instagramUrl: map['instagramUrl'] as String,
       ticketUrl: map['ticketUrl'] as String,
-      createdAt: map['createdAt'] as double,
-      startTime: map['startTime'] as double,
-      endTime: map['endTime'] as double,
+      createdAt: map['createdAt'] as int,
+      startTime: map['startTime'] as int,
+      endTime: map['endTime'] as int,
       ownerId: map['ownerId'] as String,
       isActive: map['isActive'] as bool,
     );
