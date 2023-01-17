@@ -4,18 +4,15 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import '../../../db/bloc_repository.dart';
-import '../../../db/dao/bloc_dao.dart';
 import '../../../db/entity/cart_item.dart';
 import '../../../helpers/firestore_helper.dart';
 
 class OrdersCommunityBarScreen extends StatefulWidget {
   String serviceId;
-  BlocDao dao;
   String titleHead;
 
   OrdersCommunityBarScreen(
       {required this.serviceId,
-        required this.dao,
         required this.titleHead});
 
   @override

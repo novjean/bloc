@@ -1,16 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-import '../../db/dao/bloc_dao.dart';
 import '../../db/entity/chat.dart';
 import '../../db/entity/message.dart';
 import '../../db/shared_preferences/user_preferences.dart';
 import '../../helpers/firestore_helper.dart';
 
 class RecentChats extends StatelessWidget {
-  BlocDao dao;
 
-  RecentChats({key, required this.dao}):super(key: key);
+  RecentChats({key}):super(key: key);
 
   @override
   Widget build(BuildContext context) {

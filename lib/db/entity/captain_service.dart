@@ -1,8 +1,5 @@
-import 'package:floor/floor.dart';
 
-@entity
 class CaptainService {
-  @primaryKey
   final String id;
   final String name;
   final int sequence;

@@ -13,13 +13,10 @@ import '../../../widgets/ui/sized_listview_block.dart';
 
 class ManageProductsScreen extends StatefulWidget {
   String serviceId;
-  BlocDao dao;
   ManagerService managerService;
 
   ManageProductsScreen(
-      {required this.serviceId,
-      required this.dao,
-      required this.managerService});
+      {required this.serviceId, required this.managerService});
 
   @override
   State<ManageProductsScreen> createState() => _ManageProductsScreenState();

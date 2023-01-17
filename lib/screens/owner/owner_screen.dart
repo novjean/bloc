@@ -1,5 +1,3 @@
-import 'package:bloc/db/bloc_repository.dart';
-import 'package:bloc/db/dao/bloc_dao.dart';
 import 'package:bloc/helpers/firestore_helper.dart';
 import 'package:bloc/widgets/city_item.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -10,9 +8,8 @@ import '../../db/entity/city.dart';
 
 class OwnerScreen extends StatelessWidget {
   static const routeName = '/owner-screen';
-  BlocDao dao;
 
-  OwnerScreen({key, required this.dao}) : super(key: key);
+  OwnerScreen({key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -24,22 +21,22 @@ class OwnerScreen extends StatelessWidget {
         title: const Text('Owner'),
       ),
       // drawer: AppDrawer(),
-      body: _buildBody(context, dao),
+      body: _buildBody(context),
     );
   }
 
-  _buildBody(BuildContext context, BlocDao dao) {
+  _buildBody(BuildContext context) {
     return SingleChildScrollView(
       child: Column(
         children: [
-          buildCities(context, dao),
+          buildCities(context),
           SizedBox(height: 10.0),
         ],
       ),
     );
   }
 
-  buildCities(BuildContext context, BlocDao dao) {
+  buildCities(BuildContext context) {
     final Stream<QuerySnapshot> _citiesStream = FirestoreHelper.getCitiesSnapshot();
 
     return Container(
@@ -74,7 +71,7 @@ class OwnerScreen extends StatelessWidget {
               final City city = City(cityId, name, ownerId, imageUrl);
               // BlocRepository.insertCity(dao, city);
               //
-              return CityItem(city, dao, key: ValueKey(document.id));
+              return CityItem(city, key: ValueKey(document.id));
             }).toList(),
           );
         },

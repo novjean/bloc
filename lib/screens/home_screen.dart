@@ -15,9 +15,7 @@ import '../widgets/ui/button_widget.dart';
 import 'experimental/trending.dart';
 
 class HomeScreen extends StatefulWidget {
-  BlocDao dao;
-
-  HomeScreen({key, required this.dao}) : super(key: key);
+  HomeScreen({key}) : super(key: key);
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -118,7 +116,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
             return GestureDetector(
               child: BlocSlideItem(
-                dao: widget.dao,
                 bloc: bloc,
                 rating: "5",
               ),

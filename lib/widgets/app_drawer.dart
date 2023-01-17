@@ -6,17 +6,12 @@ import 'package:bloc/utils/constants.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-import '../db/bloc_repository.dart';
-import '../db/dao/bloc_dao.dart';
-import '../main.dart';
 import '../screens/captain/captain_main_screen.dart';
 import '../screens/login_screen.dart';
 import '../screens/user/order_history_screen.dart';
 
 class AppDrawer extends StatelessWidget {
-  final BlocDao dao;
-
-  AppDrawer({key, required this.dao}) : super(key: key);
+  AppDrawer({key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +31,6 @@ class AppDrawer extends StatelessWidget {
               Navigator.of(context).pushReplacement(
                 MaterialPageRoute(
                     builder: (ctx) => MainScreen(
-                          dao: dao,
                           user: UserPreferences.getUser(),
                         )),
               );
@@ -63,7 +57,6 @@ class AppDrawer extends StatelessWidget {
                     Navigator.of(context).push(
                       MaterialPageRoute(
                           builder: (ctx) => CaptainMainScreen(
-                                dao: dao,
                                 blocServiceId: user.blocServiceId,
                               )),
                     );
@@ -78,7 +71,7 @@ class AppDrawer extends StatelessWidget {
                   onTap: () {
                     Navigator.of(context).push(
                       MaterialPageRoute(
-                          builder: (ctx) => ManagerMainScreen(dao: dao)),
+                          builder: (ctx) => ManagerMainScreen()),
                     );
                   },
                 )
@@ -91,7 +84,7 @@ class AppDrawer extends StatelessWidget {
                   onTap: () {
                     Navigator.of(context).push(
                       MaterialPageRoute(
-                          builder: (ctx) => OwnerScreen(dao: dao)),
+                          builder: (ctx) => OwnerScreen()),
                     );
                   },
                 )
@@ -110,7 +103,7 @@ class AppDrawer extends StatelessWidget {
 
               FirebaseAuth.instance.signOut();
               Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (context) => LoginScreen(dao: dao)),
+                MaterialPageRoute(builder: (context) => LoginScreen()),
               );
             },
           ),

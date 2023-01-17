@@ -17,9 +17,8 @@ import '../../widgets/ui/textfield_widget.dart';
 
 class EditProfilePage extends StatefulWidget {
   User user;
-  BlocDao dao;
 
-  EditProfilePage({key, required this.user, required this.dao}):super(key: key);
+  EditProfilePage({key, required this.user}):super(key: key);
 
   @override
   _EditProfilePageState createState() => _EditProfilePageState();

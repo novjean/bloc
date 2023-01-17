@@ -15,9 +15,8 @@ import '../../widgets/bloc/new_service_category_form.dart';
 class NewServiceCategoryScreen extends StatefulWidget {
   static const routeName = '/new-service-category-screen';
   String serviceId;
-  BlocDao dao;
 
-  NewServiceCategoryScreen({key, required this.serviceId, required this.dao}) : super(key: key);
+  NewServiceCategoryScreen({key, required this.serviceId}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _NewServiceCategoryScreenState();
@@ -35,7 +34,7 @@ class _NewServiceCategoryScreenState extends State<NewServiceCategoryScreen> {
       ),
       // drawer: AppDrawer(),
       body: NewServiceCategoryForm(
-        _submitNewServiceCategoryForm, widget.serviceId, widget.dao,  _isLoading,
+        _submitNewServiceCategoryForm, widget.serviceId, _isLoading,
         // _isLoading,
       ),
     );

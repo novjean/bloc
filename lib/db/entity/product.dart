@@ -1,8 +1,4 @@
-import 'package:floor/floor.dart';
-
-@entity
 class Product {
-  @primaryKey
   final String id;
   final String name;
   final String type;
@@ -64,8 +60,7 @@ class Product {
           priceHighestTime == other.priceHighestTime &&
           priceLowestTime == other.priceLowestTime &&
           priceCommunity == other.priceCommunity &&
-          isOfferRunning == other.isOfferRunning
-      );
+          isOfferRunning == other.isOfferRunning);
 
   @override
   int get hashCode =>
@@ -179,30 +174,30 @@ class Product {
     double priceLowest = 0.0;
     double priceCommunity = 0.0;
 
-    try{
+    try {
       price = (map['price'] as double);
-    } catch(err) {
+    } catch (err) {
       intPrice = map['price'] as int;
       price = intPrice.toDouble();
     }
 
-    try{
+    try {
       priceHighest = (map['priceHighest'] as double);
-    } catch(err) {
+    } catch (err) {
       intPrice = map['priceHighest'] as int;
       priceHighest = intPrice.toDouble();
     }
 
-    try{
+    try {
       priceLowest = (map['priceLowest'] as double);
-    } catch(err) {
+    } catch (err) {
       intPrice = map['priceLowest'] as int;
       priceLowest = intPrice.toDouble();
     }
 
-    try{
+    try {
       priceCommunity = (map['priceCommunity'] as double);
-    } catch(err) {
+    } catch (err) {
       intPrice = map['priceCommunity'] as int;
       priceCommunity = intPrice.toDouble();
     }

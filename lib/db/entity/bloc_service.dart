@@ -1,8 +1,5 @@
-import 'package:floor/floor.dart';
 
-@entity
 class BlocService {
-  @primaryKey
   final String id;
   final String name;
   final String blocId;

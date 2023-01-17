@@ -9,8 +9,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
-import '../../db/bloc_repository.dart';
-import '../../db/dao/bloc_dao.dart';
 import '../../db/entity/category.dart';
 import '../../db/entity/offer.dart';
 import '../../db/entity/product.dart';
@@ -23,10 +21,9 @@ import 'cart_screen.dart';
 import 'package:bloc/db/entity/user.dart' as blocUser;
 
 class BlocServiceDetailScreen extends StatefulWidget {
-  BlocDao dao;
   BlocService blocService;
 
-  BlocServiceDetailScreen({key, required this.dao, required this.blocService})
+  BlocServiceDetailScreen({key, required this.blocService})
       : super(key: key);
 
   @override
@@ -206,7 +203,6 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen>
                 MaterialPageRoute(
                     builder: (ctx) => CartScreen(
                         service: widget.blocService,
-                        dao: widget.dao,
                         tableNumber: mTable.tableNumber)),
               );
             },
@@ -508,7 +504,6 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen>
                     child: ProductItem(
                       serviceId: widget.blocService.id,
                       product: subProducts[index],
-                      dao: widget.dao,
                       tableNumber: mTable.tableNumber,
                       isCommunity: _isCommunity,
                       isOnOffer: isProductOnOffer,

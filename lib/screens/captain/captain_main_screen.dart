@@ -3,7 +3,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import '../../db/bloc_repository.dart';
-import '../../db/dao/bloc_dao.dart';
 import '../../db/entity/captain_service.dart';
 import '../../helpers/firestore_helper.dart';
 import '../../widgets/ui/listview_block.dart';
@@ -11,10 +10,9 @@ import '../manager/orders/manage_orders_screen.dart';
 import '../manager/tables/tables_management_screen.dart';
 
 class CaptainMainScreen extends StatelessWidget {
-  BlocDao dao;
   String blocServiceId;
 
-  CaptainMainScreen({key, required this.dao, required this.blocServiceId})
+  CaptainMainScreen({key, required this.blocServiceId})
       : super(key: key);
 
   @override
@@ -85,7 +83,6 @@ class CaptainMainScreen extends StatelessWidget {
                             builder: (ctx) => ManageOrdersScreen(
                                   serviceId: blocServiceId,
                                   serviceName: captainService.name,
-                                  dao: dao,
                                   userTitle: userTitle,
                                 )));
                         logger.d('manage inventory screen selected.');
@@ -97,7 +94,6 @@ class CaptainMainScreen extends StatelessWidget {
                             builder: (ctx) => TablesManagementScreen(
                                   blocServiceId: blocServiceId,
                                   serviceName: captainService.name,
-                                  dao: dao,
                                   userTitle: userTitle,
                                 )));
                         logger.d('manage inventory screen selected.');

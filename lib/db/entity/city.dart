@@ -1,8 +1,4 @@
-import 'package:floor/floor.dart';
-
-@entity
 class City {
-  @primaryKey
   final String id;
   final String name;
   final String ownerId;

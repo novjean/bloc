@@ -1,9 +1,6 @@
 
-import 'package:floor/floor.dart';
-
-@entity
 class Seat {
-  @primaryKey
+
   String id;
   String custId;
   String serviceId;

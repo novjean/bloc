@@ -1,15 +1,13 @@
 import 'package:bloc/screens/owner/owner_city_screen.dart';
 import 'package:flutter/material.dart';
 
-import '../db/dao/bloc_dao.dart';
 import '../db/entity/city.dart';
 
 class CityItem extends StatelessWidget {
   final Key key;
   final City city;
-  final BlocDao dao;
 
-  const CityItem(this.city, this.dao, {required this.key});
+  const CityItem(this.city, {required this.key});
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +18,7 @@ class CityItem extends StatelessWidget {
           onTap: () {
             Navigator.of(context).push(
               MaterialPageRoute(
-                  builder: (ctx) => OwnerCityScreen(dao: dao, city: city)),
+                  builder: (ctx) => OwnerCityScreen(city: city)),
             );
           },
           child: Hero(

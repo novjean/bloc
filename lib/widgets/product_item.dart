@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
-import '../db/dao/bloc_dao.dart';
 import '../db/entity/cart_item.dart';
 import '../db/entity/offer.dart';
 import '../db/entity/product.dart';
@@ -16,7 +15,6 @@ import '../utils/string_utils.dart';
 
 class ProductItem extends StatefulWidget {
   final Product product;
-  final BlocDao dao;
   final String serviceId;
   final int tableNumber;
   final bool isCommunity;
@@ -27,7 +25,6 @@ class ProductItem extends StatefulWidget {
   ProductItem(
       {required this.serviceId,
       required this.product,
-      required this.dao,
       required this.tableNumber,
       required this.isCommunity,
       required this.isOnOffer,

@@ -1,5 +1,4 @@
 import 'package:bloc/db/bloc_repository.dart';
-import 'package:bloc/db/dao/bloc_dao.dart';
 import 'package:bloc/db/shared_preferences/user_preferences.dart';
 import 'package:bloc/screens/manager/tables/seats_management.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -13,14 +12,12 @@ import '../../../widgets/ui/sized_listview_block.dart';
 import '../../forms/new_service_table_screen.dart';
 
 class TablesManagementScreen extends StatefulWidget {
-  BlocDao dao;
   String blocServiceId;
   String serviceName;
   String userTitle;
 
   TablesManagementScreen(
       {required this.blocServiceId,
-      required this.dao,
       required this.serviceName,
       required this.userTitle});
 
@@ -158,7 +155,6 @@ class _TablesManagementScreenState extends State<TablesManagementScreen> {
                     MaterialPageRoute(
                         builder: (context) => SeatsManagementScreen(
                             serviceId: widget.blocServiceId,
-                            dao: widget.dao,
                             serviceTable: serviceTables[index])),
                   );
                   // showOptionsDialog(context, serviceTables[index]);

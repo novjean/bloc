@@ -4,8 +4,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:pinput/pinput.dart';
 
-import '../db/bloc_repository.dart';
-import '../db/dao/bloc_dao.dart';
 import '../db/shared_preferences/user_preferences.dart';
 import '../helpers/firestore_helper.dart';
 import '../utils/string_utils.dart';
@@ -14,9 +12,8 @@ import 'main_screen.dart';
 
 class OTPScreen extends StatefulWidget {
   final String phone;
-  final BlocDao dao;
 
-  OTPScreen(this.phone, this.dao);
+  OTPScreen(this.phone);
 
   @override
   State<OTPScreen> createState() => _OTPScreenState();
@@ -79,7 +76,6 @@ class _OTPScreenState extends State<OTPScreen> {
                     widthFactor: 1,
                     child: OTPVerify(
                       phone: widget.phone,
-                      dao: widget.dao,
                     )),
               ),
               Container(
@@ -112,11 +108,9 @@ class _OTPScreenState extends State<OTPScreen> {
 }
 
 class OTPVerify extends StatefulWidget {
-  OTPVerify({key, required this.phone, required this.dao})
-      : super(key: key);
+  OTPVerify({key, required this.phone}) : super(key: key);
 
   String phone;
-  BlocDao dao;
 
   @override
   State<OTPVerify> createState() => _OTPVerifyState();
@@ -172,16 +166,16 @@ class _OTPVerifyState extends State<OTPVerify> {
 
   @override
   Widget build(BuildContext context) {
-    const focusedBorderColor = Color.fromRGBO(255,235,59,1);
+    const focusedBorderColor = Color.fromRGBO(255, 235, 59, 1);
     const fillColor = Color.fromRGBO(38, 50, 56, 1.0);
-    const borderColor = Color.fromRGBO(255,193,7,1);
+    const borderColor = Color.fromRGBO(255, 193, 7, 1);
 
     final defaultPinTheme = PinTheme(
       width: 56,
       height: 56,
       textStyle: const TextStyle(
         fontSize: 22,
-        color: Color.fromRGBO(255,235,59,1),
+        color: Color.fromRGBO(255, 235, 59, 1),
       ),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(19),
@@ -207,9 +201,9 @@ class _OTPVerifyState extends State<OTPVerify> {
               listenForMultipleSmsOnAndroid: true,
               defaultPinTheme: defaultPinTheme,
               // validator: (value) {
-                // print('code is ' + _verificationCode);
-                // return value == _verificationCode ? null : 'Pin is incorrect';
-                // return '';
+              // print('code is ' + _verificationCode);
+              // return value == _verificationCode ? null : 'Pin is incorrect';
+              // return '';
               // },
               // onClipboardFound: (value) {
               //   debugPrint('onClipboardFound: $value');
@@ -252,8 +246,8 @@ class _OTPVerifyState extends State<OTPVerify> {
 
                           Navigator.of(context).pushReplacement(
                               MaterialPageRoute(
-                                  builder: (context) => MainScreen(
-                                      dao: widget.dao, user: registeredUser)));
+                                  builder: (context) =>
+                                      MainScreen(user: registeredUser)));
                         } else {
                           debugPrint(
                               'user is a bloc member. navigating to main...');
@@ -271,7 +265,7 @@ class _OTPVerifyState extends State<OTPVerify> {
                           Navigator.of(context).pushReplacement(
                               MaterialPageRoute(
                                   builder: (context) =>
-                                      MainScreen(dao: widget.dao, user: user)));
+                                      MainScreen(user: user)));
                         }
                       });
                     }

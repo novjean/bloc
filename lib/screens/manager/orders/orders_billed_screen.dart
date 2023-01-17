@@ -11,11 +11,10 @@ import '../../../widgets/ui/center_text_widget.dart';
 
 class OrdersBilledScreen extends StatefulWidget {
   String serviceId;
-  BlocDao dao;
   String titleHead;
 
   OrdersBilledScreen(
-      {required this.serviceId, required this.dao, required this.titleHead});
+      {required this.serviceId, required this.titleHead});
 
   @override
   State<OrdersBilledScreen> createState() => _OrdersBilledScreenState();

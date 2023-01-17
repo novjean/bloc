@@ -11,12 +11,10 @@ import 'party_add_edit_screen.dart';
 
 class ManagePartiesScreen extends StatefulWidget {
   String serviceId;
-  BlocDao dao;
   ManagerService managerService;
 
   ManagePartiesScreen(
       {required this.serviceId,
-      required this.dao,
       required this.managerService});
 
   @override

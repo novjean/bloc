@@ -1,8 +1,5 @@
-import 'package:floor/floor.dart';
 
-@entity
 class CartItem {
-  @primaryKey
   final String cartId;
   final String serviceId;
   String billId;

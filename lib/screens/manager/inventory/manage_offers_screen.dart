@@ -8,11 +8,9 @@ import '../../../widgets/ui/listview_block.dart';
 
 class ManageOffersScreen extends StatelessWidget {
   String serviceId;
-  BlocDao dao;
 
   ManageOffersScreen({
     required this.serviceId,
-    required this.dao,
   });
 
   @override

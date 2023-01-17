@@ -3,17 +3,14 @@ import 'package:bloc/widgets/ui/listview_block.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-import '../../../db/dao/bloc_dao.dart';
 import '../../../helpers/firestore_helper.dart';
 import '../../forms/new_service_category_screen.dart';
 
 class ManageCategoryScreen extends StatelessWidget {
   String serviceId;
-  BlocDao dao;
 
   ManageCategoryScreen({
     required this.serviceId,
-    required this.dao,
   });
 
   @override
@@ -27,7 +24,7 @@ class ManageCategoryScreen extends StatelessWidget {
           Navigator.of(context).push(
             MaterialPageRoute(
                 builder: (ctx) => NewServiceCategoryScreen(
-                    serviceId: serviceId, dao: dao)),
+                    serviceId: serviceId)),
           );
         },
         child: Icon(

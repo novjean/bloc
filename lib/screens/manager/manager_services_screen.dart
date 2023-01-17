@@ -7,7 +7,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import '../../db/bloc_repository.dart';
-import '../../db/dao/bloc_dao.dart';
 import '../../db/entity/bloc_service.dart';
 import '../../helpers/firestore_helper.dart';
 import '../../widgets/ui/listview_block.dart';
@@ -16,10 +15,9 @@ import 'inventory/manage_inventory_screen.dart';
 import 'tables/tables_management_screen.dart';
 
 class ManagerServicesScreen extends StatelessWidget {
-  BlocDao dao;
   BlocService blocService;
 
-  ManagerServicesScreen({key, required this.dao, required this.blocService})
+  ManagerServicesScreen({key, required this.blocService})
       : super(key: key);
 
   @override
@@ -93,7 +91,7 @@ class ManagerServicesScreen extends StatelessWidget {
                                 ManageOrdersScreen(
                                     serviceId: blocService.id,
                                     serviceName: _managerService.name,
-                                    dao: dao, userTitle: userTitle,)));
+                                  userTitle: userTitle)));
                         logger.d('manage inventory screen selected.');
                         break;
                       }
@@ -102,8 +100,7 @@ class ManagerServicesScreen extends StatelessWidget {
                         Navigator.of(context).push(MaterialPageRoute(
                             builder: (ctx) => ManageInventoryScreen(
                                 serviceId: blocService.id,
-                                managerService: _managerService,
-                                dao: dao)));
+                                managerService: _managerService)));
                         logger.d('manage inventory screen selected.');
                         break;
                       }
@@ -113,7 +110,7 @@ class ManagerServicesScreen extends StatelessWidget {
                             builder: (ctx) => TablesManagementScreen(
                                 blocServiceId: blocService.id,
                                 serviceName: _managerService.name,
-                                dao: dao, userTitle: userTitle,)));
+                                userTitle: userTitle,)));
                         logger.d('tables management service selected.');
                         break;
                       }
@@ -122,8 +119,7 @@ class ManagerServicesScreen extends StatelessWidget {
                         Navigator.of(context).push(MaterialPageRoute(
                             builder: (ctx) => ManagePartiesScreen(
                               serviceId: blocService.id,
-                              managerService: _managerService,
-                              dao: dao,)));
+                              managerService: _managerService)));
                         logger.d('parties management service selected.');
                         break;
                       }
@@ -133,7 +129,7 @@ class ManagerServicesScreen extends StatelessWidget {
                             builder: (ctx) => BookingsScreen(
                               blocServiceId: blocService.id,
                               serviceName: _managerService.name,
-                              dao: dao, userTitle: userTitle,)));
+                              userTitle: userTitle,)));
                         logger.d('tables management service selected.');
                         break;
                       }

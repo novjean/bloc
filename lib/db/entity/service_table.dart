@@ -1,8 +1,5 @@
-import 'package:floor/floor.dart';
 
-@entity
 class ServiceTable {
-  @primaryKey
   String id;
   String serviceId;
   String captainId;

@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 
-import '../../db/dao/bloc_dao.dart';
 import '../../widgets/chat/recent_chats.dart';
 
 class ChatHomeScreen extends StatefulWidget {
-  BlocDao dao;
 
-  ChatHomeScreen({key, required this.dao}):super(key: key);
+  ChatHomeScreen({key}):super(key: key);
 
   @override
   State<ChatHomeScreen> createState() => _ChatHomeScreenState();
@@ -59,7 +57,7 @@ class _ChatHomeScreenState extends State<ChatHomeScreen> {
               child: Column(
                 children:  <Widget>[
                   // FavoriteContacts(),
-                  RecentChats(dao: widget.dao),
+                  RecentChats(),
                 ],
               ),
             ),

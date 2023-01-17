@@ -4,14 +4,12 @@ import 'package:bloc/db/entity/manager_service.dart';
 import 'package:bloc/db/entity/product.dart';
 import 'package:bloc/db/entity/seat.dart';
 import 'package:bloc/db/entity/service_table.dart';
-import 'package:floor/floor.dart';
 
 import '../entity/bloc.dart';
 import '../entity/bloc_service.dart';
 import '../entity/city.dart';
 import '../entity/user.dart';
 
-@dao
 abstract class BlocDao {
   /** User **/
   // @Insert(onConflict: OnConflictStrategy.replace)

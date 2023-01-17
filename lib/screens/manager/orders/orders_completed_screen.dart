@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import '../../../db/bloc_repository.dart';
-import '../../../db/dao/bloc_dao.dart';
 import '../../../db/entity/bill.dart';
 import '../../../db/entity/cart_item.dart';
 import '../../../db/entity/bloc_order.dart';
@@ -14,11 +13,10 @@ import '../bill_screen.dart';
 
 class OrdersCompletedScreen extends StatefulWidget {
   String serviceId;
-  BlocDao dao;
   String titleHead;
 
   OrdersCompletedScreen(
-      {required this.serviceId, required this.dao, required this.titleHead});
+      {required this.serviceId, required this.titleHead});
 
   @override
   State<OrdersCompletedScreen> createState() => _OrdersCompletedScreenState();

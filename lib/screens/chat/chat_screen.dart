@@ -7,9 +7,7 @@ import '../../widgets/chat/new_message.dart';
 
 
 class ChatScreen extends StatefulWidget {
-  BlocDao dao;
-
-  ChatScreen({key, required this.dao}):super(key: key);
+  ChatScreen({key}):super(key: key);
 
   @override
   State<ChatScreen> createState() => _ChatScreenState();

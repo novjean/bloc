@@ -4,8 +4,6 @@ import 'package:bloc/widgets/ui/cover_photo.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-import '../../db/bloc_repository.dart';
-import '../../db/dao/bloc_dao.dart';
 import '../../db/entity/bloc.dart';
 import '../../db/entity/bloc_service.dart';
 import '../../helpers/dummy.dart';
@@ -13,10 +11,9 @@ import '../../widgets/bloc_service_item.dart';
 
 class BlocDetailScreen extends StatelessWidget {
   static const routeName = '/bloc-detail';
-  BlocDao dao;
   Bloc bloc;
 
-  BlocDetailScreen({key, required this.dao, required this.bloc})
+  BlocDetailScreen({key, required this.bloc})
       : super(key: key);
 
   @override
@@ -31,7 +28,9 @@ class BlocDetailScreen extends StatelessWidget {
           Navigator.of(context).push(
             MaterialPageRoute(
                 builder: (ctx) => BlocServiceAddEditScreen(
-                    blocService: Dummy.getDummyBlocService(bloc.id), task: 'Add',)),
+                      blocService: Dummy.getDummyBlocService(bloc.id),
+                      task: 'Add',
+                    )),
           );
         },
         child: Icon(
@@ -82,7 +81,7 @@ class BlocDetailScreen extends StatelessWidget {
               final BlocService service = BlocService.fromMap(data);
               // BlocRepository.insertBlocService(dao, service);
 
-              return BlocServiceItem(service, false, dao,
+              return BlocServiceItem(service, false,
                   key: ValueKey(document.id));
             }).toList(),
           );

@@ -9,9 +9,8 @@ import '../../widgets/bloc_service_item.dart';
 
 class ManagerMainScreen extends StatelessWidget {
   static const routeName = '/manager-screen';
-  BlocDao dao;
 
-  ManagerMainScreen({key, required this.dao}) : super(key: key);
+  ManagerMainScreen({key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -66,7 +65,7 @@ class ManagerMainScreen extends StatelessWidget {
               final BlocService service = BlocService.fromMap(data);
               // BlocRepository.insertBlocService(dao, service);
 
-              return BlocServiceItem(service, true, dao, key: ValueKey(document.id));
+              return BlocServiceItem(service, true, key: ValueKey(document.id));
             }).toList(),
           );
         },

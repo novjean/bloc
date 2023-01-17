@@ -3,7 +3,6 @@ import 'package:bloc/widgets/ui/listview_block.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-import '../../../db/dao/bloc_dao.dart';
 import '../../../db/entity/manager_service.dart';
 import '../../../helpers/firestore_helper.dart';
 import 'manage_category_screen.dart';
@@ -12,12 +11,10 @@ import 'manage_products_screen.dart';
 
 class ManageInventoryScreen extends StatelessWidget{
   String serviceId;
-  BlocDao dao;
   ManagerService managerService;
 
   ManageInventoryScreen({
     required this.serviceId,
-    required this.dao,
     required this.managerService,
   });
 
@@ -88,21 +85,17 @@ class ManageInventoryScreen extends StatelessWidget{
                     Navigator.of(context).push(MaterialPageRoute(
                         builder: (ctx) => ManageProductsScreen(
                             serviceId: serviceId,
-                            managerService: managerService,
-                            dao: dao)));
+                            managerService: managerService)));
                     print('manage inventory screen selected.');
                   } else if(_sInvOption.title.contains('Categories')) {
                     Navigator.of(context).push(MaterialPageRoute(
                         builder: (ctx) => ManageCategoryScreen(
-                            serviceId: serviceId,
-                            // managerService: managerService,
-                            dao: dao)));
+                            serviceId: serviceId)));
                     print('manage category screen selected.');
                   } else if(_sInvOption.title.contains('Offers')) {
                     Navigator.of(context).push(MaterialPageRoute(
                         builder: (ctx) => ManageOffersScreen(
-                            serviceId: serviceId,
-                            dao: dao)));
+                            serviceId: serviceId)));
                     print('manage category screen selected.');
                   }
                   else {

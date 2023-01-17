@@ -1,16 +1,14 @@
 import 'package:bloc/screens/bloc/bloc_detail_screen.dart';
 import 'package:flutter/material.dart';
 
-import '../db/dao/bloc_dao.dart';
 import '../db/entity/bloc.dart';
 import '../screens/owner/bloc_add_edit_screen.dart';
 
 class BlocItem extends StatelessWidget {
   final Key key;
   final Bloc bloc;
-  final BlocDao dao;
 
-  const BlocItem(this.bloc, this.dao, {required this.key});
+  const BlocItem(this.bloc, {required this.key});
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +19,7 @@ class BlocItem extends StatelessWidget {
           onTap: () {
             Navigator.of(context).push(
               MaterialPageRoute(
-                  builder: (ctx) => BlocDetailScreen(dao: dao, bloc: bloc)),
+                  builder: (ctx) => BlocDetailScreen(bloc: bloc)),
             );
           },
           child: Hero(

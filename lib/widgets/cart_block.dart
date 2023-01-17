@@ -10,9 +10,8 @@ import 'ui/toaster.dart';
 
 class CartBlock extends StatelessWidget {
   CartItem cartItem;
-  BlocDao dao;
 
-  CartBlock({required this.cartItem, required this.dao});
+  CartBlock({required this.cartItem});
 
   @override
   Widget build(BuildContext context) {

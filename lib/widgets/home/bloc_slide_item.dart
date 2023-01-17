@@ -8,13 +8,11 @@ import '../../helpers/firestore_helper.dart';
 import '../../screens/bloc/bloc_service_detail_screen.dart';
 
 class BlocSlideItem extends StatefulWidget {
-  final BlocDao dao;
   final Bloc bloc;
   final String rating;
 
   BlocSlideItem({
     Key? key,
-    required this.dao,
     required this.bloc,
     required this.rating,
   }) : super(key: key);
@@ -63,7 +61,7 @@ class _BlocSlideItemState extends State<BlocSlideItem> {
                                   final BlocService blocService = BlocService.fromMap(data);
                                   Navigator.of(context).push(
                                     MaterialPageRoute(
-                                        builder: (ctx) => BlocServiceDetailScreen(dao: widget.dao, blocService: blocService)),
+                                        builder: (ctx) => BlocServiceDetailScreen(blocService: blocService)),
                                   );
                                 } else {
                                   print('not allowing this operation for now, futre implementation maybe.');

@@ -8,7 +8,6 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
-import 'db/database.dart';
 import 'db/shared_preferences/user_preferences.dart';
 import 'firebase_options.dart';
 import 'providers/cart.dart';
@@ -91,18 +90,16 @@ Future<void> main() async {
 
   await UserPreferences.init();
 
-  final database = await $FloorAppDatabase
-      .databaseBuilder('bloc_database.db')
-      .addMigrations([migration18to19, migration19to20]).build();
-  final dao = database.blocDao;
+  // final database = await $FloorAppDatabase
+  //     .databaseBuilder('bloc_database.db')
+  //     .addMigrations([migration18to19, migration19to20]).build();
+  // final dao = BlocDao;
 
-  runApp(MyApp(dao: dao));
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  final BlocDao dao;
-
-  MyApp({required this.dao});
+  MyApp();
 
   @override
   Widget build(BuildContext context) {
@@ -147,7 +144,7 @@ class MyApp extends StatelessWidget {
                 home: appSnapshot.connectionState != ConnectionState.done
                     ? SplashScreen()
                     // : LoginScreen(dao:dao)
-                    : LoginScreen(dao:dao),
+                    : LoginScreen(),
 
                 // routes: {
                 // HomeScreen.routeName: (ctx) => HomeScreen(),

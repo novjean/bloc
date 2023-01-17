@@ -17,11 +17,10 @@ import '../../../widgets/seat_item.dart';
 
 class SeatsManagementScreen extends StatefulWidget {
   String serviceId;
-  BlocDao dao;
   ServiceTable serviceTable;
 
   SeatsManagementScreen(
-      {required this.serviceId, required this.dao, required this.serviceTable});
+      {required this.serviceId, required this.serviceTable});
 
   @override
   State<SeatsManagementScreen> createState() => _SeatsManagementScreenState();

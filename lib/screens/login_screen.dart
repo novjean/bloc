@@ -13,9 +13,8 @@ import '../helpers/firestore_helper.dart';
 import 'main_screen.dart';
 
 class LoginScreen extends StatefulWidget {
-  BlocDao dao;
 
-  LoginScreen({key, required this.dao}) : super(key: key);
+  LoginScreen({key}) : super(key: key);
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -75,7 +74,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     // BlocRepository.insertUser(widget.dao, user);
                     UserPreferences.setUser(user);
 
-                    return MainScreen(dao: widget.dao, user: user);
+                    return MainScreen(user: user);
                   }
                   return Center(child: Text("Loading..."));
                 },
@@ -149,7 +148,7 @@ class _LoginScreenState extends State<LoginScreen> {
             onPressed: () {
               Navigator.of(context).push(MaterialPageRoute(
                   builder: (context) =>
-                      OTPScreen(_controller.text, widget.dao)));
+                      OTPScreen(_controller.text)));
             },
             child: Text(
               'Next',

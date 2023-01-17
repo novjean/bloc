@@ -1,11 +1,9 @@
-import 'package:bloc/db/bloc_repository.dart';
 import 'package:bloc/helpers/firestore_helper.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
 
-import '../../db/dao/bloc_dao.dart';
 import '../../db/entity/bloc_service.dart';
 import '../../db/entity/cart_item.dart';
 import '../../providers/cart.dart' show Cart;
@@ -15,13 +13,11 @@ import '../../widgets/ui/toaster.dart';
 class CartScreen extends StatelessWidget {
   static const routeName = '/cart';
 
-  BlocDao dao;
   BlocService service;
   int tableNumber;
 
   CartScreen(
       {key,
-      required this.dao,
       required this.service,
       required this.tableNumber})
       : super(key: key);
@@ -60,7 +56,6 @@ class CartScreen extends StatelessWidget {
                         isCompleted: cart.items.values.toList()[i].isCompleted,
                         isBilled: cart.items.values.toList()[i].isBilled,
                       ),
-                      dao: dao,
                     ),
                   ),
           ),
@@ -93,7 +88,7 @@ class CartScreen extends StatelessWidget {
                     ),
                     backgroundColor: Theme.of(context).primaryColor,
                   ),
-                  OrderButton(cart: cart, dao: dao),
+                  OrderButton(cart: cart),
                 ],
               ),
             ),
@@ -107,9 +102,8 @@ class CartScreen extends StatelessWidget {
 // leaving this widget here since it is only used by this screen
 class OrderButton extends StatefulWidget {
   final Cart cart;
-  final BlocDao dao;
 
-  OrderButton({key, required this.cart, required this.dao}) : super(key: key);
+  OrderButton({key, required this.cart}) : super(key: key);
 
   @override
   _OrderButtonState createState() => _OrderButtonState();

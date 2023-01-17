@@ -10,11 +10,10 @@ import '../../pickers/user_image_picker.dart';
 
 class NewServiceCategoryForm extends StatefulWidget {
   NewServiceCategoryForm(
-      this.submitFn, this.mServiceId, this.dao, this.isLoading);
+      this.submitFn, this.mServiceId, this.isLoading);
 
   final bool isLoading;
   final String mServiceId;
-  final BlocDao dao;
 
   final void Function(
     String catName,

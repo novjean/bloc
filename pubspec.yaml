@@ -43,11 +43,11 @@ dependencies:
   logger: ^1.1.0
 
   # db management
-  floor: ^1.2.0
+#  floor: ^1.2.0
 
   # ui
   fluttertoast: ^8.0.9
-  toggle_switch: ^2.0.1
+#  toggle_switch: ^2.0.1
 
   # persist locally data
   shared_preferences: ^2.0.5
@@ -69,14 +69,14 @@ dependencies:
 #  location: ^4.3.0
 #  google_maps_flutter: ^0.5.17
 
-dependency_overrides:
-  plugin_platform_interface: ^2.0.0
+#dependency_overrides:
+#  plugin_platform_interface: ^2.0.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  floor_generator: ^1.2.0
-  build_runner: ^2.1.2
+#  floor_generator: ^1.2.0
+#  build_runner: ^2.1.2
   flutter_launcher_icons: "^0.9.2"
 
   # The "flutter_lints" package below contains a set of recommended lints to

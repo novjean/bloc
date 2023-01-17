@@ -1,10 +1,8 @@
-import 'package:bloc/db/bloc_repository.dart';
 import 'package:bloc/helpers/firestore_helper.dart';
 import 'package:bloc/widgets/bloc_item.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-import '../../db/dao/bloc_dao.dart';
 import '../../db/entity/bloc.dart';
 import '../../db/entity/city.dart';
 import '../../helpers/dummy.dart';
@@ -12,10 +10,9 @@ import 'bloc_add_edit_screen.dart';
 
 class OwnerCityScreen extends StatelessWidget {
   static const routeName = '/city-detail';
-  BlocDao dao;
   City city;
 
-  OwnerCityScreen({key, required this.dao, required this.city})
+  OwnerCityScreen({key, required this.city})
       : super(key: key);
 
   @override
@@ -42,22 +39,22 @@ class OwnerCityScreen extends StatelessWidget {
         splashColor: Colors.grey,
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-      body: _buildBody(context, dao),
+      body: _buildBody(context),
     );
   }
 
-  _buildBody(BuildContext context, BlocDao dao) {
+  _buildBody(BuildContext context) {
     return SingleChildScrollView(
       child: Column(
         children: [
-          buildBlocs(context, dao),
+          buildBlocs(context),
           SizedBox(height: 10.0),
         ],
       ),
     );
   }
 
-  buildBlocs(BuildContext context, BlocDao dao) {
+  buildBlocs(BuildContext context) {
     return Container(
       height: MediaQuery.of(context).size.height,
       padding: EdgeInsets.all(5),
@@ -83,7 +80,7 @@ class OwnerCityScreen extends StatelessWidget {
               final Bloc bloc = Bloc.fromMap(data);
               // BlocRepository.insertBloc(dao, bloc);
 
-              return BlocItem(bloc, dao, key: ValueKey(document.id));
+              return BlocItem(bloc, key: ValueKey(document.id));
             }).toList(),
           );
         },

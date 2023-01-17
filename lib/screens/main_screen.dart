@@ -1,5 +1,3 @@
-import 'package:bloc/db/bloc_repository.dart';
-import 'package:bloc/db/dao/bloc_dao.dart';
 import 'package:bloc/db/entity/user.dart' as blocUser;
 import 'package:bloc/screens/login_screen.dart';
 import 'package:bloc/utils/constants.dart';
@@ -23,10 +21,10 @@ import 'profile/profile_page.dart';
 
 class MainScreen extends StatefulWidget {
   static const routeName = '/home-screen';
-  final BlocDao dao;
+
   final blocUser.User user;
 
-  MainScreen({key, required this.dao, required this.user}) : super(key: key);
+  MainScreen({key, required this.user}) : super(key: key);
 
   @override
   State<MainScreen> createState() => _MainScreenState();
@@ -70,7 +68,7 @@ class _MainScreenState extends State<MainScreen> {
 
           // lets grab more user details
           Navigator.of(context).push(
-            MaterialPageRoute(builder: (context) => EditProfilePage(user: widget.user, dao: widget.dao)),
+            MaterialPageRoute(builder: (context) => EditProfilePage(user: widget.user)),
           );
         } else {
           List<blocUser.User> users = [];
@@ -124,7 +122,7 @@ class _MainScreenState extends State<MainScreen> {
     FirebaseMessaging.onMessageOpenedApp.listen((message) {
       debugPrint('A new onMessageOpenedApp event was published!');
       Navigator.of(context).push(
-        MaterialPageRoute(builder: (ctx) => ChatScreen(dao: widget.dao)),
+        MaterialPageRoute(builder: (ctx) => ChatScreen()),
       );
 
       return;
@@ -141,11 +139,11 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     List pages = [
-      HomeScreen(dao: widget.dao),
+      HomeScreen(),
       // OfferScreen(),
       EventScreen(),
-      ChatScreen(dao: widget.dao),
-      ProfilePage(dao: widget.dao),
+      ChatScreen(),
+      ProfilePage(),
     ];
 
     return Scaffold(
@@ -183,14 +181,14 @@ class _MainScreenState extends State<MainScreen> {
                 FirebaseAuth.instance.signOut();
                 Navigator.of(context).pushReplacement(
                   MaterialPageRoute(
-                      builder: (context) => LoginScreen(dao: widget.dao)),
+                      builder: (context) => LoginScreen()),
                 );
               }
             },
           )
         ],
       ),
-      drawer: AppDrawer(dao: widget.dao),
+      drawer: AppDrawer(),
       body: PageView(
         physics: NeverScrollableScrollPhysics(),
         controller: _pageController,

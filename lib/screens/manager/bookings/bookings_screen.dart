@@ -1,16 +1,11 @@
 import 'package:flutter/material.dart';
 
-import '../../../db/dao/bloc_dao.dart';
-
 class BookingsScreen extends StatefulWidget {
-  BlocDao dao;
   String blocServiceId;
   String serviceName;
   String userTitle;
 
-
   BookingsScreen({required this.blocServiceId,
-    required this.dao,
     required this.serviceName,
     required this.userTitle});
 

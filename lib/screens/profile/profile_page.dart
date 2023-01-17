@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 
-import '../../db/dao/bloc_dao.dart';
 import '../../db/entity/user.dart' as blocUser;
 import '../../db/shared_preferences/user_preferences.dart';
 import '../../widgets/profile/numbers_widget.dart';
@@ -12,9 +11,8 @@ import 'edit_profile_page.dart';
 import 'package:barcode_widget/barcode_widget.dart';
 
 class ProfilePage extends StatefulWidget {
-  BlocDao dao;
 
-  ProfilePage({key, required this.dao}):super(key: key);
+  ProfilePage({key}):super(key: key);
 
   @override
   State<ProfilePage> createState() => _ProfilePageState();
@@ -52,7 +50,7 @@ class _ProfilePageState extends State<ProfilePage> {
           imagePath: user.imageUrl,
           onClicked: () async {
             await Navigator.of(context).push(
-              MaterialPageRoute(builder: (context) => EditProfilePage(user: user, dao: widget.dao)),
+              MaterialPageRoute(builder: (context) => EditProfilePage(user: user)),
             );
             setState(() {});
           },
