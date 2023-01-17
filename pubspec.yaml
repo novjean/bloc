@@ -47,7 +47,7 @@ dependencies:
 
   # ui
   fluttertoast: ^8.0.9
-#  toggle_switch: ^2.0.1
+  toggle_switch: ^2.0.1
 
   # persist locally data
   shared_preferences: ^2.0.5
