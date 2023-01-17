@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:bloc/widgets/ui/button_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -8,7 +9,8 @@ class EditImagePicker extends StatefulWidget {
   double maxWidth;
   String imageUrl;
 
-  EditImagePicker(this.imagePickFn, this.imageUrl, this.imageQuality,this.maxWidth);
+  EditImagePicker(
+      this.imagePickFn, this.imageUrl, this.imageQuality, this.maxWidth);
 
   final void Function(File pickedImage) imagePickFn;
 
@@ -28,7 +30,7 @@ class _EditImagePickerState extends State<EditImagePicker> {
       maxWidth: widget.maxWidth,
     );
     setState(() {
-      photoCaptured=true;
+      photoCaptured = true;
       _pickedImage = File(pickedImageFile!.path);
     });
     widget.imagePickFn(File(pickedImageFile!.path));
@@ -38,22 +40,28 @@ class _EditImagePickerState extends State<EditImagePicker> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        photoCaptured?
-        CircleAvatar(
-          radius: 40,
-          backgroundColor: Colors.grey,
-          backgroundImage: FileImage(_pickedImage),
-        ):CircleAvatar(
-          radius: 40,
-          backgroundImage: NetworkImage(widget.imageUrl),
-          backgroundColor: Colors.grey,
-        ),
-        FlatButton.icon(
-          textColor: Theme.of(context).primaryColor,
-          onPressed: _pickImage,
-          icon: Icon(Icons.image),
-          label: Text('Change Image'),
-        ),
+        photoCaptured
+            ? CircleAvatar(
+                radius: 40,
+                backgroundColor: Colors.grey,
+                backgroundImage: FileImage(_pickedImage),
+              )
+            : CircleAvatar(
+                radius: 40,
+                backgroundImage: NetworkImage(widget.imageUrl),
+                backgroundColor: Colors.grey,
+              ),
+        ButtonWidget(
+          text: 'Change Image',
+          onClicked: _pickImage,
+        )
+
+        // FlatButton.icon(
+        //   textColor: Theme.of(context).primaryColor,
+        //   onPressed: _pickImage,
+        //   icon: Icon(Icons.image),
+        //   label: Text('Change Image'),
+        // ),
       ],
     );
   }

@@ -38,12 +38,7 @@ class _AuthScreenState extends State<AuthScreen> {
       } else {
         await FirestoreHelper.insertUser(email, password, image, username);
 
-        Scaffold.of(ctx).showSnackBar(
-          SnackBar(
-            content: Text("Registered " + email),
-            backgroundColor: Theme.of(context).primaryColor,
-          ),
-        );
+        print("Registered " + email);
       }
     } on PlatformException catch (err) {
       var message = 'An error occurred, please check your credentials!';
@@ -52,12 +47,8 @@ class _AuthScreenState extends State<AuthScreen> {
         message = err.message!;
       }
 
-      Scaffold.of(ctx).showSnackBar(
-        SnackBar(
-          content: Text(message),
-          backgroundColor: Theme.of(ctx).errorColor,
-        ),
-      );
+      print("Error: " + message);
+
       setState(() {
         _isLoading = false;
       });

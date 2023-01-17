@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../widgets/ui/button_widget.dart';
+
 class UserImagePicker extends StatefulWidget {
   int imageQuality;
   double maxWidth;
@@ -45,12 +47,18 @@ class _UserImagePickerState extends State<UserImagePicker> {
           radius: 40,
           backgroundColor: Colors.grey,
         ),
-        FlatButton.icon(
-          textColor: Theme.of(context).primaryColor,
-          onPressed: _pickImage,
-          icon: Icon(Icons.image),
-          label: Text('Add Image'),
-        ),
+
+        ButtonWidget(
+          text: 'Add Image',
+          onClicked: _pickImage,
+        )
+
+        // FlatButton.icon(
+        //   textColor: Theme.of(context).primaryColor,
+        //   onPressed: _pickImage,
+        //   icon: Icon(Icons.image),
+        //   label: Text('Add Image'),
+        // ),
       ],
     );
   }

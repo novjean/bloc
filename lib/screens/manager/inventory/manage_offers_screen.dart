@@ -70,13 +70,13 @@ class ManageOffersScreen extends StatelessWidget {
                         'Do you want to end the offer for the item?',
                       ),
                       actions: [
-                        FlatButton(
+                        ElevatedButton(
                           child: Text('No'),
                           onPressed: () {
                             Navigator.of(ctx).pop(false);
                           },
                         ),
-                        FlatButton(
+                        ElevatedButton(
                           child: Text('Yes'),
                           onPressed: () {
                             _sOffer.isActive = false;

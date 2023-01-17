@@ -223,14 +223,13 @@ class _NewServiceTableFormState extends State<NewServiceTableForm> {
                 captainSelectWidget,
                 if (widget.isLoading) const CircularProgressIndicator(),
                 if (!widget.isLoading)
-                  RaisedButton(
+                  ElevatedButton(
                     child: const Text('Save'),
                     onPressed: _trySubmitNewTable,
                   ),
                 if (!widget.isLoading)
-                  FlatButton(
+                  ElevatedButton(
                     child: const Text('Cancel'),
-                    textColor: Theme.of(context).primaryColor,
                     onPressed: () {
                       setState(() {
                         Navigator.of(context).pop();

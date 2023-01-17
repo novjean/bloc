@@ -7,6 +7,7 @@ import 'package:logger/logger.dart';
 import '../../db/dao/bloc_dao.dart';
 import '../../db/entity/category.dart';
 import '../../pickers/user_image_picker.dart';
+import '../ui/Toaster.dart';
 
 class NewServiceCategoryForm extends StatefulWidget {
   NewServiceCategoryForm(
@@ -57,12 +58,7 @@ class _NewServiceCategoryFormState extends State<NewServiceCategoryForm> {
     FocusScope.of(context).unfocus();
 
     if (_userImageFile == null) {
-      Scaffold.of(context).showSnackBar(
-        SnackBar(
-          content: const Text('Please pick an image.'),
-          backgroundColor: Theme.of(context).errorColor,
-        ),
-      );
+      Toaster.shortToast('Please pick an image!');
       return;
     }
 
@@ -175,14 +171,13 @@ class _NewServiceCategoryFormState extends State<NewServiceCategoryForm> {
                 ),
                 if (widget.isLoading) const CircularProgressIndicator(),
                 if (!widget.isLoading)
-                  RaisedButton(
+                  ElevatedButton(
                     child: const Text('Save'),
                     onPressed: _trySubmit,
                   ),
                 if (!widget.isLoading)
-                  FlatButton(
+                  ElevatedButton(
                     child: const Text('Cancel'),
-                    textColor: Theme.of(context).primaryColor,
                     onPressed: () {
                       setState(() {
                         Navigator.of(context).pop();

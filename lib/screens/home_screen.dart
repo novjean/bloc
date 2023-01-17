@@ -270,7 +270,7 @@ class _HomeScreenState extends State<HomeScreen> {
             fontWeight: FontWeight.w800,
           ),
         ),
-        FlatButton(
+        ElevatedButton(
           child: Text(
             "See all (9)",
             style: TextStyle(

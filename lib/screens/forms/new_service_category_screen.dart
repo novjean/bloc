@@ -11,6 +11,7 @@ import 'package:logger/logger.dart';
 
 import '../../db/dao/bloc_dao.dart';
 import '../../widgets/bloc/new_service_category_form.dart';
+import '../../widgets/ui/Toaster.dart';
 
 class NewServiceCategoryScreen extends StatefulWidget {
   static const routeName = '/new-service-category-screen';
@@ -77,12 +78,8 @@ class _NewServiceCategoryScreenState extends State<NewServiceCategoryScreen> {
         'sequence': int.parse(sequence),
       });
 
-      Scaffold.of(ctx).showSnackBar(
-        SnackBar(
-          content: Text(catName + " is successfully added."),
-          backgroundColor: Theme.of(ctx).errorColor,
-        ),
-      );
+      Toaster.shortToast(catName + " is successfully added.");
+
       Navigator.of(context).pop();
     } on PlatformException catch (err) {
       var message = 'An error occurred, please check your credentials!';
@@ -92,12 +89,8 @@ class _NewServiceCategoryScreenState extends State<NewServiceCategoryScreen> {
         logger.e(message);
       }
 
-      Scaffold.of(ctx).showSnackBar(
-        SnackBar(
-          content: Text(message),
-          backgroundColor: Theme.of(ctx).errorColor,
-        ),
-      );
+      Toaster.shortToast("Error : " + message);
+
       setState(() {
         _isLoading = false;
       });

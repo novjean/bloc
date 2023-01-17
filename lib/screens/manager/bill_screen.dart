@@ -126,7 +126,7 @@ class _CompletedButtonState extends State<CompletedButton> {
 
   @override
   Widget build(BuildContext context) {
-    return FlatButton(
+    return ElevatedButton(
       child: _isLoading ? CircularProgressIndicator() : Text('COMPLETED'),
       onPressed: (widget.bill.orders.length <= 0 || _isLoading)
           ? null : () async {
@@ -161,7 +161,6 @@ class _CompletedButtonState extends State<CompletedButton> {
         });
         // widget.cart.clear();
       },
-      textColor: Theme.of(context).primaryColor,
     );
   }
 }
@@ -180,7 +179,7 @@ class _GenerateBillButtonState extends State<GenerateBillButton> {
 
   @override
   Widget build(BuildContext context) {
-    return FlatButton(
+    return ElevatedButton(
       child: _isLoading ? CircularProgressIndicator() : Text('GENERATE BILL'),
       onPressed: (widget.bill.orders.length <= 0 || _isLoading)
           ? null : () async {
@@ -214,7 +213,6 @@ class _GenerateBillButtonState extends State<GenerateBillButton> {
         });
         // widget.cart.clear();
       },
-      textColor: Theme.of(context).primaryColor,
     );
   }
 }

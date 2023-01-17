@@ -38,12 +38,12 @@ class _AuthFormState extends State<AuthForm> {
     FocusScope.of(context).unfocus();
 
     if (_userImageFile == null && !_isLogin) {
-      Scaffold.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Please pick an image.'),
-          backgroundColor: Theme.of(context).errorColor,
-        ),
-      );
+      // Scaffold.of(context).showSnackBar(
+      //   SnackBar(
+      //     content: Text('Please pick an image.'),
+      //     backgroundColor: Theme.of(context).errorColor,
+      //   ),
+      // );
       return;
     }
 
@@ -133,16 +133,15 @@ class _AuthFormState extends State<AuthForm> {
                   ),
                   if (widget.isLoading) CircularProgressIndicator(),
                   if (!widget.isLoading)
-                    RaisedButton(
+                    ElevatedButton(
                       child: Text(_isLogin ? 'Login' : 'Signup'),
                       onPressed: _trySubmit,
                     ),
                   if (!widget.isLoading)
-                    FlatButton(
+                    ElevatedButton(
                       child: Text(_isLogin
                           ? 'Create new account'
                           : 'I already have an account'),
-                      textColor: Theme.of(context).primaryColor,
                       onPressed: () {
                         setState(() {
                           _isLogin = !_isLogin;

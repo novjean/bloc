@@ -7,6 +7,7 @@ import 'package:logger/logger.dart';
 import '../../helpers/firestore_helper.dart';
 import '../../utils/string_utils.dart';
 import '../../widgets/table/new_service_table_form.dart';
+import '../../widgets/ui/Toaster.dart';
 
 class NewServiceTableScreen extends StatefulWidget {
   String serviceId;
@@ -63,22 +64,14 @@ class _NewServiceTableScreenState extends State<NewServiceTableScreen> {
           .doc(table.id)
           .set(table.toMap());
 
-      Scaffold.of(ctx).showSnackBar(
-        SnackBar(
-          content: Text(table.tableNumber.toString() + " is added!"),
-          backgroundColor: Theme.of(ctx).errorColor,
-        ),
-      );
+      Toaster.shortToast(table.tableNumber.toString() + " is added.");
+
       Navigator.of(context).pop();
     } on PlatformException catch (err) {
       var message = 'An error occurred, please check your credentials!';
       logger.e(err.message);
-      Scaffold.of(ctx).showSnackBar(
-        SnackBar(
-          content: Text(message),
-          backgroundColor: Theme.of(ctx).errorColor,
-        ),
-      );
+      Toaster.shortToast("Error : " + message);
+
       setState(() {
         _isLoading = false;
       });

@@ -43,13 +43,13 @@ class CartBlock extends StatelessWidget {
               'Do you want to remove the item from the cart?',
             ),
             actions: [
-              FlatButton(
+              ElevatedButton(
                 child: Text('No'),
                 onPressed: () {
                   Navigator.of(ctx).pop(false);
                 },
               ),
-              FlatButton(
+              ElevatedButton(
                 child: Text('Yes'),
                 onPressed: () {
                   Navigator.of(ctx).pop(true);
