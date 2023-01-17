@@ -38,10 +38,10 @@ dependencies:
 
   collection: ^1.16.0
 
-  flutter_local_notifications: ^8.2.0
+  flutter_local_notifications: ^13.0.0
   http: ^0.13.0
 
-  image_picker: ^0.8.4+4
+  image_picker: ^0.8.6
   logger: ^1.1.0
 
   # db management

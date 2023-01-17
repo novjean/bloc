@@ -57,7 +57,7 @@ Future<void> main() async {
     channel = const AndroidNotificationChannel(
       'high_importance_channel', // id
       'High Importance Notifications', // title
-      'This channel is used for important notifications.', // description
+      // 'This channel is used for important notifications.', // description
       importance: Importance.high,
     );
 

@@ -109,7 +109,7 @@ class _MainScreenState extends State<MainScreen> {
             android: AndroidNotificationDetails(
               channel.id,
               channel.name,
-              channel.description,
+              // channel.description,
               // TODO add a proper drawable resource to android, for now using
               //      one that already exists in example app.
               icon: '@mipmap/launcher_icon',
