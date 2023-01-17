@@ -60,7 +60,7 @@ class ManagerServicesScreen extends StatelessWidget {
                 document.data()! as Map<String, dynamic>;
             final ManagerService ms = ManagerService.fromMap(data);
             _managerServices.add(ms);
-            BlocRepository.insertManagerService(dao, ms);
+            // BlocRepository.insertManagerService(dao, ms);
 
             if (i == snapshot.data!.docs.length - 1) {
               return _displayManagerServices(context, _managerServices);

@@ -72,7 +72,7 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen>
           DocumentSnapshot document = res.docs[i];
           Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
           final Category category = Category.fromMap(data);
-          BlocRepository.insertCategory(widget.dao, category);
+          // BlocRepository.insertCategory(widget.dao, category);
           _categories.add(category);
         }
 
@@ -110,7 +110,7 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen>
           Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
           final Seat userSeat = Seat.fromMap(data);
           mSeat = userSeat;
-          BlocRepository.insertSeat(widget.dao, userSeat);
+          // BlocRepository.insertSeat(widget.dao, userSeat);
 
           if (i == res.docs.length - 1) {
             FirestoreHelper.pullSeatTable(userSeat.tableId).then(
@@ -305,7 +305,7 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen>
               Map<String, dynamic> data =
                   document.data()! as Map<String, dynamic>;
               final Seat seat = Seat.fromMap(data);
-              BlocRepository.insertSeat(widget.dao, seat);
+              // BlocRepository.insertSeat(widget.dao, seat);
               seats.add(seat);
 
               if (i == snapshot.data!.docs.length - 1) {
@@ -400,9 +400,9 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen>
           );
         }
 
-        if (snapshot.data!.docs.isNotEmpty) {
-          BlocRepository.clearProducts(widget.dao);
-        }
+        // if (snapshot.data!.docs.isNotEmpty) {
+        //   BlocRepository.clearProducts(widget.dao);
+        // }
 
         if (snapshot.hasData) {
           List<Product> products = [];
@@ -411,7 +411,7 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen>
             Map<String, dynamic> data =
                 document.data()! as Map<String, dynamic>;
             final Product product = Product.fromMap(data);
-            BlocRepository.insertProduct(widget.dao, product);
+            // BlocRepository.insertProduct(widget.dao, product);
             products.add(product);
 
             if (i == snapshot.data!.docs.length - 1) {

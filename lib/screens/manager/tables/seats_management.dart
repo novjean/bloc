@@ -181,15 +181,15 @@ class _SeatsManagementScreenState extends State<SeatsManagementScreen> {
           if (snapshot.data!.docs.length > 0) {
             // we received the seats from api
             // lets delete what is there in floor
-            BlocRepository.deleteSeats(
-                widget.dao, widget.serviceTable.tableNumber);
+            // BlocRepository.deleteSeats(
+            //     widget.dao, widget.serviceTable.tableNumber);
 
             for (int i = 0; i < snapshot.data!.docs.length; i++) {
               DocumentSnapshot document = snapshot.data!.docs[i];
               Map<String, dynamic> data =
                   document.data()! as Map<String, dynamic>;
               final Seat seat = Seat.fromMap(data);
-              BlocRepository.insertSeat(widget.dao, seat);
+              // BlocRepository.insertSeat(widget.dao, seat);
               seats.add(seat);
 
               if (i == snapshot.data!.docs.length - 1) {
@@ -206,7 +206,7 @@ class _SeatsManagementScreenState extends State<SeatsManagementScreen> {
                   tableId: widget.serviceTable.id,
                   tableNumber: widget.serviceTable.tableNumber);
               seats.add(seat);
-              BlocRepository.insertSeat(widget.dao, seat);
+              // BlocRepository.insertSeat(widget.dao, seat);
               FirestoreHelper.uploadSeat(seat);
             }
             return _displaySeats(context, seats);
@@ -306,7 +306,7 @@ class _SeatsManagementScreenState extends State<SeatsManagementScreen> {
       return;
     }
     // update seat in floor
-    BlocRepository.updateCustInSeat(widget.dao, seat.id, scanCustId);
+    // BlocRepository.updateCustInSeat(widget.dao, seat.id, scanCustId);
     // BlocRepository.updateTableOccupyStatus(
     //     widget.dao, seat.serviceId, seat.tableNumber, true);
 

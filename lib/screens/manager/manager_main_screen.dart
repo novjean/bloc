@@ -64,7 +64,7 @@ class ManagerMainScreen extends StatelessWidget {
               document.data()! as Map<String, dynamic>;
 
               final BlocService service = BlocService.fromMap(data);
-              BlocRepository.insertBlocService(dao, service);
+              // BlocRepository.insertBlocService(dao, service);
 
               return BlocServiceItem(service, true, dao, key: ValueKey(document.id));
             }).toList(),

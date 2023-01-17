@@ -135,8 +135,8 @@ class _OrderButtonState extends State<OrderButton> {
               final int millisecondsSinceEpoch = timestamp.millisecondsSinceEpoch;
               // need to store this in floor
               for (int i = 0; i < widget.cart.items.length; i++) {
-                BlocRepository.insertCartItem(
-                    widget.dao, widget.cart.items.values.elementAt(i));
+                // BlocRepository.insertCartItem(
+                //     widget.dao, widget.cart.items.values.elementAt(i));
 
                 // send it to firebase
                 //todo: will need to check if the upload actually went through

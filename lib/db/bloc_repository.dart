@@ -29,95 +29,95 @@ class BlocRepository {
   // }
 
   /** Service **/
-  static void insertBlocService(BlocDao dao, BlocService service) async {
-    await dao.insertBlocService(service);
-  }
+  // static void insertBlocService(BlocDao dao, BlocService service) async {
+  //   await dao.insertBlocService(service);
+  // }
 
   /** Category **/
-  static void insertCategory(BlocDao dao, Category cat) async {
-    await dao.insertCategory(cat);
-  }
+  // static void insertCategory(BlocDao dao, Category cat) async {
+  //   await dao.insertCategory(cat);
+  // }
 
-  static Stream<List<Category>> getCategories(BlocDao dao) {
-    return dao.getCategories();
-  }
+  // static Stream<List<Category>> getCategories(BlocDao dao) {
+  //   return dao.getCategories();
+  // }
 
-  static Future<List<Category>> getCategoriesFuture(BlocDao dao) async {
-    logger.i("getCategoriesFuture(): ");
-    Future<List<Category>> fCats = dao.getCategoriesFuture();
-    return fCats;
-  }
+  // static Future<List<Category>> getCategoriesFuture(BlocDao dao) async {
+  //   logger.i("getCategoriesFuture(): ");
+  //   Future<List<Category>> fCats = dao.getCategoriesFuture();
+  //   return fCats;
+  // }
 
-  static void clearCategories(BlocDao dao) {
-    dao.clearCategories();
-  }
+  // static void clearCategories(BlocDao dao) {
+  //   dao.clearCategories();
+  // }
 
   /** Cart Item **/
-  static void insertCartItem(BlocDao dao, CartItem cartitem) {
-    dao.insertCartItem(cartitem);
-  }
+  // static void insertCartItem(BlocDao dao, CartItem cartitem) {
+  //   dao.insertCartItem(cartitem);
+  // }
 
-  static Future<List<CartItem>> getCartItems(BlocDao dao, String userId) {
-    logger.i("getCartItems(): ");
-    Future<List<CartItem>> fCartItems = dao.getCartItems(userId);
-    return fCartItems;
-  }
+  // static Future<List<CartItem>> getCartItems(BlocDao dao, String userId) {
+  //   logger.i("getCartItems(): ");
+  //   Future<List<CartItem>> fCartItems = dao.getCartItems(userId);
+  //   return fCartItems;
+  // }
 
-  static Future<List<CartItem>> getCartItemsByTableNumber(BlocDao dao, String serviceId) {
-    logger.i("getCartItemsByTableNumber(): ");
-    Future<List<CartItem>> fCartItems = dao.getCartItemsByTableNumber(serviceId);
-    return fCartItems;
-  }
-
-  static Future<List<CartItem>> getPendingCartItemsByTableNumber(BlocDao dao, String serviceId) {
-    logger.i("getCartItemsByTableNumber(): ");
-    Future<List<CartItem>> fCartItems = dao.getPendingCartItemsByTableNumber(serviceId);
-    return fCartItems;
-  }
-
-  static Future<List<CartItem>> getCompletedCartItemsByTableNumber(BlocDao dao, String serviceId) {
-    logger.i("getCartItemsByTableNumber(): ");
-    Future<List<CartItem>> fCartItems = dao.getCompletedCartItemsByTableNumber(serviceId);
-    return fCartItems;
-  }
-
-  static Future<List<CartItem>> getSortedCartItems(BlocDao dao,String serviceId) {
-    logger.i("getSortedCartItems(): ");
-    Future<List<CartItem>> fCartItems = dao.getSortedCartItems(serviceId);
-    return fCartItems;
-  }
-
-  static void deleteCartItems(BlocDao dao, String productId) {
-    logger.i("deleteCartItems(): " + productId);
-    dao.deleteCartItems(productId);
-  }
+  // static Future<List<CartItem>> getCartItemsByTableNumber(BlocDao dao, String serviceId) {
+  //   logger.i("getCartItemsByTableNumber(): ");
+  //   Future<List<CartItem>> fCartItems = dao.getCartItemsByTableNumber(serviceId);
+  //   return fCartItems;
+  // }
+  //
+  // static Future<List<CartItem>> getPendingCartItemsByTableNumber(BlocDao dao, String serviceId) {
+  //   logger.i("getCartItemsByTableNumber(): ");
+  //   Future<List<CartItem>> fCartItems = dao.getPendingCartItemsByTableNumber(serviceId);
+  //   return fCartItems;
+  // }
+  //
+  // static Future<List<CartItem>> getCompletedCartItemsByTableNumber(BlocDao dao, String serviceId) {
+  //   logger.i("getCartItemsByTableNumber(): ");
+  //   Future<List<CartItem>> fCartItems = dao.getCompletedCartItemsByTableNumber(serviceId);
+  //   return fCartItems;
+  // }
+  //
+  // static Future<List<CartItem>> getSortedCartItems(BlocDao dao,String serviceId) {
+  //   logger.i("getSortedCartItems(): ");
+  //   Future<List<CartItem>> fCartItems = dao.getSortedCartItems(serviceId);
+  //   return fCartItems;
+  // }
+  //
+  // static void deleteCartItems(BlocDao dao, String productId) {
+  //   logger.i("deleteCartItems(): " + productId);
+  //   dao.deleteCartItems(productId);
+  // }
 
   /** Manager Service **/
-  static void insertManagerService(BlocDao dao, ManagerService ms) async {
-    logger.i("insertManagerService(): ");
-    await dao.insertManagerService(ms);
-  }
+  // static void insertManagerService(BlocDao dao, ManagerService ms) async {
+  //   logger.i("insertManagerService(): ");
+  //   await dao.insertManagerService(ms);
+  // }
 
   /** Product **/
-  static void insertProduct(BlocDao dao, Product product) async {
-    await dao.insertProduct(product);
-  }
+  // static void insertProduct(BlocDao dao, Product product) async {
+  //   await dao.insertProduct(product);
+  // }
+  //
+  // static Future<List<Product>> getProducts(BlocDao dao) async {
+  //   logger.i("getProducts(): ");
+  //   Future<List<Product>> fProducts = dao.getProducts();
+  //   return fProducts;
+  // }
+  //
+  // static Future<List<Product>> getProductsByCategory(BlocDao dao, String catType) async {
+  //   logger.i("getProductsByCategory(): " + catType);
+  //   Future<List<Product>> fProducts = dao.getProductsByCategory(catType);
+  //   return fProducts;
+  // }
 
-  static Future<List<Product>> getProducts(BlocDao dao) async {
-    logger.i("getProducts(): ");
-    Future<List<Product>> fProducts = dao.getProducts();
-    return fProducts;
-  }
-
-  static Future<List<Product>> getProductsByCategory(BlocDao dao, String catType) async {
-    logger.i("getProductsByCategory(): " + catType);
-    Future<List<Product>> fProducts = dao.getProductsByCategory(catType);
-    return fProducts;
-  }
-
-  static void clearProducts(BlocDao dao) {
-    dao.clearProducts();
-  }
+  // static void clearProducts(BlocDao dao) {
+  //   dao.clearProducts();
+  // }
 
   /** User **/
   // static void insertUser(BlocDao dao, User user) async {
@@ -157,27 +157,25 @@ class BlocRepository {
   // }
 
   /** Seat **/
-  static void insertSeat(BlocDao dao, Seat seat) async {
-    logger.i('insertSeat(): ');
-    await dao.insertSeat(seat);
-  }
-
-  static void updateCustInSeat(BlocDao dao, String seatId, String custId) async {
-    logger.i('updateCustInSeat(): ');
-    await dao.updateCustInSeat(seatId, custId);
-  }
-
-  static Future<List<Seat>> getSeats(BlocDao dao, String serviceId, int tableNumber) {
-    logger.i('getSeats() for table : ' + tableNumber.toString());
-    Future<List<Seat>> fSeats = dao.getSeats(serviceId, tableNumber);
-    return fSeats;
-  }
-
-  static void deleteSeats(BlocDao dao, int tableNumber) async {
-    logger.i('deleteSeats() for table : ' + tableNumber.toString());
-    await dao.deleteSeats(tableNumber);
-  }
-
-
+  // static void insertSeat(BlocDao dao, Seat seat) async {
+  //   logger.i('insertSeat(): ');
+  //   await dao.insertSeat(seat);
+  // }
+  //
+  // static void updateCustInSeat(BlocDao dao, String seatId, String custId) async {
+  //   logger.i('updateCustInSeat(): ');
+  //   await dao.updateCustInSeat(seatId, custId);
+  // }
+  //
+  // static Future<List<Seat>> getSeats(BlocDao dao, String serviceId, int tableNumber) {
+  //   logger.i('getSeats() for table : ' + tableNumber.toString());
+  //   Future<List<Seat>> fSeats = dao.getSeats(serviceId, tableNumber);
+  //   return fSeats;
+  // }
+  //
+  // static void deleteSeats(BlocDao dao, int tableNumber) async {
+  //   logger.i('deleteSeats() for table : ' + tableNumber.toString());
+  //   await dao.deleteSeats(tableNumber);
+  // }
 
 }
