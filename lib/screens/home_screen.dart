@@ -9,9 +9,11 @@ import '../db/entity/bloc.dart';
 import '../db/shared_preferences/user_preferences.dart';
 import '../helpers/firestore_helper.dart';
 import '../helpers/token_monitor.dart';
+import '../widgets/home/new_bloc_slide_item.dart';
 import '../widgets/search_card.dart';
 import '../widgets/home/bloc_slide_item.dart';
 import '../widgets/ui/button_widget.dart';
+import '../widgets/ui/sized_listview_block.dart';
 import 'experimental/trending.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -64,50 +66,48 @@ class _HomeScreenState extends State<HomeScreen> {
       },
       child: Scaffold(
         backgroundColor: Theme.of(context).backgroundColor,
-        body: Padding(
-          padding: const EdgeInsets.fromLTRB(0.0, 0, 0.0, 0),
-          child: Column(
-            children: <Widget>[
-              // buildSearchBar(context),
-              SizedBox(height: 10.0),
-              _isLoading
-                  ? Center(child: Text('Loading blocs...'))
-                  : _displayBlocs(context),
-              // SizedBox(height: 20.0),
-              // buildBookTableRow(context),
-              // buildRestaurantRow('Trending Restaurants', context),
-              // SizedBox(height: 10.0),
-              // buildCategoryRow('Category', context),
-              SizedBox(height: 20.0),
-              buildSuperstarsTitleRow('Superstars', context),
-              SizedBox(height: 10.0),
-              buildSuperstarsList(context),
-              SizedBox(height: 1.0),
-              TokenMonitor((token) {
-                if (token != null) {
-                  User user = UserPreferences.myUser;
-                  if (user.id.isNotEmpty) {
-                    if (UserPreferences.myUser.fcmToken.isEmpty ||
-                        UserPreferences.myUser.fcmToken != token) {
-                      UserPreferences.setUserFcmToken(token);
-                      FirestoreHelper.updateUserFcmToken(
-                          UserPreferences.myUser.id, token);
-                    } else {
-                      print('fcm token has not changed: ' + token);
-                    }
+        body: Column(
+          children: <Widget>[
+            // buildSearchBar(context),
+            const SizedBox(height: 5.0),
+            _isLoading
+                ? Center(child: Text('Loading blocs...'))
+                : _displayBlocs(context),
+            // SizedBox(height: 20.0),
+            // buildBookTableRow(context),
+            // buildRestaurantRow('Trending Restaurants', context),
+            // SizedBox(height: 10.0),
+            // buildCategoryRow('Category', context),
+            // SizedBox(height: 20.0),
+            // buildSuperstarsTitleRow('Superstars', context),
+            // SizedBox(height: 10.0),
+            // buildSuperstarsList(context),
+            SizedBox(height: 1.0),
+            TokenMonitor((token) {
+              if (token != null) {
+                User user = UserPreferences.myUser;
+                if (user.id.isNotEmpty) {
+                  if (UserPreferences.myUser.fcmToken.isEmpty ||
+                      UserPreferences.myUser.fcmToken != token) {
+                    UserPreferences.setUserFcmToken(token);
+                    FirestoreHelper.updateUserFcmToken(
+                        UserPreferences.myUser.id, token);
+                  } else {
+                    print('fcm token has not changed: ' + token);
                   }
                 }
-                return const Spacer();
-              })
-            ],
-          ),
+              }
+              return const Spacer();
+            })
+          ],
         ),
       ),
     );
   }
 
   _displayBlocs(context) {
-    return Expanded(
+    return SizedBox(
+      height: 400,
       child: ListView.builder(
           itemCount: mBlocs.length,
           scrollDirection: Axis.horizontal,
@@ -115,36 +115,18 @@ class _HomeScreenState extends State<HomeScreen> {
             Bloc bloc = mBlocs[index];
 
             return GestureDetector(
-              child: BlocSlideItem(
+              child:
+                  // BlocSlideItem(
+                  //   bloc: bloc,
+                  //   rating: '5',
+                  // )
+              NewBlocSlideItem(
                 bloc: bloc,
-                rating: "5",
               ),
             );
           }),
     );
   }
-
-  // buildBlocList(BuildContext context) {
-  //   return Container(
-  //     height: MediaQuery.of(context).size.height / 3.0,
-  //     width: MediaQuery.of(context).size.width,
-  //     child: ListView.builder(
-  //       primary: false,
-  //       shrinkWrap: true,
-  //       scrollDirection: Axis.horizontal,
-  //       itemCount: mBlocs.length,
-  //       itemBuilder: (BuildContext context, int index) {
-  //         Bloc bloc = mBlocs[index];
-  //
-  //         return BlocSlideItem(
-  //           dao: widget.dao,
-  //           bloc: bloc,
-  //           rating: "5",
-  //         );
-  //       },
-  //     ),
-  //   );
-  // }
 
   /** Optional **/
   buildSuperstarsTitleRow(String category, BuildContext context) {

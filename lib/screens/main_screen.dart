@@ -175,9 +175,6 @@ class _MainScreenState extends State<MainScreen> {
               if (itemIdentifier == 'logout') {
                 UserPreferences.resetUser();
 
-                // clear out local DB
-                // BlocRepository.clearUsers(widget.dao);
-
                 FirebaseAuth.instance.signOut();
                 Navigator.of(context).pushReplacement(
                   MaterialPageRoute(
