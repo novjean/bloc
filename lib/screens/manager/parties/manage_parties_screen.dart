@@ -13,9 +13,7 @@ class ManagePartiesScreen extends StatefulWidget {
   String serviceId;
   ManagerService managerService;
 
-  ManagePartiesScreen(
-      {required this.serviceId,
-      required this.managerService});
+  ManagePartiesScreen({required this.serviceId, required this.managerService});
 
   @override
   State<ManagePartiesScreen> createState() => _ManagePartiesScreenState();
@@ -113,7 +111,9 @@ class _ManagePartiesScreenState extends State<ManagePartiesScreen> {
                   Party _sParty = _parties[index];
                   print(_sParty.name + ' is selected');
 
-                  PartyAddEditScreen(party: _sParty, task: 'Edit');
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                        builder: (ctx) => PartyAddEditScreen(party: _sParty, task: 'Edit')));
                 });
           }),
     );

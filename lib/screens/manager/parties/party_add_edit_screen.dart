@@ -212,91 +212,6 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
                 onChanged: (name) =>
                     widget.party = widget.party.copyWith(name: name),
               ),
-
-              // _productType == 'Food'
-              //     ? Column(
-              //   children: [
-              //     const SizedBox(height: 24),
-              //     FormField<String>(
-              //       builder: (FormFieldState<String> state) {
-              //         return InputDecorator(
-              //           key: const ValueKey('product_category_food'),
-              //           decoration: InputDecoration(
-              //               errorStyle: TextStyle(
-              //                   color: Theme.of(context).errorColor,
-              //                   fontSize: 16.0),
-              //               hintText: 'Please select product category',
-              //               border: OutlineInputBorder(
-              //                   borderRadius:
-              //                   BorderRadius.circular(5.0))),
-              //           isEmpty: _sCategoryFood == '',
-              //           child: DropdownButtonHideUnderline(
-              //             child: DropdownButton<String>(
-              //                 value: widget.party.category,
-              //                 isDense: true,
-              //                 onChanged: (String? newValue) {
-              //                   setState(() {
-              //                     _productCategory = newValue!;
-              //                     _sCategoryFood = _productCategory;
-              //                     widget.party = widget.party
-              //                         .copyWith(category: newValue);
-              //                     // state.didChange(newValue);
-              //                   });
-              //                 },
-              //                 items: catFoodNames.map((String value) {
-              //                   return DropdownMenuItem<String>(
-              //                     value: value,
-              //                     child: Text(value),
-              //                   );
-              //                 }).toList()),
-              //           ),
-              //         );
-              //       },
-              //     ),
-              //   ],
-              // )
-              //     : Column(
-              //   children: [
-              //     const SizedBox(height: 24),
-              //     FormField<String>(
-              //       builder: (FormFieldState<String> state) {
-              //         return InputDecorator(
-              //           key: const ValueKey('product_category_alcohol'),
-              //           decoration: InputDecoration(
-              //               errorStyle: TextStyle(
-              //                   color: Theme.of(context).errorColor,
-              //                   fontSize: 16.0),
-              //               hintText: 'Please select product category',
-              //               border: OutlineInputBorder(
-              //                   borderRadius:
-              //                   BorderRadius.circular(5.0))),
-              //           isEmpty: _sCategoryAlcohol == '',
-              //           child: DropdownButtonHideUnderline(
-              //             child: DropdownButton<String>(
-              //                 value: widget.party.category,
-              //                 isDense: true,
-              //                 onChanged: (String? newValue) {
-              //                   setState(() {
-              //                     _productCategory = newValue!;
-              //                     _sCategoryAlcohol = _productCategory;
-              //                     widget.party = widget.party
-              //                         .copyWith(category: newValue);
-              //                     // state.didChange(newValue);
-              //                   });
-              //                 },
-              //                 items: catAlcoholNames.map((String value) {
-              //                   return DropdownMenuItem<String>(
-              //                     value: value,
-              //                     child: Text(value),
-              //                   );
-              //                 }).toList()),
-              //           ),
-              //         );
-              //       },
-              //     ),
-              //   ],
-              // ),
-
               const SizedBox(height: 24),
               TextFieldWidget(
                 label: 'Description',
@@ -404,6 +319,7 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
                 onClicked: () {
                   if (isPhotoChanged) {
                     widget.party = widget.party.copyWith(imageUrl: newImageUrl);
+                    FirestorageHelper.deleteFile(oldImageUrl);
                   }
 
                   if (widget.party.blocServiceId.isEmpty) {

@@ -423,11 +423,10 @@ class _ProductAddEditScreenState extends State<ProductAddEditScreen> {
                   if (isPhotoChanged) {
                     widget.product =
                         widget.product.copyWith(imageUrl: newImageUrl);
+                    FirestorageHelper.deleteFile(oldImageUrl);
                   }
 
                   FirestoreHelper.pushProduct(widget.product);
-
-                  // FirestoreHelper.updateProduct(widget.product);
 
                   Navigator.of(context).pop();
                 },
