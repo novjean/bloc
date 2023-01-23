@@ -1,4 +1,5 @@
 import 'package:bloc/db/entity/user.dart';
+import 'package:bloc/main.dart';
 import 'package:bloc/screens/user/book_table_screen.dart';
 import 'package:bloc/utils/constants.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -77,8 +78,7 @@ class _HomeScreenState extends State<HomeScreen> {
             // buildSuperstarsTitleRow('Superstars', context),
             // SizedBox(height: 10.0),
             // buildSuperstarsList(context),
-            SizedBox(height: 1.0),
-            TokenMonitor((token) {
+            !kIsWeb ? TokenMonitor((token) {
               if (token != null) {
                 User user = UserPreferences.myUser;
                 if (user.id.isNotEmpty) {
@@ -93,7 +93,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 }
               }
               return const Spacer();
-            }),
+            }) : const SizedBox(height: 0),
             const SizedBox(height: 10.0),
           ],
         ),

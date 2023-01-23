@@ -1,5 +1,6 @@
 import 'package:bloc/db/entity/bloc_service.dart';
 import 'package:bloc/helpers/firestore_helper.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -85,23 +86,21 @@ class _NewBlocSlideItemState extends State<NewBlocSlideItem> {
                         ),
                       ),
 
-                      
-
-                      // Image.network(
-                      //   widget.bloc.imageUrl,
-                      //   fit: BoxFit.fill,
-                      //   loadingBuilder: (BuildContext context, Widget child,
-                      //       ImageChunkEvent? loadingProgress) {
-                      //     if (loadingProgress == null) return child;
-                      //     return Center(
-                      //       child: CircularProgressIndicator(
-                      //         value: loadingProgress.expectedTotalBytes != null
-                      //             ? loadingProgress.cumulativeBytesLoaded /
-                      //             loadingProgress.expectedTotalBytes!
-                      //             : null,
-                      //       ),
-                      //     );
-                      //   },
+                      // CachedNetworkImage(
+                      //   imageUrl: widget.bloc.imageUrl,
+                      //   imageBuilder: (context, imageProvider) => Container(
+                      //     decoration: BoxDecoration(
+                      //       image: DecorationImage(
+                      //           image: imageProvider,
+                      //           fit: BoxFit.fitWidth,
+                      //           colorFilter:
+                      //           ColorFilter.mode(Colors.red, BlendMode.colorBurn)),
+                      //     ),
+                      //   ),
+                      //   placeholder: (context, url) => CircularProgressIndicator(),
+                      //   errorWidget: (context, url, error) {
+                      //     print(error.toString());
+                      //     return Icon(Icons.error);},
                       // ),
 
                       Container(

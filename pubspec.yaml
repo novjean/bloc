@@ -70,6 +70,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   expandable: ^5.0.1
   pinput: ^2.2.21
+  cached_network_image: ^3.2.3
 
 #  location: ^4.3.0
 #  google_maps_flutter: ^0.5.17

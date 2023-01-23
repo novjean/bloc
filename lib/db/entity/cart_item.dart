@@ -154,7 +154,7 @@ class CartItem {
       userId: map['userId'] as String,
       productId: map['productId'] as String,
       productName: map['productName'] as String,
-      productPrice: map['productPrice'] as double,
+      productPrice: map['productPrice'].toDouble(),
       isCommunity: map['isCommunity'] as bool,
       quantity: map['quantity'] as int,
       isCompleted: map['isCompleted'] as bool,
