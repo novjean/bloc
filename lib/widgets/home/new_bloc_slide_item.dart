@@ -32,7 +32,7 @@ class _NewBlocSlideItemState extends State<NewBlocSlideItem> {
     FirestoreHelper.pullBlocService(widget.bloc.id).then((res) {
       print("Successfully retrieved bloc services...");
 
-      if(res.docs.isNotEmpty){
+      if (res.docs.isNotEmpty) {
         List<BlocService> blocServices = [];
 
         for (int i = 0; i < res.docs.length; i++) {
@@ -58,64 +58,66 @@ class _NewBlocSlideItemState extends State<NewBlocSlideItem> {
       onTap: () {
         Navigator.of(context).push(
           MaterialPageRoute(
-              builder: (ctx) => BlocServiceDetailScreen(blocService: mBlocService)),
+              builder: (ctx) =>
+                  BlocServiceDetailScreen(blocService: mBlocService)),
         );
       },
-      child: _isBlocServiceLoading?SizedBox():
-
-      Hero(
-        tag: widget.bloc.id,
-        child: Card(
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10.0)),
-          child: SizedBox(
-            width: MediaQuery.of(context).size.width,
-            child: Column(
-              children: <Widget>[
-                Container(
-                  height: 300,
+      child: _isBlocServiceLoading
+          ? const SizedBox()
+          : Hero(
+              tag: widget.bloc.id,
+              child: Card(
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10.0)),
+                child: SizedBox(
                   width: MediaQuery.of(context).size.width,
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Theme.of(context).primaryColor),
-                    borderRadius: BorderRadius.all(Radius.circular(10)),
-                    image: DecorationImage(
-                        image: NetworkImage(widget.bloc.imageUrl),
-                        fit: BoxFit.fitWidth,
-                        // AssetImage(food['image']),
+                  child: Column(
+                    children: <Widget>[
+                      Container(
+                        height: 300,
+                        width: MediaQuery.of(context).size.width,
+                        decoration: BoxDecoration(
+                          border:
+                              Border.all(color: Theme.of(context).primaryColor),
+                          borderRadius: BorderRadius.all(Radius.circular(10)),
+                          image: DecorationImage(
+                            image: NetworkImage(widget.bloc.imageUrl),
+                            fit: BoxFit.fitWidth,
+                            // AssetImage(food['image']),
+                          ),
                         ),
+                      ),
+                      Container(
+                        width: MediaQuery.of(context).size.width,
+                        padding:
+                            EdgeInsets.only(top: 5, left: 15.0, right: 15.0),
+                        child: Text(
+                          "${widget.bloc.name}",
+                          style: TextStyle(
+                            fontSize: 22.0,
+                            fontWeight: FontWeight.w800,
+                          ),
+                          textAlign: TextAlign.left,
+                        ),
+                      ),
+                      SizedBox(height: 7.0),
+                      Container(
+                        width: MediaQuery.of(context).size.width,
+                        padding: EdgeInsets.only(
+                            top: 5, left: 15.0, right: 15.0, bottom: 5),
+                        child: Text(
+                          "${widget.bloc.addressLine1}, ${widget.bloc.addressLine2}",
+                          style: TextStyle(
+                            fontSize: 16.0,
+                            fontWeight: FontWeight.w300,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                Container(
-                  width: MediaQuery.of(context).size.width,
-                  padding: EdgeInsets.only(top: 5, left: 15.0, right: 15.0),
-                  child: Text(
-                    "${widget.bloc.name}",
-                    style: TextStyle(
-                      fontSize: 22.0,
-                      fontWeight: FontWeight.w800,
-                    ),
-                    textAlign: TextAlign.left,
-                  ),
-                ),
-                SizedBox(height: 7.0),
-                Container(
-                  width: MediaQuery.of(context).size.width,
-                  padding: EdgeInsets.only(top: 5, left: 15.0, right: 15.0, bottom: 5),
-                  child: Text(
-                    "${widget.bloc.addressLine1}, ${widget.bloc.addressLine2}",
-                    style: TextStyle(
-                      fontSize: 16.0,
-                      fontWeight: FontWeight.w300,
-                    ),
-                  ),
-                ),
-
-              ],
+              ),
             ),
-          ),
-        ),
-      ),
     );
   }
-
 }

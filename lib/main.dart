@@ -119,9 +119,9 @@ class MyApp extends StatelessWidget {
                 debugShowCheckedModeBanner: false,
                 title: kAppTitle,
                 theme: ThemeData(
-                  primaryColor: Color.fromRGBO(255,193,7,1),
+                  primaryColor: Color.fromRGBO(247,214,208,1),
                   primaryColorLight: Color.fromRGBO(255,235,59,1),
-                  backgroundColor: Color.fromRGBO(38, 50, 56, 1.0),
+                  backgroundColor: Color.fromRGBO(245, 245, 220, 1.0),
                   focusColor: Color.fromRGBO(31, 31, 33, 1.0),
                   shadowColor: Color.fromRGBO(158, 158, 158, 1.0),
 
@@ -129,7 +129,7 @@ class MyApp extends StatelessWidget {
                   bottomAppBarColor: Color.fromRGBO(255, 255, 255, 1.0),
 
                   // app bar and buttons by default
-                  primarySwatch: Colors.amber,
+                  primarySwatch: Colors.teal,
 
                   accentColor: Colors.grey,
                   accentColorBrightness: Brightness.dark,

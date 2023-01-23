@@ -4,16 +4,14 @@ import 'package:bloc/utils/constants.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-import '../db/dao/bloc_dao.dart';
 import '../db/entity/bloc.dart';
 import '../db/shared_preferences/user_preferences.dart';
 import '../helpers/firestore_helper.dart';
 import '../helpers/token_monitor.dart';
+import '../widgets/home/bloc_slide_item.dart';
 import '../widgets/home/new_bloc_slide_item.dart';
 import '../widgets/search_card.dart';
-import '../widgets/home/bloc_slide_item.dart';
 import '../widgets/ui/button_widget.dart';
-import '../widgets/ui/sized_listview_block.dart';
 import 'experimental/trending.dart';
 
 class HomeScreen extends StatefulWidget {
