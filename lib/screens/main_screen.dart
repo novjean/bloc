@@ -14,7 +14,7 @@ import '../../db/entity/user.dart' as blocUser;
 import '../helpers/firestore_helper.dart';
 import '../main.dart';
 import 'home_screen.dart';
-import 'events/event_screen.dart';
+import 'parties/party_screen.dart';
 import 'chat/chat_screen.dart';
 import 'profile/edit_profile_page.dart';
 import 'profile/profile_page.dart';
@@ -38,7 +38,7 @@ class _MainScreenState extends State<MainScreen> {
   List icons = [
     Icons.home,
     Icons.whatshot_sharp,
-    Icons.notifications,
+    // Icons.notifications,
     Icons.person,
   ];
 
@@ -141,8 +141,8 @@ class _MainScreenState extends State<MainScreen> {
     List pages = [
       HomeScreen(),
       // OfferScreen(),
-      EventScreen(),
-      ChatScreen(),
+      PartyScreen(),
+      // ChatScreen(),
       ProfilePage(),
     ];
 
@@ -190,7 +190,7 @@ class _MainScreenState extends State<MainScreen> {
         physics: NeverScrollableScrollPhysics(),
         controller: _pageController,
         onPageChanged: onPageChanged,
-        children: List.generate(4, (index) => pages[index]),
+        children: List.generate(3, (index) => pages[index]),
       ),
       bottomNavigationBar: BottomAppBar(
         child: Row(
@@ -201,7 +201,7 @@ class _MainScreenState extends State<MainScreen> {
             buildTabIcon(0),
             buildTabIcon(1),
             buildTabIcon(2),
-            buildTabIcon(3),
+            // buildTabIcon(3),
             // SizedBox(width: 7),
           ],
         ),

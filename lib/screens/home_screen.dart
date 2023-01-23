@@ -67,7 +67,7 @@ class _HomeScreenState extends State<HomeScreen> {
         body: Column(
           children: <Widget>[
             // buildSearchBar(context),
-            const SizedBox(height: 5.0),
+            const SizedBox(height: 10.0),
             _isLoading
                 ? Center(child: Text('Loading blocs...'))
                 : _displayBlocs(context),
@@ -75,8 +75,6 @@ class _HomeScreenState extends State<HomeScreen> {
             // buildBookTableRow(context),
             // buildRestaurantRow('Trending Restaurants', context),
             // SizedBox(height: 10.0),
-            // buildCategoryRow('Category', context),
-            // SizedBox(height: 20.0),
             // buildSuperstarsTitleRow('Superstars', context),
             // SizedBox(height: 10.0),
             // buildSuperstarsList(context),
@@ -96,7 +94,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 }
               }
               return const Spacer();
-            })
+            }),
+            const SizedBox(height: 10.0),
           ],
         ),
       ),
@@ -108,7 +107,7 @@ class _HomeScreenState extends State<HomeScreen> {
       height: 400,
       child: ListView.builder(
           itemCount: mBlocs.length,
-          scrollDirection: Axis.horizontal,
+          scrollDirection: Axis.vertical,
           itemBuilder: (ctx, index) {
             Bloc bloc = mBlocs[index];
 
@@ -118,7 +117,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   //   bloc: bloc,
                   //   rating: '5',
                   // )
-              NewBlocSlideItem(
+                  NewBlocSlideItem(
                 bloc: bloc,
               ),
             );

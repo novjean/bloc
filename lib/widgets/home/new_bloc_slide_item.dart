@@ -1,12 +1,8 @@
 import 'package:bloc/db/entity/bloc_service.dart';
 import 'package:bloc/helpers/firestore_helper.dart';
-import 'package:bloc/widgets/ui/button_widget.dart';
-import 'package:bloc/widgets/ui/toaster.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
-import 'package:provider/provider.dart';
 
 import '../../db/entity/bloc.dart';
 import '../../screens/bloc/bloc_service_detail_screen.dart';
@@ -90,7 +86,7 @@ class _NewBlocSlideItemState extends State<NewBlocSlideItem> {
                       Container(
                         width: MediaQuery.of(context).size.width,
                         padding:
-                            EdgeInsets.only(top: 5, left: 15.0, right: 15.0),
+                            EdgeInsets.only(top: 10, left: 15.0, right: 15.0),
                         child: Text(
                           "${widget.bloc.name}",
                           style: TextStyle(
@@ -100,11 +96,11 @@ class _NewBlocSlideItemState extends State<NewBlocSlideItem> {
                           textAlign: TextAlign.left,
                         ),
                       ),
-                      SizedBox(height: 7.0),
+                      SizedBox(height: 10.0),
                       Container(
                         width: MediaQuery.of(context).size.width,
                         padding: EdgeInsets.only(
-                            top: 5, left: 15.0, right: 15.0, bottom: 5),
+                            top: 0, left: 15.0, right: 15.0, bottom: 5),
                         child: Text(
                           "${widget.bloc.addressLine1}, ${widget.bloc.addressLine2}",
                           style: TextStyle(

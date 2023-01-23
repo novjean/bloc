@@ -414,6 +414,13 @@ class FirestoreHelper {
     }
   }
 
+  static Future<QuerySnapshot<Map<String, dynamic>>> pullParties(int timeNow) {
+    return FirebaseFirestore.instance
+        .collection(FirestoreHelper.PARTIES)
+        .where('startTime', isGreaterThan: timeNow)
+        .get();
+  }
+
   static getParties(String blocServiceId) {
     return FirebaseFirestore.instance
         .collection(PARTIES)
