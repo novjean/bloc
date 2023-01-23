@@ -53,7 +53,7 @@ class _MainScreenState extends State<MainScreen> {
         .where('phoneNumber', isEqualTo: widget.user.phoneNumber)
         .get()
         .then(
-      (res) {
+          (res) {
         print("Successfully retrieved users for " +
             widget.user.phoneNumber.toString());
 
@@ -76,7 +76,7 @@ class _MainScreenState extends State<MainScreen> {
           for (int i = 0; i < res.docs.length; i++) {
             DocumentSnapshot document = res.docs[i];
             Map<String, dynamic> data =
-                document.data()! as Map<String, dynamic>;
+            document.data()! as Map<String, dynamic>;
             final blocUser.User user = blocUser.User.fromMap(data);
             // BlocRepository.insertUser(widget.dao, user);
             users.add(user);
@@ -93,46 +93,48 @@ class _MainScreenState extends State<MainScreen> {
               " : $e"),
     );
 
-    //the following lines are essential for notification to work in iOS
-    final fbm = FirebaseMessaging.instance;
-    fbm.requestPermission();
+    if(!kIsWeb){
+      //the following lines are essential for notification to work in iOS
+      final fbm = FirebaseMessaging.instance;
+      fbm.requestPermission();
 
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      RemoteNotification? notification = message.notification;
-      AndroidNotification? android = message.notification?.android;
-      if (notification != null && android != null) {
-        flutterLocalNotificationsPlugin.show(
-          notification.hashCode,
-          notification.title,
-          notification.body,
-          NotificationDetails(
-            android: AndroidNotificationDetails(
-              channel.id,
-              channel.name,
-              // channel.description,
-              // TODO add a proper drawable resource to android, for now using
-              //      one that already exists in example app.
-              icon: '@mipmap/launcher_icon',
+      FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+        RemoteNotification? notification = message.notification;
+        AndroidNotification? android = message.notification?.android;
+        if (notification != null && android != null) {
+          flutterLocalNotificationsPlugin.show(
+            notification.hashCode,
+            notification.title,
+            notification.body,
+            NotificationDetails(
+              android: AndroidNotificationDetails(
+                channel.id,
+                channel.name,
+                // channel.description,
+                // TODO add a proper drawable resource to android, for now using
+                //      one that already exists in example app.
+                icon: '@mipmap/launcher_icon',
+              ),
             ),
-          ),
+          );
+        }
+      });
+
+      FirebaseMessaging.onMessageOpenedApp.listen((message) {
+        debugPrint('A new onMessageOpenedApp event was published!');
+        Navigator.of(context).push(
+          MaterialPageRoute(builder: (ctx) => ChatScreen()),
         );
+
+        return;
+      });
+      fbm.subscribeToTopic('chat');
+      fbm.subscribeToTopic('offer');
+
+      blocUser.User user = UserPreferences.getUser();
+      if (user.clearanceLevel > Constants.MANAGER_LEVEL) {
+        fbm.subscribeToTopic('sos');
       }
-    });
-
-    FirebaseMessaging.onMessageOpenedApp.listen((message) {
-      debugPrint('A new onMessageOpenedApp event was published!');
-      Navigator.of(context).push(
-        MaterialPageRoute(builder: (ctx) => ChatScreen()),
-      );
-
-      return;
-    });
-    fbm.subscribeToTopic('chat');
-    fbm.subscribeToTopic('offer');
-
-    blocUser.User user = UserPreferences.getUser();
-    if (user.clearanceLevel > Constants.MANAGER_LEVEL) {
-      fbm.subscribeToTopic('sos');
     }
   }
 

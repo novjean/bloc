@@ -56,7 +56,7 @@ class _PartyScreenState extends State<PartyScreen> {
         child: ListView.builder(
           itemCount: mParties.length,
           scrollDirection: Axis.vertical,
-          physics: BouncingScrollPhysics(),
+          physics: const BouncingScrollPhysics(),
           itemBuilder: (BuildContext context, int index) {
             return GestureDetector(
               child: PartyItem(party: mParties[index]),

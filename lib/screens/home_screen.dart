@@ -8,7 +8,6 @@ import '../db/entity/bloc.dart';
 import '../db/shared_preferences/user_preferences.dart';
 import '../helpers/firestore_helper.dart';
 import '../helpers/token_monitor.dart';
-import '../widgets/home/bloc_slide_item.dart';
 import '../widgets/home/new_bloc_slide_item.dart';
 import '../widgets/search_card.dart';
 import '../widgets/ui/button_widget.dart';

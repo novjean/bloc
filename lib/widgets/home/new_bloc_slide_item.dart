@@ -1,6 +1,7 @@
 import 'package:bloc/db/entity/bloc_service.dart';
 import 'package:bloc/helpers/firestore_helper.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 
@@ -83,6 +84,26 @@ class _NewBlocSlideItemState extends State<NewBlocSlideItem> {
                           ),
                         ),
                       ),
+
+                      
+
+                      // Image.network(
+                      //   widget.bloc.imageUrl,
+                      //   fit: BoxFit.fill,
+                      //   loadingBuilder: (BuildContext context, Widget child,
+                      //       ImageChunkEvent? loadingProgress) {
+                      //     if (loadingProgress == null) return child;
+                      //     return Center(
+                      //       child: CircularProgressIndicator(
+                      //         value: loadingProgress.expectedTotalBytes != null
+                      //             ? loadingProgress.cumulativeBytesLoaded /
+                      //             loadingProgress.expectedTotalBytes!
+                      //             : null,
+                      //       ),
+                      //     );
+                      //   },
+                      // ),
+
                       Container(
                         width: MediaQuery.of(context).size.width,
                         padding:
