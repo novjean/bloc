@@ -11,7 +11,7 @@ import 'package:logger/logger.dart';
 
 import '../../db/dao/bloc_dao.dart';
 import '../../widgets/bloc/new_service_category_form.dart';
-import '../../widgets/ui/Toaster.dart';
+import '../../widgets/ui/toaster.dart';
 
 class NewServiceCategoryScreen extends StatefulWidget {
   static const routeName = '/new-service-category-screen';

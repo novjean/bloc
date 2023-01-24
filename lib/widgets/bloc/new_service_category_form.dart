@@ -7,7 +7,7 @@ import 'package:logger/logger.dart';
 import '../../db/dao/bloc_dao.dart';
 import '../../db/entity/category.dart';
 import '../../pickers/user_image_picker.dart';
-import '../ui/Toaster.dart';
+import '../ui/toaster.dart';
 
 class NewServiceCategoryForm extends StatefulWidget {
   NewServiceCategoryForm(

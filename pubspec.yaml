@@ -48,7 +48,7 @@ dependencies:
   intl: ^0.18.0
 
   # ui
-  fluttertoast: ^8.0.9
+  fluttertoast: ^8.1.2
   toggle_switch: ^2.0.1
 
   # persist locally data

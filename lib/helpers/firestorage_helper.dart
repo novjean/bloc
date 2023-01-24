@@ -4,7 +4,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/services.dart';
 import 'package:logger/logger.dart';
 
-import '../widgets/ui/Toaster.dart';
+import '../widgets/ui/toaster.dart';
 
 class FirestorageHelper {
   static var logger = Logger();

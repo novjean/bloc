@@ -7,7 +7,7 @@ import '../../db/entity/cart_item.dart';
 import '../../db/entity/bloc_order.dart';
 import '../../db/entity/order.dart';
 import '../../helpers/firestore_helper.dart';
-import '../../widgets/ui/Toaster.dart';
+import '../../widgets/ui/toaster.dart';
 
 class BillScreen extends StatelessWidget {
   Bill bill;

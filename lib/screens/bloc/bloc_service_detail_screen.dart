@@ -16,7 +16,7 @@ import '../../db/entity/seat.dart';
 import '../../db/shared_preferences/user_preferences.dart';
 import '../../widgets/category_item.dart';
 import '../../widgets/product_item.dart';
-import '../../widgets/ui/Toaster.dart';
+import '../../widgets/ui/toaster.dart';
 import 'cart_screen.dart';
 import 'package:bloc/db/entity/user.dart' as blocUser;
 

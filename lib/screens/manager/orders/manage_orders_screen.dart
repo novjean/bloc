@@ -5,7 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import '../../../helpers/firestore_helper.dart';
-import '../../../widgets/ui/Toaster.dart';
+import '../../../widgets/ui/toaster.dart';
 import 'orders_billed_screen.dart';
 import 'orders_completed_screen.dart';
 import 'orders_pending_screen.dart';

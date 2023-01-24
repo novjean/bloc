@@ -7,7 +7,7 @@ import 'package:pinput/pinput.dart';
 import '../db/shared_preferences/user_preferences.dart';
 import '../helpers/firestore_helper.dart';
 import '../utils/string_utils.dart';
-import '../widgets/ui/Toaster.dart';
+import '../widgets/ui/toaster.dart';
 import 'main_screen.dart';
 
 class OTPScreen extends StatefulWidget {

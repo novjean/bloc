@@ -7,7 +7,7 @@ import 'package:logger/logger.dart';
 import '../../helpers/firestore_helper.dart';
 import '../../utils/string_utils.dart';
 import '../../widgets/table/new_service_table_form.dart';
-import '../../widgets/ui/Toaster.dart';
+import '../../widgets/ui/toaster.dart';
 
 class NewServiceTableScreen extends StatefulWidget {
   String serviceId;
