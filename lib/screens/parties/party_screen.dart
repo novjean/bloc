@@ -47,26 +47,21 @@ class _PartyScreenState extends State<PartyScreen> {
   }
 
   _buildBody(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.symmetric(
-        vertical: 0,
-        horizontal: 1.0,
-      ),
-      child: Expanded(
-        child: ListView.builder(
-          itemCount: mParties.length,
-          scrollDirection: Axis.vertical,
-          physics: const BouncingScrollPhysics(),
-          itemBuilder: (BuildContext context, int index) {
-            return GestureDetector(
-              child: PartyItem(party: mParties[index]),
-              onTap: () {
-                Party _sParty = mParties[index];
-                print(_sParty.name + ' is selected.');
-              },
-            );
-          },
-        ),
+    return SizedBox(
+      height: MediaQuery.of(context).size.height,
+      child: ListView.builder(
+        itemCount: mParties.length,
+        scrollDirection: Axis.vertical,
+        physics: const BouncingScrollPhysics(),
+        itemBuilder: (BuildContext context, int index) {
+          return GestureDetector(
+            child: PartyItem(party: mParties[index]),
+            onTap: () {
+              Party _sParty = mParties[index];
+              print(_sParty.name + ' is selected.');
+            },
+          );
+        },
       ),
     );
   }
