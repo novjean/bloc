@@ -26,7 +26,7 @@ class _PartyScreenState extends State<PartyScreen> {
       print("Successfully pulled in parties.");
 
       if (res.docs.isNotEmpty) {
-        // found blocs
+        // found parties
         List<Party> parties = [];
         for (int i = 0; i < res.docs.length; i++) {
           DocumentSnapshot document = res.docs[i];
@@ -55,7 +55,7 @@ class _PartyScreenState extends State<PartyScreen> {
         physics: const BouncingScrollPhysics(),
         itemBuilder: (BuildContext context, int index) {
           return GestureDetector(
-            child: PartyItem(party: mParties[index]),
+            child: PartyItem(party: mParties[index], imageHeight: 300,),
             onTap: () {
               Party _sParty = mParties[index];
               print(_sParty.name + ' is selected.');

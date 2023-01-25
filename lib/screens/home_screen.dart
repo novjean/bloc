@@ -6,10 +6,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import '../db/entity/bloc.dart';
+import '../db/entity/party.dart';
 import '../db/shared_preferences/user_preferences.dart';
+import '../helpers/dummy.dart';
 import '../helpers/firestore_helper.dart';
 import '../helpers/token_monitor.dart';
 import '../widgets/home/new_bloc_slide_item.dart';
+import '../widgets/parties/party_item.dart';
 import '../widgets/search_card.dart';
 import '../widgets/ui/button_widget.dart';
 import 'experimental/trending.dart';
@@ -23,7 +26,10 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   late List<Bloc> mBlocs;
-  var _isLoading = true;
+  var _isBlocsLoading = true;
+
+  Party mUpcomingParty = Dummy.getDummyParty('');
+  var _isUpcomingPartyLoading = true;
 
   @override
   void initState() {
@@ -43,12 +49,36 @@ class _HomeScreenState extends State<HomeScreen> {
 
           setState(() {
             mBlocs = blocs;
-            _isLoading = false;
+            _isBlocsLoading = false;
           });
         }
       } else {
         print('no blocs found!!!');
         //todo: need to re-attempt or check internet connection
+      }
+    });
+
+    int timeNow = Timestamp.now().millisecondsSinceEpoch;
+    FirestoreHelper.pullUpcomingParty(timeNow).then((res) {
+      print("Successfully pulled in parties.");
+
+      if (res.docs.isNotEmpty) {
+        try {
+          DocumentSnapshot document = res.docs[0];
+          Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+          final Party party = Party.fromMap(data);
+
+          setState(() {
+            mUpcomingParty = party;
+            _isUpcomingPartyLoading = false;
+          });
+        } catch (err) {
+          print('error: ' + err.toString());
+        }
+      } else {
+        print('no upcoming party found!');
+
+        //should not display the events module
       }
     });
   }
@@ -64,36 +94,42 @@ class _HomeScreenState extends State<HomeScreen> {
       },
       child: Scaffold(
         backgroundColor: Theme.of(context).backgroundColor,
-        body: Column(
+        body: ListView(
+          physics: const BouncingScrollPhysics(),
           children: <Widget>[
             // buildSearchBar(context),
             const SizedBox(height: 10.0),
-            _isLoading
-                ? Center(child: Text('Loading blocs...'))
+            _isBlocsLoading
+                ? const SizedBox(height: 0)
                 : _displayBlocs(context),
-            // SizedBox(height: 20.0),
+            const SizedBox(height: 10.0),
+            _isUpcomingPartyLoading
+                ? const SizedBox(height: 0)
+                : _displayUpcomingParty(context),
             // buildBookTableRow(context),
             // buildRestaurantRow('Trending Restaurants', context),
             // SizedBox(height: 10.0),
             // buildSuperstarsTitleRow('Superstars', context),
             // SizedBox(height: 10.0),
             // buildSuperstarsList(context),
-            !kIsWeb ? TokenMonitor((token) {
-              if (token != null) {
-                User user = UserPreferences.myUser;
-                if (user.id.isNotEmpty) {
-                  if (UserPreferences.myUser.fcmToken.isEmpty ||
-                      UserPreferences.myUser.fcmToken != token) {
-                    UserPreferences.setUserFcmToken(token);
-                    FirestoreHelper.updateUserFcmToken(
-                        UserPreferences.myUser.id, token);
-                  } else {
-                    print('fcm token has not changed: ' + token);
-                  }
-                }
-              }
-              return const Spacer();
-            }) : const SizedBox(height: 0),
+            !kIsWeb
+                ? TokenMonitor((token) {
+                    if (token != null) {
+                      User user = UserPreferences.myUser;
+                      if (user.id.isNotEmpty) {
+                        if (UserPreferences.myUser.fcmToken.isEmpty ||
+                            UserPreferences.myUser.fcmToken != token) {
+                          UserPreferences.setUserFcmToken(token);
+                          FirestoreHelper.updateUserFcmToken(
+                              UserPreferences.myUser.id, token);
+                        } else {
+                          print('fcm token has not changed: ' + token);
+                        }
+                      }
+                    }
+                    return const Spacer();
+                  })
+                : const SizedBox(height: 0),
             const SizedBox(height: 10.0),
           ],
         ),
@@ -106,7 +142,7 @@ class _HomeScreenState extends State<HomeScreen> {
       height: 400,
       child: ListView.builder(
           itemCount: mBlocs.length,
-          scrollDirection: Axis.vertical,
+          scrollDirection: Axis.horizontal,
           itemBuilder: (ctx, index) {
             Bloc bloc = mBlocs[index];
 
@@ -121,6 +157,20 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             );
           }),
+    );
+  }
+
+  _displayUpcomingParty(context) {
+    double imageHeight = 100;
+    return SizedBox(
+      height: imageHeight + 140,
+      child: GestureDetector(
+        child: PartyItem(party: mUpcomingParty, imageHeight: 100,),
+        onTap: () {
+          Party _sParty = mUpcomingParty;
+          print(_sParty.name + ' is selected.');
+        },
+      ),
     );
   }
 

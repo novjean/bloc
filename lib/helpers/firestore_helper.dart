@@ -418,6 +418,16 @@ class FirestoreHelper {
     return FirebaseFirestore.instance
         .collection(FirestoreHelper.PARTIES)
         .where('startTime', isGreaterThan: timeNow)
+        .orderBy('startTime', descending: false)
+        .get();
+  }
+
+  static Future<QuerySnapshot<Map<String, dynamic>>> pullUpcomingParty(int timeNow) {
+    return FirebaseFirestore.instance
+        .collection(FirestoreHelper.PARTIES)
+        .where('startTime', isGreaterThan: timeNow)
+        .orderBy('startTime', descending: false)
+        .limit(1)
         .get();
   }
 

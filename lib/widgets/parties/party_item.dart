@@ -11,10 +11,11 @@ import '../../db/entity/party.dart';
 
 class PartyItem extends StatelessWidget {
   final Party party;
+  final double imageHeight;
 
   int addCount = 1;
 
-  PartyItem({required this.party});
+  PartyItem({required this.party, required this.imageHeight});
 
   Future<void> _launchInBrowser(Uri url) async {
     if (!await launchUrl(
@@ -45,7 +46,7 @@ class PartyItem extends StatelessWidget {
             child: Column(
               children: <Widget>[
                 Container(
-                  height: 300,
+                  height: imageHeight,
                   width: MediaQuery.of(context).size.width,
                   decoration: BoxDecoration(
                     border:
