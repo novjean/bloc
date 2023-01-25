@@ -6,6 +6,7 @@ import 'package:pinput/pinput.dart';
 
 import '../db/shared_preferences/user_preferences.dart';
 import '../helpers/firestore_helper.dart';
+import '../main.dart';
 import '../utils/string_utils.dart';
 import '../widgets/ui/toaster.dart';
 import 'main_screen.dart';
@@ -137,31 +138,48 @@ class _OTPVerifyState extends State<OTPVerify> {
   }
 
   _verifyPhone() async {
-    await FirebaseAuth.instance.verifyPhoneNumber(
-        phoneNumber: '+91${widget.phone}',
-        verificationCompleted: (PhoneAuthCredential credential) async {
-          await FirebaseAuth.instance
-              .signInWithCredential(credential)
-              .then((value) async {
-            if (value.user != null) {
-              print('signInWithCredential: user logged in');
-            }
-          });
-        },
-        verificationFailed: (FirebaseAuthException e) {
-          print(e.message);
-        },
-        codeSent: (String verificationID, int? resendToken) {
-          setState(() {
-            _verificationCode = verificationID;
-          });
-        },
-        codeAutoRetrievalTimeout: (String verificationId) {
-          setState(() {
-            _verificationCode = verificationId;
-          });
-        },
-        timeout: Duration(seconds: 120));
+    if (kIsWeb) {
+      // FirebaseAuth auth = FirebaseAuth.instance;
+
+      // Wait for the user to complete the reCAPTCHA & for an SMS code to be sent.
+      // ConfirmationResult confirmationResult =
+      //     await auth.signInWithPhoneNumber('+91${widget.phone}');
+
+      await FirebaseAuth.instance
+          .signInWithPhoneNumber('+91${widget.phone}', null)
+          .then((user) {
+        print('sign in complete ' + user.verificationId);
+        // Navigator.of(context).pushReplacementNamed('/homepage');
+      }).catchError((e) {
+        print(e);
+      });
+    } else {
+      await FirebaseAuth.instance.verifyPhoneNumber(
+          phoneNumber: '+91${widget.phone}',
+          verificationCompleted: (PhoneAuthCredential credential) async {
+            await FirebaseAuth.instance
+                .signInWithCredential(credential)
+                .then((value) async {
+              if (value.user != null) {
+                print('signInWithCredential: user logged in');
+              }
+            });
+          },
+          verificationFailed: (FirebaseAuthException e) {
+            print(e.message);
+          },
+          codeSent: (String verificationID, int? resendToken) {
+            setState(() {
+              _verificationCode = verificationID;
+            });
+          },
+          codeAutoRetrievalTimeout: (String verificationId) {
+            setState(() {
+              _verificationCode = verificationId;
+            });
+          },
+          timeout: Duration(seconds: 120));
+    }
   }
 
   @override
