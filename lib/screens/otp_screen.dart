@@ -29,7 +29,7 @@ class _OTPScreenState extends State<OTPScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Container(
-                  margin: EdgeInsets.only(top: 100),
+                  margin: const EdgeInsets.only(top: 100),
                   child: Column(
                     children: [
                       Container(
@@ -80,7 +80,7 @@ class _OTPScreenState extends State<OTPScreen> {
                     )),
               ),
               Container(
-                margin: EdgeInsets.only(left: 20, right: 20, bottom: 40),
+                margin: const EdgeInsets.only(left: 20, right: 20, bottom: 40),
                 width: double.infinity,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
@@ -139,32 +139,26 @@ class _OTPVerifyState extends State<OTPVerify> {
 
   _verifyPhone() async {
     if (kIsWeb) {
-      // FirebaseAuth auth = FirebaseAuth.instance;
-
-      // Wait for the user to complete the reCAPTCHA & for an SMS code to be sent.
-      // ConfirmationResult confirmationResult =
-      //     await auth.signInWithPhoneNumber('+91${widget.phone}');
-
       await FirebaseAuth.instance
           .signInWithPhoneNumber('+91${widget.phone}', null)
           .then((user) {
-        print('sign in complete ' + user.verificationId);
+        debugPrint('signInWithPhoneNumber: user verification id ' + user.verificationId);
         setState(() {
           _verificationCode = user.verificationId;
         });
-        // Navigator.of(context).pushReplacementNamed('/homepage');
       }).catchError((e) {
-        print(e);
+        print('err: ' + e.toString());
       });
     } else {
       await FirebaseAuth.instance.verifyPhoneNumber(
           phoneNumber: '+91${widget.phone}',
           verificationCompleted: (PhoneAuthCredential credential) async {
+            print('verifyPhoneNumber: +91${widget.phone} is verified. attempting sign in with credentials...');
             await FirebaseAuth.instance
                 .signInWithCredential(credential)
                 .then((value) async {
               if (value.user != null) {
-                print('signInWithCredential: user logged in');
+                print('signInWithCredential: success. user logged in');
               }
             });
           },
@@ -181,7 +175,7 @@ class _OTPVerifyState extends State<OTPVerify> {
               _verificationCode = verificationId;
             });
           },
-          timeout: Duration(seconds: 120));
+          timeout: const Duration(seconds: 120));
     }
   }
 
