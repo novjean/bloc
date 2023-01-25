@@ -149,6 +149,9 @@ class _OTPVerifyState extends State<OTPVerify> {
           .signInWithPhoneNumber('+91${widget.phone}', null)
           .then((user) {
         print('sign in complete ' + user.verificationId);
+        setState(() {
+          _verificationCode = user.verificationId;
+        });
         // Navigator.of(context).pushReplacementNamed('/homepage');
       }).catchError((e) {
         print(e);
@@ -214,8 +217,8 @@ class _OTPVerifyState extends State<OTPVerify> {
               length: 6,
               controller: pinController,
               focusNode: focusNode,
-              androidSmsAutofillMethod:
-                  AndroidSmsAutofillMethod.smsUserConsentApi,
+              // androidSmsAutofillMethod:
+              //     AndroidSmsAutofillMethod.smsUserConsentApi,
               listenForMultipleSmsOnAndroid: true,
               defaultPinTheme: defaultPinTheme,
               // validator: (value) {
