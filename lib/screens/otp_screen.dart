@@ -35,7 +35,7 @@ class _OTPScreenState extends State<OTPScreen> {
                       Container(
                         child: Center(
                           child: Text(
-                            'BLOC',
+                            'bloc',
                             style: TextStyle(
                               color: Theme.of(context).primaryColor,
                               fontWeight: FontWeight.bold,

@@ -12,7 +12,7 @@ import '../helpers/dummy.dart';
 import '../helpers/firestore_helper.dart';
 import '../helpers/token_monitor.dart';
 import '../widgets/home/new_bloc_slide_item.dart';
-import '../widgets/parties/party_item.dart';
+import '../widgets/parties/party_home_item.dart';
 import '../widgets/search_card.dart';
 import '../widgets/ui/button_widget.dart';
 import 'experimental/trending.dart';
@@ -139,10 +139,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
   _displayBlocs(context) {
     return SizedBox(
-      height: 400,
+      height: 380,
       child: ListView.builder(
           itemCount: mBlocs.length,
-          scrollDirection: Axis.horizontal,
+          scrollDirection: Axis.vertical,
           itemBuilder: (ctx, index) {
             Bloc bloc = mBlocs[index];
 
@@ -161,11 +161,11 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   _displayUpcomingParty(context) {
-    double imageHeight = 100;
-    return SizedBox(
-      height: imageHeight + 140,
+    return Container(
+      color: Theme.of(context).primaryColorLight,
+      height: 190,
       child: GestureDetector(
-        child: PartyItem(party: mUpcomingParty, imageHeight: 100,),
+        child: PartyHomeItem(party: mUpcomingParty),
         onTap: () {
           Party _sParty = mUpcomingParty;
           print(_sParty.name + ' is selected.');

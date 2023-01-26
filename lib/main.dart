@@ -90,11 +90,6 @@ Future<void> main() async {
 
   await UserPreferences.init();
 
-  // final database = await $FloorAppDatabase
-  //     .databaseBuilder('bloc_database.db')
-  //     .addMigrations([migration18to19, migration19to20]).build();
-  // final dao = BlocDao;
-
   runApp(MyApp());
 }
 
@@ -119,17 +114,20 @@ class MyApp extends StatelessWidget {
                 debugShowCheckedModeBanner: false,
                 title: kAppTitle,
                 theme: ThemeData(
-                  primaryColor: Color.fromRGBO(247,214,208,1),
-                  primaryColorLight: Color.fromRGBO(255,235,59,1),
-                  backgroundColor: Color.fromRGBO(245, 245, 220, 1.0),
+                  //rgba(211,167,130,255)
+                  primaryColor: Color.fromRGBO(211,167,130,1),
+                    // 222,193,170
+                  primaryColorLight: Color.fromRGBO(222,193,170,1),
+
+                  backgroundColor: Color.fromRGBO(38, 50, 56, 1.0),
                   focusColor: Color.fromRGBO(31, 31, 33, 1.0),
                   shadowColor: Color.fromRGBO(158, 158, 158, 1.0),
 
-                  highlightColor: Color.fromRGBO(31, 31, 33, 1.0),
+                  highlightColor: Color.fromRGBO(255, 255, 255, 1.0),
                   bottomAppBarColor: Color.fromRGBO(255, 255, 255, 1.0),
 
                   // app bar and buttons by default
-                  primarySwatch: Colors.teal,
+                  primarySwatch: Colors.brown,
 
                   accentColor: Colors.grey,
                   accentColorBrightness: Brightness.dark,
@@ -143,7 +141,6 @@ class MyApp extends StatelessWidget {
                 ),
                 home: appSnapshot.connectionState != ConnectionState.done
                     ? SplashScreen()
-                    // : LoginScreen(dao:dao)
                     : LoginScreen(),
 
                 // routes: {
@@ -161,68 +158,3 @@ class MyApp extends StatelessWidget {
 
 }
 
-
-// class MyApp extends StatelessWidget {
-//   const MyApp({Key? key}) : super(key: key);
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return MaterialApp(
-//       home: Scaffold(
-//         appBar: AppBar(
-//           title: const Text('Plugin example app'),
-//         ),
-//         body: Center(
-//           child: Column(
-//             children: [
-//               ElevatedButton(
-//                 child: const Text("start ui"),
-//                 onPressed: () async {
-//                   final providers = [
-//                     AuthUiProvider.anonymous,
-//                     AuthUiProvider.email,
-//                     AuthUiProvider.phone,
-//                     AuthUiProvider.apple,
-//                     AuthUiProvider.github,
-//                     AuthUiProvider.google,
-//                     AuthUiProvider.microsoft,
-//                     AuthUiProvider.yahoo,
-//                   ];
-//
-//                   final result = await FlutterAuthUi.startUi(
-//                     items: providers,
-//                     tosAndPrivacyPolicy: const TosAndPrivacyPolicy(
-//                       tosUrl: "https://www.google.com",
-//                       privacyPolicyUrl: "https://www.google.com",
-//                     ),
-//                     androidOption: const AndroidOption(
-//                       enableSmartLock: false, // default true
-//                       showLogo: true, // default false
-//                       overrideTheme: true, // default false
-//                     ),
-//                     emailAuthOption: const EmailAuthOption(
-//                       requireDisplayName: true,
-//                       // default true
-//                       enableMailLink: false,
-//                       // default false
-//                       handleURL: '',
-//                       androidPackageName: '',
-//                       androidMinimumVersion: '',
-//                     ),
-//                   );
-//                   debugPrint(result.toString());
-//                 },
-//               ),
-//               ElevatedButton(
-//                 onPressed: () async {
-//                   await FlutterAuthUi.signOut();
-//                   debugPrint('Signed out !');
-//                 },
-//                 child: const Text('sign out'),
-//               ),
-//             ],
-//           ),
-//         ),
-//       ),
-//     );
-//   }

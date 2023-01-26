@@ -179,6 +179,7 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen>
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.blocService.name),
+        backgroundColor: Theme.of(context).primaryColor,
         actions: [
           IconButton(
             icon: const Icon(

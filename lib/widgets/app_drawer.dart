@@ -18,15 +18,16 @@ class AppDrawer extends StatelessWidget {
     final user = UserPreferences.getUser();
 
     return Drawer(
+      width: 240,
       child: Column(
         children: [
           AppBar(
-            title: const Text('BLOC'),
+            title: const Text('bloc'),
             automaticallyImplyLeading: false,
           ),
           ListTile(
             leading: const Icon(Icons.smart_toy_sharp),
-            title: const Text('Home'),
+            title: const Text('home'),
             onTap: () {
               Navigator.of(context).pushReplacement(
                 MaterialPageRoute(
@@ -39,7 +40,7 @@ class AppDrawer extends StatelessWidget {
           const Divider(),
           ListTile(
             leading: const Icon(Icons.history),
-            title: const Text('Orders'),
+            title: const Text('orders'),
             onTap: () {
               Navigator.of(context).push(
                 MaterialPageRoute(
@@ -51,7 +52,7 @@ class AppDrawer extends StatelessWidget {
           user.clearanceLevel > Constants.CAPTAIN_LEVEL
               ? ListTile(
                   leading: const Icon(Icons.adjust),
-                  title: const Text('Captain'),
+                  title: const Text('captain'),
                   onTap: () {
                     print('captain of bloc id : ' + user.blocServiceId);
                     Navigator.of(context).push(
@@ -67,7 +68,7 @@ class AppDrawer extends StatelessWidget {
           user.clearanceLevel > Constants.MANAGER_LEVEL
               ? ListTile(
                   leading: const Icon(Icons.account_circle_outlined),
-                  title: const Text('Manager'),
+                  title: const Text('manager'),
                   onTap: () {
                     Navigator.of(context).push(
                       MaterialPageRoute(
@@ -80,7 +81,7 @@ class AppDrawer extends StatelessWidget {
           user.clearanceLevel > Constants.OWNER_LEVEL
               ? ListTile(
                   leading: const Icon(Icons.play_circle_outlined),
-                  title: const Text('Owner'),
+                  title: const Text('owner'),
                   onTap: () {
                     Navigator.of(context).push(
                       MaterialPageRoute(
@@ -94,12 +95,9 @@ class AppDrawer extends StatelessWidget {
           const Divider(),
           ListTile(
             leading: const Icon(Icons.exit_to_app),
-            title: const Text('Logout'),
+            title: const Text('logout'),
             onTap: () {
               UserPreferences.resetUser();
-
-              // clear out local DB
-              // BlocRepository.clearUsers(dao);
 
               FirebaseAuth.instance.signOut();
               Navigator.of(context).pushReplacement(

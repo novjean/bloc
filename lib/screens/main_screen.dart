@@ -151,9 +151,11 @@ class _MainScreenState extends State<MainScreen> {
     return Scaffold(
       backgroundColor: Theme.of(context).backgroundColor,
       appBar: AppBar(
-        title: const Text('BLOC'),
+        title: const Text('bloc'),
+        backgroundColor: Theme.of(context).primaryColor,
         actions: [
           DropdownButton(
+            dropdownColor: Theme.of(context).primaryColorLight,
             underline: Container(),
             icon: Icon(Icons.more_vert,
                 color: Theme.of(context).primaryIconTheme.color),
@@ -166,7 +168,7 @@ class _MainScreenState extends State<MainScreen> {
                       SizedBox(
                         width: 8,
                       ),
-                      Text('Logout'),
+                      Text('logout'),
                     ],
                   ),
                 ),
@@ -189,12 +191,13 @@ class _MainScreenState extends State<MainScreen> {
       ),
       drawer: AppDrawer(),
       body: PageView(
-        physics: NeverScrollableScrollPhysics(),
+        physics: const NeverScrollableScrollPhysics(),
         controller: _pageController,
         onPageChanged: onPageChanged,
         children: List.generate(3, (index) => pages[index]),
       ),
       bottomNavigationBar: BottomAppBar(
+        elevation: 1,
         child: Row(
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -244,8 +247,8 @@ class _MainScreenState extends State<MainScreen> {
           size: 24.0,
         ),
         color: _page == index
-            ? Theme.of(context).focusColor
-            : Theme.of(context).shadowColor,
+            ? Theme.of(context).highlightColor
+            : Theme.of(context).backgroundColor,
         onPressed: () => _pageController.jumpToPage(index),
       ),
     );

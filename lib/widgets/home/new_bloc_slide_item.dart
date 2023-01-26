@@ -65,6 +65,7 @@ class _NewBlocSlideItemState extends State<NewBlocSlideItem> {
           : Hero(
               tag: widget.bloc.id,
               child: Card(
+                color: Theme.of(context).primaryColor,
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10.0)),
                 child: SizedBox(
@@ -110,25 +111,27 @@ class _NewBlocSlideItemState extends State<NewBlocSlideItem> {
                         child: Text(
                           "${widget.bloc.name}",
                           style: TextStyle(
-                            fontSize: 22.0,
+                            fontSize: 24.0,
                             fontWeight: FontWeight.w800,
+                            color: Theme.of(context).highlightColor,
                           ),
                           textAlign: TextAlign.left,
                         ),
                       ),
                       SizedBox(height: 10.0),
-                      Container(
-                        width: MediaQuery.of(context).size.width,
-                        padding: EdgeInsets.only(
-                            top: 0, left: 15.0, right: 15.0, bottom: 5),
-                        child: Text(
-                          "${widget.bloc.addressLine1}, ${widget.bloc.addressLine2}",
-                          style: TextStyle(
-                            fontSize: 16.0,
-                            fontWeight: FontWeight.w300,
-                          ),
-                        ),
-                      ),
+                      // Container(
+                      //   width: MediaQuery.of(context).size.width,
+                      //   padding: EdgeInsets.only(
+                      //       top: 0, left: 15.0, right: 15.0, bottom: 5),
+                      //   child: Text(
+                      //     "${widget.bloc.addressLine1}, ${widget.bloc.addressLine2}",
+                      //     style: TextStyle(
+                      //       fontSize: 16.0,
+                      //       fontWeight: FontWeight.w500,
+                      //       color: Theme.of(context).highlightColor,
+                      //     ),
+                      //   ),
+                      // ),
                     ],
                   ),
                 ),

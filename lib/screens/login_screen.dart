@@ -98,7 +98,7 @@ class _LoginScreenState extends State<LoginScreen> {
           margin: EdgeInsets.only(top: 200),
           child: Center(
             child: Text(
-              'BLOC',
+              'bloc',
               style: TextStyle(
                 color: Theme.of(context).primaryColor,
                 fontWeight: FontWeight.bold,

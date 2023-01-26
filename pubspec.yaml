@@ -75,9 +75,6 @@ dependencies:
 #  location: ^4.3.0
 #  google_maps_flutter: ^0.5.17
 
-#dependency_overrides:
-#  plugin_platform_interface: ^2.0.0
-
 dev_dependencies:
   flutter_test:
     sdk: flutter
