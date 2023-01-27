@@ -58,13 +58,15 @@ class _OTPScreenState extends State<OTPScreen> {
                       //   )),
                       // ),
                       Padding(
-                        padding: const EdgeInsets.only(top: 20.0),
+                        padding: const EdgeInsets.only(top: 20.0, left: 20, right: 20),
                         child: Center(
                             child: Text(
-                          'enter the six digit code you received on ${widget.phone}',
+                          'enter the six digit code you received on +91-${widget.phone}',
+                          textAlign: TextAlign.center,
                           style: TextStyle(
                             color: Theme.of(context).primaryColorLight,
                             fontWeight: FontWeight.bold,
+
                             fontSize: 20,
                           ),
                         )),
