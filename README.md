@@ -1,6 +1,6 @@
 # bloc
 
-A new Flutter project.
+the socializing bar.
 
 ## Getting Started
 
