@@ -8,6 +8,7 @@ import '../db/entity/offer.dart';
 import '../db/entity/party.dart';
 import '../db/entity/product.dart';
 import '../db/entity/seat.dart';
+import '../db/entity/user.dart';
 import '../db/shared_preferences/user_preferences.dart';
 import 'firestore_helper.dart';
 
@@ -62,7 +63,7 @@ class Dummy {
       name: '',
       imageUrl: '',
       createdAt: time,
-      id: StringUtils.getRandomString(20),
+      id: StringUtils.getRandomString(28),
       description: '',
       category: 'Beer',
       isAvailable: false,
@@ -83,7 +84,7 @@ class Dummy {
     int time = Timestamp.now().millisecondsSinceEpoch;
 
     Bloc dummyBloc = Bloc(
-        id: StringUtils.getRandomString(20),
+        id: StringUtils.getRandomString(28),
         createdAt: time.toString(),
         imageUrl: '',
         name: '',
@@ -104,7 +105,7 @@ class Dummy {
       imageUrl: '',
       createdAt: Timestamp.now().millisecondsSinceEpoch.toString(),
       type: '',
-      id: StringUtils.getRandomString(20),
+      id: StringUtils.getRandomString(28),
       blocId: blocId,
       emailId: '',
       primaryPhone: 0,
@@ -116,7 +117,7 @@ class Dummy {
 
   static getDummyParty(String blocId) {
     Party dummyParty = Party(
-      id: StringUtils.getRandomString(20),
+      id: StringUtils.getRandomString(28),
       createdAt: Timestamp.now().millisecondsSinceEpoch,
       imageUrl: '',
       name: '',
@@ -131,6 +132,22 @@ class Dummy {
     );
 
     return dummyParty;
+  }
+
+  static getDummyUser() {
+    User dummyUser = User(
+      blocServiceId: '',
+      clearanceLevel: 1,
+      email: '',
+      fcmToken: '',
+      id: StringUtils.getRandomString(28),
+      imageUrl: '',
+      name: '',
+      phoneNumber: 0,
+      username: ''
+    );
+
+    return dummyUser;
   }
 
 }

@@ -1,4 +1,4 @@
-import 'package:bloc/screens/manager/tables/seats_management.dart';
+import 'package:bloc/screens/manager/tables/manage_seats_screen.dart';
 import 'package:flutter/material.dart';
 
 import '../../db/entity/user.dart';

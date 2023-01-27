@@ -1,6 +1,6 @@
 import 'package:bloc/db/bloc_repository.dart';
 import 'package:bloc/db/shared_preferences/user_preferences.dart';
-import 'package:bloc/screens/manager/tables/seats_management.dart';
+import 'package:bloc/screens/manager/tables/manage_seats_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -11,21 +11,21 @@ import '../../../widgets/service_table_item.dart';
 import '../../../widgets/ui/sized_listview_block.dart';
 import '../../forms/new_service_table_screen.dart';
 
-class TablesManagementScreen extends StatefulWidget {
+class ManageTablesScreen extends StatefulWidget {
   String blocServiceId;
   String serviceName;
   String userTitle;
 
-  TablesManagementScreen(
+  ManageTablesScreen(
       {required this.blocServiceId,
       required this.serviceName,
       required this.userTitle});
 
   @override
-  State<TablesManagementScreen> createState() => _TablesManagementScreenState();
+  State<ManageTablesScreen> createState() => _ManageTablesScreenState();
 }
 
-class _TablesManagementScreenState extends State<TablesManagementScreen> {
+class _ManageTablesScreenState extends State<ManageTablesScreen> {
   String _selectedType = 'Community';
 
   @override
@@ -153,7 +153,7 @@ class _TablesManagementScreenState extends State<TablesManagementScreen> {
                   logger.d('tap selected : ' + index.toString());
                   Navigator.of(context).push(
                     MaterialPageRoute(
-                        builder: (context) => SeatsManagementScreen(
+                        builder: (context) => ManageSeatsScreen(
                             serviceId: widget.blocServiceId,
                             serviceTable: serviceTables[index])),
                   );

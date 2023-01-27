@@ -45,23 +45,23 @@ class _OTPScreenState extends State<OTPScreen> {
                           ),
                         ),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 40.0),
-                        child: Center(
-                            child: Text(
-                          'Verify +91-${widget.phone}',
-                          style: TextStyle(
-                            color: Theme.of(context).primaryColorLight,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 26,
-                          ),
-                        )),
-                      ),
+                      // Padding(
+                      //   padding: const EdgeInsets.only(top: 40.0),
+                      //   child: Center(
+                      //       child: Text(
+                      //     'verify +91-${widget.phone}',
+                      //     style: TextStyle(
+                      //       color: Theme.of(context).primaryColorLight,
+                      //       fontWeight: FontWeight.bold,
+                      //       fontSize: 26,
+                      //     ),
+                      //   )),
+                      // ),
                       Padding(
                         padding: const EdgeInsets.only(top: 20.0),
                         child: Center(
                             child: Text(
-                          'Enter the six digit code you received',
+                          'enter the six digit code you received on ${widget.phone}',
                           style: TextStyle(
                             color: Theme.of(context).primaryColorLight,
                             fontWeight: FontWeight.bold,
@@ -99,7 +99,7 @@ class _OTPScreenState extends State<OTPScreen> {
                     //         OTPScreen(_controller.text, widget.dao)));
                   },
                   child: Text(
-                    'Back',
+                    'back',
                     style: TextStyle(fontSize: 20),
                   ),
                 ),
@@ -228,7 +228,7 @@ class _OTPVerifyState extends State<OTPVerify> {
               onCompleted: (pin) async {
                 debugPrint('onCompleted: $pin');
 
-                Toaster.shortToast('Verifying ...');
+                Toaster.shortToast('verifying +91${widget.phone}');
                 try {
                   await FirebaseAuth.instance
                       .signInWithCredential(PhoneAuthProvider.credential(
@@ -248,7 +248,7 @@ class _OTPVerifyState extends State<OTPVerify> {
 
                           blocUser.User registeredUser = blocUser.User(
                             id: value.user!.uid,
-                            name: 'Superstar',
+                            name: '',
                             clearanceLevel: 1,
                             phoneNumber:
                                 StringUtils.getInt(value.user!.phoneNumber!),
@@ -273,8 +273,6 @@ class _OTPVerifyState extends State<OTPVerify> {
 
                           final blocUser.User user =
                               blocUser.User.fromMap(data);
-
-                          // BlocRepository.insertUser(widget.dao, user);
                           UserPreferences.setUser(user);
 
                           Navigator.of(context).pushReplacement(
@@ -287,7 +285,7 @@ class _OTPVerifyState extends State<OTPVerify> {
                   });
                 } catch (e) {
                   FocusScope.of(context).unfocus();
-                  Toaster.shortToast('Invalid OTP');
+                  Toaster.shortToast('invalid OTP. please try again.');
                 }
               },
               onChanged: (value) {

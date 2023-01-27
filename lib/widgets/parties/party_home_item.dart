@@ -49,8 +49,7 @@ class PartyHomeItem extends StatelessWidget {
                   children: [
                     Container(
                       width: 100,
-                      padding:
-                      EdgeInsets.only(top: 3, left: 0.0, right: 0.0),
+                      padding: EdgeInsets.only(top: 3, left: 0.0, right: 0.0),
                       child: Text(
                         "${party.name.toLowerCase()}",
                         style: TextStyle(

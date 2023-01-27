@@ -2,7 +2,7 @@ import 'package:bloc/db/entity/manager_service.dart';
 import 'package:bloc/screens/manager/orders/manage_orders_screen.dart';
 import 'package:bloc/screens/manager/parties/manage_parties_screen.dart';
 
-import 'package:bloc/screens/manager/users/users_management.dart';
+import 'package:bloc/screens/manager/users/manage_users_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -12,7 +12,7 @@ import '../../helpers/firestore_helper.dart';
 import '../../widgets/ui/listview_block.dart';
 import 'bookings/bookings_screen.dart';
 import 'inventory/manage_inventory_screen.dart';
-import 'tables/tables_management_screen.dart';
+import 'tables/manage_tables_screen.dart';
 
 class ManagerServicesScreen extends StatelessWidget {
   BlocService blocService;
@@ -107,7 +107,7 @@ class ManagerServicesScreen extends StatelessWidget {
                     case 'Tables':
                       {
                         Navigator.of(context).push(MaterialPageRoute(
-                            builder: (ctx) => TablesManagementScreen(
+                            builder: (ctx) => ManageTablesScreen(
                                 blocServiceId: blocService.id,
                                 serviceName: _managerService.name,
                                 userTitle: userTitle,)));
@@ -136,7 +136,7 @@ class ManagerServicesScreen extends StatelessWidget {
                     case 'Users':
                       {
                         Navigator.of(context).push(MaterialPageRoute(
-                            builder: (ctx) => UsersManagementScreen()));
+                            builder: (ctx) => ManageUsersScreen()));
                         logger.d('manage users screen selected.');
                         break;
                       }

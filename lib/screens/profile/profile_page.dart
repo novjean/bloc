@@ -6,7 +6,7 @@ import '../../db/shared_preferences/user_preferences.dart';
 import '../../widgets/profile/numbers_widget.dart';
 import '../../widgets/profile_widget.dart';
 import '../../widgets/ui/button_widget.dart';
-import 'edit_profile_page.dart';
+import 'profile_add_edit_register_page.dart';
 
 import 'package:barcode_widget/barcode_widget.dart';
 
@@ -21,7 +21,7 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   var logger = Logger();
   bool _showQr = false;
-  String _buttonText = 'QR Code';
+  String _buttonText = 'qr code';
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +50,7 @@ class _ProfilePageState extends State<ProfilePage> {
           imagePath: user.imageUrl,
           onClicked: () async {
             await Navigator.of(context).push(
-              MaterialPageRoute(builder: (context) => EditProfilePage(user: user)),
+              MaterialPageRoute(builder: (context) => ProfileAddEditRegisterPage(user: user, task: 'edit',)),
             );
             setState(() {});
           },
@@ -62,8 +62,8 @@ class _ProfilePageState extends State<ProfilePage> {
         // const SizedBox(height: 24),
         // NumbersWidget(),
         const SizedBox(height: 48),
-        buildAbout(user),
-        const SizedBox(height: 48),
+        // buildAbout(user),
+        // const SizedBox(height: 48),
 
       ],
     );
@@ -90,9 +90,9 @@ class _ProfilePageState extends State<ProfilePage> {
         setState(() {
           _showQr = !_showQr;
           if(!_showQr){
-            _buttonText = 'QR Code';
+            _buttonText = 'qr code';
           } else {
-            _buttonText = 'Profile Photo';
+            _buttonText = 'photo';
           }
         });
       },
@@ -105,12 +105,12 @@ class _ProfilePageState extends State<ProfilePage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'About',
+          'about',
           style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 16),
         Text(
-          'This is where I write about me.',
+          '',
           style: TextStyle(fontSize: 16, height: 1.4),
         ),
       ],

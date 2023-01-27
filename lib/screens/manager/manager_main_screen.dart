@@ -4,7 +4,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import '../../db/bloc_repository.dart';
-import '../../db/dao/bloc_dao.dart';
 import '../../widgets/bloc_service_item.dart';
 
 class ManagerMainScreen extends StatelessWidget {

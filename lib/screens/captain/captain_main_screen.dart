@@ -1,4 +1,4 @@
-import 'package:bloc/screens/manager/users/users_management.dart';
+import 'package:bloc/screens/manager/users/manage_users_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -7,7 +7,7 @@ import '../../db/entity/captain_service.dart';
 import '../../helpers/firestore_helper.dart';
 import '../../widgets/ui/listview_block.dart';
 import '../manager/orders/manage_orders_screen.dart';
-import '../manager/tables/tables_management_screen.dart';
+import '../manager/tables/manage_tables_screen.dart';
 
 class CaptainMainScreen extends StatelessWidget {
   String blocServiceId;
@@ -91,7 +91,7 @@ class CaptainMainScreen extends StatelessWidget {
                     case 'Table Management':
                       {
                         Navigator.of(context).push(MaterialPageRoute(
-                            builder: (ctx) => TablesManagementScreen(
+                            builder: (ctx) => ManageTablesScreen(
                                   blocServiceId: blocServiceId,
                                   serviceName: captainService.name,
                                   userTitle: userTitle,
@@ -112,7 +112,7 @@ class CaptainMainScreen extends StatelessWidget {
                     case 'Profile':
                       {
                         Navigator.of(context).push(MaterialPageRoute(
-                            builder: (ctx) => UsersManagementScreen()));
+                            builder: (ctx) => ManageUsersScreen()));
                         logger.d('manage users screen selected.');
                         break;
                       }

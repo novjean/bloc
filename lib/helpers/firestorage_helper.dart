@@ -14,6 +14,8 @@ class FirestorageHelper {
   static String BLOCS_SERVICES_IMAGES = 'bloc_service_image';
   static String PRODUCT_IMAGES = 'product_image';
   static String PARTY_IMAGES = 'party_image';
+  static String USER_IMAGES = 'user_image';
+
 
   static Future<bool> deleteFile(String fileUrl) async {
     final firebaseStorage = FirebaseStorage.instance;
@@ -23,10 +25,10 @@ class FirestorageHelper {
       return true;
     } on PlatformException catch (err) {
       logger.e(err.message);
-      Toaster.shortToast("File deletion failed. Check credentials.");
+      Toaster.shortToast("file deletion failed. check credentials.");
     } catch (err) {
       logger.e(err);
-      Toaster.shortToast("File deletion failed.");
+      Toaster.shortToast("file deletion failed.");
     }
     return false;
   }

@@ -49,49 +49,57 @@ class AppDrawer extends StatelessWidget {
             },
           ),
           const Divider(),
-          user.clearanceLevel > Constants.CAPTAIN_LEVEL
-              ? ListTile(
-                  leading: const Icon(Icons.adjust),
-                  title: const Text('captain'),
-                  onTap: () {
-                    print('captain of bloc id : ' + user.blocServiceId);
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                          builder: (ctx) => CaptainMainScreen(
-                                blocServiceId: user.blocServiceId,
-                              )),
-                    );
-                  },
-                )
-              : const SizedBox.shrink(),
-          const Divider(),
-          user.clearanceLevel > Constants.MANAGER_LEVEL
-              ? ListTile(
-                  leading: const Icon(Icons.account_circle_outlined),
-                  title: const Text('manager'),
-                  onTap: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                          builder: (ctx) => ManagerMainScreen()),
-                    );
-                  },
-                )
-              : const SizedBox.shrink(),
-          const Divider(),
-          user.clearanceLevel > Constants.OWNER_LEVEL
-              ? ListTile(
-                  leading: const Icon(Icons.play_circle_outlined),
-                  title: const Text('owner'),
-                  onTap: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                          builder: (ctx) => OwnerScreen()),
-                    );
-                  },
-                )
-              : const SizedBox.shrink(),
-          const Divider(),
-          Spacer(),
+          Column(children: [
+            user.clearanceLevel > Constants.CAPTAIN_LEVEL
+                ? ListTile(
+              leading: const Icon(Icons.adjust),
+              title: const Text('captain'),
+              onTap: () {
+                print('captain of bloc id : ' + user.blocServiceId);
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                      builder: (ctx) => CaptainMainScreen(
+                        blocServiceId: user.blocServiceId,
+                      )),
+                );
+              },
+            )
+                : const SizedBox.shrink(),
+            const Divider(),
+          ]),
+          Column(children: [
+            user.clearanceLevel > Constants.MANAGER_LEVEL
+                ? ListTile(
+              leading: const Icon(Icons.account_circle_outlined),
+              title: const Text('manager'),
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                      builder: (ctx) => ManagerMainScreen()),
+                );
+              },
+            )
+                : const SizedBox.shrink(),
+            const Divider(),
+          ],),
+          Column(
+            children: [
+              user.clearanceLevel > Constants.OWNER_LEVEL
+                  ? ListTile(
+                leading: const Icon(Icons.play_circle_outlined),
+                title: const Text('owner'),
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                        builder: (ctx) => OwnerScreen()),
+                  );
+                },
+              )
+                  : const SizedBox.shrink(),
+              const Divider(),
+            ],
+          ),
+          const Spacer(),
           const Divider(),
           ListTile(
             leading: const Icon(Icons.exit_to_app),

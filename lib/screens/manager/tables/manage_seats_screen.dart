@@ -15,18 +15,18 @@ import '../../../helpers/firestore_helper.dart';
 import '../../../utils/constants.dart';
 import '../../../widgets/seat_item.dart';
 
-class SeatsManagementScreen extends StatefulWidget {
+class ManageSeatsScreen extends StatefulWidget {
   String serviceId;
   ServiceTable serviceTable;
 
-  SeatsManagementScreen(
+  ManageSeatsScreen(
       {required this.serviceId, required this.serviceTable});
 
   @override
-  State<SeatsManagementScreen> createState() => _SeatsManagementScreenState();
+  State<ManageSeatsScreen> createState() => _ManageSeatsScreenState();
 }
 
-class _SeatsManagementScreenState extends State<SeatsManagementScreen> {
+class _ManageSeatsScreenState extends State<ManageSeatsScreen> {
   late Widget captainSelectWidget;
   late String _tableCaptain = '';
 

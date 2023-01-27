@@ -820,6 +820,16 @@ class FirestoreHelper {
   }
 
   /** User **/
+  static void pushUser(blocUser.User user) async {
+    try {
+      await FirebaseFirestore.instance.collection(USERS).doc(user.id).set(user.toMap());
+    } on PlatformException catch (err) {
+      logger.e(err.message);
+    } catch (err) {
+      logger.e(err);
+    }
+  }
+
   static Future<void> insertUser(
       String email, String password, File? image, String username) async {
     final _auth = FirebaseAuth.instance;
@@ -945,6 +955,13 @@ class FirestoreHelper {
       logger.e(err);
     }
   }
+
+  static void deleteUser(blocUser.User user) {
+
+    FirebaseFirestore.instance.collection(USERS).doc(user.id).delete();
+
+  }
+
 
 /** Reference **/
 // _buildProducts(BuildContext context, String _category) {

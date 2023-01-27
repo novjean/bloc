@@ -16,7 +16,7 @@ import '../main.dart';
 import 'home_screen.dart';
 import 'parties/party_screen.dart';
 import 'chat/chat_screen.dart';
-import 'profile/edit_profile_page.dart';
+import 'profile/profile_add_edit_register_page.dart';
 import 'profile/profile_page.dart';
 
 class MainScreen extends StatefulWidget {
@@ -53,7 +53,7 @@ class _MainScreenState extends State<MainScreen> {
         .where('phoneNumber', isEqualTo: widget.user.phoneNumber)
         .get()
         .then(
-          (res) {
+      (res) {
         print("Successfully retrieved users for " +
             widget.user.phoneNumber.toString());
 
@@ -68,7 +68,9 @@ class _MainScreenState extends State<MainScreen> {
 
           // lets grab more user details
           Navigator.of(context).push(
-            MaterialPageRoute(builder: (context) => EditProfilePage(user: widget.user)),
+            MaterialPageRoute(
+                builder: (context) => ProfileAddEditRegisterPage(
+                    user: widget.user, task: 'register')),
           );
         } else {
           List<blocUser.User> users = [];
@@ -76,7 +78,7 @@ class _MainScreenState extends State<MainScreen> {
           for (int i = 0; i < res.docs.length; i++) {
             DocumentSnapshot document = res.docs[i];
             Map<String, dynamic> data =
-            document.data()! as Map<String, dynamic>;
+                document.data()! as Map<String, dynamic>;
             final blocUser.User user = blocUser.User.fromMap(data);
             // BlocRepository.insertUser(widget.dao, user);
             users.add(user);
@@ -93,7 +95,7 @@ class _MainScreenState extends State<MainScreen> {
               " : $e"),
     );
 
-    if(!kIsWeb){
+    if (!kIsWeb) {
       //the following lines are essential for notification to work in iOS
       final fbm = FirebaseMessaging.instance;
       fbm.requestPermission();
@@ -181,8 +183,7 @@ class _MainScreenState extends State<MainScreen> {
 
                 FirebaseAuth.instance.signOut();
                 Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(
-                      builder: (context) => LoginScreen()),
+                  MaterialPageRoute(builder: (context) => LoginScreen()),
                 );
               }
             },
