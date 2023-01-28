@@ -90,7 +90,6 @@ class _ProfileAddEditRegisterPageState
                 newImage);
 
             setState(() {
-              // user = user.copyWith(imageUrl: newImage.path);
               imagePath = imageFile.path;
               isPhotoChanged = true;
             });

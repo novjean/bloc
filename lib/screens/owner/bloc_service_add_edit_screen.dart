@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:bloc/utils/string_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart';
@@ -63,12 +64,13 @@ class _BlocServiceAddEditScreenState extends State<BlocServiceAddEditScreen> {
             final imageFile = File('${directory.path}/$name');
             final newImage = await File(image.path).copy(imageFile.path);
 
-            setState(() async {
-              oldImageUrl = widget.blocService.imageUrl;
-              newImageUrl = await FirestorageHelper.uploadFile(
-                  FirestorageHelper.BLOCS_SERVICES_IMAGES,
-                  widget.blocService.id,
-                  newImage);
+            oldImageUrl = widget.blocService.imageUrl;
+            newImageUrl = await FirestorageHelper.uploadFile(
+                FirestorageHelper.BLOCS_SERVICES_IMAGES,
+                StringUtils.getRandomString(28),
+                newImage);
+
+            setState(() {
               imagePath = imageFile.path;
               isPhotoChanged = true;
             });

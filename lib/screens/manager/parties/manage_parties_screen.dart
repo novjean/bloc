@@ -34,7 +34,7 @@ class _ManagePartiesScreenState extends State<ManagePartiesScreen> {
             MaterialPageRoute(
                 builder: (ctx) => PartyAddEditScreen(
                       party: Dummy.getDummyParty(widget.serviceId),
-                      task: 'Add',
+                      task: 'add',
                     )),
           );
         },
@@ -113,7 +113,7 @@ class _ManagePartiesScreenState extends State<ManagePartiesScreen> {
 
                   Navigator.of(context).push(
                     MaterialPageRoute(
-                        builder: (ctx) => PartyAddEditScreen(party: _sParty, task: 'Edit')));
+                        builder: (ctx) => PartyAddEditScreen(party: _sParty, task: 'edit')));
                 });
           }),
     );

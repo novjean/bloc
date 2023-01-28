@@ -130,10 +130,11 @@ class _ProductAddEditScreenState extends State<ProductAddEditScreen> {
                   final name = basename(image.path);
                   final imageFile = File('${directory.path}/$name');
                   final newImage = await File(image.path).copy(imageFile.path);
+
                   oldImageUrl = widget.product.imageUrl;
                   newImageUrl = await FirestorageHelper.uploadFile(
                       FirestorageHelper.PRODUCT_IMAGES,
-                      widget.product.name.trim() + '_' + StringUtils.getRandomString(20),
+                      StringUtils.getRandomString(20),
                       newImage);
 
                   setState(() {

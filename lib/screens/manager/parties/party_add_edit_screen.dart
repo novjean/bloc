@@ -10,6 +10,7 @@ import 'package:path_provider/path_provider.dart';
 import '../../../db/entity/party.dart';
 import '../../../helpers/firestorage_helper.dart';
 import '../../../helpers/firestore_helper.dart';
+import '../../../utils/string_utils.dart';
 import '../../../widgets/profile_widget.dart';
 import '../../../widgets/ui/button_widget.dart';
 import '../../../widgets/ui/textfield_widget.dart';
@@ -48,7 +49,7 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
     super.initState();
 
     FirestoreHelper.pullAllBlocServices().then((res) {
-      print("successfully pulled in all bloc services... ");
+      print("successfully pulled in all bloc services ");
 
       if (res.docs.isNotEmpty) {
         List<BlocService> _blocServices = [];
@@ -82,7 +83,7 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
   @override
   Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(
-          title: Text('Party | ' + widget.task),
+          title: Text('party | ' + widget.task),
         ),
         body: _buildBody(context),
       );
@@ -127,7 +128,7 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
   }
 
   Widget dateTimeContainer(BuildContext context, String type) {
-    DateTime dateTime = type=='Start' ? sStartDateTime:sEndDateTime;
+    DateTime dateTime = type=='start' ? sStartDateTime:sEndDateTime;
 
     return Container(
       decoration: BoxDecoration(
@@ -156,14 +157,14 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
               minimumSize: Size(50, 50), //////// HERE
             ),
             onPressed: () {
-              if(type == 'Start'){
+              if(type == 'start'){
                 _isStartDateBeingSet = true;
               } else {
                 _isStartDateBeingSet = false;
               }
               _selectDate(context, dateTime);
             },
-            child: Text(type + ' Date & Time'),
+            child: Text(type + ' date & time'),
           ),
         ],
       ),
@@ -174,7 +175,7 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
   _buildBody(BuildContext context) {
     return _isBlocServicesLoading
         ? Center(
-            child: Text('Loading...'),
+            child: Text('loading...'),
           )
         : ListView(
             padding: EdgeInsets.symmetric(horizontal: 32),
@@ -196,12 +197,13 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
                   final imageFile = File('${directory.path}/$name');
                   final newImage = await File(image.path).copy(imageFile.path);
 
-                  setState(() async {
-                    oldImageUrl = widget.party.imageUrl;
-                    newImageUrl = await FirestorageHelper.uploadFile(
-                        FirestorageHelper.PARTY_IMAGES,
-                        widget.party.id,
-                        newImage);
+                  oldImageUrl = widget.party.imageUrl;
+                  newImageUrl = await FirestorageHelper.uploadFile(
+                      FirestorageHelper.PARTY_IMAGES,
+                      StringUtils.getRandomString(28),
+                      newImage);
+
+                  setState(() {
                     imagePath = imageFile.path;
                     isPhotoChanged = true;
                   });
@@ -209,14 +211,14 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
               ),
               const SizedBox(height: 24),
               TextFieldWidget(
-                label: 'Name',
+                label: 'name',
                 text: widget.party.name,
                 onChanged: (name) =>
                     widget.party = widget.party.copyWith(name: name),
               ),
               const SizedBox(height: 24),
               TextFieldWidget(
-                label: 'Description',
+                label: 'description',
                 text: widget.party.description,
                 maxLines: 5,
                 onChanged: (value) {
@@ -233,7 +235,7 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
                         errorStyle: TextStyle(
                             color: Theme.of(context).errorColor,
                             fontSize: 16.0),
-                        hintText: 'Please select bloc service',
+                        hintText: 'please select bloc service',
                         border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(5.0))),
                     isEmpty: _sBlocServiceName == '',
@@ -270,7 +272,7 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
 
               const SizedBox(height: 24),
               TextFieldWidget(
-                label: 'Instagram URL',
+                label: 'instagram url',
                 text: widget.party.instagramUrl,
                 maxLines: 1,
                 onChanged: (value) {
@@ -280,7 +282,7 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
 
               const SizedBox(height: 24),
               TextFieldWidget(
-                label: 'Ticket URL',
+                label: 'ticket url',
                 text: widget.party.ticketUrl,
                 maxLines: 1,
                 onChanged: (value) {
@@ -295,7 +297,7 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
                     width: 0,
                   ), //SizedBox
                   Text(
-                    'Available : ',
+                    'available : ',
                     style: TextStyle(fontSize: 17.0),
                   ), //Text
                   SizedBox(width: 10), //SizedBox
@@ -310,10 +312,10 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
                 ], //<Widget>[]
               ),
               const SizedBox(height: 24),
-              dateTimeContainer(context, 'Start'),
+              dateTimeContainer(context, 'start'),
 
               const SizedBox(height: 24),
-              dateTimeContainer(context, 'End'),
+              dateTimeContainer(context, 'end'),
 
               const SizedBox(height: 24),
               ButtonWidget(

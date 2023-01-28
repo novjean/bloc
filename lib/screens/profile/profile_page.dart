@@ -3,7 +3,6 @@ import 'package:logger/logger.dart';
 
 import '../../db/entity/user.dart' as blocUser;
 import '../../db/shared_preferences/user_preferences.dart';
-import '../../widgets/profile/numbers_widget.dart';
 import '../../widgets/profile_widget.dart';
 import '../../widgets/ui/button_widget.dart';
 import 'profile_add_edit_register_page.dart';

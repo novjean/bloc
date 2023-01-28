@@ -38,16 +38,16 @@ class _AuthScreenState extends State<AuthScreen> {
       } else {
         await FirestoreHelper.insertUser(email, password, image, username);
 
-        print("Registered " + email);
+        print("registered " + email);
       }
     } on PlatformException catch (err) {
-      var message = 'An error occurred, please check your credentials!';
+      var message = 'an error occurred, please check your credentials!';
 
       if (err.message != null) {
         message = err.message!;
       }
 
-      print("Error: " + message);
+      print("error: " + message);
 
       setState(() {
         _isLoading = false;

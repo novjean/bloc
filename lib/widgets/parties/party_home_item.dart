@@ -1,5 +1,4 @@
 import 'package:bloc/utils/date_time_utils.dart';
-import 'package:bloc/widgets/ui/button_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -17,7 +16,7 @@ class PartyHomeItem extends StatelessWidget {
       url,
       mode: LaunchMode.externalApplication,
     )) {
-      throw Exception('Could not launch $url');
+      throw Exception('could not launch $url');
     }
   }
 
@@ -106,7 +105,7 @@ class PartyHomeItem extends StatelessWidget {
                     borderRadius: BorderRadius.all(Radius.circular(0)),
                     image: DecorationImage(
                       image: NetworkImage(party.imageUrl),
-                      fit: BoxFit.fitHeight,
+                      fit: BoxFit.fitWidth,
                       // AssetImage(food['image']),
                     ),
                   ),

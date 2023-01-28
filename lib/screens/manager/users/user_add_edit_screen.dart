@@ -10,6 +10,7 @@ import 'package:path_provider/path_provider.dart';
 import '../../../db/entity/user.dart';
 import '../../../helpers/firestorage_helper.dart';
 import '../../../helpers/firestore_helper.dart';
+import '../../../utils/string_utils.dart';
 import '../../../widgets/profile_widget.dart';
 import '../../../widgets/ui/button_widget.dart';
 import '../../../widgets/ui/textfield_widget.dart';
@@ -199,10 +200,10 @@ class _UserAddEditScreenState extends State<UserAddEditScreen> {
             oldImageUrl = widget.user.imageUrl;
             newImageUrl = await FirestorageHelper.uploadFile(
                 FirestorageHelper.USER_IMAGES,
-                widget.user.id,
+                StringUtils.getRandomString(28),
                 newImage);
 
-            setState(() async {
+            setState(() {
               imagePath = imageFile.path;
               isPhotoChanged = true;
             });

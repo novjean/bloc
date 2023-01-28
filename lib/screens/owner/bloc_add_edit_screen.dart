@@ -11,6 +11,7 @@ import '../../../widgets/profile_widget.dart';
 import '../../../widgets/ui/button_widget.dart';
 import '../../../widgets/ui/textfield_widget.dart';
 import '../../db/entity/bloc.dart';
+import '../../utils/string_utils.dart';
 
 class BlocAddEditScreen extends StatefulWidget {
   Bloc bloc;
@@ -63,12 +64,13 @@ class _BlocAddEditScreenState extends State<BlocAddEditScreen> {
             final imageFile = File('${directory.path}/$name');
             final newImage = await File(image.path).copy(imageFile.path);
 
-            setState(() async {
-              oldImageUrl = widget.bloc.imageUrl;
-              newImageUrl = await FirestorageHelper.uploadFile(
-                  FirestorageHelper.BLOCS_IMAGES,
-                  widget.bloc.id,
-                  newImage);
+            oldImageUrl = widget.bloc.imageUrl;
+            newImageUrl = await FirestorageHelper.uploadFile(
+                FirestorageHelper.BLOCS_IMAGES,
+                StringUtils.getRandomString(28),
+                newImage);
+
+            setState(() {
               imagePath = imageFile.path;
               isPhotoChanged = true;
             });
@@ -76,14 +78,14 @@ class _BlocAddEditScreenState extends State<BlocAddEditScreen> {
         ),
         const SizedBox(height: 24),
         TextFieldWidget(
-          label: 'Name',
+          label: 'name',
           text: widget.bloc.name,
           onChanged: (name) =>
           widget.bloc = widget.bloc.copyWith(name: name),
         ),
         const SizedBox(height: 24),
         TextFieldWidget(
-          label: 'Address Line 1',
+          label: 'address line 1',
           text: widget.bloc.addressLine1,
           onChanged: (value) {
             widget.bloc = widget.bloc.copyWith(addressLine1: value);
@@ -91,14 +93,14 @@ class _BlocAddEditScreenState extends State<BlocAddEditScreen> {
         ),
         const SizedBox(height: 24),
         TextFieldWidget(
-          label: 'Address Line 2',
+          label: 'address line 2',
           text: widget.bloc.addressLine2,
           onChanged: (value) {
             widget.bloc = widget.bloc.copyWith(addressLine2: value);
           },
         ),
         TextFieldWidget(
-          label: 'Pin Code',
+          label: 'pin code',
           text: widget.bloc.pinCode,
           onChanged: (value) {
             widget.bloc = widget.bloc.copyWith(pinCode: value);
@@ -111,7 +113,7 @@ class _BlocAddEditScreenState extends State<BlocAddEditScreen> {
               width: 0,
             ), //SizedBox
             Text(
-              'Active : ',
+              'active : ',
               style: TextStyle(fontSize: 17.0),
             ), //Text
             SizedBox(width: 10), //SizedBox
@@ -128,7 +130,7 @@ class _BlocAddEditScreenState extends State<BlocAddEditScreen> {
         ),
         const SizedBox(height: 24),
         ButtonWidget(
-          text: 'Save',
+          text: 'save',
           onClicked: () {
             if (isPhotoChanged) {
               widget.bloc =

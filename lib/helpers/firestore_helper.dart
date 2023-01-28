@@ -860,7 +860,7 @@ class FirestoreHelper {
 
     blocUser.User user = blocUser.User(
         id: authResult.user!.uid,
-        name: 'Superstar',
+        name: '',
         phoneNumber: 0,
         clearanceLevel: 1,
         email: email,
