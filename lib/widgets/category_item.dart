@@ -2,9 +2,9 @@ import 'package:bloc/db/entity/category.dart';
 import 'package:flutter/material.dart';
 
 class CategoryItem extends StatelessWidget {
-  final Category cat;
+  final Category category;
 
-  CategoryItem({required this.cat});
+  CategoryItem({required this.category});
 
   @override
   Widget build(BuildContext context) {
@@ -21,8 +21,8 @@ class CategoryItem extends StatelessWidget {
               placeholder: AssetImage('assets/images/product-placeholder.png'),
               height: height,
               width: width,
-              image: cat.imageUrl != "url"
-                  ? NetworkImage(cat.imageUrl)
+              image: category.imageUrl != "url"
+                  ? NetworkImage(category.imageUrl)
                   : NetworkImage(
                   "assets/images/product-placeholder.png"),
               fit: BoxFit.cover,
@@ -55,14 +55,14 @@ class CategoryItem extends StatelessWidget {
                 height: height,
                 width: width,
                 padding: const EdgeInsets.all(1),
-                constraints: BoxConstraints(
+                constraints: const BoxConstraints(
                   minWidth: 20,
                   minHeight: 20,
                 ),
                 child: Center(
                   child: Text(
-                    cat.name,
-                    style: TextStyle(
+                    category.name.toLowerCase(),
+                    style: const TextStyle(
                       color: Colors.white,
                       fontSize: 20,
                       fontWeight: FontWeight.bold,

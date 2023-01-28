@@ -62,7 +62,7 @@ class _ProductItemState extends State<ProductItem> {
                   decoration: BoxDecoration(
                     image: DecorationImage(
                         image: NetworkImage(widget.product.imageUrl),
-                        fit: BoxFit.cover
+                        fit: BoxFit.fitHeight
                         // AssetImage(food['image']),
                         ),
                   ),
@@ -78,9 +78,9 @@ class _ProductItemState extends State<ProductItem> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
-                            Text(widget.product.name,
-                                style: TextStyle(
-                                  fontSize: 17,
+                            Text(widget.product.name.toLowerCase(),
+                                style: const TextStyle(
+                                  fontSize: 20,
                                   fontWeight: FontWeight.bold,
                                 )),
 
@@ -88,7 +88,7 @@ class _ProductItemState extends State<ProductItem> {
                             widget.isOnOffer
                                 ? Text(
                                     '\u20B9 ${widget.isCommunity ? widget.offer.offerPriceCommunity.toStringAsFixed(2) : widget.offer.offerPricePrivate.toStringAsFixed(2)}',
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                         fontSize: 18,
                                         fontWeight: FontWeight.bold))
                                 : Text(
@@ -127,7 +127,7 @@ class _ProductItemState extends State<ProductItem> {
                                               fontWeight: FontWeight.bold,
                                               color: Colors.blue),
                                         )
-                                      : SizedBox(height: 0),
+                                      : const SizedBox(height: 0),
                                 ],
                               )
                             : widget.isOnOffer
@@ -145,10 +145,10 @@ class _ProductItemState extends State<ProductItem> {
                         SizedBox(height: 2),
                         Text(
                             StringUtils.firstFewWords(
-                                    widget.product.description, 15) +
+                                    widget.product.description.toLowerCase(), 25) +
                                 '...',
                             style:
-                                TextStyle(fontSize: 15, color: Colors.black54)),
+                                TextStyle(fontSize: 16, color: Theme.of(context).primaryColorDark)),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: <Widget>[
@@ -170,16 +170,16 @@ class _ProductItemState extends State<ProductItem> {
                             Container(
                                 // color: primaryColor,
                                 margin: const EdgeInsets.symmetric(
-                                  horizontal: 1.0,
+                                  horizontal: 0.0,
                                 ),
                                 padding: const EdgeInsets.symmetric(
                                   vertical: 4.0,
-                                  horizontal: 2.0,
+                                  horizontal: 0.0,
                                 ),
                                 child: ButtonWidget(
                                   text: widget.addCount == 1
-                                      ? 'Add'
-                                      : 'Add ' + widget.addCount.toString(),
+                                      ? 'add'
+                                      : 'add' + widget.addCount.toString(),
                                   onClicked: () {
                                     // add it to the cart
                                     String cartId =
@@ -231,12 +231,12 @@ class _ProductItemState extends State<ProductItem> {
                                       widget.addCount = 1;
                                     });
 
-                                    Toaster.shortToast(widget.product.name +
+                                    Toaster.shortToast(widget.product.name.toLowerCase() +
                                         ' is added to cart.');
                                   },
                                 )),
                             IconButton(
-                              icon: Icon(Icons.add),
+                              icon: const Icon(Icons.add),
                               color: primaryColor,
                               onPressed: () {
                                 setState(() {

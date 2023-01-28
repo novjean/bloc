@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../db/entity/bloc_service.dart';
-import '../screens/bloc/bloc_service_detail_screen.dart';
+import '../screens/bloc/bloc_menu_screen.dart';
 import '../screens/manager/manager_services_screen.dart';
 import '../screens/owner/bloc_service_add_edit_screen.dart';
 
@@ -24,7 +24,7 @@ class BlocServiceItem extends StatelessWidget {
               MaterialPageRoute(
                   builder: (ctx) => isManager
                       ? ManagerServicesScreen(blocService: service)
-                      : BlocServiceDetailScreen(blocService: service)),
+                      : BlocMenuScreen(blocService: service)),
             );
           },
           child: Hero(

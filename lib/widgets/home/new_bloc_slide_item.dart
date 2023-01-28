@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 
 import '../../db/entity/bloc.dart';
-import '../../screens/bloc/bloc_service_detail_screen.dart';
+import '../../screens/bloc/bloc_menu_screen.dart';
 
 class NewBlocSlideItem extends StatefulWidget {
   final Bloc bloc;
@@ -57,7 +57,7 @@ class _NewBlocSlideItemState extends State<NewBlocSlideItem> {
         Navigator.of(context).push(
           MaterialPageRoute(
               builder: (ctx) =>
-                  BlocServiceDetailScreen(blocService: mBlocService)),
+                  BlocMenuScreen(blocService: mBlocService)),
         );
       },
       child: _isBlocServiceLoading

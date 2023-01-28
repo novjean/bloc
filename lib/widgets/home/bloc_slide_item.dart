@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import '../../db/entity/bloc.dart';
 import '../../db/entity/bloc_service.dart';
 import '../../helpers/firestore_helper.dart';
-import '../../screens/bloc/bloc_service_detail_screen.dart';
+import '../../screens/bloc/bloc_menu_screen.dart';
 
 class BlocSlideItem extends StatefulWidget {
   final Bloc bloc;
@@ -64,7 +64,7 @@ class _BlocSlideItemState extends State<BlocSlideItem> {
                                     BlocService.fromMap(data);
                                 Navigator.of(context).push(
                                   MaterialPageRoute(
-                                      builder: (ctx) => BlocServiceDetailScreen(
+                                      builder: (ctx) => BlocMenuScreen(
                                           blocService: blocService)),
                                 );
                               } else {

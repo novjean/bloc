@@ -115,16 +115,17 @@ class MyApp extends StatelessWidget {
                 title: kAppTitle,
                 theme: ThemeData(
                   //rgba(211,167,130,255)
-                  primaryColor: Color.fromRGBO(211,167,130,1),
+                  primaryColor: const Color.fromRGBO(211,167,130,1),
                     // 222,193,170
-                  primaryColorLight: Color.fromRGBO(222,193,170,1),
+                  primaryColorLight: const Color.fromRGBO(222,193,170,1),
+                  primaryColorDark: const Color.fromRGBO(42,33,26,1),
 
-                  backgroundColor: Color.fromRGBO(38, 50, 56, 1.0),
-                  focusColor: Color.fromRGBO(31, 31, 33, 1.0),
-                  shadowColor: Color.fromRGBO(158, 158, 158, 1.0),
+                  backgroundColor: const Color.fromRGBO(38, 50, 56, 1.0),
+                  focusColor: const Color.fromRGBO(31, 31, 33, 1.0),
+                  shadowColor: const Color.fromRGBO(158, 158, 158, 1.0),
 
-                  highlightColor: Color.fromRGBO(255, 255, 255, 1.0),
-                  bottomAppBarColor: Color.fromRGBO(255, 255, 255, 1.0),
+                  highlightColor: const Color.fromRGBO(255, 255, 255, 1.0),
+                  bottomAppBarColor: const Color.fromRGBO(255, 255, 255, 1.0),
 
                   // app bar and buttons by default
                   primarySwatch: Colors.brown,

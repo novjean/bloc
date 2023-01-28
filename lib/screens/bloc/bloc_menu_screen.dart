@@ -20,21 +20,19 @@ import '../../widgets/ui/toaster.dart';
 import 'cart_screen.dart';
 import 'package:bloc/db/entity/user.dart' as blocUser;
 
-class BlocServiceDetailScreen extends StatefulWidget {
+class BlocMenuScreen extends StatefulWidget {
   BlocService blocService;
 
-  BlocServiceDetailScreen({key, required this.blocService})
+  BlocMenuScreen({key, required this.blocService})
       : super(key: key);
 
   @override
-  State<BlocServiceDetailScreen> createState() =>
-      _BlocServiceDetailScreenState();
+  State<BlocMenuScreen> createState() =>
+      _BlocMenuScreenState();
 }
 
-class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen>
+class _BlocMenuScreenState extends State<BlocMenuScreen>
     with WidgetsBindingObserver {
-  static String _TAG = 'BlocServiceDetailScreen';
-
   String _sCategoryType = 'Alcohol';
 
   late ServiceTable mTable;
@@ -61,7 +59,7 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen>
     blocUser.User user = UserPreferences.myUser;
 
     FirestoreHelper.pullCategories(widget.blocService.id).then((res) {
-      print("Successfully retrieved categories...");
+      print("successfully retrieved categories");
 
       if (res.docs.isNotEmpty) {
         List<Category> _categories = [];
@@ -69,7 +67,6 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen>
           DocumentSnapshot document = res.docs[i];
           Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
           final Category category = Category.fromMap(data);
-          // BlocRepository.insertCategory(widget.dao, category);
           _categories.add(category);
         }
 
@@ -84,7 +81,7 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen>
 
     FirestoreHelper.pullCustomerSeat(widget.blocService.id, user.id)
         .then((res) {
-      print("Successfully retrieved seat of user " + user.name);
+      print("successfully retrieved seat of user " + user.name);
 
       if (res.docs.isEmpty) {
         // the user has not selected a table yet
@@ -107,7 +104,6 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen>
           Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
           final Seat userSeat = Seat.fromMap(data);
           mSeat = userSeat;
-          // BlocRepository.insertSeat(widget.dao, userSeat);
 
           if (i == res.docs.length - 1) {
             FirestoreHelper.pullSeatTable(userSeat.tableId).then(
@@ -130,7 +126,7 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen>
                   print('table could not be found for ' + userSeat.tableId);
                 }
               },
-              onError: (e) => print("Error searching for table : $e"),
+              onError: (e) => print("error searching for table : $e"),
             );
           }
         }
@@ -138,7 +134,7 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen>
     });
 
     FirestoreHelper.pullOffers(widget.blocService.id).then((res) {
-      print("Successfully retrieved offers at bloc " + widget.blocService.name);
+      print("successfully retrieved offers at bloc " + widget.blocService.name);
 
       if (res.docs.isNotEmpty) {
         for (int i = 0; i < res.docs.length; i++) {
@@ -186,8 +182,8 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen>
               Icons.back_hand_outlined,
             ),
             onPressed: () {
-              Toaster.shortToast(
-                  'We are sending someone from our team towards tour table.');
+              Toaster.longToast(
+                  'we are sending someone over to assist you soon');
 
               blocUser.User user = UserPreferences.myUser;
 
@@ -211,7 +207,7 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen>
         ],
       ),
       body: _isLoading
-          ? Center(child: Text('Loading the menu...'))
+          ? Center(child: Text('loading the menu...'))
           : _buildBody(context, widget.blocService),
     );
   }
@@ -227,7 +223,7 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen>
         _isTableDetailsLoading
             ? TextFormField(
                 key: const ValueKey('table_loading'),
-                initialValue: 'Loading Table Info ...',
+                initialValue: 'loading table info ...',
                 enabled: false,
                 autocorrect: false,
                 textCapitalization: TextCapitalization.words,
@@ -243,7 +239,7 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen>
                   )
                 : _searchTableNumber(context),
         const SizedBox(height: 2.0),
-        _isCategoriesLoading ? SizedBox() : _displayCategories(context),
+        _isCategoriesLoading ? const SizedBox() : _displayCategories(context),
         const SizedBox(height: 2.0),
         buildProducts(context, 'Beer'),
         const SizedBox(height: 1.0),
@@ -259,7 +255,7 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen>
       builder: (ctx, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           print('loading offers...');
-          return SizedBox();
+          return const SizedBox();
         }
 
         mOffers.clear();
@@ -276,10 +272,10 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen>
             // then somehow force a refresh of the menu items
             mOffers.addAll(_offers);
 
-            return SizedBox();
+            return const SizedBox();
           }
         }
-        return SizedBox();
+        return const SizedBox();
       },
     );
   }
@@ -302,7 +298,6 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen>
               Map<String, dynamic> data =
                   document.data()! as Map<String, dynamic>;
               final Seat seat = Seat.fromMap(data);
-              // BlocRepository.insertSeat(widget.dao, seat);
               seats.add(seat);
 
               if (i == snapshot.data!.docs.length - 1) {
@@ -326,9 +321,9 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen>
                       print('table could not be found for ' + seat.tableId);
                     }
                   },
-                  onError: (e) => print("Error searching for table : $e"),
+                  onError: (e) => print("error searching for table : $e"),
                 );
-                return SizedBox();
+                return const SizedBox();
               }
             }
           } else {
@@ -372,11 +367,10 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen>
           itemBuilder: (ctx, index) {
             return GestureDetector(
                 child: CategoryItem(
-                  cat: mCategoryTypes[index],
+                  category: mCategoryTypes[index],
                 ),
                 onTap: () {
                   setState(() {
-                    // _sCategory = categories[index];
                     _sCategoryType = mCategoryTypes[index].name;
                     print(_sCategoryType + ' category type is selected');
                   });
@@ -397,10 +391,6 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen>
           );
         }
 
-        // if (snapshot.data!.docs.isNotEmpty) {
-        //   BlocRepository.clearProducts(widget.dao);
-        // }
-
         if (snapshot.hasData) {
           List<Product> products = [];
           for (int i = 0; i < snapshot.data!.docs.length; i++) {
@@ -408,7 +398,6 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen>
             Map<String, dynamic> data =
                 document.data()! as Map<String, dynamic>;
             final Product product = Product.fromMap(data);
-            // BlocRepository.insertProduct(widget.dao, product);
             products.add(product);
 
             if (i == snapshot.data!.docs.length - 1) {
@@ -417,9 +406,9 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen>
           }
         } else {
           return const Expanded(
-              child: Center(child: Text('No products found!')));
+              child: Center(child: Text('no products found!')));
         }
-        return const Expanded(child: Center(child: Text('No products found!')));
+        return const Expanded(child: Center(child: Text('no products found!')));
       },
     );
   }
@@ -430,7 +419,7 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen>
     String categoryTitle = '';
     bool isCategoryChange;
 
-    LinkedHashMap map = new LinkedHashMap<int, String>();
+    LinkedHashMap map = LinkedHashMap<int, String>();
 
     List<Product> subProducts = [];
     String curCategory = '';
@@ -491,7 +480,7 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen>
                                   top: 8.0, bottom: 8, right: 20),
                               color: Theme.of(context).primaryColor,
                               child: Text(
-                                categoryTitle,
+                                categoryTitle.toLowerCase(),
                                 textAlign: TextAlign.right,
                                 style: TextStyle(
                                     fontSize: 22, fontWeight: FontWeight.bold),
@@ -500,7 +489,7 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen>
                           ),
                         ],
                       )
-                    : SizedBox(),
+                    : const SizedBox(),
                 GestureDetector(
                     child: ProductItem(
                       serviceId: widget.blocService.id,
@@ -512,7 +501,7 @@ class _BlocServiceDetailScreenState extends State<BlocServiceDetailScreen>
                     ),
                     onTap: () {
                       Product _sProduct = subProducts[index];
-                      print(_sProduct.name + ' is selected');
+                      print(_sProduct.name.toLowerCase() + ' is selected');
                     }),
               ],
             );
