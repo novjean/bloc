@@ -27,6 +27,7 @@ class _BlocAddEditScreenState extends State<BlocAddEditScreen> {
   bool isPhotoChanged = false;
   late String oldImageUrl;
   late String newImageUrl;
+  String imagePath = '';
 
   @override
   void initState() {
@@ -36,7 +37,7 @@ class _BlocAddEditScreenState extends State<BlocAddEditScreen> {
   @override
   Widget build(BuildContext context) => Scaffold(
     appBar: AppBar(
-      title: Text('Bloc | Add'),
+      title: Text('bloc | ' + widget.task),
     ),
     body: _buildBody(context),
   );
@@ -48,7 +49,7 @@ class _BlocAddEditScreenState extends State<BlocAddEditScreen> {
       children: [
         const SizedBox(height: 15),
         ProfileWidget(
-          imagePath: widget.bloc.imageUrl,
+          imagePath: imagePath.isEmpty ? widget.bloc.imageUrl : imagePath,
           isEdit: true,
           onClicked: () async {
             final image = await ImagePicker().pickImage(
@@ -68,6 +69,7 @@ class _BlocAddEditScreenState extends State<BlocAddEditScreen> {
                   FirestorageHelper.BLOCS_IMAGES,
                   widget.bloc.id,
                   newImage);
+              imagePath = imageFile.path;
               isPhotoChanged = true;
             });
           },

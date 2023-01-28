@@ -10,6 +10,7 @@ import '../db/bloc_repository.dart';
 import '../db/dao/bloc_dao.dart';
 import '../db/shared_preferences/user_preferences.dart';
 import '../helpers/firestore_helper.dart';
+import '../widgets/ui/toaster.dart';
 import 'main_screen.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -146,12 +147,19 @@ class _LoginScreenState extends State<LoginScreen> {
               minimumSize: Size(100, 60), //////// HERE
             ),
             onPressed: () {
-              Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) =>
-                      OTPScreen(_controller.text)));
+              String phoneNumberString = _controller.text;
+
+              if(phoneNumberString.length == 10){
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) =>
+                        OTPScreen(_controller.text)));
+              } else {
+                print('user entered invalid phone number' + phoneNumberString);
+                Toaster.longToast('please enter a valid phone number');
+              }
             },
             child: Text(
-              'Next',
+              'next',
               style: TextStyle(fontSize: 20),
             ),
           ),

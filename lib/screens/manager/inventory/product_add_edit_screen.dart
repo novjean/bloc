@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:bloc/utils/string_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -30,6 +31,7 @@ class _ProductAddEditScreenState extends State<ProductAddEditScreen> {
   bool isPhotoChanged = false;
   late String oldImageUrl;
   late String newImageUrl;
+  String imagePath ='';
 
   List<String> catTypeNames = [];
   List<String> catNames = [];
@@ -99,7 +101,7 @@ class _ProductAddEditScreenState extends State<ProductAddEditScreen> {
   @override
   Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(
-          title: Text('Product | ' + widget.task),
+          title: Text('product | ' + widget.task),
         ),
         body: _buildBody(context),
       );
@@ -107,7 +109,7 @@ class _ProductAddEditScreenState extends State<ProductAddEditScreen> {
   _buildBody(BuildContext context) {
     return _isCategoriesLoading
         ? Center(
-            child: Text('Loading...'),
+            child: Text('loading...'),
           )
         : ListView(
             padding: EdgeInsets.symmetric(horizontal: 32),
@@ -115,7 +117,7 @@ class _ProductAddEditScreenState extends State<ProductAddEditScreen> {
             children: [
               const SizedBox(height: 15),
               ProfileWidget(
-                imagePath: widget.product.imageUrl,
+                imagePath: imagePath.isEmpty ? widget.product.imageUrl : imagePath,
                 isEdit: true,
                 onClicked: () async {
                   final image = await ImagePicker().pickImage(
@@ -128,20 +130,21 @@ class _ProductAddEditScreenState extends State<ProductAddEditScreen> {
                   final name = basename(image.path);
                   final imageFile = File('${directory.path}/$name');
                   final newImage = await File(image.path).copy(imageFile.path);
+                  oldImageUrl = widget.product.imageUrl;
+                  newImageUrl = await FirestorageHelper.uploadFile(
+                      FirestorageHelper.PRODUCT_IMAGES,
+                      widget.product.name.trim() + '_' + StringUtils.getRandomString(20),
+                      newImage);
 
-                  setState(() async {
-                    oldImageUrl = widget.product.imageUrl;
-                    newImageUrl = await FirestorageHelper.uploadFile(
-                        FirestorageHelper.PRODUCT_IMAGES,
-                        widget.product.id,
-                        newImage);
+                  setState(() {
+                    imagePath = imageFile.path;
                     isPhotoChanged = true;
                   });
                 },
               ),
               const SizedBox(height: 24),
               TextFieldWidget(
-                label: 'Name',
+                label: 'name',
                 text: widget.product.name,
                 onChanged: (name) =>
                     widget.product = widget.product.copyWith(name: name),
@@ -155,7 +158,7 @@ class _ProductAddEditScreenState extends State<ProductAddEditScreen> {
                         errorStyle: TextStyle(
                             color: Theme.of(context).errorColor,
                             fontSize: 16.0),
-                        hintText: 'Please select product type',
+                        hintText: 'please select product type',
                         border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(5.0))),
                     isEmpty: _productType == '',
@@ -195,7 +198,7 @@ class _ProductAddEditScreenState extends State<ProductAddEditScreen> {
                                   errorStyle: TextStyle(
                                       color: Theme.of(context).errorColor,
                                       fontSize: 16.0),
-                                  hintText: 'Please select product category',
+                                  hintText: 'please select product category',
                                   border: OutlineInputBorder(
                                       borderRadius:
                                           BorderRadius.circular(5.0))),
@@ -236,7 +239,7 @@ class _ProductAddEditScreenState extends State<ProductAddEditScreen> {
                                   errorStyle: TextStyle(
                                       color: Theme.of(context).errorColor,
                                       fontSize: 16.0),
-                                  hintText: 'Please select product category',
+                                  hintText: 'please select product category',
                                   border: OutlineInputBorder(
                                       borderRadius:
                                           BorderRadius.circular(5.0))),
@@ -269,7 +272,7 @@ class _ProductAddEditScreenState extends State<ProductAddEditScreen> {
 
               const SizedBox(height: 24),
               TextFieldWidget(
-                label: 'Description',
+                label: 'description',
                 text: widget.product.description,
                 maxLines: 5,
                 onChanged: (value) {
@@ -285,13 +288,13 @@ class _ProductAddEditScreenState extends State<ProductAddEditScreen> {
                 enableSuggestions: false,
                 validator: (value) {
                   if (value!.isEmpty) {
-                    return 'Please enter a valid price for the product.';
+                    return 'please enter a valid price for the product';
                   }
                   return null;
                 },
                 keyboardType: TextInputType.number,
                 decoration: const InputDecoration(
-                  labelText: 'Price',
+                  labelText: 'price',
                 ),
                 onChanged: (value) {
                   double? newPrice = double.tryParse(value);
@@ -307,13 +310,13 @@ class _ProductAddEditScreenState extends State<ProductAddEditScreen> {
                 enableSuggestions: false,
                 validator: (value) {
                   if (value!.isEmpty) {
-                    return 'Please enter a valid community price for the product.';
+                    return 'please enter a valid community price for the product';
                   }
                   return null;
                 },
                 keyboardType: TextInputType.number,
                 decoration: const InputDecoration(
-                  labelText: 'Community Price',
+                  labelText: 'community price',
                 ),
                 onChanged: (value) {
                   double? newPrice = double.tryParse(value);
@@ -330,13 +333,13 @@ class _ProductAddEditScreenState extends State<ProductAddEditScreen> {
                 enableSuggestions: false,
                 validator: (value) {
                   if (value!.isEmpty) {
-                    return 'Please enter a valid lowest community price for the product.';
+                    return 'please enter a valid lowest community price for the product';
                   }
                   return null;
                 },
                 keyboardType: TextInputType.number,
                 decoration: const InputDecoration(
-                  labelText: 'Community Lowest Price',
+                  labelText: 'community lowest price',
                 ),
                 onChanged: (value) {
                   double? newPrice = double.tryParse(value);
@@ -355,13 +358,13 @@ class _ProductAddEditScreenState extends State<ProductAddEditScreen> {
                 enableSuggestions: false,
                 validator: (value) {
                   if (value!.isEmpty) {
-                    return 'Please enter a valid highest community price for the product.';
+                    return 'please enter a valid highest community price for the product';
                   }
                   return null;
                 },
                 keyboardType: TextInputType.number,
                 decoration: const InputDecoration(
-                  labelText: 'Community Highest Price',
+                  labelText: 'community highest price',
                 ),
                 onChanged: (value) {
                   double? newPrice = double.tryParse(value);
@@ -401,7 +404,7 @@ class _ProductAddEditScreenState extends State<ProductAddEditScreen> {
                     width: 0,
                   ), //SizedBox
                   Text(
-                    'Available : ',
+                    'available : ',
                     style: TextStyle(fontSize: 17.0),
                   ), //Text
                   SizedBox(width: 10), //SizedBox
@@ -418,9 +421,9 @@ class _ProductAddEditScreenState extends State<ProductAddEditScreen> {
               ),
               const SizedBox(height: 24),
               ButtonWidget(
-                text: 'Save',
+                text: 'save',
                 onClicked: () {
-                  if (isPhotoChanged) {
+                 if (isPhotoChanged) {
                     widget.product =
                         widget.product.copyWith(imageUrl: newImageUrl);
                     FirestorageHelper.deleteFile(oldImageUrl);

@@ -49,11 +49,13 @@ class FirestoreHelper {
   static int TABLE_PRIVATE_TYPE_ID = 1;
   static int TABLE_COMMUNITY_TYPE_ID = 2;
 
-
   /** Blocs **/
   static void pushBloc(Bloc bloc) async {
     try {
-      await FirebaseFirestore.instance.collection(BLOCS).doc(bloc.id).set(bloc.toMap());
+      await FirebaseFirestore.instance
+          .collection(BLOCS)
+          .doc(bloc.id)
+          .set(bloc.toMap());
     } on PlatformException catch (err) {
       logger.e(err.message);
     } catch (err) {
@@ -100,7 +102,10 @@ class FirestoreHelper {
   /** Bloc Services **/
   static void pushBlocService(BlocService blocService) async {
     try {
-      await FirebaseFirestore.instance.collection(BLOC_SERVICES).doc(blocService.id).set(blocService.toMap());
+      await FirebaseFirestore.instance
+          .collection(BLOC_SERVICES)
+          .doc(blocService.id)
+          .set(blocService.toMap());
     } on PlatformException catch (err) {
       logger.e(err.message);
     } catch (err) {
@@ -109,11 +114,8 @@ class FirestoreHelper {
   }
 
   static pullAllBlocServices() {
-    return FirebaseFirestore.instance
-        .collection(BLOC_SERVICES)
-        .get();
+    return FirebaseFirestore.instance.collection(BLOC_SERVICES).get();
   }
-
 
   static Future<QuerySnapshot<Object?>> pullBlocService(String blocId) {
     return FirebaseFirestore.instance
@@ -134,8 +136,8 @@ class FirestoreHelper {
 
     return FirebaseFirestore.instance
         .collection(BLOC_SERVICES)
-    // .orderBy('sequence', descending: true)
-    // .where('ownerId', isEqualTo: user!.uid)
+        // .orderBy('sequence', descending: true)
+        // .where('ownerId', isEqualTo: user!.uid)
         .snapshots();
   }
 
@@ -230,14 +232,15 @@ class FirestoreHelper {
   }
 
   static Future<QuerySnapshot<Object?>> pullCompletedCartItemsByUser(
-      String userId,
-      bool isCompleted,
-      ) {
+    String userId,
+    bool isCompleted,
+  ) {
     return FirebaseFirestore.instance
         .collection(CART_ITEMS)
         .where('userId', isEqualTo: userId)
         .where('isCompleted', isEqualTo: isCompleted)
-        .orderBy('createdAt', descending: true) // createdAt could be used i guess
+        .orderBy('createdAt',
+            descending: true) // createdAt could be used i guess
         .get();
   }
 
@@ -377,7 +380,8 @@ class FirestoreHelper {
         .set(offer.toMap());
   }
 
-  static Future<QuerySnapshot<Map<String, dynamic>>> pullOffers(String blocServiceId) {
+  static Future<QuerySnapshot<Map<String, dynamic>>> pullOffers(
+      String blocServiceId) {
     return FirebaseFirestore.instance
         .collection(FirestoreHelper.OFFERS)
         .where('blocServiceId', isEqualTo: blocServiceId)
@@ -391,7 +395,8 @@ class FirestoreHelper {
         .snapshots();
   }
 
-  static Stream<QuerySnapshot<Object?>> getActiveOffers(String blocServiceId, bool isActive) {
+  static Stream<QuerySnapshot<Object?>> getActiveOffers(
+      String blocServiceId, bool isActive) {
     return FirebaseFirestore.instance
         .collection(OFFERS)
         .where('blocServiceId', isEqualTo: blocServiceId)
@@ -399,14 +404,17 @@ class FirestoreHelper {
         .snapshots();
   }
 
-  static void deleteOffer(String docId){
+  static void deleteOffer(String docId) {
     FirebaseFirestore.instance.collection(OFFERS).doc(docId).delete();
   }
 
   /** Party **/
   static void pushParty(Party party) async {
     try {
-      await FirebaseFirestore.instance.collection(PARTIES).doc(party.id).set(party.toMap());
+      await FirebaseFirestore.instance
+          .collection(PARTIES)
+          .doc(party.id)
+          .set(party.toMap());
     } on PlatformException catch (err) {
       logger.e(err.message);
     } catch (err) {
@@ -422,7 +430,8 @@ class FirestoreHelper {
         .get();
   }
 
-  static Future<QuerySnapshot<Map<String, dynamic>>> pullUpcomingParty(int timeNow) {
+  static Future<QuerySnapshot<Map<String, dynamic>>> pullUpcomingParty(
+      int timeNow) {
     return FirebaseFirestore.instance
         .collection(FirestoreHelper.PARTIES)
         .where('startTime', isGreaterThan: timeNow)
@@ -438,11 +447,13 @@ class FirestoreHelper {
         .snapshots();
   }
 
-
   /** Products **/
   static void pushProduct(Product product) async {
     try {
-      await FirebaseFirestore.instance.collection(PRODUCTS).doc(product.id).set(product.toMap());
+      await FirebaseFirestore.instance
+          .collection(PRODUCTS)
+          .doc(product.id)
+          .set(product.toMap());
     } on PlatformException catch (err) {
       logger.e(err.message);
     } catch (err) {
@@ -474,27 +485,28 @@ class FirestoreHelper {
 
     try {
       Product product = Product(
-        id: productId,
-        name: productName,
-        type: categoryType,
-        category: productCategory,
-        description: productDescription,
-        price: price,
-        serviceId: serviceId,
-        imageUrl: imageUrl,
-        ownerId: userId,
-        createdAt: timeMilliSec,
-        isAvailable: false,
-        priceHighest: price,
-        priceLowest: price,
-        priceCommunity: price,
-        priceHighestTime: timeMilliSec,
-        priceLowestTime: timeMilliSec,
-        isOfferRunning: false
-      );
+          id: productId,
+          name: productName,
+          type: categoryType,
+          category: productCategory,
+          description: productDescription,
+          price: price,
+          serviceId: serviceId,
+          imageUrl: imageUrl,
+          ownerId: userId,
+          createdAt: timeMilliSec,
+          isAvailable: false,
+          priceHighest: price,
+          priceLowest: price,
+          priceCommunity: price,
+          priceHighestTime: timeMilliSec,
+          priceLowestTime: timeMilliSec,
+          isOfferRunning: false);
 
-      await FirebaseFirestore.instance.collection(PRODUCTS).doc(productId).set(product.toMap());
-
+      await FirebaseFirestore.instance
+          .collection(PRODUCTS)
+          .doc(productId)
+          .set(product.toMap());
     } on PlatformException catch (err) {
       logger.e(err.message);
     } catch (err) {
@@ -547,7 +559,6 @@ class FirestoreHelper {
         .snapshots();
   }
 
-
   static void updateProductImage(String productId, File image) async {
     try {
       final url = await FirestorageHelper.uploadFile(
@@ -591,22 +602,25 @@ class FirestoreHelper {
     }
   }
 
-  static void setProductOfferRunning(String productId, bool isOfferRunning) async {
+  static void setProductOfferRunning(
+      String productId, bool isOfferRunning) async {
     try {
       await FirebaseFirestore.instance
           .collection(PRODUCTS)
           .doc(productId)
           .update({'isOfferRunning': isOfferRunning})
-          .then((value) => print("Product id " + productId + " is set to offer " + isOfferRunning.toString()))
-          .catchError(
-              (error) => print("Failed to update product offer status: $error"));
+          .then((value) => print("Product id " +
+              productId +
+              " is set to offer " +
+              isOfferRunning.toString()))
+          .catchError((error) =>
+              print("Failed to update product offer status: $error"));
     } on PlatformException catch (err) {
       logger.e(err.message);
     } catch (err) {
       logger.e(err);
     }
   }
-
 
   /** Seats **/
   static Stream<QuerySnapshot<Object?>> getSeatsByTableId(String tableId) {
@@ -616,7 +630,8 @@ class FirestoreHelper {
         .snapshots();
   }
 
-  static Future<QuerySnapshot<Map<String, dynamic>>> pullCustomerSeat(String blocId, String userId) {
+  static Future<QuerySnapshot<Map<String, dynamic>>> pullCustomerSeat(
+      String blocId, String userId) {
     return FirebaseFirestore.instance
         .collection(FirestoreHelper.SEATS)
         .where('serviceId', isEqualTo: blocId)
@@ -688,7 +703,8 @@ class FirestoreHelper {
   }
 
   /** Tables **/
-  static Future<QuerySnapshot<Map<String, dynamic>>>  pullSeatTable(String tableId) {
+  static Future<QuerySnapshot<Map<String, dynamic>>> pullSeatTable(
+      String tableId) {
     return FirebaseFirestore.instance
         .collection(FirestoreHelper.TABLES)
         .where('id', isEqualTo: tableId)
@@ -822,7 +838,10 @@ class FirestoreHelper {
   /** User **/
   static void pushUser(blocUser.User user) async {
     try {
-      await FirebaseFirestore.instance.collection(USERS).doc(user.id).set(user.toMap());
+      await FirebaseFirestore.instance
+          .collection(USERS)
+          .doc(user.id)
+          .set(user.toMap());
     } on PlatformException catch (err) {
       logger.e(err.message);
     } catch (err) {
@@ -896,7 +915,9 @@ class FirestoreHelper {
       var fileUrl = user.imageUrl;
       try {
         fileUrl = await FirestorageHelper.uploadFile(
-            FirestorageHelper.USERS, user.id, File(user.imageUrl));
+            FirestorageHelper.USERS,
+            user.name.trim() + '_' + StringUtils.getRandomString(15),
+            File(user.imageUrl));
         user = user.copyWith(imageUrl: fileUrl);
       } catch (err) {
         logger.e(err);
@@ -957,11 +978,8 @@ class FirestoreHelper {
   }
 
   static void deleteUser(blocUser.User user) {
-
     FirebaseFirestore.instance.collection(USERS).doc(user.id).delete();
-
   }
-
 
 /** Reference **/
 // _buildProducts(BuildContext context, String _category) {

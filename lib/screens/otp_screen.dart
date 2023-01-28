@@ -24,12 +24,23 @@ class _OTPScreenState extends State<OTPScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        appBar: AppBar(
+          backgroundColor: Theme.of(context).backgroundColor,
+          title: Text(''),
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+        ),
         backgroundColor: Theme.of(context).backgroundColor,
         body: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
+              Spacer(),
               Container(
-                  margin: const EdgeInsets.only(top: 100),
+                  margin: const EdgeInsets.only(top: 0),
                   child: Column(
                     children: [
                       Container(
@@ -58,7 +69,8 @@ class _OTPScreenState extends State<OTPScreen> {
                       //   )),
                       // ),
                       Padding(
-                        padding: const EdgeInsets.only(top: 20.0, left: 20, right: 20),
+                        padding: const EdgeInsets.only(
+                            top: 20.0, left: 20, right: 20),
                         child: Center(
                             child: Text(
                           'enter the six digit code you received on +91-${widget.phone}',
@@ -66,13 +78,13 @@ class _OTPScreenState extends State<OTPScreen> {
                           style: TextStyle(
                             color: Theme.of(context).primaryColorLight,
                             fontWeight: FontWeight.bold,
-
                             fontSize: 20,
                           ),
                         )),
                       ),
                     ],
                   )),
+              Spacer(),
               Container(
                 margin: EdgeInsets.only(top: 0),
                 child: FractionallySizedBox(
@@ -81,31 +93,34 @@ class _OTPScreenState extends State<OTPScreen> {
                       phone: widget.phone,
                     )),
               ),
-              Container(
-                margin: const EdgeInsets.only(left: 20, right: 20, bottom: 40),
-                width: double.infinity,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    primary: Theme.of(context).primaryColor,
-                    onPrimary: Colors.white,
-                    shadowColor: Colors.white30,
-                    elevation: 3,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(32.0)),
-                    minimumSize: Size(100, 60), //////// HERE
-                  ),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                    // Navigator.of(context).push(MaterialPageRoute(
-                    //     builder: (context) =>
-                    //         OTPScreen(_controller.text, widget.dao)));
-                  },
-                  child: Text(
-                    'back',
-                    style: TextStyle(fontSize: 20),
-                  ),
-                ),
-              )
+              Spacer(),
+              Spacer(),
+              // Container(
+              //   margin: const EdgeInsets.only(left: 20, right: 20, bottom: 40),
+              //   width: double.infinity,
+              //   child: ElevatedButton(
+              //     style: ElevatedButton.styleFrom(
+              //       primary: Theme.of(context).primaryColor,
+              //       onPrimary: Colors.white,
+              //       shadowColor: Colors.white30,
+              //       elevation: 3,
+              //       shape: RoundedRectangleBorder(
+              //           borderRadius: BorderRadius.circular(32.0)),
+              //       minimumSize: Size(100, 60), //////// HERE
+              //     ),
+              //     onPressed: () {
+              //
+              //       // Navigator.of(context).pop();
+              //       // Navigator.of(context).push(MaterialPageRoute(
+              //       //     builder: (context) =>
+              //       //         OTPScreen(_controller.text, widget.dao)));
+              //     },
+              //     child: Text(
+              //       'back',
+              //       style: TextStyle(fontSize: 20),
+              //     ),
+              //   ),
+              // )
             ]));
   }
 }
@@ -144,7 +159,8 @@ class _OTPVerifyState extends State<OTPVerify> {
       await FirebaseAuth.instance
           .signInWithPhoneNumber('+91${widget.phone}', null)
           .then((user) {
-        debugPrint('signInWithPhoneNumber: user verification id ' + user.verificationId);
+        debugPrint('signInWithPhoneNumber: user verification id ' +
+            user.verificationId);
         setState(() {
           _verificationCode = user.verificationId;
         });
@@ -155,7 +171,8 @@ class _OTPVerifyState extends State<OTPVerify> {
       await FirebaseAuth.instance.verifyPhoneNumber(
           phoneNumber: '+91${widget.phone}',
           verificationCompleted: (PhoneAuthCredential credential) async {
-            print('verifyPhoneNumber: +91${widget.phone} is verified. attempting sign in with credentials...');
+            print(
+                'verifyPhoneNumber: +91${widget.phone} is verified. attempting sign in with credentials...');
             await FirebaseAuth.instance
                 .signInWithCredential(credential)
                 .then((value) async {
@@ -183,16 +200,16 @@ class _OTPVerifyState extends State<OTPVerify> {
 
   @override
   Widget build(BuildContext context) {
-    const focusedBorderColor = Color.fromRGBO(255, 235, 59, 1);
+    const focusedBorderColor = Color.fromRGBO(222, 193, 170, 1);
     const fillColor = Color.fromRGBO(38, 50, 56, 1.0);
-    const borderColor = Color.fromRGBO(255, 193, 7, 1);
+    const borderColor = Color.fromRGBO(211, 167, 130, 1);
 
     final defaultPinTheme = PinTheme(
       width: 56,
       height: 56,
       textStyle: const TextStyle(
         fontSize: 22,
-        color: Color.fromRGBO(255, 235, 59, 1),
+        color: Color.fromRGBO(222, 193, 170, 1),
       ),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(19),

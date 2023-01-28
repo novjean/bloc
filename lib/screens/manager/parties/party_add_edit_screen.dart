@@ -29,6 +29,7 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
   bool isPhotoChanged = false;
   late String oldImageUrl;
   late String newImageUrl;
+  String imagePath = '';
 
   List<BlocService> blocServices = [];
   List<String> blocServiceNames = [];
@@ -181,7 +182,7 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
             children: [
               const SizedBox(height: 15),
               ProfileWidget(
-                imagePath: widget.party.imageUrl,
+                imagePath: imagePath.isEmpty ? widget.party.imageUrl : imagePath,
                 isEdit: true,
                 onClicked: () async {
                   final image = await ImagePicker().pickImage(
@@ -201,6 +202,7 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
                         FirestorageHelper.PARTY_IMAGES,
                         widget.party.id,
                         newImage);
+                    imagePath = imageFile.path;
                     isPhotoChanged = true;
                   });
                 },

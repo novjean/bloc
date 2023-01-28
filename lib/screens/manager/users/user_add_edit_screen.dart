@@ -29,6 +29,7 @@ class _UserAddEditScreenState extends State<UserAddEditScreen> {
   bool isPhotoChanged = false;
   late String oldImageUrl;
   late String newImageUrl;
+  String imagePath = '';
 
   List<BlocService> blocServices = [];
   List<String> blocServiceNames = [];
@@ -47,7 +48,7 @@ class _UserAddEditScreenState extends State<UserAddEditScreen> {
     super.initState();
 
     FirestoreHelper.pullAllBlocServices().then((res) {
-      print("successfully pulled in all bloc services... ");
+      print("successfully pulled in all bloc services");
 
       if (res.docs.isNotEmpty) {
         List<BlocService> _blocServices = [];
@@ -81,7 +82,7 @@ class _UserAddEditScreenState extends State<UserAddEditScreen> {
   @override
   Widget build(BuildContext context) => Scaffold(
     appBar: AppBar(
-      title: Text('User | ' + widget.task),
+      title: Text('user | ' + widget.task),
     ),
     body: _buildBody(context),
   );
@@ -113,17 +114,17 @@ class _UserAddEditScreenState extends State<UserAddEditScreen> {
   //   }
   // }
 
-  Future<TimeOfDay> _selectTime(BuildContext context) async {
-    TimeOfDay initialTime = TimeOfDay.now();
-
-    TimeOfDay? pickedTime = await showTimePicker(
-      context: context,
-      initialTime: initialTime,
-    );
-
-    _sTimeOfDay = pickedTime!;
-    return _sTimeOfDay;
-  }
+  // Future<TimeOfDay> _selectTime(BuildContext context) async {
+  //   TimeOfDay initialTime = TimeOfDay.now();
+  //
+  //   TimeOfDay? pickedTime = await showTimePicker(
+  //     context: context,
+  //     initialTime: initialTime,
+  //   );
+  //
+  //   _sTimeOfDay = pickedTime!;
+  //   return _sTimeOfDay;
+  // }
 
   // Widget dateTimeContainer(BuildContext context, String type) {
   //   DateTime dateTime = type=='Start' ? sStartDateTime:sEndDateTime;
@@ -173,7 +174,7 @@ class _UserAddEditScreenState extends State<UserAddEditScreen> {
   _buildBody(BuildContext context) {
     return _isBlocServicesLoading
         ? Center(
-      child: Text('Loading user...'),
+      child: Text('loading user...'),
     )
         : ListView(
       padding: EdgeInsets.symmetric(horizontal: 32),
@@ -181,7 +182,7 @@ class _UserAddEditScreenState extends State<UserAddEditScreen> {
       children: [
         const SizedBox(height: 15),
         ProfileWidget(
-          imagePath: widget.user.imageUrl,
+          imagePath: imagePath.isEmpty? widget.user.imageUrl:imagePath,
           isEdit: true,
           onClicked: () async {
             final image = await ImagePicker().pickImage(
@@ -195,12 +196,14 @@ class _UserAddEditScreenState extends State<UserAddEditScreen> {
             final imageFile = File('${directory.path}/$name');
             final newImage = await File(image.path).copy(imageFile.path);
 
+            oldImageUrl = widget.user.imageUrl;
+            newImageUrl = await FirestorageHelper.uploadFile(
+                FirestorageHelper.USER_IMAGES,
+                widget.user.id,
+                newImage);
+
             setState(() async {
-              oldImageUrl = widget.user.imageUrl;
-              newImageUrl = await FirestorageHelper.uploadFile(
-                  FirestorageHelper.USER_IMAGES,
-                  widget.user.id,
-                  newImage);
+              imagePath = imageFile.path;
               isPhotoChanged = true;
             });
           },
@@ -241,7 +244,7 @@ class _UserAddEditScreenState extends State<UserAddEditScreen> {
                   errorStyle: TextStyle(
                       color: Theme.of(context).errorColor,
                       fontSize: 16.0),
-                  hintText: 'Please select bloc service',
+                  hintText: 'please select bloc service',
                   border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(5.0))),
               isEmpty: _sBlocServiceName == '',
@@ -325,7 +328,7 @@ class _UserAddEditScreenState extends State<UserAddEditScreen> {
 
         const SizedBox(height: 24),
         ButtonWidget(
-          text: 'Save',
+          text: 'save',
           onClicked: () {
             if (isPhotoChanged) {
               widget.user = widget.user.copyWith(imageUrl: newImageUrl);

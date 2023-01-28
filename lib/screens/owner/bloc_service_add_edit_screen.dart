@@ -27,6 +27,7 @@ class _BlocServiceAddEditScreenState extends State<BlocServiceAddEditScreen> {
   bool isPhotoChanged = false;
   late String oldImageUrl;
   late String newImageUrl;
+  String imagePath ='';
 
   @override
   void initState() {
@@ -36,7 +37,7 @@ class _BlocServiceAddEditScreenState extends State<BlocServiceAddEditScreen> {
   @override
   Widget build(BuildContext context) => Scaffold(
     appBar: AppBar(
-      title: Text('Bloc Service | ' + widget.task),
+      title: Text('bloc service | ' + widget.task),
     ),
     body: _buildBody(context),
   );
@@ -48,7 +49,7 @@ class _BlocServiceAddEditScreenState extends State<BlocServiceAddEditScreen> {
       children: [
         const SizedBox(height: 15),
         ProfileWidget(
-          imagePath: widget.blocService.imageUrl,
+          imagePath: imagePath.isEmpty? widget.blocService.imageUrl:imagePath,
           isEdit: true,
           onClicked: () async {
             final image = await ImagePicker().pickImage(
@@ -68,20 +69,21 @@ class _BlocServiceAddEditScreenState extends State<BlocServiceAddEditScreen> {
                   FirestorageHelper.BLOCS_SERVICES_IMAGES,
                   widget.blocService.id,
                   newImage);
+              imagePath = imageFile.path;
               isPhotoChanged = true;
             });
           },
         ),
         const SizedBox(height: 24),
         TextFieldWidget(
-          label: 'Name',
+          label: 'name',
           text: widget.blocService.name,
           onChanged: (name) =>
           widget.blocService = widget.blocService.copyWith(name: name),
         ),
         const SizedBox(height: 24),
         TextFieldWidget(
-          label: 'Type',
+          label: 'type',
           text: widget.blocService.type,
           onChanged: (value) {
             widget.blocService = widget.blocService.copyWith(type: value);
@@ -96,13 +98,13 @@ class _BlocServiceAddEditScreenState extends State<BlocServiceAddEditScreen> {
           enableSuggestions: false,
           validator: (value) {
             if (value!.isEmpty) {
-              return 'Please enter a valid phone number.';
+              return 'please enter a valid phone number';
             }
             return null;
           },
           keyboardType: TextInputType.number,
           decoration: const InputDecoration(
-            labelText: 'Primary Phone',
+            labelText: 'primary phone',
           ),
           onChanged: (value) {
             double? number = double.tryParse(value);
@@ -118,13 +120,13 @@ class _BlocServiceAddEditScreenState extends State<BlocServiceAddEditScreen> {
           enableSuggestions: false,
           validator: (value) {
             if (value!.isEmpty) {
-              return 'Please enter a valid phone number.';
+              return 'please enter a valid phone number';
             }
             return null;
           },
           keyboardType: TextInputType.number,
           decoration: const InputDecoration(
-            labelText: 'Secondary Phone',
+            labelText: 'secondary phone',
           ),
           onChanged: (value) {
             double? number = double.tryParse(value);
@@ -133,7 +135,7 @@ class _BlocServiceAddEditScreenState extends State<BlocServiceAddEditScreen> {
         ),
         const SizedBox(height: 24),
         TextFieldWidget(
-          label: 'Email Address',
+          label: 'email address',
           text: widget.blocService.emailId,
           onChanged: (value) {
             widget.blocService = widget.blocService.copyWith(emailId: value);
@@ -141,7 +143,7 @@ class _BlocServiceAddEditScreenState extends State<BlocServiceAddEditScreen> {
         ),
         const SizedBox(height: 24),
         ButtonWidget(
-          text: 'Save',
+          text: 'save',
           onClicked: () {
             if (isPhotoChanged) {
               widget.blocService =

@@ -11,6 +11,7 @@ import '../../db/entity/user.dart' as blocUser;
 import '../../db/shared_preferences/user_preferences.dart';
 import '../../helpers/firestorage_helper.dart';
 import '../../helpers/firestore_helper.dart';
+import '../../utils/string_utils.dart';
 import '../../widgets/profile_widget.dart';
 import '../../widgets/ui/button_widget.dart';
 import '../../widgets/ui/textfield_widget.dart';
@@ -30,16 +31,11 @@ class ProfileAddEditRegisterPage extends StatefulWidget {
 
 class _ProfileAddEditRegisterPageState
     extends State<ProfileAddEditRegisterPage> {
-  late blocUser.User user;
   bool isPhotoChanged = false;
+
   late String oldImageUrl;
-
-  @override
-  void initState() {
-    super.initState();
-
-    user = UserPreferences.getUser();
-  }
+  late String newImageUrl;
+  String imagePath = '';
 
   @override
   Widget build(BuildContext context) => Scaffold(
@@ -75,7 +71,7 @@ class _ProfileAddEditRegisterPageState
       children: [
         const SizedBox(height: 15),
         ProfileWidget(
-          imagePath: user.imageUrl,
+          imagePath: imagePath.isEmpty ? widget.user.imageUrl : imagePath,
           isEdit: true,
           onClicked: () async {
             final image = await ImagePicker().pickImage(
@@ -87,9 +83,15 @@ class _ProfileAddEditRegisterPageState
             final imageFile = File('${directory.path}/$name');
             final newImage = await File(image.path).copy(imageFile.path);
 
+            oldImageUrl = widget.user.imageUrl;
+            newImageUrl = await FirestorageHelper.uploadFile(
+                FirestorageHelper.USER_IMAGES,
+                StringUtils.getRandomString(28),
+                newImage);
+
             setState(() {
-              oldImageUrl = user.imageUrl;
-              user = user.copyWith(imageUrl: newImage.path);
+              // user = user.copyWith(imageUrl: newImage.path);
+              imagePath = imageFile.path;
               isPhotoChanged = true;
             });
           },
@@ -97,14 +99,14 @@ class _ProfileAddEditRegisterPageState
         const SizedBox(height: 24),
         TextFieldWidget(
           label: 'name',
-          text: user.name,
-          onChanged: (name) => user = user.copyWith(name: name),
+          text: widget.user.name,
+          onChanged: (name) => widget.user = widget.user.copyWith(name: name),
         ),
         const SizedBox(height: 24),
         TextFieldWidget(
           label: 'email',
-          text: user.email,
-          onChanged: (email) => user = user.copyWith(email: email),
+          text: widget.user.email,
+          onChanged: (email) => widget.user = widget.user.copyWith(email: email),
         ),
         const SizedBox(height: 24),
         // TextFieldWidget(
@@ -119,16 +121,15 @@ class _ProfileAddEditRegisterPageState
           onClicked: () {
             // we should have some validation here
             if (isDataValid()) {
-              UserPreferences.setUser(user);
-
               if (isPhotoChanged) {
+                widget.user = widget.user.copyWith(imageUrl: newImageUrl);
                 if (oldImageUrl.isNotEmpty) {
                   FirestorageHelper.deleteFile(oldImageUrl);
                 }
               }
 
-              FirestoreHelper.updateUser(user, isPhotoChanged);
-
+              UserPreferences.setUser(widget.user);
+              FirestoreHelper.pushUser(widget.user);
               Navigator.of(context).pop();
             } else {
               print('user cannot be entered as data is incomplete');
@@ -140,11 +141,11 @@ class _ProfileAddEditRegisterPageState
   }
 
   bool isDataValid() {
-    if (user.name.isEmpty) {
+    if (widget.user.name.isEmpty) {
       Toaster.longToast('please enter your name');
       return false;
     }
-    if (user.email.isEmpty) {
+    if (widget.user.email.isEmpty) {
       Toaster.longToast('please enter your email id');
       return false;
     }

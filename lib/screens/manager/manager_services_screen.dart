@@ -24,7 +24,7 @@ class ManagerServicesScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Manager | Services'),
+        title: const Text('manager | services'),
       ),
       // drawer: AppDrawer(),
       body: _buildBody(context),
