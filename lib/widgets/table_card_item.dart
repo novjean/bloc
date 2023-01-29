@@ -38,8 +38,8 @@ class _TableCardItemState extends State<TableCardItem> {
           children: [
             Text(
               widget.tableNumber == -1
-                  ? 'Table : Unassigned'
-                  : 'Table : ' + widget.tableNumber.toString(),
+                  ? 'table : unassigned'
+                  : 'table : ' + widget.tableNumber.toString(),
               style: TextStyle(
                 fontSize: 16,
               ),
@@ -48,9 +48,9 @@ class _TableCardItemState extends State<TableCardItem> {
             Spacer(),
             widget.tableNumber == -1
                 ? ButtonWidget(
-                    text: 'Scan Table',
+                    text: 'scan table',
                     onClicked: () {
-                      Toaster.shortToast('Scanning for table QR code...');
+                      Toaster.shortToast('scanning for table QR code...');
 
                       User user = UserPreferences.getUser();
                       scanTableQR(user);
@@ -71,7 +71,7 @@ class _TableCardItemState extends State<TableCardItem> {
           '#ff6666', 'Cancel', true, ScanMode.QR);
       print(scanTableId);
     } on PlatformException {
-      scanTableId = 'Failed to get platform version.';
+      scanTableId = 'failed to get platform version.';
     }
 
     // If the widget was removed from the tree while the asynchronous platform
@@ -101,7 +101,6 @@ class _TableCardItemState extends State<TableCardItem> {
               Map<String, dynamic> data =
                   document.data()! as Map<String, dynamic>;
               final Seat seat = Seat.fromMap(data);
-              // BlocRepository.insertSeat(widget.dao, seat);
 
               if (seat.custId.isEmpty) {
                 FirestoreHelper.updateSeat(seat.id, user.id);
@@ -123,7 +122,7 @@ class _TableCardItemState extends State<TableCardItem> {
             print('seats could not be found for ' + scanTableId);
           }
         },
-        onError: (e) => print("Error completing: $e"),
+        onError: (e) => print("error: $e"),
       );
     } else {
       Toaster.shortToast('not signed in, write go to log in logic here!');
@@ -131,11 +130,11 @@ class _TableCardItemState extends State<TableCardItem> {
   }
 
   _displayTableType() {
-    String tableType = widget.isCommunity ? 'Community' : 'Private';
+    String tableType = widget.isCommunity ? 'community' : 'private';
     return ButtonWidget(
       text: tableType,
       onClicked: () {
-        Toaster.shortToast('You are sitting in a ' + tableType + ' table');
+        Toaster.shortToast('you are sitting in a ' + tableType + ' table');
       },
     );
   }

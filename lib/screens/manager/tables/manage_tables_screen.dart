@@ -26,12 +26,12 @@ class ManageTablesScreen extends StatefulWidget {
 }
 
 class _ManageTablesScreenState extends State<ManageTablesScreen> {
-  String _selectedType = 'Community';
+  String _selectedType = 'private';
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(widget.userTitle + ' | ' + widget.serviceName)),
+      appBar: AppBar(title: Text('manage | tables')),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.of(context).push(
@@ -46,7 +46,7 @@ class _ManageTablesScreenState extends State<ManageTablesScreen> {
           size: 29,
         ),
         backgroundColor: Theme.of(context).primaryColor,
-        tooltip: 'New Table',
+        tooltip: 'new table',
         elevation: 5,
         splashColor: Colors.grey,
       ),
@@ -69,7 +69,7 @@ class _ManageTablesScreenState extends State<ManageTablesScreen> {
   }
 
   _displayOptions(BuildContext context) {
-    List<String> _options = ['Community', 'Private'];
+    List<String> _options = ['private', 'community'];
     double containerHeight = MediaQuery.of(context).size.height / 20;
 
     return SizedBox(
@@ -88,9 +88,8 @@ class _ManageTablesScreenState extends State<ManageTablesScreen> {
                 ),
                 onTap: () {
                   setState(() {
-                    // _sCategory = categories[index];
                     _selectedType = _options[index];
-                    print(_selectedType + ' tables display option is selected.');
+                    print(_selectedType + ' tables display option is selected');
                   });
                 });
           }),
@@ -100,10 +99,13 @@ class _ManageTablesScreenState extends State<ManageTablesScreen> {
   _buildTables(BuildContext context) {
     final user = UserPreferences.getUser();
     final Stream<QuerySnapshot<Object?>> stream;
-    if(user.clearanceLevel>=Constants.CAPTAIN_LEVEL && user.clearanceLevel<Constants.MANAGER_LEVEL){
-      stream = FirestoreHelper.getTablesByTypeAndUser(widget.blocServiceId, user.id, _selectedType);
+    if (user.clearanceLevel >= Constants.CAPTAIN_LEVEL &&
+        user.clearanceLevel < Constants.MANAGER_LEVEL) {
+      stream = FirestoreHelper.getTablesByTypeAndUser(
+          widget.blocServiceId, user.id, _selectedType);
     } else {
-      stream = FirestoreHelper.getTablesByType(widget.blocServiceId, _selectedType);
+      stream =
+          FirestoreHelper.getTablesByType(widget.blocServiceId, _selectedType);
     }
 
     return StreamBuilder<QuerySnapshot>(
@@ -122,90 +124,46 @@ class _ManageTablesScreenState extends State<ManageTablesScreen> {
             Map<String, dynamic> data =
                 document.data()! as Map<String, dynamic>;
             final ServiceTable serviceTable = ServiceTable.fromMap(data);
-            // BlocRepository.insertServiceTable(widget.dao, serviceTable);
             serviceTables.add(serviceTable);
-
-            if (i == snapshot.data!.docs.length - 1) {
-              return _displayServiceTables(context, serviceTables);
-            }
           }
-          return Text('Pulling tables...');
+          return _displayServiceTables(context, serviceTables);
         });
   }
 
   _displayServiceTables(
       BuildContext context, List<ServiceTable> serviceTables) {
-    return Expanded(
-      child: ListView.builder(
-          itemCount: serviceTables.length,
-          scrollDirection: Axis.vertical,
-          itemBuilder: (ctx, index) {
-            return GestureDetector(
-                child: ServiceTableItem(
-                  serviceTable: serviceTables[index],
-                ),
-                // chick my frever love
-                onDoubleTap: () {
-                  logger.d('double tap selected : ' + index.toString());
-                  FirestoreHelper.changeTableColor(serviceTables[index]);
-                },
-                onTap: () {
-                  logger.d('tap selected : ' + index.toString());
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                        builder: (context) => ManageSeatsScreen(
-                            serviceId: widget.blocServiceId,
-                            serviceTable: serviceTables[index])),
-                  );
-                  // showOptionsDialog(context, serviceTables[index]);
-                });
-          }),
-    );
+    if (serviceTables.isEmpty) {
+      return Text('pulling tables...');
+    } else {
+      return Expanded(
+        child: ListView.builder(
+            itemCount: serviceTables.length,
+            scrollDirection: Axis.vertical,
+            itemBuilder: (ctx, index) {
+              return GestureDetector(
+                  child: ServiceTableItem(
+                    serviceTable: serviceTables[index],
+                  ),
+                  // chick my frever love
+                  onDoubleTap: () {
+                    if (UserPreferences.myUser.clearanceLevel >=
+                        Constants.MANAGER_LEVEL) {
+                      logger.d('double tap selected : ' + index.toString());
+                      FirestoreHelper.changeTableColor(serviceTables[index]);
+                    }
+                  },
+                  onTap: () {
+                    logger.d('tap selected : ' + index.toString());
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                          builder: (context) => ManageSeatsScreen(
+                              serviceId: widget.blocServiceId,
+                              serviceTable: serviceTables[index])),
+                    );
+                    // showOptionsDialog(context, serviceTables[index]);
+                  });
+            }),
+      );
+    }
   }
-
-  // showOptionsDialog(BuildContext context, ServiceTable _table) {
-  //   // set up the AlertDialog for Table options
-  //   AlertDialog alert = AlertDialog(
-  //     title: Text("Table Options"),
-  //     content: Text("Please select what action would you like to perform."),
-  //     actions: [
-  //       TextButton(
-  //         child: Text("Cancel"),
-  //         onPressed: () {
-  //           Navigator.of(context).pop();
-  //         },
-  //       ),
-  //       TextButton(
-  //         child: Text("Change Color"),
-  //         onPressed: () {
-  //           Navigator.of(context).pop();
-  //
-  //           FirestoreHelper.changeTableColor(_table);
-  //         },
-  //       ),
-  //       TextButton(
-  //         child: Text("Manage Seats"),
-  //         onPressed: () {
-  //           Navigator.of(context).pop();
-  //
-  //           Navigator.of(context).push(
-  //             MaterialPageRoute(
-  //                 builder: (context) => SeatsManagementScreen(
-  //                     serviceId: widget.blocServiceId,
-  //                     dao: widget.dao,
-  //                     serviceTable: _table)),
-  //           );
-  //         },
-  //       ),
-  //     ],
-  //   );
-  //
-  //   // show the dialog
-  //   showDialog(
-  //     context: context,
-  //     builder: (BuildContext context) {
-  //       return alert;
-  //     },
-  //   );
-  // }
 }

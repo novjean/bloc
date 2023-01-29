@@ -1,4 +1,6 @@
 import 'package:bloc/db/bloc_repository.dart';
+import 'package:bloc/db/entity/user_level.dart';
+import 'package:bloc/db/shared_preferences/user_preferences.dart';
 import 'package:bloc/helpers/dummy.dart';
 import 'package:bloc/helpers/firestorage_helper.dart';
 import 'package:bloc/screens/manager/users/user_add_edit_screen.dart';
@@ -7,7 +9,6 @@ import 'package:flutter/material.dart';
 
 import '../../../db/entity/user.dart';
 import '../../../helpers/firestore_helper.dart';
-import '../../../utils/constants.dart';
 import '../../../widgets/manager/user_item.dart';
 import '../../../widgets/ui/sized_listview_block.dart';
 
@@ -19,17 +20,46 @@ class ManageUsersScreen extends StatefulWidget {
 }
 
 class _ManageUsersScreenState extends State<ManageUsersScreen> {
-  String _selectedType = 'captain';
+  String _selectedType = 'customer';
+  List<UserLevel> mUserLevels = [];
+  var _isUserLevelsLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+
+    // lets pull in user levels
+    FirestoreHelper.pullUserLevels(UserPreferences.myUser.clearanceLevel).then((res) {
+      print("successfully retrieved user levels");
+
+      if (res.docs.isNotEmpty) {
+        List<UserLevel> _userLevels = [];
+        for (int i = 0; i < res.docs.length; i++) {
+          DocumentSnapshot document = res.docs[i];
+          Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+          final UserLevel userLevel = UserLevel.fromMap(data);
+          _userLevels.add(userLevel);
+        }
+
+        setState(() {
+          mUserLevels = _userLevels;
+          _isUserLevelsLoading = false;
+        });
+      } else {
+        print('no user levels found!');
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('manager | users')),
+      appBar: AppBar(title: Text('manage | users')),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.of(context).push(MaterialPageRoute(
               builder: (ctx) =>
-                  UserAddEditScreen(user: Dummy.getDummyUser(), task: 'Add')));
+                  UserAddEditScreen(user: Dummy.getDummyUser(), task: 'Add', userLevels: mUserLevels,)));
         },
         child: Icon(
           Icons.add,
@@ -49,38 +79,38 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
   _buildBody(BuildContext context) {
     return Column(
       children: [
-        const SizedBox(height: 2.0),
-        _displayOptions(context),
-        const Divider(),
-        SizedBox(height: 2.0),
+        const SizedBox(height: 5.0),
+        _isUserLevelsLoading? const SizedBox(): _displayUserLevels(context),
+        // _displayOptions(context),
+        // const Divider(),
+        SizedBox(height: 5.0),
         _buildUsers(context),
-        SizedBox(height: 2.0),
+        SizedBox(height: 5.0),
       ],
     );
   }
 
-  _displayOptions(BuildContext context) {
-    List<String> _options = ['captain', 'customers'];
+  _displayUserLevels(BuildContext context){
     double containerHeight = MediaQuery.of(context).size.height / 20;
 
-    return SizedBox(
+    return Container(
       key: UniqueKey(),
       // this height has to match with category item container height
-      height: containerHeight,
+      height: MediaQuery.of(context).size.height / 14,
       child: ListView.builder(
-          itemCount: _options.length,
+          itemCount: mUserLevels.length,
           scrollDirection: Axis.horizontal,
           itemBuilder: (ctx, index) {
             return GestureDetector(
                 child: SizedListViewBlock(
-                  title: _options[index],
+                  title: mUserLevels[index].name,
                   height: containerHeight,
-                  width: MediaQuery.of(context).size.width / 2,
+                  width: MediaQuery.of(context).size.width / 2.5,
                 ),
                 onTap: () {
                   setState(() {
-                    _selectedType = _options[index];
-                    print(_selectedType + ' users display option is selected.');
+                    _selectedType = mUserLevels[index].name;
+                    print(_selectedType + ' user level is selected');
                   });
                 });
           }),
@@ -88,19 +118,16 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
   }
 
   _buildUsers(BuildContext context) {
-    int lowLevel = 0;
-    int highLevel = 9;
-
-    if (_selectedType == 'captain') {
-      lowLevel = Constants.CAPTAIN_LEVEL;
-      highLevel = Constants.MANAGER_LEVEL - 1;
-    } else {
-      lowLevel = Constants.USER_LEVEL;
-      highLevel = Constants.CAPTAIN_LEVEL - 1;
+    int sLevel = 1;
+    for(UserLevel userLevel in mUserLevels){
+      if(userLevel.name == _selectedType.toLowerCase()){
+        sLevel = userLevel.level;
+        break;
+      }
     }
 
     return StreamBuilder<QuerySnapshot>(
-        stream: FirestoreHelper.getUsersInRange(lowLevel, highLevel),
+        stream: FirestoreHelper.getUsersByLevel(sLevel),
         builder: (ctx, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(
@@ -174,55 +201,9 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
 
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (ctx) =>
-                          UserAddEditScreen(user: sUser, task: 'edit')));
+                          UserAddEditScreen(user: sUser, task: 'edit', userLevels: mUserLevels,)));
                 });
           }),
     );
   }
-
-// showOptionsDialog(BuildContext context, ServiceTable _table) {
-//   // set up the AlertDialog for Table options
-//   AlertDialog alert = AlertDialog(
-//     title: Text("Table Options"),
-//     content: Text("Please select what action would you like to perform."),
-//     actions: [
-//       TextButton(
-//         child: Text("Cancel"),
-//         onPressed:  () {
-//           Navigator.of(context).pop();
-//         },
-//       ),
-//       TextButton(
-//         child: Text("Change Color"),
-//         onPressed:  () {
-//           Navigator.of(context).pop();
-//
-//           FirestoreHelper.changeTableColor(_table);
-//         },
-//       ),
-//       TextButton(
-//         child: Text("Manage Seats"),
-//         onPressed:  () {
-//           Navigator.of(context).pop();
-//
-//           // Navigator.of(context).push(
-//           //   MaterialPageRoute(
-//           //       builder: (context) => SeatsManagementScreen(
-//           //           serviceId: serviceId,
-//           //           dao: dao,
-//           //           serviceTable: _table)),
-//           // );
-//         },
-//       ),
-//     ],
-//   );
-//
-//   // show the dialog
-//   showDialog(
-//     context: context,
-//     builder: (BuildContext context) {
-//       return alert;
-//     },
-//   );
-// }
 }

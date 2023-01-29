@@ -75,44 +75,48 @@ class _ProductItemState extends State<ProductItem> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: <Widget>[
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            Text(widget.product.name.toLowerCase(),
-                                style: const TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                )),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 5.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              Text(widget.product.name.toLowerCase(),
+                                  style: const TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                  )),
 
-                            //check if offer
-                            widget.isOnOffer
-                                ? Text(
-                                    '\u20B9 ${widget.isCommunity ? widget.offer.offerPriceCommunity.toStringAsFixed(2) : widget.offer.offerPricePrivate.toStringAsFixed(2)}',
-                                    style: const TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold))
-                                : Text(
-                                    '\u20B9 ${widget.isCommunity ? widget.product.priceCommunity.toStringAsFixed(2) : widget.product.price.toStringAsFixed(2)}',
-                                    style: TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold)),
-                            // Icon(Icons.delete_outline)
-                          ],
+                              //check if offer
+                              widget.isOnOffer
+                                  ? Text(
+                                      widget.isCommunity ? widget.offer.offerPriceCommunity.toStringAsFixed(0) : widget.offer.offerPricePrivate.toStringAsFixed(0),
+                                      style: const TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.w500))
+                                  : Text(
+                                      widget.isCommunity ? widget.product.priceCommunity.toStringAsFixed(0) : widget.product.price.toStringAsFixed(0),
+                                      style: TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.w500)),
+                              // Icon(Icons.delete_outline)
+                            ],
+                          ),
                         ),
-                        SizedBox(height: 2),
+                        const SizedBox(height: 5),
                         widget.isCommunity
                             ? Row(
                                 children: [
+                                  //\u20B9
                                   Text(
-                                      '\u20B9 ${widget.product.priceLowest.toStringAsFixed(2)}',
-                                      style: TextStyle(
+                                      widget.product.priceLowest.toStringAsFixed(0),
+                                      style: const TextStyle(
                                           fontSize: 14,
                                           fontWeight: FontWeight.bold,
                                           color: Colors.green)),
                                   Text(' | '),
                                   Text(
-                                      '\u20B9 ${widget.product.priceHighest.toStringAsFixed(2)}',
-                                      style: TextStyle(
+                                      widget.product.priceHighest.toStringAsFixed(0),
+                                      style: const TextStyle(
                                           fontSize: 15,
                                           fontWeight: FontWeight.bold,
                                           color: Colors.redAccent)),
@@ -122,7 +126,7 @@ class _ProductItemState extends State<ProductItem> {
                                               widget.offer.offerPercent
                                                   .toStringAsFixed(0) +
                                               '% off',
-                                          style: TextStyle(
+                                          style: const TextStyle(
                                               fontSize: 15,
                                               fontWeight: FontWeight.bold,
                                               color: Colors.blue),
@@ -136,13 +140,13 @@ class _ProductItemState extends State<ProductItem> {
                                         widget.offer.offerPercent
                                             .toStringAsFixed(0) +
                                         '% off',
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                         fontSize: 15,
                                         fontWeight: FontWeight.bold,
                                         color: Colors.blue),
                                   )
-                                : SizedBox(height: 0),
-                        SizedBox(height: 2),
+                                : const SizedBox(height: 0),
+                        const SizedBox(height: 2),
                         Text(
                             StringUtils.firstFewWords(
                                     widget.product.description.toLowerCase(), 25) +
@@ -179,7 +183,7 @@ class _ProductItemState extends State<ProductItem> {
                                 child: ButtonWidget(
                                   text: widget.addCount == 1
                                       ? 'add'
-                                      : 'add' + widget.addCount.toString(),
+                                      : 'add ' + widget.addCount.toString(),
                                   onClicked: () {
                                     // add it to the cart
                                     String cartId =
@@ -232,7 +236,7 @@ class _ProductItemState extends State<ProductItem> {
                                     });
 
                                     Toaster.shortToast(widget.product.name.toLowerCase() +
-                                        ' is added to cart.');
+                                        ' is added to cart');
                                   },
                                 )),
                             IconButton(

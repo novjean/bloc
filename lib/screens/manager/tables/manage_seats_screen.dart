@@ -68,7 +68,7 @@ class _ManageSeatsScreenState extends State<ManageSeatsScreen> {
               }
 
               return Card(
-                margin: const EdgeInsets.all(20),
+                margin: const EdgeInsets.all(0),
                 child: SingleChildScrollView(
                   child: Padding(
                     padding: const EdgeInsets.all(16),
@@ -76,7 +76,7 @@ class _ManageSeatsScreenState extends State<ManageSeatsScreen> {
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Text('Captain:'),
+                          Text('captain:', textAlign: TextAlign.start,),
                           SizedBox(height: 4.0),
                           FormField<String>(
                             builder: (FormFieldState<String> state) {
@@ -85,7 +85,7 @@ class _ManageSeatsScreenState extends State<ManageSeatsScreen> {
                                 decoration: InputDecoration(
                                     errorStyle:
                                         TextStyle(color: Colors.redAccent, fontSize: 16.0),
-                                    hintText: 'Please select captain',
+                                    hintText: 'please select captain',
                                     border: OutlineInputBorder(
                                         borderRadius: BorderRadius.circular(5.0))),
                                 isEmpty: _tableCaptain == '',
@@ -125,7 +125,7 @@ class _ManageSeatsScreenState extends State<ManageSeatsScreen> {
               // return _displayUsers(context, _users);
             }
           }
-          return Text('Pulling captain users...');
+          return Text('pulling captain users...');
         });
   }
 
@@ -133,8 +133,7 @@ class _ManageSeatsScreenState extends State<ManageSeatsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          title: Text('Seat Management | Table ' +
-              widget.serviceTable.tableNumber.toString())),
+          title: const Text('manage |  seats ')),
       body: _buildBody(context, widget.serviceTable),
     );
   }
@@ -142,24 +141,43 @@ class _ManageSeatsScreenState extends State<ManageSeatsScreen> {
   _buildBody(BuildContext context, ServiceTable serviceTable) {
     return Column(
       children: [
-        SizedBox(height: 2.0),
-        BarcodeWidget(
-          barcode: Barcode.qrCode(), // Barcode type and settings
-          data: serviceTable.id, // Content
-          width: 128,
-          height: 128,
+        const SizedBox(height: 10.0),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(left: 15.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Text('table : ' + widget.serviceTable.tableNumber.toString(), style: TextStyle(fontSize: 20),),
+                  const SizedBox(height: 10),
+                  Text('seats : ' + widget.serviceTable.capacity.toString(), style: TextStyle(fontSize: 20),),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(right: 15.0),
+              child: BarcodeWidget(
+                barcode: Barcode.qrCode(), // Barcode type and settings
+                data: serviceTable.id, // Content
+                width: 128,
+                height: 128,
+              ),
+            ),
+          ],
         ),
-        SizedBox(height: 2.0),
+
+        SizedBox(height: 10.0),
         captainSelectWidget,
-        SizedBox(height: 2.0),
+        SizedBox(height: 10.0),
         isActiveWidget(),
-        SizedBox(height: 2.0),
-
+        SizedBox(height: 10.0),
         tableTypeToggle(context, serviceTable),
-        SizedBox(height: 2.0),
+        SizedBox(height: 10.0),
+        Text('seats', textAlign: TextAlign.start,),
         _pullSeats(context),
-        SizedBox(height: 2.0),
-
+        SizedBox(height: 10.0),
       ],
     );
   }
@@ -178,17 +196,11 @@ class _ManageSeatsScreenState extends State<ManageSeatsScreen> {
 
           List<Seat> seats = [];
           if (snapshot.data!.docs.length > 0) {
-            // we received the seats from api
-            // lets delete what is there in floor
-            // BlocRepository.deleteSeats(
-            //     widget.dao, widget.serviceTable.tableNumber);
-
             for (int i = 0; i < snapshot.data!.docs.length; i++) {
               DocumentSnapshot document = snapshot.data!.docs[i];
               Map<String, dynamic> data =
                   document.data()! as Map<String, dynamic>;
               final Seat seat = Seat.fromMap(data);
-              // BlocRepository.insertSeat(widget.dao, seat);
               seats.add(seat);
 
               if (i == snapshot.data!.docs.length - 1) {
@@ -211,7 +223,7 @@ class _ManageSeatsScreenState extends State<ManageSeatsScreen> {
             return _displaySeats(context, seats);
           }
 
-          return Text('Pulling seats...');
+          return Text('pulling seats...');
         });
   }
 
@@ -234,9 +246,9 @@ class _ManageSeatsScreenState extends State<ManageSeatsScreen> {
                       context: context,
                       builder: (BuildContext context) {
                         return AlertDialog(
-                          title: Text("Seat Availability"),
+                          title: Text("seat free"),
                           content: Text(
-                              "Would you like to make the seat available?"),
+                              "would you like to make the seat available?"),
                           actions: [
                             TextButton(
                               child: Text("Yes"),
@@ -267,7 +279,7 @@ class _ManageSeatsScreenState extends State<ManageSeatsScreen> {
                               },
                             ),
                             TextButton(
-                              child: Text("No"),
+                              child: Text("no"),
                               onPressed: () {
                                 Navigator.of(context).pop();
                               },
@@ -325,24 +337,23 @@ class _ManageSeatsScreenState extends State<ManageSeatsScreen> {
     } else {
       initialTableTypeIndex = 1;
     }
-    List<String> types = ['Community', 'Private'];
+    List<String> types = ['community', 'private'];
 
     return Card(
-      margin: EdgeInsets.all(10),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text('Type: ', style: TextStyle(fontSize: 21)),
+            padding: const EdgeInsets.all(15.0),
+            child: Text('type: ', style: TextStyle(fontSize: 18)),
           ),
           Spacer(),
           ToggleSwitch(
-            minWidth: 90.0,
+            minWidth: 120.0,
             minHeight: 50.0,
             fontSize: 16.0,
             initialLabelIndex: initialTableTypeIndex,
-            activeBgColor: [Colors.green],
+            activeBgColor: [Theme.of(context).primaryColor],
             activeFgColor: Colors.white,
             inactiveBgColor: Colors.grey,
             inactiveFgColor: Colors.grey[900],
@@ -362,26 +373,26 @@ class _ManageSeatsScreenState extends State<ManageSeatsScreen> {
   }
 
   isActiveWidget() {
-    return Row(
-      children: <Widget>[
-        SizedBox(
-          width: 0,
-        ), //SizedBox
-        Text(
-          'Available : ',
-          style: TextStyle(fontSize: 17.0),
-        ), //Text
-        SizedBox(width: 10), //SizedBox
-        Checkbox(
-          value: widget.serviceTable.isActive,
-          onChanged: (value) {
-            setState(() {
-              widget.serviceTable.isActive =  value!;
-              FirestoreHelper.setTableActiveStatus(widget.serviceTable.id, value);
-            });
-          },
-        ), //Checkbox
-      ], //<Widget>[]
+    return Padding(
+      padding: const EdgeInsets.only(left: 15.0),
+      child: Row(
+        children: <Widget>[ //SizedBox
+          Text(
+            'active : ',
+            style: TextStyle(fontSize: 18.0),
+          ), //Text
+          const SizedBox(width: 10), //SizedBox
+          Checkbox(
+            value: widget.serviceTable.isActive,
+            onChanged: (value) {
+              setState(() {
+                widget.serviceTable.isActive =  value!;
+                FirestoreHelper.setTableActiveStatus(widget.serviceTable.id, value);
+              });
+            },
+          ), //Checkbox
+        ], //<Widget>[]
+      ),
     );
 
   }

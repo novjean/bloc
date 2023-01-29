@@ -10,7 +10,6 @@ import 'package:bloc/db/entity/user.dart' as blocUser;
 import 'package:bloc/helpers/firestorage_helper.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:logger/logger.dart';
 
@@ -45,6 +44,7 @@ class FirestoreHelper {
   static String SOS = 'sos';
   static String TABLES = 'tables';
   static String USERS = 'users';
+  static String USER_LEVELS = 'user_levels';
 
   static int TABLE_PRIVATE_TYPE_ID = 1;
   static int TABLE_COMMUNITY_TYPE_ID = 2;
@@ -522,14 +522,6 @@ class FirestoreHelper {
         .get();
   }
 
-  static getProducts(String serviceId) {
-    return FirebaseFirestore.instance
-        .collection(PRODUCTS)
-        .where('serviceId', isEqualTo: serviceId)
-        .orderBy('name', descending: false)
-        .snapshots();
-  }
-
   static getProductsByType(String serviceId, String type) {
     return FirebaseFirestore.instance
         .collection(PRODUCTS)
@@ -623,6 +615,13 @@ class FirestoreHelper {
   }
 
   /** Seats **/
+  static Future<QuerySnapshot<Map<String, dynamic>>> pullSeats(String tableId) {
+    return FirebaseFirestore.instance
+        .collection(FirestoreHelper.SEATS)
+        .where('tableId', isEqualTo: tableId)
+        .get();
+  }
+
   static Stream<QuerySnapshot<Object?>> getSeatsByTableId(String tableId) {
     return FirebaseFirestore.instance
         .collection(SEATS)
@@ -721,7 +720,7 @@ class FirestoreHelper {
   static Stream<QuerySnapshot<Object?>> getTablesByTypeAndUser(
       String serviceId, String userId, String tableType) {
     int colorType = TABLE_COMMUNITY_TYPE_ID;
-    if (tableType == 'Private') {
+    if (tableType == 'private') {
       colorType = TABLE_PRIVATE_TYPE_ID;
     }
 
@@ -736,7 +735,7 @@ class FirestoreHelper {
   static Stream<QuerySnapshot<Object?>> getTablesByType(
       String serviceId, String tableType) {
     int colorType = TABLE_COMMUNITY_TYPE_ID;
-    if (tableType == 'Private') {
+    if (tableType == 'private') {
       colorType = TABLE_PRIVATE_TYPE_ID;
     }
 
@@ -889,11 +888,27 @@ class FirestoreHelper {
         .get();
   }
 
+  static Future<QuerySnapshot<Map<String, dynamic>>> pullUsersByLevel(int level) {
+    return FirebaseFirestore.instance
+        .collection(USERS)
+        .where('clearanceLevel', isEqualTo: level)
+        .get();
+  }
+
+
   static Stream<QuerySnapshot<Object?>> getUsers(int clearanceLevel) {
     return FirebaseFirestore.instance
         .collection(USERS)
         .where('clearanceLevel', isLessThan: clearanceLevel)
         // .orderBy('sequence', descending: false)
+        .snapshots();
+  }
+
+  static getUsersByLevel(int level) {
+    return FirebaseFirestore.instance
+        .collection(USERS)
+        .where('clearanceLevel', isEqualTo: level)
+        // .orderBy('name', descending : false)
         .snapshots();
   }
 
@@ -980,6 +995,16 @@ class FirestoreHelper {
   static void deleteUser(blocUser.User user) {
     FirebaseFirestore.instance.collection(USERS).doc(user.id).delete();
   }
+
+  /** User Level **/
+  static pullUserLevels(int clearanceLevel) {
+    return FirebaseFirestore.instance
+        .collection(USER_LEVELS)
+        .where('level', isLessThan: clearanceLevel)
+        .orderBy('level', descending: false)
+        .get();
+  }
+
 
 /** Reference **/
 // _buildProducts(BuildContext context, String _category) {

@@ -16,10 +16,7 @@ class CartScreen extends StatelessWidget {
   BlocService service;
   int tableNumber;
 
-  CartScreen(
-      {key,
-      required this.service,
-      required this.tableNumber})
+  CartScreen({key, required this.service, required this.tableNumber})
       : super(key: key);
 
   @override
@@ -27,14 +24,14 @@ class CartScreen extends StatelessWidget {
     final cart = Provider.of<Cart>(context);
     return Scaffold(
       appBar: AppBar(
-        title: Text('Cart'),
+        title: Text('bloc | cart'),
       ),
       body: Column(
         children: [
           Expanded(
             child: cart.items.length == 0
                 ? Center(
-                    child: Text('No items in the cart!'),
+                    child: Text('no items in the cart!'),
                   )
                 : ListView.builder(
                     itemCount: cart.items.length,
@@ -70,24 +67,21 @@ class CartScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'Total',
+                    'total',
                     style: TextStyle(
-                      fontSize: 20,
+                      fontSize: 16,
                     ),
                   ),
                   // spacer is a special widget which takes up all the space it can
                   Spacer(),
-                  Chip(
-                    label: Text(
-                      '\u20B9${cart.totalAmount.toStringAsFixed(2)}',
-                      style: TextStyle(
-                          color: Theme.of(context)
-                              .primaryTextTheme
-                              .headline6!
-                              .color),
+                  Text(
+                    '\u20B9${cart.totalAmount.toStringAsFixed(2)}',
+                    style: TextStyle(
+                      color: Theme.of(context).primaryColorDark,
+                      fontSize: 16
                     ),
-                    backgroundColor: Theme.of(context).primaryColor,
                   ),
+                  SizedBox(width: 15),
                   OrderButton(cart: cart),
                 ],
               ),
@@ -115,7 +109,7 @@ class _OrderButtonState extends State<OrderButton> {
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
-      child: _isLoading ? CircularProgressIndicator() : Text('ORDER NOW'),
+      child: _isLoading ? CircularProgressIndicator() : Text('order now'),
       onPressed: (widget.cart.totalAmount <= 0 || _isLoading)
           ? null
           : () async {
@@ -126,12 +120,9 @@ class _OrderButtonState extends State<OrderButton> {
 
               // keeping this here for fixed timestamp throughout the cart
               Timestamp timestamp = Timestamp.now();
-              final int millisecondsSinceEpoch = timestamp.millisecondsSinceEpoch;
-              // need to store this in floor
+              final int millisecondsSinceEpoch =
+                  timestamp.millisecondsSinceEpoch;
               for (int i = 0; i < widget.cart.items.length; i++) {
-                // BlocRepository.insertCartItem(
-                //     widget.dao, widget.cart.items.values.elementAt(i));
-
                 // send it to firebase
                 //todo: will need to check if the upload actually went through
                 FirestoreHelper.uploadCartItem(
@@ -140,7 +131,7 @@ class _OrderButtonState extends State<OrderButton> {
                     millisecondsSinceEpoch);
               }
 
-              Toaster.shortToast("Order sent.");
+              Toaster.shortToast("order sent.");
 
               setState(() {
                 _isLoading = false;

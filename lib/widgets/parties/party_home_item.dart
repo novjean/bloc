@@ -48,7 +48,7 @@ class PartyHomeItem extends StatelessWidget {
                   children: [
                     Container(
                       width: 100,
-                      padding: EdgeInsets.only(top: 3, left: 0.0, right: 0.0),
+                      padding: EdgeInsets.only(top: 3, left: 5.0, right: 0.0),
                       child: Text(
                         "${party.name.toLowerCase()}",
                         style: TextStyle(
@@ -59,14 +59,21 @@ class PartyHomeItem extends StatelessWidget {
                       ),
                     ),
                     SizedBox(width: 0),
-                    Text(DateTimeUtils.getFormattedDate(party.startTime),
-                      style: TextStyle(fontSize: 18),),
-                    Text(DateTimeUtils.getFormattedTime(party.startTime),
-                      style: TextStyle(fontSize: 18),),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 5.0),
+                      child: Text(DateTimeUtils.getFormattedDate(party.startTime),
+                        style: const TextStyle(fontSize: 18),),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 5.0),
+                      child: Text(DateTimeUtils.getFormattedTime(party.startTime),
+                        style: const TextStyle(fontSize: 18),),
+                    ),
                     // ButtonWidget(text: 'Instagram', onClicked: () {
                     //   final uri = Uri.parse(party.instagramUrl);
                     //   _launchInBrowser(uri);
                     // }),
+
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         primary: Theme.of(context).highlightColor,

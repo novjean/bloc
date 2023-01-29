@@ -8,6 +8,7 @@ import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 
 import '../../../db/entity/user.dart';
+import '../../../db/entity/user_level.dart';
 import '../../../helpers/firestorage_helper.dart';
 import '../../../helpers/firestore_helper.dart';
 import '../../../utils/string_utils.dart';
@@ -18,8 +19,9 @@ import '../../../widgets/ui/textfield_widget.dart';
 class UserAddEditScreen extends StatefulWidget {
   User user;
   String task;
+  List<UserLevel> userLevels;
 
-  UserAddEditScreen({key, required this.user, required this.task})
+  UserAddEditScreen({key, required this.user, required this.task, required this.userLevels})
       : super(key: key);
 
   @override
@@ -38,6 +40,10 @@ class _UserAddEditScreenState extends State<UserAddEditScreen> {
   late String _sBlocServiceId;
   bool _isBlocServicesLoading = true;
 
+  List<String> userLevelNames = [];
+  late String _sUserLevelName;
+  late int _sUserLevel;
+
   DateTime sStartDateTime = DateTime.now();
   DateTime sEndDateTime = DateTime.now();
 
@@ -47,6 +53,13 @@ class _UserAddEditScreenState extends State<UserAddEditScreen> {
   @override
   void initState() {
     super.initState();
+
+    for(UserLevel userLevel in widget.userLevels){
+      userLevelNames.add(userLevel.name);
+      if(widget.user.clearanceLevel == userLevel.level){
+        _sUserLevelName = userLevel.name;
+      }
+    }
 
     FirestoreHelper.pullAllBlocServices().then((res) {
       print("successfully pulled in all bloc services");
@@ -280,52 +293,49 @@ class _UserAddEditScreenState extends State<UserAddEditScreen> {
           },
         ),
 
-        // const SizedBox(height: 24),
-        // TextFieldWidget(
-        //   label: 'Instagram URL',
-        //   text: widget.user.instagramUrl,
-        //   maxLines: 1,
-        //   onChanged: (value) {
-        //     widget.user = widget.user.copyWith(instagramUrl: value);
-        //   },
-        // ),
+        const SizedBox(height: 24),
+        FormField<String>(
+          builder: (FormFieldState<String> state) {
+            return InputDecorator(
+              key: const ValueKey('user_level'),
+              decoration: InputDecoration(
+                  errorStyle: TextStyle(
+                      color: Theme.of(context).errorColor,
+                      fontSize: 16.0),
+                  hintText: 'please select user level',
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(5.0))),
+              isEmpty: _sUserLevelName == '',
+              child: DropdownButtonHideUnderline(
+                child: DropdownButton<String>(
+                  value: _sUserLevelName,
+                  isDense: true,
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      _sUserLevelName = newValue!;
 
-        // const SizedBox(height: 24),
-        // TextFieldWidget(
-        //   label: 'Ticket URL',
-        //   text: widget.user.ticketUrl,
-        //   maxLines: 1,
-        //   onChanged: (value) {
-        //     widget.user = widget.user.copyWith(ticketUrl: value);
-        //   },
-        // ),
+                      for (UserLevel userLevel in widget.userLevels) {
+                        if (userLevel.name == _sUserLevelName) {
+                          _sUserLevel = userLevel.level;
+                        }
+                      }
 
-        // const SizedBox(height: 24),
-        // Row(
-        //   children: <Widget>[
-        //     SizedBox(
-        //       width: 0,
-        //     ), //SizedBox
-        //     Text(
-        //       'Available : ',
-        //       style: TextStyle(fontSize: 17.0),
-        //     ), //Text
-        //     SizedBox(width: 10), //SizedBox
-        //     Checkbox(
-        //       value: widget.user.isActive,
-        //       onChanged: (value) {
-        //         setState(() {
-        //           widget.user = widget.user.copyWith(isActive: value);
-        //         });
-        //       },
-        //     ), //Checkbox
-        //   ], //<Widget>[]
-        // ),
-        // const SizedBox(height: 24),
-        // dateTimeContainer(context, 'Start'),
-        //
-        // const SizedBox(height: 24),
-        // dateTimeContainer(context, 'End'),
+                      widget.user = widget.user
+                          .copyWith(clearanceLevel: _sUserLevel);
+                      state.didChange(newValue);
+                    });
+                  },
+                  items: userLevelNames.map((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
+                ),
+              ),
+            );
+          },
+        ),
 
         const SizedBox(height: 24),
         ButtonWidget(

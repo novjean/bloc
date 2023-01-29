@@ -18,7 +18,7 @@ class PartyItem extends StatelessWidget {
       url,
       mode: LaunchMode.externalApplication,
     )) {
-      throw Exception('Could not launch $url');
+      throw Exception('could not launch $url');
     }
   }
 
@@ -59,25 +59,34 @@ class PartyItem extends StatelessWidget {
                   width: MediaQuery.of(context).size.width,
                   padding:
                   EdgeInsets.only(top: 10, left: 15.0, right: 15.0),
-                  child: Text(
-                    "${party.name}",
-                    style: TextStyle(
-                      fontSize: 22.0,
-                      fontWeight: FontWeight.w800,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                    Text(
+                      "${party.name.toLowerCase()}",
+                      style: TextStyle(
+                        fontSize: 24.0,
+                        fontWeight: FontWeight.w800,
+                      ),
+                      textAlign: TextAlign.left,
                     ),
-                    textAlign: TextAlign.left,
-                  ),
+
+                        Text(DateTimeUtils.getFormattedDate(party.startTime),
+                          style: TextStyle(fontSize: 20),)
+                  ]),
+
+
                 ),
-                SizedBox(height: 10.0),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                      child: Text('Date : ' + DateTimeUtils.getFormattedDateString(party.startTime)),
-                    ),
-                  ],
-                ),
+                // SizedBox(height: 10.0),
+                // Row(
+                //   mainAxisAlignment: MainAxisAlignment.start,
+                //   children: [
+                //     Padding(
+                //       padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                //       child: Text('Date : ' + DateTimeUtils.getFormattedDateString(party.startTime)),
+                //     ),
+                //   ],
+                // ),
                 SizedBox(height: 10.0),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,

@@ -8,12 +8,15 @@ import 'package:bloc/widgets/table_card_item.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 
 import '../../db/entity/category.dart';
 import '../../db/entity/offer.dart';
 import '../../db/entity/product.dart';
 import '../../db/entity/seat.dart';
 import '../../db/shared_preferences/user_preferences.dart';
+import '../../widgets/cart_widget.dart';
 import '../../widgets/category_item.dart';
 import '../../widgets/product_item.dart';
 import '../../widgets/ui/toaster.dart';
@@ -170,6 +173,75 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
     super.didChangeDependencies();
   }
 
+  Future<void> scanTableQR(blocUser.User user) async {
+    String scanTableId;
+    // Platform messages may fail, so we use a try/catch PlatformException.
+    try {
+      scanTableId = await FlutterBarcodeScanner.scanBarcode(
+          '#ff6666', 'Cancel', true, ScanMode.QR);
+      print(scanTableId);
+    } on PlatformException {
+      scanTableId = 'failed to get platform version.';
+    }
+
+    // If the widget was removed from the tree while the asynchronous platform
+    // message was in flight, we want to discard the reply rather than calling
+    // setState to update our non-existent appearance.
+    if (!mounted) return;
+
+    if (scanTableId.compareTo('-1') == 0) {
+      return;
+    }
+
+    if (!user.id.isEmpty) {
+      // set the table as occupied
+      FirestoreHelper.setTableOccupyStatus(scanTableId, true);
+
+      // find the seats associated with this table
+      FirebaseFirestore.instance
+          .collection(FirestoreHelper.SEATS)
+          .where('tableId', isEqualTo: scanTableId)
+          .get()
+          .then(
+            (result) {
+          bool isSeatAvailable = false;
+          if (result.docs.isNotEmpty) {
+            for (int i = 0; i < result.docs.length; i++) {
+              DocumentSnapshot document = result.docs[i];
+              Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+              final Seat seat = Seat.fromMap(data);
+
+              if (seat.custId.isEmpty) {
+                FirestoreHelper.updateSeat(seat.id, user.id);
+                // here we update the user's bloc service id
+                FirestoreHelper.updateUserBlocId(user.id, seat.serviceId);
+                break;
+              }
+
+              if (i == result.docs.length - 1) {
+                if (!isSeatAvailable) {
+                  print(mTable.tableNumber.toString() +
+                      ' does not have a seat for ' +
+                      user.name);
+                }
+                // we should still let them be part of the table
+                // and notify the main person that someone has joined the table.
+                Toaster.shortToast('no seats left on the table!');
+              }
+            }
+          } else {
+            print('seats could not be found for ' + scanTableId);
+          }
+        },
+        onError: (e) => print("error completing: $e"),
+      );
+    } else {
+      print('user not signed in, logging out');
+
+      // Toaster.shortToast('not signed in, write go to log in logic here!');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -177,7 +249,9 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
         title: Text(widget.blocService.name),
         backgroundColor: Theme.of(context).primaryColor,
         actions: [
-          IconButton(
+          // need to check if the person is seated
+
+          _isCustomerSeated ? IconButton(
             icon: const Icon(
               Icons.back_hand_outlined,
             ),
@@ -190,7 +264,19 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
               FirestoreHelper.sendSOSMessage(user.fcmToken, user.name,
                   user.phoneNumber, mTable.tableNumber, mTable.id, mSeat.id);
             },
-          ),
+          ) : IconButton(
+            icon: const Icon(
+              Icons.qr_code,
+            ),
+            onPressed: () {
+              Toaster.longToast(
+                  'scan your table now');
+
+              blocUser.User user = UserPreferences.myUser;
+              scanTableQR(user);
+            },
+          )
+          ,
           IconButton(
             icon: const Icon(
               Icons.shopping_cart,
@@ -207,7 +293,7 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
         ],
       ),
       body: _isLoading
-          ? Center(child: Text('loading the menu...'))
+          ? Center(child: Text('loading menu...'))
           : _buildBody(context, widget.blocService),
     );
   }
@@ -219,31 +305,38 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
 
     return Column(
       children: [
-        const SizedBox(height: 2.0),
-        _isTableDetailsLoading
-            ? TextFormField(
-                key: const ValueKey('table_loading'),
-                initialValue: 'loading table info ...',
-                enabled: false,
-                autocorrect: false,
-                textCapitalization: TextCapitalization.words,
-                enableSuggestions: false,
-                keyboardType: TextInputType.text,
-              )
-            : _isCustomerSeated
-                ? TableCardItem(
-                    tableId: mTable.id,
-                    tableNumber: mTable.tableNumber,
-                    isCommunity: _isCommunity,
-                    seatId: mSeat.id,
-                  )
-                : _searchTableNumber(context),
+        // const SizedBox(height: 2.0),
+        // _isTableDetailsLoading
+        //     ? TextFormField(
+        //         key: const ValueKey('table_loading'),
+        //         initialValue: 'loading table info ...',
+        //         enabled: false,
+        //         autocorrect: false,
+        //         textCapitalization: TextCapitalization.words,
+        //         enableSuggestions: false,
+        //         keyboardType: TextInputType.text,
+        //       )
+        //     : _isCustomerSeated
+        //         ? TableCardItem(
+        //             tableId: mTable.id,
+        //             tableNumber: mTable.tableNumber,
+        //             isCommunity: _isCommunity,
+        //             seatId: mSeat.id,
+        //           )
+        //         : _searchTableNumber(context),
         const SizedBox(height: 2.0),
         _isCategoriesLoading ? const SizedBox() : _displayCategories(context),
         const SizedBox(height: 2.0),
         buildProducts(context, 'Beer'),
         const SizedBox(height: 1.0),
-        _updateOffers(context)
+        _updateOffers(context),
+        !_isCustomerSeated ? _searchTableNumber(context) : CartWidget()
+        // TableCardItem(
+        //         tableId: mTable.id,
+        //         tableNumber: mTable.tableNumber,
+        //         isCommunity: _isCommunity,
+        //         seatId: mSeat.id,
+        //       ),
       ],
     );
   }
@@ -328,12 +421,14 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
             }
           } else {
             // this will display the table card item with the dummy values
-            return TableCardItem(
-              tableId: mTable.id,
-              tableNumber: mTable.tableNumber,
-              isCommunity: _isCommunity,
-              seatId: mSeat.id,
-            );
+            return SizedBox(height: 0);
+
+            //   TableCardItem(
+            //   tableId: mTable.id,
+            //   tableNumber: mTable.tableNumber,
+            //   isCommunity: _isCommunity,
+            //   seatId: mSeat.id,
+            // );
           }
           return SizedBox();
         });
