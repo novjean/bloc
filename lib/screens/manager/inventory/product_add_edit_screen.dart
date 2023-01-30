@@ -193,38 +193,7 @@ class _ProductAddEditScreenState extends State<ProductAddEditScreen> {
                         const SizedBox(height: 24),
                         FormField<String>(
                           builder: (FormFieldState<String> state) {
-                            return InputDecorator(
-                              key: const ValueKey('product_category_food'),
-                              decoration: InputDecoration(
-                                  errorStyle: TextStyle(
-                                      color: Theme.of(context).errorColor,
-                                      fontSize: 16.0),
-                                  hintText: 'please select product category',
-                                  border: OutlineInputBorder(
-                                      borderRadius:
-                                          BorderRadius.circular(5.0))),
-                              isEmpty: _sCategoryFood == '',
-                              child: DropdownButtonHideUnderline(
-                                child: DropdownButton<String>(
-                                    value: widget.product.category,
-                                    isDense: true,
-                                    onChanged: (String? newValue) {
-                                      setState(() {
-                                        _productCategory = newValue!;
-                                        _sCategoryFood = _productCategory;
-                                        widget.product = widget.product
-                                            .copyWith(category: newValue);
-                                        // state.didChange(newValue);
-                                      });
-                                    },
-                                    items: catFoodNames.map((String value) {
-                                      return DropdownMenuItem<String>(
-                                        value: value,
-                                        child: Text(value),
-                                      );
-                                    }).toList()),
-                              ),
-                            );
+                            return buildFoodCategoryDropdown(context);
                           },
                         ),
                       ],
@@ -234,38 +203,7 @@ class _ProductAddEditScreenState extends State<ProductAddEditScreen> {
                         const SizedBox(height: 24),
                         FormField<String>(
                           builder: (FormFieldState<String> state) {
-                            return InputDecorator(
-                              key: const ValueKey('product_category_alcohol'),
-                              decoration: InputDecoration(
-                                  errorStyle: TextStyle(
-                                      color: Theme.of(context).errorColor,
-                                      fontSize: 16.0),
-                                  hintText: 'please select product category',
-                                  border: OutlineInputBorder(
-                                      borderRadius:
-                                          BorderRadius.circular(5.0))),
-                              isEmpty: _sCategoryAlcohol == '',
-                              child: DropdownButtonHideUnderline(
-                                child: DropdownButton<String>(
-                                    value: widget.product.category,
-                                    isDense: true,
-                                    onChanged: (String? newValue) {
-                                      setState(() {
-                                        _productCategory = newValue!;
-                                        _sCategoryAlcohol = _productCategory;
-                                        widget.product = widget.product
-                                            .copyWith(category: newValue);
-                                        // state.didChange(newValue);
-                                      });
-                                    },
-                                    items: catAlcoholNames.map((String value) {
-                                      return DropdownMenuItem<String>(
-                                        value: value,
-                                        child: Text(value),
-                                      );
-                                    }).toList()),
-                              ),
-                            );
+                            return buildAlcoholCategoryDropdown(context);
                           },
                         ),
                       ],
@@ -300,6 +238,19 @@ class _ProductAddEditScreenState extends State<ProductAddEditScreen> {
                 onChanged: (value) {
                   double? newPrice = double.tryParse(value);
                   widget.product = widget.product.copyWith(price: newPrice);
+
+                  if(widget.task=='add'){
+                    widget.product =
+                        widget.product.copyWith(priceCommunity: newPrice);
+                    widget.product =
+                        widget.product.copyWith(priceLowest: newPrice);
+                    widget.product = widget.product.copyWith(
+                        priceLowestTime: Timestamp.now().millisecondsSinceEpoch);
+                    widget.product =
+                        widget.product.copyWith(priceHighest: newPrice);
+                    widget.product = widget.product.copyWith(
+                        priceHighestTime: Timestamp.now().millisecondsSinceEpoch);
+                  }
                 },
               ),
               const SizedBox(height: 24),
@@ -437,5 +388,86 @@ class _ProductAddEditScreenState extends State<ProductAddEditScreen> {
               ),
             ],
           );
+  }
+
+  buildFoodCategoryDropdown(context) {
+    String existingCategory = widget.product.category;
+
+    if(!catFoodNames.contains(existingCategory)){
+      widget.product = widget.product.copyWith(category: catFoodNames[0]);
+    }
+
+    return InputDecorator(
+      key: const ValueKey('product_category_food'),
+      decoration: InputDecoration(
+          errorStyle: TextStyle(
+              color: Theme.of(context).errorColor,
+              fontSize: 16.0),
+          hintText: 'please select product category',
+          border: OutlineInputBorder(
+              borderRadius:
+              BorderRadius.circular(5.0))),
+      isEmpty: _sCategoryFood == '',
+      child: DropdownButtonHideUnderline(
+        child: DropdownButton<String>(
+            value: widget.product.category,
+            isDense: true,
+            onChanged: (String? newValue) {
+              setState(() {
+                _productCategory = newValue!;
+                _sCategoryFood = _productCategory;
+                widget.product = widget.product
+                    .copyWith(category: newValue);
+                // state.didChange(newValue);
+              });
+            },
+            items: catFoodNames.map((String value) {
+              return DropdownMenuItem<String>(
+                value: value,
+                child: Text(value),
+              );
+            }).toList()),
+      ),
+    );
+  }
+
+  buildAlcoholCategoryDropdown(BuildContext context) {
+    String existingCategory = widget.product.category;
+
+    if(!catAlcoholNames.contains(existingCategory)){
+      widget.product = widget.product.copyWith(category: catAlcoholNames[0]);
+    }
+    return InputDecorator(
+      key: const ValueKey('product_category_alcohol'),
+      decoration: InputDecoration(
+          errorStyle: TextStyle(
+              color: Theme.of(context).errorColor,
+              fontSize: 16.0),
+          hintText: 'please select product category',
+          border: OutlineInputBorder(
+              borderRadius:
+              BorderRadius.circular(5.0))),
+      isEmpty: _sCategoryAlcohol == '',
+      child: DropdownButtonHideUnderline(
+        child: DropdownButton<String>(
+            value: widget.product.category,
+            isDense: true,
+            onChanged: (String? newValue) {
+              setState(() {
+                _productCategory = newValue!;
+                _sCategoryAlcohol = _productCategory;
+                widget.product = widget.product
+                    .copyWith(category: newValue);
+                // state.didChange(newValue);
+              });
+            },
+            items: catAlcoholNames.map((String value) {
+              return DropdownMenuItem<String>(
+                value: value,
+                child: Text(value),
+              );
+            }).toList()),
+      ),
+    );
   }
 }

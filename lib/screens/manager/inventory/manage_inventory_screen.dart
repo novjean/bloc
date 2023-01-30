@@ -22,7 +22,7 @@ class ManageInventoryScreen extends StatelessWidget{
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Manager | Inventory'),
+        title: const Text('manage | inventory'),
       ),
       // drawer: AppDrawer(),
       body: _buildBody(context),

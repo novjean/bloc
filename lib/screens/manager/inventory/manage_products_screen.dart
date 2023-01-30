@@ -29,7 +29,7 @@ class _ManageProductsScreenState extends State<ManageProductsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Inventory | Products'),
+        title: const Text('inventory | products'),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -45,7 +45,7 @@ class _ManageProductsScreenState extends State<ManageProductsScreen> {
           size: 29,
         ),
         backgroundColor: Theme.of(context).primaryColor,
-        tooltip: 'Add Product',
+        tooltip: 'add product',
         elevation: 5,
         splashColor: Colors.grey,
       ),
@@ -81,7 +81,7 @@ class _ManageProductsScreenState extends State<ManageProductsScreen> {
           itemBuilder: (ctx, index) {
             return GestureDetector(
                 child: SizedListViewBlock(
-                  title: _options[index],
+                  title: _options[index].toLowerCase(),
                   height: containerHeight,
                   width: MediaQuery.of(context).size.width / 2,
                 ),
@@ -109,7 +109,7 @@ class _ManageProductsScreenState extends State<ManageProductsScreen> {
           List<Product> _products = [];
 
           if(!snapshot.hasData){
-            return Center(child: Text('No products found!'));
+            return Center(child: Text('no products found!'));
           }
 
           for (int i = 0; i < snapshot.data!.docs.length; i++) {

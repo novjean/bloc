@@ -527,7 +527,7 @@ class FirestoreHelper {
         .collection(PRODUCTS)
         .where('serviceId', isEqualTo: serviceId)
         .where('type', isEqualTo: type)
-        .where('isAvailable', isEqualTo: true)
+        // .where('isAvailable', isEqualTo: true)
         // .orderBy('sequence', descending: false)
         .snapshots();
   }
