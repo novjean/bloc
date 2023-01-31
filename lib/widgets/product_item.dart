@@ -22,13 +22,12 @@ class ProductItem extends StatefulWidget {
   final Offer offer;
   int addCount = 1;
 
-  ProductItem(
-      {required this.serviceId,
-      required this.product,
-      required this.tableNumber,
-      required this.isCommunity,
-      required this.isOnOffer,
-      required this.offer});
+  ProductItem({required this.serviceId,
+    required this.product,
+    required this.tableNumber,
+    required this.isCommunity,
+    required this.isOnOffer,
+    required this.offer});
 
   @override
   State<ProductItem> createState() => _ProductItemState();
@@ -40,7 +39,9 @@ class _ProductItemState extends State<ProductItem> {
     var logger = Logger();
     final cart = Provider.of<Cart>(context, listen: false);
 
-    Color primaryColor = Theme.of(context).primaryColor;
+    Color primaryColor = Theme
+        .of(context)
+        .primaryColor;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 1.0),
@@ -55,6 +56,7 @@ class _ProductItemState extends State<ProductItem> {
           tag: widget.product.id,
           child: Card(
             child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
                 Container(
                   height: 170,
@@ -63,8 +65,8 @@ class _ProductItemState extends State<ProductItem> {
                     image: DecorationImage(
                         image: NetworkImage(widget.product.imageUrl),
                         fit: BoxFit.fitHeight
-                        // AssetImage(food['image']),
-                        ),
+                      // AssetImage(food['image']),
+                    ),
                   ),
                 ),
                 Expanded(
@@ -73,31 +75,39 @@ class _ProductItemState extends State<ProductItem> {
                         left: 10, right: 10, top: 1, bottom: 1),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: <Widget>[
                         Padding(
                           padding: const EdgeInsets.only(top: 5.0),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: <Widget>[
-                              Text(widget.product.name.toLowerCase(),
+                              Flexible(
+                                child: Text(widget.product.name.toLowerCase(),
                                   style: const TextStyle(
                                     fontSize: 20,
                                     fontWeight: FontWeight.bold,
-                                  )),
+                                  ),),flex: 4, ),
 
-                              //check if offer
-                              widget.isOnOffer
+                              Flexible(child: widget.isOnOffer
                                   ? Text(
-                                      widget.isCommunity ? widget.offer.offerPriceCommunity.toStringAsFixed(0) : widget.offer.offerPricePrivate.toStringAsFixed(0),
-                                      style: const TextStyle(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.w500))
+                                  widget.isCommunity
+                                      ? widget.offer.offerPriceCommunity
+                                      .toStringAsFixed(0)
+                                      : widget.offer.offerPricePrivate
+                                      .toStringAsFixed(0),
+                                  style: const TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w500))
                                   : Text(
-                                      widget.isCommunity ? widget.product.priceCommunity.toStringAsFixed(0) : widget.product.price.toStringAsFixed(0),
-                                      style: TextStyle(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.w500)),
+                                widget.isCommunity ? widget.product
+                                    .priceCommunity.toStringAsFixed(0) : widget
+                                    .product.price.toStringAsFixed(0),
+                                style: const TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w500),),flex: 1,),
+
+
+
                               // Icon(Icons.delete_outline)
                             ],
                           ),
@@ -105,54 +115,57 @@ class _ProductItemState extends State<ProductItem> {
                         const SizedBox(height: 5),
                         widget.isCommunity
                             ? Row(
-                                children: [
-                                  //\u20B9
-                                  Text(
-                                      widget.product.priceLowest.toStringAsFixed(0),
-                                      style: const TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.green)),
-                                  Text(' | '),
-                                  Text(
-                                      widget.product.priceHighest.toStringAsFixed(0),
-                                      style: const TextStyle(
-                                          fontSize: 15,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.redAccent)),
-                                  widget.isOnOffer
-                                      ? Text(
-                                          ' | ' +
-                                              widget.offer.offerPercent
-                                                  .toStringAsFixed(0) +
-                                              '% off',
-                                          style: const TextStyle(
-                                              fontSize: 15,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.blue),
-                                        )
-                                      : const SizedBox(height: 0),
-                                ],
-                              )
-                            : widget.isOnOffer
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            //\u20B9
+                            Text(
+                                widget.product.priceLowest.toStringAsFixed(0),
+                                style: const TextStyle(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.green)),
+                            Text(' | '),
+                            Text(
+                                widget.product.priceHighest.toStringAsFixed(0),
+                                style: const TextStyle(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.redAccent)),
+                            widget.isOnOffer
                                 ? Text(
-                                    ' | ' +
-                                        widget.offer.offerPercent
-                                            .toStringAsFixed(0) +
-                                        '% off',
-                                    style: const TextStyle(
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.blue),
-                                  )
+                              ' | ' +
+                                  widget.offer.offerPercent
+                                      .toStringAsFixed(0) +
+                                  '% off',
+                              style: const TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.blue),
+                            )
                                 : const SizedBox(height: 0),
+                          ],
+                        )
+                            : widget.isOnOffer
+                            ? Text(
+                          ' | ' +
+                              widget.offer.offerPercent
+                                  .toStringAsFixed(0) +
+                              '% off',
+                          style: const TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.blue),
+                        )
+                            : const SizedBox(height: 0),
                         const SizedBox(height: 2),
                         Text(
                             StringUtils.firstFewWords(
-                                    widget.product.description.toLowerCase(), 25) +
+                                widget.product.description.toLowerCase(), 25) +
                                 '...',
                             style:
-                                TextStyle(fontSize: 16, color: Theme.of(context).primaryColorDark)),
+                            TextStyle(fontSize: 16, color: Theme
+                                .of(context)
+                                .primaryColorDark)),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: <Widget>[
@@ -172,7 +185,7 @@ class _ProductItemState extends State<ProductItem> {
                               },
                             ),
                             Container(
-                                // color: primaryColor,
+                              // color: primaryColor,
                                 margin: const EdgeInsets.symmetric(
                                   horizontal: 0.0,
                                 ),
@@ -187,14 +200,16 @@ class _ProductItemState extends State<ProductItem> {
                                   onClicked: () {
                                     // add it to the cart
                                     String cartId =
-                                        StringUtils.getRandomString(20);
+                                    StringUtils.getRandomString(20);
                                     //todo: this needs to increment
                                     int cartNumber = 0;
                                     final user =
                                         FirebaseAuth.instance.currentUser;
                                     String userId = user!.uid;
                                     int timestamp =
-                                        Timestamp.now().millisecondsSinceEpoch;
+                                        Timestamp
+                                            .now()
+                                            .millisecondsSinceEpoch;
                                     CartItem cartItem = CartItem(
                                         cartId: cartId,
                                         serviceId: widget.serviceId,
@@ -205,9 +220,9 @@ class _ProductItemState extends State<ProductItem> {
                                         productId: widget.product.id,
                                         productName: widget.product.name,
                                         productPrice: double.parse(widget
-                                                .isCommunity
+                                            .isCommunity
                                             ? widget.product.priceCommunity
-                                                .toString()
+                                            .toString()
                                             : widget.product.price.toString()),
                                         isCommunity: widget.isCommunity,
                                         quantity: widget.addCount,
@@ -235,8 +250,9 @@ class _ProductItemState extends State<ProductItem> {
                                       widget.addCount = 1;
                                     });
 
-                                    Toaster.shortToast(widget.product.name.toLowerCase() +
-                                        ' is added to cart');
+                                    Toaster.shortToast(
+                                        widget.product.name.toLowerCase() +
+                                            ' is added to cart');
                                   },
                                 )),
                             IconButton(
