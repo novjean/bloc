@@ -1,3 +1,4 @@
+import 'package:bloc/db/entity/category.dart';
 import 'package:bloc/db/entity/service_table.dart';
 import 'package:bloc/utils/string_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -117,37 +118,47 @@ class Dummy {
 
   static getDummyParty(String blocId) {
     Party dummyParty = Party(
-      id: StringUtils.getRandomString(28),
-      createdAt: Timestamp.now().millisecondsSinceEpoch,
-      imageUrl: '',
-      name: '',
-      ownerId: UserPreferences.myUser.id,
-      isActive: false,
-      description: '',
-      blocServiceId: '',
-      endTime: 0,
-      instagramUrl: '',
-      startTime: 0,
-      ticketUrl: ''
-    );
+        id: StringUtils.getRandomString(28),
+        createdAt: Timestamp.now().millisecondsSinceEpoch,
+        imageUrl: '',
+        name: '',
+        ownerId: UserPreferences.myUser.id,
+        isActive: false,
+        description: '',
+        blocServiceId: '',
+        endTime: 0,
+        instagramUrl: '',
+        startTime: 0,
+        ticketUrl: '');
 
     return dummyParty;
   }
 
   static getDummyUser() {
     User dummyUser = User(
-      blocServiceId: '',
-      clearanceLevel: 1,
-      email: '',
-      fcmToken: '',
-      id: StringUtils.getRandomString(28),
-      imageUrl: '',
-      name: '',
-      phoneNumber: 0,
-      username: ''
-    );
+        blocServiceId: '',
+        clearanceLevel: 1,
+        email: '',
+        fcmToken: '',
+        id: StringUtils.getRandomString(28),
+        imageUrl: '',
+        name: '',
+        phoneNumber: 0,
+        username: '');
 
     return dummyUser;
   }
 
+  static getDummyCategory(String serviceId) {
+    Category dummyCategory = Category(
+        id: StringUtils.getRandomString(28),
+        name: '',
+        imageUrl: '',
+        createdAt: Timestamp.now().millisecondsSinceEpoch,
+        ownerId: UserPreferences.myUser.id,
+        sequence: -1,
+        serviceId: serviceId,
+        type: 'Alcohol');
+    return dummyCategory;
+  }
 }

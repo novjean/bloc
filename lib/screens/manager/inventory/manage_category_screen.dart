@@ -3,8 +3,9 @@ import 'package:bloc/widgets/ui/listview_block.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
+import '../../../helpers/dummy.dart';
 import '../../../helpers/firestore_helper.dart';
-import '../../forms/new_service_category_screen.dart';
+import 'category_add_edit_screen.dart';
 
 class ManageCategoryScreen extends StatelessWidget {
   String serviceId;
@@ -17,15 +18,13 @@ class ManageCategoryScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Inventory | Category'),
+        title: const Text('inventory | category'),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.of(context).push(
-            MaterialPageRoute(
-                builder: (ctx) => NewServiceCategoryScreen(
-                    serviceId: serviceId)),
-          );
+          Navigator.of(context).push(MaterialPageRoute(
+              builder: (ctx) => CategoryAddEditScreen(
+                  category: Dummy.getDummyCategory(serviceId), task: 'add')));
         },
         child: Icon(
           Icons.add,
@@ -33,7 +32,7 @@ class ManageCategoryScreen extends StatelessWidget {
           size: 29,
         ),
         backgroundColor: Theme.of(context).primaryColor,
-        tooltip: 'Add Category',
+        tooltip: 'add category',
         elevation: 5,
         splashColor: Colors.grey,
       ),
@@ -68,7 +67,7 @@ class ManageCategoryScreen extends StatelessWidget {
   }
 
   _displayCategories(BuildContext context, List<Category> _categories) {
-    return Container(
+    return SizedBox(
       height: MediaQuery.of(context).size.height,
       child: ListView.builder(
           itemCount: _categories.length,
@@ -76,11 +75,16 @@ class ManageCategoryScreen extends StatelessWidget {
           itemBuilder: (ctx, index) {
             return GestureDetector(
                 child: ListViewBlock(
-                  title: _categories[index].sequence.toString() + ' : ' + _categories[index].name,
+                  title: _categories[index].sequence.toString() +
+                      ' : ' +
+                      _categories[index].name,
                 ),
                 onTap: () {
                   Category _sCategory = _categories[index];
                   print(_sCategory.name + ' is selected');
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (ctx) => CategoryAddEditScreen(
+                          category: _sCategory, task: 'edit')));
                 });
           }),
     );

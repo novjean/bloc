@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:bloc/db/entity/bloc.dart';
 import 'package:bloc/db/entity/bloc_service.dart';
 import 'package:bloc/db/entity/cart_item.dart';
+import 'package:bloc/db/entity/category.dart';
 import 'package:bloc/db/entity/offer.dart';
 import 'package:bloc/db/entity/party.dart';
 import 'package:bloc/db/entity/seat.dart';
@@ -132,12 +133,8 @@ class FirestoreHelper {
   }
 
   static Stream<QuerySnapshot> getAllBlocServices() {
-    final user = FirebaseAuth.instance.currentUser;
-
     return FirebaseFirestore.instance
         .collection(BLOC_SERVICES)
-        // .orderBy('sequence', descending: true)
-        // .where('ownerId', isEqualTo: user!.uid)
         .snapshots();
   }
 
@@ -294,6 +291,19 @@ class FirestoreHelper {
   }
 
   /** Category **/
+  static void pushCategory(Category category) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection(CATEGORIES)
+          .doc(category.id)
+          .set(category.toMap());
+    } on PlatformException catch (err) {
+      logger.e(err.message);
+    } catch (err) {
+      logger.e(err);
+    }
+  }
+
   static pullCategories(String blocServiceId) {
     return FirebaseFirestore.instance
         .collection(CATEGORIES)
@@ -422,10 +432,11 @@ class FirestoreHelper {
     }
   }
 
-  static Future<QuerySnapshot<Map<String, dynamic>>> pullParties(int timeNow) {
+  static Future<QuerySnapshot<Map<String, dynamic>>> pullParties(int timeNow, bool isActive) {
     return FirebaseFirestore.instance
         .collection(FirestoreHelper.PARTIES)
         .where('startTime', isGreaterThan: timeNow)
+        .where('isActive', isEqualTo: isActive)
         .orderBy('startTime', descending: false)
         .get();
   }
@@ -435,6 +446,7 @@ class FirestoreHelper {
     return FirebaseFirestore.instance
         .collection(FirestoreHelper.PARTIES)
         .where('startTime', isGreaterThan: timeNow)
+        .where('isActive', isEqualTo: true)
         .orderBy('startTime', descending: false)
         .limit(1)
         .get();
@@ -1004,6 +1016,7 @@ class FirestoreHelper {
         .orderBy('level', descending: false)
         .get();
   }
+
 
 
 /** Reference **/
