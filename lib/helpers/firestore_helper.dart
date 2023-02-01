@@ -91,8 +91,8 @@ class FirestoreHelper {
           .collection(BLOCS)
           .doc(id)
           .update({'imageUrl': url})
-          .then((value) => print("Bloc image updated."))
-          .catchError((error) => print("Failed to update bloc image: $error"));
+          .then((value) => print("bloc image updated."))
+          .catchError((error) => print("failed to update bloc image: $error"));
     } on PlatformException catch (err) {
       logger.e(err.message);
     } catch (err) {
