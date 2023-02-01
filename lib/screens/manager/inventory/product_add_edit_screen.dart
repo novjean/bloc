@@ -327,29 +327,28 @@ class _ProductAddEditScreenState extends State<ProductAddEditScreen> {
                 },
               ),
               const SizedBox(height: 24),
-              // TextFormField(
-              //   key: const ValueKey('product_sequence'),
-              //   initialValue: widget.product.priceCommunity.toString(),
-              //   autocorrect: false,
-              //   textCapitalization: TextCapitalization.none,
-              //   enableSuggestions: false,
-              //   validator: (value) {
-              //     if (value!.isEmpty) {
-              //       return 'Please enter a valid community price for the product.';
-              //     }
-              //     return null;
-              //   },
-              //   keyboardType: TextInputType.number,
-              //   decoration: const InputDecoration(
-              //     labelText: 'Community Price',
-              //   ),
-              //   onChanged: (value) {
-              //     double? newPrice = double.tryParse(value);
-              //     widget.product =
-              //         widget.product.copyWith(priceCommunity: newPrice);
-              //   },
-              // ),
-              // const SizedBox(height: 24),
+              Row(
+                children: <Widget>[
+                  SizedBox(
+                    width: 0,
+                  ), //SizedBox
+                  Text(
+                    'veg : ',
+                    style: TextStyle(fontSize: 17.0),
+                  ), //Text
+                  SizedBox(width: 10), //SizedBox
+                  Checkbox(
+                    value: widget.product.isVeg,
+                    onChanged: (value) {
+                      setState(() {
+                        widget.product =
+                            widget.product.copyWith(isVeg: value);
+                      });
+                    },
+                  ), //Checkbox
+                ], //<Widget>[]
+              ),
+              const SizedBox(height: 24),
               Row(
                 children: <Widget>[
                   SizedBox(

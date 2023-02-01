@@ -16,28 +16,29 @@ class Product {
   final int priceLowestTime;
   final double priceCommunity;
   final bool isOfferRunning;
+  final bool isVeg;
 
 //<editor-fold desc="Data Methods">
 
-  const Product({
-    required this.id,
-    required this.name,
-    required this.type,
-    required this.category,
-    required this.description,
-    required this.price,
-    required this.serviceId,
-    required this.imageUrl,
-    required this.ownerId,
-    required this.createdAt,
-    required this.isAvailable,
-    required this.priceHighest,
-    required this.priceLowest,
-    required this.priceHighestTime,
-    required this.priceLowestTime,
-    required this.priceCommunity,
-    required this.isOfferRunning,
-  });
+  const Product(
+      {required this.id,
+      required this.name,
+      required this.type,
+      required this.category,
+      required this.description,
+      required this.price,
+      required this.serviceId,
+      required this.imageUrl,
+      required this.ownerId,
+      required this.createdAt,
+      required this.isAvailable,
+      required this.priceHighest,
+      required this.priceLowest,
+      required this.priceHighestTime,
+      required this.priceLowestTime,
+      required this.priceCommunity,
+      required this.isOfferRunning,
+      required this.isVeg});
 
   @override
   bool operator ==(Object other) =>
@@ -60,7 +61,8 @@ class Product {
           priceHighestTime == other.priceHighestTime &&
           priceLowestTime == other.priceLowestTime &&
           priceCommunity == other.priceCommunity &&
-          isOfferRunning == other.isOfferRunning);
+          isOfferRunning == other.isOfferRunning &&
+          isVeg == other.isVeg);
 
   @override
   int get hashCode =>
@@ -80,7 +82,8 @@ class Product {
       priceHighestTime.hashCode ^
       priceLowestTime.hashCode ^
       priceCommunity.hashCode ^
-      isOfferRunning.hashCode;
+      isOfferRunning.hashCode ^
+      isVeg.hashCode;
 
   @override
   String toString() {
@@ -102,6 +105,7 @@ class Product {
         ' priceLowestTime: $priceLowestTime,' +
         ' priceCommunity: $priceCommunity,' +
         ' isOfferRunning: $isOfferRunning' +
+        ' isVeg: $isVeg' +
         '}';
   }
 
@@ -123,6 +127,7 @@ class Product {
     int? priceLowestTime,
     double? priceCommunity,
     bool? isOfferRunning,
+    bool? isVeg,
   }) {
     return Product(
       id: id ?? this.id,
@@ -142,6 +147,7 @@ class Product {
       priceLowestTime: priceLowestTime ?? this.priceLowestTime,
       priceCommunity: priceCommunity ?? this.priceCommunity,
       isOfferRunning: isOfferRunning ?? this.isOfferRunning,
+      isVeg: isVeg ?? this.isVeg,
     );
   }
 
@@ -164,6 +170,7 @@ class Product {
       'priceLowestTime': this.priceLowestTime,
       'priceCommunity': this.priceCommunity,
       'isOfferRunning': this.isOfferRunning,
+      'isVeg': this.isVeg,
     };
   }
 
@@ -220,6 +227,7 @@ class Product {
       priceLowestTime: map['priceLowestTime'] as int,
       priceCommunity: priceCommunity,
       isOfferRunning: map['isOfferRunning'] as bool,
+      isVeg: map['isVeg'] as bool,
     );
   }
 

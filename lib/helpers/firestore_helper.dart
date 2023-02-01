@@ -473,59 +473,6 @@ class FirestoreHelper {
     }
   }
 
-  static void insertProduct(
-      String productId,
-      String productName,
-      String categoryType,
-      String productCategory,
-      String productDescription,
-      String productPrice,
-      String serviceId,
-      String imageUrl,
-      String userId,
-      bool bool) async {
-    double price = 0.0;
-
-    try {
-      price = double.parse(productPrice);
-    } catch (err) {
-      int intPrice = int.parse(productPrice);
-      price = intPrice.toDouble();
-    }
-
-    int timeMilliSec = Timestamp.now().millisecondsSinceEpoch;
-
-    try {
-      Product product = Product(
-          id: productId,
-          name: productName,
-          type: categoryType,
-          category: productCategory,
-          description: productDescription,
-          price: price,
-          serviceId: serviceId,
-          imageUrl: imageUrl,
-          ownerId: userId,
-          createdAt: timeMilliSec,
-          isAvailable: false,
-          priceHighest: price,
-          priceLowest: price,
-          priceCommunity: price,
-          priceHighestTime: timeMilliSec,
-          priceLowestTime: timeMilliSec,
-          isOfferRunning: false);
-
-      await FirebaseFirestore.instance
-          .collection(PRODUCTS)
-          .doc(productId)
-          .set(product.toMap());
-    } on PlatformException catch (err) {
-      logger.e(err.message);
-    } catch (err) {
-      logger.e(err);
-    }
-  }
-
   static Future<QuerySnapshot<Map<String, dynamic>>> pullProduct(
       String productId) {
     return FirebaseFirestore.instance

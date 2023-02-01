@@ -76,6 +76,7 @@ class Dummy {
       priceLowestTime: time,
       type: 'Alcohol',
       priceLowest: 0,
+      isVeg: true
     );
 
     return dummyProduct;

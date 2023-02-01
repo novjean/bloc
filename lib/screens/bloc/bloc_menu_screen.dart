@@ -455,7 +455,7 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
     return Container(
       key: UniqueKey(),
       // this height has to match with category item container height
-      height: MediaQuery.of(context).size.height / 14,
+      height: MediaQuery.of(context).size.height / 12,
       child: ListView.builder(
           itemCount: mCategoryTypes.length,
           scrollDirection: Axis.horizontal,

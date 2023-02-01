@@ -59,7 +59,7 @@ class _ProductItemState extends State<ProductItem> {
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
                 Container(
-                  height: 170,
+                  height: 200,
                   width: 100,
                   decoration: BoxDecoration(
                     image: DecorationImage(
@@ -74,7 +74,7 @@ class _ProductItemState extends State<ProductItem> {
                     padding: const EdgeInsets.only(
                         left: 10, right: 10, top: 1, bottom: 1),
                     child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: <Widget>[
                         Padding(
                           padding: const EdgeInsets.only(top: 5.0),
@@ -160,15 +160,20 @@ class _ProductItemState extends State<ProductItem> {
                         const SizedBox(height: 2),
                         Text(
                             StringUtils.firstFewWords(
-                                widget.product.description.toLowerCase(), 25) +
+                                widget.product.description.toLowerCase(), 20) +
                                 '...',
                             style:
                             TextStyle(fontSize: 16, color: Theme
                                 .of(context)
                                 .primaryColorDark)),
                         Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
+                            widget.product.type == 'Food'?
+                            Image.asset(widget.product.isVeg?'assets/icons/ic_veg_food.png'
+                                :'assets/icons/ic_non_veg_food.png'): const SizedBox(width: 0),
+
+                            Spacer(),
                             IconButton(
                               icon: Icon(Icons.remove),
                               onPressed: () {
