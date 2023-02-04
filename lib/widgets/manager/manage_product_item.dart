@@ -27,7 +27,6 @@ class ManageProductItem extends StatelessWidget {
         },
         child: Hero(
           tag: product.id,
-          // 'detail_food$index',
           child: Card(
             child: Row(
               children: <Widget>[
@@ -37,7 +36,7 @@ class ManageProductItem extends StatelessWidget {
                   decoration: BoxDecoration(
                     image: DecorationImage(
                       image: NetworkImage(product.imageUrl),
-                      fit: BoxFit.cover,
+                      fit: BoxFit.fitHeight,
                     ),
                   ),
                 ),

@@ -23,7 +23,7 @@ class ManageProductsScreen extends StatefulWidget {
 }
 
 class _ManageProductsScreenState extends State<ManageProductsScreen> {
-  String _selectedType = 'Alcohol';
+  String _sType = 'Alcohol';
 
   @override
   Widget build(BuildContext context) {
@@ -61,7 +61,7 @@ class _ManageProductsScreenState extends State<ManageProductsScreen> {
         _displayOptions(context),
         const Divider(),
         const SizedBox(height: 2.0),
-        _buildProducts(context),
+        buildProducts(context),
         const SizedBox(height: 2.0),
       ],
     );
@@ -88,17 +88,17 @@ class _ManageProductsScreenState extends State<ManageProductsScreen> {
                 onTap: () {
                   setState(() {
                     // _sCategory = categories[index];
-                    _selectedType = _options[index];
-                    print(_selectedType + ' products display option is selected.');
+                    _sType = _options[index];
+                    print(_sType + ' products display option is selected');
                   });
                 });
           }),
     );
   }
 
-  _buildProducts(BuildContext context) {
+  buildProducts(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
-        stream: FirestoreHelper.getProductsByType(widget.serviceId, _selectedType),
+        stream: FirestoreHelper.getProductsByType(widget.serviceId, _sType),
         builder: (ctx, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(
