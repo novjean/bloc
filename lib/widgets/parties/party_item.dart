@@ -35,8 +35,8 @@ class PartyItem extends StatelessWidget {
       child: Hero(
         tag: party.id,
         child: Card(
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10.0)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
           child: SizedBox(
             width: MediaQuery.of(context).size.width,
             child: Column(
@@ -45,8 +45,7 @@ class PartyItem extends StatelessWidget {
                   height: imageHeight,
                   width: MediaQuery.of(context).size.width,
                   decoration: BoxDecoration(
-                    border:
-                    Border.all(color: Theme.of(context).primaryColor),
+                    border: Border.all(color: Theme.of(context).primaryColor),
                     borderRadius: BorderRadius.all(Radius.circular(10)),
                     image: DecorationImage(
                       image: NetworkImage(party.imageUrl),
@@ -57,25 +56,23 @@ class PartyItem extends StatelessWidget {
                 ),
                 Container(
                   width: MediaQuery.of(context).size.width,
-                  padding:
-                  EdgeInsets.only(top: 10, left: 15.0, right: 15.0),
+                  padding: EdgeInsets.only(top: 10, left: 15.0, right: 15.0),
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                    Text(
-                      "${party.name.toLowerCase()}",
-                      style: TextStyle(
-                        fontSize: 24.0,
-                        fontWeight: FontWeight.w800,
-                      ),
-                      textAlign: TextAlign.left,
-                    ),
-
-                        Text(DateTimeUtils.getFormattedDate(party.startTime),
-                          style: TextStyle(fontSize: 20),)
-                  ]),
-
-
+                        Text(
+                          "${party.name.toLowerCase()}",
+                          style: TextStyle(
+                            fontSize: 24.0,
+                            fontWeight: FontWeight.w800,
+                          ),
+                          textAlign: TextAlign.left,
+                        ),
+                        Text(
+                          DateTimeUtils.getFormattedDate(party.startTime),
+                          style: TextStyle(fontSize: 20),
+                        )
+                      ]),
                 ),
                 // SizedBox(height: 10.0),
                 // Row(
@@ -91,15 +88,19 @@ class PartyItem extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    ButtonWidget(text: 'Instagram', onClicked: () {
-                      final uri = Uri.parse(party.instagramUrl);
-                      _launchInBrowser(uri);
-                    }),
+                    ButtonWidget(
+                        text: 'Instagram',
+                        onClicked: () {
+                          final uri = Uri.parse(party.instagramUrl);
+                          _launchInBrowser(uri);
+                        }),
                     SizedBox(width: 10),
-                    ButtonWidget(text: 'Tickets', onClicked: () {
-                      final uri = Uri.parse(party.ticketUrl);
-                      _launchInBrowser(uri);
-                    }),
+                    ButtonWidget(
+                        text: 'Tickets',
+                        onClicked: () {
+                          final uri = Uri.parse(party.ticketUrl);
+                          _launchInBrowser(uri);
+                        }),
                     SizedBox(width: 15),
                   ],
                 ),

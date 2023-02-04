@@ -29,7 +29,7 @@ class _OrdersBilledScreenState extends State<OrdersBilledScreen> {
   void initState() {
     FirestoreHelper.pullBilledCartItemsByBloc(widget.serviceId, true, true)
         .then((res) {
-      print("Successfully retrieved cart items");
+      print("successfully retrieved cart items");
       List<CartItem> _cartItems = [];
       if (res.docs.length == 0) {
         setState(() {
@@ -64,33 +64,15 @@ class _OrdersBilledScreenState extends State<OrdersBilledScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text(widget.titleHead + ' | Billed'),
+          title: Text(widget.titleHead + ' | billed'),
         ),
         body: _isLoading
-            ? CenterTextWidget(text: 'Loading orders...')
+            ? CenterTextWidget(text: 'loading orders...')
             : ListView.builder(
                 itemCount: orders.length,
                 scrollDirection: Axis.vertical,
                 itemBuilder: (ctx, index) {
-                  String title = 'Order ID: ' + orders[index].createdAt.toString();
-
-                  String collapsed = '';
-                  String expanded = '';
-
-                  for(int i=0; i<orders[index].cartItems.length; i++) {
-                    CartItem item = orders[index].cartItems[i];
-
-                    if(i<2){
-                      collapsed += item.productName + ' x ' + item.quantity.toString() + '\n';
-                    }
-                    expanded += item.productName + ' x ' + item.quantity.toString() + '\n';
-
-                    if(i==orders[index].cartItems.length-1){
-                      expanded += '\n\n' + 'Total : ' + orders[index].total.toString();
-                    }
-                  }
-
-                  return OrderCard(title: title, collapsed: collapsed, expanded: expanded, imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/3/34/LaceUp-Invoicing-851_%C3%97_360.jpg');
+                  return OrderCard(blocOrder: orders[index]);
                 })
         );
   }

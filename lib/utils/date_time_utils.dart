@@ -20,4 +20,10 @@ class DateTimeUtils {
     return date.toLowerCase();
   }
 
+  static String getFormattedDateYear(int millis) {
+    var dt = DateTime.fromMillisecondsSinceEpoch(millis);
+    String date = DateFormat('yMMMd').format(dt);
+    return date.toLowerCase();
+  }
+
 }

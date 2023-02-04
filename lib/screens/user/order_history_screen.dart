@@ -33,7 +33,7 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
     final user = UserPreferences.getUser();
 
     FirestoreHelper.pullCompletedCartItemsByUser(user.id, true).then((res) {
-      print("Successfully retrieved cart items by bloc");
+      print("successfully retrieved cart items by bloc");
       List<CartItem> _billedCartItems = [];
       List<CartItem> _completedCartItems = [];
 
@@ -94,7 +94,7 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text('My Orders'),
+          title: Text('orders'),
         ),
         body: _buildBody(context));
   }
@@ -102,22 +102,22 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
   _buildBody(BuildContext context) {
     return Column(
       children: [
-        SizedBox(height: 5.0),
-        buildSectionTitleRow('Ongoing Orders', context),
-        SizedBox(height: 2.0),
-        _isOngoingLoading
-            ? Text('Loading ongoing orders...')
-            : completedOrders.isNotEmpty
-                ? _displayOngoingOrder(context)
-                : Text('No current orders!'),
-        SizedBox(height: 2.0),
-        buildSectionTitleRow('Past Orders', context),
+        // SizedBox(height: 5.0),
+        // buildSectionTitleRow('ongoing orders', context),
+        // SizedBox(height: 2.0),
+        // _isOngoingLoading
+        //     ? Text('loading ongoing orders...')
+        //     : completedOrders.isNotEmpty
+        //         ? _displayOngoingOrder(context)
+        //         : Text('no current orders!'),
+        // SizedBox(height: 2.0),
+        // buildSectionTitleRow('Past Orders', context),
         SizedBox(height: 2.0),
         _isPastLoading
-            ? Text('Loading past orders...')
+            ? Text('loading past orders...')
             : billedOrders.isNotEmpty
                 ? _displayBilledOrders(context)
-                : Text('No past orders!'),
+                : Text('no past orders'),
         SizedBox(height: 2.0),
       ],
     );
@@ -143,44 +143,7 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
 
   _displayOngoingOrder(BuildContext context) {
     BlocOrder order = completedOrders[0];
-
-    String title =
-        'Order ID: ' + completedOrders[0].createdAt.toString();
-
-    String collapsed = '';
-    String expanded = '';
-
-    for (int i = 0; i < order.cartItems.length; i++) {
-      CartItem item = order.cartItems[i];
-
-      if (i < 2) {
-        collapsed +=
-            item.productName + ' x ' + item.quantity.toString() + '\n';
-      }
-      expanded +=
-          item.productName + ' x ' + item.quantity.toString() + '\n';
-
-      if (i == order.cartItems.length - 1) {
-        expanded += '\n\nTotal : ' + order.total.toString();
-      }
-    }
-
-    return OrderCard(
-        title: title,
-        collapsed: collapsed,
-        expanded: expanded,
-        imageUrl:
-        'https://upload.wikimedia.org/wikipedia/commons/3/34/LaceUp-Invoicing-851_%C3%97_360.jpg');
-
-
-    // return Expanded(
-    //   child: ListView.builder(
-    //       itemCount: completedOrders.length,
-    //       scrollDirection: Axis.vertical,
-    //       itemBuilder: (ctx, index) {
-    //
-    //       }),
-    // );
+    return OrderCard(blocOrder: order);
   }
   
   _displayBilledOrders(BuildContext context) {
@@ -189,34 +152,8 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
           itemCount: billedOrders.length,
           scrollDirection: Axis.vertical,
           itemBuilder: (ctx, index) {
-            String title =
-                'Order ID: ' + billedOrders[index].createdAt.toString();
 
-            String collapsed = '';
-            String expanded = '';
-
-            for (int i = 0; i < billedOrders[index].cartItems.length; i++) {
-              CartItem item = billedOrders[index].cartItems[i];
-
-              if (i < 2) {
-                collapsed +=
-                    item.productName + ' x ' + item.quantity.toString() + '\n';
-              }
-              expanded +=
-                  item.productName + ' x ' + item.quantity.toString() + '\n';
-
-              if (i == billedOrders[index].cartItems.length - 1) {
-                expanded +=
-                    '\n\n' + 'Total : ' + billedOrders[index].total.toString();
-              }
-            }
-
-            return OrderCard(
-                title: title,
-                collapsed: collapsed,
-                expanded: expanded,
-                imageUrl:
-                    'https://upload.wikimedia.org/wikipedia/commons/3/34/LaceUp-Invoicing-851_%C3%97_360.jpg');
+            return OrderCard(blocOrder: billedOrders[index]);
           }),
     );
   }
