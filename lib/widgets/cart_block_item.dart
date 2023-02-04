@@ -27,7 +27,7 @@ class CartBlockItem extends StatelessWidget {
             ),
           ),
           title: Text(cartItem.productName),
-          subtitle: Text('Price: \u20B9' + cartItem.productPrice.toStringAsFixed(2)),
+          subtitle: Text('price: \u20B9' + cartItem.productPrice.toStringAsFixed(2)),
           trailing: Text('\u20B9' + (cartItem.productPrice * cartItem.quantity).toStringAsFixed(2)),
         ),
       ),

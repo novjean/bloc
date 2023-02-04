@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import '../../../db/entity/bloc_order.dart';
 import '../../../db/entity/cart_item.dart';
 import '../../../utils/date_time_utils.dart';
+import '../../cart_block.dart';
+import 'order_cart_item.dart';
 
 class OrderCard extends StatelessWidget {
   BlocOrder blocOrder;
@@ -15,15 +17,17 @@ class OrderCard extends StatelessWidget {
   Widget build(BuildContext context) {
     String title = 'order #' + blocOrder.createdAt.toString();
     String collapsed = '';
-    String expanded = '';
 
     for (int i = 0; i < blocOrder.cartItems.length; i++) {
       CartItem item = blocOrder.cartItems[i];
 
-      if (i < 2) {
-        collapsed += item.productName.toLowerCase() + ' x ' + item.quantity.toString() + '\n';
+      if (i >= 1) {
+        collapsed += ", ";
       }
-      expanded += item.productName.toLowerCase() + ' x ' + item.quantity.toString() + '\n';
+
+      if (i < 5) {
+        collapsed += item.productName.toLowerCase();
+      }
     }
 
     return ExpandableNotifier(
@@ -64,14 +68,16 @@ class OrderCard extends StatelessWidget {
                         Padding(
                             padding: const EdgeInsets.all(10),
                             child: Text(
-                              DateTimeUtils.getFormattedDateYear(blocOrder.createdAt),
+                              DateTimeUtils.getFormattedDateYear(
+                                  blocOrder.createdAt),
                               style: const TextStyle(fontSize: 14),
                             )),
                       ],
                     ),
                   ),
                   collapsed: Padding(
-                    padding: const EdgeInsets.only(top:10.0),
+                    padding: const EdgeInsets.only(
+                        top: 5.0, left: 10, bottom: 5, right: 10),
                     child: Text(
                       collapsed,
                       style: TextStyle(
@@ -83,58 +89,61 @@ class OrderCard extends StatelessWidget {
                     ),
                   ),
 
-                  expanded:
-
-                  Column(
+                  expanded: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(top: 10.0),
-                            child: Text(
-                              expanded,
+                      displayCartItems(context, blocOrder.cartItems),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 10.0, right: 0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'total',
                               style: TextStyle(
+                                fontWeight: FontWeight.w500,
                                 fontSize: 16,
                               ),
-                              softWrap: true,
-                              overflow: TextOverflow.ellipsis,
                             ),
-                          ),
-                        ],
-                      ),
-
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            'total',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
+                            ButtonWidget(
+                              text: '\u20B9 ${blocOrder.total}',
+                              onClicked: () {},
                             ),
-                          ),
-                          ButtonWidget(
-                            text: '\u20B9 ${blocOrder.total}',
-                            onClicked: () {},
-                          ),
-                        ],
+                          ],
+                        ),
                       )
                     ],
                   ),
-                  builder: (_, collapsed, expanded) => Padding(
-                    padding: EdgeInsets.all(10).copyWith(top: 0),
-                    child: Expandable(
-                      collapsed: collapsed,
-                      expanded: expanded,
-                    ),
+                  builder: (_, collapsed, expanded) => Expandable(
+                    collapsed: collapsed,
+                    expanded: expanded,
                   ),
                 ),
               ),
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  displayCartItems(BuildContext context, List<CartItem> cartItems) {
+    double height = 20 * cartItems.length.roundToDouble();
+    return SizedBox(
+      height: height,
+      child: ListView.builder(
+        itemCount: cartItems.length,
+        scrollDirection: Axis.vertical,
+        physics: const BouncingScrollPhysics(),
+        itemBuilder: (BuildContext context, int index) {
+          return GestureDetector(
+            child: OrderCartItem(cartItem: cartItems[index]),
+            onTap: () {
+              CartItem _sCartItem = cartItems[index];
+              print(_sCartItem.createdAt.toString() + ' is selected.');
+            },
+          );
+        },
       ),
     );
   }
