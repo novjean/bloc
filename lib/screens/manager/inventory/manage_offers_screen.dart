@@ -17,7 +17,7 @@ class ManageOffersScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text('Inventory | Offers'),
+          title: const Text('inventory | offers'),
         ),
       body: _buildOffers(context),
     );
@@ -65,19 +65,19 @@ class ManageOffersScreen extends StatelessWidget {
                   showDialog(
                     context: context,
                     builder: (ctx) => AlertDialog(
-                      title: Text('End Offer | ' + _sOffer.productName),
+                      title: Text('end offer | ' + _sOffer.productName),
                       content: Text(
-                        'Do you want to end the offer for the item?',
+                        'do you want to end the offer for the item?',
                       ),
                       actions: [
                         ElevatedButton(
-                          child: Text('No'),
+                          child: Text('no'),
                           onPressed: () {
                             Navigator.of(ctx).pop(false);
                           },
                         ),
                         ElevatedButton(
-                          child: Text('Yes'),
+                          child: Text('yes'),
                           onPressed: () {
                             _sOffer.isActive = false;
                             FirestoreHelper.deleteOffer(_sOffer.id);

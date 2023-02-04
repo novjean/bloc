@@ -669,6 +669,15 @@ class FirestoreHelper {
         .get();
   }
 
+  static Future<QuerySnapshot<Map<String, dynamic>>> pullTableByNumber(
+      String blocServiceId, int tableNumber) {
+    return FirebaseFirestore.instance
+        .collection(FirestoreHelper.TABLES)
+        .where('serviceId', isEqualTo: blocServiceId)
+        .where('tableNumber', isEqualTo: tableNumber)
+        .get();
+  }
+
   static Stream<QuerySnapshot<Object?>> getTables(String serviceId) {
     return FirebaseFirestore.instance
         .collection(TABLES)
