@@ -341,12 +341,6 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
                                               } else {
                                                 Toaster.longToast('table ' + tableNum.toString() + ' is occupied');
                                               }
-
-                                              // setState(() {
-                                              //   mTable = _table;
-                                              //   _isTableDetailsLoading = false;
-                                              //   _isCustomerSeated = true;
-                                              // });
                                             }
                                           } else {
                                             print('table could not be found for table number ' + tableNum.toString());
