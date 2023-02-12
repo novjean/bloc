@@ -425,12 +425,6 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
         const SizedBox(height: 1.0),
         _updateOffers(context),
         !_isCustomerSeated ? _searchTableNumber(context) : CartWidget()
-        // TableCardItem(
-        //         tableId: mTable.id,
-        //         tableNumber: mTable.tableNumber,
-        //         isCommunity: _isCommunity,
-        //         seatId: mSeat.id,
-        //       ),
       ],
     );
   }
@@ -514,15 +508,7 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
               }
             }
           } else {
-            // this will display the table card item with the dummy values
-            return SizedBox(height: 0);
-
-            //   TableCardItem(
-            //   tableId: mTable.id,
-            //   tableNumber: mTable.tableNumber,
-            //   isCommunity: _isCommunity,
-            //   seatId: mSeat.id,
-            // );
+            return const SizedBox(height: 0);
           }
           return SizedBox();
         });

@@ -251,7 +251,7 @@ class _ManageSeatsScreenState extends State<ManageSeatsScreen> {
                               "would you like to make the seat available?"),
                           actions: [
                             TextButton(
-                              child: Text("Yes"),
+                              child: Text("yes"),
                               onPressed: () {
                                 FirestoreHelper.updateSeat(seat.id, '');
 
@@ -316,10 +316,6 @@ class _ManageSeatsScreenState extends State<ManageSeatsScreen> {
     if (scanCustId.compareTo('-1') == 0) {
       return;
     }
-    // update seat in floor
-    // BlocRepository.updateCustInSeat(widget.dao, seat.id, scanCustId);
-    // BlocRepository.updateTableOccupyStatus(
-    //     widget.dao, seat.serviceId, seat.tableNumber, true);
 
     seat.custId = scanCustId;
     FirestoreHelper.updateSeat(seat.id, scanCustId);

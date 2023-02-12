@@ -38,89 +38,56 @@ class _OTPScreenState extends State<OTPScreen> {
         body: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Spacer(),
-              Container(
-                  margin: const EdgeInsets.only(top: 0),
-                  child: Column(
-                    children: [
-                      Container(
-                        child: Center(
-                          child: Text(
-                            'bloc',
-                            style: TextStyle(
-                              color: Theme.of(context).primaryColor,
-                              fontWeight: FontWeight.bold,
-                              letterSpacing: 25,
-                              fontSize: 72,
-                            ),
-                          ),
-                        ),
-                      ),
-                      // Padding(
-                      //   padding: const EdgeInsets.only(top: 40.0),
-                      //   child: Center(
-                      //       child: Text(
-                      //     'verify +91-${widget.phone}',
-                      //     style: TextStyle(
-                      //       color: Theme.of(context).primaryColorLight,
-                      //       fontWeight: FontWeight.bold,
-                      //       fontSize: 26,
-                      //     ),
-                      //   )),
-                      // ),
-                      Padding(
-                        padding: const EdgeInsets.only(
-                            top: 20.0, left: 20, right: 20),
-                        child: Center(
-                            child: Text(
-                          'enter the six digit code you received on +91-${widget.phone}',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: Theme.of(context).primaryColorLight,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 20,
-                          ),
-                        )),
-                      ),
-                    ],
-                  )),
-              Spacer(),
-              Container(
-                margin: EdgeInsets.only(top: 0),
-                child: FractionallySizedBox(
-                    widthFactor: 1,
-                    child: OTPVerify(
-                      phone: widget.phone,
-                    )),
+              Flexible(
+                child: Container(
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                        image: AssetImage(
+                            "assets/icons/logo-adaptive.png"),
+                        fit: BoxFit.fitHeight
+                      // AssetImage(food['image']),
+                    ),
+                  ),
+                ), flex: 3,
               ),
-              Spacer(),
-              Spacer(),
-              // Container(
-              //   margin: const EdgeInsets.only(left: 20, right: 20, bottom: 40),
-              //   width: double.infinity,
-              //   child: ElevatedButton(
-              //     style: ElevatedButton.styleFrom(
-              //       primary: Theme.of(context).primaryColor,
-              //       onPrimary: Colors.white,
-              //       shadowColor: Colors.white30,
-              //       elevation: 3,
-              //       shape: RoundedRectangleBorder(
-              //           borderRadius: BorderRadius.circular(32.0)),
-              //       minimumSize: Size(100, 60), //////// HERE
+              // Padding(
+              //   padding: const EdgeInsets.only(top: 40.0),
+              //   child: Center(
+              //       child: Text(
+              //     'verify +91-${widget.phone}',
+              //     style: TextStyle(
+              //       color: Theme.of(context).primaryColorLight,
+              //       fontWeight: FontWeight.bold,
+              //       fontSize: 26,
               //     ),
-              //     onPressed: () {
-              //
-              //       // Navigator.of(context).pop();
-              //       // Navigator.of(context).push(MaterialPageRoute(
-              //       //     builder: (context) =>
-              //       //         OTPScreen(_controller.text, widget.dao)));
-              //     },
-              //     child: Text(
-              //       'back',
-              //       style: TextStyle(fontSize: 20),
-              //     ),
-              //   ),
-              // )
+              //   )),
+              // ),
+              Flexible(
+                child: Padding(
+                  padding: const EdgeInsets.only(
+                      top: 20.0, left: 20, right: 20),
+                  child: Center(
+                      child: Text(
+                        'enter the six digit code you received on +91-${widget.phone}',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Theme.of(context).primaryColorLight,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 20,
+                        ),
+                      )),
+                ),flex: 1,
+              ),
+              Flexible(
+                child: Container(
+                  margin: EdgeInsets.only(top: 0),
+                  child: FractionallySizedBox(
+                      widthFactor: 1,
+                      child: OTPVerify(
+                        phone: widget.phone,
+                      )),
+                ), flex: 1,
+              ),
             ]));
   }
 }

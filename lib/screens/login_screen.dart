@@ -108,72 +108,76 @@ class _LoginScreenState extends State<LoginScreen> {
         //     ),
         //   ),
         // ),
-        Container(
-          height: 200,
-          width: 100,
-          decoration: BoxDecoration(
-            image: DecorationImage(
-                image: NetworkImage(
-                    "assets/icons/logo-adaptive.png"),
-                fit: BoxFit.fitHeight
-              // AssetImage(food['image']),
-            ),
-          ),
-        ),
-        Container(
-          margin: EdgeInsets.only(top: 0, right: 20, left: 20),
-          child: TextField(
-            decoration: InputDecoration(
-              enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(8)),
-                  borderSide: BorderSide(color: Colors.grey.shade200)),
-              focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(8)),
-                  borderSide: BorderSide(color: Colors.grey.shade300)),
-              filled: true,
-              hintText: 'phone number',
-              fillColor: Colors.grey[100],
-              prefix: Padding(
-                padding: EdgeInsets.all(4),
-                child: Text('+91'),
+        Flexible(
+          child: Container(
+            decoration: const BoxDecoration(
+              image: DecorationImage(
+                  image: AssetImage(
+                      "assets/icons/logo-adaptive.png"),
+                  fit: BoxFit.fitHeight
+                // AssetImage(food['image']),
               ),
             ),
-            style: TextStyle(fontSize: 20.0, height: 1.0, color: Colors.black),
-            maxLength: 10,
-            keyboardType: TextInputType.number,
-            controller: _controller,
-          ),
+          ), flex: 3,
         ),
-        Container(
-          margin: EdgeInsets.only(left: 20, right: 20, bottom: 40),
-          width: double.infinity,
-          child: ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              primary: Theme.of(context).primaryColor,
-              onPrimary: Colors.white,
-              shadowColor: Theme.of(context).shadowColor,
-              elevation: 3,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(32.0)),
-              minimumSize: Size(100, 60), //////// HERE
+        Flexible(
+          child: Container(
+            margin: const EdgeInsets.only(top: 0, right: 20, left: 20),
+            child: TextField(
+              decoration: InputDecoration(
+                enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(8)),
+                    borderSide: BorderSide(color: Colors.grey.shade200)),
+                focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(8)),
+                    borderSide: BorderSide(color: Colors.grey.shade300)),
+                filled: true,
+                hintText: 'phone number',
+                fillColor: Colors.grey[100],
+                prefix: Padding(
+                  padding: EdgeInsets.all(4),
+                  child: Text('+91'),
+                ),
+              ),
+              style: TextStyle(fontSize: 20.0, height: 1.0, color: Colors.black),
+              maxLength: 10,
+              keyboardType: TextInputType.number,
+              controller: _controller,
             ),
-            onPressed: () {
-              String phoneNumberString = _controller.text;
+          ), flex: 1,
+        ),
+        Flexible(
+          child: Container(
+            margin: EdgeInsets.only(left: 20, right: 20, bottom: 40),
+            width: double.infinity,
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                primary: Theme.of(context).primaryColor,
+                onPrimary: Colors.white,
+                shadowColor: Theme.of(context).shadowColor,
+                elevation: 3,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(32.0)),
+                minimumSize: Size(100, 60), //////// HERE
+              ),
+              onPressed: () {
+                String phoneNumberString = _controller.text;
 
-              if(phoneNumberString.length == 10){
-                Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) =>
-                        OTPScreen(_controller.text)));
-              } else {
-                print('user entered invalid phone number' + phoneNumberString);
-                Toaster.longToast('please enter a valid phone number');
-              }
-            },
-            child: Text(
-              'next',
-              style: TextStyle(fontSize: 20),
+                if(phoneNumberString.length == 10){
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) =>
+                          OTPScreen(_controller.text)));
+                } else {
+                  print('user entered invalid phone number' + phoneNumberString);
+                  Toaster.longToast('please enter a valid phone number');
+                }
+              },
+              child: Text(
+                'next',
+                style: TextStyle(fontSize: 20),
+              ),
             ),
-          ),
+          ), flex: 1,
         )
       ],
     );
