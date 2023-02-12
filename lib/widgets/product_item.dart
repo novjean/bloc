@@ -20,6 +20,7 @@ class ProductItem extends StatefulWidget {
   final bool isCommunity;
   final bool isOnOffer;
   final Offer offer;
+  final bool isCustomerSeated;
   int addCount = 1;
 
   ProductItem({required this.serviceId,
@@ -27,7 +28,8 @@ class ProductItem extends StatefulWidget {
     required this.tableNumber,
     required this.isCommunity,
     required this.isOnOffer,
-    required this.offer});
+    required this.offer,
+  required this.isCustomerSeated});
 
   @override
   State<ProductItem> createState() => _ProductItemState();
@@ -203,61 +205,8 @@ class _ProductItemState extends State<ProductItem> {
                                       ? 'add'
                                       : 'add ' + widget.addCount.toString(),
                                   onClicked: () {
-                                    // add it to the cart
-                                    String cartId =
-                                    StringUtils.getRandomString(20);
-                                    //todo: this needs to increment
-                                    int cartNumber = 0;
-                                    final user =
-                                        FirebaseAuth.instance.currentUser;
-                                    String userId = user!.uid;
-                                    int timestamp =
-                                        Timestamp
-                                            .now()
-                                            .millisecondsSinceEpoch;
-                                    CartItem cartItem = CartItem(
-                                        cartId: cartId,
-                                        serviceId: widget.serviceId,
-                                        billId: '',
-                                        tableNumber: widget.tableNumber,
-                                        cartNumber: cartNumber,
-                                        userId: userId,
-                                        productId: widget.product.id,
-                                        productName: widget.product.name,
-                                        productPrice: double.parse(widget
-                                            .isCommunity
-                                            ? widget.product.priceCommunity
-                                            .toString()
-                                            : widget.product.price.toString()),
-                                        isCommunity: widget.isCommunity,
-                                        quantity: widget.addCount,
-                                        createdAt: timestamp,
-                                        isCompleted: false,
-                                        isBilled: false);
-
-                                    cart.addItem(
-                                        cartId,
-                                        widget.serviceId,
-                                        cartItem.billId,
-                                        widget.tableNumber,
-                                        cartNumber,
-                                        cartItem.userId,
-                                        cartItem.productId,
-                                        cartItem.productName,
-                                        cartItem.productPrice,
-                                        widget.isCommunity,
-                                        cartItem.quantity,
-                                        cartItem.createdAt,
-                                        cartItem.isCompleted,
-                                        cartItem.isBilled);
-
-                                    setState(() {
-                                      widget.addCount = 1;
-                                    });
-
-                                    Toaster.shortToast(
-                                        widget.product.name.toLowerCase() +
-                                            ' is added to cart');
+                                    //check if customer is seated
+                                    widget.isCustomerSeated? addProductToCart(cart) : alertUserTable(context);
                                   },
                                 )),
                             IconButton(
@@ -281,6 +230,84 @@ class _ProductItemState extends State<ProductItem> {
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  addProductToCart(Cart cart) {
+    // add it to the cart
+    String cartId =
+    StringUtils.getRandomString(20);
+    //todo: this needs to increment
+    int cartNumber = 0;
+    final user =
+        FirebaseAuth.instance.currentUser;
+    String userId = user!.uid;
+    int timestamp =
+        Timestamp
+            .now()
+            .millisecondsSinceEpoch;
+    CartItem cartItem = CartItem(
+        cartId: cartId,
+        serviceId: widget.serviceId,
+        billId: '',
+        tableNumber: widget.tableNumber,
+        cartNumber: cartNumber,
+        userId: userId,
+        productId: widget.product.id,
+        productName: widget.product.name,
+        productPrice: double.parse(widget
+            .isCommunity
+            ? widget.product.priceCommunity
+            .toString()
+            : widget.product.price.toString()),
+        isCommunity: widget.isCommunity,
+        quantity: widget.addCount,
+        createdAt: timestamp,
+        isCompleted: false,
+        isBilled: false);
+
+    cart.addItem(
+        cartId,
+        widget.serviceId,
+        cartItem.billId,
+        widget.tableNumber,
+        cartNumber,
+        cartItem.userId,
+        cartItem.productId,
+        cartItem.productName,
+        cartItem.productPrice,
+        widget.isCommunity,
+        cartItem.quantity,
+        cartItem.createdAt,
+        cartItem.isCompleted,
+        cartItem.isBilled);
+
+    setState(() {
+      widget.addCount = 1;
+    });
+
+    Toaster.shortToast(
+        widget.product.name.toLowerCase() +
+            ' is added to cart');
+  }
+
+  alertUserTable(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text('select table'),
+        content: Text(
+          'please select your table by clicking on the scan/table icon in the title section above before adding items',
+        ),
+        actions: [
+          ElevatedButton(
+            child: Text('ok'),
+            onPressed: () {
+              Navigator.of(ctx).pop(true);
+            },
+          ),
+        ],
       ),
     );
   }

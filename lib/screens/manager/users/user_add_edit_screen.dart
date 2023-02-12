@@ -15,6 +15,7 @@ import '../../../utils/string_utils.dart';
 import '../../../widgets/profile_widget.dart';
 import '../../../widgets/ui/button_widget.dart';
 import '../../../widgets/ui/textfield_widget.dart';
+import '../../../widgets/ui/toaster.dart';
 
 class UserAddEditScreen extends StatefulWidget {
   User user;
@@ -360,6 +361,46 @@ class _UserAddEditScreenState extends State<UserAddEditScreen> {
             FirestoreHelper.pushUser(widget.user);
 
             Navigator.of(context).pop();
+          },
+        ),
+        const SizedBox(height: 24),
+        ButtonWidget(
+          text: 'delete',
+          onClicked: () {
+
+            showDialog(
+              context: context,
+              builder: (ctx) => AlertDialog(
+                title: Text('delete ' + widget.user.name),
+                content: Text(
+                  'do you want to delete the user?',
+                ),
+                actions: [
+                  ElevatedButton(
+                    child: Text('no'),
+                    onPressed: () {
+                      Navigator.of(ctx).pop(false);
+                    },
+                  ),
+                  ElevatedButton(
+                    child: Text('yes'),
+                    onPressed: () {
+                      try {
+                        FirestorageHelper.deleteFile(widget.user.imageUrl);
+                      } catch (err){
+                        print(err);
+                      }
+
+                      FirestoreHelper.deleteUser(widget.user);
+                      Toaster.shortToast('user deleted');
+
+                      Navigator.of(ctx).pop(true);
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              ),
+            );
           },
         ),
       ],

@@ -687,6 +687,7 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
                       isCommunity: _isCommunity,
                       isOnOffer: isProductOnOffer,
                       offer: productOffer,
+                      isCustomerSeated: _isCustomerSeated,
                     ),
                     onTap: () {
                       Product _sProduct = subProducts[index];
