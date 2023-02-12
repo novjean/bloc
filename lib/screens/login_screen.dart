@@ -95,17 +95,29 @@ class _LoginScreenState extends State<LoginScreen> {
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
+        // Container(
+        //   margin: EdgeInsets.only(top: 200),
+        //   child: Center(
+        //     child: Text(
+        //       'bloc',
+        //       style: TextStyle(
+        //         color: Theme.of(context).primaryColor,
+        //         fontWeight: FontWeight.bold,
+        //         letterSpacing: 25,
+        //         fontSize: 72,
+        //       ),
+        //     ),
+        //   ),
+        // ),
         Container(
-          margin: EdgeInsets.only(top: 200),
-          child: Center(
-            child: Text(
-              'bloc',
-              style: TextStyle(
-                color: Theme.of(context).primaryColor,
-                fontWeight: FontWeight.bold,
-                letterSpacing: 25,
-                fontSize: 72,
-              ),
+          height: 200,
+          width: 100,
+          decoration: BoxDecoration(
+            image: DecorationImage(
+                image: NetworkImage(
+                    "assets/icons/logo-adaptive.png"),
+                fit: BoxFit.fitHeight
+              // AssetImage(food['image']),
             ),
           ),
         ),
@@ -120,7 +132,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   borderRadius: BorderRadius.all(Radius.circular(8)),
                   borderSide: BorderSide(color: Colors.grey.shade300)),
               filled: true,
-              hintText: 'Phone Number',
+              hintText: 'phone number',
               fillColor: Colors.grey[100],
               prefix: Padding(
                 padding: EdgeInsets.all(4),
