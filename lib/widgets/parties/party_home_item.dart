@@ -68,10 +68,8 @@ class PartyHomeItem extends StatelessWidget {
                         child: Text(DateTimeUtils.getFormattedTime(party.startTime),
                           style: const TextStyle(fontSize: 18),),
                       ),
-                      // ButtonWidget(text: 'Instagram', onClicked: () {
-                      //   final uri = Uri.parse(party.instagramUrl);
-                      //   _launchInBrowser(uri);
-                      // }),
+
+                      party.ticketUrl.isNotEmpty?
 
                       Padding(
                         padding: const EdgeInsets.only(right: 5.0),
@@ -90,6 +88,26 @@ class PartyHomeItem extends StatelessWidget {
                           },
                           child: Text(
                             'get tickets',
+                            style: TextStyle(fontSize: 20, color: Colors.black),
+                          ),
+                        ),
+                      ) : Padding(
+                        padding: const EdgeInsets.only(right: 5.0),
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            primary: Theme.of(context).highlightColor,
+                            onPrimary: Colors.white,
+                            shadowColor: Colors.white30,
+                            elevation: 3,
+
+                            minimumSize: Size.fromHeight(60), //////// HERE
+                          ),
+                          onPressed: () {
+                            final uri = Uri.parse(party.listenUrl);
+                            _launchInBrowser(uri);
+                          },
+                          child: Text(
+                            'listen',
                             style: TextStyle(fontSize: 20, color: Colors.black),
                           ),
                         ),

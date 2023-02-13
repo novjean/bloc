@@ -218,7 +218,7 @@ class _ManageSeatsScreenState extends State<ManageSeatsScreen> {
                   tableNumber: widget.serviceTable.tableNumber);
               seats.add(seat);
               // BlocRepository.insertSeat(widget.dao, seat);
-              FirestoreHelper.uploadSeat(seat);
+              FirestoreHelper.pushSeat(seat);
             }
             return _displaySeats(context, seats);
           }

@@ -238,19 +238,6 @@ class _ProductAddEditScreenState extends State<ProductAddEditScreen> {
                 onChanged: (value) {
                   double? newPrice = double.tryParse(value);
                   widget.product = widget.product.copyWith(price: newPrice);
-
-                  if(widget.task=='add'){
-                    widget.product =
-                        widget.product.copyWith(priceCommunity: newPrice);
-                    widget.product =
-                        widget.product.copyWith(priceLowest: newPrice);
-                    widget.product = widget.product.copyWith(
-                        priceLowestTime: Timestamp.now().millisecondsSinceEpoch);
-                    widget.product =
-                        widget.product.copyWith(priceHighest: newPrice);
-                    widget.product = widget.product.copyWith(
-                        priceHighestTime: Timestamp.now().millisecondsSinceEpoch);
-                  }
                 },
               ),
               const SizedBox(height: 24),

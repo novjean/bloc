@@ -597,7 +597,7 @@ class FirestoreHelper {
         .get();
   }
 
-  static void uploadSeat(Seat seat) async {
+  static void pushSeat(Seat seat) async {
     await FirebaseFirestore.instance
         .collection(SEATS)
         .doc(seat.id)
@@ -641,6 +641,11 @@ class FirestoreHelper {
         .where('custId', isEqualTo: custId)
         .snapshots();
   }
+
+  static void deleteSeat(Seat seat) {
+    FirebaseFirestore.instance.collection(SEATS).doc(seat.id).delete();
+  }
+
 
   /** SOS **/
   static void sendSOSMessage(String? token, String name, int phoneNumber,
@@ -711,7 +716,21 @@ class FirestoreHelper {
         .collection(TABLES)
         .where('serviceId', isEqualTo: serviceId)
         .where('type', isEqualTo: colorType)
+        .orderBy('tableNumber', descending: false)
         .snapshots();
+  }
+
+  static void pushTable(ServiceTable table) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection(TABLES)
+          .doc(table.id)
+          .set(table.toMap());
+    } on PlatformException catch (err) {
+      logger.e(err.message);
+    } catch (err) {
+      logger.e(err);
+    }
   }
 
   static void setTableOccupyStatus(String tableId, bool isOccupied) async {
@@ -972,8 +991,6 @@ class FirestoreHelper {
         .orderBy('level', descending: false)
         .get();
   }
-
-
 
 /** Reference **/
 // _buildProducts(BuildContext context, String _category) {

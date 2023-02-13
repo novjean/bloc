@@ -26,4 +26,8 @@ class DateTimeUtils {
     return date.toLowerCase();
   }
 
+  static DateTime getDate(int millis) {
+    return DateTime.fromMillisecondsSinceEpoch(millis);
+  }
+
 }

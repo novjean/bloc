@@ -6,6 +6,7 @@ class Party {
   final String imageUrl;
   final String instagramUrl;
   final String ticketUrl;
+  final String listenUrl;
   final int createdAt;
   final int startTime;
   final int endTime;
@@ -22,6 +23,7 @@ class Party {
     required this.imageUrl,
     required this.instagramUrl,
     required this.ticketUrl,
+    required this.listenUrl,
     required this.createdAt,
     required this.startTime,
     required this.endTime,
@@ -41,6 +43,7 @@ class Party {
           imageUrl == other.imageUrl &&
           instagramUrl == other.instagramUrl &&
           ticketUrl == other.ticketUrl &&
+          listenUrl == other.listenUrl &&
           createdAt == other.createdAt &&
           startTime == other.startTime &&
           endTime == other.endTime &&
@@ -56,6 +59,7 @@ class Party {
       imageUrl.hashCode ^
       instagramUrl.hashCode ^
       ticketUrl.hashCode ^
+      listenUrl.hashCode ^
       createdAt.hashCode ^
       startTime.hashCode ^
       endTime.hashCode ^
@@ -72,6 +76,7 @@ class Party {
         ' imageUrl: $imageUrl,' +
         ' instagramUrl: $instagramUrl,' +
         ' ticketUrl: $ticketUrl,' +
+        ' listenUrl: $listenUrl,' +
         ' createdAt: $createdAt,' +
         ' startTime: $startTime,' +
         ' endTime: $endTime,' +
@@ -88,6 +93,7 @@ class Party {
     String? imageUrl,
     String? instagramUrl,
     String? ticketUrl,
+    String? listenUrl,
     int? createdAt,
     int? startTime,
     int? endTime,
@@ -102,6 +108,7 @@ class Party {
       imageUrl: imageUrl ?? this.imageUrl,
       instagramUrl: instagramUrl ?? this.instagramUrl,
       ticketUrl: ticketUrl ?? this.ticketUrl,
+      listenUrl: listenUrl ?? this.listenUrl,
       createdAt: createdAt ?? this.createdAt,
       startTime: startTime ?? this.startTime,
       endTime: endTime ?? this.endTime,
@@ -119,6 +126,7 @@ class Party {
       'imageUrl': this.imageUrl,
       'instagramUrl': this.instagramUrl,
       'ticketUrl': this.ticketUrl,
+      'listenUrl': this.listenUrl,
       'createdAt': this.createdAt,
       'startTime': this.startTime,
       'endTime': this.endTime,
@@ -136,6 +144,7 @@ class Party {
       imageUrl: map['imageUrl'] as String,
       instagramUrl: map['instagramUrl'] as String,
       ticketUrl: map['ticketUrl'] as String,
+      listenUrl: map['listenUrl'] as String,
       createdAt: map['createdAt'] as int,
       startTime: map['startTime'] as int,
       endTime: map['endTime'] as int,

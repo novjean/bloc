@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:bloc/db/entity/bloc_service.dart';
+import 'package:bloc/utils/date_time_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -128,6 +129,9 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
   }
 
   Widget dateTimeContainer(BuildContext context, String type) {
+    sStartDateTime = DateTimeUtils.getDate(widget.party.startTime);
+    sEndDateTime = DateTimeUtils.getDate(widget.party.endTime);
+
     DateTime dateTime = type=='start' ? sStartDateTime:sEndDateTime;
 
     return Container(
@@ -291,6 +295,15 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
               ),
 
               const SizedBox(height: 24),
+              TextFieldWidget(
+                label: 'listen url',
+                text: widget.party.listenUrl,
+                maxLines: 1,
+                onChanged: (value) {
+                  widget.party = widget.party.copyWith(listenUrl: value);
+                },
+              ),
+              const SizedBox(height: 24),
               Row(
                 children: <Widget>[
                   SizedBox(
@@ -319,7 +332,7 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
 
               const SizedBox(height: 24),
               ButtonWidget(
-                text: 'Save',
+                text: 'save',
                 onClicked: () {
                   if (isPhotoChanged) {
                     widget.party = widget.party.copyWith(imageUrl: newImageUrl);

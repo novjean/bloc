@@ -49,9 +49,9 @@ class Dummy {
     Seat dummySeat = Seat(
         tableNumber: -1,
         serviceId: blocServiceId,
-        id: 'dummy_seat',
+        id: StringUtils.getRandomString(28),
         custId: userId,
-        tableId: 'dummy_table');
+        tableId: '');
     return dummySeat;
   }
 
@@ -59,25 +59,24 @@ class Dummy {
     int time = Timestamp.now().millisecondsSinceEpoch;
 
     Product dummyProduct = Product(
-      serviceId: blocServiceId,
-      ownerId: userId,
-      name: '',
-      imageUrl: '',
-      createdAt: time,
-      id: StringUtils.getRandomString(28),
-      description: '',
-      category: 'Beer',
-      isAvailable: false,
-      isOfferRunning: false,
-      price: 0,
-      priceCommunity: 0,
-      priceHighest: 0,
-      priceHighestTime: time,
-      priceLowestTime: time,
-      type: 'Alcohol',
-      priceLowest: 0,
-      isVeg: true
-    );
+        serviceId: blocServiceId,
+        ownerId: userId,
+        name: '',
+        imageUrl: '',
+        createdAt: time,
+        id: StringUtils.getRandomString(28),
+        description: '',
+        category: 'Beer',
+        isAvailable: false,
+        isOfferRunning: false,
+        price: 0,
+        priceCommunity: 0,
+        priceHighest: 0,
+        priceHighestTime: time,
+        priceLowestTime: time,
+        type: 'Alcohol',
+        priceLowest: 0,
+        isVeg: true);
 
     return dummyProduct;
   }
@@ -130,7 +129,8 @@ class Dummy {
         endTime: 0,
         instagramUrl: '',
         startTime: 0,
-        ticketUrl: '');
+        ticketUrl: '',
+        listenUrl: '');
 
     return dummyParty;
   }

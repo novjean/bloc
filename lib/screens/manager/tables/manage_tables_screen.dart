@@ -1,6 +1,7 @@
 import 'package:bloc/db/bloc_repository.dart';
 import 'package:bloc/db/shared_preferences/user_preferences.dart';
-import 'package:bloc/screens/manager/tables/manage_seats_screen.dart';
+import 'package:bloc/helpers/dummy.dart';
+import 'package:bloc/screens/manager/tables/table_add_edit_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -9,7 +10,6 @@ import '../../../helpers/firestore_helper.dart';
 import '../../../utils/constants.dart';
 import '../../../widgets/service_table_item.dart';
 import '../../../widgets/ui/sized_listview_block.dart';
-import '../../forms/new_service_table_screen.dart';
 
 class ManageTablesScreen extends StatefulWidget {
   String blocServiceId;
@@ -37,7 +37,9 @@ class _ManageTablesScreenState extends State<ManageTablesScreen> {
           Navigator.of(context).push(
             MaterialPageRoute(
                 builder: (ctx) =>
-                    NewServiceTableScreen(serviceId: widget.blocServiceId)),
+                    TableAddEditScreen(table: Dummy.getDummyTable(widget.blocServiceId), task: 'add'),
+                    // NewServiceTableScreen(serviceId: widget.blocServiceId)
+            ),
           );
         },
         child: Icon(
@@ -154,12 +156,15 @@ class _ManageTablesScreenState extends State<ManageTablesScreen> {
                   },
                   onTap: () {
                     logger.d('tap selected : ' + index.toString());
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                          builder: (context) => ManageSeatsScreen(
-                              serviceId: widget.blocServiceId,
-                              serviceTable: serviceTables[index])),
-                    );
+                    Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => TableAddEditScreen(
+                          table: serviceTables[index], task: 'edit'),
+                    )
+
+                        // ManageSeatsScreen(
+                        // serviceId: widget.blocServiceId,
+                        // serviceTable: serviceTables[index])),
+                        );
                     // showOptionsDialog(context, serviceTables[index]);
                   });
             }),
