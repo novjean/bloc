@@ -26,11 +26,7 @@ class PartyItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        // Navigator.of(context).push(
-        //   MaterialPageRoute(
-        //       builder: (ctx) =>
-        //           BlocServiceDetailScreen(blocService: mBlocService)),
-        // );
+        //handled in parent
       },
       child: Hero(
         tag: party.id,
@@ -76,33 +72,34 @@ class PartyItem extends StatelessWidget {
                         )
                       ]),
                 ),
-                // SizedBox(height: 10.0),
-                // Row(
-                //   mainAxisAlignment: MainAxisAlignment.start,
-                //   children: [
-                //     Padding(
-                //       padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                //       child: Text('Date : ' + DateTimeUtils.getFormattedDateString(party.startTime)),
-                //     ),
-                //   ],
-                // ),
-                SizedBox(height: 10.0),
+                const SizedBox(height: 10.0),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
+                    party.listenUrl.isNotEmpty?
                     ButtonWidget(
-                        text: 'Instagram',
+                        text: 'listen',
+                        onClicked: () {
+                          final uri = Uri.parse(party.listenUrl);
+                          _launchInBrowser(uri);
+                        }) :const SizedBox(),
+                    SizedBox(width: 10),
+
+                    party.instagramUrl.isNotEmpty?
+                    ButtonWidget(
+                        text: 'profile',
                         onClicked: () {
                           final uri = Uri.parse(party.instagramUrl);
                           _launchInBrowser(uri);
-                        }),
+                        }) :const SizedBox(),
                     SizedBox(width: 10),
+                    party.ticketUrl.isNotEmpty?
                     ButtonWidget(
-                        text: 'Tickets',
+                        text: 'tickets',
                         onClicked: () {
                           final uri = Uri.parse(party.ticketUrl);
                           _launchInBrowser(uri);
-                        }),
+                        }) : const SizedBox(),
                     SizedBox(width: 15),
                   ],
                 ),
