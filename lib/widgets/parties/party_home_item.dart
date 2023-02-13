@@ -97,7 +97,7 @@ class PartyHomeItem extends StatelessWidget {
                                       _launchInBrowser(uri);
                                     },
                                     child: Text(
-                                      'grab tix',
+                                      'tickets',
                                       style: TextStyle(
                                           fontSize: 20, color: Colors.black),
                                     ),

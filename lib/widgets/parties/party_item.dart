@@ -68,7 +68,7 @@ class PartyItem extends StatelessWidget {
                           party.isTBA
                               ? 'tba'
                               : DateTimeUtils.getFormattedDate(party.startTime),
-                          style: TextStyle(fontSize: 20),
+                          style: const TextStyle(fontSize: 20),
                         )
                       ]),
                 ),
@@ -83,7 +83,7 @@ class PartyItem extends StatelessWidget {
                           final uri = Uri.parse(party.listenUrl);
                           _launchInBrowser(uri);
                         }) :const SizedBox(),
-                    SizedBox(width: 10),
+                    const SizedBox(width: 10),
 
                     party.instagramUrl.isNotEmpty?
                     ButtonWidget(
@@ -92,7 +92,7 @@ class PartyItem extends StatelessWidget {
                           final uri = Uri.parse(party.instagramUrl);
                           _launchInBrowser(uri);
                         }) :const SizedBox(),
-                    SizedBox(width: 10),
+                    const SizedBox(width: 10),
                     party.ticketUrl.isNotEmpty?
                     ButtonWidget(
                         text: 'tickets',
@@ -100,10 +100,10 @@ class PartyItem extends StatelessWidget {
                           final uri = Uri.parse(party.ticketUrl);
                           _launchInBrowser(uri);
                         }) : const SizedBox(),
-                    SizedBox(width: 15),
+                    const SizedBox(width: 15),
                   ],
                 ),
-                SizedBox(height: 7.0),
+                const SizedBox(height: 7.0),
 
                 // Container(
                 //   width: MediaQuery.of(context).size.width,
