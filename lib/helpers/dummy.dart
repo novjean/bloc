@@ -124,6 +124,7 @@ class Dummy {
         name: '',
         ownerId: UserPreferences.myUser.id,
         isActive: false,
+        isTBA: true,
         description: '',
         blocServiceId: '',
         endTime: 0,

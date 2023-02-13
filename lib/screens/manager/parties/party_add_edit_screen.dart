@@ -306,11 +306,8 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
               const SizedBox(height: 24),
               Row(
                 children: <Widget>[
-                  SizedBox(
-                    width: 0,
-                  ), //SizedBox
                   Text(
-                    'available : ',
+                    'active : ',
                     style: TextStyle(fontSize: 17.0),
                   ), //Text
                   SizedBox(width: 10), //SizedBox
@@ -329,6 +326,25 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
 
               const SizedBox(height: 24),
               dateTimeContainer(context, 'end'),
+
+              const SizedBox(height: 24),
+              Row(
+                children: <Widget>[
+                  Text(
+                    'to be announced : ',
+                    style: TextStyle(fontSize: 17.0),
+                  ), //Text
+                  SizedBox(width: 10), //SizedBox
+                  Checkbox(
+                    value: widget.party.isTBA,
+                    onChanged: (value) {
+                      setState(() {
+                        widget.party = widget.party.copyWith(isTBA: value);
+                      });
+                    },
+                  ), //Checkbox
+                ], //<Widget>[]
+              ),
 
               const SizedBox(height: 24),
               ButtonWidget(

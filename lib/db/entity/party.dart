@@ -11,6 +11,7 @@ class Party {
   final int startTime;
   final int endTime;
   final String ownerId;
+  final bool isTBA;
   final bool isActive;
 
 //<editor-fold desc="Data Methods">
@@ -28,6 +29,7 @@ class Party {
     required this.startTime,
     required this.endTime,
     required this.ownerId,
+    required this.isTBA,
     required this.isActive,
   });
 
@@ -48,6 +50,7 @@ class Party {
           startTime == other.startTime &&
           endTime == other.endTime &&
           ownerId == other.ownerId &&
+          isTBA == other.isTBA &&
           isActive == other.isActive);
 
   @override
@@ -64,6 +67,7 @@ class Party {
       startTime.hashCode ^
       endTime.hashCode ^
       ownerId.hashCode ^
+      isTBA.hashCode ^
       isActive.hashCode;
 
   @override
@@ -81,6 +85,7 @@ class Party {
         ' startTime: $startTime,' +
         ' endTime: $endTime,' +
         ' ownerId: $ownerId,' +
+        ' isTBA: $isTBA,' +
         ' isActive: $isActive,' +
         '}';
   }
@@ -98,6 +103,7 @@ class Party {
     int? startTime,
     int? endTime,
     String? ownerId,
+    bool? isTBA,
     bool? isActive,
   }) {
     return Party(
@@ -113,6 +119,7 @@ class Party {
       startTime: startTime ?? this.startTime,
       endTime: endTime ?? this.endTime,
       ownerId: ownerId ?? this.ownerId,
+      isTBA: isTBA ?? this.isTBA,
       isActive: isActive ?? this.isActive,
     );
   }
@@ -131,6 +138,7 @@ class Party {
       'startTime': this.startTime,
       'endTime': this.endTime,
       'ownerId': this.ownerId,
+      'isTBA': this.isTBA,
       'isActive': this.isActive,
     };
   }
@@ -149,6 +157,7 @@ class Party {
       startTime: map['startTime'] as int,
       endTime: map['endTime'] as int,
       ownerId: map['ownerId'] as String,
+      isTBA: map['isTBA'] as bool,
       isActive: map['isActive'] as bool,
     );
   }

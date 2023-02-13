@@ -69,7 +69,9 @@ class PartyItem extends StatelessWidget {
                           textAlign: TextAlign.left,
                         ),
                         Text(
-                          DateTimeUtils.getFormattedDate(party.startTime),
+                          party.isTBA
+                              ? 'tba'
+                              : DateTimeUtils.getFormattedDate(party.startTime),
                           style: TextStyle(fontSize: 20),
                         )
                       ]),

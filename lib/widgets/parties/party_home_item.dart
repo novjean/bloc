@@ -35,8 +35,8 @@ class PartyHomeItem extends StatelessWidget {
         child: Card(
           elevation: 1,
           color: Theme.of(context).primaryColorLight,
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(0.0)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(0.0)),
           child: SizedBox(
             height: 200,
             child: Row(
@@ -60,58 +60,50 @@ class PartyHomeItem extends StatelessWidget {
                       ),
                       Padding(
                         padding: const EdgeInsets.only(left: 5.0),
-                        child: Text(DateTimeUtils.getFormattedDate(party.startTime),
-                          style: const TextStyle(fontSize: 18),),
+                        child: Text(
+                          party.isTBA
+                              ? 'tba'
+                              : DateTimeUtils.getFormattedDate(party.startTime),
+                          style: const TextStyle(fontSize: 18),
+                        ),
                       ),
                       Padding(
                         padding: const EdgeInsets.only(left: 5.0),
-                        child: Text(DateTimeUtils.getFormattedTime(party.startTime),
-                          style: const TextStyle(fontSize: 18),),
-                      ),
-
-                      party.ticketUrl.isNotEmpty?
-
-                      Padding(
-                        padding: const EdgeInsets.only(right: 5.0),
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            primary: Theme.of(context).highlightColor,
-                            onPrimary: Colors.white,
-                            shadowColor: Colors.white30,
-                            elevation: 3,
-
-                            minimumSize: Size.fromHeight(60), //////// HERE
-                          ),
-                          onPressed: () {
-                            final uri = Uri.parse(party.ticketUrl);
-                            _launchInBrowser(uri);
-                          },
-                          child: Text(
-                            'get tickets',
-                            style: TextStyle(fontSize: 20, color: Colors.black),
-                          ),
-                        ),
-                      ) : Padding(
-                        padding: const EdgeInsets.only(right: 5.0),
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            primary: Theme.of(context).highlightColor,
-                            onPrimary: Colors.white,
-                            shadowColor: Colors.white30,
-                            elevation: 3,
-
-                            minimumSize: Size.fromHeight(60), //////// HERE
-                          ),
-                          onPressed: () {
-                            final uri = Uri.parse(party.listenUrl);
-                            _launchInBrowser(uri);
-                          },
-                          child: Text(
-                            'listen',
-                            style: TextStyle(fontSize: 20, color: Colors.black),
-                          ),
+                        child: Text(
+                          party.isTBA
+                              ? ''
+                              : DateTimeUtils.getFormattedTime(party.startTime),
+                          style: const TextStyle(fontSize: 18),
                         ),
                       ),
+
+                      party.isTBA
+                          ? showListenDialog(context)
+                          : party.ticketUrl.isNotEmpty
+                              ? Padding(
+                                  padding: const EdgeInsets.only(right: 5.0),
+                                  child: ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      primary: Theme.of(context).highlightColor,
+                                      onPrimary: Colors.white,
+                                      shadowColor: Colors.white30,
+                                      elevation: 3,
+
+                                      minimumSize:
+                                          Size.fromHeight(60), //////// HERE
+                                    ),
+                                    onPressed: () {
+                                      final uri = Uri.parse(party.ticketUrl);
+                                      _launchInBrowser(uri);
+                                    },
+                                    child: Text(
+                                      'grab tix',
+                                      style: TextStyle(
+                                          fontSize: 20, color: Colors.black),
+                                    ),
+                                  ),
+                                )
+                              : showListenDialog(context),
 
                       // ButtonWidget(text: 'Tickets', onClicked: () {
                       //   final uri = Uri.parse(party.ticketUrl);
@@ -119,16 +111,15 @@ class PartyHomeItem extends StatelessWidget {
                       // }),
                       SizedBox(width: 0),
                     ],
-                  ), flex: 2,
+                  ),
+                  flex: 2,
                 ),
-
                 Flexible(
                   child: Container(
                     height: 190,
                     width: 190,
                     decoration: BoxDecoration(
-                      border:
-                      Border.all(color: Theme.of(context).primaryColor),
+                      border: Border.all(color: Theme.of(context).primaryColor),
                       borderRadius: BorderRadius.all(Radius.circular(0)),
                       image: DecorationImage(
                         image: NetworkImage(party.imageUrl),
@@ -136,11 +127,36 @@ class PartyHomeItem extends StatelessWidget {
                         // AssetImage(food['image']),
                       ),
                     ),
-                  ), flex: 1,
+                  ),
+                  flex: 1,
                 ),
               ],
             ),
           ),
+        ),
+      ),
+    );
+  }
+
+  showListenDialog(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(right: 5.0),
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          primary: Theme.of(context).highlightColor,
+          onPrimary: Colors.white,
+          shadowColor: Colors.white30,
+          elevation: 3,
+
+          minimumSize: Size.fromHeight(60), //////// HERE
+        ),
+        onPressed: () {
+          final uri = Uri.parse(party.listenUrl);
+          _launchInBrowser(uri);
+        },
+        child: Text(
+          'listen',
+          style: TextStyle(fontSize: 20, color: Colors.black),
         ),
       ),
     );
