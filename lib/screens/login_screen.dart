@@ -63,20 +63,19 @@ class _LoginScreenState extends State<LoginScreen> {
 
                   if (snapshot.hasData && !snapshot.data!.exists) {
                     // user not registered in bloc, will be picked up in OTP screen
-                    return Center(child: Text("Loading..."));
+                    //todo: keep an eye on this
+                    return SignInWidget();
                   }
 
                   if (snapshot.connectionState == ConnectionState.done) {
                     Map<String, dynamic> data =
                         snapshot.data!.data() as Map<String, dynamic>;
                     final blocUser.User user = blocUser.User.fromMap(data);
-
-                    // BlocRepository.insertUser(widget.dao, user);
                     UserPreferences.setUser(user);
 
                     return MainScreen(user: user);
                   }
-                  return Center(child: Text("Loading..."));
+                  return Center(child: Text("user loading..."));
                 },
               );
             }

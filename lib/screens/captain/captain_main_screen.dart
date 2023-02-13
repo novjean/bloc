@@ -1,3 +1,4 @@
+import 'package:bloc/screens/captain/captain_tables_screen.dart';
 import 'package:bloc/screens/manager/users/manage_users_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -19,7 +20,7 @@ class CaptainMainScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Captain | Services'),
+        title: const Text('captain | services'),
       ),
       // drawer: AppDrawer(),
       body: _buildBody(context),
@@ -91,11 +92,20 @@ class CaptainMainScreen extends StatelessWidget {
                     case 'Table Management':
                       {
                         Navigator.of(context).push(MaterialPageRoute(
-                            builder: (ctx) => ManageTablesScreen(
+                            builder: (ctx) =>
+
+                                CaptainTablesScreen(
                                   blocServiceId: blocServiceId,
                                   serviceName: captainService.name,
                                   userTitle: userTitle,
                                 )));
+
+
+                                // ManageTablesScreen(
+                                //   blocServiceId: blocServiceId,
+                                //   serviceName: captainService.name,
+                                //   userTitle: userTitle,
+                                // )));
                         logger.d('manage inventory screen selected.');
                         break;
                       }

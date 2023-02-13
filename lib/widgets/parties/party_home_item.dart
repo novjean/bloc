@@ -24,11 +24,7 @@ class PartyHomeItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        // Navigator.of(context).push(
-        //   MaterialPageRoute(
-        //       builder: (ctx) =>
-        //           BlocServiceDetailScreen(blocService: mBlocService)),
-        // );
+        // handled by parent
       },
       child: Hero(
         tag: party.id,

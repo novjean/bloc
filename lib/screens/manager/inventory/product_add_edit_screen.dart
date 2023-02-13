@@ -109,7 +109,7 @@ class _ProductAddEditScreenState extends State<ProductAddEditScreen> {
   _buildBody(BuildContext context) {
     return _isCategoriesLoading
         ? Center(
-            child: Text('loading...'),
+            child: Text('categories loading...'),
           )
         : ListView(
             padding: EdgeInsets.symmetric(horizontal: 32),

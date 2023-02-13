@@ -92,7 +92,7 @@ class _TableAddEditScreenState extends State<TableAddEditScreen> {
   _buildBody(BuildContext context) {
     return _isUserCaptainsLoading
         ? Center(
-            child: Text('loading...'),
+            child: Text('tables loading...'),
           )
         : ListView(
             padding: const EdgeInsets.symmetric(horizontal: 32),

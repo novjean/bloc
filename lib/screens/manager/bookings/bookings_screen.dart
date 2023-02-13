@@ -59,7 +59,7 @@ class _BookingsScreenState extends State<BookingsScreen> {
   }
 
   _buildBookings(BuildContext context) {
-    return Expanded(child: Center(child: Text('Bookings loading...')),);
+    return Expanded(child: Center(child: Text('bookings loading...')),);
 
 
     // return StreamBuilder(stream:, builder: (ctx, snapshot) {

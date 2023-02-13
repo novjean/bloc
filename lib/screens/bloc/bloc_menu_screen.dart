@@ -207,13 +207,13 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
           .where('tableId', isEqualTo: tableId)
           .get()
           .then(
-            (result) {
+        (result) {
           bool isSeatAvailable = false;
           if (result.docs.isNotEmpty) {
             for (int i = 0; i < result.docs.length; i++) {
               DocumentSnapshot document = result.docs[i];
               Map<String, dynamic> data =
-              document.data()! as Map<String, dynamic>;
+                  document.data()! as Map<String, dynamic>;
               final Seat seat = Seat.fromMap(data);
 
               if (seat.custId.isEmpty) {
@@ -234,7 +234,8 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
                 Toaster.shortToast('no seats left on the table!');
               }
             }
-            Toaster.longToast('welcome ' + UserPreferences.myUser.name.toLowerCase());
+            Toaster.longToast(
+                'welcome ' + UserPreferences.myUser.name.toLowerCase());
           } else {
             print('seats could not be found for table id ' + tableId);
           }
@@ -304,12 +305,13 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
                                         onChanged: (text) {
                                           try {
                                             tableNum = int.parse(text);
-                                          } catch(err) {
+                                          } catch (err) {
                                             print('err: ' + err.toString());
                                           }
                                         },
                                         decoration: new InputDecoration(
-                                            labelText: 'table number', hintText: 'eg. 12'),
+                                            labelText: 'table number',
+                                            hintText: 'eg. 12'),
                                       ),
                                     )
                                   ],
@@ -324,30 +326,46 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
                                   TextButton(
                                     child: Text("continue"),
                                     onPressed: () {
-                                      print('table num is ' + tableNum.toString());
+                                      print('table num is ' +
+                                          tableNum.toString());
 
-                                      FirestoreHelper.pullTableByNumber(widget.blocService.id, tableNum).then(
-                                            (result) {
+                                      FirestoreHelper.pullTableByNumber(
+                                              widget.blocService.id, tableNum)
+                                          .then(
+                                        (result) {
                                           if (result.docs.isNotEmpty) {
-                                            for (int i = 0; i < result.docs.length; i++) {
-                                              DocumentSnapshot document = result.docs[i];
+                                            for (int i = 0;
+                                                i < result.docs.length;
+                                                i++) {
+                                              DocumentSnapshot document =
+                                                  result.docs[i];
                                               Map<String, dynamic> data =
-                                              document.data()! as Map<String, dynamic>;
-                                              final ServiceTable table = ServiceTable.fromMap(data);
-                                              print('table found ' +table.tableNumber.toString());
+                                                  document.data()!
+                                                      as Map<String, dynamic>;
+                                              final ServiceTable table =
+                                                  ServiceTable.fromMap(data);
+                                              print('table found ' +
+                                                  table.tableNumber.toString());
 
                                               // check if table is occupied
-                                              if(table.isActive && !table.isOccupied){
-                                                updateTableWithUser(table.id, UserPreferences.myUser.id);
+                                              if (table.isActive &&
+                                                  !table.isOccupied) {
+                                                updateTableWithUser(table.id,
+                                                    UserPreferences.myUser.id);
                                               } else {
-                                                Toaster.longToast('table ' + tableNum.toString() + ' is occupied');
+                                                Toaster.longToast('table ' +
+                                                    tableNum.toString() +
+                                                    ' is occupied');
                                               }
                                             }
                                           } else {
-                                            print('table could not be found for table number ' + tableNum.toString());
+                                            print(
+                                                'table could not be found for table number ' +
+                                                    tableNum.toString());
                                           }
                                         },
-                                        onError: (e) => print("error searching for table : $e"),
+                                        onError: (e) => print(
+                                            "error searching for table : $e"),
                                       );
 
                                       Navigator.of(context).pop();
@@ -684,5 +702,4 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
           }),
     );
   }
-
 }

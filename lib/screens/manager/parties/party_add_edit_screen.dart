@@ -179,7 +179,7 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
   _buildBody(BuildContext context) {
     return _isBlocServicesLoading
         ? Center(
-            child: Text('loading...'),
+            child: Text('parties loading...'),
           )
         : ListView(
             padding: EdgeInsets.symmetric(horizontal: 32),

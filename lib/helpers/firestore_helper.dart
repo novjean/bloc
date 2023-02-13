@@ -683,6 +683,16 @@ class FirestoreHelper {
         .get();
   }
 
+  static pullTablesByCaptainId(String blocServiceId, String captainId) {
+    return FirebaseFirestore.instance
+        .collection(FirestoreHelper.TABLES)
+        .where('serviceId', isEqualTo: blocServiceId)
+        .where('captainId', isEqualTo: captainId)
+        .orderBy('tableNumber', descending: true)
+        .get();
+  }
+
+
   static Stream<QuerySnapshot<Object?>> getTables(String serviceId) {
     return FirebaseFirestore.instance
         .collection(TABLES)
@@ -991,6 +1001,7 @@ class FirestoreHelper {
         .orderBy('level', descending: false)
         .get();
   }
+
 
 /** Reference **/
 // _buildProducts(BuildContext context, String _category) {
