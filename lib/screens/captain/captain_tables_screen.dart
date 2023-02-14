@@ -1,15 +1,12 @@
 import 'package:bloc/db/bloc_repository.dart';
 import 'package:bloc/db/shared_preferences/user_preferences.dart';
-import 'package:bloc/helpers/dummy.dart';
-import 'package:bloc/screens/manager/tables/table_add_edit_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import '../../../db/entity/service_table.dart';
 import '../../../helpers/firestore_helper.dart';
-import '../../../utils/constants.dart';
 import '../../../widgets/service_table_item.dart';
-import '../../../widgets/ui/sized_listview_block.dart';
+import '../manager/tables/manage_seats_screen.dart';
 
 class CaptainTablesScreen extends StatefulWidget {
   String blocServiceId;
@@ -26,8 +23,6 @@ class CaptainTablesScreen extends StatefulWidget {
 }
 
 class _CaptainTablesScreenState extends State<CaptainTablesScreen> {
-  // String _selectedType = 'private';
-
   List<ServiceTable> tables = [];
   bool isTablesLoading = true;
 
@@ -82,68 +77,6 @@ class _CaptainTablesScreenState extends State<CaptainTablesScreen> {
     );
   }
 
-  // _displayOptions(BuildContext context) {
-  //   List<String> _options = ['private', 'community'];
-  //   double containerHeight = MediaQuery.of(context).size.height / 20;
-  //
-  //   return SizedBox(
-  //     key: UniqueKey(),
-  //     // this height has to match with category item container height
-  //     height: containerHeight,
-  //     child: ListView.builder(
-  //         itemCount: _options.length,
-  //         scrollDirection: Axis.horizontal,
-  //         itemBuilder: (ctx, index) {
-  //           return GestureDetector(
-  //               child: SizedListViewBlock(
-  //                 title: _options[index],
-  //                 height: containerHeight,
-  //                 width: MediaQuery.of(context).size.width / 2,
-  //               ),
-  //               onTap: () {
-  //                 setState(() {
-  //                   _selectedType = _options[index];
-  //                   print(_selectedType + ' tables display option is selected');
-  //                 });
-  //               });
-  //         }),
-  //   );
-  // }
-
-  // _buildTables(BuildContext context) {
-  //   final user = UserPreferences.getUser();
-  //   final Stream<QuerySnapshot<Object?>> stream;
-  //   if (user.clearanceLevel >= Constants.CAPTAIN_LEVEL &&
-  //       user.clearanceLevel < Constants.MANAGER_LEVEL) {
-  //     stream = FirestoreHelper.getTablesByTypeAndUser(
-  //         widget.blocServiceId, user.id, _selectedType);
-  //   } else {
-  //     stream =
-  //         FirestoreHelper.getTablesByType(widget.blocServiceId, _selectedType);
-  //   }
-  //
-  //   return StreamBuilder<QuerySnapshot>(
-  //       stream: stream,
-  //       builder: (ctx, snapshot) {
-  //         if (snapshot.connectionState == ConnectionState.waiting) {
-  //           return const Center(
-  //             child: CircularProgressIndicator(),
-  //           );
-  //         }
-  //
-  //         List<ServiceTable> serviceTables = [];
-  //
-  //         for (int i = 0; i < snapshot.data!.docs.length; i++) {
-  //           DocumentSnapshot document = snapshot.data!.docs[i];
-  //           Map<String, dynamic> data =
-  //               document.data()! as Map<String, dynamic>;
-  //           final ServiceTable serviceTable = ServiceTable.fromMap(data);
-  //           serviceTables.add(serviceTable);
-  //         }
-  //         return _displayServiceTables(context, t);
-  //       });
-  // }
-
   _displayServiceTables(BuildContext context) {
     if (tables.isEmpty) {
       return Center(child: Text('pulling tables...'));
@@ -157,7 +90,6 @@ class _CaptainTablesScreenState extends State<CaptainTablesScreen> {
                   child: ServiceTableItem(
                     serviceTable: tables[index],
                   ),
-                  // chick my frever love
                   // onDoubleTap: () {
                   //   if (UserPreferences.myUser.clearanceLevel >=
                   //       Constants.MANAGER_LEVEL) {
@@ -166,10 +98,13 @@ class _CaptainTablesScreenState extends State<CaptainTablesScreen> {
                   //   }
                   // },
                   onTap: () {
-                    logger.d('tap selected : ' + index.toString());
+                    ServiceTable table = tables[index];
+                    logger.d('selected table : ' + table.tableNumber.toString());
                     Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => TableAddEditScreen(
-                          table: tables[index], task: 'edit'),
+                      builder: (context) => ManageSeatsScreen(
+                        serviceId: widget.blocServiceId,
+                        serviceTable: table,
+                      ),
                     ));
                   });
             }),

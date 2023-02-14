@@ -1,10 +1,49 @@
 import 'package:bloc/db/entity/seat.dart';
+import 'package:bloc/helpers/firestore_helper.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-class SeatItem extends StatelessWidget {
+import '../db/entity/user.dart';
+import '../helpers/dummy.dart';
+
+class SeatItem extends StatefulWidget {
   final Seat seat;
 
   SeatItem({required this.seat});
+
+  @override
+  State<SeatItem> createState() => _SeatItemState();
+}
+
+class _SeatItemState extends State<SeatItem> {
+  User user = Dummy.getDummyUser();
+  bool isCustomerLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.seat.custId.isNotEmpty) {
+      FirestoreHelper.pullUser(widget.seat.custId).then((res) {
+        print('successfully pulled in user for id ' + widget.seat.custId);
+
+        if (res.docs.isNotEmpty) {
+          DocumentSnapshot document = res.docs[0];
+          Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+
+          final User _user = User.fromMap(data);
+
+          setState(() {
+            user = _user;
+            isCustomerLoading = false;
+          });
+        }
+      });
+    } else {
+      setState(() {
+        isCustomerLoading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -17,18 +56,6 @@ class SeatItem extends StatelessWidget {
         borderRadius: BorderRadius.circular(8.0),
         child: Stack(
           children: <Widget>[
-            // FadeInImage(
-            //   placeholder: AssetImage('assets/images/product-placeholder.png'),
-            //   height: MediaQuery.of(context).size.height / 6,
-            //   width: MediaQuery.of(context).size.height / 6,
-            //   image: cat.imageUrl != "url"
-            //       ? NetworkImage(cat.imageUrl)
-            //       : NetworkImage(
-            //       "assets/images/product-placeholder.png"),
-            //   fit: BoxFit.cover,
-            // ),
-            // chick
-
             Container(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
@@ -55,17 +82,23 @@ class SeatItem extends StatelessWidget {
                   minWidth: 20,
                   minHeight: 20,
                 ),
-                child: Center(
-                  child: Text(
-                    seat.custId.isEmpty?'Available':seat.custId,
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
+                child: isCustomerLoading
+                    ? Center(
+                        child: Text('...'),
+                      )
+                    : Center(
+                        child: Text(
+                          widget.seat.custId.isEmpty
+                              ? 'free'
+                              : user.name,
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
               ),
             ),
           ],

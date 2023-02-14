@@ -683,12 +683,12 @@ class FirestoreHelper {
         .get();
   }
 
-  static pullTablesByCaptainId(String blocServiceId, String captainId) {
+  static Future<QuerySnapshot<Map<String, dynamic>>> pullTablesByCaptainId(String blocServiceId, String captainId) {
     return FirebaseFirestore.instance
         .collection(FirestoreHelper.TABLES)
         .where('serviceId', isEqualTo: blocServiceId)
         .where('captainId', isEqualTo: captainId)
-        .orderBy('tableNumber', descending: true)
+        .orderBy('tableNumber', descending: false)
         .get();
   }
 

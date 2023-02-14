@@ -11,6 +11,7 @@ import '../../../helpers/dummy.dart';
 import '../../../helpers/firestore_helper.dart';
 import '../../../utils/constants.dart';
 import '../../../widgets/ui/button_widget.dart';
+import 'manage_seats_screen.dart';
 
 class TableAddEditScreen extends StatefulWidget {
   ServiceTable table;
@@ -329,6 +330,15 @@ class _TableAddEditScreenState extends State<TableAddEditScreen> {
                   }
                 },
               ),
+              const SizedBox(height: 24),
+              ButtonWidget(text: 'seats', onClicked: () {
+                Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => ManageSeatsScreen(
+                    serviceId: widget.table.serviceId,
+                    serviceTable: widget.table,
+                  ),
+                ));
+              }),
             ],
           );
   }

@@ -225,7 +225,7 @@ class _OTPVerifyState extends State<OTPVerify> {
                           'user is in firebase auth. checking for bloc registration...');
 
                       FirestoreHelper.pullUser(value.user!.uid).then((res) {
-                        print("Successfully retrieved bloc user for id " +
+                        print("successfully retrieved bloc user for id " +
                             value.user!.uid);
 
                         if (res.docs.isEmpty) {

@@ -19,121 +19,17 @@ class ManageSeatsScreen extends StatefulWidget {
   String serviceId;
   ServiceTable serviceTable;
 
-  ManageSeatsScreen(
-      {required this.serviceId, required this.serviceTable});
+  ManageSeatsScreen({required this.serviceId, required this.serviceTable});
 
   @override
   State<ManageSeatsScreen> createState() => _ManageSeatsScreenState();
 }
 
 class _ManageSeatsScreenState extends State<ManageSeatsScreen> {
-  late Widget captainSelectWidget;
-  late String _tableCaptain = '';
-
-  @override
-  void initState() {
-    captainSelectWidget = buildCaptainUsers(context);
-  }
-
-  buildCaptainUsers(BuildContext context) {
-    return StreamBuilder<QuerySnapshot>(
-        stream: FirestoreHelper.getUsersInRange(
-            Constants.CAPTAIN_LEVEL, Constants.MANAGER_LEVEL - 1),
-        builder: (ctx, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-
-          List<User> _users = [];
-          List<String> _userNames = [];
-
-          for (int i = 0; i < snapshot.data!.docs.length; i++) {
-            DocumentSnapshot document = snapshot.data!.docs[i];
-            Map<String, dynamic> data =
-                document.data()! as Map<String, dynamic>;
-            final User _user = User.fromMap(data);
-            _users.add(_user);
-            _userNames.add(_user.name);
-
-            if(widget.serviceTable.captainId == _user.id){
-              _tableCaptain = _user.name;
-            }
-
-            if (i == snapshot.data!.docs.length - 1) {
-              if(_tableCaptain.isEmpty){
-                _tableCaptain = 'Unassigned';
-                _userNames.add(_tableCaptain);
-              }
-
-              return Card(
-                margin: const EdgeInsets.all(0),
-                child: SingleChildScrollView(
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Form(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text('captain:', textAlign: TextAlign.start,),
-                          SizedBox(height: 4.0),
-                          FormField<String>(
-                            builder: (FormFieldState<String> state) {
-                              return InputDecorator(
-                                key: const ValueKey('table_captain'),
-                                decoration: InputDecoration(
-                                    errorStyle:
-                                        TextStyle(color: Colors.redAccent, fontSize: 16.0),
-                                    hintText: 'please select captain',
-                                    border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(5.0))),
-                                isEmpty: _tableCaptain == '',
-                                child: DropdownButtonHideUnderline(
-                                  child: DropdownButton<String>(
-                                    value: _tableCaptain,
-                                    isDense: true,
-                                    onChanged: (String? newValue) {
-                                      setState(() {
-                                        _tableCaptain = newValue!;
-                                        for(User user in _users){
-                                          if(user.name.contains(newValue)){
-                                            FirestoreHelper.setTableCaptain(widget.serviceTable.id, user.id);
-                                          }
-                                        }
-
-                                        state.didChange(newValue);
-                                      });
-                                    },
-                                    items: _userNames.map((String value) {
-                                      return DropdownMenuItem<String>(
-                                        value: value,
-                                        child: Text(value),
-                                      );
-                                    }).toList(),
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              );
-              // return _displayUsers(context, _users);
-            }
-          }
-          return Text('pulling captain users...');
-        });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-          title: const Text('manage |  seats ')),
+      appBar: AppBar(title: const Text('manage |  seats ')),
       body: _buildBody(context, widget.serviceTable),
     );
   }
@@ -150,9 +46,15 @@ class _ManageSeatsScreenState extends State<ManageSeatsScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  Text('table : ' + widget.serviceTable.tableNumber.toString(), style: TextStyle(fontSize: 20),),
+                  Text(
+                    'table : ' + widget.serviceTable.tableNumber.toString(),
+                    style: TextStyle(fontSize: 20),
+                  ),
                   const SizedBox(height: 10),
-                  Text('seats : ' + widget.serviceTable.capacity.toString(), style: TextStyle(fontSize: 20),),
+                  Text(
+                    'seats : ' + widget.serviceTable.capacity.toString(),
+                    style: TextStyle(fontSize: 20),
+                  ),
                 ],
               ),
             ),
@@ -167,15 +69,8 @@ class _ManageSeatsScreenState extends State<ManageSeatsScreen> {
             ),
           ],
         ),
-
         SizedBox(height: 10.0),
-        captainSelectWidget,
-        SizedBox(height: 10.0),
-        isActiveWidget(),
-        SizedBox(height: 10.0),
-        tableTypeToggle(context, serviceTable),
-        SizedBox(height: 10.0),
-        Text('seats', textAlign: TextAlign.start,),
+        Divider(),
         _pullSeats(context),
         SizedBox(height: 10.0),
       ],
@@ -211,7 +106,7 @@ class _ManageSeatsScreenState extends State<ManageSeatsScreen> {
             // seats are not defined for table, adding them
             for (int i = 0; i < widget.serviceTable.capacity; i++) {
               Seat seat = Seat(
-                  custId: "",
+                  custId: '',
                   id: StringUtils.getRandomString(20),
                   serviceId: widget.serviceId,
                   tableId: widget.serviceTable.id,
@@ -241,14 +136,14 @@ class _ManageSeatsScreenState extends State<ManageSeatsScreen> {
                   Seat seat = seats[index];
 
                   if (!seat.custId.isEmpty) {
-                    logger.i('seat is occupied.');
+                    logger.i('seat is occupied');
                     showDialog(
                       context: context,
                       builder: (BuildContext context) {
                         return AlertDialog(
-                          title: Text("seat free"),
+                          title: Text("free seat"),
                           content: Text(
-                              "would you like to make the seat available?"),
+                              "would you like to make the seat free?"),
                           actions: [
                             TextButton(
                               child: Text("yes"),
@@ -372,7 +267,8 @@ class _ManageSeatsScreenState extends State<ManageSeatsScreen> {
     return Padding(
       padding: const EdgeInsets.only(left: 15.0),
       child: Row(
-        children: <Widget>[ //SizedBox
+        children: <Widget>[
+          //SizedBox
           Text(
             'active : ',
             style: TextStyle(fontSize: 18.0),
@@ -382,14 +278,14 @@ class _ManageSeatsScreenState extends State<ManageSeatsScreen> {
             value: widget.serviceTable.isActive,
             onChanged: (value) {
               setState(() {
-                widget.serviceTable.isActive =  value!;
-                FirestoreHelper.setTableActiveStatus(widget.serviceTable.id, value);
+                widget.serviceTable.isActive = value!;
+                FirestoreHelper.setTableActiveStatus(
+                    widget.serviceTable.id, value);
               });
             },
           ), //Checkbox
         ], //<Widget>[]
       ),
     );
-
   }
 }

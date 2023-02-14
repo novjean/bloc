@@ -8,7 +8,6 @@ import '../../db/entity/captain_service.dart';
 import '../../helpers/firestore_helper.dart';
 import '../../widgets/ui/listview_block.dart';
 import '../manager/orders/manage_orders_screen.dart';
-import '../manager/tables/manage_tables_screen.dart';
 
 class CaptainMainScreen extends StatelessWidget {
   String blocServiceId;
@@ -99,13 +98,6 @@ class CaptainMainScreen extends StatelessWidget {
                                   serviceName: captainService.name,
                                   userTitle: userTitle,
                                 )));
-
-
-                                // ManageTablesScreen(
-                                //   blocServiceId: blocServiceId,
-                                //   serviceName: captainService.name,
-                                //   userTitle: userTitle,
-                                // )));
                         logger.d('manage inventory screen selected.');
                         break;
                       }

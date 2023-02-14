@@ -1,3 +1,4 @@
+import 'package:bloc/main.dart';
 import 'package:bloc/screens/otp_screen.dart';
 import 'package:bloc/db/entity/user.dart' as blocUser;
 
@@ -6,14 +7,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-import '../db/bloc_repository.dart';
 import '../db/shared_preferences/user_preferences.dart';
 import '../helpers/firestore_helper.dart';
 import '../widgets/ui/toaster.dart';
 import 'main_screen.dart';
 
 class LoginScreen extends StatefulWidget {
-
   LoginScreen({key}) : super(key: key);
 
   @override
@@ -57,14 +56,18 @@ class _LoginScreenState extends State<LoginScreen> {
                   }
 
                   if (snapshot.hasError) {
-                    logger.e('snapshot has error: ' + snapshot.error.toString());
+                    print('snapshot has error: ' + snapshot.error.toString());
                     return SignInWidget();
                   }
 
                   if (snapshot.hasData && !snapshot.data!.exists) {
                     // user not registered in bloc, will be picked up in OTP screen
                     //todo: keep an eye on this
-                    return SignInWidget();
+                    if (kIsWeb) {
+                      return SignInWidget();
+                    } else {
+                      return Center(child: Text('loading user...'));
+                    }
                   }
 
                   if (snapshot.connectionState == ConnectionState.done) {
@@ -111,13 +114,13 @@ class _LoginScreenState extends State<LoginScreen> {
           child: Container(
             decoration: const BoxDecoration(
               image: DecorationImage(
-                  image: AssetImage(
-                      "assets/icons/logo-adaptive.png"),
+                  image: AssetImage("assets/icons/logo-adaptive.png"),
                   fit: BoxFit.fitHeight
-                // AssetImage(food['image']),
-              ),
+                  // AssetImage(food['image']),
+                  ),
             ),
-          ), flex: 3,
+          ),
+          flex: 3,
         ),
         Flexible(
           child: Container(
@@ -138,12 +141,14 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: Text('+91'),
                 ),
               ),
-              style: TextStyle(fontSize: 20.0, height: 1.0, color: Colors.black),
+              style:
+                  TextStyle(fontSize: 20.0, height: 1.0, color: Colors.black),
               maxLength: 10,
               keyboardType: TextInputType.number,
               controller: _controller,
             ),
-          ), flex: 1,
+          ),
+          flex: 1,
         ),
         Flexible(
           child: Container(
@@ -162,12 +167,12 @@ class _LoginScreenState extends State<LoginScreen> {
               onPressed: () {
                 String phoneNumberString = _controller.text;
 
-                if(phoneNumberString.length == 10){
+                if (phoneNumberString.length == 10) {
                   Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) =>
-                          OTPScreen(_controller.text)));
+                      builder: (context) => OTPScreen(_controller.text)));
                 } else {
-                  print('user entered invalid phone number' + phoneNumberString);
+                  print(
+                      'user entered invalid phone number' + phoneNumberString);
                   Toaster.longToast('please enter a valid phone number');
                 }
               },
@@ -176,7 +181,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 style: TextStyle(fontSize: 20),
               ),
             ),
-          ), flex: 1,
+          ),
+          flex: 1,
         )
       ],
     );
