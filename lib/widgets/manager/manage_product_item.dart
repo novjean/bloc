@@ -3,7 +3,6 @@ import 'package:bloc/widgets/ui/button_widget.dart';
 import 'package:flutter/material.dart';
 
 import '../../db/entity/product.dart';
-import '../../screens/bloc/product_detail_screen.dart';
 import '../../screens/manager/inventory/product_add_edit_screen.dart';
 
 class ManageProductItem extends StatelessWidget {
@@ -17,12 +16,15 @@ class ManageProductItem extends StatelessWidget {
     Color primaryColor = Theme.of(context).primaryColor;
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 10.0),
+      margin: const EdgeInsets.only(bottom: 2.0),
       child: GestureDetector(
         onTap: () {
           Navigator.of(context).push(
             MaterialPageRoute(
-                builder: (ctx) => ProductDetailScreen(product: product)),
+                builder: (ctx) => ProductAddEditScreen(
+                      product: product,
+                      task: 'edit',
+                    )),
           );
         },
         child: Hero(
@@ -30,6 +32,7 @@ class ManageProductItem extends StatelessWidget {
           child: Card(
             child: Row(
               children: <Widget>[
+                product.imageUrl.isNotEmpty?
                 Container(
                   height: 100,
                   width: 100,
@@ -39,11 +42,10 @@ class ManageProductItem extends StatelessWidget {
                       fit: BoxFit.fitHeight,
                     ),
                   ),
-                ),
+                ) : const SizedBox(),
                 Expanded(
                   child: Padding(
-                    padding: const EdgeInsets.only(
-                        left: 9, right: 0, top: 0, bottom: 0),
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -60,7 +62,6 @@ class ManageProductItem extends StatelessWidget {
                           ],
                         ),
                         SizedBox(height: 5),
-
                         Row(
                           children: [
                             Text(
@@ -78,7 +79,6 @@ class ManageProductItem extends StatelessWidget {
                                     color: Colors.redAccent)),
                           ],
                         ),
-
                         Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: <Widget>[
@@ -89,12 +89,14 @@ class ManageProductItem extends StatelessWidget {
                             //   },
                             // ),
                             ButtonWidget(
-                              text: 'Edit',
+                              text: 'edit',
                               onClicked: () {
                                 Navigator.of(context).push(
                                   MaterialPageRoute(
-                                      builder: (ctx) =>
-                                          ProductAddEditScreen(product: product, task: 'Edit',)),
+                                      builder: (ctx) => ProductAddEditScreen(
+                                            product: product,
+                                            task: 'edit',
+                                          )),
                                 );
                                 print(product.name +
                                     ' is clicked to be modified.');
@@ -107,7 +109,8 @@ class ManageProductItem extends StatelessWidget {
                                 print(product.name + ' is clicked for offer.');
                                 Navigator.of(context).push(
                                   MaterialPageRoute(
-                                      builder: (ctx) => AddProductOfferScreen(product: product)),
+                                      builder: (ctx) => AddProductOfferScreen(
+                                          product: product)),
                                 );
                               },
                             ),

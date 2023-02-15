@@ -12,7 +12,7 @@ class ProductDetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(product.category + ' | ' + product.name),
+        title: Text(product.category.toLowerCase() + ' | ' + product.name.toLowerCase()),
       ),
       body: _buildBody(context),
     );
@@ -22,7 +22,8 @@ class ProductDetailScreen extends StatelessWidget {
     return SingleChildScrollView(
       child: Column(
         children: [
-          SizedBox(height: 2.0),
+          const SizedBox(height: 0.0),
+          product.imageUrl.isNotEmpty?
           Container(
             width:  double.infinity,
             child: Hero(
@@ -32,32 +33,32 @@ class ProductDetailScreen extends StatelessWidget {
                 fit: BoxFit.cover,
               ),
             ),
-          ),
-          SizedBox(height: 5.0),
-          Text(
-            '\u20B9${product.price.toStringAsFixed(2)}',
-            style: TextStyle(
-              color: Theme.of(context).primaryColor,
-              fontSize: 20,
-            ),
-            textAlign: TextAlign.center,
-          ),
+          ) : const SizedBox(),
+          // SizedBox(height: 5.0),
+          // Text(
+          //   '\u20B9${product.price.toStringAsFixed(2)}',
+          //   style: TextStyle(
+          //     color: Theme.of(context).primaryColor,
+          //     fontSize: 20,
+          //   ),
+          //   textAlign: TextAlign.center,
+          // ),
           SizedBox(
             height: 10,
           ),
           Container(
             padding: EdgeInsets.symmetric(horizontal: 10),
             width: double.infinity,
-            child: Text(product.description,
+            child: Text(product.description.toLowerCase(),
                 textAlign: TextAlign.start,
                 softWrap: true,
                 style: TextStyle(
-                  color: Colors.black87,
+                  color: Theme.of(context).primaryColorDark,
                   fontSize: 20,
                 )),
           ),
-          SizedBox(
-            height: 20,
+          const SizedBox(
+            height: 10,
           ),
         ],
       ),

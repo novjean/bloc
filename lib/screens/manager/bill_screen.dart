@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import '../../db/entity/bill.dart';
 import '../../db/entity/cart_item.dart';
 import '../../db/entity/bloc_order.dart';
-import '../../db/entity/order.dart';
+import '../../db/entity/order_bloc.dart';
 import '../../helpers/firestore_helper.dart';
 import '../../widgets/ui/toaster.dart';
 
@@ -69,14 +69,14 @@ class BillScreen extends StatelessWidget {
 
   Widget TotalBox(BuildContext context) {
     return Card(
-      margin: EdgeInsets.all(15),
+      margin: const EdgeInsets.all(15),
       child: Padding(
-        padding: EdgeInsets.all(5),
+        padding: const EdgeInsets.all(5),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              'Total',
+              'total',
               style: TextStyle(
                 fontSize: 20,
               ),

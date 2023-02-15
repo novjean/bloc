@@ -4,7 +4,6 @@ import 'package:bloc/screens/manager/inventory/product_add_edit_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-import '../../../db/dao/bloc_dao.dart';
 import '../../../db/entity/manager_service.dart';
 import '../../../db/entity/product.dart';
 import '../../../helpers/firestore_helper.dart';
@@ -87,7 +86,6 @@ class _ManageProductsScreenState extends State<ManageProductsScreen> {
                 ),
                 onTap: () {
                   setState(() {
-                    // _sCategory = categories[index];
                     _sType = _options[index];
                     print(_sType + ' products display option is selected');
                   });

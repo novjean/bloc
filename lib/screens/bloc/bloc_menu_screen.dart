@@ -2,9 +2,9 @@ import 'dart:collection';
 
 import 'package:bloc/db/entity/bloc_service.dart';
 import 'package:bloc/db/entity/service_table.dart';
+import 'package:bloc/db/shared_preferences/table_preferences.dart';
 import 'package:bloc/helpers/dummy.dart';
 import 'package:bloc/helpers/firestore_helper.dart';
-import 'package:bloc/widgets/table_card_item.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -48,7 +48,6 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
   List<Category> mFoodSubCategories = [];
 
   var _isLoading = true;
-  var _isTableDetailsLoading = true;
   var _isCategoriesLoading = true;
   var _isCustomerSeated = false;
 
@@ -96,7 +95,6 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
         setState(() {
           mTable = dummyTable;
           mSeat = dummySeat;
-          _isTableDetailsLoading = false;
           _isLoading = false;
           _isCustomerSeated = false;
         });
@@ -120,7 +118,6 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
 
                     setState(() {
                       mTable = _table;
-                      _isTableDetailsLoading = false;
                       _isLoading = false;
                       _isCustomerSeated = true;
                     });
@@ -201,12 +198,7 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
       // set the table as occupied
       FirestoreHelper.setTableOccupyStatus(tableId, true);
 
-      // find the seats associated with this table
-      FirebaseFirestore.instance
-          .collection(FirestoreHelper.SEATS)
-          .where('tableId', isEqualTo: tableId)
-          .get()
-          .then(
+      FirestoreHelper.pullSeats(tableId).then(
         (result) {
           bool isSeatAvailable = false;
           if (result.docs.isNotEmpty) {
@@ -217,9 +209,33 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
               final Seat seat = Seat.fromMap(data);
 
               if (seat.custId.isEmpty) {
+                // set the table as occupied
                 FirestoreHelper.updateSeat(seat.id, userId);
                 // here we update the user's bloc service id
                 FirestoreHelper.updateUserBlocId(userId, seat.serviceId);
+
+                if (!kIsWeb) {
+                  // keeping this here since android/ios does not set table
+                  FirestoreHelper.pullTableById(widget.blocService.id, tableId)
+                      .then((res) {
+                    print('successfully pulled in table for id ' + tableId);
+
+                    if (res.docs.isNotEmpty) {
+                      DocumentSnapshot document = res.docs[0];
+                      Map<String, dynamic> data =
+                          document.data()! as Map<String, dynamic>;
+                      final ServiceTable table = ServiceTable.fromMap(data);
+
+                      TablePreferences.setTable(table);
+                      setState(() {
+                        mTable = table;
+                      });
+                    } else {
+                      print('table could not be found for id ' + tableId);
+                    }
+                  });
+                }
+
                 break;
               }
 
@@ -286,20 +302,19 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
                       onPressed: () {
                         Toaster.longToast('enter your table number');
 
-                        // blocUser.User user = UserPreferences.myUser;
-                        // scanTableQR(user);
-
+                        TablePreferences.resetTable();
                         int tableNum = -1;
+
                         showDialog(
                           context: context,
                           builder: (BuildContext context) {
                             return SystemPadding(
                               child: AlertDialog(
                                 contentPadding: const EdgeInsets.all(16.0),
-                                content: new Row(
+                                content: Row(
                                   children: <Widget>[
-                                    new Expanded(
-                                      child: new TextField(
+                                    Expanded(
+                                      child: TextField(
                                         autofocus: true,
                                         keyboardType: TextInputType.number,
                                         onChanged: (text) {
@@ -309,7 +324,7 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
                                             print('err: ' + err.toString());
                                           }
                                         },
-                                        decoration: new InputDecoration(
+                                        decoration: InputDecoration(
                                             labelText: 'table number',
                                             hintText: 'eg. 12'),
                                       ),
@@ -352,6 +367,9 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
                                                   !table.isOccupied) {
                                                 updateTableWithUser(table.id,
                                                     UserPreferences.myUser.id);
+
+                                                TablePreferences.setTable(
+                                                    table);
                                               } else {
                                                 Toaster.longToast('table ' +
                                                     tableNum.toString() +
@@ -385,6 +403,8 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
                       onPressed: () {
                         Toaster.longToast('scan your table now');
 
+                        TablePreferences.resetTable();
+
                         blocUser.User user = UserPreferences.myUser;
                         scanTableQR(user);
                       },
@@ -395,10 +415,7 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
             ),
             onPressed: () {
               Navigator.of(context).push(
-                MaterialPageRoute(
-                    builder: (ctx) => CartScreen(
-                        service: widget.blocService,
-                        tableNumber: mTable.tableNumber)),
+                MaterialPageRoute(builder: (ctx) => CartScreen()),
               );
             },
           ),
@@ -417,30 +434,11 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
 
     return Column(
       children: [
-        // const SizedBox(height: 2.0),
-        // _isTableDetailsLoading
-        //     ? TextFormField(
-        //         key: const ValueKey('table_loading'),
-        //         initialValue: 'loading table info ...',
-        //         enabled: false,
-        //         autocorrect: false,
-        //         textCapitalization: TextCapitalization.words,
-        //         enableSuggestions: false,
-        //         keyboardType: TextInputType.text,
-        //       )
-        //     : _isCustomerSeated
-        //         ? TableCardItem(
-        //             tableId: mTable.id,
-        //             tableNumber: mTable.tableNumber,
-        //             isCommunity: _isCommunity,
-        //             seatId: mSeat.id,
-        //           )
-        //         : _searchTableNumber(context),
-        const SizedBox(height: 2.0),
+        const SizedBox(height: 5.0),
         _isCategoriesLoading ? const SizedBox() : _displayCategories(context),
-        const SizedBox(height: 2.0),
+        const SizedBox(height: 5.0),
         buildProducts(context, 'Beer'),
-        const SizedBox(height: 1.0),
+        const SizedBox(height: 5.0),
         _updateOffers(context),
         !_isCustomerSeated ? _searchTableNumber(context) : CartWidget()
       ],
@@ -512,7 +510,6 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
 
                         setState(() {
                           mTable = _table;
-                          _isTableDetailsLoading = false;
                           _isCustomerSeated = true;
                         });
                       }
@@ -528,7 +525,7 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
           } else {
             return const SizedBox(height: 0);
           }
-          return SizedBox();
+          return const SizedBox();
         });
   }
 

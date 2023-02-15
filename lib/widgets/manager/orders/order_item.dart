@@ -59,8 +59,8 @@ class OrderItem extends StatelessWidget {
                 ),
                 child: Center(
                   child: Text( displayOption == 'Table' ?
-                    'Table Number : ' + order.cartItems[0].tableNumber.toString() :
-                    'Customer ID : ' + order.cartItems[0].userId,
+                    'table number : ' + order.cartItems[0].tableNumber.toString() :
+                    'customer id : ' + order.cartItems[0].userId,
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 20,

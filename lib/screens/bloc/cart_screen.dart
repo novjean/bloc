@@ -1,23 +1,22 @@
+import 'package:bloc/db/shared_preferences/table_preferences.dart';
+import 'package:bloc/db/shared_preferences/user_preferences.dart';
 import 'package:bloc/helpers/firestore_helper.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
 
-import '../../db/entity/bloc_service.dart';
 import '../../db/entity/cart_item.dart';
+import '../../db/entity/order_bloc.dart';
 import '../../providers/cart.dart' show Cart;
+import '../../utils/string_utils.dart';
 import '../../widgets/cart_block.dart';
 import '../../widgets/ui/toaster.dart';
 
 class CartScreen extends StatelessWidget {
   static const routeName = '/cart';
 
-  BlocService service;
-  int tableNumber;
-
-  CartScreen({key, required this.service, required this.tableNumber})
-      : super(key: key);
+  CartScreen({key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -77,9 +76,8 @@ class CartScreen extends StatelessWidget {
                   Text(
                     '\u20B9${cart.totalAmount.toStringAsFixed(2)}',
                     style: TextStyle(
-                      color: Theme.of(context).primaryColorDark,
-                      fontSize: 16
-                    ),
+                        color: Theme.of(context).primaryColorDark,
+                        fontSize: 16),
                   ),
                   SizedBox(width: 15),
                   OrderButton(cart: cart),
@@ -118,23 +116,49 @@ class _OrderButtonState extends State<OrderButton> {
                 _isLoading = true;
               });
 
-              // keeping this here for fixed timestamp throughout the cart
-              Timestamp timestamp = Timestamp.now();
-              final int millisecondsSinceEpoch =
-                  timestamp.millisecondsSinceEpoch;
-              for (int i = 0; i < widget.cart.items.length; i++) {
-                //todo: will need to check if the upload actually went through
-                CartItem cartItem = widget.cart.items.values.elementAt(i);
-                cartItem.createdAt = millisecondsSinceEpoch;
-                FirestoreHelper.pushCartItem(cartItem);
+              if(widget.cart.items.isNotEmpty) {
+                // keeping this here for fixed timestamp throughout the cart
+                Timestamp timestamp = Timestamp.now();
+                final int createdAtMillis =
+                    timestamp.millisecondsSinceEpoch;
+                double amount = 0.0;
+                int tableNumber = widget.cart.items.values
+                    .elementAt(0)
+                    .tableNumber;
+
+                List<String> cartIds = [];
+                for (int i = 0; i < widget.cart.items.length; i++) {
+                  //todo: will need to check if the upload actually went through
+                  CartItem cartItem = widget.cart.items.values.elementAt(i);
+                  cartItem.createdAt = createdAtMillis;
+                  FirestoreHelper.pushCartItem(cartItem);
+                  cartIds.add(cartItem.cartId);
+                  amount += cartItem.productPrice * cartItem.quantity;
+                }
+
+                //create an order object and push it
+                OrderBloc order = OrderBloc(
+                    id: StringUtils.getRandomString(28),
+                    customerId: UserPreferences.myUser.id,
+                    blocServiceId: UserPreferences.myUser.blocServiceId,
+                    creationTime: createdAtMillis,
+                    isCommunity: false,
+                    amount: amount,
+                    completionTime: 0,
+                    cartIds: cartIds,
+                    tableNumber: tableNumber,
+                    captainId: TablePreferences.myTable.captainId,
+                    sequence: 1);
+
+                FirestoreHelper.pushOrder(order);
+
+                Toaster.shortToast("order sent");
+
+                setState(() {
+                  _isLoading = false;
+                });
+                widget.cart.clear();
               }
-
-              Toaster.shortToast("order sent");
-
-              setState(() {
-                _isLoading = false;
-              });
-              widget.cart.clear();
             },
     );
   }

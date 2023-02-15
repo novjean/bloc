@@ -1,4 +1,5 @@
 import 'package:bloc/db/entity/user.dart' as blocUser;
+import 'package:bloc/db/shared_preferences/table_preferences.dart';
 import 'package:bloc/screens/login_screen.dart';
 import 'package:bloc/utils/constants.dart';
 import 'package:bloc/widgets/app_drawer.dart';
@@ -54,7 +55,7 @@ class _MainScreenState extends State<MainScreen> {
         .get()
         .then(
       (res) {
-        print("Successfully retrieved users for " +
+        print("successfully retrieved users for " +
             widget.user.phoneNumber.toString());
 
         if (res.docs.isEmpty) {
@@ -80,7 +81,6 @@ class _MainScreenState extends State<MainScreen> {
             Map<String, dynamic> data =
                 document.data()! as Map<String, dynamic>;
             final blocUser.User user = blocUser.User.fromMap(data);
-            // BlocRepository.insertUser(widget.dao, user);
             users.add(user);
 
             if (i == res.docs.length - 1) {
@@ -90,7 +90,7 @@ class _MainScreenState extends State<MainScreen> {
         }
       },
       onError: (e) => print(
-          "Error completing retrieving users for phone number : " +
+          "error completing retrieving users for phone number : " +
               widget.user.phoneNumber.toString() +
               " : $e"),
     );
@@ -130,12 +130,13 @@ class _MainScreenState extends State<MainScreen> {
 
         return;
       });
-      fbm.subscribeToTopic('chat');
+      // fbm.subscribeToTopic('chat');
       fbm.subscribeToTopic('offer');
 
       blocUser.User user = UserPreferences.getUser();
-      if (user.clearanceLevel > Constants.MANAGER_LEVEL) {
+      if (user.clearanceLevel >= Constants.CAPTAIN_LEVEL) {
         fbm.subscribeToTopic('sos');
+        fbm.subscribeToTopic('order');
       }
     }
   }

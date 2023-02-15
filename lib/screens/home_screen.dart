@@ -55,6 +55,9 @@ class _HomeScreenState extends State<HomeScreen> {
       } else {
         print('no blocs found!!!');
         //todo: need to re-attempt or check internet connection
+        setState(() {
+          _isBlocsLoading = false;
+        });
       }
     });
 

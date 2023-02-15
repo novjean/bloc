@@ -5,6 +5,7 @@ import 'package:bloc/db/entity/bloc_service.dart';
 import 'package:bloc/db/entity/cart_item.dart';
 import 'package:bloc/db/entity/category.dart';
 import 'package:bloc/db/entity/offer.dart';
+import 'package:bloc/db/entity/order_bloc.dart';
 import 'package:bloc/db/entity/party.dart';
 import 'package:bloc/db/entity/seat.dart';
 import 'package:bloc/db/entity/user.dart' as blocUser;
@@ -38,6 +39,7 @@ class FirestoreHelper {
   static String MANAGER_SERVICES = 'manager_services';
   static String MANAGER_SERVICE_OPTIONS = 'manager_service_options';
   static String OFFERS = 'offers';
+  static String ORDERS = 'orders';
   static String PARTIES = 'parties';
   static String PRODUCTS = 'products';
   static String BLOC_SERVICES = 'services';
@@ -428,6 +430,21 @@ class FirestoreHelper {
     FirebaseFirestore.instance.collection(OFFERS).doc(docId).delete();
   }
 
+  /** Order **/
+  static void pushOrder(OrderBloc order) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection(ORDERS)
+          .doc(order.id)
+          .set(order.toMap());
+    } on PlatformException catch (err) {
+      logger.e(err.message);
+    } catch (err) {
+      logger.e(err);
+    }
+  }
+
+
   /** Party **/
   static void pushParty(Party party) async {
     try {
@@ -690,6 +707,14 @@ class FirestoreHelper {
         .collection(FirestoreHelper.TABLES)
         .where('serviceId', isEqualTo: blocServiceId)
         .where('tableNumber', isEqualTo: tableNumber)
+        .get();
+  }
+
+  static Future<QuerySnapshot<Map<String, dynamic>>> pullTableById(String blocServiceId, String tableId) {
+    return FirebaseFirestore.instance
+        .collection(FirestoreHelper.TABLES)
+        .where('serviceId', isEqualTo: blocServiceId)
+        .where('id', isEqualTo: tableId)
         .get();
   }
 
@@ -1012,31 +1037,5 @@ class FirestoreHelper {
         .get();
   }
 
-/** Reference **/
-// _buildProducts(BuildContext context, String _category) {
-//   FirebaseFirestore.instance
-//       .collection(FirestoreHelper.PRODUCTS)
-//       .where('serviceId', isEqualTo: widget.service.id)
-//       .where('category', isEqualTo: _category)
-//       .get()
-//       .then(
-//         (res) {
-//       print("Successfully completed");
-//       List<Product> products = [];
-//       for (int i = 0; i < res.docs.length; i++) {
-//         DocumentSnapshot document = res.docs[i];
-//         Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-//         final Product product = Product.fromMap(data);
-//         BlocRepository.insertProduct(widget.dao, product);
-//         products.add(product);
-//
-//         if (i == res.docs.length - 1) {
-//           // _displayProductsList(context, products);
-//         }
-//       }
-//     },
-//     onError: (e) => print("Error completing: $e"),
-//   );
-// }
 
 }

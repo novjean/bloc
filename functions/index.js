@@ -29,8 +29,23 @@ exports.sosFunction = functions
       console.log(snapshot.data());
       return admin.messaging().sendToTopic('sos', {
         notification: {
-          title: 'SOS : Table ' + snapshot.data().tableNumber.toString(),
+          title: 'help : table ' + snapshot.data().tableNumber.toString(),
           body: snapshot.data().name,
+          clickAction: 'FLUTTER_NOTIFICATION_CLICK',
+        },
+      });
+    });
+
+exports.sosFunction = functions
+    .region('asia-south1')
+    .firestore
+    .document('orders/{order}')
+    .onCreate((snapshot, context) => {
+      console.log(snapshot.data());
+      return admin.messaging().sendToTopic('order', {
+        notification: {
+          title: 'order : table ' + snapshot.data().tableNumber.toString(),
+          body: 'order has been received!',
           clickAction: 'FLUTTER_NOTIFICATION_CLICK',
         },
       });
@@ -44,8 +59,8 @@ exports.offerFunction = functions
       console.log(snapshot.data());
       return admin.messaging().sendToTopic('offer', {
         notification: {
-          title: 'Offer : ' + snapshot.data().productName + '!',
-          body: 'Grab one now!',
+          title: 'offer : ' + snapshot.data().productName + '!',
+          body: 'grab one now!',
           clickAction: 'FLUTTER_NOTIFICATION_CLICK',
         },
       });

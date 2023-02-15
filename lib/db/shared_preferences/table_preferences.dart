@@ -17,13 +17,14 @@ class TablePreferences {
       capacity: 0,
       isOccupied: false,
       isActive: true,
-      type: FirestoreHelper.TABLE_COMMUNITY_TYPE_ID);
+      type: FirestoreHelper.TABLE_PRIVATE_TYPE_ID);
 
   static Future init() async =>
       _preferences = await SharedPreferences.getInstance();
 
   static Future setTable(ServiceTable table) async {
     final json = jsonEncode(table.toMap());
+    myTable = table;
     await _preferences.setString(_keyTable, json);
   }
 
@@ -33,7 +34,7 @@ class TablePreferences {
     return json == null ? myTable : ServiceTable.fromMap(jsonDecode(json));
   }
 
-  static void resetUser() {
+  static void resetTable() {
     setTable(ServiceTable(
         id: '',
         serviceId: '',
@@ -42,6 +43,6 @@ class TablePreferences {
         capacity: 0,
         isOccupied: false,
         isActive: true,
-        type: 0));
+        type: FirestoreHelper.TABLE_PRIVATE_TYPE_ID));
   }
 }
