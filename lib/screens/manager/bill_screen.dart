@@ -19,7 +19,7 @@ class BillScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Bill Screen'),
+        title: Text('bills'),
       ),
       body: _buildBody(context),
     );
@@ -47,7 +47,7 @@ class BillScreen extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
 
               children: [
-                Text('Order number : ' + order.sequence.toString()),
+                Text('order number : ' + order.sequence.toString()),
                 renderCartItems(order.cartItems),
                 // OrderCardItem(order),
               ],

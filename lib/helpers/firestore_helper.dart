@@ -141,29 +141,42 @@ class FirestoreHelper {
   /** Bookings **/
 
   /** Cart Items **/
-  static void uploadCartItem(
-      CartItem cart, Timestamp timestamp, int millisecondsSinceEpoch) async {
-    await FirebaseFirestore.instance
-        .collection(CART_ITEMS)
-        .doc(cart.cartId)
-        .set({
-      'cartId': cart.cartId,
-      'serviceId': cart.serviceId,
-      'billId': cart.billId,
-      'tableNumber': cart.tableNumber,
-      'cartNumber': cart.cartNumber,
-      'userId': cart.userId,
-      'productId': cart.productId,
-      'productName': cart.productName,
-      'productPrice': cart.productPrice,
-      'quantity': cart.quantity,
-      'createdAt': millisecondsSinceEpoch,
-      'timestamp': timestamp,
-      'isCompleted': false,
-      'isCommunity': cart.isCommunity,
-      'isBilled': cart.isBilled,
-    });
+  static void pushCartItem(CartItem cartItem) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection(CART_ITEMS)
+          .doc(cartItem.cartId)
+          .set(cartItem.toMap());
+    } on PlatformException catch (err) {
+      logger.e(err.message);
+    } catch (err) {
+      logger.e(err);
+    }
   }
+
+  // static void uploadCartItem(
+  //     CartItem cart, Timestamp timestamp, int millisecondsSinceEpoch) async {
+  //   await FirebaseFirestore.instance
+  //       .collection(CART_ITEMS)
+  //       .doc(cart.cartId)
+  //       .set({
+  //     'cartId': cart.cartId,
+  //     'serviceId': cart.serviceId,
+  //     'billId': cart.billId,
+  //     'tableNumber': cart.tableNumber,
+  //     'cartNumber': cart.cartNumber,
+  //     'userId': cart.userId,
+  //     'productId': cart.productId,
+  //     'productName': cart.productName,
+  //     'productPrice': cart.productPrice,
+  //     'quantity': cart.quantity,
+  //     'createdAt': millisecondsSinceEpoch,
+  //     'timestamp': timestamp,
+  //     'isCompleted': false,
+  //     'isCommunity': cart.isCommunity,
+  //     'isBilled': cart.isBilled,
+  //   });
+  // }
 
   static Stream<QuerySnapshot<Object?>> getCartItemsSnapshot(
       String serviceId, bool isCompleted) {
@@ -171,7 +184,6 @@ class FirestoreHelper {
         .collection(CART_ITEMS)
         .where('serviceId', isEqualTo: serviceId)
         .where('isCompleted', isEqualTo: isCompleted)
-        // .orderBy('timestamp', descending: true) // createdAt could be used i guess
         .snapshots();
   }
 
@@ -182,7 +194,6 @@ class FirestoreHelper {
         .where('serviceId', isEqualTo: serviceId)
         .where('isCompleted', isEqualTo: isCompleted)
         .where('isCommunity', isEqualTo: true)
-        // .orderBy('timestamp', descending: true) // createdAt could be used i guess
         .snapshots();
   }
 
@@ -193,8 +204,7 @@ class FirestoreHelper {
         .where('serviceId', isEqualTo: serviceId)
         .where('isCompleted', isEqualTo: isCompleted)
         .where('isBilled', isEqualTo: isBilled)
-        .orderBy('createdAt',
-            descending: true) // createdAt could be used i guess
+        .orderBy('createdAt', descending: true) // createdAt could be used i guess
         .snapshots();
   }
 
@@ -1001,7 +1011,6 @@ class FirestoreHelper {
         .orderBy('level', descending: false)
         .get();
   }
-
 
 /** Reference **/
 // _buildProducts(BuildContext context, String _category) {

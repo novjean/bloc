@@ -13,7 +13,7 @@ class CartItem {
   int quantity;
   bool isCompleted;
   bool isBilled;
-  final int createdAt;
+  int createdAt;
 
 //<editor-fold desc="Data Methods">
 

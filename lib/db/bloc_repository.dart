@@ -1,17 +1,6 @@
 
-import 'package:bloc/db/dao/bloc_dao.dart';
-import 'package:bloc/db/entity/cart_item.dart';
-import 'package:bloc/db/entity/category.dart';
-import 'package:bloc/db/entity/manager_service.dart';
-import 'package:bloc/db/entity/product.dart';
-import 'package:bloc/db/entity/seat.dart';
-import 'package:bloc/db/entity/service_table.dart';
-import 'package:bloc/db/entity/user.dart';
 import 'package:logger/logger.dart';
 
-import 'entity/bloc.dart';
-import 'entity/bloc_service.dart';
-import 'entity/city.dart';
 
 var logger = Logger(
   printer: PrettyPrinter(),

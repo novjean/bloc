@@ -117,7 +117,7 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
             ? Text('loading past orders...')
             : billedOrders.isNotEmpty
                 ? _displayBilledOrders(context)
-                : Text('no past orders'),
+                : Center(child: Text('no past orders')),
         SizedBox(height: 2.0),
       ],
     );

@@ -63,11 +63,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   if (snapshot.hasData && !snapshot.data!.exists) {
                     // user not registered in bloc, will be picked up in OTP screen
                     //todo: keep an eye on this
-                    if (kIsWeb) {
-                      return SignInWidget();
-                    } else {
-                      return Center(child: Text('loading user...'));
-                    }
+                    return SignInWidget();
                   }
 
                   if (snapshot.connectionState == ConnectionState.done) {

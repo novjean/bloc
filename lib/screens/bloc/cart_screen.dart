@@ -123,15 +123,13 @@ class _OrderButtonState extends State<OrderButton> {
               final int millisecondsSinceEpoch =
                   timestamp.millisecondsSinceEpoch;
               for (int i = 0; i < widget.cart.items.length; i++) {
-                // send it to firebase
                 //todo: will need to check if the upload actually went through
-                FirestoreHelper.uploadCartItem(
-                    widget.cart.items.values.elementAt(i),
-                    timestamp,
-                    millisecondsSinceEpoch);
+                CartItem cartItem = widget.cart.items.values.elementAt(i);
+                cartItem.createdAt = millisecondsSinceEpoch;
+                FirestoreHelper.pushCartItem(cartItem);
               }
 
-              Toaster.shortToast("order sent.");
+              Toaster.shortToast("order sent");
 
               setState(() {
                 _isLoading = false;
