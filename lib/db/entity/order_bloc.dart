@@ -1,4 +1,3 @@
-//todo: implementation is saved for another day
 class OrderBloc {
   final String id;
   final String customerId;

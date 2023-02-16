@@ -1,4 +1,5 @@
 import 'package:bloc/db/entity/category.dart';
+import 'package:bloc/db/entity/guest_wifi.dart';
 import 'package:bloc/db/entity/service_table.dart';
 import 'package:bloc/utils/string_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -162,5 +163,15 @@ class Dummy {
         serviceId: serviceId,
         type: 'Alcohol');
     return dummyCategory;
+  }
+
+  static GuestWifi getDummyWifi(String blocServiceId) {
+    GuestWifi dummyWifi = GuestWifi(
+        id: StringUtils.getRandomString(28),
+        name: '',
+        password: '',
+        blocServiceId: blocServiceId,
+        creationTime: Timestamp.now().millisecondsSinceEpoch);
+    return dummyWifi;
   }
 }

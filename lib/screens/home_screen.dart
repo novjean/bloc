@@ -4,8 +4,10 @@ import 'package:bloc/screens/user/book_table_screen.dart';
 import 'package:bloc/utils/constants.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../db/entity/bloc.dart';
+import '../db/entity/guest_wifi.dart';
 import '../db/entity/party.dart';
 import '../db/shared_preferences/user_preferences.dart';
 import '../helpers/dummy.dart';
@@ -15,6 +17,7 @@ import '../widgets/home/new_bloc_slide_item.dart';
 import '../widgets/parties/party_home_item.dart';
 import '../widgets/search_card.dart';
 import '../widgets/ui/button_widget.dart';
+import '../widgets/ui/toaster.dart';
 import 'experimental/trending.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -31,12 +34,15 @@ class _HomeScreenState extends State<HomeScreen> {
   Party mUpcomingParty = Dummy.getDummyParty('');
   var _isUpcomingPartyLoading = true;
 
+  GuestWifi mGuestWifi = Dummy.getDummyWifi(Constants.blocServiceId);
+  var _isGuestWifiDetailsLoading = true;
+
   @override
   void initState() {
     super.initState();
 
     FirestoreHelper.pullBlocs().then((res) {
-      print("Successfully pulled in blocs.");
+      print("successfully pulled in blocs");
 
       if (res.docs.isNotEmpty) {
         // found blocs
@@ -84,6 +90,29 @@ class _HomeScreenState extends State<HomeScreen> {
         //should not display the events module
       }
     });
+
+    FirestoreHelper.pullGuestWifi(Constants.blocServiceId).then((res) {
+      print("successfully pulled in guest wifi");
+
+      if (res.docs.isNotEmpty) {
+        try {
+          DocumentSnapshot document = res.docs[0];
+          Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+          final GuestWifi wifi = GuestWifi.fromMap(data);
+
+          setState(() {
+            mGuestWifi = wifi;
+            _isGuestWifiDetailsLoading = false;
+          });
+        } catch (err) {
+          print('error: ' + err.toString());
+        }
+      } else {
+        print('no guest wifi found!');
+
+        //should not display the events module
+      }
+    });
   }
 
   @override
@@ -97,8 +126,8 @@ class _HomeScreenState extends State<HomeScreen> {
       },
       child: Scaffold(
         backgroundColor: Theme.of(context).backgroundColor,
-        body: ListView(
-          physics: const BouncingScrollPhysics(),
+        body: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
             // buildSearchBar(context),
             const SizedBox(height: 10.0),
@@ -109,6 +138,12 @@ class _HomeScreenState extends State<HomeScreen> {
             _isUpcomingPartyLoading
                 ? const SizedBox(height: 0)
                 : _displayUpcomingParty(context),
+            const SizedBox(height: 10.0),
+            _isGuestWifiDetailsLoading
+                ? const SizedBox(height: 0)
+                : buildWifi(context),
+            const SizedBox(height: 10.0),
+
             // buildBookTableRow(context),
             // buildRestaurantRow('Trending Restaurants', context),
             // SizedBox(height: 10.0),
@@ -174,6 +209,58 @@ class _HomeScreenState extends State<HomeScreen> {
           print(_sParty.name + ' is selected.');
         },
       ),
+    );
+  }
+
+  buildWifi(BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          padding: EdgeInsets.only(top: 10, left: 10.0, right: 0.0),
+          child: Text(
+            "connect",
+            style: TextStyle(
+              fontSize: 24.0,
+              color: Theme.of(context).primaryColorLight,
+              fontWeight: FontWeight.w800,
+            ),
+            textAlign: TextAlign.left,
+          ),
+        ),
+
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(left: 10.0),
+              child: Text(
+                'wifi : ${mGuestWifi.name.toLowerCase()}',
+                style: TextStyle(
+                  fontSize: 20,
+                  color: Theme.of(context).primaryColorLight,
+                ),
+              ),
+            ),
+            Container(
+              padding: const EdgeInsets.only(right: 10),
+              margin: const EdgeInsets.only(bottom: 10),
+              child: ButtonWidget(
+                text: 'password',
+                onClicked: () {
+                  Clipboard.setData(ClipboardData(text: mGuestWifi.password))
+                      .then((value) {
+                    //only if ->
+                    Toaster.shortToast('password copied');
+                  });
+                },
+              ),
+            )
+          ],
+        ),
+        // showCopyPasswordDialog(context),
+      ],
     );
   }
 

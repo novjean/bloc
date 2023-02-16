@@ -17,7 +17,7 @@ class ManagerMainScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Manager | Home'),
+        title: Text('manager | home'),
       ),
       body: _buildBody(context),
     );
@@ -62,7 +62,6 @@ class ManagerMainScreen extends StatelessWidget {
               document.data()! as Map<String, dynamic>;
 
               final BlocService service = BlocService.fromMap(data);
-              // BlocRepository.insertBlocService(dao, service);
 
               return BlocServiceItem(service, true, key: ValueKey(document.id));
             }).toList(),

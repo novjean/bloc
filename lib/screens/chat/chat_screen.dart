@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../../db/dao/bloc_dao.dart';
 import '../../helpers/token_monitor.dart';
 import '../../widgets/chat/messages.dart';
 import '../../widgets/chat/new_message.dart';

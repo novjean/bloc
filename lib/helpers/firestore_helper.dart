@@ -4,6 +4,7 @@ import 'package:bloc/db/entity/bloc.dart';
 import 'package:bloc/db/entity/bloc_service.dart';
 import 'package:bloc/db/entity/cart_item.dart';
 import 'package:bloc/db/entity/category.dart';
+import 'package:bloc/db/entity/guest_wifi.dart';
 import 'package:bloc/db/entity/offer.dart';
 import 'package:bloc/db/entity/order_bloc.dart';
 import 'package:bloc/db/entity/party.dart';
@@ -35,6 +36,7 @@ class FirestoreHelper {
   static String CATEGORIES = 'categories';
   static String CART_ITEMS = 'cart_items';
   static String CITIES = 'cities';
+  static String GUEST_WIFIS = 'guest_wifis';
   static String INVENTORY_OPTIONS = 'inventory_options';
   static String MANAGER_SERVICES = 'manager_services';
   static String MANAGER_SERVICE_OPTIONS = 'manager_service_options';
@@ -367,6 +369,28 @@ class FirestoreHelper {
   static Stream<QuerySnapshot<Object?>> getCitiesSnapshot() {
     return FirebaseFirestore.instance.collection(CITIES).snapshots();
   }
+
+  /** Guest Wifi **/
+  static Future<QuerySnapshot<Map<String, dynamic>>> pullGuestWifi(String blocServiceId) {
+    return FirebaseFirestore.instance
+        .collection(FirestoreHelper.GUEST_WIFIS)
+        .where('blocServiceId', isEqualTo: blocServiceId)
+        .get();
+  }
+
+  static void pushGuestWifi(GuestWifi wifi) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection(GUEST_WIFIS)
+          .doc(wifi.id)
+          .set(wifi.toMap());
+    } on PlatformException catch (err) {
+      logger.e(err.message);
+    } catch (err) {
+      logger.e(err);
+    }
+  }
+
 
   /** Inventory Options **/
   static Stream<QuerySnapshot<Object?>> getInventoryOptions() {
@@ -1036,6 +1060,8 @@ class FirestoreHelper {
         .orderBy('level', descending: false)
         .get();
   }
+
+
 
 
 }

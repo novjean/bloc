@@ -1,5 +1,4 @@
 import 'package:bloc/db/entity/user.dart' as blocUser;
-import 'package:bloc/db/shared_preferences/table_preferences.dart';
 import 'package:bloc/screens/login_screen.dart';
 import 'package:bloc/utils/constants.dart';
 import 'package:bloc/widgets/app_drawer.dart';
@@ -16,7 +15,6 @@ import '../helpers/firestore_helper.dart';
 import '../main.dart';
 import 'home_screen.dart';
 import 'parties/party_screen.dart';
-import 'chat/chat_screen.dart';
 import 'profile/profile_add_edit_register_page.dart';
 import 'profile/profile_page.dart';
 
@@ -125,7 +123,7 @@ class _MainScreenState extends State<MainScreen> {
       FirebaseMessaging.onMessageOpenedApp.listen((message) {
         debugPrint('A new onMessageOpenedApp event was published!');
         Navigator.of(context).push(
-          MaterialPageRoute(builder: (ctx) => ChatScreen()),
+          MaterialPageRoute(builder: (ctx) => HomeScreen()),
         );
 
         return;

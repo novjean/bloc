@@ -11,14 +11,14 @@ import '../../db/entity/bloc_service.dart';
 import '../../helpers/firestore_helper.dart';
 import '../../widgets/ui/listview_block.dart';
 import 'bookings/bookings_screen.dart';
+import 'guest_wifi_edit_screen.dart';
 import 'inventory/manage_inventory_screen.dart';
 import 'tables/manage_tables_screen.dart';
 
 class ManagerServicesScreen extends StatelessWidget {
   BlocService blocService;
 
-  ManagerServicesScreen({key, required this.blocService})
-      : super(key: key);
+  ManagerServicesScreen({key, required this.blocService}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -58,7 +58,6 @@ class ManagerServicesScreen extends StatelessWidget {
                 document.data()! as Map<String, dynamic>;
             final ManagerService ms = ManagerService.fromMap(data);
             _managerServices.add(ms);
-            // BlocRepository.insertManagerService(dao, ms);
 
             if (i == snapshot.data!.docs.length - 1) {
               return _displayManagerServices(context, _managerServices);
@@ -68,7 +67,8 @@ class ManagerServicesScreen extends StatelessWidget {
         });
   }
 
-  _displayManagerServices(BuildContext context, List<ManagerService> _managerServices) {
+  _displayManagerServices(
+      BuildContext context, List<ManagerService> _managerServices) {
     String userTitle = 'Manager';
 
     return Expanded(
@@ -87,11 +87,10 @@ class ManagerServicesScreen extends StatelessWidget {
                     case 'Orders':
                       {
                         Navigator.of(context).push(MaterialPageRoute(
-                            builder: (ctx) =>
-                                ManageOrdersScreen(
-                                    serviceId: blocService.id,
-                                    serviceName: _managerService.name,
-                                  userTitle: userTitle)));
+                            builder: (ctx) => ManageOrdersScreen(
+                                serviceId: blocService.id,
+                                serviceName: _managerService.name,
+                                userTitle: userTitle)));
                         logger.d('manage inventory screen selected.');
                         break;
                       }
@@ -108,9 +107,10 @@ class ManagerServicesScreen extends StatelessWidget {
                       {
                         Navigator.of(context).push(MaterialPageRoute(
                             builder: (ctx) => ManageTablesScreen(
-                                blocServiceId: blocService.id,
-                                serviceName: _managerService.name,
-                                userTitle: userTitle,)));
+                                  blocServiceId: blocService.id,
+                                  serviceName: _managerService.name,
+                                  userTitle: userTitle,
+                                )));
                         logger.d('tables management service selected.');
                         break;
                       }
@@ -118,8 +118,8 @@ class ManagerServicesScreen extends StatelessWidget {
                       {
                         Navigator.of(context).push(MaterialPageRoute(
                             builder: (ctx) => ManagePartiesScreen(
-                              serviceId: blocService.id,
-                              managerService: _managerService)));
+                                serviceId: blocService.id,
+                                managerService: _managerService)));
                         logger.d('parties management service selected.');
                         break;
                       }
@@ -127,9 +127,10 @@ class ManagerServicesScreen extends StatelessWidget {
                       {
                         Navigator.of(context).push(MaterialPageRoute(
                             builder: (ctx) => BookingsScreen(
-                              blocServiceId: blocService.id,
-                              serviceName: _managerService.name,
-                              userTitle: userTitle,)));
+                                  blocServiceId: blocService.id,
+                                  serviceName: _managerService.name,
+                                  userTitle: userTitle,
+                                )));
                         logger.d('tables management service selected.');
                         break;
                       }
@@ -138,6 +139,13 @@ class ManagerServicesScreen extends StatelessWidget {
                         Navigator.of(context).push(MaterialPageRoute(
                             builder: (ctx) => ManageUsersScreen()));
                         logger.d('manage users screen selected.');
+                        break;
+                      }
+                    case 'guest wifi':
+                      {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (ctx) => GuestWifiEditScreen(blocServiceId: blocService.id, task: 'edit',)));
+                        logger.d('manage guest wifi screen selected.');
                         break;
                       }
                     default:

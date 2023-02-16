@@ -61,7 +61,7 @@ class _ProductItemState extends State<ProductItem> {
               children: <Widget>[
                 widget.product.imageUrl.isNotEmpty
                     ? Container(
-                        height: 200,
+                        height: 169,
                         width: 100,
                         decoration: BoxDecoration(
                           image: DecorationImage(
