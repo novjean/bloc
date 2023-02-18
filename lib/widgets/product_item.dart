@@ -189,6 +189,7 @@ class _ProductItemState extends State<ProductItem> {
                                     : 'assets/icons/ic_non_veg_food.png')
                                 : const SizedBox(width: 0),
                             Spacer(),
+                            widget.isCustomerSeated ?
                             IconButton(
                               icon: Icon(Icons.remove),
                               onPressed: () {
@@ -203,8 +204,8 @@ class _ProductItemState extends State<ProductItem> {
                                   }
                                 });
                               },
-                            ),
-                            Container(
+                            ) : SizedBox(),
+                            widget.isCustomerSeated? Container(
                                 // color: primaryColor,
                                 margin: const EdgeInsets.symmetric(
                                   horizontal: 0.0,
@@ -223,8 +224,8 @@ class _ProductItemState extends State<ProductItem> {
                                         ? addProductToCart(cart)
                                         : alertUserTable(context);
                                   },
-                                )),
-                            IconButton(
+                                )) : SizedBox(),
+                            widget.isCustomerSeated?IconButton(
                               icon: const Icon(Icons.add),
                               color: primaryColor,
                               onPressed: () {
@@ -234,7 +235,7 @@ class _ProductItemState extends State<ProductItem> {
                                 print('increment add count to ' +
                                     widget.addCount.toString());
                               },
-                            ),
+                            ):SizedBox(),
                           ],
                         ),
                       ],

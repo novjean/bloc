@@ -624,6 +624,11 @@ class FirestoreHelper {
     }
   }
 
+  static void deleteProduct(String productId) {
+    FirebaseFirestore.instance.collection(PRODUCTS).doc(productId).delete();
+  }
+
+
   /** Seats **/
   static Future<QuerySnapshot<Map<String, dynamic>>> pullSeats(String tableId) {
     return FirebaseFirestore.instance
@@ -1060,8 +1065,5 @@ class FirestoreHelper {
         .orderBy('level', descending: false)
         .get();
   }
-
-
-
 
 }

@@ -372,6 +372,30 @@ class _ProductAddEditScreenState extends State<ProductAddEditScreen> {
                   Navigator.of(context).pop();
                 },
               ),
+              const SizedBox(height: 24),
+              ButtonWidget(
+                text: 'delete photo',
+                onClicked: () {
+                  if (widget.product.imageUrl.isNotEmpty) {
+                    FirestorageHelper.deleteFile(widget.product.imageUrl);
+                  }
+
+                  Navigator.of(context).pop();
+                },
+              ),
+              const SizedBox(height: 24),
+              ButtonWidget(
+                text: 'delete',
+                onClicked: () {
+                  if (widget.product.imageUrl.isNotEmpty) {
+                    FirestorageHelper.deleteFile(widget.product.imageUrl);
+                  }
+
+                  FirestoreHelper.deleteProduct(widget.product.id);
+
+                  Navigator.of(context).pop();
+                },
+              ),
             ],
           );
   }
