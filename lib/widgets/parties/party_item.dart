@@ -56,19 +56,23 @@ class PartyItem extends StatelessWidget {
                   child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
-                          "${party.name.toLowerCase()}",
-                          style: TextStyle(
-                            fontSize: 24.0,
-                            fontWeight: FontWeight.w800,
-                          ),
-                          textAlign: TextAlign.left,
+                        Flexible(
+                          child: Text(
+                            "${party.name.toLowerCase()}",
+                            style: TextStyle(
+                              fontSize: 24.0,
+                              fontWeight: FontWeight.w800,
+                            ),
+                            textAlign: TextAlign.left,
+                          ), flex: 4,
                         ),
-                        Text(
-                          party.isTBA
-                              ? 'tba'
-                              : DateTimeUtils.getFormattedDate(party.startTime),
-                          style: const TextStyle(fontSize: 20),
+                        Flexible(
+                          child: Text(
+                            party.isTBA
+                                ? 'tba'
+                                : DateTimeUtils.getFormattedDate(party.startTime),
+                            style: const TextStyle(fontSize: 20),
+                          ), flex: 2,
                         )
                       ]),
                 ),

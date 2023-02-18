@@ -21,7 +21,7 @@ class Dummy {
         creationTime: 0,
         description: '',
         endTime: 0,
-        id: '',
+        id: StringUtils.getRandomString(28),
         isActive: false,
         isCommunityOffer: false,
         isPrivateOffer: false,
@@ -35,7 +35,7 @@ class Dummy {
 
   static ServiceTable getDummyTable(String blocServiceId) {
     ServiceTable dummyTable = ServiceTable(
-        id: 'dummy_table',
+        id: StringUtils.getRandomString(28),
         captainId: '',
         capacity: 0,
         isActive: false,
