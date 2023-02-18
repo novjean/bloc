@@ -128,9 +128,9 @@ class Dummy {
         isTBA: true,
         description: '',
         blocServiceId: '',
-        endTime: 0,
+        endTime: Timestamp.now().millisecondsSinceEpoch,
         instagramUrl: '',
-        startTime: 0,
+        startTime: Timestamp.now().millisecondsSinceEpoch,
         ticketUrl: '',
         listenUrl: '');
 
