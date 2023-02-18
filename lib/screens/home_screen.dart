@@ -126,8 +126,8 @@ class _HomeScreenState extends State<HomeScreen> {
       },
       child: Scaffold(
         backgroundColor: Theme.of(context).backgroundColor,
-        body: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
+        body: ListView(
+          physics: const BouncingScrollPhysics(),
           children: <Widget>[
             // buildSearchBar(context),
             const SizedBox(height: 10.0),
