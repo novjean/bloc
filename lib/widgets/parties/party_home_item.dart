@@ -74,7 +74,7 @@ class PartyHomeItem extends StatelessWidget {
                       ),
 
                       party.isTBA
-                          ? showListenDialog(context)
+                          ? showListenOrInstaDialog(context)
                           : party.ticketUrl.isNotEmpty
                               ? Padding(
                                   padding: const EdgeInsets.only(right: 5.0),
@@ -99,7 +99,7 @@ class PartyHomeItem extends StatelessWidget {
                                     ),
                                   ),
                                 )
-                              : showListenDialog(context),
+                              : showListenOrInstaDialog(context),
 
                       // ButtonWidget(text: 'Tickets', onClicked: () {
                       //   final uri = Uri.parse(party.ticketUrl);
@@ -134,7 +134,14 @@ class PartyHomeItem extends StatelessWidget {
     );
   }
 
-  showListenDialog(BuildContext context) {
+  showListenOrInstaDialog(BuildContext context) {
+    bool isListen =  party.listenUrl.isNotEmpty;
+    bool isInsta = party.instagramUrl.isNotEmpty;
+
+    if(!isListen && !isInsta){
+      return const SizedBox();
+    }
+
     return Padding(
       padding: const EdgeInsets.only(right: 5.0),
       child: ElevatedButton(
@@ -147,11 +154,11 @@ class PartyHomeItem extends StatelessWidget {
           minimumSize: Size.fromHeight(60), //////// HERE
         ),
         onPressed: () {
-          final uri = Uri.parse(party.listenUrl);
+          final uri = Uri.parse(isListen?party.listenUrl:party.instagramUrl);
           _launchInBrowser(uri);
         },
         child: Text(
-          'listen',
+          isListen? 'listen':'social',
           style: TextStyle(fontSize: 20, color: Colors.black),
         ),
       ),

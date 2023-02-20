@@ -91,7 +91,7 @@ class PartyItem extends StatelessWidget {
 
                     party.instagramUrl.isNotEmpty?
                     ButtonWidget(
-                        text: 'profile',
+                        text: 'social',
                         onClicked: () {
                           final uri = Uri.parse(party.instagramUrl);
                           _launchInBrowser(uri);
