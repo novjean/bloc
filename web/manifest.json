@@ -5,7 +5,7 @@
     "display": "standalone",
     "background_color": "#191919",
     "theme_color": "#f7e7ce",
-    "description": "the socializing bar.",
+    "description": "the community bar.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

@@ -16,7 +16,9 @@ import '../helpers/token_monitor.dart';
 import '../widgets/home/new_bloc_slide_item.dart';
 import '../widgets/parties/party_home_item.dart';
 import '../widgets/search_card.dart';
+import '../widgets/store_badge_item.dart';
 import '../widgets/ui/button_widget.dart';
+import '../widgets/ui/dark_button_widget.dart';
 import '../widgets/ui/toaster.dart';
 import 'experimental/trending.dart';
 
@@ -130,11 +132,10 @@ class _HomeScreenState extends State<HomeScreen> {
           physics: const BouncingScrollPhysics(),
           children: <Widget>[
             // buildSearchBar(context),
-            const SizedBox(height: 10.0),
+            const SizedBox(height: 1.0),
             _isBlocsLoading
                 ? const SizedBox(height: 0)
                 : _displayBlocs(context),
-            const SizedBox(height: 10.0),
             _isUpcomingPartyLoading
                 ? const SizedBox(height: 0)
                 : _displayUpcomingParty(context),
@@ -143,6 +144,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ? const SizedBox(height: 0)
                 : buildWifi(context),
             const SizedBox(height: 10.0),
+            kIsWeb ? StoreBadgeItem() : SizedBox(),
 
             // buildBookTableRow(context),
             // buildRestaurantRow('Trending Restaurants', context),
@@ -177,7 +179,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   _displayBlocs(context) {
     return SizedBox(
-      height: 380,
+      height: 350,
       child: ListView.builder(
           itemCount: mBlocs.length,
           scrollDirection: Axis.vertical,
@@ -213,54 +215,95 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   buildWifi(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Container(
-          padding: EdgeInsets.only(top: 10, left: 10.0, right: 0.0),
-          child: Text(
-            "connect",
-            style: TextStyle(
-              fontSize: 24.0,
-              color: Theme.of(context).primaryColorLight,
-              fontWeight: FontWeight.w800,
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 5),
+      decoration: BoxDecoration(
+        border: Border.all(),
+        color: Theme.of(context).primaryColor,
+        borderRadius: BorderRadius.all(Radius.circular(5)),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: EdgeInsets.only(top: 10, left: 10.0, right: 0.0),
+            child: Text(
+              "connect",
+              style: TextStyle(
+                fontSize: 24.0,
+                color: Theme.of(context).primaryColorDark,
+                fontWeight: FontWeight.w800,
+              ),
+              textAlign: TextAlign.left,
             ),
-            textAlign: TextAlign.left,
           ),
-        ),
 
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(left: 10.0),
-              child: Text(
-                'wifi : ${mGuestWifi.name.toLowerCase()}',
-                style: TextStyle(
-                  fontSize: 20,
-                  color: Theme.of(context).primaryColorLight,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(left: 10.0),
+                child: Text(
+                  'wifi : ${mGuestWifi.name.toLowerCase()}',
+                  style: TextStyle(
+                    fontSize: 20,
+                    color: Theme.of(context).primaryColorDark,
+                  ),
                 ),
               ),
-            ),
-            Container(
-              padding: const EdgeInsets.only(right: 10),
-              margin: const EdgeInsets.only(bottom: 10),
-              child: ButtonWidget(
-                text: 'password',
-                onClicked: () {
-                  Clipboard.setData(ClipboardData(text: mGuestWifi.password))
-                      .then((value) {
-                    //only if ->
-                    Toaster.shortToast('password copied');
-                  });
-                },
+              Container(
+                padding: const EdgeInsets.only(right: 10),
+                margin: const EdgeInsets.only(bottom: 10),
+                child: DarkButtonWidget(
+                  text: 'click for password',
+                  onClicked: () {
+                    Clipboard.setData(ClipboardData(text: mGuestWifi.password))
+                        .then((value) {
+                      //only if ->
+                      Toaster.shortToast('wifi password copied');
+                    });
+                  },
+                ),
+              )
+            ],
+          ),
+          // showCopyPasswordDialog(context),
+        ],
+      ),
+    );
+  }
+
+  displayStoreBadge(BuildContext context) {
+    return Container(
+      height: 100,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          Container(
+            height: 100,
+            decoration: BoxDecoration(
+              border: Border.all(color: Theme.of(context).primaryColor),
+              borderRadius: BorderRadius.all(Radius.circular(0)),
+              image: DecorationImage(
+                image: AssetImage('assets/images/google-play-badge.png'),
+                fit: BoxFit.fitWidth,
               ),
-            )
-          ],
-        ),
-        // showCopyPasswordDialog(context),
-      ],
+            ),
+          ),
+          Container(
+            height: 100,
+            decoration: BoxDecoration(
+              border: Border.all(color: Theme.of(context).primaryColor),
+              borderRadius: BorderRadius.all(Radius.circular(0)),
+              image: DecorationImage(
+                image: AssetImage('assets/images/google-play-badge.png'),
+                fit: BoxFit.fitWidth,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 

@@ -28,7 +28,7 @@ class _NewBlocSlideItemState extends State<NewBlocSlideItem> {
   @override
   void initState() {
     FirestoreHelper.pullBlocService(widget.bloc.id).then((res) {
-      print("Successfully retrieved bloc services...");
+      print("successfully retrieved bloc services...");
 
       if (res.docs.isNotEmpty) {
         List<BlocService> blocServices = [];
@@ -50,8 +50,6 @@ class _NewBlocSlideItemState extends State<NewBlocSlideItem> {
 
   @override
   Widget build(BuildContext context) {
-    var logger = Logger();
-
     return GestureDetector(
       onTap: () {
         Navigator.of(context).push(
@@ -118,7 +116,6 @@ class _NewBlocSlideItemState extends State<NewBlocSlideItem> {
                           textAlign: TextAlign.left,
                         ),
                       ),
-                      SizedBox(height: 10.0),
                       // Container(
                       //   width: MediaQuery.of(context).size.width,
                       //   padding: EdgeInsets.only(

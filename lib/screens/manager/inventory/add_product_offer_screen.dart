@@ -204,7 +204,7 @@ class _AddProductOfferScreenState extends State<AddProductOfferScreen> {
         const SizedBox(height: 24),
 
         ButtonWidget(
-          text: 'Save',
+          text: 'save',
           onClicked: () {
             String offerId = StringUtils.getRandomString(20);
             int creationMilliSec =
