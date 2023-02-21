@@ -53,10 +53,10 @@ dependencies:
 
   # persist locally data
   shared_preferences: ^2.0.5
-  provider: ^6.0.2
+  provider: ^6.0.5
 
   # store image
-  path_provider: ^2.0.1
+  path_provider: ^2.0.12
 
   #url launcher
   url_launcher: ^6.1.7

@@ -45,16 +45,18 @@ class _ProfileAddEditRegisterPageState
             icon: const Icon(Icons.arrow_back),
             onPressed: () {
               if (widget.task == 'register') {
-                UserPreferences.resetUser();
-
-                try {
-                  FirebaseAuth.instance.signOut();
-                } catch (err) {
-                  print('err:' + err.toString());
-                }
-                Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(builder: (context) => LoginScreen()),
-                );
+                // UserPreferences.resetUser();
+                //
+                // try {
+                //   FirebaseAuth.instance.signOut();
+                // } catch (err) {
+                //   print('err:' + err.toString());
+                // }
+                // Navigator.of(context).pushReplacement(
+                //   MaterialPageRoute(builder: (context) => LoginScreen()),
+                // );
+                print('register back press not allowed');
+                Toaster.longToast('click save to move ahead');
               } else {
                 Navigator.of(context).pop();
               }
@@ -66,8 +68,8 @@ class _ProfileAddEditRegisterPageState
 
   _buildBody(BuildContext context) {
     return ListView(
-      padding: EdgeInsets.symmetric(horizontal: 32),
-      physics: BouncingScrollPhysics(),
+      padding: const EdgeInsets.symmetric(horizontal: 32),
+      physics: const BouncingScrollPhysics(),
       children: [
         const SizedBox(height: 15),
         ProfileWidget(
@@ -97,7 +99,7 @@ class _ProfileAddEditRegisterPageState
         ),
         const SizedBox(height: 24),
         TextFieldWidget(
-          label: 'name',
+          label: 'name\*',
           text: widget.user.name,
           onChanged: (name) => widget.user = widget.user.copyWith(name: name),
         ),
@@ -132,6 +134,7 @@ class _ProfileAddEditRegisterPageState
               Navigator.of(context).pop();
             } else {
               print('user cannot be entered as data is incomplete');
+              Toaster.longToast('please enter your name');
             }
           },
         ),
@@ -142,10 +145,6 @@ class _ProfileAddEditRegisterPageState
   bool isDataValid() {
     if (widget.user.name.isEmpty) {
       Toaster.longToast('please enter your name');
-      return false;
-    }
-    if (widget.user.email.isEmpty) {
-      Toaster.longToast('please enter your email id');
       return false;
     }
 

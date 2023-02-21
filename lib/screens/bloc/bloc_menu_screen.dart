@@ -693,10 +693,27 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
                     onTap: () {
                       Product _sProduct = subProducts[index];
                       print(_sProduct.name.toLowerCase() + ' is selected');
-                    }),
+                    }), index == subProducts.length-1?displayExtraInfo():SizedBox()
               ],
             );
           }),
+    );
+  }
+
+  displayExtraInfo() {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 10),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(height: 10,),
+          Text('Info', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),),
+          Text('. all prices are in INR'),
+          Text('. standard measure pour for spirits is 30ml'),
+          Text('. if you have any allergies or dietary requirements, please let us know. Jain, vegan, gluten and dairy-allergy items are available.'),
+          SizedBox(height: 10,),
+        ],
+      ),
     );
   }
 }
