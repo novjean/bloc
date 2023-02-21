@@ -63,7 +63,6 @@ class _ProfilePageState extends State<ProfilePage> {
         const SizedBox(height: 48),
         // buildAbout(user),
         // const SizedBox(height: 48),
-
       ],
     );
   }
@@ -71,12 +70,12 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget buildName(blocUser.User user) => Column(
     children: [
       Text(
-        user.name,
+        user.name.isNotEmpty ? user.name : 'name unknown',
         style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
       ),
       const SizedBox(height: 4),
       Text(
-        user.email,
+        user.email.isNotEmpty? user.email: 'email unknown',
         style: TextStyle(color: Colors.grey),
       )
     ],

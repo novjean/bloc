@@ -413,7 +413,7 @@ class _ProductAddEditScreenState extends State<ProductAddEditScreen> {
           errorStyle: TextStyle(
               color: Theme.of(context).errorColor,
               fontSize: 16.0),
-          hintText: 'please select product category',
+          hintText: 'select product category',
           border: OutlineInputBorder(
               borderRadius:
               BorderRadius.circular(5.0))),
@@ -453,7 +453,7 @@ class _ProductAddEditScreenState extends State<ProductAddEditScreen> {
           errorStyle: TextStyle(
               color: Theme.of(context).errorColor,
               fontSize: 16.0),
-          hintText: 'please select product category',
+          hintText: 'select product category',
           border: OutlineInputBorder(
               borderRadius:
               BorderRadius.circular(5.0))),
