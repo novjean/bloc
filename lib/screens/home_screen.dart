@@ -178,8 +178,9 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   _displayBlocs(context) {
-    return SizedBox(
-      height: 350,
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 3),
+      height: 355,
       child: ListView.builder(
           itemCount: mBlocs.length,
           scrollDirection: Axis.vertical,

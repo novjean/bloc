@@ -59,7 +59,7 @@ class StoreBadgeItem extends StatelessWidget {
                 Expanded(
                   child: GestureDetector(
                     onTap: () {
-                      Toaster.shortToast('coming soon');
+                      Toaster.shortToast('pending approval');
                     },
                     child: Container(
                       margin: EdgeInsets.all(10),
