@@ -116,19 +116,20 @@ class _NewBlocSlideItemState extends State<NewBlocSlideItem> {
                           textAlign: TextAlign.left,
                         ),
                       ),
-                      // Container(
-                      //   width: MediaQuery.of(context).size.width,
-                      //   padding: EdgeInsets.only(
-                      //       top: 0, left: 15.0, right: 15.0, bottom: 5),
-                      //   child: Text(
-                      //     "${widget.bloc.addressLine1}, ${widget.bloc.addressLine2}",
-                      //     style: TextStyle(
-                      //       fontSize: 16.0,
-                      //       fontWeight: FontWeight.w500,
-                      //       color: Theme.of(context).highlightColor,
-                      //     ),
-                      //   ),
-                      // ),
+                      Container(
+                        width: MediaQuery.of(context).size.width,
+                        padding: EdgeInsets.only(
+                            top: 10, left: 15.0, right: 15.0),
+                        child: Text(
+                          "${widget.bloc.addressLine1}, ${widget.bloc.addressLine2}",
+                          style: TextStyle(
+                            fontSize: 18.0,
+                            fontWeight: FontWeight.w200,
+                            color: Theme.of(context).highlightColor,
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 5),
                     ],
                   ),
                 ),
