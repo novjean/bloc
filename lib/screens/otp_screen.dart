@@ -48,39 +48,47 @@ class _OTPScreenState extends State<OTPScreen> {
                       // AssetImage(food['image']),
                     ),
                   ),
-                ), flex: 3,
+                ), flex: 1,
               ),
-              // Padding(
-              //   padding: const EdgeInsets.only(top: 40.0),
-              //   child: Center(
-              //       child: Text(
-              //     'verify +91-${widget.phone}',
-              //     style: TextStyle(
-              //       color: Theme.of(context).primaryColorLight,
-              //       fontWeight: FontWeight.bold,
-              //       fontSize: 26,
-              //     ),
-              //   )),
-              // ),
               Flexible(
                 child: Padding(
-                  padding: const EdgeInsets.only(
-                      top: 20.0, left: 20, right: 20),
+                  padding: const EdgeInsets.only(left: 20, right: 20),
+                  child: Center(
+                      child: Text(
+                      'We offer you sunsets, balmy summer days and a beachy vibe in the city.\n\n'
+                      'Our menu of global cuisine created by Award Winning Chef Ameya Mahajani '
+    'is made with the freshest ingredients and accommodates all flavour palates.'
+    '\n\nOur co-founder Dr. Grace is passionate about food and she has '
+    'worked on detailing the menu so we feature a lot of tastes and '
+    'textures from her travels and memories.\n\nBloc is about community, '
+    'connection and coming together over some amazing food and drinks.',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Theme.of(context).primaryColorLight,
+                          fontWeight: FontWeight.normal,
+                          fontSize: 18,
+                        ),
+                      )),
+                ),flex: 2,
+              ),
+              Flexible(
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 20, right: 20),
                   child: Center(
                       child: Text(
                         'enter the six digit code you received on +91-${widget.phone}',
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           color: Theme.of(context).primaryColorLight,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20,
+                          fontWeight: FontWeight.normal,
+                          fontSize: 18,
                         ),
                       )),
                 ),flex: 1,
               ),
               Flexible(
                 child: Container(
-                  margin: EdgeInsets.only(top: 0),
+                  margin: EdgeInsets.only(top: 0, bottom: 20),
                   child: FractionallySizedBox(
                       widthFactor: 1,
                       child: OTPVerify(
