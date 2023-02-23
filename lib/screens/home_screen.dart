@@ -144,7 +144,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ? const SizedBox(height: 0)
                 : buildWifi(context),
             const SizedBox(height: 10.0),
-            kIsWeb ? StoreBadgeItem() : SizedBox(),
+            kIsWeb ? StoreBadgeItem() : const SizedBox(),
 
             // buildBookTableRow(context),
             // buildRestaurantRow('Trending Restaurants', context),
@@ -179,7 +179,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   _displayBlocs(context) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 3),
+      padding: const EdgeInsets.symmetric(horizontal: 3),
       height: 390,
       child: ListView.builder(
           itemCount: mBlocs.length,

@@ -172,14 +172,18 @@ class _ProductItemState extends State<ProductItem> {
                                   )
                                 : const SizedBox(height: 0),
                         const SizedBox(height: 2),
+                        StringUtils.getWordCount(widget.product.description)>20?
                         Text(
-                            StringUtils.firstFewWords(
-                                    widget.product.description.toLowerCase(),
-                                    20) +
-                                '...',
+                            StringUtils.firstFewWords(widget.product.description.toLowerCase(), 20) + ' ...',
                             style: TextStyle(
                                 fontSize: 16,
-                                color: Theme.of(context).primaryColorDark)),
+                                color: Theme.of(context).primaryColorDark)):
+                        Text(
+                            widget.product.description.toLowerCase(),
+                            style: TextStyle(
+                                fontSize: 16,
+                                color: Theme.of(context).primaryColorDark))
+                        ,
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[

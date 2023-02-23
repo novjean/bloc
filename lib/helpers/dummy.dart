@@ -156,6 +156,7 @@ class Dummy {
     Category dummyCategory = Category(
         id: StringUtils.getRandomString(28),
         name: '',
+        description: '',
         imageUrl: '',
         createdAt: Timestamp.now().millisecondsSinceEpoch,
         ownerId: UserPreferences.myUser.id,

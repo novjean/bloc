@@ -107,7 +107,7 @@ class _ManageProductsScreenState extends State<ManageProductsScreen> {
           List<Product> _products = [];
 
           if(!snapshot.hasData){
-            return Center(child: Text('no products found!'));
+            return const Center(child: Text('no products found!'));
           }
 
           for (int i = 0; i < snapshot.data!.docs.length; i++) {
@@ -120,7 +120,7 @@ class _ManageProductsScreenState extends State<ManageProductsScreen> {
               return _displayProductsList(context, _products);
             }
           }
-          return Center(child: Text('loading products...'));
+          return const Center(child: Text('loading products...'));
         });
   }
 

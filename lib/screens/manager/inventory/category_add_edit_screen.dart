@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:bloc/utils/string_utils.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
@@ -9,7 +8,6 @@ import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 
 import '../../../db/entity/category.dart';
-import '../../../db/entity/product.dart';
 import '../../../helpers/firestorage_helper.dart';
 import '../../../helpers/firestore_helper.dart';
 import '../../../widgets/profile_widget.dart';
@@ -125,17 +123,15 @@ class _CategoryAddEditScreenState extends State<CategoryAddEditScreen> {
             );
           },
         ),
-
-        // const SizedBox(height: 24),
-        // TextFieldWidget(
-        //   label: 'sequence',
-        //   text: widget.category.sequence.toString(),
-        //   maxLines: 5,
-        //   onChanged: (value) {
-        //     int newValue = int.parse(value);
-        //     widget.category = widget.category.copyWith(sequence: newValue);
-        //   },
-        // ),
+        const SizedBox(height: 24),
+        TextFieldWidget(
+          label: 'description',
+          text: widget.category.description,
+          maxLines: 5,
+          onChanged: (value) {
+            widget.category = widget.category.copyWith(description: value);
+          },
+        ),
         const SizedBox(height: 24),
         TextFormField(
           key: const ValueKey('category_sequence'),

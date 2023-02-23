@@ -651,9 +651,16 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
               }
             }
 
+            Category vCategory = mCategories.first;
             if (map.containsKey(index)) {
               isCategoryChange = true;
               categoryTitle = map[index];
+              for(Category category in mCategories){
+                if(category.name == categoryTitle){
+                  vCategory = category;
+                  break;
+                }
+              }
             } else {
               isCategoryChange = false;
             }
@@ -667,7 +674,7 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
                             width: double.infinity,
                             child: Container(
                               padding: EdgeInsets.only(
-                                  top: 8.0, bottom: 8, right: 20),
+                                  top: 8.0, bottom: 4, right: 20),
                               color: Theme.of(context).primaryColor,
                               child: Text(
                                 categoryTitle.toLowerCase(),
@@ -677,6 +684,20 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
                               ),
                             ),
                           ),
+                          vCategory.description.isNotEmpty?SizedBox(
+                            width: double.infinity,
+                            child: Container(
+                              padding: EdgeInsets.only(
+                                  top: 4.0, bottom: 8, left: 20, right: 20),
+                              color: Theme.of(context).primaryColor,
+                              child: Text(
+                                vCategory.description.toLowerCase(),
+                                textAlign: TextAlign.right,
+                                style: TextStyle(
+                                    fontSize: 16, fontWeight: FontWeight.normal),
+                              ),
+                            ),
+                          ):const SizedBox(),
                         ],
                       )
                     : const SizedBox(),

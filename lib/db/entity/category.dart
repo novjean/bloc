@@ -8,6 +8,7 @@ class Category {
   final String ownerId;
   final int createdAt;
   final int sequence;
+  final String description;
 
 //<editor-fold desc="Data Methods">
 
@@ -20,6 +21,7 @@ class Category {
     required this.ownerId,
     required this.createdAt,
     required this.sequence,
+    required this.description,
   });
 
   @override
@@ -34,7 +36,8 @@ class Category {
           imageUrl == other.imageUrl &&
           ownerId == other.ownerId &&
           createdAt == other.createdAt &&
-          sequence == other.sequence);
+          sequence == other.sequence &&
+          description == other.description);
 
   @override
   int get hashCode =>
@@ -45,7 +48,8 @@ class Category {
       imageUrl.hashCode ^
       ownerId.hashCode ^
       createdAt.hashCode ^
-      sequence.hashCode;
+      sequence.hashCode ^
+      description.hashCode;
 
   @override
   String toString() {
@@ -58,6 +62,7 @@ class Category {
         ' ownerId: $ownerId,' +
         ' createdAt: $createdAt,' +
         ' sequence: $sequence,' +
+        ' description: $description,' +
         '}';
   }
 
@@ -70,6 +75,7 @@ class Category {
     String? ownerId,
     int? createdAt,
     int? sequence,
+    String? description,
   }) {
     return Category(
       id: id ?? this.id,
@@ -80,6 +86,7 @@ class Category {
       ownerId: ownerId ?? this.ownerId,
       createdAt: createdAt ?? this.createdAt,
       sequence: sequence ?? this.sequence,
+      description: description ?? this.description,
     );
   }
 
@@ -93,6 +100,7 @@ class Category {
       'ownerId': this.ownerId,
       'createdAt': this.createdAt,
       'sequence': this.sequence,
+      'description': this.description,
     };
   }
 
@@ -106,6 +114,7 @@ class Category {
       ownerId: map['ownerId'] as String,
       createdAt: map['createdAt'] as int,
       sequence: map['sequence'] as int,
+      description: map['description'] as String,
     );
   }
 

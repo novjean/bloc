@@ -33,6 +33,12 @@ class StringUtils {
       startIndex = indexOfSpace + 1;
     }
 
-    return bigSentence.substring(0, indexOfSpace) + '...';
+    return bigSentence.substring(0, indexOfSpace);
+  }
+
+  static int getWordCount(String value) {
+    RegExp regExp = RegExp(" ");
+    int count = regExp.allMatches(value).length + 1;
+    return count;
   }
 }
