@@ -58,15 +58,15 @@ class _OTPScreenState extends State<OTPScreen> {
                       'We offer you sunsets, balmy summer days and a beachy vibe in the city.\n\n'
                       'Our menu of global cuisine created by Award Winning Chef Ameya Mahajani '
     'is made with the freshest ingredients and accommodates all flavour palates.'
-    '\n\nOur co-founder Dr. Grace is passionate about food and she has '
-    'worked on detailing the menu so we feature a lot of tastes and '
+    '\n\nOur co-founder Dr. Grace is passionate about food and cocktails. She has '
+    'worked on detailing the menu, so we feature a lot of tastes and '
     'textures from her travels and memories.\n\nBloc is about community, '
     'connection and coming together over some amazing food and drinks.',
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           color: Theme.of(context).primaryColorLight,
                           fontWeight: FontWeight.normal,
-                          fontSize: 18,
+                          fontSize: 16,
                         ),
                       )),
                 ),flex: 2,
@@ -76,12 +76,12 @@ class _OTPScreenState extends State<OTPScreen> {
                   padding: const EdgeInsets.only(left: 20, right: 20),
                   child: Center(
                       child: Text(
-                        'enter the six digit code you received on +91-${widget.phone}',
+                        'enter the six digit code you received on \n+91-${widget.phone}',
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           color: Theme.of(context).primaryColorLight,
                           fontWeight: FontWeight.normal,
-                          fontSize: 18,
+                          fontSize: 16,
                         ),
                       )),
                 ),flex: 1,
