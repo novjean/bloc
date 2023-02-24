@@ -1,5 +1,5 @@
+import 'package:bloc/helpers/firestore_helper.dart';
 import 'package:bloc/screens/manager/inventory/add_product_offer_screen.dart';
-import 'package:bloc/widgets/ui/button_widget.dart';
 import 'package:flutter/material.dart';
 
 import '../../db/entity/product.dart';
@@ -32,17 +32,18 @@ class ManageProductItem extends StatelessWidget {
           child: Card(
             child: Row(
               children: <Widget>[
-                product.imageUrl.isNotEmpty?
-                Container(
-                  height: 100,
-                  width: 100,
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: NetworkImage(product.imageUrl),
-                      fit: BoxFit.fitHeight,
-                    ),
-                  ),
-                ) : const SizedBox(),
+                product.imageUrl.isNotEmpty
+                    ? Container(
+                        height: 100,
+                        width: 100,
+                        decoration: BoxDecoration(
+                          image: DecorationImage(
+                            image: NetworkImage(product.imageUrl),
+                            fit: BoxFit.fitHeight,
+                          ),
+                        ),
+                      )
+                    : const SizedBox(),
                 Expanded(
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -53,12 +54,21 @@ class ManageProductItem extends StatelessWidget {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
-                            Text(product.name,
-                                style: TextStyle(
-                                    fontSize: 17, fontWeight: FontWeight.bold)),
-                            Text('\u20B9 ${product.price.toStringAsFixed(2)}',
-                                style: TextStyle(
-                                    fontSize: 18, fontWeight: FontWeight.bold)),
+                            Flexible(
+                              child: Text(product.name,
+                                  style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.normal)),
+                              flex: 3,
+                            ),
+                            Flexible(
+                              child: Text(
+                                  '\u20B9 ${product.price.toStringAsFixed(2)}',
+                                  style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.normal)),
+                              flex: 1,
+                            ),
                           ],
                         ),
                         SizedBox(height: 5),
@@ -82,28 +92,21 @@ class ManageProductItem extends StatelessWidget {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: <Widget>[
-                            // IconButton(
-                            //   icon: Icon(Icons.remove),
-                            //   onPressed: () {
-                            //     logger.i('remove product from cart.');
-                            //   },
-                            // ),
-                            ButtonWidget(
-                              text: 'edit',
-                              onClicked: () {
-                                Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                      builder: (ctx) => ProductAddEditScreen(
-                                            product: product,
-                                            task: 'edit',
-                                          )),
-                                );
-                                print(product.name +
-                                    ' is clicked to be modified.');
+                            const Text('available '),
+                            Checkbox(
+                              value: product.isAvailable,
+                              onChanged: (value) {
+                                Product updatedProduct =
+                                    product.copyWith(isAvailable: value);
+                                print('product ' +
+                                    updatedProduct.name +
+                                    ' available ' +
+                                    value.toString());
+                                FirestoreHelper.pushProduct(updatedProduct);
                               },
                             ),
                             IconButton(
-                              icon: Icon(Icons.whatshot),
+                              icon: const Icon(Icons.percent),
                               color: primaryColor,
                               onPressed: () {
                                 print(product.name + ' is clicked for offer.');

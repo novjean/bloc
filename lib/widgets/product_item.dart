@@ -61,8 +61,8 @@ class _ProductItemState extends State<ProductItem> {
               children: <Widget>[
                 widget.product.imageUrl.isNotEmpty
                     ? Container(
-                        height: 169,
-                        width: 100,
+                        height: 150,
+                        width: 150,
                         decoration: BoxDecoration(
                           image: DecorationImage(
                               image: NetworkImage(widget.product.imageUrl),
@@ -89,7 +89,7 @@ class _ProductItemState extends State<ProductItem> {
                                 child: Text(
                                   widget.product.name.toLowerCase(),
                                   style: const TextStyle(
-                                    fontSize: 20,
+                                    fontSize: 18,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
@@ -105,7 +105,7 @@ class _ProductItemState extends State<ProductItem> {
                                             : widget.offer.offerPricePrivate
                                                 .toStringAsFixed(0),
                                         style: const TextStyle(
-                                            fontSize: 18,
+                                            fontSize: 16,
                                             fontWeight: FontWeight.w500))
                                     : Text(
                                         widget.isCommunity
@@ -114,7 +114,7 @@ class _ProductItemState extends State<ProductItem> {
                                             : widget.product.price
                                                 .toStringAsFixed(0),
                                         style: const TextStyle(
-                                            fontSize: 18,
+                                            fontSize: 16,
                                             fontWeight: FontWeight.w500),
                                       ),
                                 flex: 1,
@@ -134,7 +134,7 @@ class _ProductItemState extends State<ProductItem> {
                                       widget.product.priceLowest
                                           .toStringAsFixed(0),
                                       style: const TextStyle(
-                                          fontSize: 15,
+                                          fontSize: 14,
                                           fontWeight: FontWeight.bold,
                                           color: Colors.green)),
                                   Text(' | '),
@@ -142,7 +142,7 @@ class _ProductItemState extends State<ProductItem> {
                                       widget.product.priceHighest
                                           .toStringAsFixed(0),
                                       style: const TextStyle(
-                                          fontSize: 15,
+                                          fontSize: 14,
                                           fontWeight: FontWeight.bold,
                                           color: Colors.redAccent)),
                                   widget.isOnOffer
@@ -152,7 +152,7 @@ class _ProductItemState extends State<ProductItem> {
                                                   .toStringAsFixed(0) +
                                               '% off',
                                           style: const TextStyle(
-                                              fontSize: 15,
+                                              fontSize: 14,
                                               fontWeight: FontWeight.bold,
                                               color: Colors.blue),
                                         )
@@ -166,7 +166,7 @@ class _ProductItemState extends State<ProductItem> {
                                             .toStringAsFixed(0) +
                                         '% off',
                                     style: const TextStyle(
-                                        fontSize: 15,
+                                        fontSize: 14,
                                         fontWeight: FontWeight.bold,
                                         color: Colors.blue),
                                   )
@@ -176,12 +176,12 @@ class _ProductItemState extends State<ProductItem> {
                         Text(
                             StringUtils.firstFewWords(widget.product.description.toLowerCase(), 20) + ' ...',
                             style: TextStyle(
-                                fontSize: 16,
+                                fontSize: 14,
                                 color: Theme.of(context).primaryColorDark)):
                         Text(
                             widget.product.description.toLowerCase(),
                             style: TextStyle(
-                                fontSize: 16,
+                                fontSize: 14,
                                 color: Theme.of(context).primaryColorDark))
                         ,
                         Row(

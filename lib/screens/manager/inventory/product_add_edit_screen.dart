@@ -15,6 +15,7 @@ import '../../../helpers/firestore_helper.dart';
 import '../../../widgets/profile_widget.dart';
 import '../../../widgets/ui/button_widget.dart';
 import '../../../widgets/ui/textfield_widget.dart';
+import '../../../widgets/ui/toaster.dart';
 
 class ProductAddEditScreen extends StatefulWidget {
   Product product;
@@ -375,9 +376,19 @@ class _ProductAddEditScreenState extends State<ProductAddEditScreen> {
               const SizedBox(height: 24),
               ButtonWidget(
                 text: 'delete photo',
-                onClicked: () {
+                onClicked: () async {
                   if (widget.product.imageUrl.isNotEmpty) {
-                    FirestorageHelper.deleteFile(widget.product.imageUrl);
+                    bool isPhotoDeleted = await FirestorageHelper.deleteFile(widget.product.imageUrl);
+                    if(isPhotoDeleted){
+                      print('photo deleted successfully');
+                      Toaster.shortToast('photo deleted successfully');
+                      widget.product =
+                          widget.product.copyWith(imageUrl: '');
+                      FirestoreHelper.pushProduct(widget.product);
+                    } else {
+                      print('photo deletion failed');
+                      Toaster.shortToast('photo deleted failed');
+                    }
                   }
 
                   Navigator.of(context).pop();
@@ -386,14 +397,20 @@ class _ProductAddEditScreenState extends State<ProductAddEditScreen> {
               const SizedBox(height: 24),
               ButtonWidget(
                 text: 'delete',
-                onClicked: () {
-                  if (widget.product.imageUrl.isNotEmpty) {
-                    FirestorageHelper.deleteFile(widget.product.imageUrl);
+                onClicked: () async {
+                  bool isPhotoDeleted = await FirestorageHelper.deleteFile(widget.product.imageUrl);
+                  if(isPhotoDeleted){
+                    print('photo deleted successfully');
+                    Toaster.shortToast('photo deleted successfully');
+                    widget.product =
+                        widget.product.copyWith(imageUrl: '');
+                    FirestoreHelper.deleteProduct(widget.product.id);
+                    Navigator.of(context).pop();
+
+                  } else {
+                    print('photo deletion failed');
+                    Toaster.shortToast('photo deleted failed. product delete failed');
                   }
-
-                  FirestoreHelper.deleteProduct(widget.product.id);
-
-                  Navigator.of(context).pop();
                 },
               ),
             ],

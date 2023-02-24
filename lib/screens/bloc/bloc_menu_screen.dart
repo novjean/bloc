@@ -673,27 +673,27 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
                           SizedBox(
                             width: double.infinity,
                             child: Container(
-                              padding: EdgeInsets.only(
+                              padding: const EdgeInsets.only(
                                   top: 8.0, bottom: 4, right: 20),
                               color: Theme.of(context).primaryColor,
                               child: Text(
                                 categoryTitle.toLowerCase(),
                                 textAlign: TextAlign.right,
-                                style: TextStyle(
-                                    fontSize: 22, fontWeight: FontWeight.bold),
+                                style: const TextStyle(
+                                    fontSize: 20, fontWeight: FontWeight.bold),
                               ),
                             ),
                           ),
                           vCategory.description.isNotEmpty?SizedBox(
                             width: double.infinity,
                             child: Container(
-                              padding: EdgeInsets.only(
+                              padding: const EdgeInsets.only(
                                   top: 4.0, bottom: 8, left: 20, right: 20),
                               color: Theme.of(context).primaryColor,
                               child: Text(
                                 vCategory.description.toLowerCase(),
                                 textAlign: TextAlign.right,
-                                style: TextStyle(
+                                style: const TextStyle(
                                     fontSize: 16, fontWeight: FontWeight.normal),
                               ),
                             ),
