@@ -23,7 +23,7 @@ class _PartyScreenState extends State<PartyScreen> {
     int timeNow = Timestamp.now().millisecondsSinceEpoch;
 
     FirestoreHelper.pullParties(timeNow, true).then((res) {
-      print("Successfully pulled in parties.");
+      print("successfully pulled in parties");
 
       if (res.docs.isNotEmpty) {
         // found parties
@@ -40,8 +40,11 @@ class _PartyScreenState extends State<PartyScreen> {
           });
         }
       } else {
-        print('no parties found, Booo!');
-        //todo: need to re-attempt or check internet connection
+        print('no parties found!');
+        const Center(child: Text('no parties assigned yet!'),);
+        setState(() {
+          _isPartiesLoading = false;
+        });
       }
     });
   }
