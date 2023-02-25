@@ -117,26 +117,6 @@ class Dummy {
     return dummyBlocService;
   }
 
-  static getDummyParty(String blocId) {
-    Party dummyParty = Party(
-        id: StringUtils.getRandomString(28),
-        createdAt: Timestamp.now().millisecondsSinceEpoch,
-        imageUrl: '',
-        name: '',
-        ownerId: UserPreferences.myUser.id,
-        isActive: false,
-        isTBA: true,
-        description: '',
-        blocServiceId: '',
-        endTime: Timestamp.now().millisecondsSinceEpoch,
-        instagramUrl: '',
-        startTime: Timestamp.now().millisecondsSinceEpoch,
-        ticketUrl: '',
-        listenUrl: '');
-
-    return dummyParty;
-  }
-
   static getDummyUser() {
     User dummyUser = User(
         blocServiceId: '',
@@ -175,4 +155,25 @@ class Dummy {
         creationTime: Timestamp.now().millisecondsSinceEpoch);
     return dummyWifi;
   }
+
+  static getDummyParty(String blocId) {
+    Party dummyParty = Party(
+        id: StringUtils.getRandomString(28),
+        createdAt: Timestamp.now().millisecondsSinceEpoch,
+        imageUrl: '',
+        name: '',
+        ownerId: UserPreferences.myUser.id,
+        isActive: false,
+        isTBA: true,
+        description: '',
+        blocServiceId: '',
+        endTime: Timestamp.now().millisecondsSinceEpoch,
+        instagramUrl: '',
+        startTime: Timestamp.now().millisecondsSinceEpoch,
+        ticketUrl: '',
+        listenUrl: '');
+
+    return dummyParty;
+  }
+
 }

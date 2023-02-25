@@ -492,6 +492,15 @@ class FirestoreHelper {
         .get();
   }
 
+  static Future<QuerySnapshot<Map<String, dynamic>>> pullPartiesByEndTime(int timeNow, bool isActive) {
+    return FirebaseFirestore.instance
+        .collection(FirestoreHelper.PARTIES)
+        .where('startTime', isGreaterThan: timeNow)
+        .where('isActive', isEqualTo: isActive)
+        .orderBy('startTime', descending: false)
+        .get();
+  }
+
   static Future<QuerySnapshot<Map<String, dynamic>>> pullUpcomingParty(
       int timeNow) {
     return FirebaseFirestore.instance

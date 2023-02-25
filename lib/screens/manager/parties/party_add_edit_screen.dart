@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:bloc/db/entity/bloc_service.dart';
+import 'package:bloc/helpers/fresh.dart';
 import 'package:bloc/utils/date_time_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +10,7 @@ import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 
 import '../../../db/entity/party.dart';
+import '../../../helpers/dummy.dart';
 import '../../../helpers/firestorage_helper.dart';
 import '../../../helpers/firestore_helper.dart';
 import '../../../utils/string_utils.dart';
@@ -41,8 +43,9 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
 
   DateTime sStartDateTime = DateTime.now();
   DateTime sEndDateTime = DateTime.now();
+  DateTime sDate = DateTime.now();
 
-  TimeOfDay _sTimeOfDay = TimeOfDay.now();
+  TimeOfDay sTimeOfDay = TimeOfDay.now();
   bool _isStartDateBeingSet = true;
 
   @override
@@ -96,22 +99,11 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
         firstDate: DateTime(2023, 1),
         lastDate: DateTime(2101));
     if (_sDate != null) {
-      _selectTime(context);
+      DateTime _sDateTemp = DateTime(_sDate.year, _sDate.month, _sDate.day);
 
       setState(() {
-        DateTime _sDateTime = DateTime(_sDate.year, _sDate.month, _sDate.day,
-            _sTimeOfDay.hour, _sTimeOfDay.minute);
-
-        // from here we decide what field to put it into
-        if (_isStartDateBeingSet) {
-          sStartDateTime = _sDateTime;
-          widget.party = widget.party
-              .copyWith(startTime: sStartDateTime.millisecondsSinceEpoch);
-        } else {
-          sEndDateTime = _sDateTime;
-          widget.party = widget.party
-              .copyWith(endTime: sEndDateTime.millisecondsSinceEpoch);
-        }
+        sDate = _sDateTemp;
+        _selectTime(context);
       });
     }
   }
@@ -124,8 +116,22 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
       initialTime: initialTime,
     );
 
-    _sTimeOfDay = pickedTime!;
-    return _sTimeOfDay;
+    setState((){
+      sTimeOfDay = pickedTime!;
+
+      DateTime sDateTime = DateTime(sDate.year, sDate.month, sDate.day, sTimeOfDay.hour, sTimeOfDay.minute);
+
+      if (_isStartDateBeingSet) {
+        sStartDateTime = sDateTime;
+        widget.party = widget.party
+            .copyWith(startTime: sStartDateTime.millisecondsSinceEpoch);
+      } else {
+        sEndDateTime = sDateTime;
+        widget.party = widget.party
+            .copyWith(endTime: sEndDateTime.millisecondsSinceEpoch);
+      }
+    });
+    return sTimeOfDay;
   }
 
   Widget dateTimeContainer(BuildContext context, String type) {
@@ -144,7 +150,7 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text("${dateTime.toLocal()}".split(' ')[0], style: TextStyle(
+          Text("${DateTimeUtils.getFormattedDateString(dateTime.millisecondsSinceEpoch)}", style: TextStyle(
             fontSize: 18,
           )),
           SizedBox(
@@ -178,12 +184,12 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
 
   _buildBody(BuildContext context) {
     return _isBlocServicesLoading
-        ? Center(
+        ? const Center(
             child: Text('parties loading...'),
           )
         : ListView(
-            padding: EdgeInsets.symmetric(horizontal: 32),
-            physics: BouncingScrollPhysics(),
+            padding: const EdgeInsets.symmetric(horizontal: 32),
+            physics: const BouncingScrollPhysics(),
             children: [
               const SizedBox(height: 15),
               ProfileWidget(
@@ -360,7 +366,8 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
                         widget.party.copyWith(blocServiceId: _sBlocServiceId);
                   }
 
-                  FirestoreHelper.pushParty(widget.party);
+                  Party freshParty = Fresh.freshParty(widget.party);
+                  FirestoreHelper.pushParty(freshParty);
 
                   Navigator.of(context).pop();
                 },

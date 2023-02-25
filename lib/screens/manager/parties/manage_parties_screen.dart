@@ -2,7 +2,6 @@ import 'package:bloc/helpers/dummy.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-import '../../../db/dao/bloc_dao.dart';
 import '../../../db/entity/manager_service.dart';
 import '../../../db/entity/party.dart';
 import '../../../helpers/firestore_helper.dart';
@@ -20,13 +19,11 @@ class ManagePartiesScreen extends StatefulWidget {
 }
 
 class _ManagePartiesScreenState extends State<ManagePartiesScreen> {
-  String _selectedType = 'Alcohol';
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Manage | Parties'),
+        title: const Text('manage | parties'),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -44,7 +41,7 @@ class _ManagePartiesScreenState extends State<ManagePartiesScreen> {
           size: 29,
         ),
         backgroundColor: Theme.of(context).primaryColor,
-        tooltip: 'Add Party',
+        tooltip: 'add party',
         elevation: 5,
         splashColor: Colors.grey,
       ),
@@ -76,7 +73,7 @@ class _ManagePartiesScreenState extends State<ManagePartiesScreen> {
           List<Party> _parties = [];
 
           if (!snapshot.hasData) {
-            return Center(child: Text('No products found!'));
+            return Center(child: Text('no products found!'));
           }
 
           for (int i = 0; i < snapshot.data!.docs.length; i++) {
