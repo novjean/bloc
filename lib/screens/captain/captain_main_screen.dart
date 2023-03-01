@@ -1,3 +1,4 @@
+import 'package:bloc/screens/captain/captain_orders_screen.dart';
 import 'package:bloc/screens/captain/captain_tables_screen.dart';
 import 'package:bloc/screens/manager/users/manage_users_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -80,12 +81,10 @@ class CaptainMainScreen extends StatelessWidget {
                     case 'Orders':
                       {
                         Navigator.of(context).push(MaterialPageRoute(
-                            builder: (ctx) => ManageOrdersScreen(
-                                  serviceId: blocServiceId,
-                                  serviceName: captainService.name,
-                                  userTitle: userTitle,
-                                )));
-                        logger.d('manage inventory screen selected.');
+                            builder: (ctx) => CaptainOrdersScreen(
+                              serviceId: blocServiceId,
+                            )));
+                        logger.d('captain orders screen selected.');
                         break;
                       }
                     case 'Table Management':

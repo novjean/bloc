@@ -25,7 +25,7 @@ class ManageOrdersScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(userTitle + ' | Orders'),
+        title: Text(userTitle + ' | orders'),
       ),
       // drawer: AppDrawer(),
       body: _buildBody(context),

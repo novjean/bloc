@@ -29,7 +29,7 @@ class _OrdersPendingScreenState extends State<OrdersPendingScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.titleHead + ' | Pending'),
+        title: Text(widget.titleHead + ' | pending'),
       ),
       body: _buildBody(context),
     );
