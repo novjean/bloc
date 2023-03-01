@@ -5,13 +5,14 @@ import 'package:flutter/material.dart';
 import '../../db/entity/bill.dart';
 import '../../db/entity/bloc_order.dart';
 import '../../db/entity/cart_item.dart';
+import '../../db/entity/service_table.dart';
 import '../../helpers/firestore_helper.dart';
 import '../../utils/cart_item_utils.dart';
 import '../../widgets/manager/orders/order_item.dart';
 import '../../widgets/ui/sized_listview_block.dart';
 import '../manager/bill_screen.dart';
 
-class CaptainOrdersScreen extends StatefulWidget{
+class CaptainOrdersScreen extends StatefulWidget {
   String serviceId;
 
   CaptainOrdersScreen({required this.serviceId});
@@ -26,6 +27,39 @@ class _CaptainOrdersScreenState extends State<CaptainOrdersScreen> {
 
   String _optionName = 'Table';
 
+  List<ServiceTable> tables = [];
+  bool isTablesLoading = true;
+
+  @override
+  void initState() {
+    FirestoreHelper.pullTablesByCaptainId(
+            widget.serviceId, UserPreferences.myUser.id)
+        .then((res) {
+      print('successfully pulled in captain tables');
+
+      List<ServiceTable> _tables = [];
+      if (res.docs.isNotEmpty) {
+        for (int i = 0; i < res.docs.length; i++) {
+          DocumentSnapshot document = res.docs[i];
+          Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+          final ServiceTable table = ServiceTable.fromMap(data);
+          _tables.add(table);
+        }
+
+        setState(() {
+          tables = _tables;
+          isTablesLoading = false;
+        });
+      } else {
+        print('tables could not be found for captain id ' +
+            UserPreferences.myUser.id);
+        setState(() {
+          isTablesLoading = false;
+        });
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -33,7 +67,11 @@ class _CaptainOrdersScreenState extends State<CaptainOrdersScreen> {
         title: const Text('captain | orders'),
       ),
       // drawer: AppDrawer(),
-      body: _buildBody(context),
+      body: isTablesLoading
+          ? Center(
+              child: Text('loading captain tables'),
+            )
+          : _buildBody(context),
     );
   }
 
@@ -42,12 +80,13 @@ class _CaptainOrdersScreenState extends State<CaptainOrdersScreen> {
       children: [
         const SizedBox(height: 5.0),
         _displayOrderOptions(context),
-        SizedBox(height: 2.0),
+        const Divider(),
+        const SizedBox(height: 5.0),
         _displayOptions(context),
         const Divider(),
-        SizedBox(height: 5.0),
+        const SizedBox(height: 5.0),
         _buildOrders(context),
-        SizedBox(height: 5.0),
+        const SizedBox(height: 5.0),
       ],
     );
   }
@@ -113,10 +152,10 @@ class _CaptainOrdersScreenState extends State<CaptainOrdersScreen> {
     bool completed = false;
     bool billed = false;
 
-    if(sOption == 'completed'){
+    if (sOption == 'completed') {
       completed = true;
       billed = false;
-    } else if(sOption == 'billed'){
+    } else if (sOption == 'billed') {
       completed = true;
       billed = true;
     } else {
@@ -140,10 +179,16 @@ class _CaptainOrdersScreenState extends State<CaptainOrdersScreen> {
               for (int i = 0; i < snapshot.data!.docs.length; i++) {
                 DocumentSnapshot document = snapshot.data!.docs[i];
                 Map<String, dynamic> data =
-                document.data()! as Map<String, dynamic>;
+                    document.data()! as Map<String, dynamic>;
                 final CartItem ci = CartItem.fromMap(data);
-                // BlocRepository.insertCartItem(widget.dao, ci);
-                cartItems.add(ci);
+
+                for(ServiceTable table in tables){
+                  // check if this is the captains table
+                  if(table.tableNumber == ci.tableNumber){
+                    cartItems.add(ci);
+                    break;
+                  }
+                }
 
                 if (i == snapshot.data!.docs.length - 1) {
                   return _displayOrdersList(context, cartItems);
@@ -151,20 +196,22 @@ class _CaptainOrdersScreenState extends State<CaptainOrdersScreen> {
               }
             } else {
               return Expanded(
-                  child: Center(child: Text('no ' + sOption + ' orders to display')));
+                  child: Center(
+                      child: Text('no ' + sOption + ' orders to display')));
             }
           } else {
             return Expanded(
-                child: Center(child: Text('no ' + sOption + ' orders to display')));
+                child: Center(
+                    child: Text('no ' + sOption + ' orders to display')));
           }
           return Expanded(
-              child: Center(child: Text('no ' + sOption + ' orders to display')));
+              child:
+                  Center(child: Text('no ' + sOption + ' orders to display')));
         });
-
   }
 
   _displayOrdersList(BuildContext context, List<CartItem> cartItems) {
-    if (cartItems.length > 0) {
+    if (cartItems.isNotEmpty) {
       List<BlocOrder> orders = _optionName == 'Table'
           ? CartItemUtils.extractOrdersByTableNumber(cartItems)
           : CartItemUtils.extractOrdersByUserId(cartItems);
@@ -196,14 +243,12 @@ class _CaptainOrdersScreenState extends State<CaptainOrdersScreen> {
                   Navigator.of(context).push(
                     MaterialPageRoute(
                         builder: (ctx) => BillScreen(
-                          bill: bill,
-                          isPending: true,
-                        )),
+                              bill: bill,
+                              isPending: true,
+                            )),
                   );
                 });
           }),
     );
   }
-
 }
-
