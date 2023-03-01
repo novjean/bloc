@@ -8,7 +8,7 @@ class CartItemUtils {
     List<BlocOrder> orders = [];
     int tableNumber = cartItems[0].tableNumber;
 
-    BlocOrder curOrder = BlocOrder(createdAt: cartItems[0].createdAt);
+    BlocOrder curOrder = BlocOrder(blocServiceId: cartItems[0].serviceId, createdAt: cartItems[0].createdAt);
     curOrder.tableNumber = tableNumber;
     curOrder.customerId = cartItems[0].userId;
 
@@ -20,7 +20,7 @@ class CartItemUtils {
           orders.add(curOrder);
         }
         tableNumber = ci.tableNumber;
-        curOrder = BlocOrder(createdAt: ci.createdAt);
+        curOrder = BlocOrder(blocServiceId: cartItems[0].serviceId, createdAt: ci.createdAt);
         curOrder.customerId = ci.userId;
         curOrder.tableNumber = tableNumber;
         curOrder.cartItems.add(ci);
@@ -43,7 +43,7 @@ class CartItemUtils {
     String userId = cartItems[0].userId;
     int tableNumber = cartItems[0].tableNumber;
 
-    BlocOrder curOrder = BlocOrder(createdAt: cartItems[0].createdAt);
+    BlocOrder curOrder = BlocOrder(blocServiceId: cartItems[0].serviceId, createdAt: cartItems[0].createdAt);
     curOrder.customerId = userId;
     curOrder.tableNumber = tableNumber;
 
@@ -55,7 +55,7 @@ class CartItemUtils {
           orders.add(curOrder);
         }
         userId = ci.userId;
-        curOrder = BlocOrder(createdAt: ci.createdAt);
+        curOrder = BlocOrder(blocServiceId: cartItems[0].serviceId, createdAt: ci.createdAt);
         curOrder.customerId=userId;
         curOrder.tableNumber = ci.tableNumber;
         curOrder.cartItems.add(ci);
@@ -77,7 +77,7 @@ class CartItemUtils {
     List<BlocOrder> orders = [];
     int createdAt  = cartItems[0].createdAt;
 
-    BlocOrder curOrder = BlocOrder(createdAt: cartItems[0].createdAt);
+    BlocOrder curOrder = BlocOrder(blocServiceId: cartItems[0].serviceId, createdAt: cartItems[0].createdAt);
     curOrder.customerId = cartItems[0].userId;
     curOrder.tableNumber = cartItems[0].tableNumber;
 
@@ -89,7 +89,7 @@ class CartItemUtils {
           orders.add(curOrder);
         }
         createdAt = ci.createdAt;
-        curOrder = BlocOrder(createdAt: ci.createdAt);
+        curOrder = BlocOrder(blocServiceId: cartItems[0].serviceId, createdAt: ci.createdAt);
         curOrder.customerId = ci.userId;
         curOrder.tableNumber = ci.tableNumber;
         curOrder.cartItems.add(ci);
@@ -113,8 +113,9 @@ class CartItemUtils {
     int createdAt  = cartItems[0].createdAt;
     String userId = cartItems[0].userId;
     int tableNumber = cartItems[0].tableNumber;
+    String blocServiceId = cartItems[0].serviceId;
 
-    BlocOrder order = BlocOrder(createdAt: createdAt);
+    BlocOrder order = BlocOrder(blocServiceId: blocServiceId, createdAt: createdAt);
     order.customerId = userId;
     order.tableNumber = tableNumber;
 
@@ -137,7 +138,7 @@ class CartItemUtils {
     List<BlocOrder> orders = [];
     int createdAt  = cartItems[0].createdAt;
 
-    BlocOrder curOrder = BlocOrder(createdAt: cartItems[0].createdAt);
+    BlocOrder curOrder = BlocOrder(blocServiceId: cartItems[0].serviceId, createdAt: cartItems[0].createdAt);
     curOrder.customerId = cartItems[0].userId;
     curOrder.tableNumber = cartItems[0].tableNumber;
 
@@ -149,7 +150,7 @@ class CartItemUtils {
           orders.add(curOrder);
         }
         createdAt = ci.createdAt;
-        curOrder = BlocOrder(createdAt: ci.createdAt);
+        curOrder = BlocOrder(blocServiceId: cartItems[0].serviceId, createdAt: ci.createdAt);
         curOrder.customerId = ci.userId;
         curOrder.tableNumber = ci.tableNumber;
         curOrder.cartItems.add(ci);
@@ -176,7 +177,7 @@ class CartItemUtils {
     int curCreatedAt = cartItems[0].createdAt;
 
     List<BlocOrder> orders = [];
-    BlocOrder curOrder = BlocOrder(createdAt: curCreatedAt);
+    BlocOrder curOrder = BlocOrder(blocServiceId: cartItems[0].serviceId,createdAt: curCreatedAt);
     curOrder.customerId = userId;
     curOrder.tableNumber = cartItems[0].tableNumber;
     curOrder.sequence = orderNumber;
@@ -188,7 +189,7 @@ class CartItemUtils {
           orders.add(curOrder);
         }
         curCreatedAt = ci.createdAt;
-        curOrder = BlocOrder(createdAt: curCreatedAt);
+        curOrder = BlocOrder(blocServiceId: cartItems[0].serviceId, createdAt: curCreatedAt);
         curOrder.customerId = userId;
         curOrder.tableNumber = ci.tableNumber;
         curOrder.sequence = ++orderNumber;

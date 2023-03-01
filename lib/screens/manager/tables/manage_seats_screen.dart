@@ -7,12 +7,9 @@ import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 
 import '../../../db/bloc_repository.dart';
-import '../../../db/dao/bloc_dao.dart';
 import '../../../db/entity/seat.dart';
 import '../../../db/entity/service_table.dart';
-import '../../../db/entity/user.dart';
 import '../../../helpers/firestore_helper.dart';
-import '../../../utils/constants.dart';
 import '../../../widgets/seat_item.dart';
 
 class ManageSeatsScreen extends StatefulWidget {
@@ -112,7 +109,6 @@ class _ManageSeatsScreenState extends State<ManageSeatsScreen> {
                   tableId: widget.serviceTable.id,
                   tableNumber: widget.serviceTable.tableNumber);
               seats.add(seat);
-              // BlocRepository.insertSeat(widget.dao, seat);
               FirestoreHelper.pushSeat(seat);
             }
             return _displaySeats(context, seats);

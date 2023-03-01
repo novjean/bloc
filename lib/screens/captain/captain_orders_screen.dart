@@ -8,6 +8,7 @@ import '../../db/entity/cart_item.dart';
 import '../../db/entity/service_table.dart';
 import '../../helpers/firestore_helper.dart';
 import '../../utils/cart_item_utils.dart';
+import '../../widgets/captain/captain_order_item.dart';
 import '../../widgets/manager/orders/order_item.dart';
 import '../../widgets/ui/sized_listview_block.dart';
 import '../manager/bill_screen.dart';
@@ -182,9 +183,9 @@ class _CaptainOrdersScreenState extends State<CaptainOrdersScreen> {
                     document.data()! as Map<String, dynamic>;
                 final CartItem ci = CartItem.fromMap(data);
 
-                for(ServiceTable table in tables){
+                for (ServiceTable table in tables) {
                   // check if this is the captains table
-                  if(table.tableNumber == ci.tableNumber){
+                  if (table.tableNumber == ci.tableNumber) {
                     cartItems.add(ci);
                     break;
                   }
@@ -222,15 +223,32 @@ class _CaptainOrdersScreenState extends State<CaptainOrdersScreen> {
   }
 
   _displayOrdersListByType(BuildContext context, List<BlocOrder> orders) {
+    bool completed = false;
+    bool billed = false;
+
+    if (sOption == 'completed') {
+      completed = true;
+      billed = false;
+    } else if (sOption == 'billed') {
+      completed = true;
+      billed = true;
+    } else {
+      completed = false;
+      billed = false;
+    }
+
     return Expanded(
       child: ListView.builder(
           itemCount: orders.length,
           scrollDirection: Axis.vertical,
+          physics: NeverScrollableScrollPhysics(),
           itemBuilder: (ctx, index) {
             return GestureDetector(
-                child: OrderItem(
+                child: CaptainOrderItem(
                   order: orders[index],
                   displayOption: _optionName,
+                  completed: completed,
+                  billed: billed,
                 ),
                 onTap: () {
                   BlocOrder order = orders[index];
