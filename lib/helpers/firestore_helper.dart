@@ -304,6 +304,11 @@ class FirestoreHelper {
     }
   }
 
+  static void deleteCartItem(String cartId) {
+    FirebaseFirestore.instance.collection(CART_ITEMS).doc(cartId).delete();
+  }
+
+
   /** Category **/
   static void pushCategory(Category category) async {
     try {
@@ -1073,5 +1078,6 @@ class FirestoreHelper {
         .orderBy('level', descending: false)
         .get();
   }
+
 
 }

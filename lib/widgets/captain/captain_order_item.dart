@@ -130,7 +130,6 @@ class _CaptainOrderItemState extends State<CaptainOrderItem> {
                                       ),
                                       flex: 4,
                                     ),
-
                                     Flexible(
                                       child: Text(widget.order.total.toString(),
                                           style: const TextStyle(
@@ -138,8 +137,6 @@ class _CaptainOrderItemState extends State<CaptainOrderItem> {
                                               fontWeight: FontWeight.w500)),
                                       flex: 1,
                                     ),
-
-                                    // Icon(Icons.delete_outline)
                                   ],
                                 ),
                               ),

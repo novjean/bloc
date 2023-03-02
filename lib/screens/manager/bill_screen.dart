@@ -1,25 +1,32 @@
 import 'package:bloc/utils/string_utils.dart';
-import 'package:bloc/widgets/cart_block_item.dart';
 import 'package:flutter/material.dart';
 
 import '../../db/entity/bill.dart';
 import '../../db/entity/cart_item.dart';
 import '../../db/entity/bloc_order.dart';
-import '../../db/entity/order_bloc.dart';
 import '../../helpers/firestore_helper.dart';
+import '../../widgets/bill_cart_item.dart';
 import '../../widgets/ui/toaster.dart';
 
-class BillScreen extends StatelessWidget {
+class BillScreen extends StatefulWidget {
   Bill bill;
   bool isPending;
 
-  BillScreen({required this.bill, required this.isPending});
+  BillScreen(
+      {required this.bill, required this.isPending});
+
+  @override
+  State<BillScreen> createState() => _BillScreenState();
+}
+
+class _BillScreenState extends State<BillScreen> {
+  double total = 0;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('bills'),
+        title: const Text('bills'),
       ),
       body: _buildBody(context),
     );
@@ -36,19 +43,30 @@ class BillScreen extends StatelessWidget {
   }
 
   Widget _buildOrderItems(BuildContext context) {
+    total = _calculateTotal();
+    if (total <= 0) {
+      Navigator.of(context).pop();
+    }
+
     return ListView.builder(
-        itemCount: bill.orders.length,
+        itemCount: widget.bill.orders.length,
         itemBuilder: (ctx, i) {
-          BlocOrder order = bill.orders[i];
+          BlocOrder order = widget.bill.orders[i];
           return Padding(
-            padding: const EdgeInsets.all(10.0),
+            padding: const EdgeInsets.all(1.0),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               mainAxisSize: MainAxisSize.min,
-
               children: [
-                Text('order number : ' + order.sequence.toString()),
-                renderCartItems(order.cartItems),
+                Padding(
+                  padding: const EdgeInsets.only(right: 10.0),
+                  child:
+                      Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+                    Text('order# ' + widget.bill.orders[i].sequence.toString())
+                  ]),
+                ),
+                renderCartItems(
+                    order.cartItems, total, order.sequence.toString()),
                 // OrderCardItem(order),
               ],
             ),
@@ -56,22 +74,26 @@ class BillScreen extends StatelessWidget {
         });
   }
 
-  renderCartItems(cartItems) {
-    return Column(mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        mainAxisSize: MainAxisSize.min, children: cartItems.map<Widget>((cartItem) =>
-        Flexible(
-          child: CartBlockItem(
-            cartItem
-          ),
-        )
-    ).toList());
+  renderCartItems(cartItems, double total, String orderSequence) {
+    return Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisSize: MainAxisSize.min,
+        children: cartItems
+            .map<Widget>((cartItem) => Flexible(
+                  child: BillCartItem(
+                    cartItem: cartItem,
+                    update: _update,
+                    orderSequence: orderSequence,
+                  ),
+                ))
+            .toList());
   }
 
   Widget TotalBox(BuildContext context) {
     return Card(
-      margin: const EdgeInsets.all(15),
+      margin: const EdgeInsets.all(5),
       child: Padding(
-        padding: const EdgeInsets.all(5),
+        padding: const EdgeInsets.all(1),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -85,28 +107,39 @@ class BillScreen extends StatelessWidget {
             Spacer(),
             Chip(
               label: Text(
-                '\u20B9${_calculateTotal().toStringAsFixed(2)}',
-
+                '\u20B9${total.toStringAsFixed(2)}',
                 style: TextStyle(
-                    color: Theme.of(context)
-                        .primaryTextTheme
-                        .headline6!
-                        .color),
+                    color: Theme.of(context).primaryTextTheme.headline6!.color),
               ),
               backgroundColor: Theme.of(context).primaryColor,
             ),
-            isPending?CompletedButton(bill: bill):GenerateBillButton(bill: bill),
+            widget.isPending
+                ? CompletedButton(bill: widget.bill)
+                : GenerateBillButton(bill: widget.bill),
           ],
         ),
       ),
     );
   }
 
+  int _count = 0;
+
+  // Pass this method to the child page.
+  void _update(int count) {
+    setState(() {
+      _count = count;
+    });
+  }
+
   _calculateTotal() {
     double total = 0;
 
-    for(BlocOrder order in bill.orders){
-      total += order.total;
+    for (BlocOrder order in widget.bill.orders) {
+      for (CartItem cartItem in order.cartItems) {
+        if (cartItem.quantity <= 0) continue;
+        double amount = cartItem.productPrice * cartItem.quantity;
+        total += amount;
+      }
     }
     return total;
   }
@@ -127,40 +160,40 @@ class _CompletedButtonState extends State<CompletedButton> {
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
-      child: _isLoading ? CircularProgressIndicator() : Text('COMPLETED'),
+      child: _isLoading ? CircularProgressIndicator() : Text('completed'),
       onPressed: (widget.bill.orders.length <= 0 || _isLoading)
-          ? null : () async {
-        setState(() {
-          _isLoading = true;
-        });
+          ? null
+          : () async {
+              setState(() {
+                _isLoading = true;
+              });
 
-        // mark all cart items as completed
-        List<CartItem> _cartItems = [];
-        for(BlocOrder order in widget.bill.orders) {
-          _cartItems.addAll(order.cartItems);
-        }
+              // mark all cart items as completed
+              List<CartItem> _cartItems = [];
+              for (BlocOrder order in widget.bill.orders) {
+                _cartItems.addAll(order.cartItems);
+              }
 
-        //todo: this can be used for order id logic later on
-        // String billId = StringUtils.getRandomString(20);
+              //todo: this can be used for order id logic later on
+              // String billId = StringUtils.getRandomString(20);
 
-        for(int i=0;i<_cartItems.length;i++) {
-          // _cartItems[i].billId = billId;
-          FirestoreHelper.updateCartItemAsCompleted(_cartItems[i]);
-        }
+              for (int i = 0; i < _cartItems.length; i++) {
+                // _cartItems[i].billId = billId;
+                FirestoreHelper.updateCartItemAsCompleted(_cartItems[i]);
+              }
 
-        print('Order has been marked as completed.');
-        Toaster.shortToast("Order is marked as completed.");
+              print('order has been marked as completed');
+              Toaster.shortToast("order is marked as completed");
 
-        // this is where we send the order information to firebase
-        // String orderId = StringUtils.getRandomString(20);
-        // need to know if cart item is community
-        // Order order = Order(id: orderId,customerId: _cartItems[0].userId,blocId: _cartItems[0].serviceId, isCommunity: _cartItems[0].)
+              // this is where we send the order information to firebase
+              // String orderId = StringUtils.getRandomString(20);
+              // need to know if cart item is community
+              // Order order = Order(id: orderId,customerId: _cartItems[0].userId,blocId: _cartItems[0].serviceId, isCommunity: _cartItems[0].)
 
-        setState(() {
-          _isLoading = false;
-        });
-        // widget.cart.clear();
-      },
+              setState(() {
+                _isLoading = false;
+              });
+            },
     );
   }
 }
@@ -180,46 +213,40 @@ class _GenerateBillButtonState extends State<GenerateBillButton> {
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
-      child: _isLoading ? CircularProgressIndicator() : Text('GENERATE BILL'),
+      child: _isLoading ? CircularProgressIndicator() : Text('generate bill'),
       onPressed: (widget.bill.orders.length <= 0 || _isLoading)
-          ? null : () async {
-        setState(() {
-          _isLoading = true;
-        });
+          ? null
+          : () async {
+              setState(() {
+                _isLoading = true;
+              });
 
-        // mark all cart items as completed
-        List<CartItem> _cartItems = [];
-        for(BlocOrder order in widget.bill.orders) {
-          _cartItems.addAll(order.cartItems);
-        }
+              // mark all cart items as completed
+              List<CartItem> _cartItems = [];
+              for (BlocOrder order in widget.bill.orders) {
+                _cartItems.addAll(order.cartItems);
+              }
 
-        //todo: should consider changing this to time
-        String billId = StringUtils.getRandomString(20);
+              //todo: should consider changing this to time
+              String billId = StringUtils.getRandomString(28);
 
-        for(int i=0;i<_cartItems.length;i++) {
-          FirestoreHelper.updateCartItemBilled(_cartItems[i].cartId, billId);
-        }
+              for (int i = 0; i < _cartItems.length; i++) {
+                FirestoreHelper.updateCartItemBilled(
+                    _cartItems[i].cartId, billId);
+              }
 
-        print("Bill is generated with id : " + billId);
-        Toaster.shortToast('Bill has been generated.');
+              print("bill is generated with id : " + billId);
+              Toaster.shortToast('bill has been generated');
 
-        // this is where we send the order information to firebase
-        // String orderId = StringUtils.getRandomString(20);
-        // need to know if cart item is community
-        // Order order = Order(id: orderId,customerId: _cartItems[0].userId,blocId: _cartItems[0].serviceId, isCommunity: _cartItems[0].)
+              // this is where we send the order information to firebase
+              // String orderId = StringUtils.getRandomString(20);
+              // need to know if cart item is community
+              // Order order = Order(id: orderId,customerId: _cartItems[0].userId,blocId: _cartItems[0].serviceId, isCommunity: _cartItems[0].)
 
-        setState(() {
-          _isLoading = false;
-        });
-        // widget.cart.clear();
-      },
+              setState(() {
+                _isLoading = false;
+              });
+            },
     );
   }
 }
-
-
-
-
-
-
-

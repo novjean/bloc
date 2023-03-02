@@ -2,16 +2,13 @@ import 'package:bloc/db/shared_preferences/user_preferences.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-import '../../db/entity/bill.dart';
 import '../../db/entity/bloc_order.dart';
 import '../../db/entity/cart_item.dart';
 import '../../db/entity/service_table.dart';
 import '../../helpers/firestore_helper.dart';
 import '../../utils/cart_item_utils.dart';
 import '../../widgets/captain/captain_order_item.dart';
-import '../../widgets/manager/orders/order_item.dart';
 import '../../widgets/ui/sized_listview_block.dart';
-import '../manager/bill_screen.dart';
 
 class CaptainOrdersScreen extends StatefulWidget {
   String serviceId;
@@ -241,31 +238,13 @@ class _CaptainOrdersScreenState extends State<CaptainOrdersScreen> {
       child: ListView.builder(
           itemCount: orders.length,
           scrollDirection: Axis.vertical,
-          physics: NeverScrollableScrollPhysics(),
           itemBuilder: (ctx, index) {
-            return GestureDetector(
-                child: CaptainOrderItem(
-                  order: orders[index],
-                  displayOption: _optionName,
-                  completed: completed,
-                  billed: billed,
-                ),
-                onTap: () {
-                  BlocOrder order = orders[index];
-                  print('order selected for cust id : ' +
-                      order.customerId +
-                      ", table num: " +
-                      order.tableNumber.toString());
-
-                  Bill bill = CartItemUtils.extractBill(order.cartItems);
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                        builder: (ctx) => BillScreen(
-                              bill: bill,
-                              isPending: true,
-                            )),
-                  );
-                });
+            return CaptainOrderItem(
+              order: orders[index],
+              displayOption: _optionName,
+              completed: completed,
+              billed: billed,
+            );
           }),
     );
   }

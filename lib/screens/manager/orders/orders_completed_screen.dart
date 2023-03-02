@@ -29,7 +29,7 @@ class _OrdersCompletedScreenState extends State<OrdersCompletedScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.titleHead + ' | Completed'),
+        title: Text(widget.titleHead + ' | completed'),
       ),
       body: _buildBody(context),
     );
@@ -78,15 +78,15 @@ class _OrdersCompletedScreenState extends State<OrdersCompletedScreen> {
             } else {
               return Expanded(
                   child:
-                      Center(child: Text('No completed orders to display.')));
+                      Center(child: Text('no completed orders to display.')));
             }
           } else {
             return Expanded(
-                child: Center(child: Text('No completed orders to display.')));
+                child: Center(child: Text('no completed orders to display.')));
           }
 
           return Expanded(
-              child: Center(child: Text('Loading completed cart items...')));
+              child: Center(child: Text('loading completed cart items...')));
         });
   }
 

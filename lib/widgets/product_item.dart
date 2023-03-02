@@ -3,7 +3,6 @@ import 'package:bloc/widgets/ui/toaster.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
 import '../db/entity/cart_item.dart';
@@ -39,7 +38,6 @@ class ProductItem extends StatefulWidget {
 class _ProductItemState extends State<ProductItem> {
   @override
   Widget build(BuildContext context) {
-    var logger = Logger();
     final cart = Provider.of<Cart>(context, listen: false);
 
     Color primaryColor = Theme.of(context).primaryColor;

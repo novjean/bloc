@@ -16,7 +16,7 @@ class OrdersPendingScreen extends StatefulWidget {
   String titleHead;
 
   OrdersPendingScreen(
-      {required this.serviceId, required this.titleHead});
+      {Key? key, required this.serviceId, required this.titleHead}) : super(key: key);
 
   @override
   State<OrdersPendingScreen> createState() => _OrdersPendingScreenState();
@@ -89,7 +89,7 @@ class _OrdersPendingScreenState extends State<OrdersPendingScreen> {
   }
 
   _displayOrdersList(BuildContext context, List<CartItem> cartItems) {
-    if (cartItems.length > 0) {
+    if (cartItems.isNotEmpty) {
       List<BlocOrder> orders = _optionName == 'Table'
           ? CartItemUtils.extractOrdersByTableNumber(cartItems)
           : CartItemUtils.extractOrdersByUserId(cartItems);
