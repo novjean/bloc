@@ -38,16 +38,23 @@ class AppDrawer extends StatelessWidget {
             },
           ),
           const Divider(),
-          ListTile(
-            leading: const Icon(Icons.circle_outlined),
-            title: const Text('orders'),
-            onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(builder: (ctx) => OrderHistoryScreen()),
-              );
-            },
-          ),
-          const Divider(),
+          UserPreferences.isUserLoggedIn()
+              ? Column(
+                  children: [
+                    ListTile(
+                      leading: const Icon(Icons.circle_outlined),
+                      title: const Text('orders'),
+                      onTap: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                              builder: (ctx) => OrderHistoryScreen()),
+                        );
+                      },
+                    ),
+                    const Divider(),
+                  ],
+                )
+              : const SizedBox(),
           user.clearanceLevel >= Constants.CAPTAIN_LEVEL
               ? Column(children: [
                   ListTile(
@@ -103,7 +110,7 @@ class AppDrawer extends StatelessWidget {
           const Divider(),
           ListTile(
             leading: const Icon(Icons.exit_to_app),
-            title: const Text('logout'),
+            title: Text(UserPreferences.isUserLoggedIn() ? 'logout' : 'login'),
             onTap: () {
               UserPreferences.resetUser();
 

@@ -1,5 +1,6 @@
 import 'package:bloc/db/entity/user.dart' as blocUser;
 import 'package:bloc/screens/login_screen.dart';
+import 'package:bloc/screens/profile/profile_login_screen.dart';
 import 'package:bloc/utils/constants.dart';
 import 'package:bloc/widgets/app_drawer.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -146,7 +147,7 @@ class _MainScreenState extends State<MainScreen> {
       // OfferScreen(),
       PartyScreen(),
       // ChatScreen(),
-      ProfilePage(),
+      UserPreferences.isUserLoggedIn() ? ProfilePage() : ProfileLoginScreen(),
     ];
 
     return Scaffold(
@@ -164,16 +165,16 @@ class _MainScreenState extends State<MainScreen> {
               DropdownMenuItem(
                 child: Container(
                   child: Row(
-                    children: const [
+                    children: [
                       Icon(Icons.exit_to_app),
                       SizedBox(
                         width: 8,
                       ),
-                      Text('logout'),
+                      Text(UserPreferences.isUserLoggedIn() ? 'logout' : 'login'),
                     ],
                   ),
                 ),
-                value: 'logout',
+                value: UserPreferences.isUserLoggedIn() ? 'logout' : 'login',
               ),
             ],
             onChanged: (itemIdentifier) {

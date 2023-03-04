@@ -272,153 +272,162 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
         title: Text(widget.blocService.name),
         backgroundColor: Theme.of(context).primaryColor,
         actions: [
-          // need to check if the person is seated
-
-          _isCustomerSeated
-              ? IconButton(
-                  icon: const Icon(
-                    Icons.back_hand_outlined,
-                  ),
-                  onPressed: () {
-                    Toaster.longToast(
-                        'we are sending someone over to assist you soon');
-
-                    blocUser.User user = UserPreferences.myUser;
-
-                    FirestoreHelper.sendSOSMessage(
-                        user.fcmToken,
-                        user.name,
-                        user.phoneNumber,
-                        mTable.tableNumber,
-                        mTable.id,
-                        mSeat.id);
-                  },
-                )
-              : kIsWeb
+          UserPreferences.isUserLoggedIn()
+              ?
+              // need to check if the person is seated
+              _isCustomerSeated
                   ? IconButton(
                       icon: const Icon(
-                        Icons.table_bar,
+                        Icons.back_hand_outlined,
                       ),
                       onPressed: () {
-                        Toaster.longToast('enter your table number');
-
-                        TablePreferences.resetTable();
-                        int tableNum = -1;
-
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return SystemPadding(
-                              child: AlertDialog(
-                                contentPadding: const EdgeInsets.all(16.0),
-                                content: Row(
-                                  children: <Widget>[
-                                    Expanded(
-                                      child: TextField(
-                                        autofocus: true,
-                                        keyboardType: TextInputType.number,
-                                        onChanged: (text) {
-                                          try {
-                                            tableNum = int.parse(text);
-                                          } catch (err) {
-                                            print('err: ' + err.toString());
-                                          }
-                                        },
-                                        decoration: InputDecoration(
-                                            labelText: 'table number',
-                                            hintText: 'eg. 12'),
-                                      ),
-                                    )
-                                  ],
-                                ),
-                                actions: [
-                                  TextButton(
-                                    child: const Text("no"),
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
-                                    },
-                                  ),
-                                  TextButton(
-                                    child: Text("continue"),
-                                    onPressed: () {
-                                      print('table num is ' +
-                                          tableNum.toString());
-
-                                      FirestoreHelper.pullTableByNumber(
-                                              widget.blocService.id, tableNum)
-                                          .then(
-                                        (result) {
-                                          if (result.docs.isNotEmpty) {
-                                            for (int i = 0;
-                                                i < result.docs.length;
-                                                i++) {
-                                              DocumentSnapshot document =
-                                                  result.docs[i];
-                                              Map<String, dynamic> data =
-                                                  document.data()!
-                                                      as Map<String, dynamic>;
-                                              final ServiceTable table =
-                                                  ServiceTable.fromMap(data);
-                                              print('table found ' +
-                                                  table.tableNumber.toString());
-
-                                              // check if table is occupied
-                                              if (table.isActive &&
-                                                  !table.isOccupied) {
-                                                updateTableWithUser(table.id,
-                                                    UserPreferences.myUser.id);
-
-                                                TablePreferences.setTable(
-                                                    table);
-                                              } else {
-                                                Toaster.longToast('table ' +
-                                                    tableNum.toString() +
-                                                    ' is occupied');
-                                              }
-                                            }
-                                          } else {
-                                            print(
-                                                'table could not be found for table number ' +
-                                                    tableNum.toString());
-                                          }
-                                        },
-                                        onError: (e) => print(
-                                            "error searching for table : $e"),
-                                      );
-
-                                      Navigator.of(context).pop();
-                                    },
-                                  ),
-                                ],
-                              ),
-                            );
-                          },
-                        );
-                      },
-                    )
-                  : IconButton(
-                      icon: const Icon(
-                        Icons.qr_code,
-                      ),
-                      onPressed: () {
-                        Toaster.longToast('scan your table now');
-
-                        TablePreferences.resetTable();
+                        Toaster.longToast(
+                            'we are sending someone over to assist you soon');
 
                         blocUser.User user = UserPreferences.myUser;
-                        scanTableQR(user);
+
+                        FirestoreHelper.sendSOSMessage(
+                            user.fcmToken,
+                            user.name,
+                            user.phoneNumber,
+                            mTable.tableNumber,
+                            mTable.id,
+                            mSeat.id);
                       },
-                    ),
-          IconButton(
-            icon: const Icon(
-              Icons.shopping_cart,
-            ),
-            onPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(builder: (ctx) => CartScreen()),
-              );
-            },
-          ),
+                    )
+                  : kIsWeb
+                      ? IconButton(
+                          icon: const Icon(
+                            Icons.table_bar,
+                          ),
+                          onPressed: () {
+                            Toaster.longToast('enter your table number');
+
+                            TablePreferences.resetTable();
+                            int tableNum = -1;
+
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return SystemPadding(
+                                  child: AlertDialog(
+                                    contentPadding: const EdgeInsets.all(16.0),
+                                    content: Row(
+                                      children: <Widget>[
+                                        Expanded(
+                                          child: TextField(
+                                            autofocus: true,
+                                            keyboardType: TextInputType.number,
+                                            onChanged: (text) {
+                                              try {
+                                                tableNum = int.parse(text);
+                                              } catch (err) {
+                                                print('err: ' + err.toString());
+                                              }
+                                            },
+                                            decoration: InputDecoration(
+                                                labelText: 'table number',
+                                                hintText: 'eg. 12'),
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                    actions: [
+                                      TextButton(
+                                        child: const Text("no"),
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                      ),
+                                      TextButton(
+                                        child: Text("continue"),
+                                        onPressed: () {
+                                          print('table num is ' +
+                                              tableNum.toString());
+
+                                          FirestoreHelper.pullTableByNumber(
+                                                  widget.blocService.id,
+                                                  tableNum)
+                                              .then(
+                                            (result) {
+                                              if (result.docs.isNotEmpty) {
+                                                for (int i = 0;
+                                                    i < result.docs.length;
+                                                    i++) {
+                                                  DocumentSnapshot document =
+                                                      result.docs[i];
+                                                  Map<String, dynamic> data =
+                                                      document.data()! as Map<
+                                                          String, dynamic>;
+                                                  final ServiceTable table =
+                                                      ServiceTable.fromMap(
+                                                          data);
+                                                  print('table found ' +
+                                                      table.tableNumber
+                                                          .toString());
+
+                                                  // check if table is occupied
+                                                  if (table.isActive &&
+                                                      !table.isOccupied) {
+                                                    updateTableWithUser(
+                                                        table.id,
+                                                        UserPreferences
+                                                            .myUser.id);
+
+                                                    TablePreferences.setTable(
+                                                        table);
+                                                  } else {
+                                                    Toaster.longToast('table ' +
+                                                        tableNum.toString() +
+                                                        ' is occupied');
+                                                  }
+                                                }
+                                              } else {
+                                                print(
+                                                    'table could not be found for table number ' +
+                                                        tableNum.toString());
+                                              }
+                                            },
+                                            onError: (e) => print(
+                                                "error searching for table : $e"),
+                                          );
+
+                                          Navigator.of(context).pop();
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
+                            );
+                          },
+                        )
+                      : IconButton(
+                          icon: const Icon(
+                            Icons.qr_code,
+                          ),
+                          onPressed: () {
+                            Toaster.longToast('scan your table now');
+
+                            TablePreferences.resetTable();
+
+                            blocUser.User user = UserPreferences.myUser;
+                            scanTableQR(user);
+                          },
+                        )
+              : const SizedBox(),
+          UserPreferences.isUserLoggedIn()
+              ? IconButton(
+                  icon: const Icon(
+                    Icons.shopping_cart,
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(builder: (ctx) => CartScreen()),
+                    );
+                  },
+                )
+              : const SizedBox(),
         ],
       ),
       body: _isLoading
@@ -655,8 +664,8 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
             if (map.containsKey(index)) {
               isCategoryChange = true;
               categoryTitle = map[index];
-              for(Category category in mCategories){
-                if(category.name == categoryTitle){
+              for (Category category in mCategories) {
+                if (category.name == categoryTitle) {
                   vCategory = category;
                   break;
                 }
@@ -684,20 +693,26 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
                               ),
                             ),
                           ),
-                          vCategory.description.isNotEmpty?SizedBox(
-                            width: double.infinity,
-                            child: Container(
-                              padding: const EdgeInsets.only(
-                                  top: 4.0, bottom: 8, left: 20, right: 20),
-                              color: Theme.of(context).primaryColor,
-                              child: Text(
-                                vCategory.description.toLowerCase(),
-                                textAlign: TextAlign.right,
-                                style: const TextStyle(
-                                    fontSize: 16, fontWeight: FontWeight.normal),
-                              ),
-                            ),
-                          ):const SizedBox(),
+                          vCategory.description.isNotEmpty
+                              ? SizedBox(
+                                  width: double.infinity,
+                                  child: Container(
+                                    padding: const EdgeInsets.only(
+                                        top: 4.0,
+                                        bottom: 8,
+                                        left: 20,
+                                        right: 20),
+                                    color: Theme.of(context).primaryColor,
+                                    child: Text(
+                                      vCategory.description.toLowerCase(),
+                                      textAlign: TextAlign.right,
+                                      style: const TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.normal),
+                                    ),
+                                  ),
+                                )
+                              : const SizedBox(),
                         ],
                       )
                     : const SizedBox(),
@@ -714,7 +729,10 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
                     onTap: () {
                       Product _sProduct = subProducts[index];
                       print(_sProduct.name.toLowerCase() + ' is selected');
-                    }), index == subProducts.length-1?displayExtraInfo():SizedBox()
+                    }),
+                index == subProducts.length - 1
+                    ? displayExtraInfo()
+                    : SizedBox()
               ],
             );
           }),
@@ -727,12 +745,20 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(height: 10,),
-          Text('Info', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),),
+          SizedBox(
+            height: 10,
+          ),
+          Text(
+            'Info',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
           Text('. all prices are in INR'),
           Text('. standard measure pour for spirits is 30ml'),
-          Text('. if you have any allergies or dietary requirements, please let us know. Jain, vegan, gluten and dairy-allergy items are available.'),
-          SizedBox(height: 10,),
+          Text(
+              '. if you have any allergies or dietary requirements, please let us know. Jain, vegan, gluten and dairy-allergy items are available.'),
+          SizedBox(
+            height: 10,
+          ),
         ],
       ),
     );

@@ -30,6 +30,8 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  bool _isUserLoggedIn = false;
+
   late List<Bloc> mBlocs;
   var _isBlocsLoading = true;
 
@@ -42,6 +44,9 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
+
+    _isUserLoggedIn =
+        UserPreferences.myUser.phoneNumber == 911234567890 ? false : true;
 
     FirestoreHelper.pullBlocs().then((res) {
       print("successfully pulled in blocs");
@@ -113,8 +118,6 @@ class _HomeScreenState extends State<HomeScreen> {
         }
       } else {
         print('no guest wifi found!');
-
-        //should not display the events module
       }
     });
   }
@@ -142,9 +145,11 @@ class _HomeScreenState extends State<HomeScreen> {
                 ? const SizedBox(height: 0)
                 : _displayUpcomingParty(context),
             const SizedBox(height: 10.0),
-            _isGuestWifiDetailsLoading
-                ? const SizedBox(height: 0)
-                : buildWifi(context),
+            UserPreferences.isUserLoggedIn()
+                ? _isGuestWifiDetailsLoading
+                    ? const SizedBox()
+                    : buildWifi(context)
+                : const SizedBox(),
             const SizedBox(height: 10.0),
             kIsWeb ? StoreBadgeItem() : const SizedBox(),
 
@@ -255,8 +260,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       color: Theme.of(context).primaryColorDark,
                     ),
                   ),
-                ), flex: 1,
-              ) ,
+                ),
+                flex: 1,
+              ),
               Flexible(
                 child: Container(
                   padding: const EdgeInsets.only(right: 10),
@@ -264,14 +270,16 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: DarkButtonWidget(
                     text: 'click for password',
                     onClicked: () {
-                      Clipboard.setData(ClipboardData(text: mGuestWifi.password))
+                      Clipboard.setData(
+                              ClipboardData(text: mGuestWifi.password))
                           .then((value) {
                         //only if ->
                         Toaster.shortToast('wifi password copied');
                       });
                     },
                   ),
-                ), flex: 1,
+                ),
+                flex: 1,
               )
             ],
           ),

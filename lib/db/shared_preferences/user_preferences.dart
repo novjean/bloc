@@ -51,4 +51,8 @@ class UserPreferences {
   static void setUserFcmToken(String token) {
     myUser.fcmToken = token;
   }
+
+  static bool isUserLoggedIn(){
+    return myUser.phoneNumber == 911234567890 ? false : true;
+  }
 }
