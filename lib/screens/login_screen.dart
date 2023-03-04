@@ -9,6 +9,8 @@ import 'package:intl_phone_field/intl_phone_field.dart';
 
 import '../db/shared_preferences/user_preferences.dart';
 import '../helpers/firestore_helper.dart';
+import '../main.dart';
+import '../utils/string_utils.dart';
 import '../widgets/ui/toaster.dart';
 import 'main_screen.dart';
 
@@ -22,9 +24,12 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   TextEditingController _controller = TextEditingController();
   String completePhoneNumber = '';
+  bool isIOS = false;
 
   @override
   Widget build(BuildContext context) {
+    isIOS = Theme.of(context).platform == TargetPlatform.iOS;
+
     return Scaffold(
       backgroundColor: Theme.of(context).backgroundColor,
       body: StreamBuilder(
@@ -97,7 +102,6 @@ class _LoginScreenState extends State<LoginScreen> {
               image: DecorationImage(
                   image: AssetImage("assets/icons/logo-adaptive.png"),
                   fit: BoxFit.fitHeight
-                  // AssetImage(food['image']),
                   ),
             ),
           ),
@@ -128,6 +132,27 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
           flex: 1,
         ),
+        isIOS? Flexible(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              InkWell(
+                onTap: () {
+                  _verifyUsingSkipPhone();
+                },
+                child: new Padding(
+                  padding: new EdgeInsets.symmetric(horizontal: 20),
+                  child: new Text("skip for now",
+                      style: TextStyle(
+
+                        color: Theme.of(context).primaryColor,
+                      )),
+                ),
+              ),
+            ],
+          ),
+          flex: 1,
+        ) : const SizedBox(),
         Flexible(
           child: Container(
             margin: const EdgeInsets.only(left: 20, right: 20, bottom: 40),
@@ -143,14 +168,12 @@ class _LoginScreenState extends State<LoginScreen> {
                 minimumSize: Size(100, 60), //////// HERE
               ),
               onPressed: () {
-                // String phoneNumberString = _controller.text;
-
                 if (completePhoneNumber.isNotEmpty) {
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (context) => OTPScreen(completePhoneNumber)));
                 } else {
-                  print(
-                      'user entered invalid phone number' + completePhoneNumber);
+                  print('user entered invalid phone number' +
+                      completePhoneNumber);
                   Toaster.longToast('please enter a valid phone number');
                 }
               },
@@ -161,8 +184,99 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
           ),
           flex: 1,
-        )
+        ),
       ],
     );
+  }
+
+  _verifyUsingSkipPhone() async {
+    String phone = '+911234567890';
+
+    if (kIsWeb) {
+      await FirebaseAuth.instance
+          .signInWithPhoneNumber('${phone}', null)
+          .then((user) {
+        debugPrint('signInWithPhoneNumber: user verification id ' +
+            user.verificationId);
+
+        signInToSkipBloc(user.verificationId);
+      }).catchError((e) {
+        print('err: ' + e.toString());
+      });
+    } else {
+      await FirebaseAuth.instance.verifyPhoneNumber(
+          phoneNumber: '${phone}',
+          verificationCompleted: (PhoneAuthCredential credential) async {
+            print(
+                'verifyPhoneNumber: ${phone} is verified. attempting sign in with credentials...');
+            await FirebaseAuth.instance
+                .signInWithCredential(credential)
+                .then((value) async {
+              if (value.user != null) {
+                print('signInWithCredential: success. user logged in');
+              }
+            });
+          },
+          verificationFailed: (FirebaseAuthException e) {
+            print(e.message);
+          },
+          codeSent: (String verificationID, int? resendToken) {
+            signInToSkipBloc(verificationID);
+          },
+          codeAutoRetrievalTimeout: (String verificationId) {
+            signInToSkipBloc(verificationId);
+          },
+          timeout: const Duration(seconds: 120));
+    }
+  }
+
+  void signInToSkipBloc(String verificationId) async {
+    try {
+      await FirebaseAuth.instance
+          .signInWithCredential(PhoneAuthProvider.credential(
+              verificationId: verificationId, smsCode: '123456'))
+          .then((value) async {
+        if (value.user != null) {
+          print('user is in firebase auth. checking for bloc registration...');
+
+          FirestoreHelper.pullUser(value.user!.uid).then((res) {
+            print("successfully retrieved bloc user for id " + value.user!.uid);
+
+            if (res.docs.isEmpty) {
+              print('user is not already registered in bloc, registering...');
+
+              blocUser.User registeredUser = blocUser.User(
+                id: value.user!.uid,
+                name: '',
+                clearanceLevel: 1,
+                phoneNumber: StringUtils.getInt(value.user!.phoneNumber!),
+                fcmToken: '',
+                email: '',
+                imageUrl: '',
+                username: '',
+                blocServiceId: '',
+              );
+
+              Navigator.of(context).pushReplacement(MaterialPageRoute(
+                  builder: (context) => MainScreen(user: registeredUser)));
+            } else {
+              debugPrint('user is a bloc member. navigating to main...');
+
+              DocumentSnapshot document = res.docs[0];
+              Map<String, dynamic> data =
+                  document.data()! as Map<String, dynamic>;
+
+              final blocUser.User user = blocUser.User.fromMap(data);
+              UserPreferences.setUser(user);
+
+              Navigator.of(context).pushReplacement(MaterialPageRoute(
+                  builder: (context) => MainScreen(user: user)));
+            }
+          });
+        }
+      });
+    } catch (e) {
+      FocusScope.of(context).unfocus();
+    }
   }
 }

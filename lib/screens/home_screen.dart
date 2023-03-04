@@ -67,6 +67,8 @@ class _HomeScreenState extends State<HomeScreen> {
           _isBlocsLoading = false;
         });
       }
+    }).catchError((err) {
+      print('error ' + err);
     });
 
     int timeNow = Timestamp.now().millisecondsSinceEpoch;
@@ -243,29 +245,33 @@ class _HomeScreenState extends State<HomeScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Padding(
-                padding: const EdgeInsets.only(left: 10.0),
-                child: Text(
-                  'wifi : ${mGuestWifi.name.toLowerCase()}',
-                  style: TextStyle(
-                    fontSize: 20,
-                    color: Theme.of(context).primaryColorDark,
+              Flexible(
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 10.0),
+                  child: Text(
+                    'wifi: ${mGuestWifi.name.toLowerCase()}',
+                    style: TextStyle(
+                      fontSize: 18,
+                      color: Theme.of(context).primaryColorDark,
+                    ),
                   ),
-                ),
-              ),
-              Container(
-                padding: const EdgeInsets.only(right: 10),
-                margin: const EdgeInsets.only(bottom: 10),
-                child: DarkButtonWidget(
-                  text: 'click for password',
-                  onClicked: () {
-                    Clipboard.setData(ClipboardData(text: mGuestWifi.password))
-                        .then((value) {
-                      //only if ->
-                      Toaster.shortToast('wifi password copied');
-                    });
-                  },
-                ),
+                ), flex: 1,
+              ) ,
+              Flexible(
+                child: Container(
+                  padding: const EdgeInsets.only(right: 10),
+                  margin: const EdgeInsets.only(bottom: 10),
+                  child: DarkButtonWidget(
+                    text: 'click for password',
+                    onClicked: () {
+                      Clipboard.setData(ClipboardData(text: mGuestWifi.password))
+                          .then((value) {
+                        //only if ->
+                        Toaster.shortToast('wifi password copied');
+                      });
+                    },
+                  ),
+                ), flex: 1,
               )
             ],
           ),

@@ -137,9 +137,7 @@ class FirestoreHelper {
   }
 
   static Stream<QuerySnapshot> getAllBlocServices() {
-    return FirebaseFirestore.instance
-        .collection(BLOC_SERVICES)
-        .snapshots();
+    return FirebaseFirestore.instance.collection(BLOC_SERVICES).snapshots();
   }
 
   /** Bookings **/
@@ -208,7 +206,8 @@ class FirestoreHelper {
         .where('serviceId', isEqualTo: serviceId)
         .where('isCompleted', isEqualTo: isCompleted)
         .where('isBilled', isEqualTo: isBilled)
-        .orderBy('createdAt', descending: true) // createdAt could be used i guess
+        .orderBy('createdAt',
+            descending: true) // createdAt could be used i guess
         .snapshots();
   }
 
@@ -308,7 +307,6 @@ class FirestoreHelper {
     FirebaseFirestore.instance.collection(CART_ITEMS).doc(cartId).delete();
   }
 
-
   /** Category **/
   static void pushCategory(Category category) async {
     try {
@@ -376,7 +374,8 @@ class FirestoreHelper {
   }
 
   /** Guest Wifi **/
-  static Future<QuerySnapshot<Map<String, dynamic>>> pullGuestWifi(String blocServiceId) {
+  static Future<QuerySnapshot<Map<String, dynamic>>> pullGuestWifi(
+      String blocServiceId) {
     return FirebaseFirestore.instance
         .collection(FirestoreHelper.GUEST_WIFIS)
         .where('blocServiceId', isEqualTo: blocServiceId)
@@ -395,7 +394,6 @@ class FirestoreHelper {
       logger.e(err);
     }
   }
-
 
   /** Inventory Options **/
   static Stream<QuerySnapshot<Object?>> getInventoryOptions() {
@@ -473,7 +471,6 @@ class FirestoreHelper {
     }
   }
 
-
   /** Party **/
   static void pushParty(Party party) async {
     try {
@@ -488,7 +485,8 @@ class FirestoreHelper {
     }
   }
 
-  static Future<QuerySnapshot<Map<String, dynamic>>> pullParties(int timeNow, bool isActive) {
+  static Future<QuerySnapshot<Map<String, dynamic>>> pullParties(
+      int timeNow, bool isActive) {
     return FirebaseFirestore.instance
         .collection(FirestoreHelper.PARTIES)
         .where('startTime', isGreaterThan: timeNow)
@@ -497,7 +495,8 @@ class FirestoreHelper {
         .get();
   }
 
-  static Future<QuerySnapshot<Map<String, dynamic>>> pullPartiesByEndTime(int timeNow, bool isActive) {
+  static Future<QuerySnapshot<Map<String, dynamic>>> pullPartiesByEndTime(
+      int timeNow, bool isActive) {
     return FirebaseFirestore.instance
         .collection(FirestoreHelper.PARTIES)
         .where('startTime', isGreaterThan: timeNow)
@@ -641,7 +640,6 @@ class FirestoreHelper {
     FirebaseFirestore.instance.collection(PRODUCTS).doc(productId).delete();
   }
 
-
   /** Seats **/
   static Future<QuerySnapshot<Map<String, dynamic>>> pullSeats(String tableId) {
     return FirebaseFirestore.instance
@@ -715,7 +713,6 @@ class FirestoreHelper {
     FirebaseFirestore.instance.collection(SEATS).doc(seat.id).delete();
   }
 
-
   /** SOS **/
   static void sendSOSMessage(String? token, String name, int phoneNumber,
       int tableNumber, String tableId, String seatId) async {
@@ -752,7 +749,8 @@ class FirestoreHelper {
         .get();
   }
 
-  static Future<QuerySnapshot<Map<String, dynamic>>> pullTableById(String blocServiceId, String tableId) {
+  static Future<QuerySnapshot<Map<String, dynamic>>> pullTableById(
+      String blocServiceId, String tableId) {
     return FirebaseFirestore.instance
         .collection(FirestoreHelper.TABLES)
         .where('serviceId', isEqualTo: blocServiceId)
@@ -760,7 +758,8 @@ class FirestoreHelper {
         .get();
   }
 
-  static Future<QuerySnapshot<Map<String, dynamic>>> pullTablesByCaptainId(String blocServiceId, String captainId) {
+  static Future<QuerySnapshot<Map<String, dynamic>>> pullTablesByCaptainId(
+      String blocServiceId, String captainId) {
     return FirebaseFirestore.instance
         .collection(FirestoreHelper.TABLES)
         .where('serviceId', isEqualTo: blocServiceId)
@@ -768,7 +767,6 @@ class FirestoreHelper {
         .orderBy('tableNumber', descending: false)
         .get();
   }
-
 
   static Stream<QuerySnapshot<Object?>> getTables(String serviceId) {
     return FirebaseFirestore.instance
@@ -962,13 +960,13 @@ class FirestoreHelper {
         .get();
   }
 
-  static Future<QuerySnapshot<Map<String, dynamic>>> pullUsersByLevel(int level) {
+  static Future<QuerySnapshot<Map<String, dynamic>>> pullUsersByLevel(
+      int level) {
     return FirebaseFirestore.instance
         .collection(USERS)
         .where('clearanceLevel', isEqualTo: level)
         .get();
   }
-
 
   static Stream<QuerySnapshot<Object?>> getUsers(int clearanceLevel) {
     return FirebaseFirestore.instance
@@ -1078,6 +1076,4 @@ class FirestoreHelper {
         .orderBy('level', descending: false)
         .get();
   }
-
-
 }
