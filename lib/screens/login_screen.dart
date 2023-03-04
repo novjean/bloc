@@ -1,4 +1,3 @@
-import 'package:bloc/main.dart';
 import 'package:bloc/screens/otp_screen.dart';
 import 'package:bloc/db/entity/user.dart' as blocUser;
 
@@ -6,6 +5,7 @@ import 'package:bloc/screens/ui/splash_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:intl_phone_field/intl_phone_field.dart';
 
 import '../db/shared_preferences/user_preferences.dart';
 import '../helpers/firestore_helper.dart';
@@ -21,6 +21,7 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   TextEditingController _controller = TextEditingController();
+  String completePhoneNumber = '';
 
   @override
   Widget build(BuildContext context) {
@@ -83,8 +84,6 @@ class _LoginScreenState extends State<LoginScreen> {
           }
         },
       ),
-
-      // SignInWidget()
     );
   }
 
@@ -92,20 +91,6 @@ class _LoginScreenState extends State<LoginScreen> {
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        // Container(
-        //   margin: EdgeInsets.only(top: 200),
-        //   child: Center(
-        //     child: Text(
-        //       'bloc',
-        //       style: TextStyle(
-        //         color: Theme.of(context).primaryColor,
-        //         fontWeight: FontWeight.bold,
-        //         letterSpacing: 25,
-        //         fontSize: 72,
-        //       ),
-        //     ),
-        //   ),
-        // ),
         Flexible(
           child: Container(
             decoration: const BoxDecoration(
@@ -121,34 +106,31 @@ class _LoginScreenState extends State<LoginScreen> {
         Flexible(
           child: Container(
             margin: const EdgeInsets.only(top: 0, right: 20, left: 20),
-            child: TextField(
+            child: IntlPhoneField(
+              style: TextStyle(color: Theme.of(context).primaryColor),
               decoration: InputDecoration(
-                enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(8)),
-                    borderSide: BorderSide(color: Colors.grey.shade200)),
-                focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(8)),
-                    borderSide: BorderSide(color: Colors.grey.shade300)),
-                filled: true,
-                hintText: 'phone number',
-                fillColor: Colors.grey[100],
-                prefix: Padding(
-                  padding: EdgeInsets.all(4),
-                  child: Text('+91'),
+                labelText: 'phone number',
+                labelStyle: TextStyle(color: Theme.of(context).primaryColor),
+                border: OutlineInputBorder(
+                  borderSide: BorderSide(),
                 ),
               ),
-              style:
-                  TextStyle(fontSize: 20.0, height: 1.0, color: Colors.black),
-              maxLength: 10,
-              keyboardType: TextInputType.number,
               controller: _controller,
+              initialCountryCode: 'IN',
+              onChanged: (phone) {
+                print(phone.completeNumber);
+                completePhoneNumber = phone.completeNumber;
+              },
+              onCountryChanged: (country) {
+                print('country changed to: ' + country.name);
+              },
             ),
           ),
           flex: 1,
         ),
         Flexible(
           child: Container(
-            margin: EdgeInsets.only(left: 20, right: 20, bottom: 40),
+            margin: const EdgeInsets.only(left: 20, right: 20, bottom: 40),
             width: double.infinity,
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
@@ -161,14 +143,14 @@ class _LoginScreenState extends State<LoginScreen> {
                 minimumSize: Size(100, 60), //////// HERE
               ),
               onPressed: () {
-                String phoneNumberString = _controller.text;
+                // String phoneNumberString = _controller.text;
 
-                if (phoneNumberString.length == 10) {
+                if (completePhoneNumber.isNotEmpty) {
                   Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => OTPScreen(_controller.text)));
+                      builder: (context) => OTPScreen(completePhoneNumber)));
                 } else {
                   print(
-                      'user entered invalid phone number' + phoneNumberString);
+                      'user entered invalid phone number' + completePhoneNumber);
                   Toaster.longToast('please enter a valid phone number');
                 }
               },

@@ -76,7 +76,7 @@ class _OTPScreenState extends State<OTPScreen> {
                   padding: const EdgeInsets.only(left: 20, right: 20),
                   child: Center(
                       child: Text(
-                        'enter the six digit code you received on \n+91-${widget.phone}',
+                        'enter the six digit code you received on \n${widget.phone}',
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           color: Theme.of(context).primaryColorLight,
@@ -132,7 +132,7 @@ class _OTPVerifyState extends State<OTPVerify> {
   _verifyPhone() async {
     if (kIsWeb) {
       await FirebaseAuth.instance
-          .signInWithPhoneNumber('+91${widget.phone}', null)
+          .signInWithPhoneNumber('${widget.phone}', null)
           .then((user) {
         debugPrint('signInWithPhoneNumber: user verification id ' +
             user.verificationId);
@@ -144,10 +144,10 @@ class _OTPVerifyState extends State<OTPVerify> {
       });
     } else {
       await FirebaseAuth.instance.verifyPhoneNumber(
-          phoneNumber: '+91${widget.phone}',
+          phoneNumber: '${widget.phone}',
           verificationCompleted: (PhoneAuthCredential credential) async {
             print(
-                'verifyPhoneNumber: +91${widget.phone} is verified. attempting sign in with credentials...');
+                'verifyPhoneNumber: ${widget.phone} is verified. attempting sign in with credentials...');
             await FirebaseAuth.instance
                 .signInWithCredential(credential)
                 .then((value) async {
@@ -222,7 +222,7 @@ class _OTPVerifyState extends State<OTPVerify> {
               onCompleted: (pin) async {
                 debugPrint('onCompleted: $pin');
 
-                Toaster.shortToast('verifying +91${widget.phone}');
+                Toaster.shortToast('verifying ${widget.phone}');
                 try {
                   await FirebaseAuth.instance
                       .signInWithCredential(PhoneAuthProvider.credential(
