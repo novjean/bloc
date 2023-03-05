@@ -146,34 +146,37 @@ class _LoginScreenState extends State<LoginScreen> {
           flex: 1,
         ),
         isIOS
-            ? Flexible(
-                child: Column(
-                  children: [
-                    const Spacer(),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
+            ? !kIsWeb
+                ? Flexible(
+                    child: Column(
                       children: [
-                        InkWell(
-                          onTap: () {
-                            Toaster.longToast('welcome to bloc');
-                            _verifyUsingSkipPhone();
-                          },
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 20),
-                            child: Text(
-                              "skip for now",
-                              style: TextStyle(
-                                color: Theme.of(context).primaryColor,
+                        const Spacer(),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            InkWell(
+                              onTap: () {
+                                Toaster.longToast('welcome to bloc');
+                                _verifyUsingSkipPhone();
+                              },
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 20),
+                                child: Text(
+                                  "skip for now",
+                                  style: TextStyle(
+                                    color: Theme.of(context).primaryColor,
+                                  ),
+                                ),
                               ),
                             ),
-                          ),
+                          ],
                         ),
                       ],
                     ),
-                  ],
-                ),
-                flex: 1,
-              )
+                    flex: 1,
+                  )
+                : const SizedBox()
             : const SizedBox(),
         Flexible(
           child: Container(
