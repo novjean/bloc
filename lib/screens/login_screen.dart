@@ -133,21 +133,26 @@ class _LoginScreenState extends State<LoginScreen> {
           flex: 1,
         ),
         isIOS? Flexible(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.end,
+          child: Column(
             children: [
-              InkWell(
-                onTap: () {
-                  _verifyUsingSkipPhone();
-                },
-                child: new Padding(
-                  padding: new EdgeInsets.symmetric(horizontal: 20),
-                  child: new Text("skip for now",
-                      style: TextStyle(
-
-                        color: Theme.of(context).primaryColor,
-                      )),
-                ),
+              Spacer(),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  InkWell(
+                    onTap: () {
+                      Toaster.longToast('welcome to bloc');
+                      _verifyUsingSkipPhone();
+                    },
+                    child: new Padding(
+                      padding: new EdgeInsets.symmetric(horizontal: 20),
+                      child: new Text("skip for now",
+                          style: TextStyle(
+                            color: Theme.of(context).primaryColor,
+                          )),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
