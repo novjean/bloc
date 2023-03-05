@@ -178,7 +178,7 @@ class _MainScreenState extends State<MainScreen> {
               ),
             ],
             onChanged: (itemIdentifier) {
-              if (itemIdentifier == 'logout') {
+              if (itemIdentifier == 'logout' || itemIdentifier == 'login') {
                 UserPreferences.resetUser();
 
                 FirebaseAuth.instance.signOut();
