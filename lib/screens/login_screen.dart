@@ -270,6 +270,8 @@ class _LoginScreenState extends State<LoginScreen> {
             if (res.docs.isEmpty) {
               print('user is not already registered in bloc, registering...');
 
+              int millis = Timestamp.now().millisecondsSinceEpoch;
+
               blocUser.User registeredUser = blocUser.User(
                 id: value.user!.uid,
                 name: '',
@@ -280,6 +282,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 imageUrl: '',
                 username: '',
                 blocServiceId: '',
+                createdAt: millis,
+                lastSeenAt: millis
               );
 
               Navigator.of(context).pushReplacement(MaterialPageRoute(

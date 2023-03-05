@@ -240,6 +240,8 @@ class _OTPVerifyState extends State<OTPVerify> {
                           print(
                               'user is not already registered in bloc, registering...');
 
+                          int millis = Timestamp.now().millisecondsSinceEpoch;
+
                           blocUser.User registeredUser = blocUser.User(
                             id: value.user!.uid,
                             name: '',
@@ -251,6 +253,8 @@ class _OTPVerifyState extends State<OTPVerify> {
                             imageUrl: '',
                             username: '',
                             blocServiceId: '',
+                            createdAt: millis,
+                            lastSeenAt: millis
                           );
 
                           Navigator.of(context).pushReplacement(

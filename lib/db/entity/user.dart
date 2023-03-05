@@ -9,6 +9,8 @@ class User {
   final String name;
   String fcmToken;
   final String blocServiceId;
+  final int createdAt;
+  final int lastSeenAt;
 
 //<editor-fold desc="Data Methods">
 
@@ -22,6 +24,8 @@ class User {
     required this.name,
     required this.fcmToken,
     required this.blocServiceId,
+    required this.createdAt,
+    required this.lastSeenAt,
   });
 
   @override
@@ -37,7 +41,9 @@ class User {
           phoneNumber == other.phoneNumber &&
           name == other.name &&
           fcmToken == other.fcmToken &&
-          blocServiceId == other.blocServiceId);
+          blocServiceId == other.blocServiceId &&
+          createdAt == other.createdAt &&
+          lastSeenAt == other.lastSeenAt);
 
   @override
   int get hashCode =>
@@ -49,7 +55,9 @@ class User {
       phoneNumber.hashCode ^
       name.hashCode ^
       fcmToken.hashCode ^
-      blocServiceId.hashCode;
+      blocServiceId.hashCode ^
+      createdAt.hashCode ^
+      lastSeenAt.hashCode;
 
   @override
   String toString() {
@@ -63,6 +71,8 @@ class User {
         ' name: $name,' +
         ' fcmToken: $fcmToken,' +
         ' blocServiceId: $blocServiceId,' +
+        ' createdAt: $createdAt,' +
+        ' lastSeenAt: $lastSeenAt,' +
         '}';
   }
 
@@ -76,6 +86,8 @@ class User {
     String? name,
     String? fcmToken,
     String? blocServiceId,
+    int? createdAt,
+    int? lastSeenAt,
   }) {
     return User(
       id: id ?? this.id,
@@ -87,6 +99,8 @@ class User {
       name: name ?? this.name,
       fcmToken: fcmToken ?? this.fcmToken,
       blocServiceId: blocServiceId ?? this.blocServiceId,
+      createdAt: createdAt ?? this.createdAt,
+      lastSeenAt: lastSeenAt ?? this.lastSeenAt,
     );
   }
 
@@ -101,6 +115,8 @@ class User {
       'name': this.name,
       'fcmToken': this.fcmToken,
       'blocServiceId': this.blocServiceId,
+      'createdAt': this.createdAt,
+      'lastSeenAt': this.lastSeenAt,
     };
   }
 
@@ -115,6 +131,8 @@ class User {
       name: map['name'] as String,
       fcmToken: map['fcmToken'] as String,
       blocServiceId: map['blocServiceId'] as String,
+      createdAt: map['createdAt'] as int,
+      lastSeenAt: map['lastSeenAt'] as int,
     );
   }
 

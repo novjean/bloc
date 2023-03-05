@@ -13,12 +13,14 @@ class UserPreferences {
       id: '',
       username: '',
       email: '',
-      imageUrl:'',
+      imageUrl: '',
       clearanceLevel: 0,
       phoneNumber: 0,
       name: '',
       fcmToken: '',
-      blocServiceId: '');
+      blocServiceId: '',
+      createdAt: 0,
+      lastSeenAt: 0);
 
   static Future init() async =>
       _preferences = await SharedPreferences.getInstance();
@@ -45,14 +47,16 @@ class UserPreferences {
         phoneNumber: 0,
         name: '',
         fcmToken: '',
-        blocServiceId: ''));
+        blocServiceId: '',
+        createdAt: 0,
+        lastSeenAt: 0));
   }
 
   static void setUserFcmToken(String token) {
     myUser.fcmToken = token;
   }
 
-  static bool isUserLoggedIn(){
+  static bool isUserLoggedIn() {
     return myUser.phoneNumber == 911234567890 ? false : true;
   }
 }

@@ -127,7 +127,9 @@ class Dummy {
         imageUrl: '',
         name: '',
         phoneNumber: 0,
-        username: '');
+        username: '',
+        createdAt: 0,
+        lastSeenAt: 0);
 
     return dummyUser;
   }
@@ -175,5 +177,4 @@ class Dummy {
 
     return dummyParty;
   }
-
 }
