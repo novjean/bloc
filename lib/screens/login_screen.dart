@@ -5,6 +5,7 @@ import 'package:bloc/screens/ui/splash_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:intl_phone_field/country_picker_dialog.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 
 import '../db/shared_preferences/user_preferences.dart';
@@ -110,16 +111,29 @@ class _LoginScreenState extends State<LoginScreen> {
           child: Container(
             margin: const EdgeInsets.only(top: 0, right: 20, left: 20),
             child: IntlPhoneField(
-              style: TextStyle(color: Theme.of(context).primaryColor),
+              style: TextStyle(
+                  color: Theme.of(context).primaryColor, fontSize: 20),
               decoration: InputDecoration(
-                labelText: 'phone number',
-                labelStyle: TextStyle(color: Theme.of(context).primaryColor),
-                border: OutlineInputBorder(
-                  borderSide: BorderSide(),
-                ),
-              ),
+                  labelText: 'phone number',
+                  labelStyle: TextStyle(color: Theme.of(context).primaryColor),
+                  hintStyle: TextStyle(color: Theme.of(context).primaryColor),
+                  counterStyle:
+                      TextStyle(color: Theme.of(context).primaryColor),
+                  border: OutlineInputBorder(
+                    borderSide:
+                        BorderSide(color: Theme.of(context).primaryColor),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    // width: 0.0 produces a thin "hairline" border
+                    borderSide: BorderSide(
+                        color: Theme.of(context).primaryColor, width: 0.0),
+                  )),
               controller: _controller,
               initialCountryCode: 'IN',
+              dropdownTextStyle: TextStyle(
+                  color: Theme.of(context).primaryColor, fontSize: 20),
+              pickerDialogStyle: PickerDialogStyle(
+                  backgroundColor: Theme.of(context).primaryColor),
               onChanged: (phone) {
                 print(phone.completeNumber);
                 completePhoneNumber = phone.completeNumber;
