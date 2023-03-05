@@ -13,7 +13,7 @@ import '../db/shared_preferences/user_preferences.dart';
 import '../helpers/dummy.dart';
 import '../helpers/firestore_helper.dart';
 import '../helpers/token_monitor.dart';
-import '../widgets/home/new_bloc_slide_item.dart';
+import '../widgets/home/bloc_slide_item.dart';
 import '../widgets/parties/party_home_item.dart';
 import '../widgets/search_card.dart';
 import '../widgets/store_badge_item.dart';
@@ -200,7 +200,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   //   bloc: bloc,
                   //   rating: '5',
                   // )
-                  NewBlocSlideItem(
+                  BlocSlideItem(
                 bloc: bloc,
               ),
             );

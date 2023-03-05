@@ -101,8 +101,7 @@ class _LoginScreenState extends State<LoginScreen> {
             decoration: const BoxDecoration(
               image: DecorationImage(
                   image: AssetImage("assets/icons/logo-adaptive.png"),
-                  fit: BoxFit.fitHeight
-                  ),
+                  fit: BoxFit.fitHeight),
             ),
           ),
           flex: 3,
@@ -132,32 +131,36 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
           flex: 1,
         ),
-        isIOS? Flexible(
-          child: Column(
-            children: [
-              Spacer(),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  InkWell(
-                    onTap: () {
-                      Toaster.longToast('welcome to bloc');
-                      _verifyUsingSkipPhone();
-                    },
-                    child: new Padding(
-                      padding: new EdgeInsets.symmetric(horizontal: 20),
-                      child: new Text("skip for now",
-                          style: TextStyle(
-                            color: Theme.of(context).primaryColor,
-                          )),
+        isIOS
+            ? Flexible(
+                child: Column(
+                  children: [
+                    const Spacer(),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        InkWell(
+                          onTap: () {
+                            Toaster.longToast('welcome to bloc');
+                            _verifyUsingSkipPhone();
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 20),
+                            child: Text(
+                              "skip for now",
+                              style: TextStyle(
+                                color: Theme.of(context).primaryColor,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-          flex: 1,
-        ) : const SizedBox(),
+                  ],
+                ),
+                flex: 1,
+              )
+            : const SizedBox(),
         Flexible(
           child: Container(
             margin: const EdgeInsets.only(left: 20, right: 20, bottom: 40),
@@ -182,7 +185,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   Toaster.longToast('please enter a valid phone number');
                 }
               },
-              child: Text(
+              child: const Text(
                 'next',
                 style: TextStyle(fontSize: 20),
               ),
