@@ -108,16 +108,23 @@ class AppDrawer extends StatelessWidget {
                 )
               : const SizedBox(height: 0),
           const Spacer(),
-          const Divider(),
-          ListTile(
-            leading: const Icon(Icons.settings),
-            title: Text('account'),
-            onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) => AccountScreen()),
-              );
-            },
-          ),
+          UserPreferences.isUserLoggedIn()
+              ? Column(
+                  children: [
+                    const Divider(),
+                    ListTile(
+                      leading: const Icon(Icons.settings),
+                      title: const Text('account'),
+                      onTap: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                              builder: (context) => AccountScreen()),
+                        );
+                      },
+                    ),
+                  ],
+                )
+              : const SizedBox(),
           const Divider(),
           ListTile(
             leading: const Icon(Icons.exit_to_app),
