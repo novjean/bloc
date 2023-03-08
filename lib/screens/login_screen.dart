@@ -147,39 +147,35 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
           flex: 1,
         ),
-        isIOS
-            ? !kIsWeb
-                ? Flexible(
-                    child: Column(
-                      children: [
-                        const Spacer(),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            InkWell(
-                              onTap: () {
-                                Toaster.longToast('welcome to bloc');
-                                _verifyUsingSkipPhone();
-                              },
-                              child: Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 20),
-                                child: Text(
-                                  "skip for now",
-                                  style: TextStyle(
-                                    color: Theme.of(context).primaryColor,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
+        Flexible(
+          child: Column(
+            children: [
+              const Spacer(),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  InkWell(
+                    onTap: () {
+                      Toaster.longToast('welcome to bloc');
+                      _verifyUsingSkipPhone();
+                    },
+                    child: Padding(
+                      padding:
+                      const EdgeInsets.symmetric(horizontal: 20),
+                      child: Text(
+                        "skip for now",
+                        style: TextStyle(
+                          color: Theme.of(context).primaryColor,
                         ),
-                      ],
+                      ),
                     ),
-                    flex: 1,
-                  )
-                : const SizedBox()
-            : const SizedBox(),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          flex: 1,
+        ),
         Flexible(
           child: Container(
             margin: const EdgeInsets.only(left: 20, right: 20, bottom: 40),
