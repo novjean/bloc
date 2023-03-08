@@ -83,6 +83,7 @@ class _ManageProductsScreenState extends State<ManageProductsScreen> {
                   title: _options[index].toLowerCase(),
                   height: containerHeight,
                   width: MediaQuery.of(context).size.width / 2,
+                  color: Theme.of(context).primaryColor,
                 ),
                 onTap: () {
                   setState(() {

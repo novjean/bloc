@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../db/entity/party.dart';
+import '../../utils/network_utils.dart';
 
 class PartyItem extends StatelessWidget {
   final Party party;
@@ -12,15 +13,6 @@ class PartyItem extends StatelessWidget {
   int addCount = 1;
 
   PartyItem({required this.party, required this.imageHeight});
-
-  Future<void> _launchInBrowser(Uri url) async {
-    if (!await launchUrl(
-      url,
-      mode: LaunchMode.externalApplication,
-    )) {
-      throw Exception('could not launch $url');
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -85,7 +77,7 @@ class PartyItem extends StatelessWidget {
                         text: 'listen',
                         onClicked: () {
                           final uri = Uri.parse(party.listenUrl);
-                          _launchInBrowser(uri);
+                          NetworkUtils.launchInBrowser(uri);
                         }) :const SizedBox(),
                     const SizedBox(width: 10),
 
@@ -94,7 +86,7 @@ class PartyItem extends StatelessWidget {
                         text: 'social',
                         onClicked: () {
                           final uri = Uri.parse(party.instagramUrl);
-                          _launchInBrowser(uri);
+                          NetworkUtils.launchInBrowser(uri);
                         }) :const SizedBox(),
                     const SizedBox(width: 10),
                     party.ticketUrl.isNotEmpty?
@@ -102,7 +94,7 @@ class PartyItem extends StatelessWidget {
                         text: 'tickets',
                         onClicked: () {
                           final uri = Uri.parse(party.ticketUrl);
-                          _launchInBrowser(uri);
+                          NetworkUtils.launchInBrowser(uri);
                         }) : const SizedBox(),
                     const SizedBox(width: 15),
                   ],

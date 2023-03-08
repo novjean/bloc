@@ -4,9 +4,10 @@ class SizedListViewBlock extends StatelessWidget {
   final String title;
   final double height;
   final double width;
+  final Color? color;
 
   SizedListViewBlock(
-      {required this.title, required this.height, required this.width});
+      {required this.title, required this.height, required this.width, required this.color});
 
   @override
   Widget build(BuildContext context) {
@@ -61,7 +62,7 @@ class SizedListViewBlock extends StatelessWidget {
                   child: Text(
                     title,
                     style: TextStyle(
-                      color: Colors.black54,
+                      color: color,
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),

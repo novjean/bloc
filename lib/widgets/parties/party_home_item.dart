@@ -1,6 +1,6 @@
 import 'package:bloc/utils/date_time_utils.dart';
+import 'package:bloc/utils/network_utils.dart';
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../../db/entity/party.dart';
 
@@ -10,15 +10,6 @@ class PartyHomeItem extends StatelessWidget {
   int addCount = 1;
 
   PartyHomeItem({required this.party});
-
-  Future<void> _launchInBrowser(Uri url) async {
-    if (!await launchUrl(
-      url,
-      mode: LaunchMode.externalApplication,
-    )) {
-      throw Exception('could not launch $url');
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -90,7 +81,7 @@ class PartyHomeItem extends StatelessWidget {
                                     ),
                                     onPressed: () {
                                       final uri = Uri.parse(party.ticketUrl);
-                                      _launchInBrowser(uri);
+                                      NetworkUtils.launchInBrowser(uri);
                                     },
                                     child: Text(
                                       'tickets',
@@ -155,7 +146,7 @@ class PartyHomeItem extends StatelessWidget {
         ),
         onPressed: () {
           final uri = Uri.parse(isListen?party.listenUrl:party.instagramUrl);
-          _launchInBrowser(uri);
+          NetworkUtils.launchInBrowser(uri);
         },
         child: Text(
           isListen? 'listen':'social',

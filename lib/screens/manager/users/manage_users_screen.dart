@@ -107,6 +107,7 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
                   title: mUserLevels[index].name,
                   height: containerHeight,
                   width: MediaQuery.of(context).size.width / 2.5,
+                  color: Theme.of(context).primaryColor,
                 ),
                 onTap: () {
                   setState(() {

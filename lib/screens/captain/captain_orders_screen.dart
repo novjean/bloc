@@ -105,6 +105,7 @@ class _CaptainOrdersScreenState extends State<CaptainOrdersScreen> {
                   title: mOptions[index],
                   height: containerHeight,
                   width: MediaQuery.of(context).size.width / 3,
+                  color: Theme.of(context).primaryColor,
                 ),
                 onTap: () {
                   setState(() {
@@ -133,6 +134,7 @@ class _CaptainOrdersScreenState extends State<CaptainOrdersScreen> {
                   title: _options[index],
                   height: containerHeight,
                   width: MediaQuery.of(context).size.width / 2,
+                  color: Theme.of(context).primaryColor,
                 ),
                 onTap: () {
                   setState(() {

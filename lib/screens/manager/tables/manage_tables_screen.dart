@@ -87,6 +87,7 @@ class _ManageTablesScreenState extends State<ManageTablesScreen> {
                   title: _options[index],
                   height: containerHeight,
                   width: MediaQuery.of(context).size.width / 2,
+                  color: Theme.of(context).primaryColor,
                 ),
                 onTap: () {
                   setState(() {

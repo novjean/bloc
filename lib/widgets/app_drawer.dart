@@ -6,6 +6,7 @@ import 'package:bloc/utils/constants.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+import '../screens/account_screen.dart';
 import '../screens/captain/captain_main_screen.dart';
 import '../screens/login_screen.dart';
 import '../screens/user/order_history_screen.dart';
@@ -107,6 +108,16 @@ class AppDrawer extends StatelessWidget {
                 )
               : const SizedBox(height: 0),
           const Spacer(),
+          const Divider(),
+          ListTile(
+            leading: const Icon(Icons.settings),
+            title: Text('account'),
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) => AccountScreen()),
+              );
+            },
+          ),
           const Divider(),
           ListTile(
             leading: const Icon(Icons.exit_to_app),
