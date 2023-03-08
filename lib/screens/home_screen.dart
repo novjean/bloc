@@ -78,7 +78,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     int timeNow = Timestamp.now().millisecondsSinceEpoch;
     FirestoreHelper.pullUpcomingPartyByEndTime(timeNow).then((res) {
-      print("Successfully pulled in parties.");
+      print("successfully pulled in parties.");
 
       if (res.docs.isNotEmpty) {
         try {
@@ -268,7 +268,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   padding: const EdgeInsets.only(right: 10),
                   margin: const EdgeInsets.only(bottom: 10),
                   child: DarkButtonWidget(
-                    text: 'click for password',
+                    text: 'copy password',
                     onClicked: () {
                       Clipboard.setData(
                               ClipboardData(text: mGuestWifi.password))
@@ -421,7 +421,7 @@ class _HomeScreenState extends State<HomeScreen> {
       children: <Widget>[
         // NumbersWidget(),
         ButtonWidget(
-            text: 'Book A Table',
+            text: 'book a table',
             onClicked: () async {
               await Navigator.of(context).push(
                 MaterialPageRoute(

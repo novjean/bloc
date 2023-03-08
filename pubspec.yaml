@@ -45,7 +45,7 @@ dependencies:
   logger: ^1.1.0
 
   # formatting
-  intl: ^0.18.0
+  in tl: ^0.17.0
 
   # ui
   fluttertoast: ^8.1.2
@@ -74,6 +74,7 @@ dependencies:
   intl_phone_field: ^3.1.0
   firebase_crashlytics: ^3.0.16
   delayed_display: ^2.0.0
+  firebase_auth_web: ^5.2.9
 
 #  location: ^4.3.0
 #  google_maps_flutter: ^0.5.17
