@@ -5,6 +5,7 @@ import 'package:bloc/db/entity/user.dart' as blocUser;
 
 import 'package:bloc/screens/ui/splash_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:delayed_display/delayed_display.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl_phone_field/country_picker_dialog.dart';
@@ -158,16 +159,19 @@ class _LoginScreenState extends State<LoginScreen> {
                 children: [
                   InkWell(
                     onTap: () {
-                      Toaster.longToast('welcome to bloc');
+                      Toaster.longToast('loading menu and events');
                       _verifyUsingSkipPhone();
                     },
                     child: Padding(
                       padding:
                       const EdgeInsets.symmetric(horizontal: 20),
-                      child: Text(
-                        "skip for now",
-                        style: TextStyle(
-                          color: Theme.of(context).primaryColor,
+                      child: DelayedDisplay(
+                        delay: const Duration(seconds: 3),
+                        child: Text(
+                          "skip for now",
+                          style: TextStyle(
+                            color: Theme.of(context).primaryColor,
+                          ),
                         ),
                       ),
                     ),
