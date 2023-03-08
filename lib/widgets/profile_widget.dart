@@ -21,7 +21,7 @@ class ProfileWidget extends StatelessWidget {
     return Center(
       child: Stack(
         children: [
-          buildImage(),
+          imagePath.isNotEmpty? buildImage(context) : displayDefaultImage(context),
           Positioned(
             bottom: 0,
             right: 4,
@@ -32,7 +32,7 @@ class ProfileWidget extends StatelessWidget {
     );
   }
 
-  Widget buildImage() {
+  Widget buildImage(BuildContext context) {
     final image = imagePath.contains('https://')
         ? NetworkImage(imagePath)
         : FileImage(File(imagePath));
@@ -57,10 +57,13 @@ class ProfileWidget extends StatelessWidget {
     child: buildCircle(
       color: color,
       all: 8,
-      child: Icon(
-        isEdit ? Icons.add_a_photo : Icons.edit,
-        color: Colors.white,
-        size: 20,
+      child: GestureDetector(
+        onTap: onClicked,
+        child: Icon(
+          isEdit ? Icons.add_a_photo : Icons.edit,
+          color: Colors.white,
+          size: 20,
+        ),
       ),
     ),
   );
@@ -77,4 +80,21 @@ class ProfileWidget extends StatelessWidget {
           child: child,
         ),
       );
+
+  displayDefaultImage(BuildContext context) {
+    final image = AssetImage('assets/images/default_image.png');
+
+    return ClipOval(
+      child: Material(
+        color: Colors.transparent,
+        child: Ink.image(
+          image: image as ImageProvider,
+          fit: BoxFit.cover,
+          width: 128,
+          height: 128,
+          child: InkWell(onTap: onClicked),
+        ),
+      ),
+    );
+  }
 }

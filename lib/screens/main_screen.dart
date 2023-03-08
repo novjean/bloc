@@ -155,40 +155,40 @@ class _MainScreenState extends State<MainScreen> {
       appBar: AppBar(
         title: const Text('bloc'),
         backgroundColor: Theme.of(context).primaryColor,
-        actions: [
-          DropdownButton(
-            dropdownColor: Theme.of(context).primaryColorLight,
-            underline: Container(),
-            icon: Icon(Icons.more_vert,
-                color: Theme.of(context).primaryIconTheme.color),
-            items: [
-              DropdownMenuItem(
-                child: Container(
-                  child: Row(
-                    children: [
-                      Icon(Icons.exit_to_app),
-                      SizedBox(
-                        width: 8,
-                      ),
-                      Text(UserPreferences.isUserLoggedIn() ? 'logout' : 'login'),
-                    ],
-                  ),
-                ),
-                value: UserPreferences.isUserLoggedIn() ? 'logout' : 'login',
-              ),
-            ],
-            onChanged: (itemIdentifier) {
-              if (itemIdentifier == 'logout' || itemIdentifier == 'login') {
-                UserPreferences.resetUser();
-
-                FirebaseAuth.instance.signOut();
-                Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(builder: (context) => LoginScreen()),
-                );
-              }
-            },
-          )
-        ],
+        // actions: [
+        //   DropdownButton(
+        //     dropdownColor: Theme.of(context).primaryColorLight,
+        //     underline: Container(),
+        //     icon: Icon(Icons.more_vert,
+        //         color: Theme.of(context).primaryIconTheme.color),
+        //     items: [
+        //       DropdownMenuItem(
+        //         child: Container(
+        //           child: Row(
+        //             children: [
+        //               Icon(Icons.exit_to_app),
+        //               SizedBox(
+        //                 width: 8,
+        //               ),
+        //               Text(UserPreferences.isUserLoggedIn() ? 'logout' : 'login'),
+        //             ],
+        //           ),
+        //         ),
+        //         value: UserPreferences.isUserLoggedIn() ? 'logout' : 'login',
+        //       ),
+        //     ],
+        //     onChanged: (itemIdentifier) {
+        //       if (itemIdentifier == 'logout' || itemIdentifier == 'login') {
+        //         UserPreferences.resetUser();
+        //
+        //         FirebaseAuth.instance.signOut();
+        //         Navigator.of(context).pushReplacement(
+        //           MaterialPageRoute(builder: (context) => LoginScreen()),
+        //         );
+        //       }
+        //     },
+        //   )
+        // ],
       ),
       drawer: AppDrawer(),
       body: PageView(
