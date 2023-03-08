@@ -1,4 +1,5 @@
 import 'package:bloc/db/entity/user.dart' as blocUser;
+import 'package:bloc/helpers/dummy.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -6,6 +7,7 @@ import 'package:pinput/pinput.dart';
 
 import '../db/shared_preferences/user_preferences.dart';
 import '../helpers/firestore_helper.dart';
+import '../helpers/fresh.dart';
 import '../main.dart';
 import '../utils/string_utils.dart';
 import '../widgets/ui/toaster.dart';
@@ -240,22 +242,9 @@ class _OTPVerifyState extends State<OTPVerify> {
                           print(
                               'user is not already registered in bloc, registering...');
 
-                          int millis = Timestamp.now().millisecondsSinceEpoch;
-
-                          blocUser.User registeredUser = blocUser.User(
-                            id: value.user!.uid,
-                            name: '',
-                            clearanceLevel: 1,
-                            phoneNumber:
-                                StringUtils.getInt(value.user!.phoneNumber!),
-                            fcmToken: '',
-                            email: '',
-                            imageUrl: '',
-                            username: '',
-                            blocServiceId: '',
-                            createdAt: millis,
-                            lastSeenAt: millis
-                          );
+                          blocUser.User registeredUser = Dummy.getDummyUser();
+                          registeredUser.id = value.user!.uid;
+                          registeredUser.phoneNumber = StringUtils.getInt(value.user!.phoneNumber!);
 
                           Navigator.of(context).pushReplacement(
                               MaterialPageRoute(
@@ -269,8 +258,7 @@ class _OTPVerifyState extends State<OTPVerify> {
                           Map<String, dynamic> data =
                               document.data()! as Map<String, dynamic>;
 
-                          final blocUser.User user =
-                              blocUser.User.fromMap(data);
+                          final blocUser.User user = Fresh.freshUserMap(data, true);
                           UserPreferences.setUser(user);
 
                           Navigator.of(context).pushReplacement(

@@ -946,12 +946,12 @@ class FirestoreHelper {
   //       .set(user.toMap());
   // }
 
-  static insertPhoneUser(blocUser.User user) async {
-    await FirebaseFirestore.instance
-        .collection(USERS)
-        .doc(user.id)
-        .set(user.toMap());
-  }
+  // static insertPhoneUser(blocUser.User user) async {
+  //   await FirebaseFirestore.instance
+  //       .collection(USERS)
+  //       .doc(user.id)
+  //       .set(user.toMap());
+  // }
 
   static Future<QuerySnapshot<Map<String, dynamic>>> pullUser(String userId) {
     return FirebaseFirestore.instance
@@ -984,14 +984,14 @@ class FirestoreHelper {
         .snapshots();
   }
 
-  static Stream<QuerySnapshot<Object?>> getUsersInRange(
-      int lowLevel, int highLevel) {
-    return FirebaseFirestore.instance
-        .collection(USERS)
-        .where('clearanceLevel', whereIn: [lowLevel, highLevel])
-        // .orderBy('sequence', descending: false)
-        .snapshots();
-  }
+  // static Stream<QuerySnapshot<Object?>> getUsersInRange(
+  //     int lowLevel, int highLevel) {
+  //   return FirebaseFirestore.instance
+  //       .collection(USERS)
+  //       .where('clearanceLevel', whereIn: [lowLevel, highLevel])
+  //       // .orderBy('sequence', descending: false)
+  //       .snapshots();
+  // }
 
   static CollectionReference<Object?> getUsersCollection() {
     return FirebaseFirestore.instance.collection(USERS);

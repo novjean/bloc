@@ -9,7 +9,9 @@ import 'package:intl_phone_field/country_picker_dialog.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 
 import '../db/shared_preferences/user_preferences.dart';
+import '../helpers/dummy.dart';
 import '../helpers/firestore_helper.dart';
+import '../helpers/fresh.dart';
 import '../main.dart';
 import '../utils/string_utils.dart';
 import '../widgets/ui/toaster.dart';
@@ -76,12 +78,12 @@ class _LoginScreenState extends State<LoginScreen> {
                   if (snapshot.connectionState == ConnectionState.done) {
                     Map<String, dynamic> data =
                         snapshot.data!.data() as Map<String, dynamic>;
-                    final blocUser.User user = blocUser.User.fromMap(data);
+                    final blocUser.User user = Fresh.freshUserMap(data, true);
                     UserPreferences.setUser(user);
 
                     return MainScreen(user: user);
                   }
-                  return Center(child: Text("user loading..."));
+                  return const Center(child: Text("user loading..."));
                 },
               );
             }
@@ -270,21 +272,9 @@ class _LoginScreenState extends State<LoginScreen> {
             if (res.docs.isEmpty) {
               print('user is not already registered in bloc, registering...');
 
-              int millis = Timestamp.now().millisecondsSinceEpoch;
-
-              blocUser.User registeredUser = blocUser.User(
-                id: value.user!.uid,
-                name: '',
-                clearanceLevel: 1,
-                phoneNumber: StringUtils.getInt(value.user!.phoneNumber!),
-                fcmToken: '',
-                email: '',
-                imageUrl: '',
-                username: '',
-                blocServiceId: '',
-                createdAt: millis,
-                lastSeenAt: millis
-              );
+              blocUser.User registeredUser = Dummy.getDummyUser();
+              registeredUser.id = value.user!.uid;
+              registeredUser.phoneNumber = StringUtils.getInt(value.user!.phoneNumber!);
 
               Navigator.of(context).pushReplacement(MaterialPageRoute(
                   builder: (context) => MainScreen(user: registeredUser)));
@@ -295,7 +285,7 @@ class _LoginScreenState extends State<LoginScreen> {
               Map<String, dynamic> data =
                   document.data()! as Map<String, dynamic>;
 
-              final blocUser.User user = blocUser.User.fromMap(data);
+              final blocUser.User user = Fresh.freshUserMap(data, true);
               UserPreferences.setUser(user);
 
               Navigator.of(context).pushReplacement(MaterialPageRoute(

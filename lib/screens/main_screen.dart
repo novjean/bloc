@@ -13,6 +13,7 @@ import 'package:logger/logger.dart';
 import '../db/shared_preferences/user_preferences.dart';
 import '../../db/entity/user.dart' as blocUser;
 import '../helpers/firestore_helper.dart';
+import '../helpers/fresh.dart';
 import '../main.dart';
 import 'home_screen.dart';
 import 'parties/party_screen.dart';
@@ -59,11 +60,10 @@ class _MainScreenState extends State<MainScreen> {
 
         if (res.docs.isEmpty) {
           // register the user, and we might need to get more info about the user
-          FirestoreHelper.insertPhoneUser(widget.user);
+          FirestoreHelper.pushUser(widget.user);
           print(widget.user.phoneNumber.toString() +
               ' is now registered with bloc!');
 
-          // BlocRepository.insertUser(widget.dao, widget.user);
           UserPreferences.setUser(widget.user);
 
           // lets grab more user details
@@ -79,7 +79,7 @@ class _MainScreenState extends State<MainScreen> {
             DocumentSnapshot document = res.docs[i];
             Map<String, dynamic> data =
                 document.data()! as Map<String, dynamic>;
-            final blocUser.User user = blocUser.User.fromMap(data);
+            final blocUser.User user = Fresh.freshUserMap(data, true);
             users.add(user);
 
             if (i == res.docs.length - 1) {

@@ -1,21 +1,21 @@
 import 'dart:io';
 
 import 'package:bloc/widgets/ui/toaster.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 
 import '../../db/entity/user.dart' as blocUser;
+import '../../db/entity/user.dart';
 import '../../db/shared_preferences/user_preferences.dart';
 import '../../helpers/firestorage_helper.dart';
 import '../../helpers/firestore_helper.dart';
+import '../../helpers/fresh.dart';
 import '../../utils/string_utils.dart';
 import '../../widgets/profile_widget.dart';
 import '../../widgets/ui/button_widget.dart';
 import '../../widgets/ui/textfield_widget.dart';
-import '../login_screen.dart';
 
 class ProfileAddEditRegisterPage extends StatefulWidget {
   blocUser.User user;
@@ -122,6 +122,7 @@ class _ProfileAddEditRegisterPageState
           onClicked: () {
             // we should have some validation here
             if (isDataValid()) {
+
               if (isPhotoChanged) {
                 widget.user = widget.user.copyWith(imageUrl: newImageUrl);
                 if (oldImageUrl.isNotEmpty) {
@@ -129,8 +130,10 @@ class _ProfileAddEditRegisterPageState
                 }
               }
 
-              UserPreferences.setUser(widget.user);
-              FirestoreHelper.pushUser(widget.user);
+              User freshUser = Fresh.freshUser(widget.user);
+
+              UserPreferences.setUser(freshUser);
+              FirestoreHelper.pushUser(freshUser);
               Navigator.of(context).pop();
             } else {
               print('user cannot be entered as data is incomplete');

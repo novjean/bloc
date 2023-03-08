@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 
 import '../db/entity/user.dart';
 import '../helpers/dummy.dart';
+import '../helpers/fresh.dart';
 
 class SeatItem extends StatefulWidget {
   final Seat seat;
@@ -30,7 +31,7 @@ class _SeatItemState extends State<SeatItem> {
           DocumentSnapshot document = res.docs[0];
           Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
 
-          final User _user = User.fromMap(data);
+          final User _user = Fresh.freshUserMap(data, true);
 
           setState(() {
             user = _user;

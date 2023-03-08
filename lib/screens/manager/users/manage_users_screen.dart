@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 
 import '../../../db/entity/user.dart';
 import '../../../helpers/firestore_helper.dart';
+import '../../../helpers/fresh.dart';
 import '../../../widgets/manager/user_item.dart';
 import '../../../widgets/ui/sized_listview_block.dart';
 
@@ -141,7 +142,7 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
             DocumentSnapshot document = snapshot.data!.docs[i];
             Map<String, dynamic> data =
                 document.data()! as Map<String, dynamic>;
-            final User _user = User.fromMap(data);
+            final User _user = Fresh.freshUserMap(data, false);
             _users.add(_user);
 
             if (i == snapshot.data!.docs.length - 1) {

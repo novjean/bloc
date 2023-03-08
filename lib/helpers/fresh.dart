@@ -1,4 +1,7 @@
+import 'package:bloc/helpers/firestore_helper.dart';
+
 import '../db/entity/party.dart';
+import '../db/entity/user.dart';
 import '../db/shared_preferences/user_preferences.dart';
 import 'dummy.dart';
 
@@ -6,7 +9,7 @@ class Fresh {
   static Party freshParty(Party party) {
     String blocId;
 
-    if(party.blocServiceId.isNotEmpty){
+    if (party.blocServiceId.isNotEmpty) {
       blocId = party.blocServiceId;
     } else {
       blocId = UserPreferences.myUser.blocServiceId;
@@ -86,5 +89,146 @@ class Fresh {
 
     return freshParty;
   }
+
+  static User freshUserMap(Map<String, dynamic> map, bool shouldUpdate) {
+    User user = Dummy.getDummyUser();
+    bool shouldPushUser = false;
+
+    try {
+      user = user.copyWith(id: map['id'] as String);
+    } catch (err) {
+      print('user id not exist');
+    }
+    try {
+      user = user.copyWith(username: map['username'] as String);
+    } catch (err) {
+      print('user username not exist for user id: ' + user.id);
+      shouldPushUser = true;
+    }
+    try {
+      user = user.copyWith(email: map['email'] as String);
+    } catch (err) {
+      print('user email not exist for user id: ' + user.id);
+      shouldPushUser = true;
+    }
+    try {
+      user = user.copyWith(imageUrl: map['imageUrl'] as String);
+    } catch (err) {
+      print('user imageUrl not exist for user id: ' + user.id);
+      shouldPushUser = true;
+    }
+    try {
+      user = user.copyWith(clearanceLevel: map['clearanceLevel'] as int);
+    } catch (err) {
+      print('user clearanceLevel not exist for user id: ' + user.id);
+      shouldPushUser = true;
+    }
+    try {
+      user = user.copyWith(phoneNumber: map['phoneNumber'] as int);
+    } catch (err) {
+      print('user phoneNumber not exist for user id: ' + user.id);
+      shouldPushUser = true;
+    }
+    try {
+      user = user.copyWith(name: map['name'] as String);
+    } catch (err) {
+      print('user name not exist for user id: ' + user.id);
+      shouldPushUser = true;
+    }
+    try {
+      user = user.copyWith(fcmToken: map['fcmToken'] as String);
+    } catch (err) {
+      print('user fcmToken not exist for user id: ' + user.id);
+      shouldPushUser = true;
+    }
+    try {
+      user = user.copyWith(blocServiceId: map['blocServiceId'] as String);
+    } catch (err) {
+      print('user blocServiceId not exist for user id: ' + user.id);
+      shouldPushUser = true;
+    }
+    try {
+      user = user.copyWith(createdAt: map['createdAt'] as int);
+    } catch (err) {
+      print('user createdAt not exist for user id: ' + user.id);
+      shouldPushUser = true;
+    }
+    try {
+      user = user.copyWith(lastSeenAt: map['lastSeenAt'] as int);
+    } catch (err) {
+      print('user lastSeenAt not exist for user id: ' + user.id);
+      shouldPushUser = true;
+    }
+
+    if(shouldPushUser && shouldUpdate){
+      print('updating user ' + user.id);
+      FirestoreHelper.pushUser(user);
+    }
+
+    return user;
+  }
+
+  static User freshUser(User user) {
+    User freshUser = Dummy.getDummyUser();
+
+    try {
+      freshUser = freshUser.copyWith(id: user.id);
+    } catch (err) {
+      print('user id not exist');
+    }
+    try {
+      freshUser = freshUser.copyWith(username: user.username);
+    } catch (err) {
+      print('user username not exist for user id: ' + user.id);
+    }
+    try {
+      freshUser = freshUser.copyWith(email: user.email);
+    } catch (err) {
+      print('user email not exist for user id: ' + user.id);
+    }
+    try {
+      freshUser = freshUser.copyWith(imageUrl: user.imageUrl);
+    } catch (err) {
+      print('user imageUrl not exist for user id: ' + user.id);
+    }
+    try {
+      freshUser = freshUser.copyWith(clearanceLevel: user.clearanceLevel);
+    } catch (err) {
+      print('user clearanceLevel not exist for user id: ' + user.id);
+    }
+    try {
+      freshUser = freshUser.copyWith(phoneNumber: user.phoneNumber);
+    } catch (err) {
+      print('user phoneNumber not exist for user id: ' + user.id);
+    }
+    try {
+      freshUser = freshUser.copyWith(name: user.name);
+    } catch (err) {
+      print('name not exist for user id: ' + user.id);
+    }
+    try {
+      freshUser = freshUser.copyWith(fcmToken: user.fcmToken);
+    } catch (err) {
+      print('user fcmToken not exist for user id: ' + user.id);
+    }
+    try {
+      freshUser = freshUser.copyWith(blocServiceId: user.blocServiceId);
+    } catch (err) {
+      print('user blocServiceId not exist for user id: ' + user.id);
+    }
+    try {
+      freshUser = freshUser.copyWith(createdAt: user.createdAt);
+    } catch (err) {
+      print('user createdAt not exist for user id: ' + user.id);
+    }
+    try {
+      freshUser = freshUser.copyWith(lastSeenAt: user.lastSeenAt);
+    } catch (err) {
+      print('user lastSeenAt not exist for user id: ' + user.id);
+    }
+
+    return freshUser;
+  }
+
 
 }

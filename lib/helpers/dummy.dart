@@ -118,6 +118,8 @@ class Dummy {
   }
 
   static getDummyUser() {
+    int millis = Timestamp.now().millisecondsSinceEpoch;
+
     User dummyUser = User(
         blocServiceId: '',
         clearanceLevel: 1,
@@ -128,8 +130,8 @@ class Dummy {
         name: '',
         phoneNumber: 0,
         username: '',
-        createdAt: 0,
-        lastSeenAt: 0);
+        createdAt: millis,
+        lastSeenAt: millis);
 
     return dummyUser;
   }

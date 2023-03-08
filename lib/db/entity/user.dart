@@ -1,16 +1,19 @@
 
+import '../../helpers/dummy.dart';
+import '../../helpers/fresh.dart';
+
 class User {
-  final String id;
+  String id;
   final String username;
   final String email;
   final String imageUrl;
   final int clearanceLevel;
-  final int phoneNumber;
+  int phoneNumber;
   final String name;
   String fcmToken;
   final String blocServiceId;
-  final int createdAt;
-  final int lastSeenAt;
+  int createdAt;
+  int lastSeenAt;
 
 //<editor-fold desc="Data Methods">
 

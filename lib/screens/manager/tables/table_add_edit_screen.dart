@@ -9,6 +9,7 @@ import '../../../db/entity/seat.dart';
 import '../../../db/entity/user.dart';
 import '../../../helpers/dummy.dart';
 import '../../../helpers/firestore_helper.dart';
+import '../../../helpers/fresh.dart';
 import '../../../utils/constants.dart';
 import '../../../widgets/ui/button_widget.dart';
 import 'manage_seats_screen.dart';
@@ -60,7 +61,7 @@ class _TableAddEditScreenState extends State<TableAddEditScreen> {
         for (int i = 0; i < res.docs.length; i++) {
           DocumentSnapshot document = res.docs[i];
           Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-          final User user = User.fromMap(data);
+          final User user = Fresh.freshUserMap(data, false);
 
           if (i == 0) {
             _sUserCaptainId = user.id;
