@@ -499,9 +499,9 @@ class FirestoreHelper {
       int timeNow, bool isActive) {
     return FirebaseFirestore.instance
         .collection(FirestoreHelper.PARTIES)
-        .where('startTime', isGreaterThan: timeNow)
+        .where('endTime', isGreaterThan: timeNow)
         .where('isActive', isEqualTo: isActive)
-        .orderBy('startTime', descending: false)
+        .orderBy('endTime', descending: false)
         .get();
   }
 
@@ -512,6 +512,17 @@ class FirestoreHelper {
         .where('startTime', isGreaterThan: timeNow)
         .where('isActive', isEqualTo: true)
         .orderBy('startTime', descending: false)
+        .limit(1)
+        .get();
+  }
+
+  static Future<QuerySnapshot<Map<String, dynamic>>> pullUpcomingPartyByEndTime(
+      int timeNow) {
+    return FirebaseFirestore.instance
+        .collection(FirestoreHelper.PARTIES)
+        .where('endTime', isGreaterThan: timeNow)
+        .where('isActive', isEqualTo: true)
+        .orderBy('endTime', descending: false)
         .limit(1)
         .get();
   }

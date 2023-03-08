@@ -22,7 +22,7 @@ class _PartyScreenState extends State<PartyScreen> {
 
     int timeNow = Timestamp.now().millisecondsSinceEpoch;
 
-    FirestoreHelper.pullParties(timeNow, true).then((res) {
+    FirestoreHelper.pullPartiesByEndTime(timeNow, true).then((res) {
       print("successfully pulled in parties");
 
       if (res.docs.isNotEmpty) {

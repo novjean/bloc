@@ -77,7 +77,7 @@ class _HomeScreenState extends State<HomeScreen> {
     });
 
     int timeNow = Timestamp.now().millisecondsSinceEpoch;
-    FirestoreHelper.pullUpcomingParty(timeNow).then((res) {
+    FirestoreHelper.pullUpcomingPartyByEndTime(timeNow).then((res) {
       print("Successfully pulled in parties.");
 
       if (res.docs.isNotEmpty) {
