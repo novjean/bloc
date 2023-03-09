@@ -45,6 +45,15 @@ class PartyHomeItem extends StatelessWidget {
                           textAlign: TextAlign.left,
                         ),
                       ),
+                      party.eventName.isNotEmpty
+                          ? Padding(
+                              padding: const EdgeInsets.only(left: 5.0),
+                              child: Text(
+                                party.eventName.toLowerCase(),
+                                style: const TextStyle(fontSize: 18),
+                              ),
+                            )
+                          : const SizedBox(),
                       Padding(
                         padding: const EdgeInsets.only(left: 5.0),
                         child: Text(

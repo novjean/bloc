@@ -44,7 +44,7 @@ class PartyItem extends StatelessWidget {
                 ),
                 Container(
                   width: MediaQuery.of(context).size.width,
-                  padding: EdgeInsets.only(top: 10, left: 15.0, right: 15.0),
+                  padding: EdgeInsets.only(top: 5, left: 15.0, right: 15.0),
                   child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -68,6 +68,20 @@ class PartyItem extends StatelessWidget {
                         )
                       ]),
                 ),
+                party.eventName.isNotEmpty
+                    ? Padding(
+                  padding: const EdgeInsets.only(left: 15.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Text(
+                        party.eventName.toLowerCase(),
+                        style: const TextStyle(fontSize: 18),
+                      ),
+                    ],
+                  ),
+                )
+                    : const SizedBox(),
                 const SizedBox(height: 10.0),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
