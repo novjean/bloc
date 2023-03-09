@@ -1,9 +1,12 @@
 import 'package:bloc/helpers/firestore_helper.dart';
+import 'package:bloc/widgets/ui/button_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import '../../db/entity/party.dart';
 import '../../widgets/parties/party_item.dart';
+import '../../widgets/ui/sized_listview_block.dart';
+import '../../widgets/ui/toaster.dart';
 
 class PartyScreen extends StatefulWidget {
   const PartyScreen({Key? key}) : super(key: key);
@@ -15,6 +18,10 @@ class PartyScreen extends StatefulWidget {
 class _PartyScreenState extends State<PartyScreen> {
   List<Party> mParties = [];
   var _isPartiesLoading = true;
+
+  var _showPastParties = false;
+  List<Party> mPastParties = [];
+  var _isPastPartiesLoading = true;
 
   @override
   void initState() {
@@ -41,29 +48,165 @@ class _PartyScreenState extends State<PartyScreen> {
         }
       } else {
         print('no parties found!');
-        const Center(child: Text('no parties assigned yet!'),);
+        const Center(
+          child: Text('no parties assigned yet!'),
+        );
         setState(() {
           _isPartiesLoading = false;
+        });
+      }
+    });
+
+    FirestoreHelper.pullPastParties(Timestamp.now().millisecondsSinceEpoch, false).then((res) {
+      print("successfully pulled in past parties");
+
+      if (res.docs.isNotEmpty) {
+        // found parties
+        List<Party> parties = [];
+        for (int i = 0; i < res.docs.length; i++) {
+          DocumentSnapshot document = res.docs[i];
+          Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+          final Party bloc = Party.fromMap(data);
+          parties.add(bloc);
+
+          setState(() {
+            mPastParties = parties;
+            _isPastPartiesLoading = false;
+          });
+        }
+      } else {
+        print('no past parties found!');
+        const Center(
+          child: Text('no past parties found yet!'),
+        );
+        setState(() {
+          _isPastPartiesLoading = false;
         });
       }
     });
   }
 
   _buildBody(BuildContext context) {
+    List<Party> parties = [];
+
+    parties = _showPastParties ? mPastParties : mParties;
+
+    if(parties.isEmpty){
+      if(_showPastParties){
+        Toaster.shortToast('no upcoming parties');
+        if(mParties.isNotEmpty){
+          parties = mParties;
+        } else {
+          return const Center(child: Text('no parties yet, check back here soon'),);
+        }
+      } else {
+        Toaster.shortToast('no past parties');
+        if(mPastParties.isNotEmpty){
+          parties = mPastParties;
+        } else {
+          return const Center(child: Text('no parties yet, check back here soon'),);
+        }
+      }
+    }
+
     return SizedBox(
       height: MediaQuery.of(context).size.height,
       child: ListView.builder(
-        itemCount: mParties.length,
+        itemCount: parties.length,
         scrollDirection: Axis.vertical,
         physics: const BouncingScrollPhysics(),
         itemBuilder: (BuildContext context, int index) {
-          return GestureDetector(
-            child: PartyItem(party: mParties[index], imageHeight: 300,),
-            onTap: () {
-              Party _sParty = mParties[index];
-              print(_sParty.name + ' is selected.');
-            },
-          );
+          if(index == 0){
+            return Column(
+              children: [
+                _showPastParties? GestureDetector(
+                    child: SizedListViewBlock(
+                      title: 'show upcoming parties',
+                      height: 50,
+                      width: MediaQuery.of(context).size.width,
+                      color: Theme.of(context).primaryColor,
+                    ),
+                    onTap: () {
+                      print('show upcoming parties button clicked');
+                      setState(() {
+                        _showPastParties = !_showPastParties;
+                      });
+                    }) : const SizedBox(),
+
+                // ButtonWidget(
+                //   text: 'show upcoming parties',
+                //   onClicked: () {
+                //     print('show upcoming parties button clicked');
+                //     setState(() {
+                //       _showPastParties = !_showPastParties;
+                //     });
+                //   },
+                // ) : const SizedBox(),
+                GestureDetector(
+                  child: PartyItem(
+                    party: parties[index],
+                    imageHeight: 300,
+                  ),
+                  onTap: () {
+                    Party _sParty = parties[index];
+                    print(_sParty.name + ' is selected.');
+                  },
+                ),
+              ],
+            );
+          }
+          if (index == parties.length - 1) {
+            return Column(
+              children: [
+                GestureDetector(
+                  child: PartyItem(
+                    party: parties[index],
+                    imageHeight: 300,
+                  ),
+                  onTap: () {
+                    Party _sParty = parties[index];
+                    print(_sParty.name + ' is selected.');
+                  },
+                ),
+                !_showPastParties?
+                GestureDetector(
+                    child: SizedListViewBlock(
+                      title: 'show past parties',
+                      height: 50,
+                      width: MediaQuery.of(context).size.width,
+                      color: Theme.of(context).primaryColor,
+                    ),
+                    onTap: () {
+                      print('load parties button clicked');
+                      setState(() {
+                        _showPastParties = !_showPastParties;
+                      });
+                    }) : const SizedBox()
+
+                // ButtonWidget(
+                //   text: 'show past parties',
+                //   onClicked: () {
+                //     print('load parties button clicked');
+                //     setState(() {
+                //       _showPastParties = !_showPastParties;
+                //     });
+                //   },
+                // )
+
+              ],
+            );
+          } else {
+            return GestureDetector(
+              child: PartyItem(
+                party: parties[index],
+                imageHeight: 300,
+              ),
+              onTap: () {
+                Party _sParty = parties[index];
+                print(_sParty.name + ' is selected.');
+              },
+            );
+          }
         },
       ),
     );
