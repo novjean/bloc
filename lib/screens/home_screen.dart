@@ -12,6 +12,7 @@ import '../db/entity/party.dart';
 import '../db/shared_preferences/user_preferences.dart';
 import '../helpers/dummy.dart';
 import '../helpers/firestore_helper.dart';
+import '../helpers/fresh.dart';
 import '../helpers/token_monitor.dart';
 import '../widgets/home/bloc_slide_item.dart';
 import '../widgets/parties/party_home_item.dart';
@@ -30,8 +31,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  bool _isUserLoggedIn = false;
-
   late List<Bloc> mBlocs;
   var _isBlocsLoading = true;
 
@@ -44,9 +43,6 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-
-    _isUserLoggedIn =
-        UserPreferences.myUser.phoneNumber == 911234567890 ? false : true;
 
     FirestoreHelper.pullBlocs().then((res) {
       print("successfully pulled in blocs");
@@ -83,8 +79,8 @@ class _HomeScreenState extends State<HomeScreen> {
       if (res.docs.isNotEmpty) {
         try {
           DocumentSnapshot document = res.docs[0];
-          Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-          final Party party = Party.fromMap(data);
+          Map<String, dynamic> map = document.data()! as Map<String, dynamic>;
+          final Party party = Fresh.freshPartyMap(map, true);
 
           setState(() {
             mUpcomingParty = party;

@@ -6,6 +6,108 @@ import '../db/shared_preferences/user_preferences.dart';
 import 'dummy.dart';
 
 class Fresh {
+  static Party freshPartyMap(Map<String, dynamic> map, bool shouldUpdate) {
+    Party party = Dummy.getDummyParty(UserPreferences.myUser.blocServiceId);
+    bool shouldPushParty = false;
+
+    try {
+      party = party.copyWith(id: map['id'] as String);
+    } catch (err) {
+      print('party id not exist');
+    }
+    try {
+      party = party.copyWith(name: map['name'] as String);
+    } catch (err) {
+      print('party name not exist for party id: ' + party.id);
+      shouldPushParty = true;
+    }
+    try {
+      party = party.copyWith(description: map['description'] as String);
+    } catch (err) {
+      print('party description not exist for party id: ' + party.id);
+      shouldPushParty = true;
+    }
+    try {
+      party = party.copyWith(blocServiceId: map['blocServiceId'] as String);
+    } catch (err) {
+      print('blocServiceId name not exist for party id: ' + party.id);
+      shouldPushParty = true;
+    }
+    try {
+      party = party.copyWith(imageUrl: map['imageUrl'] as String);
+    } catch (err) {
+      print('party imageUrl not exist for party id: ' + party.id);
+      shouldPushParty = true;
+    }
+    try {
+      party = party.copyWith(instagramUrl: map['instagramUrl'] as String);
+    } catch (err) {
+      print('party instagramUrl not exist for party id: ' + party.id);
+      shouldPushParty = true;
+    }
+    try {
+      party = party.copyWith(ticketUrl: map['ticketUrl'] as String);
+    } catch (err) {
+      print('party ticketUrl not exist for party id: ' + party.id);
+      shouldPushParty = true;
+    }
+    try {
+      party = party.copyWith(listenUrl: map['listenUrl'] as String);
+    } catch (err) {
+      print('party listenUrl not exist for party id: ' + party.id);
+      shouldPushParty = true;
+    }
+    try {
+      party = party.copyWith(createdAt: map['createdAt'] as int);
+    } catch (err) {
+      print('party createdAt not exist for party id: ' + party.id);
+      shouldPushParty = true;
+    }
+    try {
+      party = party.copyWith(startTime: map['startTime'] as int);
+    } catch (err) {
+      print('party startTime not exist for party id: ' + party.id);
+      shouldPushParty = true;
+    }
+    try {
+      party = party.copyWith(endTime: map['endTime'] as int);
+    } catch (err) {
+      print('party endTime not exist for party id: ' + party.id);
+      shouldPushParty = true;
+    }
+    try {
+      party = party.copyWith(ownerId: map['ownerId'] as String);
+    } catch (err) {
+      print('party ownerId not exist for party id: ' + party.id);
+      shouldPushParty = true;
+    }
+    try {
+      party = party.copyWith(isTBA: map['isTBA'] as bool);
+    } catch (err) {
+      print('party isTBA not exist for party id: ' + party.id);
+      shouldPushParty = true;
+    }
+    try {
+      party = party.copyWith(isActive: map['isActive'] as bool);
+    } catch (err) {
+      print('party isActive not exist for party id: ' + party.id);
+      shouldPushParty = true;
+    }
+    try {
+      party = party.copyWith(eventName: map['eventName'] as String);
+    } catch (err) {
+      print('party eventName not exist for party id: ' + party.id);
+      shouldPushParty = true;
+    }
+
+    if(shouldPushParty && shouldUpdate){
+      print('updating party ' + party.id);
+      FirestoreHelper.pushParty(party);
+    }
+
+    return party;
+  }
+
   static Party freshParty(Party party) {
     String blocId;
 
@@ -85,6 +187,11 @@ class Fresh {
       freshParty = freshParty.copyWith(isActive: party.isActive);
     } catch (err) {
       print('party isActive not exist for party id: ' + party.id);
+    }
+    try {
+      freshParty = freshParty.copyWith(eventName: party.eventName);
+    } catch (err) {
+      print('party eventName not exist for party id: ' + party.id);
     }
 
     return freshParty;

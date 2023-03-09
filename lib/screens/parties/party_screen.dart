@@ -1,9 +1,9 @@
 import 'package:bloc/helpers/firestore_helper.dart';
-import 'package:bloc/widgets/ui/button_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import '../../db/entity/party.dart';
+import '../../helpers/fresh.dart';
 import '../../widgets/parties/party_item.dart';
 import '../../widgets/ui/sized_listview_block.dart';
 import '../../widgets/ui/toaster.dart';
@@ -38,8 +38,8 @@ class _PartyScreenState extends State<PartyScreen> {
         for (int i = 0; i < res.docs.length; i++) {
           DocumentSnapshot document = res.docs[i];
           Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-          final Party bloc = Party.fromMap(data);
-          parties.add(bloc);
+          final Party party = Fresh.freshPartyMap(data, false);
+          parties.add(party);
 
           setState(() {
             mParties = parties;
@@ -57,7 +57,9 @@ class _PartyScreenState extends State<PartyScreen> {
       }
     });
 
-    FirestoreHelper.pullPastParties(Timestamp.now().millisecondsSinceEpoch, false).then((res) {
+    FirestoreHelper.pullPastParties(
+            Timestamp.now().millisecondsSinceEpoch, false)
+        .then((res) {
       print("successfully pulled in past parties");
 
       if (res.docs.isNotEmpty) {
@@ -66,7 +68,7 @@ class _PartyScreenState extends State<PartyScreen> {
         for (int i = 0; i < res.docs.length; i++) {
           DocumentSnapshot document = res.docs[i];
           Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-          final Party bloc = Party.fromMap(data);
+          final Party bloc = Fresh.freshPartyMap(data, true);
           parties.add(bloc);
 
           setState(() {
@@ -91,20 +93,24 @@ class _PartyScreenState extends State<PartyScreen> {
 
     parties = _showPastParties ? mPastParties : mParties;
 
-    if(parties.isEmpty){
-      if(_showPastParties){
+    if (parties.isEmpty) {
+      if (_showPastParties) {
         Toaster.shortToast('no upcoming parties');
-        if(mParties.isNotEmpty){
+        if (mParties.isNotEmpty) {
           parties = mParties;
         } else {
-          return const Center(child: Text('no parties yet, check back here soon'),);
+          return const Center(
+            child: Text('no parties yet, check back here soon'),
+          );
         }
       } else {
         Toaster.shortToast('no past parties');
-        if(mPastParties.isNotEmpty){
+        if (mPastParties.isNotEmpty) {
           parties = mPastParties;
         } else {
-          return const Center(child: Text('no parties yet, check back here soon'),);
+          return const Center(
+            child: Text('no parties yet, check back here soon'),
+          );
         }
       }
     }
@@ -116,32 +122,24 @@ class _PartyScreenState extends State<PartyScreen> {
         scrollDirection: Axis.vertical,
         physics: const BouncingScrollPhysics(),
         itemBuilder: (BuildContext context, int index) {
-          if(index == 0){
+          if (index == 0) {
             return Column(
               children: [
-                _showPastParties? GestureDetector(
-                    child: SizedListViewBlock(
-                      title: 'show upcoming parties',
-                      height: 50,
-                      width: MediaQuery.of(context).size.width,
-                      color: Theme.of(context).primaryColor,
-                    ),
-                    onTap: () {
-                      print('show upcoming parties button clicked');
-                      setState(() {
-                        _showPastParties = !_showPastParties;
-                      });
-                    }) : const SizedBox(),
-
-                // ButtonWidget(
-                //   text: 'show upcoming parties',
-                //   onClicked: () {
-                //     print('show upcoming parties button clicked');
-                //     setState(() {
-                //       _showPastParties = !_showPastParties;
-                //     });
-                //   },
-                // ) : const SizedBox(),
+                _showPastParties
+                    ? GestureDetector(
+                        child: SizedListViewBlock(
+                          title: 'show upcoming parties',
+                          height: 50,
+                          width: MediaQuery.of(context).size.width,
+                          color: Theme.of(context).primaryColor,
+                        ),
+                        onTap: () {
+                          print('show upcoming parties button clicked');
+                          setState(() {
+                            _showPastParties = !_showPastParties;
+                          });
+                        })
+                    : const SizedBox(),
                 GestureDetector(
                   child: PartyItem(
                     party: parties[index],
@@ -168,31 +166,21 @@ class _PartyScreenState extends State<PartyScreen> {
                     print(_sParty.name + ' is selected.');
                   },
                 ),
-                !_showPastParties?
-                GestureDetector(
-                    child: SizedListViewBlock(
-                      title: 'show past parties',
-                      height: 50,
-                      width: MediaQuery.of(context).size.width,
-                      color: Theme.of(context).primaryColor,
-                    ),
-                    onTap: () {
-                      print('load parties button clicked');
-                      setState(() {
-                        _showPastParties = !_showPastParties;
-                      });
-                    }) : const SizedBox()
-
-                // ButtonWidget(
-                //   text: 'show past parties',
-                //   onClicked: () {
-                //     print('load parties button clicked');
-                //     setState(() {
-                //       _showPastParties = !_showPastParties;
-                //     });
-                //   },
-                // )
-
+                !_showPastParties
+                    ? GestureDetector(
+                        child: SizedListViewBlock(
+                          title: 'show past parties',
+                          height: 50,
+                          width: MediaQuery.of(context).size.width,
+                          color: Theme.of(context).primaryColor,
+                        ),
+                        onTap: () {
+                          print('load parties button clicked');
+                          setState(() {
+                            _showPastParties = !_showPastParties;
+                          });
+                        })
+                    : const SizedBox()
               ],
             );
           } else {

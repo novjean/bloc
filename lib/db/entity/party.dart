@@ -13,6 +13,7 @@ class Party {
   final String ownerId;
   final bool isTBA;
   final bool isActive;
+  final String eventName;
 
 //<editor-fold desc="Data Methods">
 
@@ -31,6 +32,7 @@ class Party {
     required this.ownerId,
     required this.isTBA,
     required this.isActive,
+    required this.eventName,
   });
 
   @override
@@ -51,7 +53,8 @@ class Party {
           endTime == other.endTime &&
           ownerId == other.ownerId &&
           isTBA == other.isTBA &&
-          isActive == other.isActive);
+          isActive == other.isActive &&
+          eventName == other.eventName);
 
   @override
   int get hashCode =>
@@ -68,7 +71,8 @@ class Party {
       endTime.hashCode ^
       ownerId.hashCode ^
       isTBA.hashCode ^
-      isActive.hashCode;
+      isActive.hashCode ^
+      eventName.hashCode;
 
   @override
   String toString() {
@@ -87,6 +91,7 @@ class Party {
         ' ownerId: $ownerId,' +
         ' isTBA: $isTBA,' +
         ' isActive: $isActive,' +
+        ' eventName: $eventName,' +
         '}';
   }
 
@@ -105,6 +110,7 @@ class Party {
     String? ownerId,
     bool? isTBA,
     bool? isActive,
+    String? eventName,
   }) {
     return Party(
       id: id ?? this.id,
@@ -121,6 +127,7 @@ class Party {
       ownerId: ownerId ?? this.ownerId,
       isTBA: isTBA ?? this.isTBA,
       isActive: isActive ?? this.isActive,
+      eventName: eventName ?? this.eventName,
     );
   }
 
@@ -140,6 +147,7 @@ class Party {
       'ownerId': this.ownerId,
       'isTBA': this.isTBA,
       'isActive': this.isActive,
+      'eventName': this.eventName,
     };
   }
 
@@ -159,6 +167,7 @@ class Party {
       ownerId: map['ownerId'] as String,
       isTBA: map['isTBA'] as bool,
       isActive: map['isActive'] as bool,
+      eventName: map['eventName'] as String,
     );
   }
 

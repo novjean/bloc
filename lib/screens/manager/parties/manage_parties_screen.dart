@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import '../../../db/entity/manager_service.dart';
 import '../../../db/entity/party.dart';
 import '../../../helpers/firestore_helper.dart';
+import '../../../helpers/fresh.dart';
 import '../../../widgets/ui/listview_block.dart';
 import 'party_add_edit_screen.dart';
 
@@ -73,13 +74,13 @@ class _ManagePartiesScreenState extends State<ManagePartiesScreen> {
           List<Party> _parties = [];
 
           if (!snapshot.hasData) {
-            return Center(child: Text('no products found!'));
+            return Center(child: Text('no parties found!'));
           }
 
           for (int i = 0; i < snapshot.data!.docs.length; i++) {
             DocumentSnapshot document = snapshot.data!.docs[i];
             Map<String, dynamic> map = document.data()! as Map<String, dynamic>;
-            final Party _party = Party.fromMap(map);
+            final Party _party = Fresh.freshPartyMap(map, false);
             _parties.add(_party);
 
             if (i == snapshot.data!.docs.length - 1) {

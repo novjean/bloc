@@ -228,6 +228,13 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
               ),
               const SizedBox(height: 24),
               TextFieldWidget(
+                label: 'event name',
+                text: widget.party.eventName,
+                onChanged: (eventName) =>
+                widget.party = widget.party.copyWith(eventName: eventName),
+              ),
+              const SizedBox(height: 24),
+              TextFieldWidget(
                 label: 'description',
                 text: widget.party.description,
                 maxLines: 5,

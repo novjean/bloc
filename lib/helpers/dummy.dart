@@ -175,7 +175,8 @@ class Dummy {
         instagramUrl: '',
         startTime: Timestamp.now().millisecondsSinceEpoch,
         ticketUrl: '',
-        listenUrl: '');
+        listenUrl: '',
+        eventName: '');
 
     return dummyParty;
   }
