@@ -174,15 +174,9 @@ class _PartyScreenState extends State<PartyScreen> {
               ],
             );
           } else {
-            return GestureDetector(
-              child: PartyItem(
-                party: parties[index],
-                imageHeight: 300,
-              ),
-              onTap: () {
-                Party _sParty = parties[index];
-                print(_sParty.name + ' is selected.');
-              },
+            return PartyItem(
+              party: parties[index],
+              imageHeight: 300,
             );
           }
         },

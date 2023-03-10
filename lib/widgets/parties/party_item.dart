@@ -46,7 +46,6 @@ class PartyItem extends StatelessWidget {
                         image: DecorationImage(
                           image: NetworkImage(party.imageUrl),
                           fit: BoxFit.fitWidth,
-                          // AssetImage(food['image']),
                         ),
                       ),
                     ),
@@ -108,15 +107,15 @@ class PartyItem extends StatelessWidget {
                     ? Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 15.0),
                         child: Text(
-                            StringUtils.firstFewWords(
-                                    party.description.toLowerCase(), 30) +
-                                (StringUtils.getWordCount(party.description) >
-                                        30
-                                    ? ' ...'
-                                    : ''),
-                            style: TextStyle(
-                                fontSize: 15,
-                                color: Theme.of(context).primaryColorDark)),
+                          StringUtils.firstFewWords(
+                                  party.description.toLowerCase(), 30) +
+                              (StringUtils.getWordCount(party.description) > 30
+                                  ? ' ...'
+                                  : ''),
+                          style: TextStyle(
+                              fontSize: 15,
+                              color: Theme.of(context).primaryColorDark),
+                        ),
                       )
                     : const SizedBox(),
                 Row(
