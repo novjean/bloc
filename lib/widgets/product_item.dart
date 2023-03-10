@@ -43,7 +43,7 @@ class _ProductItemState extends State<ProductItem> {
     Color primaryColor = Theme.of(context).primaryColor;
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 5),
       margin: const EdgeInsets.only(bottom: 1.0),
       child: GestureDetector(
         onTap: () {

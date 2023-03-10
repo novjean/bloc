@@ -37,28 +37,34 @@ class _DarkTextFieldWidgetState extends State<DarkTextFieldWidget> {
 
   @override
   Widget build(BuildContext context) => Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      Text(
-        widget.label,
-        style: TextStyle(
-          fontWeight: FontWeight.bold,
-          fontSize: 16,
-          color: Theme.of(context).primaryColorLight,
-        ),
-      ),
-      const SizedBox(height: 8),
-      TextField(
-        controller: controller,
-        decoration: InputDecoration(
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            widget.label,
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 16,
+              color: Theme.of(context).primaryColorLight,
+            ),
           ),
-        ),
-        maxLines: widget.maxLines,
-        onChanged: widget.onChanged,
-        style: TextStyle(color: Theme.of(context).primaryColorLight),
-      ),
-    ],
-  );
+          const SizedBox(height: 8),
+          TextField(
+            controller: controller,
+            decoration: InputDecoration(
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  // width: 0.0 produces a thin "hairline" border
+                  borderSide: BorderSide(
+                      color: Theme.of(context).primaryColor, width: 0.0),
+                ),
+                labelStyle:
+                    TextStyle(color: Theme.of(context).primaryColorLight)),
+            maxLines: widget.maxLines,
+            onChanged: widget.onChanged,
+            style: TextStyle(color: Theme.of(context).primaryColorLight),
+          ),
+        ],
+      );
 }

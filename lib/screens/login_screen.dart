@@ -189,20 +189,19 @@ class _LoginScreenState extends State<LoginScreen> {
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
                 primary: Theme.of(context).primaryColor,
-                onPrimary: Colors.white,
+                foregroundColor: Colors.white,
                 shadowColor: Theme.of(context).shadowColor,
                 elevation: 3,
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(32.0)),
-                minimumSize: Size(100, 60), //////// HERE
+                minimumSize: const Size(100, 60),
               ),
               onPressed: () {
                 if (completePhoneNumber.isNotEmpty) {
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (context) => OTPScreen(completePhoneNumber)));
                 } else {
-                  print('user entered invalid phone number' +
-                      completePhoneNumber);
+                  print('user entered invalid phone number ' + completePhoneNumber);
                   Toaster.longToast('please enter a valid phone number');
                 }
               },

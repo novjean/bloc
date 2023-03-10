@@ -116,6 +116,7 @@ class PartyItem extends StatelessWidget {
                         ),
                       )
                     : const SizedBox(),
+                const SizedBox(height: 5),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [

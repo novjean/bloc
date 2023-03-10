@@ -12,15 +12,15 @@ class DarkButtonWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => ElevatedButton(
-    style: ElevatedButton.styleFrom(
-      backgroundColor: Theme.of(context).primaryColorDark,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(5),
-      ),
-      onPrimary: Colors.white,
-      padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 12),
-    ),
-    child: Text(text),
-    onPressed: onClicked,
-  );
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Theme.of(context).primaryColorDark,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(5),
+          ),
+          foregroundColor: Colors.white,
+          padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 20),
+        ),
+        child: Text(text),
+        onPressed: onClicked,
+      );
 }
