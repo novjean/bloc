@@ -6,7 +6,7 @@ class TextFieldWidget extends StatefulWidget {
   final String text;
   final ValueChanged<String> onChanged;
 
-  const TextFieldWidget({
+  TextFieldWidget({
     Key? key,
     this.maxLines = 1,
     required this.label,
@@ -37,24 +37,26 @@ class _TextFieldWidgetState extends State<TextFieldWidget> {
 
   @override
   Widget build(BuildContext context) => Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      Text(
-        widget.label,
-        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-      ),
-      const SizedBox(height: 8),
-      TextField(
-        controller: controller,
-
-        decoration: InputDecoration(
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            widget.label,
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 16,
+            ),
           ),
-        ),
-        maxLines: widget.maxLines,
-        onChanged: widget.onChanged,
-      ),
-    ],
-  );
+          const SizedBox(height: 8),
+          TextField(
+            controller: controller,
+            decoration: InputDecoration(
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+            maxLines: widget.maxLines,
+            onChanged: widget.onChanged,
+          ),
+        ],
+      );
 }

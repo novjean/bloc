@@ -152,7 +152,7 @@ class _MainScreenState extends State<MainScreen> {
       backgroundColor: Theme.of(context).backgroundColor,
       appBar: AppBar(
         title: const Text('bloc'),
-        backgroundColor: Theme.of(context).primaryColor,
+        backgroundColor: Theme.of(context).backgroundColor,
         // actions: [
         //   DropdownButton(
         //     dropdownColor: Theme.of(context).primaryColorLight,

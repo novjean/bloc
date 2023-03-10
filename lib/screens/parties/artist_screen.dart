@@ -19,7 +19,7 @@ class _ArtistScreenState extends State<ArtistScreen> {
     return Scaffold(
         appBar: AppBar(
           backgroundColor: Theme.of(context).backgroundColor,
-          title: Text(''),
+          title: const Text(''),
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
             onPressed: () {

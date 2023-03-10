@@ -15,6 +15,7 @@ import '../../helpers/fresh.dart';
 import '../../utils/string_utils.dart';
 import '../../widgets/profile_widget.dart';
 import '../../widgets/ui/button_widget.dart';
+import '../../widgets/ui/dark_textfield_widget.dart';
 import '../../widgets/ui/textfield_widget.dart';
 
 class ProfileAddEditRegisterPage extends StatefulWidget {
@@ -38,33 +39,37 @@ class _ProfileAddEditRegisterPageState
   String imagePath = '';
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(
-          title: Text('profile | ' + widget.task),
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back),
-            onPressed: () {
-              if (widget.task == 'register') {
-                // UserPreferences.resetUser();
-                //
-                // try {
-                //   FirebaseAuth.instance.signOut();
-                // } catch (err) {
-                //   print('err:' + err.toString());
-                // }
-                // Navigator.of(context).pushReplacement(
-                //   MaterialPageRoute(builder: (context) => LoginScreen()),
-                // );
-                print('register back press not allowed');
-                Toaster.longToast('click save to move ahead');
-              } else {
-                Navigator.of(context).pop();
-              }
-            },
-          ),
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Theme.of(context).backgroundColor,
+      appBar: AppBar(
+        title: Text('profile | ' + widget.task),
+        backgroundColor: Theme.of(context).backgroundColor,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            if (widget.task == 'register') {
+              // UserPreferences.resetUser();
+              //
+              // try {
+              //   FirebaseAuth.instance.signOut();
+              // } catch (err) {
+              //   print('err:' + err.toString());
+              // }
+              // Navigator.of(context).pushReplacement(
+              //   MaterialPageRoute(builder: (context) => LoginScreen()),
+              // );
+              print('register back press not allowed');
+              Toaster.longToast('click save to move ahead');
+            } else {
+              Navigator.of(context).pop();
+            }
+          },
         ),
-        body: _buildBody(context),
-      );
+      ),
+      body: _buildBody(context),
+    );
+  }
 
   _buildBody(BuildContext context) {
     return ListView(
@@ -98,16 +103,17 @@ class _ProfileAddEditRegisterPageState
           },
         ),
         const SizedBox(height: 24),
-        TextFieldWidget(
+        DarkTextFieldWidget(
           label: 'name\*',
           text: widget.user.name,
           onChanged: (name) => widget.user = widget.user.copyWith(name: name),
         ),
         const SizedBox(height: 24),
-        TextFieldWidget(
+        DarkTextFieldWidget(
           label: 'email',
           text: widget.user.email,
-          onChanged: (email) => widget.user = widget.user.copyWith(email: email),
+          onChanged: (email) =>
+              widget.user = widget.user.copyWith(email: email),
         ),
         const SizedBox(height: 24),
         // TextFieldWidget(
@@ -122,7 +128,6 @@ class _ProfileAddEditRegisterPageState
           onClicked: () {
             // we should have some validation here
             if (isDataValid()) {
-
               if (isPhotoChanged) {
                 widget.user = widget.user.copyWith(imageUrl: newImageUrl);
                 if (oldImageUrl.isNotEmpty) {
