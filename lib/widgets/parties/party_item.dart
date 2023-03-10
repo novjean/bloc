@@ -1,11 +1,11 @@
 import 'package:bloc/utils/date_time_utils.dart';
-import 'package:bloc/widgets/ui/button_widget.dart';
 import 'package:flutter/material.dart';
 
 import '../../db/entity/party.dart';
 import '../../screens/parties/artist_screen.dart';
 import '../../utils/network_utils.dart';
 import '../../utils/string_utils.dart';
+import '../ui/dark_button_widget.dart';
 
 class PartyItem extends StatelessWidget {
   final Party party;
@@ -27,6 +27,7 @@ class PartyItem extends StatelessWidget {
       child: Hero(
         tag: party.id,
         child: Card(
+          color: Theme.of(context).primaryColorLight,
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
           child: SizedBox(
@@ -122,7 +123,7 @@ class PartyItem extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     party.listenUrl.isNotEmpty
-                        ? ButtonWidget(
+                        ? DarkButtonWidget(
                             text: 'listen',
                             onClicked: () {
                               final uri = Uri.parse(party.listenUrl);
@@ -131,7 +132,7 @@ class PartyItem extends StatelessWidget {
                         : const SizedBox(),
                     const SizedBox(width: 10),
                     party.instagramUrl.isNotEmpty
-                        ? ButtonWidget(
+                        ? DarkButtonWidget(
                             text: 'social',
                             onClicked: () {
                               final uri = Uri.parse(party.instagramUrl);
@@ -140,7 +141,7 @@ class PartyItem extends StatelessWidget {
                         : const SizedBox(),
                     const SizedBox(width: 10),
                     party.ticketUrl.isNotEmpty
-                        ? ButtonWidget(
+                        ? DarkButtonWidget(
                             text: 'tickets',
                             onClicked: () {
                               final uri = Uri.parse(party.ticketUrl);

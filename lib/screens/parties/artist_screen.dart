@@ -18,10 +18,17 @@ class _ArtistScreenState extends State<ArtistScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.party.name),
-        backgroundColor: Theme.of(context).primaryColor,
+          backgroundColor: Theme.of(context).backgroundColor,
+        title: Text(''),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
       ),
-      body: _buildBody(context)
+        backgroundColor: Theme.of(context).backgroundColor,
+        body: _buildBody(context)
     );
   }
 
@@ -48,7 +55,7 @@ class _ArtistScreenState extends State<ArtistScreen> {
               textAlign: TextAlign.start,
               softWrap: true,
               style: TextStyle(
-                color: Theme.of(context).primaryColorDark,
+                color: Theme.of(context).primaryColor,
                 fontSize: 26,
               )),
         ),
@@ -62,7 +69,7 @@ class _ArtistScreenState extends State<ArtistScreen> {
               textAlign: TextAlign.start,
               softWrap: true,
               style: TextStyle(
-                color: Theme.of(context).primaryColorDark,
+                color: Theme.of(context).primaryColorLight,
                 fontSize: 20,
               )),
         ),
