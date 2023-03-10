@@ -23,14 +23,20 @@ class CartScreen extends StatelessWidget {
     final cart = Provider.of<Cart>(context);
     return Scaffold(
       appBar: AppBar(
-        title: Text('bloc | cart'),
+        backgroundColor: Theme.of(context).backgroundColor,
+        title: const Text('bloc | cart'),
       ),
+      backgroundColor: Theme.of(context).backgroundColor,
       body: Column(
         children: [
           Expanded(
-            child: cart.items.length == 0
+            child: cart.items.isEmpty
                 ? Center(
-                    child: Text('no items in the cart!'),
+                    child: Text(
+                      'no items in the cart!',
+                      style:
+                          TextStyle(color: Theme.of(context).primaryColorLight),
+                    ),
                   )
                 : ListView.builder(
                     itemCount: cart.items.length,
@@ -59,9 +65,10 @@ class CartScreen extends StatelessWidget {
             height: 10,
           ),
           Card(
-            margin: EdgeInsets.all(15),
+            color: Theme.of(context).primaryColorLight,
+            margin: EdgeInsets.only(left: 10, right: 10, bottom: 5),
             child: Padding(
-              padding: EdgeInsets.all(8),
+              padding: EdgeInsets.all(10),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -79,7 +86,7 @@ class CartScreen extends StatelessWidget {
                         color: Theme.of(context).primaryColorDark,
                         fontSize: 16),
                   ),
-                  SizedBox(width: 15),
+                  const SizedBox(width: 15),
                   OrderButton(cart: cart),
                 ],
               ),
@@ -116,15 +123,13 @@ class _OrderButtonState extends State<OrderButton> {
                 _isLoading = true;
               });
 
-              if(widget.cart.items.isNotEmpty) {
+              if (widget.cart.items.isNotEmpty) {
                 // keeping this here for fixed timestamp throughout the cart
                 Timestamp timestamp = Timestamp.now();
-                final int createdAtMillis =
-                    timestamp.millisecondsSinceEpoch;
+                final int createdAtMillis = timestamp.millisecondsSinceEpoch;
                 double amount = 0.0;
-                int tableNumber = widget.cart.items.values
-                    .elementAt(0)
-                    .tableNumber;
+                int tableNumber =
+                    widget.cart.items.values.elementAt(0).tableNumber;
 
                 List<String> cartIds = [];
                 for (int i = 0; i < widget.cart.items.length; i++) {
