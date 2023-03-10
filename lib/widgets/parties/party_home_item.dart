@@ -3,19 +3,20 @@ import 'package:bloc/utils/network_utils.dart';
 import 'package:flutter/material.dart';
 
 import '../../db/entity/party.dart';
+import '../../screens/parties/artist_screen.dart';
 
 class PartyHomeItem extends StatelessWidget {
   final Party party;
 
-  int addCount = 1;
-
-  PartyHomeItem({required this.party});
+  const PartyHomeItem({Key? key, required this.party}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        // handled by parent
+        Navigator.of(context).push(
+          MaterialPageRoute(builder: (ctx) => ArtistScreen(party: party)),
+        );
       },
       child: Hero(
         tag: party.id,
@@ -86,7 +87,7 @@ class PartyHomeItem extends StatelessWidget {
                                       elevation: 3,
 
                                       minimumSize:
-                                          Size.fromHeight(60), //////// HERE
+                                          const Size.fromHeight(60), //////// HERE
                                     ),
                                     onPressed: () {
                                       final uri = Uri.parse(party.ticketUrl);
@@ -151,7 +152,7 @@ class PartyHomeItem extends StatelessWidget {
           shadowColor: Colors.white30,
           elevation: 3,
 
-          minimumSize: Size.fromHeight(60), //////// HERE
+          minimumSize: const Size.fromHeight(60), //////// HERE
         ),
         onPressed: () {
           final uri = Uri.parse(isListen?party.listenUrl:party.instagramUrl);
@@ -159,7 +160,7 @@ class PartyHomeItem extends StatelessWidget {
         },
         child: Text(
           isListen? 'listen':'social',
-          style: TextStyle(fontSize: 20, color: Colors.black),
+          style: const TextStyle(fontSize: 20, color: Colors.black),
         ),
       ),
     );

@@ -21,7 +21,7 @@ class _ChatScreenState extends State<ChatScreen> {
     TokenMonitor((token) {
       _token = token;
       return token == null
-          ? const CircularProgressIndicator()
+          ? const SizedBox()
           : Text(token, style: const TextStyle(fontSize: 12));
     });
   }

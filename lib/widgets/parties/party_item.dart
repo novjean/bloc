@@ -11,15 +11,12 @@ class PartyItem extends StatelessWidget {
   final Party party;
   final double imageHeight;
 
-  int addCount = 1;
-
-  PartyItem({required this.party, required this.imageHeight});
+  const PartyItem({Key? key, required this.party, required this.imageHeight}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        //handled in parent
         Navigator.of(context).push(
           MaterialPageRoute(builder: (ctx) => ArtistScreen(party: party)),
         );
@@ -33,6 +30,7 @@ class PartyItem extends StatelessWidget {
           child: SizedBox(
             width: MediaQuery.of(context).size.width,
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
                 Stack(
                   children: [

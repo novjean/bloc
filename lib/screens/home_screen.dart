@@ -147,16 +147,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     : buildWifi(context)
                 : const SizedBox(),
             const SizedBox(height: 10.0),
-            kIsWeb ? StoreBadgeItem() : const SizedBox(),
-
-            // buildBookTableRow(context),
-            // buildRestaurantRow('Trending Restaurants', context),
-            // SizedBox(height: 10.0),
-            // buildSuperstarsTitleRow('Superstars', context),
-            // SizedBox(height: 10.0),
-            // buildSuperstarsList(context),
-            !kIsWeb
-                ? TokenMonitor((token) {
+            kIsWeb
+                ? StoreBadgeItem()
+                : TokenMonitor((token) {
                     if (token != null) {
                       User user = UserPreferences.myUser;
                       if (user.id.isNotEmpty) {
@@ -170,9 +163,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         }
                       }
                     }
-                    return const Spacer();
-                  })
-                : const SizedBox(height: 0),
+                    return const SizedBox();
+                  }),
             const SizedBox(height: 10.0),
           ],
         ),
@@ -208,19 +200,13 @@ class _HomeScreenState extends State<HomeScreen> {
     return Container(
       color: Theme.of(context).primaryColorLight,
       height: 190,
-      child: GestureDetector(
-        child: PartyHomeItem(party: mUpcomingParty),
-        onTap: () {
-          Party _sParty = mUpcomingParty;
-          print(_sParty.name + ' is selected.');
-        },
-      ),
+      child: PartyHomeItem(party: mUpcomingParty),
     );
   }
 
   buildWifi(BuildContext context) {
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 5),
+      margin: const EdgeInsets.symmetric(horizontal: 5),
       decoration: BoxDecoration(
         border: Border.all(),
         color: Theme.of(context).primaryColor,
@@ -231,7 +217,7 @@ class _HomeScreenState extends State<HomeScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            padding: EdgeInsets.only(top: 10, left: 10.0, right: 0.0),
+            padding: const EdgeInsets.only(top: 10, left: 10.0, right: 0.0),
             child: Text(
               "connect",
               style: TextStyle(
@@ -279,7 +265,6 @@ class _HomeScreenState extends State<HomeScreen> {
               )
             ],
           ),
-          // showCopyPasswordDialog(context),
         ],
       ),
     );
