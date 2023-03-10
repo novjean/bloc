@@ -43,6 +43,7 @@ class _ProductItemState extends State<ProductItem> {
     Color primaryColor = Theme.of(context).primaryColor;
 
     return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10),
       margin: const EdgeInsets.only(bottom: 1.0),
       child: GestureDetector(
         onTap: () {
@@ -54,6 +55,7 @@ class _ProductItemState extends State<ProductItem> {
         child: Hero(
           tag: widget.product.id,
           child: Card(
+            color: Theme.of(context).primaryColorLight,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
@@ -93,7 +95,6 @@ class _ProductItemState extends State<ProductItem> {
                                 ),
                                 flex: 4,
                               ),
-
                               Flexible(
                                 child: widget.isOnOffer
                                     ? Text(
@@ -117,8 +118,6 @@ class _ProductItemState extends State<ProductItem> {
                                       ),
                                 flex: 1,
                               ),
-
-                              // Icon(Icons.delete_outline)
                             ],
                           ),
                         ),
@@ -172,19 +171,15 @@ class _ProductItemState extends State<ProductItem> {
                         const SizedBox(height: 2),
                         Text(
                             StringUtils.firstFewWords(
-                                    widget.product.description.toLowerCase(), 20)
+                                widget.product.description.toLowerCase(), 20)
                                 + (StringUtils.getWordCount(widget.product.description) > 20 ? ' ...' : ''),
                             style: TextStyle(
                                 fontSize: 14,
                                 color: Theme.of(context).primaryColorDark)),
+                        const SizedBox(height: 2,),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
-                            widget.product.type == 'Food'
-                                ? Image.asset(widget.product.isVeg
-                                    ? 'assets/icons/ic_veg_food.png'
-                                    : 'assets/icons/ic_non_veg_food.png')
-                                : const SizedBox(width: 0),
                             Spacer(),
                             widget.isCustomerSeated
                                 ? IconButton(
@@ -224,7 +219,7 @@ class _ProductItemState extends State<ProductItem> {
                                             : alertUserTable(context);
                                       },
                                     ))
-                                : SizedBox(),
+                                : const SizedBox(),
                             widget.isCustomerSeated
                                 ? IconButton(
                                     icon: const Icon(Icons.add),
@@ -237,9 +232,17 @@ class _ProductItemState extends State<ProductItem> {
                                           widget.addCount.toString());
                                     },
                                   )
-                                : SizedBox(),
+                                : const SizedBox(),
+                            const SizedBox(width: 10),
+                            widget.product.type == 'Food'
+                                ? Image.asset(widget.product.isVeg
+                                ? 'assets/icons/ic_veg_food.png'
+                                : 'assets/icons/ic_non_veg_food.png',
+                              width: 15, height: 15,)
+                                : const SizedBox(width: 0),
                           ],
                         ),
+                        const SizedBox(height: 5),
                       ],
                     ),
                   ),
