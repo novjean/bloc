@@ -268,9 +268,10 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).backgroundColor,
       appBar: AppBar(
         title: Text(widget.blocService.name),
-        backgroundColor: Theme.of(context).primaryColor,
+        backgroundColor: Theme.of(context).backgroundColor,
         actions: [
           UserPreferences.isUserLoggedIn()
               ?
@@ -683,13 +684,15 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
                             width: double.infinity,
                             child: Container(
                               padding: const EdgeInsets.only(
-                                  top: 8.0, bottom: 4, right: 20),
-                              color: Theme.of(context).primaryColor,
+                                  top: 10.0, bottom: 4, right: 20),
+                              color: Theme.of(context).backgroundColor,
                               child: Text(
                                 categoryTitle.toLowerCase(),
                                 textAlign: TextAlign.right,
-                                style: const TextStyle(
-                                    fontSize: 20, fontWeight: FontWeight.bold),
+                                style: TextStyle(
+                                    color: Theme.of(context).primaryColorLight,
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold),
                               ),
                             ),
                           ),
@@ -702,11 +705,13 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
                                         bottom: 8,
                                         left: 20,
                                         right: 20),
-                                    color: Theme.of(context).primaryColor,
+                                    color: Theme.of(context).backgroundColor,
                                     child: Text(
                                       vCategory.description.toLowerCase(),
                                       textAlign: TextAlign.right,
-                                      style: const TextStyle(
+                                      style: TextStyle(
+                                          color: Theme.of(context)
+                                              .primaryColorLight,
                                           fontSize: 16,
                                           fontWeight: FontWeight.normal),
                                     ),
