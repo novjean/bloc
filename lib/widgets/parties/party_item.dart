@@ -3,6 +3,7 @@ import 'package:bloc/widgets/ui/button_widget.dart';
 import 'package:flutter/material.dart';
 
 import '../../db/entity/party.dart';
+import '../../screens/parties/artist_screen.dart';
 import '../../utils/network_utils.dart';
 import '../../utils/string_utils.dart';
 
@@ -19,6 +20,9 @@ class PartyItem extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         //handled in parent
+        Navigator.of(context).push(
+          MaterialPageRoute(builder: (ctx) => ArtistScreen(party: party)),
+        );
       },
       child: Hero(
         tag: party.id,
@@ -49,8 +53,7 @@ class PartyItem extends StatelessWidget {
                       bottom: 5.0,
                       child: Container(
                         width: MediaQuery.of(context).size.width,
-                        padding:
-                            EdgeInsets.only(left: 15.0, right: 15.0),
+                        padding: EdgeInsets.only(left: 15.0, right: 15.0),
                         child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
@@ -99,17 +102,19 @@ class PartyItem extends StatelessWidget {
                         ),
                       )
                     ]),
-
                 const SizedBox(height: 5.0),
                 party.description.isNotEmpty
                     ? Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 15.0),
                         child: Text(
                             StringUtils.firstFewWords(
-                                    party.description.toLowerCase(), 50) +
-                                ' ...',
+                                    party.description.toLowerCase(), 30) +
+                                (StringUtils.getWordCount(party.description) >
+                                        30
+                                    ? ' ...'
+                                    : ''),
                             style: TextStyle(
-                                fontSize: 14,
+                                fontSize: 15,
                                 color: Theme.of(context).primaryColorDark)),
                       )
                     : const SizedBox(),
@@ -145,20 +150,7 @@ class PartyItem extends StatelessWidget {
                     const SizedBox(width: 15),
                   ],
                 ),
-                const SizedBox(height: 7.0),
-
-                // Container(
-                //   width: MediaQuery.of(context).size.width,
-                //   padding: EdgeInsets.only(
-                //       top: 5, left: 15.0, right: 15.0, bottom: 5),
-                //   child: Text(
-                //     "${widget.bloc.addressLine1}, ${widget.bloc.addressLine2}",
-                //     style: TextStyle(
-                //       fontSize: 16.0,
-                //       fontWeight: FontWeight.w300,
-                //     ),
-                //   ),
-                // ),
+                const SizedBox(height: 5.0),
               ],
             ),
           ),

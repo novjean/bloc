@@ -29,7 +29,7 @@ class BlocDetailScreen extends StatelessWidget {
             MaterialPageRoute(
                 builder: (ctx) => BlocServiceAddEditScreen(
                       blocService: Dummy.getDummyBlocService(bloc.id),
-                      task: 'Add',
+                      task: 'add',
                     )),
           );
         },
@@ -39,7 +39,7 @@ class BlocDetailScreen extends StatelessWidget {
           size: 29,
         ),
         backgroundColor: Theme.of(context).primaryColor,
-        tooltip: 'New Bloc Service',
+        tooltip: 'new bloc service',
         elevation: 5,
         splashColor: Colors.grey,
       ),
@@ -79,7 +79,6 @@ class BlocDetailScreen extends StatelessWidget {
                   document.data()! as Map<String, dynamic>;
 
               final BlocService service = BlocService.fromMap(data);
-              // BlocRepository.insertBlocService(dao, service);
 
               return BlocServiceItem(service, false,
                   key: ValueKey(document.id));

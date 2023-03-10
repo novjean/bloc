@@ -170,18 +170,13 @@ class _ProductItemState extends State<ProductItem> {
                                   )
                                 : const SizedBox(height: 0),
                         const SizedBox(height: 2),
-                        StringUtils.getWordCount(widget.product.description)>20?
                         Text(
-                            StringUtils.firstFewWords(widget.product.description.toLowerCase(), 20) + ' ...',
+                            StringUtils.firstFewWords(
+                                    widget.product.description.toLowerCase(), 20)
+                                + (StringUtils.getWordCount(widget.product.description) > 20 ? ' ...' : ''),
                             style: TextStyle(
                                 fontSize: 14,
-                                color: Theme.of(context).primaryColorDark)):
-                        Text(
-                            widget.product.description.toLowerCase(),
-                            style: TextStyle(
-                                fontSize: 14,
-                                color: Theme.of(context).primaryColorDark))
-                        ,
+                                color: Theme.of(context).primaryColorDark)),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
@@ -191,53 +186,58 @@ class _ProductItemState extends State<ProductItem> {
                                     : 'assets/icons/ic_non_veg_food.png')
                                 : const SizedBox(width: 0),
                             Spacer(),
-                            widget.isCustomerSeated ?
-                            IconButton(
-                              icon: Icon(Icons.remove),
-                              onPressed: () {
-                                setState(() {
-                                  if (widget.addCount > 1) {
-                                    widget.addCount--;
-                                    print('decrement add count to ' +
-                                        widget.addCount.toString());
-                                  } else {
-                                    print('add count is at ' +
-                                        widget.addCount.toString());
-                                  }
-                                });
-                              },
-                            ) : SizedBox(),
-                            widget.isCustomerSeated? Container(
-                                // color: primaryColor,
-                                margin: const EdgeInsets.symmetric(
-                                  horizontal: 0.0,
-                                ),
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: 4.0,
-                                  horizontal: 0.0,
-                                ),
-                                child: ButtonWidget(
-                                  text: widget.addCount == 1
-                                      ? 'add'
-                                      : 'add ' + widget.addCount.toString(),
-                                  onClicked: () {
-                                    //check if customer is seated
-                                    widget.isCustomerSeated
-                                        ? addProductToCart(cart)
-                                        : alertUserTable(context);
-                                  },
-                                )) : SizedBox(),
-                            widget.isCustomerSeated?IconButton(
-                              icon: const Icon(Icons.add),
-                              color: primaryColor,
-                              onPressed: () {
-                                setState(() {
-                                  widget.addCount++;
-                                });
-                                print('increment add count to ' +
-                                    widget.addCount.toString());
-                              },
-                            ):SizedBox(),
+                            widget.isCustomerSeated
+                                ? IconButton(
+                                    icon: Icon(Icons.remove),
+                                    onPressed: () {
+                                      setState(() {
+                                        if (widget.addCount > 1) {
+                                          widget.addCount--;
+                                          print('decrement add count to ' +
+                                              widget.addCount.toString());
+                                        } else {
+                                          print('add count is at ' +
+                                              widget.addCount.toString());
+                                        }
+                                      });
+                                    },
+                                  )
+                                : SizedBox(),
+                            widget.isCustomerSeated
+                                ? Container(
+                                    // color: primaryColor,
+                                    margin: const EdgeInsets.symmetric(
+                                      horizontal: 0.0,
+                                    ),
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 4.0,
+                                      horizontal: 0.0,
+                                    ),
+                                    child: ButtonWidget(
+                                      text: widget.addCount == 1
+                                          ? 'add'
+                                          : 'add ' + widget.addCount.toString(),
+                                      onClicked: () {
+                                        //check if customer is seated
+                                        widget.isCustomerSeated
+                                            ? addProductToCart(cart)
+                                            : alertUserTable(context);
+                                      },
+                                    ))
+                                : SizedBox(),
+                            widget.isCustomerSeated
+                                ? IconButton(
+                                    icon: const Icon(Icons.add),
+                                    color: primaryColor,
+                                    onPressed: () {
+                                      setState(() {
+                                        widget.addCount++;
+                                      });
+                                      print('increment add count to ' +
+                                          widget.addCount.toString());
+                                    },
+                                  )
+                                : SizedBox(),
                           ],
                         ),
                       ],

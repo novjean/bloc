@@ -11,7 +11,7 @@ class BlocSlideItem extends StatefulWidget {
 
   int addCount = 1;
 
-  BlocSlideItem({required this.bloc});
+  BlocSlideItem({Key? key, required this.bloc}) : super(key: key);
 
   @override
   State<BlocSlideItem> createState() => _BlocSlideItemState();

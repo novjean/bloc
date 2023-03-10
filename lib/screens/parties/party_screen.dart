@@ -96,6 +96,8 @@ class _PartyScreenState extends State<PartyScreen> {
     if (parties.isEmpty) {
       if (_showPastParties) {
         Toaster.shortToast('no upcoming parties');
+        print('no upcoming parties to show');
+
         if (mParties.isNotEmpty) {
           parties = mParties;
         } else {
@@ -140,15 +142,9 @@ class _PartyScreenState extends State<PartyScreen> {
                           });
                         })
                     : const SizedBox(),
-                GestureDetector(
-                  child: PartyItem(
-                    party: parties[index],
-                    imageHeight: 300,
-                  ),
-                  onTap: () {
-                    Party _sParty = parties[index];
-                    print(_sParty.name + ' is selected.');
-                  },
+                PartyItem(
+                  party: parties[index],
+                  imageHeight: 300,
                 ),
               ],
             );
@@ -156,15 +152,9 @@ class _PartyScreenState extends State<PartyScreen> {
           if (index == parties.length - 1) {
             return Column(
               children: [
-                GestureDetector(
-                  child: PartyItem(
-                    party: parties[index],
-                    imageHeight: 300,
-                  ),
-                  onTap: () {
-                    Party _sParty = parties[index];
-                    print(_sParty.name + ' is selected.');
-                  },
+                PartyItem(
+                  party: parties[index],
+                  imageHeight: 300,
                 ),
                 !_showPastParties
                     ? GestureDetector(
