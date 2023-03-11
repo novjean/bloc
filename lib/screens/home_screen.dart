@@ -348,7 +348,7 @@ class _HomeScreenState extends State<HomeScreen> {
       builder: (ctx, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           print('loading users...');
-          return SizedBox();
+          return const SizedBox();
         }
 
         List<User> _users = [];
@@ -364,7 +364,7 @@ class _HomeScreenState extends State<HomeScreen> {
             return _displaySuperstarsList(context, _users);
           }
         }
-        return Text('Loading users...');
+        return const Center(child:Text('loading users...'));
       },
     );
   }

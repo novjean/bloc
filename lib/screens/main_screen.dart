@@ -81,6 +81,9 @@ class _MainScreenState extends State<MainScreen> {
             users.add(user);
 
             if (i == res.docs.length - 1) {
+              user.lastSeenAt = Timestamp.now().millisecondsSinceEpoch;
+              FirestoreHelper.pushUser(user);
+
               UserPreferences.setUser(user);
             }
           }
