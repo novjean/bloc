@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>App requires access to your photo library</string>
+	<string>This app requires access to the photo library to upload your profile photo</string>
 	<key>NSCameraUsageDescription</key>
-	<string>App requires access to your camera to capture photo</string>
+	<string>This app requires access to the camera to capture your profile photo and scan QR code</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleExecutable</key>
