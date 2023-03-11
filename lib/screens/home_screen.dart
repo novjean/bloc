@@ -44,33 +44,63 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
 
-    FirestoreHelper.pullBlocs().then((res) {
-      print("successfully pulled in blocs");
+    UserPreferences.myUser.clearanceLevel == Constants.PROMOTER_LEVEL
+        ? FirestoreHelper.pullBlocsPromoter().then((res) {
+            print("successfully pulled in blocs for promoter");
 
-      if (res.docs.isNotEmpty) {
-        // found blocs
-        List<Bloc> blocs = [];
-        for (int i = 0; i < res.docs.length; i++) {
-          DocumentSnapshot document = res.docs[i];
-          Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-          final Bloc bloc = Bloc.fromMap(data);
-          blocs.add(bloc);
+            if (res.docs.isNotEmpty) {
+              // found blocs
+              List<Bloc> blocs = [];
+              for (int i = 0; i < res.docs.length; i++) {
+                DocumentSnapshot document = res.docs[i];
+                Map<String, dynamic> data =
+                    document.data()! as Map<String, dynamic>;
+                final Bloc bloc = Bloc.fromMap(data);
+                blocs.add(bloc);
 
-          setState(() {
-            mBlocs = blocs;
-            _isBlocsLoading = false;
+                setState(() {
+                  mBlocs = blocs;
+                  _isBlocsLoading = false;
+                });
+              }
+            } else {
+              print('no blocs found!!!');
+              //todo: need to re-attempt or check internet connection
+              setState(() {
+                _isBlocsLoading = false;
+              });
+            }
+          }).catchError((err) {
+            print('error ' + err);
+          })
+        : FirestoreHelper.pullBlocs().then((res) {
+            print("successfully pulled in blocs");
+
+            if (res.docs.isNotEmpty) {
+              // found blocs
+              List<Bloc> blocs = [];
+              for (int i = 0; i < res.docs.length; i++) {
+                DocumentSnapshot document = res.docs[i];
+                Map<String, dynamic> data =
+                    document.data()! as Map<String, dynamic>;
+                final Bloc bloc = Bloc.fromMap(data);
+                blocs.add(bloc);
+
+                setState(() {
+                  mBlocs = blocs;
+                  _isBlocsLoading = false;
+                });
+              }
+            } else {
+              print('no blocs found!!!');
+              //todo: need to re-attempt or check internet connection
+              setState(() {
+                _isBlocsLoading = false;
+              });
+            }
+          }).catchError((err) {
+            print('error ' + err);
           });
-        }
-      } else {
-        print('no blocs found!!!');
-        //todo: need to re-attempt or check internet connection
-        setState(() {
-          _isBlocsLoading = false;
-        });
-      }
-    }).catchError((err) {
-      print('error ' + err);
-    });
 
     int timeNow = Timestamp.now().millisecondsSinceEpoch;
     FirestoreHelper.pullUpcomingPartyByEndTime(timeNow).then((res) {
@@ -228,7 +258,6 @@ class _HomeScreenState extends State<HomeScreen> {
               textAlign: TextAlign.left,
             ),
           ),
-
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -364,7 +393,7 @@ class _HomeScreenState extends State<HomeScreen> {
             return _displaySuperstarsList(context, _users);
           }
         }
-        return const Center(child:Text('loading users...'));
+        return const Center(child: Text('loading users...'));
       },
     );
   }

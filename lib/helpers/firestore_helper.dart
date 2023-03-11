@@ -75,6 +75,13 @@ class FirestoreHelper {
         .get();
   }
 
+  static pullBlocsPromoter() {
+    return FirebaseFirestore.instance
+        .collection(BLOCS)
+        .get();
+  }
+
+
   static getBlocs() {
     return FirebaseFirestore.instance.collection(BLOCS).snapshots();
   }
@@ -1064,4 +1071,5 @@ class FirestoreHelper {
         .orderBy('level', descending: false)
         .get();
   }
+
 }

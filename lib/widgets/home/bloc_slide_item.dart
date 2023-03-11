@@ -144,7 +144,7 @@ class _BlocSlideItemState extends State<BlocSlideItem> {
                           ),
                         ),
                       ),
-                      SizedBox(height: 5),
+                      const SizedBox(height: 5),
                     ],
                   ),
                 ),

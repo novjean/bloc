@@ -47,10 +47,12 @@ class Constants {
     ),
   );
 
-  static int OWNER_LEVEL = 7;
-  static int MANAGER_LEVEL = 5;
-  static int CAPTAIN_LEVEL = 3;
   static int USER_LEVEL = 1;
+  static int CAPTAIN_LEVEL = 3;
+  static int PROMOTER_LEVEL = 4;
+  static int MANAGER_LEVEL = 5;
+  static int OWNER_LEVEL = 7;
+
 
   // flagship store kept for ease of reference
   static String blocServiceId = 'UVU4XPqTYr3U0YhQzEhg';
