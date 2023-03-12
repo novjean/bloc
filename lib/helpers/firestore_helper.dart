@@ -975,7 +975,7 @@ class FirestoreHelper {
     return FirebaseFirestore.instance
         .collection(USERS)
         .where('clearanceLevel', isEqualTo: level)
-        // .orderBy('name', descending : false)
+        .orderBy('lastSeenAt', descending : true)
         .snapshots();
   }
 

@@ -30,7 +30,8 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
     super.initState();
 
     // lets pull in user levels
-    FirestoreHelper.pullUserLevels(UserPreferences.myUser.clearanceLevel).then((res) {
+    FirestoreHelper.pullUserLevels(UserPreferences.myUser.clearanceLevel)
+        .then((res) {
       print("successfully retrieved user levels");
 
       if (res.docs.isNotEmpty) {
@@ -59,8 +60,11 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.of(context).push(MaterialPageRoute(
-              builder: (ctx) =>
-                  UserAddEditScreen(user: Dummy.getDummyUser(), task: 'Add', userLevels: mUserLevels,)));
+              builder: (ctx) => UserAddEditScreen(
+                    user: Dummy.getDummyUser(),
+                    task: 'Add',
+                    userLevels: mUserLevels,
+                  )));
         },
         child: Icon(
           Icons.add,
@@ -81,17 +85,17 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
     return Column(
       children: [
         const SizedBox(height: 5.0),
-        _isUserLevelsLoading? const SizedBox(): _displayUserLevels(context),
+        _isUserLevelsLoading ? const SizedBox() : _displayUserLevels(context),
         // _displayOptions(context),
         // const Divider(),
-        SizedBox(height: 5.0),
+        const SizedBox(height: 5.0),
         _buildUsers(context),
-        SizedBox(height: 5.0),
+        const SizedBox(height: 5.0),
       ],
     );
   }
 
-  _displayUserLevels(BuildContext context){
+  _displayUserLevels(BuildContext context) {
     double containerHeight = MediaQuery.of(context).size.height / 20;
 
     return Container(
@@ -121,8 +125,8 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
 
   _buildUsers(BuildContext context) {
     int sLevel = 1;
-    for(UserLevel userLevel in mUserLevels){
-      if(userLevel.name == _selectedType.toLowerCase()){
+    for (UserLevel userLevel in mUserLevels) {
+      if (userLevel.name == _selectedType.toLowerCase()) {
         sLevel = userLevel.level;
         break;
       }
@@ -150,7 +154,7 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
               return _displayUsers(context, _users);
             }
           }
-          return Text('pulling users...');
+          return const Center(child: Text('pulling users...'));
         });
   }
 
@@ -173,10 +177,11 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
                     builder: (BuildContext context) {
                       return AlertDialog(
                         title: Text("delete user : " + sUser.name),
-                        content: Text("would you like to delete the user?"),
+                        content:
+                            const Text("would you like to delete the user?"),
                         actions: [
                           TextButton(
-                            child: Text("yes"),
+                            child: const Text("yes"),
                             onPressed: () {
                               FirestorageHelper.deleteFile(sUser.imageUrl);
                               FirestoreHelper.deleteUser(sUser);
@@ -202,8 +207,11 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
                   logger.d('user selected : ' + sUser.name);
 
                   Navigator.of(context).push(MaterialPageRoute(
-                      builder: (ctx) =>
-                          UserAddEditScreen(user: sUser, task: 'edit', userLevels: mUserLevels,)));
+                      builder: (ctx) => UserAddEditScreen(
+                            user: sUser,
+                            task: 'edit',
+                            userLevels: mUserLevels,
+                          )));
                 });
           }),
     );

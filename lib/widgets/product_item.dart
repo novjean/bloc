@@ -23,13 +23,13 @@ class ProductItem extends StatefulWidget {
   int addCount = 1;
 
   ProductItem(
-      {required this.serviceId,
+      {Key? key, required this.serviceId,
       required this.product,
       required this.tableNumber,
       required this.isCommunity,
       required this.isOnOffer,
       required this.offer,
-      required this.isCustomerSeated});
+      required this.isCustomerSeated}) : super(key: key);
 
   @override
   State<ProductItem> createState() => _ProductItemState();

@@ -1,4 +1,4 @@
-import 'package:bloc/screens/manager/tables/manage_seats_screen.dart';
+import 'package:bloc/utils/date_time_utils.dart';
 import 'package:flutter/material.dart';
 
 import '../../db/entity/user.dart';
@@ -6,73 +6,56 @@ import '../../db/entity/user.dart';
 class UserItem extends StatelessWidget {
   final User user;
 
-  UserItem({required this.user});
+  const UserItem({Key? key, required this.user}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    var height = MediaQuery.of(context).size.height / 10;
-    var width = MediaQuery.of(context).size.width;
-
     return Padding(
-      padding: const EdgeInsets.all(10.0),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(8.0),
-        child: Stack(
-          children: <Widget>[
-            // FadeInImage(
-            //   placeholder: AssetImage('assets/images/product-placeholder.png'),
-            //   height: MediaQuery.of(context).size.height / 6,
-            //   width: MediaQuery.of(context).size.height / 6,
-            //   image: cat.imageUrl != "url"
-            //       ? NetworkImage(cat.imageUrl)
-            //       : NetworkImage(
-            //       "assets/images/product-placeholder.png"),
-            //   fit: BoxFit.cover,
-            // ),
-            // chick
-
-            Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  // Add one stop for each color. Stops should increase from 0 to 1
-                  stops: [0.2, 0.7],
-                  colors: [
-                    Colors.grey,
-                    Colors.white,
-                    // serviceTable.colorStatus==SeatsManagementScreen.TABLE_GREEN?Colors.greenAccent:Colors.redAccent,
-                  ],
-                  // stops: [0.0, 0.1],
-                ),
-              ),
-              height: height,
-              width: width,
-            ),
-            Center(
-              child: Container(
-                height: height,
-                width: width,
-                padding: const EdgeInsets.all(1),
-                constraints: BoxConstraints(
-                  minWidth: 20,
-                  minHeight: 20,
-                ),
-                child: Center(
-                  child: Text(
-                    'Name : ' +
-                        user.name,
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
+      padding: const EdgeInsets.symmetric(horizontal: 5.0),
+      child: Hero(
+        tag: user.id,
+        child: Card(
+          color: Theme.of(context).primaryColorLight,
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)),
+          child: SizedBox(
+            width: MediaQuery.of(context).size.width,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(left : 5.0, top: 5),
+                      child: Text(
+                        user.name.toLowerCase(),
+                        style: TextStyle(fontSize: 18),
+                      ),
                     ),
-                    textAlign: TextAlign.center,
-                  ),
+                    user.lastSeenAt != 0
+                        ? Padding(
+                            padding: const EdgeInsets.only(right : 5.0, top: 5),
+                            child: Text('last seen: ' +
+                                DateTimeUtils.getFormattedDateYear(
+                                    user.lastSeenAt)),
+                          )
+                        : const SizedBox(),
+                  ],
                 ),
-              ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(left : 5.0, right: 5.0, top: 5),
+                      child: Text('member since: ' +
+                          DateTimeUtils.getFormattedDateYear(user.createdAt)),
+                    ),
+                  ],
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );

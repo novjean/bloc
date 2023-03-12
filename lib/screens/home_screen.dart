@@ -44,7 +44,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
 
-    UserPreferences.myUser.clearanceLevel == Constants.PROMOTER_LEVEL
+    UserPreferences.myUser.clearanceLevel >= Constants.PROMOTER_LEVEL
         ? FirestoreHelper.pullBlocsPromoter().then((res) {
             print("successfully pulled in blocs for promoter");
 
@@ -71,7 +71,10 @@ class _HomeScreenState extends State<HomeScreen> {
               });
             }
           }).catchError((err) {
-            print('error ' + err);
+            print('error loading blocs ' + err);
+            setState(() {
+              _isBlocsLoading = false;
+            });
           })
         : FirestoreHelper.pullBlocs().then((res) {
             print("successfully pulled in blocs");
@@ -99,7 +102,10 @@ class _HomeScreenState extends State<HomeScreen> {
               });
             }
           }).catchError((err) {
-            print('error ' + err);
+            print('error loading blocs ' + err);
+            setState(() {
+              _isBlocsLoading = false;
+            });
           });
 
     int timeNow = Timestamp.now().millisecondsSinceEpoch;
@@ -204,11 +210,11 @@ class _HomeScreenState extends State<HomeScreen> {
 
   _displayBlocs(context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 3),
+      padding: const EdgeInsets.symmetric(horizontal: 0),
       height: 390,
       child: ListView.builder(
           itemCount: mBlocs.length,
-          scrollDirection: Axis.vertical,
+          scrollDirection: Axis.horizontal,
           itemBuilder: (ctx, index) {
             Bloc bloc = mBlocs[index];
 

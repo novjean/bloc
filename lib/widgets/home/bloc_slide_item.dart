@@ -63,7 +63,7 @@ class _BlocSlideItemState extends State<BlocSlideItem> {
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10.0)),
                 child: SizedBox(
-                  width: MediaQuery.of(context).size.width,
+                  width: MediaQuery.of(context).size.width-10,
                   child: Column(
                     children: <Widget>[
                       Stack(

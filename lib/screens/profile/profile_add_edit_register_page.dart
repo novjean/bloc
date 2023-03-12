@@ -16,7 +16,6 @@ import '../../utils/string_utils.dart';
 import '../../widgets/profile_widget.dart';
 import '../../widgets/ui/button_widget.dart';
 import '../../widgets/ui/dark_textfield_widget.dart';
-import '../../widgets/ui/textfield_widget.dart';
 
 class ProfileAddEditRegisterPage extends StatefulWidget {
   blocUser.User user;
