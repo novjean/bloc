@@ -17,28 +17,31 @@ class Product {
   final double priceCommunity;
   bool isOfferRunning;
   final bool isVeg;
+  List<String> blocIds;
 
 //<editor-fold desc="Data Methods">
 
-  Product(
-      {required this.id,
-      required this.name,
-      required this.type,
-      required this.category,
-      required this.description,
-      required this.price,
-      required this.serviceId,
-      required this.imageUrl,
-      required this.ownerId,
-      required this.createdAt,
-      required this.isAvailable,
-      required this.priceHighest,
-      required this.priceLowest,
-      required this.priceHighestTime,
-      required this.priceLowestTime,
-      required this.priceCommunity,
-      required this.isOfferRunning,
-      required this.isVeg});
+  Product({
+    required this.id,
+    required this.name,
+    required this.type,
+    required this.category,
+    required this.description,
+    required this.price,
+    required this.serviceId,
+    required this.imageUrl,
+    required this.ownerId,
+    required this.createdAt,
+    required this.isAvailable,
+    required this.priceHighest,
+    required this.priceLowest,
+    required this.priceHighestTime,
+    required this.priceLowestTime,
+    required this.priceCommunity,
+    required this.isOfferRunning,
+    required this.isVeg,
+    required this.blocIds,
+  });
 
   @override
   bool operator ==(Object other) =>
@@ -62,7 +65,8 @@ class Product {
           priceLowestTime == other.priceLowestTime &&
           priceCommunity == other.priceCommunity &&
           isOfferRunning == other.isOfferRunning &&
-          isVeg == other.isVeg);
+          isVeg == other.isVeg &&
+          blocIds == other.blocIds);
 
   @override
   int get hashCode =>
@@ -83,7 +87,8 @@ class Product {
       priceLowestTime.hashCode ^
       priceCommunity.hashCode ^
       isOfferRunning.hashCode ^
-      isVeg.hashCode;
+      isVeg.hashCode ^
+      blocIds.hashCode;
 
   @override
   String toString() {
@@ -104,8 +109,9 @@ class Product {
         ' priceHighestTime: $priceHighestTime,' +
         ' priceLowestTime: $priceLowestTime,' +
         ' priceCommunity: $priceCommunity,' +
-        ' isOfferRunning: $isOfferRunning' +
-        ' isVeg: $isVeg' +
+        ' isOfferRunning: $isOfferRunning,' +
+        ' isVeg: $isVeg,' +
+        ' blocIds: $blocIds,' +
         '}';
   }
 
@@ -128,6 +134,7 @@ class Product {
     double? priceCommunity,
     bool? isOfferRunning,
     bool? isVeg,
+    List<String>? blocIds,
   }) {
     return Product(
       id: id ?? this.id,
@@ -148,6 +155,7 @@ class Product {
       priceCommunity: priceCommunity ?? this.priceCommunity,
       isOfferRunning: isOfferRunning ?? this.isOfferRunning,
       isVeg: isVeg ?? this.isVeg,
+      blocIds: blocIds ?? this.blocIds,
     );
   }
 
@@ -171,6 +179,7 @@ class Product {
       'priceCommunity': this.priceCommunity,
       'isOfferRunning': this.isOfferRunning,
       'isVeg': this.isVeg,
+      'blocIds': this.blocIds,
     };
   }
 
@@ -228,6 +237,7 @@ class Product {
       priceCommunity: priceCommunity,
       isOfferRunning: map['isOfferRunning'] as bool,
       isVeg: map['isVeg'] as bool,
+      blocIds: map['blocIds'] as List<String>,
     );
   }
 

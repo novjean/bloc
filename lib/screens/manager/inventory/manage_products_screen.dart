@@ -119,7 +119,7 @@ class _ManageProductsScreenState extends State<ManageProductsScreen> {
           for (int i = 0; i < snapshot.data!.docs.length; i++) {
             DocumentSnapshot document = snapshot.data!.docs[i];
             Map<String, dynamic> map = document.data()! as Map<String, dynamic>;
-            final Product _product = Fresh.freshProductMap(map, true);
+            final Product _product = Fresh.freshProductMap(map, false);
             _products.add(_product);
 
             if (i == snapshot.data!.docs.length - 1) {

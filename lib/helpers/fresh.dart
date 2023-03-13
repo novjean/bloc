@@ -134,6 +134,14 @@ class Fresh {
       print('product isVeg not exist for product id: ' + product.id);
       shouldPushProduct = true;
     }
+    try {
+      product = product.copyWith(blocIds: map['blocIds'] as List<String>);
+    } catch (err) {
+      print('product blocIds not exist for product id: ' + product.id);
+      List<String> existingBlocIds = [product.serviceId];
+      product = product.copyWith(blocIds: existingBlocIds);
+      shouldPushProduct = true;
+    }
 
     if (shouldPushProduct && shouldUpdate) {
       print('updating product ' + product.id);
@@ -235,6 +243,11 @@ class Fresh {
       freshProduct = freshProduct.copyWith(isVeg: product.isVeg);
     } catch (err) {
       print('product isVeg not exist for product id: ' + product.id);
+    }
+    try {
+      freshProduct = freshProduct.copyWith(blocIds: product.blocIds);
+    } catch (err) {
+      print('product blocIds not exist for product id: ' + product.id);
     }
 
     return freshProduct;

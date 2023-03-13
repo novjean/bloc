@@ -77,7 +77,8 @@ class Dummy {
         priceLowestTime: time,
         type: 'Alcohol',
         priceLowest: 0,
-        isVeg: true);
+        isVeg: true,
+        blocIds: []);
 
     return dummyProduct;
   }
