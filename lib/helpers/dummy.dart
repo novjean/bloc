@@ -148,7 +148,8 @@ class Dummy {
         ownerId: UserPreferences.myUser.id,
         sequence: -1,
         serviceId: serviceId,
-        type: 'Alcohol');
+        type: 'Alcohol',
+        blocIds: []);
     return dummyCategory;
   }
 

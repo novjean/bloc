@@ -226,8 +226,6 @@ class _ProductAddEditScreenState extends State<ProductAddEditScreen> {
                     sBlocs = [];
                     sBlocIds = [];
 
-                    List<String> _sBlocIds = [];
-
                     for(String blocName in sBlocNames){
                       for(BlocService bs in blocServices){
                         if(blocName == bs.name){

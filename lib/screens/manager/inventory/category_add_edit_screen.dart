@@ -4,6 +4,7 @@ import 'package:bloc/utils/string_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:multiselect/multiselect.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -15,6 +16,7 @@ import '../../../helpers/fresh.dart';
 import '../../../widgets/profile_widget.dart';
 import '../../../widgets/ui/button_widget.dart';
 import '../../../widgets/ui/textfield_widget.dart';
+import '../../../widgets/ui/toaster.dart';
 
 class CategoryAddEditScreen extends StatefulWidget {
   Category category;
@@ -74,13 +76,13 @@ class _CategoryAddEditScreenState extends State<CategoryAddEditScreen> {
           _blocServiceNames.add(blocService.name);
           _blocServices.add(blocService);
 
-          // for(String blocId in widget.product.blocIds){
-          //   if(blocId == blocService.id){
-          //     _sBlocIds.add(blocId);
-          //     _sBlocNames.add(blocService.name);
-          //     _sBlocs.add(blocService);
-          //   }
-          // }
+          for(String blocId in widget.category.blocIds){
+            if(blocId == blocService.id){
+              _sBlocIds.add(blocId);
+              _sBlocNames.add(blocService.name);
+              _sBlocs.add(blocService);
+            }
+          }
         }
 
         setState(() {
@@ -151,6 +153,36 @@ class _CategoryAddEditScreenState extends State<CategoryAddEditScreen> {
           widget.category = widget.category.copyWith(name: name),
         ),
         const SizedBox(height: 24),
+        DropDownMultiSelect(
+          onChanged: (List<String> x) {
+            setState(() {
+              sBlocNames = x;
+              sBlocs = [];
+              sBlocIds = [];
+
+              List<String> _sBlocIds = [];
+
+              for(String blocName in sBlocNames){
+                for(BlocService bs in blocServices){
+                  if(blocName == bs.name){
+                    sBlocs.add(bs);
+                    sBlocIds.add(bs.id);
+                  }
+                }
+              }
+              if(sBlocIds.isEmpty){
+                print('no blocs selected');
+                Toaster.shortToast('no blocs selected');
+              } else {
+                widget.category = widget.category.copyWith(blocIds: sBlocIds);
+              }
+            });
+          },
+          options: blocServiceNames,
+          selectedValues: sBlocNames,
+          whenEmpty: 'select blocs',
+        ),
+        const SizedBox(height: 24),
         FormField<String>(
           builder: (FormFieldState<String> state) {
             return InputDecorator(
@@ -217,8 +249,6 @@ class _CategoryAddEditScreenState extends State<CategoryAddEditScreen> {
             widget.category = widget.category.copyWith(sequence: newSequence);
           },
         ),
-        const SizedBox(height: 24),
-
         const SizedBox(height: 24),
         ButtonWidget(
           text: 'save',

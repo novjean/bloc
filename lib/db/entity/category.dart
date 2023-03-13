@@ -9,10 +9,11 @@ class Category {
   final int createdAt;
   final int sequence;
   final String description;
+  List<String> blocIds;
 
 //<editor-fold desc="Data Methods">
 
-  const Category({
+  Category({
     required this.id,
     required this.name,
     required this.type,
@@ -22,6 +23,7 @@ class Category {
     required this.createdAt,
     required this.sequence,
     required this.description,
+    required this.blocIds,
   });
 
   @override
@@ -37,7 +39,8 @@ class Category {
           ownerId == other.ownerId &&
           createdAt == other.createdAt &&
           sequence == other.sequence &&
-          description == other.description);
+          description == other.description &&
+          blocIds == other.blocIds);
 
   @override
   int get hashCode =>
@@ -49,7 +52,8 @@ class Category {
       ownerId.hashCode ^
       createdAt.hashCode ^
       sequence.hashCode ^
-      description.hashCode;
+      description.hashCode ^
+      blocIds.hashCode;
 
   @override
   String toString() {
@@ -63,6 +67,7 @@ class Category {
         ' createdAt: $createdAt,' +
         ' sequence: $sequence,' +
         ' description: $description,' +
+        ' blocIds: $blocIds,' +
         '}';
   }
 
@@ -76,6 +81,7 @@ class Category {
     int? createdAt,
     int? sequence,
     String? description,
+    List<String>? blocIds,
   }) {
     return Category(
       id: id ?? this.id,
@@ -87,6 +93,7 @@ class Category {
       createdAt: createdAt ?? this.createdAt,
       sequence: sequence ?? this.sequence,
       description: description ?? this.description,
+      blocIds: blocIds ?? this.blocIds,
     );
   }
 
@@ -101,6 +108,7 @@ class Category {
       'createdAt': this.createdAt,
       'sequence': this.sequence,
       'description': this.description,
+      'blocIds': this.blocIds,
     };
   }
 
@@ -115,6 +123,7 @@ class Category {
       createdAt: map['createdAt'] as int,
       sequence: map['sequence'] as int,
       description: map['description'] as String,
+      blocIds: map['blocIds'] as List<String>,
     );
   }
 

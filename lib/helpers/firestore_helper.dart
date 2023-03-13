@@ -336,6 +336,14 @@ class FirestoreHelper {
         .get();
   }
 
+  static pullCategoriesNew(String blocServiceId) {
+    return FirebaseFirestore.instance
+        .collection(CATEGORIES)
+        .where('blocIds', arrayContains: blocServiceId)
+        .orderBy('sequence', descending: false)
+        .get();
+  }
+
   static Stream<QuerySnapshot<Object?>> getCategories(String serviceId) {
     return FirebaseFirestore.instance
         .collection(CATEGORIES)

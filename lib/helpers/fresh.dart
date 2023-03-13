@@ -66,6 +66,14 @@ class Fresh {
       print('category description not exist for category id: ' + category.id);
       shouldPush = true;
     }
+    try {
+      category = category.copyWith(blocIds: List<String>.from(map['blocIds']));
+    } catch (err) {
+      print('category blocIds not exist for category id: ' + category.id);
+      List<String> existingBlocIds = [category.serviceId];
+      category = category.copyWith(blocIds: existingBlocIds);
+      shouldPush = true;
+    }
 
     if (shouldPush && shouldUpdate) {
       print('updating category ' + category.id);
@@ -122,6 +130,11 @@ class Fresh {
       freshCategory = freshCategory.copyWith(description: category.description);
     } catch (err) {
       print('category description not exist for category id: ' + category.id);
+    }
+    try {
+      freshCategory = freshCategory.copyWith(blocIds: category.blocIds);
+    } catch (err) {
+      print('category blocIds not exist for category id: ' + category.id);
     }
 
     return freshCategory;

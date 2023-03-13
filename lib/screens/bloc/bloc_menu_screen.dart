@@ -60,7 +60,7 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
 
     blocUser.User user = UserPreferences.myUser;
 
-    FirestoreHelper.pullCategories(widget.blocService.id).then((res) {
+    FirestoreHelper.pullCategoriesNew(widget.blocService.id).then((res) {
       print("successfully retrieved categories");
 
       if (res.docs.isNotEmpty) {
