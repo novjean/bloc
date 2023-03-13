@@ -601,6 +601,16 @@ class FirestoreHelper {
         .snapshots();
   }
 
+  static getProductsByCategoryTypeNew(String blocServiceId, String type) {
+    return FirebaseFirestore.instance
+        .collection(PRODUCTS)
+        .where('blocIds', arrayContains: blocServiceId)
+        .where('type', isEqualTo: type)
+        .where('isAvailable', isEqualTo: true)
+    // .orderBy('sequence', descending: false)
+        .snapshots();
+  }
+
   static void updateProduct(Product product) async {
     int timestamp = Timestamp.now().millisecondsSinceEpoch;
     if (product.priceCommunity > product.priceHighest) {

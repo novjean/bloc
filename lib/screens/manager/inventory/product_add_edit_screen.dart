@@ -126,8 +126,8 @@ class _ProductAddEditScreenState extends State<ProductAddEditScreen> {
 
         for (int i = 0; i < res.docs.length; i++) {
           DocumentSnapshot document = res.docs[i];
-          Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-          final Category category = Category.fromMap(data);
+          Map<String, dynamic> map = document.data()! as Map<String, dynamic>;
+          final Category category = Fresh.freshCategoryMap(map, false);
           if (category.name == 'Alcohol' || category.name == 'Food') {
             catTypeNames.add(category.name);
             continue;

@@ -68,7 +68,7 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
         for (int i = 0; i < res.docs.length; i++) {
           DocumentSnapshot document = res.docs[i];
           Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-          final Category category = Category.fromMap(data);
+          final Category category = Fresh.freshCategoryMap(data, false);
           _categories.add(category);
         }
 
@@ -582,7 +582,7 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
   /** Products List **/
   buildProducts(BuildContext context, String category) {
     return StreamBuilder<QuerySnapshot>(
-      stream: FirestoreHelper.getProductsByCategoryType(
+      stream: FirestoreHelper.getProductsByCategoryTypeNew(
           widget.blocService.id, _sCategoryType),
       builder: (ctx, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {

@@ -1,3 +1,4 @@
+import '../db/entity/category.dart';
 import '../db/entity/party.dart';
 import '../db/entity/product.dart';
 import '../db/entity/user.dart';
@@ -6,6 +7,126 @@ import 'dummy.dart';
 import 'firestore_helper.dart';
 
 class Fresh {
+  /** category **/
+  static Category freshCategoryMap(Map<String, dynamic> map, bool shouldUpdate){
+    Category category = Dummy.getDummyCategory('');
+
+    bool shouldPush = false;
+
+    try {
+      category = category.copyWith(id: map['id'] as String);
+    } catch (err) {
+      print('category id not exist');
+    }
+    try {
+      category = category.copyWith(name: map['name'] as String);
+    } catch (err) {
+      print('category name not exist for category id: ' + category.id);
+      shouldPush = true;
+    }
+    try {
+      category = category.copyWith(type: map['type'] as String);
+    } catch (err) {
+      print('category type not exist for category id: ' + category.id);
+      shouldPush = true;
+    }
+    try {
+      category = category.copyWith(serviceId: map['serviceId'] as String);
+    } catch (err) {
+      print('category serviceId not exist for category id: ' + category.id);
+      shouldPush = true;
+    }
+    try {
+      category = category.copyWith(imageUrl: map['imageUrl'] as String);
+    } catch (err) {
+      print('category imageUrl not exist for category id: ' + category.id);
+      shouldPush = true;
+    }
+    try {
+      category = category.copyWith(ownerId: map['ownerId'] as String);
+    } catch (err) {
+      print('category ownerId not exist for category id: ' + category.id);
+      shouldPush = true;
+    }
+    try {
+      category = category.copyWith(createdAt: map['createdAt'] as int);
+    } catch (err) {
+      print('category createdAt not exist for category id: ' + category.id);
+      shouldPush = true;
+    }
+    try {
+      category = category.copyWith(sequence: map['sequence'] as int);
+    } catch (err) {
+      print('category sequence not exist for category id: ' + category.id);
+      shouldPush = true;
+    }
+    try {
+      category = category.copyWith(description: map['description'] as String);
+    } catch (err) {
+      print('category description not exist for category id: ' + category.id);
+      shouldPush = true;
+    }
+
+    if (shouldPush && shouldUpdate) {
+      print('updating category ' + category.id);
+      FirestoreHelper.pushCategory(category);
+    }
+
+    return category;
+  }
+
+  static Category freshCategory(Category category){
+    Category freshCategory = Dummy.getDummyCategory('');
+
+    try {
+      freshCategory = freshCategory.copyWith(id: category.id);
+    } catch (err) {
+      print('category id not exist');
+    }
+    try {
+      freshCategory = freshCategory.copyWith(name: category.name);
+    } catch (err) {
+      print('category name not exist for category id: ' + category.id);
+    }
+    try {
+      freshCategory = freshCategory.copyWith(type: category.type);
+    } catch (err) {
+      print('category type not exist for category id: ' + category.id);
+    }
+    try {
+      freshCategory = freshCategory.copyWith(serviceId: category.serviceId);
+    } catch (err) {
+      print('category serviceId not exist for category id: ' + category.id);
+    }
+    try {
+      freshCategory = freshCategory.copyWith(imageUrl: category.imageUrl);
+    } catch (err) {
+      print('category imageUrl not exist for category id: ' + category.id);
+    }
+    try {
+      freshCategory = freshCategory.copyWith(ownerId: category.ownerId);
+    } catch (err) {
+      print('category ownerId not exist for category id: ' + category.id);
+    }
+    try {
+      freshCategory = freshCategory.copyWith(createdAt: category.createdAt);
+    } catch (err) {
+      print('category createdAt not exist for category id: ' + category.id);
+    }
+    try {
+      freshCategory = freshCategory.copyWith(sequence: category.sequence);
+    } catch (err) {
+      print('category sequence not exist for category id: ' + category.id);
+    }
+    try {
+      freshCategory = freshCategory.copyWith(description: category.description);
+    } catch (err) {
+      print('category description not exist for category id: ' + category.id);
+    }
+
+    return freshCategory;
+  }
+
   /** product **/
   static Product freshProductMap(Map<String, dynamic> map, bool shouldUpdate) {
     Product product = Dummy.getDummyProduct('', UserPreferences.myUser.id);

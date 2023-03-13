@@ -1,15 +1,17 @@
 import 'dart:io';
 
 import 'package:bloc/utils/string_utils.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 
+import '../../../db/entity/bloc_service.dart';
 import '../../../db/entity/category.dart';
 import '../../../helpers/firestorage_helper.dart';
 import '../../../helpers/firestore_helper.dart';
+import '../../../helpers/fresh.dart';
 import '../../../widgets/profile_widget.dart';
 import '../../../widgets/ui/button_widget.dart';
 import '../../../widgets/ui/textfield_widget.dart';
@@ -34,9 +36,70 @@ class _CategoryAddEditScreenState extends State<CategoryAddEditScreen> {
   List<String> typeNames = ['Alcohol', 'Food'];
   String sType = 'Alcohol';
 
+  List<BlocService> blocServices = [];
+  List<String> blocServiceNames = [];
+
+  List<BlocService> sBlocs = [];
+  List<String> sBlocIds = [];
+  List<String> sBlocNames = [];
+
+  late String _sBlocServiceName;
+  late String _sBlocServiceId;
+  bool _isBlocServicesLoading = true;
+
   @override
   void initState() {
     super.initState();
+
+    FirestoreHelper.pullAllBlocServices().then((res) {
+      print("successfully pulled in all bloc services ");
+
+      if (res.docs.isNotEmpty) {
+        List<BlocService> _blocServices = [];
+        List<String> _blocServiceNames = [];
+        List<String> _sBlocIds = [];
+        List<String> _sBlocNames = [];
+        List<BlocService> _sBlocs = [];
+
+        for (int i = 0; i < res.docs.length; i++) {
+          DocumentSnapshot document = res.docs[i];
+          Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+          final BlocService blocService = BlocService.fromMap(data);
+
+          if (i == 0) {
+            _sBlocServiceId = blocService.id;
+            _sBlocServiceName = blocService.name;
+          }
+
+          _blocServiceNames.add(blocService.name);
+          _blocServices.add(blocService);
+
+          // for(String blocId in widget.product.blocIds){
+          //   if(blocId == blocService.id){
+          //     _sBlocIds.add(blocId);
+          //     _sBlocNames.add(blocService.name);
+          //     _sBlocs.add(blocService);
+          //   }
+          // }
+        }
+
+        setState(() {
+          blocServiceNames = _blocServiceNames;
+          blocServices = _blocServices;
+
+          sBlocs = _sBlocs;
+          sBlocIds = _sBlocIds;
+          sBlocNames = _sBlocNames;
+
+          _isBlocServicesLoading = false;
+        });
+      } else {
+        print('no bloc services found!');
+        setState(() {
+          _isBlocServicesLoading = false;
+        });
+      }
+    });
   }
 
   @override
@@ -155,6 +218,8 @@ class _CategoryAddEditScreenState extends State<CategoryAddEditScreen> {
           },
         ),
         const SizedBox(height: 24),
+
+        const SizedBox(height: 24),
         ButtonWidget(
           text: 'save',
           onClicked: () {
@@ -164,7 +229,8 @@ class _CategoryAddEditScreenState extends State<CategoryAddEditScreen> {
               FirestorageHelper.deleteFile(oldImageUrl);
             }
 
-            FirestoreHelper.pushCategory(widget.category);
+            Category freshCategory = Fresh.freshCategory(widget.category);
+            FirestoreHelper.pushCategory(freshCategory);
 
             Navigator.of(context).pop();
           },

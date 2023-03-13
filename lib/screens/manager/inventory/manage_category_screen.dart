@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 
 import '../../../helpers/dummy.dart';
 import '../../../helpers/firestore_helper.dart';
+import '../../../helpers/fresh.dart';
 import 'category_add_edit_screen.dart';
 
 class ManageCategoryScreen extends StatelessWidget {
@@ -55,7 +56,7 @@ class ManageCategoryScreen extends StatelessWidget {
           for (int i = 0; i < snapshot.data!.docs.length; i++) {
             DocumentSnapshot document = snapshot.data!.docs[i];
             Map<String, dynamic> map = document.data()! as Map<String, dynamic>;
-            final Category _category = Category.fromMap(map);
+            final Category _category = Fresh.freshCategoryMap(map, true);
             _categories.add(_category);
 
             if (i == snapshot.data!.docs.length - 1) {
