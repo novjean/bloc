@@ -11,7 +11,6 @@ class Fresh {
     Product product = Dummy.getDummyProduct('', UserPreferences.myUser.id);
 
     bool shouldPushProduct = false;
-
     int intPrice = 0;
 
     try {

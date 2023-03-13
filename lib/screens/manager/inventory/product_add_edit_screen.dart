@@ -1,18 +1,19 @@
 import 'dart:io';
 
-import 'package:bloc/utils/string_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:multiselect/multiselect.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 
+import '../../../db/entity/bloc_service.dart';
 import '../../../db/entity/category.dart';
 import '../../../db/entity/product.dart';
 import '../../../helpers/firestorage_helper.dart';
 import '../../../helpers/firestore_helper.dart';
 import '../../../helpers/fresh.dart';
+import '../../../utils/string_utils.dart';
 import '../../../widgets/profile_widget.dart';
 import '../../../widgets/ui/button_widget.dart';
 import '../../../widgets/ui/textfield_widget.dart';
@@ -33,7 +34,7 @@ class _ProductAddEditScreenState extends State<ProductAddEditScreen> {
   bool isPhotoChanged = false;
   late String oldImageUrl;
   late String newImageUrl;
-  String imagePath ='';
+  String imagePath = '';
 
   List<String> catTypeNames = [];
   List<String> catNames = [];
@@ -47,9 +48,61 @@ class _ProductAddEditScreenState extends State<ProductAddEditScreen> {
   late String _productCategory;
   late String _productType;
 
+  List<BlocService> blocServices = [];
+  List<String> blocServiceNames = [];
+
+  List<String> sBlocNames = [];
+  List<BlocService> sBlocs = [];
+
+  late String _sBlocServiceName;
+  late String _sBlocServiceId;
+  bool _isBlocServicesLoading = true;
+
   @override
   void initState() {
     super.initState();
+
+    FirestoreHelper.pullAllBlocServices().then((res) {
+      print("successfully pulled in all bloc services ");
+
+      if (res.docs.isNotEmpty) {
+        List<BlocService> _blocServices = [];
+        List<String> _blocServiceNames = [];
+
+        for (int i = 0; i < res.docs.length; i++) {
+          DocumentSnapshot document = res.docs[i];
+          Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+          final BlocService blocService = BlocService.fromMap(data);
+
+          if (i == 0) {
+            _sBlocServiceId = blocService.id;
+            _sBlocServiceName = blocService.name;
+          }
+
+          _blocServiceNames.add(blocService.name);
+          _blocServices.add(blocService);
+        }
+
+        setState(() {
+          blocServiceNames = _blocServiceNames;
+          blocServices = _blocServices;
+
+          //determine the chosen ones
+          for(BlocService bs in blocServices){
+            if(bs.id == widget.product.serviceId){
+              sBlocNames.add(bs.name);
+              sBlocs.add(bs);
+            }
+          }
+          _isBlocServicesLoading = false;
+        });
+      } else {
+        print('no bloc services found!');
+        setState(() {
+          _isBlocServicesLoading = false;
+        });
+      }
+    });
 
     FirestoreHelper.pullCategories(widget.product.serviceId).then((res) {
       print("successfully pulled in categories... ");
@@ -96,6 +149,9 @@ class _ProductAddEditScreenState extends State<ProductAddEditScreen> {
         });
       } else {
         print('no categories found!');
+        setState(() {
+          _isCategoriesLoading = false;
+        });
       }
     });
   }
@@ -109,17 +165,18 @@ class _ProductAddEditScreenState extends State<ProductAddEditScreen> {
       );
 
   _buildBody(BuildContext context) {
-    return _isCategoriesLoading
+    return _isCategoriesLoading | _isBlocServicesLoading
         ? Center(
-            child: Text('categories loading...'),
+            child: Text('blocs and categories loading...'),
           )
         : ListView(
-            padding: EdgeInsets.symmetric(horizontal: 32),
-            physics: BouncingScrollPhysics(),
+            padding: const EdgeInsets.symmetric(horizontal: 32),
+            physics: const BouncingScrollPhysics(),
             children: [
               const SizedBox(height: 15),
               ProfileWidget(
-                imagePath: imagePath.isEmpty ? widget.product.imageUrl : imagePath,
+                imagePath:
+                    imagePath.isEmpty ? widget.product.imageUrl : imagePath,
                 isEdit: true,
                 onClicked: () async {
                   final image = await ImagePicker().pickImage(
@@ -153,6 +210,25 @@ class _ProductAddEditScreenState extends State<ProductAddEditScreen> {
                     widget.product = widget.product.copyWith(name: name),
               ),
               const SizedBox(height: 24),
+              DropDownMultiSelect(
+                onChanged: (List<String> x) {
+                  setState(() {
+                    sBlocNames = x;
+                    sBlocs = [];
+                    for(String blocName in sBlocNames){
+                      for(BlocService bs in blocServices){
+                        if(blocName == bs.name){
+                          sBlocs.add(bs);
+                        }
+                      }
+                    }
+                  });
+                },
+                options: blocServiceNames,
+                selectedValues: sBlocNames,
+                whenEmpty: 'select blocs',
+              ),
+              const SizedBox(height: 24,),
               FormField<String>(
                 builder: (FormFieldState<String> state) {
                   return InputDecorator(
@@ -188,7 +264,6 @@ class _ProductAddEditScreenState extends State<ProductAddEditScreen> {
                   );
                 },
               ),
-
               _productType == 'Food'
                   ? Column(
                       children: [
@@ -210,7 +285,6 @@ class _ProductAddEditScreenState extends State<ProductAddEditScreen> {
                         ),
                       ],
                     ),
-
               const SizedBox(height: 24),
               TextFieldWidget(
                 label: 'description',
@@ -330,8 +404,7 @@ class _ProductAddEditScreenState extends State<ProductAddEditScreen> {
                     value: widget.product.isVeg,
                     onChanged: (value) {
                       setState(() {
-                        widget.product =
-                            widget.product.copyWith(isVeg: value);
+                        widget.product = widget.product.copyWith(isVeg: value);
                       });
                     },
                   ), //Checkbox
@@ -363,14 +436,14 @@ class _ProductAddEditScreenState extends State<ProductAddEditScreen> {
               ButtonWidget(
                 text: 'save',
                 onClicked: () {
-                 if (isPhotoChanged) {
+                  if (isPhotoChanged) {
                     widget.product =
                         widget.product.copyWith(imageUrl: newImageUrl);
                     FirestorageHelper.deleteFile(oldImageUrl);
                   }
 
-                 Product freshProduct = Fresh.freshProduct(widget.product);
-                 FirestoreHelper.pushProduct(freshProduct);
+                  Product freshProduct = Fresh.freshProduct(widget.product);
+                  FirestoreHelper.pushProduct(freshProduct);
 
                   Navigator.of(context).pop();
                 },
@@ -380,12 +453,12 @@ class _ProductAddEditScreenState extends State<ProductAddEditScreen> {
                 text: 'delete photo',
                 onClicked: () async {
                   if (widget.product.imageUrl.isNotEmpty) {
-                    bool isPhotoDeleted = await FirestorageHelper.deleteFile(widget.product.imageUrl);
-                    if(isPhotoDeleted){
+                    bool isPhotoDeleted = await FirestorageHelper.deleteFile(
+                        widget.product.imageUrl);
+                    if (isPhotoDeleted) {
                       print('photo deleted successfully');
                       Toaster.shortToast('photo deleted successfully');
-                      widget.product =
-                          widget.product.copyWith(imageUrl: '');
+                      widget.product = widget.product.copyWith(imageUrl: '');
 
                       Product freshProduct = Fresh.freshProduct(widget.product);
                       FirestoreHelper.pushProduct(freshProduct);
@@ -402,18 +475,18 @@ class _ProductAddEditScreenState extends State<ProductAddEditScreen> {
               ButtonWidget(
                 text: 'delete',
                 onClicked: () async {
-                  bool isPhotoDeleted = await FirestorageHelper.deleteFile(widget.product.imageUrl);
-                  if(isPhotoDeleted){
+                  bool isPhotoDeleted = await FirestorageHelper.deleteFile(
+                      widget.product.imageUrl);
+                  if (isPhotoDeleted) {
                     print('photo deleted successfully');
                     Toaster.shortToast('photo deleted successfully');
-                    widget.product =
-                        widget.product.copyWith(imageUrl: '');
+                    widget.product = widget.product.copyWith(imageUrl: '');
                     FirestoreHelper.deleteProduct(widget.product.id);
                     Navigator.of(context).pop();
-
                   } else {
                     print('photo deletion failed');
-                    Toaster.shortToast('photo deleted failed. product delete failed');
+                    Toaster.shortToast(
+                        'photo deleted failed. product delete failed');
                   }
                 },
               ),
@@ -424,20 +497,17 @@ class _ProductAddEditScreenState extends State<ProductAddEditScreen> {
   buildFoodCategoryDropdown(context) {
     String existingCategory = widget.product.category;
 
-    if(!catFoodNames.contains(existingCategory)){
+    if (!catFoodNames.contains(existingCategory)) {
       widget.product = widget.product.copyWith(category: catFoodNames[0]);
     }
 
     return InputDecorator(
       key: const ValueKey('product_category_food'),
       decoration: InputDecoration(
-          errorStyle: TextStyle(
-              color: Theme.of(context).errorColor,
-              fontSize: 16.0),
+          errorStyle:
+              TextStyle(color: Theme.of(context).errorColor, fontSize: 16.0),
           hintText: 'select product category',
-          border: OutlineInputBorder(
-              borderRadius:
-              BorderRadius.circular(5.0))),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(5.0))),
       isEmpty: _sCategoryFood == '',
       child: DropdownButtonHideUnderline(
         child: DropdownButton<String>(
@@ -447,8 +517,7 @@ class _ProductAddEditScreenState extends State<ProductAddEditScreen> {
               setState(() {
                 _productCategory = newValue!;
                 _sCategoryFood = _productCategory;
-                widget.product = widget.product
-                    .copyWith(category: newValue);
+                widget.product = widget.product.copyWith(category: newValue);
                 // state.didChange(newValue);
               });
             },
@@ -465,19 +534,16 @@ class _ProductAddEditScreenState extends State<ProductAddEditScreen> {
   buildAlcoholCategoryDropdown(BuildContext context) {
     String existingCategory = widget.product.category;
 
-    if(!catAlcoholNames.contains(existingCategory)){
+    if (!catAlcoholNames.contains(existingCategory)) {
       widget.product = widget.product.copyWith(category: catAlcoholNames[0]);
     }
     return InputDecorator(
       key: const ValueKey('product_category_alcohol'),
       decoration: InputDecoration(
-          errorStyle: TextStyle(
-              color: Theme.of(context).errorColor,
-              fontSize: 16.0),
+          errorStyle:
+              TextStyle(color: Theme.of(context).errorColor, fontSize: 16.0),
           hintText: 'select product category',
-          border: OutlineInputBorder(
-              borderRadius:
-              BorderRadius.circular(5.0))),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(5.0))),
       isEmpty: _sCategoryAlcohol == '',
       child: DropdownButtonHideUnderline(
         child: DropdownButton<String>(
@@ -487,8 +553,7 @@ class _ProductAddEditScreenState extends State<ProductAddEditScreen> {
               setState(() {
                 _productCategory = newValue!;
                 _sCategoryAlcohol = _productCategory;
-                widget.product = widget.product
-                    .copyWith(category: newValue);
+                widget.product = widget.product.copyWith(category: newValue);
                 // state.didChange(newValue);
               });
             },
