@@ -51,8 +51,9 @@ class _ProductAddEditScreenState extends State<ProductAddEditScreen> {
   List<BlocService> blocServices = [];
   List<String> blocServiceNames = [];
 
-  List<String> sBlocNames = [];
   List<BlocService> sBlocs = [];
+  List<String> sBlocIds = [];
+  List<String> sBlocNames = [];
 
   late String _sBlocServiceName;
   late String _sBlocServiceId;
@@ -68,6 +69,9 @@ class _ProductAddEditScreenState extends State<ProductAddEditScreen> {
       if (res.docs.isNotEmpty) {
         List<BlocService> _blocServices = [];
         List<String> _blocServiceNames = [];
+        List<String> _sBlocIds = [];
+        List<String> _sBlocNames = [];
+        List<BlocService> _sBlocs = [];
 
         for (int i = 0; i < res.docs.length; i++) {
           DocumentSnapshot document = res.docs[i];
@@ -81,19 +85,24 @@ class _ProductAddEditScreenState extends State<ProductAddEditScreen> {
 
           _blocServiceNames.add(blocService.name);
           _blocServices.add(blocService);
+
+          for(String blocId in widget.product.blocIds){
+            if(blocId == blocService.id){
+              _sBlocIds.add(blocId);
+              _sBlocNames.add(blocService.name);
+              _sBlocs.add(blocService);
+            }
+          }
         }
 
         setState(() {
           blocServiceNames = _blocServiceNames;
           blocServices = _blocServices;
 
-          //determine the chosen ones
-          for(BlocService bs in blocServices){
-            if(bs.id == widget.product.serviceId){
-              sBlocNames.add(bs.name);
-              sBlocs.add(bs);
-            }
-          }
+          sBlocs = _sBlocs;
+          sBlocIds = _sBlocIds;
+          sBlocNames = _sBlocNames;
+
           _isBlocServicesLoading = false;
         });
       } else {
@@ -215,12 +224,23 @@ class _ProductAddEditScreenState extends State<ProductAddEditScreen> {
                   setState(() {
                     sBlocNames = x;
                     sBlocs = [];
+                    sBlocIds = [];
+
+                    List<String> _sBlocIds = [];
+
                     for(String blocName in sBlocNames){
                       for(BlocService bs in blocServices){
                         if(blocName == bs.name){
                           sBlocs.add(bs);
+                          sBlocIds.add(bs.id);
                         }
                       }
+                    }
+                    if(sBlocIds.isEmpty){
+                      print('no blocs selected');
+                      Toaster.shortToast('no blocs selected');
+                    } else {
+                      widget.product = widget.product.copyWith(blocIds: sBlocIds);
                     }
                   });
                 },

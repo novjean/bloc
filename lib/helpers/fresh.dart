@@ -129,7 +129,7 @@ class Fresh {
       shouldPushProduct = true;
     }
     try {
-      product = product.copyWith(blocIds: map['blocIds'] as List<String>);
+      product = product.copyWith(blocIds: List<String>.from(map['blocIds']));
     } catch (err) {
       print('product blocIds not exist for product id: ' + product.id);
       List<String> existingBlocIds = [product.serviceId];
