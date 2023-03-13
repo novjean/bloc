@@ -3,13 +3,14 @@ import 'package:bloc/screens/manager/inventory/add_product_offer_screen.dart';
 import 'package:flutter/material.dart';
 
 import '../../db/entity/product.dart';
+import '../../helpers/fresh.dart';
 import '../../screens/manager/inventory/product_add_edit_screen.dart';
 
 class ManageProductItem extends StatelessWidget {
   final Product product;
   final String serviceId;
 
-  ManageProductItem({required this.serviceId, required this.product});
+  ManageProductItem({Key? key, required this.serviceId, required this.product}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -102,7 +103,8 @@ class ManageProductItem extends StatelessWidget {
                                     updatedProduct.name +
                                     ' available ' +
                                     value.toString());
-                                FirestoreHelper.pushProduct(updatedProduct);
+                                Product freshProduct = Fresh.freshProduct(updatedProduct);
+                                FirestoreHelper.pushProduct(freshProduct);
                               },
                             ),
                             IconButton(

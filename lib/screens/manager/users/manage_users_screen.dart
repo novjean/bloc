@@ -14,7 +14,7 @@ import '../../../widgets/manager/user_item.dart';
 import '../../../widgets/ui/sized_listview_block.dart';
 
 class ManageUsersScreen extends StatefulWidget {
-  ManageUsersScreen();
+  ManageUsersScreen({Key? key}) : super(key: key);
 
   @override
   State<ManageUsersScreen> createState() => _ManageUsersScreenState();

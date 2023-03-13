@@ -1,11 +1,11 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 import '../../../db/entity/offer.dart';
 import '../../../db/entity/product.dart';
 import '../../../helpers/firestore_helper.dart';
+import '../../../helpers/fresh.dart';
 import '../../../utils/string_utils.dart';
 import '../../../widgets/ui/button_widget.dart';
 import '../../../widgets/ui/textfield_widget.dart';
@@ -36,14 +36,14 @@ class _AddProductOfferScreenState extends State<AddProductOfferScreen> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: Text('Product | Offer'),),
+    appBar: AppBar(title: const Text('product | offer'),),
     body: _buildBody(context),
   );
 
   _buildBody(BuildContext context) {
     return ListView(
-      padding: EdgeInsets.symmetric(horizontal: 32),
-      physics: BouncingScrollPhysics(),
+      padding: const EdgeInsets.symmetric(horizontal: 32),
+      physics: const BouncingScrollPhysics(),
       children: [
         const SizedBox(height: 24),
         TextFormField(
@@ -55,13 +55,13 @@ class _AddProductOfferScreenState extends State<AddProductOfferScreen> {
           enableSuggestions: false,
           keyboardType: TextInputType.text,
           decoration: const InputDecoration(
-            labelText: 'Product Name',
+            labelText: 'product name',
           ),
         ),
 
         const SizedBox(height: 24),
         TextFieldWidget(
-          label: 'Offer %',
+          label: 'offer %',
           text: '',
           onChanged: (textPercent) {
             offerPercent = StringUtils.getDouble(textPercent);
@@ -69,8 +69,8 @@ class _AddProductOfferScreenState extends State<AddProductOfferScreen> {
         ),
         const SizedBox(height: 24),
         TextFieldWidget(
-          label: 'Description',
-          text: 'Enter the offer description here for notification purpose.',
+          label: 'description',
+          text: 'enter the offer description here for notification purpose',
           maxLines: 5,
           onChanged: (value) {
             offerDescription = value;
@@ -79,15 +79,12 @@ class _AddProductOfferScreenState extends State<AddProductOfferScreen> {
 
         const SizedBox(height: 24),
         Row(
-          children: <Widget>[
-            SizedBox(
-              width: 0,
-            ), //SizedBox
+          children: <Widget>[ //SizedBox
             Text(
-              'Offer for Private : ',
+              'offer for private : ',
               style: TextStyle(fontSize: 17.0),
             ), //Text
-            SizedBox(width: 10), //SizedBox
+            const SizedBox(width: 10), //SizedBox
             Checkbox(
               value: isPrivateOffer,
               onChanged: (value) {
@@ -109,13 +106,13 @@ class _AddProductOfferScreenState extends State<AddProductOfferScreen> {
           enableSuggestions: false,
           validator: (value) {
             if (value!.isEmpty) {
-              return 'Please enter a valid price for the product.';
+              return 'please enter a valid price for the product';
             }
             return null;
           },
           keyboardType: TextInputType.number,
           decoration: const InputDecoration(
-            labelText: 'Current Price',
+            labelText: 'current price',
           ),
         ),
 
@@ -129,13 +126,13 @@ class _AddProductOfferScreenState extends State<AddProductOfferScreen> {
           enableSuggestions: false,
           validator: (value) {
             if (value!.isEmpty) {
-              return 'Please enter a valid price for the product.';
+              return 'please enter a valid price for the product';
             }
             return null;
           },
           keyboardType: TextInputType.number,
           decoration: const InputDecoration(
-            labelText: 'Offer Price',
+            labelText: 'offer price',
           ),
           onChanged: (value) {
             double? newPrice = double.tryParse(value);
@@ -146,11 +143,8 @@ class _AddProductOfferScreenState extends State<AddProductOfferScreen> {
         const SizedBox(height: 24),
         Row(
           children: <Widget>[
-            SizedBox(
-              width: 0,
-            ), //SizedBox
             Text(
-              'Offer for Community : ',
+              'offer for community : ',
               style: TextStyle(fontSize: 17.0),
             ), //Text
             SizedBox(width: 10), //SizedBox
@@ -173,13 +167,13 @@ class _AddProductOfferScreenState extends State<AddProductOfferScreen> {
           enableSuggestions: false,
           validator: (value) {
             if (value!.isEmpty) {
-              return 'Please enter a valid community price for the product.';
+              return 'please enter a valid community price for the product';
             }
             return null;
           },
           keyboardType: TextInputType.number,
           decoration: const InputDecoration(
-            labelText: 'Community Price',
+            labelText: 'community price',
           ),
         ),
         const SizedBox(height: 24),
@@ -192,13 +186,13 @@ class _AddProductOfferScreenState extends State<AddProductOfferScreen> {
           enableSuggestions: false,
           validator: (value) {
             if (value!.isEmpty) {
-              return 'Please enter a valid community price for the product.';
+              return 'please enter a valid community price for the product';
             }
             return null;
           },
           keyboardType: TextInputType.number,
           decoration: const InputDecoration(
-            labelText: 'Offer Community Price',
+            labelText: 'offer community price',
           ),
         ),
         const SizedBox(height: 24),
@@ -239,7 +233,11 @@ class _AddProductOfferScreenState extends State<AddProductOfferScreen> {
                 endTime: creationMilliSec);
             FirestoreHelper.insertOffer(offer);
 
-            FirestoreHelper.setProductOfferRunning(widget.product.id, true);
+            widget.product.isOfferRunning = true;
+            Product freshProduct = Fresh.freshProduct(widget.product);
+            FirestoreHelper.pushProduct(freshProduct);
+
+            // FirestoreHelper.setProductOfferRunning(widget.product.id, true);
 
             Navigator.of(context).pop();
           },

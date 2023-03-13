@@ -15,12 +15,12 @@ class Product {
   final int priceHighestTime;
   final int priceLowestTime;
   final double priceCommunity;
-  final bool isOfferRunning;
+  bool isOfferRunning;
   final bool isVeg;
 
 //<editor-fold desc="Data Methods">
 
-  const Product(
+  Product(
       {required this.id,
       required this.name,
       required this.type,

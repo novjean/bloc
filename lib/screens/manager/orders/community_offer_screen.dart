@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 
 import '../../../db/entity/offer.dart';
 import '../../../helpers/firestore_helper.dart';
+import '../../../helpers/fresh.dart';
 import '../../../utils/number_utils.dart';
 import '../../../widgets/ui/button_widget.dart';
 import '../../../widgets/ui/textfield_widget.dart';
@@ -32,7 +33,7 @@ class _CommunityOfferScreenState extends State<CommunityOfferScreen> {
     super.initState();
 
     FirestoreHelper.pullProduct(widget.cartItem.productId).then((res) {
-      print("Successfully retrieved product");
+      print("successfully retrieved product");
       for (int i = 0; i < res.docs.length; i++) {
         DocumentSnapshot document = res.docs[i];
         Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
@@ -57,27 +58,27 @@ class _CommunityOfferScreenState extends State<CommunityOfferScreen> {
   @override
   Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(
-          title: Text('Community | Offer'),
+          title: const Text('community | offer'),
         ),
         body: _isLoading
-            ? CenterTextWidget(text: 'Loading product...')
+            ? CenterTextWidget(text: 'loading product...')
             : _buildBody(context),
       );
 
   _buildBody(BuildContext context) {
     return ListView(
-      padding: EdgeInsets.symmetric(horizontal: 32),
-      physics: BouncingScrollPhysics(),
+      padding: const EdgeInsets.symmetric(horizontal: 32),
+      physics: const BouncingScrollPhysics(),
       children: [
         const SizedBox(height: 15),
         TextFieldWidget(
-          label: 'Product Name',
+          label: 'product name',
           text: _product!.name,
           onChanged: (name) => _product = _product,
         ),
         const SizedBox(height: 24),
         TextFieldWidget(
-          label: 'Community Price',
+          label: 'community price',
           text: _product!.priceCommunity.toStringAsFixed(2),
           onChanged: (value) {
             double? newPrice = double.tryParse(value);
@@ -86,7 +87,7 @@ class _CommunityOfferScreenState extends State<CommunityOfferScreen> {
         ),
         const SizedBox(height: 24),
         TextFieldWidget(
-          label: 'Price Difference',
+          label: 'price difference',
           text: _priceDifference.toStringAsFixed(2),
           onChanged: (value) {},
         ),
@@ -104,7 +105,7 @@ class _CommunityOfferScreenState extends State<CommunityOfferScreen> {
         // ),
         // const SizedBox(height: 24),
         TextFieldWidget(
-          label: 'Lowest Price',
+          label: 'lowest price',
           text: _product!.priceLowest.toStringAsFixed(2),
           onChanged: (value) {
             double? newPrice = double.tryParse(value);
@@ -113,7 +114,7 @@ class _CommunityOfferScreenState extends State<CommunityOfferScreen> {
         ),
         const SizedBox(height: 24),
         TextFieldWidget(
-          label: 'Highest Price',
+          label: 'highest price',
           text: _product!.priceHighest.toStringAsFixed(2),
           onChanged: (value) {
             double? newPrice = double.tryParse(value);
@@ -123,13 +124,26 @@ class _CommunityOfferScreenState extends State<CommunityOfferScreen> {
         const SizedBox(height: 24),
 
         ButtonWidget(
-          text: 'Save',
+          text: 'save',
           onClicked: () {
             // check if a price change has been taken place
             if (_product!.priceCommunity >= _oldPriceCommunity) {
               //the price has not changed or gone up
               // todo: notify users that the price is expected to go up, so buy quick
-              FirestoreHelper.updateProduct(_product!);
+              Product freshProduct = Fresh.freshProduct(_product!);
+
+              int timestamp = Timestamp.now().millisecondsSinceEpoch;
+              if (freshProduct.priceCommunity > freshProduct.priceHighest) {
+                freshProduct = freshProduct.copyWith(priceHighest: freshProduct.priceCommunity);
+                freshProduct = freshProduct.copyWith(priceHighestTime: timestamp);
+              } else if (freshProduct.priceCommunity < freshProduct.priceLowest) {
+                freshProduct = freshProduct.copyWith(priceLowest: freshProduct.priceCommunity);
+                freshProduct = freshProduct.copyWith(priceLowestTime: timestamp);
+              }
+
+              FirestoreHelper.pushProduct(freshProduct);
+              // FirestoreHelper.updateProduct(freshProduct);
+
               Navigator.of(context).pop();
             } else {
               double discountPercent = 100 -
@@ -142,12 +156,12 @@ class _CommunityOfferScreenState extends State<CommunityOfferScreen> {
                 context: context,
                 builder: (BuildContext ctx) {
                   return AlertDialog(
-                    title: Text("Offer Confirm"),
+                    title: Text("offer confirm"),
                     content: Text(discountPercent.toStringAsFixed(0) +
                         "% discount has been offered. Is this correct?"),
                     actions: [
                       TextButton(
-                        child: Text("Yes"),
+                        child: Text("yes"),
                         onPressed: () async {
                           // we should not change the price directly, instead use offer object
                           // FirestoreHelper.updateProduct(_product!);
@@ -199,7 +213,7 @@ class _CommunityOfferScreenState extends State<CommunityOfferScreen> {
                         },
                       ),
                       TextButton(
-                        child: Text("Cancel"),
+                        child: Text("cancel"),
                         onPressed: () {
                           Navigator.of(ctx).pop();
                         },

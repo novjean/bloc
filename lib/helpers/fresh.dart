@@ -1,11 +1,246 @@
-import 'package:bloc/helpers/firestore_helper.dart';
-
 import '../db/entity/party.dart';
+import '../db/entity/product.dart';
 import '../db/entity/user.dart';
 import '../db/shared_preferences/user_preferences.dart';
 import 'dummy.dart';
+import 'firestore_helper.dart';
 
 class Fresh {
+  /** product **/
+  static Product freshProductMap(Map<String, dynamic> map, bool shouldUpdate) {
+    Product product = Dummy.getDummyProduct('', UserPreferences.myUser.id);
+
+    bool shouldPushProduct = false;
+
+    int intPrice = 0;
+
+    try {
+      product = product.copyWith(id: map['id'] as String);
+    } catch (err) {
+      print('product id not exist');
+    }
+
+    try {
+      product = product.copyWith(name: map['name'] as String);
+    } catch (err) {
+      print('product name not exist for product id: ' + product.id);
+      shouldPushProduct = true;
+    }
+
+    try {
+      product = product.copyWith(price: map['price'] as double);
+    } on FormatException catch (_) {
+      intPrice = map['price'] as int;
+      product = product.copyWith(price: intPrice.toDouble());
+    } catch (err) {
+      print('product price not exist for product id: ' + product.id);
+      shouldPushProduct = true;
+    }
+
+    try {
+      product = product.copyWith(priceHighest: map['priceHighest'] as double);
+    } on FormatException catch (_) {
+      intPrice = map['priceHighest'] as int;
+      product = product.copyWith(priceHighest: intPrice.toDouble());
+    } catch (err) {
+      print('product priceHighest not exist for product id: ' + product.id);
+      shouldPushProduct = true;
+    }
+
+    try {
+      product = product.copyWith(priceLowest: map['priceLowest'] as double);
+    } on FormatException catch (_) {
+      intPrice = map['priceLowest'] as int;
+      product = product.copyWith(priceLowest: intPrice.toDouble());
+    } catch (err) {
+      print('product priceLowest not exist for product id: ' + product.id);
+      shouldPushProduct = true;
+    }
+
+    try {
+      product = product.copyWith(priceCommunity: map['priceCommunity'] as double);
+    } on FormatException catch (_) {
+      intPrice = map['priceCommunity'] as int;
+      product = product.copyWith(priceCommunity: intPrice.toDouble());
+    } catch (err) {
+      print('product priceCommunity not exist for product id: ' + product.id);
+      shouldPushProduct = true;
+    }
+
+    try {
+      product = product.copyWith(type: map['type'] as String);
+    } catch (err) {
+      print('product type not exist for product id: ' + product.id);
+      shouldPushProduct = true;
+    }
+    try {
+      product = product.copyWith(category: map['category'] as String);
+    } catch (err) {
+      print('product category not exist for product id: ' + product.id);
+      shouldPushProduct = true;
+    }
+    try {
+      product = product.copyWith(description: map['description'] as String);
+    } catch (err) {
+      print('product description not exist for product id: ' + product.id);
+      shouldPushProduct = true;
+    }
+    try {
+      product = product.copyWith(serviceId: map['serviceId'] as String);
+    } catch (err) {
+      print('product serviceId not exist for product id: ' + product.id);
+      shouldPushProduct = true;
+    }
+    try {
+      product = product.copyWith(imageUrl: map['imageUrl'] as String);
+    } catch (err) {
+      print('product imageUrl not exist for product id: ' + product.id);
+      shouldPushProduct = true;
+    }
+    try {
+      product = product.copyWith(ownerId: map['ownerId'] as String);
+    } catch (err) {
+      print('product ownerId not exist for product id: ' + product.id);
+      shouldPushProduct = true;
+    }
+    try {
+      product = product.copyWith(createdAt: map['createdAt'] as int);
+    } catch (err) {
+      print('product createdAt not exist for product id: ' + product.id);
+      shouldPushProduct = true;
+    }
+    try {
+      product = product.copyWith(isAvailable: map['isAvailable'] as bool);
+    } catch (err) {
+      print('product isAvailable not exist for product id: ' + product.id);
+      shouldPushProduct = true;
+    }
+    try {
+      product = product.copyWith(priceHighestTime: map['priceHighestTime'] as int);
+    } catch (err) {
+      print('product priceHighestTime not exist for product id: ' + product.id);
+      shouldPushProduct = true;
+    }
+    try {
+      product = product.copyWith(priceLowestTime: map['priceLowestTime'] as int);
+    } catch (err) {
+      print('product priceLowestTime not exist for product id: ' + product.id);
+      shouldPushProduct = true;
+    }
+    try {
+      product = product.copyWith(isOfferRunning: map['isOfferRunning'] as bool);
+    } catch (err) {
+      print('product isOfferRunning not exist for product id: ' + product.id);
+      shouldPushProduct = true;
+    }
+    try {
+      product = product.copyWith(isVeg: map['isVeg'] as bool);
+    } catch (err) {
+      print('product isVeg not exist for product id: ' + product.id);
+      shouldPushProduct = true;
+    }
+
+    if (shouldPushProduct && shouldUpdate) {
+      print('updating product ' + product.id);
+      FirestoreHelper.pushProduct(product);
+    }
+
+    return product;
+  }
+
+  static Product freshProduct(Product product){
+    Product freshProduct = Dummy.getDummyProduct(product.serviceId, product.ownerId);
+
+    try {
+      freshProduct = freshProduct.copyWith(name: product.name);
+    } catch (err) {
+      print('product name not exist for product id: ' + product.id);
+    }
+    try {
+      freshProduct = freshProduct.copyWith(type: product.type);
+    } catch (err) {
+      print('product type not exist for product id: ' + product.id);
+    }
+    try {
+      freshProduct = freshProduct.copyWith(category: product.category);
+    } catch (err) {
+      print('product category not exist for product id: ' + product.id);
+    }
+    try {
+      freshProduct = freshProduct.copyWith(description: product.description);
+    } catch (err) {
+      print('product description not exist for product id: ' + product.id);
+    }
+    try {
+      freshProduct = freshProduct.copyWith(price: product.price);
+    } catch (err) {
+      print('product price not exist for product id: ' + product.id);
+    }
+    try {
+      freshProduct = freshProduct.copyWith(serviceId: product.serviceId);
+    } catch (err) {
+      print('product serviceId not exist for product id: ' + product.id);
+    }
+    try {
+      freshProduct = freshProduct.copyWith(imageUrl: product.imageUrl);
+    } catch (err) {
+      print('product imageUrl not exist for product id: ' + product.id);
+    }
+    try {
+      freshProduct = freshProduct.copyWith(ownerId: product.ownerId);
+    } catch (err) {
+      print('product ownerId not exist for product id: ' + product.id);
+    }
+    try {
+      freshProduct = freshProduct.copyWith(createdAt: product.createdAt);
+    } catch (err) {
+      print('product createdAt not exist for product id: ' + product.id);
+    }
+    try {
+      freshProduct = freshProduct.copyWith(isAvailable: product.isAvailable);
+    } catch (err) {
+      print('product isAvailable not exist for product id: ' + product.id);
+    }
+    try {
+      freshProduct = freshProduct.copyWith(priceHighest: product.priceHighest);
+    } catch (err) {
+      print('product priceHighest not exist for product id: ' + product.id);
+    }
+    try {
+      freshProduct = freshProduct.copyWith(priceLowest: product.priceLowest);
+    } catch (err) {
+      print('product priceLowest not exist for product id: ' + product.id);
+    }
+    try {
+      freshProduct = freshProduct.copyWith(priceHighestTime: product.priceHighestTime);
+    } catch (err) {
+      print('product priceHighestTime not exist for product id: ' + product.id);
+    }
+    try {
+      freshProduct = freshProduct.copyWith(priceLowestTime: product.priceLowestTime);
+    } catch (err) {
+      print('product priceLowestTime not exist for product id: ' + product.id);
+    }
+    try {
+      freshProduct = freshProduct.copyWith(priceCommunity: product.priceCommunity);
+    } catch (err) {
+      print('product priceCommunity not exist for product id: ' + product.id);
+    }
+    try {
+      freshProduct = freshProduct.copyWith(isOfferRunning: product.isOfferRunning);
+    } catch (err) {
+      print('product isOfferRunning not exist for product id: ' + product.id);
+    }
+    try {
+      freshProduct = freshProduct.copyWith(isVeg: product.isVeg);
+    } catch (err) {
+      print('product isVeg not exist for product id: ' + product.id);
+    }
+
+    return freshProduct;
+  }
+
+  /** party **/
   static Party freshPartyMap(Map<String, dynamic> map, bool shouldUpdate) {
     Party party = Dummy.getDummyParty(UserPreferences.myUser.blocServiceId);
     bool shouldPushParty = false;
@@ -100,7 +335,7 @@ class Fresh {
       shouldPushParty = true;
     }
 
-    if(shouldPushParty && shouldUpdate){
+    if (shouldPushParty && shouldUpdate) {
       print('updating party ' + party.id);
       FirestoreHelper.pushParty(party);
     }
@@ -197,6 +432,7 @@ class Fresh {
     return freshParty;
   }
 
+  /** user **/
   static User freshUserMap(Map<String, dynamic> map, bool shouldUpdate) {
     User user = Dummy.getDummyUser();
     bool shouldPushUser = false;
@@ -267,7 +503,7 @@ class Fresh {
       shouldPushUser = true;
     }
 
-    if(shouldPushUser && shouldUpdate){
+    if (shouldPushUser && shouldUpdate) {
       print('updating user ' + user.id);
       FirestoreHelper.pushUser(user);
     }
@@ -336,6 +572,4 @@ class Fresh {
 
     return freshUser;
   }
-
-
 }

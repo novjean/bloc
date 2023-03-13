@@ -601,25 +601,6 @@ class FirestoreHelper {
         .snapshots();
   }
 
-  static void updateProductImage(String productId, File image) async {
-    try {
-      final url = await FirestorageHelper.uploadFile(
-          FirestorageHelper.PRODUCT_IMAGES, productId, image);
-
-      await FirebaseFirestore.instance
-          .collection(PRODUCTS)
-          .doc(productId)
-          .update({'imageUrl': url})
-          .then((value) => print("Product image updated."))
-          .catchError(
-              (error) => print("Failed to update product image: $error"));
-    } on PlatformException catch (err) {
-      logger.e(err.message);
-    } catch (err) {
-      logger.e(err);
-    }
-  }
-
   static void updateProduct(Product product) async {
     int timestamp = Timestamp.now().millisecondsSinceEpoch;
     if (product.priceCommunity > product.priceHighest) {

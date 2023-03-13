@@ -12,6 +12,7 @@ import '../../../db/entity/category.dart';
 import '../../../db/entity/product.dart';
 import '../../../helpers/firestorage_helper.dart';
 import '../../../helpers/firestore_helper.dart';
+import '../../../helpers/fresh.dart';
 import '../../../widgets/profile_widget.dart';
 import '../../../widgets/ui/button_widget.dart';
 import '../../../widgets/ui/textfield_widget.dart';
@@ -368,7 +369,8 @@ class _ProductAddEditScreenState extends State<ProductAddEditScreen> {
                     FirestorageHelper.deleteFile(oldImageUrl);
                   }
 
-                  FirestoreHelper.pushProduct(widget.product);
+                 Product freshProduct = Fresh.freshProduct(widget.product);
+                 FirestoreHelper.pushProduct(freshProduct);
 
                   Navigator.of(context).pop();
                 },
@@ -384,7 +386,9 @@ class _ProductAddEditScreenState extends State<ProductAddEditScreen> {
                       Toaster.shortToast('photo deleted successfully');
                       widget.product =
                           widget.product.copyWith(imageUrl: '');
-                      FirestoreHelper.pushProduct(widget.product);
+
+                      Product freshProduct = Fresh.freshProduct(widget.product);
+                      FirestoreHelper.pushProduct(freshProduct);
                     } else {
                       print('photo deletion failed');
                       Toaster.shortToast('photo deleted failed');

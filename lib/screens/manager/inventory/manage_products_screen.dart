@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import '../../../db/entity/manager_service.dart';
 import '../../../db/entity/product.dart';
 import '../../../helpers/firestore_helper.dart';
+import '../../../helpers/fresh.dart';
 import '../../../widgets/manager/manage_product_item.dart';
 import '../../../widgets/ui/sized_listview_block.dart';
 
@@ -35,7 +36,7 @@ class _ManageProductsScreenState extends State<ManageProductsScreen> {
           Navigator.of(context).push(
             MaterialPageRoute(
                 builder: (ctx) =>
-                    ProductAddEditScreen(product: Dummy.getDummyProduct(widget.serviceId, UserPreferences.myUser.id),task: 'Add',)),
+                    ProductAddEditScreen(product: Dummy.getDummyProduct(widget.serviceId, UserPreferences.myUser.id),task: 'add',)),
           );
         },
         child: Icon(
@@ -100,8 +101,12 @@ class _ManageProductsScreenState extends State<ManageProductsScreen> {
         stream: FirestoreHelper.getProductsByType(widget.serviceId, _sType),
         builder: (ctx, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(),
+            return SizedBox(
+              height: MediaQuery.of(context).size.height / 2,
+              width: MediaQuery.of(context).size.width,
+              child: const Center(
+                child: CircularProgressIndicator(),
+              ),
             );
           }
 
@@ -114,7 +119,7 @@ class _ManageProductsScreenState extends State<ManageProductsScreen> {
           for (int i = 0; i < snapshot.data!.docs.length; i++) {
             DocumentSnapshot document = snapshot.data!.docs[i];
             Map<String, dynamic> map = document.data()! as Map<String, dynamic>;
-            final Product _product = Product.fromMap(map);
+            final Product _product = Fresh.freshProductMap(map, true);
             _products.add(_product);
 
             if (i == snapshot.data!.docs.length - 1) {
