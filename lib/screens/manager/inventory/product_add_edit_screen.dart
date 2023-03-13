@@ -475,18 +475,27 @@ class _ProductAddEditScreenState extends State<ProductAddEditScreen> {
               ButtonWidget(
                 text: 'delete',
                 onClicked: () async {
-                  bool isPhotoDeleted = await FirestorageHelper.deleteFile(
-                      widget.product.imageUrl);
+                  bool isPhotoDeleted = false;
+                  if(widget.product.imageUrl.isNotEmpty) {
+                    isPhotoDeleted = await FirestorageHelper.deleteFile(
+                        widget.product.imageUrl);
+                    if(isPhotoDeleted) {
+                      print('photo deleted successfully');
+                      Toaster.shortToast('photo deleted successfully');
+                    } else {
+                      print('photo deletion failed');
+                      Toaster.shortToast('photo deletion failed');
+                    }
+                  } else {
+                    isPhotoDeleted = true;
+                  }
+
                   if (isPhotoDeleted) {
-                    print('photo deleted successfully');
-                    Toaster.shortToast('photo deleted successfully');
-                    widget.product = widget.product.copyWith(imageUrl: '');
                     FirestoreHelper.deleteProduct(widget.product.id);
                     Navigator.of(context).pop();
                   } else {
-                    print('photo deletion failed');
-                    Toaster.shortToast(
-                        'photo deleted failed. product delete failed');
+                    print('product photo deletion failed');
+                    Toaster.shortToast('product deletion failed as photo deletion failed');
                   }
                 },
               ),

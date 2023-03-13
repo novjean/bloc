@@ -28,40 +28,36 @@ class Fresh {
 
     try {
       product = product.copyWith(price: map['price'] as double);
-    } on FormatException catch (_) {
+    } catch (err) {
       intPrice = map['price'] as int;
       product = product.copyWith(price: intPrice.toDouble());
-    } catch (err) {
       print('product price not exist for product id: ' + product.id);
       shouldPushProduct = true;
     }
 
     try {
       product = product.copyWith(priceHighest: map['priceHighest'] as double);
-    } on FormatException catch (_) {
+    } catch (err) {
       intPrice = map['priceHighest'] as int;
       product = product.copyWith(priceHighest: intPrice.toDouble());
-    } catch (err) {
       print('product priceHighest not exist for product id: ' + product.id);
       shouldPushProduct = true;
     }
 
     try {
       product = product.copyWith(priceLowest: map['priceLowest'] as double);
-    } on FormatException catch (_) {
+    } catch (err) {
       intPrice = map['priceLowest'] as int;
       product = product.copyWith(priceLowest: intPrice.toDouble());
-    } catch (err) {
       print('product priceLowest not exist for product id: ' + product.id);
       shouldPushProduct = true;
     }
 
     try {
       product = product.copyWith(priceCommunity: map['priceCommunity'] as double);
-    } on FormatException catch (_) {
+    } catch (err) {
       intPrice = map['priceCommunity'] as int;
       product = product.copyWith(priceCommunity: intPrice.toDouble());
-    } catch (err) {
       print('product priceCommunity not exist for product id: ' + product.id);
       shouldPushProduct = true;
     }
@@ -150,6 +146,11 @@ class Fresh {
   static Product freshProduct(Product product){
     Product freshProduct = Dummy.getDummyProduct(product.serviceId, product.ownerId);
 
+    try {
+      freshProduct = freshProduct.copyWith(id: product.id);
+    } catch (err) {
+      print('product id not exist');
+    }
     try {
       freshProduct = freshProduct.copyWith(name: product.name);
     } catch (err) {
