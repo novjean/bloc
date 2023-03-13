@@ -78,7 +78,8 @@ class Dummy {
         type: 'Alcohol',
         priceLowest: 0,
         isVeg: true,
-        blocIds: []);
+        blocIds: [],
+        priceBottle: 0);
 
     return dummyProduct;
   }

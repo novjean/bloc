@@ -15,6 +15,7 @@ import '../../db/entity/offer.dart';
 import '../../db/entity/product.dart';
 import '../../db/entity/seat.dart';
 import '../../db/shared_preferences/user_preferences.dart';
+import '../../helpers/fresh.dart';
 import '../../main.dart';
 import '../../widgets/cart_widget.dart';
 import '../../widgets/category_item.dart';
@@ -596,7 +597,7 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
             DocumentSnapshot document = snapshot.data!.docs[i];
             Map<String, dynamic> data =
                 document.data()! as Map<String, dynamic>;
-            final Product product = Product.fromMap(data);
+            final Product product = Fresh.freshProductMap(data, false);
             products.add(product);
 
             if (i == snapshot.data!.docs.length - 1) {

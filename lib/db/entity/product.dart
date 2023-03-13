@@ -18,6 +18,7 @@ class Product {
   bool isOfferRunning;
   final bool isVeg;
   List<String> blocIds;
+  final int priceBottle;
 
 //<editor-fold desc="Data Methods">
 
@@ -41,6 +42,7 @@ class Product {
     required this.isOfferRunning,
     required this.isVeg,
     required this.blocIds,
+    required this.priceBottle,
   });
 
   @override
@@ -66,7 +68,8 @@ class Product {
           priceCommunity == other.priceCommunity &&
           isOfferRunning == other.isOfferRunning &&
           isVeg == other.isVeg &&
-          blocIds == other.blocIds);
+          blocIds == other.blocIds &&
+          priceBottle == other.priceBottle);
 
   @override
   int get hashCode =>
@@ -88,7 +91,8 @@ class Product {
       priceCommunity.hashCode ^
       isOfferRunning.hashCode ^
       isVeg.hashCode ^
-      blocIds.hashCode;
+      blocIds.hashCode ^
+      priceBottle.hashCode;
 
   @override
   String toString() {
@@ -112,6 +116,7 @@ class Product {
         ' isOfferRunning: $isOfferRunning,' +
         ' isVeg: $isVeg,' +
         ' blocIds: $blocIds,' +
+        ' priceBottle: $priceBottle,' +
         '}';
   }
 
@@ -135,6 +140,7 @@ class Product {
     bool? isOfferRunning,
     bool? isVeg,
     List<String>? blocIds,
+    int? priceBottle,
   }) {
     return Product(
       id: id ?? this.id,
@@ -156,6 +162,7 @@ class Product {
       isOfferRunning: isOfferRunning ?? this.isOfferRunning,
       isVeg: isVeg ?? this.isVeg,
       blocIds: blocIds ?? this.blocIds,
+      priceBottle: priceBottle ?? this.priceBottle,
     );
   }
 
@@ -180,6 +187,7 @@ class Product {
       'isOfferRunning': this.isOfferRunning,
       'isVeg': this.isVeg,
       'blocIds': this.blocIds,
+      'priceBottle': this.priceBottle,
     };
   }
 
@@ -238,6 +246,7 @@ class Product {
       isOfferRunning: map['isOfferRunning'] as bool,
       isVeg: map['isVeg'] as bool,
       blocIds: map['blocIds'] as List<String>,
+      priceBottle: map['priceBottle'] as int,
     );
   }
 

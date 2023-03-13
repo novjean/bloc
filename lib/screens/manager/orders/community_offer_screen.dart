@@ -37,7 +37,7 @@ class _CommunityOfferScreenState extends State<CommunityOfferScreen> {
       for (int i = 0; i < res.docs.length; i++) {
         DocumentSnapshot document = res.docs[i];
         Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-        final Product product = Product.fromMap(data);
+        final Product product = Fresh.freshProductMap(data, false);
 
         if (i == res.docs.length - 1) {
           setProduct(product);

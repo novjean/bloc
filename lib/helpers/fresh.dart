@@ -18,14 +18,12 @@ class Fresh {
     } catch (err) {
       print('product id not exist');
     }
-
     try {
       product = product.copyWith(name: map['name'] as String);
     } catch (err) {
       print('product name not exist for product id: ' + product.id);
       shouldPushProduct = true;
     }
-
     try {
       product = product.copyWith(price: map['price'] as double);
     } catch (err) {
@@ -34,7 +32,6 @@ class Fresh {
       print('product price not exist for product id: ' + product.id);
       shouldPushProduct = true;
     }
-
     try {
       product = product.copyWith(priceHighest: map['priceHighest'] as double);
     } catch (err) {
@@ -43,7 +40,6 @@ class Fresh {
       print('product priceHighest not exist for product id: ' + product.id);
       shouldPushProduct = true;
     }
-
     try {
       product = product.copyWith(priceLowest: map['priceLowest'] as double);
     } catch (err) {
@@ -52,7 +48,6 @@ class Fresh {
       print('product priceLowest not exist for product id: ' + product.id);
       shouldPushProduct = true;
     }
-
     try {
       product = product.copyWith(priceCommunity: map['priceCommunity'] as double);
     } catch (err) {
@@ -61,7 +56,6 @@ class Fresh {
       print('product priceCommunity not exist for product id: ' + product.id);
       shouldPushProduct = true;
     }
-
     try {
       product = product.copyWith(type: map['type'] as String);
     } catch (err) {
@@ -140,6 +134,12 @@ class Fresh {
       print('product blocIds not exist for product id: ' + product.id);
       List<String> existingBlocIds = [product.serviceId];
       product = product.copyWith(blocIds: existingBlocIds);
+      shouldPushProduct = true;
+    }
+    try {
+      product = product.copyWith(priceBottle: map['priceBottle'] as int);
+    } catch (err) {
+      print('product priceBottle not exist for product id: ' + product.id);
       shouldPushProduct = true;
     }
 
@@ -248,6 +248,11 @@ class Fresh {
       freshProduct = freshProduct.copyWith(blocIds: product.blocIds);
     } catch (err) {
       print('product blocIds not exist for product id: ' + product.id);
+    }
+    try {
+      freshProduct = freshProduct.copyWith(priceBottle: product.priceBottle);
+    } catch (err) {
+      print('product priceBottle not exist for product id: ' + product.id);
     }
 
     return freshProduct;

@@ -390,11 +390,31 @@ class _ProductAddEditScreenState extends State<ProductAddEditScreen> {
                 },
               ),
               const SizedBox(height: 24),
+              TextFormField(
+                key: const ValueKey('product_bottle'),
+                initialValue: widget.product.priceBottle.toString(),
+                autocorrect: false,
+                textCapitalization: TextCapitalization.none,
+                enableSuggestions: false,
+                validator: (value) {
+                  if (value!.isEmpty) {
+                    return 'please enter a valid bottle price for the product';
+                  }
+                  return null;
+                },
+                keyboardType: TextInputType.number,
+                decoration: const InputDecoration(
+                  labelText: 'bottle price',
+                ),
+                onChanged: (value) {
+                  int? newPrice = int.tryParse(value);
+                  widget.product =
+                      widget.product.copyWith(priceBottle: newPrice);
+                },
+              ),
+              const SizedBox(height: 24),
               Row(
-                children: <Widget>[
-                  SizedBox(
-                    width: 0,
-                  ), //SizedBox
+                children: <Widget>[ //SizedBox
                   Text(
                     'veg : ',
                     style: TextStyle(fontSize: 17.0),
