@@ -556,6 +556,7 @@ class FirestoreHelper {
     return FirebaseFirestore.instance
         .collection(PARTIES)
         .where('blocServiceId', isEqualTo: blocServiceId)
+        .orderBy('name', descending: false)
         .snapshots();
   }
 

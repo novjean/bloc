@@ -67,13 +67,13 @@ class _ManagePartiesScreenState extends State<ManagePartiesScreen> {
         stream: FirestoreHelper.getParties(widget.serviceId),
         builder: (ctx, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return LoadingWidget();
+            return const LoadingWidget();
           }
 
           List<Party> _parties = [];
 
           if (!snapshot.hasData) {
-            return Center(child: Text('no parties found!'));
+            return const Center(child: Text('no parties found!'));
           }
 
           for (int i = 0; i < snapshot.data!.docs.length; i++) {
