@@ -1,6 +1,7 @@
 import 'package:bloc/helpers/firestore_helper.dart';
 import 'package:bloc/screens/owner/bloc_service_add_edit_screen.dart';
 import 'package:bloc/widgets/ui/cover_photo.dart';
+import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -63,9 +64,7 @@ class BlocDetailScreen extends StatelessWidget {
         stream: FirestoreHelper.getBlocServices(bloc.id),
         builder: (ctx, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
+            return LoadingWidget();
           }
           return GridView(
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(

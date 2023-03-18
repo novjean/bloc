@@ -1,5 +1,6 @@
 import 'package:bloc/screens/manager/orders/community_offer_screen.dart';
 import 'package:bloc/widgets/manager/orders/manage_running_community_item.dart';
+import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -51,9 +52,7 @@ class _OrdersCommunityBarScreenState extends State<OrdersCommunityBarScreen> {
         stream: FirestoreHelper.getCartItemsCommunity(widget.serviceId, false),
         builder: (ctx, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
+            return LoadingWidget();
           }
 
           if (snapshot.data == null) {

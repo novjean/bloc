@@ -1,6 +1,7 @@
 import 'package:bloc/screens/captain/captain_orders_screen.dart';
 import 'package:bloc/screens/captain/captain_tables_screen.dart';
 import 'package:bloc/screens/manager/users/manage_users_screen.dart';
+import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -8,7 +9,6 @@ import '../../db/bloc_repository.dart';
 import '../../db/entity/captain_service.dart';
 import '../../helpers/firestore_helper.dart';
 import '../../widgets/ui/listview_block.dart';
-import '../manager/orders/manage_orders_screen.dart';
 
 class CaptainMainScreen extends StatelessWidget {
   String blocServiceId;
@@ -42,9 +42,7 @@ class CaptainMainScreen extends StatelessWidget {
         stream: FirestoreHelper.getCaptainServices(),
         builder: (ctx, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
+            return LoadingWidget();
           }
 
           List<CaptainService> _captainServices = [];
@@ -59,7 +57,8 @@ class CaptainMainScreen extends StatelessWidget {
               return _displayCaptainServices(context, _captainServices);
             }
           }
-          return Text('loading captain services...');
+          print('loading captain services...');
+          return LoadingWidget();
         });
   }
 

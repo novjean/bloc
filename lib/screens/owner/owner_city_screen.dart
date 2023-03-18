@@ -1,5 +1,6 @@
 import 'package:bloc/helpers/firestore_helper.dart';
 import 'package:bloc/widgets/bloc_item.dart';
+import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -62,9 +63,7 @@ class OwnerCityScreen extends StatelessWidget {
         stream: FirestoreHelper.getBlocsByCityId(city.id),
         builder: (ctx, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
+            return LoadingWidget();
           }
           return GridView(
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(

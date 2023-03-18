@@ -76,6 +76,7 @@ dependencies:
   delayed_display: ^2.0.0
   firebase_auth_web: ^5.2.9
   multiselect: ^0.1.0
+  flutter_spinkit: ^5.1.0
 
 #  location: ^4.3.0
 #  google_maps_flutter: ^0.5.17

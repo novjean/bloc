@@ -1,5 +1,6 @@
 import 'package:bloc/db/entity/inventory_option.dart';
 import 'package:bloc/widgets/ui/listview_block.dart';
+import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -46,9 +47,7 @@ class ManageInventoryScreen extends StatelessWidget{
         stream: FirestoreHelper.getInventoryOptions(),
         builder: (ctx, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
+            return const LoadingWidget();
           }
 
           List<InventoryOption> _invOptions = [];
@@ -63,7 +62,8 @@ class ManageInventoryScreen extends StatelessWidget{
               return _displayInventoryOptions(context, _invOptions);
             }
           }
-          return Center(child: Text('loading inventory options...'));
+          print('loading inventory options...');
+          return LoadingWidget();
         });
   }
 

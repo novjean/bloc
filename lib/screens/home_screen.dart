@@ -2,6 +2,7 @@ import 'package:bloc/db/entity/user.dart';
 import 'package:bloc/main.dart';
 import 'package:bloc/screens/user/book_table_screen.dart';
 import 'package:bloc/utils/constants.dart';
+import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -171,15 +172,15 @@ class _HomeScreenState extends State<HomeScreen> {
             // buildSearchBar(context),
             const SizedBox(height: 1.0),
             _isBlocsLoading
-                ? const SizedBox(height: 0)
+                ? const LoadingWidget()
                 : _displayBlocs(context),
             _isUpcomingPartyLoading
-                ? const SizedBox(height: 0)
+                ? const LoadingWidget()
                 : _displayUpcomingParty(context),
             const SizedBox(height: 10.0),
             UserPreferences.isUserLoggedIn()
                 ? _isGuestWifiDetailsLoading
-                    ? const SizedBox()
+                    ? const LoadingWidget()
                     : buildWifi(context)
                 : const SizedBox(),
             const SizedBox(height: 10.0),
@@ -383,7 +384,7 @@ class _HomeScreenState extends State<HomeScreen> {
       builder: (ctx, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           print('loading users...');
-          return const SizedBox();
+          return const LoadingWidget();
         }
 
         List<User> _users = [];
@@ -399,7 +400,7 @@ class _HomeScreenState extends State<HomeScreen> {
             return _displaySuperstarsList(context, _users);
           }
         }
-        return const Center(child: Text('loading users...'));
+        return const LoadingWidget();
       },
     );
   }

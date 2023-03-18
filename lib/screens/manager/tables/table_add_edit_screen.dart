@@ -1,6 +1,7 @@
 import 'package:barcode_widget/barcode_widget.dart';
 import 'package:bloc/db/entity/service_table.dart';
 import 'package:bloc/db/shared_preferences/user_preferences.dart';
+import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:bloc/widgets/ui/toaster.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -79,6 +80,9 @@ class _TableAddEditScreenState extends State<TableAddEditScreen> {
         });
       } else {
         print('no captains found!');
+        setState(() {
+          _isUserCaptainsLoading = false;
+        });
       }
     });
   }
@@ -93,9 +97,7 @@ class _TableAddEditScreenState extends State<TableAddEditScreen> {
 
   _buildBody(BuildContext context) {
     return _isUserCaptainsLoading
-        ? Center(
-            child: Text('tables loading...'),
-          )
+        ? LoadingWidget()
         : ListView(
             padding: const EdgeInsets.symmetric(horizontal: 32),
             physics: const BouncingScrollPhysics(),

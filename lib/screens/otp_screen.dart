@@ -28,7 +28,7 @@ class _OTPScreenState extends State<OTPScreen> {
     return Scaffold(
         appBar: AppBar(
           backgroundColor: Theme.of(context).backgroundColor,
-          title: Text(''),
+          title: const Text(''),
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
             onPressed: () {
@@ -90,7 +90,7 @@ class _OTPScreenState extends State<OTPScreen> {
               ),
               Flexible(
                 child: Container(
-                  margin: EdgeInsets.only(top: 0, bottom: 20),
+                  margin: const EdgeInsets.only(bottom: 20),
                   child: FractionallySizedBox(
                       widthFactor: 1,
                       child: OTPVerify(

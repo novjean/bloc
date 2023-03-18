@@ -4,6 +4,7 @@ import 'package:bloc/db/shared_preferences/user_preferences.dart';
 import 'package:bloc/helpers/dummy.dart';
 import 'package:bloc/helpers/firestorage_helper.dart';
 import 'package:bloc/screens/manager/users/user_add_edit_screen.dart';
+import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -136,9 +137,7 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
         stream: FirestoreHelper.getUsersByLevel(sLevel),
         builder: (ctx, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
+            return LoadingWidget();
           }
 
           List<User> _users = [];

@@ -1,3 +1,4 @@
+import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -18,9 +19,7 @@ class Messages extends StatelessWidget {
         stream: _stream,
         builder: (ctx, chatSnapshot) {
           if (chatSnapshot.connectionState == ConnectionState.waiting) {
-            return Center(
-              child: CircularProgressIndicator(),
-            );
+            return LoadingWidget();
           }
           List<Chat> chats = [];
 

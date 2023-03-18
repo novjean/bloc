@@ -1,5 +1,6 @@
 import 'package:bloc/db/entity/bloc_service.dart';
 import 'package:bloc/helpers/firestore_helper.dart';
+import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -17,7 +18,7 @@ class ManagerMainScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('manager | home'),
+        title: const Text('manager | home'),
       ),
       body: _buildBody(context),
     );
@@ -46,9 +47,7 @@ class ManagerMainScreen extends StatelessWidget {
         stream: FirestoreHelper.getAllBlocServices(),
         builder: (ctx, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
+            return const LoadingWidget();
           }
           return GridView(
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(

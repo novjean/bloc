@@ -1,4 +1,5 @@
 import 'package:bloc/helpers/firestore_helper.dart';
+import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -94,7 +95,7 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text('orders'),
+          title: const Text('bloc | orders'),
         ),
         body: _buildBody(context));
   }
@@ -112,13 +113,13 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
         //         : Text('no current orders!'),
         // SizedBox(height: 2.0),
         // buildSectionTitleRow('Past Orders', context),
-        SizedBox(height: 2.0),
+        const SizedBox(height: 5.0),
         _isPastLoading
-            ? Text('loading past orders...')
+            ? const LoadingWidget()
             : billedOrders.isNotEmpty
                 ? _displayBilledOrders(context)
                 : Center(child: Text('no past orders')),
-        SizedBox(height: 2.0),
+        const SizedBox(height: 5.0),
       ],
     );
   }

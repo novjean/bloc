@@ -1,9 +1,9 @@
-import 'dart:async';
 
 import 'package:bloc/screens/otp_screen.dart';
 import 'package:bloc/db/entity/user.dart' as blocUser;
 
 import 'package:bloc/screens/ui/splash_screen.dart';
+import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:delayed_display/delayed_display.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -44,7 +44,11 @@ class _LoginScreenState extends State<LoginScreen> {
           print('checking for auth state changes...');
 
           if (userSnapshot.connectionState == ConnectionState.waiting) {
-            return SplashScreen();
+            if(!kIsWeb) {
+              return SplashScreen();
+            } else {
+              return const LoadingWidget();
+            }
           }
 
           print('user snapshot received...');
@@ -62,9 +66,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 builder: (BuildContext ctx,
                     AsyncSnapshot<DocumentSnapshot> snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
+                    return const LoadingWidget();
                   }
 
                   if (snapshot.hasError) {
@@ -86,7 +88,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
                     return MainScreen(user: user);
                   }
-                  return const Center(child: Text("user loading..."));
+                  print('loading user...');
+                  return const LoadingWidget();
                 },
               );
             }

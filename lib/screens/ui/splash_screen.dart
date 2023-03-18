@@ -1,3 +1,4 @@
+import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:flutter/material.dart';
 
 class SplashScreen extends StatelessWidget {
@@ -5,9 +6,7 @@ class SplashScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).primaryColor,
-      body: Center(
-        child: Text('splash loading...'),
-      ),
+      body: const LoadingWidget(),
     );
   }
 }

@@ -1,4 +1,5 @@
 import 'package:bloc/db/entity/guest_wifi.dart';
+import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -60,9 +61,7 @@ class _GuestWifiEditScreenState extends State<GuestWifiEditScreen> {
 
   _buildBody(BuildContext context) {
     return _isGuestWifiLoading
-        ? Center(
-      child: Text('guest wifi loading...'),
-    )
+        ? const LoadingWidget()
         : ListView(
       padding: const EdgeInsets.symmetric(horizontal: 32),
       physics: const BouncingScrollPhysics(),

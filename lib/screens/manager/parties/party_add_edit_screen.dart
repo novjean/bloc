@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:bloc/db/entity/bloc_service.dart';
 import 'package:bloc/helpers/fresh.dart';
 import 'package:bloc/utils/date_time_utils.dart';
+import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -80,6 +81,9 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
         });
       } else {
         print('no bloc services found!');
+        setState(() {
+          _isBlocServicesLoading = false;
+        });
       }
     });
   }
@@ -184,9 +188,7 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
 
   _buildBody(BuildContext context) {
     return _isBlocServicesLoading
-        ? const Center(
-            child: Text('parties loading...'),
-          )
+        ? LoadingWidget()
         : ListView(
             padding: const EdgeInsets.symmetric(horizontal: 32),
             physics: const BouncingScrollPhysics(),

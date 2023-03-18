@@ -1,6 +1,7 @@
 import 'package:bloc/db/shared_preferences/user_preferences.dart';
 import 'package:bloc/helpers/dummy.dart';
 import 'package:bloc/screens/manager/inventory/product_add_edit_screen.dart';
+import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -101,13 +102,7 @@ class _ManageProductsScreenState extends State<ManageProductsScreen> {
         stream: FirestoreHelper.getProductsByType(widget.serviceId, _sType),
         builder: (ctx, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return SizedBox(
-              height: MediaQuery.of(context).size.height / 2,
-              width: MediaQuery.of(context).size.width,
-              child: const Center(
-                child: CircularProgressIndicator(),
-              ),
-            );
+            return LoadingWidget();
           }
 
           List<Product> _products = [];
@@ -126,7 +121,7 @@ class _ManageProductsScreenState extends State<ManageProductsScreen> {
               return _displayProductsList(context, _products);
             }
           }
-          return const Center(child: Text('loading products...'));
+          return const LoadingWidget();
         });
   }
 

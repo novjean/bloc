@@ -1,4 +1,5 @@
 import 'package:bloc/helpers/firestore_helper.dart';
+import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -188,6 +189,6 @@ class _PartyScreenState extends State<PartyScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: Theme.of(context).backgroundColor,
-        body: _isPartiesLoading ? const SizedBox() : _buildBody(context));
+        body: _isPartiesLoading ? LoadingWidget() : _buildBody(context));
   }
 }

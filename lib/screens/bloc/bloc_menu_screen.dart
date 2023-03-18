@@ -5,6 +5,7 @@ import 'package:bloc/db/entity/service_table.dart';
 import 'package:bloc/db/shared_preferences/table_preferences.dart';
 import 'package:bloc/helpers/dummy.dart';
 import 'package:bloc/helpers/firestore_helper.dart';
+import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -78,6 +79,10 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
         });
       } else {
         print('no categories found!');
+        Toaster.shortToast('no categories found');
+        setState(() {
+          _isCategoriesLoading = false;
+        });
       }
     });
 
@@ -432,7 +437,7 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
         ],
       ),
       body: _isLoading
-          ? Center(child: Text('loading menu...'))
+          ? const LoadingWidget()
           : _buildBody(context, widget.blocService),
     );
   }
@@ -445,7 +450,7 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
     return Column(
       children: [
         const SizedBox(height: 5.0),
-        _isCategoriesLoading ? const SizedBox() : _displayCategories(context),
+        _isCategoriesLoading ? LoadingWidget() : _displayCategories(context),
         const SizedBox(height: 5.0),
         buildProducts(context, 'Beer'),
         const SizedBox(height: 5.0),
@@ -462,7 +467,7 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
       builder: (ctx, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           print('loading offers...');
-          return const SizedBox();
+          return const LoadingWidget();
         }
 
         mOffers.clear();
@@ -495,7 +500,7 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
         builder: (ctx, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             print('loading table number...');
-            return const SizedBox();
+            return LoadingWidget();
           }
 
           List<Seat> seats = [];
@@ -586,9 +591,7 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
           widget.blocService.id, _sCategoryType),
       builder: (ctx, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
+          return const LoadingWidget();
         }
 
         if (snapshot.hasData) {
@@ -608,7 +611,7 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
           return const Expanded(
               child: Center(child: Text('no products found!')));
         }
-        return const Expanded(child: Center(child: Text('no products found!')));
+        return LoadingWidget();
       },
     );
   }

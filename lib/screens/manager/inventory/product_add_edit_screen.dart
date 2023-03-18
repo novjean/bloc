@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -175,9 +176,7 @@ class _ProductAddEditScreenState extends State<ProductAddEditScreen> {
 
   _buildBody(BuildContext context) {
     return _isCategoriesLoading | _isBlocServicesLoading
-        ? Center(
-            child: Text('blocs and categories loading...'),
-          )
+        ? const LoadingWidget()
         : ListView(
             padding: const EdgeInsets.symmetric(horizontal: 32),
             physics: const BouncingScrollPhysics(),

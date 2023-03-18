@@ -1,5 +1,6 @@
 import 'package:bloc/db/entity/bloc_service.dart';
 import 'package:bloc/helpers/firestore_helper.dart';
+import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -39,6 +40,11 @@ class _BlocSlideItemState extends State<BlocSlideItem> {
 
         setState(() {
           mBlocService = blocServices.first;
+          _isBlocServiceLoading = false;
+        });
+      } else {
+        print('no bloc service found!');
+        setState(() {
           _isBlocServiceLoading = false;
         });
       }

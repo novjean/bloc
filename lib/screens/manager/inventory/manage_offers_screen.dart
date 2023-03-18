@@ -1,4 +1,5 @@
 import 'package:bloc/db/entity/offer.dart';
+import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -28,9 +29,7 @@ class ManageOffersScreen extends StatelessWidget {
         stream: FirestoreHelper.getOffers(serviceId),
         builder: (ctx, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
+            return LoadingWidget();
           }
 
           List<Offer> _offers = [];

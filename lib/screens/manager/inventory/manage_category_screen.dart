@@ -1,5 +1,6 @@
 import 'package:bloc/db/entity/category.dart';
 import 'package:bloc/widgets/ui/listview_block.dart';
+import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -47,9 +48,7 @@ class ManageCategoryScreen extends StatelessWidget {
         stream: FirestoreHelper.getCategories(serviceId),
         builder: (ctx, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
+            return LoadingWidget();
           }
 
           List<Category> _categories = [];

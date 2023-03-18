@@ -1,5 +1,6 @@
 import 'package:bloc/db/entity/seat.dart';
 import 'package:bloc/helpers/firestore_helper.dart';
+import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -84,9 +85,7 @@ class _SeatItemState extends State<SeatItem> {
                   minHeight: 20,
                 ),
                 child: isCustomerLoading
-                    ? Center(
-                        child: Text('...'),
-                      )
+                    ? LoadingWidget()
                     : Center(
                         child: Text(
                           widget.seat.custId.isEmpty

@@ -1,4 +1,5 @@
 import 'package:bloc/utils/string_utils.dart';
+import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:flutter/material.dart';
 
 import '../../db/entity/bill.dart';
@@ -160,7 +161,7 @@ class _CompletedButtonState extends State<CompletedButton> {
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
-      child: _isLoading ? CircularProgressIndicator() : Text('completed'),
+      child: _isLoading ? const LoadingWidget() : const Text('completed'),
       onPressed: (widget.bill.orders.length <= 0 || _isLoading)
           ? null
           : () async {
@@ -213,7 +214,7 @@ class _GenerateBillButtonState extends State<GenerateBillButton> {
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
-      child: _isLoading ? CircularProgressIndicator() : Text('generate bill'),
+      child: _isLoading ? LoadingWidget() : Text('generate bill'),
       onPressed: (widget.bill.orders.length <= 0 || _isLoading)
           ? null
           : () async {

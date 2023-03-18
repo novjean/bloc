@@ -3,6 +3,7 @@ import 'package:bloc/screens/manager/orders/manage_orders_screen.dart';
 import 'package:bloc/screens/manager/parties/manage_parties_screen.dart';
 
 import 'package:bloc/screens/manager/users/manage_users_screen.dart';
+import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -46,9 +47,7 @@ class ManagerServicesScreen extends StatelessWidget {
         stream: FirestoreHelper.getManagerServicesSnapshot(),
         builder: (ctx, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
+            return LoadingWidget();
           }
 
           List<ManagerService> _managerServices = [];

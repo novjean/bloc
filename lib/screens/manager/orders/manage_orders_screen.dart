@@ -1,6 +1,7 @@
 import 'package:bloc/db/entity/manager_service_option.dart';
 import 'package:bloc/screens/manager/orders/orders_community_bar_screen.dart';
 import 'package:bloc/widgets/ui/listview_block.dart';
+import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -49,9 +50,7 @@ class ManageOrdersScreen extends StatelessWidget {
         stream: FirestoreHelper.getManagerServiceOptions('Order'),
         builder: (ctx, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
+            return LoadingWidget();
           }
 
           List<ManagerServiceOption> _serviceOptions = [];

@@ -1,5 +1,6 @@
 import 'package:bloc/helpers/firestore_helper.dart';
 import 'package:bloc/widgets/city_item.dart';
+import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
@@ -46,12 +47,10 @@ class OwnerScreen extends StatelessWidget {
         stream: _citiesStream,
         builder: (ctx, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
+            return LoadingWidget();
           }
           if (snapshot.hasError) {
-            return Text("Something went wrong");
+            return Center(child: Text("something went wrong"));
           }
 
           return GridView(
