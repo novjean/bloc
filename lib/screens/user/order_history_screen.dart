@@ -132,7 +132,7 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
         children: <Widget>[
           Text(
             "$category",
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 20.0,
               fontWeight: FontWeight.w800,
             ),

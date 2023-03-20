@@ -1,3 +1,5 @@
+import 'package:bloc/db/entity/party_guest.dart';
+
 import '../db/entity/category.dart';
 import '../db/entity/party.dart';
 import '../db/entity/product.dart';
@@ -508,7 +510,7 @@ class Fresh {
     try {
       freshParty = freshParty.copyWith(id: party.id);
     } catch (err) {
-      print('party name not exist for party id: ' + party.id);
+      print('party id not exist');
     }
     try {
       freshParty = freshParty.copyWith(name: party.name);
@@ -583,6 +585,64 @@ class Fresh {
 
     return freshParty;
   }
+
+  static PartyGuest freshPartyGuest(PartyGuest partyGuest) {
+    PartyGuest freshGuest = Dummy.getDummyPartyGuest();
+
+    try {
+      freshGuest = freshGuest.copyWith(id: partyGuest.id);
+    } catch (err) {
+      print('party guest id not exist');
+    }
+    try {
+      freshGuest = freshGuest.copyWith(name: partyGuest.name);
+    } catch (err) {
+      print('party guest name not exist for party guest id: ' + partyGuest.id);
+    }
+    try {
+      freshGuest = freshGuest.copyWith(partyId: partyGuest.partyId);
+    } catch (err) {
+      print('party guest partyId not exist for party guest id: ' + partyGuest.id);
+    }
+    try {
+      freshGuest = freshGuest.copyWith(guestId: partyGuest.guestId);
+    } catch (err) {
+      print('party guest guestId not exist for party guest id: ' + partyGuest.id);
+    }
+    try {
+      freshGuest = freshGuest.copyWith(phone: partyGuest.phone);
+    } catch (err) {
+      print('party guest phone not exist for party guest id: ' + partyGuest.id);
+    }
+    try {
+      freshGuest = freshGuest.copyWith(email: partyGuest.email);
+    } catch (err) {
+      print('party guest email not exist for party guest id: ' + partyGuest.id);
+    }
+    try {
+      freshGuest = freshGuest.copyWith(guestsCount: partyGuest.guestsCount);
+    } catch (err) {
+      print('party guest guestsCount not exist for party guest id: ' + partyGuest.id);
+    }
+    try {
+      freshGuest = freshGuest.copyWith(instagramUrl: partyGuest.instagramUrl);
+    } catch (err) {
+      print('party guest instagramUrl not exist for party guest id: ' + partyGuest.id);
+    }
+    try {
+      freshGuest = freshGuest.copyWith(createdAt: partyGuest.createdAt);
+    } catch (err) {
+      print('party guest createdAt not exist for party guest id: ' + partyGuest.id);
+    }
+    try {
+      freshGuest = freshGuest.copyWith(isApproved: partyGuest.isApproved);
+    } catch (err) {
+      print('party guest isApproved not exist for party guest id: ' + partyGuest.id);
+    }
+    
+    return freshGuest;
+  }
+
 
   /** user **/
   static User freshUserMap(Map<String, dynamic> map, bool shouldUpdate) {
@@ -724,4 +784,5 @@ class Fresh {
 
     return freshUser;
   }
+
 }

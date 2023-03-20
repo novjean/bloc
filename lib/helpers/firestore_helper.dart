@@ -8,6 +8,7 @@ import 'package:bloc/db/entity/guest_wifi.dart';
 import 'package:bloc/db/entity/offer.dart';
 import 'package:bloc/db/entity/order_bloc.dart';
 import 'package:bloc/db/entity/party.dart';
+import 'package:bloc/db/entity/party_guest.dart';
 import 'package:bloc/db/entity/seat.dart';
 import 'package:bloc/db/entity/user.dart' as blocUser;
 import 'package:bloc/helpers/firestorage_helper.dart';
@@ -43,6 +44,7 @@ class FirestoreHelper {
   static String OFFERS = 'offers';
   static String ORDERS = 'orders';
   static String PARTIES = 'parties';
+  static String PARTY_GUESTS = 'party_guests';
   static String PRODUCTS = 'products';
   static String BLOC_SERVICES = 'services';
   static String SEATS = 'seats';
@@ -560,6 +562,20 @@ class FirestoreHelper {
         .snapshots();
   }
 
+  /** Party Guests **/
+  static void pushPartyGuest(PartyGuest partyGuest) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection(PARTY_GUESTS)
+          .doc(partyGuest.id)
+          .set(partyGuest.toMap());
+    } on PlatformException catch (err) {
+      logger.e(err.message);
+    } catch (err) {
+      logger.e(err);
+    }
+  }
+
   /** Products **/
   static void pushProduct(Product product) async {
     try {
@@ -635,8 +651,8 @@ class FirestoreHelper {
           .collection(PRODUCTS)
           .doc(product.id)
           .update(product.toMap())
-          .then((value) => print("Product updated."))
-          .catchError((error) => print("Failed to update product : $error"));
+          .then((value) => print("product updated."))
+          .catchError((error) => print("failed to update product : $error"));
     } on PlatformException catch (err) {
       logger.e(err.message);
     } catch (err) {

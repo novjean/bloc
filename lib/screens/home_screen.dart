@@ -16,7 +16,7 @@ import '../helpers/firestore_helper.dart';
 import '../helpers/fresh.dart';
 import '../helpers/token_monitor.dart';
 import '../widgets/home/bloc_slide_item.dart';
-import '../widgets/parties/party_home_item.dart';
+import '../widgets/parties/party_banner.dart';
 import '../widgets/search_card.dart';
 import '../widgets/store_badge_item.dart';
 import '../widgets/ui/button_widget.dart';
@@ -171,9 +171,7 @@ class _HomeScreenState extends State<HomeScreen> {
           children: <Widget>[
             // buildSearchBar(context),
             const SizedBox(height: 1.0),
-            _isBlocsLoading
-                ? const LoadingWidget()
-                : _displayBlocs(context),
+            _isBlocsLoading ? const LoadingWidget() : _displayBlocs(context),
             _isUpcomingPartyLoading
                 ? const LoadingWidget()
                 : _displayUpcomingParty(context),
@@ -237,7 +235,11 @@ class _HomeScreenState extends State<HomeScreen> {
     return Container(
       color: Theme.of(context).primaryColorLight,
       height: 190,
-      child: PartyHomeItem(party: mUpcomingParty),
+      child: PartyBanner(
+        party: mUpcomingParty,
+        isClickable: true,
+        shouldShowButton: true,
+      ),
     );
   }
 

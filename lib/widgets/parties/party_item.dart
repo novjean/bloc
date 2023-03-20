@@ -1,9 +1,10 @@
 import 'package:bloc/utils/date_time_utils.dart';
+import 'package:bloc/widgets/parties/party_guest_add_edit_screen.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import '../../db/entity/party.dart';
 import '../../screens/parties/artist_screen.dart';
-import '../../utils/network_utils.dart';
 import '../../utils/string_utils.dart';
 import '../ui/dark_button_widget.dart';
 
@@ -11,10 +12,20 @@ class PartyItem extends StatelessWidget {
   final Party party;
   final double imageHeight;
 
-  const PartyItem({Key? key, required this.party, required this.imageHeight}) : super(key: key);
+  const PartyItem({Key? key, required this.party, required this.imageHeight})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    bool isGuestListActive;
+
+    int timeNow = Timestamp.now().millisecondsSinceEpoch;
+    if (timeNow < party.startTime) {
+      isGuestListActive = true;
+    } else {
+      isGuestListActive = false;
+    }
+
     return GestureDetector(
       onTap: () {
         Navigator.of(context).push(
@@ -40,7 +51,8 @@ class PartyItem extends StatelessWidget {
                       decoration: BoxDecoration(
                         border:
                             Border.all(color: Theme.of(context).primaryColor),
-                        borderRadius: BorderRadius.all(Radius.circular(10)),
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(10)),
                         image: DecorationImage(
                           image: NetworkImage(party.imageUrl),
                           fit: BoxFit.fitWidth,
@@ -51,21 +63,18 @@ class PartyItem extends StatelessWidget {
                       bottom: 5.0,
                       child: Container(
                         width: MediaQuery.of(context).size.width,
-                        padding: EdgeInsets.only(left: 15.0, right: 15.0),
+                        padding: const EdgeInsets.only(left: 15.0, right: 15.0),
                         child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            mainAxisAlignment: MainAxisAlignment.start,
                             children: [
-                              Flexible(
-                                child: Text(
-                                  "${party.name.toLowerCase()}",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 26.0,
-                                    fontWeight: FontWeight.w800,
-                                  ),
-                                  textAlign: TextAlign.left,
+                              Text(
+                                party.name.toLowerCase(),
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 26.0,
+                                  fontWeight: FontWeight.w800,
                                 ),
-                                flex: 1,
+                                textAlign: TextAlign.left,
                               ),
                             ]),
                       ),
@@ -96,7 +105,7 @@ class PartyItem extends StatelessWidget {
                           party.isTBA
                               ? 'tba'
                               : DateTimeUtils.getFormattedDate(party.startTime),
-                          style: TextStyle(fontSize: 18),
+                          style: const TextStyle(fontSize: 18),
                         ),
                       )
                     ]),
@@ -117,38 +126,62 @@ class PartyItem extends StatelessWidget {
                       )
                     : const SizedBox(),
                 const SizedBox(height: 5),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    party.listenUrl.isNotEmpty
-                        ? DarkButtonWidget(
-                            text: 'listen',
-                            onClicked: () {
-                              final uri = Uri.parse(party.listenUrl);
-                              NetworkUtils.launchInBrowser(uri);
-                            })
-                        : const SizedBox(),
-                    const SizedBox(width: 10),
-                    party.instagramUrl.isNotEmpty
-                        ? DarkButtonWidget(
-                            text: 'social',
-                            onClicked: () {
-                              final uri = Uri.parse(party.instagramUrl);
-                              NetworkUtils.launchInBrowser(uri);
-                            })
-                        : const SizedBox(),
-                    const SizedBox(width: 10),
-                    party.ticketUrl.isNotEmpty
-                        ? DarkButtonWidget(
-                            text: 'tickets',
-                            onClicked: () {
-                              final uri = Uri.parse(party.ticketUrl);
-                              NetworkUtils.launchInBrowser(uri);
-                            })
-                        : const SizedBox(),
-                    const SizedBox(width: 15),
-                  ],
-                ),
+                isGuestListActive
+                    ? Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          !party.isTBA
+                              ? Padding(
+                                  padding: const EdgeInsets.only(right: 15.0),
+                                  child: DarkButtonWidget(
+                                      text: 'join guest list',
+                                      onClicked: () {
+                                        // nav to guest list add page
+                                        Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  PartyGuestAddEditPage(
+                                                      party: party,
+                                                      task: 'add')),
+                                        );
+                                      }),
+                                )
+                              : const SizedBox(),
+                          // Row(
+                          //   mainAxisAlignment: MainAxisAlignment.end,
+                          //   children: [
+                          //     party.listenUrl.isNotEmpty
+                          //         ? DarkButtonWidget(
+                          //             text: 'listen',
+                          //             onClicked: () {
+                          //               final uri = Uri.parse(party.listenUrl);
+                          //               NetworkUtils.launchInBrowser(uri);
+                          //             })
+                          //         : const SizedBox(),
+                          //     const SizedBox(width: 10),
+                          //     party.instagramUrl.isNotEmpty
+                          //         ? DarkButtonWidget(
+                          //             text: 'social',
+                          //             onClicked: () {
+                          //               final uri = Uri.parse(party.instagramUrl);
+                          //               NetworkUtils.launchInBrowser(uri);
+                          //             })
+                          //         : const SizedBox(),
+                          //     const SizedBox(width: 10),
+                          //     party.ticketUrl.isNotEmpty
+                          //         ? DarkButtonWidget(
+                          //             text: 'tickets',
+                          //             onClicked: () {
+                          //               final uri = Uri.parse(party.ticketUrl);
+                          //               NetworkUtils.launchInBrowser(uri);
+                          //             })
+                          //         : const SizedBox(),
+                          //     const SizedBox(width: 15),
+                          //   ],
+                          // ),
+                        ],
+                      )
+                    : const SizedBox(),
                 const SizedBox(height: 5.0),
               ],
             ),
