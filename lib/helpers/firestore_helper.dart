@@ -576,6 +576,12 @@ class FirestoreHelper {
     }
   }
 
+  static getPartyGuestLists() {
+    return FirebaseFirestore.instance
+        .collection(PARTY_GUESTS)
+        .snapshots();
+  }
+
   /** Products **/
   static void pushProduct(Product product) async {
     try {
@@ -1087,5 +1093,6 @@ class FirestoreHelper {
         .orderBy('level', descending: false)
         .get();
   }
+
 
 }

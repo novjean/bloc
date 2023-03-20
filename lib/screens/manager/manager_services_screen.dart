@@ -3,6 +3,7 @@ import 'package:bloc/screens/manager/orders/manage_orders_screen.dart';
 import 'package:bloc/screens/manager/parties/manage_parties_screen.dart';
 
 import 'package:bloc/screens/manager/users/manage_users_screen.dart';
+import 'package:bloc/screens/parties/party_guest_list_screen.dart';
 import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -47,7 +48,7 @@ class ManagerServicesScreen extends StatelessWidget {
         stream: FirestoreHelper.getManagerServicesSnapshot(),
         builder: (ctx, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return LoadingWidget();
+            return const LoadingWidget();
           }
 
           List<ManagerService> _managerServices = [];
@@ -62,7 +63,7 @@ class ManagerServicesScreen extends StatelessWidget {
               return _displayManagerServices(context, _managerServices);
             }
           }
-          return Text('loading services...');
+          return const Text('loading services...');
         });
   }
 
@@ -143,8 +144,18 @@ class ManagerServicesScreen extends StatelessWidget {
                     case 'guest wifi':
                       {
                         Navigator.of(context).push(MaterialPageRoute(
-                            builder: (ctx) => GuestWifiEditScreen(blocServiceId: blocService.id, task: 'edit',)));
+                            builder: (ctx) => GuestWifiEditScreen(
+                                  blocServiceId: blocService.id,
+                                  task: 'edit',
+                                )));
                         logger.d('manage guest wifi screen selected.');
+                        break;
+                      }
+                    case 'guest list':
+                      {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (ctx) => PartyGuestListScreen()));
+                        logger.d('manage party guest list screen selected.');
                         break;
                       }
                     default:

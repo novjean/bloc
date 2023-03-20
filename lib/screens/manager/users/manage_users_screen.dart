@@ -137,7 +137,7 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
         stream: FirestoreHelper.getUsersByLevel(sLevel),
         builder: (ctx, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return LoadingWidget();
+            return const LoadingWidget();
           }
 
           List<User> _users = [];

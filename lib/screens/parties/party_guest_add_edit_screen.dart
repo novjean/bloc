@@ -12,7 +12,7 @@ import '../../helpers/firestore_helper.dart';
 import '../../helpers/fresh.dart';
 import '../../widgets/ui/button_widget.dart';
 import '../../widgets/ui/dark_textfield_widget.dart';
-import 'party_banner.dart';
+import '../../widgets/parties/party_banner.dart';
 
 class PartyGuestAddEditPage extends StatefulWidget {
   Party party;

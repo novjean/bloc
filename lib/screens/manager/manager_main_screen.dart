@@ -29,9 +29,9 @@ class ManagerMainScreen extends StatelessWidget {
       child: Column(
         children: [
           // CoverPhoto(service.name, service.imageUrl),
-          SizedBox(height: 2.0),
+          const SizedBox(height: 5.0),
           buildBlocServices(context),
-          SizedBox(height: 5.0),
+          const SizedBox(height: 5.0),
           // buildProducts(context),
           // SizedBox(height: 50.0),
         ],

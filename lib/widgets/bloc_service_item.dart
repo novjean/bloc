@@ -35,7 +35,7 @@ class BlocServiceItem extends StatelessWidget {
                   const AssetImage('assets/images/product-placeholder.png'),
               image: service.imageUrl != "url"
                   ? NetworkImage(service.imageUrl)
-                  : NetworkImage("assets/images/product-placeholder.png"),
+                  : const NetworkImage("assets/images/product-placeholder.png"),
               fit: BoxFit.cover,
             ),
           ),

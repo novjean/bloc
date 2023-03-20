@@ -1,5 +1,5 @@
 import 'package:bloc/utils/date_time_utils.dart';
-import 'package:bloc/widgets/parties/party_guest_add_edit_screen.dart';
+import 'package:bloc/screens/parties/party_guest_add_edit_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
