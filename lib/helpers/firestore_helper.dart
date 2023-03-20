@@ -576,9 +576,16 @@ class FirestoreHelper {
     }
   }
 
-  static getPartyGuestLists() {
+  static getGuestLists() {
     return FirebaseFirestore.instance
         .collection(PARTY_GUESTS)
+        .snapshots();
+  }
+
+  static getPartyGuestList(String partyId) {
+    return FirebaseFirestore.instance
+        .collection(PARTY_GUESTS)
+        .where('partyId', isEqualTo: partyId)
         .snapshots();
   }
 
