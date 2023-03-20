@@ -5,6 +5,7 @@ import 'package:multiselect/multiselect.dart';
 import '../../db/entity/party.dart';
 import '../../db/entity/party_guest.dart';
 import '../../db/entity/user.dart' as blocUser;
+import '../../db/entity/user.dart';
 import '../../db/shared_preferences/user_preferences.dart';
 import '../../helpers/dummy.dart';
 import '../../helpers/firestore_helper.dart';
@@ -182,13 +183,9 @@ class _PartyGuestAddEditPageState extends State<PartyGuestAddEditPage> {
               // we should have some validation here
               if (isDataValid()) {
                 if (hasUserChanged) {
-
-                  
-
-                  // User freshUser = Fresh.freshUser(user);
-                  //
-                  // UserPreferences.setUser(freshUser);
-                  // FirestoreHelper.pushUser(freshUser);
+                  User freshUser = Fresh.freshUser(user);
+                  UserPreferences.setUser(freshUser);
+                  FirestoreHelper.pushUser(freshUser);
 
                   PartyGuest freshPartyGuest =
                       Fresh.freshPartyGuest(partyGuest);
@@ -197,9 +194,9 @@ class _PartyGuestAddEditPageState extends State<PartyGuestAddEditPage> {
                   PartyGuest freshPartyGuest =
                       Fresh.freshPartyGuest(partyGuest);
                   FirestoreHelper.pushPartyGuest(freshPartyGuest);
-                  Toaster.longToast('guest list request is successfully sent');
                 }
 
+                Toaster.longToast('guest list request is successfully sent');
                 Navigator.of(context).pop();
               } else {
                 print('user cannot be entered as data is incomplete');
