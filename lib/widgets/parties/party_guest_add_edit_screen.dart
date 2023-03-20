@@ -1,14 +1,12 @@
-
 import 'package:bloc/widgets/ui/toaster.dart';
 import 'package:flutter/material.dart';
+import 'package:multiselect/multiselect.dart';
 
 import '../../db/entity/party.dart';
 import '../../db/entity/party_guest.dart';
 import '../../db/entity/user.dart' as blocUser;
-import '../../db/entity/user.dart';
 import '../../db/shared_preferences/user_preferences.dart';
 import '../../helpers/dummy.dart';
-import '../../helpers/firestorage_helper.dart';
 import '../../helpers/firestore_helper.dart';
 import '../../helpers/fresh.dart';
 import '../../widgets/ui/button_widget.dart';
@@ -35,9 +33,11 @@ class _PartyGuestAddEditPageState extends State<PartyGuestAddEditPage> {
   late String oldImageUrl;
   late String newImageUrl;
   String imagePath = '';
-  
+
   bool hasUserChanged = false;
 
+  late String sGuestCount;
+  List<String> guestCounts = [];
 
   @override
   void initState() {
@@ -45,6 +45,11 @@ class _PartyGuestAddEditPageState extends State<PartyGuestAddEditPage> {
 
     partyGuest = Dummy.getDummyPartyGuest();
     partyGuest.partyId = widget.party.id;
+
+    for (int i = 1; i <= 4; i++) {
+      guestCounts.add(i.toString());
+    }
+    sGuestCount = guestCounts.first;
   }
 
   @override
@@ -60,12 +65,15 @@ class _PartyGuestAddEditPageState extends State<PartyGuestAddEditPage> {
   }
 
   _buildBody(BuildContext context) {
-
     return ListView(
       physics: const BouncingScrollPhysics(),
       children: [
         const SizedBox(height: 0),
-        PartyBanner(party: widget.party, isClickable: false, shouldShowButton: false,),
+        PartyBanner(
+          party: widget.party,
+          isClickable: false,
+          shouldShowButton: false,
+        ),
         const SizedBox(height: 24),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 32),
@@ -80,59 +88,114 @@ class _PartyGuestAddEditPageState extends State<PartyGuestAddEditPage> {
             },
           ),
         ),
-        // const SizedBox(height: 24),
-        // Padding(
-        //   padding: const EdgeInsets.symmetric(horizontal: 32),
-        //   child: DarkTextFieldWidget(
-        //       label: 'phone',
-        //       text: user.phoneNumber.toString(),
-        //       onChanged: (phone) {
-        //         partyGuest = partyGuest.copyWith(phone: phone);
-        //       }
-        //   ),
-        // ),
         const SizedBox(height: 24),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 32),
           child: DarkTextFieldWidget(
-            label: 'email',
-            text: user.email,
-            onChanged: (email) {
+              label: 'email',
+              text: user.email,
+              onChanged: (email) {
                 user = user.copyWith(email: email);
                 hasUserChanged = true;
 
                 partyGuest = partyGuest.copyWith(email: email);
-            }
+              }),
+        ),
+        const SizedBox(height: 24),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 32),
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(bottom: 8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Text(
+                      'number of guests',
+                      style: TextStyle(
+                          color: Theme.of(context).primaryColorLight,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+              ),
+              FormField<String>(
+                builder: (FormFieldState<String> state) {
+                  return InputDecorator(
+                    key: const ValueKey('guest_count'),
+                    decoration: InputDecoration(
+                        fillColor: Colors.white,
+                        errorStyle: TextStyle(
+                            color: Theme.of(context).errorColor,
+                            fontSize: 16.0),
+                        hintText: 'please select guest count',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(5.0),
+                          borderSide:
+                              BorderSide(color: Theme.of(context).primaryColor),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          // width: 0.0 produces a thin "hairline" border
+                          borderSide: BorderSide(
+                              color: Theme.of(context).primaryColor,
+                              width: 0.0),
+                        )),
+                    isEmpty: sGuestCount == '',
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton<String>(
+                        style: TextStyle(color: Theme.of(context).primaryColorLight),
+                        dropdownColor: Theme.of(context).backgroundColor,
+                        value: sGuestCount,
+                        isDense: true,
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            sGuestCount = newValue!;
+                            int count = int.parse(sGuestCount);
+
+                            partyGuest =
+                                partyGuest.copyWith(guestsCount: count);
+                            state.didChange(newValue);
+                          });
+                        },
+                        items: guestCounts.map((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList(),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ],
           ),
         ),
-
         const SizedBox(height: 24),
-        // TextFieldWidget(
-        //   label: 'about',
-        //   text: '',
-        //   maxLines: 5,
-        //   onChanged: (about) {},
-        // ),
-        // const SizedBox(height: 24),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 32),
           child: ButtonWidget(
-            text: 'save',
+            text: 'join guest list',
             onClicked: () {
               // we should have some validation here
               if (isDataValid()) {
-                if(hasUserChanged) {
+                if (hasUserChanged) {
+
+                  
 
                   // User freshUser = Fresh.freshUser(user);
                   //
                   // UserPreferences.setUser(freshUser);
                   // FirestoreHelper.pushUser(freshUser);
 
-                  PartyGuest freshPartyGuest = Fresh.freshPartyGuest(partyGuest);
+                  PartyGuest freshPartyGuest =
+                      Fresh.freshPartyGuest(partyGuest);
                   FirestoreHelper.pushPartyGuest(freshPartyGuest);
-
                 } else {
-                  PartyGuest freshPartyGuest = Fresh.freshPartyGuest(partyGuest);
+                  PartyGuest freshPartyGuest =
+                      Fresh.freshPartyGuest(partyGuest);
                   FirestoreHelper.pushPartyGuest(freshPartyGuest);
                   Toaster.longToast('guest list request is successfully sent');
                 }
@@ -152,7 +215,7 @@ class _PartyGuestAddEditPageState extends State<PartyGuestAddEditPage> {
     if (partyGuest.name.isEmpty) {
       Toaster.longToast('please enter your name');
       return false;
-    } 
+    }
 
     return true;
   }

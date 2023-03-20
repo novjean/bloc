@@ -188,7 +188,7 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
 
   _buildBody(BuildContext context) {
     return _isBlocServicesLoading
-        ? LoadingWidget()
+        ? const LoadingWidget()
         : ListView(
             padding: const EdgeInsets.symmetric(horizontal: 32),
             physics: const BouncingScrollPhysics(),
@@ -223,7 +223,7 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
               ),
               const SizedBox(height: 24),
               TextFieldWidget(
-                label: 'name',
+                label: 'name \*',
                 text: widget.party.name,
                 onChanged: (name) =>
                     widget.party = widget.party.copyWith(name: name),
