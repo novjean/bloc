@@ -217,10 +217,10 @@ class _OTPVerifyState extends State<OTPVerify> {
               // return value == _verificationCode ? null : 'Pin is incorrect';
               // return '';
               // },
-              // onClipboardFound: (value) {
-              //   debugPrint('onClipboardFound: $value');
-              //   pinController.setText(value);
-              // },
+              onClipboardFound: (value) {
+                debugPrint('onClipboardFound: $value');
+                pinController.setText(value);
+              },
               hapticFeedbackType: HapticFeedbackType.lightImpact,
               onCompleted: (pin) async {
                 debugPrint('onCompleted: $pin');
@@ -276,10 +276,10 @@ class _OTPVerifyState extends State<OTPVerify> {
 
                   String exception = e.toString();
                   if(exception.contains('session-expired')){
-                    //we need to retry
+                    Toaster.shortToast('session got expired, trying again');
                     _verifyPhone();
                   } else {
-                    Toaster.shortToast('invalid OTP. please try again.');
+                    Toaster.shortToast('invalid otp, please try again');
                   }
                   FocusScope.of(context).unfocus();
                 }
