@@ -439,11 +439,17 @@ class FirestoreHelper {
   }
 
   /** Offers **/
-  static void insertOffer(Offer offer) {
-    FirebaseFirestore.instance
-        .collection(OFFERS)
-        .doc(offer.id)
-        .set(offer.toMap());
+  static void pushOffer(Offer offer) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection(OFFERS)
+          .doc(offer.id)
+          .set(offer.toMap());
+    } on PlatformException catch (err) {
+      logger.e(err.message);
+    } catch (err) {
+      logger.e(err);
+    }
   }
 
   static Future<QuerySnapshot<Map<String, dynamic>>> pullOffers(

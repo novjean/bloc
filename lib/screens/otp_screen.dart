@@ -150,18 +150,19 @@ class _OTPVerifyState extends State<OTPVerify> {
           verificationCompleted: (PhoneAuthCredential credential) async {
             print(
                 'verifyPhoneNumber: ${widget.phone} is verified. attempting sign in with credentials...');
-            await FirebaseAuth.instance
-                .signInWithCredential(credential)
-                .then((value) async {
-              if (value.user != null) {
-                print('signInWithCredential: success. user logged in');
-              }
-            });
+            // await FirebaseAuth.instance
+            //     .signInWithCredential(credential)
+            //     .then((value) async {
+            //   if (value.user != null) {
+            //     print('signInWithCredential: success. user logged in');
+            //   }
+            // });
           },
           verificationFailed: (FirebaseAuthException e) {
-            print(e.message);
+            print('verificationFailed ' + e.toString());
           },
           codeSent: (String verificationID, int? resendToken) {
+            print('verification id : ' + verificationID);
             setState(() {
               _verificationCode = verificationID;
             });
@@ -232,7 +233,8 @@ class _OTPVerifyState extends State<OTPVerify> {
                       .then((value) async {
                     if (value.user != null) {
                       print(
-                          'user is in firebase auth. checking for bloc registration...');
+                          'user is in firebase auth');
+                      print('checking for bloc registration, id ' + value.user!.uid);
 
                       FirestoreHelper.pullUser(value.user!.uid).then((res) {
                         print("successfully retrieved bloc user for id " +
@@ -270,8 +272,16 @@ class _OTPVerifyState extends State<OTPVerify> {
                     }
                   });
                 } catch (e) {
+                  print('otp error ' + e.toString());
+
+                  String exception = e.toString();
+                  if(exception.contains('session-expired')){
+                    //we need to retry
+                    _verifyPhone();
+                  } else {
+                    Toaster.shortToast('invalid OTP. please try again.');
+                  }
                   FocusScope.of(context).unfocus();
-                  Toaster.shortToast('invalid OTP. please try again.');
                 }
               },
               onChanged: (value) {

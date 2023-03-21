@@ -25,7 +25,7 @@ class AccountScreen extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        SizedBox(height: 2.0),
+        const SizedBox(height: 2.0),
         GestureDetector(
             child: SizedListViewBlock(
               title: 'privacy',
@@ -67,7 +67,13 @@ class AccountScreen extends StatelessWidget {
 
                           print('user account is deleted');
 
-                          FirebaseAuth.instance.signOut();
+                          try {
+                            User? user = FirebaseAuth.instance.currentUser;
+                            user!.delete();
+                          } catch (e){
+                            print('account delete exception ' + e.toString());
+                          }
+
                           Navigator.of(context).pushReplacement(
                             MaterialPageRoute(builder: (context) => LoginScreen()),
                           );

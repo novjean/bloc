@@ -206,7 +206,7 @@ class _CommunityOfferScreenState extends State<CommunityOfferScreen> {
                               description: 'Community offer, from us to you!', // need to figure out a good logic for this
                               creationTime: creationMilliSec,
                               endTime: endDT.millisecondsSinceEpoch);
-                          FirestoreHelper.insertOffer(offer);
+                          FirestoreHelper.pushOffer(offer);
 
                           Navigator.of(ctx).pop();
                           Navigator.of(context).pop();

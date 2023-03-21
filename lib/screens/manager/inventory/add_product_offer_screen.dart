@@ -231,7 +231,7 @@ class _AddProductOfferScreenState extends State<AddProductOfferScreen> {
                 isActive: true,
                 creationTime: creationMilliSec,
                 endTime: creationMilliSec);
-            FirestoreHelper.insertOffer(offer);
+            FirestoreHelper.pushOffer(offer);
 
             widget.product.isOfferRunning = true;
             Product freshProduct = Fresh.freshProduct(widget.product);
