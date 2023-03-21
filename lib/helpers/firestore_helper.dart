@@ -595,6 +595,11 @@ class FirestoreHelper {
         .snapshots();
   }
 
+  static void deletePartyGuest(PartyGuest partyGuest) {
+    FirebaseFirestore.instance.collection(PARTY_GUESTS).doc(partyGuest.id).delete();
+  }
+
+
   /** Products **/
   static void pushProduct(Product product) async {
     try {
@@ -1106,6 +1111,5 @@ class FirestoreHelper {
         .orderBy('level', descending: false)
         .get();
   }
-
 
 }

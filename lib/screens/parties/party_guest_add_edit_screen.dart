@@ -1,13 +1,11 @@
 import 'package:bloc/widgets/ui/toaster.dart';
 import 'package:flutter/material.dart';
-import 'package:multiselect/multiselect.dart';
 
 import '../../db/entity/party.dart';
 import '../../db/entity/party_guest.dart';
 import '../../db/entity/user.dart' as blocUser;
 import '../../db/entity/user.dart';
 import '../../db/shared_preferences/user_preferences.dart';
-import '../../helpers/dummy.dart';
 import '../../helpers/firestore_helper.dart';
 import '../../helpers/fresh.dart';
 import '../../widgets/ui/button_widget.dart';
@@ -15,10 +13,12 @@ import '../../widgets/ui/dark_textfield_widget.dart';
 import '../../widgets/parties/party_banner.dart';
 
 class PartyGuestAddEditPage extends StatefulWidget {
+  PartyGuest partyGuest;
   Party party;
   String task;
 
-  PartyGuestAddEditPage({key, required this.party, required this.task})
+  PartyGuestAddEditPage(
+      {key, required this.partyGuest, required this.party, required this.task})
       : super(key: key);
 
   @override
@@ -26,7 +26,6 @@ class PartyGuestAddEditPage extends StatefulWidget {
 }
 
 class _PartyGuestAddEditPageState extends State<PartyGuestAddEditPage> {
-  late PartyGuest partyGuest;
   late blocUser.User user;
 
   bool isPhotoChanged = false;
@@ -43,9 +42,6 @@ class _PartyGuestAddEditPageState extends State<PartyGuestAddEditPage> {
   @override
   void initState() {
     user = UserPreferences.myUser;
-
-    partyGuest = Dummy.getDummyPartyGuest();
-    partyGuest.partyId = widget.party.id;
 
     for (int i = 1; i <= 4; i++) {
       guestCounts.add(i.toString());
@@ -85,7 +81,7 @@ class _PartyGuestAddEditPageState extends State<PartyGuestAddEditPage> {
               user = user.copyWith(name: name);
               hasUserChanged = true;
 
-              partyGuest = partyGuest.copyWith(name: name);
+              widget.partyGuest = widget.partyGuest.copyWith(name: name);
             },
           ),
         ),
@@ -99,7 +95,7 @@ class _PartyGuestAddEditPageState extends State<PartyGuestAddEditPage> {
                 user = user.copyWith(email: email);
                 hasUserChanged = true;
 
-                partyGuest = partyGuest.copyWith(email: email);
+                widget.partyGuest = widget.partyGuest.copyWith(email: email);
               }),
         ),
         const SizedBox(height: 24),
@@ -146,7 +142,8 @@ class _PartyGuestAddEditPageState extends State<PartyGuestAddEditPage> {
                     isEmpty: sGuestCount == '',
                     child: DropdownButtonHideUnderline(
                       child: DropdownButton<String>(
-                        style: TextStyle(color: Theme.of(context).primaryColorLight),
+                        style: TextStyle(
+                            color: Theme.of(context).primaryColorLight),
                         dropdownColor: Theme.of(context).backgroundColor,
                         value: sGuestCount,
                         isDense: true,
@@ -155,8 +152,8 @@ class _PartyGuestAddEditPageState extends State<PartyGuestAddEditPage> {
                             sGuestCount = newValue!;
                             int count = int.parse(sGuestCount);
 
-                            partyGuest =
-                                partyGuest.copyWith(guestsCount: count);
+                            widget.partyGuest =
+                                widget.partyGuest.copyWith(guestsCount: count);
                             state.didChange(newValue);
                           });
                         },
@@ -188,11 +185,11 @@ class _PartyGuestAddEditPageState extends State<PartyGuestAddEditPage> {
                   FirestoreHelper.pushUser(freshUser);
 
                   PartyGuest freshPartyGuest =
-                      Fresh.freshPartyGuest(partyGuest);
+                      Fresh.freshPartyGuest(widget.partyGuest);
                   FirestoreHelper.pushPartyGuest(freshPartyGuest);
                 } else {
                   PartyGuest freshPartyGuest =
-                      Fresh.freshPartyGuest(partyGuest);
+                      Fresh.freshPartyGuest(widget.partyGuest);
                   FirestoreHelper.pushPartyGuest(freshPartyGuest);
                 }
 
@@ -204,12 +201,35 @@ class _PartyGuestAddEditPageState extends State<PartyGuestAddEditPage> {
             },
           ),
         ),
+        widget.task == 'edit'
+            ? Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const SizedBox(height: 24),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 32),
+                    child: ButtonWidget(
+                      text: 'delete ',
+                      onClicked: () {
+                        FirestoreHelper.deletePartyGuest(widget.partyGuest);
+
+                        print('guest list request is deleted');
+
+                        Toaster.longToast('guest list request is deleted');
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ),
+                ],
+              )
+            : const SizedBox(),
+        const SizedBox(height: 12),
       ],
     );
   }
 
   bool isDataValid() {
-    if (partyGuest.name.isEmpty) {
+    if (widget.partyGuest.name.isEmpty) {
       Toaster.longToast('please enter your name');
       return false;
     }

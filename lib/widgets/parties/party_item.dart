@@ -4,6 +4,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import '../../db/entity/party.dart';
+import '../../db/entity/party_guest.dart';
+import '../../helpers/dummy.dart';
 import '../../screens/parties/artist_screen.dart';
 import '../../utils/string_utils.dart';
 import '../ui/dark_button_widget.dart';
@@ -137,10 +139,14 @@ class PartyItem extends StatelessWidget {
                                       text: 'join guest list',
                                       onClicked: () {
                                         // nav to guest list add page
+                                        PartyGuest partyGuest = Dummy.getDummyPartyGuest();
+                                        partyGuest.partyId = party.id;
+
                                         Navigator.of(context).push(
                                           MaterialPageRoute(
                                               builder: (context) =>
                                                   PartyGuestAddEditPage(
+                                                    partyGuest: partyGuest,
                                                       party: party,
                                                       task: 'add')),
                                         );

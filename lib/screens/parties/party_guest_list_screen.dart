@@ -1,5 +1,7 @@
 import 'package:bloc/db/entity/party_guest.dart';
+import 'package:bloc/helpers/dummy.dart';
 import 'package:bloc/helpers/firestore_helper.dart';
+import 'package:bloc/screens/parties/party_guest_add_edit_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -8,8 +10,7 @@ import '../../helpers/fresh.dart';
 import '../../widgets/parties/party_guest_item.dart';
 import '../../widgets/ui/loading_widget.dart';
 
-class PartyGuestListScreen extends StatefulWidget{
-
+class PartyGuestListScreen extends StatefulWidget {
   @override
   State<PartyGuestListScreen> createState() => _PartyGuestListScreenState();
 }
@@ -67,20 +68,23 @@ class _PartyGuestListScreenState extends State<PartyGuestListScreen> {
   }
 
   _buildBody(BuildContext context) {
-    return Column(
-      children: [
-        const SizedBox(height: 5.0),
-        _isPartiesLoading ? const SizedBox() : _displayPartiesDropdown(context),
-        // _displayOptions(context),
-        // const Divider(),
-        const SizedBox(height: 5.0),
-        _buildPartyGuestList(context),
-        const SizedBox(height: 5.0),
-      ],
-    );
+    return _isPartiesLoading
+        ? const LoadingWidget()
+        : Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              const SizedBox(height: 5.0),
+              _displayPartiesDropdown(context),
+              // _displayOptions(context),
+              // const Divider(),
+              const SizedBox(height: 5.0),
+              _buildPartyGuestList(context),
+              const SizedBox(height: 5.0),
+            ],
+          );
   }
 
-  _displayPartiesDropdown(BuildContext context){
+  _displayPartiesDropdown(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 15.0),
       child: FormField<String>(
@@ -90,19 +94,16 @@ class _PartyGuestListScreenState extends State<PartyGuestListScreen> {
             decoration: InputDecoration(
                 fillColor: Colors.white,
                 errorStyle: TextStyle(
-                    color: Theme.of(context).errorColor,
-                    fontSize: 16.0),
+                    color: Theme.of(context).errorColor, fontSize: 16.0),
                 hintText: 'please select party',
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(5.0),
-                  borderSide:
-                  BorderSide(color: Theme.of(context).primaryColor),
+                  borderSide: BorderSide(color: Theme.of(context).primaryColor),
                 ),
                 enabledBorder: OutlineInputBorder(
                   // width: 0.0 produces a thin "hairline" border
                   borderSide: BorderSide(
-                      color: Theme.of(context).primaryColor,
-                      width: 0.0),
+                      color: Theme.of(context).primaryColor, width: 0.0),
                 )),
             isEmpty: sPartyName == '',
             child: DropdownButtonHideUnderline(
@@ -115,8 +116,8 @@ class _PartyGuestListScreenState extends State<PartyGuestListScreen> {
                   setState(() {
                     sPartyName = newValue!;
 
-                    for(Party party in mParties){
-                      if(party.name == sPartyName){
+                    for (Party party in mParties) {
+                      if (party.name == sPartyName) {
                         sPartyId = party.id;
                         break;
                       }
@@ -139,20 +140,20 @@ class _PartyGuestListScreenState extends State<PartyGuestListScreen> {
     );
   }
 
-  _buildPartyGuestList(BuildContext context){
+  _buildPartyGuestList(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
-        stream: sPartyName=='all'? FirestoreHelper.getGuestLists() : FirestoreHelper.getPartyGuestList(sPartyId),
+        stream: sPartyName == 'all'
+            ? FirestoreHelper.getGuestLists()
+            : FirestoreHelper.getPartyGuestList(sPartyId),
         builder: (ctx, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-           }
+          if (snapshot.connectionState == ConnectionState.waiting) {}
 
           List<PartyGuest> partyGuestList = [];
 
           for (int i = 0; i < snapshot.data!.docs.length; i++) {
             DocumentSnapshot document = snapshot.data!.docs[i];
             Map<String, dynamic> map = document.data()! as Map<String, dynamic>;
-            final PartyGuest partyGuest = PartyGuest.fromMap(map);
-            // Fresh.freshPartyGuestMap(map, false);
+            final PartyGuest partyGuest = Fresh.freshPartyGuestMap(map, false);
             partyGuestList.add(partyGuest);
 
             if (i == snapshot.data!.docs.length - 1) {
@@ -170,57 +171,64 @@ class _PartyGuestListScreenState extends State<PartyGuestListScreen> {
           scrollDirection: Axis.vertical,
           itemBuilder: (ctx, index) {
             return GestureDetector(
-                child: PartyGuestItem(
-                  partyGuest: partyGuestList[index],
-                ),
-                // onDoubleTap: () {
-                //   User sUser = users[index];
-                //   logger.d('double tap user selected : ' + sUser.name);
-                //
-                //   showDialog(
-                //     context: context,
-                //     builder: (BuildContext context) {
-                //       return AlertDialog(
-                //         title: Text("delete user : " + sUser.name),
-                //         content:
-                //         const Text("would you like to delete the user?"),
-                //         actions: [
-                //           TextButton(
-                //             child: const Text("yes"),
-                //             onPressed: () {
-                //               FirestorageHelper.deleteFile(sUser.imageUrl);
-                //               FirestoreHelper.deleteUser(sUser);
-                //
-                //               print('user is deleted');
-                //
-                //               Navigator.of(context).pop();
-                //             },
-                //           ),
-                //           TextButton(
-                //             child: const Text("no"),
-                //             onPressed: () {
-                //               Navigator.of(context).pop();
-                //             },
-                //           )
-                //         ],
-                //       );
-                //     },
-                //   );
-                // },
-                // onTap: () {
-                //   User sUser = users[index];
-                //   logger.d('user selected : ' + sUser.name);
-                //
-                //   Navigator.of(context).push(MaterialPageRoute(
-                //       builder: (ctx) => UserAddEditScreen(
-                //         user: sUser,
-                //         task: 'edit',
-                //         userLevels: mUserLevels,
-                //       )));
-                // }
-                );
+              child: PartyGuestItem(
+                partyGuest: partyGuestList[index],
+              ),
+                onTap: () {
+                  PartyGuest sPartyGuest = partyGuestList[index];
+
+                  Party sParty = Dummy.getDummyParty('');
+
+                  for(Party party in mParties){
+                    if(party.id == sPartyGuest.partyId){
+                      sParty = party;
+                      break;
+                    }
+                  }
+
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (ctx) => PartyGuestAddEditPage(
+                        partyGuest: sPartyGuest,
+                        party: sParty,
+                        task: 'edit',
+                      )));
+                }
+              // onDoubleTap: () {
+              //   User sUser = users[index];
+              //   logger.d('double tap user selected : ' + sUser.name);
+              //
+              //   showDialog(
+              //     context: context,
+              //     builder: (BuildContext context) {
+              //       return AlertDialog(
+              //         title: Text("delete user : " + sUser.name),
+              //         content:
+              //         const Text("would you like to delete the user?"),
+              //         actions: [
+              //           TextButton(
+              //             child: const Text("yes"),
+              //             onPressed: () {
+              //               FirestorageHelper.deleteFile(sUser.imageUrl);
+              //               FirestoreHelper.deleteUser(sUser);
+              //
+              //               print('user is deleted');
+              //
+              //               Navigator.of(context).pop();
+              //             },
+              //           ),
+              //           TextButton(
+              //             child: const Text("no"),
+              //             onPressed: () {
+              //               Navigator.of(context).pop();
+              //             },
+              //           )
+              //         ],
+              //       );
+              //     },
+              //   );
+              // },
+            );
           }),
     );
   }
-
 }

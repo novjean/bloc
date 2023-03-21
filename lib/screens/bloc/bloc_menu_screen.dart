@@ -611,7 +611,7 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
           return const Expanded(
               child: Center(child: Text('no products found!')));
         }
-        return LoadingWidget();
+        return const LoadingWidget();
       },
     );
   }
@@ -758,12 +758,20 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
           ),
           Text(
             'Info',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Theme.of(context).highlightColor),
           ),
-          Text('. all prices are in INR'),
-          Text('. standard measure pour for spirits is 30ml'),
           Text(
-              '. if you have any allergies or dietary requirements, please let us know. Jain, vegan, gluten and dairy-allergy items are available.'),
+            '. all prices are in INR',
+            style: TextStyle(color: Theme.of(context).highlightColor),
+          ),
+          Text('. standard measure pour for spirits is 30ml',
+              style: TextStyle(color: Theme.of(context).highlightColor)),
+          Text(
+              '. if you have any allergies or dietary requirements, please let us know. jain, vegan, gluten and dairy-allergy items are available.',
+              style: TextStyle(color: Theme.of(context).highlightColor)),
           SizedBox(
             height: 10,
           ),

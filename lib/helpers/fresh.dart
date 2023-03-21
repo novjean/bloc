@@ -643,6 +643,78 @@ class Fresh {
     return freshGuest;
   }
 
+  static PartyGuest freshPartyGuestMap(Map<String, dynamic> map, bool shouldUpdate){
+    PartyGuest partyGuest = Dummy.getDummyPartyGuest();
+    bool shouldPush = false;
+
+    try {
+      partyGuest = partyGuest.copyWith(id: map['id'] as String);
+    } catch (err) {
+      print('partyGuest id not exist');
+    }
+    try {
+      partyGuest = partyGuest.copyWith(partyId: map['partyId'] as String);
+    } catch (err) {
+      print('partyGuest partyId not exist for user id: ' + partyGuest.id);
+      shouldPush = true;
+    }
+    try {
+      partyGuest = partyGuest.copyWith(guestId: map['guestId'] as String);
+    } catch (err) {
+      print('partyGuest guestId not exist for user id: ' + partyGuest.id);
+      shouldPush = true;
+    }
+    try {
+      partyGuest = partyGuest.copyWith(name: map['name'] as String);
+    } catch (err) {
+      print('partyGuest name not exist for user id: ' + partyGuest.id);
+      shouldPush = true;
+    }
+    try {
+      partyGuest = partyGuest.copyWith(phone: map['phone'] as String);
+    } catch (err) {
+      print('partyGuest phone not exist for user id: ' + partyGuest.id);
+      shouldPush = true;
+    }
+    try {
+      partyGuest = partyGuest.copyWith(email: map['email'] as String);
+    } catch (err) {
+      print('partyGuest email not exist for user id: ' + partyGuest.id);
+      shouldPush = true;
+    }
+    try {
+      partyGuest = partyGuest.copyWith(guestsCount: map['guestsCount'] as int);
+    } catch (err) {
+      print('partyGuest guestsCount not exist for user id: ' + partyGuest.id);
+      shouldPush = true;
+    }
+    try {
+      partyGuest = partyGuest.copyWith(instagramUrl: map['instagramUrl'] as String);
+    } catch (err) {
+      print('partyGuest instagramUrl not exist for user id: ' + partyGuest.id);
+      shouldPush = true;
+    }
+    try {
+      partyGuest = partyGuest.copyWith(createdAt: map['createdAt'] as int);
+    } catch (err) {
+      print('partyGuest createdAt not exist for user id: ' + partyGuest.id);
+      shouldPush = true;
+    }
+    try {
+      partyGuest = partyGuest.copyWith(isApproved: map['isApproved'] as bool);
+    } catch (err) {
+      print('partyGuest isApproved not exist for user id: ' + partyGuest.id);
+      shouldPush = true;
+    }
+
+    if (shouldPush && shouldUpdate) {
+      print('updating party guest ' + partyGuest.id);
+      FirestoreHelper.pushPartyGuest(partyGuest);
+    }
+
+    return partyGuest;
+  }
+
 
   /** user **/
   static User freshUserMap(Map<String, dynamic> map, bool shouldUpdate) {
