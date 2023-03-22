@@ -8,6 +8,7 @@ import '../../helpers/fresh.dart';
 import '../../widgets/parties/party_item.dart';
 import '../../widgets/ui/sized_listview_block.dart';
 import '../../widgets/ui/toaster.dart';
+import '../box_office/box_office_screen.dart';
 
 class PartyScreen extends StatefulWidget {
   const PartyScreen({Key? key}) : super(key: key);
@@ -188,6 +189,26 @@ class _PartyScreenState extends State<PartyScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: Theme.of(context).backgroundColor,
-        body: _isPartiesLoading ? LoadingWidget() : _buildBody(context));
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                  builder: (ctx) =>
+                      BoxOfficeScreen()),
+            );
+          },
+          child: Icon(
+            Icons.play_arrow_outlined,
+            color: Theme.of(context).primaryColorDark,
+            size: 29,
+          ),
+          backgroundColor: Theme.of(context).primaryColor,
+          tooltip: 'box office',
+          elevation: 5,
+          splashColor: Colors.grey,
+        ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+
+        body: _isPartiesLoading ? const LoadingWidget() : _buildBody(context));
   }
 }
