@@ -1,20 +1,9 @@
-import 'package:bloc/widgets/ui/toaster.dart';
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
+
+import '../utils/network_utils.dart';
 
 class StoreBadgeItem extends StatelessWidget {
-  int addCount = 1;
-
-  StoreBadgeItem();
-
-  Future<void> _launchInBrowser(Uri url) async {
-    if (!await launchUrl(
-      url,
-      mode: LaunchMode.externalApplication,
-    )) {
-      throw Exception('could not launch $url');
-    }
-  }
+  const StoreBadgeItem({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -24,12 +13,12 @@ class StoreBadgeItem extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Divider(),
+          const Divider(),
           Flexible(
             child: Container(
                 child: Center(
                   child: Text(
-              'download app from',
+              'experience our app',
               style: TextStyle(
                     fontSize: 16, color: Theme.of(context).shadowColor),
             ),
@@ -44,10 +33,10 @@ class StoreBadgeItem extends StatelessWidget {
                     child: GestureDetector(
                       onTap: () {
                         final uri = Uri.parse('https://play.google.com/store/apps/details?id=com.novatech.bloc');
-                        _launchInBrowser(uri);
+                        NetworkUtils.launchInBrowser(uri);
                       },
                       child: Container(
-                        decoration: BoxDecoration(
+                        decoration: const BoxDecoration(
                           image: DecorationImage(
                             image: AssetImage('assets/images/google-play-badge.png'),
                             fit: BoxFit.contain,
@@ -59,11 +48,12 @@ class StoreBadgeItem extends StatelessWidget {
                 Expanded(
                   child: GestureDetector(
                     onTap: () {
-                      Toaster.shortToast('pending approval');
+                      final uri = Uri.parse('https://apps.apple.com/in/app/bloc-community/id1672736309');
+                      NetworkUtils.launchInBrowser(uri);
                     },
                     child: Container(
-                      margin: EdgeInsets.all(10),
-                      decoration: BoxDecoration(
+                      margin: const EdgeInsets.all(10),
+                      decoration: const BoxDecoration(
                         image: DecorationImage(
                           image: AssetImage('assets/images/app-store-badge.png'),
                           fit: BoxFit.contain,

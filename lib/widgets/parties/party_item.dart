@@ -115,15 +115,20 @@ class PartyItem extends StatelessWidget {
                 party.description.isNotEmpty
                     ? Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                        child: Text(
-                          StringUtils.firstFewWords(
-                                  party.description.toLowerCase(), 30) +
-                              (StringUtils.getWordCount(party.description) > 30
-                                  ? ' ...'
-                                  : ''),
-                          style: TextStyle(
-                              fontSize: 15,
-                              color: Theme.of(context).primaryColorDark),
+                        child: Expanded(
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              StringUtils.firstFewWords(
+                                      party.description.toLowerCase(), 30) +
+                                  (StringUtils.getWordCount(party.description) > 30
+                                      ? ' ...'
+                                      : ''),
+                              style: TextStyle(
+                                  fontSize: 15,
+                                  color: Theme.of(context).primaryColorDark),
+                            ),
+                          ),
                         ),
                       )
                     : const SizedBox(),
