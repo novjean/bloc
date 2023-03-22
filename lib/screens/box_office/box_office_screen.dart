@@ -1,15 +1,22 @@
+import 'package:bloc/main.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 
 import '../../db/entity/party.dart';
 import '../../db/entity/party_guest.dart';
+import '../../db/entity/user.dart';
 import '../../db/shared_preferences/user_preferences.dart';
 import '../../helpers/dummy.dart';
 import '../../helpers/firestore_helper.dart';
 import '../../helpers/fresh.dart';
+import '../../utils/constants.dart';
 import '../../widgets/box_office/box_office_item.dart';
 import '../../widgets/ui/loading_widget.dart';
 import '../../widgets/ui/sized_listview_block.dart';
+import '../../widgets/ui/toaster.dart';
+import '../parties/manage_party_ticket_screen.dart';
 
 class BoxOfficeScreen extends StatefulWidget {
   @override
@@ -56,10 +63,29 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    User user = UserPreferences.myUser;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('bloc | box office'),
       ),
+
+      floatingActionButton: (user.clearanceLevel>=Constants.PROMOTER_LEVEL && !kIsWeb)? FloatingActionButton(
+        onPressed: () {
+          scanCode();
+        },
+        child: Icon(
+          Icons.qr_code_scanner,
+          color: Theme.of(context).primaryColorDark,
+          size: 29,
+        ),
+        backgroundColor: Theme.of(context).primaryColor,
+        tooltip: 'scan code',
+        elevation: 5,
+        splashColor: Colors.grey,
+      ): const SizedBox(),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+
       body: _buildBody(context),
     );
   }
@@ -163,7 +189,7 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
           }
 
           if(!sParty.isActive){
-            // the party is over , so the request should be deleted
+            // the party is over, so the request should be deleted
             FirestoreHelper.deletePartyGuest(sPartyGuest);
             return const SizedBox();
           } else {
@@ -172,5 +198,27 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
         },
       ),
     );
+  }
+
+  void scanCode() async {
+    String scanCode;
+
+    try {
+      scanCode = await FlutterBarcodeScanner.scanBarcode(
+          '#ff6666', 'cancel', true, ScanMode.QR);
+      print('code scanned ' + scanCode);
+      Navigator.of(context).push(
+        MaterialPageRoute(
+            builder: (ctx) =>
+                ManagePartyTicketScreen(partyGuestId: scanCode,)),
+      );
+    } on PlatformException {
+      scanCode = 'failed to get platform version.';
+    } catch(e){
+      Toaster.longToast('code scan failed');
+    }
+
+    if (!mounted) return;
+
   }
 }

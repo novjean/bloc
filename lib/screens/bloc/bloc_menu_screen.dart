@@ -180,7 +180,7 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
     // Platform messages may fail, so we use a try/catch PlatformException.
     try {
       scanTableId = await FlutterBarcodeScanner.scanBarcode(
-          '#ff6666', 'Cancel', true, ScanMode.QR);
+          '#ff6666', 'cancel', true, ScanMode.QR);
       print('table id scanned ' + scanTableId);
     } on PlatformException {
       scanTableId = 'failed to get platform version.';

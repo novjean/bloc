@@ -65,7 +65,6 @@ class _PartyGuestAddEditPageState extends State<PartyGuestAddEditPage> {
     return ListView(
       physics: const BouncingScrollPhysics(),
       children: [
-        const SizedBox(height: 0),
         PartyBanner(
           party: widget.party,
           isClickable: false,

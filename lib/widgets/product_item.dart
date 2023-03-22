@@ -153,7 +153,7 @@ class _ProductItemState extends State<ProductItem> {
                                               fontWeight: FontWeight.bold,
                                               color: Colors.blue),
                                         )
-                                      : const SizedBox(height: 0),
+                                      : const SizedBox(),
                                 ],
                               )
                             : widget.isOnOffer
@@ -167,7 +167,7 @@ class _ProductItemState extends State<ProductItem> {
                                         fontWeight: FontWeight.bold,
                                         color: Colors.blue),
                                   )
-                                : const SizedBox(height: 0),
+                                : const SizedBox(),
                         const SizedBox(height: 2),
                         Text(
                             StringUtils.firstFewWords(
@@ -180,10 +180,10 @@ class _ProductItemState extends State<ProductItem> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
-                            Spacer(),
+                            const Spacer(),
                             widget.isCustomerSeated
                                 ? IconButton(
-                                    icon: Icon(Icons.remove),
+                                    icon: const Icon(Icons.remove),
                                     onPressed: () {
                                       setState(() {
                                         if (widget.addCount > 1) {
@@ -197,16 +197,12 @@ class _ProductItemState extends State<ProductItem> {
                                       });
                                     },
                                   )
-                                : SizedBox(),
+                                : const SizedBox(),
                             widget.isCustomerSeated
                                 ? Container(
                                     // color: primaryColor,
-                                    margin: const EdgeInsets.symmetric(
-                                      horizontal: 0.0,
-                                    ),
                                     padding: const EdgeInsets.symmetric(
                                       vertical: 4.0,
-                                      horizontal: 0.0,
                                     ),
                                     child: ButtonWidget(
                                       text: widget.addCount == 1

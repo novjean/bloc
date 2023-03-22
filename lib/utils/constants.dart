@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-const String kAppTitle = 'BLOC';
+const String kAppTitle = 'bloc';
 
 class Constants {
   //Colors for theme

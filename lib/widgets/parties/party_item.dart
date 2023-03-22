@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 
 import '../../db/entity/party.dart';
 import '../../db/entity/party_guest.dart';
+import '../../db/shared_preferences/user_preferences.dart';
 import '../../helpers/dummy.dart';
 import '../../screens/parties/artist_screen.dart';
 import '../../utils/string_utils.dart';
@@ -133,7 +134,7 @@ class PartyItem extends StatelessWidget {
                       )
                     : const SizedBox(),
                 const SizedBox(height: 5),
-                isGuestListActive
+                isGuestListActive & UserPreferences.isUserLoggedIn()
                     ? Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [

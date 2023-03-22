@@ -484,6 +484,13 @@ class FirestoreHelper {
     }
   }
 
+  static Future<QuerySnapshot<Map<String, dynamic>>> pullParty(String partyId) {
+    return FirebaseFirestore.instance
+        .collection(FirestoreHelper.PARTIES)
+        .where('id', isEqualTo: partyId)
+        .get();
+  }
+
   static Future<QuerySnapshot<Map<String, dynamic>>> pullParties(
       int timeNow, bool isActive) {
     return FirebaseFirestore.instance
@@ -545,6 +552,13 @@ class FirestoreHelper {
   }
 
   /** Party Guests **/
+  static Future<QuerySnapshot<Map<String, dynamic>>> pullPartyGuest(String partyGuestId) {
+    return FirebaseFirestore.instance
+        .collection(FirestoreHelper.PARTY_GUESTS)
+        .where('id', isEqualTo: partyGuestId)
+        .get();
+  }
+
   static void pushPartyGuest(PartyGuest partyGuest) async {
     try {
       await FirebaseFirestore.instance
@@ -735,7 +749,7 @@ class FirestoreHelper {
           print("seat is occupied by cust id: " + custId);
         }
       }).catchError(
-              (error) => print("Failed to update seat with cust: $error"));
+              (error) => print("failed to update seat with cust: $error"));
     } on PlatformException catch (err) {
       logger.e(err.message);
     } catch (err) {
@@ -1095,6 +1109,5 @@ class FirestoreHelper {
         .orderBy('level', descending: false)
         .get();
   }
-
 
 }

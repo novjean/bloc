@@ -192,9 +192,7 @@ class _PartyScreenState extends State<PartyScreen> {
         floatingActionButton: FloatingActionButton(
           onPressed: () {
             Navigator.of(context).push(
-              MaterialPageRoute(
-                  builder: (ctx) =>
-                      BoxOfficeScreen()),
+              MaterialPageRoute(builder: (ctx) => BoxOfficeScreen()),
             );
           },
           child: Icon(
@@ -208,7 +206,6 @@ class _PartyScreenState extends State<PartyScreen> {
           splashColor: Colors.grey,
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-
         body: _isPartiesLoading ? const LoadingWidget() : _buildBody(context));
   }
 }
