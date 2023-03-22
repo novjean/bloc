@@ -104,103 +104,7 @@ class _BoxOfficeItemState extends State<BoxOfficeItem> {
                                     ? ' approved'
                                     : ' pending')),
                           ),
-                          Padding(
-                            padding: const EdgeInsets.only(right: 5, bottom: 5),
-                            child: widget.partyGuest.isApproved
-                                ? DarkButtonWidget(
-                                    text: 'entry code',
-                                    onClicked: () {
-                                      showDialog(
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return AlertDialog(
-                                            contentPadding:
-                                                const EdgeInsets.all(16.0),
-                                            content: SizedBox(
-                                              height: 300,
-                                              child: Column(
-                                                children: [
-                                                  Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                            bottom: 20),
-                                                    child: Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .start,
-                                                      children: [
-                                                        Text(
-                                                          widget.party
-                                                                  .eventName +
-                                                              ' | ' +
-                                                              widget.party.name,
-                                                          style: TextStyle(
-                                                              fontSize: 18),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                  Center(
-                                                      child: BarcodeWidget(
-                                                    color: Theme.of(context)
-                                                        .primaryColorDark,
-                                                    barcode: Barcode.qrCode(),
-                                                    // Barcode type and settings
-                                                    data: widget.partyGuest.id,
-                                                    // Content
-                                                    width: 200,
-                                                    height: 200,
-                                                  )),
-                                                  Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                            top: 20),
-                                                    child: Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment.end,
-                                                      children: [
-                                                        Text(
-                                                          widget.partyGuest
-                                                                  .guestsRemaining
-                                                                  .toString() +
-                                                              ' guests remaining',
-                                                          style: TextStyle(
-                                                              fontSize: 16),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                            actions: [
-                                              TextButton(
-                                                child: const Text("close"),
-                                                onPressed: () {
-                                                  Navigator.of(context).pop();
-                                                },
-                                              ),
-                                            ],
-                                          );
-                                        },
-                                      );
-                                    },
-                                  )
-                                : ButtonWidget(
-                                    text: 'edit request',
-                                    onClicked: () {
-                                      Navigator.of(context).push(
-                                          MaterialPageRoute(
-                                              builder: (ctx) =>
-                                                  PartyGuestAddEditPage(
-                                                    partyGuest:
-                                                        widget.partyGuest,
-                                                    party: widget.party,
-                                                    task: 'edit',
-                                                  )));
-                                    },
-                                  ),
-                          ),
+                          displayEntryEditButton(context),
                         ],
                       ),
                     ],
@@ -228,6 +132,99 @@ class _BoxOfficeItemState extends State<BoxOfficeItem> {
           ),
         ),
       ),
+    );
+  }
+
+  displayEntryEditButton(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(right: 5, bottom: 5),
+      child: widget.partyGuest.isApproved
+          ? DarkButtonWidget(
+              text: 'entry code',
+              onClicked: () {
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      contentPadding: const EdgeInsets.all(16.0),
+                      content: SizedBox(
+                        height: 300,
+                        child: Column(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 20),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    widget.party.eventName +
+                                        ' | ' +
+                                        widget.party.name,
+                                    style: TextStyle(fontSize: 18),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Center(
+                                child: BarcodeWidget(
+                              color: Theme.of(context).primaryColorDark,
+                              barcode: Barcode.qrCode(),
+                              // Barcode type and settings
+                              data: widget.partyGuest.id,
+                              // Content
+                              width: 200,
+                              height: 200,
+                            )),
+                            Padding(
+                              padding: const EdgeInsets.only(top: 20),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Align(
+                                    alignment: Alignment.centerRight,
+                                    child: Text(
+                                      widget.partyGuest.guestsRemaining
+                                              .toString() +
+                                          ' guests remaining',
+                                      style: TextStyle(fontSize: 16),
+                                    ),
+                                  ),
+                                  Align(
+                                    alignment: Alignment.centerRight,
+                                    child: Text('valid until 11 pm',
+                                      style: TextStyle(fontSize: 16),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      actions: [
+                        TextButton(
+                          child: const Text("close"),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                      ],
+                    );
+                  },
+                );
+              },
+            )
+          : ButtonWidget(
+              text: 'edit request',
+              onClicked: () {
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (ctx) => PartyGuestAddEditPage(
+                          partyGuest: widget.partyGuest,
+                          party: widget.party,
+                          task: 'edit',
+                        )));
+              },
+            ),
     );
   }
 }

@@ -120,15 +120,20 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
 
         if (snapshot.hasData) {
           List<PartyGuest> partyGuestRequests = [];
-          for (int i = 0; i < snapshot.data!.docs.length; i++) {
-            DocumentSnapshot document = snapshot.data!.docs[i];
-            Map<String, dynamic> map = document.data()! as Map<String, dynamic>;
-            final PartyGuest partyGuest = Fresh.freshPartyGuestMap(map, false);
-            partyGuestRequests.add(partyGuest);
+          if(snapshot.data!.docs.isEmpty){
+            return const Expanded(
+                child: Center(child: Text('no guest list requests found!')));
+          } else {
+            for (int i = 0; i < snapshot.data!.docs.length; i++) {
+              DocumentSnapshot document = snapshot.data!.docs[i];
+              Map<String, dynamic> map = document.data()! as Map<String, dynamic>;
+              final PartyGuest partyGuest = Fresh.freshPartyGuestMap(map, false);
+              partyGuestRequests.add(partyGuest);
 
-            if (i == snapshot.data!.docs.length - 1) {
-              return _displayPartyGuestListRequests(
-                  context, partyGuestRequests);
+              if (i == snapshot.data!.docs.length - 1) {
+                return _displayPartyGuestListRequests(
+                    context, partyGuestRequests);
+              }
             }
           }
         } else {
