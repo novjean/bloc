@@ -46,7 +46,7 @@ class _PartyGuestAddEditPageState extends State<PartyGuestAddEditPage> {
     for (int i = 1; i <= 4; i++) {
       guestCounts.add(i.toString());
     }
-    sGuestCount = guestCounts.first;
+    sGuestCount = widget.partyGuest.guestsCount.toString();
   }
 
   @override
@@ -154,6 +154,8 @@ class _PartyGuestAddEditPageState extends State<PartyGuestAddEditPage> {
 
                             widget.partyGuest =
                                 widget.partyGuest.copyWith(guestsCount: count);
+                            widget.partyGuest =
+                                widget.partyGuest.copyWith(guestsRemaining: count);
                             state.didChange(newValue);
                           });
                         },
@@ -175,7 +177,7 @@ class _PartyGuestAddEditPageState extends State<PartyGuestAddEditPage> {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 32),
           child: ButtonWidget(
-            text: 'join guest list',
+            text: widget.task == 'edit'?'save changes': 'join list',
             onClicked: () {
               // we should have some validation here
               if (isDataValid()) {
@@ -193,7 +195,7 @@ class _PartyGuestAddEditPageState extends State<PartyGuestAddEditPage> {
                   FirestoreHelper.pushPartyGuest(freshPartyGuest);
                 }
 
-                Toaster.longToast('guest list request is successfully sent');
+                Toaster.longToast('guest list confirmation in box office');
                 Navigator.of(context).pop();
               } else {
                 print('user cannot be entered as data is incomplete');

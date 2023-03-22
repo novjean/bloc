@@ -749,15 +749,12 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
 
   displayExtraInfo() {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 10),
+      padding: const EdgeInsets.all(10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(
-            height: 10,
-          ),
           Text(
-            'Info',
+            'info',
             style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
@@ -772,9 +769,6 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
           Text(
               '. if you have any allergies or dietary requirements, please let us know. jain, vegan, gluten and dairy-allergy items are available.',
               style: TextStyle(color: Theme.of(context).highlightColor)),
-          SizedBox(
-            height: 10,
-          ),
         ],
       ),
     );

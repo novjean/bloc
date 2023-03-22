@@ -7,6 +7,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../screens/account_screen.dart';
+import '../screens/box_office/box_office_screen.dart';
 import '../screens/captain/captain_main_screen.dart';
 import '../screens/login_screen.dart';
 import '../screens/user/order_history_screen.dart';
@@ -49,6 +50,23 @@ class AppDrawer extends StatelessWidget {
                         Navigator.of(context).push(
                           MaterialPageRoute(
                               builder: (ctx) => OrderHistoryScreen()),
+                        );
+                      },
+                    ),
+                    const Divider(),
+                  ],
+                )
+              : const SizedBox(),
+          UserPreferences.isUserLoggedIn()
+              ? Column(
+                  children: [
+                    ListTile(
+                      leading: const Icon(Icons.play_arrow_outlined),
+                      title: const Text('box office'),
+                      onTap: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                              builder: (ctx) => BoxOfficeScreen()),
                         );
                       },
                     ),

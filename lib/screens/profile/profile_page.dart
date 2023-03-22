@@ -63,10 +63,13 @@ class _ProfilePageState extends State<ProfilePage> {
         const SizedBox(height: 24),
         buildName(user),
         const SizedBox(height: 24),
-        buildContactButton(),
+        buildPhotoQrToggleButton(),
+
+        const SizedBox(height: 12),
+
         // const SizedBox(height: 24),
         // NumbersWidget(),
-        const SizedBox(height: 48),
+        // const SizedBox(height: 48),
         // buildAbout(user),
         // const SizedBox(height: 48),
       ],
@@ -90,7 +93,7 @@ class _ProfilePageState extends State<ProfilePage> {
         ],
       );
 
-  Widget buildContactButton() => Center(
+  Widget buildPhotoQrToggleButton() => Center(
         child: ButtonWidget(
           text: _buttonText,
           onClicked: () {
@@ -123,4 +126,5 @@ class _ProfilePageState extends State<ProfilePage> {
           ],
         ),
       );
+
 }

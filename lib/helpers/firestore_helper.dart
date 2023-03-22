@@ -165,30 +165,6 @@ class FirestoreHelper {
     }
   }
 
-  // static void uploadCartItem(
-  //     CartItem cart, Timestamp timestamp, int millisecondsSinceEpoch) async {
-  //   await FirebaseFirestore.instance
-  //       .collection(CART_ITEMS)
-  //       .doc(cart.cartId)
-  //       .set({
-  //     'cartId': cart.cartId,
-  //     'serviceId': cart.serviceId,
-  //     'billId': cart.billId,
-  //     'tableNumber': cart.tableNumber,
-  //     'cartNumber': cart.cartNumber,
-  //     'userId': cart.userId,
-  //     'productId': cart.productId,
-  //     'productName': cart.productName,
-  //     'productPrice': cart.productPrice,
-  //     'quantity': cart.quantity,
-  //     'createdAt': millisecondsSinceEpoch,
-  //     'timestamp': timestamp,
-  //     'isCompleted': false,
-  //     'isCommunity': cart.isCommunity,
-  //     'isBilled': cart.isBilled,
-  //   });
-  // }
-
   static Stream<QuerySnapshot<Object?>> getCartItemsSnapshot(
       String serviceId, bool isCompleted) {
     return FirebaseFirestore.instance
@@ -594,6 +570,14 @@ class FirestoreHelper {
         .where('partyId', isEqualTo: partyId)
         .snapshots();
   }
+
+  static getPartyGuestListByUser(String guestId) {
+    return FirebaseFirestore.instance
+        .collection(PARTY_GUESTS)
+        .where('guestId', isEqualTo: guestId)
+        .snapshots();
+  }
+
 
   static void deletePartyGuest(PartyGuest partyGuest) {
     FirebaseFirestore.instance.collection(PARTY_GUESTS).doc(partyGuest.id).delete();
@@ -1111,5 +1095,6 @@ class FirestoreHelper {
         .orderBy('level', descending: false)
         .get();
   }
+
 
 }

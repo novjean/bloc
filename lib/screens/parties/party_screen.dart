@@ -26,8 +26,6 @@ class _PartyScreenState extends State<PartyScreen> {
 
   @override
   void initState() {
-    super.initState();
-
     int timeNow = Timestamp.now().millisecondsSinceEpoch;
 
     FirestoreHelper.pullPartiesByEndTime(timeNow, true).then((res) {
@@ -87,6 +85,7 @@ class _PartyScreenState extends State<PartyScreen> {
         });
       }
     });
+    super.initState();
   }
 
   _buildBody(BuildContext context) {

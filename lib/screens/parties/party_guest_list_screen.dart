@@ -71,7 +71,7 @@ class _PartyGuestListScreenState extends State<PartyGuestListScreen> {
     return _isPartiesLoading
         ? const LoadingWidget()
         : Column(
-      mainAxisAlignment: MainAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
               const SizedBox(height: 5.0),
               _displayPartiesDropdown(context),
@@ -171,63 +171,27 @@ class _PartyGuestListScreenState extends State<PartyGuestListScreen> {
           scrollDirection: Axis.vertical,
           itemBuilder: (ctx, index) {
             return GestureDetector(
-              child: PartyGuestItem(
-                partyGuest: partyGuestList[index],
-              ),
+                child: PartyGuestItem(
+                  partyGuest: partyGuestList[index],
+                ),
                 onTap: () {
                   PartyGuest sPartyGuest = partyGuestList[index];
 
                   Party sParty = Dummy.getDummyParty('');
 
-                  for(Party party in mParties){
-                    if(party.id == sPartyGuest.partyId){
+                  for (Party party in mParties) {
+                    if (party.id == sPartyGuest.partyId) {
                       sParty = party;
                       break;
                     }
                   }
-
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (ctx) => PartyGuestAddEditPage(
-                        partyGuest: sPartyGuest,
-                        party: sParty,
-                        task: 'edit',
-                      )));
-                }
-              // onDoubleTap: () {
-              //   User sUser = users[index];
-              //   logger.d('double tap user selected : ' + sUser.name);
-              //
-              //   showDialog(
-              //     context: context,
-              //     builder: (BuildContext context) {
-              //       return AlertDialog(
-              //         title: Text("delete user : " + sUser.name),
-              //         content:
-              //         const Text("would you like to delete the user?"),
-              //         actions: [
-              //           TextButton(
-              //             child: const Text("yes"),
-              //             onPressed: () {
-              //               FirestorageHelper.deleteFile(sUser.imageUrl);
-              //               FirestoreHelper.deleteUser(sUser);
-              //
-              //               print('user is deleted');
-              //
-              //               Navigator.of(context).pop();
-              //             },
-              //           ),
-              //           TextButton(
-              //             child: const Text("no"),
-              //             onPressed: () {
-              //               Navigator.of(context).pop();
-              //             },
-              //           )
-              //         ],
-              //       );
-              //     },
-              //   );
-              // },
-            );
+                            partyGuest: sPartyGuest,
+                            party: sParty,
+                            task: 'edit',
+                          )));
+                });
           }),
     );
   }

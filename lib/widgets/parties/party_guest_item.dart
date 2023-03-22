@@ -2,6 +2,8 @@ import 'package:bloc/utils/date_time_utils.dart';
 import 'package:flutter/material.dart';
 
 import '../../db/entity/party_guest.dart';
+import '../../helpers/firestore_helper.dart';
+import '../../helpers/fresh.dart';
 
 class PartyGuestItem extends StatelessWidget {
   final PartyGuest partyGuest;
@@ -10,6 +12,13 @@ class PartyGuestItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String title = partyGuest.name.toLowerCase();
+    int friendsCount = partyGuest.guestsCount - 1;
+
+    if (friendsCount > 0) {
+      title += ' +' + friendsCount.toString();
+    }
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 5.0),
       child: Hero(
@@ -17,7 +26,7 @@ class PartyGuestItem extends StatelessWidget {
         child: Card(
           color: Theme.of(context).primaryColorLight,
           shape:
-          RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)),
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)),
           child: SizedBox(
             width: MediaQuery.of(context).size.width,
             child: Column(
@@ -27,29 +36,46 @@ class PartyGuestItem extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Padding(
-                      padding: const EdgeInsets.only(left : 5.0, top: 5),
+                      padding: const EdgeInsets.only(left: 5.0, top: 5),
                       child: Text(
-                        partyGuest.name.toLowerCase(),
-                        style: TextStyle(fontSize: 18),
+                        title,
+                        style: TextStyle(fontSize: 20),
                       ),
                     ),
-                    // partyGuest.lastSeenAt != 0
-                    //     ? Padding(
-                    //   padding: const EdgeInsets.only(right : 5.0, top: 5),
-                    //   child: Text('last seen: ' +
-                    //       DateTimeUtils.getFormattedDateYear(
-                    //           partyGuest.lastSeenAt)),
-                    // )
-                    //     : const SizedBox(),
                   ],
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Padding(
-                      padding: const EdgeInsets.only(left : 5.0, right: 5.0, top: 5),
+                      padding:
+                          const EdgeInsets.only(left: 5, top: 5, bottom: 5),
                       child: Text('requested at: ' +
-                          DateTimeUtils.getFormattedDateYear(partyGuest.createdAt)),
+                          DateTimeUtils.getFormattedDateYear(
+                              partyGuest.createdAt)),
+                    ),
+                    Padding(
+                      padding:
+                          const EdgeInsets.only(right: 5, top: 5, bottom: 5),
+                      child: Row(
+                        children: [
+                          Text('approved: '),
+                          Checkbox(
+                            value: partyGuest.isApproved,
+                            onChanged: (value) {
+                              PartyGuest updatedPartyGuest =
+                                  partyGuest.copyWith(isApproved: value);
+                              print('party guest ' +
+                                  updatedPartyGuest.name +
+                                  ' approved ' +
+                                  value.toString());
+                              PartyGuest freshPartyGuest =
+                                  Fresh.freshPartyGuest(updatedPartyGuest);
+                              FirestoreHelper.pushPartyGuest(freshPartyGuest);
+                            },
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),

@@ -77,7 +77,7 @@ class Dummy {
   }
 
   static Offer getDummyOffer() {
-    Offer productOffer = new Offer(
+    Offer productOffer = Offer(
         blocServiceId: '',
         creationTime: 0,
         description: '',
@@ -123,8 +123,8 @@ class Dummy {
       phone: UserPreferences.myUser.phoneNumber.toString(),
       email: UserPreferences.myUser.email,
       guestsCount: 1,
+      guestsRemaining: 1,
       createdAt: Timestamp.now().millisecondsSinceEpoch,
-      instagramUrl: '',
       isApproved: false,
       partyId: ''
     );

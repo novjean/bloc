@@ -625,9 +625,9 @@ class Fresh {
       print('party guest guestsCount not exist for party guest id: ' + partyGuest.id);
     }
     try {
-      freshGuest = freshGuest.copyWith(instagramUrl: partyGuest.instagramUrl);
+      freshGuest = freshGuest.copyWith(guestsRemaining: partyGuest.guestsRemaining);
     } catch (err) {
-      print('party guest instagramUrl not exist for party guest id: ' + partyGuest.id);
+      print('party guest guestsRemaining not exist for party guest id: ' + partyGuest.id);
     }
     try {
       freshGuest = freshGuest.copyWith(createdAt: partyGuest.createdAt);
@@ -689,9 +689,9 @@ class Fresh {
       shouldPush = true;
     }
     try {
-      partyGuest = partyGuest.copyWith(instagramUrl: map['instagramUrl'] as String);
+      partyGuest = partyGuest.copyWith(guestsRemaining: map['guestsRemaining'] as int);
     } catch (err) {
-      print('partyGuest instagramUrl not exist for user id: ' + partyGuest.id);
+      print('partyGuest guestsRemaining not exist for user id: ' + partyGuest.id);
       shouldPush = true;
     }
     try {

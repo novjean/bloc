@@ -14,7 +14,7 @@ import '../../widgets/ui/sized_listview_block.dart';
 class CaptainOrdersScreen extends StatefulWidget {
   String serviceId;
 
-  CaptainOrdersScreen({required this.serviceId});
+  CaptainOrdersScreen({Key? key, required this.serviceId}) : super(key: key);
 
   @override
   State<CaptainOrdersScreen> createState() => _CaptainOrdersScreenState();

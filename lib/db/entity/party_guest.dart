@@ -6,8 +6,7 @@ class PartyGuest {
   String phone;
   String email;
   int guestsCount;
-
-  String instagramUrl;
+  int guestsRemaining;
 
   final int createdAt;
   final bool isApproved;
@@ -22,7 +21,7 @@ class PartyGuest {
     required this.phone,
     required this.email,
     required this.guestsCount,
-    required this.instagramUrl,
+    required this.guestsRemaining,
     required this.createdAt,
     required this.isApproved,
   });
@@ -39,7 +38,7 @@ class PartyGuest {
           phone == other.phone &&
           email == other.email &&
           guestsCount == other.guestsCount &&
-          instagramUrl == other.instagramUrl &&
+          guestsRemaining == other.guestsRemaining &&
           createdAt == other.createdAt &&
           isApproved == other.isApproved);
 
@@ -52,7 +51,7 @@ class PartyGuest {
       phone.hashCode ^
       email.hashCode ^
       guestsCount.hashCode ^
-      instagramUrl.hashCode ^
+      guestsRemaining.hashCode ^
       createdAt.hashCode ^
       isApproved.hashCode;
 
@@ -66,7 +65,7 @@ class PartyGuest {
         ' phone: $phone,' +
         ' email: $email,' +
         ' guestsCount: $guestsCount,' +
-        ' instagramUrl: $instagramUrl,' +
+        ' guestsRemaining: $guestsRemaining,' +
         ' createdAt: $createdAt,' +
         ' isApproved: $isApproved,' +
         '}';
@@ -80,7 +79,7 @@ class PartyGuest {
     String? phone,
     String? email,
     int? guestsCount,
-    String? instagramUrl,
+    int? guestsRemaining,
     int? createdAt,
     bool? isApproved,
   }) {
@@ -92,7 +91,7 @@ class PartyGuest {
       phone: phone ?? this.phone,
       email: email ?? this.email,
       guestsCount: guestsCount ?? this.guestsCount,
-      instagramUrl: instagramUrl ?? this.instagramUrl,
+      guestsRemaining: guestsRemaining ?? this.guestsRemaining,
       createdAt: createdAt ?? this.createdAt,
       isApproved: isApproved ?? this.isApproved,
     );
@@ -107,7 +106,7 @@ class PartyGuest {
       'phone': this.phone,
       'email': this.email,
       'guestsCount': this.guestsCount,
-      'instagramUrl': this.instagramUrl,
+      'guestsRemaining': this.guestsRemaining,
       'createdAt': this.createdAt,
       'isApproved': this.isApproved,
     };
@@ -122,7 +121,7 @@ class PartyGuest {
       phone: map['phone'] as String,
       email: map['email'] as String,
       guestsCount: map['guestsCount'] as int,
-      instagramUrl: map['instagramUrl'] as String,
+      guestsRemaining: map['guestsRemaining'] as int,
       createdAt: map['createdAt'] as int,
       isApproved: map['isApproved'] as bool,
     );

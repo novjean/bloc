@@ -50,7 +50,7 @@ class ManageOrdersScreen extends StatelessWidget {
         stream: FirestoreHelper.getManagerServiceOptions('Order'),
         builder: (ctx, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return LoadingWidget();
+            return const LoadingWidget();
           }
 
           List<ManagerServiceOption> _serviceOptions = [];
@@ -65,7 +65,8 @@ class ManageOrdersScreen extends StatelessWidget {
               return _displayServiceOptions(context, _serviceOptions);
             }
           }
-          return Center(child: Text('loading service options...'));
+          print('loading service options');
+          return const LoadingWidget();
         });
   }
 
@@ -106,10 +107,10 @@ class ManageOrdersScreen extends StatelessWidget {
                             titleHead: serviceName)));
                   } else if (_option.name.contains('Community Bar')) {
                     Toaster.shortToast(
-                        'Community bar is yet to be implemented!');
+                        'community bar is yet to be implemented!');
                     print('community bar order option selected!');
                   } else {
-                    print('Undefined order service option!');
+                    print('undefined order service option!');
                   }
                 });
           }),
