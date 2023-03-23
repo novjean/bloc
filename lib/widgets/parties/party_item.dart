@@ -1,4 +1,3 @@
-
 import 'package:bloc/utils/date_time_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -10,7 +9,6 @@ import '../../helpers/dummy.dart';
 import '../../screens/parties/artist_screen.dart';
 import '../../screens/parties/party_guest_add_edit_screen.dart';
 import '../../utils/string_utils.dart';
-import '../ui/dark_button_widget.dart';
 
 class PartyItem extends StatelessWidget {
   final Party party;
@@ -86,83 +84,92 @@ class PartyItem extends StatelessWidget {
                     )
                   ],
                 ),
-                const SizedBox(height: 5.0),
-                Row(
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 15, vertical: 5.0),
+                  child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       party.eventName.isNotEmpty
-                          ? Padding(
-                              padding: const EdgeInsets.only(left: 15.0),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    party.eventName.toLowerCase(),
-                                    style: const TextStyle(fontSize: 18),
-                                  ),
-                                ],
-                              ),
+                          ? Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Text(
+                                  party.eventName.toLowerCase(),
+                                  style: const TextStyle(fontSize: 18),
+                                ),
+                              ],
                             )
                           : const SizedBox(),
-                      Padding(
-                        padding: const EdgeInsets.only(right: 15.0),
-                        child: Text(
-                          party.isTBA
-                              ? 'tba'
-                              : DateTimeUtils.getFormattedDate(party.startTime),
-                          style: const TextStyle(fontSize: 18),
-                        ),
+                      Text(
+                        party.isTBA
+                            ? 'tba'
+                            : DateTimeUtils.getFormattedDate(party.startTime),
+                        style: const TextStyle(fontSize: 18),
                       )
-                    ]),
-                const SizedBox(height: 5.0),
-                party.description.isNotEmpty
-                    ? Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 15, vertical: 5.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Flexible(
                         child: Align(
                           alignment: Alignment.centerLeft,
                           child: Text(
-                            StringUtils.firstFewWords(
-                                party.description.toLowerCase(), 30) +
-                                (StringUtils.getWordCount(party.description) > 30
-                                    ? ' ...'
-                                    : ''),
+                            StringUtils.truncateWithEllipsis(
+                                120, party.description.toLowerCase()),
                             style: TextStyle(
                                 fontSize: 15,
                                 color: Theme.of(context).primaryColorDark),
                           ),
                         ),
-                      )
-                    : const SizedBox(),
-                const SizedBox(height: 5),
-                isGuestListActive & UserPreferences.isUserLoggedIn()
-                    ? Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          !party.isTBA
-                              ? Padding(
-                                  padding: const EdgeInsets.only(right: 15.0),
-                                  child: DarkButtonWidget(
-                                      text: 'join guest list',
-                                      onClicked: () {
-                                        // nav to guest list add page
-                                        PartyGuest partyGuest = Dummy.getDummyPartyGuest();
-                                        partyGuest.partyId = party.id;
+                        flex: 3,
+                      ),
+                      isGuestListActive & UserPreferences.isUserLoggedIn()
+                          ? Flexible(
+                              flex: 1,
+                              child: Container(
+                                height: 75,
+                                width: 75,
+                                child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor:
+                                        Theme.of(context).primaryColorDark,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(5),
+                                    ),
+                                    foregroundColor: Colors.white,
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 1, vertical: 1),
+                                  ),
+                                  child: const Text('join \nguest \nlist'),
+                                  onPressed: () {
+                                    // nav to guest list add page
+                                    PartyGuest partyGuest =
+                                        Dummy.getDummyPartyGuest();
+                                    partyGuest.partyId = party.id;
 
-                                        Navigator.of(context).push(
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  PartyGuestAddEditPage(
-                                                    partyGuest: partyGuest,
-                                                      party: party,
-                                                      task: 'add')),
-                                        );
-                                      }),
-                                )
-                              : const SizedBox(),
-                        ],
-                      )
-                    : const SizedBox(),
-                const SizedBox(height: 5.0),
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              PartyGuestAddEditPage(
+                                                  partyGuest: partyGuest,
+                                                  party: party,
+                                                  task: 'add')),
+                                    );
+                                  },
+                                ),
+                              ),
+                            )
+                          : const SizedBox(),
+                    ],
+                  ),
+                ),
               ],
             ),
           ),

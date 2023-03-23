@@ -85,7 +85,6 @@ class _BlocSlideItemState extends State<BlocSlideItem> {
                               image: DecorationImage(
                                 image: NetworkImage(widget.bloc.imageUrl),
                                 fit: BoxFit.fitWidth,
-                                // AssetImage(food['image']),
                               ),
                             ),
                           ),
@@ -97,8 +96,8 @@ class _BlocSlideItemState extends State<BlocSlideItem> {
                               child: Text(
                                 "click for menu",
                                 style: TextStyle(
-                                  color: Theme.of(context).primaryColor,
-                                  fontSize: 14
+                                  color: Theme.of(context).primaryColorDark,
+                                  fontSize: 15, fontWeight: FontWeight.bold
                                 ),
                               ),
                             ),
@@ -144,7 +143,7 @@ class _BlocSlideItemState extends State<BlocSlideItem> {
                         child: Text(
                           "${widget.bloc.addressLine1.toLowerCase()}, ${widget.bloc.addressLine2.toLowerCase()}",
                           style: TextStyle(
-                            fontSize: 18.0,
+                            fontSize: 17.0,
                             fontWeight: FontWeight.w200,
                             color: Theme.of(context).highlightColor,
                           ),

@@ -152,6 +152,7 @@ class _PartyScreenState extends State<PartyScreen> {
           }
           if (index == parties.length - 1) {
             return Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
                 PartyItem(
                   party: parties[index],

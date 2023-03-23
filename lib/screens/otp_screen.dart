@@ -58,7 +58,7 @@ class _OTPScreenState extends State<OTPScreen> {
                   child: Center(
                       child: Text(
                       'We offer you sunsets, balmy summer days and a beachy vibe in the city.\n\n'
-                      'Our menu of global cuisine created by Award Winning Chef Ameya Mahajani '
+                      'Our menu of global cuisine created by our celebrity Chef Ameya Mahajani '
     'is made with the freshest ingredients and accommodates all flavour palates.'
     '\n\nOur co-founder Dr. Grace is passionate about food and cocktails. She has '
     'worked on detailing the menu, so we feature a lot of tastes and '
@@ -212,6 +212,8 @@ class _OTPVerifyState extends State<OTPVerify> {
               //     AndroidSmsAutofillMethod.smsUserConsentApi,
               listenForMultipleSmsOnAndroid: true,
               defaultPinTheme: defaultPinTheme,
+              closeKeyboardWhenCompleted: true,
+
               // validator: (value) {
               // print('code is ' + _verificationCode);
               // return value == _verificationCode ? null : 'Pin is incorrect';
