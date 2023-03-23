@@ -27,7 +27,7 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
   List<Party> mParties = [];
   var _isPartiesLoading = true;
 
-  List<String> mOptions = ['guest list', 'tickets'];
+  List<String> mOptions = ['guest list'];
   String sOption = 'guest list';
 
   @override

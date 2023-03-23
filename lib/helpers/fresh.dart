@@ -715,7 +715,6 @@ class Fresh {
     return partyGuest;
   }
 
-
   /** user **/
   static User freshUserMap(Map<String, dynamic> map, bool shouldUpdate) {
     User user = Dummy.getDummyUser();
