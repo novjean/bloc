@@ -47,6 +47,10 @@ class _CaptainOrderItemState extends State<CaptainOrderItem> {
           user = _user;
           isCustomerLoading = false;
         });
+      } else {
+        setState(() {
+          isCustomerLoading = false;
+        });
       }
     });
   }
