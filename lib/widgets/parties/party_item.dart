@@ -39,6 +39,7 @@ class PartyItem extends StatelessWidget {
       child: Hero(
         tag: party.id,
         child: Card(
+          elevation: 10,
           color: Theme.of(context).primaryColorLight,
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),

@@ -97,7 +97,7 @@ class _ManagePartyTicketScreenState extends State<ManagePartyTicketScreen> {
     return _isPartyGuestLoading && _isPartyLoading ? const LoadingWidget() : ListView(
       physics: const BouncingScrollPhysics(),
       children: [
-        PartyBanner(party: mParty, isClickable: false, shouldShowButton: false),
+        PartyBanner(party: mParty, isClickable: false, shouldShowButton: false,),
         const SizedBox(height: 24),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 32),

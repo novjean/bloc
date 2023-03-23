@@ -57,7 +57,7 @@ class PartyBanner extends StatelessWidget {
                       ),
                       party.eventName.isNotEmpty
                           ? Padding(
-                              padding: const EdgeInsets.only(left: 5.0),
+                              padding: const EdgeInsets.only(left: 5.0, top: 10),
                               child: Text(
                                 party.eventName.toLowerCase(),
                                 style: const TextStyle(fontSize: 18),
@@ -83,6 +83,7 @@ class PartyBanner extends StatelessWidget {
                         ),
                       ),
 
+                      const Spacer(),
                       shouldShowButton
                           ? party.isTBA
                               ? showListenOrInstaDialog(context)
@@ -115,26 +116,7 @@ class PartyBanner extends StatelessWidget {
                                       ),
                                     )
                                   : showListenOrInstaDialog(context)
-                          : party.description.isNotEmpty
-                              ? Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 5),
-                                  child: Text(
-                                    StringUtils.firstFewWords(
-                                            party.description.toLowerCase(),
-                                            30) +
-                                        (StringUtils.getWordCount(
-                                                    party.description) >
-                                                30
-                                            ? ' ...'
-                                            : ''),
-                                    style: TextStyle(
-                                        fontSize: 15,
-                                        color:
-                                            Theme.of(context).primaryColorDark),
-                                  ),
-                                )
-                              : const SizedBox(),
+                          : const SizedBox()
                     ],
                   ),
                   flex: 2,
