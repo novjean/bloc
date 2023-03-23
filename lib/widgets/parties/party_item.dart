@@ -1,5 +1,5 @@
+
 import 'package:bloc/utils/date_time_utils.dart';
-import 'package:bloc/screens/parties/party_guest_add_edit_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -8,6 +8,7 @@ import '../../db/entity/party_guest.dart';
 import '../../db/shared_preferences/user_preferences.dart';
 import '../../helpers/dummy.dart';
 import '../../screens/parties/artist_screen.dart';
+import '../../screens/parties/party_guest_add_edit_screen.dart';
 import '../../utils/string_utils.dart';
 import '../ui/dark_button_widget.dart';
 
@@ -116,19 +117,17 @@ class PartyItem extends StatelessWidget {
                 party.description.isNotEmpty
                     ? Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                        child: Expanded(
-                          child: Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              StringUtils.firstFewWords(
-                                      party.description.toLowerCase(), 30) +
-                                  (StringUtils.getWordCount(party.description) > 30
-                                      ? ' ...'
-                                      : ''),
-                              style: TextStyle(
-                                  fontSize: 15,
-                                  color: Theme.of(context).primaryColorDark),
-                            ),
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            StringUtils.firstFewWords(
+                                party.description.toLowerCase(), 30) +
+                                (StringUtils.getWordCount(party.description) > 30
+                                    ? ' ...'
+                                    : ''),
+                            style: TextStyle(
+                                fontSize: 15,
+                                color: Theme.of(context).primaryColorDark),
                           ),
                         ),
                       )
@@ -159,38 +158,6 @@ class PartyItem extends StatelessWidget {
                                       }),
                                 )
                               : const SizedBox(),
-                          // Row(
-                          //   mainAxisAlignment: MainAxisAlignment.end,
-                          //   children: [
-                          //     party.listenUrl.isNotEmpty
-                          //         ? DarkButtonWidget(
-                          //             text: 'listen',
-                          //             onClicked: () {
-                          //               final uri = Uri.parse(party.listenUrl);
-                          //               NetworkUtils.launchInBrowser(uri);
-                          //             })
-                          //         : const SizedBox(),
-                          //     const SizedBox(width: 10),
-                          //     party.instagramUrl.isNotEmpty
-                          //         ? DarkButtonWidget(
-                          //             text: 'social',
-                          //             onClicked: () {
-                          //               final uri = Uri.parse(party.instagramUrl);
-                          //               NetworkUtils.launchInBrowser(uri);
-                          //             })
-                          //         : const SizedBox(),
-                          //     const SizedBox(width: 10),
-                          //     party.ticketUrl.isNotEmpty
-                          //         ? DarkButtonWidget(
-                          //             text: 'tickets',
-                          //             onClicked: () {
-                          //               final uri = Uri.parse(party.ticketUrl);
-                          //               NetworkUtils.launchInBrowser(uri);
-                          //             })
-                          //         : const SizedBox(),
-                          //     const SizedBox(width: 15),
-                          //   ],
-                          // ),
                         ],
                       )
                     : const SizedBox(),
