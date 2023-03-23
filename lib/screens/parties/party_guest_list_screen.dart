@@ -146,20 +146,32 @@ class _PartyGuestListScreenState extends State<PartyGuestListScreen> {
             ? FirestoreHelper.getGuestLists()
             : FirestoreHelper.getPartyGuestList(sPartyId),
         builder: (ctx, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {}
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const LoadingWidget();
+          }
 
           List<PartyGuest> partyGuestList = [];
 
-          for (int i = 0; i < snapshot.data!.docs.length; i++) {
-            DocumentSnapshot document = snapshot.data!.docs[i];
-            Map<String, dynamic> map = document.data()! as Map<String, dynamic>;
-            final PartyGuest partyGuest = Fresh.freshPartyGuestMap(map, false);
-            partyGuestList.add(partyGuest);
+          if(snapshot.data!.docs.isNotEmpty){
+            try {
+              for (int i = 0; i < snapshot.data!.docs.length; i++) {
+                DocumentSnapshot document = snapshot.data!.docs[i];
+                Map<String, dynamic> map = document.data()! as Map<
+                    String,
+                    dynamic>;
+                final PartyGuest partyGuest = Fresh.freshPartyGuestMap(
+                    map, false);
+                partyGuestList.add(partyGuest);
 
-            if (i == snapshot.data!.docs.length - 1) {
-              return _displayGuestList(context, partyGuestList);
+                if (i == snapshot.data!.docs.length - 1) {
+                  return _displayGuestList(context, partyGuestList);
+                }
+              }
+            } catch (err){
+              print('caught error loading party guest');
             }
           }
+
           return const LoadingWidget();
         });
   }
