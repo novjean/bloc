@@ -126,6 +126,10 @@ class AppDrawer extends StatelessWidget {
                 )
               : const SizedBox(height: 0),
           const Spacer(),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10.0),
+            child: Align(alignment: Alignment.bottomRight,child: Text('v1.2.6', style: TextStyle(fontSize: 14),)),
+          ),
           UserPreferences.isUserLoggedIn()
               ? Column(
                   children: [
