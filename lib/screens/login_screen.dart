@@ -19,6 +19,7 @@ import '../main.dart';
 import '../utils/string_utils.dart';
 import '../widgets/ui/toaster.dart';
 import 'main_screen.dart';
+import 'new_otp_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   LoginScreen({key}) : super(key: key);
@@ -202,7 +203,7 @@ class _LoginScreenState extends State<LoginScreen> {
               onPressed: () {
                 if (completePhoneNumber.isNotEmpty) {
                   Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => OTPScreen(completePhoneNumber)));
+                      builder: (context) => NewOTPScreen(completePhoneNumber)));
                 } else {
                   print('user entered invalid phone number ' + completePhoneNumber);
                   Toaster.longToast('please enter a valid phone number');

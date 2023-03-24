@@ -1,6 +1,7 @@
 import 'package:bloc/db/entity/user.dart' as blocUser;
 import 'package:bloc/helpers/dummy.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:delayed_display/delayed_display.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:pinput/pinput.dart';
@@ -76,16 +77,53 @@ class _OTPScreenState extends State<OTPScreen> {
               Flexible(
                 child: Padding(
                   padding: const EdgeInsets.only(left: 20, right: 20),
-                  child: Center(
-                      child: Text(
-                        'enter the six digit code you received on \n${widget.phone}',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: Theme.of(context).primaryColorLight,
-                          fontWeight: FontWeight.normal,
-                          fontSize: 16,
-                        ),
-                      )),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Center(
+                          child: Text(
+                            'enter the six digit code you received on \n${widget.phone}',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: Theme.of(context).primaryColorLight,
+                              fontWeight: FontWeight.normal,
+                              fontSize: 16,
+                            ),
+                          )),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 10.0, right: 10, top: 2),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            DelayedDisplay(
+                              delay: const Duration(seconds: 9),
+                              child: Text('didn\'t receive code. ', style: TextStyle(
+                                color: Theme.of(context).primaryColorLight,
+                                fontSize: 16,
+                              )),
+                            ),
+                            InkWell(
+                              onTap: () {
+                                Toaster.longToast('refreshing ');
+                                OTPVerify(
+                                  phone: widget.phone,
+                                );
+                              },
+                              child: DelayedDisplay(
+                                delay: const Duration(seconds: 10),
+                                child: Text(
+                                  'resend?',
+                                  style: TextStyle(
+                                    color: Theme.of(context).primaryColor,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                              ),
+                            ),
+                        ],),
+                      )
+                    ],
+                  ),
                 ),flex: 1,
               ),
               Flexible(
@@ -170,9 +208,10 @@ class _OTPVerifyState extends State<OTPVerify> {
           codeAutoRetrievalTimeout: (String verificationId) {
             setState(() {
               _verificationCode = verificationId;
+
             });
           },
-          timeout: const Duration(seconds: 120));
+          timeout: const Duration(seconds: 60));
     }
   }
 
@@ -195,7 +234,7 @@ class _OTPVerifyState extends State<OTPVerify> {
       ),
     );
 
-    /// Optionally you can use form to validate the Pinput
+    /// optionally you can use form to validate the Pinput
     return Form(
       key: formKey,
       child: Column(
