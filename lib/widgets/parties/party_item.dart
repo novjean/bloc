@@ -147,7 +147,7 @@ class PartyItem extends StatelessWidget {
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 1, vertical: 1),
                                   ),
-                                  child: const Text('join \nguest \nlist'),
+                                  child: const Text('join\nguest\nlist'),
                                   onPressed: () {
                                     // nav to guest list add page
                                     PartyGuest partyGuest =
