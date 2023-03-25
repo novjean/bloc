@@ -7,7 +7,6 @@ import '../../db/entity/party.dart';
 import '../../screens/parties/party_guest_add_edit_screen.dart';
 import '../../utils/date_time_utils.dart';
 import '../ui/button_widget.dart';
-import '../ui/system_padding.dart';
 
 class BoxOfficeItem extends StatefulWidget {
   final PartyGuest partyGuest;
@@ -62,7 +61,7 @@ class _BoxOfficeItemState extends State<BoxOfficeItem> {
                     children: [
                       Container(
                         padding: const EdgeInsets.only(
-                            top: 3, left: 5.0, right: 0.0),
+                            top: 3, left: 5.0),
                         child: Text(
                           title,
                           style: const TextStyle(
@@ -99,10 +98,10 @@ class _BoxOfficeItemState extends State<BoxOfficeItem> {
                         children: [
                           Padding(
                             padding: const EdgeInsets.only(left: 5.0),
-                            child: Text('status: ' +
+                            child: Text('status:\n' +
                                 (widget.partyGuest.isApproved
-                                    ? ' approved'
-                                    : ' pending')),
+                                    ? 'approved'
+                                    : 'pending')),
                           ),
                           displayEntryEditButton(context),
                         ],
@@ -140,7 +139,7 @@ class _BoxOfficeItemState extends State<BoxOfficeItem> {
       padding: const EdgeInsets.only(right: 5, bottom: 5),
       child: widget.partyGuest.isApproved
           ? DarkButtonWidget(
-              text: 'entry code',
+              text: 'entry\ncode',
               onClicked: () {
                 showDialog(
                   context: context,
@@ -191,7 +190,8 @@ class _BoxOfficeItemState extends State<BoxOfficeItem> {
                                   ),
                                   Align(
                                     alignment: Alignment.centerRight,
-                                    child: Text('valid until 11 pm',
+                                    child: Text(
+                                      'valid until 11 pm',
                                       style: TextStyle(fontSize: 16),
                                     ),
                                   ),
@@ -215,7 +215,7 @@ class _BoxOfficeItemState extends State<BoxOfficeItem> {
               },
             )
           : ButtonWidget(
-              text: 'edit request',
+              text: 'edit\nrequest',
               onClicked: () {
                 Navigator.of(context).push(MaterialPageRoute(
                     builder: (ctx) => PartyGuestAddEditPage(
