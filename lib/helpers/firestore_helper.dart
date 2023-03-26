@@ -20,6 +20,7 @@ import 'package:logger/logger.dart';
 import '../db/entity/product.dart';
 import '../db/entity/service_table.dart';
 import '../db/entity/sos.dart';
+import '../utils/logx.dart';
 import '../utils/string_utils.dart';
 
 /**
@@ -28,6 +29,7 @@ import '../utils/string_utils.dart';
  * 2.
  * **/
 class FirestoreHelper {
+  static const String _TAG = 'FirestoreHelper';
   static var logger = Logger();
 
   static String BLOCS = 'blocs';
@@ -63,10 +65,12 @@ class FirestoreHelper {
           .collection(BLOCS)
           .doc(bloc.id)
           .set(bloc.toMap());
-    } on PlatformException catch (err) {
-      logger.e(err.message);
-    } catch (err) {
-      logger.e(err);
+    } on PlatformException catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } on Exception catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } catch (e) {
+      logger.e(e);
     }
   }
 
@@ -78,11 +82,8 @@ class FirestoreHelper {
   }
 
   static pullBlocsPromoter() {
-    return FirebaseFirestore.instance
-        .collection(BLOCS)
-        .get();
+    return FirebaseFirestore.instance.collection(BLOCS).get();
   }
-
 
   static getBlocs() {
     return FirebaseFirestore.instance.collection(BLOCS).snapshots();
@@ -103,13 +104,17 @@ class FirestoreHelper {
       await FirebaseFirestore.instance
           .collection(BLOCS)
           .doc(id)
-          .update({'imageUrl': url})
-          .then((value) => print("bloc image updated."))
-          .catchError((error) => print("failed to update bloc image: $error"));
-    } on PlatformException catch (err) {
-      logger.e(err.message);
-    } catch (err) {
-      logger.e(err);
+          .update({'imageUrl': url}).then((value) {
+        Logx.i(_TAG, 'bloc image updated');
+      }).catchError((e, s) {
+        Logx.e(_TAG, e, s);
+      });
+    } on PlatformException catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } on Exception catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } catch (e) {
+      logger.e(e);
     }
   }
 
@@ -120,10 +125,12 @@ class FirestoreHelper {
           .collection(BLOC_SERVICES)
           .doc(blocService.id)
           .set(blocService.toMap());
-    } on PlatformException catch (err) {
-      logger.e(err.message);
-    } catch (err) {
-      logger.e(err);
+    } on PlatformException catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } on Exception catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } catch (e) {
+      logger.e(e);
     }
   }
 
@@ -158,10 +165,12 @@ class FirestoreHelper {
           .collection(CART_ITEMS)
           .doc(cartItem.cartId)
           .set(cartItem.toMap());
-    } on PlatformException catch (err) {
-      logger.e(err.message);
-    } catch (err) {
-      logger.e(err);
+    } on PlatformException catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } on Exception catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } catch (e) {
+      logger.e(e);
     }
   }
 
@@ -191,8 +200,7 @@ class FirestoreHelper {
         .where('serviceId', isEqualTo: serviceId)
         .where('isCompleted', isEqualTo: isCompleted)
         .where('isBilled', isEqualTo: isBilled)
-        .orderBy('createdAt',
-            descending: true) // createdAt could be used i guess
+        .orderBy('createdAt', descending: true)
         .snapshots();
   }
 
@@ -221,8 +229,7 @@ class FirestoreHelper {
         .where('userId', isEqualTo: userId)
         .where('isCompleted', isEqualTo: isCompleted)
         .where('isBilled', isEqualTo: isBilled)
-        .orderBy('createdAt',
-            descending: true) // createdAt could be used i guess
+        .orderBy('createdAt', descending: true)
         .get();
   }
 
@@ -234,8 +241,7 @@ class FirestoreHelper {
         .collection(CART_ITEMS)
         .where('userId', isEqualTo: userId)
         .where('isCompleted', isEqualTo: isCompleted)
-        .orderBy('createdAt',
-            descending: true) // createdAt could be used i guess
+        .orderBy('createdAt', descending: true)
         .get();
   }
 
@@ -255,16 +261,18 @@ class FirestoreHelper {
           .collection(CART_ITEMS)
           .doc(cart.cartId)
           .update({
-            'isCompleted': true,
-          })
-          .then((value) =>
-              print("cart item " + cart.cartId + " marked as complete."))
-          .catchError((error) =>
-              print("Failed to update cart item completed : $error"));
-    } on PlatformException catch (err) {
-      logger.e(err.message);
-    } catch (err) {
-      logger.e(err);
+        'isCompleted': true,
+      }).then((value) {
+        Logx.i(_TAG, "cart item " + cart.cartId + " marked as complete.");
+      }).catchError((e, s) {
+        Logx.ex(_TAG, 'failed to update cart item completed', e, s);
+      });
+    } on PlatformException catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } on Exception catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } catch (e) {
+      logger.e(e);
     }
   }
 
@@ -274,17 +282,19 @@ class FirestoreHelper {
           .collection(CART_ITEMS)
           .doc(cartId)
           .update({
-            'billId': billId,
-            'isBilled': true,
-          })
-          .then((value) =>
-              print("cart item " + cartId + " is part of bill id : " + billId))
-          .catchError((error) =>
-              print("Failed to update bill id for cart item : $error"));
-    } on PlatformException catch (err) {
-      logger.e(err.message);
-    } catch (err) {
-      logger.e(err);
+        'billId': billId,
+        'isBilled': true,
+      }).then((value) {
+        Logx.i(_TAG, "cart item " + cartId + " is part of bill id : " + billId);
+      }).catchError((e, s) {
+        Logx.ex(_TAG, 'failed to update bill id for cart item', e, s);
+      });
+    } on PlatformException catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } on Exception catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } catch (e) {
+      logger.e(e);
     }
   }
 
@@ -299,10 +309,12 @@ class FirestoreHelper {
           .collection(CATEGORIES)
           .doc(category.id)
           .set(category.toMap());
-    } on PlatformException catch (err) {
-      logger.e(err.message);
-    } catch (err) {
-      logger.e(err);
+    } on PlatformException catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } on Exception catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } catch (e) {
+      logger.e(e);
     }
   }
 
@@ -340,18 +352,27 @@ class FirestoreHelper {
 
   /** Chats **/
   static void sendChatMessage(String enteredMessage) async {
-    final user = FirebaseAuth.instance.currentUser;
+    try {
+      final user = FirebaseAuth.instance.currentUser;
 
-    final userData =
-        await FirebaseFirestore.instance.collection(USERS).doc(user!.uid).get();
-    FirebaseFirestore.instance.collection(CHATS).add({
-      'text': enteredMessage,
-      // timestamp available through cloud firestore
-      'createdAt': Timestamp.now(),
-      'userId': user.uid,
-      'username': userData.data()!['username'],
-      'userImage': userData.data()!['imageUrl']
-    });
+      final userData = await FirebaseFirestore.instance
+          .collection(USERS)
+          .doc(user!.uid)
+          .get();
+      FirebaseFirestore.instance.collection(CHATS).add({
+        'text': enteredMessage,
+        'createdAt': Timestamp.now(),
+        'userId': user.uid,
+        'username': userData.data()!['username'],
+        'userImage': userData.data()!['imageUrl']
+      });
+    } on PlatformException catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } on Exception catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } catch (e) {
+      logger.e(e);
+    }
   }
 
   static Stream<QuerySnapshot<Object?>> getChatsSnapshot() {
@@ -381,10 +402,12 @@ class FirestoreHelper {
           .collection(GUEST_WIFIS)
           .doc(wifi.id)
           .set(wifi.toMap());
-    } on PlatformException catch (err) {
-      logger.e(err.message);
-    } catch (err) {
-      logger.e(err);
+    } on PlatformException catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } on Exception catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } catch (e) {
+      logger.e(e);
     }
   }
 
@@ -421,10 +444,12 @@ class FirestoreHelper {
           .collection(OFFERS)
           .doc(offer.id)
           .set(offer.toMap());
-    } on PlatformException catch (err) {
-      logger.e(err.message);
-    } catch (err) {
-      logger.e(err);
+    } on PlatformException catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } on Exception catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } catch (e) {
+      logger.e(e);
     }
   }
 
@@ -463,10 +488,12 @@ class FirestoreHelper {
           .collection(ORDERS)
           .doc(order.id)
           .set(order.toMap());
-    } on PlatformException catch (err) {
-      logger.e(err.message);
-    } catch (err) {
-      logger.e(err);
+    } on PlatformException catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } on Exception catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } catch (e) {
+      logger.e(e);
     }
   }
 
@@ -477,10 +504,12 @@ class FirestoreHelper {
           .collection(PARTIES)
           .doc(party.id)
           .set(party.toMap());
-    } on PlatformException catch (err) {
-      logger.e(err.message);
-    } catch (err) {
-      logger.e(err);
+    } on PlatformException catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } on Exception catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } catch (e) {
+      logger.e(e);
     }
   }
 
@@ -552,7 +581,8 @@ class FirestoreHelper {
   }
 
   /** Party Guests **/
-  static Future<QuerySnapshot<Map<String, dynamic>>> pullPartyGuest(String partyGuestId) {
+  static Future<QuerySnapshot<Map<String, dynamic>>> pullPartyGuest(
+      String partyGuestId) {
     return FirebaseFirestore.instance
         .collection(FirestoreHelper.PARTY_GUESTS)
         .where('id', isEqualTo: partyGuestId)
@@ -565,17 +595,17 @@ class FirestoreHelper {
           .collection(PARTY_GUESTS)
           .doc(partyGuest.id)
           .set(partyGuest.toMap());
-    } on PlatformException catch (err) {
-      logger.e(err.message);
-    } catch (err) {
-      logger.e(err);
+    } on PlatformException catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } on Exception catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } catch (e) {
+      logger.e(e);
     }
   }
 
   static getGuestLists() {
-    return FirebaseFirestore.instance
-        .collection(PARTY_GUESTS)
-        .snapshots();
+    return FirebaseFirestore.instance.collection(PARTY_GUESTS).snapshots();
   }
 
   static getPartyGuestList(String partyId) {
@@ -592,11 +622,12 @@ class FirestoreHelper {
         .snapshots();
   }
 
-
   static void deletePartyGuest(PartyGuest partyGuest) {
-    FirebaseFirestore.instance.collection(PARTY_GUESTS).doc(partyGuest.id).delete();
+    FirebaseFirestore.instance
+        .collection(PARTY_GUESTS)
+        .doc(partyGuest.id)
+        .delete();
   }
-
 
   /** Products **/
   static void pushProduct(Product product) async {
@@ -605,10 +636,12 @@ class FirestoreHelper {
           .collection(PRODUCTS)
           .doc(product.id)
           .set(product.toMap());
-    } on PlatformException catch (err) {
-      logger.e(err.message);
-    } catch (err) {
-      logger.e(err);
+    } on PlatformException catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } on Exception catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } catch (e) {
+      logger.e(e);
     }
   }
 
@@ -644,7 +677,6 @@ class FirestoreHelper {
         .where('serviceId', isEqualTo: blocServiceId)
         .where('type', isEqualTo: type)
         .where('isAvailable', isEqualTo: true)
-        // .orderBy('sequence', descending: false)
         .snapshots();
   }
 
@@ -654,7 +686,6 @@ class FirestoreHelper {
         .where('blocIds', arrayContains: blocServiceId)
         .where('type', isEqualTo: type)
         .where('isAvailable', isEqualTo: true)
-    // .orderBy('sequence', descending: false)
         .snapshots();
   }
 
@@ -673,12 +704,17 @@ class FirestoreHelper {
           .collection(PRODUCTS)
           .doc(product.id)
           .update(product.toMap())
-          .then((value) => print("product updated."))
-          .catchError((error) => print("failed to update product : $error"));
-    } on PlatformException catch (err) {
-      logger.e(err.message);
-    } catch (err) {
-      logger.e(err);
+          .then((value) {
+        Logx.i(_TAG, "product updated");
+      }).catchError((e, s) {
+        Logx.ex(_TAG, 'failed to update product', e, s);
+      });
+    } on PlatformException catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } on Exception catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } catch (e) {
+      logger.e(e);
     }
   }
 
@@ -688,17 +724,22 @@ class FirestoreHelper {
       await FirebaseFirestore.instance
           .collection(PRODUCTS)
           .doc(productId)
-          .update({'isOfferRunning': isOfferRunning})
-          .then((value) => print("Product id " +
-              productId +
-              " is set to offer " +
-              isOfferRunning.toString()))
-          .catchError((error) =>
-              print("Failed to update product offer status: $error"));
-    } on PlatformException catch (err) {
-      logger.e(err.message);
-    } catch (err) {
-      logger.e(err);
+          .update({'isOfferRunning': isOfferRunning}).then((value) {
+        Logx.i(
+            _TAG,
+            "product id " +
+                productId +
+                " is set to offer " +
+                isOfferRunning.toString());
+      }).catchError((e, s) {
+        Logx.ex(_TAG, 'failed to update product offer status', e, s);
+      });
+    } on PlatformException catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } on Exception catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } catch (e) {
+      logger.e(e);
     }
   }
 
@@ -731,10 +772,18 @@ class FirestoreHelper {
   }
 
   static void pushSeat(Seat seat) async {
-    await FirebaseFirestore.instance
-        .collection(SEATS)
-        .doc(seat.id)
-        .set(seat.toMap());
+    try {
+      await FirebaseFirestore.instance
+          .collection(SEATS)
+          .doc(seat.id)
+          .set(seat.toMap());
+    } on PlatformException catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } on Exception catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } catch (e) {
+      logger.e(e);
+    }
   }
 
   static void updateSeat(String seatId, String custId) async {
@@ -744,16 +793,19 @@ class FirestoreHelper {
           .doc(seatId)
           .update({'custId': custId}).then((value) {
         if (custId.isEmpty) {
-          logger.d("seat is now free : " + seatId);
+          Logx.i(_TAG, "seat is now free : " + seatId);
         } else {
-          print("seat is occupied by cust id: " + custId);
+          Logx.i(_TAG, "seat is occupied by cust id: " + custId);
         }
-      }).catchError(
-              (error) => print("failed to update seat with cust: $error"));
-    } on PlatformException catch (err) {
-      logger.e(err.message);
-    } catch (err) {
-      logger.e(err);
+      }).catchError((e, s) {
+        Logx.ex(_TAG, 'failed to update seat with cust', e, s);
+      });
+    } on PlatformException catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } on Exception catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } catch (e) {
+      logger.e(e);
     }
   }
 
@@ -877,10 +929,12 @@ class FirestoreHelper {
           .collection(TABLES)
           .doc(table.id)
           .set(table.toMap());
-    } on PlatformException catch (err) {
-      logger.e(err.message);
-    } catch (err) {
-      logger.e(err);
+    } on PlatformException catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } on Exception catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } catch (e) {
+      logger.e(e);
     }
   }
 
@@ -889,13 +943,17 @@ class FirestoreHelper {
       await FirebaseFirestore.instance
           .collection(TABLES)
           .doc(tableId)
-          .update({'isOccupied': isOccupied})
-          .then((value) => print("Table is occupied : " + tableId))
-          .catchError((error) => print("Failed to set isOccupy table: $error"));
-    } on PlatformException catch (err) {
-      logger.e(err.message);
-    } catch (err) {
-      logger.e(err);
+          .update({'isOccupied': isOccupied}).then((value) {
+        Logx.i(_TAG, "table is occupied : " + tableId);
+      }).catchError((e, s) {
+        Logx.ex(_TAG, 'failed to set isOccupy table', e, s);
+      });
+    } on PlatformException catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } on Exception catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } catch (e) {
+      logger.e(e);
     }
   }
 
@@ -904,16 +962,22 @@ class FirestoreHelper {
       await FirebaseFirestore.instance
           .collection(TABLES)
           .doc(table.id)
-          .update({'type': newType})
-          .then((value) => print("table " +
-              table.tableNumber.toString() +
-              " type changed to type id " +
-              newType.toString()))
-          .catchError((error) => print("Failed to change table color: $error"));
-    } on PlatformException catch (err) {
-      logger.e(err.message);
-    } catch (err) {
-      logger.e(err);
+          .update({'type': newType}).then((value) {
+        Logx.i(
+            _TAG,
+            "table " +
+                table.tableNumber.toString() +
+                " type changed to type id " +
+                newType.toString());
+      }).catchError((e, s) {
+        Logx.ex(_TAG, 'failed to change table color', e, s);
+      });
+    } on PlatformException catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } on Exception catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } catch (e) {
+      logger.e(e);
     }
   }
 
@@ -922,15 +986,17 @@ class FirestoreHelper {
       await FirebaseFirestore.instance
           .collection(TABLES)
           .doc(tableId)
-          .update({'captainId': userId})
-          .then((value) =>
-              print("table id " + tableId + " has captain id " + userId))
-          .catchError(
-              (error) => print("Failed to set captain to table : $error"));
-    } on PlatformException catch (err) {
-      logger.e(err.message);
-    } catch (err) {
-      logger.e(err);
+          .update({'captainId': userId}).then((value) {
+        Logx.i(_TAG, "table id " + tableId + " has captain id " + userId);
+      }).catchError((e, s) {
+        Logx.ex(_TAG, 'failed to set captain to table', e, s);
+      });
+    } on PlatformException catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } on Exception catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } catch (e) {
+      logger.e(e);
     }
   }
 
@@ -939,36 +1005,42 @@ class FirestoreHelper {
       await FirebaseFirestore.instance
           .collection(TABLES)
           .doc(tableId)
-          .update({'isActive': isActive})
-          .then((value) => print("table id " +
-              tableId +
-              " has active status of " +
-              isActive.toString()))
-          .catchError(
-              (error) => print("Failed to set isActive to table : $error"));
-    } on PlatformException catch (err) {
-      logger.e(err.message);
-    } catch (err) {
-      logger.e(err);
+          .update({'isActive': isActive}).then((value) {
+        Logx.i(
+            _TAG,
+            "table id " +
+                tableId +
+                " has active status of " +
+                isActive.toString());
+      }).catchError((e, s) {
+        Logx.ex(_TAG, 'Failed to set isActive to table', e, s);
+      });
+    } on PlatformException catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } on Exception catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } catch (e) {
+      logger.e(e);
     }
   }
 
   static void changeTableColor(ServiceTable table) async {
     try {
-      await FirebaseFirestore.instance
-          .collection(TABLES)
-          .doc(table.id)
-          .update({
-            'type': table.type == FirestoreHelper.TABLE_COMMUNITY_TYPE_ID
-                ? FirestoreHelper.TABLE_PRIVATE_TYPE_ID
-                : FirestoreHelper.TABLE_COMMUNITY_TYPE_ID
-          })
-          .then((value) => print("Table color status changed for: " + table.id))
-          .catchError((error) => print("Failed to change table color: $error"));
-    } on PlatformException catch (err) {
-      logger.e(err.message);
-    } catch (err) {
-      logger.e(err);
+      await FirebaseFirestore.instance.collection(TABLES).doc(table.id).update({
+        'type': table.type == FirestoreHelper.TABLE_COMMUNITY_TYPE_ID
+            ? FirestoreHelper.TABLE_PRIVATE_TYPE_ID
+            : FirestoreHelper.TABLE_COMMUNITY_TYPE_ID
+      }).then((value) {
+        Logx.i(_TAG, "table color status changed for: " + table.id);
+      }).catchError((e, s) {
+        Logx.ex(_TAG, 'failed to change table color', e, s);
+      });
+    } on PlatformException catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } on Exception catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } catch (e) {
+      logger.e(e);
     }
   }
 
@@ -979,10 +1051,12 @@ class FirestoreHelper {
           .collection(USERS)
           .doc(user.id)
           .set(user.toMap());
-    } on PlatformException catch (err) {
-      logger.e(err.message);
-    } catch (err) {
-      logger.e(err);
+    } on PlatformException catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } on Exception catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } catch (e) {
+      logger.e(e);
     }
   }
 
@@ -1005,7 +1079,6 @@ class FirestoreHelper {
     return FirebaseFirestore.instance
         .collection(USERS)
         .where('clearanceLevel', isLessThan: clearanceLevel)
-        // .orderBy('sequence', descending: false)
         .snapshots();
   }
 
@@ -1013,18 +1086,9 @@ class FirestoreHelper {
     return FirebaseFirestore.instance
         .collection(USERS)
         .where('clearanceLevel', isEqualTo: level)
-        .orderBy('lastSeenAt', descending : true)
+        .orderBy('lastSeenAt', descending: true)
         .snapshots();
   }
-
-  // static Stream<QuerySnapshot<Object?>> getUsersInRange(
-  //     int lowLevel, int highLevel) {
-  //   return FirebaseFirestore.instance
-  //       .collection(USERS)
-  //       .where('clearanceLevel', whereIn: [lowLevel, highLevel])
-  //       // .orderBy('sequence', descending: false)
-  //       .snapshots();
-  // }
 
   static CollectionReference<Object?> getUsersCollection() {
     return FirebaseFirestore.instance.collection(USERS);
@@ -1039,8 +1103,12 @@ class FirestoreHelper {
             user.name.trim() + '_' + StringUtils.getRandomString(15),
             File(user.imageUrl));
         user = user.copyWith(imageUrl: fileUrl);
-      } catch (err) {
-        logger.e(err);
+      } on PlatformException catch (e, s) {
+        Logx.e(_TAG, e, s);
+      } on Exception catch (e, s) {
+        Logx.e(_TAG, e, s);
+      } catch (e) {
+        logger.e(e);
       }
     }
 
@@ -1049,51 +1117,54 @@ class FirestoreHelper {
           .collection(USERS)
           .doc(user.id)
           .update(user.toMap())
-          .then((value) => print("user has been updated in firebase."))
-          .catchError((error) =>
-              print("failed updating user in firebase. error: " + error));
-    } on PlatformException catch (err) {
-      logger.e(err.message);
-    } catch (err) {
-      logger.e(err);
+          .then((value) {
+        Logx.i(_TAG, "user has been updated in firebase.");
+      }).catchError((e, s) {
+        Logx.ex(_TAG, 'failed updating user in firebase', e, s);
+      });
+    } on PlatformException catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } on Exception catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } catch (e) {
+      logger.e(e);
     }
   }
 
   static void updateUserFcmToken(String userId, String? token) async {
     try {
-      await FirebaseFirestore.instance
-          .collection(USERS)
-          .doc(userId)
-          .update({
-            'fcmToken': token,
-          })
-          .then((value) =>
-              print(userId + " user fcm token updated to : " + token!))
-          .catchError(
-              (error) => print("failed to update user fcm token: $error"));
-    } on PlatformException catch (err) {
-      logger.e(err.message);
-    } catch (err) {
-      logger.e(err);
+      await FirebaseFirestore.instance.collection(USERS).doc(userId).update({
+        'fcmToken': token,
+      }).then((value) {
+        Logx.i(_TAG, userId + " user fcm token updated to : " + token!);
+      }).catchError((e, s) {
+        Logx.ex(_TAG, 'failed to update user fcm token', e, s);
+      });
+    } on PlatformException catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } on Exception catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } catch (e) {
+      logger.e(e);
     }
   }
 
   static void updateUserBlocId(String userId, String blocServiceId) async {
     try {
-      await FirebaseFirestore.instance
-          .collection(USERS)
-          .doc(userId)
-          .update({
-            'blocServiceId': blocServiceId,
-          })
-          .then((value) => print(
-              userId + " user bloc service id updated to : " + blocServiceId))
-          .catchError((error) =>
-              print("failed to update user bloc service id : $error"));
-    } on PlatformException catch (err) {
-      logger.e(err.message);
-    } catch (err) {
-      logger.e(err);
+      await FirebaseFirestore.instance.collection(USERS).doc(userId).update({
+        'blocServiceId': blocServiceId,
+      }).then((value) {
+        Logx.i(_TAG,
+            userId + " user bloc service id updated to : " + blocServiceId);
+      }).catchError((e, s) {
+        Logx.ex(_TAG, 'failed to update user bloc service id', e, s);
+      });
+    } on PlatformException catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } on Exception catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } catch (e) {
+      logger.e(e);
     }
   }
 
@@ -1109,5 +1180,4 @@ class FirestoreHelper {
         .orderBy('level', descending: false)
         .get();
   }
-
 }

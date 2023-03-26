@@ -1,6 +1,7 @@
 import 'package:barcode_widget/barcode_widget.dart';
 import 'package:bloc/db/entity/service_table.dart';
 import 'package:bloc/db/shared_preferences/user_preferences.dart';
+import 'package:bloc/utils/logx.dart';
 import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:bloc/widgets/ui/toaster.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -27,6 +28,7 @@ class TableAddEditScreen extends StatefulWidget {
 }
 
 class _TableAddEditScreenState extends State<TableAddEditScreen> {
+  static const String _TAG = '_TableAddEditScreenState';
   // bool isPhotoChanged = false;
   // late String oldImageUrl;
   // late String newImageUrl;
@@ -53,7 +55,7 @@ class _TableAddEditScreenState extends State<TableAddEditScreen> {
         : 'community';
 
     FirestoreHelper.pullUsersByLevel(Constants.CAPTAIN_LEVEL).then((res) {
-      print("successfully pulled in all captains ");
+      Logx.i(_TAG, "successfully pulled in all captains ");
 
       if (res.docs.isNotEmpty) {
         List<User> _captains = [];
