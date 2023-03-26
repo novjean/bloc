@@ -31,7 +31,9 @@ class _TokenMonitor extends State<TokenMonitor> {
 
       User user = UserPreferences.getUser();
       UserPreferences.setUserFcmToken(_token!);
-      FirestoreHelper.updateUserFcmToken(user.id, token);
+      if(user.id.isNotEmpty) {
+        FirestoreHelper.updateUserFcmToken(user.id, token);
+      }
     });
   }
 
