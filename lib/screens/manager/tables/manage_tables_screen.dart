@@ -1,4 +1,3 @@
-import 'package:bloc/db/bloc_repository.dart';
 import 'package:bloc/db/shared_preferences/user_preferences.dart';
 import 'package:bloc/helpers/dummy.dart';
 import 'package:bloc/screens/manager/tables/table_add_edit_screen.dart';
@@ -9,6 +8,7 @@ import 'package:flutter/material.dart';
 import '../../../db/entity/service_table.dart';
 import '../../../helpers/firestore_helper.dart';
 import '../../../utils/constants.dart';
+import '../../../utils/logx.dart';
 import '../../../widgets/service_table_item.dart';
 import '../../../widgets/ui/sized_listview_block.dart';
 
@@ -27,6 +27,8 @@ class ManageTablesScreen extends StatefulWidget {
 }
 
 class _ManageTablesScreenState extends State<ManageTablesScreen> {
+  static const String _TAG = 'ManageTablesScreen';
+
   String _selectedType = 'private';
 
   @override
@@ -150,12 +152,12 @@ class _ManageTablesScreenState extends State<ManageTablesScreen> {
                   onDoubleTap: () {
                     if (UserPreferences.myUser.clearanceLevel >=
                         Constants.MANAGER_LEVEL) {
-                      logger.d('double tap selected : ' + index.toString());
+                      Logx.i(_TAG, 'double tap selected : ' + index.toString());
                       FirestoreHelper.changeTableColor(serviceTables[index]);
                     }
                   },
                   onTap: () {
-                    logger.d('tap selected : ' + index.toString());
+                    Logx.i(_TAG, 'tap selected : ' + index.toString());
                     Navigator.of(context).push(MaterialPageRoute(
                       builder: (context) => TableAddEditScreen(
                           table: serviceTables[index], task: 'edit'),

@@ -14,6 +14,7 @@ import '../../../db/entity/party.dart';
 import '../../../helpers/dummy.dart';
 import '../../../helpers/firestorage_helper.dart';
 import '../../../helpers/firestore_helper.dart';
+import '../../../utils/logx.dart';
 import '../../../utils/string_utils.dart';
 import '../../../widgets/profile_widget.dart';
 import '../../../widgets/ui/button_widget.dart';
@@ -56,7 +57,7 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
     super.initState();
 
     FirestoreHelper.pullAllBlocServices().then((res) {
-      print("successfully pulled in all bloc services ");
+      Logx.i(_TAG, "successfully pulled in all bloc services ");
 
       if (res.docs.isNotEmpty) {
         List<BlocService> _blocServices = [];
@@ -82,7 +83,7 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
           _isBlocServicesLoading = false;
         });
       } else {
-        print('no bloc services found!');
+        Logx.i(_TAG, 'no bloc services found!');
         setState(() {
           _isBlocServicesLoading = false;
         });

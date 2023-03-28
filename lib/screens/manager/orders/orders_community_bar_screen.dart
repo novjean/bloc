@@ -4,9 +4,9 @@ import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-import '../../../db/bloc_repository.dart';
 import '../../../db/entity/cart_item.dart';
 import '../../../helpers/firestore_helper.dart';
+import '../../../utils/logx.dart';
 
 class OrdersCommunityBarScreen extends StatefulWidget {
   String serviceId;
@@ -21,6 +21,8 @@ class OrdersCommunityBarScreen extends StatefulWidget {
 }
 
 class _OrdersCommunityBarScreenState extends State<OrdersCommunityBarScreen> {
+  static const String _TAG = 'OrdersCommunityBarScreen';
+
   // String _optionName = 'Table';
 
   @override
@@ -97,7 +99,7 @@ class _OrdersCommunityBarScreenState extends State<OrdersCommunityBarScreen> {
                 ),
                 onTap: () {
                   CartItem _cartItem = cartItems[index];
-                  logger.d('clicked cart item : ' + _cartItem.toString());
+                  Logx.i(_TAG, 'clicked cart item : ' + _cartItem.toString());
 
                   // Bill bill = CartItemUtils.extractBill(order.cartItems);
                   Navigator.of(context).push(

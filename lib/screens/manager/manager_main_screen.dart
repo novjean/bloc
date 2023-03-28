@@ -4,17 +4,17 @@ import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-import '../../db/bloc_repository.dart';
+import '../../utils/logx.dart';
 import '../../widgets/bloc_service_item.dart';
 
 class ManagerMainScreen extends StatelessWidget {
-  static const routeName = '/manager-screen';
+  static const String _TAG = 'ManagerMainScreen';
 
   ManagerMainScreen({key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    logger.i('manager screen is loading...');
+    Logx.i(_TAG, 'manager screen is loading...');
 
     return Scaffold(
       appBar: AppBar(
@@ -28,12 +28,9 @@ class ManagerMainScreen extends StatelessWidget {
     return SingleChildScrollView(
       child: Column(
         children: [
-          // CoverPhoto(service.name, service.imageUrl),
           const SizedBox(height: 5.0),
           buildBlocServices(context),
           const SizedBox(height: 5.0),
-          // buildProducts(context),
-          // SizedBox(height: 50.0),
         ],
       ),
     );

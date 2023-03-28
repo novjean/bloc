@@ -1,4 +1,3 @@
-import 'package:bloc/db/bloc_repository.dart';
 import 'package:bloc/db/shared_preferences/user_preferences.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -6,6 +5,7 @@ import 'package:flutter/material.dart';
 import '../../../db/entity/service_table.dart';
 import '../../../helpers/firestore_helper.dart';
 import '../../../widgets/service_table_item.dart';
+import '../../utils/logx.dart';
 import '../manager/tables/manage_seats_screen.dart';
 
 class CaptainTablesScreen extends StatefulWidget {
@@ -23,6 +23,8 @@ class CaptainTablesScreen extends StatefulWidget {
 }
 
 class _CaptainTablesScreenState extends State<CaptainTablesScreen> {
+  static const String _TAG = 'CaptainTablesScreen';
+
   List<ServiceTable> tables = [];
   bool isTablesLoading = true;
 
@@ -90,16 +92,11 @@ class _CaptainTablesScreenState extends State<CaptainTablesScreen> {
                   child: ServiceTableItem(
                     serviceTable: tables[index],
                   ),
-                  // onDoubleTap: () {
-                  //   if (UserPreferences.myUser.clearanceLevel >=
-                  //       Constants.MANAGER_LEVEL) {
-                  //     logger.d('double tap selected : ' + index.toString());
-                  //     FirestoreHelper.changeTableColor(serviceTables[index]);
-                  //   }
-                  // },
                   onTap: () {
                     ServiceTable table = tables[index];
-                    logger.d('selected table : ' + table.tableNumber.toString());
+                    Logx.i(_TAG,
+                        'selected table : ' + table.tableNumber.toString());
+
                     Navigator.of(context).push(MaterialPageRoute(
                       builder: (context) => ManageSeatsScreen(
                         serviceId: widget.blocServiceId,

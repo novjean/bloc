@@ -2,12 +2,12 @@ import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-import '../../../db/bloc_repository.dart';
 import '../../../db/entity/bill.dart';
 import '../../../db/entity/cart_item.dart';
 import '../../../db/entity/bloc_order.dart';
 import '../../../helpers/firestore_helper.dart';
 import '../../../utils/cart_item_utils.dart';
+import '../../../utils/logx.dart';
 import '../../../widgets/manager/orders/order_item.dart';
 import '../../../widgets/ui/sized_listview_block.dart';
 import '../bill_screen.dart';
@@ -24,6 +24,8 @@ class OrdersCompletedScreen extends StatefulWidget {
 }
 
 class _OrdersCompletedScreenState extends State<OrdersCompletedScreen> {
+  static const String _TAG = 'OrdersCompletedScreen';
+
   String _optionName = 'Table';
 
   @override
@@ -113,7 +115,7 @@ class _OrdersCompletedScreenState extends State<OrdersCompletedScreen> {
                 ),
                 onTap: () {
                   BlocOrder order = orders[index];
-                  logger.d('Order selected for cust id : ' +
+                  Logx.i(_TAG, 'order selected for cust id : ' +
                       order.customerId +
                       ", table num: " +
                       order.tableNumber.toString());

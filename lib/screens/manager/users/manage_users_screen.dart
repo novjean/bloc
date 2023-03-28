@@ -1,4 +1,3 @@
-import 'package:bloc/db/bloc_repository.dart';
 import 'package:bloc/db/entity/user_level.dart';
 import 'package:bloc/db/shared_preferences/user_preferences.dart';
 import 'package:bloc/helpers/dummy.dart';
@@ -11,6 +10,7 @@ import 'package:flutter/material.dart';
 import '../../../db/entity/user.dart';
 import '../../../helpers/firestore_helper.dart';
 import '../../../helpers/fresh.dart';
+import '../../../utils/logx.dart';
 import '../../../widgets/manager/user_item.dart';
 import '../../../widgets/ui/sized_listview_block.dart';
 
@@ -22,6 +22,8 @@ class ManageUsersScreen extends StatefulWidget {
 }
 
 class _ManageUsersScreenState extends State<ManageUsersScreen> {
+  static const String _TAG = 'ManageUsersScreen';
+
   String _selectedType = 'customer';
   List<UserLevel> mUserLevels = [];
   var _isUserLevelsLoading = true;
@@ -169,7 +171,7 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
                 ),
                 onDoubleTap: () {
                   User sUser = users[index];
-                  logger.d('double tap user selected : ' + sUser.name);
+                  Logx.i(_TAG, 'double tap user selected : ' + sUser.name);
 
                   showDialog(
                     context: context,
@@ -205,7 +207,7 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
                 },
                 onTap: () {
                   User sUser = users[index];
-                  logger.d('user selected : ' + sUser.name);
+                  Logx.i(_TAG, 'user selected : ' + sUser.name);
 
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (ctx) => UserAddEditScreen(

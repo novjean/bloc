@@ -7,23 +7,25 @@ import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 
-import '../../../db/bloc_repository.dart';
 import '../../../db/entity/seat.dart';
 import '../../../db/entity/service_table.dart';
 import '../../../helpers/firestore_helper.dart';
+import '../../../utils/logx.dart';
 import '../../../widgets/seat_item.dart';
 
 class ManageSeatsScreen extends StatefulWidget {
   String serviceId;
   ServiceTable serviceTable;
 
-  ManageSeatsScreen({required this.serviceId, required this.serviceTable});
+  ManageSeatsScreen({Key? key, required this.serviceId, required this.serviceTable}) : super(key: key);
 
   @override
   State<ManageSeatsScreen> createState() => _ManageSeatsScreenState();
 }
 
 class _ManageSeatsScreenState extends State<ManageSeatsScreen> {
+  static const String _TAG = 'ManageSeatsScreen';
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -67,10 +69,10 @@ class _ManageSeatsScreenState extends State<ManageSeatsScreen> {
             ),
           ],
         ),
-        SizedBox(height: 10.0),
-        Divider(),
+        const SizedBox(height: 10.0),
+        const Divider(),
         _pullSeats(context),
-        SizedBox(height: 10.0),
+        const SizedBox(height: 5.0),
       ],
     );
   }
@@ -131,17 +133,17 @@ class _ManageSeatsScreenState extends State<ManageSeatsScreen> {
                   Seat seat = seats[index];
 
                   if (!seat.custId.isEmpty) {
-                    logger.i('seat is occupied');
+                    Logx.i(_TAG, 'seat is occupied');
                     showDialog(
                       context: context,
                       builder: (BuildContext context) {
                         return AlertDialog(
-                          title: Text("free seat"),
-                          content: Text(
+                          title: const Text("free seat"),
+                          content: const Text(
                               "would you like to make the seat free?"),
                           actions: [
                             TextButton(
-                              child: Text("yes"),
+                              child: const Text("yes"),
                               onPressed: () {
                                 FirestoreHelper.updateSeat(seat.id, '');
 
@@ -181,7 +183,7 @@ class _ManageSeatsScreenState extends State<ManageSeatsScreen> {
                   } else {
                     scanQR(seat);
                   }
-                  logger.d('seat selected : ' + seat.id);
+                  Logx.i(_TAG, 'seat selected : ' + seat.id);
                 });
           }),
     );

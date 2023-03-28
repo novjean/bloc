@@ -6,13 +6,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:logger/logger.dart';
 
 import '../db/shared_preferences/user_preferences.dart';
 import '../../db/entity/user.dart' as blocUser;
 import '../helpers/firestore_helper.dart';
 import '../helpers/fresh.dart';
 import '../main.dart';
+import '../utils/logx.dart';
 import 'home_screen.dart';
 import 'parties/party_screen.dart';
 import 'profile/profile_add_edit_register_page.dart';
@@ -30,7 +30,8 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  var logger = Logger();
+  static const String _TAG = 'PartyAddEditScreen';
+
   late PageController _pageController;
   int _page = 0;
 
@@ -53,13 +54,11 @@ class _MainScreenState extends State<MainScreen> {
         .get()
         .then(
       (res) {
-        print("successfully retrieved users for " +
-            widget.user.phoneNumber.toString());
-
         if (res.docs.isEmpty) {
+          Logx.i(_TAG, "user not found, registering " + widget.user.phoneNumber.toString());
           // register the user, and we might need to get more info about the user
           FirestoreHelper.pushUser(widget.user);
-          print(widget.user.phoneNumber.toString() +
+          Logx.i(_TAG, widget.user.phoneNumber.toString() +
               ' is now registered with bloc!');
 
           UserPreferences.setUser(widget.user);
@@ -71,6 +70,7 @@ class _MainScreenState extends State<MainScreen> {
                     user: widget.user, task: 'register')),
           );
         } else {
+          Logx.i(_TAG, "user found for " + widget.user.phoneNumber.toString());
           List<blocUser.User> users = [];
 
           for (int i = 0; i < res.docs.length; i++) {
@@ -89,10 +89,10 @@ class _MainScreenState extends State<MainScreen> {
           }
         }
       },
-      onError: (e) => print(
-          "error completing retrieving users for phone number : " +
-              widget.user.phoneNumber.toString() +
-              " : $e"),
+      onError: (e,s) {
+        Logx.ex(_TAG, "error completing retrieving users for phone number : " +
+            widget.user.phoneNumber.toString(), e, s);
+      }
     );
 
     if (!kIsWeb) {
@@ -123,7 +123,7 @@ class _MainScreenState extends State<MainScreen> {
       });
 
       FirebaseMessaging.onMessageOpenedApp.listen((message) {
-        debugPrint('A new onMessageOpenedApp event was published!');
+        Logx.i(_TAG, 'a new onMessageOpenedApp event was published!');
         Navigator.of(context).push(
           MaterialPageRoute(builder: (ctx) => HomeScreen()),
         );
@@ -215,15 +215,6 @@ class _MainScreenState extends State<MainScreen> {
         color: Theme.of(context).primaryColor,
         shape: CircularNotchedRectangle(),
       ),
-      // floatingActionButtonAnimator: FloatingActionButtonAnimator.scaling,
-      // floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      // floatingActionButton: FloatingActionButton(
-      //   elevation: 10.0,
-      //   child: Icon(
-      //     Icons.add,
-      //   ),
-      //   onPressed: () => _pageController.jumpToPage(2),
-      // ),
     );
   }
 

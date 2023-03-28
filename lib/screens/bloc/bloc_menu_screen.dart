@@ -18,6 +18,7 @@ import '../../db/entity/seat.dart';
 import '../../db/shared_preferences/user_preferences.dart';
 import '../../helpers/fresh.dart';
 import '../../main.dart';
+import '../../utils/logx.dart';
 import '../../widgets/cart_widget.dart';
 import '../../widgets/category_item.dart';
 import '../../widgets/product_item.dart';
@@ -37,6 +38,8 @@ class BlocMenuScreen extends StatefulWidget {
 
 class _BlocMenuScreenState extends State<BlocMenuScreen>
     with WidgetsBindingObserver {
+  static const String _TAG = 'BlocMenuScreen';
+
   String _sCategoryType = 'Alcohol';
 
   late ServiceTable mTable;
@@ -62,7 +65,7 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
     blocUser.User user = UserPreferences.myUser;
 
     FirestoreHelper.pullCategoriesNew(widget.blocService.id).then((res) {
-      print("successfully retrieved categories");
+      Logx.i(_TAG, "successfully retrieved categories");
 
       if (res.docs.isNotEmpty) {
         List<Category> _categories = [];
@@ -78,8 +81,7 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
           _isCategoriesLoading = false;
         });
       } else {
-        print('no categories found!');
-        Toaster.shortToast('no categories found');
+        Logx.i(_TAG, 'no categories found!');
         setState(() {
           _isCategoriesLoading = false;
         });
@@ -88,7 +90,7 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
 
     FirestoreHelper.pullCustomerSeat(widget.blocService.id, user.id)
         .then((res) {
-      print("successfully retrieved seat of user " + user.name);
+      Logx.i(_TAG, "successfully retrieved seat of user " + user.name);
 
       if (res.docs.isEmpty) {
         // the user has not selected a table yet
@@ -128,10 +130,12 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
                     });
                   }
                 } else {
-                  print('table could not be found for ' + userSeat.tableId);
+                  Logx.i(_TAG,'table could not be found for ' + userSeat.tableId);
                 }
               },
-              onError: (e) => print("error searching for table : $e"),
+              onError: (e,s) {
+                Logx.ex(_TAG, "error searching for table", e, s);
+              },
             );
           }
         }
@@ -139,7 +143,7 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
     });
 
     FirestoreHelper.pullOffers(widget.blocService.id).then((res) {
-      print("successfully retrieved offers at bloc " + widget.blocService.name);
+      Logx.i(_TAG,"successfully retrieved offers at bloc " + widget.blocService.name);
 
       if (res.docs.isNotEmpty) {
         for (int i = 0; i < res.docs.length; i++) {
@@ -181,9 +185,13 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
     try {
       scanTableId = await FlutterBarcodeScanner.scanBarcode(
           '#ff6666', 'cancel', true, ScanMode.QR);
-      print('table id scanned ' + scanTableId);
-    } on PlatformException {
+      Logx.i(_TAG, 'table id scanned ' + scanTableId);
+    } on PlatformException catch (e, s) {
       scanTableId = 'failed to get platform version.';
+      Logx.e(_TAG, e, s);
+    }  on Exception catch (e, s) {
+      Logx.e(_TAG, e, s);
+      scanTableId = e.toString();
     }
 
     // If the widget was removed from the tree while the asynchronous platform
@@ -223,7 +231,7 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
                   // keeping this here since android/ios does not set table
                   FirestoreHelper.pullTableById(widget.blocService.id, tableId)
                       .then((res) {
-                    print('successfully pulled in table for id ' + tableId);
+                    Logx.i(_TAG, 'successfully pulled in table for id ' + tableId);
 
                     if (res.docs.isNotEmpty) {
                       DocumentSnapshot document = res.docs[0];
@@ -236,7 +244,7 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
                         mTable = table;
                       });
                     } else {
-                      print('table could not be found for id ' + tableId);
+                      Logx.i(_TAG, 'table could not be found for id ' + tableId);
                     }
                   });
                 }
@@ -246,7 +254,7 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
 
               if (i == result.docs.length - 1) {
                 if (!isSeatAvailable) {
-                  print(mTable.tableNumber.toString() +
+                  Logx.i(_TAG, mTable.tableNumber.toString() +
                       ' does not have a seat for ' +
                       UserPreferences.myUser.name);
                 }
@@ -258,15 +266,14 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
             Toaster.longToast(
                 'welcome ' + UserPreferences.myUser.name.toLowerCase());
           } else {
-            print('seats could not be found for table id ' + tableId);
+            Logx.i(_TAG, 'seats could not be found for table id ' + tableId);
           }
         },
-        onError: (e) => print("error completing: $e"),
+        onError: (e,s){
+          Logx.ex(_TAG, "error completing", e, s);}
       );
     } else {
-      print('user not signed in, logging out');
-
-      // Toaster.shortToast('not signed in, write go to log in logic here!');
+      Logx.i(_TAG, 'user not signed in, logging out');
     }
   }
 
@@ -327,11 +334,13 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
                                             onChanged: (text) {
                                               try {
                                                 tableNum = int.parse(text);
-                                              } catch (err) {
-                                                print('err: ' + err.toString());
+                                              }on Exception catch (e, s) {
+                                                Logx.e(_TAG, e, s);
+                                              } catch (e) {
+                                                Logx.em(_TAG, e.toString());
                                               }
                                             },
-                                            decoration: InputDecoration(
+                                            decoration: const InputDecoration(
                                                 labelText: 'table number',
                                                 hintText: 'eg. 12'),
                                           ),
@@ -346,9 +355,9 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
                                         },
                                       ),
                                       TextButton(
-                                        child: Text("continue"),
+                                        child: const Text("continue"),
                                         onPressed: () {
-                                          print('table num is ' +
+                                          Logx.i(_TAG, 'table num is ' +
                                               tableNum.toString());
 
                                           FirestoreHelper.pullTableByNumber(
@@ -368,7 +377,7 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
                                                   final ServiceTable table =
                                                       ServiceTable.fromMap(
                                                           data);
-                                                  print('table found ' +
+                                                  Logx.i(_TAG, 'table found ' +
                                                       table.tableNumber
                                                           .toString());
 
@@ -389,13 +398,13 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
                                                   }
                                                 }
                                               } else {
-                                                print(
+                                                Logx.i(_TAG,
                                                     'table could not be found for table number ' +
                                                         tableNum.toString());
                                               }
                                             },
-                                            onError: (e) => print(
-                                                "error searching for table : $e"),
+                                            onError: (e,s) => Logx.ex(_TAG,
+                                                "error searching for table", e, s),
                                           );
 
                                           Navigator.of(context).pop();
@@ -466,7 +475,7 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
       stream: FirestoreHelper.getActiveOffers(widget.blocService.id, true),
       builder: (ctx, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          print('loading offers...');
+          Logx.i(_TAG,'loading offers...');
           return const LoadingWidget();
         }
 
@@ -499,8 +508,8 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
             widget.blocService.id, UserPreferences.myUser.id),
         builder: (ctx, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            print('loading table number...');
-            return LoadingWidget();
+            Logx.i(_TAG, 'loading table number...');
+            return const LoadingWidget();
           }
 
           List<Seat> seats = [];
@@ -529,16 +538,16 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
                         });
                       }
                     } else {
-                      print('table could not be found for ' + seat.tableId);
+                      Logx.em(_TAG, 'table could not be found for ' + seat.tableId);
                     }
                   },
-                  onError: (e) => print("error searching for table : $e"),
+                  onError: (e, s) => Logx.ex(_TAG, "error searching for table", e, s),
                 );
                 return const SizedBox();
               }
             }
           } else {
-            return const SizedBox(height: 0);
+            return const SizedBox();
           }
           return const SizedBox();
         });
@@ -577,7 +586,7 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
                 onTap: () {
                   setState(() {
                     _sCategoryType = mCategoryTypes[index].name;
-                    print(_sCategoryType + ' category type is selected');
+                    Logx.i(_TAG, _sCategoryType + ' category type is selected');
                   });
                 });
           }),
@@ -736,7 +745,7 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
                     ),
                     onTap: () {
                       Product _sProduct = subProducts[index];
-                      print(_sProduct.name.toLowerCase() + ' is selected');
+                      Logx.i(_TAG, _sProduct.name.toLowerCase() + ' is selected');
                     }),
                 index == subProducts.length - 1
                     ? displayExtraInfo()

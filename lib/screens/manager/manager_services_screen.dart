@@ -8,7 +8,6 @@ import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-import '../../db/bloc_repository.dart';
 import '../../db/entity/bloc_service.dart';
 import '../../helpers/firestore_helper.dart';
 import '../../widgets/ui/listview_block.dart';
@@ -18,6 +17,8 @@ import 'inventory/manage_inventory_screen.dart';
 import 'tables/manage_tables_screen.dart';
 
 class ManagerServicesScreen extends StatelessWidget {
+  static const String _TAG = 'ManagerServicesScreen';
+
   BlocService blocService;
 
   ManagerServicesScreen({key, required this.blocService}) : super(key: key);
@@ -36,9 +37,9 @@ class ManagerServicesScreen extends StatelessWidget {
   Widget _buildBody(BuildContext context) {
     return Column(
       children: [
-        SizedBox(height: 2.0),
+        const SizedBox(height: 5.0),
         _buildManagerServices(context),
-        SizedBox(height: 10.0),
+        const SizedBox(height: 5.0),
       ],
     );
   }
@@ -63,7 +64,7 @@ class ManagerServicesScreen extends StatelessWidget {
               return _displayManagerServices(context, _managerServices);
             }
           }
-          return const Text('loading services...');
+          return const LoadingWidget();
         });
   }
 
@@ -91,7 +92,6 @@ class ManagerServicesScreen extends StatelessWidget {
                                 serviceId: blocService.id,
                                 serviceName: _managerService.name,
                                 userTitle: userTitle)));
-                        logger.d('manage inventory screen selected.');
                         break;
                       }
                     case 'Inventory':
@@ -100,7 +100,6 @@ class ManagerServicesScreen extends StatelessWidget {
                             builder: (ctx) => ManageInventoryScreen(
                                 serviceId: blocService.id,
                                 managerService: _managerService)));
-                        logger.d('manage inventory screen selected.');
                         break;
                       }
                     case 'Tables':
@@ -111,7 +110,6 @@ class ManagerServicesScreen extends StatelessWidget {
                                   serviceName: _managerService.name,
                                   userTitle: userTitle,
                                 )));
-                        logger.d('tables management service selected.');
                         break;
                       }
                     case 'Party':
@@ -120,7 +118,6 @@ class ManagerServicesScreen extends StatelessWidget {
                             builder: (ctx) => ManagePartiesScreen(
                                 serviceId: blocService.id,
                                 managerService: _managerService)));
-                        logger.d('parties management service selected.');
                         break;
                       }
                     case 'Bookings':
@@ -131,14 +128,12 @@ class ManagerServicesScreen extends StatelessWidget {
                                   serviceName: _managerService.name,
                                   userTitle: userTitle,
                                 )));
-                        logger.d('tables management service selected.');
                         break;
                       }
                     case 'Users':
                       {
                         Navigator.of(context).push(MaterialPageRoute(
                             builder: (ctx) => ManageUsersScreen()));
-                        logger.d('manage users screen selected.');
                         break;
                       }
                     case 'guest wifi':
@@ -148,14 +143,12 @@ class ManagerServicesScreen extends StatelessWidget {
                                   blocServiceId: blocService.id,
                                   task: 'edit',
                                 )));
-                        logger.d('manage guest wifi screen selected.');
                         break;
                       }
                     case 'guest list':
                       {
                         Navigator.of(context).push(MaterialPageRoute(
                             builder: (ctx) => PartyGuestListScreen()));
-                        logger.d('manage party guest list screen selected.');
                         break;
                       }
                     default:

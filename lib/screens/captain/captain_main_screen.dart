@@ -5,16 +5,16 @@ import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-import '../../db/bloc_repository.dart';
 import '../../db/entity/captain_service.dart';
 import '../../helpers/firestore_helper.dart';
 import '../../widgets/ui/listview_block.dart';
 
 class CaptainMainScreen extends StatelessWidget {
+  static const String _TAG = 'CaptainMainScreen';
+
   String blocServiceId;
 
-  CaptainMainScreen({key, required this.blocServiceId})
-      : super(key: key);
+  CaptainMainScreen({key, required this.blocServiceId}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -30,9 +30,9 @@ class CaptainMainScreen extends StatelessWidget {
   Widget _buildBody(BuildContext context) {
     return Column(
       children: [
-        SizedBox(height: 2.0),
+        const SizedBox(height: 5.0),
         _buildCaptainServices(context),
-        SizedBox(height: 10.0),
+        const SizedBox(height: 5.0),
       ],
     );
   }
@@ -62,7 +62,8 @@ class CaptainMainScreen extends StatelessWidget {
         });
   }
 
-  _displayCaptainServices(BuildContext context, List<CaptainService> captainServices) {
+  _displayCaptainServices(
+      BuildContext context, List<CaptainService> captainServices) {
     String userTitle = 'Captain';
     return Expanded(
       child: ListView.builder(
@@ -81,22 +82,18 @@ class CaptainMainScreen extends StatelessWidget {
                       {
                         Navigator.of(context).push(MaterialPageRoute(
                             builder: (ctx) => CaptainOrdersScreen(
-                              serviceId: blocServiceId,
-                            )));
-                        logger.d('captain orders screen selected.');
+                                  serviceId: blocServiceId,
+                                )));
                         break;
                       }
                     case 'Table Management':
                       {
                         Navigator.of(context).push(MaterialPageRoute(
-                            builder: (ctx) =>
-
-                                CaptainTablesScreen(
+                            builder: (ctx) => CaptainTablesScreen(
                                   blocServiceId: blocServiceId,
                                   serviceName: captainService.name,
                                   userTitle: userTitle,
                                 )));
-                        logger.d('manage inventory screen selected.');
                         break;
                       }
                     case 'Revenue':
@@ -106,14 +103,12 @@ class CaptainMainScreen extends StatelessWidget {
                         //         serviceId: blocService.id,
                         //         managerService: captainService,
                         //         dao: dao)));
-                        logger.d('revenue service selected.');
                         break;
                       }
                     case 'Profile':
                       {
                         Navigator.of(context).push(MaterialPageRoute(
                             builder: (ctx) => ManageUsersScreen()));
-                        logger.d('manage users screen selected.');
                         break;
                       }
                     default:

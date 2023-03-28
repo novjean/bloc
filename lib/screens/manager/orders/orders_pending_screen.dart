@@ -2,12 +2,12 @@ import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-import '../../../db/bloc_repository.dart';
 import '../../../db/entity/bill.dart';
 import '../../../db/entity/cart_item.dart';
 import '../../../db/entity/bloc_order.dart';
 import '../../../helpers/firestore_helper.dart';
 import '../../../utils/cart_item_utils.dart';
+import '../../../utils/logx.dart';
 import '../../../widgets/manager/orders/order_item.dart';
 import '../../../widgets/ui/sized_listview_block.dart';
 import '../bill_screen.dart';
@@ -17,13 +17,16 @@ class OrdersPendingScreen extends StatefulWidget {
   String titleHead;
 
   OrdersPendingScreen(
-      {Key? key, required this.serviceId, required this.titleHead}) : super(key: key);
+      {Key? key, required this.serviceId, required this.titleHead})
+      : super(key: key);
 
   @override
   State<OrdersPendingScreen> createState() => _OrdersPendingScreenState();
 }
 
 class _OrdersPendingScreenState extends State<OrdersPendingScreen> {
+  static const String _TAG = 'OrdersPendingScreen';
+
   String _optionName = 'Table';
 
   @override
@@ -55,7 +58,7 @@ class _OrdersPendingScreenState extends State<OrdersPendingScreen> {
             widget.serviceId, false, false),
         builder: (ctx, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return LoadingWidget();
+            return const LoadingWidget();
           }
 
           if (snapshot.hasData) {
@@ -66,7 +69,6 @@ class _OrdersPendingScreenState extends State<OrdersPendingScreen> {
                 Map<String, dynamic> data =
                     document.data()! as Map<String, dynamic>;
                 final CartItem ci = CartItem.fromMap(data);
-                // BlocRepository.insertCartItem(widget.dao, ci);
                 cartItems.add(ci);
 
                 if (i == snapshot.data!.docs.length - 1) {
@@ -111,10 +113,12 @@ class _OrdersPendingScreenState extends State<OrdersPendingScreen> {
                 ),
                 onTap: () {
                   BlocOrder order = orders[index];
-                  logger.d('Order selected for cust id : ' +
-                      order.customerId +
-                      ", table num: " +
-                      order.tableNumber.toString());
+                  Logx.i(
+                      _TAG,
+                      'order selected for cust id : ' +
+                          order.customerId +
+                          ", table num: " +
+                          order.tableNumber.toString());
 
                   Bill bill = CartItemUtils.extractBill(order.cartItems);
                   Navigator.of(context).push(
