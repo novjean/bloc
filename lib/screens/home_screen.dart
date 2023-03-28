@@ -15,6 +15,7 @@ import '../helpers/dummy.dart';
 import '../helpers/firestore_helper.dart';
 import '../helpers/fresh.dart';
 import '../helpers/token_monitor.dart';
+import '../utils/logx.dart';
 import '../widgets/home/bloc_slide_item.dart';
 import '../widgets/parties/party_banner.dart';
 import '../widgets/search_card.dart';
@@ -32,6 +33,8 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  static const String _TAG = '_HomeScreenState';
+
   late List<Bloc> mBlocs;
   var _isBlocsLoading = true;
 
@@ -65,20 +68,20 @@ class _HomeScreenState extends State<HomeScreen> {
                 });
               }
             } else {
-              print('no blocs found!!!');
+              Logx.em(_TAG,' no blocs found!!!');
               //todo: need to re-attempt or check internet connection
               setState(() {
                 _isBlocsLoading = false;
               });
             }
-          }).catchError((err) {
-            print('error loading blocs ' + err);
+          }).catchError((e,s) {
+            Logx.ex(_TAG, 'error loading blocs', e, s);
             setState(() {
               _isBlocsLoading = false;
             });
           })
         : FirestoreHelper.pullBlocs().then((res) {
-            print("successfully pulled in blocs");
+            Logx.i(_TAG, "successfully pulled in blocs");
 
             if (res.docs.isNotEmpty) {
               // found blocs
@@ -96,14 +99,14 @@ class _HomeScreenState extends State<HomeScreen> {
                 });
               }
             } else {
-              print('no blocs found!!!');
+              Logx.em(_TAG, 'no blocs found!!!');
               //todo: need to re-attempt or check internet connection
               setState(() {
                 _isBlocsLoading = false;
               });
             }
           }).catchError((err) {
-            print('error loading blocs ' + err);
+            Logx.em(_TAG, 'error loading blocs ' + err.toString());
             setState(() {
               _isBlocsLoading = false;
             });
@@ -124,12 +127,13 @@ class _HomeScreenState extends State<HomeScreen> {
             _isUpcomingPartyLoading = false;
           });
         } catch (err) {
-          print('error: ' + err.toString());
+          Logx.em(_TAG, 'error: ' + err.toString());
         }
       } else {
-        print('no upcoming party found!');
-
-        //should not display the events module
+        Logx.em(_TAG, 'no upcoming party found!');
+        setState(() {
+          _isUpcomingPartyLoading = false;
+        });
       }
     });
 
@@ -146,8 +150,12 @@ class _HomeScreenState extends State<HomeScreen> {
             mGuestWifi = wifi;
             _isGuestWifiDetailsLoading = false;
           });
-        } catch (err) {
-          print('error: ' + err.toString());
+        } on PlatformException catch (e, s) {
+          Logx.e(_TAG, e, s);
+        } on Exception catch (e, s) {
+          Logx.e(_TAG, e, s);
+        } catch (e) {
+          Logx.em(_TAG, e.toString());
         }
       } else {
         print('no guest wifi found!');

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 
 import '../../db/entity/party.dart';
 import '../../helpers/fresh.dart';
+import '../../utils/logx.dart';
 import '../../widgets/parties/party_item.dart';
 import '../../widgets/ui/sized_listview_block.dart';
 import '../../widgets/ui/toaster.dart';
@@ -18,6 +19,8 @@ class PartyScreen extends StatefulWidget {
 }
 
 class _PartyScreenState extends State<PartyScreen> {
+  static const String _TAG = 'PartyScreen';
+
   List<Party> mParties = [];
   var _isPartiesLoading = true;
 
@@ -47,7 +50,7 @@ class _PartyScreenState extends State<PartyScreen> {
           });
         }
       } else {
-        print('no parties found!');
+        Logx.em(_TAG, 'no parties found!');
         const Center(
           child: Text('no parties assigned yet!'),
         );
@@ -60,7 +63,7 @@ class _PartyScreenState extends State<PartyScreen> {
     FirestoreHelper.pullPastParties(
             Timestamp.now().millisecondsSinceEpoch, false)
         .then((res) {
-      print("successfully pulled in past parties");
+      Logx.i(_TAG, "successfully pulled in past parties");
 
       if (res.docs.isNotEmpty) {
         // found parties
@@ -77,7 +80,7 @@ class _PartyScreenState extends State<PartyScreen> {
           });
         }
       } else {
-        print('no past parties found!');
+        Logx.i(_TAG,'no past parties found!');
         const Center(
           child: Text('no past parties found yet!'),
         );
@@ -97,7 +100,7 @@ class _PartyScreenState extends State<PartyScreen> {
     if (parties.isEmpty) {
       if (_showPastParties) {
         Toaster.shortToast('no upcoming parties');
-        print('no upcoming parties to show');
+        Logx.i(_TAG,'no upcoming parties to show');
 
         if (mParties.isNotEmpty) {
           parties = mParties;
@@ -152,7 +155,6 @@ class _PartyScreenState extends State<PartyScreen> {
           }
           if (index == parties.length - 1) {
             return Column(
-              mainAxisSize: MainAxisSize.min,
               children: [
                 PartyItem(
                   party: parties[index],

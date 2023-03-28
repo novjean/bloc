@@ -13,6 +13,10 @@ class Logx {
     FirebaseCrashlytics.instance.recordError(e, s);
   }
 
+  static void em(String tag, String message) {
+    logger.e(tag + ':' + message);
+    FirebaseCrashlytics.instance.log(message);
+  }
   static void ex(String tag, String message, Exception e, StackTrace s) {
     logger.e(tag + ':' + message + e.toString());
     FirebaseCrashlytics.instance.recordError(e, s);

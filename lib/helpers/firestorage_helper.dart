@@ -4,9 +4,11 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/services.dart';
 import 'package:logger/logger.dart';
 
+import '../utils/logx.dart';
 import '../widgets/ui/toaster.dart';
 
 class FirestorageHelper {
+  static const String _TAG = 'FirestorageHelper';
   static var logger = Logger();
 
   static String USERS = 'user_image';
@@ -23,11 +25,13 @@ class FirestorageHelper {
     try{
       await firebaseStorage.refFromURL(fileUrl).delete();
       return true;
-    } on PlatformException catch (err) {
-      logger.e(err.message);
+    } on PlatformException catch (e, s) {
+      Logx.e(_TAG, e, s);
       Toaster.shortToast("file deletion failed. check credentials.");
-    } catch (err) {
-      logger.e(err);
+    } on Exception catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } catch (e) {
+      logger.e(e);
       Toaster.shortToast("file deletion failed.");
     }
     return false;
@@ -36,12 +40,23 @@ class FirestorageHelper {
   static uploadFile(String directory, String docId, File file) async {
     logger.d("uploadFile : " + file.path);
 
-    final ref = FirebaseStorage.instance
-        .ref()
-        .child(directory)
-        .child(docId + '.jpg');
-    await ref.putFile(file);
-    final url = await ref.getDownloadURL();
+    String url = '';
+
+    try {
+      final ref = FirebaseStorage.instance
+          .ref()
+          .child(directory)
+          .child(docId + '.jpg');
+      await ref.putFile(file);
+      url = await ref.getDownloadURL();
+      Logx.i(_TAG, 'uploadFile success: ' + url.toString());
+    } on PlatformException catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } on Exception catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } catch (e) {
+      logger.e(e);
+    }
 
     return url;
   }

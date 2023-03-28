@@ -135,7 +135,9 @@ class _BlocAddEditScreenState extends State<BlocAddEditScreen> {
             if (isPhotoChanged) {
               widget.bloc =
                   widget.bloc.copyWith(imageUrl: newImageUrl);
-              FirestorageHelper.deleteFile(oldImageUrl);
+              if(oldImageUrl.isNotEmpty) {
+                FirestorageHelper.deleteFile(oldImageUrl);
+              }
             }
 
             FirestoreHelper.pushBloc(widget.bloc);

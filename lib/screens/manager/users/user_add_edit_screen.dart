@@ -345,11 +345,7 @@ class _UserAddEditScreenState extends State<UserAddEditScreen> {
             if (isPhotoChanged) {
               widget.user = widget.user.copyWith(imageUrl: newImageUrl);
               if(oldImageUrl.isNotEmpty){
-                try {
                   FirestorageHelper.deleteFile(oldImageUrl);
-                } catch (err){
-                  print(err);
-                }
               }
             }
 
@@ -385,10 +381,8 @@ class _UserAddEditScreenState extends State<UserAddEditScreen> {
                   ElevatedButton(
                     child: Text('yes'),
                     onPressed: () {
-                      try {
+                      if(widget.user.imageUrl.isNotEmpty){
                         FirestorageHelper.deleteFile(widget.user.imageUrl);
-                      } catch (err){
-                        print(err);
                       }
 
                       FirestoreHelper.deleteUser(widget.user);
