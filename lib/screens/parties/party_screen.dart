@@ -128,6 +128,54 @@ class _PartyScreenState extends State<PartyScreen> {
         scrollDirection: Axis.vertical,
         physics: const BouncingScrollPhysics(),
         itemBuilder: (BuildContext context, int index) {
+          if(parties.length == 1) {
+            if(_showPastParties) {
+              return Column(
+                children: [
+                  GestureDetector(
+                      child: SizedListViewBlock(
+                        title: 'show upcoming parties',
+                        height: 50,
+                        width: MediaQuery.of(context).size.width,
+                        color: Theme.of(context).primaryColor,
+                      ),
+                      onTap: () {
+                        print('show upcoming parties button clicked');
+                        setState(() {
+                          _showPastParties = !_showPastParties;
+                        });
+                      }),
+                  PartyItem(
+                    party: parties[index],
+                    imageHeight: 300,
+                  ),
+                ],
+              );
+            }else {
+              return Column(
+                children: [
+                  PartyItem(
+                    party: parties[index],
+                    imageHeight: 300,
+                  ),
+                  GestureDetector(
+                      child: SizedListViewBlock(
+                        title: 'show past parties',
+                        height: 50,
+                        width: MediaQuery.of(context).size.width,
+                        color: Theme.of(context).primaryColor,
+                      ),
+                      onTap: () {
+                        print('show upcoming parties button clicked');
+                        setState(() {
+                          _showPastParties = !_showPastParties;
+                        });
+                      }),
+                ],
+              );
+            }
+          }
+
           if (index == 0) {
             return Column(
               children: [
