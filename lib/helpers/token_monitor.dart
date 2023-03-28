@@ -5,6 +5,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 
 import '../db/entity/user.dart';
+import '../utils/logx.dart';
 import 'firestore_helper.dart';
 
 /// Manages & returns the users FCM token.
@@ -21,11 +22,13 @@ class TokenMonitor extends StatefulWidget {
 }
 
 class _TokenMonitor extends State<TokenMonitor> {
+  static const String _TAG = 'TokenMonitor';
+
   String? _token;
   late Stream<String> _tokenStream;
 
   void setToken(String? token) {
-    print('FCM Token: $token');
+    Logx.i(_TAG, 'fcm token: $token');
     setState(() {
       _token = token;
 

@@ -33,7 +33,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  static const String _TAG = '_HomeScreenState';
+  static const String _TAG = 'HomeScreen';
 
   late List<Bloc> mBlocs;
   var _isBlocsLoading = true;
@@ -50,7 +50,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     UserPreferences.myUser.clearanceLevel >= Constants.PROMOTER_LEVEL
         ? FirestoreHelper.pullBlocsPromoter().then((res) {
-            print("successfully pulled in blocs for promoter");
+            Logx.i(_TAG, "successfully pulled in blocs for promoter");
 
             if (res.docs.isNotEmpty) {
               // found blocs
@@ -114,7 +114,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     int timeNow = Timestamp.now().millisecondsSinceEpoch;
     FirestoreHelper.pullUpcomingPartyByEndTime(timeNow).then((res) {
-      print("successfully pulled in parties.");
+      Logx.i(_TAG,"successfully pulled in parties.");
 
       if (res.docs.isNotEmpty) {
         try {
@@ -138,7 +138,7 @@ class _HomeScreenState extends State<HomeScreen> {
     });
 
     FirestoreHelper.pullGuestWifi(Constants.blocServiceId).then((res) {
-      print("successfully pulled in guest wifi");
+      Logx.i(_TAG,"successfully pulled in guest wifi");
 
       if (res.docs.isNotEmpty) {
         try {
@@ -158,7 +158,7 @@ class _HomeScreenState extends State<HomeScreen> {
           Logx.em(_TAG, e.toString());
         }
       } else {
-        print('no guest wifi found!');
+        Logx.i(_TAG,'no guest wifi found!');
       }
     });
   }
@@ -191,7 +191,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 : const SizedBox(),
             const SizedBox(height: 10.0),
             kIsWeb
-                ? StoreBadgeItem()
+                ? const StoreBadgeItem()
                 : TokenMonitor((token) {
                     if (token != null) {
                       User user = UserPreferences.myUser;
@@ -202,7 +202,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           FirestoreHelper.updateUserFcmToken(
                               UserPreferences.myUser.id, token);
                         } else {
-                          print('fcm token has not changed: ' + token);
+                          Logx.i(_TAG,'fcm token has not changed: ' + token);
                         }
                       }
                     }
@@ -217,7 +217,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   _displayBlocs(context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 0),
       height: 390,
       child: ListView.builder(
           itemCount: mBlocs.length,
@@ -227,10 +226,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
             return GestureDetector(
               child:
-                  // BlocSlideItem(
-                  //   bloc: bloc,
-                  //   rating: '5',
-                  // )
                   BlocSlideItem(
                 bloc: bloc,
               ),
@@ -393,7 +388,7 @@ class _HomeScreenState extends State<HomeScreen> {
       stream: FirestoreHelper.getUsers(Constants.MANAGER_LEVEL),
       builder: (ctx, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          print('loading users...');
+          Logx.i(_TAG, 'loading users...');
           return const LoadingWidget();
         }
 

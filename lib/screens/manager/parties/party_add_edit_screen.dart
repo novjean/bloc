@@ -31,6 +31,8 @@ class PartyAddEditScreen extends StatefulWidget {
 }
 
 class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
+  static const String _TAG = 'PartyAddEditScreen';
+
   bool isPhotoChanged = false;
   late String oldImageUrl;
   late String newImageUrl;
