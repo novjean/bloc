@@ -5,10 +5,13 @@ import '../db/entity/party.dart';
 import '../db/entity/product.dart';
 import '../db/entity/user.dart';
 import '../db/shared_preferences/user_preferences.dart';
+import '../utils/logx.dart';
 import 'dummy.dart';
 import 'firestore_helper.dart';
 
 class Fresh {
+  static const String _TAG = 'Fresh';
+
   /** category **/
   static Category freshCategoryMap(Map<String, dynamic> map, bool shouldUpdate){
     Category category = Dummy.getDummyCategory('');
@@ -165,8 +168,10 @@ class Fresh {
     } catch (err) {
       intPrice = map['price'] as int;
       product = product.copyWith(price: intPrice.toDouble());
-      print('product price not exist for product id: ' + product.id);
-      shouldPushProduct = true;
+      if(intPrice == 0){
+        Logx.i(_TAG, 'product price not exist for product id: ' + product.id);
+        shouldPushProduct = true;
+      }
     }
     try {
       product = product.copyWith(priceHighest: map['priceHighest'] as double);
