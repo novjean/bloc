@@ -182,7 +182,9 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
                           TextButton(
                             child: const Text("yes"),
                             onPressed: () {
-                              FirestorageHelper.deleteFile(sUser.imageUrl);
+                              if(sUser.imageUrl.isNotEmpty) {
+                                FirestorageHelper.deleteFile(sUser.imageUrl);
+                              }
                               FirestoreHelper.deleteUser(sUser);
 
                               print('user is deleted');

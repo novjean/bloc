@@ -12,6 +12,7 @@ import '../../db/shared_preferences/user_preferences.dart';
 import '../../helpers/firestorage_helper.dart';
 import '../../helpers/firestore_helper.dart';
 import '../../helpers/fresh.dart';
+import '../../utils/logx.dart';
 import '../../utils/string_utils.dart';
 import '../../widgets/profile_widget.dart';
 import '../../widgets/ui/button_widget.dart';
@@ -31,6 +32,8 @@ class ProfileAddEditRegisterPage extends StatefulWidget {
 
 class _ProfileAddEditRegisterPageState
     extends State<ProfileAddEditRegisterPage> {
+  static const String _TAG = '_ProfileAddEditRegisterPageState';
+
   bool isPhotoChanged = false;
 
   late String oldImageUrl;
@@ -48,17 +51,7 @@ class _ProfileAddEditRegisterPageState
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
             if (widget.task == 'register') {
-              // UserPreferences.resetUser();
-              //
-              // try {
-              //   FirebaseAuth.instance.signOut();
-              // } catch (err) {
-              //   print('err:' + err.toString());
-              // }
-              // Navigator.of(context).pushReplacement(
-              //   MaterialPageRoute(builder: (context) => LoginScreen()),
-              // );
-              print('register back press not allowed');
+              Logx.i(_TAG,'register back press not allowed');
               Toaster.longToast('click save to move ahead');
             } else {
               Navigator.of(context).pop();
@@ -140,7 +133,7 @@ class _ProfileAddEditRegisterPageState
               FirestoreHelper.pushUser(freshUser);
               Navigator.of(context).pop();
             } else {
-              print('user cannot be entered as data is incomplete');
+              Logx.i(_TAG,'user cannot be entered as data is incomplete');
               Toaster.longToast('please enter your name');
             }
           },

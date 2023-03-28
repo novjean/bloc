@@ -256,7 +256,9 @@ class _CategoryAddEditScreenState extends State<CategoryAddEditScreen> {
             if (isPhotoChanged) {
               widget.category =
                   widget.category.copyWith(imageUrl: newImageUrl);
-              FirestorageHelper.deleteFile(oldImageUrl);
+              if(oldImageUrl.isNotEmpty) {
+                FirestorageHelper.deleteFile(oldImageUrl);
+              }
             }
 
             Category freshCategory = Fresh.freshCategory(widget.category);
