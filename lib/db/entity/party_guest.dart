@@ -11,8 +11,9 @@ class PartyGuest {
   final int createdAt;
   final bool isApproved;
 
-//<editor-fold desc="Data Methods">
+  String guestStatus;
 
+//<editor-fold desc="Data Methods">
   PartyGuest({
     required this.id,
     required this.partyId,
@@ -24,6 +25,7 @@ class PartyGuest {
     required this.guestsRemaining,
     required this.createdAt,
     required this.isApproved,
+    required this.guestStatus,
   });
 
   @override
@@ -40,7 +42,8 @@ class PartyGuest {
           guestsCount == other.guestsCount &&
           guestsRemaining == other.guestsRemaining &&
           createdAt == other.createdAt &&
-          isApproved == other.isApproved);
+          isApproved == other.isApproved &&
+          guestStatus == other.guestStatus);
 
   @override
   int get hashCode =>
@@ -53,7 +56,8 @@ class PartyGuest {
       guestsCount.hashCode ^
       guestsRemaining.hashCode ^
       createdAt.hashCode ^
-      isApproved.hashCode;
+      isApproved.hashCode ^
+      guestStatus.hashCode;
 
   @override
   String toString() {
@@ -68,6 +72,7 @@ class PartyGuest {
         ' guestsRemaining: $guestsRemaining,' +
         ' createdAt: $createdAt,' +
         ' isApproved: $isApproved,' +
+        ' guestStatus: $guestStatus,' +
         '}';
   }
 
@@ -82,6 +87,7 @@ class PartyGuest {
     int? guestsRemaining,
     int? createdAt,
     bool? isApproved,
+    String? guestStatus,
   }) {
     return PartyGuest(
       id: id ?? this.id,
@@ -94,6 +100,7 @@ class PartyGuest {
       guestsRemaining: guestsRemaining ?? this.guestsRemaining,
       createdAt: createdAt ?? this.createdAt,
       isApproved: isApproved ?? this.isApproved,
+      guestStatus: guestStatus ?? this.guestStatus,
     );
   }
 
@@ -109,6 +116,7 @@ class PartyGuest {
       'guestsRemaining': this.guestsRemaining,
       'createdAt': this.createdAt,
       'isApproved': this.isApproved,
+      'guestStatus': this.guestStatus,
     };
   }
 
@@ -124,6 +132,7 @@ class PartyGuest {
       guestsRemaining: map['guestsRemaining'] as int,
       createdAt: map['createdAt'] as int,
       isApproved: map['isApproved'] as bool,
+      guestStatus: map['guestStatus'] as String,
     );
   }
 

@@ -46,6 +46,9 @@ class _PartyGuestAddEditPageState extends State<PartyGuestAddEditPage> {
   late String sGuestCount;
   List<String> guestCounts = [];
 
+  late String sGuestStatus;
+  List<String> guestStatuses = ['couple', 'ladies', 'lgbtq+'];
+
   @override
   void initState() {
     user = Dummy.getDummyUser();
@@ -73,6 +76,8 @@ class _PartyGuestAddEditPageState extends State<PartyGuestAddEditPage> {
       guestCounts.add(i.toString());
     }
     sGuestCount = widget.partyGuest.guestsCount.toString();
+
+    sGuestStatus = widget.partyGuest.guestStatus;
   }
 
   @override
@@ -204,6 +209,79 @@ class _PartyGuestAddEditPageState extends State<PartyGuestAddEditPage> {
               const SizedBox(height: 24),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 32),
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 8.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Text(
+                            'guests status',
+                            style: TextStyle(
+                                color: Theme.of(context).primaryColorLight,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                    ),
+                    FormField<String>(
+                      builder: (FormFieldState<String> state) {
+                        return InputDecorator(
+                          key: const ValueKey('guests_status'),
+                          decoration: InputDecoration(
+                              fillColor: Colors.white,
+                              errorStyle: TextStyle(
+                                  color: Theme.of(context).errorColor,
+                                  fontSize: 16.0),
+                              hintText: 'please select guest status',
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(5.0),
+                                borderSide: BorderSide(
+                                    color: Theme.of(context).primaryColor),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                // width: 0.0 produces a thin "hairline" border
+                                borderSide: BorderSide(
+                                    color: Theme.of(context).primaryColor,
+                                    width: 0.0),
+                              )),
+                          isEmpty: sGuestStatus == '',
+                          child: DropdownButtonHideUnderline(
+                            child: DropdownButton<String>(
+                              style: TextStyle(
+                                  color: Theme.of(context).primaryColorLight),
+                              dropdownColor: Theme.of(context).backgroundColor,
+                              value: sGuestStatus,
+                              isDense: true,
+                              onChanged: (String? newValue) {
+                                setState(() {
+                                  sGuestStatus = newValue!;
+
+                                  widget.partyGuest = widget.partyGuest
+                                      .copyWith(guestStatus: sGuestStatus);
+                                  state.didChange(newValue);
+                                });
+                              },
+                              items: guestStatuses.map((String value) {
+                                return DropdownMenuItem<String>(
+                                  value: value,
+                                  child: Text(value),
+                                );
+                              }).toList(),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: 24),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 32),
                 child: ButtonWidget(
                   text: widget.task == 'edit' ? 'save changes' : 'join list',
                   onClicked: () {
@@ -236,7 +314,7 @@ class _PartyGuestAddEditPageState extends State<PartyGuestAddEditPage> {
                                       ],
                                     ),
                                   ),
-                                  Container(
+                                  SizedBox(
                                     height: 250,
                                     width: 300,
                                     child: SingleChildScrollView(
@@ -247,40 +325,16 @@ class _PartyGuestAddEditPageState extends State<PartyGuestAddEditPage> {
                                         mainAxisAlignment:
                                             MainAxisAlignment.start,
                                         children: [
-                                          Text('entry rules:\n'),
+                                          const Text('entry rules:\n'),
                                           Text(widget.party.guestListRules
                                               .toLowerCase()),
-                                          Text('\nclub rules:\n'),
+                                          const Text('\nclub rules:\n'),
                                           Text(widget.party.clubRules
                                               .toLowerCase()),
                                         ],
                                       ),
                                     ),
                                   ),
-                                  // Padding(
-                                  //   padding: const EdgeInsets.only(top: 20),
-                                  //   child: Column(
-                                  //     mainAxisAlignment: MainAxisAlignment.start,
-                                  //     children: [
-                                  //       Align(
-                                  //         alignment: Alignment.centerRight,
-                                  //         child: Text(
-                                  //           widget.partyGuest.guestsRemaining
-                                  //               .toString() +
-                                  //               ' guests remaining',
-                                  //           style: TextStyle(fontSize: 16),
-                                  //         ),
-                                  //       ),
-                                  //       Align(
-                                  //         alignment: Alignment.centerRight,
-                                  //         child: Text(
-                                  //           'valid until 11 pm',
-                                  //           style: TextStyle(fontSize: 16),
-                                  //         ),
-                                  //       ),
-                                  //     ],
-                                  //   ),
-                                  // ),
                                 ],
                               ),
                             ),

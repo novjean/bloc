@@ -56,4 +56,7 @@ class Constants {
 
   // flagship store kept for ease of reference
   static String blocServiceId = 'UVU4XPqTYr3U0YhQzEhg';
+
+  static String clubRules = '- Entry is restricted to the age of 21+ \n- We are a community. Respect everyone and their space on the floor. Don’t be a killjoy!! \n- Do not carry illegal substances. There isn\'t a better drug than Music! \n- Keep a smile and respect other patrons, artists, staff, bouncers, and the community. \n- Please refrain from using the phrase \'You don\'t know who I am\'. We are all Humans here and unfortunately, pets are not allowed.\n- You are being shot by our cameras. No guns and ammunition in the club allowed.\n- Violence will not be tolerated. Keep P.L.U.R on your Mind: Peace, Love, Unity & Respect.\n- Always toast before a shot. Have fun and stay classy.\n- You are responsible for your valuable belongings, that includes your partners. Keep an eye!\n- Open footwear is not allowed. No one likes an “Ouch” moment!\n- Rights of admission reserved for the ones who deserve.\n- You are important to us. Do not Drink & Drive.';
+  static String guestListRules = 'guest list shuts at 11 pm on the day of the event. club entry charges apply.';
 }

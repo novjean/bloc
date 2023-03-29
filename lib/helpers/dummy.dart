@@ -2,6 +2,7 @@ import 'package:bloc/db/entity/category.dart';
 import 'package:bloc/db/entity/guest_wifi.dart';
 import 'package:bloc/db/entity/party_guest.dart';
 import 'package:bloc/db/entity/service_table.dart';
+import 'package:bloc/utils/constants.dart';
 import 'package:bloc/utils/string_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -96,27 +97,26 @@ class Dummy {
 
   static Party getDummyParty(String blocId) {
     Party dummyParty = Party(
-        id: StringUtils.getRandomString(28),
-        createdAt: Timestamp.now().millisecondsSinceEpoch,
-        imageUrl: '',
-        name: '',
-        ownerId: UserPreferences.myUser.id,
-        isActive: false,
-        isTBA: true,
-        description: '',
-        blocServiceId: '',
-        endTime: Timestamp.now().millisecondsSinceEpoch,
-        instagramUrl: '',
-        startTime: Timestamp.now().millisecondsSinceEpoch,
-        ticketUrl: '',
-        listenUrl: '',
-        eventName: '',
-
-        isGuestListActive: false,
-        guestListCount: 1,
-        isEmailRequired: false,
-        clubRules: '',
-        guestListRules: '',
+      id: StringUtils.getRandomString(28),
+      createdAt: Timestamp.now().millisecondsSinceEpoch,
+      imageUrl: '',
+      name: '',
+      ownerId: UserPreferences.myUser.id,
+      isActive: false,
+      isTBA: true,
+      description: '',
+      blocServiceId: '',
+      endTime: Timestamp.now().millisecondsSinceEpoch,
+      instagramUrl: '',
+      startTime: Timestamp.now().millisecondsSinceEpoch,
+      ticketUrl: '',
+      listenUrl: '',
+      eventName: '',
+      isGuestListActive: false,
+      guestListCount: 1,
+      isEmailRequired: false,
+      clubRules: Constants.clubRules,
+      guestListRules: Constants.guestListRules,
     );
 
     return dummyParty;
@@ -124,17 +124,17 @@ class Dummy {
 
   static PartyGuest getDummyPartyGuest() {
     PartyGuest dummyGuest = PartyGuest(
-      id: StringUtils.getRandomString(28),
-      guestId: UserPreferences.myUser.id,
-      name: UserPreferences.myUser.name,
-      phone: UserPreferences.myUser.phoneNumber.toString(),
-      email: UserPreferences.myUser.email,
-      guestsCount: 1,
-      guestsRemaining: 1,
-      createdAt: Timestamp.now().millisecondsSinceEpoch,
-      isApproved: false,
-      partyId: ''
-    );
+        id: StringUtils.getRandomString(28),
+        partyId: '',
+        guestId: UserPreferences.myUser.id,
+        name: UserPreferences.myUser.name,
+        phone: UserPreferences.myUser.phoneNumber.toString(),
+        email: UserPreferences.myUser.email,
+        guestsCount: 1,
+        guestsRemaining: 1,
+        createdAt: Timestamp.now().millisecondsSinceEpoch,
+        isApproved: false,
+        guestStatus: 'couple');
     return dummyGuest;
   }
 
@@ -206,5 +206,4 @@ class Dummy {
         lastSeenAt: millis);
     return dummyUser;
   }
-  
 }

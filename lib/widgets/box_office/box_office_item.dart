@@ -60,8 +60,7 @@ class _BoxOfficeItemState extends State<BoxOfficeItem> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Container(
-                        padding: const EdgeInsets.only(
-                            top: 3, left: 5.0),
+                        padding: const EdgeInsets.only(top: 3, left: 5.0),
                         child: Text(
                           title,
                           style: const TextStyle(
@@ -182,10 +181,12 @@ class _BoxOfficeItemState extends State<BoxOfficeItem> {
                                   Align(
                                     alignment: Alignment.centerRight,
                                     child: Text(
-                                      widget.partyGuest.guestsRemaining
+                                      widget.partyGuest.guestStatus +
+                                          ' entry.' +
+                                          widget.partyGuest.guestsRemaining
                                               .toString() +
                                           ' guests remaining',
-                                      style: TextStyle(fontSize: 16),
+                                      style: const TextStyle(fontSize: 16),
                                     ),
                                   ),
                                   Align(

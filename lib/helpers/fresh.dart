@@ -281,12 +281,20 @@ class Fresh {
     }
     try {
       party = party.copyWith(clubRules: map['clubRules'] as String);
+      if(party.clubRules.isEmpty){
+        party = party.copyWith(clubRules: Constants.clubRules);
+        shouldPushParty = true;
+      }
     } catch (e) {
       Logx.em(_TAG, 'party clubRules not exist for party id: ' + party.id);
       shouldPushParty = true;
     }
     try {
       party = party.copyWith(guestListRules: map['guestListRules'] as String);
+      if(party.guestListRules.isEmpty){
+        party = party.copyWith(guestListRules: Constants.guestListRules);
+        shouldPushParty = true;
+      }
     } catch (e) {
       Logx.em(_TAG, 'party guestListRules not exist for party id: ' + party.id);
       shouldPushParty = true;
@@ -491,6 +499,15 @@ class Fresh {
               partyGuest.id);
     }
 
+    try {
+      freshGuest = freshGuest.copyWith(guestStatus: partyGuest.guestStatus);
+    } catch (e) {
+      Logx.em(
+          _TAG,
+          'party guest guestStatus not exist for party guest id: ' +
+              partyGuest.id);
+    }
+
     return freshGuest;
   }
 
@@ -563,6 +580,13 @@ class Fresh {
     } catch (e) {
       Logx.em(_TAG,
           'partyGuest isApproved not exist for user id: ' + partyGuest.id);
+      shouldPush = true;
+    }
+    try {
+      partyGuest = partyGuest.copyWith(guestStatus: map['guestStatus'] as String);
+    } catch (e) {
+      Logx.em(_TAG,
+          'partyGuest guestStatus not exist for user id: ' + partyGuest.id);
       shouldPush = true;
     }
 
