@@ -41,7 +41,7 @@ class _PartyScreenState extends State<PartyScreen> {
         for (int i = 0; i < res.docs.length; i++) {
           DocumentSnapshot document = res.docs[i];
           Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-          final Party party = Fresh.freshPartyMap(data, false);
+          final Party party = Fresh.freshPartyMap(data, true);
           parties.add(party);
 
           setState(() {
@@ -71,7 +71,7 @@ class _PartyScreenState extends State<PartyScreen> {
         for (int i = 0; i < res.docs.length; i++) {
           DocumentSnapshot document = res.docs[i];
           Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-          final Party bloc = Fresh.freshPartyMap(data, false);
+          final Party bloc = Fresh.freshPartyMap(data, true);
           parties.add(bloc);
 
           setState(() {
