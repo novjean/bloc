@@ -13,7 +13,7 @@ import '../screens/login_screen.dart';
 import '../screens/user/order_history_screen.dart';
 
 class AppDrawer extends StatelessWidget {
-  AppDrawer({key}) : super(key: key);
+  const AppDrawer({key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -91,7 +91,7 @@ class AppDrawer extends StatelessWidget {
                   ),
                   const Divider(),
                 ])
-              : const SizedBox(height: 0),
+              : const SizedBox(),
           user.clearanceLevel >= Constants.MANAGER_LEVEL
               ? Column(
                   children: [
@@ -108,7 +108,7 @@ class AppDrawer extends StatelessWidget {
                     const Divider(),
                   ],
                 )
-              : const SizedBox(height: 0),
+              : const SizedBox(),
           user.clearanceLevel >= Constants.OWNER_LEVEL
               ? Column(
                   children: [
@@ -124,7 +124,7 @@ class AppDrawer extends StatelessWidget {
                     const Divider(),
                   ],
                 )
-              : const SizedBox(height: 0),
+              : const SizedBox(),
           const Spacer(),
           const Padding(
             padding: EdgeInsets.symmetric(horizontal: 10.0),

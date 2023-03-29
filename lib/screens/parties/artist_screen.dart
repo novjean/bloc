@@ -7,7 +7,7 @@ import '../../widgets/ui/button_widget.dart';
 class ArtistScreen extends StatefulWidget {
   final Party party;
 
-  ArtistScreen({required this.party, Key? key}) : super(key: key);
+  const ArtistScreen({required this.party, Key? key}) : super(key: key);
 
   @override
   State<ArtistScreen> createState() => _ArtistScreenState();
@@ -90,7 +90,7 @@ class _ArtistScreenState extends State<ArtistScreen> {
               ButtonWidget(
                   text: 'buy tickets',
                   onClicked: () {
-                    final uri = Uri.parse(widget.party.listenUrl);
+                    final uri = Uri.parse(widget.party.ticketUrl);
                     NetworkUtils.launchInBrowser(uri);
                   }),
               const SizedBox(height: 10),
