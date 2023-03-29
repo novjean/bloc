@@ -110,7 +110,14 @@ class Dummy {
         startTime: Timestamp.now().millisecondsSinceEpoch,
         ticketUrl: '',
         listenUrl: '',
-        eventName: '');
+        eventName: '',
+
+        isGuestListActive: false,
+        guestListCount: 1,
+        isEmailRequired: false,
+        clubRules: '',
+        guestListRules: '',
+    );
 
     return dummyParty;
   }

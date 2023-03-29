@@ -12,6 +12,7 @@ import '../../helpers/dummy.dart';
 import '../../helpers/firestore_helper.dart';
 import '../../helpers/fresh.dart';
 import '../../utils/constants.dart';
+import '../../utils/logx.dart';
 import '../../widgets/box_office/box_office_item.dart';
 import '../../widgets/ui/loading_widget.dart';
 import '../../widgets/ui/sized_listview_block.dart';
@@ -24,6 +25,8 @@ class BoxOfficeScreen extends StatefulWidget {
 }
 
 class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
+  static const String _TAG = 'BoxOfficeScreen';
+
   List<Party> mParties = [];
   var _isPartiesLoading = true;
 
@@ -35,7 +38,7 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
     int timeNow = Timestamp.now().millisecondsSinceEpoch;
 
     FirestoreHelper.pullPartiesByEndTime(timeNow, true).then((res) {
-      print("successfully pulled in parties");
+      Logx.i(_TAG, "successfully pulled in parties");
 
       if (res.docs.isNotEmpty) {
         List<Party> parties = [];
@@ -51,7 +54,7 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
           });
         }
       } else {
-        print('no parties found!');
+        Logx.i(_TAG, 'no parties found!');
         setState(() {
           _isPartiesLoading = false;
         });
@@ -168,7 +171,7 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
         }
         return const LoadingWidget();
       },
-    ) : Expanded(child: Center(child: Text('no tickets here!'),));
+    ) : const Expanded(child: Center(child: Text('no tickets here!'),));
   }
 
   _displayPartyGuestListRequests(

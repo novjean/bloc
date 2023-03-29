@@ -71,7 +71,7 @@ class _PartyScreenState extends State<PartyScreen> {
         for (int i = 0; i < res.docs.length; i++) {
           DocumentSnapshot document = res.docs[i];
           Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-          final Party bloc = Fresh.freshPartyMap(data, true);
+          final Party bloc = Fresh.freshPartyMap(data, false);
           parties.add(bloc);
 
           setState(() {

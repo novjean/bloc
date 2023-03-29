@@ -49,7 +49,7 @@ class PartyBanner extends StatelessWidget {
                         child: Text(
                           party.name.toLowerCase(),
                           style: const TextStyle(
-                            fontSize: 24.0,
+                            fontSize: 24,
                             fontWeight: FontWeight.w800,
                           ),
                           textAlign: TextAlign.left,
@@ -84,7 +84,7 @@ class PartyBanner extends StatelessWidget {
                       ),
 
                       const Spacer(),
-                      shouldShowButton
+                      shouldShowButton && party.name.length<20
                           ? party.isTBA
                               ? showListenOrInstaDialog(context)
                               : party.ticketUrl.isNotEmpty

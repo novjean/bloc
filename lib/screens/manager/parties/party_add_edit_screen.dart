@@ -52,6 +52,9 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
   TimeOfDay sTimeOfDay = TimeOfDay.now();
   bool _isStartDateBeingSet = true;
 
+  late String sGuestCount;
+  List<String> guestCounts = [];
+
   @override
   void initState() {
     super.initState();
@@ -89,6 +92,11 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
         });
       }
     });
+
+    for (int i = 1; i <= 10; i++) {
+      guestCounts.add(i.toString());
+    }
+    sGuestCount = widget.party.guestListCount.toString();
   }
 
   @override
@@ -322,6 +330,12 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
                 },
               ),
               const SizedBox(height: 24),
+              dateTimeContainer(context, 'start'),
+
+              const SizedBox(height: 24),
+              dateTimeContainer(context, 'end'),
+
+              const SizedBox(height: 24),
               Row(
                 children: <Widget>[
                   Text(
@@ -339,11 +353,6 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
                   ), //Checkbox
                 ], //<Widget>[]
               ),
-              const SizedBox(height: 24),
-              dateTimeContainer(context, 'start'),
-
-              const SizedBox(height: 24),
-              dateTimeContainer(context, 'end'),
 
               const SizedBox(height: 24),
               Row(
@@ -363,6 +372,136 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
                   ), //Checkbox
                 ], //<Widget>[]
               ),
+
+              const SizedBox(height: 24),
+              Row(
+                children: <Widget>[
+                  Text(
+                    'guestlist active : ',
+                    style: TextStyle(fontSize: 17.0),
+                  ), //Text
+                  const SizedBox(width: 10), //SizedBox
+                  Checkbox(
+                    value: widget.party.isGuestListActive,
+                    onChanged: (value) {
+                      setState(() {
+                        widget.party = widget.party.copyWith(isGuestListActive: value);
+                      });
+                    },
+                  ), //Checkbox
+                ], //<Widget>[]
+              ),
+              const SizedBox(height: 24),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 32),
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 8.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Text(
+                            'guests count',
+                            style: TextStyle(
+                                color: Theme.of(context).primaryColorLight,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                    ),
+                    FormField<String>(
+                      builder: (FormFieldState<String> state) {
+                        return InputDecorator(
+                          key: const ValueKey('guest_count'),
+                          decoration: InputDecoration(
+                              fillColor: Colors.white,
+                              errorStyle: TextStyle(
+                                  color: Theme.of(context).errorColor,
+                                  fontSize: 16.0),
+                              hintText: 'please select guest count',
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(5.0),
+                                borderSide: BorderSide(
+                                    color: Theme.of(context).primaryColor),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                // width: 0.0 produces a thin "hairline" border
+                                borderSide: BorderSide(
+                                    color: Theme.of(context).primaryColor,
+                                    width: 0.0),
+                              )),
+                          isEmpty: sGuestCount == '',
+                          child: DropdownButtonHideUnderline(
+                            child: DropdownButton<String>(
+                              style: TextStyle(
+                                  color: Theme.of(context).primaryColorLight),
+                              dropdownColor: Theme.of(context).backgroundColor,
+                              value: sGuestCount,
+                              isDense: true,
+                              onChanged: (String? newValue) {
+                                setState(() {
+                                  sGuestCount = newValue!;
+                                  int count = int.parse(sGuestCount);
+
+                                  widget.party = widget.party
+                                      .copyWith(guestListCount: count);
+                                  state.didChange(newValue);
+                                });
+                              },
+                              items: guestCounts.map((String value) {
+                                return DropdownMenuItem<String>(
+                                  value: value,
+                                  child: Text(value),
+                                );
+                              }).toList(),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 24),
+              Row(
+                children: <Widget>[
+                  const Text(
+                    'email required : ',
+                    style: TextStyle(fontSize: 17.0),
+                  ), //Text
+                  const SizedBox(width: 10), //SizedBox
+                  Checkbox(
+                    value: widget.party.isEmailRequired,
+                    onChanged: (value) {
+                      setState(() {
+                        widget.party = widget.party.copyWith(isEmailRequired: value);
+                      });
+                    },
+                  ), //Checkbox
+                ], //<Widget>[]
+              ),
+              const SizedBox(height: 24),
+              TextFieldWidget(
+                label: 'guest list rules',
+                text: widget.party.guestListRules,
+                maxLines: 5,
+                onChanged: (value) {
+                  widget.party = widget.party.copyWith(guestListRules: value);
+                },
+              ),
+
+              const SizedBox(height: 24),
+              TextFieldWidget(
+                label: 'club rules',
+                text: widget.party.clubRules,
+                maxLines: 5,
+                onChanged: (value) {
+                  widget.party = widget.party.copyWith(clubRules: value);
+                },
+              ),
+
 
               const SizedBox(height: 24),
               ButtonWidget(

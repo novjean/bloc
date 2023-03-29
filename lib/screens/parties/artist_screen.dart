@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 
 import '../../db/entity/party.dart';
+import '../../db/entity/party_guest.dart';
+import '../../helpers/dummy.dart';
 import '../../utils/network_utils.dart';
 import '../../widgets/ui/button_widget.dart';
+import 'party_guest_add_edit_screen.dart';
 
 class ArtistScreen extends StatefulWidget {
   final Party party;
@@ -80,23 +83,52 @@ class _ArtistScreenState extends State<ArtistScreen> {
         //     ],
         //   ),
         // ),
+        widget.party.isGuestListActive
+            ? Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    ButtonWidget(
+                        text: 'join guest list',
+                        onClicked: () {
+                          // nav to guest list add page
+                          PartyGuest partyGuest =
+                          Dummy.getDummyPartyGuest();
+                          partyGuest.partyId = widget.party.id;
+
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    PartyGuestAddEditPage(
+                                        partyGuest: partyGuest,
+                                        party: widget.party,
+                                        task: 'add')),
+                          );
+                        }),
+                    const SizedBox(height: 10),
+                  ],
+                ),
+              )
+            : const SizedBox(),
         widget.party.ticketUrl.isNotEmpty
             ? Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 10.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              ButtonWidget(
-                  text: 'buy tickets',
-                  onClicked: () {
-                    final uri = Uri.parse(widget.party.ticketUrl);
-                    NetworkUtils.launchInBrowser(uri);
-                  }),
-              const SizedBox(height: 10),
-            ],
-          ),
-        )
+                padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    ButtonWidget(
+                        text: 'buy tickets',
+                        onClicked: () {
+                          final uri = Uri.parse(widget.party.ticketUrl);
+                          NetworkUtils.launchInBrowser(uri);
+                        }),
+                    const SizedBox(height: 10),
+                  ],
+                ),
+              )
             : const SizedBox(),
         widget.party.listenUrl.isNotEmpty
             ? Padding(
@@ -106,7 +138,8 @@ class _ArtistScreenState extends State<ArtistScreen> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     ButtonWidget(
-                        text: 'listen' + findListenSource(widget.party.listenUrl),
+                        text:
+                            'listen' + findListenSource(widget.party.listenUrl),
                         onClicked: () {
                           final uri = Uri.parse(widget.party.listenUrl);
                           NetworkUtils.launchInBrowser(uri);
@@ -140,13 +173,13 @@ class _ArtistScreenState extends State<ArtistScreen> {
   }
 
   String findListenSource(String listenUrl) {
-    if(listenUrl.contains('spotify')){
-        return ' on spotify';
-    } else if(listenUrl.contains('soundcloud')){
+    if (listenUrl.contains('spotify')) {
+      return ' on spotify';
+    } else if (listenUrl.contains('soundcloud')) {
       return ' on soundcloud';
-    } if(listenUrl.contains('youtube')){
+    } else if (listenUrl.contains('youtube')) {
       return ' on youtube';
-    } else{
+    } else {
       return '';
     }
   }

@@ -494,6 +494,37 @@ class Fresh {
       shouldPushParty = true;
     }
 
+    try {
+      party = party.copyWith(isGuestListActive: map['isGuestListActive'] as bool);
+    } catch (e) {
+      Logx.em(_TAG, 'party isGuestListActive not exist for party id: ' + party.id);
+      shouldPushParty = true;
+    }
+    try {
+      party = party.copyWith(guestListCount: map['guestListCount'] as int);
+    } catch (e) {
+      Logx.em(_TAG, 'party guestListCount not exist for party id: ' + party.id);
+      shouldPushParty = true;
+    }
+    try {
+      party = party.copyWith(isEmailRequired: map['isEmailRequired'] as bool);
+    } catch (e) {
+      Logx.em(_TAG, 'party isEmailRequired not exist for party id: ' + party.id);
+      shouldPushParty = true;
+    }
+    try {
+      party = party.copyWith(clubRules: map['clubRules'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'party clubRules not exist for party id: ' + party.id);
+      shouldPushParty = true;
+    }
+    try {
+      party = party.copyWith(guestListRules: map['guestListRules'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'party guestListRules not exist for party id: ' + party.id);
+      shouldPushParty = true;
+    }
+
     if (shouldPushParty && shouldUpdate) {
       Logx.em(_TAG, 'updating party ' + party.id);
       FirestoreHelper.pushParty(party);
@@ -586,6 +617,31 @@ class Fresh {
       freshParty = freshParty.copyWith(eventName: party.eventName);
     } catch (e) {
       Logx.em(_TAG, 'party eventName not exist for party id: ' + party.id);
+    }
+    try {
+      freshParty = freshParty.copyWith(isGuestListActive: party.isGuestListActive);
+    } catch (e) {
+      Logx.em(_TAG, 'party isGuestListActive not exist for party id: ' + party.id);
+    }
+    try {
+      freshParty = freshParty.copyWith(guestListCount: party.guestListCount);
+    } catch (e) {
+      Logx.em(_TAG, 'party guestListCount not exist for party id: ' + party.id);
+    }
+    try {
+      freshParty = freshParty.copyWith(isEmailRequired: party.isEmailRequired);
+    } catch (e) {
+      Logx.em(_TAG, 'party isEmailRequired not exist for party id: ' + party.id);
+    }
+    try {
+      freshParty = freshParty.copyWith(clubRules: party.clubRules);
+    } catch (e) {
+      Logx.em(_TAG, 'party clubRules not exist for party id: ' + party.id);
+    }
+    try {
+      freshParty = freshParty.copyWith(guestListRules: party.guestListRules);
+    } catch (e) {
+      Logx.em(_TAG, 'party guestListRules not exist for party id: ' + party.id);
     }
 
     return freshParty;

@@ -11,6 +11,7 @@ import '../../db/shared_preferences/user_preferences.dart';
 import '../../helpers/dummy.dart';
 import '../../helpers/firestore_helper.dart';
 import '../../helpers/fresh.dart';
+import '../../utils/logx.dart';
 import '../../widgets/ui/button_widget.dart';
 import '../../widgets/ui/dark_textfield_widget.dart';
 import '../../widgets/parties/party_banner.dart';
@@ -29,6 +30,8 @@ class PartyGuestAddEditPage extends StatefulWidget {
 }
 
 class _PartyGuestAddEditPageState extends State<PartyGuestAddEditPage> {
+  static const String _TAG = 'PartyGuestAddEditPage';
+
   late blocUser.User user;
 
   bool isPhotoChanged = false;
@@ -66,7 +69,7 @@ class _PartyGuestAddEditPageState extends State<PartyGuestAddEditPage> {
       }
     });
 
-    for (int i = 1; i <= 4; i++) {
+    for (int i = 1; i <= widget.party.guestListCount; i++) {
       guestCounts.add(i.toString());
     }
     sGuestCount = widget.partyGuest.guestsCount.toString();
@@ -113,7 +116,7 @@ class _PartyGuestAddEditPageState extends State<PartyGuestAddEditPage> {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 32),
                 child: DarkTextFieldWidget(
-                    label: 'email',
+                    label: 'email' + (widget.party.isEmailRequired ? '\*' : ''),
                     text: user.email,
                     onChanged: (email) {
                       user = user.copyWith(email: email);
@@ -206,25 +209,124 @@ class _PartyGuestAddEditPageState extends State<PartyGuestAddEditPage> {
                   onClicked: () {
                     // we should have some validation here
                     if (isDataValid()) {
-                      if (hasUserChanged) {
-                        User freshUser = Fresh.freshUser(user);
-                        UserPreferences.setUser(freshUser);
-                        FirestoreHelper.pushUser(freshUser);
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext ctx) {
+                          // ScrollController controller = ScrollController();
+                          // controller.animateTo(controller.position.maxScrollExtent,
+                          //     duration: const Duration(milliseconds: 1), curve: Curves.fastOutSlowIn);
+                          return AlertDialog(
+                            contentPadding: const EdgeInsets.all(16.0),
+                            content: SizedBox(
+                              height: 300,
+                              child: Column(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.only(bottom: 20),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          widget.party.eventName +
+                                              ' | ' +
+                                              widget.party.name,
+                                          style: const TextStyle(fontSize: 18),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Container(
+                                    height: 250,
+                                    width: 300,
+                                    child: SingleChildScrollView(
+                                      child: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        children: [
+                                          Text('entry rules:\n'),
+                                          Text(widget.party.guestListRules
+                                              .toLowerCase()),
+                                          Text('\nclub rules:\n'),
+                                          Text(widget.party.clubRules
+                                              .toLowerCase()),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  // Padding(
+                                  //   padding: const EdgeInsets.only(top: 20),
+                                  //   child: Column(
+                                  //     mainAxisAlignment: MainAxisAlignment.start,
+                                  //     children: [
+                                  //       Align(
+                                  //         alignment: Alignment.centerRight,
+                                  //         child: Text(
+                                  //           widget.partyGuest.guestsRemaining
+                                  //               .toString() +
+                                  //               ' guests remaining',
+                                  //           style: TextStyle(fontSize: 16),
+                                  //         ),
+                                  //       ),
+                                  //       Align(
+                                  //         alignment: Alignment.centerRight,
+                                  //         child: Text(
+                                  //           'valid until 11 pm',
+                                  //           style: TextStyle(fontSize: 16),
+                                  //         ),
+                                  //       ),
+                                  //     ],
+                                  //   ),
+                                  // ),
+                                ],
+                              ),
+                            ),
+                            actions: [
+                              TextButton(
+                                child: const Text('close'),
+                                onPressed: () {
+                                  Navigator.of(ctx).pop();
+                                },
+                              ),
+                              TextButton(
+                                child: const Text("confirm"),
+                                onPressed: () {
+                                  if (hasUserChanged) {
+                                    User freshUser = Fresh.freshUser(user);
+                                    UserPreferences.setUser(freshUser);
+                                    FirestoreHelper.pushUser(freshUser);
 
-                        PartyGuest freshPartyGuest =
-                            Fresh.freshPartyGuest(widget.partyGuest);
-                        FirestoreHelper.pushPartyGuest(freshPartyGuest);
-                      } else {
-                        PartyGuest freshPartyGuest =
-                            Fresh.freshPartyGuest(widget.partyGuest);
-                        FirestoreHelper.pushPartyGuest(freshPartyGuest);
-                      }
+                                    PartyGuest freshPartyGuest =
+                                        Fresh.freshPartyGuest(
+                                            widget.partyGuest);
+                                    FirestoreHelper.pushPartyGuest(
+                                        freshPartyGuest);
+                                  } else {
+                                    PartyGuest freshPartyGuest =
+                                        Fresh.freshPartyGuest(
+                                            widget.partyGuest);
+                                    FirestoreHelper.pushPartyGuest(
+                                        freshPartyGuest);
+                                  }
 
-                      Toaster.longToast(
-                          'guest list confirmation in box office');
-                      Navigator.of(context).pop();
+                                  Logx.i(_TAG,
+                                      'guest list confirmation in box office');
+                                  Toaster.longToast(
+                                      'guest list confirmation in box office');
+                                  Navigator.of(ctx).pop();
+                                  Navigator.of(context).pop();
+                                },
+                              ),
+                            ],
+                          );
+                        },
+                      );
                     } else {
-                      print('user cannot be entered as data is incomplete');
+                      Logx.em(
+                          _TAG, 'user cannot be entered as data is incomplete');
                     }
                   },
                 ),
@@ -237,12 +339,12 @@ class _PartyGuestAddEditPageState extends State<PartyGuestAddEditPage> {
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 32),
                           child: ButtonWidget(
-                            text: 'delete ',
+                            text: 'delete',
                             onClicked: () {
                               FirestoreHelper.deletePartyGuest(
                                   widget.partyGuest);
 
-                              print('guest list request is deleted');
+                              Logx.i(_TAG, 'guest list request is deleted');
 
                               Toaster.longToast(
                                   'guest list request is deleted');
@@ -260,7 +362,13 @@ class _PartyGuestAddEditPageState extends State<PartyGuestAddEditPage> {
 
   bool isDataValid() {
     if (widget.partyGuest.name.isEmpty) {
+      Logx.em(_TAG, 'name not entered for guest');
       Toaster.longToast('please enter your name');
+      return false;
+    }
+    if (widget.party.isEmailRequired && widget.partyGuest.email.isEmpty) {
+      Logx.em(_TAG, 'email not entered for guest');
+      Toaster.longToast('please enter your email');
       return false;
     }
 

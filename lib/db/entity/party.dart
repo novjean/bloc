@@ -1,25 +1,35 @@
 class Party {
   final String id;
   final String name;
+  final String eventName;
   final String description;
   final String blocServiceId;
+
   final String imageUrl;
   final String instagramUrl;
   final String ticketUrl;
   final String listenUrl;
+
   final int createdAt;
   final int startTime;
   final int endTime;
+
   final String ownerId;
   final bool isTBA;
   final bool isActive;
-  final String eventName;
+
+  final bool isGuestListActive;
+  final int guestListCount;
+  final bool isEmailRequired;
+
+  final String guestListRules;
+  final String clubRules;
 
 //<editor-fold desc="Data Methods">
-
   const Party({
     required this.id,
     required this.name,
+    required this.eventName,
     required this.description,
     required this.blocServiceId,
     required this.imageUrl,
@@ -32,7 +42,11 @@ class Party {
     required this.ownerId,
     required this.isTBA,
     required this.isActive,
-    required this.eventName,
+    required this.isGuestListActive,
+    required this.guestListCount,
+    required this.isEmailRequired,
+    required this.guestListRules,
+    required this.clubRules,
   });
 
   @override
@@ -42,6 +56,7 @@ class Party {
           runtimeType == other.runtimeType &&
           id == other.id &&
           name == other.name &&
+          eventName == other.eventName &&
           description == other.description &&
           blocServiceId == other.blocServiceId &&
           imageUrl == other.imageUrl &&
@@ -54,12 +69,17 @@ class Party {
           ownerId == other.ownerId &&
           isTBA == other.isTBA &&
           isActive == other.isActive &&
-          eventName == other.eventName);
+          isGuestListActive == other.isGuestListActive &&
+          guestListCount == other.guestListCount &&
+          isEmailRequired == other.isEmailRequired &&
+          guestListRules == other.guestListRules &&
+          clubRules == other.clubRules);
 
   @override
   int get hashCode =>
       id.hashCode ^
       name.hashCode ^
+      eventName.hashCode ^
       description.hashCode ^
       blocServiceId.hashCode ^
       imageUrl.hashCode ^
@@ -72,13 +92,18 @@ class Party {
       ownerId.hashCode ^
       isTBA.hashCode ^
       isActive.hashCode ^
-      eventName.hashCode;
+      isGuestListActive.hashCode ^
+      guestListCount.hashCode ^
+      isEmailRequired.hashCode ^
+      guestListRules.hashCode ^
+      clubRules.hashCode;
 
   @override
   String toString() {
     return 'Party{' +
         ' id: $id,' +
         ' name: $name,' +
+        ' eventName: $eventName,' +
         ' description: $description,' +
         ' blocServiceId: $blocServiceId,' +
         ' imageUrl: $imageUrl,' +
@@ -91,13 +116,18 @@ class Party {
         ' ownerId: $ownerId,' +
         ' isTBA: $isTBA,' +
         ' isActive: $isActive,' +
-        ' eventName: $eventName,' +
+        ' isGuestListActive: $isGuestListActive,' +
+        ' guestListCount: $guestListCount,' +
+        ' isEmailRequired: $isEmailRequired,' +
+        ' guestListRules: $guestListRules,' +
+        ' clubRules: $clubRules,' +
         '}';
   }
 
   Party copyWith({
     String? id,
     String? name,
+    String? eventName,
     String? description,
     String? blocServiceId,
     String? imageUrl,
@@ -110,11 +140,16 @@ class Party {
     String? ownerId,
     bool? isTBA,
     bool? isActive,
-    String? eventName,
+    bool? isGuestListActive,
+    int? guestListCount,
+    bool? isEmailRequired,
+    String? guestListRules,
+    String? clubRules,
   }) {
     return Party(
       id: id ?? this.id,
       name: name ?? this.name,
+      eventName: eventName ?? this.eventName,
       description: description ?? this.description,
       blocServiceId: blocServiceId ?? this.blocServiceId,
       imageUrl: imageUrl ?? this.imageUrl,
@@ -127,7 +162,11 @@ class Party {
       ownerId: ownerId ?? this.ownerId,
       isTBA: isTBA ?? this.isTBA,
       isActive: isActive ?? this.isActive,
-      eventName: eventName ?? this.eventName,
+      isGuestListActive: isGuestListActive ?? this.isGuestListActive,
+      guestListCount: guestListCount ?? this.guestListCount,
+      isEmailRequired: isEmailRequired ?? this.isEmailRequired,
+      guestListRules: guestListRules ?? this.guestListRules,
+      clubRules: clubRules ?? this.clubRules,
     );
   }
 
@@ -135,6 +174,7 @@ class Party {
     return {
       'id': this.id,
       'name': this.name,
+      'eventName': this.eventName,
       'description': this.description,
       'blocServiceId': this.blocServiceId,
       'imageUrl': this.imageUrl,
@@ -147,7 +187,11 @@ class Party {
       'ownerId': this.ownerId,
       'isTBA': this.isTBA,
       'isActive': this.isActive,
-      'eventName': this.eventName,
+      'isGuestListActive': this.isGuestListActive,
+      'guestListCount': this.guestListCount,
+      'isEmailRequired': this.isEmailRequired,
+      'guestListRules': this.guestListRules,
+      'clubRules': this.clubRules,
     };
   }
 
@@ -155,6 +199,7 @@ class Party {
     return Party(
       id: map['id'] as String,
       name: map['name'] as String,
+      eventName: map['eventName'] as String,
       description: map['description'] as String,
       blocServiceId: map['blocServiceId'] as String,
       imageUrl: map['imageUrl'] as String,
@@ -167,7 +212,11 @@ class Party {
       ownerId: map['ownerId'] as String,
       isTBA: map['isTBA'] as bool,
       isActive: map['isActive'] as bool,
-      eventName: map['eventName'] as String,
+      isGuestListActive: map['isGuestListActive'] as bool,
+      guestListCount: map['guestListCount'] as int,
+      isEmailRequired: map['isEmailRequired'] as bool,
+      guestListRules: map['guestListRules'] as String,
+      clubRules: map['clubRules'] as String,
     );
   }
 
