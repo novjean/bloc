@@ -47,10 +47,15 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
 
   DateTime sStartDateTime = DateTime.now();
   DateTime sEndDateTime = DateTime.now();
+  DateTime sEndGuestListDateTime = DateTime.now();
+  bool _isGuestListDateBeingSet = true;
+
   DateTime sDate = DateTime.now();
 
   TimeOfDay sTimeOfDay = TimeOfDay.now();
   bool _isStartDateBeingSet = true;
+  bool _isEndDateBeingSet = true;
+
 
   late String sGuestCount;
   List<String> guestCounts = [];
@@ -140,10 +145,16 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
         sStartDateTime = sDateTime;
         widget.party = widget.party
             .copyWith(startTime: sStartDateTime.millisecondsSinceEpoch);
-      } else {
+      } else if(_isEndDateBeingSet) {
         sEndDateTime = sDateTime;
         widget.party = widget.party
             .copyWith(endTime: sEndDateTime.millisecondsSinceEpoch);
+      } else if(_isGuestListDateBeingSet){
+        sEndGuestListDateTime = sDateTime;
+        widget.party = widget.party
+            .copyWith(guestListEndTime: sEndGuestListDateTime.millisecondsSinceEpoch);
+      } else {
+        Logx.em(_TAG, 'unhandled date time');
       }
     });
     return sTimeOfDay;
@@ -152,23 +163,32 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
   Widget dateTimeContainer(BuildContext context, String type) {
     sStartDateTime = DateTimeUtils.getDate(widget.party.startTime);
     sEndDateTime = DateTimeUtils.getDate(widget.party.endTime);
+    sEndGuestListDateTime = DateTimeUtils.getDate(widget.party.guestListEndTime);
 
-    DateTime dateTime = type=='start' ? sStartDateTime:sEndDateTime;
+    DateTime dateTime;
+    if(type=='start'){
+      dateTime = sStartDateTime;
+    } else if (type == 'end'){
+      dateTime = sEndDateTime;
+    } else {
+      dateTime = sEndGuestListDateTime;
+    }
 
     return Container(
       decoration: BoxDecoration(
           border: Border.all(
             color: Colors.black38,
           ),
-          borderRadius: BorderRadius.all(Radius.circular(20))),
-      padding: EdgeInsets.only(left: 10, top: 5, right: 5, bottom: 5),
+          borderRadius: const BorderRadius.all(Radius.circular(20))),
+      padding: const EdgeInsets.only(left: 10, top: 5, right: 5, bottom: 5),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text("${DateTimeUtils.getFormattedDateString(dateTime.millisecondsSinceEpoch)}", style: TextStyle(
+          Text(DateTimeUtils.getFormattedDateString(dateTime.millisecondsSinceEpoch),
+              style: const TextStyle(
             fontSize: 18,
           )),
-          SizedBox(
+          const SizedBox(
             height: 20.0,
           ),
           ElevatedButton(
@@ -179,17 +199,25 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
               elevation: 3,
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(32.0)),
-              minimumSize: Size(50, 50), //////// HERE
+              minimumSize: const Size(50, 50), //////// HERE
             ),
             onPressed: () {
               if(type == 'start'){
                 _isStartDateBeingSet = true;
+                _isEndDateBeingSet = false;
+                _isGuestListDateBeingSet = false;
+              } else if (type == 'end'){
+                _isStartDateBeingSet = false;
+                _isEndDateBeingSet = true;
+                _isGuestListDateBeingSet = false;
               } else {
                 _isStartDateBeingSet = false;
+                _isEndDateBeingSet = false;
+                _isGuestListDateBeingSet = true;
               }
               _selectDate(context, dateTime);
             },
-            child: Text(type + ' date & time'),
+            child: Text(type == 'guestListEndTime'? 'guestlist end time'  : type + ' date & time'),
           ),
         ],
       ),
@@ -338,11 +366,11 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
               const SizedBox(height: 24),
               Row(
                 children: <Widget>[
-                  Text(
+                  const Text(
                     'active : ',
                     style: TextStyle(fontSize: 17.0),
                   ), //Text
-                  SizedBox(width: 10), //SizedBox
+                  const SizedBox(width: 10), //SizedBox
                   Checkbox(
                     value: widget.party.isActive,
                     onChanged: (value) {
@@ -357,11 +385,11 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
               const SizedBox(height: 24),
               Row(
                 children: <Widget>[
-                  Text(
+                  const Text(
                     'to be announced : ',
                     style: TextStyle(fontSize: 17.0),
                   ), //Text
-                  SizedBox(width: 10), //SizedBox
+                  const SizedBox(width: 10), //SizedBox
                   Checkbox(
                     value: widget.party.isTBA,
                     onChanged: (value) {
@@ -392,78 +420,79 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
                 ], //<Widget>[]
               ),
               const SizedBox(height: 24),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 32),
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 8.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Text(
-                            'guests count',
-                            style: TextStyle(
-                                color: Theme.of(context).primaryColorLight,
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold),
-                          ),
-                        ],
-                      ),
+              Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 8.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Text(
+                          'guests count',
+                          style: TextStyle(
+                              color: Theme.of(context).primaryColorLight,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold),
+                        ),
+                      ],
                     ),
-                    FormField<String>(
-                      builder: (FormFieldState<String> state) {
-                        return InputDecorator(
-                          key: const ValueKey('guest_count'),
-                          decoration: InputDecoration(
-                              fillColor: Colors.white,
-                              errorStyle: TextStyle(
-                                  color: Theme.of(context).errorColor,
-                                  fontSize: 16.0),
-                              hintText: 'please select guest count',
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(5.0),
-                                borderSide: BorderSide(
-                                    color: Theme.of(context).primaryColor),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                // width: 0.0 produces a thin "hairline" border
-                                borderSide: BorderSide(
-                                    color: Theme.of(context).primaryColor,
-                                    width: 0.0),
-                              )),
-                          isEmpty: sGuestCount == '',
-                          child: DropdownButtonHideUnderline(
-                            child: DropdownButton<String>(
-                              style: TextStyle(
-                                  color: Theme.of(context).primaryColorLight),
-                              dropdownColor: Theme.of(context).backgroundColor,
-                              value: sGuestCount,
-                              isDense: true,
-                              onChanged: (String? newValue) {
-                                setState(() {
-                                  sGuestCount = newValue!;
-                                  int count = int.parse(sGuestCount);
-
-                                  widget.party = widget.party
-                                      .copyWith(guestListCount: count);
-                                  state.didChange(newValue);
-                                });
-                              },
-                              items: guestCounts.map((String value) {
-                                return DropdownMenuItem<String>(
-                                  value: value,
-                                  child: Text(value),
-                                );
-                              }).toList(),
+                  ),
+                  FormField<String>(
+                    builder: (FormFieldState<String> state) {
+                      return InputDecorator(
+                        key: const ValueKey('guest_count'),
+                        decoration: InputDecoration(
+                            fillColor: Colors.white,
+                            errorStyle: TextStyle(
+                                color: Theme.of(context).errorColor,
+                                fontSize: 16.0),
+                            hintText: 'please select guest count',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(5.0),
+                              borderSide: BorderSide(
+                                  color: Theme.of(context).primaryColor),
                             ),
+                            enabledBorder: OutlineInputBorder(
+                              // width: 0.0 produces a thin "hairline" border
+                              borderSide: BorderSide(
+                                  color: Theme.of(context).primaryColor,
+                                  width: 0.0),
+                            )),
+                        isEmpty: sGuestCount == '',
+                        child: DropdownButtonHideUnderline(
+                          child: DropdownButton<String>(
+                            style: TextStyle(
+                                color: Theme.of(context).primaryColorLight),
+                            dropdownColor: Theme.of(context).backgroundColor,
+                            value: sGuestCount,
+                            isDense: true,
+                            onChanged: (String? newValue) {
+                              setState(() {
+                                sGuestCount = newValue!;
+                                int count = int.parse(sGuestCount);
+
+                                widget.party = widget.party
+                                    .copyWith(guestListCount: count);
+                                state.didChange(newValue);
+                              });
+                            },
+                            items: guestCounts.map((String value) {
+                              return DropdownMenuItem<String>(
+                                value: value,
+                                child: Text(value),
+                              );
+                            }).toList(),
                           ),
-                        );
-                      },
-                    ),
-                  ],
-                ),
+                        ),
+                      );
+                    },
+                  ),
+                ],
               ),
+
+              const SizedBox(height: 24),
+              dateTimeContainer(context, 'guestListEndTime'),
+
               const SizedBox(height: 24),
               Row(
                 children: <Widget>[

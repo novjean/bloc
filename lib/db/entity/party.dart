@@ -21,6 +21,7 @@ class Party {
   final bool isGuestListActive;
   final int guestListCount;
   final bool isEmailRequired;
+  final int guestListEndTime;
 
   final String guestListRules;
   final String clubRules;
@@ -45,6 +46,7 @@ class Party {
     required this.isGuestListActive,
     required this.guestListCount,
     required this.isEmailRequired,
+    required this.guestListEndTime,
     required this.guestListRules,
     required this.clubRules,
   });
@@ -72,6 +74,7 @@ class Party {
           isGuestListActive == other.isGuestListActive &&
           guestListCount == other.guestListCount &&
           isEmailRequired == other.isEmailRequired &&
+          guestListEndTime == other.guestListEndTime &&
           guestListRules == other.guestListRules &&
           clubRules == other.clubRules);
 
@@ -95,6 +98,7 @@ class Party {
       isGuestListActive.hashCode ^
       guestListCount.hashCode ^
       isEmailRequired.hashCode ^
+      guestListEndTime.hashCode ^
       guestListRules.hashCode ^
       clubRules.hashCode;
 
@@ -119,6 +123,7 @@ class Party {
         ' isGuestListActive: $isGuestListActive,' +
         ' guestListCount: $guestListCount,' +
         ' isEmailRequired: $isEmailRequired,' +
+        ' guestListEndTime: $guestListEndTime,' +
         ' guestListRules: $guestListRules,' +
         ' clubRules: $clubRules,' +
         '}';
@@ -143,6 +148,7 @@ class Party {
     bool? isGuestListActive,
     int? guestListCount,
     bool? isEmailRequired,
+    int? guestListEndTime,
     String? guestListRules,
     String? clubRules,
   }) {
@@ -165,6 +171,7 @@ class Party {
       isGuestListActive: isGuestListActive ?? this.isGuestListActive,
       guestListCount: guestListCount ?? this.guestListCount,
       isEmailRequired: isEmailRequired ?? this.isEmailRequired,
+      guestListEndTime: guestListEndTime ?? this.guestListEndTime,
       guestListRules: guestListRules ?? this.guestListRules,
       clubRules: clubRules ?? this.clubRules,
     );
@@ -190,6 +197,7 @@ class Party {
       'isGuestListActive': this.isGuestListActive,
       'guestListCount': this.guestListCount,
       'isEmailRequired': this.isEmailRequired,
+      'guestListEndTime': this.guestListEndTime,
       'guestListRules': this.guestListRules,
       'clubRules': this.clubRules,
     };
@@ -215,6 +223,7 @@ class Party {
       isGuestListActive: map['isGuestListActive'] as bool,
       guestListCount: map['guestListCount'] as int,
       isEmailRequired: map['isEmailRequired'] as bool,
+      guestListEndTime: map['guestListEndTime'] as int,
       guestListRules: map['guestListRules'] as String,
       clubRules: map['clubRules'] as String,
     );

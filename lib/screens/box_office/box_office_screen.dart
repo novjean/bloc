@@ -191,7 +191,7 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
             }
           }
 
-          if(!sParty.isActive){
+          if(!sParty.isActive || Timestamp.now().millisecondsSinceEpoch > sParty.endTime){
             // the party is over, so the request should be deleted
             FirestoreHelper.deletePartyGuest(sPartyGuest);
             return const SizedBox();

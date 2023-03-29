@@ -257,7 +257,6 @@ class Fresh {
       Logx.em(_TAG, 'party eventName not exist for party id: ' + party.id);
       shouldPushParty = true;
     }
-
     try {
       party =
           party.copyWith(isGuestListActive: map['isGuestListActive'] as bool);
@@ -270,6 +269,12 @@ class Fresh {
       party = party.copyWith(guestListCount: map['guestListCount'] as int);
     } catch (e) {
       Logx.em(_TAG, 'party guestListCount not exist for party id: ' + party.id);
+      shouldPushParty = true;
+    }
+    try {
+      party = party.copyWith(guestListEndTime: map['guestListEndTime'] as int);
+    } catch (e) {
+      Logx.em(_TAG, 'party guestListEndTime not exist for party id: ' + party.id);
       shouldPushParty = true;
     }
     try {
@@ -406,6 +411,11 @@ class Fresh {
       freshParty = freshParty.copyWith(guestListCount: party.guestListCount);
     } catch (e) {
       Logx.em(_TAG, 'party guestListCount not exist for party id: ' + party.id);
+    }
+    try {
+      freshParty = freshParty.copyWith(guestListEndTime: party.guestListEndTime);
+    } catch (e) {
+      Logx.em(_TAG, 'party guestListEndTime not exist for party id: ' + party.id);
     }
     try {
       freshParty = freshParty.copyWith(isEmailRequired: party.isEmailRequired);

@@ -24,16 +24,9 @@ class PartyItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool isGuestListActive = party.isGuestListActive;
-    
-    int timeNow = Timestamp
-        .now()
-        .millisecondsSinceEpoch;
-    if (timeNow < party.startTime) {
-      isGuestListActive = true;
-    } else {
-      isGuestListActive = false;
-    }
+    int timeNow = Timestamp.now().millisecondsSinceEpoch;
+    bool isGuestListActive =
+        party.isGuestListActive & (timeNow < party.guestListEndTime);
 
     return GestureDetector(
       onTap: () {
@@ -137,7 +130,9 @@ class PartyItem extends StatelessWidget {
                         ),
                         flex: 3,
                       ),
-                      isGuestListActive & UserPreferences.isUserLoggedIn() & !isGuestListRequested
+                      isGuestListActive &
+                              UserPreferences.isUserLoggedIn() &
+                              !isGuestListRequested
                           ? Flexible(
                               flex: 1,
                               child: Container(

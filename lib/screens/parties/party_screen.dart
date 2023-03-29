@@ -83,7 +83,7 @@ class _PartyScreenState extends State<PartyScreen> {
           _isPastPartiesLoading = false;
         });
       } else {
-        Logx.i(_TAG,'no past parties found!');
+        Logx.i(_TAG, 'no past parties found!');
         const Center(
           child: Text('no past parties found yet!'),
         );
@@ -93,7 +93,8 @@ class _PartyScreenState extends State<PartyScreen> {
       }
     });
 
-    FirestoreHelper.pullGuestListRequested(UserPreferences.myUser.id).then((res) {
+    FirestoreHelper.pullGuestListRequested(UserPreferences.myUser.id)
+        .then((res) {
       Logx.i(_TAG, "successfully pulled in requested guest list");
 
       if (res.docs.isNotEmpty) {
@@ -110,7 +111,7 @@ class _PartyScreenState extends State<PartyScreen> {
           _isPartyGuestsLoading = false;
         });
       } else {
-        Logx.i(_TAG,'no party guest requests found!');
+        Logx.i(_TAG, 'no party guest requests found!');
         const SizedBox();
         setState(() {
           _isPartyGuestsLoading = false;
@@ -121,6 +122,32 @@ class _PartyScreenState extends State<PartyScreen> {
     super.initState();
   }
 
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        backgroundColor: Theme.of(context).backgroundColor,
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(builder: (ctx) => BoxOfficeScreen()),
+            );
+          },
+          child: Icon(
+            Icons.play_arrow_outlined,
+            color: Theme.of(context).primaryColorDark,
+            size: 29,
+          ),
+          backgroundColor: Theme.of(context).primaryColor,
+          tooltip: 'box office',
+          elevation: 5,
+          splashColor: Colors.grey,
+        ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+        body: _isPartiesLoading & _isPartyGuestsLoading
+            ? const LoadingWidget()
+            : _buildBody(context));
+  }
+
   _buildBody(BuildContext context) {
     List<Party> parties = [];
 
@@ -129,7 +156,7 @@ class _PartyScreenState extends State<PartyScreen> {
     if (parties.isEmpty) {
       if (_showPastParties) {
         Toaster.shortToast('no upcoming parties');
-        Logx.i(_TAG,'no upcoming parties to show');
+        Logx.i(_TAG, 'no upcoming parties to show');
 
         if (mParties.isNotEmpty) {
           parties = mParties;
@@ -152,7 +179,6 @@ class _PartyScreenState extends State<PartyScreen> {
 
     return Column(
       children: [
-        // _updateGuestListRequests(context),
         Expanded(
           child: ListView.builder(
             itemCount: parties.length,
@@ -162,15 +188,15 @@ class _PartyScreenState extends State<PartyScreen> {
               bool isGuestListRequested = false;
 
               Party party = parties[index];
-              for(PartyGuest partyGuest in mPartyGuestRequests){
-                if(partyGuest.partyId == party.id){
+              for (PartyGuest partyGuest in mPartyGuestRequests) {
+                if (partyGuest.partyId == party.id) {
                   isGuestListRequested = true;
                   break;
                 }
               }
 
-              if(parties.length == 1) {
-                if(_showPastParties) {
+              if (parties.length == 1) {
+                if (_showPastParties) {
                   return Column(
                     children: [
                       GestureDetector(
@@ -181,7 +207,7 @@ class _PartyScreenState extends State<PartyScreen> {
                             color: Theme.of(context).primaryColor,
                           ),
                           onTap: () {
-                            print('show upcoming parties button clicked');
+                            Logx.i(_TAG, 'show upcoming parties button clicked');
                             setState(() {
                               _showPastParties = !_showPastParties;
                             });
@@ -193,7 +219,7 @@ class _PartyScreenState extends State<PartyScreen> {
                       ),
                     ],
                   );
-                }else {
+                } else {
                   return Column(
                     children: [
                       PartyItem(
@@ -209,7 +235,7 @@ class _PartyScreenState extends State<PartyScreen> {
                             color: Theme.of(context).primaryColor,
                           ),
                           onTap: () {
-                            print('show upcoming parties button clicked');
+                            Logx.i(_TAG, 'show upcoming parties button clicked');
                             setState(() {
                               _showPastParties = !_showPastParties;
                             });
@@ -231,7 +257,8 @@ class _PartyScreenState extends State<PartyScreen> {
                               color: Theme.of(context).primaryColor,
                             ),
                             onTap: () {
-                              Logx.i(_TAG, 'show upcoming parties button clicked');
+                              Logx.i(
+                                  _TAG, 'show upcoming parties button clicked');
                               setState(() {
                                 _showPastParties = !_showPastParties;
                               });
@@ -284,59 +311,4 @@ class _PartyScreenState extends State<PartyScreen> {
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-        backgroundColor: Theme.of(context).backgroundColor,
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(builder: (ctx) => BoxOfficeScreen()),
-            );
-          },
-          child: Icon(
-            Icons.play_arrow_outlined,
-            color: Theme.of(context).primaryColorDark,
-            size: 29,
-          ),
-          backgroundColor: Theme.of(context).primaryColor,
-          tooltip: 'box office',
-          elevation: 5,
-          splashColor: Colors.grey,
-        ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-        body: _isPartiesLoading & _isPartyGuestsLoading ? const LoadingWidget() : _buildBody(context));
-  }
-
-  _updateGuestListRequests(BuildContext context) {
-    return StreamBuilder<QuerySnapshot>(
-      stream: FirestoreHelper.getGuestListRequested(UserPreferences.myUser.id),
-      builder: (ctx, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          Logx.i(_TAG,'loading guest...');
-          return const SizedBox();
-        }
-
-        mPartyGuestRequests.clear();
-
-        List<PartyGuest> _partyGuests = [];
-        for (int i = 0; i < snapshot.data!.docs.length; i++) {
-          DocumentSnapshot document = snapshot.data!.docs[i];
-          Map<String, dynamic> map = document.data()! as Map<String, dynamic>;
-          final PartyGuest partyGuest = Fresh.freshPartyGuestMap(map,false);
-          _partyGuests.add(partyGuest);
-
-          if (i == snapshot.data!.docs.length - 1) {
-            // here we need to check if any new offers has come
-            // then somehow force a refresh of the menu items
-            mPartyGuestRequests.addAll(_partyGuests);
-
-            return const SizedBox();
-          }
-        }
-        return const SizedBox();
-      },
-    );
-
-  }
 }

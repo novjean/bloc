@@ -1,8 +1,13 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import '../../db/entity/party.dart';
 import '../../db/entity/party_guest.dart';
+import '../../db/shared_preferences/user_preferences.dart';
 import '../../helpers/dummy.dart';
+import '../../helpers/firestore_helper.dart';
+import '../../helpers/fresh.dart';
+import '../../utils/logx.dart';
 import '../../utils/network_utils.dart';
 import '../../widgets/ui/button_widget.dart';
 import 'party_guest_add_edit_screen.dart';
@@ -17,6 +22,8 @@ class ArtistScreen extends StatefulWidget {
 }
 
 class _ArtistScreenState extends State<ArtistScreen> {
+  static const String _TAG = 'ArtistScreen';
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,6 +42,9 @@ class _ArtistScreenState extends State<ArtistScreen> {
   }
 
   _buildBody(BuildContext context) {
+    int timeNow = Timestamp.now().millisecondsSinceEpoch;
+    bool isGuestListActive = widget.party.isGuestListActive & (timeNow < widget.party.guestListEndTime);
+
     return ListView(
       children: [
         SizedBox(
@@ -83,7 +93,7 @@ class _ArtistScreenState extends State<ArtistScreen> {
         //     ],
         //   ),
         // ),
-        widget.party.isGuestListActive
+        isGuestListActive & UserPreferences.isUserLoggedIn()
             ? Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 10.0),
                 child: Column(
