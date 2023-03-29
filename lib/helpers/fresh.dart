@@ -281,7 +281,7 @@ class Fresh {
     }
     try {
       party = party.copyWith(clubRules: map['clubRules'] as String);
-      if(party.clubRules.isEmpty){
+      if (party.clubRules.isEmpty) {
         party = party.copyWith(clubRules: Constants.clubRules);
         shouldPushParty = true;
       }
@@ -291,7 +291,7 @@ class Fresh {
     }
     try {
       party = party.copyWith(guestListRules: map['guestListRules'] as String);
-      if(party.guestListRules.isEmpty){
+      if (party.guestListRules.isEmpty) {
         party = party.copyWith(guestListRules: Constants.guestListRules);
         shouldPushParty = true;
       }
@@ -583,7 +583,8 @@ class Fresh {
       shouldPush = true;
     }
     try {
-      partyGuest = partyGuest.copyWith(guestStatus: map['guestStatus'] as String);
+      partyGuest =
+          partyGuest.copyWith(guestStatus: map['guestStatus'] as String);
     } catch (e) {
       Logx.em(_TAG,
           'partyGuest guestStatus not exist for user id: ' + partyGuest.id);
@@ -765,7 +766,7 @@ class Fresh {
 
   static Product freshProduct(Product product) {
     Product freshProduct =
-    Dummy.getDummyProduct(product.serviceId, product.ownerId);
+        Dummy.getDummyProduct(product.serviceId, product.ownerId);
 
     try {
       freshProduct = freshProduct.copyWith(id: product.id);

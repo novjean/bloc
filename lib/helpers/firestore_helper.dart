@@ -589,6 +589,13 @@ class FirestoreHelper {
         .get();
   }
 
+  static pullGuestListRequested(String userId) {
+    return FirebaseFirestore.instance
+        .collection(FirestoreHelper.PARTY_GUESTS)
+        .where('guestId', isEqualTo: userId)
+        .get();
+  }
+
   static void pushPartyGuest(PartyGuest partyGuest) async {
     try {
       await FirebaseFirestore.instance
@@ -1180,4 +1187,5 @@ class FirestoreHelper {
         .orderBy('level', descending: false)
         .get();
   }
+
 }

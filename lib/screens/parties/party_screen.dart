@@ -1,9 +1,11 @@
+import 'package:bloc/db/shared_preferences/user_preferences.dart';
 import 'package:bloc/helpers/firestore_helper.dart';
 import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import '../../db/entity/party.dart';
+import '../../db/entity/party_guest.dart';
 import '../../helpers/fresh.dart';
 import '../../utils/logx.dart';
 import '../../widgets/parties/party_item.dart';
@@ -28,6 +30,9 @@ class _PartyScreenState extends State<PartyScreen> {
   List<Party> mPastParties = [];
   var _isPastPartiesLoading = true;
 
+  List<PartyGuest> mPartyGuestRequests = [];
+  var _isPartyGuestsLoading = true;
+
   @override
   void initState() {
     int timeNow = Timestamp.now().millisecondsSinceEpoch;
@@ -43,12 +48,11 @@ class _PartyScreenState extends State<PartyScreen> {
           Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
           final Party party = Fresh.freshPartyMap(data, true);
           parties.add(party);
-
-          setState(() {
-            mParties = parties;
-            _isPartiesLoading = false;
-          });
         }
+        setState(() {
+          mParties = parties;
+          _isPartiesLoading = false;
+        });
       } else {
         Logx.em(_TAG, 'no parties found!');
         const Center(
@@ -73,12 +77,11 @@ class _PartyScreenState extends State<PartyScreen> {
           Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
           final Party bloc = Fresh.freshPartyMap(data, true);
           parties.add(bloc);
-
-          setState(() {
-            mPastParties = parties;
-            _isPastPartiesLoading = false;
-          });
         }
+        setState(() {
+          mPastParties = parties;
+          _isPastPartiesLoading = false;
+        });
       } else {
         Logx.i(_TAG,'no past parties found!');
         const Center(
@@ -89,6 +92,32 @@ class _PartyScreenState extends State<PartyScreen> {
         });
       }
     });
+
+    FirestoreHelper.pullGuestListRequested(UserPreferences.myUser.id).then((res) {
+      Logx.i(_TAG, "successfully pulled in requested guest list");
+
+      if (res.docs.isNotEmpty) {
+        // found party guests
+        List<PartyGuest> partyGuestRequests = [];
+        for (int i = 0; i < res.docs.length; i++) {
+          DocumentSnapshot document = res.docs[i];
+          Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+          final PartyGuest partyGuest = Fresh.freshPartyGuestMap(data, false);
+          partyGuestRequests.add(partyGuest);
+        }
+        setState(() {
+          mPartyGuestRequests = partyGuestRequests;
+          _isPartyGuestsLoading = false;
+        });
+      } else {
+        Logx.i(_TAG,'no party guest requests found!');
+        const SizedBox();
+        setState(() {
+          _isPartyGuestsLoading = false;
+        });
+      }
+    });
+
     super.initState();
   }
 
@@ -121,118 +150,137 @@ class _PartyScreenState extends State<PartyScreen> {
       }
     }
 
-    return SizedBox(
-      height: MediaQuery.of(context).size.height,
-      child: ListView.builder(
-        itemCount: parties.length,
-        scrollDirection: Axis.vertical,
-        physics: const BouncingScrollPhysics(),
-        itemBuilder: (BuildContext context, int index) {
-          if(parties.length == 1) {
-            if(_showPastParties) {
-              return Column(
-                children: [
-                  GestureDetector(
-                      child: SizedListViewBlock(
-                        title: 'show upcoming parties',
-                        height: 50,
-                        width: MediaQuery.of(context).size.width,
-                        color: Theme.of(context).primaryColor,
-                      ),
-                      onTap: () {
-                        print('show upcoming parties button clicked');
-                        setState(() {
-                          _showPastParties = !_showPastParties;
-                        });
-                      }),
-                  PartyItem(
-                    party: parties[index],
-                    imageHeight: 300,
-                  ),
-                ],
-              );
-            }else {
-              return Column(
-                children: [
-                  PartyItem(
-                    party: parties[index],
-                    imageHeight: 300,
-                  ),
-                  GestureDetector(
-                      child: SizedListViewBlock(
-                        title: 'show past parties',
-                        height: 50,
-                        width: MediaQuery.of(context).size.width,
-                        color: Theme.of(context).primaryColor,
-                      ),
-                      onTap: () {
-                        print('show upcoming parties button clicked');
-                        setState(() {
-                          _showPastParties = !_showPastParties;
-                        });
-                      }),
-                ],
-              );
-            }
-          }
+    return Column(
+      children: [
+        // _updateGuestListRequests(context),
+        Expanded(
+          child: ListView.builder(
+            itemCount: parties.length,
+            scrollDirection: Axis.vertical,
+            physics: const BouncingScrollPhysics(),
+            itemBuilder: (BuildContext context, int index) {
+              bool isGuestListRequested = false;
 
-          if (index == 0) {
-            return Column(
-              children: [
-                _showPastParties
-                    ? GestureDetector(
-                        child: SizedListViewBlock(
-                          title: 'show upcoming parties',
-                          height: 50,
-                          width: MediaQuery.of(context).size.width,
-                          color: Theme.of(context).primaryColor,
-                        ),
-                        onTap: () {
-                          print('show upcoming parties button clicked');
-                          setState(() {
-                            _showPastParties = !_showPastParties;
-                          });
-                        })
-                    : const SizedBox(),
-                PartyItem(
+              Party party = parties[index];
+              for(PartyGuest partyGuest in mPartyGuestRequests){
+                if(partyGuest.partyId == party.id){
+                  isGuestListRequested = true;
+                  break;
+                }
+              }
+
+              if(parties.length == 1) {
+                if(_showPastParties) {
+                  return Column(
+                    children: [
+                      GestureDetector(
+                          child: SizedListViewBlock(
+                            title: 'show upcoming parties',
+                            height: 50,
+                            width: MediaQuery.of(context).size.width,
+                            color: Theme.of(context).primaryColor,
+                          ),
+                          onTap: () {
+                            print('show upcoming parties button clicked');
+                            setState(() {
+                              _showPastParties = !_showPastParties;
+                            });
+                          }),
+                      PartyItem(
+                        party: parties[index],
+                        imageHeight: 300,
+                        isGuestListRequested: isGuestListRequested,
+                      ),
+                    ],
+                  );
+                }else {
+                  return Column(
+                    children: [
+                      PartyItem(
+                        party: parties[index],
+                        imageHeight: 300,
+                        isGuestListRequested: isGuestListRequested,
+                      ),
+                      GestureDetector(
+                          child: SizedListViewBlock(
+                            title: 'show past parties',
+                            height: 50,
+                            width: MediaQuery.of(context).size.width,
+                            color: Theme.of(context).primaryColor,
+                          ),
+                          onTap: () {
+                            print('show upcoming parties button clicked');
+                            setState(() {
+                              _showPastParties = !_showPastParties;
+                            });
+                          }),
+                    ],
+                  );
+                }
+              }
+
+              if (index == 0) {
+                return Column(
+                  children: [
+                    _showPastParties
+                        ? GestureDetector(
+                            child: SizedListViewBlock(
+                              title: 'show upcoming parties',
+                              height: 50,
+                              width: MediaQuery.of(context).size.width,
+                              color: Theme.of(context).primaryColor,
+                            ),
+                            onTap: () {
+                              Logx.i(_TAG, 'show upcoming parties button clicked');
+                              setState(() {
+                                _showPastParties = !_showPastParties;
+                              });
+                            })
+                        : const SizedBox(),
+                    PartyItem(
+                      party: parties[index],
+                      imageHeight: 300,
+                      isGuestListRequested: isGuestListRequested,
+                    ),
+                  ],
+                );
+              }
+              if (index == parties.length - 1) {
+                return Column(
+                  children: [
+                    PartyItem(
+                      party: parties[index],
+                      imageHeight: 300,
+                      isGuestListRequested: isGuestListRequested,
+                    ),
+                    !_showPastParties
+                        ? GestureDetector(
+                            child: SizedListViewBlock(
+                              title: 'show past parties',
+                              height: 50,
+                              width: MediaQuery.of(context).size.width,
+                              color: Theme.of(context).primaryColor,
+                            ),
+                            onTap: () {
+                              Logx.i(_TAG, 'load parties button clicked');
+                              setState(() {
+                                _showPastParties = !_showPastParties;
+                              });
+                            })
+                        : const SizedBox()
+                  ],
+                );
+              } else {
+                return PartyItem(
                   party: parties[index],
                   imageHeight: 300,
-                ),
-              ],
-            );
-          }
-          if (index == parties.length - 1) {
-            return Column(
-              children: [
-                PartyItem(
-                  party: parties[index],
-                  imageHeight: 300,
-                ),
-                !_showPastParties
-                    ? GestureDetector(
-                        child: SizedListViewBlock(
-                          title: 'show past parties',
-                          height: 50,
-                          width: MediaQuery.of(context).size.width,
-                          color: Theme.of(context).primaryColor,
-                        ),
-                        onTap: () {
-                          print('load parties button clicked');
-                          setState(() {
-                            _showPastParties = !_showPastParties;
-                          });
-                        })
-                    : const SizedBox()
-              ],
-            );
-          } else {
-            return PartyItem(
-              party: parties[index],
-              imageHeight: 300,
-            );
-          }
-        },
-      ),
+                  isGuestListRequested: isGuestListRequested,
+                );
+              }
+            },
+          ),
+        ),
+      ],
     );
   }
 
@@ -257,6 +305,38 @@ class _PartyScreenState extends State<PartyScreen> {
           splashColor: Colors.grey,
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-        body: _isPartiesLoading ? const LoadingWidget() : _buildBody(context));
+        body: _isPartiesLoading & _isPartyGuestsLoading ? const LoadingWidget() : _buildBody(context));
+  }
+
+  _updateGuestListRequests(BuildContext context) {
+    return StreamBuilder<QuerySnapshot>(
+      stream: FirestoreHelper.getGuestListRequested(UserPreferences.myUser.id),
+      builder: (ctx, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          Logx.i(_TAG,'loading guest...');
+          return const SizedBox();
+        }
+
+        mPartyGuestRequests.clear();
+
+        List<PartyGuest> _partyGuests = [];
+        for (int i = 0; i < snapshot.data!.docs.length; i++) {
+          DocumentSnapshot document = snapshot.data!.docs[i];
+          Map<String, dynamic> map = document.data()! as Map<String, dynamic>;
+          final PartyGuest partyGuest = Fresh.freshPartyGuestMap(map,false);
+          _partyGuests.add(partyGuest);
+
+          if (i == snapshot.data!.docs.length - 1) {
+            // here we need to check if any new offers has come
+            // then somehow force a refresh of the menu items
+            mPartyGuestRequests.addAll(_partyGuests);
+
+            return const SizedBox();
+          }
+        }
+        return const SizedBox();
+      },
+    );
+
   }
 }

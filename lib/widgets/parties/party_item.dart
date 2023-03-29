@@ -13,15 +13,22 @@ import '../../utils/string_utils.dart';
 class PartyItem extends StatelessWidget {
   final Party party;
   final double imageHeight;
+  final bool isGuestListRequested;
 
-  const PartyItem({Key? key, required this.party, required this.imageHeight})
+  const PartyItem(
+      {Key? key,
+      required this.party,
+      required this.imageHeight,
+      required this.isGuestListRequested})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    bool isGuestListActive;
-
-    int timeNow = Timestamp.now().millisecondsSinceEpoch;
+    bool isGuestListActive = party.isGuestListActive;
+    
+    int timeNow = Timestamp
+        .now()
+        .millisecondsSinceEpoch;
     if (timeNow < party.startTime) {
       isGuestListActive = true;
     } else {
@@ -130,7 +137,7 @@ class PartyItem extends StatelessWidget {
                         ),
                         flex: 3,
                       ),
-                      isGuestListActive & UserPreferences.isUserLoggedIn()
+                      isGuestListActive & UserPreferences.isUserLoggedIn() & !isGuestListRequested
                           ? Flexible(
                               flex: 1,
                               child: Container(

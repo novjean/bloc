@@ -459,7 +459,7 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
     return Column(
       children: [
         const SizedBox(height: 5.0),
-        _isCategoriesLoading ? LoadingWidget() : _displayCategories(context),
+        _isCategoriesLoading ? const LoadingWidget() : _displayCategories(context),
         const SizedBox(height: 5.0),
         buildProducts(context, 'Beer'),
         const SizedBox(height: 5.0),
@@ -476,7 +476,7 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
       builder: (ctx, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           Logx.i(_TAG,'loading offers...');
-          return const LoadingWidget();
+          return const SizedBox();
         }
 
         mOffers.clear();
@@ -774,6 +774,8 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
             style: TextStyle(color: Theme.of(context).highlightColor),
           ),
           Text('. standard measure pour for spirits is 30ml',
+              style: TextStyle(color: Theme.of(context).highlightColor)),
+          Text('. alcohol will be served to patrons only above 25 years or elder',
               style: TextStyle(color: Theme.of(context).highlightColor)),
           Text(
               '. if you have any allergies or dietary requirements, please let us know. jain, vegan, gluten and dairy-allergy items are available.',
