@@ -35,7 +35,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   static const String _TAG = 'HomeScreen';
 
-  late List<Bloc> mBlocs;
+  List<Bloc> mBlocs = [];
   var _isBlocsLoading = true;
 
   Party mUpcomingParty = Dummy.getDummyParty('');
@@ -102,6 +102,7 @@ class _HomeScreenState extends State<HomeScreen> {
               Logx.em(_TAG, 'no blocs found!!!');
               //todo: need to re-attempt or check internet connection
               setState(() {
+                mBlocs = [];
                 _isBlocsLoading = false;
               });
             }
