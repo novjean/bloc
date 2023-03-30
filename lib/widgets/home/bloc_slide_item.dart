@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 
 import '../../db/entity/bloc.dart';
 import '../../screens/bloc/bloc_menu_screen.dart';
-import '../../utils/logx.dart';
 
 class BlocSlideItem extends StatefulWidget {
   final Bloc bloc;
@@ -20,8 +19,6 @@ class BlocSlideItem extends StatefulWidget {
 }
 
 class _BlocSlideItemState extends State<BlocSlideItem> {
-  static const String _TAG = 'BlocSlideItem';
-
   late BlocService mBlocService;
 
   var _isBlocServiceLoading = true;
@@ -29,10 +26,9 @@ class _BlocSlideItemState extends State<BlocSlideItem> {
   @override
   void initState() {
     FirestoreHelper.pullBlocService(widget.bloc.id).then((res) {
+      print("successfully retrieved bloc services...");
 
       if (res.docs.isNotEmpty) {
-        Logx.i(_TAG, "successfully pulled in  bloc service for id " + widget.bloc.id);
-
         List<BlocService> blocServices = [];
 
         for (int i = 0; i < res.docs.length; i++) {
@@ -47,7 +43,7 @@ class _BlocSlideItemState extends State<BlocSlideItem> {
           _isBlocServiceLoading = false;
         });
       } else {
-        Logx.em(_TAG, 'no bloc service found for id ' + widget.bloc.id);
+        print('no bloc service found!');
         setState(() {
           _isBlocServiceLoading = false;
         });
@@ -129,9 +125,9 @@ class _BlocSlideItemState extends State<BlocSlideItem> {
                       Container(
                         width: MediaQuery.of(context).size.width,
                         padding:
-                            const EdgeInsets.only(top: 10, left: 15.0, right: 15.0),
+                            EdgeInsets.only(top: 10, left: 15.0, right: 15.0),
                         child: Text(
-                          widget.bloc.name,
+                          "${widget.bloc.name}",
                           style: TextStyle(
                             fontSize: 24.0,
                             fontWeight: FontWeight.w800,
@@ -143,12 +139,12 @@ class _BlocSlideItemState extends State<BlocSlideItem> {
                       Container(
                         width: MediaQuery.of(context).size.width,
                         padding:
-                            const EdgeInsets.only(top: 5, left: 15.0, right: 15.0),
+                            EdgeInsets.only(top: 5, left: 15.0, right: 15.0),
                         child: Text(
                           "${widget.bloc.addressLine1.toLowerCase()}, ${widget.bloc.addressLine2.toLowerCase()}",
                           style: TextStyle(
-                            fontSize: 16.0,
-                            fontWeight: FontWeight.w400,
+                            fontSize: 17.0,
+                            fontWeight: FontWeight.w200,
                             color: Theme.of(context).highlightColor,
                           ),
                         ),
