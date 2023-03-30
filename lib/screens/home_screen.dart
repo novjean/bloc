@@ -329,44 +329,6 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   /** Optional **/
-  buildSuperstarsTitleRow(String category, BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 10, right: 10),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          Text(
-            "$category",
-            style: TextStyle(
-              color: Theme.of(context).primaryColor,
-              fontSize: 20.0,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          // FlatButton(
-          //   child: Text(
-          //     "See all",
-          //     style: TextStyle(
-          //       color: Theme.of(context).accentColor,
-          //     ),
-          //   ),
-          //   onPressed: () {
-          //     Navigator.push(
-          //       context,
-          //       MaterialPageRoute(
-          //         builder: (BuildContext context) {
-          //todo: need to navigate to show list of users or friends
-          //           return Categories();
-          //         },
-          //       ),
-          //     );
-          //   },
-          // ),
-        ],
-      ),
-    );
-  }
-
   buildSuperstarsList(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
       stream: FirestoreHelper.getUsers(Constants.MANAGER_LEVEL),

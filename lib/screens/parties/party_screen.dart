@@ -155,7 +155,6 @@ class _PartyScreenState extends State<PartyScreen> {
 
     if (parties.isEmpty) {
       if (_showPastParties) {
-        Toaster.shortToast('no upcoming parties');
         Logx.i(_TAG, 'no upcoming parties to show');
 
         if (mParties.isNotEmpty) {
@@ -166,7 +165,7 @@ class _PartyScreenState extends State<PartyScreen> {
           );
         }
       } else {
-        Toaster.shortToast('no past parties');
+        Logx.i(_TAG, 'no past parties');
         if (mPastParties.isNotEmpty) {
           parties = mPastParties;
         } else {
