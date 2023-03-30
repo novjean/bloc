@@ -122,10 +122,12 @@ class _HomeScreenState extends State<HomeScreen> {
           Map<String, dynamic> map = document.data()! as Map<String, dynamic>;
           final Party party = Fresh.freshPartyMap(map, true);
 
-          setState(() {
-            mUpcomingParty = party;
-            _isUpcomingPartyLoading = false;
-          });
+          if(mounted) {
+            setState(() {
+              mUpcomingParty = party;
+              _isUpcomingPartyLoading = false;
+            });
+          }
         } catch (err) {
           Logx.em(_TAG, 'error: ' + err.toString());
         }

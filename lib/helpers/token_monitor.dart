@@ -29,15 +29,17 @@ class _TokenMonitor extends State<TokenMonitor> {
 
   void setToken(String? token) {
     Logx.i(_TAG, 'fcm token: $token');
-    setState(() {
-      _token = token;
+    if(mounted) {
+      setState(() {
+        _token = token;
 
-      User user = UserPreferences.getUser();
-      UserPreferences.setUserFcmToken(_token!);
-      if(user.id.isNotEmpty) {
-        FirestoreHelper.updateUserFcmToken(user.id, token);
-      }
-    });
+        User user = UserPreferences.getUser();
+        UserPreferences.setUserFcmToken(_token!);
+        if (user.id.isNotEmpty) {
+          FirestoreHelper.updateUserFcmToken(user.id, token);
+        }
+      });
+    }
   }
 
   @override

@@ -1,4 +1,3 @@
-
 import 'package:bloc/screens/otp_screen.dart';
 import 'package:bloc/db/entity/user.dart' as blocUser;
 
@@ -8,6 +7,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:delayed_display/delayed_display.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl_phone_field/country_picker_dialog.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 
@@ -16,6 +16,7 @@ import '../helpers/dummy.dart';
 import '../helpers/firestore_helper.dart';
 import '../helpers/fresh.dart';
 import '../main.dart';
+import '../utils/logx.dart';
 import '../utils/string_utils.dart';
 import '../widgets/ui/toaster.dart';
 import 'main_screen.dart';
@@ -29,6 +30,8 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  static const String _TAG = 'LoginScreen';
+
   TextEditingController _controller = TextEditingController();
   String completePhoneNumber = '';
   bool isIOS = false;
@@ -42,17 +45,17 @@ class _LoginScreenState extends State<LoginScreen> {
       body: StreamBuilder(
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (ctx, userSnapshot) {
-          print('checking for auth state changes...');
+          Logx.i(_TAG, 'checking for auth state changes...');
 
           if (userSnapshot.connectionState == ConnectionState.waiting) {
-            if(!kIsWeb) {
+            if (!kIsWeb) {
               return SplashScreen();
             } else {
               return const LoadingWidget();
             }
           }
 
-          print('user snapshot received...');
+          Logx.i(_TAG, 'user snapshot received...');
 
           if (userSnapshot.hasData) {
             final user = FirebaseAuth.instance.currentUser;
@@ -71,13 +74,13 @@ class _LoginScreenState extends State<LoginScreen> {
                   }
 
                   if (snapshot.hasError) {
-                    print('snapshot has error: ' + snapshot.error.toString());
+                    Logx.em(_TAG,
+                        'snapshot has error: ' + snapshot.error.toString());
                     return SignInWidget();
                   }
 
                   if (snapshot.hasData && !snapshot.data!.exists) {
                     // user not registered in bloc, will be picked up in OTP screen
-                    //todo: keep an eye on this
                     return SignInWidget();
                   }
 
@@ -89,7 +92,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                     return MainScreen(user: user);
                   }
-                  print('loading user...');
+                  Logx.i(_TAG, 'loading user...');
                   return const LoadingWidget();
                 },
               );
@@ -144,11 +147,11 @@ class _LoginScreenState extends State<LoginScreen> {
               pickerDialogStyle: PickerDialogStyle(
                   backgroundColor: Theme.of(context).primaryColor),
               onChanged: (phone) {
-                print(phone.completeNumber);
+                Logx.i(_TAG, phone.completeNumber);
                 completePhoneNumber = phone.completeNumber;
               },
               onCountryChanged: (country) {
-                print('country changed to: ' + country.name);
+                Logx.i(_TAG, 'country changed to: ' + country.name);
               },
             ),
           ),
@@ -167,8 +170,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       _verifyUsingSkipPhone();
                     },
                     child: Padding(
-                      padding:
-                      const EdgeInsets.symmetric(horizontal: 20),
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
                       child: DelayedDisplay(
                         delay: const Duration(seconds: 3),
                         child: Text(
@@ -205,7 +207,10 @@ class _LoginScreenState extends State<LoginScreen> {
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (context) => OTPScreen(completePhoneNumber)));
                 } else {
-                  print('user entered invalid phone number ' + completePhoneNumber);
+                  Logx.i(
+                      _TAG,
+                      'user entered invalid phone number ' +
+                          completePhoneNumber);
                   Toaster.longToast('please enter a valid phone number');
                 }
               },
@@ -225,40 +230,56 @@ class _LoginScreenState extends State<LoginScreen> {
     String phone = '+911234567890';
 
     if (kIsWeb) {
-      await FirebaseAuth.instance
-          .signInWithPhoneNumber('${phone}', null)
-          .then((user) {
-        debugPrint('signInWithPhoneNumber: user verification id ' +
-            user.verificationId);
+      try {
+        await FirebaseAuth.instance
+            .signInWithPhoneNumber('${phone}', null)
+            .then((user) {
+          debugPrint('signInWithPhoneNumber: user verification id ' +
+              user.verificationId);
 
-        signInToSkipBloc(user.verificationId);
-      }).catchError((e) {
-        print('err: ' + e.toString());
-      });
+          signInToSkipBloc(user.verificationId);
+        }).catchError((e) {
+          Logx.em(_TAG, e.toString());
+        });
+      } on PlatformException catch (e, s) {
+        Logx.e(_TAG, e, s);
+      } on Exception catch (e, s) {
+        Logx.e(_TAG, e, s);
+      } catch (e) {
+        logger.e(e);
+      }
     } else {
-      await FirebaseAuth.instance.verifyPhoneNumber(
-          phoneNumber: '${phone}',
-          verificationCompleted: (PhoneAuthCredential credential) async {
-            print(
-                'verifyPhoneNumber: ${phone} is verified. attempting sign in with credentials...');
-            await FirebaseAuth.instance
-                .signInWithCredential(credential)
-                .then((value) async {
-              if (value.user != null) {
-                print('signInWithCredential: success. user logged in');
-              }
-            });
-          },
-          verificationFailed: (FirebaseAuthException e) {
-            print(e.message);
-          },
-          codeSent: (String verificationID, int? resendToken) {
-            signInToSkipBloc(verificationID);
-          },
-          codeAutoRetrievalTimeout: (String verificationId) {
-            signInToSkipBloc(verificationId);
-          },
-          timeout: const Duration(seconds: 120));
+      try {
+        await FirebaseAuth.instance.verifyPhoneNumber(
+            phoneNumber: '${phone}',
+            verificationCompleted: (PhoneAuthCredential credential) async {
+              print(
+                  'verifyPhoneNumber: ${phone} is verified. attempting sign in with credentials...');
+              await FirebaseAuth.instance
+                  .signInWithCredential(credential)
+                  .then((value) async {
+                if (value.user != null) {
+                  print('signInWithCredential: success. user logged in');
+                }
+              });
+            },
+            verificationFailed: (FirebaseAuthException e) {
+              Logx.em(_TAG, e.message.toString());
+            },
+            codeSent: (String verificationID, int? resendToken) {
+              signInToSkipBloc(verificationID);
+            },
+            codeAutoRetrievalTimeout: (String verificationId) {
+              signInToSkipBloc(verificationId);
+            },
+            timeout: const Duration(seconds: 120));
+      } on PlatformException catch (e, s) {
+        Logx.e(_TAG, e, s);
+      } on Exception catch (e, s) {
+        Logx.e(_TAG, e, s);
+      } catch (e) {
+        logger.e(e);
+      }
     }
   }
 
@@ -269,22 +290,26 @@ class _LoginScreenState extends State<LoginScreen> {
               verificationId: verificationId, smsCode: '123456'))
           .then((value) async {
         if (value.user != null) {
-          print('user is in firebase auth. checking for bloc registration...');
+          Logx.i(_TAG,
+              'user is in firebase auth. checking for bloc registration...');
 
           FirestoreHelper.pullUser(value.user!.uid).then((res) {
-            print("successfully retrieved bloc user for id " + value.user!.uid);
+            Logx.i(_TAG,
+                "successfully retrieved bloc user for id " + value.user!.uid);
 
             if (res.docs.isEmpty) {
-              print('user is not already registered in bloc, registering...');
+              Logx.i(_TAG,
+                  'user is not already registered in bloc, registering...');
 
               blocUser.User registeredUser = Dummy.getDummyUser();
               registeredUser.id = value.user!.uid;
-              registeredUser.phoneNumber = StringUtils.getInt(value.user!.phoneNumber!);
+              registeredUser.phoneNumber =
+                  StringUtils.getInt(value.user!.phoneNumber!);
 
               Navigator.of(context).pushReplacement(MaterialPageRoute(
                   builder: (context) => MainScreen(user: registeredUser)));
             } else {
-              debugPrint('user is a bloc member. navigating to main...');
+              Logx.i(_TAG, 'user is a bloc member. navigating to main...');
 
               DocumentSnapshot document = res.docs[0];
               Map<String, dynamic> data =
@@ -299,7 +324,12 @@ class _LoginScreenState extends State<LoginScreen> {
           });
         }
       });
+    } on PlatformException catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } on Exception catch (e, s) {
+      Logx.e(_TAG, e, s);
     } catch (e) {
+      logger.e(e);
       FocusScope.of(context).unfocus();
     }
   }

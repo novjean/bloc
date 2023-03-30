@@ -10,7 +10,6 @@ import '../../helpers/fresh.dart';
 import '../../utils/logx.dart';
 import '../../widgets/parties/party_item.dart';
 import '../../widgets/ui/sized_listview_block.dart';
-import '../../widgets/ui/toaster.dart';
 import '../box_office/box_office_screen.dart';
 
 class PartyScreen extends StatefulWidget {
@@ -126,22 +125,24 @@ class _PartyScreenState extends State<PartyScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: Theme.of(context).backgroundColor,
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(builder: (ctx) => BoxOfficeScreen()),
-            );
-          },
-          child: Icon(
-            Icons.play_arrow_outlined,
-            color: Theme.of(context).primaryColorDark,
-            size: 29,
-          ),
-          backgroundColor: Theme.of(context).primaryColor,
-          tooltip: 'box office',
-          elevation: 5,
-          splashColor: Colors.grey,
-        ),
+        floatingActionButton: UserPreferences.isUserLoggedIn()
+            ? FloatingActionButton(
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(builder: (ctx) => BoxOfficeScreen()),
+                  );
+                },
+                child: Icon(
+                  Icons.play_arrow_outlined,
+                  color: Theme.of(context).primaryColorDark,
+                  size: 29,
+                ),
+                backgroundColor: Theme.of(context).primaryColor,
+                tooltip: 'box office',
+                elevation: 5,
+                splashColor: Colors.grey,
+              )
+            : const SizedBox(),
         floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
         body: _isPartiesLoading & _isPartyGuestsLoading
             ? const LoadingWidget()
@@ -206,7 +207,8 @@ class _PartyScreenState extends State<PartyScreen> {
                             color: Theme.of(context).primaryColor,
                           ),
                           onTap: () {
-                            Logx.i(_TAG, 'show upcoming parties button clicked');
+                            Logx.i(
+                                _TAG, 'show upcoming parties button clicked');
                             setState(() {
                               _showPastParties = !_showPastParties;
                             });
@@ -234,7 +236,8 @@ class _PartyScreenState extends State<PartyScreen> {
                             color: Theme.of(context).primaryColor,
                           ),
                           onTap: () {
-                            Logx.i(_TAG, 'show upcoming parties button clicked');
+                            Logx.i(
+                                _TAG, 'show upcoming parties button clicked');
                             setState(() {
                               _showPastParties = !_showPastParties;
                             });
@@ -309,5 +312,4 @@ class _PartyScreenState extends State<PartyScreen> {
       ],
     );
   }
-
 }
