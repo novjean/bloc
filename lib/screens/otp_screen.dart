@@ -10,6 +10,7 @@ import '../db/shared_preferences/user_preferences.dart';
 import '../helpers/firestore_helper.dart';
 import '../helpers/fresh.dart';
 import '../main.dart';
+import '../utils/logx.dart';
 import '../utils/string_utils.dart';
 import '../widgets/ui/toaster.dart';
 import 'main_screen.dart';
@@ -17,13 +18,15 @@ import 'main_screen.dart';
 class OTPScreen extends StatefulWidget {
   final String phone;
 
-  OTPScreen(this.phone);
+  OTPScreen(this.phone, {Key? key}) : super(key: key);
 
   @override
   State<OTPScreen> createState() => _OTPScreenState();
 }
 
 class _OTPScreenState extends State<OTPScreen> {
+  static const String _TAG = 'OTPScreen';
+
   final pinController = TextEditingController();
   final focusNode = FocusNode();
   final formKey = GlobalKey<FormState>();
@@ -48,35 +51,32 @@ class _OTPScreenState extends State<OTPScreen> {
       await FirebaseAuth.instance
           .signInWithPhoneNumber('${widget.phone}', null)
           .then((user) {
-        debugPrint('signInWithPhoneNumber: user verification id ' +
+        Logx.i(_TAG,'signInWithPhoneNumber: user verification id ' +
             user.verificationId);
         setState(() {
           _verificationCode = user.verificationId;
         });
-      }).catchError((e) {
-        print('err: ' + e.toString());
+      }).catchError((e,s) {
+        Logx.e(_TAG, e, s);
       });
     } else {
       await FirebaseAuth.instance.verifyPhoneNumber(
           phoneNumber: '${widget.phone}',
           verificationCompleted: (PhoneAuthCredential credential) async {
-            print(
+            Logx.i(_TAG,
                 'verifyPhoneNumber: ${widget.phone} is verified. attempting sign in with credentials...');
           },
           verificationFailed: (FirebaseAuthException e) {
-            print('verificationFailed ' + e.toString());
+            Logx.i(_TAG, 'verificationFailed ' + e.toString());
           },
           codeSent: (String verificationID, int? resendToken) {
-            print('verification id : ' + verificationID);
+            Logx.i(_TAG, 'verification id : ' + verificationID);
             setState(() {
               _verificationCode = verificationID;
             });
           },
           codeAutoRetrievalTimeout: (String verificationId) {
-            setState(() {
-              _verificationCode = verificationId;
-
-            });
+            Logx.i(_TAG, 'code auto retrieval timeout');
           },
           timeout: const Duration(seconds: 60));
     }
@@ -254,16 +254,15 @@ class _OTPScreenState extends State<OTPScreen> {
                     verificationId: _verificationCode, smsCode: pin))
                     .then((value) async {
                   if (value.user != null) {
-                    print(
-                        'user is in firebase auth');
-                    print('checking for bloc registration, id ' + value.user!.uid);
+                    Logx.i(_TAG, 'user is in firebase auth');
+                    Logx.i(_TAG, 'checking for bloc registration, id ' + value.user!.uid);
 
                     FirestoreHelper.pullUser(value.user!.uid).then((res) {
-                      print("successfully retrieved bloc user for id " +
+                      Logx.i(_TAG, "successfully retrieved bloc user for id " +
                           value.user!.uid);
 
                       if (res.docs.isEmpty) {
-                        print(
+                        Logx.i(_TAG,
                             'user is not already registered in bloc, registering...');
 
                         blocUser.User registeredUser = Dummy.getDummyUser();
@@ -275,7 +274,7 @@ class _OTPScreenState extends State<OTPScreen> {
                                 builder: (context) =>
                                     MainScreen(user: registeredUser)));
                       } else {
-                        debugPrint(
+                        Logx.i(_TAG,
                             'user is a bloc member. navigating to main...');
 
                         DocumentSnapshot document = res.docs[0];
@@ -294,7 +293,7 @@ class _OTPScreenState extends State<OTPScreen> {
                   }
                 });
               } catch (e) {
-                print('otp error ' + e.toString());
+                Logx.em(_TAG , 'otp error ' + e.toString());
 
                 String exception = e.toString();
                 if(exception.contains('session-expired')){
