@@ -182,7 +182,7 @@ class _BoxOfficeItemState extends State<BoxOfficeItem> {
                                     alignment: Alignment.centerRight,
                                     child: Text(
                                       widget.partyGuest.guestStatus +
-                                          ' entry.' +
+                                          ' entry. ' +
                                           widget.partyGuest.guestsRemaining
                                               .toString() +
                                           ' guests remaining',
@@ -192,7 +192,7 @@ class _BoxOfficeItemState extends State<BoxOfficeItem> {
                                   Align(
                                     alignment: Alignment.centerRight,
                                     child: Text(
-                                      'valid until 11 pm',
+                                      'valid until ' + DateTimeUtils.getFormattedTime(widget.party.guestListEndTime),
                                       style: TextStyle(fontSize: 16),
                                     ),
                                   ),
