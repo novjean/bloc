@@ -2,14 +2,18 @@ import 'package:bloc/db/shared_preferences/user_preferences.dart';
 import 'package:bloc/utils/network_utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../../db/entity/user.dart' as blocUser;
 import '../helpers/firestorage_helper.dart';
 import '../helpers/firestore_helper.dart';
+import '../utils/logx.dart';
 import '../widgets/ui/sized_listview_block.dart';
 import 'login_screen.dart';
 
 class AccountScreen extends StatelessWidget {
+  static const String _TAG = 'AccountScreen';
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -50,11 +54,11 @@ class AccountScreen extends StatelessWidget {
                 context: context,
                 builder: (BuildContext context) {
                   return AlertDialog(
-                    title: Text("delete account"),
-                    content: Text("deleting your account will delete your access and all your information on this site. are you sure you want to continue?"),
+                    title: const Text("delete account"),
+                    content: const Text("deleting your account will delete your access and all your information on this site. are you sure you want to continue?"),
                     actions: [
                       TextButton(
-                        child: Text("yes"),
+                        child: const Text("yes"),
                         onPressed: () {
                           blocUser.User sUser = UserPreferences.myUser;
 
@@ -65,13 +69,17 @@ class AccountScreen extends StatelessWidget {
                           FirestoreHelper.deleteUser(sUser);
                           UserPreferences.resetUser();
 
-                          print('user account is deleted');
+                          Logx.i(_TAG, 'user account is deleted');
 
                           try {
                             User? user = FirebaseAuth.instance.currentUser;
                             user!.delete();
-                          } catch (e){
-                            print('account delete exception ' + e.toString());
+                          } on PlatformException catch (e, s) {
+                            Logx.e(_TAG, e, s);
+                          } on Exception catch (e, s) {
+                            Logx.e(_TAG, e, s);
+                          } catch (e) {
+                            Logx.em(_TAG, 'account delete failed ' + e.toString());
                           }
 
                           Navigator.of(context).pushReplacement(
