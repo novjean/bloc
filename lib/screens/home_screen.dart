@@ -14,7 +14,6 @@ import '../db/shared_preferences/user_preferences.dart';
 import '../helpers/dummy.dart';
 import '../helpers/firestore_helper.dart';
 import '../helpers/fresh.dart';
-import '../helpers/token_monitor.dart';
 import '../utils/logx.dart';
 import '../widgets/home/bloc_slide_item.dart';
 import '../widgets/parties/party_banner.dart';
@@ -178,7 +177,6 @@ class _HomeScreenState extends State<HomeScreen> {
         body: ListView(
           physics: const BouncingScrollPhysics(),
           children: <Widget>[
-            // buildSearchBar(context),
             const SizedBox(height: 1.0),
             _isBlocsLoading ? const LoadingWidget() : _displayBlocs(context),
             _isUpcomingPartyLoading
@@ -193,22 +191,7 @@ class _HomeScreenState extends State<HomeScreen> {
             const SizedBox(height: 10.0),
             kIsWeb
                 ? const StoreBadgeItem()
-                : TokenMonitor((token) {
-                    if (token != null) {
-                      User user = UserPreferences.myUser;
-                      if (user.id.isNotEmpty) {
-                        if (UserPreferences.myUser.fcmToken.isEmpty ||
-                            UserPreferences.myUser.fcmToken != token) {
-                          UserPreferences.setUserFcmToken(token);
-                          FirestoreHelper.updateUserFcmToken(
-                              UserPreferences.myUser.id, token);
-                        } else {
-                          Logx.i(_TAG,'fcm token has not changed: ' + token);
-                        }
-                      }
-                    }
-                    return const SizedBox();
-                  }),
+                : const SizedBox(),
             const SizedBox(height: 10.0),
           ],
         ),
