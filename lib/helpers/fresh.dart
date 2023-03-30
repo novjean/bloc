@@ -736,10 +736,10 @@ class Fresh {
       shouldPushProduct = true;
     }
     try {
-      product = product.copyWith(isOfferRunning: map['isOfferRunning'] as bool);
+      product = product.copyWith(isOfferRunning: map['isOffeunning'] as bool);
     } catch (e) {
       Logx.em(
-          _TAG, 'product isOfferRunning not exist for product id: ' + product.id);
+          _TAG, 'product isOffeunning not exist for product id: ' + product.id);
       shouldPushProduct = true;
     }
     try {
@@ -875,7 +875,7 @@ class Fresh {
           freshProduct.copyWith(isOfferRunning: product.isOfferRunning);
     } catch (e) {
       Logx.em(
-          _TAG, 'product isOfferRunning not exist for product id: ' + product.id);
+          _TAG, 'product isOffeunning not exist for product id: ' + product.id);
     }
     try {
       freshProduct = freshProduct.copyWith(isVeg: product.isVeg);
