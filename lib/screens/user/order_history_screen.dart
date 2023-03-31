@@ -118,7 +118,7 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
             ? const LoadingWidget()
             : billedOrders.isNotEmpty
                 ? _displayBilledOrders(context)
-                : Center(child: Text('no past orders')),
+                : const Expanded(child: Center(child: Text('no past orders'))),
         const SizedBox(height: 5.0),
       ],
     );
