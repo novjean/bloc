@@ -1,4 +1,5 @@
 import 'package:bloc/db/entity/manager_service.dart';
+import 'package:bloc/screens/manager/ads/ads_screen.dart';
 import 'package:bloc/screens/manager/orders/manage_orders_screen.dart';
 import 'package:bloc/screens/manager/parties/manage_parties_screen.dart';
 
@@ -85,6 +86,46 @@ class ManagerServicesScreen extends StatelessWidget {
                 ),
                 onTap: () {
                   switch (_managerServices[index].name) {
+                    case 'ads':
+                      {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (ctx) =>
+                                AdsScreen(serviceId: blocService.id)));
+                        break;
+                      }
+                    case 'Bookings':
+                      {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (ctx) => BookingsScreen(
+                                  blocServiceId: blocService.id,
+                                  serviceName: _managerService.name,
+                                  userTitle: userTitle,
+                                )));
+                        break;
+                      }
+                    case 'guest list':
+                      {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (ctx) => PartyGuestListScreen()));
+                        break;
+                      }
+                    case 'guest wifi':
+                      {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (ctx) => GuestWifiEditScreen(
+                                  blocServiceId: blocService.id,
+                                  task: 'edit',
+                                )));
+                        break;
+                      }
+                    case 'Inventory':
+                      {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (ctx) => ManageInventoryScreen(
+                                serviceId: blocService.id,
+                                managerService: _managerService)));
+                        break;
+                      }
                     case 'Orders':
                       {
                         Navigator.of(context).push(MaterialPageRoute(
@@ -94,10 +135,10 @@ class ManagerServicesScreen extends StatelessWidget {
                                 userTitle: userTitle)));
                         break;
                       }
-                    case 'Inventory':
+                    case 'Party':
                       {
                         Navigator.of(context).push(MaterialPageRoute(
-                            builder: (ctx) => ManageInventoryScreen(
+                            builder: (ctx) => ManagePartiesScreen(
                                 serviceId: blocService.id,
                                 managerService: _managerService)));
                         break;
@@ -112,45 +153,13 @@ class ManagerServicesScreen extends StatelessWidget {
                                 )));
                         break;
                       }
-                    case 'Party':
-                      {
-                        Navigator.of(context).push(MaterialPageRoute(
-                            builder: (ctx) => ManagePartiesScreen(
-                                serviceId: blocService.id,
-                                managerService: _managerService)));
-                        break;
-                      }
-                    case 'Bookings':
-                      {
-                        Navigator.of(context).push(MaterialPageRoute(
-                            builder: (ctx) => BookingsScreen(
-                                  blocServiceId: blocService.id,
-                                  serviceName: _managerService.name,
-                                  userTitle: userTitle,
-                                )));
-                        break;
-                      }
                     case 'Users':
                       {
                         Navigator.of(context).push(MaterialPageRoute(
                             builder: (ctx) => ManageUsersScreen()));
                         break;
                       }
-                    case 'guest wifi':
-                      {
-                        Navigator.of(context).push(MaterialPageRoute(
-                            builder: (ctx) => GuestWifiEditScreen(
-                                  blocServiceId: blocService.id,
-                                  task: 'edit',
-                                )));
-                        break;
-                      }
-                    case 'guest list':
-                      {
-                        Navigator.of(context).push(MaterialPageRoute(
-                            builder: (ctx) => PartyGuestListScreen()));
-                        break;
-                      }
+
                     default:
                   }
                 });

@@ -10,7 +10,7 @@ import '../../widgets/bloc_service_item.dart';
 class ManagerMainScreen extends StatelessWidget {
   static const String _TAG = 'ManagerMainScreen';
 
-  ManagerMainScreen({key}) : super(key: key);
+  const ManagerMainScreen({key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

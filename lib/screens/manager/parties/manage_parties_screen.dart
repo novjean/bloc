@@ -14,7 +14,7 @@ class ManagePartiesScreen extends StatefulWidget {
   String serviceId;
   ManagerService managerService;
 
-  ManagePartiesScreen({required this.serviceId, required this.managerService});
+  ManagePartiesScreen({Key? key, required this.serviceId, required this.managerService}) : super(key: key);
 
   @override
   State<ManagePartiesScreen> createState() => _ManagePartiesScreenState();

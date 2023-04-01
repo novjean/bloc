@@ -310,16 +310,23 @@ class _LoginScreenState extends State<LoginScreen> {
                   builder: (context) => MainScreen(user: registeredUser)));
             } else {
               Logx.i(_TAG, 'user is a bloc member. navigating to main...');
+              try {
+                DocumentSnapshot document = res.docs[0];
+                Map<String, dynamic> data =
+                document.data()! as Map<String, dynamic>;
 
-              DocumentSnapshot document = res.docs[0];
-              Map<String, dynamic> data =
-                  document.data()! as Map<String, dynamic>;
+                final blocUser.User user = Fresh.freshUserMap(data, true);
+                UserPreferences.setUser(user);
 
-              final blocUser.User user = Fresh.freshUserMap(data, true);
-              UserPreferences.setUser(user);
-
-              Navigator.of(context).pushReplacement(MaterialPageRoute(
-                  builder: (context) => MainScreen(user: user)));
+                Navigator.of(context).pushReplacement(MaterialPageRoute(
+                    builder: (context) => MainScreen(user: user)));
+              } on PlatformException catch (e, s) {
+                Logx.e(_TAG, e, s);
+              } on Exception catch (e, s) {
+                Logx.e(_TAG, e, s);
+              } catch (e) {
+                logger.e(e);
+              }
             }
           });
         }

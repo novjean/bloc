@@ -6,11 +6,13 @@ import 'package:flutter/material.dart';
 
 import '../../../db/entity/manager_service.dart';
 import '../../../helpers/firestore_helper.dart';
+import '../../../utils/logx.dart';
 import 'manage_category_screen.dart';
 import 'manage_offers_screen.dart';
 import 'manage_products_screen.dart';
 
 class ManageInventoryScreen extends StatelessWidget{
+  static const String _TAG = 'ManageInventoryScreen';
   String serviceId;
   ManagerService managerService;
 
@@ -25,7 +27,6 @@ class ManageInventoryScreen extends StatelessWidget{
       appBar: AppBar(
         title: const Text('manage | inventory'),
       ),
-      // drawer: AppDrawer(),
       body: _buildBody(context),
     );
   }
@@ -34,9 +35,9 @@ class ManageInventoryScreen extends StatelessWidget{
     return SingleChildScrollView(
       child: Column(
         children: [
-          SizedBox(height: 2.0),
+          const SizedBox(height: 5.0),
           _buildInventoryOptions(context),
-          SizedBox(height: 10.0),
+          const SizedBox(height: 5.0),
         ],
       ),
     );
@@ -62,8 +63,8 @@ class ManageInventoryScreen extends StatelessWidget{
               return _displayInventoryOptions(context, _invOptions);
             }
           }
-          print('loading inventory options...');
-          return LoadingWidget();
+          Logx.i(_TAG, 'loading inventory options...');
+          return const LoadingWidget();
         });
   }
 
@@ -86,20 +87,20 @@ class ManageInventoryScreen extends StatelessWidget{
                         builder: (ctx) => ManageProductsScreen(
                             serviceId: serviceId,
                             managerService: managerService)));
-                    print('manage inventory screen selected.');
+                    Logx.i(_TAG, 'manage inventory screen selected.');
                   } else if(_sInvOption.title.contains('Categories')) {
                     Navigator.of(context).push(MaterialPageRoute(
                         builder: (ctx) => ManageCategoryScreen(
                             serviceId: serviceId)));
-                    print('manage category screen selected.');
+                    Logx.i(_TAG, 'manage category screen selected.');
                   } else if(_sInvOption.title.contains('Offers')) {
                     Navigator.of(context).push(MaterialPageRoute(
                         builder: (ctx) => ManageOffersScreen(
                             serviceId: serviceId)));
-                    print('manage category screen selected.');
+                    Logx.i(_TAG, 'manage category screen selected.');
                   }
                   else {
-                    print('Undefined inventory option!');
+                    Logx.i(_TAG, 'Undefined inventory option!');
                   }
                 });
           }),

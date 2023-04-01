@@ -6,6 +6,7 @@ import 'package:bloc/utils/constants.dart';
 import 'package:bloc/utils/string_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import '../db/entity/ad.dart';
 import '../db/entity/bloc.dart';
 import '../db/entity/bloc_service.dart';
 import '../db/entity/offer.dart';
@@ -17,6 +18,21 @@ import '../db/shared_preferences/user_preferences.dart';
 import 'firestore_helper.dart';
 
 class Dummy {
+  static Ad getDummyAd(String blocServiceId) {
+    Ad dummyAd = Ad(
+        id: StringUtils.getRandomString(28),
+        title: '',
+        message: '',
+        type: '',
+        blocId: blocServiceId,
+        partyId: '',
+        createdAt: Timestamp.now().millisecondsSinceEpoch,
+        isActive: false,
+        hits: 0);
+
+    return dummyAd;
+  }
+
   static Bloc getDummyBloc(String cityId) {
     int time = Timestamp.now().millisecondsSinceEpoch;
 

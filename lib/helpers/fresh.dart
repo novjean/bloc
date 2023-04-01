@@ -1,5 +1,6 @@
 import 'package:bloc/db/entity/party_guest.dart';
 
+import '../db/entity/ad.dart';
 import '../db/entity/category.dart';
 import '../db/entity/party.dart';
 import '../db/entity/product.dart';
@@ -12,6 +13,130 @@ import 'firestore_helper.dart';
 
 class Fresh {
   static const String _TAG = 'Fresh';
+
+  /** ad **/
+  static Ad freshAdMap(
+      Map<String, dynamic> map, bool shouldUpdate) {
+    Ad ad = Dummy.getDummyAd('');
+
+    bool shouldPush = false;
+
+    try {
+      ad = ad.copyWith(id: map['id'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'ad id not exist');
+    }
+    try {
+      ad = ad.copyWith(title: map['title'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'ad title not exist for ad id: ' + ad.id);
+      shouldPush = true;
+    }
+    try {
+      ad = ad.copyWith(message: map['message'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'ad message not exist for ad id: ' + ad.id);
+      shouldPush = true;
+    }
+    try {
+      ad = ad.copyWith(type: map['type'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'ad type not exist for ad id: ' + ad.id);
+      shouldPush = true;
+    }
+    try {
+      ad = ad.copyWith(blocId: map['blocId'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'ad blocId not exist for ad id: ' + ad.id);
+      shouldPush = true;
+    }
+    try {
+      ad = ad.copyWith(partyId: map['partyId'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'ad partyId not exist for ad id: ' + ad.id);
+      shouldPush = true;
+    }
+    try {
+      ad = ad.copyWith(hits: map['hits'] as int);
+    } catch (e) {
+      Logx.em(_TAG, 'ad hits not exist for ad id: ' + ad.id);
+      shouldPush = true;
+    }
+    try {
+      ad = ad.copyWith(createdAt: map['createdAt'] as int);
+    } catch (e) {
+      Logx.em(_TAG, 'ad createdAt not exist for ad id: ' + ad.id);
+      shouldPush = true;
+    }
+    try {
+      ad = ad.copyWith(isActive: map['isActive'] as bool);
+    } catch (e) {
+      Logx.em(_TAG, 'ad isActive not exist for ad id: ' + ad.id);
+      shouldPush = true;
+    }
+
+    if (shouldPush &&
+        shouldUpdate &&
+        UserPreferences.myUser.clearanceLevel >= Constants.MANAGER_LEVEL) {
+      Logx.em(_TAG, 'updating ad ' + ad.id);
+      FirestoreHelper.pushAd(ad);
+    }
+
+    return ad;
+  }
+
+  static Ad freshAd(Ad ad) {
+    Ad freshAd = Dummy.getDummyAd('');
+
+    try {
+      freshAd = freshAd.copyWith(id: ad.id);
+    } catch (e) {
+      Logx.em(_TAG, 'ad id not exist');
+    }
+    try {
+      freshAd = freshAd.copyWith(title: ad.title);
+    } catch (e) {
+      Logx.em(_TAG, 'ad title not exist for ad id: ' + ad.id);
+    }
+    try {
+      freshAd = freshAd.copyWith(message: ad.message);
+    } catch (e) {
+      Logx.em(_TAG, 'ad message not exist for ad id: ' + ad.id);
+    }
+    try {
+      freshAd = freshAd.copyWith(type: ad.type);
+    } catch (e) {
+      Logx.em(_TAG, 'ad type not exist for ad id: ' + ad.id);
+    }
+    try {
+      freshAd = freshAd.copyWith(blocId: ad.blocId);
+    } catch (e) {
+      Logx.em(_TAG, 'ad blocId not exist for ad id: ' + ad.id);
+    }
+    try {
+      freshAd = freshAd.copyWith(partyId: ad.partyId);
+    } catch (e) {
+      Logx.em(_TAG, 'ad partyId not exist for ad id: ' + ad.id);
+    }
+    try {
+      freshAd = freshAd.copyWith(hits: ad.hits);
+    } catch (e) {
+      Logx.em(_TAG, 'ad hits not exist for ad id: ' + ad.id);
+    }
+    try {
+      freshAd = freshAd.copyWith(createdAt: ad.createdAt);
+    } catch (e) {
+      Logx.em(_TAG, 'ad createdAt not exist for ad id: ' + ad.id);
+    }
+    try {
+      freshAd = freshAd.copyWith(isActive: ad.isActive);
+    } catch (e) {
+      Logx.em(_TAG, 'ad isActive not exist for ad id: ' + ad.id);
+    }
+
+    return freshAd;
+  }
+
 
   /** category **/
   static Category freshCategoryMap(

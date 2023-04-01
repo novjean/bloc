@@ -17,6 +17,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
 import 'package:logger/logger.dart';
 
+import '../db/entity/ad.dart';
 import '../db/entity/product.dart';
 import '../db/entity/service_table.dart';
 import '../db/entity/sos.dart';
@@ -32,6 +33,7 @@ class FirestoreHelper {
   static const String _TAG = 'FirestoreHelper';
   static var logger = Logger();
 
+  static String ADS = 'ads';
   static String BLOCS = 'blocs';
   static String BOOKINGS = 'bookings';
   static String CHATS = 'chats';
@@ -57,6 +59,30 @@ class FirestoreHelper {
 
   static int TABLE_PRIVATE_TYPE_ID = 1;
   static int TABLE_COMMUNITY_TYPE_ID = 2;
+
+  /** Ads **/
+  static void pushAd(Ad ad) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection(ADS)
+          .doc(ad.id)
+          .set(ad.toMap());
+    } on PlatformException catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } on Exception catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } catch (e) {
+      logger.e(e);
+    }
+  }
+
+  static getAds(String blocId) {
+    return FirebaseFirestore.instance
+        .collection(ADS)
+        .where('blocId', isEqualTo: blocId)
+        .where('isActive', isEqualTo: true)
+        .snapshots();
+  }
 
   /** Blocs **/
   static void pushBloc(Bloc bloc) async {

@@ -65,3 +65,18 @@ exports.offerFunction = functions
         },
       });
     });
+
+exports.adFunction = functions
+    .region('asia-south1')
+    .firestore
+    .document('ads/{document}')
+    .onCreate((snapshot, context) => {
+      console.log(snapshot.data());
+      return admin.messaging().sendToTopic('ads', {
+        notification: {
+          title: snapshot.data().title,
+          body: snapshot.data().message,
+          clickAction: 'FLUTTER_NOTIFICATION_CLICK',
+        },
+      });
+    });

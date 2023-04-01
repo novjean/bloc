@@ -23,4 +23,9 @@ class Logx {
     logger.e(tag + ':' + message + e.toString());
     FirebaseCrashlytics.instance.recordError(e, s);
   }
+
+  static void d(String tag, String message) {
+    String text = tag + ':' + message;
+    logger.d(text);
+  }
 }

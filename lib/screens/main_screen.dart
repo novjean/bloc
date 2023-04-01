@@ -132,6 +132,7 @@ class _MainScreenState extends State<MainScreen> {
       });
       // fbm.subscribeToTopic('chat');
       fbm.subscribeToTopic('offer');
+      fbm.subscribeToTopic('ads');
 
       blocUser.User user = UserPreferences.getUser();
       if (user.clearanceLevel >= Constants.CAPTAIN_LEVEL) {
