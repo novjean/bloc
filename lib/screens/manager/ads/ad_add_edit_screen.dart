@@ -47,9 +47,12 @@ class _AdAddEditScreenState extends State<AdAddEditScreen> {
           widget.ad = widget.ad.copyWith(title: title),
         ),
         const SizedBox(height: 24),
+        // ios default 140
+        // ios extended 260
+        // android default 80
         TextFieldWidget(
           label: 'message \*',
-          text: widget.ad.message,
+          text: widget.ad.message, 
           maxLines: 5,
           onChanged: (message) =>
           widget.ad = widget.ad.copyWith(message: message),

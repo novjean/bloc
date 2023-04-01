@@ -253,10 +253,10 @@ class _OTPScreenState extends State<OTPScreen> {
               // print('code is ' + _verificationCode);
               // return value == _verificationCode ? null : 'pin is incorrect';
               // },
-              onClipboardFound: (value) {
-                debugPrint('onClipboardFound: $value');
-                pinController.setText(value);
-              },
+              // onClipboardFound: (value) {
+              //   debugPrint('onClipboardFound: $value');
+              //   pinController.setText(value);
+              // },
               hapticFeedbackType: HapticFeedbackType.lightImpact,
               onCompleted: (pin) async {
                 debugPrint('onCompleted: $pin');
