@@ -1,4 +1,3 @@
-
 import 'package:bloc/helpers/fresh.dart';
 import 'package:flutter/material.dart';
 
@@ -28,11 +27,11 @@ class _AdAddEditScreenState extends State<AdAddEditScreen> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(
-      title: Text('ad | ' + widget.task),
-    ),
-    body: _buildBody(context),
-  );
+        appBar: AppBar(
+          title: Text('ad | ' + widget.task),
+        ),
+        body: _buildBody(context),
+      );
 
   _buildBody(BuildContext context) {
     return ListView(
@@ -43,8 +42,7 @@ class _AdAddEditScreenState extends State<AdAddEditScreen> {
         TextFieldWidget(
           label: 'title \*',
           text: widget.ad.title,
-          onChanged: (title) =>
-          widget.ad = widget.ad.copyWith(title: title),
+          onChanged: (title) => widget.ad = widget.ad.copyWith(title: title),
         ),
         const SizedBox(height: 24),
         // ios default 140
@@ -52,10 +50,11 @@ class _AdAddEditScreenState extends State<AdAddEditScreen> {
         // android default 80
         TextFieldWidget(
           label: 'message \*',
-          text: widget.ad.message, 
+          text: widget.ad.message,
           maxLines: 5,
+          maxLength: 260,
           onChanged: (message) =>
-          widget.ad = widget.ad.copyWith(message: message),
+              widget.ad = widget.ad.copyWith(message: message),
         ),
         const SizedBox(height: 24),
         TextFieldWidget(

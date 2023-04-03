@@ -270,6 +270,7 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
               TextFieldWidget(
                 label: 'event name',
                 text: widget.party.eventName,
+                maxLength: 20,
                 onChanged: (eventName) =>
                 widget.party = widget.party.copyWith(eventName: eventName),
               ),

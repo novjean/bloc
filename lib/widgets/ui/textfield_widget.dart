@@ -5,6 +5,7 @@ class TextFieldWidget extends StatefulWidget {
   final String label;
   final String text;
   final ValueChanged<String> onChanged;
+  late final int? maxLength;
 
   TextFieldWidget({
     Key? key,
@@ -12,6 +13,7 @@ class TextFieldWidget extends StatefulWidget {
     required this.label,
     required this.text,
     required this.onChanged,
+    this.maxLength,
   }) : super(key: key);
 
   @override
@@ -48,6 +50,7 @@ class _TextFieldWidgetState extends State<TextFieldWidget> {
           ),
           const SizedBox(height: 8),
           TextField(
+            maxLength: widget.maxLength ?? 1000,
             controller: controller,
             decoration: InputDecoration(
               border: OutlineInputBorder(
@@ -56,6 +59,16 @@ class _TextFieldWidgetState extends State<TextFieldWidget> {
             ),
             maxLines: widget.maxLines,
             onChanged: widget.onChanged,
+            buildCounter: (context,
+                {required currentLength, required isFocused, maxLength}) {
+              return widget.maxLength != null
+                  ? Container(
+                      transform:
+                          Matrix4.translationValues(0, -5, 0),
+                      child: Text("$currentLength/$maxLength"),
+                    )
+                  : const SizedBox();
+            },
           ),
         ],
       );
