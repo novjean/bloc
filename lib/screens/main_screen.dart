@@ -23,7 +23,7 @@ class MainScreen extends StatefulWidget {
 
   final blocUser.User user;
 
-  MainScreen({key, required this.user}) : super(key: key);
+  const MainScreen({key, required this.user}) : super(key: key);
 
   @override
   State<MainScreen> createState() => _MainScreenState();

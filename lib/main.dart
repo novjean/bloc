@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:bloc/screens/login_screen.dart';
+import 'package:bloc/screens/main_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -15,6 +16,7 @@ import 'firebase_options.dart';
 import 'providers/cart.dart';
 import 'screens/ui/splash_screen.dart';
 import 'utils/constants.dart';
+import 'widgets/ui/loading_widget.dart';
 
 var logger = Logger(
   printer: PrettyPrinter(),
@@ -105,7 +107,7 @@ Future<void> main() async {
 }
 
 class MyApp extends StatelessWidget {
-  MyApp();
+  MyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -121,6 +123,11 @@ class MyApp extends StatelessWidget {
           // Initialize FlutterFire:
           future: _initialization,
           builder: (ctx, appSnapshot) {
+
+            if (appSnapshot.connectionState == ConnectionState.waiting) {
+              return const LoadingWidget();
+            }
+
             return MaterialApp(
                 debugShowCheckedModeBanner: false,
                 title: kAppTitle,
@@ -153,7 +160,9 @@ class MyApp extends StatelessWidget {
                 ),
                 home: appSnapshot.connectionState != ConnectionState.done
                     ? SplashScreen()
-                    : LoginScreen(),
+                    :
+                // MainScreen(user: ),
+                LoginScreen(),
 
                 // routes: {
                 // HomeScreen.routeName: (ctx) => HomeScreen(),

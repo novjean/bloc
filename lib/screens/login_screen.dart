@@ -23,7 +23,7 @@ import 'main_screen.dart';
 import 'otp_screen.dart';
 
 class LoginScreen extends StatefulWidget {
-  LoginScreen({key}) : super(key: key);
+  const LoginScreen({key}) : super(key: key);
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
