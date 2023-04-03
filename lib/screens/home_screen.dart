@@ -148,10 +148,12 @@ class _HomeScreenState extends State<HomeScreen> {
           Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
           final GuestWifi wifi = GuestWifi.fromMap(data);
 
-          setState(() {
-            mGuestWifi = wifi;
-            _isGuestWifiDetailsLoading = false;
-          });
+          if(mounted) {
+            setState(() {
+              mGuestWifi = wifi;
+              _isGuestWifiDetailsLoading = false;
+            });
+          }
         } on PlatformException catch (e, s) {
           Logx.e(_TAG, e, s);
         } on Exception catch (e, s) {

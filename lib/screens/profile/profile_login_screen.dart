@@ -17,7 +17,7 @@ class ProfileLoginScreen extends StatelessWidget {
 
               FirebaseAuth.instance.signOut();
               Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (context) => LoginScreen()),
+                MaterialPageRoute(builder: (context) => LoginScreen(shouldTriggerSkip: false,)),
               );
             }),
       ),

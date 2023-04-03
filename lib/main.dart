@@ -1,7 +1,7 @@
 import 'dart:ui';
 
 import 'package:bloc/screens/login_screen.dart';
-import 'package:bloc/screens/main_screen.dart';
+import 'package:bloc/utils/logx.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -16,7 +16,6 @@ import 'firebase_options.dart';
 import 'providers/cart.dart';
 import 'screens/ui/splash_screen.dart';
 import 'utils/constants.dart';
-import 'widgets/ui/loading_widget.dart';
 
 var logger = Logger(
   printer: PrettyPrinter(),
@@ -30,7 +29,7 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   // If you're going to use other Firebase services in the background, such as Firestore,
   // make sure you call `initializeApp` before using other Firebase services.
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  print('Handling a background message ${message.messageId}');
+  Logx.i('main', 'handling a background message ${message.messageId}');
 }
 
 /// Create a [AndroidNotificationChannel] for heads up notifications
@@ -49,6 +48,8 @@ late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
 const bool kIsWeb = identical(0, 0.0);
 
 Future<void> main() async {
+  const String _TAG = 'main';
+
   WidgetsFlutterBinding.ensureInitialized();
 
   await Firebase.initializeApp(
@@ -82,7 +83,7 @@ Future<void> main() async {
     /// default FCM channel to enable heads up notifications.
     await flutterLocalNotificationsPlugin
         .resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>()
+        AndroidFlutterLocalNotificationsPlugin>()
         ?.createNotificationChannel(channel);
 
     /// Update the iOS foreground notification presentation options to allow
@@ -103,11 +104,18 @@ Future<void> main() async {
 
   await UserPreferences.init();
 
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
-  MyApp({Key? key}) : super(key: key);
+class MyApp extends StatefulWidget {
+  const MyApp({Key? key}) : super(key: key);
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  static const String _TAG = 'MyApp';
 
   @override
   Widget build(BuildContext context) {
@@ -120,59 +128,53 @@ class MyApp extends StatelessWidget {
         ),
       ],
       child: FutureBuilder(
-          // Initialize FlutterFire:
+        // Initialize FlutterFire:
           future: _initialization,
           builder: (ctx, appSnapshot) {
 
-            if (appSnapshot.connectionState == ConnectionState.waiting) {
-              return const LoadingWidget();
-            }
-
             return MaterialApp(
-                debugShowCheckedModeBanner: false,
-                title: kAppTitle,
-                theme: ThemeData(
-                  //rgba(211,167,130,255)
-                  primaryColor: const Color.fromRGBO(211,167,130,1),
-                    // 222,193,170
-                  primaryColorLight: const Color.fromRGBO(222,193,170,1),
-                  primaryColorDark: const Color.fromRGBO(42,33,26,1),
+              debugShowCheckedModeBanner: false,
+              title: kAppTitle,
+              theme: ThemeData(
+                //rgba(211,167,130,255)
+                primaryColor: const Color.fromRGBO(211, 167, 130, 1),
+                // 222,193,170
+                primaryColorLight: const Color.fromRGBO(222, 193, 170, 1),
+                primaryColorDark: const Color.fromRGBO(42, 33, 26, 1),
 
-                  backgroundColor: const Color.fromRGBO(38, 50, 56, 1.0),
-                  focusColor: const Color.fromRGBO(31, 31, 33, 1.0),
-                  shadowColor: const Color.fromRGBO(158, 158, 158, 1.0),
+                backgroundColor: const Color.fromRGBO(38, 50, 56, 1.0),
+                focusColor: const Color.fromRGBO(31, 31, 33, 1.0),
+                shadowColor: const Color.fromRGBO(158, 158, 158, 1.0),
 
-                  highlightColor: const Color.fromRGBO(255, 255, 255, 1.0),
-                  bottomAppBarColor: const Color.fromRGBO(255, 255, 255, 1.0),
+                highlightColor: const Color.fromRGBO(255, 255, 255, 1.0),
+                bottomAppBarColor: const Color.fromRGBO(255, 255, 255, 1.0),
 
-                  // app bar and buttons by default
-                  primarySwatch: Colors.brown,
+                // app bar and buttons by default
+                primarySwatch: Colors.brown,
 
-                  accentColor: Colors.grey,
-                  accentColorBrightness: Brightness.dark,
-                  buttonTheme: ButtonTheme.of(context).copyWith(
-                    buttonColor: Colors.red,
-                    textTheme: ButtonTextTheme.primary,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
-                    ),
+                accentColor: Colors.grey,
+                accentColorBrightness: Brightness.dark,
+                buttonTheme: ButtonTheme.of(context).copyWith(
+                  buttonColor: Colors.red,
+                  textTheme: ButtonTextTheme.primary,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
                   ),
                 ),
-                home: appSnapshot.connectionState != ConnectionState.done
-                    ? SplashScreen()
-                    :
-                // MainScreen(user: ),
-                LoginScreen(),
+              ),
+              home: appSnapshot.connectionState != ConnectionState.done
+                  ? SplashScreen()
+                  : const LoginScreen(shouldTriggerSkip: true),
 
-                // routes: {
-                // HomeScreen.routeName: (ctx) => HomeScreen(),
-                // ManagerScreen.routeName: (ctx) => ManagerScreen(),
-                // OwnerScreen.routeName: (ctx) => OwnerScreen(),
-                // CityDetailScreen.routeName: (ctx) => CityDetailScreen(),
-                // NewBlocScreen.routeName: (ctx) => NewBlocScreen(),
-                // BlocDetailScreen.routeName: (ctx) => BlocDetailScreen(),
-                // }
-                );
+              routes: {
+              HomeScreen.routeName: (ctx) => HomeScreen(),
+              // ManagerScreen.routeName: (ctx) => ManagerScreen(),
+              // OwnerScreen.routeName: (ctx) => OwnerScreen(),
+              // CityDetailScreen.routeName: (ctx) => CityDetailScreen(),
+              // NewBlocScreen.routeName: (ctx) => NewBlocScreen(),
+              // BlocDetailScreen.routeName: (ctx) => BlocDetailScreen(),
+              }
+            );
           }),
     );
   }

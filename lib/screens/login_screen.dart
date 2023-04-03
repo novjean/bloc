@@ -20,10 +20,12 @@ import '../utils/logx.dart';
 import '../utils/string_utils.dart';
 import '../widgets/ui/toaster.dart';
 import 'main_screen.dart';
-import 'otp_screen.dart';
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({key}) : super(key: key);
+  final bool shouldTriggerSkip;
+
+  const LoginScreen({Key? key, required this.shouldTriggerSkip})
+      : super(key: key);
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -54,15 +56,17 @@ class _LoginScreenState extends State<LoginScreen> {
               return const LoadingWidget();
             }
           }
-
-          Logx.i(_TAG, 'user snapshot received...');
+          Logx.i(_TAG, 'user snapshot received');
 
           if (userSnapshot.hasData) {
+            Logx.i(_TAG, 'user snapshot has data');
+
             final user = FirebaseAuth.instance.currentUser;
 
             CollectionReference users = FirestoreHelper.getUsersCollection();
 
             if (user!.uid.isEmpty) {
+              Logx.i(_TAG, 'user snapshot uid is empty');
               return SignInWidget();
             } else {
               return FutureBuilder<DocumentSnapshot>(
@@ -74,12 +78,16 @@ class _LoginScreenState extends State<LoginScreen> {
                   }
 
                   if (snapshot.hasError) {
-                    Logx.em(_TAG,
-                        'snapshot has error: ' + snapshot.error.toString());
+                    Logx.em(
+                        _TAG,
+                        'user snapshot has error: ' +
+                            snapshot.error.toString());
                     return SignInWidget();
                   }
 
                   if (snapshot.hasData && !snapshot.data!.exists) {
+                    Logx.i(_TAG,
+                        'user snapshot has data but not registered in bloc ');
                     // user not registered in bloc, will be picked up in OTP screen
                     return SignInWidget();
                   }
@@ -98,7 +106,12 @@ class _LoginScreenState extends State<LoginScreen> {
               );
             }
           } else {
-            return SignInWidget();
+            if (widget.shouldTriggerSkip) {
+              _verifyUsingSkipPhone();
+              return SizedBox();
+            } else {
+              return SignInWidget();
+            }
           }
         },
       ),
@@ -110,6 +123,7 @@ class _LoginScreenState extends State<LoginScreen> {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Flexible(
+          flex: 3,
           child: Container(
             decoration: const BoxDecoration(
               image: DecorationImage(
@@ -117,9 +131,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   fit: BoxFit.fitHeight),
             ),
           ),
-          flex: 3,
         ),
         Flexible(
+          flex: 1,
           child: Container(
             margin: const EdgeInsets.only(top: 0, right: 20, left: 20),
             child: IntlPhoneField(
@@ -155,9 +169,9 @@ class _LoginScreenState extends State<LoginScreen> {
               },
             ),
           ),
-          flex: 1,
         ),
         Flexible(
+          flex: 1,
           child: Column(
             children: [
               const Spacer(),
@@ -186,9 +200,9 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
             ],
           ),
-          flex: 1,
         ),
         Flexible(
+          flex: 1,
           child: Container(
             margin: const EdgeInsets.only(left: 20, right: 20, bottom: 40),
             width: double.infinity,
@@ -220,13 +234,13 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
             ),
           ),
-          flex: 1,
         ),
       ],
     );
   }
 
   _verifyUsingSkipPhone() async {
+    Logx.i(_TAG, '_verifyUsingSkipPhone');
     String phone = '+911234567890';
 
     if (kIsWeb) {
@@ -313,7 +327,7 @@ class _LoginScreenState extends State<LoginScreen> {
               try {
                 DocumentSnapshot document = res.docs[0];
                 Map<String, dynamic> data =
-                document.data()! as Map<String, dynamic>;
+                    document.data()! as Map<String, dynamic>;
 
                 final blocUser.User user = Fresh.freshUserMap(data, true);
                 UserPreferences.setUser(user);
