@@ -205,7 +205,7 @@ class _PartyGuestAddEditPageState extends State<PartyGuestAddEditPage> {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 32),
                 child: DarkTextFieldWidget(
-                    label: 'email' + (widget.party.isEmailRequired ? '\*' : ''),
+                    label: 'email${widget.party.isEmailRequired ? ' \*' : ''}',
                     text: bloc_user.email,
                     onChanged: (email) {
                       bloc_user = bloc_user.copyWith(email: email);
@@ -673,38 +673,6 @@ class _PartyGuestAddEditPageState extends State<PartyGuestAddEditPage> {
               child: const Text('close'),
               onPressed: () {
                 Navigator.of(ctx).pop();
-              },
-            ),
-            TextButton(
-              child: const Text("confirm"),
-              onPressed: () {
-
-
-                // if (hasUserChanged) {
-                //   blocUser.User freshUser = Fresh.freshUser(user);
-                //   UserPreferences.setUser(freshUser);
-                //   FirestoreHelper.pushUser(freshUser);
-                //
-                //   PartyGuest freshPartyGuest =
-                //   Fresh.freshPartyGuest(
-                //       widget.partyGuest);
-                //   FirestoreHelper.pushPartyGuest(
-                //       freshPartyGuest);
-                // } else {
-                //   PartyGuest freshPartyGuest =
-                //   Fresh.freshPartyGuest(
-                //       widget.partyGuest);
-                //   FirestoreHelper.pushPartyGuest(
-                //       freshPartyGuest);
-                // }
-                //
-                //
-                // Logx.i(_TAG,
-                //     'guest list confirmation in box office');
-                // Toaster.longToast(
-                //     'guest list confirmation in box office');
-                // Navigator.of(ctx).pop();
-                // Navigator.of(context).pop();
               },
             ),
           ],

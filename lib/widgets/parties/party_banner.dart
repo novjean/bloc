@@ -3,7 +3,10 @@ import 'package:bloc/utils/network_utils.dart';
 import 'package:flutter/material.dart';
 
 import '../../db/entity/party.dart';
+import '../../db/entity/party_guest.dart';
+import '../../helpers/dummy.dart';
 import '../../screens/parties/artist_screen.dart';
+import '../../screens/parties/party_guest_add_edit_screen.dart';
 import '../../utils/string_utils.dart';
 
 class PartyBanner extends StatelessWidget {
@@ -103,12 +106,20 @@ class PartyBanner extends StatelessWidget {
                                               60), //////// HERE
                                         ),
                                         onPressed: () {
-                                          final uri =
-                                              Uri.parse(party.ticketUrl);
-                                          NetworkUtils.launchInBrowser(uri);
+                                          PartyGuest partyGuest = Dummy.getDummyPartyGuest();
+                                          partyGuest.partyId = party.id;
+
+                                          Navigator.of(context).push(
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    PartyGuestAddEditPage(
+                                                        partyGuest: partyGuest,
+                                                        party: party,
+                                                        task: 'add')),
+                                          );
                                         },
                                         child: Text(
-                                          'tickets',
+                                          'join guest list',
                                           style: TextStyle(
                                               fontSize: 20,
                                               color: Colors.black),
