@@ -161,7 +161,7 @@ class AppDrawer extends StatelessWidget {
 
               FirebaseAuth.instance.signOut();
               Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (context) => LoginScreen(shouldTriggerSkip: false,)),
+                MaterialPageRoute(builder: (context) => const LoginScreen(shouldTriggerSkip: false,)),
               );
             },
           ),

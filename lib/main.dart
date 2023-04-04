@@ -166,14 +166,14 @@ class _MyAppState extends State<MyApp> {
                   ? SplashScreen()
                   : const LoginScreen(shouldTriggerSkip: true),
 
-              routes: {
-              HomeScreen.routeName: (ctx) => HomeScreen(),
+              // routes: {
+              // HomeScreen.routeName: (ctx) => HomeScreen(),
               // ManagerScreen.routeName: (ctx) => ManagerScreen(),
               // OwnerScreen.routeName: (ctx) => OwnerScreen(),
               // CityDetailScreen.routeName: (ctx) => CityDetailScreen(),
               // NewBlocScreen.routeName: (ctx) => NewBlocScreen(),
               // BlocDetailScreen.routeName: (ctx) => BlocDetailScreen(),
-              }
+              // }
             );
           }),
     );

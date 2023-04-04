@@ -39,6 +39,12 @@ class _LoginScreenState extends State<LoginScreen> {
   bool isIOS = false;
 
   @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     isIOS = Theme.of(context).platform == TargetPlatform.iOS;
 

@@ -147,6 +147,7 @@ class _OTPScreenState extends State<OTPScreen> {
                 ),
               ),
               Flexible(
+                flex: 1,
                 child: Padding(
                   padding: const EdgeInsets.only(left: 20, right: 20),
                   child: Column(
@@ -198,9 +199,9 @@ class _OTPScreenState extends State<OTPScreen> {
                     ],
                   ),
                 ),
-                flex: 1,
               ),
               Flexible(
+                flex: 1,
                 child: Container(
                   margin: const EdgeInsets.only(bottom: 20),
                   child: FractionallySizedBox(
@@ -209,7 +210,6 @@ class _OTPScreenState extends State<OTPScreen> {
                         widget.phone,
                       )),
                 ),
-                flex: 1,
               ),
             ]));
   }

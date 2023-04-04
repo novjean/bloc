@@ -131,7 +131,6 @@ class PartyItem extends StatelessWidget {
                         flex: 3,
                       ),
                       isGuestListActive &
-                              UserPreferences.isUserLoggedIn() &
                               !isGuestListRequested
                           ? Flexible(
                               flex: 1,

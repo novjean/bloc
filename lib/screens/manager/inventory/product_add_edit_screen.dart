@@ -14,6 +14,7 @@ import '../../../db/entity/product.dart';
 import '../../../helpers/firestorage_helper.dart';
 import '../../../helpers/firestore_helper.dart';
 import '../../../helpers/fresh.dart';
+import '../../../utils/logx.dart';
 import '../../../utils/string_utils.dart';
 import '../../../widgets/profile_widget.dart';
 import '../../../widgets/ui/button_widget.dart';
@@ -32,6 +33,8 @@ class ProductAddEditScreen extends StatefulWidget {
 }
 
 class _ProductAddEditScreenState extends State<ProductAddEditScreen> {
+  static const String _TAG = 'ProductAddEditScreen';
+
   bool isPhotoChanged = false;
   late String oldImageUrl;
   late String newImageUrl;
@@ -65,7 +68,7 @@ class _ProductAddEditScreenState extends State<ProductAddEditScreen> {
     super.initState();
 
     FirestoreHelper.pullAllBlocServices().then((res) {
-      print("successfully pulled in all bloc services ");
+      Logx.i(_TAG, "successfully pulled in all bloc services ");
 
       if (res.docs.isNotEmpty) {
         List<BlocService> _blocServices = [];
@@ -107,7 +110,7 @@ class _ProductAddEditScreenState extends State<ProductAddEditScreen> {
           _isBlocServicesLoading = false;
         });
       } else {
-        print('no bloc services found!');
+        Logx.i(_TAG, 'no bloc services found!');
         setState(() {
           _isBlocServicesLoading = false;
         });
@@ -115,7 +118,7 @@ class _ProductAddEditScreenState extends State<ProductAddEditScreen> {
     });
 
     FirestoreHelper.pullCategories(widget.product.serviceId).then((res) {
-      print("successfully pulled in categories... ");
+      Logx.i(_TAG, "successfully pulled in categories... ");
 
       if (res.docs.isNotEmpty) {
         _productCategory = widget.product.category;
@@ -158,7 +161,7 @@ class _ProductAddEditScreenState extends State<ProductAddEditScreen> {
           _isCategoriesLoading = false;
         });
       } else {
-        print('no categories found!');
+        Logx.i(_TAG, 'no categories found!');
         setState(() {
           _isCategoriesLoading = false;
         });
@@ -169,7 +172,7 @@ class _ProductAddEditScreenState extends State<ProductAddEditScreen> {
   @override
   Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(
-          title: Text('product | ' + widget.task),
+          title: Text('product | ${widget.task}'),
         ),
         body: _buildBody(context),
       );
@@ -234,7 +237,7 @@ class _ProductAddEditScreenState extends State<ProductAddEditScreen> {
                       }
                     }
                     if(sBlocIds.isEmpty){
-                      print('no blocs selected');
+                      Logx.i(_TAG, 'no blocs selected');
                       Toaster.shortToast('no blocs selected');
                     } else {
                       widget.product = widget.product.copyWith(blocIds: sBlocIds);
@@ -495,14 +498,14 @@ class _ProductAddEditScreenState extends State<ProductAddEditScreen> {
                     bool isPhotoDeleted = await FirestorageHelper.deleteFile(
                         widget.product.imageUrl);
                     if (isPhotoDeleted) {
-                      print('photo deleted successfully');
+                      Logx.i(_TAG, 'photo deleted successfully');
                       Toaster.shortToast('photo deleted successfully');
                       widget.product = widget.product.copyWith(imageUrl: '');
 
                       Product freshProduct = Fresh.freshProduct(widget.product);
                       FirestoreHelper.pushProduct(freshProduct);
                     } else {
-                      print('photo deletion failed');
+                      Logx.em(_TAG, 'photo deletion failed');
                       Toaster.shortToast('photo deleted failed');
                     }
                   }
@@ -519,10 +522,10 @@ class _ProductAddEditScreenState extends State<ProductAddEditScreen> {
                     isPhotoDeleted = await FirestorageHelper.deleteFile(
                         widget.product.imageUrl);
                     if(isPhotoDeleted) {
-                      print('photo deleted successfully');
+                      Logx.i(_TAG, 'photo deleted successfully');
                       Toaster.shortToast('photo deleted successfully');
                     } else {
-                      print('photo deletion failed');
+                      Logx.em(_TAG, 'photo deletion failed');
                       Toaster.shortToast('photo deletion failed');
                     }
                   } else {
@@ -533,7 +536,7 @@ class _ProductAddEditScreenState extends State<ProductAddEditScreen> {
                     FirestoreHelper.deleteProduct(widget.product.id);
                     Navigator.of(context).pop();
                   } else {
-                    print('product photo deletion failed');
+                    Logx.em(_TAG, 'product photo deletion failed');
                     Toaster.shortToast('product deletion failed as photo deletion failed');
                   }
                 },
