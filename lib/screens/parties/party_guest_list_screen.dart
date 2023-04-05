@@ -1,7 +1,7 @@
 import 'package:bloc/db/entity/party_guest.dart';
 import 'package:bloc/helpers/dummy.dart';
 import 'package:bloc/helpers/firestore_helper.dart';
-import 'package:bloc/screens/parties/party_guest_add_edit_screen.dart';
+import 'package:bloc/screens/parties/party_guest_add_edit_manage_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -217,10 +217,10 @@ class _PartyGuestListScreenState extends State<PartyGuestListScreen> {
                     }
                   }
                   Navigator.of(context).push(MaterialPageRoute(
-                      builder: (ctx) => PartyGuestAddEditPage(
+                      builder: (ctx) => PartyGuestAddEditManagePage(
                             partyGuest: sPartyGuest,
                             party: sParty,
-                            task: 'edit',
+                            task: 'manage',
                           )));
                 });
           }),

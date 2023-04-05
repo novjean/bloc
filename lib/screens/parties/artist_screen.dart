@@ -10,7 +10,7 @@ import '../../helpers/fresh.dart';
 import '../../utils/logx.dart';
 import '../../utils/network_utils.dart';
 import '../../widgets/ui/button_widget.dart';
-import 'party_guest_add_edit_screen.dart';
+import 'party_guest_add_edit_manage_screen.dart';
 
 class ArtistScreen extends StatefulWidget {
   final Party party;
@@ -111,7 +111,7 @@ class _ArtistScreenState extends State<ArtistScreen> {
                           Navigator.of(context).push(
                             MaterialPageRoute(
                                 builder: (context) =>
-                                    PartyGuestAddEditPage(
+                                    PartyGuestAddEditManagePage(
                                         partyGuest: partyGuest,
                                         party: widget.party,
                                         task: 'add')),

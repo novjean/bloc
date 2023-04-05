@@ -6,7 +6,7 @@ import '../../db/entity/party.dart';
 import '../../db/entity/party_guest.dart';
 import '../../helpers/dummy.dart';
 import '../../screens/parties/artist_screen.dart';
-import '../../screens/parties/party_guest_add_edit_screen.dart';
+import '../../screens/parties/party_guest_add_edit_manage_screen.dart';
 import '../../utils/string_utils.dart';
 
 class PartyBanner extends StatelessWidget {
@@ -112,7 +112,7 @@ class PartyBanner extends StatelessWidget {
                                           Navigator.of(context).push(
                                             MaterialPageRoute(
                                                 builder: (context) =>
-                                                    PartyGuestAddEditPage(
+                                                    PartyGuestAddEditManagePage(
                                                         partyGuest: partyGuest,
                                                         party: party,
                                                         task: 'add')),

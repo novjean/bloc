@@ -4,7 +4,7 @@ import 'package:bloc/widgets/ui/dark_button_widget.dart';
 import 'package:flutter/material.dart';
 
 import '../../db/entity/party.dart';
-import '../../screens/parties/party_guest_add_edit_screen.dart';
+import '../../screens/parties/party_guest_add_edit_manage_screen.dart';
 import '../../utils/date_time_utils.dart';
 import '../ui/button_widget.dart';
 
@@ -219,7 +219,7 @@ class _BoxOfficeItemState extends State<BoxOfficeItem> {
               text: 'edit\nrequest',
               onClicked: () {
                 Navigator.of(context).push(MaterialPageRoute(
-                    builder: (ctx) => PartyGuestAddEditPage(
+                    builder: (ctx) => PartyGuestAddEditManagePage(
                           partyGuest: widget.partyGuest,
                           party: widget.party,
                           task: 'edit',

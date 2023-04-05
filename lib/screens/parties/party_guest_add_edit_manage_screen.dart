@@ -24,20 +24,20 @@ import '../../widgets/ui/dark_textfield_widget.dart';
 import '../../widgets/parties/party_banner.dart';
 import '../main_screen.dart';
 
-class PartyGuestAddEditPage extends StatefulWidget {
+class PartyGuestAddEditManagePage extends StatefulWidget {
   PartyGuest partyGuest;
   Party party;
   String task;
 
-  PartyGuestAddEditPage(
+  PartyGuestAddEditManagePage(
       {key, required this.partyGuest, required this.party, required this.task})
       : super(key: key);
 
   @override
-  _PartyGuestAddEditPageState createState() => _PartyGuestAddEditPageState();
+  _PartyGuestAddEditManagePageState createState() => _PartyGuestAddEditManagePageState();
 }
 
-class _PartyGuestAddEditPageState extends State<PartyGuestAddEditPage> {
+class _PartyGuestAddEditManagePageState extends State<PartyGuestAddEditManagePage> {
   static const String _TAG = 'PartyGuestAddEditPage';
 
   late blocUser.User bloc_user;
@@ -146,6 +146,20 @@ class _PartyGuestAddEditPageState extends State<PartyGuestAddEditPage> {
                   },
                 ),
               ),
+              widget.task == 'manage' ?
+                  Column(children: [
+                    const SizedBox(height: 24),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 32),
+                      child: DarkTextFieldWidget(
+                        label: 'phone number \*',
+                        text: bloc_user.phoneNumber.toString(),
+                        onChanged: (value) {
+                        },
+                      ),
+                    ),
+                  ],)
+                  :const SizedBox(),
               !isLoggedIn
                   ? Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 32.0),
@@ -156,7 +170,7 @@ class _PartyGuestAddEditPageState extends State<PartyGuestAddEditPage> {
                           Padding(
                             padding: EdgeInsets.only(bottom: 10),
                             child: Text(
-                              'phone number\*',
+                              'phone number \*',
                               style: TextStyle(
                                   color: Theme.of(context).primaryColorLight,
                                   fontSize: 16,
@@ -366,7 +380,7 @@ class _PartyGuestAddEditPageState extends State<PartyGuestAddEditPage> {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 32),
                 child: ButtonWidget(
-                  text: widget.task == 'edit' ? 'save changes' : 'join list',
+                  text: (widget.task == 'edit' || widget.task == 'manage') ? 'save changes' : 'join list',
                   onClicked: () {
                     if (isDataValid()) {
                       if(isLoggedIn) {
