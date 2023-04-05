@@ -7,6 +7,8 @@ import 'package:flutter/material.dart';
 
 import '../../db/entity/party.dart';
 import '../../helpers/fresh.dart';
+import '../../utils/date_time_utils.dart';
+import '../../utils/logx.dart';
 import '../../widgets/parties/party_guest_item.dart';
 import '../../widgets/ui/loading_widget.dart';
 
@@ -16,6 +18,8 @@ class PartyGuestListScreen extends StatefulWidget {
 }
 
 class _PartyGuestListScreenState extends State<PartyGuestListScreen> {
+  static const String _TAG = 'PartyGuestListScreen';
+
   var _isPartiesLoading = true;
   List<Party> mParties = [];
 
@@ -152,26 +156,41 @@ class _PartyGuestListScreenState extends State<PartyGuestListScreen> {
 
           List<PartyGuest> partyGuestList = [];
 
-          if(snapshot.data!.docs.isNotEmpty){
+          if (snapshot.data!.docs.isNotEmpty) {
             try {
               for (int i = 0; i < snapshot.data!.docs.length; i++) {
                 DocumentSnapshot document = snapshot.data!.docs[i];
-                Map<String, dynamic> map = document.data()! as Map<
-                    String,
-                    dynamic>;
-                final PartyGuest partyGuest = Fresh.freshPartyGuestMap(
-                    map, false);
-                partyGuestList.add(partyGuest);
+                Map<String, dynamic> map =
+                    document.data()! as Map<String, dynamic>;
+                final PartyGuest partyGuest =
+                    Fresh.freshPartyGuestMap(map, false);
+
+                //check if the guest request is more than a day old
+                int timeNow = Timestamp.now().millisecondsSinceEpoch;
+                int partyEndTime = 0;
+                for (Party party in mParties) {
+                  if (partyGuest.partyId == party.id) {
+                    partyEndTime = party.endTime;
+                    break;
+                  }
+                }
+
+                if (timeNow > partyEndTime + DateTimeUtils.millisecondsDay) {
+                  FirestoreHelper.deletePartyGuest(partyGuest);
+                } else {
+                  partyGuestList.add(partyGuest);
+                }
 
                 if (i == snapshot.data!.docs.length - 1) {
                   return _displayGuestList(context, partyGuestList);
                 }
               }
-            } catch (err){
-              print('caught error loading party guest');
+            } on Exception catch (e, s) {
+              Logx.e(_TAG, e, s);
+            } catch (e) {
+              Logx.em(_TAG, 'error loading party guest' + e.toString());
             }
           }
-
           return const LoadingWidget();
         });
   }
