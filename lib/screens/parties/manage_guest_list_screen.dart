@@ -12,13 +12,13 @@ import '../../utils/logx.dart';
 import '../../widgets/parties/party_guest_item.dart';
 import '../../widgets/ui/loading_widget.dart';
 
-class PartyGuestListScreen extends StatefulWidget {
+class ManageGuestListScreen extends StatefulWidget {
   @override
-  State<PartyGuestListScreen> createState() => _PartyGuestListScreenState();
+  State<ManageGuestListScreen> createState() => _ManageGuestListScreenState();
 }
 
-class _PartyGuestListScreenState extends State<PartyGuestListScreen> {
-  static const String _TAG = 'PartyGuestListScreen';
+class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
+  static const String _TAG = 'ManageGuestListScreen';
 
   var _isPartiesLoading = true;
   List<Party> mParties = [];

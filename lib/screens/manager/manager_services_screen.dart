@@ -4,7 +4,7 @@ import 'package:bloc/screens/manager/orders/manage_orders_screen.dart';
 import 'package:bloc/screens/manager/parties/manage_parties_screen.dart';
 
 import 'package:bloc/screens/manager/users/manage_users_screen.dart';
-import 'package:bloc/screens/parties/party_guest_list_screen.dart';
+import 'package:bloc/screens/parties/manage_guest_list_screen.dart';
 import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -106,7 +106,7 @@ class ManagerServicesScreen extends StatelessWidget {
                     case 'guest list':
                       {
                         Navigator.of(context).push(MaterialPageRoute(
-                            builder: (ctx) => PartyGuestListScreen()));
+                            builder: (ctx) => ManageGuestListScreen()));
                         break;
                       }
                     case 'guest wifi':
