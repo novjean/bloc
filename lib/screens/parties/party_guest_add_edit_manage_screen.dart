@@ -34,10 +34,12 @@ class PartyGuestAddEditManagePage extends StatefulWidget {
       : super(key: key);
 
   @override
-  _PartyGuestAddEditManagePageState createState() => _PartyGuestAddEditManagePageState();
+  _PartyGuestAddEditManagePageState createState() =>
+      _PartyGuestAddEditManagePageState();
 }
 
-class _PartyGuestAddEditManagePageState extends State<PartyGuestAddEditManagePage> {
+class _PartyGuestAddEditManagePageState
+    extends State<PartyGuestAddEditManagePage> {
   static const String _TAG = 'PartyGuestAddEditPage';
 
   late blocUser.User bloc_user;
@@ -146,29 +148,30 @@ class _PartyGuestAddEditManagePageState extends State<PartyGuestAddEditManagePag
                   },
                 ),
               ),
-              widget.task == 'manage' ?
-                  Column(children: [
-                    const SizedBox(height: 24),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 32),
-                      child: DarkTextFieldWidget(
-                        label: 'phone number \*',
-                        text: bloc_user.phoneNumber.toString(),
-                        onChanged: (value) {
-                        },
-                      ),
-                    ),
-                  ],)
-                  :const SizedBox(),
+              widget.task == 'manage'
+                  ? Column(
+                      children: [
+                        const SizedBox(height: 24),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 32),
+                          child: DarkTextFieldWidget(
+                            label: 'phone number \*',
+                            text: bloc_user.phoneNumber.toString(),
+                            onChanged: (value) {},
+                          ),
+                        ),
+                      ],
+                    )
+                  : const SizedBox(),
               !isLoggedIn
                   ? Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 32.0),
-                    child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                      padding: const EdgeInsets.symmetric(horizontal: 32.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           const SizedBox(height: 24),
                           Padding(
-                            padding: EdgeInsets.only(bottom: 10),
+                            padding: const EdgeInsets.only(bottom: 10),
                             child: Text(
                               'phone number \*',
                               style: TextStyle(
@@ -180,40 +183,47 @@ class _PartyGuestAddEditManagePageState extends State<PartyGuestAddEditManagePag
                           Container(
                             child: IntlPhoneField(
                               style: TextStyle(
-                                  color: Theme.of(context).primaryColor, fontSize: 18),
+                                  color: Theme.of(context).primaryColor,
+                                  fontSize: 18),
                               decoration: InputDecoration(
                                   labelText: '',
-                                  labelStyle: TextStyle(color: Theme.of(context).primaryColor),
-                                  hintStyle: TextStyle(color: Theme.of(context).primaryColor),
-                                  counterStyle:
-                                  TextStyle(color: Theme.of(context).primaryColor),
+                                  labelStyle: TextStyle(
+                                      color: Theme.of(context).primaryColor),
+                                  hintStyle: TextStyle(
+                                      color: Theme.of(context).primaryColor),
+                                  counterStyle: TextStyle(
+                                      color: Theme.of(context).primaryColor),
                                   border: OutlineInputBorder(
-                                    borderSide:
-                                    BorderSide(color: Theme.of(context).primaryColor),
+                                    borderSide: BorderSide(
+                                        color: Theme.of(context).primaryColor),
                                   ),
                                   enabledBorder: OutlineInputBorder(
                                     // width: 0.0 produces a thin "hairline" border
                                     borderSide: BorderSide(
-                                        color: Theme.of(context).primaryColor, width: 0.0),
+                                        color: Theme.of(context).primaryColor,
+                                        width: 0.0),
                                   )),
                               controller: _controller,
                               initialCountryCode: 'IN',
                               dropdownTextStyle: TextStyle(
-                                  color: Theme.of(context).primaryColor, fontSize: 18),
+                                  color: Theme.of(context).primaryColor,
+                                  fontSize: 18),
                               pickerDialogStyle: PickerDialogStyle(
-                                  backgroundColor: Theme.of(context).primaryColor),
+                                  backgroundColor:
+                                      Theme.of(context).primaryColor),
                               onChanged: (phone) {
                                 Logx.i(_TAG, phone.completeNumber);
                                 completePhoneNumber = phone.completeNumber;
                               },
                               onCountryChanged: (country) {
-                                Logx.i(_TAG, 'country changed to: ' + country.name);
+                                Logx.i(_TAG,
+                                    'country changed to: ' + country.name);
                               },
                             ),
                           ),
                         ],
                       ),
-                  )
+                    )
                   : const SizedBox(),
               const SizedBox(height: 24),
               Padding(
@@ -380,16 +390,17 @@ class _PartyGuestAddEditManagePageState extends State<PartyGuestAddEditManagePag
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 32),
                 child: ButtonWidget(
-                  text: (widget.task == 'edit' || widget.task == 'manage') ? 'save changes' : 'join list',
+                  text: (widget.task == 'edit' || widget.task == 'manage')
+                      ? 'save changes'
+                      : 'join list',
                   onClicked: () {
                     if (isDataValid()) {
-                      if(isLoggedIn) {
+                      if (isLoggedIn) {
                         showRulesConfirmationDialog(context, false);
                       } else {
                         // need to register the user first
                         _verifyPhone();
                       }
-
                     } else {
                       Logx.em(
                           _TAG, 'user cannot be entered as data is incomplete');
@@ -438,7 +449,7 @@ class _PartyGuestAddEditManagePageState extends State<PartyGuestAddEditManagePag
       return false;
     }
 
-    if(!isLoggedIn && widget.partyGuest.phone.isEmpty){
+    if (!isLoggedIn && widget.partyGuest.phone.isEmpty) {
       Logx.em(_TAG, 'phone not entered for guest');
       Toaster.longToast('please enter your phone number');
       return false;
@@ -447,7 +458,7 @@ class _PartyGuestAddEditManagePageState extends State<PartyGuestAddEditManagePag
     return true;
   }
 
-   showRulesConfirmationDialog(BuildContext context, bool shouldRegisterUser) {
+  showRulesConfirmationDialog(BuildContext context, bool shouldRegisterUser) {
     return showDialog(
       context: context,
       builder: (BuildContext ctx) {
@@ -463,13 +474,10 @@ class _PartyGuestAddEditManagePageState extends State<PartyGuestAddEditManagePag
                 Padding(
                   padding: const EdgeInsets.only(bottom: 20),
                   child: Row(
-                    mainAxisAlignment:
-                    MainAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Text(
-                        widget.party.eventName +
-                            ' | ' +
-                            widget.party.name,
+                        widget.party.eventName + ' | ' + widget.party.name,
                         style: const TextStyle(fontSize: 18),
                       ),
                     ],
@@ -481,17 +489,13 @@ class _PartyGuestAddEditManagePageState extends State<PartyGuestAddEditManagePag
                   child: SingleChildScrollView(
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment:
-                      CrossAxisAlignment.start,
-                      mainAxisAlignment:
-                      MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         const Text('entry rules:\n'),
-                        Text(widget.party.guestListRules
-                            .toLowerCase()),
+                        Text(widget.party.guestListRules.toLowerCase()),
                         const Text('\nclub rules:\n'),
-                        Text(widget.party.clubRules
-                            .toLowerCase()),
+                        Text(widget.party.clubRules.toLowerCase()),
                       ],
                     ),
                   ),
@@ -509,38 +513,45 @@ class _PartyGuestAddEditManagePageState extends State<PartyGuestAddEditManagePag
             TextButton(
               child: const Text("confirm"),
               onPressed: () {
-                if(shouldRegisterUser){
-                  PartyGuest freshPartyGuest = Fresh.freshPartyGuest(widget.partyGuest);
+                if (shouldRegisterUser) {
+                  PartyGuest freshPartyGuest =
+                      Fresh.freshPartyGuest(widget.partyGuest);
                   FirestoreHelper.pushPartyGuest(freshPartyGuest);
                 } else {
                   if (hasUserChanged) {
                     blocUser.User freshUser = Fresh.freshUser(bloc_user);
                     UserPreferences.setUser(freshUser);
                     FirestoreHelper.pushUser(freshUser);
-
-                    widget.partyGuest.guestId = bloc_user.id;
-
-                    PartyGuest freshPartyGuest = Fresh.freshPartyGuest(widget.partyGuest);
-                    FirestoreHelper.pushPartyGuest(freshPartyGuest);
-                  } else {
-                    widget.partyGuest.guestId = bloc_user.id;
-
-                    PartyGuest freshPartyGuest = Fresh.freshPartyGuest(widget.partyGuest);
-                    FirestoreHelper.pushPartyGuest(freshPartyGuest);
                   }
+
+                  // need to see if the user already has a guest request
+                  widget.partyGuest.guestId = bloc_user.id;
+
+                  FirestoreHelper.pullPartyGuestByUser(widget.partyGuest.guestId, widget.partyGuest.partyId)
+                      .then((res) {
+                        Logx.i(_TAG, 'pulled in party guest by user');
+
+                        if(res.docs.isEmpty){
+                          // user has not requested for party guest list, approve
+                          PartyGuest freshPartyGuest = Fresh.freshPartyGuest(widget.partyGuest);
+                          FirestoreHelper.pushPartyGuest(freshPartyGuest);
+
+                          Logx.i(_TAG, 'guest list request in box office');
+                          Toaster.longToast('guest list request in box office');
+                        } else {
+                          //already requested
+                          Logx.i(_TAG, 'duplicate guest list request');
+                          Toaster.longToast('guest list has already been requested');
+                        }
+
+                  });
                 }
 
-                Logx.i(_TAG,
-                    'guest list confirmation in box office');
-                Toaster.longToast(
-                    'guest list confirmation in box office');
                 Navigator.of(ctx).pop();
                 Navigator.of(context).pop();
 
-                Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            MainScreen(user: bloc_user)));
+                Navigator.of(context).pushReplacement(MaterialPageRoute(
+                    builder: (context) => MainScreen(user: bloc_user)));
               },
             ),
           ],
@@ -615,8 +626,7 @@ class _PartyGuestAddEditManagePageState extends State<PartyGuestAddEditManagePag
                 Padding(
                   padding: const EdgeInsets.only(bottom: 20),
                   child: Row(
-                    mainAxisAlignment:
-                    MainAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Text(
                         'phone number verification',
@@ -638,14 +648,14 @@ class _PartyGuestAddEditManagePageState extends State<PartyGuestAddEditManagePag
                 ),
                 Center(
                     child: Text(
-                      'enter the six digit code you received on \n${completePhoneNumber}',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Theme.of(context).primaryColorDark,
-                        fontWeight: FontWeight.normal,
-                        fontSize: 16,
-                      ),
-                    )),
+                  'enter the six digit code you received on \n${completePhoneNumber}',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Theme.of(context).primaryColorDark,
+                    fontWeight: FontWeight.normal,
+                    fontSize: 16,
+                  ),
+                )),
                 Padding(
                   padding: const EdgeInsets.only(
                       left: 10.0, right: 10, top: 2, bottom: 5),
@@ -746,7 +756,7 @@ class _PartyGuestAddEditManagePageState extends State<PartyGuestAddEditManagePag
                 try {
                   await FirebaseAuth.instance
                       .signInWithCredential(PhoneAuthProvider.credential(
-                      verificationId: _verificationCode, smsCode: pin))
+                          verificationId: _verificationCode, smsCode: pin))
                       .then((value) async {
                     if (value.user != null) {
                       Logx.i(_TAG, 'user is in firebase auth');
@@ -766,14 +776,16 @@ class _PartyGuestAddEditManagePageState extends State<PartyGuestAddEditManagePag
                               'user is not already registered in bloc, registering...');
 
                           bloc_user.id = value.user!.uid;
-                          bloc_user.phoneNumber = StringUtils.getInt(value.user!.phoneNumber!);
+                          bloc_user.phoneNumber =
+                              StringUtils.getInt(value.user!.phoneNumber!);
 
                           FirestoreHelper.pushUser(bloc_user);
                           Logx.i(_TAG, 'registered user ' + bloc_user.id);
 
                           UserPreferences.setUser(bloc_user);
                           widget.partyGuest.guestId = bloc_user.id;
-                          widget.partyGuest.phone = bloc_user.phoneNumber.toString();
+                          widget.partyGuest.phone =
+                              bloc_user.phoneNumber.toString();
 
                           showRulesConfirmationDialog(context, true);
                         } else {
@@ -782,7 +794,7 @@ class _PartyGuestAddEditManagePageState extends State<PartyGuestAddEditManagePag
 
                           DocumentSnapshot document = res.docs[0];
                           Map<String, dynamic> data =
-                          document.data()! as Map<String, dynamic>;
+                              document.data()! as Map<String, dynamic>;
 
                           blocUser.User user = Fresh.freshUserMap(data, true);
 
@@ -797,7 +809,8 @@ class _PartyGuestAddEditManagePageState extends State<PartyGuestAddEditManagePag
                           bloc_user = user;
 
                           widget.partyGuest.guestId = bloc_user.id;
-                          widget.partyGuest.phone = bloc_user.phoneNumber.toString();
+                          widget.partyGuest.phone =
+                              bloc_user.phoneNumber.toString();
                           showRulesConfirmationDialog(context, false);
                         }
                       });
@@ -852,7 +865,6 @@ class _PartyGuestAddEditManagePageState extends State<PartyGuestAddEditManagePag
       ),
     );
   }
-
 }
 
 //  void showOTPModal(BuildContext context) {

@@ -209,7 +209,7 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
     try {
       scanCode = await FlutterBarcodeScanner.scanBarcode(
           '#ff6666', 'cancel', true, ScanMode.QR);
-      print('code scanned ' + scanCode);
+      Logx.i(_TAG, 'code scanned ' + scanCode);
       Navigator.of(context).push(
         MaterialPageRoute(
             builder: (ctx) =>
