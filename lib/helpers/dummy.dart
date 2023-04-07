@@ -135,7 +135,10 @@ class Dummy {
       isEmailRequired: false,
       clubRules: Constants.clubRules,
       guestListRules: Constants.guestListRules,
-      type: 'artist'
+      type: 'artist',
+      isTicketed: false,
+      ticketsSoldCount: 0,
+      ticketsSalesTotal: 0,
     );
 
     return dummyParty;

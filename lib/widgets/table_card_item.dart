@@ -9,6 +9,7 @@ import '../db/entity/seat.dart';
 import '../db/entity/user.dart';
 import '../db/shared_preferences/user_preferences.dart';
 import '../helpers/firestore_helper.dart';
+import '../utils/logx.dart';
 
 class TableCardItem extends StatefulWidget {
   String seatId;
@@ -27,6 +28,8 @@ class TableCardItem extends StatefulWidget {
 }
 
 class _TableCardItemState extends State<TableCardItem> {
+  static const String _TAG = 'TableCardItem';
+
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -80,6 +83,7 @@ class _TableCardItemState extends State<TableCardItem> {
     if (!mounted) return;
 
     if (scanTableId.compareTo('-1') == 0) {
+      Logx.i(_TAG, 'scan cancelled');
       return;
     }
 

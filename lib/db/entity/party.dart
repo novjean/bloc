@@ -26,9 +26,13 @@ class Party {
 
   final String guestListRules;
   final String clubRules;
-  
+
+  final bool isTicketed;
+  int ticketsSoldCount;
+  double ticketsSalesTotal;
+
 //<editor-fold desc="Data Methods">
-  const Party({
+  Party({
     required this.id,
     required this.name,
     required this.eventName,
@@ -51,6 +55,9 @@ class Party {
     required this.guestListEndTime,
     required this.guestListRules,
     required this.clubRules,
+    required this.isTicketed,
+    required this.ticketsSoldCount,
+    required this.ticketsSalesTotal,
   });
 
   @override
@@ -79,7 +86,10 @@ class Party {
           isEmailRequired == other.isEmailRequired &&
           guestListEndTime == other.guestListEndTime &&
           guestListRules == other.guestListRules &&
-          clubRules == other.clubRules);
+          clubRules == other.clubRules &&
+          isTicketed == other.isTicketed &&
+          ticketsSoldCount == other.ticketsSoldCount &&
+          ticketsSalesTotal == other.ticketsSalesTotal);
 
   @override
   int get hashCode =>
@@ -104,7 +114,10 @@ class Party {
       isEmailRequired.hashCode ^
       guestListEndTime.hashCode ^
       guestListRules.hashCode ^
-      clubRules.hashCode;
+      clubRules.hashCode ^
+      isTicketed.hashCode ^
+      ticketsSoldCount.hashCode ^
+      ticketsSalesTotal.hashCode;
 
   @override
   String toString() {
@@ -131,6 +144,9 @@ class Party {
         ' guestListEndTime: $guestListEndTime,' +
         ' guestListRules: $guestListRules,' +
         ' clubRules: $clubRules,' +
+        ' isTicketed: $isTicketed,' +
+        ' ticketsSoldCount: $ticketsSoldCount,' +
+        ' ticketsSalesTotal: $ticketsSalesTotal,' +
         '}';
   }
 
@@ -157,6 +173,9 @@ class Party {
     int? guestListEndTime,
     String? guestListRules,
     String? clubRules,
+    bool? isTicketed,
+    int? ticketsSoldCount,
+    double? ticketsSalesTotal,
   }) {
     return Party(
       id: id ?? this.id,
@@ -181,6 +200,9 @@ class Party {
       guestListEndTime: guestListEndTime ?? this.guestListEndTime,
       guestListRules: guestListRules ?? this.guestListRules,
       clubRules: clubRules ?? this.clubRules,
+      isTicketed: isTicketed ?? this.isTicketed,
+      ticketsSoldCount: ticketsSoldCount ?? this.ticketsSoldCount,
+      ticketsSalesTotal: ticketsSalesTotal ?? this.ticketsSalesTotal,
     );
   }
 
@@ -208,6 +230,9 @@ class Party {
       'guestListEndTime': this.guestListEndTime,
       'guestListRules': this.guestListRules,
       'clubRules': this.clubRules,
+      'isTicketed': this.isTicketed,
+      'ticketsSoldCount': this.ticketsSoldCount,
+      'ticketsSalesTotal': this.ticketsSalesTotal,
     };
   }
 
@@ -235,6 +260,9 @@ class Party {
       guestListEndTime: map['guestListEndTime'] as int,
       guestListRules: map['guestListRules'] as String,
       clubRules: map['clubRules'] as String,
+      isTicketed: map['isTicketed'] as bool,
+      ticketsSoldCount: map['ticketsSoldCount'] as int,
+      ticketsSalesTotal: map['ticketsSalesTotal'] as double,
     );
   }
 

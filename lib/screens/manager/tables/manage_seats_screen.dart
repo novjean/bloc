@@ -206,6 +206,7 @@ class _ManageSeatsScreenState extends State<ManageSeatsScreen> {
     if (!mounted) return;
 
     if (scanCustId.compareTo('-1') == 0) {
+      Logx.i(_TAG, 'scan cancelled');
       return;
     }
 

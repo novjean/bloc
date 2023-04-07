@@ -210,15 +210,24 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
       scanCode = await FlutterBarcodeScanner.scanBarcode(
           '#ff6666', 'cancel', true, ScanMode.QR);
       Logx.i(_TAG, 'code scanned ' + scanCode);
-      Navigator.of(context).push(
-        MaterialPageRoute(
-            builder: (ctx) =>
-                ConfirmGuestListScreen(partyGuestId: scanCode,)),
-      );
-    } on PlatformException {
-      scanCode = 'failed to get platform version.';
-    } catch(e){
-      Toaster.longToast('code scan failed');
+      if(scanCode!='-1') {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+              builder: (ctx) =>
+                  ConfirmGuestListScreen(partyGuestId: scanCode,)),
+        );
+      } else {
+        Logx.i(_TAG, 'scan cancelled');
+      }
+    } on PlatformException catch (e, s) {
+      Logx.e(_TAG, e, s);
+      Toaster.longToast('code scan failed, not get platform version');
+    } on Exception catch (e, s) {
+      Logx.e(_TAG, e, s);
+      Toaster.longToast('scan failed : ' + e.toString());
+    } catch (e) {
+      logger.e(e);
+      Toaster.longToast('scan failed : ' + e.toString());
     }
 
     if (!mounted) return;

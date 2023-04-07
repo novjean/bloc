@@ -79,7 +79,7 @@ class Fresh {
     if (shouldPush &&
         shouldUpdate &&
         UserPreferences.myUser.clearanceLevel >= Constants.MANAGER_LEVEL) {
-      Logx.em(_TAG, 'updating ad ' + ad.id);
+      Logx.i(_TAG, 'updating ad ' + ad.id);
       FirestoreHelper.pushAd(ad);
     }
 
@@ -218,7 +218,7 @@ class Fresh {
     if (shouldPush &&
         shouldUpdate &&
         UserPreferences.myUser.clearanceLevel >= Constants.MANAGER_LEVEL) {
-      Logx.em(_TAG, 'updating category ' + category.id);
+      Logx.i(_TAG, 'updating category ' + category.id);
       FirestoreHelper.pushCategory(category);
     }
 
@@ -438,10 +438,32 @@ class Fresh {
       shouldPushParty = true;
     }
 
+    try {
+      party = party.copyWith(isTicketed: map['isTicketed'] as bool);
+    } catch (e) {
+      Logx.em(
+          _TAG, 'party isTicketed not exist for party id: ' + party.id);
+      shouldPushParty = true;
+    }
+    try {
+      party = party.copyWith(ticketsSoldCount: map['ticketsSoldCount'] as int);
+    } catch (e) {
+      Logx.em(
+          _TAG, 'party ticketsSoldCount not exist for party id: ' + party.id);
+      shouldPushParty = true;
+    }
+    try {
+      party = party.copyWith(ticketsSalesTotal: map['ticketsSalesTotal'] as double);
+    } catch (e) {
+      Logx.em(
+          _TAG, 'party ticketsSalesTotal not exist for party id: ' + party.id);
+      shouldPushParty = true;
+    }
+
     if (shouldPushParty &&
         shouldUpdate &&
         UserPreferences.myUser.clearanceLevel >= Constants.MANAGER_LEVEL) {
-      Logx.em(_TAG, 'updating party ' + party.id);
+      Logx.i(_TAG, 'updating party ' + party.id);
       FirestoreHelper.pushParty(party);
     }
 
@@ -742,7 +764,7 @@ class Fresh {
     if (shouldPush &&
         shouldUpdate &&
         UserPreferences.myUser.clearanceLevel >= Constants.MANAGER_LEVEL) {
-      Logx.em(_TAG, 'updating party guest ' + partyGuest.id);
+      Logx.i(_TAG, 'updating party guest ' + partyGuest.id);
       FirestoreHelper.pushPartyGuest(partyGuest);
     }
 
@@ -905,7 +927,7 @@ class Fresh {
     if (shouldPushProduct &&
         shouldUpdate &&
         UserPreferences.myUser.clearanceLevel >= Constants.MANAGER_LEVEL) {
-      Logx.em(_TAG, 'updating product ' + product.id);
+      Logx.i(_TAG, 'updating product ' + product.id);
       FirestoreHelper.pushProduct(product);
     }
 
@@ -1110,7 +1132,7 @@ class Fresh {
     if (shouldPush &&
         shouldUpdate &&
         UserPreferences.myUser.clearanceLevel >= Constants.MANAGER_LEVEL) {
-      Logx.em(_TAG, 'updating ticket ' + ticket.id);
+      Logx.i(_TAG, 'updating ticket ' + ticket.id);
       FirestoreHelper.pushTicket(ticket);
     }
 
@@ -1253,7 +1275,7 @@ class Fresh {
     if (shouldPushUser &&
         shouldUpdate &&
         UserPreferences.myUser.clearanceLevel >= Constants.MANAGER_LEVEL) {
-      Logx.em(_TAG, 'updating user ' + user.id);
+      Logx.i(_TAG, 'updating user ' + user.id);
       FirestoreHelper.pushUser(user);
     }
 
