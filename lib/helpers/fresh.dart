@@ -4,6 +4,7 @@ import '../db/entity/ad.dart';
 import '../db/entity/category.dart';
 import '../db/entity/party.dart';
 import '../db/entity/product.dart';
+import '../db/entity/ticket.dart';
 import '../db/entity/user.dart';
 import '../db/shared_preferences/user_preferences.dart';
 import '../utils/constants.dart';
@@ -429,6 +430,13 @@ class Fresh {
       Logx.em(_TAG, 'party guestListRules not exist for party id: ' + party.id);
       shouldPushParty = true;
     }
+    try {
+      party = party.copyWith(type: map['type'] as String);
+    } catch (e) {
+      Logx.em(
+          _TAG, 'party type not exist for party id: ' + party.id);
+      shouldPushParty = true;
+    }
 
     if (shouldPushParty &&
         shouldUpdate &&
@@ -557,6 +565,11 @@ class Fresh {
       freshParty = freshParty.copyWith(guestListRules: party.guestListRules);
     } catch (e) {
       Logx.em(_TAG, 'party guestListRules not exist for party id: ' + party.id);
+    }
+    try {
+      freshParty = freshParty.copyWith(type: party.type);
+    } catch (e) {
+      Logx.em(_TAG, 'party type not exist for party id: ' + party.id);
     }
 
     return freshParty;
@@ -1020,6 +1033,150 @@ class Fresh {
     }
 
     return freshProduct;
+  }
+
+  /** ticket **/
+  static Ticket freshTicketMap(Map<String, dynamic> map, bool shouldUpdate) {
+    Ticket ticket = Dummy.getDummyTicket();
+    bool shouldPush = false;
+
+    try {
+      ticket = ticket.copyWith(id: map['id'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'ticket id not exist');
+    }
+    try {
+      ticket = ticket.copyWith(name: map['name'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'ticket name not exist for ticket id: ' + ticket.id);
+      shouldPush = true;
+    }
+
+    try {
+      ticket = ticket.copyWith(partyId: map['partyId'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'ticket partyId not exist for ticket id: ' + ticket.id);
+      shouldPush = true;
+    }
+    try {
+      ticket = ticket.copyWith(customerId: map['customerId'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'ticket customerId not exist for ticket id: ' + ticket.id);
+      shouldPush = true;
+    }
+    try {
+      ticket = ticket.copyWith(transactionId: map['transactionId'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'ticket transactionId not exist for ticket id: ' + ticket.id);
+      shouldPush = true;
+    }
+    try {
+      ticket = ticket.copyWith(phone: map['phone'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'ticket phone not exist for ticket id: ' + ticket.id);
+      shouldPush = true;
+    }
+    try {
+      ticket = ticket.copyWith(email: map['email'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'ticket email not exist for ticket id: ' + ticket.id);
+      shouldPush = true;
+    }
+    try {
+      ticket = ticket.copyWith(entryCount: map['entryCount'] as int);
+    } catch (e) {
+      Logx.em(_TAG, 'ticket entryCount not exist for ticket id: ' + ticket.id);
+      shouldPush = true;
+    }
+    try {
+      ticket = ticket.copyWith(entriesRemaining: map['entriesRemaining'] as int);
+    } catch (e) {
+      Logx.em(_TAG, 'ticket entriesRemaining not exist for ticket id: ' + ticket.id);
+      shouldPush = true;
+    }
+    try {
+      ticket = ticket.copyWith(createdAt: map['createdAt'] as int);
+    } catch (e) {
+      Logx.em(_TAG, 'ticket createdAt not exist for ticket id: ' + ticket.id);
+      shouldPush = true;
+    }
+    try {
+      ticket = ticket.copyWith(isPaid: map['isPaid'] as bool);
+    } catch (e) {
+      Logx.em(_TAG, 'ticket isPaid not exist for ticket id: ' + ticket.id);
+      shouldPush = true;
+    }
+
+    if (shouldPush &&
+        shouldUpdate &&
+        UserPreferences.myUser.clearanceLevel >= Constants.MANAGER_LEVEL) {
+      Logx.em(_TAG, 'updating ticket ' + ticket.id);
+      FirestoreHelper.pushTicket(ticket);
+    }
+
+    return ticket;
+  }
+
+  static Ticket freshTicket(Ticket ticket) {
+    Ticket freshTicket = Dummy.getDummyTicket();
+
+    try {
+      freshTicket = freshTicket.copyWith(id: ticket.id);
+    } catch (e) {
+      Logx.em(_TAG, 'ticket id not exist');
+    }
+    try {
+      freshTicket = freshTicket.copyWith(name: ticket.name);
+    } catch (e) {
+      Logx.em(_TAG, 'ticket name not exist for ticket id: ' + ticket.id);
+    }
+    try {
+      freshTicket = freshTicket.copyWith(partyId: ticket.partyId);
+    } catch (e) {
+      Logx.em(_TAG, 'ticket partyId not exist for ticket id: ' + ticket.id);
+    }
+    try {
+      freshTicket = freshTicket.copyWith(customerId: ticket.customerId);
+    } catch (e) {
+      Logx.em(_TAG, 'ticket customerId not exist for ticket id: ' + ticket.id);
+    }
+    try {
+      freshTicket = freshTicket.copyWith(transactionId: ticket.transactionId);
+    } catch (e) {
+      Logx.em(_TAG, 'ticket transactionId not exist for ticket id: ' + ticket.id);
+    }
+    try {
+      freshTicket = freshTicket.copyWith(phone: ticket.phone);
+    } catch (e) {
+      Logx.em(_TAG, 'ticket phone not exist for ticket id: ' + ticket.id);
+    }
+    try {
+      freshTicket = freshTicket.copyWith(email: ticket.email);
+    } catch (e) {
+      Logx.em(_TAG, 'ticket email not exist for ticket id: ' + ticket.id);
+    }
+    try {
+      freshTicket = freshTicket.copyWith(entryCount: ticket.entryCount);
+    } catch (e) {
+      Logx.em(_TAG, 'ticket entryCount not exist for ticket id: ' + ticket.id);
+    }
+    try {
+      freshTicket = freshTicket.copyWith(entriesRemaining: ticket.entriesRemaining);
+    } catch (e) {
+      Logx.em(_TAG, 'ticket entriesRemaining not exist for ticket id: ' + ticket.id);
+    }
+    try {
+      freshTicket = freshTicket.copyWith(createdAt: ticket.createdAt);
+    } catch (e) {
+      Logx.em(_TAG, 'ticket createdAt not exist for ticket id: ' + ticket.id);
+    }
+    try {
+      freshTicket = freshTicket.copyWith(isPaid: ticket.isPaid);
+    } catch (e) {
+      Logx.em(_TAG, 'ticket isPaid not exist for ticket id: ' + ticket.id);
+    }
+
+    return freshTicket;
   }
 
   /** user **/

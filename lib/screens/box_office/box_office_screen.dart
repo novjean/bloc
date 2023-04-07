@@ -17,7 +17,7 @@ import '../../widgets/box_office/box_office_item.dart';
 import '../../widgets/ui/loading_widget.dart';
 import '../../widgets/ui/sized_listview_block.dart';
 import '../../widgets/ui/toaster.dart';
-import '../parties/manage_party_ticket_screen.dart';
+import '../parties/confirm_guest_list_screen.dart';
 
 class BoxOfficeScreen extends StatefulWidget {
   @override
@@ -213,7 +213,7 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
       Navigator.of(context).push(
         MaterialPageRoute(
             builder: (ctx) =>
-                ManagePartyTicketScreen(partyGuestId: scanCode,)),
+                ConfirmGuestListScreen(partyGuestId: scanCode,)),
       );
     } on PlatformException {
       scanCode = 'failed to get platform version.';

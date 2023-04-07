@@ -86,7 +86,7 @@ class _ManagePartiesScreenState extends State<ManagePartiesScreen> {
               return _displayPartiesList(context, _parties);
             }
           }
-          return Center(child: Text('loading products...'));
+          return Center(child: Text('loading parties...'));
         });
   }
 

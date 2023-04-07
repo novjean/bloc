@@ -10,6 +10,7 @@ import 'package:bloc/db/entity/order_bloc.dart';
 import 'package:bloc/db/entity/party.dart';
 import 'package:bloc/db/entity/party_guest.dart';
 import 'package:bloc/db/entity/seat.dart';
+import 'package:bloc/db/entity/ticket.dart';
 import 'package:bloc/db/entity/user.dart' as blocUser;
 import 'package:bloc/helpers/firestorage_helper.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -54,6 +55,7 @@ class FirestoreHelper {
   static String SEATS = 'seats';
   static String SOS = 'sos';
   static String TABLES = 'tables';
+  static String TICKETS = 'tickets';
   static String USERS = 'users';
   static String USER_LEVELS = 'user_levels';
 
@@ -1085,6 +1087,23 @@ class FirestoreHelper {
       logger.e(e);
     }
   }
+
+  /** Ticket **/
+  static void pushTicket(Ticket ticket) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection(TICKETS)
+          .doc(ticket.id)
+          .set(ticket.toMap());
+    } on PlatformException catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } on Exception catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } catch (e) {
+      logger.e(e);
+    }
+  }
+
 
   /** User **/
   static void pushUser(blocUser.User user) async {

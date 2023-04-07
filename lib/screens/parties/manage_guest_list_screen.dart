@@ -41,7 +41,7 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
         for (int i = 0; i < res.docs.length; i++) {
           DocumentSnapshot document = res.docs[i];
           Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-          final Party party = Fresh.freshPartyMap(data, false);
+          final Party party = Fresh.freshPartyMap(data, true);
           parties.add(party);
           _partyNames.add(party.name);
 

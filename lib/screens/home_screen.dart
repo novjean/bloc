@@ -120,7 +120,7 @@ class _HomeScreenState extends State<HomeScreen> {
         try {
           DocumentSnapshot document = res.docs[0];
           Map<String, dynamic> map = document.data()! as Map<String, dynamic>;
-          final Party party = Fresh.freshPartyMap(map, true);
+          final Party party = Fresh.freshPartyMap(map, false);
 
           if(mounted) {
             setState(() {

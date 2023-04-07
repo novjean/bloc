@@ -11,17 +11,17 @@ import '../../helpers/dummy.dart';
 import '../../helpers/fresh.dart';
 import '../../widgets/ui/textfield_widget.dart';
 
-class ManagePartyTicketScreen extends StatefulWidget {
+class ConfirmGuestListScreen extends StatefulWidget {
   String partyGuestId;
 
-  ManagePartyTicketScreen({required this.partyGuestId});
+  ConfirmGuestListScreen({required this.partyGuestId});
 
   @override
-  State<ManagePartyTicketScreen> createState() =>
-      _ManagePartyTicketScreenState();
+  State<ConfirmGuestListScreen> createState() =>
+      _ConfirmGuestListScreenState();
 }
 
-class _ManagePartyTicketScreenState extends State<ManagePartyTicketScreen> {
+class _ConfirmGuestListScreenState extends State<ConfirmGuestListScreen> {
   late PartyGuest mPartyGuest;
   var _isPartyGuestLoading = true;
 
@@ -50,18 +50,16 @@ class _ManagePartyTicketScreenState extends State<ManagePartyTicketScreen> {
           Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
           final PartyGuest partyGuest = Fresh.freshPartyGuestMap(data, false);
           mPartyGuest = partyGuest;
-          // requests.add(partyGuest);
         }
 
         FirestoreHelper.pullParty(mPartyGuest.partyId).then((res) {
           print("successfully pulled in party");
 
           if (res.docs.isNotEmpty) {
-            // Party party = Dummy.getDummyParty('');
             for (int i = 0; i < res.docs.length; i++) {
               DocumentSnapshot document = res.docs[i];
               Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-              final Party party = Fresh.freshPartyMap(data, false);
+              final Party party = Fresh.freshPartyMap(data, true);
               mParty = party;
               // requests.add(partyGuest);
             }
