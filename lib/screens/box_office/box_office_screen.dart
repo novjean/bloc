@@ -77,15 +77,15 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
         onPressed: () {
           scanCode();
         },
+        backgroundColor: Theme.of(context).primaryColor,
+        tooltip: 'scan code',
+        elevation: 5,
+        splashColor: Colors.grey,
         child: Icon(
           Icons.qr_code_scanner,
           color: Theme.of(context).primaryColorDark,
           size: 29,
         ),
-        backgroundColor: Theme.of(context).primaryColor,
-        tooltip: 'scan code',
-        elevation: 5,
-        splashColor: Colors.grey,
       ): const SizedBox(),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
 
