@@ -118,6 +118,7 @@ class PartyItem extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Flexible(
+                        flex: 3,
                         child: Align(
                           alignment: Alignment.centerLeft,
                           child: Text(
@@ -128,7 +129,6 @@ class PartyItem extends StatelessWidget {
                                 color: Theme.of(context).primaryColorDark),
                           ),
                         ),
-                        flex: 3,
                       ),
                       isGuestListActive &
                               !isGuestListRequested

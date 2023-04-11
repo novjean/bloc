@@ -56,8 +56,17 @@ class _PartyGuestAddEditManagePageState
   late String sGuestCount;
   List<String> guestCounts = [];
 
-  late String sGuestStatus;
+  String sGuestStatus = 'couple';
   List<String> guestStatuses = ['couple', 'ladies', 'lgbtq+'];
+
+  String sGender = 'male';
+  List<String> genders = [
+    'male',
+    'female',
+    'transgender',
+    'non-binary/non-conforming',
+    'prefer not to respond'
+  ];
 
   bool isLoggedIn = false;
   String _verificationCode = '';
@@ -100,8 +109,8 @@ class _PartyGuestAddEditManagePageState
       guestCounts.add(i.toString());
     }
     sGuestCount = widget.partyGuest.guestsCount.toString();
-
     sGuestStatus = widget.partyGuest.guestStatus;
+    sGender = widget.partyGuest.gender;
   }
 
   @override
@@ -158,7 +167,8 @@ class _PartyGuestAddEditManagePageState
                     bloc_user = bloc_user.copyWith(surname: surname);
                     hasUserChanged = true;
 
-                    widget.partyGuest = widget.partyGuest.copyWith(surname: surname);
+                    widget.partyGuest =
+                        widget.partyGuest.copyWith(surname: surname);
                   },
                 ),
               ),
@@ -264,7 +274,7 @@ class _PartyGuestAddEditManagePageState
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           Text(
-                            'number of guests',
+                            'gender \*',
                             style: TextStyle(
                                 color: Theme.of(context).primaryColorLight,
                                 fontSize: 16,
@@ -276,13 +286,13 @@ class _PartyGuestAddEditManagePageState
                     FormField<String>(
                       builder: (FormFieldState<String> state) {
                         return InputDecorator(
-                          key: const ValueKey('guest_count'),
+                          key: const ValueKey('gender_dropdown'),
                           decoration: InputDecoration(
                               fillColor: Colors.white,
                               errorStyle: TextStyle(
                                   color: Theme.of(context).errorColor,
                                   fontSize: 16.0),
-                              hintText: 'please select guest count',
+                              hintText: 'please select gender',
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(5.0),
                                 borderSide: BorderSide(
@@ -294,27 +304,28 @@ class _PartyGuestAddEditManagePageState
                                     color: Theme.of(context).primaryColor,
                                     width: 0.0),
                               )),
-                          isEmpty: sGuestCount == '',
+                          isEmpty: sGender == '',
                           child: DropdownButtonHideUnderline(
                             child: DropdownButton<String>(
                               style: TextStyle(
                                   color: Theme.of(context).primaryColorLight),
                               dropdownColor: Theme.of(context).backgroundColor,
-                              value: sGuestCount,
+                              value: sGender,
                               isDense: true,
                               onChanged: (String? newValue) {
                                 setState(() {
-                                  sGuestCount = newValue!;
-                                  int count = int.parse(sGuestCount);
+                                  sGender = newValue!;
+
+                                  bloc_user =
+                                      bloc_user.copyWith(gender: sGender);
+                                  hasUserChanged = true;
 
                                   widget.partyGuest = widget.partyGuest
-                                      .copyWith(guestsCount: count);
-                                  widget.partyGuest = widget.partyGuest
-                                      .copyWith(guestsRemaining: count);
+                                      .copyWith(gender: sGender);
                                   state.didChange(newValue);
                                 });
                               },
-                              items: guestCounts.map((String value) {
+                              items: genders.map((String value) {
                                 return DropdownMenuItem<String>(
                                   value: value,
                                   child: Text(value),
@@ -329,6 +340,87 @@ class _PartyGuestAddEditManagePageState
                 ),
               ),
               const SizedBox(height: 24),
+              guestCounts.length == 1
+                  ? const SizedBox()
+                  : Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 32),
+                      child: Column(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 8.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'number of guests',
+                                  style: TextStyle(
+                                      color:
+                                          Theme.of(context).primaryColorLight,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ],
+                            ),
+                          ),
+                          FormField<String>(
+                            builder: (FormFieldState<String> state) {
+                              return InputDecorator(
+                                key: const ValueKey('guest_count'),
+                                decoration: InputDecoration(
+                                    fillColor: Colors.white,
+                                    errorStyle: TextStyle(
+                                        color: Theme.of(context).errorColor,
+                                        fontSize: 16.0),
+                                    hintText: 'please select guest count',
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(5.0),
+                                      borderSide: BorderSide(
+                                          color:
+                                              Theme.of(context).primaryColor),
+                                    ),
+                                    enabledBorder: OutlineInputBorder(
+                                      // width: 0.0 produces a thin "hairline" border
+                                      borderSide: BorderSide(
+                                          color: Theme.of(context).primaryColor,
+                                          width: 0.0),
+                                    )),
+                                isEmpty: sGuestCount == '',
+                                child: DropdownButtonHideUnderline(
+                                  child: DropdownButton<String>(
+                                    style: TextStyle(
+                                        color: Theme.of(context)
+                                            .primaryColorLight),
+                                    dropdownColor:
+                                        Theme.of(context).backgroundColor,
+                                    value: sGuestCount,
+                                    isDense: true,
+                                    onChanged: (String? newValue) {
+                                      setState(() {
+                                        sGuestCount = newValue!;
+                                        int count = int.parse(sGuestCount);
+
+                                        widget.partyGuest = widget.partyGuest
+                                            .copyWith(guestsCount: count);
+                                        widget.partyGuest = widget.partyGuest
+                                            .copyWith(guestsRemaining: count);
+                                        state.didChange(newValue);
+                                      });
+                                    },
+                                    items: guestCounts.map((String value) {
+                                      return DropdownMenuItem<String>(
+                                        value: value,
+                                        child: Text(value),
+                                      );
+                                    }).toList(),
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                          const SizedBox(height: 24),
+                        ],
+                      ),
+                    ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 32),
                 child: Column(
@@ -546,23 +638,25 @@ class _PartyGuestAddEditManagePageState
                   // need to see if the user already has a guest request
                   widget.partyGuest.guestId = bloc_user.id;
 
-                  FirestoreHelper.pullPartyGuestByUser(widget.partyGuest.guestId, widget.partyGuest.partyId)
+                  FirestoreHelper.pullPartyGuestByUser(
+                          widget.partyGuest.guestId, widget.partyGuest.partyId)
                       .then((res) {
-                        Logx.i(_TAG, 'pulled in party guest by user');
+                    Logx.i(_TAG, 'pulled in party guest by user');
 
-                        if(res.docs.isEmpty){
-                          // user has not requested for party guest list, approve
-                          PartyGuest freshPartyGuest = Fresh.freshPartyGuest(widget.partyGuest);
-                          FirestoreHelper.pushPartyGuest(freshPartyGuest);
+                    if (res.docs.isEmpty) {
+                      // user has not requested for party guest list, approve
+                      PartyGuest freshPartyGuest =
+                          Fresh.freshPartyGuest(widget.partyGuest);
+                      FirestoreHelper.pushPartyGuest(freshPartyGuest);
 
-                          Logx.i(_TAG, 'guest list request in box office');
-                          Toaster.longToast('guest list request in box office');
-                        } else {
-                          //already requested
-                          Logx.i(_TAG, 'duplicate guest list request');
-                          Toaster.longToast('guest list has already been requested');
-                        }
-
+                      Logx.i(_TAG, 'guest list request in box office');
+                      Toaster.longToast('guest list request in box office');
+                    } else {
+                      //already requested
+                      Logx.i(_TAG, 'duplicate guest list request');
+                      Toaster.longToast(
+                          'guest list has already been requested');
+                    }
                   });
                 }
 

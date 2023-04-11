@@ -4,6 +4,7 @@ class User {
   final String surname;
   final String email;
   final String imageUrl;
+  final String gender;
   final int clearanceLevel;
   int phoneNumber;
   String fcmToken;
@@ -18,6 +19,7 @@ class User {
     required this.surname,
     required this.email,
     required this.imageUrl,
+    required this.gender,
     required this.clearanceLevel,
     required this.phoneNumber,
     required this.fcmToken,
@@ -36,6 +38,7 @@ class User {
           surname == other.surname &&
           email == other.email &&
           imageUrl == other.imageUrl &&
+          gender == other.gender &&
           clearanceLevel == other.clearanceLevel &&
           phoneNumber == other.phoneNumber &&
           fcmToken == other.fcmToken &&
@@ -50,6 +53,7 @@ class User {
       surname.hashCode ^
       email.hashCode ^
       imageUrl.hashCode ^
+      gender.hashCode ^
       clearanceLevel.hashCode ^
       phoneNumber.hashCode ^
       fcmToken.hashCode ^
@@ -65,6 +69,7 @@ class User {
         ' surname: $surname,' +
         ' email: $email,' +
         ' imageUrl: $imageUrl,' +
+        ' gender: $gender,' +
         ' clearanceLevel: $clearanceLevel,' +
         ' phoneNumber: $phoneNumber,' +
         ' fcmToken: $fcmToken,' +
@@ -80,6 +85,7 @@ class User {
     String? surname,
     String? email,
     String? imageUrl,
+    String? gender,
     int? clearanceLevel,
     int? phoneNumber,
     String? fcmToken,
@@ -93,6 +99,7 @@ class User {
       surname: surname ?? this.surname,
       email: email ?? this.email,
       imageUrl: imageUrl ?? this.imageUrl,
+      gender: gender ?? this.gender,
       clearanceLevel: clearanceLevel ?? this.clearanceLevel,
       phoneNumber: phoneNumber ?? this.phoneNumber,
       fcmToken: fcmToken ?? this.fcmToken,
@@ -109,6 +116,7 @@ class User {
       'surname': this.surname,
       'email': this.email,
       'imageUrl': this.imageUrl,
+      'gender': this.gender,
       'clearanceLevel': this.clearanceLevel,
       'phoneNumber': this.phoneNumber,
       'fcmToken': this.fcmToken,
@@ -125,6 +133,7 @@ class User {
       surname: map['surname'] as String,
       email: map['email'] as String,
       imageUrl: map['imageUrl'] as String,
+      gender: map['gender'] as String,
       clearanceLevel: map['clearanceLevel'] as int,
       phoneNumber: map['phoneNumber'] as int,
       fcmToken: map['fcmToken'] as String,

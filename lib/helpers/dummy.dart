@@ -152,7 +152,8 @@ class Dummy {
         guestsRemaining: 1,
         createdAt: Timestamp.now().millisecondsSinceEpoch,
         isApproved: false,
-        guestStatus: 'couple');
+        guestStatus: 'couple',
+        gender: 'male');
     return dummyGuest;
   }
 
@@ -219,6 +220,7 @@ class Dummy {
         imageUrl: '',
         name: '',
         surname: '',
+        gender: 'male',
         phoneNumber: 0,
         createdAt: millis,
         lastSeenAt: millis);

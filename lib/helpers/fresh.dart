@@ -648,6 +648,12 @@ class Fresh {
           'party guest guestStatus not exist for party guest id: ' +
               partyGuest.id);
     }
+    try {
+      freshGuest = freshGuest.copyWith(gender: partyGuest.gender);
+    } catch (e) {
+      Logx.em(
+          _TAG, 'party guest gender not exist for party guest id: ' + partyGuest.id);
+    }
 
     return freshGuest;
   }
@@ -735,6 +741,14 @@ class Fresh {
     } catch (e) {
       Logx.em(_TAG,
           'partyGuest guestStatus not exist for user id: ' + partyGuest.id);
+      shouldPush = true;
+    }
+    try {
+      partyGuest =
+          partyGuest.copyWith(gender: map['gender'] as String);
+    } catch (e) {
+      Logx.em(_TAG,
+          'partyGuest gender not exist for user id: ' + partyGuest.id);
       shouldPush = true;
     }
 
@@ -1081,6 +1095,12 @@ class Fresh {
       shouldPushUser = true;
     }
     try {
+      user = user.copyWith(gender: map['gender'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'user gender not exist for user id: ' + user.id);
+      shouldPushUser = true;
+    }
+    try {
       user = user.copyWith(fcmToken: map['fcmToken'] as String);
     } catch (e) {
       Logx.em(_TAG, 'user fcmToken not exist for user id: ' + user.id);
@@ -1124,9 +1144,19 @@ class Fresh {
       Logx.em(_TAG, 'user id not exist');
     }
     try {
+      freshUser = freshUser.copyWith(name: user.name);
+    } catch (e) {
+      Logx.em(_TAG, 'name not exist for user id: ' + user.id);
+    }
+    try {
       freshUser = freshUser.copyWith(surname: user.surname);
     } catch (e) {
       Logx.em(_TAG, 'user surname not exist for user id: ' + user.id);
+    }
+    try {
+      freshUser = freshUser.copyWith(gender: user.gender);
+    } catch (e) {
+      Logx.em(_TAG, 'user gender not exist for user id: ' + user.id);
     }
     try {
       freshUser = freshUser.copyWith(email: user.email);
@@ -1147,11 +1177,6 @@ class Fresh {
       freshUser = freshUser.copyWith(phoneNumber: user.phoneNumber);
     } catch (e) {
       Logx.em(_TAG, 'user phoneNumber not exist for user id: ' + user.id);
-    }
-    try {
-      freshUser = freshUser.copyWith(name: user.name);
-    } catch (e) {
-      Logx.em(_TAG, 'name not exist for user id: ' + user.id);
     }
     try {
       freshUser = freshUser.copyWith(fcmToken: user.fcmToken);
