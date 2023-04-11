@@ -577,6 +577,12 @@ class Fresh {
           'party guest name not exist for party guest id: ' + partyGuest.id);
     }
     try {
+      freshGuest = freshGuest.copyWith(surname: partyGuest.surname);
+    } catch (e) {
+      Logx.em(_TAG,
+          'party guest surname not exist for party guest id: ' + partyGuest.id);
+    }
+    try {
       freshGuest = freshGuest.copyWith(partyId: partyGuest.partyId);
     } catch (e) {
       Logx.em(_TAG,
@@ -674,6 +680,12 @@ class Fresh {
       partyGuest = partyGuest.copyWith(name: map['name'] as String);
     } catch (e) {
       Logx.em(_TAG, 'partyGuest name not exist for user id: ' + partyGuest.id);
+      shouldPush = true;
+    }
+    try {
+      partyGuest = partyGuest.copyWith(surname: map['surname'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'partyGuest surname not exist for user id: ' + partyGuest.id);
       shouldPush = true;
     }
     try {
@@ -1033,9 +1045,9 @@ class Fresh {
       Logx.em(_TAG, 'user id not exist');
     }
     try {
-      user = user.copyWith(username: map['username'] as String);
+      user = user.copyWith(surname: map['surname'] as String);
     } catch (e) {
-      Logx.em(_TAG, 'user username not exist for user id: ' + user.id);
+      Logx.em(_TAG, 'user surname not exist for user id: ' + user.id);
       shouldPushUser = true;
     }
     try {
@@ -1112,9 +1124,9 @@ class Fresh {
       Logx.em(_TAG, 'user id not exist');
     }
     try {
-      freshUser = freshUser.copyWith(username: user.username);
+      freshUser = freshUser.copyWith(surname: user.surname);
     } catch (e) {
-      Logx.em(_TAG, 'user username not exist for user id: ' + user.id);
+      Logx.em(_TAG, 'user surname not exist for user id: ' + user.id);
     }
     try {
       freshUser = freshUser.copyWith(email: user.email);

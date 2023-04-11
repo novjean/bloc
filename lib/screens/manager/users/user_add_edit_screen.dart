@@ -14,6 +14,7 @@ import '../../../helpers/firestore_helper.dart';
 import '../../../utils/string_utils.dart';
 import '../../../widgets/profile_widget.dart';
 import '../../../widgets/ui/button_widget.dart';
+import '../../../widgets/ui/loading_widget.dart';
 import '../../../widgets/ui/textfield_widget.dart';
 import '../../../widgets/ui/toaster.dart';
 
@@ -188,11 +189,9 @@ class _UserAddEditScreenState extends State<UserAddEditScreen> {
 
   _buildBody(BuildContext context) {
     return _isBlocServicesLoading
-        ? Center(
-      child: Text('loading user...'),
-    )
+        ? const LoadingWidget()
         : ListView(
-      padding: EdgeInsets.symmetric(horizontal: 32),
+      padding: const EdgeInsets.symmetric(horizontal: 32),
       physics: const BouncingScrollPhysics(),
       children: [
         const SizedBox(height: 15),
@@ -229,6 +228,13 @@ class _UserAddEditScreenState extends State<UserAddEditScreen> {
           text: widget.user.name,
           onChanged: (name) =>
           widget.user = widget.user.copyWith(name: name),
+        ),
+        const SizedBox(height: 24),
+        TextFieldWidget(
+          label: 'surname',
+          text: widget.user.surname,
+          onChanged: (name) =>
+          widget.user = widget.user.copyWith(surname: name),
         ),
         const SizedBox(height: 24),
         TextFieldWidget(

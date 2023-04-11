@@ -148,6 +148,20 @@ class _PartyGuestAddEditManagePageState
                   },
                 ),
               ),
+              const SizedBox(height: 24),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 32),
+                child: DarkTextFieldWidget(
+                  label: 'surname \*',
+                  text: bloc_user.surname,
+                  onChanged: (surname) {
+                    bloc_user = bloc_user.copyWith(surname: surname);
+                    hasUserChanged = true;
+
+                    widget.partyGuest = widget.partyGuest.copyWith(surname: surname);
+                  },
+                ),
+              ),
               widget.task == 'manage'
                   ? Column(
                       children: [
@@ -441,6 +455,11 @@ class _PartyGuestAddEditManagePageState
     if (widget.partyGuest.name.isEmpty) {
       Logx.em(_TAG, 'name not entered for guest');
       Toaster.longToast('please enter your name');
+      return false;
+    }
+    if (widget.partyGuest.surname.isEmpty) {
+      Logx.em(_TAG, 'surname not entered for guest');
+      Toaster.longToast('please enter your surname / last name');
       return false;
     }
     if (widget.party.isEmailRequired && widget.partyGuest.email.isEmpty) {

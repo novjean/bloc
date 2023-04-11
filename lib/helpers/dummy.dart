@@ -145,6 +145,7 @@ class Dummy {
         partyId: '',
         guestId: UserPreferences.myUser.id,
         name: UserPreferences.myUser.name,
+        surname: UserPreferences.myUser.surname,
         phone: UserPreferences.myUser.phoneNumber.toString(),
         email: UserPreferences.myUser.email,
         guestsCount: 1,
@@ -217,8 +218,8 @@ class Dummy {
         id: StringUtils.getRandomString(28),
         imageUrl: '',
         name: '',
+        surname: '',
         phoneNumber: 0,
-        username: '',
         createdAt: millis,
         lastSeenAt: millis);
     return dummyUser;

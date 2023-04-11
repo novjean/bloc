@@ -3,6 +3,7 @@ class PartyGuest {
   String partyId;
   String guestId;
   String name;
+  String surname;
   String phone;
   String email;
   int guestsCount;
@@ -19,6 +20,7 @@ class PartyGuest {
     required this.partyId,
     required this.guestId,
     required this.name,
+    required this.surname,
     required this.phone,
     required this.email,
     required this.guestsCount,
@@ -37,6 +39,7 @@ class PartyGuest {
           partyId == other.partyId &&
           guestId == other.guestId &&
           name == other.name &&
+          surname == other.surname &&
           phone == other.phone &&
           email == other.email &&
           guestsCount == other.guestsCount &&
@@ -51,6 +54,7 @@ class PartyGuest {
       partyId.hashCode ^
       guestId.hashCode ^
       name.hashCode ^
+      surname.hashCode ^
       phone.hashCode ^
       email.hashCode ^
       guestsCount.hashCode ^
@@ -66,6 +70,7 @@ class PartyGuest {
         ' partyId: $partyId,' +
         ' guestId: $guestId,' +
         ' name: $name,' +
+        ' surname: $surname,' +
         ' phone: $phone,' +
         ' email: $email,' +
         ' guestsCount: $guestsCount,' +
@@ -81,6 +86,7 @@ class PartyGuest {
     String? partyId,
     String? guestId,
     String? name,
+    String? surname,
     String? phone,
     String? email,
     int? guestsCount,
@@ -94,6 +100,7 @@ class PartyGuest {
       partyId: partyId ?? this.partyId,
       guestId: guestId ?? this.guestId,
       name: name ?? this.name,
+      surname: surname ?? this.surname,
       phone: phone ?? this.phone,
       email: email ?? this.email,
       guestsCount: guestsCount ?? this.guestsCount,
@@ -110,6 +117,7 @@ class PartyGuest {
       'partyId': this.partyId,
       'guestId': this.guestId,
       'name': this.name,
+      'surname': this.surname,
       'phone': this.phone,
       'email': this.email,
       'guestsCount': this.guestsCount,
@@ -126,6 +134,7 @@ class PartyGuest {
       partyId: map['partyId'] as String,
       guestId: map['guestId'] as String,
       name: map['name'] as String,
+      surname: map['surname'] as String,
       phone: map['phone'] as String,
       email: map['email'] as String,
       guestsCount: map['guestsCount'] as int,
