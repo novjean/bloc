@@ -156,10 +156,12 @@ class AppDrawer extends StatelessWidget {
           ListTile(
             leading: const Icon(Icons.exit_to_app),
             title: Text(UserPreferences.isUserLoggedIn() ? 'logout' : 'login'),
-            onTap: () {
+            onTap: () async {
               UserPreferences.resetUser();
 
-              FirebaseAuth.instance.signOut();
+              await FirebaseAuth.instance.signOut();
+              Navigator.of(context).pop();
+
               Navigator.of(context).pushReplacement(
                 MaterialPageRoute(builder: (context) => const LoginScreen(shouldTriggerSkip: false,)),
               );

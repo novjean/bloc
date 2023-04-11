@@ -59,13 +59,14 @@ class AccountScreen extends StatelessWidget {
                     actions: [
                       TextButton(
                         child: Text("yes"),
-                        onPressed: () {
+                        onPressed: () async {
                           blocUser.User sUser = UserPreferences.myUser;
 
                           if(sUser.imageUrl.isNotEmpty) {
                             FirestorageHelper.deleteFile(sUser.imageUrl);
                           }
 
+                          await FirebaseAuth.instance.signOut();
                           FirestoreHelper.deleteUser(sUser);
                           UserPreferences.resetUser();
 

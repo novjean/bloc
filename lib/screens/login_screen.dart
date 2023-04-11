@@ -62,16 +62,19 @@ class _LoginScreenState extends State<LoginScreen> {
               return const LoadingWidget();
             }
           }
+
           Logx.i(_TAG, 'user snapshot received');
+
 
           if (userSnapshot.hasData) {
             Logx.i(_TAG, 'user snapshot has data');
 
             final user = FirebaseAuth.instance.currentUser;
 
+
             CollectionReference users = FirestoreHelper.getUsersCollection();
 
-            if (user!.uid.isEmpty) {
+            if (user!.uid.isEmpty || widget.shouldTriggerSkip == false) {
               Logx.i(_TAG, 'user snapshot uid is empty');
               return SignInWidget();
             } else {

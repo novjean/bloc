@@ -631,7 +631,9 @@ class _PartyGuestAddEditManagePageState
                 } else {
                   if (hasUserChanged) {
                     blocUser.User freshUser = Fresh.freshUser(bloc_user);
-                    UserPreferences.setUser(freshUser);
+                    if(freshUser.id == UserPreferences.myUser.id){
+                      UserPreferences.setUser(freshUser);
+                    }
                     FirestoreHelper.pushUser(freshUser);
                   }
 
@@ -643,7 +645,7 @@ class _PartyGuestAddEditManagePageState
                       .then((res) {
                     Logx.i(_TAG, 'pulled in party guest by user');
 
-                    if (res.docs.isEmpty) {
+                    if (res.docs.isEmpty || widget.task == 'edit'  || widget.task == 'manage') {
                       // user has not requested for party guest list, approve
                       PartyGuest freshPartyGuest =
                           Fresh.freshPartyGuest(widget.partyGuest);

@@ -12,10 +12,11 @@ class ProfileLoginScreen extends StatelessWidget {
       body: Center(
         child: ButtonWidget(
             text: 'login',
-            onClicked: () {
+            onClicked: () async {
               UserPreferences.resetUser();
 
-              FirebaseAuth.instance.signOut();
+              await FirebaseAuth.instance.signOut();
+
               Navigator.of(context).pushReplacement(
                 MaterialPageRoute(builder: (context) => LoginScreen(shouldTriggerSkip: false,)),
               );

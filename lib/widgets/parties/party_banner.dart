@@ -1,5 +1,6 @@
 import 'package:bloc/utils/date_time_utils.dart';
 import 'package:bloc/utils/network_utils.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import '../../db/entity/party.dart';
@@ -7,7 +8,6 @@ import '../../db/entity/party_guest.dart';
 import '../../helpers/dummy.dart';
 import '../../screens/parties/artist_screen.dart';
 import '../../screens/parties/party_guest_add_edit_manage_screen.dart';
-import '../../utils/string_utils.dart';
 
 class PartyBanner extends StatelessWidget {
   final Party party;
@@ -23,6 +23,9 @@ class PartyBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    int timeNow = Timestamp.now().millisecondsSinceEpoch;
+    bool isGuestListActive = party.isGuestListActive & (timeNow < party.guestListEndTime);
+
     return GestureDetector(
       onTap: () {
         isClickable
@@ -87,10 +90,11 @@ class PartyBanner extends StatelessWidget {
                       ),
 
                       const Spacer(),
-                      shouldShowButton && party.name.length<20
+
+                      shouldShowButton
                           ? party.isTBA
                               ? showListenOrInstaDialog(context)
-                              : party.ticketUrl.isNotEmpty
+                              : isGuestListActive
                                   ? Padding(
                                       padding:
                                           const EdgeInsets.only(right: 5.0),
@@ -103,7 +107,7 @@ class PartyBanner extends StatelessWidget {
                                           elevation: 3,
 
                                           minimumSize: const Size.fromHeight(
-                                              60), //////// HERE
+                                              60),
                                         ),
                                         onPressed: () {
                                           PartyGuest partyGuest = Dummy.getDummyPartyGuest();
@@ -185,5 +189,47 @@ class PartyBanner extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Widget displayButton(BuildContext context, bool isGuestListActive) {
+    if(isGuestListActive){
+      return Padding(
+        padding:
+        const EdgeInsets.only(right: 5.0),
+        child: ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            backgroundColor:
+            Theme.of(context).highlightColor,
+            foregroundColor: Colors.white,
+            shadowColor: Colors.white30,
+            elevation: 3,
+
+            minimumSize: const Size.fromHeight(
+                60), //////// HERE
+          ),
+          onPressed: () {
+            PartyGuest partyGuest = Dummy.getDummyPartyGuest();
+            partyGuest.partyId = party.id;
+
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                  builder: (context) =>
+                      PartyGuestAddEditManagePage(
+                          partyGuest: partyGuest,
+                          party: party,
+                          task: 'add')),
+            );
+          },
+          child: Text(
+            'join guest list',
+            style: TextStyle(
+                fontSize: 20,
+                color: Colors.black),
+          ),
+        ),
+      );
+    } else {
+      return showListenOrInstaDialog(context);
+    }
   }
 }
