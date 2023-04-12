@@ -26,6 +26,8 @@ class Party {
   final String guestListRules;
   final String clubRules;
 
+  final bool isBigAct;
+
 //<editor-fold desc="Data Methods">
   const Party({
     required this.id,
@@ -49,6 +51,7 @@ class Party {
     required this.guestListEndTime,
     required this.guestListRules,
     required this.clubRules,
+    required this.isBigAct,
   });
 
   @override
@@ -76,7 +79,8 @@ class Party {
           isEmailRequired == other.isEmailRequired &&
           guestListEndTime == other.guestListEndTime &&
           guestListRules == other.guestListRules &&
-          clubRules == other.clubRules);
+          clubRules == other.clubRules &&
+          isBigAct == other.isBigAct);
 
   @override
   int get hashCode =>
@@ -100,7 +104,8 @@ class Party {
       isEmailRequired.hashCode ^
       guestListEndTime.hashCode ^
       guestListRules.hashCode ^
-      clubRules.hashCode;
+      clubRules.hashCode ^
+      isBigAct.hashCode;
 
   @override
   String toString() {
@@ -126,6 +131,7 @@ class Party {
         ' guestListEndTime: $guestListEndTime,' +
         ' guestListRules: $guestListRules,' +
         ' clubRules: $clubRules,' +
+        ' isBigAct: $isBigAct,' +
         '}';
   }
 
@@ -151,6 +157,7 @@ class Party {
     int? guestListEndTime,
     String? guestListRules,
     String? clubRules,
+    bool? isBigAct,
   }) {
     return Party(
       id: id ?? this.id,
@@ -174,6 +181,7 @@ class Party {
       guestListEndTime: guestListEndTime ?? this.guestListEndTime,
       guestListRules: guestListRules ?? this.guestListRules,
       clubRules: clubRules ?? this.clubRules,
+      isBigAct: isBigAct ?? this.isBigAct,
     );
   }
 
@@ -200,6 +208,7 @@ class Party {
       'guestListEndTime': this.guestListEndTime,
       'guestListRules': this.guestListRules,
       'clubRules': this.clubRules,
+      'isBigAct': this.isBigAct,
     };
   }
 
@@ -226,6 +235,7 @@ class Party {
       guestListEndTime: map['guestListEndTime'] as int,
       guestListRules: map['guestListRules'] as String,
       clubRules: map['clubRules'] as String,
+      isBigAct: map['isBigAct'] as bool,
     );
   }
 

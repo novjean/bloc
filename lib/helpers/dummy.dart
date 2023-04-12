@@ -134,6 +134,7 @@ class Dummy {
       isEmailRequired: false,
       clubRules: Constants.clubRules,
       guestListRules: Constants.guestListRules,
+      isBigAct: true
     );
 
     return dummyParty;

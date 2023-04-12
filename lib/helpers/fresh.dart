@@ -429,6 +429,14 @@ class Fresh {
       Logx.em(_TAG, 'party guestListRules not exist for party id: ' + party.id);
       shouldPushParty = true;
     }
+    try {
+      party =
+          party.copyWith(isBigAct: map['isBigAct'] as bool);
+    } catch (e) {
+      Logx.em(
+          _TAG, 'party isBigAct not exist for party id: ' + party.id);
+      shouldPushParty = true;
+    }
 
     if (shouldPushParty &&
         shouldUpdate &&
@@ -545,8 +553,7 @@ class Fresh {
     try {
       freshParty = freshParty.copyWith(isEmailRequired: party.isEmailRequired);
     } catch (e) {
-      Logx.em(
-          _TAG, 'party isEmailRequired not exist for party id: ' + party.id);
+      Logx.em(_TAG, 'party isEmailRequired not exist for party id: ' + party.id);
     }
     try {
       freshParty = freshParty.copyWith(clubRules: party.clubRules);
@@ -557,6 +564,12 @@ class Fresh {
       freshParty = freshParty.copyWith(guestListRules: party.guestListRules);
     } catch (e) {
       Logx.em(_TAG, 'party guestListRules not exist for party id: ' + party.id);
+    }
+    try {
+      freshParty =
+          freshParty.copyWith(isBigAct: party.isBigAct);
+    } catch (e) {
+      Logx.em(_TAG, 'party isBigAct not exist for party id: ' + party.id);
     }
 
     return freshParty;

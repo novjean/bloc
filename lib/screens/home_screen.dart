@@ -4,6 +4,7 @@ import 'package:bloc/screens/user/book_table_screen.dart';
 import 'package:bloc/utils/constants.dart';
 import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:delayed_display/delayed_display.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -23,6 +24,7 @@ import '../widgets/ui/button_widget.dart';
 import '../widgets/ui/dark_button_widget.dart';
 import '../widgets/ui/toaster.dart';
 import 'experimental/trending.dart';
+import 'main_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   HomeScreen({key}) : super(key: key);
@@ -67,13 +69,13 @@ class _HomeScreenState extends State<HomeScreen> {
                 });
               }
             } else {
-              Logx.em(_TAG,' no blocs found!!!');
+              Logx.em(_TAG, ' no blocs found!!!');
               //todo: need to re-attempt or check internet connection
               setState(() {
                 _isBlocsLoading = false;
               });
             }
-          }).catchError((e,s) {
+          }).catchError((e, s) {
             Logx.ex(_TAG, 'error loading blocs', e, s);
             setState(() {
               _isBlocsLoading = false;
@@ -114,7 +116,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     int timeNow = Timestamp.now().millisecondsSinceEpoch;
     FirestoreHelper.pullUpcomingPartyByEndTime(timeNow).then((res) {
-      Logx.i(_TAG,"successfully pulled in parties.");
+      Logx.i(_TAG, "successfully pulled in parties.");
 
       if (res.docs.isNotEmpty) {
         try {
@@ -122,7 +124,7 @@ class _HomeScreenState extends State<HomeScreen> {
           Map<String, dynamic> map = document.data()! as Map<String, dynamic>;
           final Party party = Fresh.freshPartyMap(map, true);
 
-          if(mounted) {
+          if (mounted) {
             setState(() {
               mUpcomingParty = party;
               _isUpcomingPartyLoading = false;
@@ -140,7 +142,7 @@ class _HomeScreenState extends State<HomeScreen> {
     });
 
     FirestoreHelper.pullGuestWifi(Constants.blocServiceId).then((res) {
-      Logx.i(_TAG,"successfully pulled in guest wifi");
+      Logx.i(_TAG, "successfully pulled in guest wifi");
 
       if (res.docs.isNotEmpty) {
         try {
@@ -148,7 +150,7 @@ class _HomeScreenState extends State<HomeScreen> {
           Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
           final GuestWifi wifi = GuestWifi.fromMap(data);
 
-          if(mounted) {
+          if (mounted) {
             setState(() {
               mGuestWifi = wifi;
               _isGuestWifiDetailsLoading = false;
@@ -162,7 +164,7 @@ class _HomeScreenState extends State<HomeScreen> {
           Logx.em(_TAG, e.toString());
         }
       } else {
-        Logx.i(_TAG,'no guest wifi found!');
+        Logx.i(_TAG, 'no guest wifi found!');
       }
     });
   }
@@ -193,9 +195,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     : buildWifi(context)
                 : const SizedBox(),
             const SizedBox(height: 10.0),
-            kIsWeb
-                ? const StoreBadgeItem()
-                : const SizedBox(),
+            kIsWeb ? const StoreBadgeItem() : const SizedBox(),
             const SizedBox(height: 10.0),
           ],
         ),
@@ -213,8 +213,7 @@ class _HomeScreenState extends State<HomeScreen> {
             Bloc bloc = mBlocs[index];
 
             return GestureDetector(
-              child:
-                  BlocSlideItem(
+              child: BlocSlideItem(
                 bloc: bloc,
               ),
             );
@@ -262,6 +261,7 @@ class _HomeScreenState extends State<HomeScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Flexible(
+                flex: 1,
                 child: Padding(
                   padding: const EdgeInsets.only(left: 10.0),
                   child: Text(
@@ -272,7 +272,6 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                 ),
-                flex: 1,
               ),
               Flexible(
                 child: Container(

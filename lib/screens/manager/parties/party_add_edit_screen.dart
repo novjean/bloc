@@ -400,6 +400,24 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
                   ), //Checkbox
                 ], //<Widget>[]
               ),
+              const SizedBox(height: 24),
+              Row(
+                children: <Widget>[
+                  const Text(
+                    'big act : ',
+                    style: TextStyle(fontSize: 17.0),
+                  ), //Text
+                  const SizedBox(width: 10), //SizedBox
+                  Checkbox(
+                    value: widget.party.isBigAct,
+                    onChanged: (value) {
+                      setState(() {
+                        widget.party = widget.party.copyWith(isBigAct: value);
+                      });
+                    },
+                  ), //Checkbox
+                ], //<Widget>[]
+              ),
 
               const SizedBox(height: 24),
               Row(
