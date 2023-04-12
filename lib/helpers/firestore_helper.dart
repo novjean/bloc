@@ -572,6 +572,7 @@ class FirestoreHelper {
         .collection(FirestoreHelper.PARTIES)
         .where('endTime', isLessThanOrEqualTo: timeNow)
         .where('isTBA', isEqualTo: isTBA)
+        .where('isBigAct', isEqualTo: true)
         .orderBy('endTime', descending: true)
         .get();
   }
