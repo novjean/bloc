@@ -33,7 +33,7 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
     int timeNow = Timestamp.now().millisecondsSinceEpoch;
 
     FirestoreHelper.pullPartiesByEndTime(timeNow, true).then((res) {
-      print("successfully pulled in parties");
+      Logx.i(_TAG, "successfully pulled in parties");
 
       if (res.docs.isNotEmpty) {
         // found parties
@@ -53,7 +53,7 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
           });
         }
       } else {
-        print('no parties found!');
+        Logx.i(_TAG, 'no parties found!');
         const Center(
           child: Text('no parties assigned yet!'),
         );
