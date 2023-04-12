@@ -588,6 +588,16 @@ class FirestoreHelper {
         .get();
   }
 
+  static getUpcomingGuestListParties(int timeNow) {
+    return FirebaseFirestore.instance
+        .collection(FirestoreHelper.PARTIES)
+        .where('endTime', isGreaterThan: timeNow)
+        .where('isActive', isEqualTo: true)
+        .where('isGuestListActive', isEqualTo: true)
+        .orderBy('endTime', descending: false)
+        .snapshots();
+  }
+
   static Future<QuerySnapshot<Map<String, dynamic>>> pullUpcomingPartyByEndTime(
       int timeNow) {
     return FirebaseFirestore.instance
@@ -1223,6 +1233,8 @@ class FirestoreHelper {
         .orderBy('level', descending: false)
         .get();
   }
+
+
 
 
 }

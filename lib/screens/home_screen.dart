@@ -4,7 +4,6 @@ import 'package:bloc/screens/user/book_table_screen.dart';
 import 'package:bloc/utils/constants.dart';
 import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:delayed_display/delayed_display.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -24,7 +23,6 @@ import '../widgets/ui/button_widget.dart';
 import '../widgets/ui/dark_button_widget.dart';
 import '../widgets/ui/toaster.dart';
 import 'experimental/trending.dart';
-import 'main_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   HomeScreen({key}) : super(key: key);
@@ -180,23 +178,14 @@ class _HomeScreenState extends State<HomeScreen> {
       },
       child: Scaffold(
         backgroundColor: Theme.of(context).backgroundColor,
-        body: ListView(
-          physics: const BouncingScrollPhysics(),
+        body: Column(
+          // physics: const BouncingScrollPhysics(),
           children: <Widget>[
             const SizedBox(height: 1.0),
             _isBlocsLoading ? const LoadingWidget() : _displayBlocs(context),
             _isUpcomingPartyLoading
                 ? const LoadingWidget()
-                : _displayUpcomingParty(context),
-            const SizedBox(height: 10.0),
-            UserPreferences.isUserLoggedIn()
-                ? _isGuestWifiDetailsLoading
-                    ? const LoadingWidget()
-                    : buildWifi(context)
-                : const SizedBox(),
-            const SizedBox(height: 10.0),
-            kIsWeb ? const StoreBadgeItem() : const SizedBox(),
-            const SizedBox(height: 10.0),
+                : _displayPartiesNFooter(context),
           ],
         ),
       ),
@@ -204,7 +193,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   _displayBlocs(context) {
-    return Container(
+    return SizedBox(
       height: 390,
       child: ListView.builder(
           itemCount: mBlocs.length,
@@ -218,18 +207,6 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             );
           }),
-    );
-  }
-
-  _displayUpcomingParty(context) {
-    return Container(
-      color: Theme.of(context).primaryColorLight,
-      height: 190,
-      child: PartyBanner(
-        party: mUpcomingParty,
-        isClickable: true,
-        shouldShowButton: true,
-      ),
     );
   }
 
@@ -274,6 +251,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               Flexible(
+                flex: 1,
                 child: Container(
                   padding: const EdgeInsets.only(right: 10),
                   margin: const EdgeInsets.only(bottom: 10),
@@ -289,7 +267,6 @@ class _HomeScreenState extends State<HomeScreen> {
                     },
                   ),
                 ),
-                flex: 1,
               )
             ],
           ),
@@ -328,6 +305,132 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  _displayPartiesNFooter(BuildContext context) {
+    int timeNow = Timestamp.now().millisecondsSinceEpoch;
+
+    return StreamBuilder<QuerySnapshot>(
+      stream: FirestoreHelper.getUpcomingGuestListParties(timeNow),
+      builder: (ctx, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const LoadingWidget();
+        }
+
+        if (snapshot.hasData) {
+          List<Party> parties = [];
+          for (int i = 0; i < snapshot.data!.docs.length; i++) {
+            DocumentSnapshot document = snapshot.data!.docs[i];
+            Map<String, dynamic> data =
+                document.data()! as Map<String, dynamic>;
+            final Party bloc = Fresh.freshPartyMap(data, true);
+            parties.add(bloc);
+
+            if (i == snapshot.data!.docs.length - 1) {
+              return _displayPartiesList(context, parties);
+            }
+          }
+        }
+
+        return Expanded(
+          child: Column(
+            children: [
+              UserPreferences.isUserLoggedIn()
+                  ? _isGuestWifiDetailsLoading
+                  ? const LoadingWidget()
+                  : buildWifi(context)
+                  : const SizedBox(),
+              const SizedBox(height: 10.0),
+              kIsWeb ? const StoreBadgeItem() : const SizedBox(),
+              const SizedBox(height: 10.0),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  _displayPartiesList(BuildContext context, List<Party> parties) {
+    return Expanded(
+      child: ListView.builder(
+        itemCount: parties.length,
+        scrollDirection: Axis.vertical,
+        itemBuilder: (BuildContext context, int index) {
+          Party party = parties[index];
+
+          if (parties.length == 1) {
+            _displayLastParty(party);
+            return Column(
+              children: [
+                PartyBanner(
+                  party: party,
+                  isClickable: true,
+                  shouldShowButton: true,
+                ),
+                const SizedBox(height: 10.0),
+                UserPreferences.isUserLoggedIn()
+                    ? _isGuestWifiDetailsLoading
+                        ? const LoadingWidget()
+                        : buildWifi(context)
+                    : const SizedBox(),
+                const SizedBox(height: 10.0),
+                kIsWeb ? const StoreBadgeItem() : const SizedBox(),
+                const SizedBox(height: 10.0),
+              ],
+            );
+          } else {
+            if (index == parties.length - 1) {
+              // _displayLastParty(party);
+              return Column(
+                children: [
+                  PartyBanner(
+                    party: party,
+                    isClickable: true,
+                    shouldShowButton: true,
+                  ),
+                  const SizedBox(height: 10.0),
+                  UserPreferences.isUserLoggedIn()
+                      ? _isGuestWifiDetailsLoading
+                          ? const LoadingWidget()
+                          : buildWifi(context)
+                      : const SizedBox(),
+                  const SizedBox(height: 10.0),
+                  kIsWeb ? const StoreBadgeItem() : const SizedBox(),
+                  const SizedBox(height: 10.0),
+                ],
+              );
+            } else {
+              return PartyBanner(
+                party: party,
+                isClickable: true,
+                shouldShowButton: true,
+              );
+            }
+          }
+        },
+      ),
+    );
+  }
+
+  _displayLastParty(Party party) {
+    return Column(
+      children: [
+        PartyBanner(
+          party: party,
+          isClickable: true,
+          shouldShowButton: true,
+        ),
+        const SizedBox(height: 10.0),
+        UserPreferences.isUserLoggedIn()
+            ? _isGuestWifiDetailsLoading
+                ? const LoadingWidget()
+                : buildWifi(context)
+            : const SizedBox(),
+        const SizedBox(height: 10.0),
+        kIsWeb ? const StoreBadgeItem() : const SizedBox(),
+        const SizedBox(height: 10.0),
+      ],
     );
   }
 
