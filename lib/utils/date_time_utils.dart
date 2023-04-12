@@ -2,6 +2,7 @@ import 'package:intl/intl.dart';
 
 class DateTimeUtils {
   static int millisecondsDay = 86400000;
+  static int millisecondsWeek = 604800000;
 
   static String getFormattedDateString(int millis) {
     var dt = DateTime.fromMillisecondsSinceEpoch(millis);

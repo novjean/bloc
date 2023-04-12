@@ -102,6 +102,12 @@ class _ProfileAddEditRegisterPageState
         ),
         const SizedBox(height: 24),
         DarkTextFieldWidget(
+          label: 'surname',
+          text: widget.user.surname,
+          onChanged: (text) => widget.user = widget.user.copyWith(surname: text),
+        ),
+        const SizedBox(height: 24),
+        DarkTextFieldWidget(
           label: 'email',
           text: widget.user.email,
           onChanged: (email) =>

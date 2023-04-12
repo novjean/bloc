@@ -131,7 +131,7 @@ class AppDrawer extends StatelessWidget {
             child: Align(
                 alignment: Alignment.bottomRight,
                 child: Text(
-                  'v1.4.1',
+                  'v1.4.2',
                   style: TextStyle(fontSize: 14),
                 )),
           ),
@@ -156,10 +156,12 @@ class AppDrawer extends StatelessWidget {
           ListTile(
             leading: const Icon(Icons.exit_to_app),
             title: Text(UserPreferences.isUserLoggedIn() ? 'logout' : 'login'),
-            onTap: () {
+            onTap: () async {
               UserPreferences.resetUser();
 
-              FirebaseAuth.instance.signOut();
+              await FirebaseAuth.instance.signOut();
+              Navigator.of(context).pop();
+
               Navigator.of(context).pushReplacement(
                 MaterialPageRoute(builder: (context) => const LoginScreen(shouldTriggerSkip: false,)),
               );

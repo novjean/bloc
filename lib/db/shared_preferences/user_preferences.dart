@@ -11,12 +11,13 @@ class UserPreferences {
 
   static var myUser = User(
       id: '',
-      username: '',
       email: '',
       imageUrl: '',
       clearanceLevel: 0,
       phoneNumber: 0,
       name: '',
+      surname: '',
+      gender: 'male',
       fcmToken: '',
       blocServiceId: '',
       createdAt: 0,
@@ -40,12 +41,13 @@ class UserPreferences {
   static void resetUser() {
     setUser(User(
         id: '',
-        username: '',
         email: '',
         imageUrl: '',
         clearanceLevel: 0,
         phoneNumber: 0,
         name: '',
+        surname: '',
+        gender: '',
         fcmToken: '',
         blocServiceId: '',
         createdAt: 0,

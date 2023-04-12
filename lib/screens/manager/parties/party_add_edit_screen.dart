@@ -571,6 +571,7 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
                   ), //Checkbox
                 ], //<Widget>[]
               ),
+
               const SizedBox(height: 24),
               TextFieldWidget(
                 label: 'guest list rules',

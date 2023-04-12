@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 
 import '../../db/entity/party.dart';
 import '../../helpers/fresh.dart';
+import '../../utils/file_utils.dart';
 import '../../utils/date_time_utils.dart';
 import '../../utils/logx.dart';
 import '../../widgets/parties/party_guest_item.dart';
@@ -158,6 +159,9 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
 
           if (snapshot.data!.docs.isNotEmpty) {
             try {
+
+              String guestListText = '';
+
               for (int i = 0; i < snapshot.data!.docs.length; i++) {
                 DocumentSnapshot document = snapshot.data!.docs[i];
                 Map<String, dynamic> map =
@@ -168,20 +172,34 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
                 //check if the guest request is more than a day old
                 int timeNow = Timestamp.now().millisecondsSinceEpoch;
                 int partyEndTime = 0;
+                int partyStartTime = 0;
                 for (Party party in mParties) {
                   if (partyGuest.partyId == party.id) {
                     partyEndTime = party.endTime;
+                    partyStartTime = party.startTime;
+
                     break;
                   }
                 }
 
-                if (timeNow > partyEndTime + DateTimeUtils.millisecondsDay) {
+                if (timeNow > partyEndTime + DateTimeUtils.millisecondsWeek) {
                   FirestoreHelper.deletePartyGuest(partyGuest);
                 } else {
+                  if(sPartyName!='all'){
+                    guestListText += '${partyGuest.name},${partyGuest.surname},+${partyGuest.phone},${partyGuest.email},${partyGuest.gender}\n';
+                  }
+
                   partyGuestList.add(partyGuest);
                 }
 
                 if (i == snapshot.data!.docs.length - 1) {
+                  if(guestListText.isNotEmpty){
+                    String date = DateTimeUtils.getFormattedDateYear(partyStartTime);
+                    String fileName = '$sPartyName-$date.txt';
+                    FileUtils.write(fileName, guestListText);
+                    Logx.i(_TAG, 'saved to guest list file : $fileName');
+                  }
+
                   return _displayGuestList(context, partyGuestList);
                 }
               }
