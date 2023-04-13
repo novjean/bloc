@@ -24,13 +24,15 @@ class ProductItem extends StatefulWidget {
   int addCount = 1;
 
   ProductItem(
-      {Key? key, required this.serviceId,
+      {Key? key,
+      required this.serviceId,
       required this.product,
       required this.tableNumber,
       required this.isCommunity,
       required this.isOnOffer,
       required this.offer,
-      required this.isCustomerSeated}) : super(key: key);
+      required this.isCustomerSeated})
+      : super(key: key);
 
   @override
   State<ProductItem> createState() => _ProductItemState();
@@ -174,12 +176,19 @@ class _ProductItemState extends State<ProductItem> {
                         const SizedBox(height: 2),
                         Text(
                             StringUtils.firstFewWords(
-                                widget.product.description.toLowerCase(), 20)
-                                + (StringUtils.getWordCount(widget.product.description) > 20 ? ' ...' : ''),
+                                    widget.product.description.toLowerCase(),
+                                    20) +
+                                (StringUtils.getWordCount(
+                                            widget.product.description) >
+                                        20
+                                    ? ' ...'
+                                    : ''),
                             style: TextStyle(
                                 fontSize: 14,
                                 color: Theme.of(context).primaryColorDark)),
-                        const SizedBox(height: 2,),
+                        const SizedBox(
+                          height: 2,
+                        ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
@@ -191,11 +200,15 @@ class _ProductItemState extends State<ProductItem> {
                                       setState(() {
                                         if (widget.addCount > 1) {
                                           widget.addCount--;
-                                          Logx.i(_TAG, 'decrement add count to ' +
-                                              widget.addCount.toString());
+                                          Logx.i(
+                                              _TAG,
+                                              'decrement add count to ' +
+                                                  widget.addCount.toString());
                                         } else {
-                                          Logx.i(_TAG, 'add count is at ' +
-                                              widget.addCount.toString());
+                                          Logx.i(
+                                              _TAG,
+                                              'add count is at ' +
+                                                  widget.addCount.toString());
                                         }
                                       });
                                     },
@@ -227,18 +240,39 @@ class _ProductItemState extends State<ProductItem> {
                                       setState(() {
                                         widget.addCount++;
                                       });
-                                      Logx.i(_TAG, 'increment add count to ' +
-                                          widget.addCount.toString());
+                                      Logx.i(
+                                          _TAG,
+                                          'increment add count to ' +
+                                              widget.addCount.toString());
                                     },
                                   )
                                 : const SizedBox(),
                             const SizedBox(width: 10),
                             widget.product.type == 'Food'
-                                ? Image.asset(widget.product.isVeg
-                                ? 'assets/icons/ic_veg_food.png'
-                                : 'assets/icons/ic_non_veg_food.png',
-                              width: 15, height: 15,)
-                                : const SizedBox(width: 0),
+                                ? Image.asset(
+                                    widget.product.isVeg
+                                        ? 'assets/icons/ic_veg_food.png'
+                                        : 'assets/icons/ic_non_veg_food.png',
+                                    width: 15,
+                                    height: 15,
+                                  )
+                                : widget.product.priceBottle!=0? Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      Image.asset(
+                                        'assets/icons/ic_bottle.png',
+                                        width: 15,
+                                        height: 15,
+                                      ), Padding(
+                                        padding: const EdgeInsets.only(left: 2.0),
+                                        child: Text(widget.product.priceBottle.toStringAsFixed(0),
+                                            style: const TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w500)
+                                        ),
+                                      )
+                                    ],
+                                  ) : const SizedBox(),
                           ],
                         ),
                         const SizedBox(height: 5),
