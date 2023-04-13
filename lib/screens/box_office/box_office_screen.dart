@@ -12,6 +12,7 @@ import '../../helpers/dummy.dart';
 import '../../helpers/firestore_helper.dart';
 import '../../helpers/fresh.dart';
 import '../../utils/constants.dart';
+import '../../utils/date_time_utils.dart';
 import '../../utils/logx.dart';
 import '../../widgets/box_office/box_office_item.dart';
 import '../../widgets/ui/loading_widget.dart';
@@ -131,7 +132,7 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
                 onTap: () {
                   setState(() {
                     sOption = mOptions[index];
-                    print(sOption + ' at box office is selected');
+                    Logx.i(_TAG, sOption + ' at box office is selected');
                   });
                 });
           }),
@@ -191,8 +192,9 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
             }
           }
 
-          if(!sParty.isActive || Timestamp.now().millisecondsSinceEpoch > sParty.endTime){
-            // the party is over, so the request should be deleted
+
+          if(Timestamp.now().millisecondsSinceEpoch > sParty.endTime + DateTimeUtils.millisecondsWeek){
+            // the party is been over more than a week, delete it
             FirestoreHelper.deletePartyGuest(sPartyGuest);
             return const SizedBox();
           } else {
