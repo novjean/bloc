@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import '../../db/entity/bloc.dart';
 import '../../db/entity/city.dart';
 import '../../helpers/dummy.dart';
+import '../../helpers/fresh.dart';
 import 'bloc_add_edit_screen.dart';
 
 class OwnerCityScreen extends StatelessWidget {
@@ -20,24 +21,23 @@ class OwnerCityScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Owner | ' + city.name),
+        title: Text('owner | ' + city.name),
       ),
-      // drawer: AppDrawer(),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.of(context).push(
             MaterialPageRoute(builder: (ctx) => BlocAddEditScreen(bloc: Dummy.getDummyBloc(city.id),task: 'Add',)),
           );
         },
-        child: Icon(
+        backgroundColor: Theme.of(context).primaryColor,
+        tooltip: 'new bloc',
+        elevation: 5,
+        splashColor: Colors.grey,
+        child: const Icon(
           Icons.add,
           color: Colors.black,
           size: 29,
         ),
-        backgroundColor: Theme.of(context).primaryColor,
-        tooltip: 'New Bloc',
-        elevation: 5,
-        splashColor: Colors.grey,
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       body: _buildBody(context),
@@ -48,8 +48,9 @@ class OwnerCityScreen extends StatelessWidget {
     return SingleChildScrollView(
       child: Column(
         children: [
+          const SizedBox(height: 5.0),
           buildBlocs(context),
-          SizedBox(height: 10.0),
+          const SizedBox(height: 5.0),
         ],
       ),
     );
@@ -58,12 +59,12 @@ class OwnerCityScreen extends StatelessWidget {
   buildBlocs(BuildContext context) {
     return Container(
       height: MediaQuery.of(context).size.height,
-      padding: EdgeInsets.all(5),
+      padding: const EdgeInsets.all(5),
       child: StreamBuilder<QuerySnapshot>(
         stream: FirestoreHelper.getBlocsByCityId(city.id),
         builder: (ctx, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return LoadingWidget();
+            return const LoadingWidget();
           }
           return GridView(
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -75,9 +76,7 @@ class OwnerCityScreen extends StatelessWidget {
             children: snapshot.data!.docs.map((DocumentSnapshot document) {
               Map<String, dynamic> data =
                   document.data()! as Map<String, dynamic>;
-
-              final Bloc bloc = Bloc.fromMap(data);
-              // BlocRepository.insertBloc(dao, bloc);
+              final Bloc bloc = Fresh.freshBlocMap(data, false);
 
               return BlocItem(bloc, key: ValueKey(document.id));
             }).toList(),

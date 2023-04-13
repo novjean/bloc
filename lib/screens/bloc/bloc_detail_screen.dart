@@ -48,9 +48,9 @@ class BlocDetailScreen extends StatelessWidget {
       body: ListView(
         children: [
           CoverPhoto(bloc.name, bloc.imageUrl),
-          SizedBox(height: 2.0),
+          const SizedBox(height: 5.0),
           buildBlocs(context),
-          SizedBox(height: 50.0),
+          const SizedBox(height: 5.0),
         ],
       ),
     );

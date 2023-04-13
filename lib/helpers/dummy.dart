@@ -37,16 +37,19 @@ class Dummy {
     int time = Timestamp.now().millisecondsSinceEpoch;
 
     Bloc dummyBloc = Bloc(
-        id: StringUtils.getRandomString(28),
-        createdAt: time.toString(),
-        imageUrl: '',
-        name: '',
-        ownerId: UserPreferences.myUser.id,
-        addressLine1: '',
-        addressLine2: '',
-        cityId: cityId,
-        isActive: false,
-        pinCode: '');
+      id: StringUtils.getRandomString(28),
+      createdAt: time.toString(),
+      name: '',
+      ownerId: UserPreferences.myUser.id,
+      addressLine1: '',
+      addressLine2: '',
+      cityId: cityId,
+      isActive: false,
+      pinCode: '',
+      imageUrl: '',
+      imageUrl2: '',
+      imageUrl3: '',
+    );
 
     return dummyBloc;
   }
@@ -113,29 +116,28 @@ class Dummy {
 
   static Party getDummyParty(String blocId) {
     Party dummyParty = Party(
-      id: StringUtils.getRandomString(28),
-      createdAt: Timestamp.now().millisecondsSinceEpoch,
-      imageUrl: '',
-      name: '',
-      ownerId: UserPreferences.myUser.id,
-      isActive: false,
-      isTBA: true,
-      description: '',
-      blocServiceId: '',
-      endTime: Timestamp.now().millisecondsSinceEpoch,
-      instagramUrl: '',
-      startTime: Timestamp.now().millisecondsSinceEpoch,
-      ticketUrl: '',
-      listenUrl: '',
-      eventName: '',
-      isGuestListActive: false,
-      guestListCount: 2,
-      guestListEndTime: Timestamp.now().millisecondsSinceEpoch,
-      isEmailRequired: false,
-      clubRules: Constants.clubRules,
-      guestListRules: Constants.guestListRules,
-      isBigAct: true
-    );
+        id: StringUtils.getRandomString(28),
+        createdAt: Timestamp.now().millisecondsSinceEpoch,
+        imageUrl: '',
+        name: '',
+        ownerId: UserPreferences.myUser.id,
+        isActive: false,
+        isTBA: true,
+        description: '',
+        blocServiceId: '',
+        endTime: Timestamp.now().millisecondsSinceEpoch,
+        instagramUrl: '',
+        startTime: Timestamp.now().millisecondsSinceEpoch,
+        ticketUrl: '',
+        listenUrl: '',
+        eventName: '',
+        isGuestListActive: false,
+        guestListCount: 2,
+        guestListEndTime: Timestamp.now().millisecondsSinceEpoch,
+        isEmailRequired: false,
+        clubRules: Constants.clubRules,
+        guestListRules: Constants.guestListRules,
+        isBigAct: true);
 
     return dummyParty;
   }

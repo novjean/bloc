@@ -1,6 +1,7 @@
 import 'package:bloc/db/entity/bloc_service.dart';
 import 'package:bloc/helpers/firestore_helper.dart';
 import 'package:bloc/widgets/ui/loading_widget.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -60,6 +61,12 @@ class _BlocSlideItemState extends State<BlocSlideItem> {
 
   @override
   Widget build(BuildContext context) {
+    List<String> imgList = [
+      widget.bloc.imageUrl,
+      'https://firebasestorage.googleapis.com/v0/b/bloc-novatech.appspot.com/o/bloc_service_image%2FUJIIia7TYiBwQ1lF3eO447zvM7gc.jpg?alt=media&token=fdda6b44-fae5-413f-b630-509bf7f3e0b6'
+    ];
+
+
     return GestureDetector(
       onTap: () {
         Navigator.of(context).push(
@@ -81,20 +88,41 @@ class _BlocSlideItemState extends State<BlocSlideItem> {
                     children: <Widget>[
                       Stack(
                         children: [
-                          Container(
+                          // Container(
+                          //   height: 300,
+                          //   width: MediaQuery.of(context).size.width,
+                          //   decoration: BoxDecoration(
+                          //     border: Border.all(
+                          //         color: Theme.of(context).primaryColor),
+                          //     borderRadius:
+                          //         const BorderRadius.all(Radius.circular(10)),
+                          //     image: DecorationImage(
+                          //       image: NetworkImage(widget.bloc.imageUrl),
+                          //       fit: BoxFit.fitWidth,
+                          //     ),
+                          //   ),
+                          // ),
+
+                          SizedBox(
                             height: 300,
-                            width: MediaQuery.of(context).size.width,
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                  color: Theme.of(context).primaryColor),
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(10)),
-                              image: DecorationImage(
-                                image: NetworkImage(widget.bloc.imageUrl),
-                                fit: BoxFit.fitWidth,
-                              ),
-                            ),
-                          ),
+                              child: CarouselSlider(
+                                options: CarouselOptions(
+                                  initialPage: 0,
+                                  enableInfiniteScroll: true,
+                                  autoPlay: true,
+                                  autoPlayInterval: const Duration(seconds: 2),
+                                  autoPlayAnimationDuration: const Duration(milliseconds: 800),
+                                  autoPlayCurve: Curves.fastOutSlowIn,
+                                ),
+                                items: imgList
+                                    .map((item) => Container(
+                                  child: Center(
+                                      child:
+                                      Image.network(item, fit: BoxFit.fitWidth, width:  MediaQuery.of(context).size.width)),
+                                ))
+                                    .toList(),
+                              )),
+
                           Positioned(
                             bottom: 0.0,
                             right: 0.0,

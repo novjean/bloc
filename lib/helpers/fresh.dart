@@ -1,6 +1,7 @@
 import 'package:bloc/db/entity/party_guest.dart';
 
 import '../db/entity/ad.dart';
+import '../db/entity/bloc.dart';
 import '../db/entity/category.dart';
 import '../db/entity/party.dart';
 import '../db/entity/product.dart';
@@ -137,6 +138,161 @@ class Fresh {
     return freshAd;
   }
 
+  /** bloc **/
+  static Bloc freshBlocMap(
+      Map<String, dynamic> map, bool shouldUpdate) {
+    Bloc bloc = Dummy.getDummyBloc('');
+
+    bool shouldPush = false;
+
+    try {
+      bloc = bloc.copyWith(id: map['id'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'bloc id not exist');
+    }
+    try {
+      bloc = bloc.copyWith(name: map['name'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'bloc name not exist for bloc id: ' + bloc.id);
+      shouldPush = true;
+    }
+    try {
+      bloc = bloc.copyWith(cityId: map['cityId'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'bloc cityId not exist for bloc id: ' + bloc.id);
+      shouldPush = true;
+    }
+    try {
+      bloc = bloc.copyWith(addressLine1: map['addressLine1'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'bloc addressLine1 not exist for bloc id: ' + bloc.id);
+      shouldPush = true;
+    }
+    try {
+      bloc = bloc.copyWith(addressLine2: map['addressLine2'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'bloc addressLine2 not exist for bloc id: ' + bloc.id);
+      shouldPush = true;
+    }
+    try {
+      bloc = bloc.copyWith(pinCode: map['pinCode'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'bloc pinCode not exist for bloc id: ' + bloc.id);
+      shouldPush = true;
+    }
+    try {
+      bloc = bloc.copyWith(ownerId: map['ownerId'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'bloc ownerId not exist for bloc id: ' + bloc.id);
+      shouldPush = true;
+    }
+    try {
+      bloc = bloc.copyWith(createdAt: map['createdAt'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'bloc createdAt not exist for bloc id: ' + bloc.id);
+      shouldPush = true;
+    }
+    try {
+      bloc = bloc.copyWith(isActive: map['isActive'] as bool);
+    } catch (e) {
+      Logx.em(_TAG, 'bloc isActive not exist for bloc id: ' + bloc.id);
+      shouldPush = true;
+    }
+    try {
+      bloc = bloc.copyWith(imageUrl: map['imageUrl'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'bloc imageUrl not exist for bloc id: ' + bloc.id);
+      shouldPush = true;
+    }
+    try {
+      bloc = bloc.copyWith(imageUrl2: map['imageUrl2'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'bloc imageUrl2 not exist for bloc id: ' + bloc.id);
+      shouldPush = true;
+    }
+    try {
+      bloc = bloc.copyWith(imageUrl3: map['imageUrl3'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'bloc imageUrl3 not exist for bloc id: ' + bloc.id);
+      shouldPush = true;
+    }
+
+    if (shouldPush &&
+        shouldUpdate &&
+        UserPreferences.myUser.clearanceLevel >= Constants.MANAGER_LEVEL) {
+      Logx.em(_TAG, 'updating bloc ' + bloc.id);
+      FirestoreHelper.pushBloc(bloc);
+    }
+
+    return bloc;
+  }
+
+  static Bloc freshBloc(Bloc bloc) {
+    Bloc freshBloc = Dummy.getDummyBloc('');
+
+    try {
+      freshBloc = freshBloc.copyWith(id: bloc.id);
+    } catch (e) {
+      Logx.em(_TAG, 'bloc id not exist');
+    }
+    try {
+      freshBloc = freshBloc.copyWith(name: bloc.name);
+    } catch (e) {
+      Logx.em(_TAG, 'bloc name not exist for bloc id: ' + bloc.id);
+    }
+    try {
+      freshBloc = freshBloc.copyWith(cityId: bloc.cityId);
+    } catch (e) {
+      Logx.em(_TAG, 'bloc cityId not exist for bloc id: ' + bloc.id);
+    }
+    try {
+      freshBloc = freshBloc.copyWith(addressLine1: bloc.addressLine1);
+    } catch (e) {
+      Logx.em(_TAG, 'bloc addressLine1 not exist for bloc id: ' + bloc.id);
+    }
+    try {
+      freshBloc = freshBloc.copyWith(addressLine2: bloc.addressLine2);
+    } catch (e) {
+      Logx.em(_TAG, 'bloc addressLine2 not exist for bloc id: ' + bloc.id);
+    }
+    try {
+      freshBloc = freshBloc.copyWith(pinCode: bloc.pinCode);
+    } catch (e) {
+      Logx.em(_TAG, 'bloc pinCode not exist for bloc id: ' + bloc.id);
+    }
+    try {
+      freshBloc = freshBloc.copyWith(ownerId: bloc.ownerId);
+    } catch (e) {
+      Logx.em(_TAG, 'bloc ownerId not exist for bloc id: ' + bloc.id);
+    }
+    try {
+      freshBloc = freshBloc.copyWith(createdAt: bloc.createdAt);
+    } catch (e) {
+      Logx.em(_TAG, 'bloc createdAt not exist for bloc id: ' + bloc.id);
+    }
+    try {
+      freshBloc = freshBloc.copyWith(isActive: bloc.isActive);
+    } catch (e) {
+      Logx.em(_TAG, 'bloc isActive not exist for bloc id: ' + bloc.id);
+    }
+    try {
+      freshBloc = freshBloc.copyWith(imageUrl: bloc.imageUrl);
+    } catch (e) {
+      Logx.em(_TAG, 'bloc imageUrl not exist for bloc id: ' + bloc.id);
+    }
+    try {
+      freshBloc = freshBloc.copyWith(imageUrl2: bloc.imageUrl2);
+    } catch (e) {
+      Logx.em(_TAG, 'bloc imageUrl2 not exist for bloc id: ' + bloc.id);
+    }
+    try {
+      freshBloc = freshBloc.copyWith(imageUrl3: bloc.imageUrl3);
+    } catch (e) {
+      Logx.em(_TAG, 'bloc imageUrl3 not exist for bloc id: ' + bloc.id);
+    }
+
+    return freshBloc;
+  }
 
   /** category **/
   static Category freshCategoryMap(

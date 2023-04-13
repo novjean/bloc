@@ -26,9 +26,20 @@ class BlocAddEditScreen extends StatefulWidget {
 
 class _BlocAddEditScreenState extends State<BlocAddEditScreen> {
   bool isPhotoChanged = false;
-  late String oldImageUrl;
-  late String newImageUrl;
+  bool isPhoto2Changed = false;
+  bool isPhoto3Changed = false;
+
   String imagePath = '';
+  String imagePath2 = '';
+  String imagePath3 = '';
+
+  String oldImageUrl = '';
+  String oldImageUrl2 = '';
+  String oldImageUrl3 = '';
+
+  String newImageUrl = '';
+  String newImageUrl2 = '';
+  String newImageUrl3 = '';
 
   @override
   void initState() {
@@ -45,36 +56,107 @@ class _BlocAddEditScreenState extends State<BlocAddEditScreen> {
 
   _buildBody(BuildContext context) {
     return ListView(
-      padding: EdgeInsets.symmetric(horizontal: 32),
-      physics: BouncingScrollPhysics(),
+      padding: const EdgeInsets.symmetric(horizontal: 32),
+      physics: const BouncingScrollPhysics(),
       children: [
         const SizedBox(height: 15),
-        ProfileWidget(
-          imagePath: imagePath.isEmpty ? widget.bloc.imageUrl : imagePath,
-          isEdit: true,
-          onClicked: () async {
-            final image = await ImagePicker().pickImage(
-                source: ImageSource.gallery,
-                imageQuality: 90,
-                maxWidth: 500);
-            if (image == null) return;
 
-            final directory = await getApplicationDocumentsDirectory();
-            final name = basename(image.path);
-            final imageFile = File('${directory.path}/$name');
-            final newImage = await File(image.path).copy(imageFile.path);
+        SizedBox(
+          height: 150,
+          child: ListView(
+            scrollDirection: Axis.horizontal,
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                child: ProfileWidget(
+                  imagePath: imagePath.isEmpty? widget.bloc.imageUrl:imagePath,
+                  isEdit: true,
+                  onClicked: () async {
+                    final image = await ImagePicker().pickImage(
+                        source: ImageSource.gallery,
+                        imageQuality: 95,
+                        maxWidth: 768);
+                    if (image == null) return;
 
-            oldImageUrl = widget.bloc.imageUrl;
-            newImageUrl = await FirestorageHelper.uploadFile(
-                FirestorageHelper.BLOCS_IMAGES,
-                StringUtils.getRandomString(28),
-                newImage);
+                    final directory = await getApplicationDocumentsDirectory();
+                    final name = basename(image.path);
+                    final imageFile = File('${directory.path}/$name');
+                    final newImage = await File(image.path).copy(imageFile.path);
 
-            setState(() {
-              imagePath = imageFile.path;
-              isPhotoChanged = true;
-            });
-          },
+                    oldImageUrl = widget.bloc.imageUrl;
+                    newImageUrl = await FirestorageHelper.uploadFile(
+                        FirestorageHelper.BLOCS_IMAGES,
+                        StringUtils.getRandomString(28),
+                        newImage);
+
+                    setState(() {
+                      imagePath = imageFile.path;
+                      isPhotoChanged = true;
+                    });
+                  },
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                child: ProfileWidget(
+                  imagePath: imagePath2.isEmpty? widget.bloc.imageUrl2:imagePath2,
+                  isEdit: true,
+                  onClicked: () async {
+                    final image = await ImagePicker().pickImage(
+                        source: ImageSource.gallery,
+                        imageQuality: 95,
+                        maxWidth: 768);
+                    if (image == null) return;
+
+                    final directory = await getApplicationDocumentsDirectory();
+                    final name = basename(image.path);
+                    final imageFile = File('${directory.path}/$name');
+                    final newImage = await File(image.path).copy(imageFile.path);
+
+                    oldImageUrl2 = widget.bloc.imageUrl2;
+                    newImageUrl2 = await FirestorageHelper.uploadFile(
+                        FirestorageHelper.BLOCS_IMAGES,
+                        StringUtils.getRandomString(28),
+                        newImage);
+
+                    setState(() {
+                      imagePath2 = imageFile.path;
+                      isPhoto2Changed = true;
+                    });
+                  },
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                child: ProfileWidget(
+                  imagePath: imagePath3.isEmpty? widget.bloc.imageUrl3:imagePath3,
+                  isEdit: true,
+                  onClicked: () async {
+                    final image = await ImagePicker().pickImage(
+                        source: ImageSource.gallery,
+                        imageQuality: 95,
+                        maxWidth: 768);
+                    if (image == null) return;
+
+                    final directory = await getApplicationDocumentsDirectory();
+                    final name = basename(image.path);
+                    final imageFile = File('${directory.path}/$name');
+                    final newImage = await File(image.path).copy(imageFile.path);
+
+                    oldImageUrl3 = widget.bloc.imageUrl;
+                    newImageUrl3 = await FirestorageHelper.uploadFile(
+                        FirestorageHelper.BLOCS_IMAGES,
+                        StringUtils.getRandomString(28),
+                        newImage);
+
+                    setState(() {
+                      imagePath3 = imageFile.path;
+                      isPhoto3Changed = true;
+                    });
+                  },
+                ),
+              ),
+            ],),
         ),
         const SizedBox(height: 24),
         TextFieldWidget(
@@ -137,6 +219,20 @@ class _BlocAddEditScreenState extends State<BlocAddEditScreen> {
                   widget.bloc.copyWith(imageUrl: newImageUrl);
               if(oldImageUrl.isNotEmpty) {
                 FirestorageHelper.deleteFile(oldImageUrl);
+              }
+            }
+            if (isPhoto2Changed) {
+              widget.bloc =
+                  widget.bloc.copyWith(imageUrl2: newImageUrl2);
+              if(oldImageUrl2.isNotEmpty) {
+                FirestorageHelper.deleteFile(oldImageUrl2);
+              }
+            }
+            if (isPhoto3Changed) {
+              widget.bloc =
+                  widget.bloc.copyWith(imageUrl3: newImageUrl3);
+              if(oldImageUrl3.isNotEmpty) {
+                FirestorageHelper.deleteFile(oldImageUrl3);
               }
             }
 

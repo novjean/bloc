@@ -55,7 +55,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 DocumentSnapshot document = res.docs[i];
                 Map<String, dynamic> data =
                     document.data()! as Map<String, dynamic>;
-                final Bloc bloc = Bloc.fromMap(data);
+                final Bloc bloc = Fresh.freshBlocMap(data, false);
                 blocs.add(bloc);
 
                 setState(() {
@@ -86,7 +86,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 DocumentSnapshot document = res.docs[i];
                 Map<String, dynamic> data =
                     document.data()! as Map<String, dynamic>;
-                final Bloc bloc = Bloc.fromMap(data);
+                final Bloc bloc = Fresh.freshBlocMap(data, false);
                 blocs.add(bloc);
 
                 setState(() {

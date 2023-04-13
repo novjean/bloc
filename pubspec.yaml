@@ -76,6 +76,7 @@ dependencies:
   multiselect: ^0.1.0
   pinput: ^2.2.31
   flutter_spinkit: ^5.1.0
+  carousel_slider: ^4.2.1
 
 #  cached_network_image: ^3.2.3
 #  location: ^4.3.0

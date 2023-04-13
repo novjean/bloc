@@ -45,120 +45,207 @@ class _BlocServiceAddEditScreenState extends State<BlocServiceAddEditScreen> {
 
   _buildBody(BuildContext context) {
     return ListView(
-      padding: EdgeInsets.symmetric(horizontal: 32),
-      physics: BouncingScrollPhysics(),
+      physics: const BouncingScrollPhysics(),
       children: [
         const SizedBox(height: 15),
-        ProfileWidget(
-          imagePath: imagePath.isEmpty? widget.blocService.imageUrl:imagePath,
-          isEdit: true,
-          onClicked: () async {
-            final image = await ImagePicker().pickImage(
-                source: ImageSource.gallery,
-                imageQuality: 90,
-                maxWidth: 500);
-            if (image == null) return;
+        Container(
+          height: 150,
+          child: ListView(
+            scrollDirection: Axis.horizontal,
+            children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 5.0),
+              child: ProfileWidget(
+                imagePath: imagePath.isEmpty? widget.blocService.imageUrl:imagePath,
+                isEdit: true,
+                onClicked: () async {
+                  final image = await ImagePicker().pickImage(
+                      source: ImageSource.gallery,
+                      imageQuality: 90,
+                      maxWidth: 500);
+                  if (image == null) return;
 
-            final directory = await getApplicationDocumentsDirectory();
-            final name = basename(image.path);
-            final imageFile = File('${directory.path}/$name');
-            final newImage = await File(image.path).copy(imageFile.path);
+                  final directory = await getApplicationDocumentsDirectory();
+                  final name = basename(image.path);
+                  final imageFile = File('${directory.path}/$name');
+                  final newImage = await File(image.path).copy(imageFile.path);
 
-            oldImageUrl = widget.blocService.imageUrl;
-            newImageUrl = await FirestorageHelper.uploadFile(
-                FirestorageHelper.BLOCS_SERVICES_IMAGES,
-                StringUtils.getRandomString(28),
-                newImage);
+                  oldImageUrl = widget.blocService.imageUrl;
+                  newImageUrl = await FirestorageHelper.uploadFile(
+                      FirestorageHelper.BLOCS_SERVICES_IMAGES,
+                      StringUtils.getRandomString(28),
+                      newImage);
 
-            setState(() {
-              imagePath = imageFile.path;
-              isPhotoChanged = true;
-            });
-          },
+                  setState(() {
+                    imagePath = imageFile.path;
+                    isPhotoChanged = true;
+                  });
+                },
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 5.0),
+              child: ProfileWidget(
+                imagePath: imagePath.isEmpty? widget.blocService.imageUrl:imagePath,
+                isEdit: true,
+                onClicked: () async {
+                  final image = await ImagePicker().pickImage(
+                      source: ImageSource.gallery,
+                      imageQuality: 90,
+                      maxWidth: 500);
+                  if (image == null) return;
+
+                  final directory = await getApplicationDocumentsDirectory();
+                  final name = basename(image.path);
+                  final imageFile = File('${directory.path}/$name');
+                  final newImage = await File(image.path).copy(imageFile.path);
+
+                  oldImageUrl = widget.blocService.imageUrl;
+                  newImageUrl = await FirestorageHelper.uploadFile(
+                      FirestorageHelper.BLOCS_SERVICES_IMAGES,
+                      StringUtils.getRandomString(28),
+                      newImage);
+
+                  setState(() {
+                    imagePath = imageFile.path;
+                    isPhotoChanged = true;
+                  });
+                },
+              ),
+            ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                child: ProfileWidget(
+                  imagePath: imagePath.isEmpty? widget.blocService.imageUrl:imagePath,
+                  isEdit: true,
+                  onClicked: () async {
+                    final image = await ImagePicker().pickImage(
+                        source: ImageSource.gallery,
+                        imageQuality: 90,
+                        maxWidth: 500);
+                    if (image == null) return;
+
+                    final directory = await getApplicationDocumentsDirectory();
+                    final name = basename(image.path);
+                    final imageFile = File('${directory.path}/$name');
+                    final newImage = await File(image.path).copy(imageFile.path);
+
+                    oldImageUrl = widget.blocService.imageUrl;
+                    newImageUrl = await FirestorageHelper.uploadFile(
+                        FirestorageHelper.BLOCS_SERVICES_IMAGES,
+                        StringUtils.getRandomString(28),
+                        newImage);
+
+                    setState(() {
+                      imagePath = imageFile.path;
+                      isPhotoChanged = true;
+                    });
+                  },
+                ),
+              ),
+          ],),
         ),
         const SizedBox(height: 24),
-        TextFieldWidget(
-          label: 'name',
-          text: widget.blocService.name,
-          onChanged: (name) =>
-          widget.blocService = widget.blocService.copyWith(name: name),
-        ),
-        const SizedBox(height: 24),
-        TextFieldWidget(
-          label: 'type',
-          text: widget.blocService.type,
-          onChanged: (value) {
-            widget.blocService = widget.blocService.copyWith(type: value);
-          },
-        ),
-        const SizedBox(height: 24),
-        TextFormField(
-          key: const ValueKey('bloc_service_primary_phone'),
-          initialValue: widget.blocService.primaryPhone.toString(),
-          autocorrect: false,
-          textCapitalization: TextCapitalization.none,
-          enableSuggestions: false,
-          validator: (value) {
-            if (value!.isEmpty) {
-              return 'please enter a valid phone number';
-            }
-            return null;
-          },
-          keyboardType: TextInputType.number,
-          decoration: const InputDecoration(
-            labelText: 'primary phone',
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 32),
+          child: TextFieldWidget(
+            label: 'name',
+            text: widget.blocService.name,
+            onChanged: (name) =>
+            widget.blocService = widget.blocService.copyWith(name: name),
           ),
-          onChanged: (value) {
-            double? number = double.tryParse(value);
-            widget.blocService = widget.blocService.copyWith(primaryPhone: number);
-          },
         ),
         const SizedBox(height: 24),
-        TextFormField(
-          key: const ValueKey('bloc_service_secondary_phone'),
-          initialValue: widget.blocService.secondaryPhone.toString(),
-          autocorrect: false,
-          textCapitalization: TextCapitalization.none,
-          enableSuggestions: false,
-          validator: (value) {
-            if (value!.isEmpty) {
-              return 'please enter a valid phone number';
-            }
-            return null;
-          },
-          keyboardType: TextInputType.number,
-          decoration: const InputDecoration(
-            labelText: 'secondary phone',
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 32),
+          child: TextFieldWidget(
+            label: 'type',
+            text: widget.blocService.type,
+            onChanged: (value) {
+              widget.blocService = widget.blocService.copyWith(type: value);
+            },
           ),
-          onChanged: (value) {
-            double? number = double.tryParse(value);
-            widget.blocService = widget.blocService.copyWith(secondaryPhone: number);
-          },
         ),
         const SizedBox(height: 24),
-        TextFieldWidget(
-          label: 'email address',
-          text: widget.blocService.emailId,
-          onChanged: (value) {
-            widget.blocService = widget.blocService.copyWith(emailId: value);
-          },
-        ),
-        const SizedBox(height: 24),
-        ButtonWidget(
-          text: 'save',
-          onClicked: () {
-            if (isPhotoChanged) {
-              widget.blocService =
-                  widget.blocService.copyWith(imageUrl: newImageUrl);
-              if(oldImageUrl.isNotEmpty) {
-                FirestorageHelper.deleteFile(oldImageUrl);
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 32),
+          child: TextFormField(
+            key: const ValueKey('bloc_service_primary_phone'),
+            initialValue: widget.blocService.primaryPhone.toString(),
+            autocorrect: false,
+            textCapitalization: TextCapitalization.none,
+            enableSuggestions: false,
+            validator: (value) {
+              if (value!.isEmpty) {
+                return 'please enter a valid phone number';
               }
-            }
+              return null;
+            },
+            keyboardType: TextInputType.number,
+            decoration: const InputDecoration(
+              labelText: 'primary phone',
+            ),
+            onChanged: (value) {
+              double? number = double.tryParse(value);
+              widget.blocService = widget.blocService.copyWith(primaryPhone: number);
+            },
+          ),
+        ),
+        const SizedBox(height: 24),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 32),
+          child: TextFormField(
+            key: const ValueKey('bloc_service_secondary_phone'),
+            initialValue: widget.blocService.secondaryPhone.toString(),
+            autocorrect: false,
+            textCapitalization: TextCapitalization.none,
+            enableSuggestions: false,
+            validator: (value) {
+              if (value!.isEmpty) {
+                return 'please enter a valid phone number';
+              }
+              return null;
+            },
+            keyboardType: TextInputType.number,
+            decoration: const InputDecoration(
+              labelText: 'secondary phone',
+            ),
+            onChanged: (value) {
+              double? number = double.tryParse(value);
+              widget.blocService = widget.blocService.copyWith(secondaryPhone: number);
+            },
+          ),
+        ),
+        const SizedBox(height: 24),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 32),
+          child: TextFieldWidget(
+            label: 'email address',
+            text: widget.blocService.emailId,
+            onChanged: (value) {
+              widget.blocService = widget.blocService.copyWith(emailId: value);
+            },
+          ),
+        ),
+        const SizedBox(height: 24),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 32),
+          child: ButtonWidget(
+            text: 'save',
+            onClicked: () {
+              if (isPhotoChanged) {
+                widget.blocService =
+                    widget.blocService.copyWith(imageUrl: newImageUrl);
+                if(oldImageUrl.isNotEmpty) {
+                  FirestorageHelper.deleteFile(oldImageUrl);
+                }
+              }
 
-            FirestoreHelper.pushBlocService(widget.blocService);
+              FirestoreHelper.pushBlocService(widget.blocService);
 
-            Navigator.of(context).pop();
-          },
+              Navigator.of(context).pop();
+            },
+          ),
         ),
       ],
     );

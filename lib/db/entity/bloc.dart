@@ -6,13 +6,15 @@ class Bloc {
   final String addressLine1;
   final String addressLine2;
   final String pinCode;
-  final String imageUrl;
   final String ownerId;
   final String createdAt;
   final bool isActive;
 
-//<editor-fold desc="Data Methods">
+  final String imageUrl;
+  final String imageUrl2;
+  final String imageUrl3;
 
+//<editor-fold desc="Data Methods">
   const Bloc({
     required this.id,
     required this.name,
@@ -20,10 +22,12 @@ class Bloc {
     required this.addressLine1,
     required this.addressLine2,
     required this.pinCode,
-    required this.imageUrl,
     required this.ownerId,
     required this.createdAt,
     required this.isActive,
+    required this.imageUrl,
+    required this.imageUrl2,
+    required this.imageUrl3,
   });
 
   @override
@@ -37,10 +41,12 @@ class Bloc {
           addressLine1 == other.addressLine1 &&
           addressLine2 == other.addressLine2 &&
           pinCode == other.pinCode &&
-          imageUrl == other.imageUrl &&
           ownerId == other.ownerId &&
           createdAt == other.createdAt &&
-          isActive == other.isActive);
+          isActive == other.isActive &&
+          imageUrl == other.imageUrl &&
+          imageUrl2 == other.imageUrl2 &&
+          imageUrl3 == other.imageUrl3);
 
   @override
   int get hashCode =>
@@ -50,10 +56,12 @@ class Bloc {
       addressLine1.hashCode ^
       addressLine2.hashCode ^
       pinCode.hashCode ^
-      imageUrl.hashCode ^
       ownerId.hashCode ^
       createdAt.hashCode ^
-      isActive.hashCode;
+      isActive.hashCode ^
+      imageUrl.hashCode ^
+      imageUrl2.hashCode ^
+      imageUrl3.hashCode;
 
   @override
   String toString() {
@@ -64,10 +72,12 @@ class Bloc {
         ' addressLine1: $addressLine1,' +
         ' addressLine2: $addressLine2,' +
         ' pinCode: $pinCode,' +
-        ' imageUrl: $imageUrl,' +
         ' ownerId: $ownerId,' +
         ' createdAt: $createdAt,' +
         ' isActive: $isActive,' +
+        ' imageUrl: $imageUrl,' +
+        ' imageUrl2: $imageUrl2,' +
+        ' imageUrl3: $imageUrl3,' +
         '}';
   }
 
@@ -78,10 +88,12 @@ class Bloc {
     String? addressLine1,
     String? addressLine2,
     String? pinCode,
-    String? imageUrl,
     String? ownerId,
     String? createdAt,
     bool? isActive,
+    String? imageUrl,
+    String? imageUrl2,
+    String? imageUrl3,
   }) {
     return Bloc(
       id: id ?? this.id,
@@ -90,10 +102,12 @@ class Bloc {
       addressLine1: addressLine1 ?? this.addressLine1,
       addressLine2: addressLine2 ?? this.addressLine2,
       pinCode: pinCode ?? this.pinCode,
-      imageUrl: imageUrl ?? this.imageUrl,
       ownerId: ownerId ?? this.ownerId,
       createdAt: createdAt ?? this.createdAt,
       isActive: isActive ?? this.isActive,
+      imageUrl: imageUrl ?? this.imageUrl,
+      imageUrl2: imageUrl2 ?? this.imageUrl2,
+      imageUrl3: imageUrl3 ?? this.imageUrl3,
     );
   }
 
@@ -105,10 +119,12 @@ class Bloc {
       'addressLine1': this.addressLine1,
       'addressLine2': this.addressLine2,
       'pinCode': this.pinCode,
-      'imageUrl': this.imageUrl,
       'ownerId': this.ownerId,
       'createdAt': this.createdAt,
       'isActive': this.isActive,
+      'imageUrl': this.imageUrl,
+      'imageUrl2': this.imageUrl2,
+      'imageUrl3': this.imageUrl3,
     };
   }
 
@@ -120,10 +136,12 @@ class Bloc {
       addressLine1: map['addressLine1'] as String,
       addressLine2: map['addressLine2'] as String,
       pinCode: map['pinCode'] as String,
-      imageUrl: map['imageUrl'] as String,
       ownerId: map['ownerId'] as String,
       createdAt: map['createdAt'] as String,
       isActive: map['isActive'] as bool,
+      imageUrl: map['imageUrl'] as String,
+      imageUrl2: map['imageUrl2'] as String,
+      imageUrl3: map['imageUrl3'] as String,
     );
   }
 
