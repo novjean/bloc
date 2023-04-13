@@ -7,7 +7,7 @@ class StoreBadgeItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       height: 100,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -15,17 +15,18 @@ class StoreBadgeItem extends StatelessWidget {
         children: [
           const Divider(),
           Flexible(
+            flex: 1,
             child: Container(
                 child: Center(
                   child: Text(
-              'experience our app',
+              'get notified of upcoming events, artists and more in our app',
               style: TextStyle(
                     fontSize: 16, color: Theme.of(context).shadowColor),
             ),
                 )),
-            flex: 1,
           ),
           Flexible(
+            flex: 3,
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
@@ -64,7 +65,6 @@ class StoreBadgeItem extends StatelessWidget {
                 ),
               ],
             ),
-            flex: 3,
           ),
         ],
       ),

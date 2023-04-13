@@ -1,3 +1,4 @@
+import 'package:bloc/utils/logx.dart';
 import 'package:bloc/widgets/ui/button_widget.dart';
 import 'package:bloc/widgets/ui/toaster.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -36,6 +37,8 @@ class ProductItem extends StatefulWidget {
 }
 
 class _ProductItemState extends State<ProductItem> {
+  static const String _TAG = 'ProductItem';
+
   @override
   Widget build(BuildContext context) {
     final cart = Provider.of<Cart>(context, listen: false);
@@ -96,6 +99,7 @@ class _ProductItemState extends State<ProductItem> {
                                 flex: 4,
                               ),
                               Flexible(
+                                flex: 1,
                                 child: widget.isOnOffer
                                     ? Text(
                                         widget.isCommunity
@@ -116,7 +120,6 @@ class _ProductItemState extends State<ProductItem> {
                                             fontSize: 16,
                                             fontWeight: FontWeight.w500),
                                       ),
-                                flex: 1,
                               ),
                             ],
                           ),
@@ -134,7 +137,7 @@ class _ProductItemState extends State<ProductItem> {
                                           fontSize: 14,
                                           fontWeight: FontWeight.bold,
                                           color: Colors.green)),
-                                  Text(' | '),
+                                  const Text(' | '),
                                   Text(
                                       widget.product.priceHighest
                                           .toStringAsFixed(0),
@@ -188,10 +191,10 @@ class _ProductItemState extends State<ProductItem> {
                                       setState(() {
                                         if (widget.addCount > 1) {
                                           widget.addCount--;
-                                          print('decrement add count to ' +
+                                          Logx.i(_TAG, 'decrement add count to ' +
                                               widget.addCount.toString());
                                         } else {
-                                          print('add count is at ' +
+                                          Logx.i(_TAG, 'add count is at ' +
                                               widget.addCount.toString());
                                         }
                                       });
@@ -224,7 +227,7 @@ class _ProductItemState extends State<ProductItem> {
                                       setState(() {
                                         widget.addCount++;
                                       });
-                                      print('increment add count to ' +
+                                      Logx.i(_TAG, 'increment add count to ' +
                                           widget.addCount.toString());
                                     },
                                   )
