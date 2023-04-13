@@ -248,31 +248,6 @@ class _ProductItemState extends State<ProductItem> {
                                   )
                                 : const SizedBox(),
                             const SizedBox(width: 10),
-                            // widget.product.type == 'Food'
-                            //     ? Image.asset(
-                            //         widget.product.isVeg
-                            //             ? 'assets/icons/ic_veg_food.png'
-                            //             : 'assets/icons/ic_non_veg_food.png',
-                            //         width: 15,
-                            //         height: 15,
-                            //       )
-                            //     : widget.product.priceBottle!=0? Row(
-                            //         mainAxisAlignment: MainAxisAlignment.start,
-                            //         children: [
-                            //           Image.asset(
-                            //             'assets/icons/ic_bottle.png',
-                            //             width: 15,
-                            //             height: 15,
-                            //           ), Padding(
-                            //             padding: const EdgeInsets.only(left: 2.0),
-                            //             child: Text(widget.product.priceBottle.toStringAsFixed(0),
-                            //                 style: const TextStyle(
-                            //                     fontSize: 16,
-                            //                     fontWeight: FontWeight.w500)
-                            //             ),
-                            //           )
-                            //         ],
-                            //       ) : const SizedBox(),
                           ],
                         ),
                         Row(

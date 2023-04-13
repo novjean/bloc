@@ -19,7 +19,7 @@ class StoreBadgeItem extends StatelessWidget {
             child: Container(
                 child: Center(
                   child: Text(
-              'get notified of upcoming events, artists and more in our app',
+              'experience our app',
               style: TextStyle(
                     fontSize: 16, color: Theme.of(context).shadowColor),
             ),
