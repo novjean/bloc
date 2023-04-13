@@ -37,9 +37,6 @@ class _HomeScreenState extends State<HomeScreen> {
   List<Bloc> mBlocs = [];
   var _isBlocsLoading = true;
 
-  Party mUpcomingParty = Dummy.getDummyParty('');
-  var _isUpcomingPartyLoading = true;
-
   GuestWifi mGuestWifi = Dummy.getDummyWifi(Constants.blocServiceId);
   var _isGuestWifiDetailsLoading = true;
 
@@ -112,33 +109,6 @@ class _HomeScreenState extends State<HomeScreen> {
             });
           });
 
-    int timeNow = Timestamp.now().millisecondsSinceEpoch;
-    FirestoreHelper.pullUpcomingPartyByEndTime(timeNow).then((res) {
-      Logx.i(_TAG, "successfully pulled in parties.");
-
-      if (res.docs.isNotEmpty) {
-        try {
-          DocumentSnapshot document = res.docs[0];
-          Map<String, dynamic> map = document.data()! as Map<String, dynamic>;
-          final Party party = Fresh.freshPartyMap(map, true);
-
-          if (mounted) {
-            setState(() {
-              mUpcomingParty = party;
-              _isUpcomingPartyLoading = false;
-            });
-          }
-        } catch (err) {
-          Logx.em(_TAG, 'error: ' + err.toString());
-        }
-      } else {
-        Logx.em(_TAG, 'no upcoming party found!');
-        setState(() {
-          _isUpcomingPartyLoading = false;
-        });
-      }
-    });
-
     FirestoreHelper.pullGuestWifi(Constants.blocServiceId).then((res) {
       Logx.i(_TAG, "successfully pulled in guest wifi");
 
@@ -179,13 +149,10 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Scaffold(
         backgroundColor: Theme.of(context).backgroundColor,
         body: Column(
-          // physics: const BouncingScrollPhysics(),
           children: <Widget>[
             const SizedBox(height: 1.0),
             _isBlocsLoading ? const LoadingWidget() : _displayBlocs(context),
-            _isUpcomingPartyLoading
-                ? const LoadingWidget()
-                : _displayPartiesNFooter(context),
+            _displayPartiesNFooter(context),
           ],
         ),
       ),
@@ -216,7 +183,7 @@ class _HomeScreenState extends State<HomeScreen> {
       decoration: BoxDecoration(
         border: Border.all(),
         color: Theme.of(context).primaryColor,
-        borderRadius: BorderRadius.all(Radius.circular(5)),
+        borderRadius: const BorderRadius.all(Radius.circular(5)),
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
