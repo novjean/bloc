@@ -55,6 +55,7 @@ class _BoxOfficeItemState extends State<BoxOfficeItem> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 Flexible(
+                  flex: 2,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -99,7 +100,12 @@ class _BoxOfficeItemState extends State<BoxOfficeItem> {
                             padding: const EdgeInsets.only(left: 5.0),
                             child: Text('status:\n' +
                                 (widget.partyGuest.isApproved
-                                    ? 'approved'
+                                    ? widget.partyGuest.guestsRemaining == 0
+                                        ? 'completed'
+                                        : widget.partyGuest.guestsRemaining
+                                                .toString() +
+                                            ' ' +
+                                            widget.partyGuest.guestStatus
                                     : 'pending')),
                           ),
                           displayEntryEditButton(context),
@@ -107,9 +113,9 @@ class _BoxOfficeItemState extends State<BoxOfficeItem> {
                       ),
                     ],
                   ),
-                  flex: 2,
                 ),
                 Flexible(
+                  flex: 1,
                   child: Container(
                     height: 150,
                     width: 150,
@@ -123,7 +129,6 @@ class _BoxOfficeItemState extends State<BoxOfficeItem> {
                       ),
                     ),
                   ),
-                  flex: 1,
                 ),
               ],
             ),
@@ -192,7 +197,9 @@ class _BoxOfficeItemState extends State<BoxOfficeItem> {
                                   Align(
                                     alignment: Alignment.centerRight,
                                     child: Text(
-                                      'valid until ' + DateTimeUtils.getFormattedTime(widget.party.guestListEndTime),
+                                      'valid until ' +
+                                          DateTimeUtils.getFormattedTime(
+                                              widget.party.guestListEndTime),
                                       style: TextStyle(fontSize: 16),
                                     ),
                                   ),

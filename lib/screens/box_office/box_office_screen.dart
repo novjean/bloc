@@ -31,13 +31,20 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
   List<Party> mParties = [];
   var _isPartiesLoading = true;
 
-  List<String> mOptions = ['guest list'];
-  String sOption = 'guest list';
+  late List<String> mOptions;
+  late String sOption;
 
   @override
   void initState() {
-    int timeNow = Timestamp.now().millisecondsSinceEpoch;
 
+    if(UserPreferences.myUser.clearanceLevel>=Constants.PROMOTER_LEVEL){
+      mOptions = ['arriving', 'completed'];
+    } else {
+      mOptions = ['guest list'];
+    }
+    sOption = mOptions.first;
+
+    int timeNow = Timestamp.now().millisecondsSinceEpoch;
     FirestoreHelper.pullPartiesByEndTime(timeNow, true).then((res) {
       Logx.i(_TAG, "successfully pulled in parties");
 
@@ -105,7 +112,8 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
               children: [
                 displayBoxOfficeOptions(context),
                 const Divider(),
-                buildUserPartyGuestList(context)
+                UserPreferences.myUser.clearanceLevel>=Constants.PROMOTER_LEVEL?
+                    buildPartiesGuestList(context): buildUserPartyGuestList(context)
               ],
             ),
           );
@@ -192,7 +200,6 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
             }
           }
 
-
           if(Timestamp.now().millisecondsSinceEpoch > sParty.endTime + DateTimeUtils.millisecondsWeek){
             // the party is been over more than a week, delete it
             FirestoreHelper.deletePartyGuest(sPartyGuest);
@@ -204,6 +211,54 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
       ),
     );
   }
+
+  buildPartiesGuestList(BuildContext context) {
+    return StreamBuilder<QuerySnapshot>(
+      stream:
+      FirestoreHelper.getApprovedPartyGuestList(),
+      builder: (ctx, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const LoadingWidget();
+        }
+
+        if (snapshot.hasData) {
+          List<PartyGuest> arrivingRequests = [];
+          List<PartyGuest> completedRequests = [];
+
+          if (snapshot.data!.docs.isEmpty) {
+            return const Expanded(
+                child: Center(child: Text('no guest list requests found!')));
+          } else {
+            for (int i = 0; i < snapshot.data!.docs.length; i++) {
+              DocumentSnapshot document = snapshot.data!.docs[i];
+              Map<String, dynamic> map = document.data()! as Map<String,
+                  dynamic>;
+              final PartyGuest partyGuest = Fresh.freshPartyGuestMap(
+                  map, false);
+
+              if (partyGuest.guestsRemaining == 0) {
+                completedRequests.add(partyGuest);
+              } else {
+                arrivingRequests.add(partyGuest);
+              }
+
+              if (i == snapshot.data!.docs.length - 1) {
+                return _displayPartyGuestListRequests(
+                    context, sOption == mOptions.first
+                    ? arrivingRequests
+                    : completedRequests);
+              }
+            }
+          }
+        } else {
+          return const Expanded(
+              child: Center(child: Text('no guest list requests found!')));
+        }
+        return const LoadingWidget();
+      },
+    );
+  }
+
 
   void scanCode() async {
     String scanCode;
@@ -217,13 +272,20 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
             builder: (ctx) =>
                 ManagePartyTicketScreen(partyGuestId: scanCode,)),
       );
-    } on PlatformException {
+    } on PlatformException catch (e,s) {
       scanCode = 'failed to get platform version.';
+      Logx.ex(_TAG, scanCode, e, s);
+      Toaster.longToast('code scan failed to get platform version');
+    }  on Exception catch (e, s) {
+      Toaster.longToast('code scan failed');
+      Logx.e(_TAG, e, s);
     } catch(e){
       Toaster.longToast('code scan failed');
+      Logx.em(_TAG, e.toString());
     }
 
     if (!mounted) return;
 
   }
+
 }
