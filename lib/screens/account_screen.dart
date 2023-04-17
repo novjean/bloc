@@ -37,7 +37,7 @@ class AccountScreen extends StatelessWidget {
               width: MediaQuery.of(context).size.width,
               color: Theme.of(context).primaryColor,
             ),
-            onTap: () async {
+            onTap: () {
               final uri = Uri.parse('https://bloc.bar/privacy.html');
               NetworkUtils.launchInBrowser(uri);
             }),

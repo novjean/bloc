@@ -15,6 +15,7 @@ import '../helpers/dummy.dart';
 import '../helpers/firestore_helper.dart';
 import '../helpers/fresh.dart';
 import '../utils/logx.dart';
+import '../widgets/footer.dart';
 import '../widgets/home/bloc_slide_item.dart';
 import '../widgets/parties/party_banner.dart';
 import '../widgets/search_card.dart';
@@ -243,7 +244,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   displayStoreBadge(BuildContext context) {
-    return Container(
+    return SizedBox(
       height: 100,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
@@ -252,8 +253,8 @@ class _HomeScreenState extends State<HomeScreen> {
             height: 100,
             decoration: BoxDecoration(
               border: Border.all(color: Theme.of(context).primaryColor),
-              borderRadius: BorderRadius.all(Radius.circular(0)),
-              image: DecorationImage(
+              borderRadius: const BorderRadius.all(Radius.circular(0)),
+              image: const DecorationImage(
                 image: AssetImage('assets/images/google-play-badge.png'),
                 fit: BoxFit.fitWidth,
               ),
@@ -263,8 +264,8 @@ class _HomeScreenState extends State<HomeScreen> {
             height: 100,
             decoration: BoxDecoration(
               border: Border.all(color: Theme.of(context).primaryColor),
-              borderRadius: BorderRadius.all(Radius.circular(0)),
-              image: DecorationImage(
+              borderRadius: const BorderRadius.all(Radius.circular(0)),
+              image: const DecorationImage(
                 image: AssetImage('assets/images/google-play-badge.png'),
                 fit: BoxFit.fitWidth,
               ),
@@ -305,12 +306,13 @@ class _HomeScreenState extends State<HomeScreen> {
             children: [
               UserPreferences.isUserLoggedIn()
                   ? _isGuestWifiDetailsLoading
-                  ? const LoadingWidget()
-                  : buildWifi(context)
+                      ? const LoadingWidget()
+                      : buildWifi(context)
                   : const SizedBox(),
               const SizedBox(height: 10.0),
               kIsWeb ? const StoreBadgeItem() : const SizedBox(),
               const SizedBox(height: 10.0),
+              Footer(),
             ],
           ),
         );
@@ -344,6 +346,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 const SizedBox(height: 10.0),
                 kIsWeb ? const StoreBadgeItem() : const SizedBox(),
                 const SizedBox(height: 10.0),
+                Footer(),
               ],
             );
           } else {
@@ -365,6 +368,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   const SizedBox(height: 10.0),
                   kIsWeb ? const StoreBadgeItem() : const SizedBox(),
                   const SizedBox(height: 10.0),
+                  Footer(),
                 ],
               );
             } else {
@@ -397,6 +401,7 @@ class _HomeScreenState extends State<HomeScreen> {
         const SizedBox(height: 10.0),
         kIsWeb ? const StoreBadgeItem() : const SizedBox(),
         const SizedBox(height: 10.0),
+        Footer(),
       ],
     );
   }
