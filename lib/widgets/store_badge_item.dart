@@ -25,6 +25,7 @@ class StoreBadgeItem extends StatelessWidget {
             ),
                 )),
           ),
+          const Divider(),
           Flexible(
             flex: 3,
             child: Row(

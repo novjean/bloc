@@ -675,6 +675,13 @@ class FirestoreHelper {
         .snapshots();
   }
 
+  static getApprovedPartyGuestList() {
+    return FirebaseFirestore.instance
+        .collection(PARTY_GUESTS)
+        .where('isApproved', isEqualTo: true)
+        .snapshots();
+  }
+
   static void deletePartyGuest(PartyGuest partyGuest) {
     FirebaseFirestore.instance
         .collection(PARTY_GUESTS)
@@ -1233,6 +1240,7 @@ class FirestoreHelper {
         .orderBy('level', descending: false)
         .get();
   }
+
 
 
 
