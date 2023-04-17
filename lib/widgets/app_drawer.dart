@@ -141,7 +141,7 @@ class AppDrawer extends StatelessWidget {
             child: Align(
                 alignment: Alignment.bottomRight,
                 child: Text(
-                  'v1.4.4',
+                  'v1.4.5',
                   style: TextStyle(fontSize: 14),
                 )),
           ),
