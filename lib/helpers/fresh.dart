@@ -306,6 +306,12 @@ class Fresh {
       shouldPushParty = true;
     }
     try {
+      party = party.copyWith(eventName: map['eventName'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'party eventName not exist for party id: ' + party.id);
+      shouldPushParty = true;
+    }
+    try {
       party = party.copyWith(description: map['description'] as String);
     } catch (e) {
       Logx.em(_TAG, 'party description not exist for party id: ' + party.id);
@@ -314,7 +320,14 @@ class Fresh {
     try {
       party = party.copyWith(blocServiceId: map['blocServiceId'] as String);
     } catch (e) {
-      Logx.em(_TAG, 'blocServiceId name not exist for party id: ' + party.id);
+      Logx.em(_TAG, 'party blocServiceId not exist for party id: ' + party.id);
+      shouldPushParty = true;
+    }
+    try {
+      party = party.copyWith(type: map['type'] as String);
+    } catch (e) {
+      Logx.em(
+          _TAG, 'party type not exist for party id: ' + party.id);
       shouldPushParty = true;
     }
     try {
@@ -377,12 +390,15 @@ class Fresh {
       Logx.em(_TAG, 'party isActive not exist for party id: ' + party.id);
       shouldPushParty = true;
     }
-    try {
-      party = party.copyWith(eventName: map['eventName'] as String);
+    try{
+      party =
+          party.copyWith(isBigAct: map['isBigAct'] as bool);
     } catch (e) {
-      Logx.em(_TAG, 'party eventName not exist for party id: ' + party.id);
+      Logx.em(
+          _TAG, 'party isBigAct not exist for party id: ' + party.id);
       shouldPushParty = true;
     }
+
     try {
       party =
           party.copyWith(isGuestListActive: map['isGuestListActive'] as bool);
@@ -398,12 +414,6 @@ class Fresh {
       shouldPushParty = true;
     }
     try {
-      party = party.copyWith(guestListEndTime: map['guestListEndTime'] as int);
-    } catch (e) {
-      Logx.em(_TAG, 'party guestListEndTime not exist for party id: ' + party.id);
-      shouldPushParty = true;
-    }
-    try {
       party = party.copyWith(isEmailRequired: map['isEmailRequired'] as bool);
     } catch (e) {
       Logx.em(
@@ -411,13 +421,9 @@ class Fresh {
       shouldPushParty = true;
     }
     try {
-      party = party.copyWith(clubRules: map['clubRules'] as String);
-      if (party.clubRules.isEmpty) {
-        party = party.copyWith(clubRules: Constants.clubRules);
-        shouldPushParty = true;
-      }
+      party = party.copyWith(guestListEndTime: map['guestListEndTime'] as int);
     } catch (e) {
-      Logx.em(_TAG, 'party clubRules not exist for party id: ' + party.id);
+      Logx.em(_TAG, 'party guestListEndTime not exist for party id: ' + party.id);
       shouldPushParty = true;
     }
     try {
@@ -431,10 +437,13 @@ class Fresh {
       shouldPushParty = true;
     }
     try {
-      party = party.copyWith(type: map['type'] as String);
+      party = party.copyWith(clubRules: map['clubRules'] as String);
+      if (party.clubRules.isEmpty) {
+        party = party.copyWith(clubRules: Constants.clubRules);
+        shouldPushParty = true;
+      }
     } catch (e) {
-      Logx.em(
-          _TAG, 'party type not exist for party id: ' + party.id);
+      Logx.em(_TAG, 'party clubRules not exist for party id: ' + party.id);
       shouldPushParty = true;
     }
 
@@ -491,6 +500,11 @@ class Fresh {
       Logx.em(_TAG, 'party name not exist for party id: ' + party.id);
     }
     try {
+      freshParty = freshParty.copyWith(eventName: party.eventName);
+    } catch (e) {
+      Logx.em(_TAG, 'party eventName not exist for party id: ' + party.id);
+    }
+    try {
       freshParty = freshParty.copyWith(description: party.description);
     } catch (e) {
       Logx.em(_TAG, 'party description not exist for party id: ' + party.id);
@@ -500,6 +514,12 @@ class Fresh {
     } catch (e) {
       Logx.em(_TAG, 'party blocServiceId not exist for party id: ' + party.id);
     }
+    try {
+      freshParty = freshParty.copyWith(type: party.type);
+    } catch (e) {
+      Logx.em(_TAG, 'party type not exist for party id: ' + party.id);
+    }
+
     try {
       freshParty = freshParty.copyWith(imageUrl: party.imageUrl);
     } catch (e) {
@@ -520,6 +540,7 @@ class Fresh {
     } catch (e) {
       Logx.em(_TAG, 'party listenUrl not exist for party id: ' + party.id);
     }
+
     try {
       freshParty = freshParty.copyWith(createdAt: party.createdAt);
     } catch (e) {
@@ -535,6 +556,7 @@ class Fresh {
     } catch (e) {
       Logx.em(_TAG, 'party endTime not exist for party id: ' + party.id);
     }
+
     try {
       freshParty = freshParty.copyWith(ownerId: party.ownerId);
     } catch (e) {
@@ -550,11 +572,13 @@ class Fresh {
     } catch (e) {
       Logx.em(_TAG, 'party isActive not exist for party id: ' + party.id);
     }
-    try {
-      freshParty = freshParty.copyWith(eventName: party.eventName);
+    try{
+      freshParty =
+          freshParty.copyWith(isBigAct: party.isBigAct);
     } catch (e) {
-      Logx.em(_TAG, 'party eventName not exist for party id: ' + party.id);
+      Logx.em(_TAG, 'party isBigAct not exist for party id: ' + party.id);
     }
+
     try {
       freshParty =
           freshParty.copyWith(isGuestListActive: party.isGuestListActive);
@@ -575,13 +599,7 @@ class Fresh {
     try {
       freshParty = freshParty.copyWith(isEmailRequired: party.isEmailRequired);
     } catch (e) {
-      Logx.em(
-          _TAG, 'party isEmailRequired not exist for party id: ' + party.id);
-    }
-    try {
-      freshParty = freshParty.copyWith(clubRules: party.clubRules);
-    } catch (e) {
-      Logx.em(_TAG, 'party clubRules not exist for party id: ' + party.id);
+      Logx.em(_TAG, 'party isEmailRequired not exist for party id: ' + party.id);
     }
     try {
       freshParty = freshParty.copyWith(guestListRules: party.guestListRules);
@@ -589,14 +607,34 @@ class Fresh {
       Logx.em(_TAG, 'party guestListRules not exist for party id: ' + party.id);
     }
     try {
-      freshParty = freshParty.copyWith(type: party.type);
+      freshParty = freshParty.copyWith(clubRules: party.clubRules);
     } catch (e) {
-      Logx.em(_TAG, 'party type not exist for party id: ' + party.id);
+      Logx.em(_TAG, 'party clubRules not exist for party id: ' + party.id);
+    }
+
+    try{
+      freshParty =
+          freshParty.copyWith(isTicketed: party.isTicketed);
+    } catch (e) {
+      Logx.em(_TAG, 'party isTicketed not exist for party id: ' + party.id);
+    }
+    try{
+      freshParty =
+          freshParty.copyWith(ticketsSoldCount: party.ticketsSoldCount);
+    } catch (e) {
+      Logx.em(_TAG, 'party ticketsSoldCount not exist for party id: ' + party.id);
+    }
+    try{
+      freshParty =
+          freshParty.copyWith(ticketsSalesTotal: party.ticketsSalesTotal);
+    } catch (e) {
+      Logx.em(_TAG, 'party ticketsSalesTotal not exist for party id: ' + party.id);
     }
 
     return freshParty;
   }
 
+  /** Party Guest **/
   static PartyGuest freshPartyGuest(PartyGuest partyGuest) {
     PartyGuest freshGuest = Dummy.getDummyPartyGuest();
 

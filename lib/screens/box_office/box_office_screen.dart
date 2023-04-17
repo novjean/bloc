@@ -17,7 +17,7 @@ import '../../widgets/box_office/box_office_item.dart';
 import '../../widgets/ui/loading_widget.dart';
 import '../../widgets/ui/sized_listview_block.dart';
 import '../../widgets/ui/toaster.dart';
-import '../parties/confirm_guest_list_screen.dart';
+import '../parties/manage_party_guest_screen.dart';
 
 class BoxOfficeScreen extends StatefulWidget {
   @override
@@ -30,13 +30,20 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
   List<Party> mParties = [];
   var _isPartiesLoading = true;
 
-  List<String> mOptions = ['guest list'];
-  String sOption = 'guest list';
+  late List<String> mOptions;
+  late String sOption;
 
   @override
   void initState() {
-    int timeNow = Timestamp.now().millisecondsSinceEpoch;
 
+    if(UserPreferences.myUser.clearanceLevel>=Constants.PROMOTER_LEVEL){
+      mOptions = ['arriving', 'completed'];
+    } else {
+      mOptions = ['guest list'];
+    }
+    sOption = mOptions.first;
+
+    int timeNow = Timestamp.now().millisecondsSinceEpoch;
     FirestoreHelper.pullPartiesByEndTime(timeNow, true).then((res) {
       Logx.i(_TAG, "successfully pulled in parties");
 
@@ -104,7 +111,8 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
               children: [
                 displayBoxOfficeOptions(context),
                 const Divider(),
-                buildUserPartyGuestList(context)
+                UserPreferences.myUser.clearanceLevel>=Constants.PROMOTER_LEVEL?
+                    buildPartiesGuestList(context): buildUserPartyGuestList(context)
               ],
             ),
           );
@@ -131,7 +139,7 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
                 onTap: () {
                   setState(() {
                     sOption = mOptions[index];
-                    print(sOption + ' at box office is selected');
+                    Logx.i(_TAG, sOption + ' at box office is selected');
                   });
                 });
           }),
@@ -191,17 +199,59 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
             }
           }
 
-          if(!sParty.isActive || Timestamp.now().millisecondsSinceEpoch > sParty.endTime){
-            // the party is over, so the request should be deleted
-            FirestoreHelper.deletePartyGuest(sPartyGuest);
-            return const SizedBox();
-          } else {
-            return BoxOfficeItem(partyGuest: sPartyGuest, party: sParty, isClickable: true,);
-          }
+          return BoxOfficeItem(partyGuest: sPartyGuest, party: sParty, isClickable: true,);
         },
       ),
     );
   }
+
+  buildPartiesGuestList(BuildContext context) {
+    return StreamBuilder<QuerySnapshot>(
+      stream:
+      FirestoreHelper.getApprovedPartyGuestList(),
+      builder: (ctx, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const LoadingWidget();
+        }
+
+        if (snapshot.hasData) {
+          List<PartyGuest> arrivingRequests = [];
+          List<PartyGuest> completedRequests = [];
+
+          if (snapshot.data!.docs.isEmpty) {
+            return const Expanded(
+                child: Center(child: Text('no guest list requests found!')));
+          } else {
+            for (int i = 0; i < snapshot.data!.docs.length; i++) {
+              DocumentSnapshot document = snapshot.data!.docs[i];
+              Map<String, dynamic> map = document.data()! as Map<String,
+                  dynamic>;
+              final PartyGuest partyGuest = Fresh.freshPartyGuestMap(
+                  map, false);
+
+              if (partyGuest.guestsRemaining == 0) {
+                completedRequests.add(partyGuest);
+              } else {
+                arrivingRequests.add(partyGuest);
+              }
+
+              if (i == snapshot.data!.docs.length - 1) {
+                return _displayPartyGuestListRequests(
+                    context, sOption == mOptions.first
+                    ? arrivingRequests
+                    : completedRequests);
+              }
+            }
+          }
+        } else {
+          return const Expanded(
+              child: Center(child: Text('no guest list requests found!')));
+        }
+        return const LoadingWidget();
+      },
+    );
+  }
+
 
   void scanCode() async {
     String scanCode;
@@ -209,12 +259,12 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
     try {
       scanCode = await FlutterBarcodeScanner.scanBarcode(
           '#ff6666', 'cancel', true, ScanMode.QR);
-      Logx.i(_TAG, 'code scanned ' + scanCode);
+      Logx.i(_TAG, 'code scanned $scanCode');
       if(scanCode!='-1') {
         Navigator.of(context).push(
           MaterialPageRoute(
               builder: (ctx) =>
-                  ConfirmGuestListScreen(partyGuestId: scanCode,)),
+                  ManagePartyGuestScreen(partyGuestId: scanCode,)),
         );
       } else {
         Logx.i(_TAG, 'scan cancelled');
@@ -233,4 +283,5 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
     if (!mounted) return;
 
   }
+
 }

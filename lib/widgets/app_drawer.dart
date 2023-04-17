@@ -11,8 +11,11 @@ import '../screens/box_office/box_office_screen.dart';
 import '../screens/captain/captain_main_screen.dart';
 import '../screens/login_screen.dart';
 import '../screens/user/order_history_screen.dart';
+import '../utils/logx.dart';
 
 class AppDrawer extends StatelessWidget {
+  static const String _TAG = 'AppDrawer';
+
   const AppDrawer({key}) : super(key: key);
 
   @override
@@ -31,6 +34,7 @@ class AppDrawer extends StatelessWidget {
             leading: const Icon(Icons.crop_square_sharp),
             title: const Text('home'),
             onTap: () {
+              Navigator.of(context).pop();
               Navigator.of(context).pushReplacement(
                 MaterialPageRoute(
                     builder: (ctx) => MainScreen(
@@ -47,6 +51,7 @@ class AppDrawer extends StatelessWidget {
                       leading: const Icon(Icons.circle_outlined),
                       title: const Text('orders'),
                       onTap: () {
+                        Navigator.of(context).pop();
                         Navigator.of(context).push(
                           MaterialPageRoute(
                               builder: (ctx) => OrderHistoryScreen()),
@@ -64,6 +69,7 @@ class AppDrawer extends StatelessWidget {
                       leading: const Icon(Icons.play_arrow_outlined),
                       title: const Text('box office'),
                       onTap: () {
+                        Navigator.of(context).pop();
                         Navigator.of(context).push(
                           MaterialPageRoute(
                               builder: (ctx) => BoxOfficeScreen()),
@@ -80,7 +86,9 @@ class AppDrawer extends StatelessWidget {
                     leading: const Icon(Icons.adjust),
                     title: const Text('captain'),
                     onTap: () {
-                      print('captain of bloc id : ' + user.blocServiceId);
+                      Logx.i(_TAG, 'captain of bloc id : ' + user.blocServiceId);
+
+                      Navigator.of(context).pop();
                       Navigator.of(context).push(
                         MaterialPageRoute(
                             builder: (ctx) => CaptainMainScreen(
@@ -99,6 +107,7 @@ class AppDrawer extends StatelessWidget {
                       leading: const Icon(Icons.account_circle_outlined),
                       title: const Text('manager'),
                       onTap: () {
+                        Navigator.of(context).pop();
                         Navigator.of(context).push(
                           MaterialPageRoute(
                               builder: (ctx) => ManagerMainScreen()),
@@ -116,6 +125,7 @@ class AppDrawer extends StatelessWidget {
                       leading: const Icon(Icons.play_circle_outlined),
                       title: const Text('owner'),
                       onTap: () {
+                        Navigator.of(context).pop();
                         Navigator.of(context).push(
                           MaterialPageRoute(builder: (ctx) => OwnerScreen()),
                         );
@@ -131,7 +141,7 @@ class AppDrawer extends StatelessWidget {
             child: Align(
                 alignment: Alignment.bottomRight,
                 child: Text(
-                  'v1.4.2',
+                  'v1.4.4',
                   style: TextStyle(fontSize: 14),
                 )),
           ),
@@ -143,6 +153,7 @@ class AppDrawer extends StatelessWidget {
                       leading: const Icon(Icons.settings),
                       title: const Text('account'),
                       onTap: () {
+                        Navigator.of(context).pop();
                         Navigator.of(context).push(
                           MaterialPageRoute(
                               builder: (context) => AccountScreen()),

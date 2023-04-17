@@ -37,9 +37,6 @@ class _HomeScreenState extends State<HomeScreen> {
   List<Bloc> mBlocs = [];
   var _isBlocsLoading = true;
 
-  Party mUpcomingParty = Dummy.getDummyParty('');
-  var _isUpcomingPartyLoading = true;
-
   GuestWifi mGuestWifi = Dummy.getDummyWifi(Constants.blocServiceId);
   var _isGuestWifiDetailsLoading = true;
 
@@ -67,13 +64,13 @@ class _HomeScreenState extends State<HomeScreen> {
                 });
               }
             } else {
-              Logx.em(_TAG,' no blocs found!!!');
+              Logx.em(_TAG, ' no blocs found!!!');
               //todo: need to re-attempt or check internet connection
               setState(() {
                 _isBlocsLoading = false;
               });
             }
-          }).catchError((e,s) {
+          }).catchError((e, s) {
             Logx.ex(_TAG, 'error loading blocs', e, s);
             setState(() {
               _isBlocsLoading = false;
@@ -112,35 +109,8 @@ class _HomeScreenState extends State<HomeScreen> {
             });
           });
 
-    int timeNow = Timestamp.now().millisecondsSinceEpoch;
-    FirestoreHelper.pullUpcomingPartyByEndTime(timeNow).then((res) {
-      Logx.i(_TAG,"successfully pulled in parties.");
-
-      if (res.docs.isNotEmpty) {
-        try {
-          DocumentSnapshot document = res.docs[0];
-          Map<String, dynamic> map = document.data()! as Map<String, dynamic>;
-          final Party party = Fresh.freshPartyMap(map, false);
-
-          if(mounted) {
-            setState(() {
-              mUpcomingParty = party;
-              _isUpcomingPartyLoading = false;
-            });
-          }
-        } catch (err) {
-          Logx.em(_TAG, 'error: ' + err.toString());
-        }
-      } else {
-        Logx.em(_TAG, 'no upcoming party found!');
-        setState(() {
-          _isUpcomingPartyLoading = false;
-        });
-      }
-    });
-
     FirestoreHelper.pullGuestWifi(Constants.blocServiceId).then((res) {
-      Logx.i(_TAG,"successfully pulled in guest wifi");
+      Logx.i(_TAG, "successfully pulled in guest wifi");
 
       if (res.docs.isNotEmpty) {
         try {
@@ -148,7 +118,7 @@ class _HomeScreenState extends State<HomeScreen> {
           Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
           final GuestWifi wifi = GuestWifi.fromMap(data);
 
-          if(mounted) {
+          if (mounted) {
             setState(() {
               mGuestWifi = wifi;
               _isGuestWifiDetailsLoading = false;
@@ -162,7 +132,7 @@ class _HomeScreenState extends State<HomeScreen> {
           Logx.em(_TAG, e.toString());
         }
       } else {
-        Logx.i(_TAG,'no guest wifi found!');
+        Logx.i(_TAG, 'no guest wifi found!');
       }
     });
   }
@@ -178,25 +148,11 @@ class _HomeScreenState extends State<HomeScreen> {
       },
       child: Scaffold(
         backgroundColor: Theme.of(context).backgroundColor,
-        body: ListView(
-          physics: const BouncingScrollPhysics(),
+        body: Column(
           children: <Widget>[
             const SizedBox(height: 1.0),
             _isBlocsLoading ? const LoadingWidget() : _displayBlocs(context),
-            _isUpcomingPartyLoading
-                ? const LoadingWidget()
-                : _displayUpcomingParty(context),
-            const SizedBox(height: 10.0),
-            UserPreferences.isUserLoggedIn()
-                ? _isGuestWifiDetailsLoading
-                    ? const LoadingWidget()
-                    : buildWifi(context)
-                : const SizedBox(),
-            const SizedBox(height: 10.0),
-            kIsWeb
-                ? const StoreBadgeItem()
-                : const SizedBox(),
-            const SizedBox(height: 10.0),
+            _displayPartiesNFooter(context),
           ],
         ),
       ),
@@ -204,7 +160,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   _displayBlocs(context) {
-    return Container(
+    return SizedBox(
       height: 390,
       child: ListView.builder(
           itemCount: mBlocs.length,
@@ -213,24 +169,11 @@ class _HomeScreenState extends State<HomeScreen> {
             Bloc bloc = mBlocs[index];
 
             return GestureDetector(
-              child:
-                  BlocSlideItem(
+              child: BlocSlideItem(
                 bloc: bloc,
               ),
             );
           }),
-    );
-  }
-
-  _displayUpcomingParty(context) {
-    return Container(
-      color: Theme.of(context).primaryColorLight,
-      height: 190,
-      child: PartyBanner(
-        party: mUpcomingParty,
-        isClickable: true,
-        shouldShowButton: true,
-      ),
     );
   }
 
@@ -240,7 +183,7 @@ class _HomeScreenState extends State<HomeScreen> {
       decoration: BoxDecoration(
         border: Border.all(),
         color: Theme.of(context).primaryColor,
-        borderRadius: BorderRadius.all(Radius.circular(5)),
+        borderRadius: const BorderRadius.all(Radius.circular(5)),
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -262,6 +205,7 @@ class _HomeScreenState extends State<HomeScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Flexible(
+                flex: 1,
                 child: Padding(
                   padding: const EdgeInsets.only(left: 10.0),
                   child: Text(
@@ -272,9 +216,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                 ),
-                flex: 1,
               ),
               Flexible(
+                flex: 1,
                 child: Container(
                   padding: const EdgeInsets.only(right: 10),
                   margin: const EdgeInsets.only(bottom: 10),
@@ -290,7 +234,6 @@ class _HomeScreenState extends State<HomeScreen> {
                     },
                   ),
                 ),
-                flex: 1,
               )
             ],
           ),
@@ -329,6 +272,132 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  _displayPartiesNFooter(BuildContext context) {
+    int timeNow = Timestamp.now().millisecondsSinceEpoch;
+
+    return StreamBuilder<QuerySnapshot>(
+      stream: FirestoreHelper.getUpcomingGuestListParties(timeNow),
+      builder: (ctx, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const LoadingWidget();
+        }
+
+        if (snapshot.hasData) {
+          List<Party> parties = [];
+          for (int i = 0; i < snapshot.data!.docs.length; i++) {
+            DocumentSnapshot document = snapshot.data!.docs[i];
+            Map<String, dynamic> data =
+                document.data()! as Map<String, dynamic>;
+            final Party bloc = Fresh.freshPartyMap(data, true);
+            parties.add(bloc);
+
+            if (i == snapshot.data!.docs.length - 1) {
+              return _displayPartiesList(context, parties);
+            }
+          }
+        }
+
+        return Expanded(
+          child: Column(
+            children: [
+              UserPreferences.isUserLoggedIn()
+                  ? _isGuestWifiDetailsLoading
+                  ? const LoadingWidget()
+                  : buildWifi(context)
+                  : const SizedBox(),
+              const SizedBox(height: 10.0),
+              kIsWeb ? const StoreBadgeItem() : const SizedBox(),
+              const SizedBox(height: 10.0),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  _displayPartiesList(BuildContext context, List<Party> parties) {
+    return Expanded(
+      child: ListView.builder(
+        itemCount: parties.length,
+        scrollDirection: Axis.vertical,
+        itemBuilder: (BuildContext context, int index) {
+          Party party = parties[index];
+
+          if (parties.length == 1) {
+            _displayLastParty(party);
+            return Column(
+              children: [
+                PartyBanner(
+                  party: party,
+                  isClickable: true,
+                  shouldShowButton: true,
+                ),
+                const SizedBox(height: 10.0),
+                UserPreferences.isUserLoggedIn()
+                    ? _isGuestWifiDetailsLoading
+                        ? const LoadingWidget()
+                        : buildWifi(context)
+                    : const SizedBox(),
+                const SizedBox(height: 10.0),
+                kIsWeb ? const StoreBadgeItem() : const SizedBox(),
+                const SizedBox(height: 10.0),
+              ],
+            );
+          } else {
+            if (index == parties.length - 1) {
+              // _displayLastParty(party);
+              return Column(
+                children: [
+                  PartyBanner(
+                    party: party,
+                    isClickable: true,
+                    shouldShowButton: true,
+                  ),
+                  const SizedBox(height: 10.0),
+                  UserPreferences.isUserLoggedIn()
+                      ? _isGuestWifiDetailsLoading
+                          ? const LoadingWidget()
+                          : buildWifi(context)
+                      : const SizedBox(),
+                  const SizedBox(height: 10.0),
+                  kIsWeb ? const StoreBadgeItem() : const SizedBox(),
+                  const SizedBox(height: 10.0),
+                ],
+              );
+            } else {
+              return PartyBanner(
+                party: party,
+                isClickable: true,
+                shouldShowButton: true,
+              );
+            }
+          }
+        },
+      ),
+    );
+  }
+
+  _displayLastParty(Party party) {
+    return Column(
+      children: [
+        PartyBanner(
+          party: party,
+          isClickable: true,
+          shouldShowButton: true,
+        ),
+        const SizedBox(height: 10.0),
+        UserPreferences.isUserLoggedIn()
+            ? _isGuestWifiDetailsLoading
+                ? const LoadingWidget()
+                : buildWifi(context)
+            : const SizedBox(),
+        const SizedBox(height: 10.0),
+        kIsWeb ? const StoreBadgeItem() : const SizedBox(),
+        const SizedBox(height: 10.0),
+      ],
     );
   }
 

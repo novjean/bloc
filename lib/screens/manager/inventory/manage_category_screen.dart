@@ -12,9 +12,9 @@ import 'category_add_edit_screen.dart';
 class ManageCategoryScreen extends StatelessWidget {
   String serviceId;
 
-  ManageCategoryScreen({
+  ManageCategoryScreen({Key? key,
     required this.serviceId,
-  });
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -28,15 +28,15 @@ class ManageCategoryScreen extends StatelessWidget {
               builder: (ctx) => CategoryAddEditScreen(
                   category: Dummy.getDummyCategory(serviceId), task: 'add')));
         },
-        child: Icon(
-          Icons.add,
-          color: Colors.black,
-          size: 29,
-        ),
         backgroundColor: Theme.of(context).primaryColor,
         tooltip: 'add category',
         elevation: 5,
         splashColor: Colors.grey,
+        child: const Icon(
+          Icons.add,
+          color: Colors.black,
+          size: 29,
+        ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       body: _buildCategories(context),

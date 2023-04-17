@@ -37,7 +37,7 @@ class _PartyScreenState extends State<PartyScreen> {
     int timeNow = Timestamp.now().millisecondsSinceEpoch;
 
     FirestoreHelper.pullPartiesByEndTime(timeNow, true).then((res) {
-      print("successfully pulled in parties");
+      Logx.i(_TAG, 'successfully pulled in parties');
 
       if (res.docs.isNotEmpty) {
         // found parties
@@ -77,10 +77,12 @@ class _PartyScreenState extends State<PartyScreen> {
           final Party bloc = Fresh.freshPartyMap(data, false);
           parties.add(bloc);
         }
-        setState(() {
-          mPastParties = parties;
-          _isPastPartiesLoading = false;
-        });
+        if(mounted) {
+          setState(() {
+            mPastParties = parties;
+            _isPastPartiesLoading = false;
+          });
+        }
       } else {
         Logx.i(_TAG, 'no past parties found!');
         const Center(

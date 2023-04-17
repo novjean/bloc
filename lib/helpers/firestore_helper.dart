@@ -574,6 +574,7 @@ class FirestoreHelper {
         .collection(FirestoreHelper.PARTIES)
         .where('endTime', isLessThanOrEqualTo: timeNow)
         .where('isTBA', isEqualTo: isTBA)
+        .where('isBigAct', isEqualTo: true)
         .orderBy('endTime', descending: true)
         .get();
   }
@@ -587,6 +588,16 @@ class FirestoreHelper {
         .orderBy('startTime', descending: false)
         .limit(1)
         .get();
+  }
+
+  static getUpcomingGuestListParties(int timeNow) {
+    return FirebaseFirestore.instance
+        .collection(FirestoreHelper.PARTIES)
+        .where('endTime', isGreaterThan: timeNow)
+        .where('isActive', isEqualTo: true)
+        .where('isGuestListActive', isEqualTo: true)
+        .orderBy('endTime', descending: false)
+        .snapshots();
   }
 
   static Future<QuerySnapshot<Map<String, dynamic>>> pullUpcomingPartyByEndTime(
@@ -663,6 +674,13 @@ class FirestoreHelper {
     return FirebaseFirestore.instance
         .collection(PARTY_GUESTS)
         .where('guestId', isEqualTo: guestId)
+        .snapshots();
+  }
+
+  static getApprovedPartyGuestList() {
+    return FirebaseFirestore.instance
+        .collection(PARTY_GUESTS)
+        .where('isApproved', isEqualTo: true)
         .snapshots();
   }
 
@@ -1241,6 +1259,9 @@ class FirestoreHelper {
         .orderBy('level', descending: false)
         .get();
   }
+
+
+
 
 
 }

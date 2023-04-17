@@ -139,6 +139,7 @@ class Dummy {
       isTicketed: false,
       ticketsSoldCount: 0,
       ticketsSalesTotal: 0,
+      isBigAct: true
     );
 
     return dummyParty;

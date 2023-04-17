@@ -18,12 +18,12 @@ class Party {
   final String ownerId;
   final bool isTBA;
   final bool isActive;
+  final bool isBigAct;
 
   final bool isGuestListActive;
   final int guestListCount;
   final bool isEmailRequired;
   final int guestListEndTime;
-
   final String guestListRules;
   final String clubRules;
 
@@ -58,6 +58,7 @@ class Party {
     required this.isTicketed,
     required this.ticketsSoldCount,
     required this.ticketsSalesTotal,
+    required this.isBigAct,
   });
 
   @override
@@ -89,7 +90,8 @@ class Party {
           clubRules == other.clubRules &&
           isTicketed == other.isTicketed &&
           ticketsSoldCount == other.ticketsSoldCount &&
-          ticketsSalesTotal == other.ticketsSalesTotal);
+          ticketsSalesTotal == other.ticketsSalesTotal &&
+          isBigAct == other.isBigAct);
 
   @override
   int get hashCode =>
@@ -117,7 +119,8 @@ class Party {
       clubRules.hashCode ^
       isTicketed.hashCode ^
       ticketsSoldCount.hashCode ^
-      ticketsSalesTotal.hashCode;
+      ticketsSalesTotal.hashCode ^
+      isBigAct.hashCode;
 
   @override
   String toString() {
@@ -147,6 +150,7 @@ class Party {
         ' isTicketed: $isTicketed,' +
         ' ticketsSoldCount: $ticketsSoldCount,' +
         ' ticketsSalesTotal: $ticketsSalesTotal,' +
+        ' isBigAct: $isBigAct,' +
         '}';
   }
 
@@ -176,6 +180,7 @@ class Party {
     bool? isTicketed,
     int? ticketsSoldCount,
     double? ticketsSalesTotal,
+    bool? isBigAct,
   }) {
     return Party(
       id: id ?? this.id,
@@ -203,6 +208,7 @@ class Party {
       isTicketed: isTicketed ?? this.isTicketed,
       ticketsSoldCount: ticketsSoldCount ?? this.ticketsSoldCount,
       ticketsSalesTotal: ticketsSalesTotal ?? this.ticketsSalesTotal,
+      isBigAct: isBigAct ?? this.isBigAct,
     );
   }
 
@@ -233,6 +239,7 @@ class Party {
       'isTicketed': this.isTicketed,
       'ticketsSoldCount': this.ticketsSoldCount,
       'ticketsSalesTotal': this.ticketsSalesTotal,
+      'isBigAct': this.isBigAct,
     };
   }
 
@@ -263,6 +270,7 @@ class Party {
       isTicketed: map['isTicketed'] as bool,
       ticketsSoldCount: map['ticketsSoldCount'] as int,
       ticketsSalesTotal: map['ticketsSalesTotal'] as double,
+      isBigAct: map['isBigAct'] as bool,
     );
   }
 

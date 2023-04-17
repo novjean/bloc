@@ -573,9 +573,6 @@ class _PartyGuestAddEditManagePageState
     return showDialog(
       context: context,
       builder: (BuildContext ctx) {
-        // ScrollController controller = ScrollController();
-        // controller.animateTo(controller.position.maxScrollExtent,
-        //     duration: const Duration(milliseconds: 1), curve: Curves.fastOutSlowIn);
         return AlertDialog(
           contentPadding: const EdgeInsets.all(16.0),
           content: SizedBox(
