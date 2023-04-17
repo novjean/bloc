@@ -12,6 +12,7 @@ import '../../utils/date_time_utils.dart';
 import '../../utils/logx.dart';
 import '../../widgets/parties/party_guest_item.dart';
 import '../../widgets/ui/loading_widget.dart';
+import '../../widgets/ui/toaster.dart';
 
 class ManageGuestListScreen extends StatefulWidget {
   @override
@@ -27,6 +28,8 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
   String sPartyName = 'all';
   String sPartyId = '';
   List<String> mPartyNames = [];
+
+  List<PartyGuest> mPartyGuests = [];
 
   @override
   void initState() {
@@ -68,6 +71,47 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('manage | guest list')),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          showDialog(
+              context: context,
+              builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text('delete all ${sPartyName=='all'?'':sPartyName} guest lists'),
+              content: Text('deleting ${mPartyGuests.length} guest list requests. are you sure you want to continue?'),
+              actions: [
+                TextButton(
+                  child: Text("yes"),
+                  onPressed: () async {
+                    for(PartyGuest partyGuest in mPartyGuests){
+                      FirestoreHelper.deletePartyGuest(partyGuest);
+                    }
+                    Logx.i(_TAG, 'deleted all ${sPartyName=='all'?'':sPartyName} guest list requests!');
+                    Toaster.shortToast('deleted all ${sPartyName=='all'?'':sPartyName} guest list requests!');
+                    Navigator.of(context).pop();
+                  },
+                ),
+                TextButton(
+                  child: const Text("no"),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                )
+              ],
+            );
+          });
+        },
+        backgroundColor: Theme.of(context).primaryColor,
+        tooltip: 'delete',
+        elevation: 5,
+        splashColor: Colors.grey,
+        child: const Icon(
+          Icons.delete_forever,
+          color: Colors.black,
+          size: 29,
+        ),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       body: _buildBody(context),
     );
   }
@@ -182,23 +226,31 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
                   }
                 }
 
-                if (timeNow > partyEndTime + DateTimeUtils.millisecondsWeek) {
-                  FirestoreHelper.deletePartyGuest(partyGuest);
-                } else {
-                  if(sPartyName!='all'){
-                    guestListText += '${partyGuest.name},${partyGuest.surname},+${partyGuest.phone},${partyGuest.email},${partyGuest.gender}\n';
-                  }
-
-                  partyGuestList.add(partyGuest);
+                if(sPartyName!='all'){
+                  guestListText += '${partyGuest.name},${partyGuest.surname},+${partyGuest.phone},${partyGuest.email},${partyGuest.gender},${partyGuest.guestStatus}\n';
                 }
+
+                partyGuestList.add(partyGuest);
+
+                // if (timeNow > partyEndTime + DateTimeUtils.millisecondsWeek) {
+                //   FirestoreHelper.deletePartyGuest(partyGuest);
+                // } else {
+                //   if(sPartyName!='all'){
+                //     guestListText += '${partyGuest.name},${partyGuest.surname},+${partyGuest.phone},${partyGuest.email},${partyGuest.gender},${partyGuest.guestStatus}\n';
+                //   }
+                //
+                //   partyGuestList.add(partyGuest);
+                // }
 
                 if (i == snapshot.data!.docs.length - 1) {
                   if(guestListText.isNotEmpty){
                     String date = DateTimeUtils.getFormattedDateYear(partyStartTime);
-                    String fileName = '$sPartyName-$date.txt';
+                    String fileName = '$sPartyName-$date.csv';
                     FileUtils.write(fileName, guestListText);
                     Logx.i(_TAG, 'saved to guest list file : $fileName');
                   }
+
+                  mPartyGuests = partyGuestList;
 
                   return _displayGuestList(context, partyGuestList);
                 }

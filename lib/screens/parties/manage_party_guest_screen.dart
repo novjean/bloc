@@ -13,19 +13,19 @@ import '../../helpers/fresh.dart';
 import '../../utils/logx.dart';
 import '../../widgets/ui/textfield_widget.dart';
 
-class ManagePartyTicketScreen extends StatefulWidget {
+class ManagePartyGuestScreen extends StatefulWidget {
   String partyGuestId;
 
-  ManagePartyTicketScreen({Key? key, required this.partyGuestId})
+  ManagePartyGuestScreen({Key? key, required this.partyGuestId})
       : super(key: key);
 
   @override
-  State<ManagePartyTicketScreen> createState() =>
-      _ManagePartyTicketScreenState();
+  State<ManagePartyGuestScreen> createState() =>
+      _ManagePartyGuestScreenState();
 }
 
-class _ManagePartyTicketScreenState extends State<ManagePartyTicketScreen> {
-  static const String _TAG = 'ManagePartyTicketScreen';
+class _ManagePartyGuestScreenState extends State<ManagePartyGuestScreen> {
+  static const String _TAG = 'ManagePartyGuestScreen';
 
   late PartyGuest mPartyGuest;
   var _isPartyGuestLoading = true;
@@ -38,7 +38,7 @@ class _ManagePartyTicketScreenState extends State<ManagePartyTicketScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('ticket | confirm')),
+      appBar: AppBar(title: const Text('guest list | confirm')),
       body: _buildBody(context),
     );
   }

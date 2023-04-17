@@ -12,13 +12,12 @@ import '../../helpers/dummy.dart';
 import '../../helpers/firestore_helper.dart';
 import '../../helpers/fresh.dart';
 import '../../utils/constants.dart';
-import '../../utils/date_time_utils.dart';
 import '../../utils/logx.dart';
 import '../../widgets/box_office/box_office_item.dart';
 import '../../widgets/ui/loading_widget.dart';
 import '../../widgets/ui/sized_listview_block.dart';
 import '../../widgets/ui/toaster.dart';
-import '../parties/manage_party_ticket_screen.dart';
+import '../parties/manage_party_guest_screen.dart';
 
 class BoxOfficeScreen extends StatefulWidget {
   @override
@@ -200,13 +199,7 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
             }
           }
 
-          if(Timestamp.now().millisecondsSinceEpoch > sParty.endTime + DateTimeUtils.millisecondsWeek){
-            // the party is been over more than a week, delete it
-            FirestoreHelper.deletePartyGuest(sPartyGuest);
-            return const SizedBox();
-          } else {
-            return BoxOfficeItem(partyGuest: sPartyGuest, party: sParty, isClickable: true,);
-          }
+          return BoxOfficeItem(partyGuest: sPartyGuest, party: sParty, isClickable: true,);
         },
       ),
     );
@@ -266,11 +259,11 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
     try {
       scanCode = await FlutterBarcodeScanner.scanBarcode(
           '#ff6666', 'cancel', true, ScanMode.QR);
-      Logx.i(_TAG, 'code scanned ' + scanCode);
+      Logx.i(_TAG, 'code scanned $scanCode');
       Navigator.of(context).push(
         MaterialPageRoute(
             builder: (ctx) =>
-                ManagePartyTicketScreen(partyGuestId: scanCode,)),
+                ManagePartyGuestScreen(partyGuestId: scanCode,)),
       );
     } on PlatformException catch (e,s) {
       scanCode = 'failed to get platform version.';
