@@ -406,7 +406,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  /** Optional **/
+  /** optional **/
   buildSuperstarsList(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
       stream: FirestoreHelper.getUsers(Constants.MANAGER_LEVEL),
