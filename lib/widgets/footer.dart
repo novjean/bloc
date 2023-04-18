@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../screens/contact_us_screen.dart';
 import '../screens/privacy_policy_screen.dart';
 import '../screens/refund_policy_screen.dart';
 import '../screens/terms_and_conditions_screen.dart';
@@ -34,13 +35,10 @@ class Footer extends StatelessWidget {
                   ),
                 ),
                 InkWell(
-                  onTap: () async {
-                    var url = Uri.parse("tel:+917700004328");
-                    if (await canLaunchUrl(url)) {
-                    await launchUrl(url);
-                    } else {
-                    throw 'Could not launch $url';
-                    }
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(builder: (context) => ContactUsScreen()),
+                    );
                   },
                   child: Text(
                     'contact us',
