@@ -4,6 +4,7 @@ class Party {
   final String eventName;
   final String description;
   final String blocServiceId;
+  final String type;
 
   final String imageUrl;
   final String instagramUrl;
@@ -17,24 +18,27 @@ class Party {
   final String ownerId;
   final bool isTBA;
   final bool isActive;
+  final bool isBigAct;
 
   final bool isGuestListActive;
   final int guestListCount;
   final bool isEmailRequired;
   final int guestListEndTime;
-
   final String guestListRules;
   final String clubRules;
 
-  final bool isBigAct;
+  final bool isTicketed;
+  int ticketsSoldCount;
+  double ticketsSalesTotal;
 
 //<editor-fold desc="Data Methods">
-  const Party({
+  Party({
     required this.id,
     required this.name,
     required this.eventName,
     required this.description,
     required this.blocServiceId,
+    required this.type,
     required this.imageUrl,
     required this.instagramUrl,
     required this.ticketUrl,
@@ -51,6 +55,9 @@ class Party {
     required this.guestListEndTime,
     required this.guestListRules,
     required this.clubRules,
+    required this.isTicketed,
+    required this.ticketsSoldCount,
+    required this.ticketsSalesTotal,
     required this.isBigAct,
   });
 
@@ -64,6 +71,7 @@ class Party {
           eventName == other.eventName &&
           description == other.description &&
           blocServiceId == other.blocServiceId &&
+          type == other.type &&
           imageUrl == other.imageUrl &&
           instagramUrl == other.instagramUrl &&
           ticketUrl == other.ticketUrl &&
@@ -80,6 +88,9 @@ class Party {
           guestListEndTime == other.guestListEndTime &&
           guestListRules == other.guestListRules &&
           clubRules == other.clubRules &&
+          isTicketed == other.isTicketed &&
+          ticketsSoldCount == other.ticketsSoldCount &&
+          ticketsSalesTotal == other.ticketsSalesTotal &&
           isBigAct == other.isBigAct);
 
   @override
@@ -89,6 +100,7 @@ class Party {
       eventName.hashCode ^
       description.hashCode ^
       blocServiceId.hashCode ^
+      type.hashCode ^
       imageUrl.hashCode ^
       instagramUrl.hashCode ^
       ticketUrl.hashCode ^
@@ -105,6 +117,9 @@ class Party {
       guestListEndTime.hashCode ^
       guestListRules.hashCode ^
       clubRules.hashCode ^
+      isTicketed.hashCode ^
+      ticketsSoldCount.hashCode ^
+      ticketsSalesTotal.hashCode ^
       isBigAct.hashCode;
 
   @override
@@ -115,6 +130,7 @@ class Party {
         ' eventName: $eventName,' +
         ' description: $description,' +
         ' blocServiceId: $blocServiceId,' +
+        ' type: $type,' +
         ' imageUrl: $imageUrl,' +
         ' instagramUrl: $instagramUrl,' +
         ' ticketUrl: $ticketUrl,' +
@@ -131,6 +147,9 @@ class Party {
         ' guestListEndTime: $guestListEndTime,' +
         ' guestListRules: $guestListRules,' +
         ' clubRules: $clubRules,' +
+        ' isTicketed: $isTicketed,' +
+        ' ticketsSoldCount: $ticketsSoldCount,' +
+        ' ticketsSalesTotal: $ticketsSalesTotal,' +
         ' isBigAct: $isBigAct,' +
         '}';
   }
@@ -141,6 +160,7 @@ class Party {
     String? eventName,
     String? description,
     String? blocServiceId,
+    String? type,
     String? imageUrl,
     String? instagramUrl,
     String? ticketUrl,
@@ -157,6 +177,9 @@ class Party {
     int? guestListEndTime,
     String? guestListRules,
     String? clubRules,
+    bool? isTicketed,
+    int? ticketsSoldCount,
+    double? ticketsSalesTotal,
     bool? isBigAct,
   }) {
     return Party(
@@ -165,6 +188,7 @@ class Party {
       eventName: eventName ?? this.eventName,
       description: description ?? this.description,
       blocServiceId: blocServiceId ?? this.blocServiceId,
+      type: type ?? this.type,
       imageUrl: imageUrl ?? this.imageUrl,
       instagramUrl: instagramUrl ?? this.instagramUrl,
       ticketUrl: ticketUrl ?? this.ticketUrl,
@@ -181,6 +205,9 @@ class Party {
       guestListEndTime: guestListEndTime ?? this.guestListEndTime,
       guestListRules: guestListRules ?? this.guestListRules,
       clubRules: clubRules ?? this.clubRules,
+      isTicketed: isTicketed ?? this.isTicketed,
+      ticketsSoldCount: ticketsSoldCount ?? this.ticketsSoldCount,
+      ticketsSalesTotal: ticketsSalesTotal ?? this.ticketsSalesTotal,
       isBigAct: isBigAct ?? this.isBigAct,
     );
   }
@@ -192,6 +219,7 @@ class Party {
       'eventName': this.eventName,
       'description': this.description,
       'blocServiceId': this.blocServiceId,
+      'type': this.type,
       'imageUrl': this.imageUrl,
       'instagramUrl': this.instagramUrl,
       'ticketUrl': this.ticketUrl,
@@ -208,6 +236,9 @@ class Party {
       'guestListEndTime': this.guestListEndTime,
       'guestListRules': this.guestListRules,
       'clubRules': this.clubRules,
+      'isTicketed': this.isTicketed,
+      'ticketsSoldCount': this.ticketsSoldCount,
+      'ticketsSalesTotal': this.ticketsSalesTotal,
       'isBigAct': this.isBigAct,
     };
   }
@@ -219,6 +250,7 @@ class Party {
       eventName: map['eventName'] as String,
       description: map['description'] as String,
       blocServiceId: map['blocServiceId'] as String,
+      type: map['type'] as String,
       imageUrl: map['imageUrl'] as String,
       instagramUrl: map['instagramUrl'] as String,
       ticketUrl: map['ticketUrl'] as String,
@@ -235,6 +267,9 @@ class Party {
       guestListEndTime: map['guestListEndTime'] as int,
       guestListRules: map['guestListRules'] as String,
       clubRules: map['clubRules'] as String,
+      isTicketed: map['isTicketed'] as bool,
+      ticketsSoldCount: map['ticketsSoldCount'] as int,
+      ticketsSalesTotal: map['ticketsSalesTotal'] as double,
       isBigAct: map['isBigAct'] as bool,
     );
   }

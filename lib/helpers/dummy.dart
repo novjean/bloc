@@ -2,6 +2,7 @@ import 'package:bloc/db/entity/category.dart';
 import 'package:bloc/db/entity/guest_wifi.dart';
 import 'package:bloc/db/entity/party_guest.dart';
 import 'package:bloc/db/entity/service_table.dart';
+import 'package:bloc/db/entity/ticket.dart';
 import 'package:bloc/utils/constants.dart';
 import 'package:bloc/utils/string_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -116,28 +117,33 @@ class Dummy {
 
   static Party getDummyParty(String blocId) {
     Party dummyParty = Party(
-        id: StringUtils.getRandomString(28),
-        createdAt: Timestamp.now().millisecondsSinceEpoch,
-        imageUrl: '',
-        name: '',
-        ownerId: UserPreferences.myUser.id,
-        isActive: false,
-        isTBA: true,
-        description: '',
-        blocServiceId: '',
-        endTime: Timestamp.now().millisecondsSinceEpoch,
-        instagramUrl: '',
-        startTime: Timestamp.now().millisecondsSinceEpoch,
-        ticketUrl: '',
-        listenUrl: '',
-        eventName: '',
-        isGuestListActive: false,
-        guestListCount: 2,
-        guestListEndTime: Timestamp.now().millisecondsSinceEpoch,
-        isEmailRequired: false,
-        clubRules: Constants.clubRules,
-        guestListRules: Constants.guestListRules,
-        isBigAct: true);
+      id: StringUtils.getRandomString(28),
+      createdAt: Timestamp.now().millisecondsSinceEpoch,
+      imageUrl: '',
+      name: '',
+      ownerId: UserPreferences.myUser.id,
+      isActive: false,
+      isTBA: true,
+      description: '',
+      blocServiceId: '',
+      endTime: Timestamp.now().millisecondsSinceEpoch,
+      instagramUrl: '',
+      startTime: Timestamp.now().millisecondsSinceEpoch,
+      ticketUrl: '',
+      listenUrl: '',
+      eventName: '',
+      isGuestListActive: false,
+      guestListCount: 2,
+      guestListEndTime: Timestamp.now().millisecondsSinceEpoch,
+      isEmailRequired: false,
+      clubRules: Constants.clubRules,
+      guestListRules: Constants.guestListRules,
+      type: 'artist',
+      isTicketed: false,
+      ticketsSoldCount: 0,
+      ticketsSalesTotal: 0,
+      isBigAct: true
+    );
 
     return dummyParty;
   }
@@ -211,6 +217,23 @@ class Dummy {
     return dummyTable;
   }
 
+  static Ticket getDummyTicket() {
+    Ticket ticket = Ticket(
+        id: StringUtils.getRandomString(28),
+        partyId: '',
+        customerId: UserPreferences.myUser.id,
+        transactionId: '',
+        name: UserPreferences.myUser.name,
+        phone: UserPreferences.myUser.phoneNumber.toString(),
+        email: UserPreferences.myUser.email,
+        entryCount: 1,
+        entriesRemaining: 1,
+        createdAt: Timestamp.now().millisecondsSinceEpoch,
+        isPaid: false,
+    );
+    return ticket;
+  }
+
   static User getDummyUser() {
     int millis = Timestamp.now().millisecondsSinceEpoch;
 
@@ -229,4 +252,5 @@ class Dummy {
         lastSeenAt: millis);
     return dummyUser;
   }
+
 }

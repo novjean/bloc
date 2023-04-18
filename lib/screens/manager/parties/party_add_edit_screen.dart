@@ -55,9 +55,11 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
   bool _isStartDateBeingSet = true;
   bool _isEndDateBeingSet = true;
 
-
   late String sGuestCount;
   List<String> guestCounts = [];
+
+  String _sPartyType = 'artist';
+  List<String> partyTypes = ['artist', 'event'];
 
   @override
   void initState() {
@@ -266,6 +268,45 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
                 onChanged: (name) =>
                     widget.party = widget.party.copyWith(name: name),
               ),
+
+              const SizedBox(height: 24),
+              FormField<String>(
+                builder: (FormFieldState<String> state) {
+                  return InputDecorator(
+                    key: const ValueKey('party_type'),
+                    decoration: InputDecoration(
+                        errorStyle: TextStyle(
+                            color: Theme.of(context).errorColor,
+                            fontSize: 16.0),
+                        hintText: 'please select party type',
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(5.0))),
+                    isEmpty: _sPartyType == '',
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton<String>(
+                        value: _sPartyType,
+                        isDense: true,
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            _sPartyType = newValue!;
+
+                            widget.party = widget.party
+                                .copyWith(type: _sPartyType);
+                            state.didChange(newValue);
+                          });
+                        },
+                        items: partyTypes.map((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList(),
+                      ),
+                    ),
+                  );
+                },
+              ),
+
               const SizedBox(height: 24),
               TextFieldWidget(
                 label: 'event name',
@@ -413,6 +454,25 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
                     onChanged: (value) {
                       setState(() {
                         widget.party = widget.party.copyWith(isBigAct: value);
+                      });
+                    },
+                  ), //Checkbox
+                ], //<Widget>[]
+              ),
+
+              const SizedBox(height: 24),
+              Row(
+                children: <Widget>[
+                  Text(
+                    'ticketed event : ',
+                    style: TextStyle(fontSize: 17.0),
+                  ), //Text
+                  const SizedBox(width: 10), //SizedBox
+                  Checkbox(
+                    value: widget.party.isTicketed,
+                    onChanged: (value) {
+                      setState(() {
+                        widget.party = widget.party.copyWith(isTicketed: value);
                       });
                     },
                   ), //Checkbox

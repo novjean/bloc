@@ -84,15 +84,15 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
         onPressed: () {
           scanCode();
         },
+        backgroundColor: Theme.of(context).primaryColor,
+        tooltip: 'scan code',
+        elevation: 5,
+        splashColor: Colors.grey,
         child: Icon(
           Icons.qr_code_scanner,
           color: Theme.of(context).primaryColorDark,
           size: 29,
         ),
-        backgroundColor: Theme.of(context).primaryColor,
-        tooltip: 'scan code',
-        elevation: 5,
-        splashColor: Colors.grey,
       ): const SizedBox(),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
 
@@ -260,21 +260,24 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
       scanCode = await FlutterBarcodeScanner.scanBarcode(
           '#ff6666', 'cancel', true, ScanMode.QR);
       Logx.i(_TAG, 'code scanned $scanCode');
-      Navigator.of(context).push(
-        MaterialPageRoute(
-            builder: (ctx) =>
-                ManagePartyGuestScreen(partyGuestId: scanCode,)),
-      );
-    } on PlatformException catch (e,s) {
-      scanCode = 'failed to get platform version.';
-      Logx.ex(_TAG, scanCode, e, s);
-      Toaster.longToast('code scan failed to get platform version');
-    }  on Exception catch (e, s) {
-      Toaster.longToast('code scan failed');
+      if(scanCode!='-1') {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+              builder: (ctx) =>
+                  ManagePartyGuestScreen(partyGuestId: scanCode,)),
+        );
+      } else {
+        Logx.i(_TAG, 'scan cancelled');
+      }
+    } on PlatformException catch (e, s) {
       Logx.e(_TAG, e, s);
-    } catch(e){
-      Toaster.longToast('code scan failed');
-      Logx.em(_TAG, e.toString());
+      Toaster.longToast('code scan failed, not get platform version');
+    } on Exception catch (e, s) {
+      Logx.e(_TAG, e, s);
+      Toaster.longToast('scan failed : ' + e.toString());
+    } catch (e) {
+      logger.e(e);
+      Toaster.longToast('scan failed : ' + e.toString());
     }
 
     if (!mounted) return;

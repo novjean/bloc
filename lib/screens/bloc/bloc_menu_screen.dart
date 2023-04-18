@@ -200,6 +200,7 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
     if (!mounted) return;
 
     if (scanTableId.compareTo('-1') == 0) {
+      Logx.i(_TAG, 'scan cancelled');
       return;
     }
 
