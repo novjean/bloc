@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
+import '../screens/privacy_policy_screen.dart';
+import '../screens/refund_policy_screen.dart';
 import '../screens/terms_and_conditions_screen.dart';
 import '../utils/network_utils.dart';
 
@@ -21,7 +24,8 @@ class Footer extends StatelessWidget {
               children: [
                 InkWell(
                   onTap: () {
-
+                    final uri = Uri.parse('https://www.instagram.com/bloc.india/');
+                    NetworkUtils.launchInBrowser(uri);
                   },
                   child: Text(
                     'instagram',
@@ -29,19 +33,14 @@ class Footer extends StatelessWidget {
                         fontSize: 14, color: Theme.of(context).primaryColorLight),
                   ),
                 ),
-                // InkWell(
-                //   onTap: () {
-                //
-                //   },
-                //   child: Text(
-                //     'whatsapp',
-                //     style: TextStyle(
-                //         fontSize: 14, color: Theme.of(context).primaryColorLight),
-                //   ),
-                // ),
                 InkWell(
-                  onTap: () {
-
+                  onTap: () async {
+                    var url = Uri.parse("tel:+917700004328");
+                    if (await canLaunchUrl(url)) {
+                    await launchUrl(url);
+                    } else {
+                    throw 'Could not launch $url';
+                    }
                   },
                   child: Text(
                     'contact us',
@@ -58,11 +57,24 @@ class Footer extends StatelessWidget {
               children: [
                 InkWell(
                   onTap: () {
-                    final uri = Uri.parse('https://bloc.bar/privacy.html');
-                    NetworkUtils.launchInBrowser(uri);
+                    Navigator.of(context).push(
+                      MaterialPageRoute(builder: (context) => PrivacyPolicyScreen()),
+                    );
                   },
                   child: Text(
                     'privacy policy',
+                    style: TextStyle(
+                        fontSize: 14, color: Theme.of(context).primaryColorLight),
+                  ),
+                ),
+                InkWell(
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(builder: (context) => RefundPolicyScreen()),
+                    );
+                  },
+                  child: Text(
+                    'refund policy',
                     style: TextStyle(
                         fontSize: 14, color: Theme.of(context).primaryColorLight),
                   ),
@@ -75,16 +87,6 @@ class Footer extends StatelessWidget {
                   },
                   child: Text(
                     'terms and conditions',
-                    style: TextStyle(
-                        fontSize: 14, color: Theme.of(context).primaryColorLight),
-                  ),
-                ),
-                InkWell(
-                  onTap: () {
-
-                  },
-                  child: Text(
-                    'refund and cancellation policy',
                     style: TextStyle(
                         fontSize: 14, color: Theme.of(context).primaryColorLight),
                   ),

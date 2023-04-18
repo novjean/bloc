@@ -1,4 +1,7 @@
 import 'package:bloc/db/shared_preferences/user_preferences.dart';
+import 'package:bloc/screens/privacy_policy_screen.dart';
+import 'package:bloc/screens/refund_policy_screen.dart';
+import 'package:bloc/screens/terms_and_conditions_screen.dart';
 import 'package:bloc/utils/network_utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -18,8 +21,9 @@ class AccountScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('account'),
+        title: const Text('bloc | account'),
       ),
+      backgroundColor: Theme.of(context).backgroundColor,
       body: _buildBody(context),
     );
   }
@@ -29,22 +33,52 @@ class AccountScreen extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const SizedBox(height: 2.0),
+        const SizedBox(height: 5.0),
         GestureDetector(
             child: SizedListViewBlock(
-              title: 'privacy',
+              title: 'privacy policy',
               height: 50,
               width: MediaQuery.of(context).size.width,
               color: Theme.of(context).primaryColor,
             ),
             onTap: () {
-              final uri = Uri.parse('https://bloc.bar/privacy.html');
-              NetworkUtils.launchInBrowser(uri);
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) => PrivacyPolicyScreen()),
+              );
             }),
         const Divider(),
+        const SizedBox(height: 5.0),
         GestureDetector(
             child: SizedListViewBlock(
-              title: 'delete',
+              title: 'refund policy',
+              height: 50,
+              width: MediaQuery.of(context).size.width,
+              color: Theme.of(context).primaryColor,
+            ),
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) => RefundPolicyScreen()),
+              );
+            }),
+        const Divider(),
+        const SizedBox(height: 5.0),
+        GestureDetector(
+            child: SizedListViewBlock(
+              title: 'terms and conditions',
+              height: 50,
+              width: MediaQuery.of(context).size.width,
+              color: Theme.of(context).primaryColor,
+            ),
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) => TermsAndConditionsScreen()),
+              );
+            }),
+        const Divider(),
+        const SizedBox(height: 5.0),
+        GestureDetector(
+            child: SizedListViewBlock(
+              title: 'delete account',
               height: 50,
               width: MediaQuery.of(context).size.width,
               color: Theme.of(context).errorColor,
@@ -84,7 +118,7 @@ class AccountScreen extends StatelessWidget {
                           }
 
                           Navigator.of(context).pushReplacement(
-                            MaterialPageRoute(builder: (context) => LoginScreen(shouldTriggerSkip: false,)),
+                            MaterialPageRoute(builder: (context) => const LoginScreen(shouldTriggerSkip: false,)),
                           );
                         },
                       ),
