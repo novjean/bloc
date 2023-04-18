@@ -118,7 +118,7 @@ class _BlocSlideItemState extends State<BlocSlideItem> {
                                     .map((item) => Container(
                                   child: Center(
                                       child:
-                                      Image.network(item, fit: BoxFit.fitWidth, width:  MediaQuery.of(context).size.width)),
+                                      Image.network(item, fit: BoxFit.fill, width:  MediaQuery.of(context).size.width)),
                                 ))
                                     .toList(),
                               )),

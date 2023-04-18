@@ -39,13 +39,13 @@ class PartyBanner extends StatelessWidget {
         child: Card(
           elevation: 1,
           color: Theme.of(context).primaryColorLight,
-          // shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0.0)),
           child: SizedBox(
             height: 200,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 Flexible(
+                  flex: 2,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -134,9 +134,9 @@ class PartyBanner extends StatelessWidget {
                           : const SizedBox()
                     ],
                   ),
-                  flex: 2,
                 ),
                 Flexible(
+                  flex: 1,
                   child: Container(
                     height: 200,
                     width: 200,
@@ -150,7 +150,6 @@ class PartyBanner extends StatelessWidget {
                       ),
                     ),
                   ),
-                  flex: 1,
                 ),
               ],
             ),
