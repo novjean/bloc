@@ -151,7 +151,6 @@ class _HomeScreenState extends State<HomeScreen> {
         resizeToAvoidBottomInset : false,
         body: Column(
           children: <Widget>[
-            const SizedBox(height: 1.0),
             _isBlocsLoading ? const LoadingWidget() : _displayBlocs(context),
             _displayPartiesNFooter(context),
           ],

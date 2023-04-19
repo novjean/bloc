@@ -10,10 +10,13 @@ class StoreBadgeItem extends StatelessWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Text(
-          'download the app to receive push notifications, guest list and ticket status updates, and be a part of the ever expanding #blocCommunity',
-          textAlign: TextAlign.center,
-          style: TextStyle(fontSize: 16, color: Theme.of(context).shadowColor),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10.0),
+          child: Text(
+            'download the app to receive push notifications, guest list and ticket status updates, and be a part of the ever expanding #blocCommunity',
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 16, color: Theme.of(context).shadowColor),
+          ),
         ),
 
         Row(

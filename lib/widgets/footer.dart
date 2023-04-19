@@ -57,7 +57,7 @@ class Footer extends StatelessWidget {
                 )
               ],
             ),
-            Spacer(),
+            const Spacer(),
             Column(
               mainAxisAlignment: MainAxisAlignment.end,
               crossAxisAlignment: CrossAxisAlignment.end,
