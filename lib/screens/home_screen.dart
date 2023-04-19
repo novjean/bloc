@@ -43,8 +43,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void initState() {
-    super.initState();
-
     UserPreferences.myUser.clearanceLevel >= Constants.PROMOTER_LEVEL
         ? FirestoreHelper.pullBlocsPromoter().then((res) {
             Logx.i(_TAG, "successfully pulled in blocs for promoter");
@@ -136,6 +134,7 @@ class _HomeScreenState extends State<HomeScreen> {
         Logx.i(_TAG, 'no guest wifi found!');
       }
     });
+    super.initState();
   }
 
   @override
@@ -149,6 +148,7 @@ class _HomeScreenState extends State<HomeScreen> {
       },
       child: Scaffold(
         backgroundColor: Theme.of(context).backgroundColor,
+        resizeToAvoidBottomInset : false,
         body: Column(
           children: <Widget>[
             const SizedBox(height: 1.0),
@@ -161,18 +161,16 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   _displayBlocs(context) {
-    return SizedBox(
-      height: 390,
+    return Expanded(
       child: ListView.builder(
+        shrinkWrap: true,
           itemCount: mBlocs.length,
           scrollDirection: Axis.horizontal,
           itemBuilder: (ctx, index) {
             Bloc bloc = mBlocs[index];
 
-            return GestureDetector(
-              child: BlocSlideItem(
-                bloc: bloc,
-              ),
+            return BlocSlideItem(
+              bloc: bloc,
             );
           }),
     );

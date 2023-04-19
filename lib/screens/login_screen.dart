@@ -50,6 +50,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
     return Scaffold(
       backgroundColor: Theme.of(context).backgroundColor,
+      resizeToAvoidBottomInset : false,
       body: StreamBuilder(
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (ctx, userSnapshot) {
@@ -76,7 +77,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
             if (user!.uid.isEmpty || widget.shouldTriggerSkip == false) {
               Logx.i(_TAG, 'user snapshot uid is empty');
-              return SignInWidget();
+              return signInWidget();
             } else {
               return FutureBuilder<DocumentSnapshot>(
                 future: users.doc(user.uid).get(),
@@ -91,14 +92,14 @@ class _LoginScreenState extends State<LoginScreen> {
                         _TAG,
                         'user snapshot has error: ' +
                             snapshot.error.toString());
-                    return SignInWidget();
+                    return signInWidget();
                   }
 
                   if (snapshot.hasData && !snapshot.data!.exists) {
                     Logx.i(_TAG,
                         'user snapshot has data but not registered in bloc ');
                     // user not registered in bloc, will be picked up in OTP screen
-                    return SignInWidget();
+                    return signInWidget();
                   }
 
                   if (snapshot.connectionState == ConnectionState.done) {
@@ -119,7 +120,7 @@ class _LoginScreenState extends State<LoginScreen> {
               _verifyUsingSkipPhone();
               return SizedBox();
             } else {
-              return SignInWidget();
+              return signInWidget();
             }
           }
         },
@@ -127,7 +128,7 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  Widget SignInWidget() {
+  Widget signInWidget() {
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [

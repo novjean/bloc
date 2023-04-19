@@ -1,6 +1,5 @@
 import 'package:bloc/db/entity/bloc_service.dart';
 import 'package:bloc/helpers/firestore_helper.dart';
-import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -24,7 +23,6 @@ class _BlocSlideItemState extends State<BlocSlideItem> {
   static const String _TAG = 'BlocSlideItem';
 
   late BlocService mBlocService;
-
   var _isBlocServiceLoading = true;
 
   @override
@@ -57,6 +55,7 @@ class _BlocSlideItemState extends State<BlocSlideItem> {
         });
       }
     });
+    super.initState();
   }
 
   @override
@@ -79,65 +78,153 @@ class _BlocSlideItemState extends State<BlocSlideItem> {
           : Hero(
               tag: widget.bloc.id,
               child: Card(
+                elevation: 1,
                 color: Theme.of(context).primaryColor,
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10.0)),
+                    borderRadius: BorderRadius.circular(0.0)),
                 child: SizedBox(
-                  width: MediaQuery.of(context).size.width-10,
+                  width: MediaQuery.of(context).size.width - 10,
                   child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
-                      Stack(
-                        children: [
-                          // Container(
-                          //   height: 300,
-                          //   width: MediaQuery.of(context).size.width,
-                          //   decoration: BoxDecoration(
-                          //     border: Border.all(
-                          //         color: Theme.of(context).primaryColor),
-                          //     borderRadius:
-                          //         const BorderRadius.all(Radius.circular(10)),
-                          //     image: DecorationImage(
-                          //       image: NetworkImage(widget.bloc.imageUrl),
-                          //       fit: BoxFit.fitWidth,
-                          //     ),
-                          //   ),
-                          // ),
+                      Flexible(
+                        flex: 4,
+                        child: SizedBox(
+                            height: 400,
+                            child: CarouselSlider(
+                              options: CarouselOptions(
+                                initialPage: 0,
+                                enableInfiniteScroll: true,
+                                autoPlay: true,
+                                autoPlayInterval: const Duration(seconds: 2),
+                                autoPlayAnimationDuration: const Duration(milliseconds: 800),
+                                // autoPlayCurve: Curves.fastOutSlowIn,
+                                enlargeCenterPage: true,
+                                scrollDirection: Axis.vertical,
+                                aspectRatio: 2.0,
+                              ),
+                              items: imgList
+                                  .map((item) => Container(
+                                child: Center(
+                                    child:
+                                    Image.network(item, fit: BoxFit.fitWidth, height: 400, width:  MediaQuery.of(context).size.width)),
+                              ))
+                                  .toList(),
+                            )),
 
-                          SizedBox(
-                            height: 300,
-                              child: CarouselSlider(
-                                options: CarouselOptions(
-                                  initialPage: 0,
-                                  enableInfiniteScroll: true,
-                                  autoPlay: true,
-                                  autoPlayInterval: const Duration(seconds: 2),
-                                  autoPlayAnimationDuration: const Duration(milliseconds: 800),
-                                  autoPlayCurve: Curves.fastOutSlowIn,
-                                ),
-                                items: imgList
-                                    .map((item) => Container(
-                                  child: Center(
-                                      child:
-                                      Image.network(item, fit: BoxFit.fill, width:  MediaQuery.of(context).size.width)),
-                                ))
-                                    .toList(),
-                              )),
 
-                          Positioned(
-                            bottom: 0.0,
-                            right: 0.0,
-                            child: Padding(
-                              padding: const EdgeInsets.only(bottom: 1.0, right: 5),
-                              child: Text(
-                                "click for menu",
-                                style: TextStyle(
-                                  color: Theme.of(context).primaryColorDark,
-                                  fontSize: 15, fontWeight: FontWeight.bold
+                        // Stack(
+                        //   children: [
+                        //     // Container(
+                        //     //   height: 300,
+                        //     //   width: MediaQuery.of(context).size.width,
+                        //     //   decoration: BoxDecoration(
+                        //     //     border: Border.all(
+                        //     //         color: Theme.of(context).primaryColor),
+                        //     //     borderRadius:
+                        //     //         const BorderRadius.all(Radius.circular(10)),
+                        //     //     image: DecorationImage(
+                        //     //       image: NetworkImage(widget.bloc.imageUrl),
+                        //     //       fit: BoxFit.fitWidth,
+                        //     //     ),
+                        //     //   ),
+                        //     // ),
+                        //
+                        //
+                        //
+                        //     Positioned(
+                        //       bottom: 0.0,
+                        //       left: 0.0,
+                        //       child: Padding(
+                        //         padding: const EdgeInsets.only(bottom: 1.0, left: 5),
+                        //         child: Text(
+                        //           "${widget.bloc.addressLine1.toLowerCase()}, ${widget.bloc.addressLine2.toLowerCase()}",
+                        //           style: TextStyle(
+                        //               color: Theme.of(context).primaryColorDark,
+                        //               fontSize: 15, fontWeight: FontWeight.normal
+                        //           ),
+                        //         ),
+                        //       ),
+                        //     )
+                        //   ],
+                        // ),
+                      ),
+
+                      Flexible(
+                        flex: 1,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 5),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              // Padding(
+                              //   padding: const EdgeInsets.only(right: 15),
+                              //   child: Text(
+                              //     "${widget.bloc.addressLine1.toLowerCase()}\n${widget.bloc.addressLine2.toLowerCase()}",
+                              //     style: TextStyle(
+                              //         color: Theme.of(context).primaryColorDark,
+                              //         fontSize: 15, fontWeight: FontWeight.normal
+                              //     ),
+                              //   ),
+                              // ),
+                              // SizedBox(
+                              //   height: 50,
+                              //   child: ElevatedButton.icon(
+                              //     onPressed: () {},
+                              //     icon: const Icon(
+                              //       Icons.map,
+                              //       size: 24.0,
+                              //     ),
+                              //     label: const Text('map'), // <-- Text
+                              //   ),
+                              // ),
+
+                              Padding(
+                                padding: const EdgeInsets.only(right: 15.0),
+                                child: SizedBox(
+                                  height: 50,
+                                  child: ElevatedButton.icon(
+                                    onPressed: () {
+                                      Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                            builder: (ctx) => BlocMenuScreen(blocService: mBlocService)),
+                                      );
+                                    },
+                                    icon: const Icon(
+                                      Icons.menu_book,
+                                      size: 24.0,
+                                    ),
+                                    label: const Text('menu'), // <-- Text
+                                  ),
                                 ),
                               ),
-                            ),
-                          )
-                        ],
+                              SizedBox(
+                                height: 50,
+                                child: ElevatedButton.icon(
+                                  onPressed: () {},
+                                  icon: const Icon(
+                                    Icons.table_restaurant,
+                                    size: 24.0,
+                                  ),
+                                  label: const Text('reserve'), // <-- Text
+                                ),
+                              ),
+
+                              // Text(
+                              //   widget.bloc.name,
+                              //   style: TextStyle(
+                              //     fontSize: 24.0,
+                              //     fontWeight: FontWeight.w800,
+                              //     color: Theme.of(context).highlightColor,
+                              //   ),
+                              //   textAlign: TextAlign.left,
+                              // ),
+                            ],
+                          ),
+                        ),
                       ),
 
                       // CachedNetworkImage(
@@ -156,35 +243,6 @@ class _BlocSlideItemState extends State<BlocSlideItem> {
                       //     print(error.toString());
                       //     return Icon(Icons.error);},
                       // ),
-
-                      Container(
-                        width: MediaQuery.of(context).size.width,
-                        padding:
-                            EdgeInsets.only(top: 10, left: 15.0, right: 15.0),
-                        child: Text(
-                          widget.bloc.name,
-                          style: TextStyle(
-                            fontSize: 24.0,
-                            fontWeight: FontWeight.w800,
-                            color: Theme.of(context).highlightColor,
-                          ),
-                          textAlign: TextAlign.left,
-                        ),
-                      ),
-                      Container(
-                        width: MediaQuery.of(context).size.width,
-                        padding:
-                            const EdgeInsets.only(top: 5, left: 15.0, right: 15.0),
-                        child: Text(
-                          "${widget.bloc.addressLine1.toLowerCase()}, ${widget.bloc.addressLine2.toLowerCase()}",
-                          style: TextStyle(
-                            fontSize: 16.0,
-                            fontWeight: FontWeight.w400,
-                            color: Theme.of(context).highlightColor,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 5),
                     ],
                   ),
                 ),

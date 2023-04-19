@@ -11,7 +11,7 @@ class StoreBadgeItem extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         Text(
-          'download the app to receive push notifications, get guest list and ticket updates, and be a part of the ever expanding #blocCommunity',
+          'download the app to receive push notifications, guest list and ticket status updates, and be a part of the ever expanding #blocCommunity',
           textAlign: TextAlign.center,
           style: TextStyle(fontSize: 16, color: Theme.of(context).shadowColor),
         ),

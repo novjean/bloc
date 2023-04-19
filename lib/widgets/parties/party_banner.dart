@@ -97,7 +97,7 @@ class PartyBanner extends StatelessWidget {
                               : isGuestListActive
                                   ? Padding(
                                       padding:
-                                          const EdgeInsets.only(right: 5.0),
+                                          const EdgeInsets.only(right: 0.0),
                                       child: ElevatedButton(
                                         style: ElevatedButton.styleFrom(
                                           backgroundColor:
@@ -139,13 +139,12 @@ class PartyBanner extends StatelessWidget {
                   flex: 1,
                   child: Container(
                     height: 200,
-                    width: 200,
                     decoration: BoxDecoration(
                       border: Border.all(color: Theme.of(context).primaryColor),
                       borderRadius: BorderRadius.all(Radius.circular(0)),
                       image: DecorationImage(
                         image: NetworkImage(party.imageUrl),
-                        fit: BoxFit.fitHeight,
+                        fit: BoxFit.fill,
                         // AssetImage(food['image']),
                       ),
                     ),

@@ -10,7 +10,7 @@ import 'profile_add_edit_register_page.dart';
 import 'package:barcode_widget/barcode_widget.dart';
 
 class ProfilePage extends StatefulWidget {
-  ProfilePage({key}) : super(key: key);
+  const ProfilePage({key}) : super(key: key);
 
   @override
   State<ProfilePage> createState() => _ProfilePageState();

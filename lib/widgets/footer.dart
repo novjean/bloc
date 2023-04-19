@@ -10,14 +10,24 @@ class Footer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 70,
+      height: 75,
       width: MediaQuery.of(context).size.width,
       color: Colors.black,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            Container(
+              height: 40,
+              width: 35,
+              decoration: const BoxDecoration(
+                image: DecorationImage(
+                    image: AssetImage("assets/icons/logo-adaptive.png"),
+                    fit: BoxFit.fitHeight),
+              ),
+            ),
             Column(
               mainAxisAlignment: MainAxisAlignment.end,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -47,7 +57,7 @@ class Footer extends StatelessWidget {
                 )
               ],
             ),
-            const Divider(),
+            Spacer(),
             Column(
               mainAxisAlignment: MainAxisAlignment.end,
               crossAxisAlignment: CrossAxisAlignment.end,
