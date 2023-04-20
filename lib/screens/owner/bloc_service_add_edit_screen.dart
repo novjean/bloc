@@ -50,100 +50,37 @@ class _BlocServiceAddEditScreenState extends State<BlocServiceAddEditScreen> {
         const SizedBox(height: 15),
         Container(
           height: 150,
-          child: ListView(
-            scrollDirection: Axis.horizontal,
-            children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 5.0),
-              child: ProfileWidget(
-                imagePath: imagePath.isEmpty? widget.blocService.imageUrl:imagePath,
-                isEdit: true,
-                onClicked: () async {
-                  final image = await ImagePicker().pickImage(
-                      source: ImageSource.gallery,
-                      imageQuality: 90,
-                      maxWidth: 500);
-                  if (image == null) return;
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 5.0),
+            child: ProfileWidget(
+              imagePath: imagePath.isEmpty? widget.blocService.imageUrl:imagePath,
+              isEdit: true,
+              onClicked: () async {
+                final image = await ImagePicker().pickImage(
+                    source: ImageSource.gallery,
+                    imageQuality: 90,
+                    maxWidth: 500);
+                if (image == null) return;
 
-                  final directory = await getApplicationDocumentsDirectory();
-                  final name = basename(image.path);
-                  final imageFile = File('${directory.path}/$name');
-                  final newImage = await File(image.path).copy(imageFile.path);
+                final directory = await getApplicationDocumentsDirectory();
+                final name = basename(image.path);
+                final imageFile = File('${directory.path}/$name');
+                final newImage = await File(image.path).copy(imageFile.path);
 
-                  oldImageUrl = widget.blocService.imageUrl;
-                  newImageUrl = await FirestorageHelper.uploadFile(
-                      FirestorageHelper.BLOCS_SERVICES_IMAGES,
-                      StringUtils.getRandomString(28),
-                      newImage);
+                oldImageUrl = widget.blocService.imageUrl;
+                newImageUrl = await FirestorageHelper.uploadFile(
+                    FirestorageHelper.BLOCS_SERVICES_IMAGES,
+                    StringUtils.getRandomString(28),
+                    newImage);
 
-                  setState(() {
-                    imagePath = imageFile.path;
-                    isPhotoChanged = true;
-                  });
-                },
-              ),
+                setState(() {
+                  imagePath = imageFile.path;
+                  isPhotoChanged = true;
+                });
+              },
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 5.0),
-              child: ProfileWidget(
-                imagePath: imagePath.isEmpty? widget.blocService.imageUrl:imagePath,
-                isEdit: true,
-                onClicked: () async {
-                  final image = await ImagePicker().pickImage(
-                      source: ImageSource.gallery,
-                      imageQuality: 90,
-                      maxWidth: 500);
-                  if (image == null) return;
+          ),
 
-                  final directory = await getApplicationDocumentsDirectory();
-                  final name = basename(image.path);
-                  final imageFile = File('${directory.path}/$name');
-                  final newImage = await File(image.path).copy(imageFile.path);
-
-                  oldImageUrl = widget.blocService.imageUrl;
-                  newImageUrl = await FirestorageHelper.uploadFile(
-                      FirestorageHelper.BLOCS_SERVICES_IMAGES,
-                      StringUtils.getRandomString(28),
-                      newImage);
-
-                  setState(() {
-                    imagePath = imageFile.path;
-                    isPhotoChanged = true;
-                  });
-                },
-              ),
-            ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 5.0),
-                child: ProfileWidget(
-                  imagePath: imagePath.isEmpty? widget.blocService.imageUrl:imagePath,
-                  isEdit: true,
-                  onClicked: () async {
-                    final image = await ImagePicker().pickImage(
-                        source: ImageSource.gallery,
-                        imageQuality: 90,
-                        maxWidth: 500);
-                    if (image == null) return;
-
-                    final directory = await getApplicationDocumentsDirectory();
-                    final name = basename(image.path);
-                    final imageFile = File('${directory.path}/$name');
-                    final newImage = await File(image.path).copy(imageFile.path);
-
-                    oldImageUrl = widget.blocService.imageUrl;
-                    newImageUrl = await FirestorageHelper.uploadFile(
-                        FirestorageHelper.BLOCS_SERVICES_IMAGES,
-                        StringUtils.getRandomString(28),
-                        newImage);
-
-                    setState(() {
-                      imagePath = imageFile.path;
-                      isPhotoChanged = true;
-                    });
-                  },
-                ),
-              ),
-          ],),
         ),
         const SizedBox(height: 24),
         Padding(

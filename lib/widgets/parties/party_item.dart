@@ -41,137 +41,139 @@ class PartyItem extends StatelessWidget {
           color: Theme.of(context).primaryColorLight,
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
-          child: SizedBox(
-            width: MediaQuery.of(context).size.width,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: <Widget>[
-                Stack(
-                  children: [
-                    Container(
-                      height: imageHeight,
-                      width: MediaQuery.of(context).size.width,
-                      decoration: BoxDecoration(
-                        border:
-                            Border.all(color: Theme.of(context).primaryColor),
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(10)),
-                        image: DecorationImage(
-                          image: NetworkImage(party.imageUrl),
-                          fit: BoxFit.fitWidth,
-                        ),
-                      ),
-                    ),
-                    Positioned(
-                      bottom: 5.0,
-                      child: Container(
+          child: SingleChildScrollView(
+            child: SizedBox(
+              width: MediaQuery.of(context).size.width,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: <Widget>[
+                  Stack(
+                    children: [
+                      Container(
+                        height: imageHeight,
                         width: MediaQuery.of(context).size.width,
-                        padding: const EdgeInsets.only(left: 15.0, right: 15.0),
-                        child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Text(
-                                party.name.toLowerCase(),
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 26.0,
-                                  fontWeight: FontWeight.w800,
-                                ),
-                                textAlign: TextAlign.left,
-                              ),
-                            ]),
-                      ),
-                    )
-                  ],
-                ),
-                Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 15, vertical: 5.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      party.eventName.isNotEmpty
-                          ? Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Text(
-                                  party.eventName.toLowerCase(),
-                                  style: const TextStyle(fontSize: 18),
-                                ),
-                              ],
-                            )
-                          : const SizedBox(),
-                      Text(
-                        party.isTBA
-                            ? 'tba'
-                            : DateTimeUtils.getFormattedDate(party.startTime),
-                        style: const TextStyle(fontSize: 18),
-                      )
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 15, vertical: 5.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Flexible(
-                        flex: 3,
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            StringUtils.truncateWithEllipsis(
-                                120, party.description.toLowerCase()),
-                            style: TextStyle(
-                                fontSize: 15,
-                                color: Theme.of(context).primaryColorDark),
+                        decoration: BoxDecoration(
+                          border:
+                              Border.all(color: Theme.of(context).primaryColor),
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(10)),
+                          image: DecorationImage(
+                            image: NetworkImage(party.imageUrl),
+                            fit: BoxFit.fitWidth,
                           ),
                         ),
                       ),
-                      isGuestListActive &
-                              !isGuestListRequested
-                          ? Flexible(
-                              flex: 1,
-                              child: Container(
-                                height: 75,
-                                width: 75,
-                                child: ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor:
-                                        Theme.of(context).primaryColorDark,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(5),
-                                    ),
-                                    foregroundColor: Colors.white,
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 1, vertical: 1),
+                      Positioned(
+                        bottom: 5.0,
+                        child: Container(
+                          width: MediaQuery.of(context).size.width,
+                          padding: const EdgeInsets.only(left: 15.0, right: 15.0),
+                          child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Text(
+                                  party.name.toLowerCase(),
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 26.0,
+                                    fontWeight: FontWeight.w800,
                                   ),
-                                  child: const Text('join\nguest\nlist'),
-                                  onPressed: () {
-                                    // nav to guest list add page
-                                    PartyGuest partyGuest =
-                                        Dummy.getDummyPartyGuest();
-                                    partyGuest.partyId = party.id;
-
-                                    Navigator.of(context).push(
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              PartyGuestAddEditManagePage(
-                                                  partyGuest: partyGuest,
-                                                  party: party,
-                                                  task: 'add')),
-                                    );
-                                  },
+                                  textAlign: TextAlign.left,
                                 ),
-                              ),
-                            )
-                          : const SizedBox(),
+                              ]),
+                        ),
+                      )
                     ],
                   ),
-                ),
-              ],
+                  Padding(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 15, vertical: 5.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        party.eventName.isNotEmpty
+                            ? Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    party.eventName.toLowerCase(),
+                                    style: const TextStyle(fontSize: 18),
+                                  ),
+                                ],
+                              )
+                            : const SizedBox(),
+                        Text(
+                          party.isTBA
+                              ? 'tba'
+                              : DateTimeUtils.getFormattedDate(party.startTime),
+                          style: const TextStyle(fontSize: 18),
+                        )
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 15, vertical: 5.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Flexible(
+                          flex: 3,
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              StringUtils.truncateWithEllipsis(
+                                  120, party.description.toLowerCase()),
+                              style: TextStyle(
+                                  fontSize: 15,
+                                  color: Theme.of(context).primaryColorDark),
+                            ),
+                          ),
+                        ),
+                        isGuestListActive &
+                                !isGuestListRequested
+                            ? Flexible(
+                                flex: 1,
+                                child: Container(
+                                  height: 75,
+                                  width: 75,
+                                  child: ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor:
+                                          Theme.of(context).primaryColorDark,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(5),
+                                      ),
+                                      foregroundColor: Colors.white,
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 1, vertical: 1),
+                                    ),
+                                    child: const Text('join\nguest\nlist'),
+                                    onPressed: () {
+                                      // nav to guest list add page
+                                      PartyGuest partyGuest =
+                                          Dummy.getDummyPartyGuest();
+                                      partyGuest.partyId = party.id;
+
+                                      Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                PartyGuestAddEditManagePage(
+                                                    partyGuest: partyGuest,
+                                                    party: party,
+                                                    task: 'add')),
+                                      );
+                                    },
+                                  ),
+                                ),
+                              )
+                            : const SizedBox(),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),

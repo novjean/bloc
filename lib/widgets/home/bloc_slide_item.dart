@@ -94,7 +94,6 @@ class _BlocSlideItemState extends State<BlocSlideItem> {
                                 autoPlay: true,
                                 autoPlayInterval: const Duration(seconds: 2),
                                 autoPlayAnimationDuration: const Duration(milliseconds: 800),
-                                // autoPlayCurve: Curves.fastOutSlowIn,
                                 enlargeCenterPage: true,
                                 scrollDirection: Axis.vertical,
                                 aspectRatio: 2.0,
@@ -136,17 +135,17 @@ class _BlocSlideItemState extends State<BlocSlideItem> {
                                   ),
                                 ),
                               ),
-                              SizedBox(
-                                height: 50,
-                                child: ElevatedButton.icon(
-                                  onPressed: () {},
-                                  icon: const Icon(
-                                    Icons.table_restaurant,
-                                    size: 24.0,
-                                  ),
-                                  label: const Text('reserve'), // <-- Text
-                                ),
-                              ),
+                              // SizedBox(
+                              //   height: 50,
+                              //   child: ElevatedButton.icon(
+                              //     onPressed: () {},
+                              //     icon: const Icon(
+                              //       Icons.table_restaurant,
+                              //       size: 24.0,
+                              //     ),
+                              //     label: const Text('reserve'), // <-- Text
+                              //   ),
+                              // ),
                             ],
                           ),
                         ),
