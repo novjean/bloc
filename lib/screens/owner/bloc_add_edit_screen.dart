@@ -7,7 +7,6 @@ import 'package:path_provider/path_provider.dart';
 
 import '../../../helpers/firestorage_helper.dart';
 import '../../../helpers/firestore_helper.dart';
-import '../../../widgets/profile_widget.dart';
 import '../../../widgets/ui/button_widget.dart';
 import '../../../widgets/ui/textfield_widget.dart';
 import '../../db/entity/bloc.dart';
