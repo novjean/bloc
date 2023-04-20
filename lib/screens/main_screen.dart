@@ -139,6 +139,10 @@ class _MainScreenState extends State<MainScreen> {
         fbm.subscribeToTopic('sos');
         fbm.subscribeToTopic('order');
       }
+
+      if (user.clearanceLevel >= Constants.MANAGER_LEVEL) {
+        fbm.subscribeToTopic('party_guest');
+      }
     }
   }
 
@@ -201,6 +205,8 @@ class _MainScreenState extends State<MainScreen> {
       ),
       bottomNavigationBar: BottomAppBar(
         elevation: 1,
+        color: Theme.of(context).primaryColor,
+        shape: CircularNotchedRectangle(),
         child: Row(
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -213,8 +219,6 @@ class _MainScreenState extends State<MainScreen> {
             // SizedBox(width: 7),
           ],
         ),
-        color: Theme.of(context).primaryColor,
-        shape: CircularNotchedRectangle(),
       ),
     );
   }

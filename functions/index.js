@@ -80,3 +80,18 @@ exports.adFunction = functions
         },
       });
     });
+
+exports.partyGuestFunction = functions
+    .region('asia-south1')
+    .firestore
+    .document('party_guests/{document}')
+    .onCreate((snapshot, context) => {
+      console.log(snapshot.data());
+      return admin.messaging().sendToTopic('party_guest', {
+        notification: {
+          title: 'guest list request',
+          body: snapshot.data().name + ' ' + snapshot.data().surname,
+          clickAction: 'FLUTTER_NOTIFICATION_CLICK',
+        },
+      });
+    });
