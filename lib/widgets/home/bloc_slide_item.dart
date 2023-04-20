@@ -60,12 +60,6 @@ class _BlocSlideItemState extends State<BlocSlideItem> {
 
   @override
   Widget build(BuildContext context) {
-    List<String> imgList = [
-      widget.bloc.imageUrl,
-      'https://firebasestorage.googleapis.com/v0/b/bloc-novatech.appspot.com/o/bloc_service_image%2FUJIIia7TYiBwQ1lF3eO447zvM7gc.jpg?alt=media&token=fdda6b44-fae5-413f-b630-509bf7f3e0b6'
-    ];
-
-
     return GestureDetector(
       onTap: () {
         Navigator.of(context).push(
@@ -105,7 +99,7 @@ class _BlocSlideItemState extends State<BlocSlideItem> {
                                 scrollDirection: Axis.vertical,
                                 aspectRatio: 2.0,
                               ),
-                              items: imgList
+                              items: widget.bloc.imageUrls
                                   .map((item) => Container(
                                 child: Center(
                                     child:
@@ -113,43 +107,6 @@ class _BlocSlideItemState extends State<BlocSlideItem> {
                               ))
                                   .toList(),
                             )),
-
-
-                        // Stack(
-                        //   children: [
-                        //     // Container(
-                        //     //   height: 300,
-                        //     //   width: MediaQuery.of(context).size.width,
-                        //     //   decoration: BoxDecoration(
-                        //     //     border: Border.all(
-                        //     //         color: Theme.of(context).primaryColor),
-                        //     //     borderRadius:
-                        //     //         const BorderRadius.all(Radius.circular(10)),
-                        //     //     image: DecorationImage(
-                        //     //       image: NetworkImage(widget.bloc.imageUrl),
-                        //     //       fit: BoxFit.fitWidth,
-                        //     //     ),
-                        //     //   ),
-                        //     // ),
-                        //
-                        //
-                        //
-                        //     Positioned(
-                        //       bottom: 0.0,
-                        //       left: 0.0,
-                        //       child: Padding(
-                        //         padding: const EdgeInsets.only(bottom: 1.0, left: 5),
-                        //         child: Text(
-                        //           "${widget.bloc.addressLine1.toLowerCase()}, ${widget.bloc.addressLine2.toLowerCase()}",
-                        //           style: TextStyle(
-                        //               color: Theme.of(context).primaryColorDark,
-                        //               fontSize: 15, fontWeight: FontWeight.normal
-                        //           ),
-                        //         ),
-                        //       ),
-                        //     )
-                        //   ],
-                        // ),
                       ),
 
                       Flexible(
@@ -160,28 +117,6 @@ class _BlocSlideItemState extends State<BlocSlideItem> {
                             mainAxisAlignment: MainAxisAlignment.end,
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
-                              // Padding(
-                              //   padding: const EdgeInsets.only(right: 15),
-                              //   child: Text(
-                              //     "${widget.bloc.addressLine1.toLowerCase()}\n${widget.bloc.addressLine2.toLowerCase()}",
-                              //     style: TextStyle(
-                              //         color: Theme.of(context).primaryColorDark,
-                              //         fontSize: 15, fontWeight: FontWeight.normal
-                              //     ),
-                              //   ),
-                              // ),
-                              // SizedBox(
-                              //   height: 50,
-                              //   child: ElevatedButton.icon(
-                              //     onPressed: () {},
-                              //     icon: const Icon(
-                              //       Icons.map,
-                              //       size: 24.0,
-                              //     ),
-                              //     label: const Text('map'), // <-- Text
-                              //   ),
-                              // ),
-
                               Padding(
                                 padding: const EdgeInsets.only(right: 15.0),
                                 child: SizedBox(
@@ -212,16 +147,6 @@ class _BlocSlideItemState extends State<BlocSlideItem> {
                                   label: const Text('reserve'), // <-- Text
                                 ),
                               ),
-
-                              // Text(
-                              //   widget.bloc.name,
-                              //   style: TextStyle(
-                              //     fontSize: 24.0,
-                              //     fontWeight: FontWeight.w800,
-                              //     color: Theme.of(context).highlightColor,
-                              //   ),
-                              //   textAlign: TextAlign.left,
-                              // ),
                             ],
                           ),
                         ),

@@ -206,15 +206,11 @@ class Fresh {
       shouldPush = true;
     }
     try {
-      bloc = bloc.copyWith(imageUrl2: map['imageUrl2'] as String);
+      bloc = bloc.copyWith(imageUrls: List<String>.from(map['imageUrls']));
     } catch (e) {
-      Logx.em(_TAG, 'bloc imageUrl2 not exist for bloc id: ' + bloc.id);
-      shouldPush = true;
-    }
-    try {
-      bloc = bloc.copyWith(imageUrl3: map['imageUrl3'] as String);
-    } catch (e) {
-      Logx.em(_TAG, 'bloc imageUrl3 not exist for bloc id: ' + bloc.id);
+      Logx.em(_TAG, 'bloc imageUrls not exist for bloc id: ' + bloc.id);
+      List<String> existingImageUrl = [bloc.imageUrl];
+      bloc = bloc.copyWith(imageUrls: existingImageUrl);
       shouldPush = true;
     }
 
@@ -282,14 +278,9 @@ class Fresh {
       Logx.em(_TAG, 'bloc imageUrl not exist for bloc id: ' + bloc.id);
     }
     try {
-      freshBloc = freshBloc.copyWith(imageUrl2: bloc.imageUrl2);
+      freshBloc = freshBloc.copyWith(imageUrls: bloc.imageUrls);
     } catch (e) {
-      Logx.em(_TAG, 'bloc imageUrl2 not exist for bloc id: ' + bloc.id);
-    }
-    try {
-      freshBloc = freshBloc.copyWith(imageUrl3: bloc.imageUrl3);
-    } catch (e) {
-      Logx.em(_TAG, 'bloc imageUrl3 not exist for bloc id: ' + bloc.id);
+      Logx.em(_TAG, 'bloc imageUrls not exist for bloc id: ' + bloc.id);
     }
 
     return freshBloc;

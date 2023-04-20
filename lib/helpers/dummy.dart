@@ -48,8 +48,7 @@ class Dummy {
       isActive: false,
       pinCode: '',
       imageUrl: '',
-      imageUrl2: '',
-      imageUrl3: '',
+      imageUrls: []
     );
 
     return dummyBloc;

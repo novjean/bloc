@@ -9,10 +9,8 @@ class Bloc {
   final String ownerId;
   final String createdAt;
   final bool isActive;
-
   final String imageUrl;
-  final String imageUrl2;
-  final String imageUrl3;
+  final List<String> imageUrls;
 
 //<editor-fold desc="Data Methods">
   const Bloc({
@@ -26,8 +24,7 @@ class Bloc {
     required this.createdAt,
     required this.isActive,
     required this.imageUrl,
-    required this.imageUrl2,
-    required this.imageUrl3,
+    required this.imageUrls,
   });
 
   @override
@@ -45,8 +42,7 @@ class Bloc {
           createdAt == other.createdAt &&
           isActive == other.isActive &&
           imageUrl == other.imageUrl &&
-          imageUrl2 == other.imageUrl2 &&
-          imageUrl3 == other.imageUrl3);
+          imageUrls == other.imageUrls);
 
   @override
   int get hashCode =>
@@ -60,8 +56,7 @@ class Bloc {
       createdAt.hashCode ^
       isActive.hashCode ^
       imageUrl.hashCode ^
-      imageUrl2.hashCode ^
-      imageUrl3.hashCode;
+      imageUrls.hashCode;
 
   @override
   String toString() {
@@ -76,8 +71,7 @@ class Bloc {
         ' createdAt: $createdAt,' +
         ' isActive: $isActive,' +
         ' imageUrl: $imageUrl,' +
-        ' imageUrl2: $imageUrl2,' +
-        ' imageUrl3: $imageUrl3,' +
+        ' imageUrls: $imageUrls,' +
         '}';
   }
 
@@ -92,8 +86,7 @@ class Bloc {
     String? createdAt,
     bool? isActive,
     String? imageUrl,
-    String? imageUrl2,
-    String? imageUrl3,
+    List<String>? imageUrls,
   }) {
     return Bloc(
       id: id ?? this.id,
@@ -106,8 +99,7 @@ class Bloc {
       createdAt: createdAt ?? this.createdAt,
       isActive: isActive ?? this.isActive,
       imageUrl: imageUrl ?? this.imageUrl,
-      imageUrl2: imageUrl2 ?? this.imageUrl2,
-      imageUrl3: imageUrl3 ?? this.imageUrl3,
+      imageUrls: imageUrls ?? this.imageUrls,
     );
   }
 
@@ -123,8 +115,7 @@ class Bloc {
       'createdAt': this.createdAt,
       'isActive': this.isActive,
       'imageUrl': this.imageUrl,
-      'imageUrl2': this.imageUrl2,
-      'imageUrl3': this.imageUrl3,
+      'imageUrls': this.imageUrls,
     };
   }
 
@@ -140,8 +131,7 @@ class Bloc {
       createdAt: map['createdAt'] as String,
       isActive: map['isActive'] as bool,
       imageUrl: map['imageUrl'] as String,
-      imageUrl2: map['imageUrl2'] as String,
-      imageUrl3: map['imageUrl3'] as String,
+      imageUrls: map['imageUrls'] as List<String>,
     );
   }
 
