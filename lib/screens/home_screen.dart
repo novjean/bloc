@@ -226,7 +226,6 @@ class _HomeScreenState extends State<HomeScreen> {
                       Clipboard.setData(
                               ClipboardData(text: mGuestWifi.password))
                           .then((value) {
-                        //only if ->
                         Toaster.shortToast('wifi password copied');
                       });
                     },

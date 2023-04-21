@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+import '../widgets/ui/toaster.dart';
 
 class ContactUsScreen extends StatelessWidget {
   @override
@@ -42,7 +45,11 @@ class ContactUsScreen extends StatelessWidget {
                   if (await canLaunchUrl(url)) {
                     await launchUrl(url);
                   } else {
-                    throw 'Could not launch $url';
+                    Clipboard.setData(
+                        const ClipboardData(text: '+917700004328'))
+                        .then((value) {
+                      Toaster.shortToast('phone number copied');
+                    });
                   }
                 },
                 child: Text(
