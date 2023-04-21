@@ -25,6 +25,7 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
   var _isPartiesLoading = true;
   List<Party> mParties = [];
 
+  Party sParty = Dummy.getDummyParty('');
   String sPartyName = 'all';
   String sPartyId = '';
   List<String> mPartyNames = [];
@@ -128,7 +129,7 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
               // const Divider(),
               const SizedBox(height: 5.0),
               _buildPartyGuestList(context),
-              const SizedBox(height: 5.0),
+              const SizedBox(height: 70.0),
             ],
           );
   }
@@ -168,6 +169,7 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
                     for (Party party in mParties) {
                       if (party.name == sPartyName) {
                         sPartyId = party.id;
+                        sParty = party;
                         break;
                       }
                     }
@@ -266,14 +268,31 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
   }
 
   _displayGuestList(BuildContext context, List<PartyGuest> partyGuestList) {
+
+
     return Expanded(
       child: ListView.builder(
           itemCount: partyGuestList.length,
           scrollDirection: Axis.vertical,
           itemBuilder: (ctx, index) {
+            PartyGuest partyGuest = partyGuestList[index];
+
+            String partyName = '';
+            if(sPartyName == 'all'){
+              for(Party party in mParties){
+                if(partyGuest.partyId == party.id){
+                  partyName = party.name;
+                  break;
+                }
+              }
+            } else {
+              partyName = sParty.name;
+            }
+
             return GestureDetector(
                 child: PartyGuestItem(
                   partyGuest: partyGuestList[index],
+                  partyName: partyName,
                 ),
                 onTap: () {
                   PartyGuest sPartyGuest = partyGuestList[index];

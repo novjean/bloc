@@ -207,8 +207,7 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
 
   buildPartiesGuestList(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
-      stream:
-      FirestoreHelper.getApprovedPartyGuestList(),
+      stream: FirestoreHelper.getApprovedPartyGuestList(),
       builder: (ctx, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const LoadingWidget();

@@ -7,12 +7,13 @@ import '../../helpers/fresh.dart';
 
 class PartyGuestItem extends StatelessWidget {
   final PartyGuest partyGuest;
+  final String partyName;
 
-  const PartyGuestItem({Key? key, required this.partyGuest}) : super(key: key);
+  const PartyGuestItem({Key? key, required this.partyGuest, required this.partyName}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    String title = partyGuest.name.toLowerCase();
+    String title = partyGuest.name.toLowerCase() + ' ' + partyGuest.surname.toLowerCase();
     int friendsCount = partyGuest.guestsCount - 1;
 
     if (friendsCount > 0) {
@@ -36,7 +37,7 @@ class PartyGuestItem extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Padding(
-                      padding: const EdgeInsets.only(left: 5.0, top: 5),
+                      padding: const EdgeInsets.symmetric(horizontal: 5.0),
                       child: Text(
                         title,
                         style: TextStyle(fontSize: 20),
@@ -45,11 +46,21 @@ class PartyGuestItem extends StatelessWidget {
                   ],
                 ),
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(left: 5),
+                      child: Text(
+                        partyName,
+                      ),
+                    ),
+                ],),
+                Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Padding(
                       padding:
-                          const EdgeInsets.only(left: 5, top: 5, bottom: 5),
+                          const EdgeInsets.only(left: 5),
                       child: Text('requested at: ' +
                           DateTimeUtils.getFormattedDateYear(
                               partyGuest.createdAt)),
