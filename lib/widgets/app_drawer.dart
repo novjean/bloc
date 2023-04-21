@@ -22,6 +22,14 @@ class AppDrawer extends StatelessWidget {
   Widget build(BuildContext context) {
     final user = UserPreferences.getUser();
 
+    bool showCaptain = false;
+    if(user.clearanceLevel >= Constants.CAPTAIN_LEVEL){
+      showCaptain = true;
+    }
+    if(user.clearanceLevel == Constants.PROMOTER_LEVEL){
+      showCaptain = false;
+    }
+
     return Drawer(
       width: MediaQuery.of(context).size.width / 2,
       child: Column(
@@ -80,7 +88,7 @@ class AppDrawer extends StatelessWidget {
                   ],
                 )
               : const SizedBox(),
-          user.clearanceLevel >= Constants.CAPTAIN_LEVEL
+          showCaptain
               ? Column(children: [
                   ListTile(
                     leading: const Icon(Icons.adjust),
