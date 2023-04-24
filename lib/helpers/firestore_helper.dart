@@ -628,6 +628,15 @@ class FirestoreHelper {
         .get();
   }
 
+  static getPartyGuestsByPartyId(String partyId) {
+    return FirebaseFirestore.instance
+        .collection(PARTY_GUESTS)
+        .where('partyId', isEqualTo: partyId)
+        .where('isApproved', isEqualTo: true)
+        .snapshots();
+  }
+
+
   static Future<QuerySnapshot<Map<String, dynamic>>> pullPartyGuestByUser(String guestId, String partyId) {
     return FirebaseFirestore.instance
         .collection(FirestoreHelper.PARTY_GUESTS)
@@ -1259,9 +1268,5 @@ class FirestoreHelper {
         .orderBy('level', descending: false)
         .get();
   }
-
-
-
-
 
 }
