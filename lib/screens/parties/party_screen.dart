@@ -88,9 +88,11 @@ class _PartyScreenState extends State<PartyScreen> {
         const Center(
           child: Text('no past parties found yet!'),
         );
-        setState(() {
-          _isPastPartiesLoading = false;
-        });
+        if(mounted) {
+          setState(() {
+            _isPastPartiesLoading = false;
+          });
+        }
       }
     });
 
@@ -107,10 +109,12 @@ class _PartyScreenState extends State<PartyScreen> {
           final PartyGuest partyGuest = Fresh.freshPartyGuestMap(data, false);
           partyGuestRequests.add(partyGuest);
         }
-        setState(() {
-          mPartyGuestRequests = partyGuestRequests;
-          _isPartyGuestsLoading = false;
-        });
+        if(mounted) {
+          setState(() {
+            mPartyGuestRequests = partyGuestRequests;
+            _isPartyGuestsLoading = false;
+          });
+        }
       } else {
         Logx.i(_TAG, 'no party guest requests found!');
         const SizedBox();
@@ -134,15 +138,15 @@ class _PartyScreenState extends State<PartyScreen> {
                     MaterialPageRoute(builder: (ctx) => BoxOfficeScreen()),
                   );
                 },
+                backgroundColor: Theme.of(context).primaryColor,
+                tooltip: 'box office',
+                elevation: 5,
+                splashColor: Colors.grey,
                 child: Icon(
                   Icons.play_arrow_outlined,
                   color: Theme.of(context).primaryColorDark,
                   size: 29,
                 ),
-                backgroundColor: Theme.of(context).primaryColor,
-                tooltip: 'box office',
-                elevation: 5,
-                splashColor: Colors.grey,
               )
             : const SizedBox(),
         floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
