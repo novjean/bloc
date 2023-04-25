@@ -496,7 +496,7 @@ class _PartyGuestAddEditManagePageState
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 32),
                 child: ButtonWidget(
-                  text: (widget.task == 'edit' || widget.task == 'manage')
+                  text: (widget.task == 'edit')
                       ? 'save changes'
                       : 'join list',
                   onClicked: () {
@@ -514,7 +514,7 @@ class _PartyGuestAddEditManagePageState
                   },
                 ),
               ),
-              widget.task == 'edit'
+              widget.task == 'edit' || widget.task == 'manage'
                   ? Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [

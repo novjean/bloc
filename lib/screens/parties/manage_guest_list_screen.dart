@@ -228,21 +228,16 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
                   }
                 }
 
-                if(sPartyName!='all'){
-                  guestListText += '${partyGuest.name},${partyGuest.surname},+${partyGuest.phone},${partyGuest.email},${partyGuest.gender},${partyGuest.guestStatus}\n';
+                if (timeNow > partyEndTime + DateTimeUtils.millisecondsDay) {
+                  // house cleaning
+                  FirestoreHelper.deletePartyGuest(partyGuest);
+                } else {
+                  if(sPartyName!='all'){
+                    guestListText += '${partyGuest.name},${partyGuest.surname},+${partyGuest.phone},${partyGuest.email},${partyGuest.gender},${partyGuest.guestStatus}\n';
+                  }
+
+                  partyGuestList.add(partyGuest);
                 }
-
-                partyGuestList.add(partyGuest);
-
-                // if (timeNow > partyEndTime + DateTimeUtils.millisecondsWeek) {
-                //   FirestoreHelper.deletePartyGuest(partyGuest);
-                // } else {
-                //   if(sPartyName!='all'){
-                //     guestListText += '${partyGuest.name},${partyGuest.surname},+${partyGuest.phone},${partyGuest.email},${partyGuest.gender},${partyGuest.guestStatus}\n';
-                //   }
-                //
-                //   partyGuestList.add(partyGuest);
-                // }
 
                 if (i == snapshot.data!.docs.length - 1) {
                   if(guestListText.isNotEmpty){
@@ -268,8 +263,6 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
   }
 
   _displayGuestList(BuildContext context, List<PartyGuest> partyGuestList) {
-
-
     return Expanded(
       child: ListView.builder(
           itemCount: partyGuestList.length,
