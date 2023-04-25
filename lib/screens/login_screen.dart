@@ -34,9 +34,10 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   static const String _TAG = 'LoginScreen';
 
-  TextEditingController _controller = TextEditingController();
+  final TextEditingController _controller = TextEditingController();
   String completePhoneNumber = '';
   bool isIOS = false;
+  int maxPhoneNumberLength = 10;
 
   @override
   void dispose() {
@@ -118,7 +119,7 @@ class _LoginScreenState extends State<LoginScreen> {
           } else {
             if (widget.shouldTriggerSkip) {
               _verifyUsingSkipPhone();
-              return SizedBox();
+              return const SizedBox();
             } else {
               return signInWidget();
             }
@@ -173,9 +174,15 @@ class _LoginScreenState extends State<LoginScreen> {
               onChanged: (phone) {
                 Logx.i(_TAG, phone.completeNumber);
                 completePhoneNumber = phone.completeNumber;
+
+                if(phone.number.length == maxPhoneNumberLength){
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => OTPScreen(completePhoneNumber)));
+                }
               },
               onCountryChanged: (country) {
                 Logx.i(_TAG, 'country changed to: ' + country.name);
+                maxPhoneNumberLength = country.maxLength;
               },
             ),
           ),
