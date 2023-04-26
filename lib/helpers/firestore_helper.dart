@@ -590,6 +590,16 @@ class FirestoreHelper {
         .get();
   }
 
+  static Future<QuerySnapshot<Map<String, dynamic>>> pullActiveGuestListParties(
+      int timeNow) {
+    return FirebaseFirestore.instance
+        .collection(FirestoreHelper.PARTIES)
+        .where('isActive', isEqualTo: true)
+        .where('isGuestListActive', isEqualTo: true)
+        .orderBy('endTime', descending: false)
+        .get();
+  }
+
   static getUpcomingGuestListParties(int timeNow) {
     return FirebaseFirestore.instance
         .collection(FirestoreHelper.PARTIES)
@@ -618,6 +628,14 @@ class FirestoreHelper {
         .orderBy('name', descending: false)
         .snapshots();
   }
+
+  static void deleteParty(Party party) {
+    FirebaseFirestore.instance
+        .collection(PARTIES)
+        .doc(party.id)
+        .delete();
+  }
+
 
   /** Party Guests **/
   static Future<QuerySnapshot<Map<String, dynamic>>> pullPartyGuest(

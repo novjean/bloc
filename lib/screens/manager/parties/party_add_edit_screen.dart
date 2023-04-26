@@ -18,6 +18,7 @@ import '../../../utils/string_utils.dart';
 import '../../../widgets/profile_widget.dart';
 import '../../../widgets/ui/button_widget.dart';
 import '../../../widgets/ui/textfield_widget.dart';
+import '../../../widgets/ui/toaster.dart';
 
 class PartyAddEditScreen extends StatefulWidget {
   Party party;
@@ -633,6 +634,20 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
                   Navigator.of(context).pop();
                 },
               ),
+              const SizedBox(height: 24),
+              ButtonWidget(
+                text: 'delete',
+                onClicked: () {
+                  if(widget.party.imageUrl.isNotEmpty){
+                    FirestorageHelper.deleteFile(widget.party.imageUrl);
+                  }
+
+                  FirestoreHelper.deleteParty(widget.party);
+                  Toaster.shortToast('deleted party ' + widget.party.name);
+                  Navigator.of(context).pop();
+                },
+              ),
+              const SizedBox(height: 5),
             ],
           );
   }

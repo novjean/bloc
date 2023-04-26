@@ -36,7 +36,7 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
   void initState() {
     int timeNow = Timestamp.now().millisecondsSinceEpoch;
 
-    FirestoreHelper.pullPartiesByEndTime(timeNow, true).then((res) {
+    FirestoreHelper.pullActiveGuestListParties(timeNow).then((res) {
       Logx.i(_TAG, "successfully pulled in parties");
 
       if (res.docs.isNotEmpty) {
@@ -228,16 +228,11 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
                   }
                 }
 
-                if (timeNow > partyEndTime + DateTimeUtils.millisecondsDay) {
-                  // house cleaning
-                  FirestoreHelper.deletePartyGuest(partyGuest);
-                } else {
-                  if(sPartyName!='all'){
-                    guestListText += '${partyGuest.name},${partyGuest.surname},+${partyGuest.phone},${partyGuest.email},${partyGuest.gender},${partyGuest.guestStatus}\n';
-                  }
-
-                  partyGuestList.add(partyGuest);
+                if(sPartyName!='all'){
+                  guestListText += '${partyGuest.name},${partyGuest.surname},+${partyGuest.phone},${partyGuest.email},${partyGuest.gender},${partyGuest.guestStatus}\n';
                 }
+
+                partyGuestList.add(partyGuest);
 
                 if (i == snapshot.data!.docs.length - 1) {
                   if(guestListText.isNotEmpty){

@@ -67,12 +67,10 @@ class _LoginScreenState extends State<LoginScreen> {
 
           Logx.i(_TAG, 'user snapshot received');
 
-
           if (userSnapshot.hasData) {
             Logx.i(_TAG, 'user snapshot has data');
 
             final user = FirebaseAuth.instance.currentUser;
-
 
             CollectionReference users = FirestoreHelper.getUsersCollection();
 
