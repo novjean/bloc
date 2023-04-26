@@ -27,6 +27,10 @@ class Party {
   final String guestListRules;
   final String clubRules;
 
+  final String challenge;
+  final bool isChallengeActive;
+  final String genre;
+
   final bool isTicketed;
   int ticketsSoldCount;
   double ticketsSalesTotal;
@@ -49,16 +53,19 @@ class Party {
     required this.ownerId,
     required this.isTBA,
     required this.isActive,
+    required this.isBigAct,
     required this.isGuestListActive,
     required this.guestListCount,
     required this.isEmailRequired,
     required this.guestListEndTime,
     required this.guestListRules,
     required this.clubRules,
+    required this.challenge,
+    required this.isChallengeActive,
+    required this.genre,
     required this.isTicketed,
     required this.ticketsSoldCount,
     required this.ticketsSalesTotal,
-    required this.isBigAct,
   });
 
   @override
@@ -82,16 +89,19 @@ class Party {
           ownerId == other.ownerId &&
           isTBA == other.isTBA &&
           isActive == other.isActive &&
+          isBigAct == other.isBigAct &&
           isGuestListActive == other.isGuestListActive &&
           guestListCount == other.guestListCount &&
           isEmailRequired == other.isEmailRequired &&
           guestListEndTime == other.guestListEndTime &&
           guestListRules == other.guestListRules &&
           clubRules == other.clubRules &&
+          challenge == other.challenge &&
+          isChallengeActive == other.isChallengeActive &&
+          genre == other.genre &&
           isTicketed == other.isTicketed &&
           ticketsSoldCount == other.ticketsSoldCount &&
-          ticketsSalesTotal == other.ticketsSalesTotal &&
-          isBigAct == other.isBigAct);
+          ticketsSalesTotal == other.ticketsSalesTotal);
 
   @override
   int get hashCode =>
@@ -111,16 +121,19 @@ class Party {
       ownerId.hashCode ^
       isTBA.hashCode ^
       isActive.hashCode ^
+      isBigAct.hashCode ^
       isGuestListActive.hashCode ^
       guestListCount.hashCode ^
       isEmailRequired.hashCode ^
       guestListEndTime.hashCode ^
       guestListRules.hashCode ^
       clubRules.hashCode ^
+      challenge.hashCode ^
+      isChallengeActive.hashCode ^
+      genre.hashCode ^
       isTicketed.hashCode ^
       ticketsSoldCount.hashCode ^
-      ticketsSalesTotal.hashCode ^
-      isBigAct.hashCode;
+      ticketsSalesTotal.hashCode;
 
   @override
   String toString() {
@@ -141,16 +154,19 @@ class Party {
         ' ownerId: $ownerId,' +
         ' isTBA: $isTBA,' +
         ' isActive: $isActive,' +
+        ' isBigAct: $isBigAct,' +
         ' isGuestListActive: $isGuestListActive,' +
         ' guestListCount: $guestListCount,' +
         ' isEmailRequired: $isEmailRequired,' +
         ' guestListEndTime: $guestListEndTime,' +
         ' guestListRules: $guestListRules,' +
         ' clubRules: $clubRules,' +
+        ' challenge: $challenge,' +
+        ' isChallengeActive: $isChallengeActive,' +
+        ' genre: $genre,' +
         ' isTicketed: $isTicketed,' +
         ' ticketsSoldCount: $ticketsSoldCount,' +
         ' ticketsSalesTotal: $ticketsSalesTotal,' +
-        ' isBigAct: $isBigAct,' +
         '}';
   }
 
@@ -171,16 +187,19 @@ class Party {
     String? ownerId,
     bool? isTBA,
     bool? isActive,
+    bool? isBigAct,
     bool? isGuestListActive,
     int? guestListCount,
     bool? isEmailRequired,
     int? guestListEndTime,
     String? guestListRules,
     String? clubRules,
+    String? challenge,
+    bool? isChallengeActive,
+    String? genre,
     bool? isTicketed,
     int? ticketsSoldCount,
     double? ticketsSalesTotal,
-    bool? isBigAct,
   }) {
     return Party(
       id: id ?? this.id,
@@ -199,16 +218,19 @@ class Party {
       ownerId: ownerId ?? this.ownerId,
       isTBA: isTBA ?? this.isTBA,
       isActive: isActive ?? this.isActive,
+      isBigAct: isBigAct ?? this.isBigAct,
       isGuestListActive: isGuestListActive ?? this.isGuestListActive,
       guestListCount: guestListCount ?? this.guestListCount,
       isEmailRequired: isEmailRequired ?? this.isEmailRequired,
       guestListEndTime: guestListEndTime ?? this.guestListEndTime,
       guestListRules: guestListRules ?? this.guestListRules,
       clubRules: clubRules ?? this.clubRules,
+      challenge: challenge ?? this.challenge,
+      isChallengeActive: isChallengeActive ?? this.isChallengeActive,
+      genre: genre ?? this.genre,
       isTicketed: isTicketed ?? this.isTicketed,
       ticketsSoldCount: ticketsSoldCount ?? this.ticketsSoldCount,
       ticketsSalesTotal: ticketsSalesTotal ?? this.ticketsSalesTotal,
-      isBigAct: isBigAct ?? this.isBigAct,
     );
   }
 
@@ -230,16 +252,19 @@ class Party {
       'ownerId': this.ownerId,
       'isTBA': this.isTBA,
       'isActive': this.isActive,
+      'isBigAct': this.isBigAct,
       'isGuestListActive': this.isGuestListActive,
       'guestListCount': this.guestListCount,
       'isEmailRequired': this.isEmailRequired,
       'guestListEndTime': this.guestListEndTime,
       'guestListRules': this.guestListRules,
       'clubRules': this.clubRules,
+      'challenge': this.challenge,
+      'isChallengeActive': this.isChallengeActive,
+      'genre': this.genre,
       'isTicketed': this.isTicketed,
       'ticketsSoldCount': this.ticketsSoldCount,
       'ticketsSalesTotal': this.ticketsSalesTotal,
-      'isBigAct': this.isBigAct,
     };
   }
 
@@ -261,16 +286,19 @@ class Party {
       ownerId: map['ownerId'] as String,
       isTBA: map['isTBA'] as bool,
       isActive: map['isActive'] as bool,
+      isBigAct: map['isBigAct'] as bool,
       isGuestListActive: map['isGuestListActive'] as bool,
       guestListCount: map['guestListCount'] as int,
       isEmailRequired: map['isEmailRequired'] as bool,
       guestListEndTime: map['guestListEndTime'] as int,
       guestListRules: map['guestListRules'] as String,
       clubRules: map['clubRules'] as String,
+      challenge: map['challenge'] as String,
+      isChallengeActive: map['isChallengeActive'] as bool,
+      genre: map['genre'] as String,
       isTicketed: map['isTicketed'] as bool,
       ticketsSoldCount: map['ticketsSoldCount'] as int,
       ticketsSalesTotal: map['ticketsSalesTotal'] as double,
-      isBigAct: map['isBigAct'] as bool,
     );
   }
 

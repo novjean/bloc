@@ -616,6 +616,29 @@ class Fresh {
       shouldPushParty = true;
     }
 
+    try {
+      party = party.copyWith(challenge: map['challenge'] as String);
+    } catch (e) {
+      Logx.em(
+          _TAG, 'party challenge not exist for party id: ' + party.id);
+      shouldPushParty = true;
+    }
+    try {
+      party = party.copyWith(isChallengeActive: map['isChallengeActive'] as bool);
+    } catch (e) {
+      Logx.em(
+          _TAG, 'party isChallengeActive not exist for party id: ' + party.id);
+      shouldPushParty = true;
+    }
+    try {
+      party = party.copyWith(genre: map['genre'] as String);
+    } catch (e) {
+      Logx.em(
+          _TAG, 'party genre not exist for party id: ' + party.id);
+      shouldPushParty = true;
+    }
+
+
     if (shouldPushParty &&
         shouldUpdate &&
         UserPreferences.myUser.clearanceLevel >= Constants.MANAGER_LEVEL) {
@@ -776,6 +799,25 @@ class Fresh {
           freshParty.copyWith(ticketsSalesTotal: party.ticketsSalesTotal);
     } catch (e) {
       Logx.em(_TAG, 'party ticketsSalesTotal not exist for party id: ' + party.id);
+    }
+
+    try{
+      freshParty =
+          freshParty.copyWith(challenge: party.challenge);
+    } catch (e) {
+      Logx.em(_TAG, 'party challenge not exist for party id: ' + party.id);
+    }
+    try{
+      freshParty =
+          freshParty.copyWith(isChallengeActive: party.isChallengeActive);
+    } catch (e) {
+      Logx.em(_TAG, 'party isChallengeActive not exist for party id: ' + party.id);
+    }
+    try{
+      freshParty =
+          freshParty.copyWith(genre: party.genre);
+    } catch (e) {
+      Logx.em(_TAG, 'party genre not exist for party id: ' + party.id);
     }
 
     return freshParty;

@@ -316,6 +316,16 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
                 onChanged: (eventName) =>
                 widget.party = widget.party.copyWith(eventName: eventName),
               ),
+
+              const SizedBox(height: 24),
+              TextFieldWidget(
+                label: 'genre',
+                text: widget.party.genre,
+                maxLength: 20,
+                onChanged: (genre) =>
+                widget.party = widget.party.copyWith(genre: genre),
+              ),
+
               const SizedBox(height: 24),
               TextFieldWidget(
                 label: 'description',
@@ -611,6 +621,33 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
                 },
               ),
 
+              const SizedBox(height: 24),
+              Row(
+                children: <Widget>[
+                  const Text(
+                    'challenge active : ',
+                    style: TextStyle(fontSize: 17.0),
+                  ), //Text
+                  const SizedBox(width: 10), //SizedBox
+                  Checkbox(
+                    value: widget.party.isChallengeActive,
+                    onChanged: (value) {
+                      setState(() {
+                        widget.party = widget.party.copyWith(isChallengeActive: value);
+                      });
+                    },
+                  ), //Checkbox
+                ], //<Widget>[]
+              ),
+              const SizedBox(height: 24),
+              TextFieldWidget(
+                label: 'challenge',
+                text: widget.party.challenge,
+                maxLines: 5,
+                onChanged: (value) {
+                  widget.party = widget.party.copyWith(challenge: value);
+                },
+              ),
 
               const SizedBox(height: 24),
               ButtonWidget(

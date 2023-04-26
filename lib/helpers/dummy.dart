@@ -141,7 +141,10 @@ class Dummy {
       isTicketed: false,
       ticketsSoldCount: 0,
       ticketsSalesTotal: 0,
-      isBigAct: true
+      isBigAct: true,
+      challenge: '',
+      genre: 'techno',
+      isChallengeActive: false
     );
 
     return dummyParty;
