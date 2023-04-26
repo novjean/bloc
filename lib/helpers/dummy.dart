@@ -47,7 +47,6 @@ class Dummy {
       cityId: cityId,
       isActive: false,
       pinCode: '',
-      imageUrl: '',
       imageUrls: []
     );
 

@@ -9,7 +9,6 @@ class Bloc {
   final String ownerId;
   final String createdAt;
   final bool isActive;
-  final String imageUrl;
   final List<String> imageUrls;
 
 //<editor-fold desc="Data Methods">
@@ -23,7 +22,6 @@ class Bloc {
     required this.ownerId,
     required this.createdAt,
     required this.isActive,
-    required this.imageUrl,
     required this.imageUrls,
   });
 
@@ -41,7 +39,6 @@ class Bloc {
           ownerId == other.ownerId &&
           createdAt == other.createdAt &&
           isActive == other.isActive &&
-          imageUrl == other.imageUrl &&
           imageUrls == other.imageUrls);
 
   @override
@@ -55,7 +52,6 @@ class Bloc {
       ownerId.hashCode ^
       createdAt.hashCode ^
       isActive.hashCode ^
-      imageUrl.hashCode ^
       imageUrls.hashCode;
 
   @override
@@ -70,7 +66,6 @@ class Bloc {
         ' ownerId: $ownerId,' +
         ' createdAt: $createdAt,' +
         ' isActive: $isActive,' +
-        ' imageUrl: $imageUrl,' +
         ' imageUrls: $imageUrls,' +
         '}';
   }
@@ -85,7 +80,6 @@ class Bloc {
     String? ownerId,
     String? createdAt,
     bool? isActive,
-    String? imageUrl,
     List<String>? imageUrls,
   }) {
     return Bloc(
@@ -98,7 +92,6 @@ class Bloc {
       ownerId: ownerId ?? this.ownerId,
       createdAt: createdAt ?? this.createdAt,
       isActive: isActive ?? this.isActive,
-      imageUrl: imageUrl ?? this.imageUrl,
       imageUrls: imageUrls ?? this.imageUrls,
     );
   }
@@ -114,7 +107,6 @@ class Bloc {
       'ownerId': this.ownerId,
       'createdAt': this.createdAt,
       'isActive': this.isActive,
-      'imageUrl': this.imageUrl,
       'imageUrls': this.imageUrls,
     };
   }
@@ -130,7 +122,6 @@ class Bloc {
       ownerId: map['ownerId'] as String,
       createdAt: map['createdAt'] as String,
       isActive: map['isActive'] as bool,
-      imageUrl: map['imageUrl'] as String,
       imageUrls: map['imageUrls'] as List<String>,
     );
   }

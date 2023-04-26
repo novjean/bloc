@@ -32,22 +32,18 @@ class _BlocAddEditScreenState extends State<BlocAddEditScreen> {
 
   List<String> imageUrls = [];
   List<String> oldImageUrls = [];
-  int indexImageUrl = 0;
 
   @override
   void initState() {
     super.initState();
 
-    if (widget.bloc.imageUrl.isNotEmpty) {
-      imageUrls.add(widget.bloc.imageUrl);
-      indexImageUrl++;
-    }
+    imageUrls.addAll(widget.bloc.imageUrls);
   }
 
   @override
   Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(
-          title: Text('bloc | ' + widget.task),
+          title: Text('bloc | ${widget.task}'),
         ),
         body: _buildBody(context),
       );
@@ -58,54 +54,11 @@ class _BlocAddEditScreenState extends State<BlocAddEditScreen> {
       physics: const BouncingScrollPhysics(),
       children: [
         const SizedBox(height: 15),
-        // SizedBox(
-        //   height: 150,
-        //   child: ListView(
-        //     scrollDirection: Axis.horizontal,
-        //     children: [
-        //       Padding(
-        //         padding: const EdgeInsets.symmetric(horizontal: 5.0),
-        //         child: ProfileWidget(
-        //           imagePath:
-        //               imagePath.isEmpty ? widget.bloc.imageUrl : imagePath,
-        //           isEdit: true,
-        //           onClicked: () async {
-        //             final image = await ImagePicker().pickImage(
-        //                 source: ImageSource.gallery,
-        //                 imageQuality: 100,
-        //                 maxHeight: 768,
-        //                 maxWidth: 1024);
-        //             if (image == null) return;
-        //
-        //             final directory = await getApplicationDocumentsDirectory();
-        //             final name = basename(image.path);
-        //             final imageFile = File('${directory.path}/$name');
-        //             final newImage =
-        //                 await File(image.path).copy(imageFile.path);
-        //
-        //             oldImageUrl = widget.bloc.imageUrl;
-        //             newImageUrl = await FirestorageHelper.uploadFile(
-        //                 FirestorageHelper.BLOCS_IMAGES,
-        //                 StringUtils.getRandomString(28),
-        //                 newImage);
-        //
-        //
-        //             setState(() {
-        //               imagePath = imageFile.path;
-        //               // isPhotoChanged = true;
-        //             });
-        //           },
-        //         ),
-        //       ),
-        //     ],
-        //   ),
-        // ),
-        // const SizedBox(height: 24),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(imageUrls.length.toString() + ' photos : '),
-            Spacer(),
+            const Spacer(),
             ButtonWidget(
               text: 'pick file',
               onClicked: () async {
@@ -200,7 +153,7 @@ class _BlocAddEditScreenState extends State<BlocAddEditScreen> {
             SizedBox(
               width: 0,
             ), //SizedBox
-            Text(
+            const Text(
               'active : ',
               style: TextStyle(fontSize: 17.0),
             ), //Text
@@ -219,12 +172,6 @@ class _BlocAddEditScreenState extends State<BlocAddEditScreen> {
         ButtonWidget(
           text: 'save',
           onClicked: () {
-            // if (isPhotoChanged) {
-            //   widget.bloc = widget.bloc.copyWith(imageUrl: newImageUrl);
-            //   if (oldImageUrl.isNotEmpty) {
-            //     FirestorageHelper.deleteFile(oldImageUrl);
-            //   }
-            // }
             FirestoreHelper.pushBloc(widget.bloc);
             Navigator.of(context).pop();
           },
@@ -235,7 +182,7 @@ class _BlocAddEditScreenState extends State<BlocAddEditScreen> {
 
   Widget photosListDialog() {
     return SingleChildScrollView(
-      child: Container(
+      child: SizedBox(
         height: 300.0, // Change as per your requirement
         width: 300.0, // Change as per your requirement
         child: ListView.builder(

@@ -144,7 +144,7 @@ class Fresh {
       Map<String, dynamic> map, bool shouldUpdate) {
     Bloc bloc = Dummy.getDummyBloc('');
 
-    bool shouldPush = false;
+    bool shouldPush = true;
 
     try {
       bloc = bloc.copyWith(id: map['id'] as String);
@@ -200,17 +200,11 @@ class Fresh {
       shouldPush = true;
     }
     try {
-      bloc = bloc.copyWith(imageUrl: map['imageUrl'] as String);
-    } catch (e) {
-      Logx.em(_TAG, 'bloc imageUrl not exist for bloc id: ' + bloc.id);
-      shouldPush = true;
-    }
-    try {
       bloc = bloc.copyWith(imageUrls: List<String>.from(map['imageUrls']));
     } catch (e) {
       Logx.em(_TAG, 'bloc imageUrls not exist for bloc id: ' + bloc.id);
-      List<String> existingImageUrl = [bloc.imageUrl];
-      bloc = bloc.copyWith(imageUrls: existingImageUrl);
+      List<String> temp = [];
+      bloc = bloc.copyWith(imageUrls: temp);
       shouldPush = true;
     }
 
@@ -271,11 +265,6 @@ class Fresh {
       freshBloc = freshBloc.copyWith(isActive: bloc.isActive);
     } catch (e) {
       Logx.em(_TAG, 'bloc isActive not exist for bloc id: ' + bloc.id);
-    }
-    try {
-      freshBloc = freshBloc.copyWith(imageUrl: bloc.imageUrl);
-    } catch (e) {
-      Logx.em(_TAG, 'bloc imageUrl not exist for bloc id: ' + bloc.id);
     }
     try {
       freshBloc = freshBloc.copyWith(imageUrls: bloc.imageUrls);
