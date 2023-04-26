@@ -142,7 +142,7 @@ class Dummy {
       ticketsSoldCount: 0,
       ticketsSalesTotal: 0,
       isBigAct: true,
-      challenge: '',
+      challenge: Constants.challenge,
       genre: 'techno',
       isChallengeActive: false
     );

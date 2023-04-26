@@ -18,6 +18,7 @@ import '../../helpers/fresh.dart';
 import '../../main.dart';
 import '../../utils/constants.dart';
 import '../../utils/logx.dart';
+import '../../utils/network_utils.dart';
 import '../../utils/string_utils.dart';
 import '../../widgets/ui/button_widget.dart';
 import '../../widgets/ui/dark_textfield_widget.dart';
@@ -660,10 +661,15 @@ class _PartyGuestAddEditManagePageState
                 }
 
                 Navigator.of(ctx).pop();
-                Navigator.of(context).pop();
 
-                Navigator.of(context).pushReplacement(MaterialPageRoute(
-                    builder: (context) => MainScreen(user: bloc_user)));
+                if(widget.party.isChallengeActive){
+                  showChallengeDialog(context);
+                } else {
+                  Navigator.of(context).pop();
+
+                  Navigator.of(context).pushReplacement(MaterialPageRoute(
+                      builder: (context) => MainScreen(user: bloc_user)));
+                }
               },
             ),
           ],
@@ -671,6 +677,77 @@ class _PartyGuestAddEditManagePageState
       },
     );
   }
+
+  showChallengeDialog(BuildContext context) {
+    return showDialog(
+      context: context,
+      builder: (BuildContext ctx) {
+        return AlertDialog(
+          contentPadding: const EdgeInsets.all(16.0),
+          content: SizedBox(
+            height: 300,
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 20),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Text(
+                        '#blocCommunity ' + ' | ' + widget.party.name,
+                        style: const TextStyle(fontSize: 18),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(
+                  height: 250,
+                  width: 300,
+                  child: SingleChildScrollView(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        const Text('bloc needs you:\n'),
+                        Text(widget.party.challenge.toLowerCase()),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              child: const Text('close'),
+              onPressed: () {
+                Navigator.of(ctx).pop();
+                Navigator.of(context).pop();
+
+                Navigator.of(context).pushReplacement(MaterialPageRoute(
+                    builder: (context) => MainScreen(user: bloc_user)));
+              },
+            ),
+            TextButton(
+              child: const Text("support us"),
+              onPressed: () {
+                Navigator.of(ctx).pop();
+                Navigator.of(context).pop();
+
+                Navigator.of(context).pushReplacement(MaterialPageRoute(
+                builder: (context) => MainScreen(user: bloc_user)));
+
+                final uri = Uri.parse('https://www.instagram.com/bloc.india/');
+                NetworkUtils.launchInBrowser(uri);
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
 
   void _verifyPhone() async {
     Logx.i(_TAG, '_verifyPhone: registering ' + completePhoneNumber.toString());
