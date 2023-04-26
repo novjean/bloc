@@ -34,20 +34,20 @@ class BlocDetailScreen extends StatelessWidget {
                     )),
           );
         },
-        child: Icon(
-          Icons.add,
-          color: Colors.black,
-          size: 29,
-        ),
         backgroundColor: Theme.of(context).primaryColor,
         tooltip: 'new bloc service',
         elevation: 5,
         splashColor: Colors.grey,
+        child: const Icon(
+          Icons.add,
+          color: Colors.black,
+          size: 29,
+        ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       body: ListView(
         children: [
-          CoverPhoto(bloc.name, bloc.imageUrl),
+          CoverPhoto(bloc.name, bloc.imageUrls.first),
           const SizedBox(height: 5.0),
           buildBlocs(context),
           const SizedBox(height: 5.0),
@@ -64,7 +64,7 @@ class BlocDetailScreen extends StatelessWidget {
         stream: FirestoreHelper.getBlocServices(bloc.id),
         builder: (ctx, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return LoadingWidget();
+            return const LoadingWidget();
           }
           return GridView(
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(

@@ -15,6 +15,22 @@ class BlocItem extends StatelessWidget {
     return ClipRRect(
       borderRadius: BorderRadius.circular(10),
       child: GridTile(
+        footer: GridTileBar(
+          backgroundColor: Colors.black87,
+          title: Text(
+            bloc.name,
+            textAlign: TextAlign.center,
+          ),
+          trailing: IconButton(
+            icon: const Icon(Icons.edit),
+            onPressed: () {
+              Navigator.of(context).push(
+                  MaterialPageRoute(builder: (ctx) => BlocAddEditScreen(bloc: bloc, task: 'Edit',)),
+              );
+            },
+            color: Theme.of(context).primaryColor,
+          ),
+        ),
         child: GestureDetector(
           onTap: () {
             Navigator.of(context).push(
@@ -28,27 +44,11 @@ class BlocItem extends StatelessWidget {
             child: FadeInImage(
               placeholder:
                   const AssetImage('assets/images/product-placeholder.png'),
-              image: bloc.imageUrl != "url"
-                  ? NetworkImage(bloc.imageUrl)
-                  : NetworkImage("assets/images/product-placeholder.png"),
+              image: bloc.imageUrls.first != "url"
+                  ? NetworkImage(bloc.imageUrls.first)
+                  : const NetworkImage("assets/images/product-placeholder.png"),
               fit: BoxFit.cover,
             ),
-          ),
-        ),
-        footer: GridTileBar(
-          backgroundColor: Colors.black87,
-          title: Text(
-            bloc.name,
-            textAlign: TextAlign.center,
-          ),
-          trailing: IconButton(
-            icon: Icon(Icons.edit),
-            onPressed: () {
-              Navigator.of(context).push(
-                  MaterialPageRoute(builder: (ctx) => BlocAddEditScreen(bloc: bloc, task: 'Edit',)),
-              );
-            },
-            color: Theme.of(context).primaryColor,
           ),
         ),
       ),
