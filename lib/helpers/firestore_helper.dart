@@ -9,6 +9,7 @@ import 'package:bloc/db/entity/offer.dart';
 import 'package:bloc/db/entity/order_bloc.dart';
 import 'package:bloc/db/entity/party.dart';
 import 'package:bloc/db/entity/party_guest.dart';
+import 'package:bloc/db/entity/reservation.dart';
 import 'package:bloc/db/entity/seat.dart';
 import 'package:bloc/db/entity/ticket.dart';
 import 'package:bloc/db/entity/user.dart' as blocUser;
@@ -36,7 +37,6 @@ class FirestoreHelper {
 
   static String ADS = 'ads';
   static String BLOCS = 'blocs';
-  static String BOOKINGS = 'bookings';
   static String CHATS = 'chats';
   static String CAPTAIN_SERVICES = 'captain_services';
   static String CATEGORIES = 'categories';
@@ -52,6 +52,7 @@ class FirestoreHelper {
   static String PARTY_GUESTS = 'party_guests';
   static String PRODUCTS = 'products';
   static String BLOC_SERVICES = 'services';
+  static String RESERVATIONS = 'reservations';
   static String SEATS = 'seats';
   static String SOS = 'sos';
   static String TABLES = 'tables';
@@ -509,7 +510,7 @@ class FirestoreHelper {
     FirebaseFirestore.instance.collection(OFFERS).doc(docId).delete();
   }
 
-  /** Order **/
+  /** order **/
   static void pushOrder(OrderBloc order) async {
     try {
       await FirebaseFirestore.instance
@@ -525,7 +526,7 @@ class FirestoreHelper {
     }
   }
 
-  /** Party **/
+  /** party **/
   static void pushParty(Party party) async {
     try {
       await FirebaseFirestore.instance
@@ -637,7 +638,7 @@ class FirestoreHelper {
   }
 
 
-  /** Party Guests **/
+  /** party guests **/
   static Future<QuerySnapshot<Map<String, dynamic>>> pullPartyGuest(
       String partyGuestId) {
     return FirebaseFirestore.instance
@@ -718,7 +719,7 @@ class FirestoreHelper {
         .delete();
   }
 
-  /** Products **/
+  /** products **/
   static void pushProduct(Product product) async {
     try {
       await FirebaseFirestore.instance
@@ -836,7 +837,23 @@ class FirestoreHelper {
     FirebaseFirestore.instance.collection(PRODUCTS).doc(productId).delete();
   }
 
-  /** Seats **/
+  /** reservations **/
+  static void pushReservation(Reservation reservation) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection(RESERVATIONS)
+          .doc(reservation.id)
+          .set(reservation.toMap());
+    } on PlatformException catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } on Exception catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } catch (e) {
+      logger.e(e);
+    }
+  }
+
+  /** seats **/
   static Future<QuerySnapshot<Map<String, dynamic>>> pullSeats(String tableId) {
     return FirebaseFirestore.instance
         .collection(FirestoreHelper.SEATS)
@@ -920,7 +937,7 @@ class FirestoreHelper {
     FirebaseFirestore.instance.collection(SEATS).doc(seat.id).delete();
   }
 
-  /** SOS **/
+  /** sos **/
   static void sendSOSMessage(String? token, String name, int phoneNumber,
       int tableNumber, String tableId, String seatId) async {
     int timeMilliSec = Timestamp.now().millisecondsSinceEpoch;
@@ -938,7 +955,7 @@ class FirestoreHelper {
     FirebaseFirestore.instance.collection(SOS).doc(sos.id).set(sos.toMap());
   }
 
-  /** Tables **/
+  /** tables **/
   static Future<QuerySnapshot<Map<String, dynamic>>> pullSeatTable(
       String tableId) {
     return FirebaseFirestore.instance
@@ -1286,5 +1303,7 @@ class FirestoreHelper {
         .orderBy('level', descending: false)
         .get();
   }
+
+
 
 }

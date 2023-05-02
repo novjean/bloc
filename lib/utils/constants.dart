@@ -4,6 +4,7 @@ const String kAppTitle = 'bloc';
 
 class Constants {
   //Colors for theme
+  static const Color primary = Color.fromRGBO(211, 167, 130, 1);
   static Color lightPrimary = Color(0xfffcfcff);
   static Color darkPrimary = Colors.black;
   static Color lightAccent = Color(0xff5563ff);

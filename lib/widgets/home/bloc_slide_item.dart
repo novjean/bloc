@@ -1,4 +1,5 @@
 import 'package:bloc/db/entity/bloc_service.dart';
+import 'package:bloc/helpers/dummy.dart';
 import 'package:bloc/helpers/firestore_helper.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -6,6 +7,7 @@ import 'package:flutter/material.dart';
 
 import '../../db/entity/bloc.dart';
 import '../../screens/bloc/bloc_menu_screen.dart';
+import '../../screens/user/reservation_add_edit_screen.dart';
 import '../../utils/logx.dart';
 
 class BlocSlideItem extends StatefulWidget {
@@ -29,7 +31,8 @@ class _BlocSlideItemState extends State<BlocSlideItem> {
   void initState() {
     FirestoreHelper.pullBlocService(widget.bloc.id).then((res) {
       if (res.docs.isNotEmpty) {
-        Logx.i(_TAG, "successfully pulled in bloc service for id " + widget.bloc.id);
+        Logx.i(_TAG,
+            "successfully pulled in bloc service for id " + widget.bloc.id);
 
         List<BlocService> blocServices = [];
         for (int i = 0; i < res.docs.length; i++) {
@@ -39,7 +42,7 @@ class _BlocSlideItemState extends State<BlocSlideItem> {
           blocServices.add(blocService);
         }
 
-        if(mounted) {
+        if (mounted) {
           setState(() {
             mBlocService = blocServices.first;
             _isBlocServiceLoading = false;
@@ -47,7 +50,6 @@ class _BlocSlideItemState extends State<BlocSlideItem> {
         } else {
           Logx.em(_TAG, 'state is not mounted');
         }
-
       } else {
         Logx.em(_TAG, 'no bloc service found for id ' + widget.bloc.id);
         setState(() {
@@ -93,17 +95,22 @@ class _BlocSlideItemState extends State<BlocSlideItem> {
                                 enableInfiniteScroll: true,
                                 autoPlay: true,
                                 autoPlayInterval: const Duration(seconds: 2),
-                                autoPlayAnimationDuration: const Duration(milliseconds: 800),
+                                autoPlayAnimationDuration:
+                                    const Duration(milliseconds: 800),
                                 enlargeCenterPage: true,
-                                scrollDirection: Axis.vertical,
-                                aspectRatio: 2.0,
+                                scrollDirection: Axis.horizontal,
+                                // aspectRatio: 2.0,
                               ),
                               items: widget.bloc.imageUrls
                                   .map((item) => Container(
-                                child: Center(
-                                    child:
-                                    Image.network(item, fit: BoxFit.fitWidth, height: 400, width:  MediaQuery.of(context).size.width)),
-                              ))
+                                        child: Center(
+                                            child: Image.network(item,
+                                                fit: BoxFit.fitWidth,
+                                                height: 400,
+                                                width: MediaQuery.of(context)
+                                                    .size
+                                                    .width)),
+                                      ))
                                   .toList(),
                             )),
                       ),
@@ -111,7 +118,8 @@ class _BlocSlideItemState extends State<BlocSlideItem> {
                       Flexible(
                         flex: 1,
                         child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 5),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 15.0, vertical: 5),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.end,
                             crossAxisAlignment: CrossAxisAlignment.end,
@@ -124,7 +132,8 @@ class _BlocSlideItemState extends State<BlocSlideItem> {
                                     onPressed: () {
                                       Navigator.of(context).push(
                                         MaterialPageRoute(
-                                            builder: (ctx) => BlocMenuScreen(blocService: mBlocService)),
+                                            builder: (ctx) => BlocMenuScreen(
+                                                blocService: mBlocService)),
                                       );
                                     },
                                     icon: const Icon(
@@ -135,17 +144,27 @@ class _BlocSlideItemState extends State<BlocSlideItem> {
                                   ),
                                 ),
                               ),
-                              // SizedBox(
-                              //   height: 50,
-                              //   child: ElevatedButton.icon(
-                              //     onPressed: () {},
-                              //     icon: const Icon(
-                              //       Icons.table_restaurant,
-                              //       size: 24.0,
-                              //     ),
-                              //     label: const Text('reserve'), // <-- Text
-                              //   ),
-                              // ),
+                              SizedBox(
+                                height: 50,
+                                child: ElevatedButton.icon(
+                                  onPressed: () {
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                          builder: (ctx) =>
+                                              ReservationAddEditScreen(
+                                                  reservation:
+                                                      Dummy.getDummyReservation(
+                                                          mBlocService.id),
+                                                  task: 'add')),
+                                    );
+                                  },
+                                  icon: const Icon(
+                                    Icons.table_restaurant,
+                                    size: 24.0,
+                                  ),
+                                  label: const Text('reserve'), // <-- Text
+                                ),
+                              ),
                             ],
                           ),
                         ),

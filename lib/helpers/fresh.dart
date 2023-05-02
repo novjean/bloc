@@ -5,6 +5,7 @@ import '../db/entity/bloc.dart';
 import '../db/entity/category.dart';
 import '../db/entity/party.dart';
 import '../db/entity/product.dart';
+import '../db/entity/reservation.dart';
 import '../db/entity/ticket.dart';
 import '../db/entity/user.dart';
 import '../db/shared_preferences/user_preferences.dart';
@@ -1297,6 +1298,116 @@ class Fresh {
     }
 
     return freshProduct;
+  }
+  
+  /** reservation **/
+  static Reservation freshReservationMap(Map<String, dynamic> map, bool shouldUpdate) {
+    Reservation reservation = Dummy.getDummyReservation(Constants.blocServiceId);
+    bool shouldPush = false;
+
+    try {
+      reservation = reservation.copyWith(id: map['id'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'reservation id not exist');
+    }
+    try {
+      reservation = reservation.copyWith(name: map['name'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'reservation name not exist for reservation id: ' + reservation.id);
+      shouldPush = true;
+    }
+    try {
+      reservation = reservation.copyWith(blocServiceId: map['blocServiceId'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'reservation blocServiceId not exist for reservation id: ' + reservation.id);
+      shouldPush = true;
+    }
+    try {
+      reservation = reservation.copyWith(phone: map['phone'] as int);
+    } catch (e) {
+      Logx.em(_TAG, 'reservation phone not exist for reservation id: ' + reservation.id);
+      shouldPush = true;
+    }
+    try {
+      reservation = reservation.copyWith(guestsCount: map['guestsCount'] as int);
+    } catch (e) {
+      Logx.em(_TAG, 'reservation guestsCount not exist for reservation id: ' + reservation.id);
+      shouldPush = true;
+    }
+    try {
+      reservation = reservation.copyWith(createdAt: map['createdAt'] as int);
+    } catch (e) {
+      Logx.em(_TAG, 'reservation createdAt not exist for reservation id: ' + reservation.id);
+      shouldPush = true;
+    }
+    try {
+      reservation = reservation.copyWith(arrivalDate: map['arrivalDate'] as int);
+    } catch (e) {
+      Logx.em(_TAG, 'reservation arrivalDate not exist for reservation id: ' + reservation.id);
+      shouldPush = true;
+    }
+    try {
+      reservation = reservation.copyWith(arrivalTime: map['arrivalTime'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'reservation arrivalTime not exist for reservation id: ' + reservation.id);
+      shouldPush = true;
+    }
+
+    if (shouldPush &&
+        shouldUpdate &&
+        UserPreferences.myUser.clearanceLevel >= Constants.MANAGER_LEVEL) {
+      Logx.i(_TAG, 'updating reservation ' + reservation.id);
+      FirestoreHelper.pushReservation(reservation);
+    }
+
+    return reservation;
+  }
+
+  static Reservation freshReservation(Reservation reservation) {
+    Reservation freshReservation = Dummy.getDummyReservation(Constants.blocServiceId);
+
+    try {
+      freshReservation = freshReservation.copyWith(id: reservation.id);
+    } catch (e) {
+      Logx.em(_TAG, 'reservation id not exist');
+    }
+    try {
+      freshReservation = freshReservation.copyWith(name: reservation.name);
+    } catch (e) {
+      Logx.em(_TAG, 'reservation name not exist for reservation id: ' + reservation.id);
+    }
+    try {
+      freshReservation = freshReservation.copyWith(blocServiceId: reservation.blocServiceId);
+    } catch (e) {
+      Logx.em(_TAG, 'reservation blocServiceId not exist for reservation id: ' + reservation.id);
+    }
+    try {
+      freshReservation = freshReservation.copyWith(phone: reservation.phone);
+    } catch (e) {
+      Logx.em(_TAG, 'reservation phone not exist for reservation id: ' + reservation.id);
+    }
+    try {
+      freshReservation = freshReservation.copyWith(guestsCount: reservation.guestsCount);
+    } catch (e) {
+      Logx.em(_TAG, 'reservation guestsCount not exist for reservation id: ' + reservation.id);
+    }
+    try {
+      freshReservation = freshReservation.copyWith(createdAt: reservation.createdAt);
+    } catch (e) {
+      Logx.em(_TAG, 'reservation createdAt not exist for reservation id: ' + reservation.id);
+    }
+    try {
+      freshReservation = freshReservation.copyWith(arrivalDate: reservation.arrivalDate);
+    } catch (e) {
+      Logx.em(_TAG, 'reservation arrivalDate not exist for reservation id: ' + reservation.id);
+    }
+    try {
+      freshReservation = freshReservation.copyWith(arrivalTime: reservation.arrivalTime);
+    } catch (e) {
+      Logx.em(_TAG, 'reservation arrivalTime not exist for reservation id: ' + reservation.id);
+    }
+
+    return freshReservation;
   }
 
   /** ticket **/

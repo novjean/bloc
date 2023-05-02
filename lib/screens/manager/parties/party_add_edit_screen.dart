@@ -59,12 +59,14 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
   late String sGuestCount;
   List<String> guestCounts = [];
 
-  String _sPartyType = 'artist';
+  late String _sPartyType;
   List<String> partyTypes = ['artist', 'event'];
 
   @override
   void initState() {
     super.initState();
+
+    _sPartyType = widget.party.type;
 
     FirestoreHelper.pullAllBlocServices().then((res) {
       Logx.i(_TAG, "successfully pulled in all bloc services ");
@@ -224,7 +226,6 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
         ],
       ),
     );
-
   }
 
   _buildBody(BuildContext context) {
@@ -474,7 +475,7 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
               const SizedBox(height: 24),
               Row(
                 children: <Widget>[
-                  Text(
+                  const Text(
                     'ticketed event : ',
                     style: TextStyle(fontSize: 17.0),
                   ), //Text

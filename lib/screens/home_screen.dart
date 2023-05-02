@@ -1,6 +1,6 @@
 import 'package:bloc/db/entity/user.dart';
 import 'package:bloc/main.dart';
-import 'package:bloc/screens/user/book_table_screen.dart';
+import 'package:bloc/screens/user/reservation_add_edit_screen.dart';
 import 'package:bloc/utils/constants.dart';
 import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -457,24 +457,24 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   /** Non functional **/
-  buildBookTableRow(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        // NumbersWidget(),
-        ButtonWidget(
-            text: 'book a table',
-            onClicked: () async {
-              await Navigator.of(context).push(
-                MaterialPageRoute(
-                    builder: (context) => BookTableScreen(
-                          blocs: mBlocs,
-                        )),
-              );
-            }),
-      ],
-    );
-  }
+  // buildBookTableRow(BuildContext context) {
+  //   return Row(
+  //     mainAxisAlignment: MainAxisAlignment.center,
+  //     children: <Widget>[
+  //       // NumbersWidget(),
+  //       ButtonWidget(
+  //           text: 'book a table',
+  //           onClicked: () async {
+  //             await Navigator.of(context).push(
+  //               MaterialPageRoute(
+  //                   builder: (context) => ReservationAddEditScreen(
+  //                          reservation: null, task: 'add',
+  //                       )),
+  //             );
+  //           }),
+  //     ],
+  //   );
+  // }
 
   /** Unimplemented **/
   buildRestaurantRow(String restaurant, BuildContext context) {

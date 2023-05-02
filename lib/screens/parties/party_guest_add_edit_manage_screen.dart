@@ -71,7 +71,7 @@ class _PartyGuestAddEditManagePageState
 
   bool isLoggedIn = false;
   String _verificationCode = '';
-  TextEditingController _controller = TextEditingController();
+  final TextEditingController _controller = TextEditingController();
   String completePhoneNumber = '';
   final pinController = TextEditingController();
   final focusNode = FocusNode();

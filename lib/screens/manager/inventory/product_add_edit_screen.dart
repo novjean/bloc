@@ -452,11 +452,8 @@ class _ProductAddEditScreenState extends State<ProductAddEditScreen> {
               ),
               const SizedBox(height: 24),
               Row(
-                children: <Widget>[
-                  SizedBox(
-                    width: 0,
-                  ), //SizedBox
-                  Text(
+                children: <Widget>[ //SizedBox
+                  const Text(
                     'available : ',
                     style: TextStyle(fontSize: 17.0),
                   ), //Text

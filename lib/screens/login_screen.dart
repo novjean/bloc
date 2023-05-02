@@ -117,7 +117,7 @@ class _LoginScreenState extends State<LoginScreen> {
           } else {
             if (widget.shouldTriggerSkip) {
               _verifyUsingSkipPhone();
-              return const SizedBox();
+              return LoadingWidget();
             } else {
               return signInWidget();
             }
