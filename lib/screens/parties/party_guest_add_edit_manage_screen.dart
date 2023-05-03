@@ -570,7 +570,7 @@ class _PartyGuestAddEditManagePageState
     return true;
   }
 
-  showRulesConfirmationDialog(BuildContext context, bool shouldRegisterUser) {
+  showRulesConfirmationDialog(BuildContext context, bool isNewUser) {
     return showDialog(
       context: context,
       builder: (BuildContext ctx) {
@@ -622,7 +622,7 @@ class _PartyGuestAddEditManagePageState
             TextButton(
               child: const Text("confirm"),
               onPressed: () {
-                if (shouldRegisterUser) {
+                if (isNewUser) {
                   PartyGuest freshPartyGuest =
                       Fresh.freshPartyGuest(widget.partyGuest);
                   FirestoreHelper.pushPartyGuest(freshPartyGuest);

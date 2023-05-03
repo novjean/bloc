@@ -21,6 +21,7 @@ import '../../utils/string_utils.dart';
 import '../../widgets/ui/button_widget.dart';
 import '../../widgets/ui/dark_textfield_widget.dart';
 import '../../widgets/ui/toaster.dart';
+import '../main_screen.dart';
 
 class ReservationAddEditScreen extends StatefulWidget {
   Reservation reservation;
@@ -58,9 +59,9 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
   void initState() {
     if(!UserPreferences.isUserLoggedIn()){
       bloc_user = Dummy.getDummyUser();
+    } else {
+      bloc_user = UserPreferences.myUser;
     }
-
-
 
     for (int i = 1; i <= 15; i++) {
       guestCounts.add(i.toString());
@@ -293,8 +294,7 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
           text: 'reserve',
           onClicked: () {
             if(UserPreferences.isUserLoggedIn()){
-              FirestoreHelper.pushReservation(widget.reservation);
-              Navigator.of(context).pop();
+              showConfirmationDialog(context, false);
             } else {
               _verifyPhone();
             }
@@ -527,9 +527,10 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
                           Logx.i(_TAG, 'registered user ' + bloc_user.id);
 
                           UserPreferences.setUser(bloc_user);
-                          widget.reservation.customerId = bloc_user.id;
+                          widget.reservation = widget.reservation
+                              .copyWith(customerId: bloc_user.id);
 
-                          showRulesConfirmationDialog(context, true);
+                          showConfirmationDialog(context, true);
                         } else {
                           Logx.i(_TAG,
                               'user is a bloc member. navigating to main...');
@@ -549,9 +550,10 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
                           UserPreferences.setUser(user);
                           bloc_user = user;
 
-                          widget.reservation.customerId = bloc_user.id;
+                          widget.reservation = widget.reservation
+                              .copyWith(customerId: bloc_user.id);
 
-                          showRulesConfirmationDialog(context, false);
+                          showConfirmationDialog(context, false);
                         }
                       });
                     }
@@ -603,6 +605,118 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  showConfirmationDialog(BuildContext context, bool isNewUser) {
+    return showDialog(
+      context: context,
+      builder: (BuildContext ctx) {
+        return AlertDialog(
+          contentPadding: const EdgeInsets.all(16.0),
+          content: SizedBox(
+            height: 250,
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 20),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Text('reservation confirmation ',
+                        style: const TextStyle(fontSize: 18),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(
+                  height: 200,
+                  width: 300,
+                  child: SingleChildScrollView(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Text('your table for the party of ${widget.reservation.guestsCount} '
+                            'on the ${DateTimeUtils.getFormattedDate2(widget.reservation.arrivalDate)} will be reviewed and approved soon. '
+                            '\n\nyour reservation confirmation status shall can be found at the box office. '
+                            'also, our team may reach out to you for any further information. thank you.'),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              child: const Text('close'),
+              onPressed: () {
+                Navigator.of(ctx).pop();
+              },
+            ),
+            TextButton(
+              child: const Text("confirm"),
+              onPressed: () {
+                if (isNewUser) {
+                  Reservation freshReservation = Fresh.freshReservation(widget.reservation);
+                  FirestoreHelper.pushReservation(freshReservation);
+                } else {
+                  Reservation freshReservation = Fresh.freshReservation(widget.reservation);
+                  FirestoreHelper.pushReservation(freshReservation);
+
+                  //todo: need to implement this soon
+                  // if (hasUserChanged) {
+                  //   blocUser.User freshUser = Fresh.freshUser(bloc_user);
+                  //   if(freshUser.id == UserPreferences.myUser.id){
+                  //     UserPreferences.setUser(freshUser);
+                  //   }
+                  //   FirestoreHelper.pushUser(freshUser);
+                  // }
+
+                  // need to see if the user already has a guest request
+                //   widget.partyGuest.guestId = bloc_user.id;
+                //
+                //   FirestoreHelper.pullPartyGuestByUser(
+                //       widget.partyGuest.guestId, widget.partyGuest.partyId)
+                //       .then((res) {
+                //     Logx.i(_TAG, 'pulled in party guest by user');
+                //
+                //     if (res.docs.isEmpty || widget.task == 'edit'  || widget.task == 'manage') {
+                //       // user has not requested for party guest list, approve
+                //       PartyGuest freshPartyGuest =
+                //       Fresh.freshPartyGuest(widget.partyGuest);
+                //       FirestoreHelper.pushPartyGuest(freshPartyGuest);
+                //
+                //       Logx.i(_TAG, 'guest list request in box office');
+                //       Toaster.longToast('guest list request in box office');
+                //     } else {
+                //       //already requested
+                //       Logx.i(_TAG, 'duplicate guest list request');
+                //       Toaster.longToast(
+                //           'guest list has already been requested');
+                //     }
+                //   });
+                }
+
+                Navigator.of(ctx).pop();
+                Navigator.of(context).pushReplacement(MaterialPageRoute(
+                    builder: (context) => MainScreen(user: bloc_user)));
+
+                // if(widget.party.isChallengeActive){
+                //   showChallengeDialog(context);
+                // } else {
+                //   Navigator.of(context).pop();
+                //
+                //   Navigator.of(context).pushReplacement(MaterialPageRoute(
+                //       builder: (context) => MainScreen(user: bloc_user)));
+                // }
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 
