@@ -1,10 +1,13 @@
 import 'package:bloc/main.dart';
+import 'package:bloc/screens/user/reservation_add_edit_screen.dart';
+import 'package:bloc/utils/date_time_utils.dart';
 import 'package:bloc/utils/scan_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import '../../db/entity/party.dart';
 import '../../db/entity/party_guest.dart';
+import '../../db/entity/reservation.dart';
 import '../../db/entity/user.dart';
 import '../../db/shared_preferences/user_preferences.dart';
 import '../../helpers/dummy.dart';
@@ -14,6 +17,7 @@ import '../../utils/constants.dart';
 import '../../utils/logx.dart';
 import '../../widgets/box_office/box_office_item.dart';
 import '../../widgets/parties/party_guest_list_banner.dart';
+import '../../widgets/reservations/reservation_banner.dart';
 import '../../widgets/ui/loading_widget.dart';
 import '../../widgets/ui/sized_listview_block.dart';
 import '../promoter/promoter_guests_screen.dart';
@@ -29,13 +33,13 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
   List<Party> mParties = [];
   List<Party> mGuestListParties = [];
   var _isPartiesLoading = true;
-
+  
   late List<String> mOptions;
-  late String sOption;
+  String sOption = '';
 
   @override
   void initState() {
-    mOptions = ['guest list'];
+    mOptions = ['guest list', 'reservations'];
     sOption = mOptions.first;
 
     int timeNow = Timestamp.now().millisecondsSinceEpoch;
@@ -50,7 +54,7 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
           Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
           final Party party = Fresh.freshPartyMap(data, false);
           parties.add(party);
-          if(party.isGuestListActive){
+          if (party.isGuestListActive) {
             mGuestListParties.add(party);
           }
 
@@ -108,13 +112,15 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                UserPreferences.myUser.clearanceLevel >= Constants.PROMOTER_LEVEL ?
-                const SizedBox():
-                displayBoxOfficeOptions(context) ,
+                // UserPreferences.myUser.clearanceLevel >= Constants.PROMOTER_LEVEL ?
+                // const SizedBox():
+                displayBoxOfficeOptions(context),
                 const Divider(),
                 UserPreferences.myUser.clearanceLevel >=
                         Constants.PROMOTER_LEVEL
-                    ? displayGuestListParties(context)
+                    ? sOption == mOptions.first
+                        ? displayGuestListParties(context)
+                        : buildReservations(context)
                     : buildUserPartyGuestList(context)
               ],
             ),
@@ -136,7 +142,7 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
                 child: SizedListViewBlock(
                   title: mOptions[index],
                   height: containerHeight,
-                  width: MediaQuery.of(context).size.width / 4,
+                  width: MediaQuery.of(context).size.width / 3,
                   color: Theme.of(context).primaryColor,
                 ),
                 onTap: () {
@@ -146,6 +152,42 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
                   });
                 });
           }),
+    );
+  }
+
+  buildReservations(BuildContext context) {
+    return StreamBuilder<QuerySnapshot>(
+      stream: FirestoreHelper.getReservations(),
+      builder: (ctx, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const LoadingWidget();
+        }
+        if (snapshot.hasData) {
+          List<Reservation> reservations = [];
+          if (snapshot.data!.docs.isEmpty) {
+            return const Expanded(
+                child:
+                Center(child: Text('no reservations found!')));
+          } else {
+            for (int i = 0; i < snapshot.data!.docs.length; i++) {
+              DocumentSnapshot document = snapshot.data!.docs[i];
+              Map<String, dynamic> map =
+              document.data()! as Map<String, dynamic>;
+              final Reservation reservation = Fresh.freshReservationMap(map, false);
+              reservations.add(reservation);
+
+              if (i == snapshot.data!.docs.length - 1) {
+                return displayReservations(context, reservations);
+              }
+            }
+          }
+        } else {
+          return const Expanded(
+              child:
+              Center(child: Text('no reservations found!')));
+        }
+        return const LoadingWidget();
+      },
     );
   }
 
@@ -188,9 +230,9 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
               return const LoadingWidget();
             },
           )
-        : const Expanded(
+        : Expanded(
             child: Center(
-            child: Text('no tickets here!'),
+            child: Text('no ${sOption} here!'),
           ));
   }
 
@@ -213,7 +255,7 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
             }
           }
 
-          if(!foundParty){
+          if (!foundParty) {
             // the party is ended, house cleaning logic will be needed
             return const SizedBox();
           } else {
@@ -242,11 +284,36 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
                   Party _sParty = mGuestListParties[index];
                   print(_sParty.name + ' is selected');
 
-                  Navigator.of(context).push(
-                      MaterialPageRoute(
-                          builder: (ctx) => PromoterGuestsScreen(party: _sParty)));
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (ctx) => PromoterGuestsScreen(party: _sParty)));
                 });
           }),
     );
   }
+
+  displayReservations(BuildContext context, List<Reservation> reservations) {
+    return Expanded(
+      child: ListView.builder(
+          itemCount: reservations.length,
+          scrollDirection: Axis.vertical,
+          itemBuilder: (ctx, index) {
+            return GestureDetector(
+                child: ReservationBanner(
+                  reservation: reservations[index],
+                ),
+                onTap: () {
+                  Reservation _sReservation = reservations[index];
+                  Logx.i(
+                      _TAG, _sReservation.name + '\'s reservation is selected');
+
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (ctx) => ReservationAddEditScreen(
+                            reservation: _sReservation,
+                            task: 'edit',
+                          )));
+                });
+          }),
+    );
+  }
+
 }

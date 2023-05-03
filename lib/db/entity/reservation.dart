@@ -10,6 +10,8 @@ class Reservation {
   final int arrivalDate;
   final String arrivalTime;
 
+  final bool isApproved;
+
 //<editor-fold desc="Data Methods">
   const Reservation({
     required this.id,
@@ -21,6 +23,7 @@ class Reservation {
     required this.createdAt,
     required this.arrivalDate,
     required this.arrivalTime,
+    required this.isApproved,
   });
 
   @override
@@ -36,7 +39,8 @@ class Reservation {
           guestsCount == other.guestsCount &&
           createdAt == other.createdAt &&
           arrivalDate == other.arrivalDate &&
-          arrivalTime == other.arrivalTime);
+          arrivalTime == other.arrivalTime &&
+          isApproved == other.isApproved);
 
   @override
   int get hashCode =>
@@ -48,7 +52,8 @@ class Reservation {
       guestsCount.hashCode ^
       createdAt.hashCode ^
       arrivalDate.hashCode ^
-      arrivalTime.hashCode;
+      arrivalTime.hashCode ^
+      isApproved.hashCode;
 
   @override
   String toString() {
@@ -62,6 +67,7 @@ class Reservation {
         ' createdAt: $createdAt,' +
         ' arrivalDate: $arrivalDate,' +
         ' arrivalTime: $arrivalTime,' +
+        ' isApproved: $isApproved,' +
         '}';
   }
 
@@ -75,6 +81,7 @@ class Reservation {
     int? createdAt,
     int? arrivalDate,
     String? arrivalTime,
+    bool? isApproved,
   }) {
     return Reservation(
       id: id ?? this.id,
@@ -86,6 +93,7 @@ class Reservation {
       createdAt: createdAt ?? this.createdAt,
       arrivalDate: arrivalDate ?? this.arrivalDate,
       arrivalTime: arrivalTime ?? this.arrivalTime,
+      isApproved: isApproved ?? this.isApproved,
     );
   }
 
@@ -100,6 +108,7 @@ class Reservation {
       'createdAt': this.createdAt,
       'arrivalDate': this.arrivalDate,
       'arrivalTime': this.arrivalTime,
+      'isApproved': this.isApproved,
     };
   }
 
@@ -114,6 +123,7 @@ class Reservation {
       createdAt: map['createdAt'] as int,
       arrivalDate: map['arrivalDate'] as int,
       arrivalTime: map['arrivalTime'] as String,
+      isApproved: map['isApproved'] as bool,
     );
   }
 

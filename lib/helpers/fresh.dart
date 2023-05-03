@@ -1358,6 +1358,12 @@ class Fresh {
       Logx.em(_TAG, 'reservation arrivalTime not exist for reservation id: ' + reservation.id);
       shouldPush = true;
     }
+    try {
+      reservation = reservation.copyWith(isApproved: map['isApproved'] as bool);
+    } catch (e) {
+      Logx.em(_TAG, 'reservation isApproved not exist for reservation id: ' + reservation.id);
+      shouldPush = true;
+    }
 
     if (shouldPush &&
         shouldUpdate &&
@@ -1416,6 +1422,11 @@ class Fresh {
       freshReservation = freshReservation.copyWith(arrivalTime: reservation.arrivalTime);
     } catch (e) {
       Logx.em(_TAG, 'reservation arrivalTime not exist for reservation id: ' + reservation.id);
+    }
+    try {
+      freshReservation = freshReservation.copyWith(isApproved: reservation.isApproved);
+    } catch (e) {
+      Logx.em(_TAG, 'reservation isApproved not exist for reservation id: ' + reservation.id);
     }
 
     return freshReservation;

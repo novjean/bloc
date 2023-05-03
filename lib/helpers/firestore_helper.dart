@@ -371,7 +371,7 @@ class FirestoreHelper {
         .snapshots();
   }
 
-  /** Captain Services **/
+  /** captain services **/
   static Stream<QuerySnapshot<Object?>> getCaptainServices() {
     return FirebaseFirestore.instance
         .collection(CAPTAIN_SERVICES)
@@ -379,7 +379,7 @@ class FirestoreHelper {
         .snapshots();
   }
 
-  /** Chats **/
+  /** chats **/
   static void sendChatMessage(String enteredMessage) async {
     try {
       final user = FirebaseAuth.instance.currentUser;
@@ -411,12 +411,12 @@ class FirestoreHelper {
         .snapshots();
   }
 
-  /** Cities **/
+  /** cities **/
   static Stream<QuerySnapshot<Object?>> getCitiesSnapshot() {
     return FirebaseFirestore.instance.collection(CITIES).snapshots();
   }
 
-  /** Guest Wifi **/
+  /** guest wifi **/
   static Future<QuerySnapshot<Map<String, dynamic>>> pullGuestWifi(
       String blocServiceId) {
     return FirebaseFirestore.instance
@@ -440,7 +440,7 @@ class FirestoreHelper {
     }
   }
 
-  /** Inventory Options **/
+  /** inventory options **/
   static Stream<QuerySnapshot<Object?>> getInventoryOptions() {
     return FirebaseFirestore.instance
         .collection(INVENTORY_OPTIONS)
@@ -448,7 +448,7 @@ class FirestoreHelper {
         .snapshots();
   }
 
-  /** Manager Services **/
+  /** manager services **/
   static Stream<QuerySnapshot<Object?>> getManagerServicesSnapshot() {
     return FirebaseFirestore.instance
         .collection(MANAGER_SERVICES)
@@ -456,7 +456,7 @@ class FirestoreHelper {
         .snapshots();
   }
 
-  /** Manager Service Options **/
+  /** manager service options **/
   static Stream<QuerySnapshot<Object?>> getManagerServiceOptions(
       String service) {
     return FirebaseFirestore.instance
@@ -842,7 +842,23 @@ class FirestoreHelper {
     }
   }
 
-  static Stream<QuerySnapshot<Object?>> getReservations(String blocServiceId) {
+  static pullReservationsByEndTime(int timeNow, bool isApproved) {
+    return FirebaseFirestore.instance
+        .collection(FirestoreHelper.RESERVATIONS)
+        .where('arrivalDate', isGreaterThan: timeNow)
+        .where('isApproved', isEqualTo: isApproved)
+        .orderBy('arrivalDate', descending: false)
+        .get();
+  }
+
+  static Stream<QuerySnapshot<Object?>> getReservations() {
+    return FirebaseFirestore.instance
+        .collection(RESERVATIONS)
+        .orderBy('arrivalDate', descending: false)
+        .snapshots();
+  }
+
+  static Stream<QuerySnapshot<Object?>> getReservationsByBlocId(String blocServiceId) {
     return FirebaseFirestore.instance
         .collection(RESERVATIONS)
         .where('blocServiceId', isEqualTo: blocServiceId)
@@ -852,7 +868,6 @@ class FirestoreHelper {
 
   static void deleteReservation(String docId) {
     FirebaseFirestore.instance.collection(RESERVATIONS).doc(docId).delete();
-
   }
 
   /** seats **/
@@ -1152,7 +1167,7 @@ class FirestoreHelper {
     }
   }
 
-  /** Ticket **/
+  /** ticket **/
   static void pushTicket(Ticket ticket) async {
     try {
       await FirebaseFirestore.instance
@@ -1169,7 +1184,7 @@ class FirestoreHelper {
   }
 
 
-  /** User **/
+  /** user **/
   static void pushUser(blocUser.User user) async {
     try {
       await FirebaseFirestore.instance

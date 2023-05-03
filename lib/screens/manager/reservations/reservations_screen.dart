@@ -70,7 +70,7 @@ class _ReservationsScreenState extends State<ReservationsScreen> {
   }
 
   _buildReservations(BuildContext context) {
-    return StreamBuilder<QuerySnapshot>(stream: FirestoreHelper.getReservations(widget.blocServiceId),
+    return StreamBuilder<QuerySnapshot>(stream: FirestoreHelper.getReservationsByBlocId(widget.blocServiceId),
         builder: (ctx, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const LoadingWidget();

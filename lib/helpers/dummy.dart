@@ -208,7 +208,8 @@ class Dummy {
         guestsCount: 1,
         createdAt: Timestamp.now().millisecondsSinceEpoch,
         arrivalDate: Timestamp.now().millisecondsSinceEpoch,
-        arrivalTime: '');
+        arrivalTime: '',
+        isApproved: false);
     return dummyReservation;
   }
 
