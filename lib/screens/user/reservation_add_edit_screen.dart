@@ -1,14 +1,23 @@
 import 'package:bloc/db/shared_preferences/user_preferences.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:delayed_display/delayed_display.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl_phone_field/country_picker_dialog.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
+import 'package:pinput/pinput.dart';
 
 import '../../db/entity/reservation.dart';
+import '../../db/entity/user.dart' as blocUser;
+
+import '../../helpers/dummy.dart';
 import '../../helpers/firestore_helper.dart';
+import '../../helpers/fresh.dart';
+import '../../main.dart';
 import '../../utils/constants.dart';
 import '../../utils/date_time_utils.dart';
 import '../../utils/logx.dart';
+import '../../utils/string_utils.dart';
 import '../../widgets/ui/button_widget.dart';
 import '../../widgets/ui/dark_textfield_widget.dart';
 import '../../widgets/ui/toaster.dart';
@@ -37,12 +46,21 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
   List<String> guestCounts = [];
   late String sGuestCount;
 
+  final pinController = TextEditingController();
+  final focusNode = FocusNode();
   bool isLoggedIn = false;
   String completePhoneNumber = '';
+  String _verificationCode = '';
+
+  late blocUser.User bloc_user;
 
   @override
   void initState() {
-    super.initState();
+    if(!UserPreferences.isUserLoggedIn()){
+      bloc_user = Dummy.getDummyUser();
+    }
+
+
 
     for (int i = 1; i <= 15; i++) {
       guestCounts.add(i.toString());
@@ -54,6 +72,7 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
     } else {
       sArrivalTime = DateTimeUtils.getTimeOfDay(widget.reservation.arrivalTime);
     }
+    super.initState();
   }
 
   @override
@@ -273,13 +292,319 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
         ButtonWidget(
           text: 'reserve',
           onClicked: () {
-
-            FirestoreHelper.pushReservation(widget.reservation);
-
-            Navigator.of(context).pop();
+            if(UserPreferences.isUserLoggedIn()){
+              FirestoreHelper.pushReservation(widget.reservation);
+              Navigator.of(context).pop();
+            } else {
+              _verifyPhone();
+            }
           },
         ),
       ],
+    );
+  }
+
+  void _verifyPhone() async {
+    Logx.i(_TAG, '_verifyPhone: registering ' + completePhoneNumber.toString());
+
+    if (kIsWeb) {
+      await FirebaseAuth.instance
+          .signInWithPhoneNumber('${completePhoneNumber}', null)
+          .then((firebaseUser) {
+        Logx.i(
+            _TAG,
+            'signInWithPhoneNumber: user verification id ' +
+                firebaseUser.verificationId);
+
+        showOTPDialog(context);
+
+        setState(() {
+          _verificationCode = firebaseUser.verificationId;
+        });
+      }).catchError((e, s) {
+        Logx.e(_TAG, e, s);
+      });
+    } else {
+      await FirebaseAuth.instance.verifyPhoneNumber(
+          phoneNumber: '${completePhoneNumber}',
+          verificationCompleted: (PhoneAuthCredential credential) async {
+            Logx.i(_TAG,
+                'verifyPhoneNumber: ${completePhoneNumber} is verified. attempting sign in with credentials...');
+          },
+          verificationFailed: (FirebaseAuthException e) {
+            Logx.em(_TAG, 'verificationFailed ' + e.toString());
+          },
+          codeSent: (String verificationID, int? resendToken) {
+            Logx.i(_TAG, 'verification id : ' + verificationID);
+
+            if (mounted) {
+              showOTPDialog(context);
+
+              setState(() {
+                _verificationCode = verificationID;
+              });
+            }
+          },
+          codeAutoRetrievalTimeout: (String verificationId) {
+            if (mounted) {
+              setState(() {
+                _verificationCode = verificationId;
+              });
+            }
+          },
+          timeout: const Duration(seconds: 60));
+    }
+  }
+
+  showOTPDialog(BuildContext context) {
+    return showDialog(
+      context: context,
+      builder: (BuildContext ctx) {
+        return AlertDialog(
+          contentPadding: const EdgeInsets.all(16.0),
+          content: SizedBox(
+            height: 250,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 20),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Text(
+                        'phone number verification',
+                        style: const TextStyle(fontSize: 18),
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 20),
+                  child: Container(
+                    margin: const EdgeInsets.only(bottom: 20),
+                    child: FractionallySizedBox(
+                        widthFactor: 1,
+                        child: OTPVerifyWidget(
+                          completePhoneNumber,
+                        )),
+                  ),
+                ),
+                Center(
+                    child: Text(
+                      'enter the six digit code you received on \n${completePhoneNumber}',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Theme.of(context).primaryColorDark,
+                        fontWeight: FontWeight.normal,
+                        fontSize: 16,
+                      ),
+                    )),
+                Padding(
+                  padding: const EdgeInsets.only(
+                      left: 10.0, right: 10, top: 2, bottom: 5),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      DelayedDisplay(
+                        delay: const Duration(seconds: 7),
+                        child: Text('didn\'t receive code. ',
+                            style: TextStyle(
+                              color: Theme.of(context).primaryColorDark,
+                              fontSize: 16,
+                            )),
+                      ),
+                      InkWell(
+                        onTap: () {
+                          Toaster.longToast('refreshing');
+                          _verifyPhone();
+                        },
+                        child: DelayedDisplay(
+                          delay: const Duration(seconds: 10),
+                          child: Text(
+                            'resend?',
+                            style: TextStyle(
+                              color: Theme.of(context).primaryColor,
+                              fontSize: 16,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                )
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              child: const Text('close'),
+              onPressed: () {
+                Navigator.of(ctx).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  OTPVerifyWidget(String phone) {
+    const focusedBorderColor = Color.fromRGBO(222, 193, 170, 1);
+    const fillColor = Color.fromRGBO(38, 50, 56, 1.0);
+    const borderColor = Color.fromRGBO(211, 167, 130, 1);
+
+    final defaultPinTheme = PinTheme(
+      width: 56,
+      height: 56,
+      textStyle: const TextStyle(
+        fontSize: 22,
+        color: Color.fromRGBO(222, 193, 170, 1),
+      ),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(19),
+        border: Border.all(color: borderColor),
+      ),
+    );
+
+    return Form(
+      key: GlobalKey<FormState>(),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Directionality(
+            // Specify direction if desired
+            textDirection: TextDirection.ltr,
+            child: Pinput(
+              length: 6,
+              controller: pinController,
+              focusNode: focusNode,
+              // androidSmsAutofillMethod:
+              //     AndroidSmsAutofillMethod.smsUserConsentApi,
+              listenForMultipleSmsOnAndroid: true,
+              defaultPinTheme: defaultPinTheme,
+              closeKeyboardWhenCompleted: true,
+              // validator: (value) {
+              // print('code is ' + _verificationCode);
+              // return value == _verificationCode ? null : 'pin is incorrect';
+              // },
+              // onClipboardFound: (value) {
+              //   debugPrint('onClipboardFound: $value');
+              //   pinController.setText(value);
+              // },
+              hapticFeedbackType: HapticFeedbackType.lightImpact,
+              onCompleted: (pin) async {
+                debugPrint('onCompleted: $pin');
+
+                Toaster.shortToast('verifying ${completePhoneNumber}');
+                try {
+                  await FirebaseAuth.instance
+                      .signInWithCredential(PhoneAuthProvider.credential(
+                      verificationId: _verificationCode, smsCode: pin))
+                      .then((value) async {
+                    if (value.user != null) {
+                      Logx.i(_TAG, 'user is in firebase auth');
+                      Logx.i(
+                          _TAG,
+                          'checking for bloc registration, id ' +
+                              value.user!.uid);
+
+                      FirestoreHelper.pullUser(value.user!.uid).then((res) {
+                        Logx.i(
+                            _TAG,
+                            "successfully retrieved bloc user for id " +
+                                value.user!.uid);
+
+                        if (res.docs.isEmpty) {
+                          Logx.i(_TAG,
+                              'user is not already registered in bloc, registering...');
+
+                          bloc_user.id = value.user!.uid;
+                          bloc_user.phoneNumber =
+                              StringUtils.getInt(value.user!.phoneNumber!);
+
+                          FirestoreHelper.pushUser(bloc_user);
+                          Logx.i(_TAG, 'registered user ' + bloc_user.id);
+
+                          UserPreferences.setUser(bloc_user);
+                          widget.partyGuest.guestId = bloc_user.id;
+                          widget.partyGuest.phone =
+                              bloc_user.phoneNumber.toString();
+
+                          showRulesConfirmationDialog(context, true);
+                        } else {
+                          Logx.i(_TAG,
+                              'user is a bloc member. navigating to main...');
+
+                          DocumentSnapshot document = res.docs[0];
+                          Map<String, dynamic> data =
+                          document.data()! as Map<String, dynamic>;
+
+                          blocUser.User user = Fresh.freshUserMap(data, true);
+
+                          //update user details
+                          user = user.copyWith(name: bloc_user.name);
+                          int time = Timestamp.now().millisecondsSinceEpoch;
+                          user = user.copyWith(lastSeenAt: time);
+                          FirestoreHelper.pushUser(user);
+
+                          UserPreferences.setUser(user);
+                          bloc_user = user;
+
+                          widget.reservation.cus = bloc_user.id;
+
+                          showRulesConfirmationDialog(context, false);
+                        }
+                      });
+                    }
+                  });
+                } catch (e) {
+                  Logx.em(_TAG, 'otp error ' + e.toString());
+
+                  String exception = e.toString();
+                  if (exception.contains('session-expired')) {
+                    Toaster.shortToast('session got expired, trying again');
+                    _verifyPhone();
+                  } else {
+                    Toaster.shortToast('invalid otp, please try again');
+                  }
+                  FocusScope.of(context).unfocus();
+                }
+              },
+              onChanged: (value) {
+                debugPrint('onChanged: $value');
+              },
+              cursor: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Container(
+                    margin: const EdgeInsets.only(bottom: 9),
+                    width: 22,
+                    height: 1,
+                    color: focusedBorderColor,
+                  ),
+                ],
+              ),
+              focusedPinTheme: defaultPinTheme.copyWith(
+                decoration: defaultPinTheme.decoration!.copyWith(
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: focusedBorderColor),
+                ),
+              ),
+              submittedPinTheme: defaultPinTheme.copyWith(
+                decoration: defaultPinTheme.decoration!.copyWith(
+                  color: fillColor,
+                  borderRadius: BorderRadius.circular(19),
+                  border: Border.all(color: focusedBorderColor),
+                ),
+              ),
+              errorPinTheme: defaultPinTheme.copyBorderWith(
+                border: Border.all(color: Colors.redAccent),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -392,4 +717,5 @@ Future<void> _selectTime(BuildContext context) async {
       ),
     );
   }
+
 }
