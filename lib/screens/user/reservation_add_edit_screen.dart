@@ -54,13 +54,18 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
   String _verificationCode = '';
 
   late blocUser.User bloc_user;
+  bool isEdit = false;
 
   @override
   void initState() {
-    if(!UserPreferences.isUserLoggedIn()){
+    if (!UserPreferences.isUserLoggedIn()) {
       bloc_user = Dummy.getDummyUser();
     } else {
       bloc_user = UserPreferences.myUser;
+    }
+
+    if (widget.task == 'edit') {
+      isEdit = true;
     }
 
     for (int i = 1; i <= 15; i++) {
@@ -68,10 +73,11 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
     }
     sGuestCount = widget.reservation.guestsCount.toString();
 
-    if(widget.reservation.arrivalTime.isEmpty){
+    if (widget.reservation.arrivalTime.isEmpty) {
       sArrivalTime = TimeOfDay.now();
     } else {
-      sArrivalTime = DateTimeUtils.getTimeOfDay(widget.reservation.arrivalTime);
+      sArrivalTime =
+          DateTimeUtils.stringToTimeOfDay(widget.reservation.arrivalTime);
     }
     super.initState();
   }
@@ -79,7 +85,7 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('bloc | reservations')),
+      appBar: AppBar(title: Text('reserve | table')),
       backgroundColor: Theme.of(context).backgroundColor,
       body: _buildBody(context),
     );
@@ -191,7 +197,6 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
                     ),
                   ),
                 ),
-
               ],
             ),
             timeContainer(context),
@@ -208,8 +213,7 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
                   child: Text(
                     'number of guests *',
                     style: TextStyle(
-                        color:
-                        Theme.of(context).primaryColorLight,
+                        color: Theme.of(context).primaryColorLight,
                         fontSize: 16,
                         fontWeight: FontWeight.bold),
                   ),
@@ -223,29 +227,24 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
                   decoration: InputDecoration(
                       fillColor: Colors.white,
                       errorStyle: TextStyle(
-                          color: Theme.of(context).errorColor,
-                          fontSize: 16.0),
+                          color: Theme.of(context).errorColor, fontSize: 16.0),
                       hintText: 'please select guests count',
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(5.0),
-                        borderSide: BorderSide(
-                            color:
-                            Theme.of(context).primaryColor),
+                        borderSide:
+                            BorderSide(color: Theme.of(context).primaryColor),
                       ),
                       enabledBorder: OutlineInputBorder(
                         // width: 0.0 produces a thin "hairline" border
                         borderSide: BorderSide(
-                            color: Theme.of(context).primaryColor,
-                            width: 0.0),
+                            color: Theme.of(context).primaryColor, width: 0.0),
                       )),
                   isEmpty: sGuestCount == '',
                   child: DropdownButtonHideUnderline(
                     child: DropdownButton<String>(
-                      style: TextStyle(
-                          color: Theme.of(context)
-                              .primaryColorLight),
-                      dropdownColor:
-                      Theme.of(context).backgroundColor,
+                      style:
+                          TextStyle(color: Theme.of(context).primaryColorLight),
+                      dropdownColor: Theme.of(context).backgroundColor,
                       value: sGuestCount,
                       isDense: true,
                       onChanged: (String? newValue) {
@@ -270,7 +269,6 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
             const SizedBox(height: 24),
           ],
         ),
-
         const SizedBox(height: 24),
         Row(
           mainAxisAlignment: MainAxisAlignment.end,
@@ -289,17 +287,41 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
             ),
           ],
         ),
-
-        ButtonWidget(
-          text: 'reserve',
-          onClicked: () {
-            if(UserPreferences.isUserLoggedIn()){
-              showConfirmationDialog(context, false);
-            } else {
-              _verifyPhone();
-            }
-          },
-        ),
+        isEdit
+            ? Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  ButtonWidget(
+                      text: 'save',
+                    onClicked: () {
+                      Reservation freshReservation =
+                          Fresh.freshReservation(widget.reservation);
+                      FirestoreHelper.pushReservation(freshReservation);
+                      Toaster.shortToast('reservation changes saved');
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                  const SizedBox(height: 10),
+                  ButtonWidget(
+                      text: 'delete',
+                      onClicked: () {
+                        FirestoreHelper.deleteReservation(
+                            widget.reservation.id);
+                        Toaster.shortToast('reservation deleted');
+                        Navigator.of(context).pop();
+                      }),
+                ],
+              )
+            : ButtonWidget(
+                text: 'reserve',
+                onClicked: () {
+                  if (UserPreferences.isUserLoggedIn()) {
+                    showConfirmationDialog(context, false);
+                  } else {
+                    _verifyPhone();
+                  }
+                },
+              ),
       ],
     );
   }
@@ -392,14 +414,14 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
                 ),
                 Center(
                     child: Text(
-                      'enter the six digit code you received on \n${completePhoneNumber}',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Theme.of(context).primaryColorDark,
-                        fontWeight: FontWeight.normal,
-                        fontSize: 16,
-                      ),
-                    )),
+                  'enter the six digit code you received on \n${completePhoneNumber}',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Theme.of(context).primaryColorDark,
+                    fontWeight: FontWeight.normal,
+                    fontSize: 16,
+                  ),
+                )),
                 Padding(
                   padding: const EdgeInsets.only(
                       left: 10.0, right: 10, top: 2, bottom: 5),
@@ -500,7 +522,7 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
                 try {
                   await FirebaseAuth.instance
                       .signInWithCredential(PhoneAuthProvider.credential(
-                      verificationId: _verificationCode, smsCode: pin))
+                          verificationId: _verificationCode, smsCode: pin))
                       .then((value) async {
                     if (value.user != null) {
                       Logx.i(_TAG, 'user is in firebase auth');
@@ -537,7 +559,7 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
 
                           DocumentSnapshot document = res.docs[0];
                           Map<String, dynamic> data =
-                          document.data()! as Map<String, dynamic>;
+                              document.data()! as Map<String, dynamic>;
 
                           blocUser.User user = Fresh.freshUserMap(data, true);
 
@@ -622,9 +644,10 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
                   padding: const EdgeInsets.only(bottom: 20),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Text('reservation confirmation ',
-                        style: const TextStyle(fontSize: 18),
+                    children: const [
+                      Text(
+                        'reservation confirmation ',
+                        style: TextStyle(fontSize: 18),
                       ),
                     ],
                   ),
@@ -638,7 +661,8 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        Text('your table for the party of ${widget.reservation.guestsCount} '
+                        Text(
+                            'your table for the party of ${widget.reservation.guestsCount} '
                             'on the ${DateTimeUtils.getFormattedDate2(widget.reservation.arrivalDate)} will be reviewed and approved soon. '
                             '\n\nyour reservation confirmation status shall can be found at the box office. '
                             'also, our team may reach out to you for any further information. thank you.'),
@@ -660,10 +684,12 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
               child: const Text("confirm"),
               onPressed: () {
                 if (isNewUser) {
-                  Reservation freshReservation = Fresh.freshReservation(widget.reservation);
+                  Reservation freshReservation =
+                      Fresh.freshReservation(widget.reservation);
                   FirestoreHelper.pushReservation(freshReservation);
                 } else {
-                  Reservation freshReservation = Fresh.freshReservation(widget.reservation);
+                  Reservation freshReservation =
+                      Fresh.freshReservation(widget.reservation);
                   FirestoreHelper.pushReservation(freshReservation);
 
                   //todo: need to implement this soon
@@ -676,42 +702,33 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
                   // }
 
                   // need to see if the user already has a guest request
-                //   widget.partyGuest.guestId = bloc_user.id;
-                //
-                //   FirestoreHelper.pullPartyGuestByUser(
-                //       widget.partyGuest.guestId, widget.partyGuest.partyId)
-                //       .then((res) {
-                //     Logx.i(_TAG, 'pulled in party guest by user');
-                //
-                //     if (res.docs.isEmpty || widget.task == 'edit'  || widget.task == 'manage') {
-                //       // user has not requested for party guest list, approve
-                //       PartyGuest freshPartyGuest =
-                //       Fresh.freshPartyGuest(widget.partyGuest);
-                //       FirestoreHelper.pushPartyGuest(freshPartyGuest);
-                //
-                //       Logx.i(_TAG, 'guest list request in box office');
-                //       Toaster.longToast('guest list request in box office');
-                //     } else {
-                //       //already requested
-                //       Logx.i(_TAG, 'duplicate guest list request');
-                //       Toaster.longToast(
-                //           'guest list has already been requested');
-                //     }
-                //   });
+                  //   widget.partyGuest.guestId = bloc_user.id;
+                  //
+                  //   FirestoreHelper.pullPartyGuestByUser(
+                  //       widget.partyGuest.guestId, widget.partyGuest.partyId)
+                  //       .then((res) {
+                  //     Logx.i(_TAG, 'pulled in party guest by user');
+                  //
+                  //     if (res.docs.isEmpty || widget.task == 'edit'  || widget.task == 'manage') {
+                  //       // user has not requested for party guest list, approve
+                  //       PartyGuest freshPartyGuest =
+                  //       Fresh.freshPartyGuest(widget.partyGuest);
+                  //       FirestoreHelper.pushPartyGuest(freshPartyGuest);
+                  //
+                  //       Logx.i(_TAG, 'guest list request in box office');
+                  //       Toaster.longToast('guest list request in box office');
+                  //     } else {
+                  //       //already requested
+                  //       Logx.i(_TAG, 'duplicate guest list request');
+                  //       Toaster.longToast(
+                  //           'guest list has already been requested');
+                  //     }
+                  //   });
                 }
 
                 Navigator.of(ctx).pop();
                 Navigator.of(context).pushReplacement(MaterialPageRoute(
                     builder: (context) => MainScreen(user: bloc_user)));
-
-                // if(widget.party.isChallengeActive){
-                //   showChallengeDialog(context);
-                // } else {
-                //   Navigator.of(context).pop();
-                //
-                //   Navigator.of(context).pushReplacement(MaterialPageRoute(
-                //       builder: (context) => MainScreen(user: bloc_user)));
-                // }
               },
             ),
           ],
@@ -770,14 +787,14 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
         lastDate: DateTime(2101));
     if (_sDate != null) {
       setState(() {
-        sDateArrival= DateTime(_sDate.year, _sDate.month, _sDate.day);
-        widget.reservation = widget.reservation.copyWith(arrivalDate: sDateArrival.millisecondsSinceEpoch);
+        sDateArrival = DateTime(_sDate.year, _sDate.month, _sDate.day);
+        widget.reservation = widget.reservation
+            .copyWith(arrivalDate: sDateArrival.millisecondsSinceEpoch);
       });
     }
   }
 
-
-Future<void> _selectTime(BuildContext context) async {
+  Future<void> _selectTime(BuildContext context) async {
     TimeOfDay initialTime = TimeOfDay.now();
 
     TimeOfDay? pickedTime = await showTimePicker(
@@ -787,7 +804,8 @@ Future<void> _selectTime(BuildContext context) async {
 
     setState(() {
       sArrivalTime = pickedTime!;
-      widget.reservation = widget.reservation.copyWith(arrivalTime: sArrivalTime.format(context));
+      widget.reservation = widget.reservation
+          .copyWith(arrivalTime: sArrivalTime.format(context));
     });
   }
 
@@ -829,5 +847,4 @@ Future<void> _selectTime(BuildContext context) async {
       ),
     );
   }
-
 }

@@ -97,16 +97,15 @@ class _BlocSlideItemState extends State<BlocSlideItem> {
                                 autoPlayInterval: const Duration(seconds: 2),
                                 autoPlayAnimationDuration:
                                     const Duration(milliseconds: 800),
-                                enlargeCenterPage: true,
-                                scrollDirection: Axis.horizontal,
-                                // aspectRatio: 2.0,
+                                enlargeCenterPage: false,
+                                scrollDirection: Axis.vertical,
+                                aspectRatio: 2.0,
                               ),
                               items: widget.bloc.imageUrls
                                   .map((item) => Container(
                                         child: Center(
                                             child: Image.network(item,
                                                 fit: BoxFit.fitWidth,
-                                                height: 400,
                                                 width: MediaQuery.of(context)
                                                     .size
                                                     .width)),

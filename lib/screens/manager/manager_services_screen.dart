@@ -2,6 +2,7 @@ import 'package:bloc/db/entity/manager_service.dart';
 import 'package:bloc/screens/manager/ads/ads_screen.dart';
 import 'package:bloc/screens/manager/orders/manage_orders_screen.dart';
 import 'package:bloc/screens/manager/parties/manage_parties_screen.dart';
+import 'package:bloc/screens/manager/reservations/reservations_screen.dart';
 
 import 'package:bloc/screens/manager/users/manage_users_screen.dart';
 import 'package:bloc/screens/parties/manage_guest_list_screen.dart';
@@ -12,7 +13,6 @@ import 'package:flutter/material.dart';
 import '../../db/entity/bloc_service.dart';
 import '../../helpers/firestore_helper.dart';
 import '../../widgets/ui/listview_block.dart';
-import 'bookings/bookings_screen.dart';
 import 'guest_wifi_edit_screen.dart';
 import 'inventory/manage_inventory_screen.dart';
 import 'tables/manage_tables_screen.dart';
@@ -93,10 +93,10 @@ class ManagerServicesScreen extends StatelessWidget {
                                 AdsScreen(serviceId: blocService.id)));
                         break;
                       }
-                    case 'Bookings':
+                    case 'reservations':
                       {
                         Navigator.of(context).push(MaterialPageRoute(
-                            builder: (ctx) => BookingsScreen(
+                            builder: (ctx) => ReservationsScreen(
                                   blocServiceId: blocService.id,
                                   serviceName: _managerService.name,
                                   userTitle: userTitle,
@@ -135,7 +135,7 @@ class ManagerServicesScreen extends StatelessWidget {
                                 userTitle: userTitle)));
                         break;
                       }
-                    case 'Party':
+                    case 'parties':
                       {
                         Navigator.of(context).push(MaterialPageRoute(
                             builder: (ctx) => ManagePartiesScreen(

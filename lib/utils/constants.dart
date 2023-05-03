@@ -5,11 +5,11 @@ const String kAppTitle = 'bloc';
 class Constants {
   //Colors for theme
   static const Color primary = Color.fromRGBO(211, 167, 130, 1);
-  static Color lightPrimary = Color(0xfffcfcff);
+  static Color lightPrimary = const Color(0xfffcfcff);
   static Color darkPrimary = Colors.black;
-  static Color lightAccent = Color(0xff5563ff);
-  static Color darkAccent = Color(0xff5563ff);
-  static Color lightBG = Color(0xfffcfcff);
+  static Color lightAccent = const Color(0xff5563ff);
+  static Color darkAccent = const Color(0xff5563ff);
+  static Color lightBG = const Color(0xfffcfcff);
   static Color darkBG = Colors.black;
   static Color? ratingBG = Colors.red[600];
 

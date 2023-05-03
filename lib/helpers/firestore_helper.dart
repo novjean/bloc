@@ -549,16 +549,6 @@ class FirestoreHelper {
         .get();
   }
 
-  static Future<QuerySnapshot<Map<String, dynamic>>> pullParties(
-      int timeNow, bool isActive) {
-    return FirebaseFirestore.instance
-        .collection(FirestoreHelper.PARTIES)
-        .where('startTime', isGreaterThan: timeNow)
-        .where('isActive', isEqualTo: isActive)
-        .orderBy('startTime', descending: false)
-        .get();
-  }
-
   static Future<QuerySnapshot<Map<String, dynamic>>> pullPartiesByEndTime(
       int timeNow, bool isActive) {
     return FirebaseFirestore.instance
@@ -580,16 +570,16 @@ class FirestoreHelper {
         .get();
   }
 
-  static Future<QuerySnapshot<Map<String, dynamic>>> pullUpcomingParty(
-      int timeNow) {
-    return FirebaseFirestore.instance
-        .collection(FirestoreHelper.PARTIES)
-        .where('startTime', isGreaterThan: timeNow)
-        .where('isActive', isEqualTo: true)
-        .orderBy('startTime', descending: false)
-        .limit(1)
-        .get();
-  }
+  // static Future<QuerySnapshot<Map<String, dynamic>>> pullUpcomingParty(
+  //     int timeNow) {
+  //   return FirebaseFirestore.instance
+  //       .collection(FirestoreHelper.PARTIES)
+  //       .where('startTime', isGreaterThan: timeNow)
+  //       .where('isActive', isEqualTo: true)
+  //       .orderBy('startTime', descending: false)
+  //       .limit(1)
+  //       .get();
+  // }
 
   static Future<QuerySnapshot<Map<String, dynamic>>> pullActiveGuestListParties(
       int timeNow) {
@@ -636,7 +626,6 @@ class FirestoreHelper {
         .doc(party.id)
         .delete();
   }
-
 
   /** party guests **/
   static Future<QuerySnapshot<Map<String, dynamic>>> pullPartyGuest(
@@ -851,6 +840,19 @@ class FirestoreHelper {
     } catch (e) {
       logger.e(e);
     }
+  }
+
+  static Stream<QuerySnapshot<Object?>> getReservations(String blocServiceId) {
+    return FirebaseFirestore.instance
+        .collection(RESERVATIONS)
+        .where('blocServiceId', isEqualTo: blocServiceId)
+        .orderBy('arrivalDate', descending: false)
+        .snapshots();
+  }
+
+  static void deleteReservation(String docId) {
+    FirebaseFirestore.instance.collection(RESERVATIONS).doc(docId).delete();
+
   }
 
   /** seats **/
@@ -1295,7 +1297,7 @@ class FirestoreHelper {
     FirebaseFirestore.instance.collection(USERS).doc(user.id).delete();
   }
 
-  /** User Level **/
+  /** user level **/
   static pullUserLevels(int clearanceLevel) {
     return FirebaseFirestore.instance
         .collection(USER_LEVELS)
@@ -1303,7 +1305,5 @@ class FirestoreHelper {
         .orderBy('level', descending: false)
         .get();
   }
-
-
 
 }
