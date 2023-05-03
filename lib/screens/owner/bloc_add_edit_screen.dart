@@ -216,14 +216,17 @@ class _BlocAddEditScreenState extends State<BlocAddEditScreen> {
                         onTap: () {
                           FirestorageHelper.deleteFile(imageUrls[index]);
                           imageUrls.removeAt(index);
+
+                          widget.bloc = widget.bloc.copyWith(imageUrls: imageUrls);
+                          FirestoreHelper.pushBloc(widget.bloc);
+
                           Navigator.of(context).pop();
                           setState(() {
-
                           });
                         },
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
+                          children: const <Widget>[
                             Icon(Icons.delete_forever),
                           ],
                         ),
