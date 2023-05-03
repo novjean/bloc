@@ -199,6 +199,7 @@ class Dummy {
     Reservation dummyReservation = Reservation(
         id: StringUtils.getRandomString(28),
         blocServiceId: blocServiceId,
+        customerId: UserPreferences.myUser.id,
         name:
             UserPreferences.isUserLoggedIn() ? UserPreferences.myUser.name : '',
         phone: UserPreferences.isUserLoggedIn()

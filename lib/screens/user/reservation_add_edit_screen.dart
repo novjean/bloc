@@ -527,9 +527,7 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
                           Logx.i(_TAG, 'registered user ' + bloc_user.id);
 
                           UserPreferences.setUser(bloc_user);
-                          widget.partyGuest.guestId = bloc_user.id;
-                          widget.partyGuest.phone =
-                              bloc_user.phoneNumber.toString();
+                          widget.reservation.customerId = bloc_user.id;
 
                           showRulesConfirmationDialog(context, true);
                         } else {
@@ -551,7 +549,7 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
                           UserPreferences.setUser(user);
                           bloc_user = user;
 
-                          widget.reservation.cus = bloc_user.id;
+                          widget.reservation.customerId = bloc_user.id;
 
                           showRulesConfirmationDialog(context, false);
                         }

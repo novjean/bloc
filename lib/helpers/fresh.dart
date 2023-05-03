@@ -1323,6 +1323,12 @@ class Fresh {
       shouldPush = true;
     }
     try {
+      reservation = reservation.copyWith(customerId: map['customerId'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'reservation customerId not exist for reservation id: ' + reservation.id);
+      shouldPush = true;
+    }
+    try {
       reservation = reservation.copyWith(phone: map['phone'] as int);
     } catch (e) {
       Logx.em(_TAG, 'reservation phone not exist for reservation id: ' + reservation.id);
@@ -1380,6 +1386,11 @@ class Fresh {
       freshReservation = freshReservation.copyWith(blocServiceId: reservation.blocServiceId);
     } catch (e) {
       Logx.em(_TAG, 'reservation blocServiceId not exist for reservation id: ' + reservation.id);
+    }
+    try {
+      freshReservation = freshReservation.copyWith(customerId: reservation.customerId);
+    } catch (e) {
+      Logx.em(_TAG, 'reservation customerId not exist for reservation id: ' + reservation.id);
     }
     try {
       freshReservation = freshReservation.copyWith(phone: reservation.phone);

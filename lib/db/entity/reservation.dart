@@ -1,7 +1,7 @@
 class Reservation {
   final String id;
   final String blocServiceId;
-  // final String customerId;
+  final String customerId;
   final String name;
   final int phone;
   final int guestsCount;
@@ -14,6 +14,7 @@ class Reservation {
   const Reservation({
     required this.id,
     required this.blocServiceId,
+    required this.customerId,
     required this.name,
     required this.phone,
     required this.guestsCount,
@@ -29,6 +30,7 @@ class Reservation {
           runtimeType == other.runtimeType &&
           id == other.id &&
           blocServiceId == other.blocServiceId &&
+          customerId == other.customerId &&
           name == other.name &&
           phone == other.phone &&
           guestsCount == other.guestsCount &&
@@ -40,6 +42,7 @@ class Reservation {
   int get hashCode =>
       id.hashCode ^
       blocServiceId.hashCode ^
+      customerId.hashCode ^
       name.hashCode ^
       phone.hashCode ^
       guestsCount.hashCode ^
@@ -52,6 +55,7 @@ class Reservation {
     return 'Reservation{' +
         ' id: $id,' +
         ' blocServiceId: $blocServiceId,' +
+        ' customerId: $customerId,' +
         ' name: $name,' +
         ' phone: $phone,' +
         ' guestsCount: $guestsCount,' +
@@ -64,6 +68,7 @@ class Reservation {
   Reservation copyWith({
     String? id,
     String? blocServiceId,
+    String? customerId,
     String? name,
     int? phone,
     int? guestsCount,
@@ -74,6 +79,7 @@ class Reservation {
     return Reservation(
       id: id ?? this.id,
       blocServiceId: blocServiceId ?? this.blocServiceId,
+      customerId: customerId ?? this.customerId,
       name: name ?? this.name,
       phone: phone ?? this.phone,
       guestsCount: guestsCount ?? this.guestsCount,
@@ -87,6 +93,7 @@ class Reservation {
     return {
       'id': this.id,
       'blocServiceId': this.blocServiceId,
+      'customerId': this.customerId,
       'name': this.name,
       'phone': this.phone,
       'guestsCount': this.guestsCount,
@@ -100,6 +107,7 @@ class Reservation {
     return Reservation(
       id: map['id'] as String,
       blocServiceId: map['blocServiceId'] as String,
+      customerId: map['customerId'] as String,
       name: map['name'] as String,
       phone: map['phone'] as int,
       guestsCount: map['guestsCount'] as int,
