@@ -95,3 +95,17 @@ exports.partyGuestFunction = functions
         },
       });
     });
+exports.reservationFunction = functions
+    .region('asia-south1')
+    .firestore
+    .document('reservations/{document}')
+    .onCreate((snapshot, context) => {
+      console.log(snapshot.data());
+      return admin.messaging().sendToTopic('reservations', {
+        notification: {
+          title: 'reservation table request',
+          body: snapshot.data().name + ' ' + snapshot.data().guestsCount,
+          clickAction: 'FLUTTER_NOTIFICATION_CLICK',
+        },
+      });
+    });
