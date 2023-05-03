@@ -282,7 +282,7 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
                 ),
                 onTap: () {
                   Party _sParty = mGuestListParties[index];
-                  print(_sParty.name + ' is selected');
+                  Logx.i(_TAG, _sParty.name + ' is selected');
 
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (ctx) => PromoterGuestsScreen(party: _sParty)));
