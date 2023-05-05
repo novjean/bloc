@@ -140,9 +140,14 @@ class _MainScreenState extends State<MainScreen> {
         fbm.subscribeToTopic('order');
       }
 
-      if (user.clearanceLevel >= Constants.MANAGER_LEVEL) {
+      if (user.clearanceLevel >= Constants.PROMOTER_LEVEL) {
         fbm.subscribeToTopic('party_guest');
       }
+
+      if (user.clearanceLevel >= Constants.MANAGER_LEVEL) {
+        fbm.subscribeToTopic('reservations');
+      }
+
     }
   }
 

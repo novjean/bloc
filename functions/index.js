@@ -104,7 +104,7 @@ exports.reservationFunction = functions
       return admin.messaging().sendToTopic('reservations', {
         notification: {
           title: 'reservation table request',
-          body: snapshot.data().name + ' ' + snapshot.data().guestsCount,
+          body: snapshot.data().name + ' - party of ' + snapshot.data().guestsCount,
           clickAction: 'FLUTTER_NOTIFICATION_CLICK',
         },
       });
