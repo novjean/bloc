@@ -866,6 +866,14 @@ class FirestoreHelper {
         .snapshots();
   }
 
+  static getReservationsByUser(String userId) {
+    return FirebaseFirestore.instance
+        .collection(RESERVATIONS)
+        .where('customerId', isEqualTo: userId)
+        .snapshots();
+  }
+
+
   static void deleteReservation(String docId) {
     FirebaseFirestore.instance.collection(RESERVATIONS).doc(docId).delete();
   }

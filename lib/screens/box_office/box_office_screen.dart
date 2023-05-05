@@ -1,6 +1,5 @@
 import 'package:bloc/main.dart';
 import 'package:bloc/screens/user/reservation_add_edit_screen.dart';
-import 'package:bloc/utils/date_time_utils.dart';
 import 'package:bloc/utils/scan_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -33,7 +32,7 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
   List<Party> mParties = [];
   List<Party> mGuestListParties = [];
   var _isPartiesLoading = true;
-  
+
   late List<String> mOptions;
   String sOption = '';
 
@@ -112,19 +111,35 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                // UserPreferences.myUser.clearanceLevel >= Constants.PROMOTER_LEVEL ?
-                // const SizedBox():
                 displayBoxOfficeOptions(context),
                 const Divider(),
                 UserPreferences.myUser.clearanceLevel >=
                         Constants.PROMOTER_LEVEL
-                    ? sOption == mOptions.first
-                        ? displayGuestListParties(context)
-                        : buildReservations(context)
-                    : buildUserPartyGuestList(context)
+                    ? switchPromoterOptions(context)
+                    : switchUserOptions(context)
               ],
             ),
           );
+  }
+
+  switchPromoterOptions(BuildContext context) {
+    if (sOption == 'guest list') {
+      return displayGuestListParties(context);
+    } else if (sOption == 'reservations') {
+      return buildReservations(context);
+    } else {
+      // unsupported
+    }
+  }
+
+  switchUserOptions(BuildContext context) {
+    if (sOption == 'guest list') {
+      return buildUserPartyGuestList(context);
+    } else if (sOption == 'reservations') {
+      return buildUserReservations(context);
+    } else {
+      // unsupported
+    }
   }
 
   displayBoxOfficeOptions(BuildContext context) {
@@ -166,14 +181,14 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
           List<Reservation> reservations = [];
           if (snapshot.data!.docs.isEmpty) {
             return const Expanded(
-                child:
-                Center(child: Text('no reservations found!')));
+                child: Center(child: Text('no reservations found!')));
           } else {
             for (int i = 0; i < snapshot.data!.docs.length; i++) {
               DocumentSnapshot document = snapshot.data!.docs[i];
               Map<String, dynamic> map =
-              document.data()! as Map<String, dynamic>;
-              final Reservation reservation = Fresh.freshReservationMap(map, false);
+                  document.data()! as Map<String, dynamic>;
+              final Reservation reservation =
+                  Fresh.freshReservationMap(map, false);
               reservations.add(reservation);
 
               if (i == snapshot.data!.docs.length - 1) {
@@ -183,8 +198,45 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
           }
         } else {
           return const Expanded(
-              child:
-              Center(child: Text('no reservations found!')));
+              child: Center(child: Text('no reservations found!')));
+        }
+        return const LoadingWidget();
+      },
+    );
+  }
+
+  buildUserReservations(BuildContext context) {
+    Logx.i(_TAG, 'searching for reservations for user ${UserPreferences.myUser.id}');
+
+    return StreamBuilder<QuerySnapshot>(
+      stream: FirestoreHelper.getReservationsByUser(UserPreferences.myUser.id),
+      builder: (ctx, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const LoadingWidget();
+        }
+
+        if (snapshot.hasData) {
+          List<Reservation> reservations = [];
+          if (snapshot.data!.docs.isEmpty) {
+            return const Expanded(
+                child: Center(child: Text('no reservations found!')));
+          } else {
+            for (int i = 0; i < snapshot.data!.docs.length; i++) {
+              DocumentSnapshot document = snapshot.data!.docs[i];
+              Map<String, dynamic> map =
+              document.data()! as Map<String, dynamic>;
+              final Reservation reservation =
+              Fresh.freshReservationMap(map, false);
+              reservations.add(reservation);
+
+              if (i == snapshot.data!.docs.length - 1) {
+                return displayReservations(context, reservations);
+              }
+            }
+          }
+        } else {
+          return const Expanded(
+              child: Center(child: Text('no reservations found!')));
         }
         return const LoadingWidget();
       },
@@ -192,48 +244,41 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
   }
 
   buildUserPartyGuestList(BuildContext context) {
-    return sOption == mOptions.first
-        ? StreamBuilder<QuerySnapshot>(
-            stream: FirestoreHelper.getPartyGuestListByUser(
-                UserPreferences.getUser().id),
-            builder: (ctx, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const LoadingWidget();
-              }
+    return StreamBuilder<QuerySnapshot>(
+      stream:
+          FirestoreHelper.getPartyGuestListByUser(UserPreferences.getUser().id),
+      builder: (ctx, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const LoadingWidget();
+        }
 
-              if (snapshot.hasData) {
-                List<PartyGuest> partyGuestRequests = [];
-                if (snapshot.data!.docs.isEmpty) {
-                  return const Expanded(
-                      child:
-                          Center(child: Text('no guest list requests found!')));
-                } else {
-                  for (int i = 0; i < snapshot.data!.docs.length; i++) {
-                    DocumentSnapshot document = snapshot.data!.docs[i];
-                    Map<String, dynamic> map =
-                        document.data()! as Map<String, dynamic>;
-                    final PartyGuest partyGuest =
-                        Fresh.freshPartyGuestMap(map, false);
-                    partyGuestRequests.add(partyGuest);
+        if (snapshot.hasData) {
+          List<PartyGuest> partyGuestRequests = [];
+          if (snapshot.data!.docs.isEmpty) {
+            return const Expanded(
+                child: Center(child: Text('no guest list requests found!')));
+          } else {
+            for (int i = 0; i < snapshot.data!.docs.length; i++) {
+              DocumentSnapshot document = snapshot.data!.docs[i];
+              Map<String, dynamic> map =
+                  document.data()! as Map<String, dynamic>;
+              final PartyGuest partyGuest =
+                  Fresh.freshPartyGuestMap(map, false);
+              partyGuestRequests.add(partyGuest);
 
-                    if (i == snapshot.data!.docs.length - 1) {
-                      return _displayPartyGuestListRequests(
-                          context, partyGuestRequests);
-                    }
-                  }
-                }
-              } else {
-                return const Expanded(
-                    child:
-                        Center(child: Text('no guest list requests found!')));
+              if (i == snapshot.data!.docs.length - 1) {
+                return _displayPartyGuestListRequests(
+                    context, partyGuestRequests);
               }
-              return const LoadingWidget();
-            },
-          )
-        : Expanded(
-            child: Center(
-            child: Text('no ${sOption} here!'),
-          ));
+            }
+          }
+        } else {
+          return const Expanded(
+              child: Center(child: Text('no guest list requests found!')));
+        }
+        return const LoadingWidget();
+      },
+    );
   }
 
   _displayPartyGuestListRequests(
@@ -300,6 +345,7 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
             return GestureDetector(
                 child: ReservationBanner(
                   reservation: reservations[index],
+                  isPromoter: UserPreferences.myUser.clearanceLevel >= Constants.PROMOTER_LEVEL,
                 ),
                 onTap: () {
                   Reservation _sReservation = reservations[index];
@@ -315,5 +361,4 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
           }),
     );
   }
-
 }

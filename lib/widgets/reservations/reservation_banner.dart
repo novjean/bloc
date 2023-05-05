@@ -12,11 +12,11 @@ import '../../utils/logx.dart';
 class ReservationBanner extends StatelessWidget {
   static const String _TAG = 'ReservationBanner';
   final Reservation reservation;
+  final bool isPromoter;
 
-  const ReservationBanner({
-    Key? key,
-    required this.reservation,
-  }) : super(key: key);
+  const ReservationBanner(
+      {Key? key, required this.reservation, required this.isPromoter})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -79,7 +79,8 @@ class ReservationBanner extends StatelessWidget {
                       ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.only(right: 5.0, top: 10, bottom: 10),
+                      padding: const EdgeInsets.only(
+                          right: 5.0, top: 10, bottom: 10),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
@@ -93,63 +94,54 @@ class ReservationBanner extends StatelessWidget {
                                       )));
                             },
                           ),
-                          reservation.isApproved
-                              ? Padding(
-                                padding: const EdgeInsets.only(left: 10.0),
-                                child: DarkButtonWidget(
-                                    text: 'decline',
-                                    onClicked: () {
-                                      bool value = false;
-                                      Reservation updatedReservation =
-                                          reservation.copyWith(isApproved: value);
-                                      Logx.i(_TAG,
-                                          'reservation for ${updatedReservation.name} approved $value');
-                                      Reservation freshReservation =
-                                          Fresh.freshReservation(
-                                              updatedReservation);
-                                      FirestoreHelper.pushReservation(
-                                          freshReservation);
-                                    }),
-                              )
-                              : Padding(
-                                padding: const EdgeInsets.only(left: 10.0),
-                                child: ButtonWidget(
-                                    text: 'approve',
-                                    onClicked: () {
-                                      bool value = true;
-                                      Reservation updatedReservation =
-                                          reservation.copyWith(isApproved: value);
-                                      Logx.i(_TAG,
-                                          'reservation for ${updatedReservation.name} approved $value');
-                                      Reservation freshReservation =
-                                          Fresh.freshReservation(
-                                              updatedReservation);
-                                      FirestoreHelper.pushReservation(
-                                          freshReservation);
-                                    },
-                                  ),
-                              )
+                          isPromoter
+                              ? reservation.isApproved
+                                  ? Padding(
+                                      padding:
+                                          const EdgeInsets.only(left: 10.0),
+                                      child: DarkButtonWidget(
+                                          text: 'decline',
+                                          onClicked: () {
+                                            bool value = false;
+                                            Reservation updatedReservation =
+                                                reservation.copyWith(
+                                                    isApproved: value);
+                                            Logx.i(_TAG,
+                                                'reservation for ${updatedReservation.name} approved $value');
+                                            Reservation freshReservation =
+                                                Fresh.freshReservation(
+                                                    updatedReservation);
+                                            FirestoreHelper.pushReservation(
+                                                freshReservation);
+                                          }),
+                                    )
+                                  : Padding(
+                                      padding:
+                                          const EdgeInsets.only(left: 10.0),
+                                      child: ButtonWidget(
+                                        text: 'approve',
+                                        onClicked: () {
+                                          bool value = true;
+                                          Reservation updatedReservation =
+                                              reservation.copyWith(
+                                                  isApproved: value);
+                                          Logx.i(_TAG,
+                                              'reservation for ${updatedReservation.name} approved $value');
+                                          Reservation freshReservation =
+                                              Fresh.freshReservation(
+                                                  updatedReservation);
+                                          FirestoreHelper.pushReservation(
+                                              freshReservation);
+                                        },
+                                      ),
+                                    )
+                              : const SizedBox()
                         ],
                       ),
                     )
                   ],
                 ),
               ),
-              // Flexible(
-              //   flex: 1,
-              //   child: Container(
-              //     height: 200,
-              //     decoration: BoxDecoration(
-              //       border: Border.all(color: Theme.of(context).primaryColor),
-              //       borderRadius: BorderRadius.all(Radius.circular(0)),
-              //       image: DecorationImage(
-              //         image: NetworkImage(reservation.imageUrl),
-              //         fit: BoxFit.fitHeight,
-              //         // AssetImage(food['image']),
-              //       ),
-              //     ),
-              //   ),
-              // ),
             ],
           ),
         ),
