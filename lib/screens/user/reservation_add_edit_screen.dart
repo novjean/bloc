@@ -551,6 +551,8 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
                           UserPreferences.setUser(bloc_user);
                           widget.reservation = widget.reservation
                               .copyWith(customerId: bloc_user.id);
+                          widget.reservation = widget.reservation
+                              .copyWith(phone: int.tryParse(completePhoneNumber));
 
                           showConfirmationDialog(context, true);
                         } else {
@@ -574,6 +576,8 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
 
                           widget.reservation = widget.reservation
                               .copyWith(customerId: bloc_user.id);
+                          widget.reservation = widget.reservation
+                              .copyWith(phone: int.tryParse(completePhoneNumber));
 
                           showConfirmationDialog(context, false);
                         }
