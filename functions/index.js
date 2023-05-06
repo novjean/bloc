@@ -95,6 +95,7 @@ exports.partyGuestFunction = functions
         },
       });
     });
+
 exports.reservationFunction = functions
     .region('asia-south1')
     .firestore

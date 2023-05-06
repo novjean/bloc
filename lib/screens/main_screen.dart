@@ -125,7 +125,7 @@ class _MainScreenState extends State<MainScreen> {
       FirebaseMessaging.onMessageOpenedApp.listen((message) {
         Logx.i(_TAG, 'a new onMessageOpenedApp event was published!');
         Navigator.of(context).push(
-          MaterialPageRoute(builder: (ctx) => HomeScreen()),
+          MaterialPageRoute(builder: (ctx) => MainScreen(user: UserPreferences.myUser,)),
         );
 
         return;
