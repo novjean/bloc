@@ -1,3 +1,4 @@
+import 'package:bloc/utils/constants.dart';
 import 'package:bloc/utils/date_time_utils.dart';
 import 'package:bloc/utils/network_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -160,53 +161,55 @@ class PartyBanner extends StatelessWidget {
   }
 
   displayGuestListButton(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(right: 0.0),
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Theme.of(context).highlightColor,
-          foregroundColor: Colors.white,
-          shadowColor: Colors.white30,
-          elevation: 3,
-          minimumSize: const Size.fromHeight(60),
-        ),
-        onPressed: () {
-          PartyGuest partyGuest = Dummy.getDummyPartyGuest();
-          partyGuest.partyId = party.id;
+    return ElevatedButton.icon(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Constants.background,
+        foregroundColor: Constants.primary,
+        shadowColor: Colors.white10,
+        elevation: 3,
+        minimumSize: const Size.fromHeight(60),
+      ),
+      onPressed: () {
+        PartyGuest partyGuest = Dummy.getDummyPartyGuest();
+        partyGuest.partyId = party.id;
 
-          Navigator.of(context).push(
-            MaterialPageRoute(
-                builder: (context) => PartyGuestAddEditManagePage(
-                    partyGuest: partyGuest, party: party, task: 'add')),
-          );
-        },
-        child: const Text(
-          'join guest list',
-          style: TextStyle(fontSize: 20, color: Colors.black),
-        ),
+        Navigator.of(context).push(
+          MaterialPageRoute(
+              builder: (context) => PartyGuestAddEditManagePage(
+                  partyGuest: partyGuest, party: party, task: 'add')),
+        );
+      },
+      icon: const Icon(
+        Icons.app_registration,
+        size: 24.0,
+      ),
+      label: const Text(
+        'join guest list',
+        style: TextStyle(fontSize: 20, color: Constants.primary),
       ),
     );
   }
 
   displayBuyTicketButton(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(right: 0.0),
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Theme.of(context).highlightColor,
-          foregroundColor: Colors.white,
-          shadowColor: Colors.white30,
-          elevation: 3,
-          minimumSize: const Size.fromHeight(60),
-        ),
-        onPressed: () {
-          final uri = Uri.parse(party.ticketUrl);
-          NetworkUtils.launchInBrowser(uri);
-        },
-        child: const Text(
-          'buy ticket',
-          style: TextStyle(fontSize: 20, color: Colors.black),
-        ),
+    return ElevatedButton.icon(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Constants.background,
+        foregroundColor: Constants.primary,
+        shadowColor: Colors.white30,
+        elevation: 3,
+        minimumSize: const Size.fromHeight(60),
+      ),
+      onPressed: () {
+        final uri = Uri.parse(party.ticketUrl);
+        NetworkUtils.launchInBrowser(uri);
+      },
+      label: const Text(
+        'buy ticket',
+        style: TextStyle(fontSize: 20, color: Constants.primary),
+      ),
+      icon: const Icon(
+        Icons.star_half,
+        size: 24.0,
       ),
     );
   }
