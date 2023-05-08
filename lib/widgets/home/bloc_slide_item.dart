@@ -117,8 +117,8 @@ class _BlocSlideItemState extends State<BlocSlideItem> {
                       Flexible(
                         flex: 1,
                         child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 15.0, vertical: 5),
+                          padding: const EdgeInsets.only(
+                              right: 10.0, bottom: 10),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.end,
                             crossAxisAlignment: CrossAxisAlignment.end,

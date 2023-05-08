@@ -7,7 +7,6 @@ import 'package:bloc/db/entity/ticket.dart';
 import 'package:bloc/utils/constants.dart';
 import 'package:bloc/utils/string_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
 
 import '../db/entity/ad.dart';
 import '../db/entity/bloc.dart';

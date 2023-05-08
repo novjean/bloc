@@ -8,8 +8,11 @@ import '../../db/entity/party_guest.dart';
 import '../../helpers/dummy.dart';
 import '../../screens/parties/artist_screen.dart';
 import '../../screens/parties/party_guest_add_edit_manage_screen.dart';
+import '../../utils/logx.dart';
 
 class PartyBanner extends StatelessWidget {
+  static const String _TAG = 'PartyBanner';
+
   final Party party;
   final bool isClickable;
   final bool shouldShowButton;
@@ -24,7 +27,8 @@ class PartyBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     int timeNow = Timestamp.now().millisecondsSinceEpoch;
-    bool isGuestListActive = party.isGuestListActive & (timeNow < party.guestListEndTime);
+    bool isGuestListActive =
+        party.isGuestListActive & (timeNow < party.guestListEndTime);
 
     return GestureDetector(
       onTap: () {
@@ -32,7 +36,7 @@ class PartyBanner extends StatelessWidget {
             ? Navigator.of(context).push(
                 MaterialPageRoute(builder: (ctx) => ArtistScreen(party: party)),
               )
-            : print('party banner no click');
+            : Logx.i(_TAG, 'party banner no click');
       },
       child: Hero(
         tag: party.id,
@@ -51,7 +55,8 @@ class PartyBanner extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Container(
-                        padding: const EdgeInsets.only(top: 3, left: 5.0, right: 0.0),
+                        padding: const EdgeInsets.only(
+                            top: 3, left: 5.0, right: 0.0),
                         child: Text(
                           party.name.toLowerCase(),
                           style: const TextStyle(
@@ -63,7 +68,8 @@ class PartyBanner extends StatelessWidget {
                       ),
                       party.eventName.isNotEmpty
                           ? Padding(
-                              padding: const EdgeInsets.only(left: 5.0, top: 10),
+                              padding:
+                                  const EdgeInsets.only(left: 5.0, top: 10),
                               child: Text(
                                 party.eventName.toLowerCase(),
                                 style: const TextStyle(fontSize: 18),
@@ -88,50 +94,14 @@ class PartyBanner extends StatelessWidget {
                           style: const TextStyle(fontSize: 18),
                         ),
                       ),
-
                       const Spacer(),
-
-                      shouldShowButton
-                          ? party.isTBA
-                              ? showListenOrInstaDialog(context)
-                              : isGuestListActive
-                                  ? Padding(
-                                      padding:
-                                          const EdgeInsets.only(right: 0.0),
-                                      child: ElevatedButton(
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor:
-                                              Theme.of(context).highlightColor,
-                                          foregroundColor: Colors.white,
-                                          shadowColor: Colors.white30,
-                                          elevation: 3,
-
-                                          minimumSize: const Size.fromHeight(
-                                              60),
-                                        ),
-                                        onPressed: () {
-                                          PartyGuest partyGuest = Dummy.getDummyPartyGuest();
-                                          partyGuest.partyId = party.id;
-
-                                          Navigator.of(context).push(
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    PartyGuestAddEditManagePage(
-                                                        partyGuest: partyGuest,
-                                                        party: party,
-                                                        task: 'add')),
-                                          );
-                                        },
-                                        child: Text(
-                                          'join guest list',
-                                          style: TextStyle(
-                                              fontSize: 20,
-                                              color: Colors.black),
-                                        ),
-                                      ),
-                                    )
-                                  : showListenOrInstaDialog(context)
-                          : const SizedBox()
+                      shouldShowButton &&
+                              !party.isTBA &&
+                              party.ticketUrl.isNotEmpty
+                          ? displayBuyTicketButton(context)
+                          : isGuestListActive
+                              ? displayGuestListButton(context)
+                              : showListenOrInstaDialog(context)
                     ],
                   ),
                 ),
@@ -141,7 +111,7 @@ class PartyBanner extends StatelessWidget {
                     height: 200,
                     decoration: BoxDecoration(
                       border: Border.all(color: Theme.of(context).primaryColor),
-                      borderRadius: BorderRadius.all(Radius.circular(0)),
+                      borderRadius: const BorderRadius.all(Radius.circular(0)),
                       image: DecorationImage(
                         image: NetworkImage(party.imageUrl),
                         fit: BoxFit.fitHeight,
@@ -189,45 +159,55 @@ class PartyBanner extends StatelessWidget {
     );
   }
 
-  Widget displayButton(BuildContext context, bool isGuestListActive) {
-    if(isGuestListActive){
-      return Padding(
-        padding:
-        const EdgeInsets.only(right: 5.0),
-        child: ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            backgroundColor:
-            Theme.of(context).highlightColor,
-            foregroundColor: Colors.white,
-            shadowColor: Colors.white30,
-            elevation: 3,
-
-            minimumSize: const Size.fromHeight(
-                60), //////// HERE
-          ),
-          onPressed: () {
-            PartyGuest partyGuest = Dummy.getDummyPartyGuest();
-            partyGuest.partyId = party.id;
-
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                  builder: (context) =>
-                      PartyGuestAddEditManagePage(
-                          partyGuest: partyGuest,
-                          party: party,
-                          task: 'add')),
-            );
-          },
-          child: Text(
-            'join guest list',
-            style: TextStyle(
-                fontSize: 20,
-                color: Colors.black),
-          ),
+  displayGuestListButton(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(right: 0.0),
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Theme.of(context).highlightColor,
+          foregroundColor: Colors.white,
+          shadowColor: Colors.white30,
+          elevation: 3,
+          minimumSize: const Size.fromHeight(60),
         ),
-      );
-    } else {
-      return showListenOrInstaDialog(context);
-    }
+        onPressed: () {
+          PartyGuest partyGuest = Dummy.getDummyPartyGuest();
+          partyGuest.partyId = party.id;
+
+          Navigator.of(context).push(
+            MaterialPageRoute(
+                builder: (context) => PartyGuestAddEditManagePage(
+                    partyGuest: partyGuest, party: party, task: 'add')),
+          );
+        },
+        child: const Text(
+          'join guest list',
+          style: TextStyle(fontSize: 20, color: Colors.black),
+        ),
+      ),
+    );
+  }
+
+  displayBuyTicketButton(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(right: 0.0),
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Theme.of(context).highlightColor,
+          foregroundColor: Colors.white,
+          shadowColor: Colors.white30,
+          elevation: 3,
+          minimumSize: const Size.fromHeight(60),
+        ),
+        onPressed: () {
+          final uri = Uri.parse(party.ticketUrl);
+          NetworkUtils.launchInBrowser(uri);
+        },
+        child: const Text(
+          'buy ticket',
+          style: TextStyle(fontSize: 20, color: Colors.black),
+        ),
+      ),
+    );
   }
 }

@@ -1,6 +1,5 @@
 import 'package:bloc/db/entity/user.dart';
 import 'package:bloc/main.dart';
-import 'package:bloc/screens/user/reservation_add_edit_screen.dart';
 import 'package:bloc/utils/constants.dart';
 import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -20,7 +19,6 @@ import '../widgets/home/bloc_slide_item.dart';
 import '../widgets/parties/party_banner.dart';
 import '../widgets/search_card.dart';
 import '../widgets/store_badge_item.dart';
-import '../widgets/ui/button_widget.dart';
 import '../widgets/ui/dark_button_widget.dart';
 import '../widgets/ui/toaster.dart';
 import 'experimental/trending.dart';
@@ -276,7 +274,7 @@ class _HomeScreenState extends State<HomeScreen> {
     int timeNow = Timestamp.now().millisecondsSinceEpoch;
 
     return StreamBuilder<QuerySnapshot>(
-      stream: FirestoreHelper.getUpcomingGuestListParties(timeNow),
+      stream: FirestoreHelper.getUpcomingParties(timeNow),
       builder: (ctx, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const LoadingWidget();
