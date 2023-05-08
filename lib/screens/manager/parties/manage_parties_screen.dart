@@ -7,7 +7,9 @@ import '../../../db/entity/manager_service.dart';
 import '../../../db/entity/party.dart';
 import '../../../helpers/firestore_helper.dart';
 import '../../../helpers/fresh.dart';
+import '../../../utils/logx.dart';
 import '../../../widgets/ui/listview_block.dart';
+import '../../../widgets/ui/sized_listview_block.dart';
 import 'party_add_edit_screen.dart';
 
 class ManagePartiesScreen extends StatefulWidget {
@@ -21,6 +23,19 @@ class ManagePartiesScreen extends StatefulWidget {
 }
 
 class _ManagePartiesScreenState extends State<ManagePartiesScreen> {
+  static const String _TAG = 'ManagePartiesScreen';
+
+  late List<String> mOptions;
+  String sOption = '';
+
+  @override
+  void initState() {
+    mOptions = ['event', 'artist'];
+    sOption = mOptions.first;
+
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -37,15 +52,15 @@ class _ManagePartiesScreenState extends State<ManagePartiesScreen> {
                     )),
           );
         },
-        child: Icon(
-          Icons.add,
-          color: Colors.black,
-          size: 29,
-        ),
         backgroundColor: Theme.of(context).primaryColor,
         tooltip: 'add party',
         elevation: 5,
         splashColor: Colors.grey,
+        child: const Icon(
+          Icons.add,
+          color: Colors.black,
+          size: 29,
+        ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       body: _buildBody(context),
@@ -55,16 +70,45 @@ class _ManagePartiesScreenState extends State<ManagePartiesScreen> {
   _buildBody(BuildContext context) {
     return Column(
       children: [
-        const SizedBox(height: 2.0),
+        displayBoxOfficeOptions(context),
+        const Divider(),
         _buildParties(context),
-        const SizedBox(height: 2.0),
+        const SizedBox(height: 5.0),
       ],
+    );
+  }
+
+  displayBoxOfficeOptions(BuildContext context) {
+    double containerHeight = MediaQuery.of(context).size.height / 20;
+
+    return SizedBox(
+      key: UniqueKey(),
+      // this height has to match with category item container height
+      height: MediaQuery.of(context).size.height / 15,
+      child: ListView.builder(
+          itemCount: mOptions.length,
+          scrollDirection: Axis.horizontal,
+          itemBuilder: (ctx, index) {
+            return GestureDetector(
+                child: SizedListViewBlock(
+                  title: mOptions[index],
+                  height: containerHeight,
+                  width: MediaQuery.of(context).size.width / 3,
+                  color: Theme.of(context).primaryColor,
+                ),
+                onTap: () {
+                  setState(() {
+                    sOption = mOptions[index];
+                    Logx.i(_TAG, '$sOption at box office is selected');
+                  });
+                });
+          }),
     );
   }
 
   _buildParties(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
-        stream: FirestoreHelper.getParties(widget.serviceId),
+        stream: FirestoreHelper.getPartyByType(widget.serviceId, sOption),
         builder: (ctx, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const LoadingWidget();
@@ -106,7 +150,7 @@ class _ManagePartiesScreenState extends State<ManagePartiesScreen> {
                 // ),
                 onTap: () {
                   Party _sParty = _parties[index];
-                  print(_sParty.name + ' is selected');
+                  print('${_sParty.name} is selected');
 
                   Navigator.of(context).push(
                     MaterialPageRoute(

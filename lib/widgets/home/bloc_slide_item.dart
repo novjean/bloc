@@ -116,16 +116,14 @@ class _BlocSlideItemState extends State<BlocSlideItem> {
 
                       Flexible(
                         flex: 1,
-                        child: Padding(
-                          padding: const EdgeInsets.only(
-                              right: 10.0, bottom: 10),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.only(right: 15.0),
-                                child: SizedBox(
+                        child: Center(
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                SizedBox(
                                   height: 50,
                                   child: ElevatedButton.icon(
                                     onPressed: () {
@@ -142,29 +140,32 @@ class _BlocSlideItemState extends State<BlocSlideItem> {
                                     label: const Text('menu'), // <-- Text
                                   ),
                                 ),
-                              ),
-                              SizedBox(
-                                height: 50,
-                                child: ElevatedButton.icon(
-                                  onPressed: () {
-                                    Navigator.of(context).push(
-                                      MaterialPageRoute(
-                                          builder: (ctx) =>
-                                              ReservationAddEditScreen(
-                                                  reservation:
-                                                      Dummy.getDummyReservation(
-                                                          mBlocService.id),
-                                                  task: 'add')),
-                                    );
-                                  },
-                                  icon: const Icon(
-                                    Icons.table_restaurant,
-                                    size: 24.0,
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 10.0),
+                                  child: SizedBox(
+                                    height: 50,
+                                    child: ElevatedButton.icon(
+                                      onPressed: () {
+                                        Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                              builder: (ctx) =>
+                                                  ReservationAddEditScreen(
+                                                      reservation:
+                                                          Dummy.getDummyReservation(
+                                                              mBlocService.id),
+                                                      task: 'add')),
+                                        );
+                                      },
+                                      icon: const Icon(
+                                        Icons.table_restaurant,
+                                        size: 24.0,
+                                      ),
+                                      label: const Text('reserve'), // <-- Text
+                                    ),
                                   ),
-                                  label: const Text('reserve'), // <-- Text
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
                       ),

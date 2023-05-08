@@ -591,6 +591,16 @@ class FirestoreHelper {
         .get();
   }
 
+  static getPartyByType(String blocServiceId, String type) {
+    return FirebaseFirestore.instance
+        .collection(PARTIES)
+        .where('blocServiceId', isEqualTo: blocServiceId)
+        .where('type', isEqualTo: type)
+        .orderBy('name', descending: false)
+        .snapshots();
+  }
+
+
   static getUpcomingParties(int timeNow) {
     return FirebaseFirestore.instance
         .collection(FirestoreHelper.PARTIES)
