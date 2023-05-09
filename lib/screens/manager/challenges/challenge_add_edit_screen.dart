@@ -68,9 +68,6 @@ class _ChallengeAddEditScreenState extends State<ChallengeAddEditScreen> {
           onChanged: (title) => widget.challenge = widget.challenge.copyWith(title: title),
         ),
         const SizedBox(height: 24),
-        // ios default 140
-        // ios extended 260
-        // android default 80
         TextFieldWidget(
           label: 'description \*',
           text: widget.challenge.description,

@@ -217,6 +217,21 @@ class _PartyGuestAddEditManagePageState
                             onChanged: (value) {},
                           ),
                         ),
+                        const SizedBox(height: 24),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 32),
+                          child: DarkTextFieldWidget(
+                            label: 'challenge level',
+                            text: bloc_user.challengeLevel.toString(),
+                            onChanged: (value) {
+                              if(value.isNotEmpty){
+                                int? iValue = int.tryParse(value);
+                                bloc_user = bloc_user.copyWith(challengeLevel: iValue);
+                                FirestoreHelper.pushUser(bloc_user);
+                              }
+                            },
+                          ),
+                        ),
                       ],
                     )
                   : const SizedBox(),

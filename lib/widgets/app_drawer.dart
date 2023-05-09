@@ -145,11 +145,11 @@ class AppDrawer extends StatelessWidget {
               : const SizedBox(),
           const Spacer(),
           const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 10.0),
+            padding: EdgeInsets.symmetric(horizontal: 9.0),
             child: Align(
                 alignment: Alignment.bottomRight,
                 child: Text(
-                  'v1.5.4',
+                  'v${Constants.appVersion}',
                   style: TextStyle(fontSize: 14),
                 )),
           ),

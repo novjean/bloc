@@ -10,7 +10,6 @@ class Constants {
 
   static const Color background = Color.fromRGBO(38, 50, 56, 1.0);
 
-
   static Color lightAccent = const Color(0xff5563ff);
   static Color darkAccent = const Color(0xff5563ff);
   static Color lightBG = const Color(0xfffcfcff);
@@ -58,6 +57,7 @@ class Constants {
   static int MANAGER_LEVEL = 5;
   static int OWNER_LEVEL = 7;
 
+  static const String appVersion = '1.5.4';
 
   // flagship store kept for ease of reference
   static String blocServiceId = 'UVU4XPqTYr3U0YhQzEhg';
