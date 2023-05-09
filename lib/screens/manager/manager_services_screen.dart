@@ -1,5 +1,5 @@
 import 'package:bloc/db/entity/manager_service.dart';
-import 'package:bloc/screens/manager/ads/ads_screen.dart';
+import 'package:bloc/screens/manager/ads/manage_ads_screen.dart';
 import 'package:bloc/screens/manager/orders/manage_orders_screen.dart';
 import 'package:bloc/screens/manager/parties/manage_parties_screen.dart';
 import 'package:bloc/screens/manager/reservations/reservations_screen.dart';
@@ -13,6 +13,7 @@ import 'package:flutter/material.dart';
 import '../../db/entity/bloc_service.dart';
 import '../../helpers/firestore_helper.dart';
 import '../../widgets/ui/listview_block.dart';
+import 'challenges/manage_challenges_screen.dart';
 import 'guest_wifi_edit_screen.dart';
 import 'inventory/manage_inventory_screen.dart';
 import 'tables/manage_tables_screen.dart';
@@ -90,7 +91,14 @@ class ManagerServicesScreen extends StatelessWidget {
                       {
                         Navigator.of(context).push(MaterialPageRoute(
                             builder: (ctx) =>
-                                AdsScreen(serviceId: blocService.id)));
+                                ManageAdsScreen(serviceId: blocService.id)));
+                        break;
+                      }
+                    case 'challenges':
+                      {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (ctx) =>
+                                ManageChallengesScreen()));
                         break;
                       }
                     case 'reservations':

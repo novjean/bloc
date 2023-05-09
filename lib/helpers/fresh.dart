@@ -3,6 +3,7 @@ import 'package:bloc/db/entity/party_guest.dart';
 import '../db/entity/ad.dart';
 import '../db/entity/bloc.dart';
 import '../db/entity/category.dart';
+import '../db/entity/challenge.dart';
 import '../db/entity/party.dart';
 import '../db/entity/product.dart';
 import '../db/entity/reservation.dart';
@@ -281,7 +282,7 @@ class Fresh {
       Map<String, dynamic> map, bool shouldUpdate) {
     Category category = Dummy.getDummyCategory('');
 
-    bool shouldPush = false;
+    bool shouldPush = true;
 
     try {
       category = category.copyWith(id: map['id'] as String);
@@ -425,6 +426,97 @@ class Fresh {
 
     return freshCategory;
   }
+
+  /** challenge **/
+  static Challenge freshChallengeMap(
+      Map<String, dynamic> map, bool shouldUpdate) {
+    Challenge challenge = Dummy.getDummyChallenge();
+
+    bool shouldPush = true;
+
+    try {
+      challenge = challenge.copyWith(id: map['id'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'challenge id not exist');
+    }
+    try {
+      challenge = challenge.copyWith(level: map['level'] as int);
+    } catch (e) {
+      Logx.em(_TAG, 'challenge level not exist for category id: ' + challenge.id);
+      shouldPush = true;
+    }
+    try {
+      challenge = challenge.copyWith(title: map['title'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'challenge title not exist for category id: ' + challenge.id);
+      shouldPush = true;
+    }
+    try {
+      challenge = challenge.copyWith(description: map['description'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'challenge description not exist for category id: ' + challenge.id);
+      shouldPush = true;
+    }
+    try {
+      challenge = challenge.copyWith(points: map['points'] as int);
+    } catch (e) {
+      Logx.em(_TAG, 'challenge points not exist for category id: ' + challenge.id);
+      shouldPush = true;
+    }
+    try {
+      challenge = challenge.copyWith(clickCount: map['clickCount'] as int);
+    } catch (e) {
+      Logx.em(_TAG, 'challenge clickCount not exist for category id: ' + challenge.id);
+      shouldPush = true;
+    }
+
+    if (shouldPush &&
+        shouldUpdate &&
+        UserPreferences.myUser.clearanceLevel >= Constants.MANAGER_LEVEL) {
+      Logx.i(_TAG, 'updating challenge ' + challenge.id);
+      FirestoreHelper.pushChallenge(challenge);
+    }
+
+    return challenge;
+  }
+
+  static Challenge freshChallenge(Challenge challenge) {
+    Challenge freshChallenge = Dummy.getDummyChallenge();
+
+    try {
+      freshChallenge = freshChallenge.copyWith(id: challenge.id);
+    } catch (e) {
+      Logx.em(_TAG, 'challenge id not exist');
+    }
+    try {
+      freshChallenge = freshChallenge.copyWith(level: challenge.level);
+    } catch (e) {
+      Logx.em(_TAG, 'challenge level not exist for challenge id: ' + challenge.id);
+    }
+    try {
+      freshChallenge = freshChallenge.copyWith(title: challenge.title);
+    } catch (e) {
+      Logx.em(_TAG, 'challenge title not exist for challenge id: ' + challenge.id);
+    }
+    try {
+      freshChallenge = freshChallenge.copyWith(description: challenge.description);
+    } catch (e) {
+      Logx.em(_TAG, 'challenge description not exist for challenge id: ' + challenge.id);
+    }
+    try {
+      freshChallenge = freshChallenge.copyWith(points: challenge.points);
+    } catch (e) {
+      Logx.em(_TAG, 'challenge points not exist for challenge id: ' + challenge.id);
+    }
+    try {
+      freshChallenge = freshChallenge.copyWith(clickCount: challenge.clickCount);
+    } catch (e) {
+      Logx.em(_TAG, 'challenge clickCount not exist for challenge id: ' + challenge.id);
+    }
+
+    return freshChallenge;
+  }
+
 
   /** party **/
   static Party freshPartyMap(Map<String, dynamic> map, bool shouldUpdate) {
@@ -1611,6 +1703,12 @@ class Fresh {
       shouldPushUser = true;
     }
     try {
+      user = user.copyWith(challengeLevel: map['challengeLevel'] as int);
+    } catch (e) {
+      Logx.em(_TAG, 'user challengeLevel not exist for user id: ' + user.id);
+      shouldPushUser = true;
+    }
+    try {
       user = user.copyWith(phoneNumber: map['phoneNumber'] as int);
     } catch (e) {
       Logx.em(_TAG, 'user phoneNumber not exist for user id: ' + user.id);
@@ -1700,6 +1798,11 @@ class Fresh {
       freshUser = freshUser.copyWith(clearanceLevel: user.clearanceLevel);
     } catch (e) {
       Logx.em(_TAG, 'user clearanceLevel not exist for user id: ' + user.id);
+    }
+    try {
+      freshUser = freshUser.copyWith(challengeLevel: user.challengeLevel);
+    } catch (e) {
+      Logx.em(_TAG, 'user challengeLevel not exist for user id: ' + user.id);
     }
     try {
       freshUser = freshUser.copyWith(phoneNumber: user.phoneNumber);

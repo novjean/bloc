@@ -1,4 +1,5 @@
 import 'package:bloc/db/entity/category.dart';
+import 'package:bloc/db/entity/challenge.dart';
 import 'package:bloc/db/entity/guest_wifi.dart';
 import 'package:bloc/db/entity/party_guest.dart';
 import 'package:bloc/db/entity/reservation.dart';
@@ -83,6 +84,17 @@ class Dummy {
         type: 'Alcohol',
         blocIds: []);
     return dummyCategory;
+  }
+
+  static Challenge getDummyChallenge() {
+    Challenge dummyChallenge = Challenge(
+        id: StringUtils.getRandomString(28),
+        level: 0,
+        title: '',
+        description: '',
+        points: 0,
+        clickCount: 0);
+    return dummyChallenge;
   }
 
   static GuestWifi getDummyWifi(String blocServiceId) {
@@ -256,11 +268,12 @@ class Dummy {
     int millis = Timestamp.now().millisecondsSinceEpoch;
 
     User dummyUser = User(
+        id: StringUtils.getRandomString(28),
         blocServiceId: '',
         clearanceLevel: 1,
+        challengeLevel: 1,
         email: '',
         fcmToken: '',
-        id: StringUtils.getRandomString(28),
         imageUrl: '',
         name: '',
         surname: '',

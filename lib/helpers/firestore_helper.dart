@@ -4,6 +4,7 @@ import 'package:bloc/db/entity/bloc.dart';
 import 'package:bloc/db/entity/bloc_service.dart';
 import 'package:bloc/db/entity/cart_item.dart';
 import 'package:bloc/db/entity/category.dart';
+import 'package:bloc/db/entity/challenge.dart';
 import 'package:bloc/db/entity/guest_wifi.dart';
 import 'package:bloc/db/entity/offer.dart';
 import 'package:bloc/db/entity/order_bloc.dart';
@@ -41,6 +42,7 @@ class FirestoreHelper {
   static String CAPTAIN_SERVICES = 'captain_services';
   static String CATEGORIES = 'categories';
   static String CART_ITEMS = 'cart_items';
+  static String CHALLENGES = 'challenges';
   static String CITIES = 'cities';
   static String GUEST_WIFIS = 'guest_wifis';
   static String INVENTORY_OPTIONS = 'inventory_options';
@@ -85,6 +87,10 @@ class FirestoreHelper {
         .where('blocId', isEqualTo: blocId)
         .where('isActive', isEqualTo: true)
         .snapshots();
+  }
+
+  static void deleteAd(String docId) {
+    FirebaseFirestore.instance.collection(ADS).doc(docId).delete();
   }
 
   /** Blocs **/
@@ -147,7 +153,7 @@ class FirestoreHelper {
     }
   }
 
-  /** Bloc Services **/
+  /** bloc services **/
   static void pushBlocService(BlocService blocService) async {
     try {
       await FirebaseFirestore.instance
@@ -185,9 +191,8 @@ class FirestoreHelper {
     return FirebaseFirestore.instance.collection(BLOC_SERVICES).snapshots();
   }
 
-  /** Bookings **/
 
-  /** Cart Items **/
+  /** cart items **/
   static void pushCartItem(CartItem cartItem) async {
     try {
       await FirebaseFirestore.instance
@@ -331,7 +336,7 @@ class FirestoreHelper {
     FirebaseFirestore.instance.collection(CART_ITEMS).doc(cartId).delete();
   }
 
-  /** Category **/
+  /** category **/
   static void pushCategory(Category category) async {
     try {
       await FirebaseFirestore.instance
@@ -377,6 +382,33 @@ class FirestoreHelper {
         .collection(CAPTAIN_SERVICES)
         .orderBy('sequence', descending: false)
         .snapshots();
+  }
+
+  /** challenges **/
+  static void pushChallenge(Challenge challenge) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection(CHALLENGES)
+          .doc(challenge.id)
+          .set(challenge.toMap());
+    } on PlatformException catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } on Exception catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } catch (e) {
+      logger.e(e);
+    }
+  }
+
+  static Stream<QuerySnapshot<Object?>> getChallenges() {
+    return FirebaseFirestore.instance
+        .collection(CHALLENGES)
+        .orderBy('level', descending: false)
+        .snapshots();
+  }
+
+  static void deleteChallenge(String docId) {
+    FirebaseFirestore.instance.collection(CHALLENGES).doc(docId).delete();
   }
 
   /** chats **/
@@ -466,7 +498,7 @@ class FirestoreHelper {
         .snapshots();
   }
 
-  /** Offers **/
+  /** offers **/
   static void pushOffer(Offer offer) async {
     try {
       await FirebaseFirestore.instance

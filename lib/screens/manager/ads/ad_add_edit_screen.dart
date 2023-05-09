@@ -102,6 +102,16 @@ class _AdAddEditScreenState extends State<AdAddEditScreen> {
             Navigator.of(context).pop();
           },
         ),
+        const SizedBox(height: 24),
+        ButtonWidget(
+          text: 'delete',
+          onClicked: () {
+            FirestoreHelper.deleteAd(widget.ad.id);
+
+            Navigator.of(context).pop();
+          },
+        ),
+        const SizedBox(height: 10),
       ],
     );
   }

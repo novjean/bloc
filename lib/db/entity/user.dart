@@ -2,13 +2,17 @@ class User {
   String id;
   final String name;
   final String surname;
+  int phoneNumber;
   final String email;
   final String imageUrl;
   final String gender;
+
   final int clearanceLevel;
-  int phoneNumber;
-  String fcmToken;
+  final int challengeLevel;
+
   final String blocServiceId;
+  String fcmToken;
+
   int createdAt;
   int lastSeenAt;
 
@@ -17,13 +21,14 @@ class User {
     required this.id,
     required this.name,
     required this.surname,
+    required this.phoneNumber,
     required this.email,
     required this.imageUrl,
     required this.gender,
     required this.clearanceLevel,
-    required this.phoneNumber,
-    required this.fcmToken,
+    required this.challengeLevel,
     required this.blocServiceId,
+    required this.fcmToken,
     required this.createdAt,
     required this.lastSeenAt,
   });
@@ -36,13 +41,14 @@ class User {
           id == other.id &&
           name == other.name &&
           surname == other.surname &&
+          phoneNumber == other.phoneNumber &&
           email == other.email &&
           imageUrl == other.imageUrl &&
           gender == other.gender &&
           clearanceLevel == other.clearanceLevel &&
-          phoneNumber == other.phoneNumber &&
-          fcmToken == other.fcmToken &&
+          challengeLevel == other.challengeLevel &&
           blocServiceId == other.blocServiceId &&
+          fcmToken == other.fcmToken &&
           createdAt == other.createdAt &&
           lastSeenAt == other.lastSeenAt);
 
@@ -51,13 +57,14 @@ class User {
       id.hashCode ^
       name.hashCode ^
       surname.hashCode ^
+      phoneNumber.hashCode ^
       email.hashCode ^
       imageUrl.hashCode ^
       gender.hashCode ^
       clearanceLevel.hashCode ^
-      phoneNumber.hashCode ^
-      fcmToken.hashCode ^
+      challengeLevel.hashCode ^
       blocServiceId.hashCode ^
+      fcmToken.hashCode ^
       createdAt.hashCode ^
       lastSeenAt.hashCode;
 
@@ -67,13 +74,14 @@ class User {
         ' id: $id,' +
         ' name: $name,' +
         ' surname: $surname,' +
+        ' phoneNumber: $phoneNumber,' +
         ' email: $email,' +
         ' imageUrl: $imageUrl,' +
         ' gender: $gender,' +
         ' clearanceLevel: $clearanceLevel,' +
-        ' phoneNumber: $phoneNumber,' +
-        ' fcmToken: $fcmToken,' +
+        ' challengeLevel: $challengeLevel,' +
         ' blocServiceId: $blocServiceId,' +
+        ' fcmToken: $fcmToken,' +
         ' createdAt: $createdAt,' +
         ' lastSeenAt: $lastSeenAt,' +
         '}';
@@ -83,13 +91,14 @@ class User {
     String? id,
     String? name,
     String? surname,
+    int? phoneNumber,
     String? email,
     String? imageUrl,
     String? gender,
     int? clearanceLevel,
-    int? phoneNumber,
-    String? fcmToken,
+    int? challengeLevel,
     String? blocServiceId,
+    String? fcmToken,
     int? createdAt,
     int? lastSeenAt,
   }) {
@@ -97,13 +106,14 @@ class User {
       id: id ?? this.id,
       name: name ?? this.name,
       surname: surname ?? this.surname,
+      phoneNumber: phoneNumber ?? this.phoneNumber,
       email: email ?? this.email,
       imageUrl: imageUrl ?? this.imageUrl,
       gender: gender ?? this.gender,
       clearanceLevel: clearanceLevel ?? this.clearanceLevel,
-      phoneNumber: phoneNumber ?? this.phoneNumber,
-      fcmToken: fcmToken ?? this.fcmToken,
+      challengeLevel: challengeLevel ?? this.challengeLevel,
       blocServiceId: blocServiceId ?? this.blocServiceId,
+      fcmToken: fcmToken ?? this.fcmToken,
       createdAt: createdAt ?? this.createdAt,
       lastSeenAt: lastSeenAt ?? this.lastSeenAt,
     );
@@ -114,13 +124,14 @@ class User {
       'id': this.id,
       'name': this.name,
       'surname': this.surname,
+      'phoneNumber': this.phoneNumber,
       'email': this.email,
       'imageUrl': this.imageUrl,
       'gender': this.gender,
       'clearanceLevel': this.clearanceLevel,
-      'phoneNumber': this.phoneNumber,
-      'fcmToken': this.fcmToken,
+      'challengeLevel': this.challengeLevel,
       'blocServiceId': this.blocServiceId,
+      'fcmToken': this.fcmToken,
       'createdAt': this.createdAt,
       'lastSeenAt': this.lastSeenAt,
     };
@@ -131,13 +142,14 @@ class User {
       id: map['id'] as String,
       name: map['name'] as String,
       surname: map['surname'] as String,
+      phoneNumber: map['phoneNumber'] as int,
       email: map['email'] as String,
       imageUrl: map['imageUrl'] as String,
       gender: map['gender'] as String,
       clearanceLevel: map['clearanceLevel'] as int,
-      phoneNumber: map['phoneNumber'] as int,
-      fcmToken: map['fcmToken'] as String,
+      challengeLevel: map['challengeLevel'] as int,
       blocServiceId: map['blocServiceId'] as String,
+      fcmToken: map['fcmToken'] as String,
       createdAt: map['createdAt'] as int,
       lastSeenAt: map['lastSeenAt'] as int,
     );

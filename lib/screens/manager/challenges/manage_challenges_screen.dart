@@ -1,49 +1,45 @@
+import 'package:bloc/db/entity/challenge.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-import '../../../db/entity/ad.dart';
-import '../../../helpers/dummy.dart';
-import '../../../helpers/firestore_helper.dart';
-import '../../../helpers/fresh.dart';
-import '../../../utils/logx.dart';
-import '../../../widgets/ui/listview_block.dart';
-import '../../../widgets/ui/loading_widget.dart';
-import 'ad_add_edit_screen.dart';
+import '../../../../helpers/dummy.dart';
+import '../../../../helpers/firestore_helper.dart';
+import '../../../../helpers/fresh.dart';
+import '../../../../utils/logx.dart';
+import '../../../../widgets/ui/listview_block.dart';
+import '../../../../widgets/ui/loading_widget.dart';
+import 'challenge_add_edit_screen.dart';
 
-class AdsScreen extends StatelessWidget {
-  static const String _TAG = 'AdsScreen';
+class ManageChallengesScreen extends StatelessWidget {
+  static const String _TAG = 'ManageChallengesScreen';
 
-  String serviceId;
-
-  AdsScreen({
-    required this.serviceId,
-  });
+  ManageChallengesScreen();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('manage | ads'),
+        title: const Text('manage | challenges'),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.of(context).push(
             MaterialPageRoute(
-                builder: (ctx) => AdAddEditScreen(
-                  ad: Dummy.getDummyAd(serviceId),
+                builder: (ctx) => ChallengeAddEditScreen(
+                  challenge: Dummy.getDummyChallenge(),
                   task: 'add',
                 )),
           );
         },
-        child: Icon(
-          Icons.add,
-          color: Colors.black,
-          size: 29,
-        ),
         backgroundColor: Theme.of(context).primaryColor,
         tooltip: 'add ad',
         elevation: 5,
         splashColor: Colors.grey,
+        child: const Icon(
+          Icons.add,
+          color: Colors.black,
+          size: 29,
+        ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       body: _buildBody(context),
@@ -55,55 +51,56 @@ class AdsScreen extends StatelessWidget {
       child: Column(
         children: [
           const SizedBox(height: 5.0),
-          _buildAds(context),
+          _buildChallenges(context),
           const SizedBox(height: 5.0),
         ],
       ),
     );
   }
 
-  _buildAds(BuildContext context) {
+  _buildChallenges(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
-        stream: FirestoreHelper.getAds(serviceId),
+        stream: FirestoreHelper.getChallenges(),
         builder: (ctx, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const LoadingWidget();
           }
 
-          List<Ad> _ads = [];
+          List<Challenge> challenges = [];
           for (int i = 0; i < snapshot.data!.docs.length; i++) {
             DocumentSnapshot document = snapshot.data!.docs[i];
             Map<String, dynamic> map = document.data()! as Map<String, dynamic>;
-            final Ad _ad = Fresh.freshAdMap(map, false);
-            _ads.add(_ad);
+            final Challenge challenge = Fresh.freshChallengeMap(map, false);
+            challenges.add(challenge);
 
             if (i == snapshot.data!.docs.length - 1) {
-              return _displayAds(context, _ads);
+              return _displayChallenges(context, challenges);
             }
           }
-          Logx.i(_TAG, 'loading ads...');
+          Logx.i(_TAG, 'loading challenges...');
           return const LoadingWidget();
         });
   }
 
-  _displayAds(BuildContext context, List<Ad> ads) {
-    return Expanded(
+  _displayChallenges(BuildContext context, List<Challenge> challenges) {
+    return Container(
+      height: MediaQuery.of(context).size.height,
       child: ListView.builder(
-          itemCount: ads.length,
+          itemCount: challenges.length,
           scrollDirection: Axis.vertical,
           itemBuilder: (ctx, index) {
             return GestureDetector(
                 child: ListViewBlock(
-                  title: ads[index].title,
+                  title: challenges[index].title,
                 ),
                 onTap: () {
-                  Ad sAd = ads[index];
-                  Logx.i(_TAG, sAd.title + ' : ' + sAd.message);
+                  Challenge sChallenge = challenges[index];
+                  Logx.i(_TAG,'selected challenge ' + sChallenge.title);
 
                   Navigator.of(context).push(
                     MaterialPageRoute(
-                        builder: (ctx) => AdAddEditScreen(
-                          ad: sAd,
+                        builder: (ctx) => ChallengeAddEditScreen(
+                          challenge: sChallenge,
                           task: 'edit',
                         )),
                   );
