@@ -191,7 +191,6 @@ class FirestoreHelper {
     return FirebaseFirestore.instance.collection(BLOC_SERVICES).snapshots();
   }
 
-
   /** cart items **/
   static void pushCartItem(CartItem cartItem) async {
     try {
@@ -398,6 +397,13 @@ class FirestoreHelper {
     } catch (e) {
       logger.e(e);
     }
+  }
+
+  static Future<QuerySnapshot<Map<String, dynamic>>> pullChallenges() {
+    return FirebaseFirestore.instance
+        .collection(CHALLENGES)
+        .orderBy('level', descending: false)
+        .get();
   }
 
   static Stream<QuerySnapshot<Object?>> getChallenges() {

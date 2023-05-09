@@ -85,8 +85,8 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('reserve | table')),
-      backgroundColor: Theme.of(context).backgroundColor,
+      appBar: AppBar(title: const Text('reserve | table')),
+      backgroundColor: Constants.background,
       body: _buildBody(context),
     );
   }

@@ -8,6 +8,7 @@ import 'package:intl_phone_field/country_picker_dialog.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:pinput/pinput.dart';
 
+import '../../db/entity/challenge.dart';
 import '../../db/entity/party.dart';
 import '../../db/entity/party_guest.dart';
 import '../../db/entity/user.dart' as blocUser;
@@ -58,7 +59,7 @@ class _PartyGuestAddEditManagePageState
   List<String> guestCounts = [];
 
   String sGuestStatus = 'couple';
-  List<String> guestStatuses = ['couple', 'ladies', 'lgbtq+'];
+  List<String> guestStatuses = ['couple', 'ladies', 'lgbtq+', 'stag'];
 
   String sGender = 'male';
   List<String> genders = [
@@ -76,12 +77,19 @@ class _PartyGuestAddEditManagePageState
   final pinController = TextEditingController();
   final focusNode = FocusNode();
 
+  List<Challenge> challenges = [] ;
+  bool isChallengesLoading = true;
+
   @override
   void initState() {
-    bloc_user = Dummy.getDummyUser();
+    if (!UserPreferences.isUserLoggedIn()) {
+      bloc_user = Dummy.getDummyUser();
+    } else {
+      bloc_user = UserPreferences.myUser;
+    }
 
     FirestoreHelper.pullUser(widget.partyGuest.guestId).then((res) {
-      print('successfully pulled in user');
+      Logx.i(_TAG, 'successfully pulled in user');
 
       if (res.docs.isNotEmpty) {
         DocumentSnapshot document = res.docs[0];
@@ -106,12 +114,36 @@ class _PartyGuestAddEditManagePageState
       }
     });
 
+    FirestoreHelper.pullChallenges().then((res) {
+      if (res.docs.isNotEmpty) {
+        Logx.i(_TAG,
+            "successfully pulled in all challenges");
+
+        for (int i = 0; i < res.docs.length; i++) {
+          DocumentSnapshot document = res.docs[i];
+          Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+          final Challenge challenge = Fresh.freshChallengeMap(data, false);
+          challenges.add(challenge);
+        }
+
+        setState(() {
+          isChallengesLoading = false;
+        });
+      } else {
+        Logx.em(_TAG, 'no challenges found, setting default');
+        setState(() {
+          isChallengesLoading = false;
+        });
+      }
+    });
+
     for (int i = 1; i <= widget.party.guestListCount; i++) {
       guestCounts.add(i.toString());
     }
     sGuestCount = widget.partyGuest.guestsCount.toString();
     sGuestStatus = widget.partyGuest.guestStatus;
     sGender = widget.partyGuest.gender;
+    super.initState();
   }
 
   @override
@@ -134,7 +166,7 @@ class _PartyGuestAddEditManagePageState
   }
 
   _buildBody(BuildContext context) {
-    return isCustomerLoading
+    return isCustomerLoading && isChallengesLoading
         ? const LoadingWidget()
         : ListView(
             physics: const BouncingScrollPhysics(),
@@ -679,6 +711,8 @@ class _PartyGuestAddEditManagePageState
   }
 
   showChallengeDialog(BuildContext context) {
+    String challengeText = findChallengeText();
+
     return showDialog(
       context: context,
       builder: (BuildContext ctx) {
@@ -694,7 +728,7 @@ class _PartyGuestAddEditManagePageState
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Text(
-                        '#blocCommunity ' + ' | ' + widget.party.name,
+                        '#blocCommunity  | ${widget.party.name}',
                         style: const TextStyle(fontSize: 18),
                       ),
                     ],
@@ -710,7 +744,7 @@ class _PartyGuestAddEditManagePageState
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         const Text('bloc needs you:\n'),
-                        Text(widget.party.challenge.toLowerCase()),
+                        Text(challengeText.toLowerCase()),
                       ],
                     ),
                   ),
@@ -816,10 +850,10 @@ class _PartyGuestAddEditManagePageState
                   padding: const EdgeInsets.only(bottom: 20),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
+                    children: const [
                       Text(
                         'phone number verification',
-                        style: const TextStyle(fontSize: 18),
+                        style: TextStyle(fontSize: 18),
                       ),
                     ],
                   ),
@@ -1053,6 +1087,18 @@ class _PartyGuestAddEditManagePageState
         ],
       ),
     );
+  }
+
+  String findChallengeText() {
+    String challengeText = '';
+
+    for(Challenge challenge in challenges){
+      if(challenge.level==bloc_user.challengeLevel){
+        challengeText = challenge.description;
+        break;
+      }
+    }
+    return challengeText;
   }
 }
 
