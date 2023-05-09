@@ -96,13 +96,13 @@ class PartyBanner extends StatelessWidget {
                         ),
                       ),
                       const Spacer(),
-                      shouldShowButton &&
-                              !party.isTBA &&
-                              party.ticketUrl.isNotEmpty
-                          ? displayBuyTicketButton(context)
-                          : isGuestListActive
-                              ? displayGuestListButton(context)
-                              : showListenOrInstaDialog(context)
+                      shouldShowButton
+                          ? !party.isTBA && party.ticketUrl.isNotEmpty
+                              ? displayBuyTicketButton(context)
+                              : isGuestListActive
+                                  ? displayGuestListButton(context)
+                                  : showListenOrInstaDialog(context)
+                          : const SizedBox()
                     ],
                   ),
                 ),
