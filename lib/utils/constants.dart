@@ -57,7 +57,7 @@ class Constants {
   static int MANAGER_LEVEL = 5;
   static int OWNER_LEVEL = 7;
 
-  static const String appVersion = '1.5.5';
+  static const String appVersion = '1.5.6';
 
   // flagship store kept for ease of reference
   static String blocServiceId = 'UVU4XPqTYr3U0YhQzEhg';
