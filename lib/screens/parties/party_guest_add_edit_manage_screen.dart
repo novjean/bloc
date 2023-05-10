@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:universal_html/html.dart' as html;
 
 import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:bloc/widgets/ui/toaster.dart';
@@ -813,6 +814,9 @@ class _PartyGuestAddEditManagePageState
                         NetworkUtils.launchInBrowser(uri);
                         break;
                       }
+                    case 2:{
+                      break;
+                    }
                     case 100:
                       {
                         final urlImage = widget.party.storyImageUrl.isNotEmpty
@@ -824,16 +828,20 @@ class _PartyGuestAddEditManagePageState
 
                         try{
                           if(kIsWeb){
+                            downloadFile(urlImage);
+
+                            // _onShareXFileFromAssets(context);
+
                             // Image? fromPicker = await ImagePickerWeb.getImageAsWidget();
 
-                            var temp = "/assets/temp";
-                            final path = '$temp/${widget.party.id}.jpg';
-                            File(path).writeAsBytesSync(bytes);
-
-                            final files = <XFile>[];
-                            files.add(XFile(path, name: '${widget.party.id}.jpg'));
-
-                            await Share.shareXFiles(files, text: '#blocCommunity');
+                            // var temp = "/assets/temp";
+                            // final path = '$temp/${widget.party.id}.jpg';
+                            // File(path).writeAsBytesSync(bytes);
+                            //
+                            // final files = <XFile>[];
+                            // files.add(XFile(path, name: '${widget.party.id}.jpg'));
+                            //
+                            // await Share.shareXFiles(files, text: '#blocCommunity');
                           } else {
                             var temp = await getTemporaryDirectory();
                             final path = '${temp.path}/${widget.party.id}.jpg';
@@ -881,6 +889,47 @@ class _PartyGuestAddEditManagePageState
     return returnChallenge;
   }
 
+  void downloadFile(String url) {
+    html.AnchorElement anchorElement =  html.AnchorElement(href: url);
+    anchorElement.download = url;
+    anchorElement.click();
+  }
+
+  void _onShareXFileFromAssets(BuildContext context) async {
+    final box = context.findRenderObject() as RenderBox?;
+    final scaffoldMessenger = ScaffoldMessenger.of(context);
+    final data = await rootBundle.load('assets/images/default_image.png');
+    final buffer = data.buffer;
+    final shareResult = await Share.shareXFiles(
+      [
+        XFile.fromData(
+          buffer.asUint8List(data.offsetInBytes, data.lengthInBytes),
+          name: 'flutter_logo.png',
+          mimeType: 'image/png',
+        ),
+      ],
+      sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size,
+    );
+
+    scaffoldMessenger.showSnackBar(getResultSnackBar(shareResult));
+  }
+
+  SnackBar getResultSnackBar(ShareResult result) {
+    return SnackBar(
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text("share result: ${result.status}"),
+          if (result.status == ShareResultStatus.success)
+            Text("shared to: ${result.raw}")
+        ],
+      ),
+    );
+  }
+
+
+  /** phone registration **/
   void _verifyPhone() async {
     Logx.i(_TAG, '_verifyPhone: registering ' + completePhoneNumber.toString());
 
