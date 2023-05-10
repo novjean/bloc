@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:bloc/widgets/ui/toaster.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -6,7 +8,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl_phone_field/country_picker_dialog.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:pinput/pinput.dart';
+import 'package:http/http.dart' as http;
+import 'package:share_plus/share_plus.dart';
 
 import '../../db/entity/challenge.dart';
 import '../../db/entity/party.dart';
@@ -728,75 +733,98 @@ class _PartyGuestAddEditManagePageState
   showChallengeDialog(BuildContext context) {
     String challengeText = findChallengeText();
 
-    return showDialog(
-      context: context,
-      builder: (BuildContext ctx) {
-        return AlertDialog(
-          contentPadding: const EdgeInsets.all(16.0),
-          content: SizedBox(
-            height: 300,
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 20),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Text(
-                        '#blocCommunity  | ${widget.party.name}',
-                        style: const TextStyle(fontSize: 18),
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(
-                  height: 250,
-                  width: 300,
-                  child: SingleChildScrollView(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
+    if(challengeText.isEmpty){
+      // all challenges are completed
+      Navigator.of(context).pop();
+
+      Navigator.of(context).pushReplacement(MaterialPageRoute(
+          builder: (context) => MainScreen(user: bloc_user)));
+    } else {
+      return showDialog(
+        context: context,
+        builder: (BuildContext ctx) {
+          return AlertDialog(
+            contentPadding: const EdgeInsets.all(16.0),
+            content: SizedBox(
+              height: 300,
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 20),
+                    child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        const Text('bloc needs you:\n'),
-                        Text(challengeText.toLowerCase()),
+                        Text(
+                          '#blocCommunity  | ${widget.party.name}',
+                          style: const TextStyle(fontSize: 18),
+                        ),
                       ],
                     ),
                   ),
-                ),
-              ],
+                  SizedBox(
+                    height: 250,
+                    width: 300,
+                    child: SingleChildScrollView(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          const Text('bloc needs you:\n'),
+                          Text(challengeText.toLowerCase()),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-          actions: [
-            TextButton(
-              child: const Text('close'),
-              onPressed: () {
-                Navigator.of(ctx).pop();
-                Navigator.of(context).pop();
+            actions: [
+              TextButton(
+                child: const Text('close'),
+                onPressed: () {
+                  Navigator.of(ctx).pop();
+                  Navigator.of(context).pop();
 
-                Navigator.of(context).pushReplacement(MaterialPageRoute(
-                    builder: (context) => MainScreen(user: bloc_user)));
-              },
-            ),
-            TextButton(
-              child: const Text("support us"),
-              onPressed: () {
-                Navigator.of(ctx).pop();
-                Navigator.of(context).pop();
+                  Navigator.of(context).pushReplacement(MaterialPageRoute(
+                      builder: (context) => MainScreen(user: bloc_user)));
+                },
+              ),
+              TextButton(
+                child: const Text("support us"),
+                onPressed: () async {
+                  Navigator.of(ctx).pop();
+                  Navigator.of(context).pop();
 
-                Navigator.of(context).pushReplacement(MaterialPageRoute(
-                builder: (context) => MainScreen(user: bloc_user)));
+                  Navigator.of(context).pushReplacement(MaterialPageRoute(
+                      builder: (context) => MainScreen(user: bloc_user)));
 
-                final uri = Uri.parse('https://www.instagram.com/bloc.india/');
-                NetworkUtils.launchInBrowser(uri);
-              },
-            ),
-          ],
-        );
-      },
-    );
+                  //todo: this logic needs to be worked upon
+                  if(bloc_user.challengeLevel==1) {
+                    final uri = Uri.parse(
+                        'https://www.instagram.com/bloc.india/');
+                    NetworkUtils.launchInBrowser(uri);
+                  } else if (bloc_user.challengeLevel == 2){
+                    final urlImage = widget.party.imageUrl;
+                    final url = Uri.parse(urlImage);
+                    final response = await http.get(url);
+                    final bytes = response.bodyBytes;
+
+                    final temp = await getTemporaryDirectory();
+                    final path = '${temp.path}/${widget.party.id}.jpg';
+                    File(path).writeAsBytesSync(bytes);
+
+                    //todo:need to check if this works in iOS
+                    await Share.shareFiles([path], text: '#blocCommunity');
+                  }
+                },
+              ),
+            ],
+          );
+        },
+      );
+    }
   }
-
 
   void _verifyPhone() async {
     Logx.i(_TAG, '_verifyPhone: registering ' + completePhoneNumber.toString());
@@ -1108,7 +1136,7 @@ class _PartyGuestAddEditManagePageState
     String challengeText = '';
 
     for(Challenge challenge in challenges){
-      if(challenge.level==bloc_user.challengeLevel){
+      if(challenge.level>=bloc_user.challengeLevel){
         challengeText = challenge.description;
         break;
       }
