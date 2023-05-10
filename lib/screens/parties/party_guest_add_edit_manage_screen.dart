@@ -6,6 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:delayed_display/delayed_display.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl_phone_field/country_picker_dialog.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:path_provider/path_provider.dart';
@@ -82,7 +83,8 @@ class _PartyGuestAddEditManagePageState
   final pinController = TextEditingController();
   final focusNode = FocusNode();
 
-  List<Challenge> challenges = [] ;
+  List<Challenge> challenges = [];
+
   bool isChallengesLoading = true;
 
   @override
@@ -121,8 +123,7 @@ class _PartyGuestAddEditManagePageState
 
     FirestoreHelper.pullChallenges().then((res) {
       if (res.docs.isNotEmpty) {
-        Logx.i(_TAG,
-            "successfully pulled in all challenges");
+        Logx.i(_TAG, "successfully pulled in all challenges");
 
         for (int i = 0; i < res.docs.length; i++) {
           DocumentSnapshot document = res.docs[i];
@@ -229,10 +230,13 @@ class _PartyGuestAddEditManagePageState
                             label: 'challenge level',
                             text: bloc_user.challengeLevel.toString(),
                             onChanged: (value) {
-                              if(value.isNotEmpty){
+                              if (value.isNotEmpty) {
                                 int? iValue = int.tryParse(value);
-                                bloc_user = bloc_user.copyWith(challengeLevel: iValue);
+                                bloc_user =
+                                    bloc_user.copyWith(challengeLevel: iValue);
                                 FirestoreHelper.pushUser(bloc_user);
+                                Toaster.shortToast(
+                                    'updated user challenge level');
                               }
                             },
                           ),
@@ -549,9 +553,7 @@ class _PartyGuestAddEditManagePageState
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 32),
                 child: ButtonWidget(
-                  text: (widget.task == 'edit')
-                      ? 'save changes'
-                      : 'join list',
+                  text: (widget.task == 'edit') ? 'save changes' : 'join list',
                   onClicked: () {
                     if (isDataValid()) {
                       if (isLoggedIn) {
@@ -681,7 +683,7 @@ class _PartyGuestAddEditManagePageState
                 } else {
                   if (hasUserChanged) {
                     blocUser.User freshUser = Fresh.freshUser(bloc_user);
-                    if(freshUser.id == UserPreferences.myUser.id){
+                    if (freshUser.id == UserPreferences.myUser.id) {
                       UserPreferences.setUser(freshUser);
                     }
                     FirestoreHelper.pushUser(freshUser);
@@ -695,7 +697,9 @@ class _PartyGuestAddEditManagePageState
                       .then((res) {
                     Logx.i(_TAG, 'pulled in party guest by user');
 
-                    if (res.docs.isEmpty || widget.task == 'edit'  || widget.task == 'manage') {
+                    if (res.docs.isEmpty ||
+                        widget.task == 'edit' ||
+                        widget.task == 'manage') {
                       // user has not requested for party guest list, approve
                       PartyGuest freshPartyGuest =
                           Fresh.freshPartyGuest(widget.partyGuest);
@@ -714,7 +718,7 @@ class _PartyGuestAddEditManagePageState
 
                 Navigator.of(ctx).pop();
 
-                if(widget.party.isChallengeActive){
+                if (widget.party.isChallengeActive) {
                   showChallengeDialog(context);
                 } else {
                   Navigator.of(context).pop();
@@ -731,14 +735,16 @@ class _PartyGuestAddEditManagePageState
   }
 
   showChallengeDialog(BuildContext context) {
-    String challengeText = findChallengeText();
+    Challenge challenge = findChallenge();
 
-    if(challengeText.isEmpty){
+    String challengeText = challenge.description;
+
+    if (challengeText.isEmpty) {
       // all challenges are completed
       Navigator.of(context).pop();
 
-      Navigator.of(context).pushReplacement(MaterialPageRoute(
-          builder: (context) => MainScreen(user: bloc_user)));
+      Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => MainScreen(user: bloc_user)));
     } else {
       return showDialog(
         context: context,
@@ -771,7 +777,7 @@ class _PartyGuestAddEditManagePageState
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           const Text('bloc needs you:\n'),
-                          Text(challengeText.toLowerCase()),
+                          Text(challenge.description.toLowerCase()),
                         ],
                       ),
                     ),
@@ -799,23 +805,62 @@ class _PartyGuestAddEditManagePageState
                   Navigator.of(context).pushReplacement(MaterialPageRoute(
                       builder: (context) => MainScreen(user: bloc_user)));
 
-                  //todo: this logic needs to be worked upon
-                  if(bloc_user.challengeLevel==1) {
-                    final uri = Uri.parse(
-                        'https://www.instagram.com/bloc.india/');
-                    NetworkUtils.launchInBrowser(uri);
-                  } else if (bloc_user.challengeLevel == 2){
-                    final urlImage = widget.party.imageUrl;
-                    final url = Uri.parse(urlImage);
-                    final response = await http.get(url);
-                    final bytes = response.bodyBytes;
+                  switch (challenge.level) {
+                    case 1:
+                      {
+                        final uri =
+                            Uri.parse('https://www.instagram.com/bloc.india/');
+                        NetworkUtils.launchInBrowser(uri);
+                        break;
+                      }
+                    case 100:
+                      {
+                        final urlImage = widget.party.storyImageUrl.isNotEmpty
+                            ? widget.party.storyImageUrl
+                            : widget.party.imageUrl;
+                        final url = Uri.parse(urlImage);
+                        final response = await http.get(url);
+                        final bytes = response.bodyBytes;
 
-                    final temp = await getTemporaryDirectory();
-                    final path = '${temp.path}/${widget.party.id}.jpg';
-                    File(path).writeAsBytesSync(bytes);
+                        try{
+                          var temp;
 
-                    //todo:need to check if this works in iOS
-                    await Share.shareFiles([path], text: '#blocCommunity');
+                          if(kIsWeb){
+                            temp = "/assets/temp";
+                            final path = '$temp/${widget.party.id}.jpg';
+                            File(path).writeAsBytesSync(bytes);
+
+                            await Share.shareFiles([path], text: '#blocCommunity');
+                          } else {
+                            temp = await getTemporaryDirectory();
+                            final path = '${temp.path}/${widget.party.id}.jpg';
+                            File(path).writeAsBytesSync(bytes);
+
+                            await Share.shareFiles([path], text: '#blocCommunity');
+                          }
+                        } on PlatformException catch (e, s) {
+                          Logx.e(_TAG, e, s);
+                        } on Exception catch (e, s) {
+                          Logx.e(_TAG, e, s);
+                        } catch (e) {
+                          logger.e(e);
+                        }
+
+                        // if(kIsWeb){
+                        //   await Share.shareXFiles([XFile(path)], text: '#blocCommunity');
+                        // } else {
+                        //   //todo:need to check if this works in iOS
+                        //   await Share.shareFiles([path], text: '#blocCommunity');
+                        // }
+                        break;
+                      }
+                    default:
+                      {
+                        final uri =
+                            Uri.parse('https://www.instagram.com/bloc.india/');
+                        NetworkUtils.launchInBrowser(uri);
+                        break;
+                      }
                   }
                 },
               ),
@@ -1135,13 +1180,24 @@ class _PartyGuestAddEditManagePageState
   String findChallengeText() {
     String challengeText = '';
 
-    for(Challenge challenge in challenges){
-      if(challenge.level>=bloc_user.challengeLevel){
+    for (Challenge challenge in challenges) {
+      if (challenge.level >= bloc_user.challengeLevel) {
         challengeText = challenge.description;
         break;
       }
     }
     return challengeText;
+  }
+
+  Challenge findChallenge() {
+    Challenge returnChallenge = challenges.last;
+
+    for (Challenge challenge in challenges) {
+      if (challenge.level >= bloc_user.challengeLevel) {
+        return challenge;
+      }
+    }
+    return returnChallenge;
   }
 }
 

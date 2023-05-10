@@ -17,6 +17,7 @@ class FirestorageHelper {
   static String CATEGORY_IMAGES = 'service_category_image';
   static String PRODUCT_IMAGES = 'product_image';
   static String PARTY_IMAGES = 'party_image';
+  static String PARTY_STORY_IMAGES = 'party_story_image';
   static String USER_IMAGES = 'user_image';
 
   static Future<bool> deleteFile(String fileUrl) async {

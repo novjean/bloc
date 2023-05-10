@@ -566,6 +566,12 @@ class Fresh {
       shouldPushParty = true;
     }
     try {
+      party = party.copyWith(storyImageUrl: map['storyImageUrl'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'party storyImageUrl not exist for party id: ' + party.id);
+      shouldPushParty = true;
+    }
+    try {
       party = party.copyWith(instagramUrl: map['instagramUrl'] as String);
     } catch (e) {
       Logx.em(_TAG, 'party instagramUrl not exist for party id: ' + party.id);
@@ -776,6 +782,11 @@ class Fresh {
       freshParty = freshParty.copyWith(imageUrl: party.imageUrl);
     } catch (e) {
       Logx.em(_TAG, 'party imageUrl not exist for party id: ' + party.id);
+    }
+    try {
+      freshParty = freshParty.copyWith(storyImageUrl: party.storyImageUrl);
+    } catch (e) {
+      Logx.em(_TAG, 'party storyImageUrl not exist for party id: ' + party.id);
     }
     try {
       freshParty = freshParty.copyWith(instagramUrl: party.instagramUrl);

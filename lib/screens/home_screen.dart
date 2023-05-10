@@ -94,16 +94,20 @@ class _HomeScreenState extends State<HomeScreen> {
             } else {
               Logx.em(_TAG, 'no blocs found!!!');
               //todo: need to re-attempt or check internet connection
-              setState(() {
-                mBlocs = [];
-                _isBlocsLoading = false;
-              });
+              if(mounted){
+                setState(() {
+                  mBlocs = [];
+                  _isBlocsLoading = false;
+                });
+              }
             }
           }).catchError((err) {
             Logx.em(_TAG, 'error loading blocs ' + err.toString());
-            setState(() {
-              _isBlocsLoading = false;
-            });
+            if(mounted){
+              setState(() {
+                _isBlocsLoading = false;
+              });
+            }
           });
 
     FirestoreHelper.pullGuestWifi(Constants.blocServiceId).then((res) {

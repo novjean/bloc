@@ -38,6 +38,7 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
   late String oldImageUrl;
   late String newImageUrl;
   String imagePath = '';
+  String storyImagePath = '';
 
   List<BlocService> blocServices = [];
   List<String> blocServiceNames = [];
@@ -236,14 +237,81 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
             physics: const BouncingScrollPhysics(),
             children: [
               const SizedBox(height: 15),
-              ProfileWidget(
-                imagePath: imagePath.isEmpty ? widget.party.imageUrl : imagePath,
-                isEdit: true,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  ProfileWidget(
+                    imagePath: imagePath.isEmpty ? widget.party.imageUrl : imagePath,
+                    isEdit: true,
+                    onClicked: () async {
+                      final image = await ImagePicker().pickImage(
+                          source: ImageSource.gallery,
+                          imageQuality: 90,
+                          maxWidth: 500);
+                      if (image == null) return;
+
+                      final directory = await getApplicationDocumentsDirectory();
+                      final name = basename(image.path);
+                      final imageFile = File('${directory.path}/$name');
+                      final newImage = await File(image.path).copy(imageFile.path);
+
+                      oldImageUrl = widget.party.imageUrl;
+                      newImageUrl = await FirestorageHelper.uploadFile(
+                          FirestorageHelper.PARTY_IMAGES,
+                          StringUtils.getRandomString(28),
+                          newImage);
+
+                      setState(() {
+                        imagePath = imageFile.path;
+                        isPhotoChanged = true;
+                      });
+                    },
+                  ),
+                  ProfileWidget(
+                    imagePath: storyImagePath.isEmpty ? widget.party.storyImageUrl : storyImagePath,
+                    isEdit: true,
+                    onClicked: () async {
+                      final image = await ImagePicker().pickImage(
+                          source: ImageSource.gallery,
+                          imageQuality: 100,
+                          maxHeight: 1920,
+                          maxWidth: 1080);
+                      if (image == null) return;
+
+                      final directory = await getApplicationDocumentsDirectory();
+                      final name = basename(image.path);
+                      final imageFile = File('${directory.path}/$name');
+                      final newImage = await File(image.path).copy(imageFile.path);
+
+                      String tempImageUrl = await FirestorageHelper.uploadFile(
+                          FirestorageHelper.PARTY_STORY_IMAGES,
+                          StringUtils.getRandomString(28),
+                          newImage);
+
+                      setState(() {
+                        storyImagePath = imageFile.path;
+
+                        if(widget.party.storyImageUrl.isNotEmpty){
+                          FirestorageHelper.deleteFile(widget.party.storyImageUrl);
+                        }
+
+                        widget.party = widget.party.copyWith(storyImageUrl: tempImageUrl);
+                        FirestoreHelper.pushParty(widget.party);
+                        Toaster.shortToast('updated party story image');
+                      });
+                    },
+                  ),
+                ],
+              ),
+              const SizedBox(height: 24),
+              ButtonWidget(
+                text: 'pick story image file',
                 onClicked: () async {
                   final image = await ImagePicker().pickImage(
                       source: ImageSource.gallery,
-                      imageQuality: 90,
-                      maxWidth: 500);
+                      imageQuality: 100,
+                      maxHeight: 1920,
+                      maxWidth: 1080);
                   if (image == null) return;
 
                   final directory = await getApplicationDocumentsDirectory();
@@ -251,15 +319,15 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
                   final imageFile = File('${directory.path}/$name');
                   final newImage = await File(image.path).copy(imageFile.path);
 
-                  oldImageUrl = widget.party.imageUrl;
                   newImageUrl = await FirestorageHelper.uploadFile(
-                      FirestorageHelper.PARTY_IMAGES,
+                      FirestorageHelper.PARTY_STORY_IMAGES,
                       StringUtils.getRandomString(28),
                       newImage);
 
                   setState(() {
-                    imagePath = imageFile.path;
-                    isPhotoChanged = true;
+                    widget.party = widget.party.copyWith(storyImageUrl: newImageUrl);
+                    FirestoreHelper.pushParty(widget.party);
+                    Toaster.shortToast('updated party story image');
                   });
                 },
               ),

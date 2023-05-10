@@ -57,7 +57,7 @@ class _BlocAddEditScreenState extends State<BlocAddEditScreen> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(imageUrls.length.toString() + ' photos : '),
+            Text('${imageUrls.length} photos : '),
             const Spacer(),
             ButtonWidget(
               text: 'pick file',

@@ -130,6 +130,7 @@ class Dummy {
         id: StringUtils.getRandomString(28),
         createdAt: Timestamp.now().millisecondsSinceEpoch,
         imageUrl: '',
+        storyImageUrl: '',
         name: '',
         ownerId: UserPreferences.myUser.id,
         isActive: false,

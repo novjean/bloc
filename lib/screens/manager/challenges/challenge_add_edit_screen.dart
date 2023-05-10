@@ -1,7 +1,6 @@
 import 'package:bloc/helpers/fresh.dart';
 import 'package:flutter/material.dart';
 
-import '../../../db/entity/ad.dart';
 import '../../../db/entity/challenge.dart';
 import '../../../helpers/firestore_helper.dart';
 import '../../../widgets/ui/button_widget.dart';
