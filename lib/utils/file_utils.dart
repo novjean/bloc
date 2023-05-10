@@ -15,4 +15,9 @@ class FileUtils {
     anchorElement.download = url;
     anchorElement.click();
   }
+
+  static void openFileNewTabForWeb(String url) {
+    html.window.open(url, 'new tab');
+  }
+  
 }

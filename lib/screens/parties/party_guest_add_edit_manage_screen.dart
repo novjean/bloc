@@ -829,8 +829,8 @@ class _PartyGuestAddEditManagePageState
 
                         try{
                           if(kIsWeb){
-                            FileUtils.downloadFileForWeb(urlImage);
-                            
+                            FileUtils.openFileNewTabForWeb(urlImage);
+
                             // Image? fromPicker = await ImagePickerWeb.getImageAsWidget();
                           } else {
                             var temp = await getTemporaryDirectory();
