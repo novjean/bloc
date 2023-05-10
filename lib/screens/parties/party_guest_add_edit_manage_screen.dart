@@ -818,25 +818,31 @@ class _PartyGuestAddEditManagePageState
                         final urlImage = widget.party.storyImageUrl.isNotEmpty
                             ? widget.party.storyImageUrl
                             : widget.party.imageUrl;
-                        final url = Uri.parse(urlImage);
+                        final Uri url = Uri.parse(urlImage);
                         final response = await http.get(url);
-                        final bytes = response.bodyBytes;
+                        final Uint8List bytes = response.bodyBytes;
 
                         try{
-                          var temp;
-
                           if(kIsWeb){
-                            temp = "/assets/temp";
+                            // Image? fromPicker = await ImagePickerWeb.getImageAsWidget();
+
+                            var temp = "/assets/temp";
                             final path = '$temp/${widget.party.id}.jpg';
                             File(path).writeAsBytesSync(bytes);
 
-                            await Share.shareFiles([path], text: '#blocCommunity');
+                            final files = <XFile>[];
+                            files.add(XFile(path, name: '${widget.party.id}.jpg'));
+
+                            await Share.shareXFiles(files, text: '#blocCommunity');
                           } else {
-                            temp = await getTemporaryDirectory();
+                            var temp = await getTemporaryDirectory();
                             final path = '${temp.path}/${widget.party.id}.jpg';
                             File(path).writeAsBytesSync(bytes);
 
-                            await Share.shareFiles([path], text: '#blocCommunity');
+                            final files = <XFile>[];
+                            files.add(XFile(path, name: '${widget.party.id}.jpg'));
+
+                            await Share.shareXFiles(files, text: '#blocCommunity');
                           }
                         } on PlatformException catch (e, s) {
                           Logx.e(_TAG, e, s);
@@ -845,13 +851,6 @@ class _PartyGuestAddEditManagePageState
                         } catch (e) {
                           logger.e(e);
                         }
-
-                        // if(kIsWeb){
-                        //   await Share.shareXFiles([XFile(path)], text: '#blocCommunity');
-                        // } else {
-                        //   //todo:need to check if this works in iOS
-                        //   await Share.shareFiles([path], text: '#blocCommunity');
-                        // }
                         break;
                       }
                     default:
@@ -869,6 +868,17 @@ class _PartyGuestAddEditManagePageState
         },
       );
     }
+  }
+
+  Challenge findChallenge() {
+    Challenge returnChallenge = challenges.last;
+
+    for (Challenge challenge in challenges) {
+      if (challenge.level >= bloc_user.challengeLevel) {
+        return challenge;
+      }
+    }
+    return returnChallenge;
   }
 
   void _verifyPhone() async {
@@ -1175,29 +1185,6 @@ class _PartyGuestAddEditManagePageState
         ],
       ),
     );
-  }
-
-  String findChallengeText() {
-    String challengeText = '';
-
-    for (Challenge challenge in challenges) {
-      if (challenge.level >= bloc_user.challengeLevel) {
-        challengeText = challenge.description;
-        break;
-      }
-    }
-    return challengeText;
-  }
-
-  Challenge findChallenge() {
-    Challenge returnChallenge = challenges.last;
-
-    for (Challenge challenge in challenges) {
-      if (challenge.level >= bloc_user.challengeLevel) {
-        return challenge;
-      }
-    }
-    return returnChallenge;
   }
 }
 

@@ -304,34 +304,6 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
                 ],
               ),
               const SizedBox(height: 24),
-              ButtonWidget(
-                text: 'pick story image file',
-                onClicked: () async {
-                  final image = await ImagePicker().pickImage(
-                      source: ImageSource.gallery,
-                      imageQuality: 100,
-                      maxHeight: 1920,
-                      maxWidth: 1080);
-                  if (image == null) return;
-
-                  final directory = await getApplicationDocumentsDirectory();
-                  final name = basename(image.path);
-                  final imageFile = File('${directory.path}/$name');
-                  final newImage = await File(image.path).copy(imageFile.path);
-
-                  newImageUrl = await FirestorageHelper.uploadFile(
-                      FirestorageHelper.PARTY_STORY_IMAGES,
-                      StringUtils.getRandomString(28),
-                      newImage);
-
-                  setState(() {
-                    widget.party = widget.party.copyWith(storyImageUrl: newImageUrl);
-                    FirestoreHelper.pushParty(widget.party);
-                    Toaster.shortToast('updated party story image');
-                  });
-                },
-              ),
-              const SizedBox(height: 24),
               TextFieldWidget(
                 label: 'name \*',
                 text: widget.party.name,
