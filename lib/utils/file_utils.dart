@@ -19,5 +19,5 @@ class FileUtils {
   static void openFileNewTabForWeb(String url) {
     html.window.open(url, 'new tab');
   }
-  
+
 }
