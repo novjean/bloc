@@ -815,9 +815,6 @@ class _PartyGuestAddEditManagePageState
                         NetworkUtils.launchInBrowser(uri);
                         break;
                       }
-                    case 2:{
-                      break;
-                    }
                     case 100:
                       {
                         final urlImage = widget.party.storyImageUrl.isNotEmpty
