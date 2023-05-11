@@ -1,3 +1,5 @@
+import 'dart:io' show Platform;
+
 import 'package:bloc/db/entity/user.dart';
 import 'package:bloc/main.dart';
 import 'package:bloc/utils/constants.dart';
@@ -5,6 +7,7 @@ import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:upgrader/upgrader.dart';
 
 import '../db/entity/bloc.dart';
 import '../db/entity/guest_wifi.dart';
@@ -94,7 +97,7 @@ class _HomeScreenState extends State<HomeScreen> {
             } else {
               Logx.em(_TAG, 'no blocs found!!!');
               //todo: need to re-attempt or check internet connection
-              if(mounted){
+              if (mounted) {
                 setState(() {
                   mBlocs = [];
                   _isBlocsLoading = false;
@@ -103,7 +106,7 @@ class _HomeScreenState extends State<HomeScreen> {
             }
           }).catchError((err) {
             Logx.em(_TAG, 'error loading blocs ' + err.toString());
-            if(mounted){
+            if (mounted) {
               setState(() {
                 _isBlocsLoading = false;
               });
@@ -148,14 +151,20 @@ class _HomeScreenState extends State<HomeScreen> {
           currentFocus.unfocus();
         }
       },
-      child: Scaffold(
-        backgroundColor: Theme.of(context).backgroundColor,
-        resizeToAvoidBottomInset : false,
-        body: Column(
-          children: <Widget>[
-            _isBlocsLoading ? const LoadingWidget() : _displayBlocs(context),
-            _displayPartiesNFooter(context),
-          ],
+      child: UpgradeAlert(
+        upgrader: Upgrader(
+            dialogStyle: Theme.of(context).platform == TargetPlatform.iOS
+                ? UpgradeDialogStyle.cupertino
+                : UpgradeDialogStyle.material),
+        child: Scaffold(
+          backgroundColor: Constants.background,
+          resizeToAvoidBottomInset: false,
+          body: Column(
+            children: <Widget>[
+              _isBlocsLoading ? const LoadingWidget() : _displayBlocs(context),
+              _displayPartiesNFooter(context),
+            ],
+          ),
         ),
       ),
     );
@@ -164,7 +173,7 @@ class _HomeScreenState extends State<HomeScreen> {
   _displayBlocs(context) {
     return Expanded(
       child: ListView.builder(
-        shrinkWrap: true,
+          shrinkWrap: true,
           itemCount: mBlocs.length,
           scrollDirection: Axis.horizontal,
           itemBuilder: (ctx, index) {

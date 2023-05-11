@@ -10,6 +10,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
+import 'package:upgrader/upgrader.dart';
 
 import 'db/shared_preferences/user_preferences.dart';
 import 'firebase_options.dart';
