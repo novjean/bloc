@@ -471,7 +471,9 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
                         widget.party = widget.party.copyWith(isActive: value);
                       });
 
-                      // showDeleteStoryPhotoDialog()
+                      if(widget.party.storyImageUrl.isNotEmpty){
+                        showDeleteStoryPhotoDialog(context);
+                      }
                     },
                   ), //Checkbox
                 ], //<Widget>[]
@@ -730,6 +732,34 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
               const SizedBox(height: 5),
             ],
           );
+  }
+
+  void showDeleteStoryPhotoDialog(BuildContext context) {
+     showDialog(
+      context: context,
+      builder: (BuildContext ctx) {
+        return AlertDialog(
+          title: const Text("delete story photo"),
+          content: const Text("would your like to delete the story photo?"),
+          actions: [
+            TextButton(
+              child: const Text("yes"),
+              onPressed: () {
+                FirestorageHelper.deleteFile(widget.party.storyImageUrl);
+                Logx.i(_TAG, 'story photo is deleted');
+                Navigator.of(ctx).pop();
+              },
+            ),
+            TextButton(
+              child: const Text("no"),
+              onPressed: () {
+                Navigator.of(ctx).pop();
+              },
+            )
+          ],
+        );
+      },
+    );
   }
 }
 

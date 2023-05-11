@@ -151,7 +151,10 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
             TextButton(
               child: const Text("confirm"),
               onPressed: () {
+                setState(() {
 
+                });
+                Navigator.of(ctx).pop();
               },
             ),
           ],
@@ -205,11 +208,8 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
                 value: sGender,
                 isDense: true,
                 onChanged: (String? newValue) {
-                  setState(() {
-                    sGender = newValue!;
-
-                    state.didChange(newValue);
-                  });
+                  sGender = newValue!;
+                  state.didChange(newValue);
                 },
                 items: mGenders.map((String value) {
                   return DropdownMenuItem<String>(
@@ -264,18 +264,15 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
                 value: sUserLevelName,
                 isDense: true,
                 onChanged: (String? newValue) {
-                  setState(() {
-                    sUserLevelName = newValue!;
+                  sUserLevelName = newValue!;
 
-                    for (UserLevel level in mUserLevels) {
-                      if (level.name == sUserLevelName) {
-                        sUserLevel = level;
-                        break;
-                      }
+                  for (UserLevel level in mUserLevels) {
+                    if (level.name == sUserLevelName) {
+                      sUserLevel = level;
+                      break;
                     }
-
-                    state.didChange(newValue);
-                  });
+                  }
+                  state.didChange(newValue);
                 },
                 items: mUserLevelNames.map((String value) {
                   return DropdownMenuItem<String>(
