@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 const String kAppTitle = 'bloc';
 
 class Constants {
+  static const String appVersion = '1.5.8';
+
   //Colors for theme
   static const Color primary = Color.fromRGBO(211, 167, 130, 1);
   static const Color lightPrimary =  Color.fromRGBO(222, 193, 170, 1);
@@ -57,7 +59,6 @@ class Constants {
   static int MANAGER_LEVEL = 5;
   static int OWNER_LEVEL = 7;
 
-  static const String appVersion = '1.5.7';
 
   // flagship store kept for ease of reference
   static String blocServiceId = 'UVU4XPqTYr3U0YhQzEhg';
