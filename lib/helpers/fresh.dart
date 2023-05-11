@@ -1682,7 +1682,7 @@ class Fresh {
   /** user **/
   static User freshUserMap(Map<String, dynamic> map, bool shouldUpdate) {
     User user = Dummy.getDummyUser();
-    bool shouldPushUser = false;
+    bool shouldPushUser = true;
 
     try {
       user = user.copyWith(id: map['id'] as String);
@@ -1690,9 +1690,21 @@ class Fresh {
       Logx.em(_TAG, 'user id not exist');
     }
     try {
+      user = user.copyWith(name: map['name'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'user name not exist for user id: ' + user.id);
+      shouldPushUser = true;
+    }
+    try {
       user = user.copyWith(surname: map['surname'] as String);
     } catch (e) {
       Logx.em(_TAG, 'user surname not exist for user id: ' + user.id);
+      shouldPushUser = true;
+    }
+    try {
+      user = user.copyWith(phoneNumber: map['phoneNumber'] as int);
+    } catch (e) {
+      Logx.em(_TAG, 'user phoneNumber not exist for user id: ' + user.id);
       shouldPushUser = true;
     }
     try {
@@ -1708,6 +1720,13 @@ class Fresh {
       shouldPushUser = true;
     }
     try {
+      user = user.copyWith(gender: map['gender'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'user gender not exist for user id: ' + user.id);
+      shouldPushUser = true;
+    }
+
+    try {
       user = user.copyWith(clearanceLevel: map['clearanceLevel'] as int);
     } catch (e) {
       Logx.em(_TAG, 'user clearanceLevel not exist for user id: ' + user.id);
@@ -1719,24 +1738,7 @@ class Fresh {
       Logx.em(_TAG, 'user challengeLevel not exist for user id: ' + user.id);
       shouldPushUser = true;
     }
-    try {
-      user = user.copyWith(phoneNumber: map['phoneNumber'] as int);
-    } catch (e) {
-      Logx.em(_TAG, 'user phoneNumber not exist for user id: ' + user.id);
-      shouldPushUser = true;
-    }
-    try {
-      user = user.copyWith(name: map['name'] as String);
-    } catch (e) {
-      Logx.em(_TAG, 'user name not exist for user id: ' + user.id);
-      shouldPushUser = true;
-    }
-    try {
-      user = user.copyWith(gender: map['gender'] as String);
-    } catch (e) {
-      Logx.em(_TAG, 'user gender not exist for user id: ' + user.id);
-      shouldPushUser = true;
-    }
+
     try {
       user = user.copyWith(fcmToken: map['fcmToken'] as String);
     } catch (e) {
@@ -1749,6 +1751,7 @@ class Fresh {
       Logx.em(_TAG, 'user blocServiceId not exist for user id: ' + user.id);
       shouldPushUser = true;
     }
+
     try {
       user = user.copyWith(createdAt: map['createdAt'] as int);
     } catch (e) {

@@ -77,7 +77,7 @@ class _MainScreenState extends State<MainScreen> {
             DocumentSnapshot document = res.docs[i];
             Map<String, dynamic> data =
                 document.data()! as Map<String, dynamic>;
-            final blocUser.User user = Fresh.freshUserMap(data, true);
+            final blocUser.User user = Fresh.freshUserMap(data, false);
             users.add(user);
 
             if (i == res.docs.length - 1) {

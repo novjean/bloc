@@ -5,6 +5,7 @@ import 'package:bloc/db/entity/party_guest.dart';
 import 'package:bloc/db/entity/reservation.dart';
 import 'package:bloc/db/entity/service_table.dart';
 import 'package:bloc/db/entity/ticket.dart';
+import 'package:bloc/db/entity/user_level.dart';
 import 'package:bloc/utils/constants.dart';
 import 'package:bloc/utils/string_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -283,5 +284,15 @@ class Dummy {
         createdAt: millis,
         lastSeenAt: millis);
     return dummyUser;
+  }
+
+  static UserLevel getDummyUserLevel() {
+    UserLevel dummyUserLevel = const UserLevel(
+      id: '84ub8bC0m3NQH9KfWCkD',
+      name: 'customer',
+      level: 1
+    );
+
+    return dummyUserLevel;
   }
 }

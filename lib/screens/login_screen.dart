@@ -344,7 +344,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 Map<String, dynamic> data =
                     document.data()! as Map<String, dynamic>;
 
-                final blocUser.User user = Fresh.freshUserMap(data, true);
+                final blocUser.User user = Fresh.freshUserMap(data, false);
                 UserPreferences.setUser(user);
 
                 Navigator.of(context).pushReplacement(MaterialPageRoute(

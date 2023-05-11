@@ -13,6 +13,8 @@ import '../../../helpers/fresh.dart';
 import '../../../utils/logx.dart';
 import '../../../widgets/manager/user_item.dart';
 import '../../../widgets/ui/sized_listview_block.dart';
+import '../../../widgets/ui/system_padding.dart';
+import '../../../widgets/ui/toaster.dart';
 
 class ManageUsersScreen extends StatefulWidget {
   ManageUsersScreen({Key? key}) : super(key: key);
@@ -25,12 +27,20 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
   static const String _TAG = 'ManageUsersScreen';
 
   String _selectedType = 'customer';
+  String sUserLevelName = 'customer';
+  late UserLevel sUserLevel;
   List<UserLevel> mUserLevels = [];
+  List<String> mUserLevelNames = [];
+
   var _isUserLevelsLoading = true;
+
+  int sChallengeLevel = 1;
 
   @override
   void initState() {
     super.initState();
+
+    sUserLevel = Dummy.getDummyUserLevel();
 
     // lets pull in user levels
     FirestoreHelper.pullUserLevels(UserPreferences.myUser.clearanceLevel)
@@ -44,6 +54,7 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
           Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
           final UserLevel userLevel = UserLevel.fromMap(data);
           _userLevels.add(userLevel);
+          mUserLevelNames.add(userLevel.name);
         }
 
         setState(() {
@@ -63,39 +74,76 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('manage | users')),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.of(context).push(MaterialPageRoute(
-              builder: (ctx) => UserAddEditScreen(
-                    user: Dummy.getDummyUser(),
-                    task: 'add',
-                    userLevels: mUserLevels,
-                  )));
-        },
-        backgroundColor: Theme.of(context).primaryColor,
-        tooltip: 'new user',
-        elevation: 5,
-        splashColor: Colors.grey,
-        child: const Icon(
-          Icons.add,
-          color: Colors.black,
-          size: 29,
-        ),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       body: _buildBody(context),
     );
   }
 
   _buildBody(BuildContext context) {
-    return Column(
+    return _isUserLevelsLoading? const LoadingWidget():
+    Column(
       children: [
         const SizedBox(height: 5.0),
-        _isUserLevelsLoading ? const SizedBox() : _displayUserLevels(context),
+        _displayUserLevelsDropdown(context),
         const SizedBox(height: 5.0),
         _buildUsers(context),
         const SizedBox(height: 5.0),
       ],
+    );
+  }
+
+  _displayUserLevelsDropdown(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 15.0),
+      child: FormField<String>(
+        builder: (FormFieldState<String> state) {
+          return InputDecorator(
+            key: const ValueKey('user_levels_key'),
+            decoration: InputDecoration(
+                fillColor: Colors.white,
+                errorStyle: TextStyle(
+                    color: Theme.of(context).errorColor, fontSize: 16.0),
+                hintText: 'please select user level',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(5.0),
+                  borderSide: BorderSide(color: Theme.of(context).primaryColor),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  // width: 0.0 produces a thin "hairline" border
+                  borderSide: BorderSide(
+                      color: Theme.of(context).primaryColor, width: 0.0),
+                )),
+            isEmpty: sUserLevelName == '',
+            child: DropdownButtonHideUnderline(
+              child: DropdownButton<String>(
+                style: TextStyle(color: Theme.of(context).primaryColor),
+                dropdownColor: Theme.of(context).backgroundColor,
+                value: sUserLevelName,
+                isDense: true,
+                onChanged: (String? newValue) {
+                  setState(() {
+                    sUserLevelName = newValue!;
+
+                    for (UserLevel level in mUserLevels) {
+                      if (level.name == sUserLevelName) {
+                        sUserLevel = level;
+                        break;
+                      }
+                    }
+
+                    state.didChange(newValue);
+                  });
+                },
+                items: mUserLevelNames.map((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+              ),
+            ),
+          );
+        },
+      ),
     );
   }
 
@@ -128,16 +176,8 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
   }
 
   _buildUsers(BuildContext context) {
-    int sLevel = 1;
-    for (UserLevel userLevel in mUserLevels) {
-      if (userLevel.name == _selectedType.toLowerCase()) {
-        sLevel = userLevel.level;
-        break;
-      }
-    }
-
     return StreamBuilder<QuerySnapshot>(
-        stream: FirestoreHelper.getUsersByLevel(sLevel),
+        stream: FirestoreHelper.getUsersByLevel(sUserLevel.level),
         builder: (ctx, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const LoadingWidget();
