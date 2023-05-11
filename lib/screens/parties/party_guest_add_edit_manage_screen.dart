@@ -1,6 +1,6 @@
 import 'dart:io';
-// import 'package:universal_html/html.dart' as html;
 
+import 'package:bloc/widgets/ui/dark_button_widget.dart';
 import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:bloc/widgets/ui/toaster.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -228,20 +228,43 @@ class _PartyGuestAddEditManagePageState
                         const SizedBox(height: 24),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 32),
-                          child: DarkTextFieldWidget(
-                            label: 'challenge level',
-                            text: bloc_user.challengeLevel.toString(),
-                            onChanged: (value) {
-                              if (value.isNotEmpty) {
-                                int? iValue = int.tryParse(value);
-                                bloc_user =
-                                    bloc_user.copyWith(challengeLevel: iValue);
-                                FirestoreHelper.pushUser(bloc_user);
-                                Toaster.shortToast(
-                                    'updated user challenge level');
-                              }
-                            },
-                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(bottom: 10),
+                                child: Text(
+                                  'challenge level \*',
+                                  style: TextStyle(
+                                      color: Theme.of(context).primaryColorLight,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  ButtonWidget(text: '  down  ', onClicked: () {
+                                    int level = bloc_user.challengeLevel;
+                                    level--;
+                                    setState(() {
+                                      bloc_user = bloc_user.copyWith(challengeLevel: level);
+                                      FirestoreHelper.pushUser(bloc_user);
+                                    });
+                                  },),
+                                  DarkButtonWidget(text: bloc_user.challengeLevel.toString(), onClicked: () {  },),
+                                  ButtonWidget(text: 'level up', onClicked: () {
+                                    int level = bloc_user.challengeLevel;
+                                    level++;
+                                    setState(() {
+                                      bloc_user = bloc_user.copyWith(challengeLevel: level);
+                                      FirestoreHelper.pushUser(bloc_user);
+                                    });
+                                  },),
+                                ],
+                              )
+                            ],
+                          )
                         ),
                       ],
                     )
