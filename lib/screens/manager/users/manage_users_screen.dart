@@ -35,7 +35,7 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
     // lets pull in user levels
     FirestoreHelper.pullUserLevels(UserPreferences.myUser.clearanceLevel)
         .then((res) {
-      print("successfully retrieved user levels");
+      Logx.i(_TAG, 'successfully retrieved user levels');
 
       if (res.docs.isNotEmpty) {
         List<UserLevel> _userLevels = [];
@@ -51,7 +51,10 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
           _isUserLevelsLoading = false;
         });
       } else {
-        print('no user levels found!');
+        Logx.em(_TAG, 'no user levels found!');
+        setState(() {
+          _isUserLevelsLoading = false;
+        });
       }
     });
   }
@@ -59,25 +62,25 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('manage | users')),
+      appBar: AppBar(title: const Text('manage | users')),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.of(context).push(MaterialPageRoute(
               builder: (ctx) => UserAddEditScreen(
                     user: Dummy.getDummyUser(),
-                    task: 'Add',
+                    task: 'add',
                     userLevels: mUserLevels,
                   )));
         },
-        child: Icon(
-          Icons.add,
-          color: Colors.black,
-          size: 29,
-        ),
         backgroundColor: Theme.of(context).primaryColor,
         tooltip: 'new user',
         elevation: 5,
         splashColor: Colors.grey,
+        child: const Icon(
+          Icons.add,
+          color: Colors.black,
+          size: 29,
+        ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       body: _buildBody(context),
@@ -89,8 +92,6 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
       children: [
         const SizedBox(height: 5.0),
         _isUserLevelsLoading ? const SizedBox() : _displayUserLevels(context),
-        // _displayOptions(context),
-        // const Divider(),
         const SizedBox(height: 5.0),
         _buildUsers(context),
         const SizedBox(height: 5.0),
@@ -101,7 +102,7 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
   _displayUserLevels(BuildContext context) {
     double containerHeight = MediaQuery.of(context).size.height / 20;
 
-    return Container(
+    return SizedBox(
       key: UniqueKey(),
       // this height has to match with category item container height
       height: MediaQuery.of(context).size.height / 14,
@@ -119,7 +120,7 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
                 onTap: () {
                   setState(() {
                     _selectedType = mUserLevels[index].name;
-                    print(_selectedType + ' user level is selected');
+                    Logx.i(_TAG, '$_selectedType user level is selected');
                   });
                 });
           }),
@@ -155,7 +156,7 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
               return _displayUsers(context, _users);
             }
           }
-          return const Center(child: Text('pulling users...'));
+          return const LoadingWidget();
         });
   }
 
@@ -188,8 +189,7 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
                                 FirestorageHelper.deleteFile(sUser.imageUrl);
                               }
                               FirestoreHelper.deleteUser(sUser);
-
-                              print('user is deleted');
+                              Logx.i(_TAG, 'user is deleted');
 
                               Navigator.of(context).pop();
                             },
@@ -207,7 +207,7 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
                 },
                 onTap: () {
                   User sUser = users[index];
-                  Logx.i(_TAG, 'user selected : ' + sUser.name);
+                  Logx.i(_TAG, 'user selected : ${sUser.name}');
 
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (ctx) => UserAddEditScreen(

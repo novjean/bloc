@@ -11,9 +11,11 @@ import '../../../db/entity/user.dart';
 import '../../../db/entity/user_level.dart';
 import '../../../helpers/firestorage_helper.dart';
 import '../../../helpers/firestore_helper.dart';
+import '../../../utils/logx.dart';
 import '../../../utils/string_utils.dart';
 import '../../../widgets/profile_widget.dart';
 import '../../../widgets/ui/button_widget.dart';
+import '../../../widgets/ui/dark_button_widget.dart';
 import '../../../widgets/ui/loading_widget.dart';
 import '../../../widgets/ui/textfield_widget.dart';
 import '../../../widgets/ui/toaster.dart';
@@ -31,6 +33,8 @@ class UserAddEditScreen extends StatefulWidget {
 }
 
 class _UserAddEditScreenState extends State<UserAddEditScreen> {
+  static const String _TAG = 'UserAddEditScreen';
+
   bool isPhotoChanged = false;
   late String oldImageUrl;
   late String newImageUrl;
@@ -64,7 +68,7 @@ class _UserAddEditScreenState extends State<UserAddEditScreen> {
     }
 
     FirestoreHelper.pullAllBlocServices().then((res) {
-      print("successfully pulled in all bloc services");
+      Logx.i(_TAG, "successfully pulled in all bloc services");
 
       if (res.docs.isNotEmpty) {
         List<BlocService> _blocServices = [];
@@ -90,7 +94,10 @@ class _UserAddEditScreenState extends State<UserAddEditScreen> {
           _isBlocServicesLoading = false;
         });
       } else {
-        print('no bloc services found!');
+        Logx.em(_TAG, 'no bloc services found!');
+        setState(() {
+          _isBlocServicesLoading = false;
+        });
       }
     });
   }
@@ -98,94 +105,10 @@ class _UserAddEditScreenState extends State<UserAddEditScreen> {
   @override
   Widget build(BuildContext context) => Scaffold(
     appBar: AppBar(
-      title: Text('user | ' + widget.task),
+      title: Text('user | ${widget.task}'),
     ),
     body: _buildBody(context),
   );
-
-  // Future<void> _selectDate(BuildContext context, DateTime initDate) async {
-  //   final DateTime? _sDate = await showDatePicker(
-  //       context: context,
-  //       initialDate: initDate,
-  //       firstDate: DateTime(2023, 1),
-  //       lastDate: DateTime(2101));
-  //   if (_sDate != null) {
-  //     _selectTime(context);
-  //
-  //     setState(() {
-  //       DateTime _sDateTime = DateTime(_sDate.year, _sDate.month, _sDate.day,
-  //           _sTimeOfDay.hour, _sTimeOfDay.minute);
-  //
-  //       // from here we decide what field to put it into
-  //       if (_isStartDateBeingSet) {
-  //         sStartDateTime = _sDateTime;
-  //         widget.user = widget.user
-  //             .copyWith(startTime: sStartDateTime.millisecondsSinceEpoch);
-  //       } else {
-  //         sEndDateTime = _sDateTime;
-  //         widget.user = widget.user
-  //             .copyWith(endTime: sEndDateTime.millisecondsSinceEpoch);
-  //       }
-  //     });
-  //   }
-  // }
-
-  // Future<TimeOfDay> _selectTime(BuildContext context) async {
-  //   TimeOfDay initialTime = TimeOfDay.now();
-  //
-  //   TimeOfDay? pickedTime = await showTimePicker(
-  //     context: context,
-  //     initialTime: initialTime,
-  //   );
-  //
-  //   _sTimeOfDay = pickedTime!;
-  //   return _sTimeOfDay;
-  // }
-
-  // Widget dateTimeContainer(BuildContext context, String type) {
-  //   DateTime dateTime = type=='Start' ? sStartDateTime:sEndDateTime;
-  //
-  //   return Container(
-  //     decoration: BoxDecoration(
-  //         border: Border.all(
-  //           color: Colors.black38,
-  //         ),
-  //         borderRadius: BorderRadius.all(Radius.circular(20))),
-  //     padding: EdgeInsets.only(left: 10, top: 5, right: 5, bottom: 5),
-  //     child: Row(
-  //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //       children: [
-  //         Text("${dateTime.toLocal()}".split(' ')[0], style: TextStyle(
-  //           fontSize: 18,
-  //         )),
-  //         SizedBox(
-  //           height: 20.0,
-  //         ),
-  //         ElevatedButton(
-  //           style: ElevatedButton.styleFrom(
-  //             primary: Theme.of(context).primaryColor,
-  //             onPrimary: Colors.white,
-  //             shadowColor: Theme.of(context).shadowColor,
-  //             elevation: 3,
-  //             shape: RoundedRectangleBorder(
-  //                 borderRadius: BorderRadius.circular(32.0)),
-  //             minimumSize: Size(50, 50), //////// HERE
-  //           ),
-  //           onPressed: () {
-  //             if(type == 'Start'){
-  //               _isStartDateBeingSet = true;
-  //             } else {
-  //               _isStartDateBeingSet = false;
-  //             }
-  //             _selectDate(context, dateTime);
-  //           },
-  //           child: Text(type + ' Date & Time'),
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  //
-  // }
 
   _buildBody(BuildContext context) {
     return _isBlocServicesLoading
@@ -254,6 +177,43 @@ class _UserAddEditScreenState extends State<UserAddEditScreen> {
           onChanged: (value) {
             widget.user = widget.user.copyWith(email: value);
           },
+        ),
+        const SizedBox(height: 24),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Padding(
+              padding: EdgeInsets.only(bottom: 10),
+              child: Text(
+                'challenge level ',
+                style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold),
+              ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                ButtonWidget(text: '  down  ', onClicked: () {
+                  int level = widget.user.challengeLevel;
+                  level--;
+                  setState(() {
+                    widget.user = widget.user.copyWith(challengeLevel: level);
+                    FirestoreHelper.pushUser(widget.user);
+                  });
+                },),
+                DarkButtonWidget(text: widget.user.challengeLevel.toString(), onClicked: () {  },),
+                ButtonWidget(text: 'level up', onClicked: () {
+                  int level = widget.user.challengeLevel;
+                  level++;
+                  setState(() {
+                    widget.user = widget.user.copyWith(challengeLevel: level);
+                    FirestoreHelper.pushUser(widget.user);
+                  });
+                },),
+              ],
+            )
+          ],
         ),
 
         const SizedBox(height: 24),

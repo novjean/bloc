@@ -27,18 +27,17 @@ class UserItem extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Padding(
-                      padding: const EdgeInsets.only(left : 5.0, top: 5),
+                      padding: const EdgeInsets.only(left: 5.0, top: 5),
                       child: Text(
-                        user.name.toLowerCase(),
-                        style: TextStyle(fontSize: 18),
+                        (user.name + user.surname).toLowerCase(),
+                        style: const TextStyle(fontSize: 18),
                       ),
                     ),
                     user.lastSeenAt != 0
                         ? Padding(
-                            padding: const EdgeInsets.only(right : 5.0, top: 5),
-                            child: Text('last seen: ' +
-                                DateTimeUtils.getFormattedDateYear(
-                                    user.lastSeenAt)),
+                            padding: const EdgeInsets.only(right: 5.0, top: 5),
+                            child: Text(
+                                'last seen: ${DateTimeUtils.getFormattedDateYear(user.lastSeenAt)}'),
                           )
                         : const SizedBox(),
                   ],
@@ -47,9 +46,9 @@ class UserItem extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Padding(
-                      padding: const EdgeInsets.only(left : 5.0, right: 5.0, top: 5),
-                      child: Text('member since: ' +
-                          DateTimeUtils.getFormattedDateYear(user.createdAt)),
+                      padding:
+                          const EdgeInsets.only(left: 5.0, right: 5.0, top: 5),
+                      child: Text('bloc day: ${DateTimeUtils.getFormattedDateYear(user.createdAt)}'),
                     ),
                   ],
                 ),
