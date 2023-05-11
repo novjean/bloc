@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:bloc/widgets/ui/toaster.dart';
+import 'package:delayed_display/delayed_display.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart';
@@ -45,7 +46,7 @@ class _ProfileAddEditRegisterPageState
     return Scaffold(
       backgroundColor: Theme.of(context).backgroundColor,
       appBar: AppBar(
-        title: Text('profile | ' + widget.task),
+        title: Text('profile | ${widget.task}'),
         backgroundColor: Theme.of(context).backgroundColor,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
@@ -114,13 +115,23 @@ class _ProfileAddEditRegisterPageState
               widget.user = widget.user.copyWith(email: email),
         ),
         const SizedBox(height: 24),
-        // TextFieldWidget(
-        //   label: 'about',
-        //   text: '',
-        //   maxLines: 5,
-        //   onChanged: (about) {},
-        // ),
-        // const SizedBox(height: 24),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(right: 10, bottom: 5),
+              child: DelayedDisplay(
+                delay: const Duration(seconds: 1),
+                child: Text(
+                  "* required",
+                  style: TextStyle(
+                    color: Theme.of(context).primaryColor,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
         ButtonWidget(
           text: 'save',
           onClicked: () {

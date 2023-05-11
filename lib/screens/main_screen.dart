@@ -90,8 +90,7 @@ class _MainScreenState extends State<MainScreen> {
         }
       },
       onError: (e,s) {
-        Logx.ex(_TAG, "error completing retrieving users for phone number : " +
-            widget.user.phoneNumber.toString(), e, s);
+        Logx.ex(_TAG, "error completing retrieving users for phone number : ${widget.user.phoneNumber}", e, s);
       }
     );
 

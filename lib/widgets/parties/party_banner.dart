@@ -98,7 +98,7 @@ class PartyBanner extends StatelessWidget {
                       const Spacer(),
                       shouldShowButton
                           ? !party.isTBA && party.ticketUrl.isNotEmpty
-                              ? displayBuyTicketButton(context)
+                              ? showBuyTixButton(context)
                               : isGuestListActive
                                   ? displayGuestListButton(context)
                                   : showListenOrInstaDialog(context)
@@ -184,13 +184,13 @@ class PartyBanner extends StatelessWidget {
         size: 24.0,
       ),
       label: const Text(
-        'join guest list',
+        'guest list',
         style: TextStyle(fontSize: 20, color: Constants.primary),
       ),
     );
   }
 
-  displayBuyTicketButton(BuildContext context) {
+  showBuyTixButton(BuildContext context) {
     return ElevatedButton.icon(
       style: ElevatedButton.styleFrom(
         backgroundColor: Constants.background,

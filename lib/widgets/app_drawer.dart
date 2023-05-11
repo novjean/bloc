@@ -52,24 +52,24 @@ class AppDrawer extends StatelessWidget {
             },
           ),
           const Divider(),
-          UserPreferences.isUserLoggedIn()
-              ? Column(
-                  children: [
-                    ListTile(
-                      leading: const Icon(Icons.circle_outlined),
-                      title: const Text('orders'),
-                      onTap: () {
-                        Navigator.of(context).pop();
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                              builder: (ctx) => OrderHistoryScreen()),
-                        );
-                      },
-                    ),
-                    const Divider(),
-                  ],
-                )
-              : const SizedBox(),
+          // UserPreferences.isUserLoggedIn()
+          //     ? Column(
+          //         children: [
+          //           ListTile(
+          //             leading: const Icon(Icons.circle_outlined),
+          //             title: const Text('orders'),
+          //             onTap: () {
+          //               Navigator.of(context).pop();
+          //               Navigator.of(context).push(
+          //                 MaterialPageRoute(
+          //                     builder: (ctx) => OrderHistoryScreen()),
+          //               );
+          //             },
+          //           ),
+          //           const Divider(),
+          //         ],
+          //       )
+          //     : const SizedBox(),
           UserPreferences.isUserLoggedIn()
               ? Column(
                   children: [

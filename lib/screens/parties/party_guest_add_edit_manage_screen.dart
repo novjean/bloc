@@ -227,45 +227,57 @@ class _PartyGuestAddEditManagePageState
                         ),
                         const SizedBox(height: 24),
                         Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 32),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.only(bottom: 10),
-                                child: Text(
-                                  'challenge level \*',
-                                  style: TextStyle(
-                                      color: Theme.of(context).primaryColorLight,
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold),
+                            padding: const EdgeInsets.symmetric(horizontal: 32),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(bottom: 10),
+                                  child: Text(
+                                    'challenge level \*',
+                                    style: TextStyle(
+                                        color:
+                                            Theme.of(context).primaryColorLight,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold),
+                                  ),
                                 ),
-                              ),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  ButtonWidget(text: '  down  ', onClicked: () {
-                                    int level = bloc_user.challengeLevel;
-                                    level--;
-                                    setState(() {
-                                      bloc_user = bloc_user.copyWith(challengeLevel: level);
-                                      FirestoreHelper.pushUser(bloc_user);
-                                    });
-                                  },),
-                                  DarkButtonWidget(text: bloc_user.challengeLevel.toString(), onClicked: () {  },),
-                                  ButtonWidget(text: 'level up', onClicked: () {
-                                    int level = bloc_user.challengeLevel;
-                                    level++;
-                                    setState(() {
-                                      bloc_user = bloc_user.copyWith(challengeLevel: level);
-                                      FirestoreHelper.pushUser(bloc_user);
-                                    });
-                                  },),
-                                ],
-                              )
-                            ],
-                          )
-                        ),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    ButtonWidget(
+                                      text: '  down  ',
+                                      onClicked: () {
+                                        int level = bloc_user.challengeLevel;
+                                        level--;
+                                        setState(() {
+                                          bloc_user = bloc_user.copyWith(
+                                              challengeLevel: level);
+                                          FirestoreHelper.pushUser(bloc_user);
+                                        });
+                                      },
+                                    ),
+                                    DarkButtonWidget(
+                                      text: bloc_user.challengeLevel.toString(),
+                                      onClicked: () {},
+                                    ),
+                                    ButtonWidget(
+                                      text: 'level up',
+                                      onClicked: () {
+                                        int level = bloc_user.challengeLevel;
+                                        level++;
+                                        setState(() {
+                                          bloc_user = bloc_user.copyWith(
+                                              challengeLevel: level);
+                                          FirestoreHelper.pushUser(bloc_user);
+                                        });
+                                      },
+                                    ),
+                                  ],
+                                )
+                              ],
+                            )),
                       ],
                     )
                   : const SizedBox(),
@@ -575,6 +587,23 @@ class _PartyGuestAddEditManagePageState
                 ),
               ),
               const SizedBox(height: 24),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(right: 42, bottom: 5),
+                    child: DelayedDisplay(
+                      delay: const Duration(seconds: 1),
+                      child: Text(
+                        "* required",
+                        style: TextStyle(
+                          color: Theme.of(context).primaryColor,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 32),
                 child: ButtonWidget(
@@ -618,7 +647,7 @@ class _PartyGuestAddEditManagePageState
                       ],
                     )
                   : const SizedBox(),
-              const SizedBox(height: 12),
+              const SizedBox(height: 24),
             ],
           );
   }
@@ -847,8 +876,8 @@ class _PartyGuestAddEditManagePageState
                         final response = await http.get(url);
                         final Uint8List bytes = response.bodyBytes;
 
-                        try{
-                          if(kIsWeb){
+                        try {
+                          if (kIsWeb) {
                             FileUtils.openFileNewTabForWeb(urlImage);
 
                             // Image? fromPicker = await ImagePickerWeb.getImageAsWidget();
@@ -858,9 +887,11 @@ class _PartyGuestAddEditManagePageState
                             File(path).writeAsBytesSync(bytes);
 
                             final files = <XFile>[];
-                            files.add(XFile(path, name: '${widget.party.id}.jpg'));
+                            files.add(
+                                XFile(path, name: '${widget.party.id}.jpg'));
 
-                            await Share.shareXFiles(files, text: '#blocCommunity');
+                            await Share.shareXFiles(files,
+                                text: '#blocCommunity');
                           }
                         } on PlatformException catch (e, s) {
                           Logx.e(_TAG, e, s);

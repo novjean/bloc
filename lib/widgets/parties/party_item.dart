@@ -8,6 +8,7 @@ import '../../db/shared_preferences/user_preferences.dart';
 import '../../helpers/dummy.dart';
 import '../../screens/parties/artist_screen.dart';
 import '../../screens/parties/party_guest_add_edit_manage_screen.dart';
+import '../../utils/network_utils.dart';
 import '../../utils/string_utils.dart';
 
 class PartyItem extends StatelessWidget {
@@ -67,7 +68,8 @@ class PartyItem extends StatelessWidget {
                         bottom: 5.0,
                         child: Container(
                           width: MediaQuery.of(context).size.width,
-                          padding: const EdgeInsets.only(left: 15.0, right: 15.0),
+                          padding:
+                              const EdgeInsets.only(left: 15.0, right: 15.0),
                           child: Row(
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
@@ -86,8 +88,8 @@ class PartyItem extends StatelessWidget {
                     ],
                   ),
                   Padding(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 15, vertical: 5.0),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 15, vertical: 5.0),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -112,8 +114,8 @@ class PartyItem extends StatelessWidget {
                     ),
                   ),
                   Padding(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 15, vertical: 5.0),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 15, vertical: 5.0),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -131,44 +133,14 @@ class PartyItem extends StatelessWidget {
                             ),
                           ),
                         ),
-                        isGuestListActive &
-                                !isGuestListRequested
+                        party.ticketUrl.isNotEmpty
                             ? Flexible(
-                                flex: 1,
-                                child: Container(
-                                  height: 75,
-                                  width: 75,
-                                  child: ElevatedButton(
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor:
-                                          Theme.of(context).primaryColorDark,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(5),
-                                      ),
-                                      foregroundColor: Colors.white,
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 1, vertical: 1),
-                                    ),
-                                    child: const Text('join\nguest\nlist'),
-                                    onPressed: () {
-                                      // nav to guest list add page
-                                      PartyGuest partyGuest =
-                                          Dummy.getDummyPartyGuest();
-                                      partyGuest.partyId = party.id;
-
-                                      Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                PartyGuestAddEditManagePage(
-                                                    partyGuest: partyGuest,
-                                                    party: party,
-                                                    task: 'add')),
-                                      );
-                                    },
-                                  ),
-                                ),
-                              )
-                            : const SizedBox(),
+                                flex: 1, child: showBuyTicketNowButton(context))
+                            : (isGuestListActive & !isGuestListRequested)
+                                ? Flexible(
+                                    flex: 1,
+                                    child: showJoinGuestListButton(context))
+                                : const SizedBox(),
                       ],
                     ),
                   ),
@@ -177,6 +149,57 @@ class PartyItem extends StatelessWidget {
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget showJoinGuestListButton(BuildContext context) {
+    return SizedBox(
+      height: 75,
+      width: 75,
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Theme.of(context).primaryColorDark,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(5),
+          ),
+          foregroundColor: Colors.white,
+          padding: const EdgeInsets.symmetric(horizontal: 1, vertical: 1),
+        ),
+        child: const Text('join\nguest\nlist'),
+        onPressed: () {
+          // nav to guest list add page
+          PartyGuest partyGuest = Dummy.getDummyPartyGuest();
+          partyGuest.partyId = party.id;
+
+          Navigator.of(context).push(
+            MaterialPageRoute(
+                builder: (context) => PartyGuestAddEditManagePage(
+                    partyGuest: partyGuest, party: party, task: 'add')),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget showBuyTicketNowButton(BuildContext context) {
+    return SizedBox(
+      height: 75,
+      width: 75,
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Theme.of(context).primaryColorDark,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(5),
+          ),
+          foregroundColor: Colors.white,
+          padding: const EdgeInsets.symmetric(horizontal: 1, vertical: 1),
+        ),
+        child: const Text('buy\nticket\nnow'),
+        onPressed: () {
+          final uri = Uri.parse(party.ticketUrl);
+          NetworkUtils.launchInBrowser(uri);
+        },
       ),
     );
   }
