@@ -236,9 +236,11 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   void onPageChanged(int page) {
-    setState(() {
-      this._page = page;
-    });
+    if(mounted) {
+      setState(() {
+        this._page = page;
+      });
+    }
   }
 
   buildTabIcon(int index) {
