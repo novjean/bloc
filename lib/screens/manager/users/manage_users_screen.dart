@@ -12,9 +12,6 @@ import '../../../helpers/firestore_helper.dart';
 import '../../../helpers/fresh.dart';
 import '../../../utils/logx.dart';
 import '../../../widgets/manager/user_item.dart';
-import '../../../widgets/ui/sized_listview_block.dart';
-import '../../../widgets/ui/system_padding.dart';
-import '../../../widgets/ui/toaster.dart';
 
 class ManageUsersScreen extends StatefulWidget {
   ManageUsersScreen({Key? key}) : super(key: key);
@@ -26,13 +23,22 @@ class ManageUsersScreen extends StatefulWidget {
 class _ManageUsersScreenState extends State<ManageUsersScreen> {
   static const String _TAG = 'ManageUsersScreen';
 
-  String _selectedType = 'customer';
   String sUserLevelName = 'customer';
   late UserLevel sUserLevel;
   List<UserLevel> mUserLevels = [];
   List<String> mUserLevelNames = [];
 
   var _isUserLevelsLoading = true;
+
+  String sGender = 'all';
+  List<String> mGenders = [
+    'all',
+    'male',
+    'female',
+    'transgender',
+    'non-binary/non-conforming',
+    'prefer not to respond'
+  ];
 
   int sChallengeLevel = 1;
 
@@ -74,16 +80,91 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('manage | users')),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          showFilterDialog(context);
+        },
+        backgroundColor: Theme.of(context).primaryColor,
+        tooltip: 'filter',
+        elevation: 5,
+        splashColor: Colors.grey,
+        child: const Icon(
+          Icons.filter_list_outlined,
+          color: Colors.black,
+          size: 29,
+        ),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       body: _buildBody(context),
     );
   }
 
+  showFilterDialog(BuildContext context) {
+    return showDialog(
+      context: context,
+      builder: (BuildContext ctx) {
+        return AlertDialog(
+          contentPadding: const EdgeInsets.all(16.0),
+          content: SizedBox(
+            height: 300,
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 20),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Text(
+                        'filter',
+                        style: const TextStyle(fontSize: 18),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(
+                  height: 250,
+                  width: 300,
+                  child: SingleChildScrollView(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        const Text('levels:\n'),
+                        _displayUserLevelsDropdown(context),
+                        const Text('\ngender:\n'),
+                        _displayGenderDropdown(context)
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              child: const Text('close'),
+              onPressed: () {
+                Navigator.of(ctx).pop();
+              },
+            ),
+            TextButton(
+              child: const Text("confirm"),
+              onPressed: () {
+
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+
   _buildBody(BuildContext context) {
-    return _isUserLevelsLoading? const LoadingWidget():
+    return _isUserLevelsLoading ? const LoadingWidget() :
     Column(
       children: [
-        const SizedBox(height: 5.0),
-        _displayUserLevelsDropdown(context),
         const SizedBox(height: 5.0),
         _buildUsers(context),
         const SizedBox(height: 5.0),
@@ -91,9 +172,62 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
     );
   }
 
+  _displayGenderDropdown(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 0.0),
+      child: FormField<String>(
+        builder: (FormFieldState<String> state) {
+          return InputDecorator(
+            key: const ValueKey('gender_dropdown'),
+            decoration: InputDecoration(
+                fillColor: Colors.white,
+                errorStyle: TextStyle(
+                    color: Theme.of(context).errorColor,
+                    fontSize: 16.0),
+                hintText: 'please select gender',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(5.0),
+                  borderSide: BorderSide(
+                      color: Theme.of(context).primaryColor),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  // width: 0.0 produces a thin "hairline" border
+                  borderSide: BorderSide(
+                      color: Theme.of(context).primaryColor,
+                      width: 0.0),
+                )),
+            isEmpty: sGender == '',
+            child: DropdownButtonHideUnderline(
+              child: DropdownButton<String>(
+                style: TextStyle(
+                    color: Theme.of(context).primaryColorLight),
+                dropdownColor: Theme.of(context).backgroundColor,
+                value: sGender,
+                isDense: true,
+                onChanged: (String? newValue) {
+                  setState(() {
+                    sGender = newValue!;
+
+                    state.didChange(newValue);
+                  });
+                },
+                items: mGenders.map((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
   _displayUserLevelsDropdown(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 15.0),
+      padding: const EdgeInsets.symmetric(horizontal: 0.0),
       child: FormField<String>(
         builder: (FormFieldState<String> state) {
           return InputDecorator(
@@ -101,22 +235,32 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
             decoration: InputDecoration(
                 fillColor: Colors.white,
                 errorStyle: TextStyle(
-                    color: Theme.of(context).errorColor, fontSize: 16.0),
+                    color: Theme
+                        .of(context)
+                        .errorColor, fontSize: 16.0),
                 hintText: 'please select user level',
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(5.0),
-                  borderSide: BorderSide(color: Theme.of(context).primaryColor),
+                  borderSide: BorderSide(color: Theme
+                      .of(context)
+                      .primaryColor),
                 ),
                 enabledBorder: OutlineInputBorder(
                   // width: 0.0 produces a thin "hairline" border
                   borderSide: BorderSide(
-                      color: Theme.of(context).primaryColor, width: 0.0),
+                      color: Theme
+                          .of(context)
+                          .primaryColor, width: 0.0),
                 )),
             isEmpty: sUserLevelName == '',
             child: DropdownButtonHideUnderline(
               child: DropdownButton<String>(
-                style: TextStyle(color: Theme.of(context).primaryColor),
-                dropdownColor: Theme.of(context).backgroundColor,
+                style: TextStyle(color: Theme
+                    .of(context)
+                    .primaryColor),
+                dropdownColor: Theme
+                    .of(context)
+                    .backgroundColor,
                 value: sUserLevelName,
                 isDense: true,
                 onChanged: (String? newValue) {
@@ -147,37 +291,17 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
     );
   }
 
-  _displayUserLevels(BuildContext context) {
-    double containerHeight = MediaQuery.of(context).size.height / 20;
-
-    return SizedBox(
-      key: UniqueKey(),
-      // this height has to match with category item container height
-      height: MediaQuery.of(context).size.height / 14,
-      child: ListView.builder(
-          itemCount: mUserLevels.length,
-          scrollDirection: Axis.horizontal,
-          itemBuilder: (ctx, index) {
-            return GestureDetector(
-                child: SizedListViewBlock(
-                  title: mUserLevels[index].name,
-                  height: containerHeight,
-                  width: MediaQuery.of(context).size.width / 2.5,
-                  color: Theme.of(context).primaryColor,
-                ),
-                onTap: () {
-                  setState(() {
-                    _selectedType = mUserLevels[index].name;
-                    Logx.i(_TAG, '$_selectedType user level is selected');
-                  });
-                });
-          }),
-    );
-  }
-
   _buildUsers(BuildContext context) {
+    Stream<QuerySnapshot<Object?>> stream;
+
+    if(sGender == 'all'){
+      stream = FirestoreHelper.getUsersByLevel(sUserLevel.level);
+    } else {
+      stream = FirestoreHelper.getUsersByLevelAndGender(sUserLevel.level, sGender);
+    }
+
     return StreamBuilder<QuerySnapshot>(
-        stream: FirestoreHelper.getUsersByLevel(sUserLevel.level),
+        stream: stream,
         builder: (ctx, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const LoadingWidget();
@@ -188,7 +312,7 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
           for (int i = 0; i < snapshot.data!.docs.length; i++) {
             DocumentSnapshot document = snapshot.data!.docs[i];
             Map<String, dynamic> data =
-                document.data()! as Map<String, dynamic>;
+            document.data()! as Map<String, dynamic>;
             final User _user = Fresh.freshUserMap(data, false);
             _users.add(_user);
 
@@ -220,12 +344,12 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
                       return AlertDialog(
                         title: Text("delete user : " + sUser.name),
                         content:
-                            const Text("would you like to delete the user?"),
+                        const Text("would you like to delete the user?"),
                         actions: [
                           TextButton(
                             child: const Text("yes"),
                             onPressed: () {
-                              if(sUser.imageUrl.isNotEmpty) {
+                              if (sUser.imageUrl.isNotEmpty) {
                                 FirestorageHelper.deleteFile(sUser.imageUrl);
                               }
                               FirestoreHelper.deleteUser(sUser);
@@ -250,7 +374,8 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
                   Logx.i(_TAG, 'user selected : ${sUser.name}');
 
                   Navigator.of(context).push(MaterialPageRoute(
-                      builder: (ctx) => UserAddEditScreen(
+                      builder: (ctx) =>
+                          UserAddEditScreen(
                             user: sUser,
                             task: 'edit',
                             userLevels: mUserLevels,
@@ -259,4 +384,5 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
           }),
     );
   }
+
 }

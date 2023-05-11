@@ -608,17 +608,6 @@ class FirestoreHelper {
         .get();
   }
 
-  // static Future<QuerySnapshot<Map<String, dynamic>>> pullUpcomingParty(
-  //     int timeNow) {
-  //   return FirebaseFirestore.instance
-  //       .collection(FirestoreHelper.PARTIES)
-  //       .where('startTime', isGreaterThan: timeNow)
-  //       .where('isActive', isEqualTo: true)
-  //       .orderBy('startTime', descending: false)
-  //       .limit(1)
-  //       .get();
-  // }
-
   static Future<QuerySnapshot<Map<String, dynamic>>> pullActiveGuestListParties(
       int timeNow) {
     return FirebaseFirestore.instance
@@ -668,14 +657,6 @@ class FirestoreHelper {
         .orderBy('endTime', descending: false)
         .limit(1)
         .get();
-  }
-
-  static getParties(String blocServiceId) {
-    return FirebaseFirestore.instance
-        .collection(PARTIES)
-        .where('blocServiceId', isEqualTo: blocServiceId)
-        .orderBy('name', descending: false)
-        .snapshots();
   }
 
   static void deleteParty(Party party) {
@@ -1292,6 +1273,15 @@ class FirestoreHelper {
     return FirebaseFirestore.instance
         .collection(USERS)
         .where('clearanceLevel', isEqualTo: level)
+        .orderBy('lastSeenAt', descending: true)
+        .snapshots();
+  }
+
+  static getUsersByLevelAndGender(int level, String gender) {
+    return FirebaseFirestore.instance
+        .collection(USERS)
+        .where('clearanceLevel', isEqualTo: level)
+        .where('gender', isEqualTo: gender)
         .orderBy('lastSeenAt', descending: true)
         .snapshots();
   }

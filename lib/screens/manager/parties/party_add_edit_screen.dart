@@ -470,6 +470,8 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
                       setState(() {
                         widget.party = widget.party.copyWith(isActive: value);
                       });
+
+                      // showDeleteStoryPhotoDialog()
                     },
                   ), //Checkbox
                 ], //<Widget>[]
