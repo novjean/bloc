@@ -28,7 +28,6 @@ class Party {
   final String guestListRules;
   final String clubRules;
 
-  final String challenge;
   final bool isChallengeActive;
   final String genre;
 
@@ -62,7 +61,6 @@ class Party {
     required this.guestListEndTime,
     required this.guestListRules,
     required this.clubRules,
-    required this.challenge,
     required this.isChallengeActive,
     required this.genre,
     required this.isTicketed,
@@ -99,7 +97,6 @@ class Party {
           guestListEndTime == other.guestListEndTime &&
           guestListRules == other.guestListRules &&
           clubRules == other.clubRules &&
-          challenge == other.challenge &&
           isChallengeActive == other.isChallengeActive &&
           genre == other.genre &&
           isTicketed == other.isTicketed &&
@@ -132,7 +129,6 @@ class Party {
       guestListEndTime.hashCode ^
       guestListRules.hashCode ^
       clubRules.hashCode ^
-      challenge.hashCode ^
       isChallengeActive.hashCode ^
       genre.hashCode ^
       isTicketed.hashCode ^
@@ -166,7 +162,6 @@ class Party {
         ' guestListEndTime: $guestListEndTime,' +
         ' guestListRules: $guestListRules,' +
         ' clubRules: $clubRules,' +
-        ' challenge: $challenge,' +
         ' isChallengeActive: $isChallengeActive,' +
         ' genre: $genre,' +
         ' isTicketed: $isTicketed,' +
@@ -200,7 +195,6 @@ class Party {
     int? guestListEndTime,
     String? guestListRules,
     String? clubRules,
-    String? challenge,
     bool? isChallengeActive,
     String? genre,
     bool? isTicketed,
@@ -232,7 +226,6 @@ class Party {
       guestListEndTime: guestListEndTime ?? this.guestListEndTime,
       guestListRules: guestListRules ?? this.guestListRules,
       clubRules: clubRules ?? this.clubRules,
-      challenge: challenge ?? this.challenge,
       isChallengeActive: isChallengeActive ?? this.isChallengeActive,
       genre: genre ?? this.genre,
       isTicketed: isTicketed ?? this.isTicketed,
@@ -267,7 +260,6 @@ class Party {
       'guestListEndTime': this.guestListEndTime,
       'guestListRules': this.guestListRules,
       'clubRules': this.clubRules,
-      'challenge': this.challenge,
       'isChallengeActive': this.isChallengeActive,
       'genre': this.genre,
       'isTicketed': this.isTicketed,
@@ -302,7 +294,6 @@ class Party {
       guestListEndTime: map['guestListEndTime'] as int,
       guestListRules: map['guestListRules'] as String,
       clubRules: map['clubRules'] as String,
-      challenge: map['challenge'] as String,
       isChallengeActive: map['isChallengeActive'] as bool,
       genre: map['genre'] as String,
       isTicketed: map['isTicketed'] as bool,

@@ -684,15 +684,6 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
                   ), //Checkbox
                 ], //<Widget>[]
               ),
-              const SizedBox(height: 24),
-              TextFieldWidget(
-                label: 'challenge',
-                text: widget.party.challenge,
-                maxLines: 5,
-                onChanged: (value) {
-                  widget.party = widget.party.copyWith(challenge: value);
-                },
-              ),
 
               const SizedBox(height: 24),
               ButtonWidget(

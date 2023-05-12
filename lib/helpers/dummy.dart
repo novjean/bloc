@@ -155,7 +155,6 @@ class Dummy {
         ticketsSoldCount: 0,
         ticketsSalesTotal: 0,
         isBigAct: true,
-        challenge: Constants.challenge,
         genre: 'techno',
         isChallengeActive: false);
 

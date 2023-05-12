@@ -705,13 +705,6 @@ class Fresh {
     }
 
     try {
-      party = party.copyWith(challenge: map['challenge'] as String);
-    } catch (e) {
-      Logx.em(
-          _TAG, 'party challenge not exist for party id: ' + party.id);
-      shouldPushParty = true;
-    }
-    try {
       party = party.copyWith(isChallengeActive: map['isChallengeActive'] as bool);
     } catch (e) {
       Logx.em(
@@ -894,12 +887,6 @@ class Fresh {
       Logx.em(_TAG, 'party ticketsSalesTotal not exist for party id: ' + party.id);
     }
 
-    try{
-      freshParty =
-          freshParty.copyWith(challenge: party.challenge);
-    } catch (e) {
-      Logx.em(_TAG, 'party challenge not exist for party id: ' + party.id);
-    }
     try{
       freshParty =
           freshParty.copyWith(isChallengeActive: party.isChallengeActive);
