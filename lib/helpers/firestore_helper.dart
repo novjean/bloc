@@ -5,6 +5,7 @@ import 'package:bloc/db/entity/bloc_service.dart';
 import 'package:bloc/db/entity/cart_item.dart';
 import 'package:bloc/db/entity/category.dart';
 import 'package:bloc/db/entity/challenge.dart';
+import 'package:bloc/db/entity/genre.dart';
 import 'package:bloc/db/entity/guest_wifi.dart';
 import 'package:bloc/db/entity/offer.dart';
 import 'package:bloc/db/entity/order_bloc.dart';
@@ -30,7 +31,6 @@ import '../utils/string_utils.dart';
 /**
  * Tips:
  * 1. when the stream builder querying is being run more than once, create an index in firebase db
- * 2.
  * **/
 class FirestoreHelper {
   static const String _TAG = 'FirestoreHelper';
@@ -44,6 +44,7 @@ class FirestoreHelper {
   static String CART_ITEMS = 'cart_items';
   static String CHALLENGES = 'challenges';
   static String CITIES = 'cities';
+  static String GENRES = 'genres';
   static String GUEST_WIFIS = 'guest_wifis';
   static String INVENTORY_OPTIONS = 'inventory_options';
   static String MANAGER_SERVICES = 'manager_services';
@@ -454,11 +455,44 @@ class FirestoreHelper {
     return FirebaseFirestore.instance.collection(CITIES).snapshots();
   }
 
+  /** genre **/
+  static void pushGenre(Genre genre) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection(GENRES)
+          .doc(genre.id)
+          .set(genre.toMap());
+    } on PlatformException catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } on Exception catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } catch (e) {
+      logger.e(e);
+    }
+  }
+
+  static Future<QuerySnapshot<Map<String, dynamic>>> pullGenres() {
+    return FirebaseFirestore.instance
+        .collection(GENRES)
+        .get();
+  }
+
+  static getGenres() {
+    return FirebaseFirestore.instance
+        .collection(GENRES)
+        .orderBy('name', descending: false)
+        .snapshots();
+  }
+
+  static void deleteGenre(String docId) {
+    FirebaseFirestore.instance.collection(GENRES).doc(docId).delete();
+  }
+
   /** guest wifi **/
   static Future<QuerySnapshot<Map<String, dynamic>>> pullGuestWifi(
       String blocServiceId) {
     return FirebaseFirestore.instance
-        .collection(FirestoreHelper.GUEST_WIFIS)
+        .collection(GUEST_WIFIS)
         .where('blocServiceId', isEqualTo: blocServiceId)
         .get();
   }

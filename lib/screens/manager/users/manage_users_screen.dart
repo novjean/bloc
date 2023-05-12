@@ -316,7 +316,8 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
                 child: Text('gender: ${sGender}'),
               ),
               Expanded(
-                child: Align(alignment: Alignment.centerRight,
+                child: Align(
+                    alignment: Alignment.centerRight,
                     child: Text('count: ${mUsers.length}')),
               ),
             ],

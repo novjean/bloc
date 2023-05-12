@@ -39,7 +39,7 @@ class _HomeScreenState extends State<HomeScreen> {
   List<Bloc> mBlocs = [];
   var _isBlocsLoading = true;
 
-  GuestWifi mGuestWifi = Dummy.getDummyWifi(Constants.blocServiceId);
+  GuestWifi mGuestWifi = Dummy.getDummyGuestWifi(Constants.blocServiceId);
   var _isGuestWifiDetailsLoading = true;
 
   @override

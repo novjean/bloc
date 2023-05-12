@@ -13,6 +13,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../db/entity/ad.dart';
 import '../db/entity/bloc.dart';
 import '../db/entity/bloc_service.dart';
+import '../db/entity/genre.dart';
 import '../db/entity/offer.dart';
 import '../db/entity/party.dart';
 import '../db/entity/product.dart';
@@ -100,7 +101,15 @@ class Dummy {
     return dummyChallenge;
   }
 
-  static GuestWifi getDummyWifi(String blocServiceId) {
+  static Genre getDummyGenre(){
+    Genre dummyGenre = Genre(
+      id: StringUtils.getRandomString(28),
+      name: '',
+    );
+    return dummyGenre;
+  }
+
+  static GuestWifi getDummyGuestWifi(String blocServiceId) {
     GuestWifi dummyWifi = GuestWifi(
         id: StringUtils.getRandomString(28),
         name: '',

@@ -4,6 +4,7 @@ import '../db/entity/ad.dart';
 import '../db/entity/bloc.dart';
 import '../db/entity/category.dart';
 import '../db/entity/challenge.dart';
+import '../db/entity/genre.dart';
 import '../db/entity/party.dart';
 import '../db/entity/product.dart';
 import '../db/entity/reservation.dart';
@@ -442,43 +443,43 @@ class Fresh {
     try {
       challenge = challenge.copyWith(level: map['level'] as int);
     } catch (e) {
-      Logx.em(_TAG, 'challenge level not exist for category id: ' + challenge.id);
+      Logx.em(_TAG, 'challenge level not exist for id: ' + challenge.id);
       shouldPush = true;
     }
     try {
       challenge = challenge.copyWith(title: map['title'] as String);
     } catch (e) {
-      Logx.em(_TAG, 'challenge title not exist for category id: ' + challenge.id);
+      Logx.em(_TAG, 'challenge title not exist for id: ' + challenge.id);
       shouldPush = true;
     }
     try {
       challenge = challenge.copyWith(description: map['description'] as String);
     } catch (e) {
-      Logx.em(_TAG, 'challenge description not exist for category id: ' + challenge.id);
+      Logx.em(_TAG, 'challenge description not exist for id: ' + challenge.id);
       shouldPush = true;
     }
     try {
       challenge = challenge.copyWith(points: map['points'] as int);
     } catch (e) {
-      Logx.em(_TAG, 'challenge points not exist for category id: ' + challenge.id);
+      Logx.em(_TAG, 'challenge points not exist for id: ' + challenge.id);
       shouldPush = true;
     }
     try {
       challenge = challenge.copyWith(clickCount: map['clickCount'] as int);
     } catch (e) {
-      Logx.em(_TAG, 'challenge clickCount not exist for category id: ' + challenge.id);
+      Logx.em(_TAG, 'challenge clickCount not exist for id: ' + challenge.id);
       shouldPush = true;
     }
     try {
       challenge = challenge.copyWith(dialogTitle: map['dialogTitle'] as String);
     } catch (e) {
-      Logx.em(_TAG, 'challenge dialogTitle not exist for category id: ' + challenge.id);
+      Logx.em(_TAG, 'challenge dialogTitle not exist for id: ' + challenge.id);
       shouldPush = true;
     }
     try {
       challenge = challenge.copyWith(dialogAcceptText: map['dialogAcceptText'] as String);
     } catch (e) {
-      Logx.em(_TAG, 'challenge dialogAcceptText not exist for category id: ' + challenge.id);
+      Logx.em(_TAG, 'challenge dialogAcceptText not exist for id: ' + challenge.id);
       shouldPush = true;
     }
 
@@ -539,6 +540,51 @@ class Fresh {
     return freshChallenge;
   }
 
+  /** genre **/
+  static Genre freshGenreMap(
+      Map<String, dynamic> map, bool shouldUpdate) {
+    Genre genre = Dummy.getDummyGenre();
+
+    bool shouldPush = true;
+
+    try {
+      genre = genre.copyWith(id: map['id'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'genre id not exist');
+    }
+    try {
+      genre = genre.copyWith(name: map['name'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'genre name not exist for id: ' + genre.id);
+      shouldPush = true;
+    }
+
+    if (shouldPush &&
+        shouldUpdate &&
+        UserPreferences.myUser.clearanceLevel >= Constants.MANAGER_LEVEL) {
+      Logx.i(_TAG, 'updating genre ' + genre.id);
+      FirestoreHelper.pushGenre(genre);
+    }
+
+    return genre;
+  }
+
+  static Genre freshGenre(Genre genre) {
+    Genre freshGenre = Dummy.getDummyGenre();
+
+    try {
+      freshGenre = freshGenre.copyWith(id: genre.id);
+    } catch (e) {
+      Logx.em(_TAG, 'genre id not exist');
+    }
+    try {
+      freshGenre = freshGenre.copyWith(name: genre.name);
+    } catch (e) {
+      Logx.em(_TAG, 'genre name not exist for id: ' + genre.id);
+    }
+
+    return freshGenre;
+  }
 
   /** party **/
   static Party freshPartyMap(Map<String, dynamic> map, bool shouldUpdate) {

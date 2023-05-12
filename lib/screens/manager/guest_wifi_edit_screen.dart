@@ -28,7 +28,7 @@ class _GuestWifiEditScreenState extends State<GuestWifiEditScreen> {
   void initState() {
     super.initState();
 
-    wifi = Dummy.getDummyWifi(widget.blocServiceId);
+    wifi = Dummy.getDummyGuestWifi(widget.blocServiceId);
 
     FirestoreHelper.pullGuestWifi(widget.blocServiceId).then((res) {
       print("successfully pulled in guest wifi ");

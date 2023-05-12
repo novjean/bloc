@@ -10,6 +10,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 
+import '../../../db/entity/genre.dart';
 import '../../../db/entity/party.dart';
 import '../../../helpers/firestorage_helper.dart';
 import '../../../helpers/firestore_helper.dart';
@@ -63,6 +64,11 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
   late String _sPartyType;
   List<String> partyTypes = ['artist', 'event'];
 
+  String sGenre = '';
+  List<Genre> mGenres = [];
+  List<String> mGenreNames = [''];
+  bool isGenresLoading = true;
+
   @override
   void initState() {
     super.initState();
@@ -103,6 +109,44 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
       }
     });
 
+    FirestoreHelper.pullGenres().then((res) {
+      Logx.i(_TAG, "successfully pulled in all genres ");
+
+      if (res.docs.isNotEmpty) {
+        for (int i = 0; i < res.docs.length; i++) {
+          DocumentSnapshot document = res.docs[i];
+          Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+          final Genre genre = Fresh.freshGenreMap(data, false);
+          mGenres.add(genre);
+          mGenreNames.add(genre.name);
+
+          if(widget.party.genre == genre.name){
+            sGenre = genre.name;
+          }
+        }
+
+        if(sGenre.isEmpty){
+          if(widget.party.genre.isNotEmpty){
+            // clearing out faulty data
+            widget.party = widget.party.copyWith(genre: '');
+          }
+        }
+
+        if(mounted){
+          setState(() {
+            isGenresLoading = false;
+          });
+        }
+      } else {
+        Logx.i(_TAG, 'no genres found!');
+        if(mounted){
+          setState(() {
+            isGenresLoading = false;
+          });
+        }
+      }
+    });
+
     for (int i = 1; i <= 10; i++) {
       guestCounts.add(i.toString());
     }
@@ -112,125 +156,13 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
   @override
   Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(
-          title: Text('party | ' + widget.task),
+          title: Text('party | ${widget.task}'),
         ),
         body: _buildBody(context),
       );
 
-  Future<void> _selectDate(BuildContext context, DateTime initDate) async {
-    final DateTime? _sDate = await showDatePicker(
-        context: context,
-        initialDate: initDate,
-        firstDate: DateTime(2023, 1),
-        lastDate: DateTime(2101));
-    if (_sDate != null) {
-      DateTime _sDateTemp = DateTime(_sDate.year, _sDate.month, _sDate.day);
-
-      setState(() {
-        sDate = _sDateTemp;
-        _selectTime(context);
-      });
-    }
-  }
-
-  Future<TimeOfDay> _selectTime(BuildContext context) async {
-    TimeOfDay initialTime = TimeOfDay.now();
-
-    TimeOfDay? pickedTime = await showTimePicker(
-      context: context,
-      initialTime: initialTime,
-    );
-
-    setState((){
-      sTimeOfDay = pickedTime!;
-
-      DateTime sDateTime = DateTime(sDate.year, sDate.month, sDate.day, sTimeOfDay.hour, sTimeOfDay.minute);
-
-      if (_isStartDateBeingSet) {
-        sStartDateTime = sDateTime;
-        widget.party = widget.party
-            .copyWith(startTime: sStartDateTime.millisecondsSinceEpoch);
-      } else if(_isEndDateBeingSet) {
-        sEndDateTime = sDateTime;
-        widget.party = widget.party
-            .copyWith(endTime: sEndDateTime.millisecondsSinceEpoch);
-      } else if(_isGuestListDateBeingSet){
-        sEndGuestListDateTime = sDateTime;
-        widget.party = widget.party
-            .copyWith(guestListEndTime: sEndGuestListDateTime.millisecondsSinceEpoch);
-      } else {
-        Logx.em(_TAG, 'unhandled date time');
-      }
-    });
-    return sTimeOfDay;
-  }
-
-  Widget dateTimeContainer(BuildContext context, String type) {
-    sStartDateTime = DateTimeUtils.getDate(widget.party.startTime);
-    sEndDateTime = DateTimeUtils.getDate(widget.party.endTime);
-    sEndGuestListDateTime = DateTimeUtils.getDate(widget.party.guestListEndTime);
-
-    DateTime dateTime;
-    if(type=='start'){
-      dateTime = sStartDateTime;
-    } else if (type == 'end'){
-      dateTime = sEndDateTime;
-    } else {
-      dateTime = sEndGuestListDateTime;
-    }
-
-    return Container(
-      decoration: BoxDecoration(
-          border: Border.all(
-            color: Colors.black38,
-          ),
-          borderRadius: const BorderRadius.all(Radius.circular(20))),
-      padding: const EdgeInsets.only(left: 10, top: 5, right: 5, bottom: 5),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(DateTimeUtils.getFormattedDateString(dateTime.millisecondsSinceEpoch),
-              style: const TextStyle(
-            fontSize: 18,
-          )),
-          const SizedBox(
-            height: 20.0,
-          ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              primary: Theme.of(context).primaryColor,
-              onPrimary: Colors.white,
-              shadowColor: Theme.of(context).shadowColor,
-              elevation: 3,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(32.0)),
-              minimumSize: const Size(50, 50), //////// HERE
-            ),
-            onPressed: () {
-              if(type == 'start'){
-                _isStartDateBeingSet = true;
-                _isEndDateBeingSet = false;
-                _isGuestListDateBeingSet = false;
-              } else if (type == 'end'){
-                _isStartDateBeingSet = false;
-                _isEndDateBeingSet = true;
-                _isGuestListDateBeingSet = false;
-              } else {
-                _isStartDateBeingSet = false;
-                _isEndDateBeingSet = false;
-                _isGuestListDateBeingSet = true;
-              }
-              _selectDate(context, dateTime);
-            },
-            child: Text(type == 'guestListEndTime'? 'guestlist end time'  : type + ' date & time'),
-          ),
-        ],
-      ),
-    );
-  }
-
   _buildBody(BuildContext context) {
-    return _isBlocServicesLoading
+    return _isBlocServicesLoading && isGenresLoading
         ? const LoadingWidget()
         : ListView(
             padding: const EdgeInsets.symmetric(horizontal: 32),
@@ -359,12 +291,37 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
               ),
 
               const SizedBox(height: 24),
-              TextFieldWidget(
-                label: 'genre',
-                text: widget.party.genre,
-                maxLength: 20,
-                onChanged: (genre) =>
-                widget.party = widget.party.copyWith(genre: genre),
+              FormField<String>(
+                builder: (FormFieldState<String> state) {
+                  return InputDecorator(
+                    key: const ValueKey('party_genre'),
+                    decoration: InputDecoration(
+                        errorStyle: TextStyle(
+                            color: Theme.of(context).errorColor,
+                            fontSize: 16.0),
+                        hintText: 'please select party genre',
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(5.0))),
+                    isEmpty: sGenre == '',
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton<String>(
+                        value: sGenre,
+                        isDense: true,
+                        onChanged: (String? newValue) {
+                          sGenre = newValue!;
+                          widget.party = widget.party.copyWith(genre: sGenre);
+                          state.didChange(newValue);
+                        },
+                        items: mGenreNames.map((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList(),
+                      ),
+                    ),
+                  );
+                },
               ),
 
               const SizedBox(height: 24),
@@ -723,6 +680,118 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
               const SizedBox(height: 5),
             ],
           );
+  }
+
+  Future<void> _selectDate(BuildContext context, DateTime initDate) async {
+    final DateTime? _sDate = await showDatePicker(
+        context: context,
+        initialDate: initDate,
+        firstDate: DateTime(2023, 1),
+        lastDate: DateTime(2101));
+    if (_sDate != null) {
+      DateTime _sDateTemp = DateTime(_sDate.year, _sDate.month, _sDate.day);
+
+      setState(() {
+        sDate = _sDateTemp;
+        _selectTime(context);
+      });
+    }
+  }
+
+  Future<TimeOfDay> _selectTime(BuildContext context) async {
+    TimeOfDay initialTime = TimeOfDay.now();
+
+    TimeOfDay? pickedTime = await showTimePicker(
+      context: context,
+      initialTime: initialTime,
+    );
+
+    setState((){
+      sTimeOfDay = pickedTime!;
+
+      DateTime sDateTime = DateTime(sDate.year, sDate.month, sDate.day, sTimeOfDay.hour, sTimeOfDay.minute);
+
+      if (_isStartDateBeingSet) {
+        sStartDateTime = sDateTime;
+        widget.party = widget.party
+            .copyWith(startTime: sStartDateTime.millisecondsSinceEpoch);
+      } else if(_isEndDateBeingSet) {
+        sEndDateTime = sDateTime;
+        widget.party = widget.party
+            .copyWith(endTime: sEndDateTime.millisecondsSinceEpoch);
+      } else if(_isGuestListDateBeingSet){
+        sEndGuestListDateTime = sDateTime;
+        widget.party = widget.party
+            .copyWith(guestListEndTime: sEndGuestListDateTime.millisecondsSinceEpoch);
+      } else {
+        Logx.em(_TAG, 'unhandled date time');
+      }
+    });
+    return sTimeOfDay;
+  }
+
+  Widget dateTimeContainer(BuildContext context, String type) {
+    sStartDateTime = DateTimeUtils.getDate(widget.party.startTime);
+    sEndDateTime = DateTimeUtils.getDate(widget.party.endTime);
+    sEndGuestListDateTime = DateTimeUtils.getDate(widget.party.guestListEndTime);
+
+    DateTime dateTime;
+    if(type=='start'){
+      dateTime = sStartDateTime;
+    } else if (type == 'end'){
+      dateTime = sEndDateTime;
+    } else {
+      dateTime = sEndGuestListDateTime;
+    }
+
+    return Container(
+      decoration: BoxDecoration(
+          border: Border.all(
+            color: Colors.black38,
+          ),
+          borderRadius: const BorderRadius.all(Radius.circular(20))),
+      padding: const EdgeInsets.only(left: 10, top: 5, right: 5, bottom: 5),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(DateTimeUtils.getFormattedDateString(dateTime.millisecondsSinceEpoch),
+              style: const TextStyle(
+                fontSize: 18,
+              )),
+          const SizedBox(
+            height: 20.0,
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              primary: Theme.of(context).primaryColor,
+              onPrimary: Colors.white,
+              shadowColor: Theme.of(context).shadowColor,
+              elevation: 3,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(32.0)),
+              minimumSize: const Size(50, 50), //////// HERE
+            ),
+            onPressed: () {
+              if(type == 'start'){
+                _isStartDateBeingSet = true;
+                _isEndDateBeingSet = false;
+                _isGuestListDateBeingSet = false;
+              } else if (type == 'end'){
+                _isStartDateBeingSet = false;
+                _isEndDateBeingSet = true;
+                _isGuestListDateBeingSet = false;
+              } else {
+                _isStartDateBeingSet = false;
+                _isEndDateBeingSet = false;
+                _isGuestListDateBeingSet = true;
+              }
+              _selectDate(context, dateTime);
+            },
+            child: Text(type == 'guestListEndTime'? 'guestlist end time'  : type + ' date & time'),
+          ),
+        ],
+      ),
+    );
   }
 
   void showDeleteStoryPhotoDialog(BuildContext context) {
