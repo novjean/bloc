@@ -82,16 +82,15 @@ class PartyBanner extends StatelessWidget {
                         child: Text(
                           party.isTBA
                               ? 'tba'
-                              : DateTimeUtils.getFormattedDate(party.startTime),
+                              : '${DateTimeUtils.getFormattedDate(party.startTime)}, ${DateTimeUtils.getFormattedTime(party.startTime)}',
                           style: const TextStyle(fontSize: 18),
                         ),
                       ),
                       Padding(
                         padding: const EdgeInsets.only(left: 5.0),
                         child: Text(
-                          party.isTBA
-                              ? ''
-                              : DateTimeUtils.getFormattedTime(party.startTime),
+                          party.genre.isNotEmpty
+                              ? '[${party.genre}]' : '',
                           style: const TextStyle(fontSize: 18),
                         ),
                       ),

@@ -20,6 +20,7 @@ class DateTimeUtils {
     return date;
   }
 
+  //fri, may 12
   static String getFormattedDate(int millis) {
     var dt = DateTime.fromMillisecondsSinceEpoch(millis);
     String date = DateFormat('MMMEd').format(dt);
@@ -33,6 +34,7 @@ class DateTimeUtils {
     return date.toLowerCase();
   }
 
+  //8 pm
   static String getFormattedTime(int millis) {
     var dt = DateTime.fromMillisecondsSinceEpoch(millis);
     String date = DateFormat('j').format(dt);

@@ -98,7 +98,7 @@ class PartyItem extends StatelessWidget {
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
                                   Text(
-                                    party.eventName.toLowerCase(),
+                                    '${party.eventName.toLowerCase()} [${party.genre}]',
                                     style: const TextStyle(fontSize: 18),
                                   ),
                                 ],
