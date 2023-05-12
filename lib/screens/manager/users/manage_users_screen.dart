@@ -23,6 +23,8 @@ class ManageUsersScreen extends StatefulWidget {
 class _ManageUsersScreenState extends State<ManageUsersScreen> {
   static const String _TAG = 'ManageUsersScreen';
 
+  List<User> mUsers = [];
+
   String sUserLevelName = 'customer';
   late UserLevel sUserLevel;
   List<UserLevel> mUserLevels = [];
@@ -151,9 +153,7 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
             TextButton(
               child: const Text("confirm"),
               onPressed: () {
-                setState(() {
-
-                });
+                setState(() {});
                 Navigator.of(ctx).pop();
               },
             ),
@@ -163,16 +163,8 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
     );
   }
 
-
   _buildBody(BuildContext context) {
-    return _isUserLevelsLoading ? const LoadingWidget() :
-    Column(
-      children: [
-        const SizedBox(height: 5.0),
-        _buildUsers(context),
-        const SizedBox(height: 5.0),
-      ],
-    );
+    return _isUserLevelsLoading ? const LoadingWidget() : _buildUsers(context);
   }
 
   _displayGenderDropdown(BuildContext context) {
@@ -185,25 +177,21 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
             decoration: InputDecoration(
                 fillColor: Colors.white,
                 errorStyle: TextStyle(
-                    color: Theme.of(context).errorColor,
-                    fontSize: 16.0),
+                    color: Theme.of(context).errorColor, fontSize: 16.0),
                 hintText: 'please select gender',
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(5.0),
-                  borderSide: BorderSide(
-                      color: Theme.of(context).primaryColor),
+                  borderSide: BorderSide(color: Theme.of(context).primaryColor),
                 ),
                 enabledBorder: OutlineInputBorder(
                   // width: 0.0 produces a thin "hairline" border
                   borderSide: BorderSide(
-                      color: Theme.of(context).primaryColor,
-                      width: 0.0),
+                      color: Theme.of(context).primaryColor, width: 0.0),
                 )),
             isEmpty: sGender == '',
             child: DropdownButtonHideUnderline(
               child: DropdownButton<String>(
-                style: TextStyle(
-                    color: Theme.of(context).primaryColorLight),
+                style: TextStyle(color: Theme.of(context).primaryColorLight),
                 dropdownColor: Theme.of(context).backgroundColor,
                 value: sGender,
                 isDense: true,
@@ -235,32 +223,22 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
             decoration: InputDecoration(
                 fillColor: Colors.white,
                 errorStyle: TextStyle(
-                    color: Theme
-                        .of(context)
-                        .errorColor, fontSize: 16.0),
+                    color: Theme.of(context).errorColor, fontSize: 16.0),
                 hintText: 'please select user level',
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(5.0),
-                  borderSide: BorderSide(color: Theme
-                      .of(context)
-                      .primaryColor),
+                  borderSide: BorderSide(color: Theme.of(context).primaryColor),
                 ),
                 enabledBorder: OutlineInputBorder(
                   // width: 0.0 produces a thin "hairline" border
                   borderSide: BorderSide(
-                      color: Theme
-                          .of(context)
-                          .primaryColor, width: 0.0),
+                      color: Theme.of(context).primaryColor, width: 0.0),
                 )),
             isEmpty: sUserLevelName == '',
             child: DropdownButtonHideUnderline(
               child: DropdownButton<String>(
-                style: TextStyle(color: Theme
-                    .of(context)
-                    .primaryColor),
-                dropdownColor: Theme
-                    .of(context)
-                    .backgroundColor,
+                style: TextStyle(color: Theme.of(context).primaryColor),
+                dropdownColor: Theme.of(context).backgroundColor,
                 value: sUserLevelName,
                 isDense: true,
                 onChanged: (String? newValue) {
@@ -291,10 +269,11 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
   _buildUsers(BuildContext context) {
     Stream<QuerySnapshot<Object?>> stream;
 
-    if(sGender == 'all'){
+    if (sGender == 'all') {
       stream = FirestoreHelper.getUsersByLevel(sUserLevel.level);
     } else {
-      stream = FirestoreHelper.getUsersByLevelAndGender(sUserLevel.level, sGender);
+      stream =
+          FirestoreHelper.getUsersByLevelAndGender(sUserLevel.level, sGender);
     }
 
     return StreamBuilder<QuerySnapshot>(
@@ -304,82 +283,104 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
             return const LoadingWidget();
           }
 
-          List<User> _users = [];
+          mUsers = [];
 
           for (int i = 0; i < snapshot.data!.docs.length; i++) {
             DocumentSnapshot document = snapshot.data!.docs[i];
             Map<String, dynamic> data =
-            document.data()! as Map<String, dynamic>;
+                document.data()! as Map<String, dynamic>;
             final User _user = Fresh.freshUserMap(data, false);
-            _users.add(_user);
+            mUsers.add(_user);
 
             if (i == snapshot.data!.docs.length - 1) {
-              return _displayUsers(context, _users);
+              return _displayBody(context);
             }
           }
           return const LoadingWidget();
         });
   }
 
-  _displayUsers(BuildContext context, List<User> users) {
-    return Expanded(
-      child: ListView.builder(
-          itemCount: users.length,
-          scrollDirection: Axis.vertical,
-          itemBuilder: (ctx, index) {
-            return GestureDetector(
-                child: UserItem(
-                  user: users[index],
-                ),
-                onDoubleTap: () {
-                  User sUser = users[index];
-                  Logx.i(_TAG, 'double tap user selected : ' + sUser.name);
+  _displayBody(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 3),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Text('level: ${sUserLevelName}'),
+              ),
+              Expanded(
+                child: Text('gender: ${sGender}'),
+              ),
+              Expanded(
+                child: Align(alignment: Alignment.centerRight,
+                    child: Text('count: ${mUsers.length}')),
+              ),
+            ],
+          ),
+        ),
+        Expanded(
+          child: ListView.builder(
+              itemCount: mUsers.length,
+              scrollDirection: Axis.vertical,
+              itemBuilder: (ctx, index) {
+                return GestureDetector(
+                    child: UserItem(
+                      user: mUsers[index],
+                    ),
+                    onDoubleTap: () {
+                      User sUser = mUsers[index];
+                      Logx.i(_TAG, 'double tap user selected : ' + sUser.name);
 
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        title: Text("delete user : " + sUser.name),
-                        content:
-                        const Text("would you like to delete the user?"),
-                        actions: [
-                          TextButton(
-                            child: const Text("yes"),
-                            onPressed: () {
-                              if (sUser.imageUrl.isNotEmpty) {
-                                FirestorageHelper.deleteFile(sUser.imageUrl);
-                              }
-                              FirestoreHelper.deleteUser(sUser);
-                              Logx.i(_TAG, 'user is deleted');
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: Text("delete user : " + sUser.name),
+                            content: const Text(
+                                "would you like to delete the user?"),
+                            actions: [
+                              TextButton(
+                                child: const Text("yes"),
+                                onPressed: () {
+                                  if (sUser.imageUrl.isNotEmpty) {
+                                    FirestorageHelper.deleteFile(
+                                        sUser.imageUrl);
+                                  }
+                                  FirestoreHelper.deleteUser(sUser);
+                                  Logx.i(_TAG, 'user is deleted');
 
-                              Navigator.of(context).pop();
-                            },
-                          ),
-                          TextButton(
-                            child: const Text("no"),
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                          )
-                        ],
+                                  Navigator.of(context).pop();
+                                },
+                              ),
+                              TextButton(
+                                child: const Text("no"),
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                              )
+                            ],
+                          );
+                        },
                       );
                     },
-                  );
-                },
-                onTap: () {
-                  User sUser = users[index];
-                  Logx.i(_TAG, 'user selected : ${sUser.name}');
+                    onTap: () {
+                      User sUser = mUsers[index];
+                      Logx.i(_TAG, 'user selected : ${sUser.name}');
 
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (ctx) =>
-                          UserAddEditScreen(
-                            user: sUser,
-                            task: 'edit',
-                            userLevels: mUserLevels,
-                          )));
-                });
-          }),
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (ctx) => UserAddEditScreen(
+                                user: sUser,
+                                task: 'edit',
+                                userLevels: mUserLevels,
+                              )));
+                    });
+              }),
+        ),
+      ],
     );
   }
-
 }
