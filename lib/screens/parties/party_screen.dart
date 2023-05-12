@@ -48,18 +48,22 @@ class _PartyScreenState extends State<PartyScreen> {
           final Party party = Fresh.freshPartyMap(data, false);
           parties.add(party);
         }
-        setState(() {
-          mParties = parties;
-          _isPartiesLoading = false;
-        });
+        if(mounted){
+          setState(() {
+            mParties = parties;
+            _isPartiesLoading = false;
+          });
+        }
       } else {
         Logx.em(_TAG, 'no parties found!');
         const Center(
           child: Text('no parties assigned yet!'),
         );
-        setState(() {
-          _isPartiesLoading = false;
-        });
+        if(mounted) {
+          setState(() {
+            _isPartiesLoading = false;
+          });
+        }
       }
     });
 
@@ -82,6 +86,8 @@ class _PartyScreenState extends State<PartyScreen> {
             mPastParties = parties;
             _isPastPartiesLoading = false;
           });
+        } else {
+          Logx.em(_TAG, 'not mounted');
         }
       } else {
         Logx.i(_TAG, 'no past parties found!');
@@ -92,6 +98,8 @@ class _PartyScreenState extends State<PartyScreen> {
           setState(() {
             _isPastPartiesLoading = false;
           });
+        } else {
+          Logx.em(_TAG, 'not mounted');
         }
       }
     });
