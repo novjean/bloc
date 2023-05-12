@@ -814,9 +814,12 @@ class _PartyGuestAddEditManagePageState
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        Text(
-                          '#blocCommunity  | ${widget.party.name}',
-                          style: const TextStyle(fontSize: 18),
+                        Expanded(
+                          child: Text(
+                            '#blocCommunity  | ${widget.party.name}',
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(fontSize: 18),
+                          ),
                         ),
                       ],
                     ),
