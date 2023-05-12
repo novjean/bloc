@@ -1,9 +1,14 @@
+import 'dart:io';
+
 import 'package:bloc/db/entity/party_guest.dart';
 import 'package:bloc/helpers/dummy.dart';
 import 'package:bloc/helpers/firestore_helper.dart';
 import 'package:bloc/screens/parties/party_guest_add_edit_manage_screen.dart';
+import 'package:bloc/utils/string_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../../db/entity/party.dart';
 import '../../helpers/fresh.dart';
@@ -11,6 +16,7 @@ import '../../utils/file_utils.dart';
 import '../../utils/date_time_utils.dart';
 import '../../utils/logx.dart';
 import '../../widgets/parties/party_guest_item.dart';
+import '../../widgets/ui/button_widget.dart';
 import '../../widgets/ui/loading_widget.dart';
 import '../../widgets/ui/toaster.dart';
 
@@ -74,33 +80,7 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
       appBar: AppBar(title: const Text('manage | guest list')),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          showDialog(
-              context: context,
-              builder: (BuildContext context) {
-            return AlertDialog(
-              title: Text('delete all ${sPartyName=='all'?'':sPartyName} guest lists'),
-              content: Text('deleting ${mPartyGuests.length} guest list requests. are you sure you want to continue?'),
-              actions: [
-                TextButton(
-                  child: Text("yes"),
-                  onPressed: () async {
-                    for(PartyGuest partyGuest in mPartyGuests){
-                      FirestoreHelper.deletePartyGuest(partyGuest);
-                    }
-                    Logx.i(_TAG, 'deleted all ${sPartyName=='all'?'':sPartyName} guest list requests!');
-                    Toaster.shortToast('deleted all ${sPartyName=='all'?'':sPartyName} guest list requests!');
-                    Navigator.of(context).pop();
-                  },
-                ),
-                TextButton(
-                  child: const Text("no"),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                )
-              ],
-            );
-          });
+          showOptionsDialog(context);
         },
         backgroundColor: Theme.of(context).primaryColor,
         tooltip: 'delete',
@@ -236,8 +216,10 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
 
                 if (i == snapshot.data!.docs.length - 1) {
                   if(guestListText.isNotEmpty){
+
                     String date = DateTimeUtils.getFormattedDateYear(partyStartTime);
                     String fileName = '$sPartyName-$date.csv';
+
                     FileUtils.write(fileName, guestListText);
                     Logx.i(_TAG, 'saved to guest list file : $fileName');
                   }
@@ -301,6 +283,127 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
                           )));
                 });
           }),
+    );
+  }
+
+  showOptionsDialog(BuildContext context) {
+    return showDialog(
+      context: context,
+      builder: (BuildContext ctx) {
+        return AlertDialog(
+          contentPadding: const EdgeInsets.all(16.0),
+          content: SizedBox(
+            height: 250,
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 20),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: const [
+                        Text(
+                          'options',
+                          style: TextStyle(fontSize: 18),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(
+                    height: 200,
+                    width: 300,
+                    child: SingleChildScrollView(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text('share list'),
+                              ButtonWidget(text: 'share', onClicked: () async {
+                                Navigator.of(ctx).pop();
+
+                                String guestListText = '';
+                                for(PartyGuest partyGuest in mPartyGuests){
+                                  guestListText += '${partyGuest.name},${partyGuest.surname},+${partyGuest.phone},${partyGuest.email},${partyGuest.gender},${partyGuest.guestStatus}\n';
+                                }
+
+                                var temp = await getTemporaryDirectory();
+                                String rand = StringUtils.getRandomString(5);
+                                String fileName = '$sPartyName-$rand.csv';
+
+                                final path = '${temp.path}/$fileName';
+                                File(path).writeAsString(guestListText);
+
+                                final files = <XFile>[];
+                                files.add(
+                                    XFile(path, name: fileName));
+
+                                await Share.shareXFiles(files,
+                                    text: '#blocCommunity: $sPartyName');
+
+                              }),
+                            ],
+                          ),
+                          const SizedBox(height:5),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text('delete list'),
+                              ButtonWidget(text: 'delete', onClicked: () {
+                                Navigator.of(ctx).pop();
+
+                                showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        title: Text('delete all ${sPartyName=='all'?'':sPartyName} guest lists'),
+                                        content: Text('deleting ${mPartyGuests.length} guest list requests. are you sure you want to continue?'),
+                                        actions: [
+                                          TextButton(
+                                            child: Text("yes"),
+                                            onPressed: () async {
+                                              for(PartyGuest partyGuest in mPartyGuests){
+                                                FirestoreHelper.deletePartyGuest(partyGuest);
+                                              }
+                                              Logx.i(_TAG, 'deleted all ${sPartyName=='all'?'':sPartyName} guest list requests!');
+                                              Toaster.shortToast('deleted all ${sPartyName=='all'?'':sPartyName} guest list requests!');
+                                              Navigator.of(context).pop();
+                                            },
+                                          ),
+                                          TextButton(
+                                            child: const Text("no"),
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                            },
+                                          )
+                                        ],
+                                      );
+                                    });
+
+                              }),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          actions: [
+            TextButton(
+              child: const Text('close'),
+              onPressed: () {
+                Navigator.of(ctx).pop();
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 }
