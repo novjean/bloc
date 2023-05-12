@@ -23,7 +23,7 @@ class Fresh {
       Map<String, dynamic> map, bool shouldUpdate) {
     Ad ad = Dummy.getDummyAd('');
 
-    bool shouldPush = false;
+    bool shouldPush = true;
 
     try {
       ad = ad.copyWith(id: map['id'] as String);
@@ -469,6 +469,18 @@ class Fresh {
       Logx.em(_TAG, 'challenge clickCount not exist for category id: ' + challenge.id);
       shouldPush = true;
     }
+    try {
+      challenge = challenge.copyWith(dialogTitle: map['dialogTitle'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'challenge dialogTitle not exist for category id: ' + challenge.id);
+      shouldPush = true;
+    }
+    try {
+      challenge = challenge.copyWith(dialogAcceptText: map['dialogAcceptText'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'challenge dialogAcceptText not exist for category id: ' + challenge.id);
+      shouldPush = true;
+    }
 
     if (shouldPush &&
         shouldUpdate &&
@@ -513,6 +525,16 @@ class Fresh {
     } catch (e) {
       Logx.em(_TAG, 'challenge clickCount not exist for challenge id: ' + challenge.id);
     }
+    try {
+      freshChallenge = freshChallenge.copyWith(dialogTitle: challenge.dialogTitle);
+    } catch (e) {
+      Logx.em(_TAG, 'challenge dialogTitle not exist for challenge id: ' + challenge.id);
+    }
+    try {
+      freshChallenge = freshChallenge.copyWith(dialogAcceptText: challenge.dialogAcceptText);
+    } catch (e) {
+      Logx.em(_TAG, 'challenge dialogAcceptText not exist for challenge id: ' + challenge.id);
+    }
 
     return freshChallenge;
   }
@@ -521,7 +543,7 @@ class Fresh {
   /** party **/
   static Party freshPartyMap(Map<String, dynamic> map, bool shouldUpdate) {
     Party party = Dummy.getDummyParty(UserPreferences.myUser.blocServiceId);
-    bool shouldPushParty = false;
+    bool shouldPushParty = true;
 
     try {
       party = party.copyWith(id: map['id'] as String);
@@ -1003,7 +1025,7 @@ class Fresh {
   static PartyGuest freshPartyGuestMap(
       Map<String, dynamic> map, bool shouldUpdate) {
     PartyGuest partyGuest = Dummy.getDummyPartyGuest();
-    bool shouldPush = false;
+    bool shouldPush = true;
 
     try {
       partyGuest = partyGuest.copyWith(id: map['id'] as String);
@@ -1108,7 +1130,7 @@ class Fresh {
   static Product freshProductMap(Map<String, dynamic> map, bool shouldUpdate) {
     Product product = Dummy.getDummyProduct('', UserPreferences.myUser.id);
 
-    bool shouldPushProduct = false;
+    bool shouldPushProduct = true;
     int intPrice = 0;
 
     try {
@@ -1393,7 +1415,7 @@ class Fresh {
   /** reservation **/
   static Reservation freshReservationMap(Map<String, dynamic> map, bool shouldUpdate) {
     Reservation reservation = Dummy.getDummyReservation(Constants.blocServiceId);
-    bool shouldPush = false;
+    bool shouldPush = true;
 
     try {
       reservation = reservation.copyWith(id: map['id'] as String);
@@ -1455,9 +1477,7 @@ class Fresh {
       shouldPush = true;
     }
 
-    if (shouldPush &&
-        shouldUpdate &&
-        UserPreferences.myUser.clearanceLevel >= Constants.MANAGER_LEVEL) {
+    if (shouldPush && shouldUpdate) {
       Logx.i(_TAG, 'updating reservation ' + reservation.id);
       FirestoreHelper.pushReservation(reservation);
     }
@@ -1525,7 +1545,7 @@ class Fresh {
   /** ticket **/
   static Ticket freshTicketMap(Map<String, dynamic> map, bool shouldUpdate) {
     Ticket ticket = Dummy.getDummyTicket();
-    bool shouldPush = false;
+    bool shouldPush = true;
 
     try {
       ticket = ticket.copyWith(id: map['id'] as String);
@@ -1594,9 +1614,7 @@ class Fresh {
       shouldPush = true;
     }
 
-    if (shouldPush &&
-        shouldUpdate &&
-        UserPreferences.myUser.clearanceLevel >= Constants.MANAGER_LEVEL) {
+    if (shouldPush && shouldUpdate) {
       Logx.i(_TAG, 'updating ticket ' + ticket.id);
       FirestoreHelper.pushTicket(ticket);
     }
@@ -1752,9 +1770,7 @@ class Fresh {
       shouldPushUser = true;
     }
 
-    if (shouldPushUser &&
-        shouldUpdate &&
-        UserPreferences.myUser.clearanceLevel >= Constants.MANAGER_LEVEL) {
+    if (shouldPushUser && shouldUpdate) {
       Logx.i(_TAG, 'updating user ' + user.id);
       FirestoreHelper.pushUser(user);
     }

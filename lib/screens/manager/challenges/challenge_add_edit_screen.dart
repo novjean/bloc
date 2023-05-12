@@ -68,11 +68,23 @@ class _ChallengeAddEditScreenState extends State<ChallengeAddEditScreen> {
         ),
         const SizedBox(height: 24),
         TextFieldWidget(
+          label: 'dialog title \*',
+          text: widget.challenge.dialogTitle,
+          onChanged: (text) => widget.challenge = widget.challenge.copyWith(dialogTitle: text),
+        ),
+        const SizedBox(height: 24),
+        TextFieldWidget(
           label: 'description \*',
           text: widget.challenge.description,
           maxLines: 5,
           onChanged: (description) =>
           widget.challenge = widget.challenge.copyWith(description: description),
+        ),
+        const SizedBox(height: 24),
+        TextFieldWidget(
+          label: 'dialog accept text \*',
+          text: widget.challenge.dialogAcceptText,
+          onChanged: (text) => widget.challenge = widget.challenge.copyWith(dialogAcceptText: text),
         ),
         const SizedBox(height: 24),
         TextFormField(

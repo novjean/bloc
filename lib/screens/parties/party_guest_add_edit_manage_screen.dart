@@ -830,7 +830,7 @@ class _PartyGuestAddEditManagePageState
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                          const Text('bloc needs you:\n'),
+                          Text('${challenge.dialogTitle}:\n'),
                           Text(challenge.description.toLowerCase()),
                         ],
                       ),
@@ -851,13 +851,10 @@ class _PartyGuestAddEditManagePageState
                 },
               ),
               TextButton(
-                child: const Text("support us"),
+                child: Text(challenge.dialogAcceptText),
                 onPressed: () async {
-                  Navigator.of(ctx).pop();
-                  Navigator.of(context).pop();
-
-                  Navigator.of(context).pushReplacement(MaterialPageRoute(
-                      builder: (context) => MainScreen(user: bloc_user)));
+                  Logx.i(_TAG, 'user accepts challenge');
+                  Toaster.longToast('thank you for supporting us!');
 
                   switch (challenge.level) {
                     case 1:

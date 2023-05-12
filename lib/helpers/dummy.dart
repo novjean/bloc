@@ -94,7 +94,9 @@ class Dummy {
         title: '',
         description: '',
         points: 0,
-        clickCount: 0);
+        clickCount: 0,
+        dialogTitle: '',
+        dialogAcceptText: '');
     return dummyChallenge;
   }
 

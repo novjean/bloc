@@ -299,7 +299,7 @@ class _HomeScreenState extends State<HomeScreen> {
             DocumentSnapshot document = snapshot.data!.docs[i];
             Map<String, dynamic> data =
                 document.data()! as Map<String, dynamic>;
-            final Party bloc = Fresh.freshPartyMap(data, true);
+            final Party bloc = Fresh.freshPartyMap(data, false);
             parties.add(bloc);
 
             if (i == snapshot.data!.docs.length - 1) {

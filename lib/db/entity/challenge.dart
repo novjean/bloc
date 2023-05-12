@@ -6,6 +6,9 @@ class Challenge {
   final int points;
   final int clickCount;
 
+  final String dialogTitle;
+  final String dialogAcceptText;
+
 //<editor-fold desc="Data Methods">
   const Challenge({
     required this.id,
@@ -14,6 +17,8 @@ class Challenge {
     required this.description,
     required this.points,
     required this.clickCount,
+    required this.dialogTitle,
+    required this.dialogAcceptText,
   });
 
   @override
@@ -26,7 +31,9 @@ class Challenge {
           title == other.title &&
           description == other.description &&
           points == other.points &&
-          clickCount == other.clickCount);
+          clickCount == other.clickCount &&
+          dialogTitle == other.dialogTitle &&
+          dialogAcceptText == other.dialogAcceptText);
 
   @override
   int get hashCode =>
@@ -35,7 +42,9 @@ class Challenge {
       title.hashCode ^
       description.hashCode ^
       points.hashCode ^
-      clickCount.hashCode;
+      clickCount.hashCode ^
+      dialogTitle.hashCode ^
+      dialogAcceptText.hashCode;
 
   @override
   String toString() {
@@ -46,6 +55,8 @@ class Challenge {
         ' description: $description,' +
         ' points: $points,' +
         ' clickCount: $clickCount,' +
+        ' dialogTitle: $dialogTitle,' +
+        ' dialogAcceptText: $dialogAcceptText,' +
         '}';
   }
 
@@ -56,6 +67,8 @@ class Challenge {
     String? description,
     int? points,
     int? clickCount,
+    String? dialogTitle,
+    String? dialogAcceptText,
   }) {
     return Challenge(
       id: id ?? this.id,
@@ -64,6 +77,8 @@ class Challenge {
       description: description ?? this.description,
       points: points ?? this.points,
       clickCount: clickCount ?? this.clickCount,
+      dialogTitle: dialogTitle ?? this.dialogTitle,
+      dialogAcceptText: dialogAcceptText ?? this.dialogAcceptText,
     );
   }
 
@@ -75,6 +90,8 @@ class Challenge {
       'description': this.description,
       'points': this.points,
       'clickCount': this.clickCount,
+      'dialogTitle': this.dialogTitle,
+      'dialogAcceptText': this.dialogAcceptText,
     };
   }
 
@@ -86,6 +103,8 @@ class Challenge {
       description: map['description'] as String,
       points: map['points'] as int,
       clickCount: map['clickCount'] as int,
+      dialogTitle: map['dialogTitle'] as String,
+      dialogAcceptText: map['dialogAcceptText'] as String,
     );
   }
 
