@@ -82,6 +82,18 @@ class PartyItem extends StatelessWidget {
                                   ),
                                   textAlign: TextAlign.left,
                                 ),
+                                party.chapter.isNotEmpty? Padding(
+                                  padding: const EdgeInsets.only(top: 0.0),
+                                  child: Text(
+                                    ' ${party.chapter}',
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 26,
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                    textAlign: TextAlign.right,
+                                  ),
+                                ): const SizedBox(),
                               ]),
                         ),
                       )

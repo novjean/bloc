@@ -101,7 +101,7 @@ class Dummy {
     return dummyChallenge;
   }
 
-  static Genre getDummyGenre(){
+  static Genre getDummyGenre() {
     Genre dummyGenre = Genre(
       id: StringUtils.getRandomString(28),
       name: '',
@@ -166,8 +166,9 @@ class Dummy {
         ticketsSoldCount: 0,
         ticketsSalesTotal: 0,
         isBigAct: true,
-        genre: 'techno',
-        isChallengeActive: false);
+        genre: '',
+        isChallengeActive: false,
+        chapter: '');
 
     return dummyParty;
   }
@@ -297,11 +298,8 @@ class Dummy {
   }
 
   static UserLevel getDummyUserLevel() {
-    UserLevel dummyUserLevel = const UserLevel(
-      id: '84ub8bC0m3NQH9KfWCkD',
-      name: 'customer',
-      level: 1
-    );
+    UserLevel dummyUserLevel =
+        const UserLevel(id: '84ub8bC0m3NQH9KfWCkD', name: 'customer', level: 1);
 
     return dummyUserLevel;
   }

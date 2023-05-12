@@ -628,6 +628,14 @@ class Fresh {
       shouldPushParty = true;
     }
     try {
+      party = party.copyWith(chapter: map['chapter'] as String);
+    } catch (e) {
+      Logx.em(
+          _TAG, 'party chapter not exist for party id: ' + party.id);
+      shouldPushParty = true;
+    }
+
+    try {
       party = party.copyWith(imageUrl: map['imageUrl'] as String);
     } catch (e) {
       Logx.em(_TAG, 'party imageUrl not exist for party id: ' + party.id);
@@ -837,6 +845,11 @@ class Fresh {
       freshParty = freshParty.copyWith(type: party.type);
     } catch (e) {
       Logx.em(_TAG, 'party type not exist for party id: ' + party.id);
+    }
+    try {
+      freshParty = freshParty.copyWith(chapter: party.chapter);
+    } catch (e) {
+      Logx.em(_TAG, 'party chapter not exist for party id: ' + party.id);
     }
 
     try {

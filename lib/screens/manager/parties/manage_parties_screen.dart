@@ -141,7 +141,7 @@ class _ManagePartiesScreenState extends State<ManagePartiesScreen> {
           itemBuilder: (ctx, index) {
             return GestureDetector(
                 child: ListViewBlock(
-                  title: _parties[index].name,
+                  title: '${_parties[index].name} ${_parties[index].chapter}',
                 ),
                 // ManagePartyItem(
                 //   serviceId: widget.serviceId,

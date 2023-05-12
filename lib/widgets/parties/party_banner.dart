@@ -58,13 +58,29 @@ class PartyBanner extends StatelessWidget {
                       Container(
                         padding: const EdgeInsets.only(
                             top: 3, left: 5.0, right: 0.0),
-                        child: Text(
-                          party.name.toLowerCase(),
-                          style: const TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.w800,
-                          ),
-                          textAlign: TextAlign.left,
+                        child: Row(
+                          children: [
+                            Text(
+                              party.name.toLowerCase(),
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                fontSize: 24,
+                                fontWeight: FontWeight.w800,
+                              ),
+                              textAlign: TextAlign.left,
+                            ),
+                            party.chapter.isNotEmpty? Padding(
+                              padding: const EdgeInsets.only(top: 0.0),
+                              child: Text(
+                                ' (${party.chapter})',
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                                textAlign: TextAlign.right,
+                              ),
+                            ): const SizedBox(),
+                          ],
                         ),
                       ),
                       party.eventName.isNotEmpty
@@ -89,8 +105,7 @@ class PartyBanner extends StatelessWidget {
                       Padding(
                         padding: const EdgeInsets.only(left: 5.0),
                         child: Text(
-                          party.genre.isNotEmpty
-                              ? '[${party.genre}]' : '',
+                          party.genre.isNotEmpty ? '[${party.genre}]' : '',
                           style: const TextStyle(fontSize: 18),
                         ),
                       ),

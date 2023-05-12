@@ -5,6 +5,7 @@ class Party {
   final String description;
   final String blocServiceId;
   final String type;
+  final String chapter;
 
   final String imageUrl;
   final String storyImageUrl;
@@ -43,6 +44,7 @@ class Party {
     required this.description,
     required this.blocServiceId,
     required this.type,
+    required this.chapter,
     required this.imageUrl,
     required this.storyImageUrl,
     required this.instagramUrl,
@@ -79,6 +81,7 @@ class Party {
           description == other.description &&
           blocServiceId == other.blocServiceId &&
           type == other.type &&
+          chapter == other.chapter &&
           imageUrl == other.imageUrl &&
           storyImageUrl == other.storyImageUrl &&
           instagramUrl == other.instagramUrl &&
@@ -111,6 +114,7 @@ class Party {
       description.hashCode ^
       blocServiceId.hashCode ^
       type.hashCode ^
+      chapter.hashCode ^
       imageUrl.hashCode ^
       storyImageUrl.hashCode ^
       instagramUrl.hashCode ^
@@ -144,6 +148,7 @@ class Party {
         ' description: $description,' +
         ' blocServiceId: $blocServiceId,' +
         ' type: $type,' +
+        ' chapter: $chapter,' +
         ' imageUrl: $imageUrl,' +
         ' storyImageUrl: $storyImageUrl,' +
         ' instagramUrl: $instagramUrl,' +
@@ -177,6 +182,7 @@ class Party {
     String? description,
     String? blocServiceId,
     String? type,
+    String? chapter,
     String? imageUrl,
     String? storyImageUrl,
     String? instagramUrl,
@@ -208,6 +214,7 @@ class Party {
       description: description ?? this.description,
       blocServiceId: blocServiceId ?? this.blocServiceId,
       type: type ?? this.type,
+      chapter: chapter ?? this.chapter,
       imageUrl: imageUrl ?? this.imageUrl,
       storyImageUrl: storyImageUrl ?? this.storyImageUrl,
       instagramUrl: instagramUrl ?? this.instagramUrl,
@@ -242,6 +249,7 @@ class Party {
       'description': this.description,
       'blocServiceId': this.blocServiceId,
       'type': this.type,
+      'chapter': this.chapter,
       'imageUrl': this.imageUrl,
       'storyImageUrl': this.storyImageUrl,
       'instagramUrl': this.instagramUrl,
@@ -276,6 +284,7 @@ class Party {
       description: map['description'] as String,
       blocServiceId: map['blocServiceId'] as String,
       type: map['type'] as String,
+      chapter: map['chapter'] as String,
       imageUrl: map['imageUrl'] as String,
       storyImageUrl: map['storyImageUrl'] as String,
       instagramUrl: map['instagramUrl'] as String,
