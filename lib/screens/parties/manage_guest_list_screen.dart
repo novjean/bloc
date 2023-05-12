@@ -321,33 +321,46 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              const Text('share list'),
+                              const Text('share list in'),
                               ButtonWidget(text: 'share', onClicked: () async {
                                 Navigator.of(ctx).pop();
 
                                 String guestListText = '';
                                 for(PartyGuest partyGuest in mPartyGuests){
-                                  guestListText += '${partyGuest.name},${partyGuest.surname},+${partyGuest.phone},${partyGuest.email},${partyGuest.gender},${partyGuest.guestStatus}\n';
+                                  guestListText += '${partyGuest.name},${partyGuest.surname},'
+                                      '+${partyGuest.phone},${partyGuest.email},${partyGuest.gender},'
+                                      '${partyGuest.guestStatus},${partyGuest.isApproved?'approved':'not approved'}\n';
                                 }
 
-                                var temp = await getTemporaryDirectory();
                                 String rand = StringUtils.getRandomString(5);
                                 String fileName = '$sPartyName-$rand.csv';
-
-                                final path = '${temp.path}/$fileName';
-                                File(path).writeAsString(guestListText);
-
-                                final files = <XFile>[];
-                                files.add(
-                                    XFile(path, name: fileName));
-
-                                await Share.shareXFiles(files,
-                                    text: '#blocCommunity: $sPartyName');
+                                FileUtils.shareCsvFile(fileName, guestListText, sPartyName);
 
                               }),
                             ],
                           ),
-                          const SizedBox(height:5),
+                          const SizedBox(height:10),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text('share list out'),
+                              ButtonWidget(text: 'share', onClicked: () async {
+                                Navigator.of(ctx).pop();
+
+                                String guestListText = '';
+                                for(PartyGuest partyGuest in mPartyGuests){
+                                  guestListText += '${partyGuest.name},${partyGuest.surname},'
+                                      '+${partyGuest.phone},'
+                                      '${partyGuest.guestStatus},${partyGuest.isApproved?'approved':'not approved'}\n';
+                                }
+
+                                String rand = StringUtils.getRandomString(5);
+                                String fileName = '$sPartyName-$rand.csv';
+                                FileUtils.shareCsvFile(fileName, guestListText, sPartyName);
+                              }),
+                            ],
+                          ),
+                          const SizedBox(height:10),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
