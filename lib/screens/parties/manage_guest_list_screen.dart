@@ -186,53 +186,23 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
           if (snapshot.data!.docs.isNotEmpty) {
             try {
 
-              String guestListText = '';
-
               for (int i = 0; i < snapshot.data!.docs.length; i++) {
                 DocumentSnapshot document = snapshot.data!.docs[i];
                 Map<String, dynamic> map =
                     document.data()! as Map<String, dynamic>;
                 final PartyGuest partyGuest =
                     Fresh.freshPartyGuestMap(map, false);
-
-                //check if the guest request is more than a day old
-                int timeNow = Timestamp.now().millisecondsSinceEpoch;
-                int partyEndTime = 0;
-                int partyStartTime = 0;
-                for (Party party in mParties) {
-                  if (partyGuest.partyId == party.id) {
-                    partyEndTime = party.endTime;
-                    partyStartTime = party.startTime;
-
-                    break;
-                  }
-                }
-
-                if(sPartyName!='all'){
-                  guestListText += '${partyGuest.name},${partyGuest.surname},+${partyGuest.phone},${partyGuest.email},${partyGuest.gender},${partyGuest.guestStatus}\n';
-                }
-
                 partyGuestList.add(partyGuest);
 
                 if (i == snapshot.data!.docs.length - 1) {
-                  if(guestListText.isNotEmpty){
-
-                    String date = DateTimeUtils.getFormattedDateYear(partyStartTime);
-                    String fileName = '$sPartyName-$date.csv';
-
-                    FileUtils.write(fileName, guestListText);
-                    Logx.i(_TAG, 'saved to guest list file : $fileName');
-                  }
-
                   mPartyGuests = partyGuestList;
-
                   return _displayGuestList(context, partyGuestList);
                 }
               }
             } on Exception catch (e, s) {
               Logx.e(_TAG, e, s);
             } catch (e) {
-              Logx.em(_TAG, 'error loading party guest' + e.toString());
+              Logx.em(_TAG, 'error loading party guest$e');
             }
           }
           return const LoadingWidget();
@@ -321,7 +291,7 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              const Text('share list in'),
+                              const Text('list in-house'),
                               ButtonWidget(text: 'share', onClicked: () async {
                                 Navigator.of(ctx).pop();
 
@@ -343,7 +313,7 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              const Text('share list out'),
+                              const Text('list external'),
                               ButtonWidget(text: 'share', onClicked: () async {
                                 Navigator.of(ctx).pop();
 
