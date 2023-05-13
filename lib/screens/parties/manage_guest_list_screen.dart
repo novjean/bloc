@@ -54,7 +54,7 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
           Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
           final Party party = Fresh.freshPartyMap(data, true);
           parties.add(party);
-          _partyNames.add(party.name);
+          _partyNames.add(party.name + ' ' + party.chapter);
 
           setState(() {
             mParties = parties;
@@ -147,7 +147,7 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
                     sPartyName = newValue!;
 
                     for (Party party in mParties) {
-                      if (party.name == sPartyName) {
+                      if (party.name + ' ' + party.chapter == sPartyName) {
                         sPartyId = party.id;
                         sParty = party;
                         break;
