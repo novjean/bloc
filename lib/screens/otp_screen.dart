@@ -1,5 +1,6 @@
 import 'package:bloc/db/entity/user.dart' as blocUser;
 import 'package:bloc/helpers/dummy.dart';
+import 'package:bloc/routing/otp_arguments.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:delayed_display/delayed_display.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -16,9 +17,10 @@ import '../widgets/ui/toaster.dart';
 import 'main_screen.dart';
 
 class OTPScreen extends StatefulWidget {
-  final String phone;
+  final OtpArguments arguments;
 
-  OTPScreen(this.phone, {Key? key}) : super(key: key);
+  const OTPScreen({Key? key, required this.arguments})
+      : super(key: key);
 
   @override
   State<OTPScreen> createState() => _OTPScreenState();
@@ -32,9 +34,12 @@ class _OTPScreenState extends State<OTPScreen> {
   final formKey = GlobalKey<FormState>();
 
   String _verificationCode = '';
+  late String phone;
 
   @override
   void initState() {
+    phone = widget.arguments.phoneNumber;
+
     _verifyPhone();
     super.initState();
   }
@@ -49,7 +54,7 @@ class _OTPScreenState extends State<OTPScreen> {
   _verifyPhone() async {
     if (kIsWeb) {
       await FirebaseAuth.instance
-          .signInWithPhoneNumber('${widget.phone}', null)
+          .signInWithPhoneNumber(phone, null)
           .then((user) {
         Logx.i(
             _TAG,
@@ -63,10 +68,10 @@ class _OTPScreenState extends State<OTPScreen> {
       });
     } else {
       await FirebaseAuth.instance.verifyPhoneNumber(
-          phoneNumber: '${widget.phone}',
+          phoneNumber: phone,
           verificationCompleted: (PhoneAuthCredential credential) async {
             Logx.i(_TAG,
-                'verifyPhoneNumber: ${widget.phone} is verified. attempting sign in with credentials...');
+                'verifyPhoneNumber: $phone is verified. attempting sign in with credentials...');
           },
           verificationFailed: (FirebaseAuthException e) {
             Logx.i(_TAG, 'verificationFailed ' + e.toString());
@@ -155,7 +160,7 @@ class _OTPScreenState extends State<OTPScreen> {
                     children: [
                       Center(
                           child: Text(
-                        'enter the six digit code you received on \n${widget.phone}',
+                        'enter the six digit code you received on \n$phone',
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           color: Theme.of(context).primaryColorLight,
@@ -207,7 +212,7 @@ class _OTPScreenState extends State<OTPScreen> {
                   child: FractionallySizedBox(
                       widthFactor: 1,
                       child: OTPVerifyWidget(
-                        widget.phone,
+                        phone,
                       )),
                 ),
               ),
@@ -261,7 +266,7 @@ class _OTPScreenState extends State<OTPScreen> {
               onCompleted: (pin) async {
                 debugPrint('onCompleted: $pin');
 
-                Toaster.shortToast('verifying ${widget.phone}');
+                Toaster.shortToast('verifying $phone');
                 try {
                   await FirebaseAuth.instance
                       .signInWithCredential(PhoneAuthProvider.credential(

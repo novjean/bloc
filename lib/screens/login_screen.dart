@@ -1,4 +1,5 @@
 import 'package:bloc/routing/login_arguments.dart';
+import 'package:bloc/routing/otp_arguments.dart';
 import 'package:bloc/screens/otp_screen.dart';
 import 'package:bloc/db/entity/user.dart' as blocUser;
 
@@ -17,6 +18,7 @@ import '../helpers/dummy.dart';
 import '../helpers/firestore_helper.dart';
 import '../helpers/fresh.dart';
 import '../main.dart';
+import '../routing/app_routes.dart';
 import '../utils/logx.dart';
 import '../utils/string_utils.dart';
 import '../widgets/ui/toaster.dart';
@@ -185,8 +187,12 @@ class _LoginScreenState extends State<LoginScreen> {
                 completePhoneNumber = phone.completeNumber;
 
                 if(phone.number.length == maxPhoneNumberLength){
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => OTPScreen(completePhoneNumber)));
+                  OtpArguments args = OtpArguments(phoneNumber: completePhoneNumber);
+                  Navigator.pushNamed(
+                    context,
+                    AppRoutes.otp,
+                    arguments: args,
+                  );
                 }
               },
               onCountryChanged: (country) {
@@ -244,8 +250,12 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               onPressed: () {
                 if (completePhoneNumber.isNotEmpty) {
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => OTPScreen(completePhoneNumber)));
+                  OtpArguments args = OtpArguments(phoneNumber: completePhoneNumber);
+                  Navigator.pushNamed(
+                    context,
+                    AppRoutes.otp,
+                    arguments: args,
+                  );
                 } else {
                   Logx.i(
                       _TAG,

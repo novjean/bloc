@@ -1,5 +1,7 @@
 import 'package:bloc/routing/login_arguments.dart';
+import 'package:bloc/routing/otp_arguments.dart';
 import 'package:bloc/screens/login_screen.dart';
+import 'package:bloc/screens/otp_screen.dart';
 import 'package:flutter/material.dart';
 
 import 'app_routes.dart';
@@ -8,16 +10,18 @@ import 'app_routes.dart';
 class RouteGenerator {
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
-      // case AppRoutes.login:
-      //   return buildRoute(const LoginScreen(shouldTriggerSkip: false,), settings: settings);
-      // case AppRoutes.register:
+      case AppRoutes.login:
+        final arguments = settings.arguments as LoginArguments;
+        return buildRoute(LoginScreen(arguments: arguments), settings: settings);
+      case AppRoutes.otp:
+        final arguments = settings.arguments as OtpArguments;
+        return buildRoute(OTPScreen(arguments: arguments), settings: settings);
+
+    // case AppRoutes.register:
       //   return buildRoute(const Register(), settings: settings);
       // case AppRoutes.profile:
       //   final arguments = settings.arguments as ProfileArguments;
       //   return buildRoute(const LoginScreen(arguments: arguments), settings: settings);
-      case AppRoutes.login:
-        final arguments = settings.arguments as LoginArguments;
-        return buildRoute(LoginScreen(arguments: arguments), settings: settings);
       // case AppRoutes.settings:
       //   return buildRoute(const Settings(), settings: settings);
       default:
