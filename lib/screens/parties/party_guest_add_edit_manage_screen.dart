@@ -870,6 +870,13 @@ class _PartyGuestAddEditManagePageState
                         NetworkUtils.launchInBrowser(uri);
                         break;
                       }
+                    case 2:
+                      {
+                        final uri =
+                        Uri.parse('https://www.instagram.com/freq.club/');
+                        NetworkUtils.launchInBrowser(uri);
+                        break;
+                      }
                     case 100:
                       {
                         final urlImage = widget.party.storyImageUrl.isNotEmpty
