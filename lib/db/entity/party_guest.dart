@@ -12,6 +12,7 @@ class PartyGuest {
   int guestsRemaining;
 
   final int createdAt;
+  final bool isChallengeClicked;
   final bool isApproved;
 
   String guestStatus;
@@ -29,6 +30,7 @@ class PartyGuest {
     required this.guestsCount,
     required this.guestsRemaining,
     required this.createdAt,
+    required this.isChallengeClicked,
     required this.isApproved,
     required this.guestStatus,
   });
@@ -49,6 +51,7 @@ class PartyGuest {
           guestsCount == other.guestsCount &&
           guestsRemaining == other.guestsRemaining &&
           createdAt == other.createdAt &&
+          isChallengeClicked == other.isChallengeClicked &&
           isApproved == other.isApproved &&
           guestStatus == other.guestStatus);
 
@@ -65,6 +68,7 @@ class PartyGuest {
       guestsCount.hashCode ^
       guestsRemaining.hashCode ^
       createdAt.hashCode ^
+      isChallengeClicked.hashCode ^
       isApproved.hashCode ^
       guestStatus.hashCode;
 
@@ -82,6 +86,7 @@ class PartyGuest {
         ' guestsCount: $guestsCount,' +
         ' guestsRemaining: $guestsRemaining,' +
         ' createdAt: $createdAt,' +
+        ' isChallengeClicked: $isChallengeClicked,' +
         ' isApproved: $isApproved,' +
         ' guestStatus: $guestStatus,' +
         '}';
@@ -99,6 +104,7 @@ class PartyGuest {
     int? guestsCount,
     int? guestsRemaining,
     int? createdAt,
+    bool? isChallengeClicked,
     bool? isApproved,
     String? guestStatus,
   }) {
@@ -114,6 +120,7 @@ class PartyGuest {
       guestsCount: guestsCount ?? this.guestsCount,
       guestsRemaining: guestsRemaining ?? this.guestsRemaining,
       createdAt: createdAt ?? this.createdAt,
+      isChallengeClicked: isChallengeClicked ?? this.isChallengeClicked,
       isApproved: isApproved ?? this.isApproved,
       guestStatus: guestStatus ?? this.guestStatus,
     );
@@ -132,6 +139,7 @@ class PartyGuest {
       'guestsCount': this.guestsCount,
       'guestsRemaining': this.guestsRemaining,
       'createdAt': this.createdAt,
+      'isChallengeClicked': this.isChallengeClicked,
       'isApproved': this.isApproved,
       'guestStatus': this.guestStatus,
     };
@@ -150,6 +158,7 @@ class PartyGuest {
       guestsCount: map['guestsCount'] as int,
       guestsRemaining: map['guestsRemaining'] as int,
       createdAt: map['createdAt'] as int,
+      isChallengeClicked: map['isChallengeClicked'] as bool,
       isApproved: map['isApproved'] as bool,
       guestStatus: map['guestStatus'] as String,
     );

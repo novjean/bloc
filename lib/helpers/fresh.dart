@@ -1062,6 +1062,14 @@ class Fresh {
           'party guest isApproved not exist for party guest id: ' +
               partyGuest.id);
     }
+    try {
+      freshGuest = freshGuest.copyWith(isChallengeClicked: partyGuest.isChallengeClicked);
+    } catch (e) {
+      Logx.em(
+          _TAG,
+          'party guest isChallengeClicked not exist for party guest id: ' +
+              partyGuest.id);
+    }
 
     try {
       freshGuest = freshGuest.copyWith(guestStatus: partyGuest.guestStatus);
@@ -1156,6 +1164,13 @@ class Fresh {
     } catch (e) {
       Logx.em(_TAG,
           'partyGuest isApproved not exist for user id: ' + partyGuest.id);
+      shouldPush = true;
+    }
+    try {
+      partyGuest = partyGuest.copyWith(isChallengeClicked: map['isChallengeClicked'] as bool);
+    } catch (e) {
+      Logx.em(_TAG,
+          'partyGuest isChallengeClicked not exist for user id: ' + partyGuest.id);
       shouldPush = true;
     }
     try {

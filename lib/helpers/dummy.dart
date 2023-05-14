@@ -187,6 +187,7 @@ class Dummy {
         createdAt: Timestamp.now().millisecondsSinceEpoch,
         isApproved: false,
         guestStatus: 'couple',
+        isChallengeClicked: false,
         gender: 'male');
     return dummyGuest;
   }

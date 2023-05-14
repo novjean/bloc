@@ -859,6 +859,9 @@ class _PartyGuestAddEditManagePageState
                   Logx.i(_TAG, 'user accepts challenge');
                   Toaster.longToast('thank you for supporting us!');
 
+                  widget.partyGuest = widget.partyGuest.copyWith(isChallengeClicked: true);
+                  FirestoreHelper.pushPartyGuest(widget.partyGuest);
+
                   switch (challenge.level) {
                     case 1:
                       {
