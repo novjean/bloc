@@ -6,6 +6,8 @@ import 'package:bloc/utils/constants.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+import '../routing/app_routes.dart';
+import '../routing/login_arguments.dart';
 import '../screens/account_screen.dart';
 import '../screens/box_office/box_office_screen.dart';
 import '../screens/captain/captain_main_screen.dart';
@@ -181,8 +183,11 @@ class AppDrawer extends StatelessWidget {
               await FirebaseAuth.instance.signOut();
               Navigator.of(context).pop();
 
-              Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (context) => const LoginScreen(shouldTriggerSkip: false,)),
+              LoginArguments args = LoginArguments(shouldTriggerSkip: false);
+              Navigator.pushReplacementNamed(
+                context,
+                AppRoutes.login,
+                arguments: args,
               );
             },
           ),

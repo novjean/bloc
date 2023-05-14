@@ -1103,45 +1103,45 @@ class Fresh {
       partyGuest = partyGuest.copyWith(partyId: map['partyId'] as String);
     } catch (e) {
       Logx.em(
-          _TAG, 'partyGuest partyId not exist for user id: ' + partyGuest.id);
+          _TAG, 'partyGuest partyId not exist for id: ' + partyGuest.id);
       shouldPush = true;
     }
     try {
       partyGuest = partyGuest.copyWith(guestId: map['guestId'] as String);
     } catch (e) {
       Logx.em(
-          _TAG, 'partyGuest guestId not exist for user id: ' + partyGuest.id);
+          _TAG, 'partyGuest guestId not exist for id: ' + partyGuest.id);
       shouldPush = true;
     }
     try {
       partyGuest = partyGuest.copyWith(name: map['name'] as String);
     } catch (e) {
-      Logx.em(_TAG, 'partyGuest name not exist for user id: ' + partyGuest.id);
+      Logx.em(_TAG, 'partyGuest name not exist for id: ' + partyGuest.id);
       shouldPush = true;
     }
     try {
       partyGuest = partyGuest.copyWith(surname: map['surname'] as String);
     } catch (e) {
-      Logx.em(_TAG, 'partyGuest surname not exist for user id: ' + partyGuest.id);
+      Logx.em(_TAG, 'partyGuest surname not exist for id: ' + partyGuest.id);
       shouldPush = true;
     }
     try {
       partyGuest = partyGuest.copyWith(phone: map['phone'] as String);
     } catch (e) {
-      Logx.em(_TAG, 'partyGuest phone not exist for user id: ' + partyGuest.id);
+      Logx.em(_TAG, 'partyGuest phone not exist for id: ' + partyGuest.id);
       shouldPush = true;
     }
     try {
       partyGuest = partyGuest.copyWith(email: map['email'] as String);
     } catch (e) {
-      Logx.em(_TAG, 'partyGuest email not exist for user id: ' + partyGuest.id);
+      Logx.em(_TAG, 'partyGuest email not exist for id: ' + partyGuest.id);
       shouldPush = true;
     }
     try {
       partyGuest = partyGuest.copyWith(guestsCount: map['guestsCount'] as int);
     } catch (e) {
       Logx.em(_TAG,
-          'partyGuest guestsCount not exist for user id: ' + partyGuest.id);
+          'partyGuest guestsCount not exist for id: ' + partyGuest.id);
       shouldPush = true;
     }
     try {
@@ -1149,28 +1149,28 @@ class Fresh {
           partyGuest.copyWith(guestsRemaining: map['guestsRemaining'] as int);
     } catch (e) {
       Logx.em(_TAG,
-          'partyGuest guestsRemaining not exist for user id: ' + partyGuest.id);
+          'partyGuest guestsRemaining not exist for id: ' + partyGuest.id);
       shouldPush = true;
     }
     try {
       partyGuest = partyGuest.copyWith(createdAt: map['createdAt'] as int);
     } catch (e) {
       Logx.em(
-          _TAG, 'partyGuest createdAt not exist for user id: ' + partyGuest.id);
+          _TAG, 'partyGuest createdAt not exist for id: ' + partyGuest.id);
       shouldPush = true;
     }
     try {
       partyGuest = partyGuest.copyWith(isApproved: map['isApproved'] as bool);
     } catch (e) {
       Logx.em(_TAG,
-          'partyGuest isApproved not exist for user id: ' + partyGuest.id);
+          'partyGuest isApproved not exist for id: ' + partyGuest.id);
       shouldPush = true;
     }
     try {
       partyGuest = partyGuest.copyWith(isChallengeClicked: map['isChallengeClicked'] as bool);
     } catch (e) {
       Logx.em(_TAG,
-          'partyGuest isChallengeClicked not exist for user id: ' + partyGuest.id);
+          'partyGuest isChallengeClicked not exist for id: ' + partyGuest.id);
       shouldPush = true;
     }
     try {
@@ -1178,7 +1178,7 @@ class Fresh {
           partyGuest.copyWith(guestStatus: map['guestStatus'] as String);
     } catch (e) {
       Logx.em(_TAG,
-          'partyGuest guestStatus not exist for user id: ' + partyGuest.id);
+          'partyGuest guestStatus not exist for id: ' + partyGuest.id);
       shouldPush = true;
     }
     try {

@@ -358,7 +358,6 @@ class _HomeScreenState extends State<HomeScreen> {
             );
           } else {
             if (index == parties.length - 1) {
-              // _displayLastParty(party);
               return Column(
                 children: [
                   PartyBanner(

@@ -1,7 +1,10 @@
 import 'dart:ui';
 
+import 'package:bloc/routing/login_arguments.dart';
 import 'package:bloc/screens/login_screen.dart';
+import 'package:bloc/routing/app_routes.dart';
 import 'package:bloc/utils/logx.dart';
+import 'package:bloc/routing/route_generator.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -122,6 +125,8 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     final Future<FirebaseApp> _initialization = Firebase.initializeApp();
 
+    const LoginArguments loginArguments = LoginArguments(shouldTriggerSkip: true);
+
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
@@ -164,21 +169,15 @@ class _MyAppState extends State<MyApp> {
                 ),
               ),
               home: appSnapshot.connectionState != ConnectionState.done
-                  ? SplashScreen()
-                  : const LoginScreen(shouldTriggerSkip: true),
-
-              // routes: {
-              // HomeScreen.routeName: (ctx) => HomeScreen(),
-              // ManagerScreen.routeName: (ctx) => ManagerScreen(),
-              // OwnerScreen.routeName: (ctx) => OwnerScreen(),
-              // CityDetailScreen.routeName: (ctx) => CityDetailScreen(),
-              // NewBlocScreen.routeName: (ctx) => NewBlocScreen(),
-              // BlocDetailScreen.routeName: (ctx) => BlocDetailScreen(),
-              // }
+                  ?  SplashScreen():
+              const LoginScreen(arguments: loginArguments),
+              // initialRoute: getInitialPage(),
+              onGenerateRoute: RouteGenerator.generateRoute,
             );
           }),
     );
   }
+  String getInitialPage() => AppRoutes.login;
 
 }
 

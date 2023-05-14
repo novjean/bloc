@@ -1,4 +1,5 @@
 import 'package:bloc/db/shared_preferences/user_preferences.dart';
+import 'package:bloc/routing/login_arguments.dart';
 import 'package:bloc/screens/privacy_policy_screen.dart';
 import 'package:bloc/screens/refund_policy_screen.dart';
 import 'package:bloc/screens/terms_and_conditions_screen.dart';
@@ -10,6 +11,7 @@ import 'package:flutter/services.dart';
 import '../../db/entity/user.dart' as blocUser;
 import '../helpers/firestorage_helper.dart';
 import '../helpers/firestore_helper.dart';
+import '../routing/app_routes.dart';
 import '../utils/logx.dart';
 import '../widgets/ui/sized_listview_block.dart';
 import 'login_screen.dart';
@@ -114,11 +116,14 @@ class AccountScreen extends StatelessWidget {
                           } on Exception catch (e, s) {
                             Logx.e(_TAG, e, s);
                           } catch (e) {
-                            Logx.em(_TAG, 'account delete failed ' + e.toString());
+                            Logx.em(_TAG, 'account delete failed $e');
                           }
 
-                          Navigator.of(context).pushReplacement(
-                            MaterialPageRoute(builder: (context) => const LoginScreen(shouldTriggerSkip: false,)),
+                          LoginArguments args = const LoginArguments(shouldTriggerSkip: false);
+                          Navigator.pushReplacementNamed(
+                            context,
+                            AppRoutes.login,
+                            arguments: args,
                           );
                         },
                       ),

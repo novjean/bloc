@@ -1,3 +1,4 @@
+import 'package:bloc/routing/login_arguments.dart';
 import 'package:bloc/screens/otp_screen.dart';
 import 'package:bloc/db/entity/user.dart' as blocUser;
 
@@ -22,9 +23,9 @@ import '../widgets/ui/toaster.dart';
 import 'main_screen.dart';
 
 class LoginScreen extends StatefulWidget {
-  final bool shouldTriggerSkip;
+  final LoginArguments arguments;
 
-  const LoginScreen({Key? key, required this.shouldTriggerSkip})
+  const LoginScreen({Key? key, required this.arguments})
       : super(key: key);
 
   @override
@@ -33,6 +34,8 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   static const String _TAG = 'LoginScreen';
+
+  late bool shouldTriggerSkip;
 
   final TextEditingController _controller = TextEditingController();
   String completePhoneNumber = '';
@@ -43,6 +46,14 @@ class _LoginScreenState extends State<LoginScreen> {
   void dispose() {
     _controller.dispose();
     super.dispose();
+  }
+
+
+  @override
+  void initState() {
+    shouldTriggerSkip = widget.arguments.shouldTriggerSkip;
+
+    super.initState();
   }
 
   @override
@@ -74,7 +85,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
             CollectionReference users = FirestoreHelper.getUsersCollection();
 
-            if (user!.uid.isEmpty || widget.shouldTriggerSkip == false) {
+            if (user!.uid.isEmpty || shouldTriggerSkip == false) {
               Logx.i(_TAG, 'user snapshot uid is empty');
               return signInWidget();
             } else {
@@ -115,9 +126,9 @@ class _LoginScreenState extends State<LoginScreen> {
               );
             }
           } else {
-            if (widget.shouldTriggerSkip) {
+            if (shouldTriggerSkip) {
               _verifyUsingSkipPhone();
-              return LoadingWidget();
+              return const LoadingWidget();
             } else {
               return signInWidget();
             }

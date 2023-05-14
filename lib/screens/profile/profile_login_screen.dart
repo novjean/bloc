@@ -1,8 +1,10 @@
+import 'package:bloc/routing/login_arguments.dart';
 import 'package:bloc/widgets/ui/button_widget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../../db/shared_preferences/user_preferences.dart';
+import '../../routing/app_routes.dart';
 import '../login_screen.dart';
 
 class ProfileLoginScreen extends StatelessWidget {
@@ -18,8 +20,12 @@ class ProfileLoginScreen extends StatelessWidget {
 
               await FirebaseAuth.instance.signOut();
 
-              Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (context) => LoginScreen(shouldTriggerSkip: false,)),
+              LoginArguments args = LoginArguments(shouldTriggerSkip: false);
+
+              Navigator.pushReplacementNamed(
+                context,
+                AppRoutes.login,
+                arguments: args,
               );
             }),
       ),
