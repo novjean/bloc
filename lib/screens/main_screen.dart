@@ -1,4 +1,5 @@
 import 'package:bloc/db/entity/user.dart' as blocUser;
+import 'package:bloc/routing/arguments/main_arguments.dart';
 import 'package:bloc/screens/profile/profile_login_screen.dart';
 import 'package:bloc/utils/constants.dart';
 import 'package:bloc/widgets/app_drawer.dart';
@@ -8,7 +9,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 import '../db/shared_preferences/user_preferences.dart';
-import '../../db/entity/user.dart' as blocUser;
 import '../helpers/firestore_helper.dart';
 import '../helpers/fresh.dart';
 import '../main.dart';
@@ -19,11 +19,9 @@ import 'profile/profile_add_edit_register_page.dart';
 import 'profile/profile_page.dart';
 
 class MainScreen extends StatefulWidget {
-  static const routeName = '/home-screen';
+  final MainArguments arguments;
 
-  final blocUser.User user;
-
-  const MainScreen({key, required this.user}) : super(key: key);
+  const MainScreen({key, required this.arguments}) : super(key: key);
 
   @override
   State<MainScreen> createState() => _MainScreenState();
@@ -31,6 +29,8 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   static const String _TAG = 'PartyAddEditScreen';
+
+  late blocUser.User user;
 
   late PageController _pageController;
   int _page = 0;
@@ -44,33 +44,34 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   void initState() {
-    super.initState();
+    user = widget.arguments.user;
+
     _pageController = PageController();
 
     // lets check if the user is already registered
     FirebaseFirestore.instance
         .collection(FirestoreHelper.USERS)
-        .where('phoneNumber', isEqualTo: widget.user.phoneNumber)
+        .where('phoneNumber', isEqualTo: user.phoneNumber)
         .get()
         .then(
       (res) {
         if (res.docs.isEmpty) {
-          Logx.i(_TAG, "user not found, registering " + widget.user.phoneNumber.toString());
+          Logx.i(_TAG, "user not found, registering " + user.phoneNumber.toString());
           // register the user, and we might need to get more info about the user
-          FirestoreHelper.pushUser(widget.user);
-          Logx.i(_TAG, widget.user.phoneNumber.toString() +
+          FirestoreHelper.pushUser(user);
+          Logx.i(_TAG, user.phoneNumber.toString() +
               ' is now registered with bloc!');
 
-          UserPreferences.setUser(widget.user);
+          UserPreferences.setUser(user);
 
           // lets grab more user details
           Navigator.of(context).push(
             MaterialPageRoute(
                 builder: (context) => ProfileAddEditRegisterPage(
-                    user: widget.user, task: 'register')),
+                    user: user, task: 'register')),
           );
         } else {
-          Logx.i(_TAG, "user found for " + widget.user.phoneNumber.toString());
+          Logx.i(_TAG, "user found for " + user.phoneNumber.toString());
           List<blocUser.User> users = [];
 
           for (int i = 0; i < res.docs.length; i++) {
@@ -90,7 +91,7 @@ class _MainScreenState extends State<MainScreen> {
         }
       },
       onError: (e,s) {
-        Logx.ex(_TAG, "error completing retrieving users for phone number : ${widget.user.phoneNumber}", e, s);
+        Logx.ex(_TAG, "error completing retrieving users for phone number : ${user.phoneNumber}", e, s);
       }
     );
 
@@ -150,6 +151,8 @@ class _MainScreenState extends State<MainScreen> {
       }
 
     }
+
+    super.initState();
   }
 
   @override

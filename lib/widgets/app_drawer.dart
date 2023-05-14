@@ -1,5 +1,4 @@
 import 'package:bloc/db/shared_preferences/user_preferences.dart';
-import 'package:bloc/screens/main_screen.dart';
 import 'package:bloc/screens/manager/manager_main_screen.dart';
 import 'package:bloc/screens/owner/owner_screen.dart';
 import 'package:bloc/utils/constants.dart';
@@ -7,12 +6,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../routing/app_routes.dart';
-import '../routing/login_arguments.dart';
+import '../routing/arguments/login_arguments.dart';
+import '../routing/arguments/main_arguments.dart';
 import '../screens/account_screen.dart';
 import '../screens/box_office/box_office_screen.dart';
 import '../screens/captain/captain_main_screen.dart';
-import '../screens/login_screen.dart';
-import '../screens/user/order_history_screen.dart';
 import '../utils/logx.dart';
 
 class AppDrawer extends StatelessWidget {
@@ -45,11 +43,10 @@ class AppDrawer extends StatelessWidget {
             title: const Text('home'),
             onTap: () {
               Navigator.of(context).pop();
-              Navigator.of(context).pushReplacement(
-                MaterialPageRoute(
-                    builder: (ctx) => MainScreen(
-                          user: UserPreferences.getUser(),
-                        )),
+              Navigator.pushReplacementNamed(
+                context,
+                AppRoutes.main,
+                arguments: MainArguments(user: UserPreferences.getUser()),
               );
             },
           ),

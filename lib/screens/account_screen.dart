@@ -1,5 +1,5 @@
 import 'package:bloc/db/shared_preferences/user_preferences.dart';
-import 'package:bloc/routing/login_arguments.dart';
+import 'package:bloc/routing/arguments/login_arguments.dart';
 import 'package:bloc/screens/privacy_policy_screen.dart';
 import 'package:bloc/screens/refund_policy_screen.dart';
 import 'package:bloc/screens/terms_and_conditions_screen.dart';

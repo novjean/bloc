@@ -1,6 +1,6 @@
 import 'dart:ui';
 
-import 'package:bloc/routing/login_arguments.dart';
+import 'package:bloc/routing/arguments/login_arguments.dart';
 import 'package:bloc/screens/login_screen.dart';
 import 'package:bloc/routing/app_routes.dart';
 import 'package:bloc/utils/logx.dart';

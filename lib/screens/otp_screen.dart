@@ -1,6 +1,6 @@
 import 'package:bloc/db/entity/user.dart' as blocUser;
 import 'package:bloc/helpers/dummy.dart';
-import 'package:bloc/routing/otp_arguments.dart';
+import 'package:bloc/routing/arguments/otp_arguments.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:delayed_display/delayed_display.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -11,6 +11,8 @@ import '../db/shared_preferences/user_preferences.dart';
 import '../helpers/firestore_helper.dart';
 import '../helpers/fresh.dart';
 import '../main.dart';
+import '../routing/app_routes.dart';
+import '../routing/arguments/main_arguments.dart';
 import '../utils/logx.dart';
 import '../utils/string_utils.dart';
 import '../widgets/ui/toaster.dart';
@@ -294,10 +296,12 @@ class _OTPScreenState extends State<OTPScreen> {
                           registeredUser.phoneNumber =
                               StringUtils.getInt(value.user!.phoneNumber!);
 
-                          Navigator.of(context).pushReplacement(
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      MainScreen(user: registeredUser)));
+
+                          Navigator.pushReplacementNamed(
+                            context,
+                            AppRoutes.main,
+                            arguments: MainArguments(user: registeredUser),
+                          );
                         } else {
                           Logx.i(_TAG,
                               'user is a bloc member. navigating to main...');
@@ -310,10 +314,11 @@ class _OTPScreenState extends State<OTPScreen> {
                               Fresh.freshUserMap(data, true);
                           UserPreferences.setUser(user);
 
-                          Navigator.of(context).pushReplacement(
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      MainScreen(user: user)));
+                          Navigator.pushReplacementNamed(
+                            context,
+                            AppRoutes.main,
+                            arguments: MainArguments(user: user),
+                          );
                         }
                       });
                     }

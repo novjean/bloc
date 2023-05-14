@@ -14,6 +14,8 @@ import '../../helpers/dummy.dart';
 import '../../helpers/firestore_helper.dart';
 import '../../helpers/fresh.dart';
 import '../../main.dart';
+import '../../routing/app_routes.dart';
+import '../../routing/arguments/main_arguments.dart';
 import '../../utils/constants.dart';
 import '../../utils/date_time_utils.dart';
 import '../../utils/logx.dart';
@@ -21,7 +23,6 @@ import '../../utils/string_utils.dart';
 import '../../widgets/ui/button_widget.dart';
 import '../../widgets/ui/dark_textfield_widget.dart';
 import '../../widgets/ui/toaster.dart';
-import '../main_screen.dart';
 
 class ReservationAddEditScreen extends StatefulWidget {
   Reservation reservation;
@@ -732,8 +733,11 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
                 }
 
                 Navigator.of(ctx).pop();
-                Navigator.of(context).pushReplacement(MaterialPageRoute(
-                    builder: (context) => MainScreen(user: bloc_user)));
+                Navigator.pushReplacementNamed(
+                  context,
+                  AppRoutes.main,
+                  arguments: MainArguments(user: bloc_user),
+                );
               },
             ),
           ],

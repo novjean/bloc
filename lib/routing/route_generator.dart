@@ -1,10 +1,12 @@
-import 'package:bloc/routing/login_arguments.dart';
-import 'package:bloc/routing/otp_arguments.dart';
+import 'package:bloc/routing/arguments/login_arguments.dart';
+import 'package:bloc/routing/arguments/otp_arguments.dart';
 import 'package:bloc/screens/login_screen.dart';
+import 'package:bloc/screens/main_screen.dart';
 import 'package:bloc/screens/otp_screen.dart';
 import 'package:flutter/material.dart';
 
 import 'app_routes.dart';
+import 'arguments/main_arguments.dart';
 
 /// route_generator.dart
 class RouteGenerator {
@@ -13,6 +15,9 @@ class RouteGenerator {
       case AppRoutes.login:
         final arguments = settings.arguments as LoginArguments;
         return buildRoute(LoginScreen(arguments: arguments), settings: settings);
+      case AppRoutes.main:
+        final arguments = settings.arguments as MainArguments;
+        return buildRoute(MainScreen(arguments: arguments), settings: settings);
       case AppRoutes.otp:
         final arguments = settings.arguments as OtpArguments;
         return buildRoute(OTPScreen(arguments: arguments), settings: settings);

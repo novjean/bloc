@@ -1,4 +1,4 @@
-import 'package:bloc/routing/login_arguments.dart';
+import 'package:bloc/routing/arguments/login_arguments.dart';
 import 'package:bloc/widgets/ui/button_widget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';

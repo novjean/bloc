@@ -1,5 +1,6 @@
-import 'package:bloc/routing/login_arguments.dart';
-import 'package:bloc/routing/otp_arguments.dart';
+import 'package:bloc/routing/arguments/login_arguments.dart';
+import 'package:bloc/routing/arguments/main_arguments.dart';
+import 'package:bloc/routing/arguments/otp_arguments.dart';
 import 'package:bloc/screens/otp_screen.dart';
 import 'package:bloc/db/entity/user.dart' as blocUser;
 
@@ -120,7 +121,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     final blocUser.User user = Fresh.freshUserMap(data, true);
                     UserPreferences.setUser(user);
 
-                    return MainScreen(user: user);
+                    return MainScreen(arguments: MainArguments(user: user));
                   }
                   Logx.i(_TAG, 'loading user...');
                   return const LoadingWidget();
@@ -356,8 +357,12 @@ class _LoginScreenState extends State<LoginScreen> {
               registeredUser.phoneNumber =
                   StringUtils.getInt(value.user!.phoneNumber!);
 
-              Navigator.of(context).pushReplacement(MaterialPageRoute(
-                  builder: (context) => MainScreen(user: registeredUser)));
+              Navigator.pushReplacementNamed(
+                context,
+                AppRoutes.main,
+                arguments: MainArguments(user: registeredUser),
+              );
+
             } else {
               Logx.i(_TAG, 'user is a bloc member. navigating to main...');
               try {
@@ -368,8 +373,11 @@ class _LoginScreenState extends State<LoginScreen> {
                 final blocUser.User user = Fresh.freshUserMap(data, false);
                 UserPreferences.setUser(user);
 
-                Navigator.of(context).pushReplacement(MaterialPageRoute(
-                    builder: (context) => MainScreen(user: user)));
+                Navigator.pushReplacementNamed(
+                  context,
+                  AppRoutes.main,
+                  arguments: MainArguments(user: user),
+                );
               } on PlatformException catch (e, s) {
                 Logx.e(_TAG, e, s);
               } on Exception catch (e, s) {
