@@ -1,3 +1,4 @@
+import 'package:bloc/routing/arguments/gl_arguments.dart';
 import 'package:bloc/utils/constants.dart';
 import 'package:bloc/utils/date_time_utils.dart';
 import 'package:bloc/utils/network_utils.dart';
@@ -7,6 +8,7 @@ import 'package:flutter/material.dart';
 import '../../db/entity/party.dart';
 import '../../db/entity/party_guest.dart';
 import '../../helpers/dummy.dart';
+import '../../routing/app_routes.dart';
 import '../../screens/parties/artist_screen.dart';
 import '../../screens/parties/party_guest_add_edit_manage_screen.dart';
 import '../../utils/logx.dart';
@@ -212,10 +214,10 @@ class PartyBanner extends StatelessWidget {
         PartyGuest partyGuest = Dummy.getDummyPartyGuest();
         partyGuest.partyId = party.id;
 
-        Navigator.of(context).push(
-          MaterialPageRoute(
-              builder: (context) => PartyGuestAddEditManagePage(
-                  partyGuest: partyGuest, party: party, task: 'add')),
+        Navigator.pushNamed(
+          context,
+          AppRoutes.gl,
+          arguments: GlArguments(partyGuest: partyGuest, party: party, task: 'add'),
         );
       },
       icon: const Icon(

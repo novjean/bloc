@@ -7,6 +7,8 @@ import '../../db/shared_preferences/user_preferences.dart';
 import '../../helpers/dummy.dart';
 import '../../helpers/firestore_helper.dart';
 import '../../helpers/fresh.dart';
+import '../../routing/app_routes.dart';
+import '../../routing/arguments/gl_arguments.dart';
 import '../../utils/logx.dart';
 import '../../utils/network_utils.dart';
 import '../../widgets/ui/button_widget.dart';
@@ -108,13 +110,10 @@ class _ArtistScreenState extends State<ArtistScreen> {
                           Dummy.getDummyPartyGuest();
                           partyGuest.partyId = widget.party.id;
 
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    PartyGuestAddEditManagePage(
-                                        partyGuest: partyGuest,
-                                        party: widget.party,
-                                        task: 'add')),
+                          Navigator.pushNamed(
+                            context,
+                            AppRoutes.gl,
+                            arguments: GlArguments(partyGuest: partyGuest, party: widget.party, task: 'add'),
                           );
                         }),
                     const SizedBox(height: 10),

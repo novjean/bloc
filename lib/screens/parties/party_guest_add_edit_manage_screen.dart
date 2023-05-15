@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:bloc/routing/arguments/gl_arguments.dart';
 import 'package:bloc/widgets/ui/dark_button_widget.dart';
 import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:bloc/widgets/ui/toaster.dart';
@@ -36,12 +37,10 @@ import '../../widgets/ui/dark_textfield_widget.dart';
 import '../../widgets/parties/party_banner.dart';
 
 class PartyGuestAddEditManagePage extends StatefulWidget {
-  PartyGuest partyGuest;
-  Party party;
-  String task;
+  final GlArguments arguments;
 
   PartyGuestAddEditManagePage(
-      {key, required this.partyGuest, required this.party, required this.task})
+      {key, required this.arguments})
       : super(key: key);
 
   @override
@@ -52,6 +51,10 @@ class PartyGuestAddEditManagePage extends StatefulWidget {
 class _PartyGuestAddEditManagePageState
     extends State<PartyGuestAddEditManagePage> {
   static const String _TAG = 'PartyGuestAddEditPage';
+
+  late PartyGuest partyGuest;
+  late Party party;
+  late String task;
 
   late blocUser.User bloc_user;
 
@@ -92,13 +95,17 @@ class _PartyGuestAddEditManagePageState
 
   @override
   void initState() {
+    party = widget.arguments.party;
+    partyGuest = widget.arguments.partyGuest;
+    task = widget.arguments.task;
+
     if (!UserPreferences.isUserLoggedIn()) {
       bloc_user = Dummy.getDummyUser();
     } else {
       bloc_user = UserPreferences.myUser;
     }
 
-    FirestoreHelper.pullUser(widget.partyGuest.guestId).then((res) {
+    FirestoreHelper.pullUser(partyGuest.guestId).then((res) {
       Logx.i(_TAG, 'successfully pulled in user');
 
       if (res.docs.isNotEmpty) {
@@ -146,12 +153,12 @@ class _PartyGuestAddEditManagePageState
       }
     });
 
-    for (int i = 1; i <= widget.party.guestListCount; i++) {
+    for (int i = 1; i <= party.guestListCount; i++) {
       guestCounts.add(i.toString());
     }
-    sGuestCount = widget.partyGuest.guestsCount.toString();
-    sGuestStatus = widget.partyGuest.guestStatus;
-    sGender = widget.partyGuest.gender;
+    sGuestCount = partyGuest.guestsCount.toString();
+    sGuestStatus = partyGuest.guestStatus;
+    sGender = partyGuest.gender;
     super.initState();
   }
 
@@ -167,7 +174,7 @@ class _PartyGuestAddEditManagePageState
     return Scaffold(
       backgroundColor: Theme.of(context).backgroundColor,
       appBar: AppBar(
-        title: Text('party guest | ${widget.task}'),
+        title: Text('party guest | $task'),
         backgroundColor: Theme.of(context).backgroundColor,
       ),
       body: _buildBody(context),
@@ -181,7 +188,7 @@ class _PartyGuestAddEditManagePageState
             physics: const BouncingScrollPhysics(),
             children: [
               PartyBanner(
-                party: widget.party,
+                party: party,
                 isClickable: false,
                 shouldShowButton: false,
               ),
@@ -195,7 +202,7 @@ class _PartyGuestAddEditManagePageState
                     bloc_user = bloc_user.copyWith(name: name);
                     hasUserChanged = true;
 
-                    widget.partyGuest = widget.partyGuest.copyWith(name: name);
+                    partyGuest = partyGuest.copyWith(name: name);
                   },
                 ),
               ),
@@ -209,12 +216,12 @@ class _PartyGuestAddEditManagePageState
                     bloc_user = bloc_user.copyWith(surname: surname);
                     hasUserChanged = true;
 
-                    widget.partyGuest =
-                        widget.partyGuest.copyWith(surname: surname);
+                    partyGuest =
+                        partyGuest.copyWith(surname: surname);
                   },
                 ),
               ),
-              widget.task == 'manage'
+              task == 'manage'
                   ? Column(
                       children: [
                         const SizedBox(height: 24),
@@ -348,14 +355,14 @@ class _PartyGuestAddEditManagePageState
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 32),
                 child: DarkTextFieldWidget(
-                    label: 'email${widget.party.isEmailRequired ? ' \*' : ''}',
+                    label: 'email${party.isEmailRequired ? ' \*' : ''}',
                     text: bloc_user.email,
                     onChanged: (email) {
                       bloc_user = bloc_user.copyWith(email: email);
                       hasUserChanged = true;
 
-                      widget.partyGuest =
-                          widget.partyGuest.copyWith(email: email);
+                      partyGuest =
+                          partyGuest.copyWith(email: email);
                     }),
               ),
               const SizedBox(height: 24),
@@ -415,7 +422,7 @@ class _PartyGuestAddEditManagePageState
                                       bloc_user.copyWith(gender: sGender);
                                   hasUserChanged = true;
 
-                                  widget.partyGuest = widget.partyGuest
+                                  partyGuest = partyGuest
                                       .copyWith(gender: sGender);
                                   state.didChange(newValue);
                                 });
@@ -494,9 +501,9 @@ class _PartyGuestAddEditManagePageState
                                         sGuestCount = newValue!;
                                         int count = int.parse(sGuestCount);
 
-                                        widget.partyGuest = widget.partyGuest
+                                        partyGuest = partyGuest
                                             .copyWith(guestsCount: count);
-                                        widget.partyGuest = widget.partyGuest
+                                        partyGuest = partyGuest
                                             .copyWith(guestsRemaining: count);
                                         state.didChange(newValue);
                                       });
@@ -568,7 +575,7 @@ class _PartyGuestAddEditManagePageState
                                 setState(() {
                                   sGuestStatus = newValue!;
 
-                                  widget.partyGuest = widget.partyGuest
+                                  partyGuest = partyGuest
                                       .copyWith(guestStatus: sGuestStatus);
                                   state.didChange(newValue);
                                 });
@@ -608,7 +615,7 @@ class _PartyGuestAddEditManagePageState
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 32),
                 child: ButtonWidget(
-                  text: (widget.task == 'edit') ? 'save changes' : 'join list',
+                  text: (task == 'edit') ? 'save changes' : 'join list',
                   onClicked: () {
                     if (isDataValid()) {
                       if (isLoggedIn) {
@@ -624,7 +631,7 @@ class _PartyGuestAddEditManagePageState
                   },
                 ),
               ),
-              widget.task == 'edit' || widget.task == 'manage'
+              task == 'edit' || task == 'manage'
                   ? Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
@@ -635,7 +642,7 @@ class _PartyGuestAddEditManagePageState
                             text: 'delete',
                             onClicked: () {
                               FirestoreHelper.deletePartyGuest(
-                                  widget.partyGuest);
+                                  partyGuest);
 
                               Logx.i(_TAG, 'guest list request is deleted');
 
@@ -654,23 +661,23 @@ class _PartyGuestAddEditManagePageState
   }
 
   bool isDataValid() {
-    if (widget.partyGuest.name.isEmpty) {
+    if (partyGuest.name.isEmpty) {
       Logx.em(_TAG, 'name not entered for guest');
       Toaster.longToast('please enter your name');
       return false;
     }
-    if (widget.partyGuest.surname.isEmpty) {
+    if (partyGuest.surname.isEmpty) {
       Logx.em(_TAG, 'surname not entered for guest');
       Toaster.longToast('please enter your surname / last name');
       return false;
     }
-    if (widget.party.isEmailRequired && widget.partyGuest.email.isEmpty) {
+    if (party.isEmailRequired && partyGuest.email.isEmpty) {
       Logx.em(_TAG, 'email not entered for guest');
       Toaster.longToast('please enter your email');
       return false;
     }
 
-    if (!isLoggedIn && widget.partyGuest.phone.isEmpty) {
+    if (!isLoggedIn && partyGuest.phone.isEmpty) {
       Logx.em(_TAG, 'phone not entered for guest');
       Toaster.longToast('please enter your phone number');
       return false;
@@ -695,7 +702,7 @@ class _PartyGuestAddEditManagePageState
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Text(
-                        widget.party.eventName + ' | ' + widget.party.name,
+                        party.eventName + ' | ' + party.name,
                         style: const TextStyle(fontSize: 18),
                       ),
                     ],
@@ -711,9 +718,9 @@ class _PartyGuestAddEditManagePageState
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         const Text('entry rules:\n'),
-                        Text(widget.party.guestListRules.toLowerCase()),
+                        Text(party.guestListRules.toLowerCase()),
                         const Text('\nclub rules:\n'),
-                        Text(widget.party.clubRules.toLowerCase()),
+                        Text(party.clubRules.toLowerCase()),
                       ],
                     ),
                   ),
@@ -733,7 +740,7 @@ class _PartyGuestAddEditManagePageState
               onPressed: () {
                 if (isNewUser) {
                   PartyGuest freshPartyGuest =
-                      Fresh.freshPartyGuest(widget.partyGuest);
+                      Fresh.freshPartyGuest(partyGuest);
                   FirestoreHelper.pushPartyGuest(freshPartyGuest);
                 } else {
                   if (hasUserChanged) {
@@ -745,19 +752,19 @@ class _PartyGuestAddEditManagePageState
                   }
 
                   // need to see if the user already has a guest request
-                  widget.partyGuest.guestId = bloc_user.id;
+                  partyGuest.guestId = bloc_user.id;
 
                   FirestoreHelper.pullPartyGuestByUser(
-                          widget.partyGuest.guestId, widget.partyGuest.partyId)
+                          partyGuest.guestId, partyGuest.partyId)
                       .then((res) {
                     Logx.i(_TAG, 'pulled in party guest by user');
 
                     if (res.docs.isEmpty ||
-                        widget.task == 'edit' ||
-                        widget.task == 'manage') {
+                        task == 'edit' ||
+                        task == 'manage') {
                       // user has not requested for party guest list, approve
                       PartyGuest freshPartyGuest =
-                          Fresh.freshPartyGuest(widget.partyGuest);
+                          Fresh.freshPartyGuest(partyGuest);
                       FirestoreHelper.pushPartyGuest(freshPartyGuest);
 
                       Logx.i(_TAG, 'guest list request in box office');
@@ -773,7 +780,7 @@ class _PartyGuestAddEditManagePageState
 
                 Navigator.of(ctx).pop();
 
-                if (widget.party.isChallengeActive) {
+                if (party.isChallengeActive) {
                   showChallengeDialog(context);
                 } else {
                   Navigator.of(context).pop();
@@ -823,7 +830,7 @@ class _PartyGuestAddEditManagePageState
                       children: [
                         Expanded(
                           child: Text(
-                            '#blocCommunity  | ${widget.party.name}',
+                            '#blocCommunity  | ${party.name}',
                             overflow: TextOverflow.ellipsis,
                             style: const TextStyle(fontSize: 18),
                           ),
@@ -869,8 +876,8 @@ class _PartyGuestAddEditManagePageState
                   Logx.i(_TAG, 'user accepts challenge');
                   Toaster.longToast('thank you for supporting us!');
 
-                  widget.partyGuest = widget.partyGuest.copyWith(isChallengeClicked: true);
-                  FirestoreHelper.pushPartyGuest(widget.partyGuest);
+                  partyGuest = partyGuest.copyWith(isChallengeClicked: true);
+                  FirestoreHelper.pushPartyGuest(partyGuest);
 
                   switch (challenge.level) {
                     case 1:
@@ -889,9 +896,9 @@ class _PartyGuestAddEditManagePageState
                       }
                     case 100:
                       {
-                        final urlImage = widget.party.storyImageUrl.isNotEmpty
-                            ? widget.party.storyImageUrl
-                            : widget.party.imageUrl;
+                        final urlImage = party.storyImageUrl.isNotEmpty
+                            ? party.storyImageUrl
+                            : party.imageUrl;
                         final Uri url = Uri.parse(urlImage);
                         final response = await http.get(url);
                         final Uint8List bytes = response.bodyBytes;
@@ -903,12 +910,12 @@ class _PartyGuestAddEditManagePageState
                             // Image? fromPicker = await ImagePickerWeb.getImageAsWidget();
                           } else {
                             var temp = await getTemporaryDirectory();
-                            final path = '${temp.path}/${widget.party.id}.jpg';
+                            final path = '${temp.path}/${party.id}.jpg';
                             File(path).writeAsBytesSync(bytes);
 
                             final files = <XFile>[];
                             files.add(
-                                XFile(path, name: '${widget.party.id}.jpg'));
+                                XFile(path, name: '${party.id}.jpg'));
 
                             await Share.shareXFiles(files,
                                 text: '#blocCommunity');
@@ -1174,8 +1181,8 @@ class _PartyGuestAddEditManagePageState
                           Logx.i(_TAG, 'registered user ' + bloc_user.id);
 
                           UserPreferences.setUser(bloc_user);
-                          widget.partyGuest.guestId = bloc_user.id;
-                          widget.partyGuest.phone =
+                          partyGuest.guestId = bloc_user.id;
+                          partyGuest.phone =
                               bloc_user.phoneNumber.toString();
 
                           showRulesConfirmationDialog(context, true);
@@ -1199,8 +1206,8 @@ class _PartyGuestAddEditManagePageState
                           UserPreferences.setUser(user);
                           bloc_user = user;
 
-                          widget.partyGuest.guestId = bloc_user.id;
-                          widget.partyGuest.phone =
+                          partyGuest.guestId = bloc_user.id;
+                          partyGuest.phone =
                               bloc_user.phoneNumber.toString();
                           showRulesConfirmationDialog(context, false);
                         }

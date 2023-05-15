@@ -12,6 +12,8 @@ import 'package:share_plus/share_plus.dart';
 
 import '../../db/entity/party.dart';
 import '../../helpers/fresh.dart';
+import '../../routing/app_routes.dart';
+import '../../routing/arguments/gl_arguments.dart';
 import '../../utils/file_utils.dart';
 import '../../utils/date_time_utils.dart';
 import '../../utils/logx.dart';
@@ -245,12 +247,11 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
                       break;
                     }
                   }
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (ctx) => PartyGuestAddEditManagePage(
-                            partyGuest: sPartyGuest,
-                            party: sParty,
-                            task: 'manage',
-                          )));
+                  Navigator.pushNamed(
+                    context,
+                    AppRoutes.gl,
+                    arguments: GlArguments(partyGuest: sPartyGuest, party: sParty, task: 'manage'),
+                  );
                 });
           }),
     );

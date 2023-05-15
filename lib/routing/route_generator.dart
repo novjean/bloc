@@ -1,8 +1,10 @@
+import 'package:bloc/routing/arguments/gl_arguments.dart';
 import 'package:bloc/routing/arguments/login_arguments.dart';
 import 'package:bloc/routing/arguments/otp_arguments.dart';
 import 'package:bloc/screens/login_screen.dart';
 import 'package:bloc/screens/main_screen.dart';
 import 'package:bloc/screens/otp_screen.dart';
+import 'package:bloc/screens/parties/party_guest_add_edit_manage_screen.dart';
 import 'package:flutter/material.dart';
 
 import 'app_routes.dart';
@@ -12,6 +14,9 @@ import 'arguments/main_arguments.dart';
 class RouteGenerator {
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
+      case AppRoutes.gl:
+        final arguments = settings.arguments as GlArguments;
+        return buildRoute(PartyGuestAddEditManagePage(arguments : arguments), settings: settings);
       case AppRoutes.login:
         final arguments = settings.arguments as LoginArguments;
         return buildRoute(LoginScreen(arguments: arguments), settings: settings);

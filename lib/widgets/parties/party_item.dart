@@ -6,6 +6,8 @@ import '../../db/entity/party.dart';
 import '../../db/entity/party_guest.dart';
 import '../../db/shared_preferences/user_preferences.dart';
 import '../../helpers/dummy.dart';
+import '../../routing/app_routes.dart';
+import '../../routing/arguments/gl_arguments.dart';
 import '../../screens/parties/artist_screen.dart';
 import '../../screens/parties/party_guest_add_edit_manage_screen.dart';
 import '../../utils/network_utils.dart';
@@ -184,10 +186,10 @@ class PartyItem extends StatelessWidget {
           PartyGuest partyGuest = Dummy.getDummyPartyGuest();
           partyGuest.partyId = party.id;
 
-          Navigator.of(context).push(
-            MaterialPageRoute(
-                builder: (context) => PartyGuestAddEditManagePage(
-                    partyGuest: partyGuest, party: party, task: 'add')),
+          Navigator.pushNamed(
+            context,
+            AppRoutes.gl,
+            arguments: GlArguments(partyGuest: partyGuest, party: party, task: 'add'),
           );
         },
       ),

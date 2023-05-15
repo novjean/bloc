@@ -4,7 +4,7 @@ class AppRoutes{
   static const main = '/main';
   static const otp = '/otp';
 
-  static const guest = '/guest';
+  static const gl = '/gl';
 
   static const register = '/register';
   static const settings = '/settings';
