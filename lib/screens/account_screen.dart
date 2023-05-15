@@ -119,11 +119,10 @@ class AccountScreen extends StatelessWidget {
                             Logx.em(_TAG, 'account delete failed $e');
                           }
 
-                          LoginArguments args = const LoginArguments(shouldTriggerSkip: false);
                           Navigator.pushReplacementNamed(
                             context,
                             AppRoutes.login,
-                            arguments: args,
+                            arguments: LoginArguments(shouldTriggerSkip: false),
                           );
                         },
                       ),

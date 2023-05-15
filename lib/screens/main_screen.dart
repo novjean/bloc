@@ -12,6 +12,8 @@ import '../db/shared_preferences/user_preferences.dart';
 import '../helpers/firestore_helper.dart';
 import '../helpers/fresh.dart';
 import '../main.dart';
+import '../routing/app_routes.dart';
+import '../routing/arguments/login_arguments.dart';
 import '../utils/logx.dart';
 import 'home_screen.dart';
 import 'parties/party_screen.dart';
@@ -124,11 +126,26 @@ class _MainScreenState extends State<MainScreen> {
 
       FirebaseMessaging.onMessageOpenedApp.listen((message) {
         Logx.i(_TAG, 'a new onMessageOpenedApp event was published!');
-        Navigator.of(context).push(
-          MaterialPageRoute(builder: (ctx) => HomeScreen()
-              // MainScreen(user: UserPreferences.myUser,)
-          ),
-        );
+
+        if(UserPreferences.isUserLoggedIn()){
+          Navigator.pushReplacementNamed(
+            context,
+            AppRoutes.main,
+            arguments: MainArguments(user: UserPreferences.myUser),
+          );
+        } else {
+          Navigator.pushReplacementNamed(
+            context,
+            AppRoutes.login,
+            arguments: LoginArguments(shouldTriggerSkip: false),
+          );
+        }
+
+        // Navigator.of(context).push(
+        //   MaterialPageRoute(builder: (ctx) => HomeScreen()
+        //       // MainScreen(user: UserPreferences.myUser,)
+        //   ),
+        // );
 
         return;
       });
