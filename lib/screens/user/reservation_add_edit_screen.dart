@@ -406,7 +406,7 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
               ],
             ),
             DropDownMultiSelect(
-              selected_values_style: const TextStyle(color: Constants.primary),
+              selected_values_style: const TextStyle(color: Constants.lightPrimary),
               decoration: InputDecoration(
                   hoverColor: Colors.indigo.shade200,
                   fillColor: Constants.lightPrimary,
@@ -950,7 +950,7 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
               DateTimeUtils.getFormattedDateType(
                   sDateArrival.millisecondsSinceEpoch, 0),
               style: const TextStyle(
-                color: Constants.primary,
+                color: Constants.lightPrimary,
                 fontSize: 18,
               )),
           const SizedBox(
@@ -1019,7 +1019,7 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
         children: [
           Text(sArrivalTime.format(context),
               style: const TextStyle(
-                color: Constants.primary,
+                color: Constants.lightPrimary,
                 fontSize: 18,
               )),
           const SizedBox(
