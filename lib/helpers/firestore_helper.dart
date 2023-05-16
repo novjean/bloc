@@ -810,6 +810,7 @@ class FirestoreHelper {
         .collection(FirestoreHelper.PRODUCTS)
         .where('blocIds', arrayContains: blocServiceId)
         .where('priceBottle', isGreaterThan: 0)
+        .where('isAvailable', isEqualTo: true)
         .get();
   }
 

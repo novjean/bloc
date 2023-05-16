@@ -49,6 +49,9 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
   List<String> guestCounts = [];
   late String sGuestCount;
 
+  List<String> ocassions = ['none', 'birthday', 'anniversary'];
+  late String sOcassion;
+
   final pinController = TextEditingController();
   final focusNode = FocusNode();
   bool isLoggedIn = false;
@@ -64,7 +67,6 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
   List<String> sBottleNames = [];
   List<Product> sBottles = [];
   List<String> sBottleIds = [];
-
 
   @override
   void initState() {
@@ -82,6 +84,9 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
       guestCounts.add(i.toString());
     }
     sGuestCount = widget.reservation.guestsCount.toString();
+    sOcassion = widget.reservation.occasion;
+
+    sBottleIds = widget.reservation.bottleProductIds;
 
     if (widget.reservation.arrivalTime.isEmpty) {
       sArrivalTime = TimeOfDay.now();
@@ -93,16 +98,29 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
     FirestoreHelper.pullProductsByBottle(Constants.blocServiceId).then((res) {
       Logx.i(_TAG, "successfully pulled in all bottles");
 
-      if(res.docs.isNotEmpty){
-
+      if (res.docs.isNotEmpty) {
+        List<Product> products = [];
+        List<String> bottleNames = [];
         for (int i = 0; i < res.docs.length; i++) {
           DocumentSnapshot document = res.docs[i];
           Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
           final Product product = Fresh.freshProductMap(data, true);
-          mBottles.add(product);
-          mBottleNames.add(product.name);
+          products.add(product);
         }
+
+        products.sort((a, b) => a.category.compareTo(b.category));
+
+        for (Product product in products) {
+          mBottleNames.add(
+              '${product.name.toLowerCase()} [${product.category.toLowerCase()}]');
+          if(sBottleIds.contains(product.id)){
+            sBottles.add(product);
+            sBottleNames.add('${product.name.toLowerCase()} [${product.category.toLowerCase()}]');
+          }
+        }
+
         setState(() {
+          mBottles = products;
           isBottlesLoading = false;
         });
       } else {
@@ -303,34 +321,146 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
             const SizedBox(height: 24),
           ],
         ),
-        const SizedBox(height: 24),
-        DropDownMultiSelect(
-          onChanged: (List<String> x) {
-            setState(() {
-              sBottleNames = x;
-              sBottles = [];
-              sBottleIds = [];
-
-              for(String bottleName in sBottleNames){
-                for(Product product in mBottles){
-                  if(bottleName == product.name){
-                    sBottles.add(product);
-                    sBottleIds.add(product.id);
-                  }
-                }
-              }
-              if(sBottleIds.isEmpty){
-                Logx.i(_TAG, 'no bottles selected');
-              } else {
-                // widget.product = widget.product.copyWith(blocIds: sBlocIds);
-              }
-            });
-          },
-          options: mBottleNames,
-          selectedValues: sBottleNames,
-          whenEmpty: 'select bottles',
+        Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 8.0),
+                  child: Text(
+                    'special occasion',
+                    style: TextStyle(
+                        color: Theme.of(context).primaryColorLight,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ],
+            ),
+            FormField<String>(
+              builder: (FormFieldState<String> state) {
+                return InputDecorator(
+                  key: const ValueKey('special_occasion'),
+                  decoration: InputDecoration(
+                      fillColor: Colors.white,
+                      errorStyle: TextStyle(
+                          color: Theme.of(context).errorColor, fontSize: 16.0),
+                      hintText: 'please select special occasion',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(5.0),
+                        borderSide:
+                        BorderSide(color: Theme.of(context).primaryColor),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        // width: 0.0 produces a thin "hairline" border
+                        borderSide: BorderSide(
+                            color: Theme.of(context).primaryColor, width: 0.0),
+                      )),
+                  isEmpty: sOcassion == '',
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton<String>(
+                      style:
+                      TextStyle(color: Theme.of(context).primaryColorLight),
+                      dropdownColor: Theme.of(context).backgroundColor,
+                      value: sOcassion,
+                      isDense: true,
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          sOcassion = newValue!;
+                          widget.reservation = widget.reservation
+                              .copyWith(occasion: sOcassion);
+                          state.didChange(newValue);
+                        });
+                      },
+                      items: ocassions.map((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                );
+              },
+            ),
+            const SizedBox(height: 24),
+          ],
         ),
 
+        Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 8.0),
+                  child: Text(
+                    'reserve your bottles',
+                    style: TextStyle(
+                        color: Theme.of(context).primaryColorLight,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ],
+            ),
+            DropDownMultiSelect(
+              selected_values_style: const TextStyle(color: Constants.primary),
+              decoration: InputDecoration(
+                  hoverColor: Colors.indigo.shade200,
+                  fillColor: Constants.lightPrimary,
+                  errorStyle: TextStyle(
+                      color: Theme.of(context).errorColor, fontSize: 16.0),
+                  hintText: '',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(5.0),
+                    borderSide:
+                        BorderSide(color: Theme.of(context).primaryColor),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    // width: 0.0 produces a thin "hairline" border
+                    borderSide: BorderSide(
+                        color: Theme.of(context).primaryColor, width: 0.0),
+                  )),
+              onChanged: (List<String> x) {
+                setState(() {
+                  sBottleNames = x;
+                  sBottles = [];
+                  sBottleIds = [];
+
+                  for (String bottleName in sBottleNames) {
+                    for (Product product in mBottles) {
+                      if (bottleName ==
+                          '${product.name.toLowerCase()} [${product.category.toLowerCase()}]') {
+                        sBottles.add(product);
+                        sBottleIds.add(product.id);
+                      }
+                    }
+                  }
+                  if (sBottleIds.isEmpty) {
+                    Logx.i(_TAG, 'no bottles selected');
+                  } else {
+                    widget.reservation =
+                        widget.reservation.copyWith(bottleNames: sBottleNames);
+                    widget.reservation = widget.reservation
+                        .copyWith(bottleProductIds: sBottleIds);
+                  }
+                });
+              },
+              options: mBottleNames,
+              selectedValues: sBottleNames,
+              whenEmpty: 'none selected',
+            ),
+          ],
+        ),
+        const SizedBox(height: 24),
+        DarkTextFieldWidget(
+          label: 'additional requests',
+          text: widget.reservation.specialRequest,
+          onChanged: (text) =>
+          widget.reservation = widget.reservation.copyWith(specialRequest: text),
+        ),
         const SizedBox(height: 24),
         Row(
           mainAxisAlignment: MainAxisAlignment.end,

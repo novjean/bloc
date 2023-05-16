@@ -1544,6 +1544,31 @@ class Fresh {
       Logx.em(_TAG, 'reservation arrivalTime not exist for reservation id: ' + reservation.id);
       shouldPush = true;
     }
+
+    try {
+      reservation = reservation.copyWith(bottleProductIds: List<String>.from(map['bottleProductIds']));
+    } catch (e) {
+      Logx.em(_TAG, 'reservation bottleProductIds not exist for id: ' + reservation.id);
+      shouldPush = true;
+    }
+    try {
+      reservation = reservation.copyWith(bottleNames: List<String>.from(map['bottleNames']));
+    } catch (e) {
+      Logx.em(_TAG, 'reservation bottleNames not exist for id: ' + reservation.id);
+      shouldPush = true;
+    }
+    try {
+      reservation = reservation.copyWith(specialRequest: map['specialRequest'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'reservation specialRequest not exist for id: ' + reservation.id);
+      shouldPush = true;
+    }
+    try {
+      reservation = reservation.copyWith(occasion: map['occasion'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'reservation occasion not exist for id: ' + reservation.id);
+      shouldPush = true;
+    }
     try {
       reservation = reservation.copyWith(isApproved: map['isApproved'] as bool);
     } catch (e) {
@@ -1605,8 +1630,30 @@ class Fresh {
     try {
       freshReservation = freshReservation.copyWith(arrivalTime: reservation.arrivalTime);
     } catch (e) {
-      Logx.em(_TAG, 'reservation arrivalTime not exist for reservation id: ' + reservation.id);
+      Logx.em(_TAG, 'reservation arrivalTime not exist for id: ' + reservation.id);
     }
+
+    try {
+      freshReservation = freshReservation.copyWith(bottleProductIds: reservation.bottleProductIds);
+    } catch (e) {
+      Logx.em(_TAG, 'reservation bottleProductIds not exist for id: ' + reservation.id);
+    }
+    try {
+      freshReservation = freshReservation.copyWith(bottleNames: reservation.bottleNames);
+    } catch (e) {
+      Logx.em(_TAG, 'reservation bottleNames not exist for id: ' + reservation.id);
+    }
+    try {
+      freshReservation = freshReservation.copyWith(specialRequest: reservation.specialRequest);
+    } catch (e) {
+      Logx.em(_TAG, 'reservation specialRequest not exist for id: ' + reservation.id);
+    }
+    try {
+      freshReservation = freshReservation.copyWith(occasion: reservation.occasion);
+    } catch (e) {
+      Logx.em(_TAG, 'reservation occasion not exist for reservation id: ' + reservation.id);
+    }
+
     try {
       freshReservation = freshReservation.copyWith(isApproved: reservation.isApproved);
     } catch (e) {

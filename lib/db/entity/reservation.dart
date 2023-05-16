@@ -10,10 +10,14 @@ class Reservation {
   final int arrivalDate;
   final String arrivalTime;
 
+  List<String> bottleProductIds;
+  List<String> bottleNames;
+  String specialRequest;
+  String occasion;
   final bool isApproved;
 
 //<editor-fold desc="Data Methods">
-  const Reservation({
+  Reservation({
     required this.id,
     required this.blocServiceId,
     required this.customerId,
@@ -23,6 +27,12 @@ class Reservation {
     required this.createdAt,
     required this.arrivalDate,
     required this.arrivalTime,
+
+    required this.bottleProductIds,
+    required this.bottleNames,
+    required this.specialRequest,
+    required this.occasion,
+
     required this.isApproved,
   });
 
@@ -40,6 +50,12 @@ class Reservation {
           createdAt == other.createdAt &&
           arrivalDate == other.arrivalDate &&
           arrivalTime == other.arrivalTime &&
+
+          bottleProductIds == other.bottleProductIds &&
+          bottleNames == other.bottleNames &&
+          specialRequest == other.specialRequest &&
+          occasion == other.occasion &&
+
           isApproved == other.isApproved);
 
   @override
@@ -53,6 +69,12 @@ class Reservation {
       createdAt.hashCode ^
       arrivalDate.hashCode ^
       arrivalTime.hashCode ^
+
+      bottleProductIds.hashCode ^
+      bottleNames.hashCode ^
+      specialRequest.hashCode ^
+      occasion.hashCode ^
+
       isApproved.hashCode;
 
   @override
@@ -67,6 +89,12 @@ class Reservation {
         ' createdAt: $createdAt,' +
         ' arrivalDate: $arrivalDate,' +
         ' arrivalTime: $arrivalTime,' +
+
+        ' bottleProductIds: $bottleProductIds,' +
+        ' bottleNames: $bottleNames,' +
+        ' specialRequest: $specialRequest,' +
+        ' occasion: $occasion,' +
+
         ' isApproved: $isApproved,' +
         '}';
   }
@@ -81,6 +109,10 @@ class Reservation {
     int? createdAt,
     int? arrivalDate,
     String? arrivalTime,
+    List<String>? bottleProductIds,
+    List<String>? bottleNames,
+    String? specialRequest,
+    String? occasion,
     bool? isApproved,
   }) {
     return Reservation(
@@ -93,6 +125,12 @@ class Reservation {
       createdAt: createdAt ?? this.createdAt,
       arrivalDate: arrivalDate ?? this.arrivalDate,
       arrivalTime: arrivalTime ?? this.arrivalTime,
+
+      bottleProductIds: bottleProductIds ?? this.bottleProductIds,
+      bottleNames: bottleNames ?? this.bottleNames,
+      specialRequest: specialRequest ?? this.specialRequest,
+      occasion: occasion ?? this.occasion,
+
       isApproved: isApproved ?? this.isApproved,
     );
   }
@@ -108,6 +146,10 @@ class Reservation {
       'createdAt': this.createdAt,
       'arrivalDate': this.arrivalDate,
       'arrivalTime': this.arrivalTime,
+      'bottleProductIds': this.bottleProductIds,
+      'bottleNames': this.bottleNames,
+      'specialRequest': this.specialRequest,
+      'occasion': this.occasion,
       'isApproved': this.isApproved,
     };
   }
@@ -123,6 +165,12 @@ class Reservation {
       createdAt: map['createdAt'] as int,
       arrivalDate: map['arrivalDate'] as int,
       arrivalTime: map['arrivalTime'] as String,
+
+      bottleProductIds: map['bottleProductIds'] as List<String>,
+      bottleNames: map['bottleNames'] as List<String>,
+      specialRequest: map['specialRequest'] as String,
+      occasion: map['occasion'] as String,
+
       isApproved: map['isApproved'] as bool,
     );
   }

@@ -10,7 +10,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
-import 'package:upgrader/upgrader.dart';
 
 import 'db/shared_preferences/user_preferences.dart';
 import 'firebase_options.dart';
@@ -144,7 +143,7 @@ class _MyAppState extends State<MyApp> {
                 primaryColorDark: const Color.fromRGBO(42, 33, 26, 1),
 
                 backgroundColor: const Color.fromRGBO(38, 50, 56, 1.0),
-                focusColor: const Color.fromRGBO(31, 31, 33, 1.0),
+                // focusColor: const Color.fromRGBO(31, 31, 33, 1.0),
                 shadowColor: const Color.fromRGBO(158, 158, 158, 1.0),
 
                 highlightColor: const Color.fromRGBO(255, 255, 255, 1.0),

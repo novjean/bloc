@@ -234,6 +234,10 @@ class Dummy {
         createdAt: Timestamp.now().millisecondsSinceEpoch,
         arrivalDate: Timestamp.now().millisecondsSinceEpoch,
         arrivalTime: '',
+        bottleProductIds: [],
+        bottleNames: [],
+        specialRequest: '',
+        occasion: 'none',
         isApproved: false);
     return dummyReservation;
   }
