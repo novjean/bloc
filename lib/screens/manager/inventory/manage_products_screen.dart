@@ -102,7 +102,7 @@ class _ManageProductsScreenState extends State<ManageProductsScreen> {
         stream: FirestoreHelper.getProductsByType(widget.serviceId, _sType),
         builder: (ctx, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return LoadingWidget();
+            return const LoadingWidget();
           }
 
           List<Product> _products = [];

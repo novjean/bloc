@@ -805,6 +805,14 @@ class FirestoreHelper {
         .get();
   }
 
+  static pullProductsByBottle(String blocServiceId) {
+    return FirebaseFirestore.instance
+        .collection(FirestoreHelper.PRODUCTS)
+        .where('blocIds', arrayContains: blocServiceId)
+        .where('priceBottle', isGreaterThan: 0)
+        .get();
+  }
+
   static getProductsByType(String serviceId, String type) {
     return FirebaseFirestore.instance
         .collection(PRODUCTS)

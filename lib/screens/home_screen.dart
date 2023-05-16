@@ -1,5 +1,3 @@
-import 'dart:io' show Platform;
-
 import 'package:bloc/db/entity/user.dart';
 import 'package:bloc/main.dart';
 import 'package:bloc/utils/constants.dart';

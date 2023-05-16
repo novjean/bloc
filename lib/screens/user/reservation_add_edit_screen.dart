@@ -5,8 +5,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl_phone_field/country_picker_dialog.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
+import 'package:multiselect/multiselect.dart';
 import 'package:pinput/pinput.dart';
 
+import '../../db/entity/product.dart';
 import '../../db/entity/reservation.dart';
 import '../../db/entity/user.dart' as blocUser;
 
@@ -56,6 +58,14 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
   late blocUser.User bloc_user;
   bool isEdit = false;
 
+  List<Product> mBottles = [];
+  List<String> mBottleNames = [];
+  bool isBottlesLoading = true;
+  List<String> sBottleNames = [];
+  List<Product> sBottles = [];
+  List<String> sBottleIds = [];
+
+
   @override
   void initState() {
     if (!UserPreferences.isUserLoggedIn()) {
@@ -79,6 +89,30 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
       sArrivalTime =
           DateTimeUtils.stringToTimeOfDay(widget.reservation.arrivalTime);
     }
+
+    FirestoreHelper.pullProductsByBottle(Constants.blocServiceId).then((res) {
+      Logx.i(_TAG, "successfully pulled in all bottles");
+
+      if(res.docs.isNotEmpty){
+
+        for (int i = 0; i < res.docs.length; i++) {
+          DocumentSnapshot document = res.docs[i];
+          Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+          final Product product = Fresh.freshProductMap(data, true);
+          mBottles.add(product);
+          mBottleNames.add(product.name);
+        }
+        setState(() {
+          isBottlesLoading = false;
+        });
+      } else {
+        // no bottles found
+        setState(() {
+          isBottlesLoading = false;
+        });
+      }
+    });
+
     super.initState();
   }
 
@@ -269,6 +303,34 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
             const SizedBox(height: 24),
           ],
         ),
+        const SizedBox(height: 24),
+        DropDownMultiSelect(
+          onChanged: (List<String> x) {
+            setState(() {
+              sBottleNames = x;
+              sBottles = [];
+              sBottleIds = [];
+
+              for(String bottleName in sBottleNames){
+                for(Product product in mBottles){
+                  if(bottleName == product.name){
+                    sBottles.add(product);
+                    sBottleIds.add(product.id);
+                  }
+                }
+              }
+              if(sBottleIds.isEmpty){
+                Logx.i(_TAG, 'no bottles selected');
+              } else {
+                // widget.product = widget.product.copyWith(blocIds: sBlocIds);
+              }
+            });
+          },
+          options: mBottleNames,
+          selectedValues: sBottleNames,
+          whenEmpty: 'select bottles',
+        ),
+
         const SizedBox(height: 24),
         Row(
           mainAxisAlignment: MainAxisAlignment.end,

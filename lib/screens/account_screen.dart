@@ -2,7 +2,6 @@ import 'package:bloc/db/shared_preferences/user_preferences.dart';
 import 'package:bloc/screens/privacy_policy_screen.dart';
 import 'package:bloc/screens/refund_policy_screen.dart';
 import 'package:bloc/screens/terms_and_conditions_screen.dart';
-import 'package:bloc/utils/network_utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';

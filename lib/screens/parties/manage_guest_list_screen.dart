@@ -54,14 +54,13 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
           Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
           final Party party = Fresh.freshPartyMap(data, true);
           parties.add(party);
-          _partyNames.add(party.name + ' ' + party.chapter);
-
-          setState(() {
-            mParties = parties;
-            mPartyNames = _partyNames;
-            _isPartiesLoading = false;
-          });
+          _partyNames.add('${party.name} ${party.chapter}');
         }
+        setState(() {
+          mParties = parties;
+          mPartyNames = _partyNames;
+          _isPartiesLoading = false;
+        });
       } else {
         Logx.i(_TAG, 'no parties found!');
         const Center(
