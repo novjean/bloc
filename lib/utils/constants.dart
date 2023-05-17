@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 const String kAppTitle = 'bloc';
 
 class Constants {
-  static const String appVersion = '1.6.3';
+  static const String appVersion = '1.6.4';
 
   //Colors for theme
   static const Color primary = Color.fromRGBO(211, 167, 130, 1);
