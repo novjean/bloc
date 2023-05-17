@@ -207,7 +207,7 @@ class _BlocAddEditScreenState extends State<BlocAddEditScreen> {
                   ),
                 ),
                 SizedBox.fromSize(
-                  size: Size(56, 56),
+                  size: const Size(50, 50),
                   child: ClipOval(
                     child: Material(
                       color: Colors.redAccent,

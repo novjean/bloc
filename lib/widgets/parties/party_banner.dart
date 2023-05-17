@@ -55,59 +55,26 @@ class PartyBanner extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+
+
                       Padding(
                         padding: const EdgeInsets.only(left: 5.0),
-                        child: Row(
-                          children: [
-                            Text(
-                              party.name.toLowerCase(),
-                              overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(
-                                fontSize: 22,
-                                fontWeight: FontWeight.w700,
-                              ),
-                              textAlign: TextAlign.left,
-                            ),
-                            party.chapter.isNotEmpty? Text(
-                              ' (${party.chapter})',
-                              style: const TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w400,
-                              ),
-                              textAlign: TextAlign.right,
-                            ): const SizedBox(),
-
-                          ],
+                        child: RichText(
+                          text: TextSpan(
+                              text: party.name.toLowerCase() + ' ',
+                              style: TextStyle(color: Colors.black,
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.bold),
+                              children: <TextSpan>[
+                                TextSpan(text: party.chapter,
+                                    style: TextStyle(color: Colors.black,
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.normal,
+                                        fontStyle: FontStyle.italic)),
+                              ]
+                          ),
                         ),
                       ),
-                      // Container(
-                      //   padding: const EdgeInsets.only(
-                      //       top: 3, left: 5.0, right: 0.0),
-                      //   child: Flexible(
-                      //     flex: 1,
-                      //     child: Row(
-                      //       children: [
-                      //         Text(
-                      //           party.name.toLowerCase(),
-                      //           overflow: TextOverflow.ellipsis,
-                      //           style: const TextStyle(
-                      //             fontSize: 24,
-                      //             fontWeight: FontWeight.w800,
-                      //           ),
-                      //           textAlign: TextAlign.left,
-                      //         ),
-                      //         party.chapter.isNotEmpty? Text(
-                      //           ' (${party.chapter})',
-                      //           style: const TextStyle(
-                      //             fontSize: 18,
-                      //             fontWeight: FontWeight.w400,
-                      //           ),
-                      //           textAlign: TextAlign.right,
-                      //         ): const SizedBox(),
-                      //       ],
-                      //     ),
-                      //   ),
-                      // ),
                       party.eventName.isNotEmpty
                           ? Padding(
                               padding:

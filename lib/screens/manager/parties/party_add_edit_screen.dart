@@ -814,6 +814,9 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
               child: const Text("yes"),
               onPressed: () {
                 FirestorageHelper.deleteFile(widget.party.storyImageUrl);
+
+                widget.party = widget.party.copyWith(storyImageUrl: '');
+
                 Logx.i(_TAG, 'story photo is deleted');
                 Navigator.of(ctx).pop();
               },

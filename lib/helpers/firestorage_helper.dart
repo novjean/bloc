@@ -25,6 +25,7 @@ class FirestorageHelper {
 
     try{
       await firebaseStorage.refFromURL(fileUrl).delete();
+      Logx.d(_TAG, '$fileUrl deleted successfully');
       return true;
     } on PlatformException catch (e, s) {
       Logx.e(_TAG, e, s);
