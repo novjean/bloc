@@ -40,6 +40,15 @@ class _HomeScreenState extends State<HomeScreen> {
   GuestWifi mGuestWifi = Dummy.getDummyGuestWifi(Constants.blocServiceId);
   var _isGuestWifiDetailsLoading = true;
 
+  ScrollController _scrollController = ScrollController();
+
+  _scrollToBottom() {
+    _scrollController.animateTo(
+        _scrollController.position.maxScrollExtent,
+        duration: const Duration(seconds: 30),
+        curve: Curves.linear);
+  }
+
   @override
   void initState() {
     UserPreferences.myUser.clearanceLevel >= Constants.PROMOTER_LEVEL
@@ -326,9 +335,12 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   _displayPartiesList(BuildContext context, List<Party> parties) {
+    WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToBottom());
+
     return Expanded(
       child: ListView.builder(
         itemCount: parties.length,
+        controller: _scrollController,
         scrollDirection: Axis.vertical,
         itemBuilder: (BuildContext context, int index) {
           Party party = parties[index];
