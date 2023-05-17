@@ -396,7 +396,7 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
                 Padding(
                   padding: const EdgeInsets.only(bottom: 8.0),
                   child: Text(
-                    'reserve your bottles',
+                    'reserve bottles',
                     style: TextStyle(
                         color: Theme.of(context).primaryColorLight,
                         fontSize: 16,
@@ -450,7 +450,7 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
               },
               options: mBottleNames,
               selectedValues: sBottleNames,
-              whenEmpty: 'none selected',
+              whenEmpty: 'none',
             ),
           ],
         ),
@@ -948,7 +948,7 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
         children: [
           Text(
               DateTimeUtils.getFormattedDateType(
-                  sDateArrival.millisecondsSinceEpoch, 0),
+                  sDateArrival.millisecondsSinceEpoch, 0).toLowerCase(),
               style: const TextStyle(
                 color: Constants.lightPrimary,
                 fontSize: 18,

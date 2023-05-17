@@ -244,7 +244,7 @@ class _ManagePartiesScreenState extends State<ManagePartiesScreen> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              const Text('party/event'),
+                              const Text('event | artist'),
                               ButtonWidget(text: 'add', onClicked: () {
                                 Navigator.of(ctx).pop();
 

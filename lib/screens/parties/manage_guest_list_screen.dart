@@ -1,4 +1,3 @@
-import 'dart:io';
 
 import 'package:bloc/db/entity/party_guest.dart';
 import 'package:bloc/helpers/dummy.dart';
@@ -7,13 +6,10 @@ import 'package:bloc/screens/parties/party_guest_add_edit_manage_screen.dart';
 import 'package:bloc/utils/string_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:share_plus/share_plus.dart';
 
 import '../../db/entity/party.dart';
 import '../../helpers/fresh.dart';
 import '../../utils/file_utils.dart';
-import '../../utils/date_time_utils.dart';
 import '../../utils/logx.dart';
 import '../../widgets/parties/party_guest_item.dart';
 import '../../widgets/ui/button_widget.dart';
@@ -82,11 +78,11 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
           showOptionsDialog(context);
         },
         backgroundColor: Theme.of(context).primaryColor,
-        tooltip: 'delete',
+        tooltip: 'actions',
         elevation: 5,
         splashColor: Colors.grey,
         child: const Icon(
-          Icons.delete_forever,
+          Icons.science,
           color: Colors.black,
           size: 29,
         ),
