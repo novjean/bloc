@@ -8,7 +8,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 import '../db/shared_preferences/user_preferences.dart';
-import '../../db/entity/user.dart' as blocUser;
 import '../helpers/firestore_helper.dart';
 import '../helpers/fresh.dart';
 import '../main.dart';
@@ -212,7 +211,7 @@ class _MainScreenState extends State<MainScreen> {
       bottomNavigationBar: BottomAppBar(
         elevation: 1,
         color: Theme.of(context).primaryColor,
-        shape: CircularNotchedRectangle(),
+        shape: const CircularNotchedRectangle(),
         child: Row(
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
