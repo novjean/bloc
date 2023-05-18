@@ -87,11 +87,11 @@ class AccountScreen extends StatelessWidget {
                 context: context,
                 builder: (BuildContext context) {
                   return AlertDialog(
-                    title: Text("delete account"),
-                    content: Text("deleting your account will delete your access and all your information on this site. are you sure you want to continue?"),
+                    title: const Text("delete account"),
+                    content: const Text("deleting your account will delete your access and all your information on this site. are you sure you want to continue?"),
                     actions: [
                       TextButton(
-                        child: Text("yes"),
+                        child: const Text("yes"),
                         onPressed: () async {
                           blocUser.User sUser = UserPreferences.myUser;
 

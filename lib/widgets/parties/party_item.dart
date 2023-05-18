@@ -187,7 +187,7 @@ class PartyItem extends StatelessWidget {
 
           Navigator.of(context).push(
             MaterialPageRoute(
-                builder: (context) => PartyGuestAddEditManagePage(
+                builder: (context) => PartyGuestAddEditManageScreen(
                     partyGuest: partyGuest, party: party, task: 'add')),
           );
         },

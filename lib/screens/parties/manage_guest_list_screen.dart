@@ -241,7 +241,7 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
                     }
                   }
                   Navigator.of(context).push(MaterialPageRoute(
-                      builder: (ctx) => PartyGuestAddEditManagePage(
+                      builder: (ctx) => PartyGuestAddEditManageScreen(
                             partyGuest: sPartyGuest,
                             party: sParty,
                             task: 'manage',

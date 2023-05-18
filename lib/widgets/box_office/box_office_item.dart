@@ -226,7 +226,7 @@ class _BoxOfficeItemState extends State<BoxOfficeItem> {
               text: 'edit\nrequest',
               onClicked: () {
                 Navigator.of(context).push(MaterialPageRoute(
-                    builder: (ctx) => PartyGuestAddEditManagePage(
+                    builder: (ctx) => PartyGuestAddEditManageScreen(
                           partyGuest: widget.partyGuest,
                           party: widget.party,
                           task: 'edit',

@@ -41,6 +41,13 @@ class DateTimeUtils {
     return date.toLowerCase();
   }
 
+  // 8:30 PM
+  static String getFormattedTime2(int millis) {
+    var dt = DateTime.fromMillisecondsSinceEpoch(millis);
+    String date = DateFormat('hh:mm a').format(dt);
+    return date;
+  }
+
   static String getFormattedDateYear(int millis) {
     var dt = DateTime.fromMillisecondsSinceEpoch(millis);
     String date = DateFormat('yMMMd').format(dt);
@@ -56,6 +63,7 @@ class DateTimeUtils {
     return time;
   }
 
+  // 6:30 PM
   static TimeOfDay stringToTimeOfDay(String tod) {
     final format = DateFormat.jm(); //"6:00 AM"
     return TimeOfDay.fromDateTime(format.parse(tod));

@@ -111,7 +111,7 @@ class _ArtistScreenState extends State<ArtistScreen> {
                           Navigator.of(context).push(
                             MaterialPageRoute(
                                 builder: (context) =>
-                                    PartyGuestAddEditManagePage(
+                                    PartyGuestAddEditManageScreen(
                                         partyGuest: partyGuest,
                                         party: widget.party,
                                         task: 'add')),

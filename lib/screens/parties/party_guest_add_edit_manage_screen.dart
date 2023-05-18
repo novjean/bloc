@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:bloc/db/entity/reservation.dart';
+import 'package:bloc/utils/date_time_utils.dart';
 import 'package:bloc/widgets/ui/dark_button_widget.dart';
 import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:bloc/widgets/ui/toaster.dart';
@@ -33,24 +35,25 @@ import '../../widgets/ui/button_widget.dart';
 import '../../widgets/ui/dark_textfield_widget.dart';
 import '../../widgets/parties/party_banner.dart';
 import '../main_screen.dart';
+import '../user/reservation_add_edit_screen.dart';
 
-class PartyGuestAddEditManagePage extends StatefulWidget {
+class PartyGuestAddEditManageScreen extends StatefulWidget {
   PartyGuest partyGuest;
   Party party;
   String task;
 
-  PartyGuestAddEditManagePage(
+  PartyGuestAddEditManageScreen(
       {key, required this.partyGuest, required this.party, required this.task})
       : super(key: key);
 
   @override
-  _PartyGuestAddEditManagePageState createState() =>
-      _PartyGuestAddEditManagePageState();
+  _PartyGuestAddEditManageScreenState createState() =>
+      _PartyGuestAddEditManageScreenState();
 }
 
-class _PartyGuestAddEditManagePageState
-    extends State<PartyGuestAddEditManagePage> {
-  static const String _TAG = 'PartyGuestAddEditPage';
+class _PartyGuestAddEditManageScreenState
+    extends State<PartyGuestAddEditManageScreen> {
+  static const String _TAG = 'PartyGuestAddEditManageScreen';
 
   late blocUser.User bloc_user;
 
@@ -847,10 +850,8 @@ class _PartyGuestAddEditManagePageState
                 child: const Text('close'),
                 onPressed: () {
                   Navigator.of(ctx).pop();
-                  Navigator.of(context).pop();
 
-                  Navigator.of(context).pushReplacement(MaterialPageRoute(
-                      builder: (context) => MainScreen(user: bloc_user)));
+                  showReserveTableDialog(context);
                 },
               ),
               TextButton(
@@ -928,6 +929,92 @@ class _PartyGuestAddEditManagePageState
       );
     }
   }
+
+  showReserveTableDialog(BuildContext context) {
+    return showDialog(
+      context: context,
+      builder: (BuildContext ctx) {
+        return AlertDialog(
+          contentPadding: const EdgeInsets.all(16.0),
+          content: SizedBox(
+            height: 150,
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 20),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Text(
+                        'reserve table | ${widget.party.name}',
+                        style: const TextStyle(fontSize: 18),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(
+                  height: 100,
+                  width: 300,
+                  child: SingleChildScrollView(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: const [
+                        Text('reserve your table at the trendiest club in town and let us take care of every detail, so you can focus on enjoying a wonderful evening with your loved ones.'),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              child: const Text('close'),
+              onPressed: () {
+                Navigator.of(ctx).pop();
+                Navigator.of(context).pop();
+
+                Navigator.of(context).pushReplacement(MaterialPageRoute(
+                    builder: (context) => MainScreen(user: bloc_user)));
+              },
+            ),
+            TextButton(
+              child: const Text("reserve my table"),
+              onPressed: () {
+                Reservation reservation  = Dummy.getDummyReservation(Constants.blocServiceId);
+                reservation = reservation.copyWith(customerId: widget.partyGuest.guestId);
+                reservation = reservation.copyWith(name: '${widget.partyGuest.name} ${widget.partyGuest.surname}');
+                int? phoneNumber = int.tryParse(widget.partyGuest.phone);
+                reservation = reservation.copyWith(phone: phoneNumber);
+
+                reservation = reservation.copyWith(arrivalDate: widget.party.startTime);
+                reservation = reservation.copyWith(arrivalTime: DateTimeUtils.getFormattedTime2(widget.party.startTime));
+
+                reservation = reservation.copyWith(guestsCount: widget.partyGuest.guestsCount);
+
+                Navigator.of(ctx).pop();
+                Navigator.of(context).pop();
+
+                Navigator.of(context).pushReplacement(MaterialPageRoute(
+                    builder: (context) => MainScreen(user: bloc_user)));
+
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                      builder: (ctx) =>
+                          ReservationAddEditScreen(
+                              reservation: reservation,
+                              task: 'add')),
+                );
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
 
   Challenge findChallenge() {
     Challenge returnChallenge = challenges.last;
