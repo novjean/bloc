@@ -750,13 +750,16 @@ class FirestoreHelper {
   }
 
   static getGuestLists() {
-    return FirebaseFirestore.instance.collection(PARTY_GUESTS).snapshots();
+    return FirebaseFirestore.instance.collection(PARTY_GUESTS)
+        .orderBy('createdAt', descending: true)
+        .snapshots();
   }
 
   static getPartyGuestList(String partyId) {
     return FirebaseFirestore.instance
         .collection(PARTY_GUESTS)
         .where('partyId', isEqualTo: partyId)
+        .orderBy('createdAt', descending: true)
         .snapshots();
   }
 
@@ -764,13 +767,6 @@ class FirestoreHelper {
     return FirebaseFirestore.instance
         .collection(PARTY_GUESTS)
         .where('guestId', isEqualTo: guestId)
-        .snapshots();
-  }
-
-  static getApprovedPartyGuestList() {
-    return FirebaseFirestore.instance
-        .collection(PARTY_GUESTS)
-        .where('isApproved', isEqualTo: true)
         .snapshots();
   }
 

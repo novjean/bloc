@@ -4,8 +4,11 @@ import 'package:flutter/material.dart';
 import '../../db/entity/party_guest.dart';
 import '../../helpers/firestore_helper.dart';
 import '../../helpers/fresh.dart';
+import '../../utils/logx.dart';
 
 class PartyGuestItem extends StatelessWidget {
+  static const String _TAG = 'PartyGuestItem';
+
   final PartyGuest partyGuest;
   final String partyName;
 
@@ -13,11 +16,11 @@ class PartyGuestItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String title = partyGuest.name.toLowerCase() + ' ' + partyGuest.surname.toLowerCase();
+    String title = '${partyGuest.name.toLowerCase()} ${partyGuest.surname.toLowerCase()}';
     int friendsCount = partyGuest.guestsCount - 1;
 
     if (friendsCount > 0) {
-      title += ' +' + friendsCount.toString();
+      title += ' +$friendsCount';
     }
 
     return Padding(
@@ -33,17 +36,19 @@ class PartyGuestItem extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 5.0),
-                      child: Text(
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
                         title,
-                        style: TextStyle(fontSize: 20),
+                        style: const TextStyle(fontSize: 18),
                       ),
-                    ),
-                  ],
+                      Text(' ${DateTimeUtils.getFormattedDateString(
+                          partyGuest.createdAt)}'),
+                    ],
+                  ),
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,
@@ -56,30 +61,39 @@ class PartyGuestItem extends StatelessWidget {
                     ),
                 ],),
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(left: 5, top: 5),
+                      child: Text(
+                        'status : ${partyGuest.guestStatus}',
+                      ),
+                    ),
+                  ],),
+                Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Padding(
                       padding:
-                          const EdgeInsets.only(left: 5),
-                      child: Text('requested at: ' +
-                          DateTimeUtils.getFormattedDateYear(
-                              partyGuest.createdAt)),
+                      const EdgeInsets.only(left: 5, bottom: 5),
+                      child: Row(
+                        children: [
+                          Text('supported : ${partyGuest.isChallengeClicked}'),
+                        ],
+                      ),
                     ),
                     Padding(
                       padding:
-                          const EdgeInsets.only(right: 5, top: 5, bottom: 5),
+                          const EdgeInsets.only(right: 5, bottom: 5),
                       child: Row(
                         children: [
-                          Text('approved: '),
+                          const Text('approved: '),
                           Checkbox(
                             value: partyGuest.isApproved,
                             onChanged: (value) {
                               PartyGuest updatedPartyGuest =
                                   partyGuest.copyWith(isApproved: value);
-                              print('party guest ' +
-                                  updatedPartyGuest.name +
-                                  ' approved ' +
-                                  value.toString());
+                              Logx.i(_TAG, 'party guest ${updatedPartyGuest.name} approved $value');
                               PartyGuest freshPartyGuest =
                                   Fresh.freshPartyGuest(updatedPartyGuest);
                               FirestoreHelper.pushPartyGuest(freshPartyGuest);
