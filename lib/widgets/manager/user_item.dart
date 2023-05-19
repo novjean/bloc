@@ -23,24 +23,21 @@ class UserItem extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(left: 5.0, top: 5),
-                      child: Text(
-                        (user.name + user.surname).toLowerCase(),
+                Padding(
+                  padding: const EdgeInsets.all(5.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        ('${user.name} ${user.surname}').toLowerCase(),
                         style: const TextStyle(fontSize: 18),
                       ),
-                    ),
-                    user.lastSeenAt != 0
-                        ? Padding(
-                            padding: const EdgeInsets.only(right: 5.0, top: 5),
-                            child: Text(
-                                'last seen: ${DateTimeUtils.getFormattedDateYear(user.lastSeenAt)}'),
-                          )
-                        : const SizedBox(),
-                  ],
+                      user.lastSeenAt != 0
+                          ? Text(
+                              'last seen: ${DateTimeUtils.getFormattedDateYear(user.lastSeenAt)}')
+                          : const SizedBox(),
+                    ],
+                  ),
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,

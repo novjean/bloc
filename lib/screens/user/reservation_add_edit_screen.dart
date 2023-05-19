@@ -80,7 +80,7 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
       isEdit = true;
     }
 
-    for (int i = 1; i <= 15; i++) {
+    for (int i = 1; i <= 10; i++) {
       guestCounts.add(i.toString());
     }
     sGuestCount = widget.reservation.guestsCount.toString();
@@ -152,8 +152,11 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
         DarkTextFieldWidget(
           label: 'name \*',
           text: widget.reservation.name,
-          onChanged: (name) =>
-              widget.reservation = widget.reservation.copyWith(name: name),
+          onChanged: (name) {
+            bloc_user = bloc_user.copyWith(name: name);
+
+            widget.reservation = widget.reservation.copyWith(name: name);
+          }
         ),
         !UserPreferences.isUserLoggedIn()
             ? Column(
@@ -694,19 +697,9 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
               length: 6,
               controller: pinController,
               focusNode: focusNode,
-              // androidSmsAutofillMethod:
-              //     AndroidSmsAutofillMethod.smsUserConsentApi,
               listenForMultipleSmsOnAndroid: true,
               defaultPinTheme: defaultPinTheme,
               closeKeyboardWhenCompleted: true,
-              // validator: (value) {
-              // print('code is ' + _verificationCode);
-              // return value == _verificationCode ? null : 'pin is incorrect';
-              // },
-              // onClipboardFound: (value) {
-              //   debugPrint('onClipboardFound: $value');
-              //   pinController.setText(value);
-              // },
               hapticFeedbackType: HapticFeedbackType.lightImpact,
               onCompleted: (pin) async {
                 debugPrint('onCompleted: $pin');
@@ -718,17 +711,10 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
                           verificationId: _verificationCode, smsCode: pin))
                       .then((value) async {
                     if (value.user != null) {
-                      Logx.i(_TAG, 'user is in firebase auth');
-                      Logx.i(
-                          _TAG,
-                          'checking for bloc registration, id ' +
-                              value.user!.uid);
+                      Logx.i(_TAG, 'user in firebase auth. checking bloc registration: id: ${value.user!.uid}');
 
                       FirestoreHelper.pullUser(value.user!.uid).then((res) {
-                        Logx.i(
-                            _TAG,
-                            "successfully retrieved bloc user for id " +
-                                value.user!.uid);
+                        Logx.i(_TAG, "successfully retrieved bloc user for id ${value.user!.uid}");
 
                         if (res.docs.isEmpty) {
                           Logx.i(_TAG,
@@ -739,7 +725,7 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
                               StringUtils.getInt(value.user!.phoneNumber!);
 
                           FirestoreHelper.pushUser(bloc_user);
-                          Logx.i(_TAG, 'registered user ' + bloc_user.id);
+                          Logx.i(_TAG, 'registered user ${bloc_user.id}');
 
                           UserPreferences.setUser(bloc_user);
                           widget.reservation = widget.reservation
@@ -750,7 +736,7 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
                           showConfirmationDialog(context, true);
                         } else {
                           Logx.i(_TAG,
-                              'user is a bloc member. navigating to main...');
+                              'user is a bloc member, logging in...');
 
                           DocumentSnapshot document = res.docs[0];
                           Map<String, dynamic> data =
@@ -888,39 +874,6 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
                   Reservation freshReservation =
                       Fresh.freshReservation(widget.reservation);
                   FirestoreHelper.pushReservation(freshReservation);
-
-                  //todo: need to implement this soon
-                  // if (hasUserChanged) {
-                  //   blocUser.User freshUser = Fresh.freshUser(bloc_user);
-                  //   if(freshUser.id == UserPreferences.myUser.id){
-                  //     UserPreferences.setUser(freshUser);
-                  //   }
-                  //   FirestoreHelper.pushUser(freshUser);
-                  // }
-
-                  // need to see if the user already has a guest request
-                  //   widget.partyGuest.guestId = bloc_user.id;
-                  //
-                  //   FirestoreHelper.pullPartyGuestByUser(
-                  //       widget.partyGuest.guestId, widget.partyGuest.partyId)
-                  //       .then((res) {
-                  //     Logx.i(_TAG, 'pulled in party guest by user');
-                  //
-                  //     if (res.docs.isEmpty || widget.task == 'edit'  || widget.task == 'manage') {
-                  //       // user has not requested for party guest list, approve
-                  //       PartyGuest freshPartyGuest =
-                  //       Fresh.freshPartyGuest(widget.partyGuest);
-                  //       FirestoreHelper.pushPartyGuest(freshPartyGuest);
-                  //
-                  //       Logx.i(_TAG, 'guest list request in box office');
-                  //       Toaster.longToast('guest list request in box office');
-                  //     } else {
-                  //       //already requested
-                  //       Logx.i(_TAG, 'duplicate guest list request');
-                  //       Toaster.longToast(
-                  //           'guest list has already been requested');
-                  //     }
-                  //   });
                 }
 
                 Navigator.of(ctx).pop();
