@@ -1,9 +1,11 @@
 import 'dart:convert';
 
+import 'package:bloc/db/shared_preferences/user_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 import '../../helpers/firestore_helper.dart';
+import '../ui/toaster.dart';
 
 class NewMessage extends StatefulWidget {
   String? _token;
@@ -76,7 +78,7 @@ class _NewMessageState extends State<NewMessage> {
               textCapitalization: TextCapitalization.sentences,
               autocorrect: true,
               enableSuggestions: true,
-              decoration: InputDecoration(labelText: 'Send a message...'),
+              decoration: InputDecoration(labelText: 'send a message...'),
               onChanged: (value) {
                 setState(() {
                   _enteredMessage = value;
@@ -86,9 +88,22 @@ class _NewMessageState extends State<NewMessage> {
           ),
           IconButton(
             color: Theme.of(context).primaryColor,
-            icon: Icon(Icons.send),
+            icon: const Icon(Icons.send),
             // null means the button will be disabled
-            onPressed: _enteredMessage.trim().isEmpty ? null : _sendMessage,
+            onPressed: () {
+              if(UserPreferences.isUserLoggedIn()){
+                if(_enteredMessage.trim().isEmpty) {
+                  null;
+                } else {
+                  FocusScope.of(context).unfocus();
+                  FirestoreHelper.sendChatMessage(_enteredMessage);
+                  _controller.clear();
+                }
+              } else {
+                Toaster.longToast('log in to chat in the community');
+              }
+
+            }
           )
         ],
       ),

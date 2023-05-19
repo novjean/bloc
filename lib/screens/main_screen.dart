@@ -1,4 +1,5 @@
 import 'package:bloc/db/entity/user.dart' as blocUser;
+import 'package:bloc/screens/chat/chat_home_screen.dart';
 import 'package:bloc/screens/profile/profile_login_screen.dart';
 import 'package:bloc/utils/constants.dart';
 import 'package:bloc/widgets/app_drawer.dart';
@@ -12,6 +13,7 @@ import '../helpers/firestore_helper.dart';
 import '../helpers/fresh.dart';
 import '../main.dart';
 import '../utils/logx.dart';
+import 'chat/chat_screen.dart';
 import 'home_screen.dart';
 import 'parties/party_screen.dart';
 import 'profile/profile_add_edit_register_page.dart';
@@ -37,7 +39,7 @@ class _MainScreenState extends State<MainScreen> {
   List icons = [
     Icons.home,
     Icons.whatshot_sharp,
-    // Icons.notifications,
+    Icons.notifications,
     Icons.person,
   ];
 
@@ -157,7 +159,8 @@ class _MainScreenState extends State<MainScreen> {
       HomeScreen(),
       // OfferScreen(),
       PartyScreen(),
-      // ChatScreen(),
+      // ChatHomeScreen(),
+      ChatScreen(),
       UserPreferences.isUserLoggedIn() ? ProfilePage() : ProfileLoginScreen(),
     ];
 
@@ -201,12 +204,12 @@ class _MainScreenState extends State<MainScreen> {
         //   )
         // ],
       ),
-      drawer: AppDrawer(),
+      drawer: const AppDrawer(),
       body: PageView(
         physics: const NeverScrollableScrollPhysics(),
         controller: _pageController,
         onPageChanged: onPageChanged,
-        children: List.generate(3, (index) => pages[index]),
+        children: List.generate(4, (index) => pages[index]),
       ),
       bottomNavigationBar: BottomAppBar(
         elevation: 1,
@@ -220,7 +223,7 @@ class _MainScreenState extends State<MainScreen> {
             buildTabIcon(0),
             buildTabIcon(1),
             buildTabIcon(2),
-            // buildTabIcon(3),
+            buildTabIcon(3),
             // SizedBox(width: 7),
           ],
         ),
@@ -253,7 +256,7 @@ class _MainScreenState extends State<MainScreen> {
         ),
         color: _page == index
             ? Theme.of(context).highlightColor
-            : Theme.of(context).backgroundColor,
+            : Constants.background,
         onPressed: () => _pageController.jumpToPage(index),
       ),
     );

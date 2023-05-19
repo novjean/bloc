@@ -96,10 +96,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 final Bloc bloc = Fresh.freshBlocMap(data, false);
                 blocs.add(bloc);
 
-                setState(() {
-                  mBlocs = blocs;
-                  _isBlocsLoading = false;
-                });
+                if(mounted) {
+                  setState(() {
+                    mBlocs = blocs;
+                    _isBlocsLoading = false;
+                  });
+                }
               }
             } else {
               Logx.em(_TAG, 'no blocs found!!!');

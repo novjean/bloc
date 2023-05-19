@@ -33,18 +33,29 @@ class Messages extends StatelessWidget {
               return _displayChats(context, chats);
             }
           }
-          return Text('Loading chats...');
+          return Text('loading chats...');
         });
+  }
+
+  ScrollController _scrollController = ScrollController();
+
+  _scrollToBottom() {
+    _scrollController.animateTo(
+        _scrollController.position.maxScrollExtent,
+        duration: const Duration(seconds: 1),
+        curve: Curves.linear);
   }
 
   _displayChats(
       BuildContext context, List<Chat> chats) {
     final user = FirebaseAuth.instance.currentUser;
 
-    return Container(
-      height: MediaQuery.of(context).size.height,
+    WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToBottom());
+
+    return Expanded(
       child: ListView.builder(
           itemCount: chats.length,
+          controller: _scrollController,
           scrollDirection: Axis.vertical,
           itemBuilder: (ctx, index) {
             return GestureDetector(

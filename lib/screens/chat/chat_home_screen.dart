@@ -15,33 +15,6 @@ class _ChatHomeScreenState extends State<ChatHomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).primaryColor,
-      // appBar: AppBar(
-      //   leading: IconButton(
-      //     icon:const Icon(
-      //       Icons.menu,
-      //     ),
-      //     onPressed: (){},
-      //   ),
-      //   title:Row(
-      //     mainAxisAlignment: MainAxisAlignment.center,
-      //     children:const[
-      //       Text("Chatting App",
-      //         style: TextStyle(
-      //             fontSize: 19.0,
-      //             fontWeight: FontWeight.bold
-      //         ),  ),
-      //     ],
-      //   ),
-      //   elevation: 0.0,
-      //   actions: <Widget>[
-      //     IconButton(
-      //       icon:const Icon(
-      //         Icons.search,
-      //       ),
-      //       onPressed: (){},
-      //     ),
-      //   ],
-      // ),
       body: Column(
         children: <Widget>[
           // const  CategorySelector(),

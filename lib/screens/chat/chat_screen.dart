@@ -29,15 +29,13 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        child: Column(
-          children: [
-            Expanded(
-              child: Messages(),
-            ),
-            NewMessage(_token),
-          ],
-        ),
+      body: Column(
+        children: [
+          Expanded(
+            child: Messages(),
+          ),
+          NewMessage(_token),
+        ],
       ),
     );
   }
