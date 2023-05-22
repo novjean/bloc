@@ -1,16 +1,17 @@
 import 'package:barcode_widget/barcode_widget.dart';
 import 'package:bloc/db/entity/party_guest.dart';
+import 'package:bloc/db/shared_preferences/user_preferences.dart';
 import 'package:bloc/helpers/firestore_helper.dart';
 import 'package:bloc/widgets/ui/dark_button_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 
 import '../../db/entity/party.dart';
-import '../../db/shared_preferences/user_preferences.dart';
 import '../../screens/parties/party_guest_add_edit_manage_screen.dart';
 import '../../utils/constants.dart';
 import '../../utils/date_time_utils.dart';
 import '../ui/button_widget.dart';
+import '../ui/toaster.dart';
 
 class BoxOfficeItem extends StatefulWidget {
   final PartyGuest partyGuest;
@@ -77,6 +78,7 @@ class _BoxOfficeItemState extends State<BoxOfficeItem> {
                               ),
                               textAlign: TextAlign.left,
                             ),
+                            UserPreferences.myUser.clearanceLevel >= Constants.PROMOTER_LEVEL?
                             ToggleSwitch(
                               customWidths: [40.0, 40.0],
                               cornerRadius: 20.0,
@@ -97,7 +99,7 @@ class _BoxOfficeItemState extends State<BoxOfficeItem> {
                                   FirestoreHelper.pushPartyGuest(widget.partyGuest);
                                 }
                               },
-                            ),
+                            ): const SizedBox(),
                           ],
                         ),
                       ),
@@ -138,6 +140,7 @@ class _BoxOfficeItemState extends State<BoxOfficeItem> {
                                             widget.partyGuest.guestStatus
                                     : 'pending')),
                           ),
+                          displayBanUserButton(context),
                           displayEntryEditButton(context),
                         ],
                       ),
@@ -190,9 +193,7 @@ class _BoxOfficeItemState extends State<BoxOfficeItem> {
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
                                   Text(
-                                    widget.party.eventName +
-                                        ' | ' +
-                                        widget.party.name,
+                                    '${widget.party.eventName} | ${widget.party.name}',
                                     style: TextStyle(fontSize: 18),
                                   ),
                                 ],
@@ -247,7 +248,7 @@ class _BoxOfficeItemState extends State<BoxOfficeItem> {
               },
             )
           : ButtonWidget(
-              text: 'edit\nrequest',
+              text: '✏️ edit',
               onClicked: () {
                 Navigator.of(context).push(MaterialPageRoute(
                     builder: (ctx) => PartyGuestAddEditManageScreen(
@@ -257,6 +258,29 @@ class _BoxOfficeItemState extends State<BoxOfficeItem> {
                         )));
               },
             ),
+    );
+  }
+
+  displayBanUserButton(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 5),
+      child: !widget.partyGuest.shouldBanUser
+          ? DarkButtonWidget(
+        text: '🚷 ban',
+        onClicked: () {
+          widget.partyGuest.shouldBanUser = true;
+          FirestoreHelper.pushPartyGuest(widget.partyGuest);
+          Toaster.longToast('request to ban has been sent');
+        },
+      )
+          : ButtonWidget(
+        text: '️🤝 free',
+        onClicked: () {
+          widget.partyGuest.shouldBanUser = false;
+          FirestoreHelper.pushPartyGuest(widget.partyGuest);
+          Toaster.longToast('request to ban has been canceled');
+        },
+      ),
     );
   }
 }

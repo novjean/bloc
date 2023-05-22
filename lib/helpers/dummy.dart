@@ -188,6 +188,7 @@ class Dummy {
         isApproved: false,
         guestStatus: 'couple',
         isChallengeClicked: false,
+        shouldBanUser: false,
         gender: 'male');
     return dummyGuest;
   }

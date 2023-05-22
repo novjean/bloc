@@ -14,6 +14,7 @@ class PartyGuest {
   final int createdAt;
   final bool isChallengeClicked;
   final bool isApproved;
+  bool shouldBanUser;
 
   String guestStatus;
 
@@ -32,6 +33,7 @@ class PartyGuest {
     required this.createdAt,
     required this.isChallengeClicked,
     required this.isApproved,
+    required this.shouldBanUser,
     required this.guestStatus,
   });
 
@@ -53,6 +55,7 @@ class PartyGuest {
           createdAt == other.createdAt &&
           isChallengeClicked == other.isChallengeClicked &&
           isApproved == other.isApproved &&
+          shouldBanUser == other.shouldBanUser &&
           guestStatus == other.guestStatus);
 
   @override
@@ -70,6 +73,7 @@ class PartyGuest {
       createdAt.hashCode ^
       isChallengeClicked.hashCode ^
       isApproved.hashCode ^
+      shouldBanUser.hashCode ^
       guestStatus.hashCode;
 
   @override
@@ -88,6 +92,7 @@ class PartyGuest {
         ' createdAt: $createdAt,' +
         ' isChallengeClicked: $isChallengeClicked,' +
         ' isApproved: $isApproved,' +
+        ' shouldBanUser: $shouldBanUser,' +
         ' guestStatus: $guestStatus,' +
         '}';
   }
@@ -106,6 +111,7 @@ class PartyGuest {
     int? createdAt,
     bool? isChallengeClicked,
     bool? isApproved,
+    bool? shouldBanUser,
     String? guestStatus,
   }) {
     return PartyGuest(
@@ -122,6 +128,7 @@ class PartyGuest {
       createdAt: createdAt ?? this.createdAt,
       isChallengeClicked: isChallengeClicked ?? this.isChallengeClicked,
       isApproved: isApproved ?? this.isApproved,
+      shouldBanUser: shouldBanUser ?? this.shouldBanUser,
       guestStatus: guestStatus ?? this.guestStatus,
     );
   }
@@ -141,6 +148,7 @@ class PartyGuest {
       'createdAt': this.createdAt,
       'isChallengeClicked': this.isChallengeClicked,
       'isApproved': this.isApproved,
+      'shouldBanUser': this.shouldBanUser,
       'guestStatus': this.guestStatus,
     };
   }
@@ -160,6 +168,7 @@ class PartyGuest {
       createdAt: map['createdAt'] as int,
       isChallengeClicked: map['isChallengeClicked'] as bool,
       isApproved: map['isApproved'] as bool,
+      shouldBanUser: map['shouldBanUser'] as bool,
       guestStatus: map['guestStatus'] as String,
     );
   }

@@ -45,6 +45,29 @@ class PartyGuestItem extends StatelessWidget {
                         title,
                         style: const TextStyle(fontSize: 18),
                       ),
+                      partyGuest.shouldBanUser?
+                      SizedBox.fromSize(
+                        size: const Size(25, 25),
+                        child: ClipOval(
+                          child: Material(
+                            color: Colors.redAccent,
+                            child: InkWell(
+                              splashColor: Colors.red,
+                              onTap: () {
+                                // here we should write the ban user
+                                
+
+                              },
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: const <Widget>[
+                                  Icon(Icons.dangerous),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ): const SizedBox(),
                       Text(' ${DateTimeUtils.getFormattedDateString(
                           partyGuest.createdAt)}'),
                     ],
