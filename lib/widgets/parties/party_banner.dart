@@ -55,8 +55,6 @@ class PartyBanner extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-
-
                       Padding(
                         padding: const EdgeInsets.only(left: 5.0),
                         child: RichText(

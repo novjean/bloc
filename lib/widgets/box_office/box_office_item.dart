@@ -1,10 +1,14 @@
 import 'package:barcode_widget/barcode_widget.dart';
 import 'package:bloc/db/entity/party_guest.dart';
+import 'package:bloc/helpers/firestore_helper.dart';
 import 'package:bloc/widgets/ui/dark_button_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:toggle_switch/toggle_switch.dart';
 
 import '../../db/entity/party.dart';
+import '../../db/shared_preferences/user_preferences.dart';
 import '../../screens/parties/party_guest_add_edit_manage_screen.dart';
+import '../../utils/constants.dart';
 import '../../utils/date_time_utils.dart';
 import '../ui/button_widget.dart';
 
@@ -60,15 +64,41 @@ class _BoxOfficeItemState extends State<BoxOfficeItem> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Container(
-                        padding: const EdgeInsets.only(top: 3, left: 5.0),
-                        child: Text(
-                          title,
-                          style: const TextStyle(
-                            fontSize: 24.0,
-                            fontWeight: FontWeight.w800,
-                          ),
-                          textAlign: TextAlign.left,
+                      Padding(
+                        padding: const EdgeInsets.only(left: 5.0, right: 5, top: 3),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              title,
+                              style: const TextStyle(
+                                fontSize: 24.0,
+                                fontWeight: FontWeight.w800,
+                              ),
+                              textAlign: TextAlign.left,
+                            ),
+                            ToggleSwitch(
+                              customWidths: [40.0, 40.0],
+                              cornerRadius: 20.0,
+                              activeBgColors: [[Constants.background], [Colors.redAccent]],
+                              activeFgColor: Colors.white,
+                              inactiveBgColor: Colors.grey,
+                              inactiveFgColor: Colors.white,
+                              initialLabelIndex: widget.partyGuest.guestsRemaining==0?0:1,
+                              totalSwitches: 2,
+                              labels: ['👍🏼', '👎🏼'],
+                              onToggle: (index) {
+                                print('switched to: $index');
+                                if(index == 0){
+                                  widget.partyGuest.guestsRemaining = 0;
+                                  FirestoreHelper.pushPartyGuest(widget.partyGuest);
+                                } else {
+                                  widget.partyGuest.guestsRemaining = widget.partyGuest.guestsCount;
+                                  FirestoreHelper.pushPartyGuest(widget.partyGuest);
+                                }
+                              },
+                            ),
+                          ],
                         ),
                       ),
                       widget.party.eventName.isNotEmpty
@@ -143,7 +173,7 @@ class _BoxOfficeItemState extends State<BoxOfficeItem> {
       padding: const EdgeInsets.only(right: 5, bottom: 5),
       child: widget.partyGuest.isApproved
           ? DarkButtonWidget(
-              text: 'entry\ncode',
+              text: 'entry 🎟',
               onClicked: () {
                 showDialog(
                   context: context,
@@ -186,20 +216,14 @@ class _BoxOfficeItemState extends State<BoxOfficeItem> {
                                   Align(
                                     alignment: Alignment.centerRight,
                                     child: Text(
-                                      widget.partyGuest.guestStatus +
-                                          ' entry. ' +
-                                          widget.partyGuest.guestsRemaining
-                                              .toString() +
-                                          ' guests remaining',
+                                      '${widget.partyGuest.guestStatus} entry. ${widget.partyGuest.guestsRemaining} guests remaining',
                                       style: const TextStyle(fontSize: 16),
                                     ),
                                   ),
                                   Align(
                                     alignment: Alignment.centerRight,
                                     child: Text(
-                                      'valid until ' +
-                                          DateTimeUtils.getFormattedTime(
-                                              widget.party.guestListEndTime),
+                                      'valid until ${DateTimeUtils.getFormattedTime(widget.party.guestListEndTime)}',
                                       style: TextStyle(fontSize: 16),
                                     ),
                                   ),
