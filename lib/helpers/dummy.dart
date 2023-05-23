@@ -1,6 +1,7 @@
 import 'package:bloc/db/entity/category.dart';
 import 'package:bloc/db/entity/challenge.dart';
 import 'package:bloc/db/entity/guest_wifi.dart';
+import 'package:bloc/db/entity/history_music.dart';
 import 'package:bloc/db/entity/party_guest.dart';
 import 'package:bloc/db/entity/reservation.dart';
 import 'package:bloc/db/entity/service_table.dart';
@@ -117,6 +118,12 @@ class Dummy {
         blocServiceId: blocServiceId,
         creationTime: Timestamp.now().millisecondsSinceEpoch);
     return dummyWifi;
+  }
+
+  static HistoryMusic getDummyHistoryMusic() {
+    HistoryMusic dummy = HistoryMusic(
+        id: StringUtils.getRandomString(28), userId: '', genre: '', count: 0);
+    return dummy;
   }
 
   static Offer getDummyOffer() {

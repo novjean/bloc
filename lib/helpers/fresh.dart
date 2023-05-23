@@ -1,3 +1,4 @@
+import 'package:bloc/db/entity/history_music.dart';
 import 'package:bloc/db/entity/party_guest.dart';
 
 import '../db/entity/ad.dart';
@@ -584,6 +585,72 @@ class Fresh {
     }
 
     return freshGenre;
+  }
+
+  /** history music **/
+  static HistoryMusic freshHistoryMusicMap(
+      Map<String, dynamic> map, bool shouldUpdate) {
+    HistoryMusic historyMusic = Dummy.getDummyHistoryMusic();
+
+    bool shouldPush = true;
+
+    try {
+      historyMusic = historyMusic.copyWith(id: map['id'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'historyMusic id not exist');
+    }
+    try {
+      historyMusic = historyMusic.copyWith(userId: map['userId'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'historyMusic userId not exist for id: ${historyMusic.id}');
+      shouldPush = true;
+    }
+    try {
+      historyMusic = historyMusic.copyWith(genre: map['genre'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'historyMusic genre not exist for id: ${historyMusic.id}');
+      shouldPush = true;
+    }
+    try {
+      historyMusic = historyMusic.copyWith(count: map['count'] as int);
+    } catch (e) {
+      Logx.em(_TAG, 'historyMusic count not exist for id: ${historyMusic.id}');
+      shouldPush = true;
+    }
+
+    if (shouldPush && shouldUpdate) {
+      Logx.i(_TAG, 'updating history music ${historyMusic.id}');
+      FirestoreHelper.pushHistoryMusic(historyMusic);
+    }
+
+    return historyMusic;
+  }
+
+  static HistoryMusic freshHistoryMusic(HistoryMusic historyMusic) {
+    HistoryMusic fresh = Dummy.getDummyHistoryMusic();
+
+    try {
+      fresh = fresh.copyWith(id: historyMusic.id);
+    } catch (e) {
+      Logx.em(_TAG, 'historyMusic id not exist');
+    }
+    try {
+      fresh = fresh.copyWith(userId: historyMusic.userId);
+    } catch (e) {
+      Logx.em(_TAG, 'historyMusic userId not exist for id: ${historyMusic.id}');
+    }
+    try {
+      fresh = fresh.copyWith(genre: historyMusic.genre);
+    } catch (e) {
+      Logx.em(_TAG, 'historyMusic genre not exist for id: ${historyMusic.id}');
+    }
+    try {
+      fresh = fresh.copyWith(count: historyMusic.count);
+    } catch (e) {
+      Logx.em(_TAG, 'historyMusic count not exist for id: ${historyMusic.id}');
+    }
+
+    return fresh;
   }
 
   /** party **/

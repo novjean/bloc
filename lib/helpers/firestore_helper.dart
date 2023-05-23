@@ -7,6 +7,7 @@ import 'package:bloc/db/entity/category.dart';
 import 'package:bloc/db/entity/challenge.dart';
 import 'package:bloc/db/entity/genre.dart';
 import 'package:bloc/db/entity/guest_wifi.dart';
+import 'package:bloc/db/entity/history_music.dart';
 import 'package:bloc/db/entity/offer.dart';
 import 'package:bloc/db/entity/order_bloc.dart';
 import 'package:bloc/db/entity/party.dart';
@@ -46,6 +47,7 @@ class FirestoreHelper {
   static String CITIES = 'cities';
   static String GENRES = 'genres';
   static String GUEST_WIFIS = 'guest_wifis';
+  static String HISTORY_MUSIC = 'history_music';
   static String INVENTORY_OPTIONS = 'inventory_options';
   static String MANAGER_SERVICES = 'manager_services';
   static String MANAGER_SERVICE_OPTIONS = 'manager_service_options';
@@ -512,6 +514,32 @@ class FirestoreHelper {
     }
   }
 
+  /** history music **/
+  static void pushHistoryMusic(HistoryMusic historyMusic) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection(HISTORY_MUSIC)
+          .doc(historyMusic.id)
+          .set(historyMusic.toMap());
+    } on PlatformException catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } on Exception catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } catch (e) {
+      logger.e(e);
+    }
+  }
+
+  static Future<QuerySnapshot<Map<String, dynamic>>> pullHistoryMusic(String userId, String genre) {
+    return FirebaseFirestore.instance
+        .collection(FirestoreHelper.HISTORY_MUSIC)
+        .where('userId', isEqualTo: userId)
+        .where('genre', isEqualTo: genre)
+        .limit(1)
+        .get();
+  }
+
+
   /** inventory options **/
   static Stream<QuerySnapshot<Object?>> getInventoryOptions() {
     return FirebaseFirestore.instance
@@ -682,16 +710,16 @@ class FirestoreHelper {
         .snapshots();
   }
 
-  static Future<QuerySnapshot<Map<String, dynamic>>> pullUpcomingPartyByEndTime(
-      int timeNow) {
-    return FirebaseFirestore.instance
-        .collection(FirestoreHelper.PARTIES)
-        .where('endTime', isGreaterThan: timeNow)
-        .where('isActive', isEqualTo: true)
-        .orderBy('endTime', descending: false)
-        .limit(1)
-        .get();
-  }
+  // static Future<QuerySnapshot<Map<String, dynamic>>> pullUpcomingPartyByEndTime(
+  //     int timeNow) {
+  //   return FirebaseFirestore.instance
+  //       .collection(FirestoreHelper.PARTIES)
+  //       .where('endTime', isGreaterThan: timeNow)
+  //       .where('isActive', isEqualTo: true)
+  //       .orderBy('endTime', descending: false)
+  //       .limit(1)
+  //       .get();
+  // }
 
   static void deleteParty(Party party) {
     FirebaseFirestore.instance
@@ -1416,5 +1444,6 @@ class FirestoreHelper {
         .orderBy('level', descending: false)
         .get();
   }
+
 
 }

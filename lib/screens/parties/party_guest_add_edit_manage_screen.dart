@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:bloc/db/entity/history_music.dart';
 import 'package:bloc/db/entity/reservation.dart';
 import 'package:bloc/utils/date_time_utils.dart';
 import 'package:bloc/widgets/ui/dark_button_widget.dart';
@@ -741,6 +742,13 @@ class _PartyGuestAddEditManageScreenState
                   PartyGuest freshPartyGuest =
                       Fresh.freshPartyGuest(widget.partyGuest);
                   FirestoreHelper.pushPartyGuest(freshPartyGuest);
+
+                  HistoryMusic historyMusic = Dummy.getDummyHistoryMusic();
+                  historyMusic.userId = widget.partyGuest.guestId;
+                  historyMusic.genre = widget.party.genre;
+                  historyMusic.count = 1;
+                  FirestoreHelper.pushHistoryMusic(historyMusic);
+
                 } else {
                   if (hasUserChanged) {
                     blocUser.User freshUser = Fresh.freshUser(bloc_user);
@@ -768,6 +776,26 @@ class _PartyGuestAddEditManageScreenState
 
                       Logx.i(_TAG, 'guest list request in box office');
                       Toaster.longToast('guest list request in box office');
+
+                      FirestoreHelper.pullHistoryMusic(widget.partyGuest.guestId, widget.party.genre)
+                          .then((res) {
+                            if(res.docs.isEmpty){
+                              // no history, add new one
+                              HistoryMusic historyMusic = Dummy.getDummyHistoryMusic();
+                              historyMusic.userId = widget.partyGuest.guestId;
+                              historyMusic.genre = widget.party.genre;
+                              historyMusic.count = 1;
+                              FirestoreHelper.pushHistoryMusic(historyMusic);
+                            } else {
+                              for (int i = 0; i < res.docs.length; i++) {
+                                DocumentSnapshot document = res.docs[i];
+                                Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+                                final HistoryMusic historyMusic = Fresh.freshHistoryMusicMap(data, false);
+                                historyMusic.count++;
+                                FirestoreHelper.pushHistoryMusic(historyMusic);
+                              }
+                            }
+                      });
                     } else {
                       //already requested
                       Logx.i(_TAG, 'duplicate guest list request');
