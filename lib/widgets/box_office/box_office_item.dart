@@ -66,7 +66,8 @@ class _BoxOfficeItemState extends State<BoxOfficeItem> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Padding(
-                        padding: const EdgeInsets.only(left: 5.0, right: 5, top: 3),
+                        padding:
+                            const EdgeInsets.only(left: 5.0, right: 5, top: 3),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -78,28 +79,39 @@ class _BoxOfficeItemState extends State<BoxOfficeItem> {
                               ),
                               textAlign: TextAlign.left,
                             ),
-                            UserPreferences.myUser.clearanceLevel >= Constants.PROMOTER_LEVEL?
-                            ToggleSwitch(
-                              customWidths: [40.0, 40.0],
-                              cornerRadius: 20.0,
-                              activeBgColors: [[Constants.background], [Colors.redAccent]],
-                              activeFgColor: Colors.white,
-                              inactiveBgColor: Colors.grey,
-                              inactiveFgColor: Colors.white,
-                              initialLabelIndex: widget.partyGuest.guestsRemaining==0?0:1,
-                              totalSwitches: 2,
-                              labels: ['👍🏼', '👎🏼'],
-                              onToggle: (index) {
-                                print('switched to: $index');
-                                if(index == 0){
-                                  widget.partyGuest.guestsRemaining = 0;
-                                  FirestoreHelper.pushPartyGuest(widget.partyGuest);
-                                } else {
-                                  widget.partyGuest.guestsRemaining = widget.partyGuest.guestsCount;
-                                  FirestoreHelper.pushPartyGuest(widget.partyGuest);
-                                }
-                              },
-                            ): const SizedBox(),
+                            UserPreferences.myUser.clearanceLevel >=
+                                    Constants.PROMOTER_LEVEL
+                                ? ToggleSwitch(
+                                    customWidths: [40.0, 40.0],
+                                    cornerRadius: 20.0,
+                                    activeBgColors: [
+                                      [Constants.background],
+                                      [Colors.redAccent]
+                                    ],
+                                    activeFgColor: Colors.white,
+                                    inactiveBgColor: Colors.grey,
+                                    inactiveFgColor: Colors.white,
+                                    initialLabelIndex:
+                                        widget.partyGuest.guestsRemaining == 0
+                                            ? 0
+                                            : 1,
+                                    totalSwitches: 2,
+                                    labels: ['👍🏼', '👎🏼'],
+                                    onToggle: (index) {
+                                      print('switched to: $index');
+                                      if (index == 0) {
+                                        widget.partyGuest.guestsRemaining = 0;
+                                        FirestoreHelper.pushPartyGuest(
+                                            widget.partyGuest);
+                                      } else {
+                                        widget.partyGuest.guestsRemaining =
+                                            widget.partyGuest.guestsCount;
+                                        FirestoreHelper.pushPartyGuest(
+                                            widget.partyGuest);
+                                      }
+                                    },
+                                  )
+                                : const SizedBox(),
                           ],
                         ),
                       ),
@@ -140,8 +152,11 @@ class _BoxOfficeItemState extends State<BoxOfficeItem> {
                                             widget.partyGuest.guestStatus
                                     : 'pending')),
                           ),
-                          displayBanUserButton(context),
-                          displayEntryEditButton(context),
+                          Spacer(),
+                          UserPreferences.myUser.clearanceLevel>=Constants.PROMOTER_LEVEL?
+                          displayBanUserButton(context) : const SizedBox(),
+                          UserPreferences.myUser.clearanceLevel>=Constants.PROMOTER_LEVEL?
+                          displayEntryEditButton(context):displayUserEntryEditButton(context),
                         ],
                       ),
                     ],
@@ -171,116 +186,257 @@ class _BoxOfficeItemState extends State<BoxOfficeItem> {
     );
   }
 
-  displayEntryEditButton(BuildContext context) {
+  displayUserEntryEditButton(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(right: 5, bottom: 5),
       child: widget.partyGuest.isApproved
           ? DarkButtonWidget(
-              text: 'entry 🎟',
-              onClicked: () {
-                showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return AlertDialog(
-                      contentPadding: const EdgeInsets.all(16.0),
-                      content: SizedBox(
-                        height: 300,
-                        child: Column(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(bottom: 20),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    '${widget.party.eventName} | ${widget.party.name}',
-                                    style: TextStyle(fontSize: 18),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Center(
-                                child: BarcodeWidget(
-                              color: Theme.of(context).primaryColorDark,
-                              barcode: Barcode.qrCode(),
-                              // Barcode type and settings
-                              data: widget.partyGuest.id,
-                              // Content
-                              width: 200,
-                              height: 200,
-                            )),
-                            Padding(
-                              padding: const EdgeInsets.only(top: 20),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Align(
-                                    alignment: Alignment.centerRight,
-                                    child: Text(
-                                      '${widget.partyGuest.guestStatus} entry. ${widget.partyGuest.guestsRemaining} guests remaining',
-                                      style: const TextStyle(fontSize: 16),
-                                    ),
-                                  ),
-                                  Align(
-                                    alignment: Alignment.centerRight,
-                                    child: Text(
-                                      'valid until ${DateTimeUtils.getFormattedTime(widget.party.guestListEndTime)}',
-                                      style: TextStyle(fontSize: 16),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      actions: [
-                        TextButton(
-                          child: const Text("close"),
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                        ),
-                      ],
-                    );
-                  },
-                );
-              },
+        text: '🎟 entry',
+        onClicked: () {
+          showTicketEntryDialog(context);
+          // showDialog(
+          //   context: context,
+          //   builder: (BuildContext context) {
+          //     return AlertDialog(
+          //       contentPadding: const EdgeInsets.all(16.0),
+          //       content: SizedBox(
+          //         height: 300,
+          //         child: Column(
+          //           children: [
+          //             Padding(
+          //               padding: const EdgeInsets.only(bottom: 20),
+          //               child: Row(
+          //                 mainAxisAlignment: MainAxisAlignment.start,
+          //                 children: [
+          //                   Text(
+          //                     '${widget.party.eventName} | ${widget.party.name}',
+          //                     style: TextStyle(fontSize: 18),
+          //                   ),
+          //                 ],
+          //               ),
+          //             ),
+          //             Center(
+          //                 child: BarcodeWidget(
+          //                   color: Theme.of(context).primaryColorDark,
+          //                   barcode: Barcode.qrCode(),
+          //                   // Barcode type and settings
+          //                   data: widget.partyGuest.id,
+          //                   // Content
+          //                   width: 200,
+          //                   height: 200,
+          //                 )),
+          //             Padding(
+          //               padding: const EdgeInsets.only(top: 20),
+          //               child: Column(
+          //                 mainAxisAlignment: MainAxisAlignment.start,
+          //                 children: [
+          //                   Align(
+          //                     alignment: Alignment.centerRight,
+          //                     child: Text(
+          //                       '${widget.partyGuest.guestStatus} entry. ${widget.partyGuest.guestsRemaining} guests remaining',
+          //                       style: const TextStyle(fontSize: 16),
+          //                     ),
+          //                   ),
+          //                   Align(
+          //                     alignment: Alignment.centerRight,
+          //                     child: Text(
+          //                       'valid until ${DateTimeUtils.getFormattedTime(widget.party.guestListEndTime)}',
+          //                       style: TextStyle(fontSize: 16),
+          //                     ),
+          //                   ),
+          //                 ],
+          //               ),
+          //             ),
+          //           ],
+          //         ),
+          //       ),
+          //       actions: [
+          //         TextButton(
+          //           child: const Text("close"),
+          //           onPressed: () {
+          //             Navigator.of(context).pop();
+          //           },
+          //         ),
+          //       ],
+          //     );
+          //   },
+          // );
+        },
+      ): ButtonWidget(
+        text: '✏️ edit',
+        onClicked: () {
+          Navigator.of(context).push(MaterialPageRoute(
+              builder: (ctx) => PartyGuestAddEditManageScreen(
+                partyGuest: widget.partyGuest,
+                party: widget.party,
+                task: 'edit',
+              )));
+        },
+      ),
+    );
+  }
+
+  displayEntryEditButton(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(right: 5, bottom: 5),
+      child: widget.partyGuest.isApproved
+          ? SizedBox(
+              height: 50,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Theme.of(context).primaryColorDark,
+                  shape: const CircleBorder(),
+                  foregroundColor: Colors.white,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
+                ),
+                child: const Text(
+                  '🎟',
+                  style: TextStyle(fontSize: 18),
+                ),
+                onPressed: () {
+                  showTicketEntryDialog(context);
+                },
+              ),
             )
-          : ButtonWidget(
-              text: '✏️ edit',
-              onClicked: () {
-                Navigator.of(context).push(MaterialPageRoute(
-                    builder: (ctx) => PartyGuestAddEditManageScreen(
-                          partyGuest: widget.partyGuest,
-                          party: widget.party,
-                          task: 'edit',
-                        )));
-              },
-            ),
+          : SizedBox(
+        height: 50,
+        child: ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Theme.of(context).primaryColorDark,
+            shape: const CircleBorder(),
+            foregroundColor: Colors.white,
+            padding:
+            const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
+          ),
+          child: const Text(
+            '✏️',
+            style: TextStyle(fontSize: 18),
+          ),
+          onPressed: () {
+            Navigator.of(context).push(MaterialPageRoute(
+                builder: (ctx) => PartyGuestAddEditManageScreen(
+                  partyGuest: widget.partyGuest,
+                  party: widget.party,
+                  task: 'edit',
+                )));
+          },
+        ),
+      )
     );
   }
 
   displayBanUserButton(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 5),
-      child: !widget.partyGuest.shouldBanUser
-          ? DarkButtonWidget(
-        text: '🚷 ban',
-        onClicked: () {
-          widget.partyGuest.shouldBanUser = true;
-          FirestoreHelper.pushPartyGuest(widget.partyGuest);
-          Toaster.longToast('request to ban has been sent');
-        },
-      )
-          : ButtonWidget(
-        text: '️🤝 free',
-        onClicked: () {
-          widget.partyGuest.shouldBanUser = false;
-          FirestoreHelper.pushPartyGuest(widget.partyGuest);
-          Toaster.longToast('request to ban has been canceled');
-        },
-      ),
+        padding: const EdgeInsets.only(bottom: 5),
+        child: !widget.partyGuest.shouldBanUser
+            ? SizedBox(
+                height: 50,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Theme.of(context).primaryColorDark,
+                    shape: const CircleBorder(),
+                    foregroundColor: Colors.white,
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
+                  ),
+                  child: const Text(
+                    '🚷',
+                    style: TextStyle(fontSize: 18),
+                  ),
+                  onPressed: () {
+                    widget.partyGuest.shouldBanUser = true;
+                    FirestoreHelper.pushPartyGuest(widget.partyGuest);
+                    Toaster.longToast('request to ban has been sent');
+                  },
+                ),
+              )
+            : SizedBox(
+                height: 50,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Theme.of(context).primaryColorDark,
+                    shape: const CircleBorder(),
+                    foregroundColor: Colors.white,
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
+                  ),
+                  child: const Text(
+                    '🤝',
+                    style: TextStyle(fontSize: 18),
+                  ),
+                  onPressed: () {
+                    widget.partyGuest.shouldBanUser = false;
+                    FirestoreHelper.pushPartyGuest(widget.partyGuest);
+                    Toaster.longToast('request to ban has been canceled');
+                  },
+                ),
+              ));
+  }
+
+  showTicketEntryDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          contentPadding: const EdgeInsets.all(16.0),
+          content: SizedBox(
+            height: 300,
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 20),
+                  child: Text(
+                    '${widget.party.eventName} | ${widget.party.name}',
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(fontSize: 18),
+                  ),
+                ),
+                Center(
+                    child: BarcodeWidget(
+                      color: Theme.of(context).primaryColorDark,
+                      barcode: Barcode.qrCode(),
+                      // Barcode type and settings
+                      data: widget.partyGuest.id,
+                      // Content
+                      width: 200,
+                      height: 200,
+                    )),
+                Padding(
+                  padding: const EdgeInsets.only(top: 20),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: Text(
+                          '${widget.partyGuest.guestStatus} entry. ${widget.partyGuest.guestsRemaining} guests remaining',
+                          style: const TextStyle(fontSize: 16),
+                        ),
+                      ),
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: Text(
+                          'valid until ${DateTimeUtils.getFormattedTime(widget.party.guestListEndTime)}',
+                          style: TextStyle(fontSize: 16),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              child: const Text("close"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 }

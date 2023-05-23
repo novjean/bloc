@@ -1902,6 +1902,13 @@ class Fresh {
       shouldPushUser = true;
     }
 
+    try {
+      user = user.copyWith(isBanned: map['isBanned'] as bool);
+    } catch (e) {
+      Logx.em(_TAG, 'user isBanned not exist for id: ' + user.id);
+      shouldPushUser = true;
+    }
+
     if (shouldPushUser && shouldUpdate) {
       Logx.i(_TAG, 'updating user ' + user.id);
       FirestoreHelper.pushUser(user);
@@ -1977,6 +1984,11 @@ class Fresh {
       freshUser = freshUser.copyWith(lastSeenAt: user.lastSeenAt);
     } catch (e) {
       Logx.em(_TAG, 'user lastSeenAt not exist for user id: ' + user.id);
+    }
+    try {
+      freshUser = freshUser.copyWith(isBanned: user.isBanned);
+    } catch (e) {
+      Logx.em(_TAG, 'user isBanned not exist for id: ' + user.id);
     }
 
     return freshUser;

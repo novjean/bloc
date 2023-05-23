@@ -714,6 +714,7 @@ class FirestoreHelper {
         .collection(PARTY_GUESTS)
         .where('partyId', isEqualTo: partyId)
         .where('isApproved', isEqualTo: true)
+        .orderBy('name', descending: false)
         .snapshots();
   }
 
@@ -932,7 +933,7 @@ class FirestoreHelper {
   static Stream<QuerySnapshot<Object?>> getReservations() {
     return FirebaseFirestore.instance
         .collection(RESERVATIONS)
-        .orderBy('arrivalDate', descending: false)
+        .orderBy('arrivalDate', descending: true)
         .snapshots();
   }
 

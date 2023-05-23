@@ -217,72 +217,76 @@ class _PartyGuestAddEditManageScreenState
                 ),
               ),
               widget.task == 'manage'
-                  ? Column(
-                      children: [
-                        const SizedBox(height: 24),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 32),
-                          child: DarkTextFieldWidget(
+                  ? Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 32.0),
+                    child: Column(
+                        children: [
+                          const SizedBox(height: 24),
+                          DarkTextFieldWidget(
+                            label: 'banned ',
+                            text: bloc_user.isBanned.toString(),
+                            onChanged: (value) {},
+                          ),
+                          const SizedBox(height: 24),
+                          DarkTextFieldWidget(
                             label: 'phone number \*',
                             text: bloc_user.phoneNumber.toString(),
                             onChanged: (value) {},
                           ),
-                        ),
-                        const SizedBox(height: 24),
-                        Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 32),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.only(bottom: 10),
-                                  child: Text(
-                                    'challenge level \*',
-                                    style: TextStyle(
-                                        color:
-                                            Theme.of(context).primaryColorLight,
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold),
-                                  ),
+                          const SizedBox(height: 24),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(bottom: 10),
+                                child: Text(
+                                  'challenge level \*',
+                                  style: TextStyle(
+                                      color:
+                                          Theme.of(context).primaryColorLight,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold),
                                 ),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    ButtonWidget(
-                                      text: '  down  ',
-                                      onClicked: () {
-                                        int level = bloc_user.challengeLevel;
-                                        level--;
-                                        setState(() {
-                                          bloc_user = bloc_user.copyWith(
-                                              challengeLevel: level);
-                                          FirestoreHelper.pushUser(bloc_user);
-                                        });
-                                      },
-                                    ),
-                                    DarkButtonWidget(
-                                      text: bloc_user.challengeLevel.toString(),
-                                      onClicked: () {},
-                                    ),
-                                    ButtonWidget(
-                                      text: 'level up',
-                                      onClicked: () {
-                                        int level = bloc_user.challengeLevel;
-                                        level++;
-                                        setState(() {
-                                          bloc_user = bloc_user.copyWith(
-                                              challengeLevel: level);
-                                          FirestoreHelper.pushUser(bloc_user);
-                                        });
-                                      },
-                                    ),
-                                  ],
-                                )
-                              ],
-                            )),
-                      ],
-                    )
+                              ),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  ButtonWidget(
+                                    text: '  down  ',
+                                    onClicked: () {
+                                      int level = bloc_user.challengeLevel;
+                                      level--;
+                                      setState(() {
+                                        bloc_user = bloc_user.copyWith(
+                                            challengeLevel: level);
+                                        FirestoreHelper.pushUser(bloc_user);
+                                      });
+                                    },
+                                  ),
+                                  DarkButtonWidget(
+                                    text: bloc_user.challengeLevel.toString(),
+                                    onClicked: () {},
+                                  ),
+                                  ButtonWidget(
+                                    text: 'level up',
+                                    onClicked: () {
+                                      int level = bloc_user.challengeLevel;
+                                      level++;
+                                      setState(() {
+                                        bloc_user = bloc_user.copyWith(
+                                            challengeLevel: level);
+                                        FirestoreHelper.pushUser(bloc_user);
+                                      });
+                                    },
+                                  ),
+                                ],
+                              )
+                            ],
+                          ),
+                        ],
+                      ),
+                  )
                   : const SizedBox(),
               !isLoggedIn
                   ? Padding(

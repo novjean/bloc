@@ -9,7 +9,7 @@ class DarkButtonWidget extends StatelessWidget {
     Key? key,
     required this.text,
     required this.onClicked,
-    this.height
+    this.height,
   }) : super(key: key);
 
   @override

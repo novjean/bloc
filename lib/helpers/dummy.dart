@@ -298,6 +298,7 @@ class Dummy {
         surname: '',
         gender: 'male',
         phoneNumber: 0,
+        isBanned: false,
         createdAt: millis,
         lastSeenAt: millis);
     return dummyUser;

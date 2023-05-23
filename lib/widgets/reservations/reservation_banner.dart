@@ -46,18 +46,25 @@ class ReservationBanner extends StatelessWidget {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(
-                            title,
-                            style: const TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.w800,
+                          Flexible(
+                            flex: 2,
+                            child: Text(
+                              title,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                fontSize: 24,
+                                fontWeight: FontWeight.w800,
+                              ),
+                              textAlign: TextAlign.left,
                             ),
-                            textAlign: TextAlign.left,
                           ),
-                          Text(
-                            DateTimeUtils.getFormattedDate(
-                                reservation.arrivalDate),
-                            style: const TextStyle(fontSize: 18),
+                          Flexible(
+                            flex: 1,
+                            child: Text(
+                              DateTimeUtils.getFormattedDate(
+                                  reservation.arrivalDate),
+                              style: const TextStyle(fontSize: 18),
+                            ),
                           )
                         ],
                       ),
