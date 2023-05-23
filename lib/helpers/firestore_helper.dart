@@ -539,6 +539,12 @@ class FirestoreHelper {
         .get();
   }
 
+  static Future<QuerySnapshot<Map<String, dynamic>>> pullHistoryMusicByUser(String userId) {
+    return FirebaseFirestore.instance
+        .collection(FirestoreHelper.HISTORY_MUSIC)
+        .where('userId', isEqualTo: userId)
+        .get();
+  }
 
   /** inventory options **/
   static Stream<QuerySnapshot<Object?>> getInventoryOptions() {
@@ -1444,6 +1450,5 @@ class FirestoreHelper {
         .orderBy('level', descending: false)
         .get();
   }
-
 
 }

@@ -15,7 +15,7 @@ import '../utils/logx.dart';
 import 'home_screen.dart';
 import 'parties/party_screen.dart';
 import 'profile/profile_add_edit_register_page.dart';
-import 'profile/profile_page.dart';
+import 'profile/profile_screen.dart';
 
 class MainScreen extends StatefulWidget {
   static const routeName = '/home-screen';
@@ -158,7 +158,7 @@ class _MainScreenState extends State<MainScreen> {
       // OfferScreen(),
       PartyScreen(),
       // ChatScreen(),
-      UserPreferences.isUserLoggedIn() ? ProfilePage() : ProfileLoginScreen(),
+      UserPreferences.isUserLoggedIn() ? ProfileScreen() : ProfileLoginScreen(),
     ];
 
     return Scaffold(
