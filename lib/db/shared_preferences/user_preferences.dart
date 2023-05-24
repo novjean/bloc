@@ -10,21 +10,21 @@ class UserPreferences {
   static const _keyUser = 'user';
 
   static var myUser = User(
-    id: '',
-    email: '',
-    imageUrl: '',
-    clearanceLevel: 0,
-    challengeLevel: 1,
-    phoneNumber: 0,
-    name: '',
-    surname: '',
-    gender: 'male',
-    fcmToken: '',
-    blocServiceId: '',
-    createdAt: 0,
-    lastSeenAt: 0,
-    isBanned: false,
-  );
+      id: '',
+      email: '',
+      imageUrl: '',
+      clearanceLevel: 0,
+      challengeLevel: 1,
+      phoneNumber: 0,
+      name: '',
+      surname: '',
+      gender: 'male',
+      fcmToken: '',
+      blocServiceId: '',
+      createdAt: 0,
+      lastSeenAt: 0,
+      isBanned: false,
+      isAppUser: false);
 
   static Future init() async =>
       _preferences = await SharedPreferences.getInstance();
@@ -56,7 +56,8 @@ class UserPreferences {
         blocServiceId: '',
         createdAt: 0,
         lastSeenAt: 0,
-        isBanned: false));
+        isBanned: false,
+        isAppUser: false));
   }
 
   static void setUserFcmToken(String token) {
