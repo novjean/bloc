@@ -483,6 +483,12 @@ class Fresh {
       Logx.em(_TAG, 'challenge dialogAcceptText not exist for id: ' + challenge.id);
       shouldPush = true;
     }
+    try {
+      challenge = challenge.copyWith(dialogAccept2Text: map['dialogAccept2Text'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'challenge dialogAccept2Text not exist for id: ' + challenge.id);
+      shouldPush = true;
+    }
 
     if (shouldPush &&
         shouldUpdate &&
@@ -536,6 +542,11 @@ class Fresh {
       freshChallenge = freshChallenge.copyWith(dialogAcceptText: challenge.dialogAcceptText);
     } catch (e) {
       Logx.em(_TAG, 'challenge dialogAcceptText not exist for challenge id: ' + challenge.id);
+    }
+    try {
+      freshChallenge = freshChallenge.copyWith(dialogAccept2Text: challenge.dialogAccept2Text);
+    } catch (e) {
+      Logx.em(_TAG, 'challenge dialogAccept2Text not exist for challenge id: ' + challenge.id);
     }
 
     return freshChallenge;

@@ -886,6 +886,36 @@ class _PartyGuestAddEditManageScreenState
                   showReserveTableDialog(context);
                 },
               ),
+              challenge.dialogAccept2Text.isNotEmpty?
+              TextButton(
+                child: Text(challenge.dialogAccept2Text),
+                onPressed: () async {
+                  Logx.i(_TAG, 'user accepts challenge');
+                  Toaster.longToast('thank you for supporting us!');
+
+                  widget.partyGuest = widget.partyGuest.copyWith(isChallengeClicked: true);
+                  FirestoreHelper.pushPartyGuest(widget.partyGuest);
+
+                  switch (challenge.level) {
+                    case 3:{
+                      //android download
+                      final uri = Uri.parse(
+                          'https://play.google.com/store/apps/details?id=com.novatech.bloc');
+                      NetworkUtils.launchInBrowser(uri);
+                      break;
+                    }
+                    default:
+                      {
+                        final uri =
+                        Uri.parse('https://www.instagram.com/bloc.india/');
+                        NetworkUtils.launchInBrowser(uri);
+                        break;
+                      }
+                  }
+                },
+              )
+                  : const SizedBox(),
+
               TextButton(
                 child: Text(challenge.dialogAcceptText),
                 onPressed: () async {
@@ -907,6 +937,13 @@ class _PartyGuestAddEditManageScreenState
                       {
                         final uri =
                         Uri.parse('https://www.instagram.com/freq.club/');
+                        NetworkUtils.launchInBrowser(uri);
+                        break;
+                      }
+                      case 3:{
+                        //ios download
+                        final uri = Uri.parse(
+                            'https://apps.apple.com/in/app/bloc-community/id1672736309');
                         NetworkUtils.launchInBrowser(uri);
                         break;
                       }

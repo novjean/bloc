@@ -9,27 +9,27 @@ import '../../../widgets/reservations/reservation_item.dart';
 import '../../../widgets/ui/loading_widget.dart';
 import '../../user/reservation_add_edit_screen.dart';
 
-class ReservationsScreen extends StatefulWidget {
+class ManageReservationsScreen extends StatefulWidget {
   String blocServiceId;
   String serviceName;
   String userTitle;
 
-  ReservationsScreen({required this.blocServiceId,
+  ManageReservationsScreen({required this.blocServiceId,
     required this.serviceName,
     required this.userTitle});
 
   @override
-  State<StatefulWidget> createState() => _ReservationsScreenState();
+  State<StatefulWidget> createState() => _ManageReservationsScreenState();
 }
 
-class _ReservationsScreenState extends State<ReservationsScreen> {
+class _ManageReservationsScreenState extends State<ManageReservationsScreen> {
   static const String _TAG = 'ReservationsScreen';
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          title: Text('manage | ' + widget.serviceName)),
+          title: Text('manage | ${widget.serviceName}')),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           //todo: implement new booking

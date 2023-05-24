@@ -98,7 +98,7 @@ class Dummy {
         points: 0,
         clickCount: 0,
         dialogTitle: '',
-        dialogAcceptText: '');
+        dialogAcceptText: '',dialogAccept2Text: '');
     return dummyChallenge;
   }
 

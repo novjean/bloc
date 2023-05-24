@@ -975,7 +975,7 @@ class FirestoreHelper {
     return FirebaseFirestore.instance
         .collection(RESERVATIONS)
         .where('blocServiceId', isEqualTo: blocServiceId)
-        .orderBy('arrivalDate', descending: false)
+        .orderBy('arrivalDate', descending: true)
         .snapshots();
   }
 

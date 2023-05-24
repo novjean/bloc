@@ -2,7 +2,7 @@ import 'package:bloc/db/entity/manager_service.dart';
 import 'package:bloc/screens/manager/ads/manage_ads_screen.dart';
 import 'package:bloc/screens/manager/orders/manage_orders_screen.dart';
 import 'package:bloc/screens/manager/parties/manage_parties_screen.dart';
-import 'package:bloc/screens/manager/reservations/reservations_screen.dart';
+import 'package:bloc/screens/manager/reservations/manage_reservations_screen.dart';
 
 import 'package:bloc/screens/manager/users/manage_users_screen.dart';
 import 'package:bloc/screens/parties/manage_guest_list_screen.dart';
@@ -104,7 +104,7 @@ class ManagerServicesScreen extends StatelessWidget {
                     case 'reservations':
                       {
                         Navigator.of(context).push(MaterialPageRoute(
-                            builder: (ctx) => ReservationsScreen(
+                            builder: (ctx) => ManageReservationsScreen(
                                   blocServiceId: blocService.id,
                                   serviceName: _managerService.name,
                                   userTitle: userTitle,
