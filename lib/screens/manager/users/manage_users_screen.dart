@@ -42,6 +42,13 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
     'prefer not to respond'
   ];
 
+  String sMode = 'all';
+  List<String> mModes = [
+    'all',
+    'app',
+    'web',
+  ];
+
   int sChallengeLevel = 1;
 
   @override
@@ -135,7 +142,9 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
                         const Text('levels:\n'),
                         _displayUserLevelsDropdown(context),
                         const Text('\ngender:\n'),
-                        _displayGenderDropdown(context)
+                        _displayGenderDropdown(context),
+                        const Text('\mode:\n'),
+                        _displayModesDropdown(context)
                       ],
                     ),
                   ),
@@ -165,6 +174,52 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
 
   _buildBody(BuildContext context) {
     return _isUserLevelsLoading ? const LoadingWidget() : _buildUsers(context);
+  }
+
+  _displayModesDropdown(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 0.0),
+      child: FormField<String>(
+        builder: (FormFieldState<String> state) {
+          return InputDecorator(
+            key: const ValueKey('modes_dropdown'),
+            decoration: InputDecoration(
+                fillColor: Colors.white,
+                errorStyle: TextStyle(
+                    color: Theme.of(context).errorColor, fontSize: 16.0),
+                hintText: 'please select user mode',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(5.0),
+                  borderSide: BorderSide(color: Theme.of(context).primaryColor),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  // width: 0.0 produces a thin "hairline" border
+                  borderSide: BorderSide(
+                      color: Theme.of(context).primaryColor, width: 0.0),
+                )),
+            isEmpty: sMode == '',
+            child: DropdownButtonHideUnderline(
+              child: DropdownButton<String>(
+                style: TextStyle(color: Theme.of(context).primaryColorLight),
+                dropdownColor: Theme.of(context).backgroundColor,
+                value: sMode,
+                isDense: true,
+                onChanged: (String? newValue) {
+                  sMode = newValue!;
+                  state.didChange(newValue);
+                },
+                items: mModes.map((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+              ),
+            ),
+          );
+        },
+      ),
+    );
   }
 
   _displayGenderDropdown(BuildContext context) {
@@ -269,11 +324,14 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
   _buildUsers(BuildContext context) {
     Stream<QuerySnapshot<Object?>> stream;
 
-    if (sGender == 'all') {
+    if (sGender == 'all' && sMode == 'all') {
       stream = FirestoreHelper.getUsersByLevel(sUserLevel.level);
+    } else if(sGender == 'all' && sMode != 'all') {
+      stream = FirestoreHelper.getUsersByLevelAndMode(sUserLevel.level, sMode == 'app'?true:false );
+    } else if(sGender != 'all' && sMode == 'all'){
+      stream = FirestoreHelper.getUsersByLevelAndGender(sUserLevel.level, sGender);
     } else {
-      stream =
-          FirestoreHelper.getUsersByLevelAndGender(sUserLevel.level, sGender);
+      stream = FirestoreHelper.getUsersByLevelAndGenderAndMode(sUserLevel.level, sGender, sMode == 'app'?true:false);
     }
 
     return StreamBuilder<QuerySnapshot>(

@@ -1351,6 +1351,25 @@ class FirestoreHelper {
         .snapshots();
   }
 
+  static getUsersByLevelAndMode(int level, bool isAppUser) {
+    return FirebaseFirestore.instance
+        .collection(USERS)
+        .where('clearanceLevel', isEqualTo: level)
+        .where('isAppUser', isEqualTo: isAppUser)
+        .orderBy('lastSeenAt', descending: true)
+        .snapshots();
+  }
+
+  static getUsersByLevelAndGenderAndMode(int level, String gender, bool isAppUser) {
+    return FirebaseFirestore.instance
+        .collection(USERS)
+        .where('clearanceLevel', isEqualTo: level)
+        .where('gender', isEqualTo: gender)
+        .where('isAppUser', isEqualTo: isAppUser)
+        .orderBy('lastSeenAt', descending: true)
+        .snapshots();
+  }
+
   static getUsersByLevelAndGender(int level, String gender) {
     return FirebaseFirestore.instance
         .collection(USERS)
