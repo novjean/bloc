@@ -163,7 +163,7 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
                 onTap: () {
                   setState(() {
                     sOption = mOptions[index];
-                    Logx.i(_TAG, sOption + ' at box office is selected');
+                    Logx.i(_TAG, '$sOption at box office is selected');
                   });
                 });
           }),
@@ -223,10 +223,8 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
           } else {
             for (int i = 0; i < snapshot.data!.docs.length; i++) {
               DocumentSnapshot document = snapshot.data!.docs[i];
-              Map<String, dynamic> map =
-              document.data()! as Map<String, dynamic>;
-              final Reservation reservation =
-              Fresh.freshReservationMap(map, false);
+              Map<String, dynamic> map = document.data()! as Map<String, dynamic>;
+              final Reservation reservation = Fresh.freshReservationMap(map, false);
               reservations.add(reservation);
 
               if (i == snapshot.data!.docs.length - 1) {

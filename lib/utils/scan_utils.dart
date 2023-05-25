@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 
 import '../main.dart';
-import '../screens/parties/manage_party_guest_screen.dart';
+import '../screens/parties/box_office_guest_list_screen.dart';
 import '../widgets/ui/toaster.dart';
 import 'logx.dart';
 
@@ -20,7 +20,7 @@ class ScanUtils {
       if (scanCode != '-1') {
         Navigator.of(context).push(
           MaterialPageRoute(
-              builder: (ctx) => ManagePartyGuestScreen(
+              builder: (ctx) => BoxOfficeGuestListScreen(
                     partyGuestId: scanCode,
                   )),
         );

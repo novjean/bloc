@@ -381,7 +381,7 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
                                                 content: Text('deleting ${mPartyGuests.length} guest list requests. are you sure you want to continue?'),
                                                 actions: [
                                                   TextButton(
-                                                    child: Text("yes"),
+                                                    child: const Text('yes'),
                                                     onPressed: () async {
                                                       for(PartyGuest partyGuest in mPartyGuests){
                                                         FirestoreHelper.deletePartyGuest(partyGuest);

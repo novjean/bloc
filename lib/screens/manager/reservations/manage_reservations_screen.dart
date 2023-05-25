@@ -70,7 +70,8 @@ class _ManageReservationsScreenState extends State<ManageReservationsScreen> {
   }
 
   _buildReservations(BuildContext context) {
-    return StreamBuilder<QuerySnapshot>(stream: FirestoreHelper.getReservationsByBlocId(widget.blocServiceId),
+    return StreamBuilder<QuerySnapshot>(
+        stream: FirestoreHelper.getReservationsByBlocId(widget.blocServiceId),
         builder: (ctx, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const LoadingWidget();
@@ -96,6 +97,7 @@ class _ManageReservationsScreenState extends State<ManageReservationsScreen> {
               Logx.em(_TAG, 'error loading party guest$e');
             }
           }
+
           return const LoadingWidget();
     });
   }

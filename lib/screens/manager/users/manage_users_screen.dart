@@ -392,13 +392,13 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
                     ),
                     onDoubleTap: () {
                       User sUser = mUsers[index];
-                      Logx.i(_TAG, 'double tap user selected : ' + sUser.name);
+                      Logx.i(_TAG, 'double tap user selected : ${sUser.name}');
 
                       showDialog(
                         context: context,
                         builder: (BuildContext context) {
                           return AlertDialog(
-                            title: Text("delete user : " + sUser.name),
+                            title: Text("delete user : ${sUser.name}"),
                             content: const Text(
                                 "would you like to delete the user?"),
                             actions: [
