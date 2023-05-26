@@ -306,52 +306,50 @@ class _PartyGuestAddEditManageScreenState
                                   fontWeight: FontWeight.bold),
                             ),
                           ),
-                          Container(
-                            child: IntlPhoneField(
-                              style: TextStyle(
-                                  color: Theme.of(context).primaryColor,
-                                  fontSize: 18),
-                              decoration: InputDecoration(
-                                  labelText: '',
-                                  labelStyle: TextStyle(
+                          IntlPhoneField(
+                            style: TextStyle(
+                                color: Theme.of(context).primaryColor,
+                                fontSize: 18),
+                            decoration: InputDecoration(
+                                labelText: '',
+                                labelStyle: TextStyle(
+                                    color: Theme.of(context).primaryColor),
+                                hintStyle: TextStyle(
+                                    color: Theme.of(context).primaryColor),
+                                counterStyle: TextStyle(
+                                    color: Theme.of(context).primaryColor),
+                                border: OutlineInputBorder(
+                                  borderSide: BorderSide(
                                       color: Theme.of(context).primaryColor),
-                                  hintStyle: TextStyle(
-                                      color: Theme.of(context).primaryColor),
-                                  counterStyle: TextStyle(
-                                      color: Theme.of(context).primaryColor),
-                                  border: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                        color: Theme.of(context).primaryColor),
-                                  ),
-                                  enabledBorder: OutlineInputBorder(
-                                    // width: 0.0 produces a thin "hairline" border
-                                    borderSide: BorderSide(
-                                        color: Theme.of(context).primaryColor,
-                                        width: 0.0),
-                                  )),
-                              controller: _controller,
-                              initialCountryCode: 'IN',
-                              dropdownTextStyle: TextStyle(
-                                  color: Theme.of(context).primaryColor,
-                                  fontSize: 18),
-                              pickerDialogStyle: PickerDialogStyle(
-                                  backgroundColor:
-                                      Theme.of(context).primaryColor),
-                              onChanged: (phone) {
-                                Logx.i(_TAG, phone.completeNumber);
-                                completePhoneNumber = phone.completeNumber;
-                              },
-                              onCountryChanged: (country) {
-                                Logx.i(_TAG,
-                                    'country changed to: ' + country.name);
-                              },
-                            ),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  // width: 0.0 produces a thin "hairline" border
+                                  borderSide: BorderSide(
+                                      color: Theme.of(context).primaryColor,
+                                      width: 0.0),
+                                )),
+                            controller: _controller,
+                            initialCountryCode: 'IN',
+                            dropdownTextStyle: TextStyle(
+                                color: Theme.of(context).primaryColor,
+                                fontSize: 18),
+                            pickerDialogStyle: PickerDialogStyle(
+                                backgroundColor:
+                                    Theme.of(context).primaryColor),
+                            onChanged: (phone) {
+                              Logx.i(_TAG, phone.completeNumber);
+                              completePhoneNumber = phone.completeNumber;
+                            },
+                            onCountryChanged: (country) {
+                              Logx.i(_TAG,
+                                  'country changed to: ' + country.name);
+                            },
                           ),
                         ],
                       ),
                     )
                   : const SizedBox(),
-              const SizedBox(height: 24),
+              const SizedBox(height: 12),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 32),
                 child: DarkTextFieldWidget(

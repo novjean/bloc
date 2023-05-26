@@ -4,6 +4,7 @@ import 'package:bloc/db/entity/bloc.dart';
 import 'package:bloc/db/entity/bloc_service.dart';
 import 'package:bloc/db/entity/cart_item.dart';
 import 'package:bloc/db/entity/category.dart';
+import 'package:bloc/db/entity/celebration.dart';
 import 'package:bloc/db/entity/challenge.dart';
 import 'package:bloc/db/entity/genre.dart';
 import 'package:bloc/db/entity/guest_wifi.dart';
@@ -44,6 +45,7 @@ class FirestoreHelper {
   static String CATEGORIES = 'categories';
   static String CART_ITEMS = 'cart_items';
   static String CHALLENGES = 'challenges';
+  static String CELEBRATIONS = 'celebrations';
   static String CITIES = 'cities';
   static String GENRES = 'genres';
   static String GUEST_WIFIS = 'guest_wifis';
@@ -385,6 +387,27 @@ class FirestoreHelper {
         .orderBy('sequence', descending: false)
         .snapshots();
   }
+
+  /** celebrations **/
+  static void pushCelebration(Celebration celebration) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection(CELEBRATIONS)
+          .doc(celebration.id)
+          .set(celebration.toMap());
+    } on PlatformException catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } on Exception catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } catch (e) {
+      logger.e(e);
+    }
+  }
+
+  static void deleteCelebration(String docId) {
+    FirebaseFirestore.instance.collection(CELEBRATIONS).doc(docId).delete();
+  }
+
 
   /** challenges **/
   static void pushChallenge(Challenge challenge) async {

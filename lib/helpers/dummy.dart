@@ -14,6 +14,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../db/entity/ad.dart';
 import '../db/entity/bloc.dart';
 import '../db/entity/bloc_service.dart';
+import '../db/entity/celebration.dart';
 import '../db/entity/genre.dart';
 import '../db/entity/offer.dart';
 import '../db/entity/party.dart';
@@ -87,6 +88,28 @@ class Dummy {
         type: 'Alcohol',
         blocIds: []);
     return dummyCategory;
+  }
+
+  static Celebration getDummyCelebration(String blocServiceId) {
+    Celebration dummy = Celebration(
+        id: StringUtils.getRandomString(28),
+        blocServiceId: blocServiceId,
+        customerId: UserPreferences.myUser.id,
+        name: UserPreferences.isUserLoggedIn() ? UserPreferences.myUser.name : '',
+        surname: UserPreferences.isUserLoggedIn() ? UserPreferences.myUser.surname : '',
+        phone: UserPreferences.isUserLoggedIn()
+            ? UserPreferences.myUser.phoneNumber
+            : 0,
+        guestsCount: 1,
+        createdAt: Timestamp.now().millisecondsSinceEpoch,
+        arrivalDate: Timestamp.now().millisecondsSinceEpoch,
+        arrivalTime: '',
+        bottleProductIds: [],
+        bottleNames: [],
+        specialRequest: '',
+        occasion: 'none',
+        isApproved: false,);
+    return dummy;
   }
 
   static Challenge getDummyChallenge() {

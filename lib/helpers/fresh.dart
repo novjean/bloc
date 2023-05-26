@@ -4,6 +4,7 @@ import 'package:bloc/db/entity/party_guest.dart';
 import '../db/entity/ad.dart';
 import '../db/entity/bloc.dart';
 import '../db/entity/category.dart';
+import '../db/entity/celebration.dart';
 import '../db/entity/challenge.dart';
 import '../db/entity/genre.dart';
 import '../db/entity/party.dart';
@@ -427,6 +428,196 @@ class Fresh {
     }
 
     return freshCategory;
+  }
+
+  /** celebration **/
+  static Celebration freshCelebrationMap(Map<String, dynamic> map, bool shouldUpdate) {
+    Celebration celebration = Dummy.getDummyCelebration(Constants.blocServiceId);
+    bool shouldPush = true;
+
+    try {
+      celebration = celebration.copyWith(id: map['id'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'celebration id not exist');
+    }
+    try {
+      celebration = celebration.copyWith(name: map['name'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'celebration name not exist for id: ' + celebration.id);
+      shouldPush = true;
+    }
+    try {
+      celebration = celebration.copyWith(surname: map['surname'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'celebration surname not exist for id: ' + celebration.id);
+      shouldPush = true;
+    }
+    try {
+      celebration = celebration.copyWith(blocServiceId: map['blocServiceId'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'celebration blocServiceId not exist for id: ' + celebration.id);
+      shouldPush = true;
+    }
+    try {
+      celebration = celebration.copyWith(customerId: map['customerId'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'celebration customerId not exist for id: ' + celebration.id);
+      shouldPush = true;
+    }
+    try {
+      celebration = celebration.copyWith(phone: map['phone'] as int);
+    } catch (e) {
+      Logx.em(_TAG, 'celebration phone not exist for id: ' + celebration.id);
+      shouldPush = true;
+    }
+
+    try {
+      celebration = celebration.copyWith(guestsCount: map['guestsCount'] as int);
+    } catch (e) {
+      Logx.em(_TAG, 'celebration guestsCount not exist for id: ' + celebration.id);
+      shouldPush = true;
+    }
+    try {
+      celebration = celebration.copyWith(createdAt: map['createdAt'] as int);
+    } catch (e) {
+      Logx.em(_TAG, 'celebration createdAt not exist for id: ' + celebration.id);
+      shouldPush = true;
+    }
+    try {
+      celebration = celebration.copyWith(arrivalDate: map['arrivalDate'] as int);
+    } catch (e) {
+      Logx.em(_TAG, 'celebration arrivalDate not exist for id: ' + celebration.id);
+      shouldPush = true;
+    }
+    try {
+      celebration = celebration.copyWith(arrivalTime: map['arrivalTime'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'celebration arrivalTime not exist for id: ' + celebration.id);
+      shouldPush = true;
+    }
+
+    try {
+      celebration = celebration.copyWith(bottleProductIds: List<String>.from(map['bottleProductIds']));
+    } catch (e) {
+      Logx.em(_TAG, 'celebration bottleProductIds not exist for id: ' + celebration.id);
+      shouldPush = true;
+    }
+    try {
+      celebration = celebration.copyWith(bottleNames: List<String>.from(map['bottleNames']));
+    } catch (e) {
+      Logx.em(_TAG, 'celebration bottleNames not exist for id: ' + celebration.id);
+      shouldPush = true;
+    }
+    try {
+      celebration = celebration.copyWith(specialRequest: map['specialRequest'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'celebration specialRequest not exist for id: ' + celebration.id);
+      shouldPush = true;
+    }
+    try {
+      celebration = celebration.copyWith(occasion: map['occasion'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'reservation occasion not exist for id: ' + celebration.id);
+      shouldPush = true;
+    }
+    try {
+      celebration = celebration.copyWith(isApproved: map['isApproved'] as bool);
+    } catch (e) {
+      Logx.em(_TAG, 'celebration isApproved not exist for id: ' + celebration.id);
+      shouldPush = true;
+    }
+
+    if (shouldPush && shouldUpdate) {
+      Logx.i(_TAG, 'updating celebration ' + celebration.id);
+      FirestoreHelper.pushCelebration(celebration);
+    }
+
+    return celebration;
+  }
+
+  static Celebration freshCelebration(Celebration celebration) {
+    Celebration fresh = Dummy.getDummyCelebration(Constants.blocServiceId);
+
+    try {
+      fresh = fresh.copyWith(id: celebration.id);
+    } catch (e) {
+      Logx.em(_TAG, 'celebration id not exist');
+    }
+    try {
+      fresh = fresh.copyWith(name: celebration.name);
+    } catch (e) {
+      Logx.em(_TAG, 'celebration name not exist for id: ' + celebration.id);
+    }
+    try {
+      fresh = fresh.copyWith(surname: celebration.surname);
+    } catch (e) {
+      Logx.em(_TAG, 'celebration surname not exist for id: ' + celebration.id);
+    }
+    try {
+      fresh = fresh.copyWith(blocServiceId: celebration.blocServiceId);
+    } catch (e) {
+      Logx.em(_TAG, 'celebration blocServiceId not exist for id: ' + celebration.id);
+    }
+    try {
+      fresh = fresh.copyWith(customerId: celebration.customerId);
+    } catch (e) {
+      Logx.em(_TAG, 'celebration customerId not exist for id: ' + celebration.id);
+    }
+    try {
+      fresh = fresh.copyWith(phone: celebration.phone);
+    } catch (e) {
+      Logx.em(_TAG, 'celebration phone not exist for id: ' + celebration.id);
+    }
+
+    try {
+      fresh = fresh.copyWith(guestsCount: celebration.guestsCount);
+    } catch (e) {
+      Logx.em(_TAG, 'celebration guestsCount not exist for id: ' + celebration.id);
+    }
+    try {
+      fresh = fresh.copyWith(createdAt: celebration.createdAt);
+    } catch (e) {
+      Logx.em(_TAG, 'celebration createdAt not exist for id: ' + celebration.id);
+    }
+    try {
+      fresh = fresh.copyWith(arrivalDate: celebration.arrivalDate);
+    } catch (e) {
+      Logx.em(_TAG, 'celebration arrivalDate not exist for id: ' + celebration.id);
+    }
+    try {
+      fresh = fresh.copyWith(arrivalTime: celebration.arrivalTime);
+    } catch (e) {
+      Logx.em(_TAG, 'celebration arrivalTime not exist for id: ' + celebration.id);
+    }
+
+    try {
+      fresh = fresh.copyWith(bottleProductIds: celebration.bottleProductIds);
+    } catch (e) {
+      Logx.em(_TAG, 'celebration bottleProductIds not exist for id: ' + celebration.id);
+    }
+    try {
+      fresh = fresh.copyWith(bottleNames: celebration.bottleNames);
+    } catch (e) {
+      Logx.em(_TAG, 'celebration bottleNames not exist for id: ' + celebration.id);
+    }
+    try {
+      fresh = fresh.copyWith(specialRequest: celebration.specialRequest);
+    } catch (e) {
+      Logx.em(_TAG, 'celebration specialRequest not exist for id: ' + celebration.id);
+    }
+    try {
+      fresh = fresh.copyWith(occasion: celebration.occasion);
+    } catch (e) {
+      Logx.em(_TAG, 'celebration occasion not exist for id: ' + celebration.id);
+    }
+
+    try {
+      fresh = fresh.copyWith(isApproved: celebration.isApproved);
+    } catch (e) {
+      Logx.em(_TAG, 'celebration isApproved not exist for id: ' + celebration.id);
+    }
+
+    return fresh;
   }
 
   /** challenge **/
