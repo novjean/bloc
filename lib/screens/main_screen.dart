@@ -160,6 +160,7 @@ class _MainScreenState extends State<MainScreen> {
 
       if (user.clearanceLevel >= Constants.MANAGER_LEVEL) {
         fbm.subscribeToTopic('reservations');
+        fbm.subscribeToTopic('celebrations');
       }
 
       if(UserPreferences.isUserLoggedIn()){
