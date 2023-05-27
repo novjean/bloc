@@ -23,7 +23,7 @@ class ManageReservationsScreen extends StatefulWidget {
 }
 
 class _ManageReservationsScreenState extends State<ManageReservationsScreen> {
-  static const String _TAG = 'ReservationsScreen';
+  static const String _TAG = 'ManageReservationsScreen';
 
   @override
   Widget build(BuildContext context) {
@@ -94,7 +94,7 @@ class _ManageReservationsScreenState extends State<ManageReservationsScreen> {
             } on Exception catch (e, s) {
               Logx.e(_TAG, e, s);
             } catch (e) {
-              Logx.em(_TAG, 'error loading party guest$e');
+              Logx.em(_TAG, 'error loading reservations : $e');
             }
           }
 

@@ -100,7 +100,7 @@ class Dummy {
         phone: UserPreferences.isUserLoggedIn()
             ? UserPreferences.myUser.phoneNumber
             : 0,
-        guestsCount: 1,
+        guestsCount: 25,
         createdAt: Timestamp.now().millisecondsSinceEpoch,
         arrivalDate: Timestamp.now().millisecondsSinceEpoch,
         arrivalTime: '',

@@ -51,8 +51,16 @@ class _CelebrationAddEditScreenState extends State<CelebrationAddEditScreen> {
   List<String> guestCounts = [];
   late String sGuestCount;
 
-  List<String> ocassions = ['none', 'birthday', 'charity gala', 'corporate event',
-    'family reunion', 'shareholder event', 'wedding party'
+  List<String> ocassions = [
+    'none',
+    'birthday party',
+    'charity gala',
+    'college party',
+    'corporate event',
+    'family reunion',
+    'shareholder event',
+    'wedding party',
+    'other'
   ];
   late String sOcassion;
 
@@ -175,56 +183,56 @@ class _CelebrationAddEditScreenState extends State<CelebrationAddEditScreen> {
             }),
         !UserPreferences.isUserLoggedIn()
             ? Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 24),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 10),
-              child: Text(
-                'phone number \*',
-                style: TextStyle(
-                    color: Theme.of(context).primaryColorLight,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold),
-              ),
-            ),
-            IntlPhoneField(
-              style: TextStyle(
-                  color: Theme.of(context).primaryColor, fontSize: 18),
-              decoration: InputDecoration(
-                  labelText: '',
-                  labelStyle:
-                  TextStyle(color: Theme.of(context).primaryColor),
-                  hintStyle:
-                  TextStyle(color: Theme.of(context).primaryColor),
-                  counterStyle:
-                  TextStyle(color: Theme.of(context).primaryColor),
-                  border: OutlineInputBorder(
-                    borderSide: BorderSide(
-                        color: Theme.of(context).primaryColor),
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 24),
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 10),
+                    child: Text(
+                      'phone number \*',
+                      style: TextStyle(
+                          color: Theme.of(context).primaryColorLight,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold),
+                    ),
                   ),
-                  enabledBorder: OutlineInputBorder(
-                    // width: 0.0 produces a thin "hairline" border
-                    borderSide: BorderSide(
-                        color: Theme.of(context).primaryColor,
-                        width: 0.0),
-                  )),
-              controller: _controller,
-              initialCountryCode: 'IN',
-              dropdownTextStyle: TextStyle(
-                  color: Theme.of(context).primaryColor, fontSize: 18),
-              pickerDialogStyle: PickerDialogStyle(
-                  backgroundColor: Theme.of(context).primaryColor),
-              onChanged: (phone) {
-                Logx.i(_TAG, phone.completeNumber);
-                completePhoneNumber = phone.completeNumber;
-              },
-              onCountryChanged: (country) {
-                Logx.i(_TAG, 'country changed to: ' + country.name);
-              },
-            ),
-          ],
-        )
+                  IntlPhoneField(
+                    style: TextStyle(
+                        color: Theme.of(context).primaryColor, fontSize: 18),
+                    decoration: InputDecoration(
+                        labelText: '',
+                        labelStyle:
+                            TextStyle(color: Theme.of(context).primaryColor),
+                        hintStyle:
+                            TextStyle(color: Theme.of(context).primaryColor),
+                        counterStyle:
+                            TextStyle(color: Theme.of(context).primaryColor),
+                        border: OutlineInputBorder(
+                          borderSide:
+                              BorderSide(color: Theme.of(context).primaryColor),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          // width: 0.0 produces a thin "hairline" border
+                          borderSide: BorderSide(
+                              color: Theme.of(context).primaryColor,
+                              width: 0.0),
+                        )),
+                    controller: _controller,
+                    initialCountryCode: 'IN',
+                    dropdownTextStyle: TextStyle(
+                        color: Theme.of(context).primaryColor, fontSize: 18),
+                    pickerDialogStyle: PickerDialogStyle(
+                        backgroundColor: Theme.of(context).primaryColor),
+                    onChanged: (phone) {
+                      Logx.i(_TAG, phone.completeNumber);
+                      completePhoneNumber = phone.completeNumber;
+                    },
+                    onCountryChanged: (country) {
+                      Logx.i(_TAG, 'country changed to: ' + country.name);
+                    },
+                  ),
+                ],
+              )
             : const SizedBox(),
         const SizedBox(height: 12),
         Column(
@@ -300,7 +308,7 @@ class _CelebrationAddEditScreenState extends State<CelebrationAddEditScreen> {
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(5.0),
                         borderSide:
-                        BorderSide(color: Theme.of(context).primaryColor),
+                            BorderSide(color: Theme.of(context).primaryColor),
                       ),
                       enabledBorder: OutlineInputBorder(
                         // width: 0.0 produces a thin "hairline" border
@@ -311,7 +319,7 @@ class _CelebrationAddEditScreenState extends State<CelebrationAddEditScreen> {
                   child: DropdownButtonHideUnderline(
                     child: DropdownButton<String>(
                       style:
-                      TextStyle(color: Theme.of(context).primaryColorLight),
+                          TextStyle(color: Theme.of(context).primaryColorLight),
                       dropdownColor: Theme.of(context).backgroundColor,
                       value: sGuestCount,
                       isDense: true,
@@ -366,7 +374,7 @@ class _CelebrationAddEditScreenState extends State<CelebrationAddEditScreen> {
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(5.0),
                         borderSide:
-                        BorderSide(color: Theme.of(context).primaryColor),
+                            BorderSide(color: Theme.of(context).primaryColor),
                       ),
                       enabledBorder: OutlineInputBorder(
                         // width: 0.0 produces a thin "hairline" border
@@ -377,7 +385,7 @@ class _CelebrationAddEditScreenState extends State<CelebrationAddEditScreen> {
                   child: DropdownButtonHideUnderline(
                     child: DropdownButton<String>(
                       style:
-                      TextStyle(color: Theme.of(context).primaryColorLight),
+                          TextStyle(color: Theme.of(context).primaryColorLight),
                       dropdownColor: Theme.of(context).backgroundColor,
                       value: sOcassion,
                       isDense: true,
@@ -423,7 +431,7 @@ class _CelebrationAddEditScreenState extends State<CelebrationAddEditScreen> {
             MultiSelectDialogField(
               items: mBottles
                   .map((e) => MultiSelectItem(e,
-                  '${e.name.toLowerCase()} | ${e.category.toLowerCase()}'))
+                      '${e.name.toLowerCase()} | ${e.category.toLowerCase()}'))
                   .toList(),
               listType: MultiSelectListType.CHIP,
               buttonIcon: Icon(
@@ -497,38 +505,39 @@ class _CelebrationAddEditScreenState extends State<CelebrationAddEditScreen> {
         ),
         isEdit
             ? Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            ButtonWidget(
-              text: 'save',
-              onClicked: () {
-                Celebration freshCelebration = Fresh.freshCelebration(widget.celebration);
-                FirestoreHelper.pushCelebration(freshCelebration);
-                Toaster.shortToast('celebration changes saved');
-                Navigator.of(context).pop();
-              },
-            ),
-            const SizedBox(height: 10),
-            ButtonWidget(
-                text: 'delete',
-                onClicked: () {
-                  FirestoreHelper.deleteCelebration(
-                      widget.celebration.id);
-                  Toaster.shortToast('celebration deleted');
-                  Navigator.of(context).pop();
-                }),
-          ],
-        )
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  ButtonWidget(
+                    text: 'save',
+                    onClicked: () {
+                      Celebration freshCelebration =
+                          Fresh.freshCelebration(widget.celebration);
+                      FirestoreHelper.pushCelebration(freshCelebration);
+                      Toaster.shortToast('celebration changes saved');
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                  const SizedBox(height: 10),
+                  ButtonWidget(
+                      text: 'delete',
+                      onClicked: () {
+                        FirestoreHelper.deleteCelebration(
+                            widget.celebration.id);
+                        Toaster.shortToast('celebration deleted');
+                        Navigator.of(context).pop();
+                      }),
+                ],
+              )
             : ButtonWidget(
-          text: 'reserve',
-          onClicked: () {
-            if (UserPreferences.isUserLoggedIn()) {
-              showConfirmationDialog(context, false);
-            } else {
-              _verifyPhone();
-            }
-          },
-        ),
+                text: 'reserve',
+                onClicked: () {
+                  if (UserPreferences.isUserLoggedIn()) {
+                    showConfirmationDialog(context, false);
+                  } else {
+                    _verifyPhone();
+                  }
+                },
+              ),
         const SizedBox(height: 24),
       ],
     );
@@ -622,14 +631,14 @@ class _CelebrationAddEditScreenState extends State<CelebrationAddEditScreen> {
                 ),
                 Center(
                     child: Text(
-                      'enter the six digit code you received on \n${completePhoneNumber}',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Theme.of(context).primaryColorDark,
-                        fontWeight: FontWeight.normal,
-                        fontSize: 16,
-                      ),
-                    )),
+                  'enter the six digit code you received on \n${completePhoneNumber}',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Theme.of(context).primaryColorDark,
+                    fontWeight: FontWeight.normal,
+                    fontSize: 16,
+                  ),
+                )),
                 Padding(
                   padding: const EdgeInsets.only(
                       left: 10.0, right: 10, top: 2, bottom: 5),
@@ -720,7 +729,7 @@ class _CelebrationAddEditScreenState extends State<CelebrationAddEditScreen> {
                 try {
                   await FirebaseAuth.instance
                       .signInWithCredential(PhoneAuthProvider.credential(
-                      verificationId: _verificationCode, smsCode: pin))
+                          verificationId: _verificationCode, smsCode: pin))
                       .then((value) async {
                     if (value.user != null) {
                       Logx.i(_TAG,
@@ -753,7 +762,7 @@ class _CelebrationAddEditScreenState extends State<CelebrationAddEditScreen> {
 
                           DocumentSnapshot document = res.docs[0];
                           Map<String, dynamic> data =
-                          document.data()! as Map<String, dynamic>;
+                              document.data()! as Map<String, dynamic>;
 
                           blocUser.User user = Fresh.freshUserMap(data, true);
 
@@ -859,10 +868,10 @@ class _CelebrationAddEditScreenState extends State<CelebrationAddEditScreen> {
                       children: [
                         Text(
                             'thank you for choosing us to host your celebration '
-                                'on the ${DateTimeUtils.getFormattedDate2(widget.celebration.arrivalDate)}'
-                                ', your booking will be reviewed and approved soon. '
-                                '\n\nyour celebration confirmation status shall be found at the box office. '
-                                'also, our team may reach out to you for any further information. thank you.'),
+                            'on the ${DateTimeUtils.getFormattedDate2(widget.celebration.arrivalDate)}'
+                            ', your booking will be reviewed and approved soon. '
+                            '\n\nyour celebration confirmation status shall be found at the box office. '
+                            'also, our team may reach out to you for any further information. thank you.'),
                       ],
                     ),
                   ),
@@ -881,10 +890,12 @@ class _CelebrationAddEditScreenState extends State<CelebrationAddEditScreen> {
               child: const Text("confirm"),
               onPressed: () {
                 if (isNewUser) {
-                  Celebration freshCelebration = Fresh.freshCelebration(widget.celebration);
+                  Celebration freshCelebration =
+                      Fresh.freshCelebration(widget.celebration);
                   FirestoreHelper.pushCelebration(freshCelebration);
                 } else {
-                  Celebration freshCelebration = Fresh.freshCelebration(widget.celebration);
+                  Celebration freshCelebration =
+                      Fresh.freshCelebration(widget.celebration);
                   FirestoreHelper.pushCelebration(freshCelebration);
                 }
 
@@ -913,7 +924,7 @@ class _CelebrationAddEditScreenState extends State<CelebrationAddEditScreen> {
         children: [
           Text(
               DateTimeUtils.getFormattedDateType(
-                  sDateArrival.millisecondsSinceEpoch, 0)
+                      sDateArrival.millisecondsSinceEpoch, 0)
                   .toLowerCase(),
               style: const TextStyle(
                 color: Constants.lightPrimary,

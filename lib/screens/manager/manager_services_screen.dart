@@ -13,6 +13,7 @@ import 'package:flutter/material.dart';
 import '../../db/entity/bloc_service.dart';
 import '../../helpers/firestore_helper.dart';
 import '../../widgets/ui/listview_block.dart';
+import 'celebrations/manage_celebrations_screen.dart';
 import 'challenges/manage_challenges_screen.dart';
 import 'guest_wifi_edit_screen.dart';
 import 'inventory/manage_inventory_screen.dart';
@@ -99,6 +100,16 @@ class ManagerServicesScreen extends StatelessWidget {
                         Navigator.of(context).push(MaterialPageRoute(
                             builder: (ctx) =>
                                 ManageChallengesScreen()));
+                        break;
+                      }
+                    case 'celebrations':
+                      {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (ctx) => ManageCelebrationsScreen(
+                              blocServiceId: blocService.id,
+                              serviceName: _managerService.name,
+                              userTitle: userTitle,
+                            )));
                         break;
                       }
                     case 'reservations':

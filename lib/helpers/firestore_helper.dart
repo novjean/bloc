@@ -404,6 +404,14 @@ class FirestoreHelper {
     }
   }
 
+  static Stream<QuerySnapshot<Object?>> getCelebrationsByBlocId(String blocServiceId) {
+    return FirebaseFirestore.instance
+        .collection(CELEBRATIONS)
+        .where('blocServiceId', isEqualTo: blocServiceId)
+        .orderBy('arrivalDate', descending: true)
+        .snapshots();
+  }
+
   static void deleteCelebration(String docId) {
     FirebaseFirestore.instance.collection(CELEBRATIONS).doc(docId).delete();
   }
