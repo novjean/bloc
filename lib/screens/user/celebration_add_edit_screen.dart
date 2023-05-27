@@ -1,4 +1,5 @@
 import 'package:bloc/db/shared_preferences/user_preferences.dart';
+import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:delayed_display/delayed_display.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -58,7 +59,6 @@ class _CelebrationAddEditScreenState extends State<CelebrationAddEditScreen> {
     'college party',
     'corporate event',
     'family reunion',
-    'shareholder event',
     'wedding party',
     'other'
   ];
@@ -74,7 +74,6 @@ class _CelebrationAddEditScreenState extends State<CelebrationAddEditScreen> {
   bool isEdit = false;
 
   List<Product> mBottles = [];
-  List<String> mBottleNames = [];
   bool isBottlesLoading = true;
   List<String> sBottleNames = [];
   List<Product> sBottles = [];
@@ -92,11 +91,7 @@ class _CelebrationAddEditScreenState extends State<CelebrationAddEditScreen> {
       isEdit = true;
     }
 
-    int i = 1;
-    for (; i <= 40; i++) {
-      int count = i * 25;
-      guestCounts.add(count.toString());
-    }
+    guestCounts = ['25','50','100','150','200','250','300','400','500','750','1000','1500'];
 
     sGuestCount = widget.celebration.guestsCount.toString();
     sOcassion = widget.celebration.occasion;
@@ -118,15 +113,16 @@ class _CelebrationAddEditScreenState extends State<CelebrationAddEditScreen> {
         for (int i = 0; i < res.docs.length; i++) {
           DocumentSnapshot document = res.docs[i];
           Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-          final Product product = Fresh.freshProductMap(data, true);
+          final Product product = Fresh.freshProductMap(data, false);
           products.add(product);
         }
 
         products.sort((a, b) => a.category.compareTo(b.category));
 
-        for (Product product in products) {
-          mBottleNames.add(
-              '${product.name.toLowerCase()} [${product.category.toLowerCase()}]');
+        mBottles = products;
+
+        for (int i=0;i<products.length;i++) {
+          Product product = products[i];
           if (sBottleIds.contains(product.id)) {
             sBottles.add(product);
             sBottleNames.add(
@@ -135,7 +131,6 @@ class _CelebrationAddEditScreenState extends State<CelebrationAddEditScreen> {
         }
 
         setState(() {
-          mBottles = products;
           isBottlesLoading = false;
         });
       } else {
@@ -152,7 +147,7 @@ class _CelebrationAddEditScreenState extends State<CelebrationAddEditScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('bloc | celebrate life')),
+      appBar: AppBar(title: const Text('bloc | celebration')),
       backgroundColor: Constants.background,
       body: _buildBody(context),
     );
@@ -165,7 +160,7 @@ class _CelebrationAddEditScreenState extends State<CelebrationAddEditScreen> {
       children: [
         const SizedBox(height: 15),
         DarkTextFieldWidget(
-            label: 'name \*',
+            label: 'name *',
             text: widget.celebration.name,
             onChanged: (name) {
               bloc_user = bloc_user.copyWith(name: name);
@@ -174,7 +169,7 @@ class _CelebrationAddEditScreenState extends State<CelebrationAddEditScreen> {
             }),
         const SizedBox(height: 24),
         DarkTextFieldWidget(
-            label: 'surname \*',
+            label: 'surname *',
             text: widget.celebration.surname,
             onChanged: (text) {
               bloc_user = bloc_user.copyWith(surname: text);
@@ -189,7 +184,7 @@ class _CelebrationAddEditScreenState extends State<CelebrationAddEditScreen> {
                   Padding(
                     padding: const EdgeInsets.only(bottom: 10),
                     child: Text(
-                      'phone number \*',
+                      'phone number *',
                       style: TextStyle(
                           color: Theme.of(context).primaryColorLight,
                           fontSize: 16,
@@ -228,7 +223,7 @@ class _CelebrationAddEditScreenState extends State<CelebrationAddEditScreen> {
                       completePhoneNumber = phone.completeNumber;
                     },
                     onCountryChanged: (country) {
-                      Logx.i(_TAG, 'country changed to: ' + country.name);
+                      Logx.i(_TAG, 'country changed to: ${country.name}');
                     },
                   ),
                 ],
@@ -243,7 +238,7 @@ class _CelebrationAddEditScreenState extends State<CelebrationAddEditScreen> {
                 Padding(
                   padding: const EdgeInsets.only(bottom: 8),
                   child: Text(
-                    'date \*',
+                    'date *',
                     style: TextStyle(
                       color: Theme.of(context).primaryColorLight,
                       fontWeight: FontWeight.bold,
@@ -431,9 +426,10 @@ class _CelebrationAddEditScreenState extends State<CelebrationAddEditScreen> {
             MultiSelectDialogField(
               items: mBottles
                   .map((e) => MultiSelectItem(e,
-                      '${e.name.toLowerCase()} | ${e.category.toLowerCase()}'))
+                  '${e.name.toLowerCase()} [${e.category.toLowerCase()}]'))
                   .toList(),
               listType: MultiSelectListType.CHIP,
+              initialValue: sBottles.map((e) => e).toList(),
               buttonIcon: Icon(
                 Icons.arrow_drop_down,
                 color: Colors.grey.shade700,

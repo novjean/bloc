@@ -64,7 +64,6 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
   bool isEdit = false;
 
   List<Product> mBottles = [];
-  List<String> mBottleNames = [];
   bool isBottlesLoading = true;
   List<String> sBottleNames = [];
   List<Product> sBottles = [];
@@ -107,15 +106,13 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
         for (int i = 0; i < res.docs.length; i++) {
           DocumentSnapshot document = res.docs[i];
           Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-          final Product product = Fresh.freshProductMap(data, true);
+          final Product product = Fresh.freshProductMap(data, false);
           products.add(product);
         }
 
         products.sort((a, b) => a.category.compareTo(b.category));
 
         for (Product product in products) {
-          mBottleNames.add(
-              '${product.name.toLowerCase()} [${product.category.toLowerCase()}]');
           if (sBottleIds.contains(product.id)) {
             sBottles.add(product);
             sBottleNames.add(
@@ -413,6 +410,7 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
                   .map((e) => MultiSelectItem(e,
                       '${e.name.toLowerCase()} | ${e.category.toLowerCase()}'))
                   .toList(),
+              initialValue: sBottles.map((e) => e).toList(),
               listType: MultiSelectListType.CHIP,
               buttonIcon: Icon(
                 Icons.arrow_drop_down,
