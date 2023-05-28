@@ -211,7 +211,9 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
                 ],
               )
             : const SizedBox(),
-        const SizedBox(height: 12),
+        !UserPreferences.isUserLoggedIn()
+            ? const SizedBox(height: 12)
+            : const SizedBox(height: 24),
         Column(
           children: [
             Row(

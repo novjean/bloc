@@ -1,5 +1,6 @@
 import 'package:bloc/db/entity/history_music.dart';
 import 'package:bloc/db/entity/party_guest.dart';
+import 'package:bloc/db/entity/ui_photo.dart';
 
 import '../db/entity/ad.dart';
 import '../db/entity/bloc.dart';
@@ -2083,6 +2084,62 @@ class Fresh {
     }
 
     return freshTicket;
+  }
+
+  /** ui photo **/
+  static UiPhoto freshUiPhotoMap(Map<String, dynamic> map, bool shouldUpdate) {
+    UiPhoto uiPhoto = Dummy.getDummyUiPhoto();
+    bool shouldPush = true;
+
+    try {
+      uiPhoto = uiPhoto.copyWith(id: map['id'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'uiPhoto id not exist');
+    }
+    try {
+      uiPhoto = uiPhoto.copyWith(name: map['name'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'uiPhoto name not exist for id: ' + uiPhoto.id);
+      shouldPush = true;
+    }
+    try {
+      uiPhoto = uiPhoto.copyWith(imageUrls: List<String>.from(map['imageUrls']));
+    } catch (e) {
+      Logx.em(_TAG, 'uiPhoto imageUrls not exist for id: ' + uiPhoto.id);
+      List<String> temp = [];
+      uiPhoto = uiPhoto.copyWith(imageUrls: temp);
+      shouldPush = true;
+    }
+
+
+    if (shouldPush && shouldUpdate) {
+      Logx.i(_TAG, 'updating uiPhoto ' + uiPhoto.id);
+      FirestoreHelper.pushUiPhoto(uiPhoto);
+    }
+
+    return uiPhoto;
+  }
+
+  static UiPhoto freshUiPhoto(UiPhoto uiPhoto) {
+    UiPhoto freshUiPhoto = Dummy.getDummyUiPhoto();
+
+    try {
+      freshUiPhoto = freshUiPhoto.copyWith(id: uiPhoto.id);
+    } catch (e) {
+      Logx.em(_TAG, 'uiPhoto id not exist');
+    }
+    try {
+      freshUiPhoto = freshUiPhoto.copyWith(name: uiPhoto.name);
+    } catch (e) {
+      Logx.em(_TAG, 'uiPhoto name not exist for id: ' + uiPhoto.id);
+    }
+    try {
+      freshUiPhoto = freshUiPhoto.copyWith(imageUrls: uiPhoto.imageUrls);
+    } catch (e) {
+      Logx.em(_TAG, 'uiPhoto imageUrls not exist for id: ' + uiPhoto.id);
+    }
+
+    return freshUiPhoto;
   }
 
   /** user **/

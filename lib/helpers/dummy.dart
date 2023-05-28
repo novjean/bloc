@@ -6,6 +6,7 @@ import 'package:bloc/db/entity/party_guest.dart';
 import 'package:bloc/db/entity/reservation.dart';
 import 'package:bloc/db/entity/service_table.dart';
 import 'package:bloc/db/entity/ticket.dart';
+import 'package:bloc/db/entity/ui_photo.dart';
 import 'package:bloc/db/entity/user_level.dart';
 import 'package:bloc/utils/constants.dart';
 import 'package:bloc/utils/string_utils.dart';
@@ -311,6 +312,15 @@ class Dummy {
       isPaid: false,
     );
     return ticket;
+  }
+
+  static UiPhoto getDummyUiPhoto() {
+    UiPhoto uiPhoto = UiPhoto(
+      id: StringUtils.getRandomString(28),
+      name: '',
+      imageUrls: []
+    );
+    return uiPhoto;
   }
 
   static User getDummyUser() {

@@ -16,6 +16,7 @@ import 'package:bloc/db/entity/party_guest.dart';
 import 'package:bloc/db/entity/reservation.dart';
 import 'package:bloc/db/entity/seat.dart';
 import 'package:bloc/db/entity/ticket.dart';
+import 'package:bloc/db/entity/ui_photo.dart';
 import 'package:bloc/db/entity/user.dart' as blocUser;
 import 'package:bloc/helpers/firestorage_helper.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -64,6 +65,7 @@ class FirestoreHelper {
   static String SOS = 'sos';
   static String TABLES = 'tables';
   static String TICKETS = 'tickets';
+  static String UI_PHOTOS = 'ui_photos';
   static String USERS = 'users';
   static String USER_LEVELS = 'user_levels';
 
@@ -1335,6 +1337,29 @@ class FirestoreHelper {
     }
   }
 
+  /** ui photo **/
+  static void pushUiPhoto(UiPhoto uiPhoto) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection(UI_PHOTOS)
+          .doc(uiPhoto.id)
+          .set(uiPhoto.toMap());
+    } on PlatformException catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } on Exception catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } catch (e) {
+      logger.e(e);
+    }
+  }
+
+  static Future<QuerySnapshot<Map<String, dynamic>>> pullUiPhoto(String name) {
+    return FirebaseFirestore.instance
+        .collection(UI_PHOTOS)
+        .where('name', isEqualTo: name)
+        .get();
+  }
+
 
   /** user **/
   static void pushUser(blocUser.User user) async {
@@ -1500,5 +1525,6 @@ class FirestoreHelper {
         .orderBy('level', descending: false)
         .get();
   }
+
 
 }

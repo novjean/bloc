@@ -349,7 +349,9 @@ class _PartyGuestAddEditManageScreenState
                       ),
                     )
                   : const SizedBox(),
-              const SizedBox(height: 12),
+              !UserPreferences.isUserLoggedIn()
+                  ? const SizedBox(height: 12)
+                  : const SizedBox(height: 24),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 32),
                 child: DarkTextFieldWidget(
