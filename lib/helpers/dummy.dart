@@ -105,6 +105,7 @@ class Dummy {
         createdAt: Timestamp.now().millisecondsSinceEpoch,
         arrivalDate: Timestamp.now().millisecondsSinceEpoch,
         arrivalTime: '',
+        durationHours: 1,
         bottleProductIds: [],
         bottleNames: [],
         specialRequest: '',

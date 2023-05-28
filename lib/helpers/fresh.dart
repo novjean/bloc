@@ -496,6 +496,12 @@ class Fresh {
       Logx.em(_TAG, 'celebration arrivalTime not exist for id: ' + celebration.id);
       shouldPush = true;
     }
+    try {
+      celebration = celebration.copyWith(durationHours: map['durationHours'] as int);
+    } catch (e) {
+      Logx.em(_TAG, 'celebration durationHours not exist for id: ' + celebration.id);
+      shouldPush = true;
+    }
 
     try {
       celebration = celebration.copyWith(bottleProductIds: List<String>.from(map['bottleProductIds']));
@@ -589,6 +595,11 @@ class Fresh {
       fresh = fresh.copyWith(arrivalTime: celebration.arrivalTime);
     } catch (e) {
       Logx.em(_TAG, 'celebration arrivalTime not exist for id: ' + celebration.id);
+    }
+    try {
+      fresh = fresh.copyWith(durationHours: celebration.durationHours);
+    } catch (e) {
+      Logx.em(_TAG, 'celebration durationHours not exist for id: ' + celebration.id);
     }
 
     try {

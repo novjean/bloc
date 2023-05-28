@@ -54,6 +54,9 @@ class _CelebrationAddEditScreenState extends State<CelebrationAddEditScreen> {
   List<String> guestCounts = [];
   late String sGuestCount;
 
+  List<String> durationHours = [];
+  late String sDurationHours;
+
   List<String> ocassions = [
     'none',
     'birthday party',
@@ -112,6 +115,11 @@ class _CelebrationAddEditScreenState extends State<CelebrationAddEditScreen> {
       '1000',
       '1500'
     ];
+
+    for(int i=1; i<=12; i++){
+      durationHours.add(i.toString());
+    }
+    sDurationHours = widget.celebration.durationHours.toString();
 
     sGuestCount = widget.celebration.guestsCount.toString();
     sOcassion = widget.celebration.occasion;
@@ -433,6 +441,81 @@ class _CelebrationAddEditScreenState extends State<CelebrationAddEditScreen> {
                   ],
                 ),
               ),
+
+              const SizedBox(height: 24),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 32.0),
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 8.0),
+                          child: Text(
+                            'booking duration in hours',
+                            style: TextStyle(
+                                color: Theme.of(context).primaryColorLight,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      ],
+                    ),
+                    FormField<String>(
+                      builder: (FormFieldState<String> state) {
+                        return InputDecorator(
+                          key: const ValueKey('duration_hours'),
+                          decoration: InputDecoration(
+                              fillColor: Colors.white,
+                              errorStyle: TextStyle(
+                                  color: Theme.of(context).errorColor,
+                                  fontSize: 16.0),
+                              hintText: 'please select booking duration hours',
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(5.0),
+                                borderSide: BorderSide(
+                                    color: Theme.of(context).primaryColor),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                // width: 0.0 produces a thin "hairline" border
+                                borderSide: BorderSide(
+                                    color: Theme.of(context).primaryColor,
+                                    width: 0.0),
+                              )),
+                          isEmpty: sDurationHours == '',
+                          child: DropdownButtonHideUnderline(
+                            child: DropdownButton<String>(
+                              style: TextStyle(
+                                  color: Theme.of(context).primaryColorLight),
+                              dropdownColor: Theme.of(context).backgroundColor,
+                              value: sDurationHours,
+                              isDense: true,
+                              onChanged: (String? newValue) {
+                                setState(() {
+                                  sDurationHours = newValue!;
+                                  widget.celebration = widget.celebration
+                                      .copyWith(
+                                      durationHours: int.parse(sDurationHours));
+                                  state.didChange(newValue);
+                                });
+                              },
+                              items: durationHours.map((String value) {
+                                return DropdownMenuItem<String>(
+                                  value: value,
+                                  child: Text(value),
+                                );
+                              }).toList(),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                    const SizedBox(height: 24),
+                  ],
+                ),
+              ),
+
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 32.0),
                 child: Column(
@@ -635,7 +718,7 @@ class _CelebrationAddEditScreenState extends State<CelebrationAddEditScreen> {
                         ],
                       )
                     : ButtonWidget(
-                        text: 'reserve',
+                        text: 'confim',
                         onClicked: () {
                           if (UserPreferences.isUserLoggedIn()) {
                             showConfirmationDialog(context, false);

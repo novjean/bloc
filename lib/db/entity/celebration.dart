@@ -10,7 +10,7 @@ class Celebration {
   final int createdAt;
   final int arrivalDate;
   final String arrivalTime;
-  // final int durationHours;
+  final int durationHours;
 
   List<String> bottleProductIds;
   List<String> bottleNames;
@@ -31,6 +31,7 @@ class Celebration {
     required this.createdAt,
     required this.arrivalDate,
     required this.arrivalTime,
+    required this.durationHours,
     required this.bottleProductIds,
     required this.bottleNames,
     required this.specialRequest,
@@ -53,6 +54,7 @@ class Celebration {
           createdAt == other.createdAt &&
           arrivalDate == other.arrivalDate &&
           arrivalTime == other.arrivalTime &&
+          durationHours == other.durationHours &&
           bottleProductIds == other.bottleProductIds &&
           bottleNames == other.bottleNames &&
           specialRequest == other.specialRequest &&
@@ -71,6 +73,7 @@ class Celebration {
       createdAt.hashCode ^
       arrivalDate.hashCode ^
       arrivalTime.hashCode ^
+      durationHours.hashCode ^
       bottleProductIds.hashCode ^
       bottleNames.hashCode ^
       specialRequest.hashCode ^
@@ -90,6 +93,7 @@ class Celebration {
         ' createdAt: $createdAt,' +
         ' arrivalDate: $arrivalDate,' +
         ' arrivalTime: $arrivalTime,' +
+        ' durationHours: $durationHours,' +
         ' bottleProductIds: $bottleProductIds,' +
         ' bottleNames: $bottleNames,' +
         ' specialRequest: $specialRequest,' +
@@ -109,6 +113,7 @@ class Celebration {
     int? createdAt,
     int? arrivalDate,
     String? arrivalTime,
+    int? durationHours,
     List<String>? bottleProductIds,
     List<String>? bottleNames,
     String? specialRequest,
@@ -126,6 +131,7 @@ class Celebration {
       createdAt: createdAt ?? this.createdAt,
       arrivalDate: arrivalDate ?? this.arrivalDate,
       arrivalTime: arrivalTime ?? this.arrivalTime,
+      durationHours: durationHours ?? this.durationHours,
       bottleProductIds: bottleProductIds ?? this.bottleProductIds,
       bottleNames: bottleNames ?? this.bottleNames,
       specialRequest: specialRequest ?? this.specialRequest,
@@ -146,6 +152,7 @@ class Celebration {
       'createdAt': this.createdAt,
       'arrivalDate': this.arrivalDate,
       'arrivalTime': this.arrivalTime,
+      'durationHours': this.durationHours,
       'bottleProductIds': this.bottleProductIds,
       'bottleNames': this.bottleNames,
       'specialRequest': this.specialRequest,
@@ -166,6 +173,7 @@ class Celebration {
       createdAt: map['createdAt'] as int,
       arrivalDate: map['arrivalDate'] as int,
       arrivalTime: map['arrivalTime'] as String,
+      durationHours: map['durationHours'] as int,
       bottleProductIds: map['bottleProductIds'] as List<String>,
       bottleNames: map['bottleNames'] as List<String>,
       specialRequest: map['specialRequest'] as String,
