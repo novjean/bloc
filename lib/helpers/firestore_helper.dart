@@ -414,6 +414,20 @@ class FirestoreHelper {
         .snapshots();
   }
 
+  static Stream<QuerySnapshot<Object?>> getCelebrationsByUser(String userId) {
+    return FirebaseFirestore.instance
+        .collection(CELEBRATIONS)
+        .where('customerId', isEqualTo: userId)
+        .snapshots();
+  }
+
+  static Stream<QuerySnapshot<Object?>> getCelebrations() {
+    return FirebaseFirestore.instance
+        .collection(CELEBRATIONS)
+        .orderBy('arrivalDate', descending: true)
+        .snapshots();
+  }
+
   static void deleteCelebration(String docId) {
     FirebaseFirestore.instance.collection(CELEBRATIONS).doc(docId).delete();
   }
@@ -1525,6 +1539,5 @@ class FirestoreHelper {
         .orderBy('level', descending: false)
         .get();
   }
-
 
 }

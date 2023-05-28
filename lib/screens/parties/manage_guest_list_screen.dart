@@ -300,7 +300,7 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
                                         String guestListText = '';
                                         for(PartyGuest partyGuest in mPartyGuests){
                                           guestListText += '${partyGuest.name},${partyGuest.surname},'
-                                              '+${partyGuest.phone},${partyGuest.email},${partyGuest.gender},'
+                                              '+${partyGuest.phone},${partyGuest.email},${partyGuest.guestsCount} pax,${partyGuest.gender},'
                                               '${partyGuest.guestStatus},${partyGuest.isApproved?'approved':'not approved'}\n';
                                         }
 
@@ -338,7 +338,7 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
                                         String guestListText = '';
                                         for(PartyGuest partyGuest in mPartyGuests){
                                           guestListText += '${partyGuest.name},${partyGuest.surname},'
-                                              '+${partyGuest.phone},'
+                                              '+${partyGuest.phone},${partyGuest.guestsCount} pax,'
                                               '${partyGuest.guestStatus},${partyGuest.isApproved?'approved':'not approved'}\n';
                                         }
 

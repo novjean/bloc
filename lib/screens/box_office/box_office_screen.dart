@@ -4,6 +4,7 @@ import 'package:bloc/utils/scan_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
+import '../../db/entity/celebration.dart';
 import '../../db/entity/party.dart';
 import '../../db/entity/party_guest.dart';
 import '../../db/entity/reservation.dart';
@@ -15,11 +16,13 @@ import '../../helpers/fresh.dart';
 import '../../utils/constants.dart';
 import '../../utils/logx.dart';
 import '../../widgets/box_office/box_office_item.dart';
+import '../../widgets/celebrations/celebration_banner.dart';
 import '../../widgets/parties/party_guest_list_banner.dart';
 import '../../widgets/reservations/reservation_banner.dart';
 import '../../widgets/ui/loading_widget.dart';
 import '../../widgets/ui/sized_listview_block.dart';
 import '../promoter/promoter_guests_screen.dart';
+import '../user/celebration_add_edit_screen.dart';
 
 class BoxOfficeScreen extends StatefulWidget {
   @override
@@ -38,7 +41,7 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
 
   @override
   void initState() {
-    mOptions = ['guest list', 'reservations'];
+    mOptions = ['guest list', 'reservations', 'celebrations'];
     sOption = mOptions.first;
 
     int timeNow = Timestamp.now().millisecondsSinceEpoch;
@@ -127,7 +130,10 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
       return displayGuestListParties(context);
     } else if (sOption == 'reservations') {
       return buildReservations(context);
-    } else {
+    }  else if (sOption == 'celebrations') {
+      return buildCelebrations(context);
+    }
+    else {
       // unsupported
     }
   }
@@ -137,6 +143,8 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
       return buildUserPartyGuestList(context);
     } else if (sOption == 'reservations') {
       return buildUserReservations(context);
+    }  else if (sOption == 'celebrations') {
+      return buildUserCelebrations(context);
     } else {
       // unsupported
     }
@@ -229,6 +237,77 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
 
               if (i == snapshot.data!.docs.length - 1) {
                 return displayReservations(context, reservations);
+              }
+            }
+          }
+        } else {
+          return const Expanded(
+              child: Center(child: Text('no reservations found!')));
+        }
+        return const LoadingWidget();
+      },
+    );
+  }
+
+  buildCelebrations(BuildContext context) {
+    return StreamBuilder<QuerySnapshot>(
+      stream: FirestoreHelper.getCelebrations(),
+      builder: (ctx, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const LoadingWidget();
+        }
+        if (snapshot.hasData) {
+          List<Celebration> celebrations = [];
+          if (snapshot.data!.docs.isEmpty) {
+            return const Expanded(
+                child: Center(child: Text('no celebrations found!')));
+          } else {
+            for (int i = 0; i < snapshot.data!.docs.length; i++) {
+              DocumentSnapshot document = snapshot.data!.docs[i];
+              Map<String, dynamic> map =
+              document.data()! as Map<String, dynamic>;
+              final Celebration celebration =
+              Fresh.freshCelebrationMap(map, false);
+              celebrations.add(celebration);
+
+              if (i == snapshot.data!.docs.length - 1) {
+                return displayCelebrations(context, celebrations);
+              }
+            }
+          }
+        } else {
+          return const Expanded(
+              child: Center(child: Text('no reservations found!')));
+        }
+        return const LoadingWidget();
+      },
+    );
+  }
+
+  buildUserCelebrations(BuildContext context) {
+    Logx.i(_TAG, 'searching for celebrations for user ${UserPreferences.myUser.id}');
+
+    return StreamBuilder<QuerySnapshot>(
+      stream: FirestoreHelper.getCelebrationsByUser(UserPreferences.myUser.id),
+      builder: (ctx, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const LoadingWidget();
+        }
+
+        if (snapshot.hasData) {
+          List<Celebration> celebrations = [];
+          if (snapshot.data!.docs.isEmpty) {
+            return const Expanded(
+                child: Center(child: Text('no celebrations found!')));
+          } else {
+            for (int i = 0; i < snapshot.data!.docs.length; i++) {
+              DocumentSnapshot document = snapshot.data!.docs[i];
+              Map<String, dynamic> map = document.data()! as Map<String, dynamic>;
+              final Celebration celebration = Fresh.freshCelebrationMap(map, false);
+              celebrations.add(celebration);
+
+              if (i == snapshot.data!.docs.length - 1) {
+                return displayCelebrations(context, celebrations);
               }
             }
           }
@@ -359,4 +438,31 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
           }),
     );
   }
+
+  displayCelebrations(BuildContext context, List<Celebration> celebrations) {
+    return Expanded(
+      child: ListView.builder(
+          itemCount: celebrations.length,
+          scrollDirection: Axis.vertical,
+          itemBuilder: (ctx, index) {
+            return GestureDetector(
+                child: CelebrationBanner(
+                  celebration: celebrations[index],
+                  isPromoter: UserPreferences.myUser.clearanceLevel >= Constants.PROMOTER_LEVEL,
+                ),
+                onTap: () {
+                  Celebration _sCelebration = celebrations[index];
+                  Logx.i(
+                      _TAG, _sCelebration.name + '\'s celebration is selected');
+
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (ctx) => CelebrationAddEditScreen(
+                        celebration: _sCelebration,
+                        task: 'edit',
+                      )));
+                });
+          }),
+    );
+  }
+
 }
