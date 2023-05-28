@@ -100,7 +100,7 @@ class _PromoterGuestsScreenState extends State<PromoterGuestsScreen> {
                 onTap: () {
                   setState(() {
                     sOption = mOptions[index];
-                    Logx.i(_TAG, sOption + ' at box office is selected');
+                    Logx.i(_TAG, '$sOption at box office is selected');
                   });
                 });
           }),

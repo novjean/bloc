@@ -8,6 +8,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
+import '../db/entity/user.dart';
 import '../db/shared_preferences/user_preferences.dart';
 import '../helpers/firestore_helper.dart';
 import '../helpers/fresh.dart';
@@ -17,7 +18,7 @@ import 'chat/chat_screen.dart';
 import 'home_screen.dart';
 import 'parties/party_screen.dart';
 import 'profile/profile_add_edit_register_page.dart';
-import 'profile/profile_page.dart';
+import 'profile/profile_screen.dart';
 
 class MainScreen extends StatefulWidget {
   static const routeName = '/home-screen';
@@ -31,7 +32,7 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  static const String _TAG = 'PartyAddEditScreen';
+  static const String _TAG = 'MainScreen';
 
   late PageController _pageController;
   int _page = 0;
@@ -56,22 +57,29 @@ class _MainScreenState extends State<MainScreen> {
         .then(
       (res) {
         if (res.docs.isEmpty) {
-          Logx.i(_TAG, "user not found, registering " + widget.user.phoneNumber.toString());
+          Logx.i(_TAG, 'user not found, registering ${widget.user.phoneNumber}');
           // register the user, and we might need to get more info about the user
-          FirestoreHelper.pushUser(widget.user);
-          Logx.i(_TAG, widget.user.phoneNumber.toString() +
-              ' is now registered with bloc!');
+          User user = widget.user;
 
-          UserPreferences.setUser(widget.user);
+          if(kIsWeb){
+            user.isAppUser = false;
+          } else {
+            user.isAppUser = true;
+          }
+
+          FirestoreHelper.pushUser(user);
+          Logx.i(_TAG, '${user.phoneNumber} is now registered with bloc!');
+
+          UserPreferences.setUser(user);
 
           // lets grab more user details
           Navigator.of(context).push(
             MaterialPageRoute(
                 builder: (context) => ProfileAddEditRegisterPage(
-                    user: widget.user, task: 'register')),
+                    user: user, task: 'register')),
           );
         } else {
-          Logx.i(_TAG, "user found for " + widget.user.phoneNumber.toString());
+          Logx.i(_TAG, 'user found for ${widget.user.phoneNumber}');
           List<blocUser.User> users = [];
 
           for (int i = 0; i < res.docs.length; i++) {
@@ -83,8 +91,14 @@ class _MainScreenState extends State<MainScreen> {
 
             if (i == res.docs.length - 1) {
               user.lastSeenAt = Timestamp.now().millisecondsSinceEpoch;
+              if(UserPreferences.isUserLoggedIn()){
+                if(kIsWeb){
+                  user.isAppUser = false;
+                } else {
+                  user.isAppUser = true;
+                }
+              }
               FirestoreHelper.pushUser(user);
-
               UserPreferences.setUser(user);
             }
           }
@@ -148,8 +162,23 @@ class _MainScreenState extends State<MainScreen> {
 
       if (user.clearanceLevel >= Constants.MANAGER_LEVEL) {
         fbm.subscribeToTopic('reservations');
+        fbm.subscribeToTopic('celebrations');
       }
 
+      if(UserPreferences.isUserLoggedIn()){
+        // update the user is in app mode
+        User user = UserPreferences.myUser;
+        user.isAppUser = true;
+        FirestoreHelper.pushUser(user);
+      }
+    } else {
+      // in web mode
+      if(UserPreferences.isUserLoggedIn()){
+        // update the user is in app mode
+        User user = UserPreferences.myUser;
+        user.isAppUser = false;
+        FirestoreHelper.pushUser(user);
+      }
     }
   }
 
@@ -161,7 +190,7 @@ class _MainScreenState extends State<MainScreen> {
       PartyScreen(),
       // ChatHomeScreen(),
       ChatScreen(),
-      UserPreferences.isUserLoggedIn() ? ProfilePage() : ProfileLoginScreen(),
+      UserPreferences.isUserLoggedIn() ? ProfileScreen() : ProfileLoginScreen(),
     ];
 
     return Scaffold(

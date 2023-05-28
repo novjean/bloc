@@ -28,7 +28,7 @@ class _ChallengeAddEditScreenState extends State<ChallengeAddEditScreen> {
   @override
   Widget build(BuildContext context) => Scaffold(
     appBar: AppBar(
-      title: Text('challenge | ' + widget.task),
+      title: Text('challenge | ${widget.task}'),
     ),
     body: _buildBody(context),
   );
@@ -85,6 +85,12 @@ class _ChallengeAddEditScreenState extends State<ChallengeAddEditScreen> {
           label: 'dialog accept text \*',
           text: widget.challenge.dialogAcceptText,
           onChanged: (text) => widget.challenge = widget.challenge.copyWith(dialogAcceptText: text),
+        ),
+        const SizedBox(height: 24),
+        TextFieldWidget(
+          label: 'dialog accept text 2 \*',
+          text: widget.challenge.dialogAccept2Text,
+          onChanged: (text) => widget.challenge = widget.challenge.copyWith(dialogAccept2Text: text),
         ),
         const SizedBox(height: 24),
         TextFormField(

@@ -3,29 +3,31 @@ import 'package:bloc/widgets/ui/button_widget.dart';
 import 'package:bloc/widgets/ui/dark_button_widget.dart';
 import 'package:flutter/material.dart';
 
+import '../../db/entity/celebration.dart';
 import '../../db/entity/reservation.dart';
 import '../../helpers/firestore_helper.dart';
 import '../../helpers/fresh.dart';
+import '../../screens/user/celebration_add_edit_screen.dart';
 import '../../screens/user/reservation_add_edit_screen.dart';
 import '../../utils/logx.dart';
 
-class ReservationBanner extends StatelessWidget {
-  static const String _TAG = 'ReservationBanner';
-  final Reservation reservation;
+class CelebrationBanner extends StatelessWidget {
+  static const String _TAG = 'CelebrationBanner';
+  final Celebration celebration;
   final bool isPromoter;
 
-  const ReservationBanner(
-      {Key? key, required this.reservation, required this.isPromoter})
+  const CelebrationBanner(
+      {Key? key, required this.celebration, required this.isPromoter})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    String title = reservation.name.toLowerCase() +
-        (reservation.guestsCount > 1
-            ? ' + ${reservation.guestsCount - 1}'
+    String title = celebration.name.toLowerCase() +
+        (celebration.guestsCount > 1
+            ? ' + ${celebration.guestsCount - 1}'
             : '');
     return Hero(
-      tag: reservation.id,
+      tag: celebration.id,
       child: Card(
         elevation: 1,
         color: Theme.of(context).primaryColorLight,
@@ -62,7 +64,7 @@ class ReservationBanner extends StatelessWidget {
                             flex: 1,
                             child: Text(
                               DateTimeUtils.getFormattedDate(
-                                  reservation.arrivalDate),
+                                  celebration.arrivalDate),
                               style: const TextStyle(fontSize: 18),
                             ),
                           )
@@ -75,11 +77,11 @@ class ReservationBanner extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            '+${reservation.phone}',
+                            '+${celebration.phone}',
                             style: const TextStyle(fontSize: 18),
                           ),
                           Text(
-                            reservation.arrivalTime,
+                            celebration.arrivalTime,
                             style: const TextStyle(fontSize: 18),
                           ),
                         ],
@@ -95,14 +97,14 @@ class ReservationBanner extends StatelessWidget {
                             text: 'edit',
                             onClicked: () {
                               Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (ctx) => ReservationAddEditScreen(
-                                        reservation: reservation,
+                                  builder: (ctx) => CelebrationAddEditScreen(
+                                        celebration: celebration,
                                         task: 'edit',
                                       )));
                             },
                           ),
                           isPromoter
-                              ? reservation.isApproved
+                              ? celebration.isApproved
                                   ? Padding(
                                       padding:
                                           const EdgeInsets.only(left: 10.0),
@@ -110,16 +112,16 @@ class ReservationBanner extends StatelessWidget {
                                           text: 'decline',
                                           onClicked: () {
                                             bool value = false;
-                                            Reservation updatedReservation =
-                                                reservation.copyWith(
+                                            Celebration updatedCelebration =
+                                                celebration.copyWith(
                                                     isApproved: value);
                                             Logx.i(_TAG,
-                                                'reservation for ${updatedReservation.name} approved $value');
-                                            Reservation freshReservation =
-                                                Fresh.freshReservation(
-                                                    updatedReservation);
-                                            FirestoreHelper.pushReservation(
-                                                freshReservation);
+                                                'celebration for ${updatedCelebration.name} approved $value');
+                                            Celebration freshCelebration =
+                                                Fresh.freshCelebration(
+                                                    updatedCelebration);
+                                            FirestoreHelper.pushCelebration(
+                                                freshCelebration);
                                           }),
                                     )
                                   : Padding(
@@ -129,16 +131,16 @@ class ReservationBanner extends StatelessWidget {
                                         text: 'approve',
                                         onClicked: () {
                                           bool value = true;
-                                          Reservation updatedReservation =
-                                              reservation.copyWith(
+                                          Celebration updatedCelebration =
+                                              celebration.copyWith(
                                                   isApproved: value);
                                           Logx.i(_TAG,
-                                              'reservation for ${updatedReservation.name} approved $value');
-                                          Reservation freshReservation =
-                                              Fresh.freshReservation(
-                                                  updatedReservation);
-                                          FirestoreHelper.pushReservation(
-                                              freshReservation);
+                                              'celebration for ${updatedCelebration.name} approved $value');
+                                          Celebration freshCelebration =
+                                              Fresh.freshCelebration(
+                                                  updatedCelebration);
+                                          FirestoreHelper.pushCelebration(
+                                              freshCelebration);
                                         },
                                       ),
                                     )

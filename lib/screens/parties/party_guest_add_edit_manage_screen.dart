@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:bloc/db/entity/history_music.dart';
 import 'package:bloc/db/entity/reservation.dart';
 import 'package:bloc/utils/date_time_utils.dart';
 import 'package:bloc/widgets/ui/dark_button_widget.dart';
@@ -217,72 +218,76 @@ class _PartyGuestAddEditManageScreenState
                 ),
               ),
               widget.task == 'manage'
-                  ? Column(
-                      children: [
-                        const SizedBox(height: 24),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 32),
-                          child: DarkTextFieldWidget(
+                  ? Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 32.0),
+                    child: Column(
+                        children: [
+                          const SizedBox(height: 24),
+                          DarkTextFieldWidget(
+                            label: 'banned ',
+                            text: bloc_user.isBanned.toString(),
+                            onChanged: (value) {},
+                          ),
+                          const SizedBox(height: 24),
+                          DarkTextFieldWidget(
                             label: 'phone number \*',
                             text: bloc_user.phoneNumber.toString(),
                             onChanged: (value) {},
                           ),
-                        ),
-                        const SizedBox(height: 24),
-                        Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 32),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.only(bottom: 10),
-                                  child: Text(
-                                    'challenge level \*',
-                                    style: TextStyle(
-                                        color:
-                                            Theme.of(context).primaryColorLight,
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold),
-                                  ),
+                          const SizedBox(height: 24),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(bottom: 10),
+                                child: Text(
+                                  'challenge level \*',
+                                  style: TextStyle(
+                                      color:
+                                          Theme.of(context).primaryColorLight,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold),
                                 ),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    ButtonWidget(
-                                      text: '  down  ',
-                                      onClicked: () {
-                                        int level = bloc_user.challengeLevel;
-                                        level--;
-                                        setState(() {
-                                          bloc_user = bloc_user.copyWith(
-                                              challengeLevel: level);
-                                          FirestoreHelper.pushUser(bloc_user);
-                                        });
-                                      },
-                                    ),
-                                    DarkButtonWidget(
-                                      text: bloc_user.challengeLevel.toString(),
-                                      onClicked: () {},
-                                    ),
-                                    ButtonWidget(
-                                      text: 'level up',
-                                      onClicked: () {
-                                        int level = bloc_user.challengeLevel;
-                                        level++;
-                                        setState(() {
-                                          bloc_user = bloc_user.copyWith(
-                                              challengeLevel: level);
-                                          FirestoreHelper.pushUser(bloc_user);
-                                        });
-                                      },
-                                    ),
-                                  ],
-                                )
-                              ],
-                            )),
-                      ],
-                    )
+                              ),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  ButtonWidget(
+                                    text: '  down  ',
+                                    onClicked: () {
+                                      int level = bloc_user.challengeLevel;
+                                      level--;
+                                      setState(() {
+                                        bloc_user = bloc_user.copyWith(
+                                            challengeLevel: level);
+                                        FirestoreHelper.pushUser(bloc_user);
+                                      });
+                                    },
+                                  ),
+                                  DarkButtonWidget(
+                                    text: bloc_user.challengeLevel.toString(),
+                                    onClicked: () {},
+                                  ),
+                                  ButtonWidget(
+                                    text: 'level up',
+                                    onClicked: () {
+                                      int level = bloc_user.challengeLevel;
+                                      level++;
+                                      setState(() {
+                                        bloc_user = bloc_user.copyWith(
+                                            challengeLevel: level);
+                                        FirestoreHelper.pushUser(bloc_user);
+                                      });
+                                    },
+                                  ),
+                                ],
+                              )
+                            ],
+                          ),
+                        ],
+                      ),
+                  )
                   : const SizedBox(),
               !isLoggedIn
                   ? Padding(
@@ -301,52 +306,52 @@ class _PartyGuestAddEditManageScreenState
                                   fontWeight: FontWeight.bold),
                             ),
                           ),
-                          Container(
-                            child: IntlPhoneField(
-                              style: TextStyle(
-                                  color: Theme.of(context).primaryColor,
-                                  fontSize: 18),
-                              decoration: InputDecoration(
-                                  labelText: '',
-                                  labelStyle: TextStyle(
+                          IntlPhoneField(
+                            style: TextStyle(
+                                color: Theme.of(context).primaryColor,
+                                fontSize: 18),
+                            decoration: InputDecoration(
+                                labelText: '',
+                                labelStyle: TextStyle(
+                                    color: Theme.of(context).primaryColor),
+                                hintStyle: TextStyle(
+                                    color: Theme.of(context).primaryColor),
+                                counterStyle: TextStyle(
+                                    color: Theme.of(context).primaryColor),
+                                border: OutlineInputBorder(
+                                  borderSide: BorderSide(
                                       color: Theme.of(context).primaryColor),
-                                  hintStyle: TextStyle(
-                                      color: Theme.of(context).primaryColor),
-                                  counterStyle: TextStyle(
-                                      color: Theme.of(context).primaryColor),
-                                  border: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                        color: Theme.of(context).primaryColor),
-                                  ),
-                                  enabledBorder: OutlineInputBorder(
-                                    // width: 0.0 produces a thin "hairline" border
-                                    borderSide: BorderSide(
-                                        color: Theme.of(context).primaryColor,
-                                        width: 0.0),
-                                  )),
-                              controller: _controller,
-                              initialCountryCode: 'IN',
-                              dropdownTextStyle: TextStyle(
-                                  color: Theme.of(context).primaryColor,
-                                  fontSize: 18),
-                              pickerDialogStyle: PickerDialogStyle(
-                                  backgroundColor:
-                                      Theme.of(context).primaryColor),
-                              onChanged: (phone) {
-                                Logx.i(_TAG, phone.completeNumber);
-                                completePhoneNumber = phone.completeNumber;
-                              },
-                              onCountryChanged: (country) {
-                                Logx.i(_TAG,
-                                    'country changed to: ' + country.name);
-                              },
-                            ),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  // width: 0.0 produces a thin "hairline" border
+                                  borderSide: BorderSide(
+                                      color: Theme.of(context).primaryColor,
+                                      width: 0.0),
+                                )),
+                            controller: _controller,
+                            initialCountryCode: 'IN',
+                            dropdownTextStyle: TextStyle(
+                                color: Theme.of(context).primaryColor,
+                                fontSize: 18),
+                            pickerDialogStyle: PickerDialogStyle(
+                                backgroundColor:
+                                    Theme.of(context).primaryColor),
+                            onChanged: (phone) {
+                              Logx.i(_TAG, phone.completeNumber);
+                              completePhoneNumber = phone.completeNumber;
+                            },
+                            onCountryChanged: (country) {
+                              Logx.i(_TAG,
+                                  'country changed to: ' + country.name);
+                            },
                           ),
                         ],
                       ),
                     )
                   : const SizedBox(),
-              const SizedBox(height: 24),
+              !UserPreferences.isUserLoggedIn()
+                  ? const SizedBox(height: 12)
+                  : const SizedBox(height: 24),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 32),
                 child: DarkTextFieldWidget(
@@ -737,6 +742,13 @@ class _PartyGuestAddEditManageScreenState
                   PartyGuest freshPartyGuest =
                       Fresh.freshPartyGuest(widget.partyGuest);
                   FirestoreHelper.pushPartyGuest(freshPartyGuest);
+
+                  HistoryMusic historyMusic = Dummy.getDummyHistoryMusic();
+                  historyMusic.userId = widget.partyGuest.guestId;
+                  historyMusic.genre = widget.party.genre;
+                  historyMusic.count = 1;
+                  FirestoreHelper.pushHistoryMusic(historyMusic);
+
                 } else {
                   if (hasUserChanged) {
                     blocUser.User freshUser = Fresh.freshUser(bloc_user);
@@ -764,6 +776,26 @@ class _PartyGuestAddEditManageScreenState
 
                       Logx.i(_TAG, 'guest list request in box office');
                       Toaster.longToast('guest list request in box office');
+
+                      FirestoreHelper.pullHistoryMusic(widget.partyGuest.guestId, widget.party.genre)
+                          .then((res) {
+                            if(res.docs.isEmpty){
+                              // no history, add new one
+                              HistoryMusic historyMusic = Dummy.getDummyHistoryMusic();
+                              historyMusic.userId = widget.partyGuest.guestId;
+                              historyMusic.genre = widget.party.genre;
+                              historyMusic.count = 1;
+                              FirestoreHelper.pushHistoryMusic(historyMusic);
+                            } else {
+                              for (int i = 0; i < res.docs.length; i++) {
+                                DocumentSnapshot document = res.docs[i];
+                                Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+                                final HistoryMusic historyMusic = Fresh.freshHistoryMusicMap(data, false);
+                                historyMusic.count++;
+                                FirestoreHelper.pushHistoryMusic(historyMusic);
+                              }
+                            }
+                      });
                     } else {
                       //already requested
                       Logx.i(_TAG, 'duplicate guest list request');
@@ -854,6 +886,36 @@ class _PartyGuestAddEditManageScreenState
                   showReserveTableDialog(context);
                 },
               ),
+              challenge.dialogAccept2Text.isNotEmpty?
+              TextButton(
+                child: Text(challenge.dialogAccept2Text),
+                onPressed: () async {
+                  Logx.i(_TAG, 'user accepts challenge');
+                  Toaster.longToast('thank you for supporting us!');
+
+                  widget.partyGuest = widget.partyGuest.copyWith(isChallengeClicked: true);
+                  FirestoreHelper.pushPartyGuest(widget.partyGuest);
+
+                  switch (challenge.level) {
+                    case 3:{
+                      //android download
+                      final uri = Uri.parse(
+                          'https://play.google.com/store/apps/details?id=com.novatech.bloc');
+                      NetworkUtils.launchInBrowser(uri);
+                      break;
+                    }
+                    default:
+                      {
+                        final uri =
+                        Uri.parse('https://www.instagram.com/bloc.india/');
+                        NetworkUtils.launchInBrowser(uri);
+                        break;
+                      }
+                  }
+                },
+              )
+                  : const SizedBox(),
+
               TextButton(
                 child: Text(challenge.dialogAcceptText),
                 onPressed: () async {
@@ -875,6 +937,13 @@ class _PartyGuestAddEditManageScreenState
                       {
                         final uri =
                         Uri.parse('https://www.instagram.com/freq.club/');
+                        NetworkUtils.launchInBrowser(uri);
+                        break;
+                      }
+                      case 3:{
+                        //ios download
+                        final uri = Uri.parse(
+                            'https://apps.apple.com/in/app/bloc-community/id1672736309');
                         NetworkUtils.launchInBrowser(uri);
                         break;
                       }

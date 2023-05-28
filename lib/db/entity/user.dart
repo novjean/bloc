@@ -16,6 +16,9 @@ class User {
   int createdAt;
   int lastSeenAt;
 
+  bool isBanned;
+  bool isAppUser;
+
 //<editor-fold desc="Data Methods">
   User({
     required this.id,
@@ -31,6 +34,8 @@ class User {
     required this.fcmToken,
     required this.createdAt,
     required this.lastSeenAt,
+    required this.isBanned,
+    required this.isAppUser,
   });
 
   @override
@@ -50,7 +55,9 @@ class User {
           blocServiceId == other.blocServiceId &&
           fcmToken == other.fcmToken &&
           createdAt == other.createdAt &&
-          lastSeenAt == other.lastSeenAt);
+          lastSeenAt == other.lastSeenAt &&
+          isBanned == other.isBanned &&
+          isAppUser == other.isAppUser);
 
   @override
   int get hashCode =>
@@ -66,7 +73,9 @@ class User {
       blocServiceId.hashCode ^
       fcmToken.hashCode ^
       createdAt.hashCode ^
-      lastSeenAt.hashCode;
+      lastSeenAt.hashCode ^
+      isBanned.hashCode ^
+      isAppUser.hashCode;
 
   @override
   String toString() {
@@ -84,6 +93,8 @@ class User {
         ' fcmToken: $fcmToken,' +
         ' createdAt: $createdAt,' +
         ' lastSeenAt: $lastSeenAt,' +
+        ' isBanned: $isBanned,' +
+        ' isAppUser: $isAppUser,' +
         '}';
   }
 
@@ -101,6 +112,8 @@ class User {
     String? fcmToken,
     int? createdAt,
     int? lastSeenAt,
+    bool? isBanned,
+    bool? isAppUser,
   }) {
     return User(
       id: id ?? this.id,
@@ -116,6 +129,8 @@ class User {
       fcmToken: fcmToken ?? this.fcmToken,
       createdAt: createdAt ?? this.createdAt,
       lastSeenAt: lastSeenAt ?? this.lastSeenAt,
+      isBanned: isBanned ?? this.isBanned,
+      isAppUser: isAppUser ?? this.isAppUser,
     );
   }
 
@@ -134,6 +149,8 @@ class User {
       'fcmToken': this.fcmToken,
       'createdAt': this.createdAt,
       'lastSeenAt': this.lastSeenAt,
+      'isBanned': this.isBanned,
+      'isAppUser': this.isAppUser,
     };
   }
 
@@ -152,6 +169,8 @@ class User {
       fcmToken: map['fcmToken'] as String,
       createdAt: map['createdAt'] as int,
       lastSeenAt: map['lastSeenAt'] as int,
+      isBanned: map['isBanned'] as bool,
+      isAppUser: map['isAppUser'] as bool,
     );
   }
 

@@ -32,10 +32,10 @@ class BlocServiceItem extends StatelessWidget {
             tag: service.id,
             child: FadeInImage(
               placeholder:
-                  const AssetImage('assets/images/product-placeholder.png'),
+                  const AssetImage('assets/images/logo.png'),
               image: service.imageUrl != "url"
                   ? NetworkImage(service.imageUrl)
-                  : const NetworkImage("assets/images/product-placeholder.png"),
+                  : const NetworkImage("assets/images/logo.png"),
               fit: BoxFit.cover,
             ),
           ),

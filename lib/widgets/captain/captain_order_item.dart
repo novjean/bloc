@@ -8,6 +8,7 @@ import '../../db/entity/cart_item.dart';
 import '../../db/entity/user.dart';
 import '../../helpers/dummy.dart';
 import '../../helpers/firestore_helper.dart';
+import '../../helpers/fresh.dart';
 import '../../screens/manager/bill_screen.dart';
 import '../../utils/cart_item_utils.dart';
 import '../../utils/date_time_utils.dart';
@@ -41,7 +42,7 @@ class _CaptainOrderItemState extends State<CaptainOrderItem> {
         DocumentSnapshot document = res.docs[0];
         Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
 
-        final User _user = User.fromMap(data);
+        final User _user = Fresh.freshUserMap(data, false);
 
         setState(() {
           user = _user;

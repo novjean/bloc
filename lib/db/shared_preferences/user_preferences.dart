@@ -22,7 +22,9 @@ class UserPreferences {
       fcmToken: '',
       blocServiceId: '',
       createdAt: 0,
-      lastSeenAt: 0);
+      lastSeenAt: 0,
+      isBanned: false,
+      isAppUser: false);
 
   static Future init() async =>
       _preferences = await SharedPreferences.getInstance();
@@ -53,7 +55,9 @@ class UserPreferences {
         fcmToken: '',
         blocServiceId: '',
         createdAt: 0,
-        lastSeenAt: 0));
+        lastSeenAt: 0,
+        isBanned: false,
+        isAppUser: false));
   }
 
   static void setUserFcmToken(String token) {

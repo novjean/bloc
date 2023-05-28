@@ -28,10 +28,10 @@ class CoverPhoto extends StatelessWidget {
                   ),
                   child: FadeInImage(
                     placeholder: const AssetImage(
-                        'assets/images/product-placeholder.png'),
+                        'assets/images/logo.png'),
                     image: imageUrl != "url"
                         ? NetworkImage(imageUrl)
-                        : NetworkImage("assets/images/product-placeholder.png"),
+                        : NetworkImage("assets/images/logo.png"),
                     fit: BoxFit.cover,
                   ),
                 ),

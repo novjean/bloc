@@ -4,9 +4,11 @@ import 'package:bloc/db/entity/bloc.dart';
 import 'package:bloc/db/entity/bloc_service.dart';
 import 'package:bloc/db/entity/cart_item.dart';
 import 'package:bloc/db/entity/category.dart';
+import 'package:bloc/db/entity/celebration.dart';
 import 'package:bloc/db/entity/challenge.dart';
 import 'package:bloc/db/entity/genre.dart';
 import 'package:bloc/db/entity/guest_wifi.dart';
+import 'package:bloc/db/entity/history_music.dart';
 import 'package:bloc/db/entity/offer.dart';
 import 'package:bloc/db/entity/order_bloc.dart';
 import 'package:bloc/db/entity/party.dart';
@@ -14,6 +16,7 @@ import 'package:bloc/db/entity/party_guest.dart';
 import 'package:bloc/db/entity/reservation.dart';
 import 'package:bloc/db/entity/seat.dart';
 import 'package:bloc/db/entity/ticket.dart';
+import 'package:bloc/db/entity/ui_photo.dart';
 import 'package:bloc/db/entity/user.dart' as blocUser;
 import 'package:bloc/helpers/firestorage_helper.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -43,9 +46,11 @@ class FirestoreHelper {
   static String CATEGORIES = 'categories';
   static String CART_ITEMS = 'cart_items';
   static String CHALLENGES = 'challenges';
+  static String CELEBRATIONS = 'celebrations';
   static String CITIES = 'cities';
   static String GENRES = 'genres';
   static String GUEST_WIFIS = 'guest_wifis';
+  static String HISTORY_MUSIC = 'history_music';
   static String INVENTORY_OPTIONS = 'inventory_options';
   static String MANAGER_SERVICES = 'manager_services';
   static String MANAGER_SERVICE_OPTIONS = 'manager_service_options';
@@ -60,6 +65,7 @@ class FirestoreHelper {
   static String SOS = 'sos';
   static String TABLES = 'tables';
   static String TICKETS = 'tickets';
+  static String UI_PHOTOS = 'ui_photos';
   static String USERS = 'users';
   static String USER_LEVELS = 'user_levels';
 
@@ -384,6 +390,49 @@ class FirestoreHelper {
         .snapshots();
   }
 
+  /** celebrations **/
+  static void pushCelebration(Celebration celebration) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection(CELEBRATIONS)
+          .doc(celebration.id)
+          .set(celebration.toMap());
+    } on PlatformException catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } on Exception catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } catch (e) {
+      logger.e(e);
+    }
+  }
+
+  static Stream<QuerySnapshot<Object?>> getCelebrationsByBlocId(String blocServiceId) {
+    return FirebaseFirestore.instance
+        .collection(CELEBRATIONS)
+        .where('blocServiceId', isEqualTo: blocServiceId)
+        .orderBy('arrivalDate', descending: true)
+        .snapshots();
+  }
+
+  static Stream<QuerySnapshot<Object?>> getCelebrationsByUser(String userId) {
+    return FirebaseFirestore.instance
+        .collection(CELEBRATIONS)
+        .where('customerId', isEqualTo: userId)
+        .snapshots();
+  }
+
+  static Stream<QuerySnapshot<Object?>> getCelebrations() {
+    return FirebaseFirestore.instance
+        .collection(CELEBRATIONS)
+        .orderBy('arrivalDate', descending: true)
+        .snapshots();
+  }
+
+  static void deleteCelebration(String docId) {
+    FirebaseFirestore.instance.collection(CELEBRATIONS).doc(docId).delete();
+  }
+
+
   /** challenges **/
   static void pushChallenge(Challenge challenge) async {
     try {
@@ -510,6 +559,38 @@ class FirestoreHelper {
     } catch (e) {
       logger.e(e);
     }
+  }
+
+  /** history music **/
+  static void pushHistoryMusic(HistoryMusic historyMusic) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection(HISTORY_MUSIC)
+          .doc(historyMusic.id)
+          .set(historyMusic.toMap());
+    } on PlatformException catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } on Exception catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } catch (e) {
+      logger.e(e);
+    }
+  }
+
+  static Future<QuerySnapshot<Map<String, dynamic>>> pullHistoryMusic(String userId, String genre) {
+    return FirebaseFirestore.instance
+        .collection(FirestoreHelper.HISTORY_MUSIC)
+        .where('userId', isEqualTo: userId)
+        .where('genre', isEqualTo: genre)
+        .limit(1)
+        .get();
+  }
+
+  static Future<QuerySnapshot<Map<String, dynamic>>> pullHistoryMusicByUser(String userId) {
+    return FirebaseFirestore.instance
+        .collection(FirestoreHelper.HISTORY_MUSIC)
+        .where('userId', isEqualTo: userId)
+        .get();
   }
 
   /** inventory options **/
@@ -682,16 +763,16 @@ class FirestoreHelper {
         .snapshots();
   }
 
-  static Future<QuerySnapshot<Map<String, dynamic>>> pullUpcomingPartyByEndTime(
-      int timeNow) {
-    return FirebaseFirestore.instance
-        .collection(FirestoreHelper.PARTIES)
-        .where('endTime', isGreaterThan: timeNow)
-        .where('isActive', isEqualTo: true)
-        .orderBy('endTime', descending: false)
-        .limit(1)
-        .get();
-  }
+  // static Future<QuerySnapshot<Map<String, dynamic>>> pullUpcomingPartyByEndTime(
+  //     int timeNow) {
+  //   return FirebaseFirestore.instance
+  //       .collection(FirestoreHelper.PARTIES)
+  //       .where('endTime', isGreaterThan: timeNow)
+  //       .where('isActive', isEqualTo: true)
+  //       .orderBy('endTime', descending: false)
+  //       .limit(1)
+  //       .get();
+  // }
 
   static void deleteParty(Party party) {
     FirebaseFirestore.instance
@@ -714,6 +795,7 @@ class FirestoreHelper {
         .collection(PARTY_GUESTS)
         .where('partyId', isEqualTo: partyId)
         .where('isApproved', isEqualTo: true)
+        .orderBy('name', descending: false)
         .snapshots();
   }
 
@@ -932,7 +1014,7 @@ class FirestoreHelper {
   static Stream<QuerySnapshot<Object?>> getReservations() {
     return FirebaseFirestore.instance
         .collection(RESERVATIONS)
-        .orderBy('arrivalDate', descending: false)
+        .orderBy('arrivalDate', descending: true)
         .snapshots();
   }
 
@@ -940,7 +1022,7 @@ class FirestoreHelper {
     return FirebaseFirestore.instance
         .collection(RESERVATIONS)
         .where('blocServiceId', isEqualTo: blocServiceId)
-        .orderBy('arrivalDate', descending: false)
+        .orderBy('arrivalDate', descending: true)
         .snapshots();
   }
 
@@ -1269,6 +1351,29 @@ class FirestoreHelper {
     }
   }
 
+  /** ui photo **/
+  static void pushUiPhoto(UiPhoto uiPhoto) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection(UI_PHOTOS)
+          .doc(uiPhoto.id)
+          .set(uiPhoto.toMap());
+    } on PlatformException catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } on Exception catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } catch (e) {
+      logger.e(e);
+    }
+  }
+
+  static Future<QuerySnapshot<Map<String, dynamic>>> pullUiPhoto(String name) {
+    return FirebaseFirestore.instance
+        .collection(UI_PHOTOS)
+        .where('name', isEqualTo: name)
+        .get();
+  }
+
 
   /** user **/
   static void pushUser(blocUser.User user) async {
@@ -1312,6 +1417,25 @@ class FirestoreHelper {
     return FirebaseFirestore.instance
         .collection(USERS)
         .where('clearanceLevel', isEqualTo: level)
+        .orderBy('lastSeenAt', descending: true)
+        .snapshots();
+  }
+
+  static getUsersByLevelAndMode(int level, bool isAppUser) {
+    return FirebaseFirestore.instance
+        .collection(USERS)
+        .where('clearanceLevel', isEqualTo: level)
+        .where('isAppUser', isEqualTo: isAppUser)
+        .orderBy('lastSeenAt', descending: true)
+        .snapshots();
+  }
+
+  static getUsersByLevelAndGenderAndMode(int level, String gender, bool isAppUser) {
+    return FirebaseFirestore.instance
+        .collection(USERS)
+        .where('clearanceLevel', isEqualTo: level)
+        .where('gender', isEqualTo: gender)
+        .where('isAppUser', isEqualTo: isAppUser)
         .orderBy('lastSeenAt', descending: true)
         .snapshots();
   }

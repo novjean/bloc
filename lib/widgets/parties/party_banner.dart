@@ -1,12 +1,17 @@
+import 'package:bloc/db/shared_preferences/user_preferences.dart';
 import 'package:bloc/utils/constants.dart';
 import 'package:bloc/utils/date_time_utils.dart';
 import 'package:bloc/utils/network_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
+import '../../db/entity/history_music.dart';
 import '../../db/entity/party.dart';
 import '../../db/entity/party_guest.dart';
+import '../../db/entity/user.dart';
 import '../../helpers/dummy.dart';
+import '../../helpers/firestore_helper.dart';
+import '../../helpers/fresh.dart';
 import '../../screens/parties/artist_screen.dart';
 import '../../screens/parties/party_guest_add_edit_manage_screen.dart';
 import '../../utils/logx.dart';
@@ -55,8 +60,6 @@ class PartyBanner extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-
-
                       Padding(
                         padding: const EdgeInsets.only(left: 5.0),
                         child: RichText(
@@ -208,6 +211,30 @@ class PartyBanner extends StatelessWidget {
       onPressed: () {
         final uri = Uri.parse(party.ticketUrl);
         NetworkUtils.launchInBrowser(uri);
+
+        if(UserPreferences.isUserLoggedIn()){
+          User user = UserPreferences.myUser;
+
+          FirestoreHelper.pullHistoryMusic(user.id, party.genre)
+              .then((res) {
+            if(res.docs.isEmpty){
+              // no history, add new one
+              HistoryMusic historyMusic = Dummy.getDummyHistoryMusic();
+              historyMusic.userId = user.id;
+              historyMusic.genre = party.genre;
+              historyMusic.count = 1;
+              FirestoreHelper.pushHistoryMusic(historyMusic);
+            } else {
+              for (int i = 0; i < res.docs.length; i++) {
+                DocumentSnapshot document = res.docs[i];
+                Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+                final HistoryMusic historyMusic = Fresh.freshHistoryMusicMap(data, false);
+                historyMusic.count++;
+                FirestoreHelper.pushHistoryMusic(historyMusic);
+              }
+            }
+          });
+        }
       },
       label: const Text(
         'buy ticket',

@@ -8,6 +8,7 @@ class Challenge {
 
   final String dialogTitle;
   final String dialogAcceptText;
+  final String dialogAccept2Text;
 
 //<editor-fold desc="Data Methods">
   const Challenge({
@@ -19,6 +20,7 @@ class Challenge {
     required this.clickCount,
     required this.dialogTitle,
     required this.dialogAcceptText,
+    required this.dialogAccept2Text,
   });
 
   @override
@@ -33,7 +35,8 @@ class Challenge {
           points == other.points &&
           clickCount == other.clickCount &&
           dialogTitle == other.dialogTitle &&
-          dialogAcceptText == other.dialogAcceptText);
+          dialogAcceptText == other.dialogAcceptText &&
+          dialogAccept2Text == other.dialogAccept2Text);
 
   @override
   int get hashCode =>
@@ -44,7 +47,8 @@ class Challenge {
       points.hashCode ^
       clickCount.hashCode ^
       dialogTitle.hashCode ^
-      dialogAcceptText.hashCode;
+      dialogAcceptText.hashCode ^
+      dialogAccept2Text.hashCode;
 
   @override
   String toString() {
@@ -57,6 +61,7 @@ class Challenge {
         ' clickCount: $clickCount,' +
         ' dialogTitle: $dialogTitle,' +
         ' dialogAcceptText: $dialogAcceptText,' +
+        ' dialogAccept2Text: $dialogAccept2Text,' +
         '}';
   }
 
@@ -69,6 +74,7 @@ class Challenge {
     int? clickCount,
     String? dialogTitle,
     String? dialogAcceptText,
+    String? dialogAccept2Text,
   }) {
     return Challenge(
       id: id ?? this.id,
@@ -79,6 +85,7 @@ class Challenge {
       clickCount: clickCount ?? this.clickCount,
       dialogTitle: dialogTitle ?? this.dialogTitle,
       dialogAcceptText: dialogAcceptText ?? this.dialogAcceptText,
+      dialogAccept2Text: dialogAccept2Text ?? this.dialogAccept2Text,
     );
   }
 
@@ -92,6 +99,7 @@ class Challenge {
       'clickCount': this.clickCount,
       'dialogTitle': this.dialogTitle,
       'dialogAcceptText': this.dialogAcceptText,
+      'dialogAccept2Text': this.dialogAccept2Text,
     };
   }
 
@@ -105,6 +113,7 @@ class Challenge {
       clickCount: map['clickCount'] as int,
       dialogTitle: map['dialogTitle'] as String,
       dialogAcceptText: map['dialogAcceptText'] as String,
+      dialogAccept2Text: map['dialogAccept2Text'] as String,
     );
   }
 

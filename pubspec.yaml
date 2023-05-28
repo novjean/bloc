@@ -1,5 +1,5 @@
 name: bloc
-description: on high, above the streets and crowds, a hidden gem where music abounds, bloc's rooftop bar, a haven of sound.
+description: high above, we sway, melodies lift us higher, stars dance, souls ignite. blocCommunity <3
 
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
@@ -15,7 +15,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 1.6.5+44
+version: 1.7.3+52
 
 environment:
   sdk: ">=2.16.2 <3.0.0"
@@ -83,6 +83,8 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
+  multi_select_flutter: ^4.1.3
+  syncfusion_flutter_charts: ^21.2.4
 
 #  image_picker_web: ^3.0.0+1
 

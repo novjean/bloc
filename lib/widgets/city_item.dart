@@ -25,7 +25,7 @@ class CityItem extends StatelessWidget {
             // hero should be wired in with where we are animating to
             tag: city.id,
             child: FadeInImage(
-              placeholder: AssetImage('assets/images/product-placeholder.png'),
+              placeholder: AssetImage('assets/images/logo.png'),
               image: NetworkImage(city.imageUrl),
               fit: BoxFit.cover,
             ),

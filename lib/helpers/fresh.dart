@@ -1,8 +1,11 @@
+import 'package:bloc/db/entity/history_music.dart';
 import 'package:bloc/db/entity/party_guest.dart';
+import 'package:bloc/db/entity/ui_photo.dart';
 
 import '../db/entity/ad.dart';
 import '../db/entity/bloc.dart';
 import '../db/entity/category.dart';
+import '../db/entity/celebration.dart';
 import '../db/entity/challenge.dart';
 import '../db/entity/genre.dart';
 import '../db/entity/party.dart';
@@ -428,6 +431,207 @@ class Fresh {
     return freshCategory;
   }
 
+  /** celebration **/
+  static Celebration freshCelebrationMap(Map<String, dynamic> map, bool shouldUpdate) {
+    Celebration celebration = Dummy.getDummyCelebration(Constants.blocServiceId);
+    bool shouldPush = true;
+
+    try {
+      celebration = celebration.copyWith(id: map['id'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'celebration id not exist');
+    }
+    try {
+      celebration = celebration.copyWith(name: map['name'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'celebration name not exist for id: ' + celebration.id);
+      shouldPush = true;
+    }
+    try {
+      celebration = celebration.copyWith(surname: map['surname'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'celebration surname not exist for id: ' + celebration.id);
+      shouldPush = true;
+    }
+    try {
+      celebration = celebration.copyWith(blocServiceId: map['blocServiceId'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'celebration blocServiceId not exist for id: ' + celebration.id);
+      shouldPush = true;
+    }
+    try {
+      celebration = celebration.copyWith(customerId: map['customerId'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'celebration customerId not exist for id: ' + celebration.id);
+      shouldPush = true;
+    }
+    try {
+      celebration = celebration.copyWith(phone: map['phone'] as int);
+    } catch (e) {
+      Logx.em(_TAG, 'celebration phone not exist for id: ' + celebration.id);
+      shouldPush = true;
+    }
+
+    try {
+      celebration = celebration.copyWith(guestsCount: map['guestsCount'] as int);
+    } catch (e) {
+      Logx.em(_TAG, 'celebration guestsCount not exist for id: ' + celebration.id);
+      shouldPush = true;
+    }
+    try {
+      celebration = celebration.copyWith(createdAt: map['createdAt'] as int);
+    } catch (e) {
+      Logx.em(_TAG, 'celebration createdAt not exist for id: ' + celebration.id);
+      shouldPush = true;
+    }
+    try {
+      celebration = celebration.copyWith(arrivalDate: map['arrivalDate'] as int);
+    } catch (e) {
+      Logx.em(_TAG, 'celebration arrivalDate not exist for id: ' + celebration.id);
+      shouldPush = true;
+    }
+    try {
+      celebration = celebration.copyWith(arrivalTime: map['arrivalTime'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'celebration arrivalTime not exist for id: ' + celebration.id);
+      shouldPush = true;
+    }
+    try {
+      celebration = celebration.copyWith(durationHours: map['durationHours'] as int);
+    } catch (e) {
+      Logx.em(_TAG, 'celebration durationHours not exist for id: ' + celebration.id);
+      shouldPush = true;
+    }
+
+    try {
+      celebration = celebration.copyWith(bottleProductIds: List<String>.from(map['bottleProductIds']));
+    } catch (e) {
+      Logx.em(_TAG, 'celebration bottleProductIds not exist for id: ' + celebration.id);
+      shouldPush = true;
+    }
+    try {
+      celebration = celebration.copyWith(bottleNames: List<String>.from(map['bottleNames']));
+    } catch (e) {
+      Logx.em(_TAG, 'celebration bottleNames not exist for id: ' + celebration.id);
+      shouldPush = true;
+    }
+    try {
+      celebration = celebration.copyWith(specialRequest: map['specialRequest'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'celebration specialRequest not exist for id: ' + celebration.id);
+      shouldPush = true;
+    }
+    try {
+      celebration = celebration.copyWith(occasion: map['occasion'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'reservation occasion not exist for id: ' + celebration.id);
+      shouldPush = true;
+    }
+    try {
+      celebration = celebration.copyWith(isApproved: map['isApproved'] as bool);
+    } catch (e) {
+      Logx.em(_TAG, 'celebration isApproved not exist for id: ' + celebration.id);
+      shouldPush = true;
+    }
+
+    if (shouldPush && shouldUpdate) {
+      Logx.i(_TAG, 'updating celebration ' + celebration.id);
+      FirestoreHelper.pushCelebration(celebration);
+    }
+
+    return celebration;
+  }
+
+  static Celebration freshCelebration(Celebration celebration) {
+    Celebration fresh = Dummy.getDummyCelebration(Constants.blocServiceId);
+
+    try {
+      fresh = fresh.copyWith(id: celebration.id);
+    } catch (e) {
+      Logx.em(_TAG, 'celebration id not exist');
+    }
+    try {
+      fresh = fresh.copyWith(name: celebration.name);
+    } catch (e) {
+      Logx.em(_TAG, 'celebration name not exist for id: ' + celebration.id);
+    }
+    try {
+      fresh = fresh.copyWith(surname: celebration.surname);
+    } catch (e) {
+      Logx.em(_TAG, 'celebration surname not exist for id: ' + celebration.id);
+    }
+    try {
+      fresh = fresh.copyWith(blocServiceId: celebration.blocServiceId);
+    } catch (e) {
+      Logx.em(_TAG, 'celebration blocServiceId not exist for id: ' + celebration.id);
+    }
+    try {
+      fresh = fresh.copyWith(customerId: celebration.customerId);
+    } catch (e) {
+      Logx.em(_TAG, 'celebration customerId not exist for id: ' + celebration.id);
+    }
+    try {
+      fresh = fresh.copyWith(phone: celebration.phone);
+    } catch (e) {
+      Logx.em(_TAG, 'celebration phone not exist for id: ' + celebration.id);
+    }
+
+    try {
+      fresh = fresh.copyWith(guestsCount: celebration.guestsCount);
+    } catch (e) {
+      Logx.em(_TAG, 'celebration guestsCount not exist for id: ' + celebration.id);
+    }
+    try {
+      fresh = fresh.copyWith(createdAt: celebration.createdAt);
+    } catch (e) {
+      Logx.em(_TAG, 'celebration createdAt not exist for id: ' + celebration.id);
+    }
+    try {
+      fresh = fresh.copyWith(arrivalDate: celebration.arrivalDate);
+    } catch (e) {
+      Logx.em(_TAG, 'celebration arrivalDate not exist for id: ' + celebration.id);
+    }
+    try {
+      fresh = fresh.copyWith(arrivalTime: celebration.arrivalTime);
+    } catch (e) {
+      Logx.em(_TAG, 'celebration arrivalTime not exist for id: ' + celebration.id);
+    }
+    try {
+      fresh = fresh.copyWith(durationHours: celebration.durationHours);
+    } catch (e) {
+      Logx.em(_TAG, 'celebration durationHours not exist for id: ' + celebration.id);
+    }
+
+    try {
+      fresh = fresh.copyWith(bottleProductIds: celebration.bottleProductIds);
+    } catch (e) {
+      Logx.em(_TAG, 'celebration bottleProductIds not exist for id: ' + celebration.id);
+    }
+    try {
+      fresh = fresh.copyWith(bottleNames: celebration.bottleNames);
+    } catch (e) {
+      Logx.em(_TAG, 'celebration bottleNames not exist for id: ' + celebration.id);
+    }
+    try {
+      fresh = fresh.copyWith(specialRequest: celebration.specialRequest);
+    } catch (e) {
+      Logx.em(_TAG, 'celebration specialRequest not exist for id: ' + celebration.id);
+    }
+    try {
+      fresh = fresh.copyWith(occasion: celebration.occasion);
+    } catch (e) {
+      Logx.em(_TAG, 'celebration occasion not exist for id: ' + celebration.id);
+    }
+
+    try {
+      fresh = fresh.copyWith(isApproved: celebration.isApproved);
+    } catch (e) {
+      Logx.em(_TAG, 'celebration isApproved not exist for id: ' + celebration.id);
+    }
+
+    return fresh;
+  }
+
   /** challenge **/
   static Challenge freshChallengeMap(
       Map<String, dynamic> map, bool shouldUpdate) {
@@ -480,6 +684,12 @@ class Fresh {
       challenge = challenge.copyWith(dialogAcceptText: map['dialogAcceptText'] as String);
     } catch (e) {
       Logx.em(_TAG, 'challenge dialogAcceptText not exist for id: ' + challenge.id);
+      shouldPush = true;
+    }
+    try {
+      challenge = challenge.copyWith(dialogAccept2Text: map['dialogAccept2Text'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'challenge dialogAccept2Text not exist for id: ' + challenge.id);
       shouldPush = true;
     }
 
@@ -536,6 +746,11 @@ class Fresh {
     } catch (e) {
       Logx.em(_TAG, 'challenge dialogAcceptText not exist for challenge id: ' + challenge.id);
     }
+    try {
+      freshChallenge = freshChallenge.copyWith(dialogAccept2Text: challenge.dialogAccept2Text);
+    } catch (e) {
+      Logx.em(_TAG, 'challenge dialogAccept2Text not exist for challenge id: ' + challenge.id);
+    }
 
     return freshChallenge;
   }
@@ -584,6 +799,72 @@ class Fresh {
     }
 
     return freshGenre;
+  }
+
+  /** history music **/
+  static HistoryMusic freshHistoryMusicMap(
+      Map<String, dynamic> map, bool shouldUpdate) {
+    HistoryMusic historyMusic = Dummy.getDummyHistoryMusic();
+
+    bool shouldPush = true;
+
+    try {
+      historyMusic = historyMusic.copyWith(id: map['id'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'historyMusic id not exist');
+    }
+    try {
+      historyMusic = historyMusic.copyWith(userId: map['userId'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'historyMusic userId not exist for id: ${historyMusic.id}');
+      shouldPush = true;
+    }
+    try {
+      historyMusic = historyMusic.copyWith(genre: map['genre'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'historyMusic genre not exist for id: ${historyMusic.id}');
+      shouldPush = true;
+    }
+    try {
+      historyMusic = historyMusic.copyWith(count: map['count'] as int);
+    } catch (e) {
+      Logx.em(_TAG, 'historyMusic count not exist for id: ${historyMusic.id}');
+      shouldPush = true;
+    }
+
+    if (shouldPush && shouldUpdate) {
+      Logx.i(_TAG, 'updating history music ${historyMusic.id}');
+      FirestoreHelper.pushHistoryMusic(historyMusic);
+    }
+
+    return historyMusic;
+  }
+
+  static HistoryMusic freshHistoryMusic(HistoryMusic historyMusic) {
+    HistoryMusic fresh = Dummy.getDummyHistoryMusic();
+
+    try {
+      fresh = fresh.copyWith(id: historyMusic.id);
+    } catch (e) {
+      Logx.em(_TAG, 'historyMusic id not exist');
+    }
+    try {
+      fresh = fresh.copyWith(userId: historyMusic.userId);
+    } catch (e) {
+      Logx.em(_TAG, 'historyMusic userId not exist for id: ${historyMusic.id}');
+    }
+    try {
+      fresh = fresh.copyWith(genre: historyMusic.genre);
+    } catch (e) {
+      Logx.em(_TAG, 'historyMusic genre not exist for id: ${historyMusic.id}');
+    }
+    try {
+      fresh = fresh.copyWith(count: historyMusic.count);
+    } catch (e) {
+      Logx.em(_TAG, 'historyMusic count not exist for id: ${historyMusic.id}');
+    }
+
+    return fresh;
   }
 
   /** party **/
@@ -1067,8 +1348,12 @@ class Fresh {
     } catch (e) {
       Logx.em(
           _TAG,
-          'party guest isChallengeClicked not exist for party guest id: ' +
-              partyGuest.id);
+          'party guest isChallengeClicked not exist for id: ${partyGuest.id}');
+    }
+    try {
+      freshGuest = freshGuest.copyWith(shouldBanUser: partyGuest.shouldBanUser);
+    } catch (e) {
+      Logx.em(_TAG, 'party guest shouldBanUser not exist for id: ${partyGuest.id}');
     }
 
     try {
@@ -1103,45 +1388,45 @@ class Fresh {
       partyGuest = partyGuest.copyWith(partyId: map['partyId'] as String);
     } catch (e) {
       Logx.em(
-          _TAG, 'partyGuest partyId not exist for user id: ' + partyGuest.id);
+          _TAG, 'partyGuest partyId not exist for id: ' + partyGuest.id);
       shouldPush = true;
     }
     try {
       partyGuest = partyGuest.copyWith(guestId: map['guestId'] as String);
     } catch (e) {
       Logx.em(
-          _TAG, 'partyGuest guestId not exist for user id: ' + partyGuest.id);
+          _TAG, 'partyGuest guestId not exist for id: ' + partyGuest.id);
       shouldPush = true;
     }
     try {
       partyGuest = partyGuest.copyWith(name: map['name'] as String);
     } catch (e) {
-      Logx.em(_TAG, 'partyGuest name not exist for user id: ' + partyGuest.id);
+      Logx.em(_TAG, 'partyGuest name not exist for id: ' + partyGuest.id);
       shouldPush = true;
     }
     try {
       partyGuest = partyGuest.copyWith(surname: map['surname'] as String);
     } catch (e) {
-      Logx.em(_TAG, 'partyGuest surname not exist for user id: ' + partyGuest.id);
+      Logx.em(_TAG, 'partyGuest surname not exist for id: ' + partyGuest.id);
       shouldPush = true;
     }
     try {
       partyGuest = partyGuest.copyWith(phone: map['phone'] as String);
     } catch (e) {
-      Logx.em(_TAG, 'partyGuest phone not exist for user id: ' + partyGuest.id);
+      Logx.em(_TAG, 'partyGuest phone not exist for id: ' + partyGuest.id);
       shouldPush = true;
     }
     try {
       partyGuest = partyGuest.copyWith(email: map['email'] as String);
     } catch (e) {
-      Logx.em(_TAG, 'partyGuest email not exist for user id: ' + partyGuest.id);
+      Logx.em(_TAG, 'partyGuest email not exist for id: ' + partyGuest.id);
       shouldPush = true;
     }
     try {
       partyGuest = partyGuest.copyWith(guestsCount: map['guestsCount'] as int);
     } catch (e) {
       Logx.em(_TAG,
-          'partyGuest guestsCount not exist for user id: ' + partyGuest.id);
+          'partyGuest guestsCount not exist for id: ' + partyGuest.id);
       shouldPush = true;
     }
     try {
@@ -1149,28 +1434,35 @@ class Fresh {
           partyGuest.copyWith(guestsRemaining: map['guestsRemaining'] as int);
     } catch (e) {
       Logx.em(_TAG,
-          'partyGuest guestsRemaining not exist for user id: ' + partyGuest.id);
+          'partyGuest guestsRemaining not exist for id: ' + partyGuest.id);
       shouldPush = true;
     }
     try {
       partyGuest = partyGuest.copyWith(createdAt: map['createdAt'] as int);
     } catch (e) {
       Logx.em(
-          _TAG, 'partyGuest createdAt not exist for user id: ' + partyGuest.id);
+          _TAG, 'partyGuest createdAt not exist for id: ' + partyGuest.id);
       shouldPush = true;
     }
     try {
       partyGuest = partyGuest.copyWith(isApproved: map['isApproved'] as bool);
     } catch (e) {
       Logx.em(_TAG,
-          'partyGuest isApproved not exist for user id: ' + partyGuest.id);
+          'partyGuest isApproved not exist for id: ' + partyGuest.id);
       shouldPush = true;
     }
     try {
       partyGuest = partyGuest.copyWith(isChallengeClicked: map['isChallengeClicked'] as bool);
     } catch (e) {
       Logx.em(_TAG,
-          'partyGuest isChallengeClicked not exist for user id: ' + partyGuest.id);
+          'partyGuest isChallengeClicked not exist for id: ' + partyGuest.id);
+      shouldPush = true;
+    }
+    try {
+      partyGuest = partyGuest.copyWith(shouldBanUser: map['shouldBanUser'] as bool);
+    } catch (e) {
+      Logx.em(_TAG,
+          'partyGuest shouldBanUser not exist for id: ' + partyGuest.id);
       shouldPush = true;
     }
     try {
@@ -1178,7 +1470,7 @@ class Fresh {
           partyGuest.copyWith(guestStatus: map['guestStatus'] as String);
     } catch (e) {
       Logx.em(_TAG,
-          'partyGuest guestStatus not exist for user id: ' + partyGuest.id);
+          'partyGuest guestStatus not exist for id: ' + partyGuest.id);
       shouldPush = true;
     }
     try {
@@ -1186,13 +1478,13 @@ class Fresh {
           partyGuest.copyWith(gender: map['gender'] as String);
     } catch (e) {
       Logx.em(_TAG,
-          'partyGuest gender not exist for user id: ' + partyGuest.id);
+          'partyGuest gender not exist for id: ' + partyGuest.id);
       shouldPush = true;
     }
 
     if (shouldPush &&
         shouldUpdate &&
-        UserPreferences.myUser.clearanceLevel >= Constants.MANAGER_LEVEL) {
+        UserPreferences.myUser.clearanceLevel >= Constants.PROMOTER_LEVEL) {
       Logx.i(_TAG, 'updating party guest ' + partyGuest.id);
       FirestoreHelper.pushPartyGuest(partyGuest);
     }
@@ -1805,6 +2097,62 @@ class Fresh {
     return freshTicket;
   }
 
+  /** ui photo **/
+  static UiPhoto freshUiPhotoMap(Map<String, dynamic> map, bool shouldUpdate) {
+    UiPhoto uiPhoto = Dummy.getDummyUiPhoto();
+    bool shouldPush = true;
+
+    try {
+      uiPhoto = uiPhoto.copyWith(id: map['id'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'uiPhoto id not exist');
+    }
+    try {
+      uiPhoto = uiPhoto.copyWith(name: map['name'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'uiPhoto name not exist for id: ' + uiPhoto.id);
+      shouldPush = true;
+    }
+    try {
+      uiPhoto = uiPhoto.copyWith(imageUrls: List<String>.from(map['imageUrls']));
+    } catch (e) {
+      Logx.em(_TAG, 'uiPhoto imageUrls not exist for id: ' + uiPhoto.id);
+      List<String> temp = [];
+      uiPhoto = uiPhoto.copyWith(imageUrls: temp);
+      shouldPush = true;
+    }
+
+
+    if (shouldPush && shouldUpdate) {
+      Logx.i(_TAG, 'updating uiPhoto ' + uiPhoto.id);
+      FirestoreHelper.pushUiPhoto(uiPhoto);
+    }
+
+    return uiPhoto;
+  }
+
+  static UiPhoto freshUiPhoto(UiPhoto uiPhoto) {
+    UiPhoto freshUiPhoto = Dummy.getDummyUiPhoto();
+
+    try {
+      freshUiPhoto = freshUiPhoto.copyWith(id: uiPhoto.id);
+    } catch (e) {
+      Logx.em(_TAG, 'uiPhoto id not exist');
+    }
+    try {
+      freshUiPhoto = freshUiPhoto.copyWith(name: uiPhoto.name);
+    } catch (e) {
+      Logx.em(_TAG, 'uiPhoto name not exist for id: ' + uiPhoto.id);
+    }
+    try {
+      freshUiPhoto = freshUiPhoto.copyWith(imageUrls: uiPhoto.imageUrls);
+    } catch (e) {
+      Logx.em(_TAG, 'uiPhoto imageUrls not exist for id: ' + uiPhoto.id);
+    }
+
+    return freshUiPhoto;
+  }
+
   /** user **/
   static User freshUserMap(Map<String, dynamic> map, bool shouldUpdate) {
     User user = Dummy.getDummyUser();
@@ -1891,6 +2239,19 @@ class Fresh {
       shouldPushUser = true;
     }
 
+    try {
+      user = user.copyWith(isBanned: map['isBanned'] as bool);
+    } catch (e) {
+      Logx.em(_TAG, 'user isBanned not exist for id: ' + user.id);
+      shouldPushUser = true;
+    }
+    try {
+      user = user.copyWith(isAppUser: map['isAppUser'] as bool);
+    } catch (e) {
+      Logx.em(_TAG, 'user isAppUser not exist for id: ' + user.id);
+      shouldPushUser = true;
+    }
+
     if (shouldPushUser && shouldUpdate) {
       Logx.i(_TAG, 'updating user ' + user.id);
       FirestoreHelper.pushUser(user);
@@ -1966,6 +2327,16 @@ class Fresh {
       freshUser = freshUser.copyWith(lastSeenAt: user.lastSeenAt);
     } catch (e) {
       Logx.em(_TAG, 'user lastSeenAt not exist for user id: ' + user.id);
+    }
+    try {
+      freshUser = freshUser.copyWith(isBanned: user.isBanned);
+    } catch (e) {
+      Logx.em(_TAG, 'user isBanned not exist for id: ' + user.id);
+    }
+    try {
+      freshUser = freshUser.copyWith(isAppUser: user.isAppUser);
+    } catch (e) {
+      Logx.em(_TAG, 'user isAppUser not exist for id: ' + user.id);
     }
 
     return freshUser;

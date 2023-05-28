@@ -1,10 +1,12 @@
 import 'package:bloc/db/entity/category.dart';
 import 'package:bloc/db/entity/challenge.dart';
 import 'package:bloc/db/entity/guest_wifi.dart';
+import 'package:bloc/db/entity/history_music.dart';
 import 'package:bloc/db/entity/party_guest.dart';
 import 'package:bloc/db/entity/reservation.dart';
 import 'package:bloc/db/entity/service_table.dart';
 import 'package:bloc/db/entity/ticket.dart';
+import 'package:bloc/db/entity/ui_photo.dart';
 import 'package:bloc/db/entity/user_level.dart';
 import 'package:bloc/utils/constants.dart';
 import 'package:bloc/utils/string_utils.dart';
@@ -13,6 +15,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../db/entity/ad.dart';
 import '../db/entity/bloc.dart';
 import '../db/entity/bloc_service.dart';
+import '../db/entity/celebration.dart';
 import '../db/entity/genre.dart';
 import '../db/entity/offer.dart';
 import '../db/entity/party.dart';
@@ -88,6 +91,29 @@ class Dummy {
     return dummyCategory;
   }
 
+  static Celebration getDummyCelebration(String blocServiceId) {
+    Celebration dummy = Celebration(
+        id: StringUtils.getRandomString(28),
+        blocServiceId: blocServiceId,
+        customerId: UserPreferences.myUser.id,
+        name: UserPreferences.isUserLoggedIn() ? UserPreferences.myUser.name : '',
+        surname: UserPreferences.isUserLoggedIn() ? UserPreferences.myUser.surname : '',
+        phone: UserPreferences.isUserLoggedIn()
+            ? UserPreferences.myUser.phoneNumber
+            : 0,
+        guestsCount: 25,
+        createdAt: Timestamp.now().millisecondsSinceEpoch,
+        arrivalDate: Timestamp.now().millisecondsSinceEpoch,
+        arrivalTime: '',
+        durationHours: 1,
+        bottleProductIds: [],
+        bottleNames: [],
+        specialRequest: '',
+        occasion: 'none',
+        isApproved: false,);
+    return dummy;
+  }
+
   static Challenge getDummyChallenge() {
     Challenge dummyChallenge = Challenge(
         id: StringUtils.getRandomString(28),
@@ -97,7 +123,7 @@ class Dummy {
         points: 0,
         clickCount: 0,
         dialogTitle: '',
-        dialogAcceptText: '');
+        dialogAcceptText: '',dialogAccept2Text: '');
     return dummyChallenge;
   }
 
@@ -117,6 +143,12 @@ class Dummy {
         blocServiceId: blocServiceId,
         creationTime: Timestamp.now().millisecondsSinceEpoch);
     return dummyWifi;
+  }
+
+  static HistoryMusic getDummyHistoryMusic() {
+    HistoryMusic dummy = HistoryMusic(
+        id: StringUtils.getRandomString(28), userId: '', genre: '', count: 0);
+    return dummy;
   }
 
   static Offer getDummyOffer() {
@@ -188,6 +220,7 @@ class Dummy {
         isApproved: false,
         guestStatus: 'couple',
         isChallengeClicked: false,
+        shouldBanUser: false,
         gender: 'male');
     return dummyGuest;
   }
@@ -282,6 +315,15 @@ class Dummy {
     return ticket;
   }
 
+  static UiPhoto getDummyUiPhoto() {
+    UiPhoto uiPhoto = UiPhoto(
+      id: StringUtils.getRandomString(28),
+      name: '',
+      imageUrls: []
+    );
+    return uiPhoto;
+  }
+
   static User getDummyUser() {
     int millis = Timestamp.now().millisecondsSinceEpoch;
 
@@ -297,6 +339,8 @@ class Dummy {
         surname: '',
         gender: 'male',
         phoneNumber: 0,
+        isBanned: false,
+        isAppUser: false,
         createdAt: millis,
         lastSeenAt: millis);
     return dummyUser;

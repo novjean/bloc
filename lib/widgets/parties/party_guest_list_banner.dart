@@ -70,6 +70,12 @@ class PartyGuestListBanner extends StatelessWidget {
                     ),
 
                     const Spacer(),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 5.0),
+                      child: Text('end time: ${DateTimeUtils.getFormattedTime(party.guestListEndTime)}',
+                        style: const TextStyle(fontSize: 18),
+                      ),
+                    ),
 
                   ],
                 ),

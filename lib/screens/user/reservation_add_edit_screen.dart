@@ -5,7 +5,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl_phone_field/country_picker_dialog.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
-import 'package:multiselect/multiselect.dart';
+import 'package:multi_select_flutter/dialog/multi_select_dialog_field.dart';
+import 'package:multi_select_flutter/util/multi_select_item.dart';
+import 'package:multi_select_flutter/util/multi_select_list_type.dart';
 import 'package:pinput/pinput.dart';
 
 import '../../db/entity/product.dart';
@@ -62,7 +64,6 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
   bool isEdit = false;
 
   List<Product> mBottles = [];
-  List<String> mBottleNames = [];
   bool isBottlesLoading = true;
   List<String> sBottleNames = [];
   List<Product> sBottles = [];
@@ -80,9 +81,11 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
       isEdit = true;
     }
 
-    for (int i = 1; i <= 15; i++) {
+    int i = 1;
+    for (; i <= 10; i++) {
       guestCounts.add(i.toString());
     }
+
     sGuestCount = widget.reservation.guestsCount.toString();
     sOcassion = widget.reservation.occasion;
 
@@ -100,22 +103,20 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
 
       if (res.docs.isNotEmpty) {
         List<Product> products = [];
-        List<String> bottleNames = [];
         for (int i = 0; i < res.docs.length; i++) {
           DocumentSnapshot document = res.docs[i];
           Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-          final Product product = Fresh.freshProductMap(data, true);
+          final Product product = Fresh.freshProductMap(data, false);
           products.add(product);
         }
 
         products.sort((a, b) => a.category.compareTo(b.category));
 
         for (Product product in products) {
-          mBottleNames.add(
-              '${product.name.toLowerCase()} [${product.category.toLowerCase()}]');
-          if(sBottleIds.contains(product.id)){
+          if (sBottleIds.contains(product.id)) {
             sBottles.add(product);
-            sBottleNames.add('${product.name.toLowerCase()} [${product.category.toLowerCase()}]');
+            sBottleNames.add(
+                '${product.name.toLowerCase()} [${product.category.toLowerCase()}]');
           }
         }
 
@@ -150,11 +151,13 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
       children: [
         const SizedBox(height: 15),
         DarkTextFieldWidget(
-          label: 'name \*',
-          text: widget.reservation.name,
-          onChanged: (name) =>
-              widget.reservation = widget.reservation.copyWith(name: name),
-        ),
+            label: 'name \*',
+            text: widget.reservation.name,
+            onChanged: (name) {
+              bloc_user = bloc_user.copyWith(name: name);
+
+              widget.reservation = widget.reservation.copyWith(name: name);
+            }),
         !UserPreferences.isUserLoggedIn()
             ? Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -170,47 +173,47 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
                           fontWeight: FontWeight.bold),
                     ),
                   ),
-                  Container(
-                    child: IntlPhoneField(
-                      style: TextStyle(
-                          color: Theme.of(context).primaryColor, fontSize: 18),
-                      decoration: InputDecoration(
-                          labelText: '',
-                          labelStyle:
-                              TextStyle(color: Theme.of(context).primaryColor),
-                          hintStyle:
-                              TextStyle(color: Theme.of(context).primaryColor),
-                          counterStyle:
-                              TextStyle(color: Theme.of(context).primaryColor),
-                          border: OutlineInputBorder(
-                            borderSide: BorderSide(
-                                color: Theme.of(context).primaryColor),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            // width: 0.0 produces a thin "hairline" border
-                            borderSide: BorderSide(
-                                color: Theme.of(context).primaryColor,
-                                width: 0.0),
-                          )),
-                      controller: _controller,
-                      initialCountryCode: 'IN',
-                      dropdownTextStyle: TextStyle(
-                          color: Theme.of(context).primaryColor, fontSize: 18),
-                      pickerDialogStyle: PickerDialogStyle(
-                          backgroundColor: Theme.of(context).primaryColor),
-                      onChanged: (phone) {
-                        Logx.i(_TAG, phone.completeNumber);
-                        completePhoneNumber = phone.completeNumber;
-                      },
-                      onCountryChanged: (country) {
-                        Logx.i(_TAG, 'country changed to: ' + country.name);
-                      },
-                    ),
+                  IntlPhoneField(
+                    style: TextStyle(
+                        color: Theme.of(context).primaryColor, fontSize: 18),
+                    decoration: InputDecoration(
+                        labelText: '',
+                        labelStyle:
+                            TextStyle(color: Theme.of(context).primaryColor),
+                        hintStyle:
+                            TextStyle(color: Theme.of(context).primaryColor),
+                        counterStyle:
+                            TextStyle(color: Theme.of(context).primaryColor),
+                        border: OutlineInputBorder(
+                          borderSide: BorderSide(
+                              color: Theme.of(context).primaryColor),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          // width: 0.0 produces a thin "hairline" border
+                          borderSide: BorderSide(
+                              color: Theme.of(context).primaryColor,
+                              width: 0.0),
+                        )),
+                    controller: _controller,
+                    initialCountryCode: 'IN',
+                    dropdownTextStyle: TextStyle(
+                        color: Theme.of(context).primaryColor, fontSize: 18),
+                    pickerDialogStyle: PickerDialogStyle(
+                        backgroundColor: Theme.of(context).primaryColor),
+                    onChanged: (phone) {
+                      Logx.i(_TAG, phone.completeNumber);
+                      completePhoneNumber = phone.completeNumber;
+                    },
+                    onCountryChanged: (country) {
+                      Logx.i(_TAG, 'country changed to: ' + country.name);
+                    },
                   ),
                 ],
               )
             : const SizedBox(),
-        const SizedBox(height: 24),
+        !UserPreferences.isUserLoggedIn()
+            ? const SizedBox(height: 12)
+            : const SizedBox(height: 24),
         Column(
           children: [
             Row(
@@ -350,7 +353,7 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(5.0),
                         borderSide:
-                        BorderSide(color: Theme.of(context).primaryColor),
+                            BorderSide(color: Theme.of(context).primaryColor),
                       ),
                       enabledBorder: OutlineInputBorder(
                         // width: 0.0 produces a thin "hairline" border
@@ -361,15 +364,15 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
                   child: DropdownButtonHideUnderline(
                     child: DropdownButton<String>(
                       style:
-                      TextStyle(color: Theme.of(context).primaryColorLight),
+                          TextStyle(color: Theme.of(context).primaryColorLight),
                       dropdownColor: Theme.of(context).backgroundColor,
                       value: sOcassion,
                       isDense: true,
                       onChanged: (String? newValue) {
                         setState(() {
                           sOcassion = newValue!;
-                          widget.reservation = widget.reservation
-                              .copyWith(occasion: sOcassion);
+                          widget.reservation =
+                              widget.reservation.copyWith(occasion: sOcassion);
                           state.didChange(newValue);
                         });
                       },
@@ -387,7 +390,6 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
             const SizedBox(height: 24),
           ],
         ),
-
         Column(
           children: [
             Row(
@@ -405,52 +407,54 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
                 ),
               ],
             ),
-            DropDownMultiSelect(
-              selected_values_style: const TextStyle(color: Constants.lightPrimary),
-              decoration: InputDecoration(
-                  hoverColor: Colors.indigo.shade200,
-                  fillColor: Constants.lightPrimary,
-                  errorStyle: TextStyle(
-                      color: Theme.of(context).errorColor, fontSize: 16.0),
-                  hintText: '',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(5.0),
-                    borderSide:
-                        BorderSide(color: Theme.of(context).primaryColor),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    // width: 0.0 produces a thin "hairline" border
-                    borderSide: BorderSide(
-                        color: Theme.of(context).primaryColor, width: 0.0),
-                  )),
-              onChanged: (List<String> x) {
-                setState(() {
-                  sBottleNames = x;
-                  sBottles = [];
-                  sBottleIds = [];
+            MultiSelectDialogField(
+              items: mBottles
+                  .map((e) => MultiSelectItem(e,
+                      '${e.name.toLowerCase()} | ${e.category.toLowerCase()}'))
+                  .toList(),
+              initialValue: sBottles.map((e) => e).toList(),
+              listType: MultiSelectListType.CHIP,
+              buttonIcon: Icon(
+                Icons.arrow_drop_down,
+                color: Colors.grey.shade700,
+              ),
+              title: const Text('select your spirit 🥂'),
+              buttonText: const Text(
+                'select',
+                style: TextStyle(color: Constants.lightPrimary),
+              ),
+              decoration: BoxDecoration(
+                color: Constants.background,
+                borderRadius: const BorderRadius.all(Radius.circular(5)),
+                border: Border.all(
+                  color: Constants.primary,
+                  width: 0.0,
+                ),
+              ),
+              searchable: true,
+              onConfirm: (values) {
+                sBottles = values as List<Product>;
+                sBottleIds = [];
+                sBottleNames = [];
 
-                  for (String bottleName in sBottleNames) {
-                    for (Product product in mBottles) {
-                      if (bottleName ==
-                          '${product.name.toLowerCase()} [${product.category.toLowerCase()}]') {
-                        sBottles.add(product);
-                        sBottleIds.add(product.id);
-                      }
-                    }
-                  }
-                  if (sBottleIds.isEmpty) {
-                    Logx.i(_TAG, 'no bottles selected');
-                  } else {
-                    widget.reservation =
-                        widget.reservation.copyWith(bottleNames: sBottleNames);
-                    widget.reservation = widget.reservation
-                        .copyWith(bottleProductIds: sBottleIds);
-                  }
-                });
+                for (Product product in sBottles) {
+                  sBottleIds.add(product.id);
+                  sBottleNames.add(product.name);
+                }
+
+                if (sBottleIds.isEmpty) {
+                  Logx.i(_TAG, 'no bottles selected');
+                  widget.reservation =
+                      widget.reservation.copyWith(bottleNames: []);
+                  widget.reservation =
+                      widget.reservation.copyWith(bottleProductIds: []);
+                } else {
+                  widget.reservation =
+                      widget.reservation.copyWith(bottleNames: sBottleNames);
+                  widget.reservation =
+                      widget.reservation.copyWith(bottleProductIds: sBottleIds);
+                }
               },
-              options: mBottleNames,
-              selectedValues: sBottleNames,
-              whenEmpty: 'none',
             ),
           ],
         ),
@@ -458,8 +462,8 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
         DarkTextFieldWidget(
           label: 'additional requests',
           text: widget.reservation.specialRequest,
-          onChanged: (text) =>
-          widget.reservation = widget.reservation.copyWith(specialRequest: text),
+          onChanged: (text) => widget.reservation =
+              widget.reservation.copyWith(specialRequest: text),
         ),
         const SizedBox(height: 24),
         Row(
@@ -694,19 +698,9 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
               length: 6,
               controller: pinController,
               focusNode: focusNode,
-              // androidSmsAutofillMethod:
-              //     AndroidSmsAutofillMethod.smsUserConsentApi,
               listenForMultipleSmsOnAndroid: true,
               defaultPinTheme: defaultPinTheme,
               closeKeyboardWhenCompleted: true,
-              // validator: (value) {
-              // print('code is ' + _verificationCode);
-              // return value == _verificationCode ? null : 'pin is incorrect';
-              // },
-              // onClipboardFound: (value) {
-              //   debugPrint('onClipboardFound: $value');
-              //   pinController.setText(value);
-              // },
               hapticFeedbackType: HapticFeedbackType.lightImpact,
               onCompleted: (pin) async {
                 debugPrint('onCompleted: $pin');
@@ -718,17 +712,12 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
                           verificationId: _verificationCode, smsCode: pin))
                       .then((value) async {
                     if (value.user != null) {
-                      Logx.i(_TAG, 'user is in firebase auth');
-                      Logx.i(
-                          _TAG,
-                          'checking for bloc registration, id ' +
-                              value.user!.uid);
+                      Logx.i(_TAG,
+                          'user in firebase auth. checking bloc registration: id: ${value.user!.uid}');
 
                       FirestoreHelper.pullUser(value.user!.uid).then((res) {
-                        Logx.i(
-                            _TAG,
-                            "successfully retrieved bloc user for id " +
-                                value.user!.uid);
+                        Logx.i(_TAG,
+                            "successfully retrieved bloc user for id ${value.user!.uid}");
 
                         if (res.docs.isEmpty) {
                           Logx.i(_TAG,
@@ -739,7 +728,7 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
                               StringUtils.getInt(value.user!.phoneNumber!);
 
                           FirestoreHelper.pushUser(bloc_user);
-                          Logx.i(_TAG, 'registered user ' + bloc_user.id);
+                          Logx.i(_TAG, 'registered user ${bloc_user.id}');
 
                           UserPreferences.setUser(bloc_user);
                           widget.reservation = widget.reservation
@@ -749,8 +738,7 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
 
                           showConfirmationDialog(context, true);
                         } else {
-                          Logx.i(_TAG,
-                              'user is a bloc member. navigating to main...');
+                          Logx.i(_TAG, 'user is a bloc member, logging in...');
 
                           DocumentSnapshot document = res.docs[0];
                           Map<String, dynamic> data =
@@ -861,7 +849,7 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
                         Text(
                             'your table for the party of ${widget.reservation.guestsCount} '
                             'on the ${DateTimeUtils.getFormattedDate2(widget.reservation.arrivalDate)} will be reviewed and approved soon. '
-                            '\n\nyour reservation confirmation status shall can be found at the box office. '
+                            '\n\nyour reservation confirmation status shall be found at the box office. '
                             'also, our team may reach out to you for any further information. thank you.'),
                       ],
                     ),
@@ -888,39 +876,6 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
                   Reservation freshReservation =
                       Fresh.freshReservation(widget.reservation);
                   FirestoreHelper.pushReservation(freshReservation);
-
-                  //todo: need to implement this soon
-                  // if (hasUserChanged) {
-                  //   blocUser.User freshUser = Fresh.freshUser(bloc_user);
-                  //   if(freshUser.id == UserPreferences.myUser.id){
-                  //     UserPreferences.setUser(freshUser);
-                  //   }
-                  //   FirestoreHelper.pushUser(freshUser);
-                  // }
-
-                  // need to see if the user already has a guest request
-                  //   widget.partyGuest.guestId = bloc_user.id;
-                  //
-                  //   FirestoreHelper.pullPartyGuestByUser(
-                  //       widget.partyGuest.guestId, widget.partyGuest.partyId)
-                  //       .then((res) {
-                  //     Logx.i(_TAG, 'pulled in party guest by user');
-                  //
-                  //     if (res.docs.isEmpty || widget.task == 'edit'  || widget.task == 'manage') {
-                  //       // user has not requested for party guest list, approve
-                  //       PartyGuest freshPartyGuest =
-                  //       Fresh.freshPartyGuest(widget.partyGuest);
-                  //       FirestoreHelper.pushPartyGuest(freshPartyGuest);
-                  //
-                  //       Logx.i(_TAG, 'guest list request in box office');
-                  //       Toaster.longToast('guest list request in box office');
-                  //     } else {
-                  //       //already requested
-                  //       Logx.i(_TAG, 'duplicate guest list request');
-                  //       Toaster.longToast(
-                  //           'guest list has already been requested');
-                  //     }
-                  //   });
                 }
 
                 Navigator.of(ctx).pop();
@@ -948,7 +903,8 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
         children: [
           Text(
               DateTimeUtils.getFormattedDateType(
-                  sDateArrival.millisecondsSinceEpoch, 0).toLowerCase(),
+                      sDateArrival.millisecondsSinceEpoch, 0)
+                  .toLowerCase(),
               style: const TextStyle(
                 color: Constants.lightPrimary,
                 fontSize: 18,

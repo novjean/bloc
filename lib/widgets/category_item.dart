@@ -18,13 +18,13 @@ class CategoryItem extends StatelessWidget {
         child: Stack(
           children: <Widget>[
             FadeInImage(
-              placeholder: AssetImage('assets/images/product-placeholder.png'),
+              placeholder: AssetImage('assets/images/logo.png'),
               height: height,
               width: width,
               image: category.imageUrl != "url"
                   ? NetworkImage(category.imageUrl)
                   : NetworkImage(
-                  "assets/images/product-placeholder.png"),
+                  "assets/images/logo.png"),
               fit: BoxFit.cover,
             ),
             // Image.asset(

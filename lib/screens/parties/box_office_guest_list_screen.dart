@@ -13,18 +13,18 @@ import '../../helpers/fresh.dart';
 import '../../utils/logx.dart';
 import '../../widgets/ui/textfield_widget.dart';
 
-class ManagePartyGuestScreen extends StatefulWidget {
+class BoxOfficeGuestListScreen extends StatefulWidget {
   String partyGuestId;
 
-  ManagePartyGuestScreen({Key? key, required this.partyGuestId})
+  BoxOfficeGuestListScreen({Key? key, required this.partyGuestId})
       : super(key: key);
 
   @override
-  State<ManagePartyGuestScreen> createState() =>
-      _ManagePartyGuestScreenState();
+  State<BoxOfficeGuestListScreen> createState() =>
+      _BoxOfficeGuestListScreenState();
 }
 
-class _ManagePartyGuestScreenState extends State<ManagePartyGuestScreen> {
+class _BoxOfficeGuestListScreenState extends State<BoxOfficeGuestListScreen> {
   static const String _TAG = 'ManagePartyGuestScreen';
 
   late PartyGuest mPartyGuest;

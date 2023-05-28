@@ -110,3 +110,18 @@ exports.reservationFunction = functions
         },
       });
     });
+
+exports.reservationFunction = functions
+    .region('asia-south1')
+    .firestore
+    .document('celebrations/{document}')
+    .onCreate((snapshot, context) => {
+      console.log(snapshot.data());
+      return admin.messaging().sendToTopic('celebrations', {
+        notification: {
+          title: 'celebration request',
+          body: snapshot.data().name + ' - ' + snapshot.data().guestsCount,
+          clickAction: 'FLUTTER_NOTIFICATION_CLICK',
+        },
+      });
+    });

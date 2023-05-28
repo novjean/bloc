@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 
 import '../../db/entity/bloc.dart';
 import '../../screens/bloc/bloc_menu_screen.dart';
+import '../../screens/user/celebration_add_edit_screen.dart';
 import '../../screens/user/reservation_add_edit_screen.dart';
 import '../../utils/logx.dart';
 
@@ -120,9 +121,30 @@ class _BlocSlideItemState extends State<BlocSlideItem> {
                           child: Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 10.0),
                             child: Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               crossAxisAlignment: CrossAxisAlignment.end,
                               children: [
+                                SizedBox(
+                                  height: 50,
+                                  child: ElevatedButton.icon(
+                                    onPressed: () {
+                                      Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                            builder: (ctx) =>
+                                                CelebrationAddEditScreen(
+                                                    celebration:
+                                                    Dummy.getDummyCelebration(
+                                                        mBlocService.id),
+                                                    task: 'add')),
+                                      );
+                                    },
+                                    icon: const Icon(
+                                      Icons.groups_outlined,
+                                      size: 24.0,
+                                    ),
+                                    label: const Text('celebrate'), // <-- Text
+                                  ),
+                                ),
                                 SizedBox(
                                   height: 50,
                                   child: ElevatedButton.icon(
