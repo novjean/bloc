@@ -89,8 +89,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   if (snapshot.hasError) {
                     Logx.em(
                         _TAG,
-                        'user snapshot has error: ' +
-                            snapshot.error.toString());
+                        'user snapshot has error: ${snapshot.error}');
                     return signInWidget();
                   }
 
@@ -117,7 +116,7 @@ class _LoginScreenState extends State<LoginScreen> {
           } else {
             if (widget.shouldTriggerSkip) {
               _verifyUsingSkipPhone();
-              return LoadingWidget();
+              return const LoadingWidget();
             } else {
               return signInWidget();
             }
@@ -219,7 +218,7 @@ class _LoginScreenState extends State<LoginScreen> {
         Flexible(
           flex: 1,
           child: Container(
-            margin: const EdgeInsets.only(left: 20, right: 20, bottom: 40),
+            margin: const EdgeInsets.only(left: 20, right: 20),
             width: double.infinity,
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
@@ -238,8 +237,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 } else {
                   Logx.i(
                       _TAG,
-                      'user entered invalid phone number ' +
-                          completePhoneNumber);
+                      'user entered invalid phone number $completePhoneNumber');
                   Toaster.longToast('please enter a valid phone number');
                 }
               },
@@ -250,9 +248,36 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
           ),
         ),
+        Flexible(
+          flex: 1,
+          child: Container(
+            margin: const EdgeInsets.only(left: 20, right: 20, bottom: 40),
+            width: double.infinity,
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Theme.of(context).primaryColor,
+                foregroundColor: Colors.white,
+                shadowColor: Theme.of(context).shadowColor,
+                elevation: 3,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(32.0)),
+                minimumSize: const Size(100, 60),
+              ),
+              onPressed: () {
+                _logInWithFacebook();
+              },
+              child: const Text(
+                'facebook',
+                style: TextStyle(fontSize: 20),
+              ),
+            ),
+          ),
+        ),
       ],
     );
   }
+
+  
 
   _verifyUsingSkipPhone() async {
     Logx.i(_TAG, '_verifyUsingSkipPhone');
@@ -263,8 +288,7 @@ class _LoginScreenState extends State<LoginScreen> {
         await FirebaseAuth.instance
             .signInWithPhoneNumber('${phone}', null)
             .then((user) {
-          debugPrint('signInWithPhoneNumber: user verification id ' +
-              user.verificationId);
+          debugPrint('signInWithPhoneNumber: user verification id ${user.verificationId}');
 
           signInToSkipBloc(user.verificationId);
         }).catchError((e) {
@@ -280,7 +304,7 @@ class _LoginScreenState extends State<LoginScreen> {
     } else {
       try {
         await FirebaseAuth.instance.verifyPhoneNumber(
-            phoneNumber: '${phone}',
+            phoneNumber: phone,
             verificationCompleted: (PhoneAuthCredential credential) async {
               print(
                   'verifyPhoneNumber: ${phone} is verified. attempting sign in with credentials...');
@@ -288,7 +312,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   .signInWithCredential(credential)
                   .then((value) async {
                 if (value.user != null) {
-                  print('signInWithCredential: success. user logged in');
+                  Logx.i(_TAG,'signInWithCredential: success. user logged in');
                 }
               });
             },
@@ -324,7 +348,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
           FirestoreHelper.pullUser(value.user!.uid).then((res) {
             Logx.i(_TAG,
-                "successfully retrieved bloc user for id " + value.user!.uid);
+                "successfully retrieved bloc user for id ${value.user!.uid}");
 
             if (res.docs.isEmpty) {
               Logx.i(_TAG,
