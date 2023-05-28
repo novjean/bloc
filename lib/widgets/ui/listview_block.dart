@@ -14,17 +14,6 @@ class ListViewBlock extends StatelessWidget{
         borderRadius: BorderRadius.circular(8.0),
         child: Stack(
           children: <Widget>[
-            // FadeInImage(
-            //   placeholder: AssetImage('assets/images/product-placeholder.png'),
-            //   height: MediaQuery.of(context).size.height / 6,
-            //   width: MediaQuery.of(context).size.height / 6,
-            //   image: cat.imageUrl != "url"
-            //       ? NetworkImage(cat.imageUrl)
-            //       : NetworkImage(
-            //       "assets/images/product-placeholder.png"),
-            //   fit: BoxFit.cover,
-            // ),
-
             Container(
               decoration: BoxDecoration(
                 gradient: LinearGradient(

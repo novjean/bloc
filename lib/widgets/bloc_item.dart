@@ -43,10 +43,10 @@ class BlocItem extends StatelessWidget {
             tag: bloc.id,
             child: FadeInImage(
               placeholder:
-                  const AssetImage('assets/images/product-placeholder.png'),
+                  const AssetImage('assets/images/logo.png'),
               image: bloc.imageUrls.first != "url"
                   ? NetworkImage(bloc.imageUrls.first)
-                  : const NetworkImage("assets/images/product-placeholder.png"),
+                  : const NetworkImage("assets/images/logo.png"),
               fit: BoxFit.cover,
             ),
           ),

@@ -20,7 +20,7 @@ class OrderItem extends StatelessWidget {
         child: Stack(
           children: <Widget>[
             // FadeInImage(
-            //   placeholder: AssetImage('assets/images/product-placeholder.png'),
+            //   placeholder: AssetImage('assets/images/logo.png'),
             //   height: MediaQuery.of(context).size.height / 6,
             //   width: MediaQuery.of(context).size.height / 6,
             //   image: cat.imageUrl != "url"

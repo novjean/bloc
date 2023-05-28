@@ -20,17 +20,6 @@ class SizedListViewBlock extends StatelessWidget {
         borderRadius: BorderRadius.circular(8.0),
         child: Stack(
           children: <Widget>[
-            // FadeInImage(
-            //   placeholder: AssetImage('assets/images/product-placeholder.png'),
-            //   height: height,
-            //   width: width,
-            //   image: cat.imageUrl != "url"
-            //       ? NetworkImage(cat.imageUrl)
-            //       : NetworkImage(
-            //       "assets/images/product-placeholder.png"),
-            //   fit: BoxFit.cover,
-            // ),
-
             Container(
               height: height,
               width: width,
