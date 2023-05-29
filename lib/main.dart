@@ -1,6 +1,8 @@
 import 'dart:ui';
 
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:bloc/screens/login_screen.dart';
+import 'package:bloc/services/notification_service.dart';
 import 'package:bloc/utils/logx.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
@@ -10,7 +12,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
-import 'package:awesome_notifications/awesome_notifications.dart';
 
 import 'db/shared_preferences/user_preferences.dart';
 import 'firebase_options.dart';
@@ -31,6 +32,17 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   // make sure you call `initializeApp` before using other Firebase services.
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   Logx.i('main', 'handling a background message ${message.messageId}');
+
+  // AwesomeNotifications().createNotificationFromJsonData(message.data);
+
+  // await NotificationService.showNotification(
+  //   title: "title of the notification",
+  //   body: "Body of the notification",
+  //   summary: "Small Summary",
+  //   notificationLayout: NotificationLayout.BigPicture,
+  //   bigPicture:
+  //   "https://files.tecnoblog.net/wp-content/uploads/2019/09/emoji.jpg",
+  // );
 }
 
 /// Create a [AndroidNotificationChannel] for heads up notifications
@@ -69,6 +81,7 @@ Future<void> main() async {
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
   if (!kIsWeb) {
+
     channel = const AndroidNotificationChannel(
       'high_importance_channel', // id
       'High Importance Notifications', // title
@@ -105,21 +118,14 @@ Future<void> main() async {
 
   await UserPreferences.init();
 
-  // Always initialize Awesome Notifications
-  await NotificationController.initializeLocalNotifications();
-
-  runApp(const MyApp());
+  runApp(const BlocApp());
 }
 
-class MyApp extends StatefulWidget {
-  const MyApp({Key? key}) : super(key: key);
+class BlocApp extends StatelessWidget {
+  const BlocApp({Key? key}) : super(key: key);
 
-  @override
-  State<MyApp> createState() => _MyAppState();
-}
+  static GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
-class _MyAppState extends State<MyApp> {
-  static const String _TAG = 'MyApp';
 
   @override
   Widget build(BuildContext context) {
@@ -139,14 +145,14 @@ class _MyAppState extends State<MyApp> {
             return MaterialApp(
               debugShowCheckedModeBanner: false,
               title: kAppTitle,
+              navigatorKey: navigatorKey,
               theme: ThemeData(
-                //rgba(211,167,130,255)
-                primaryColor: const Color.fromRGBO(211, 167, 130, 1),
+                primaryColor: Constants.primary,
                 // 222,193,170
-                primaryColorLight: const Color.fromRGBO(222, 193, 170, 1),
-                primaryColorDark: const Color.fromRGBO(42, 33, 26, 1),
+                primaryColorLight: Constants.lightPrimary,
+                primaryColorDark: Constants.darkPrimary,
 
-                backgroundColor: const Color.fromRGBO(38, 50, 56, 1.0),
+                backgroundColor: Constants.background,
                 // focusColor: const Color.fromRGBO(31, 31, 33, 1.0),
                 shadowColor: const Color.fromRGBO(158, 158, 158, 1.0),
 
@@ -174,14 +180,9 @@ class _MyAppState extends State<MyApp> {
               // HomeScreen.routeName: (ctx) => HomeScreen(),
               // ManagerScreen.routeName: (ctx) => ManagerScreen(),
               // OwnerScreen.routeName: (ctx) => OwnerScreen(),
-              // CityDetailScreen.routeName: (ctx) => CityDetailScreen(),
-              // NewBlocScreen.routeName: (ctx) => NewBlocScreen(),
-              // BlocDetailScreen.routeName: (ctx) => BlocDetailScreen(),
               // }
             );
           }),
     );
   }
-
 }
-

@@ -172,7 +172,7 @@ class _MainScreenState extends State<MainScreen> {
     } else {
       // in web mode
       if(UserPreferences.isUserLoggedIn()){
-        // update the user is in app mode
+        // update the user is in web mode
         User user = UserPreferences.myUser;
         user.isAppUser = false;
         FirestoreHelper.pushUser(user);
@@ -230,7 +230,7 @@ class _MainScreenState extends State<MainScreen> {
         //   )
         // ],
       ),
-      drawer: AppDrawer(),
+      drawer: const AppDrawer(),
       body: PageView(
         physics: const NeverScrollableScrollPhysics(),
         controller: _pageController,

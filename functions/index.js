@@ -73,11 +73,6 @@ exports.adFunction = functions
     .onCreate((snapshot, context) => {
       console.log(snapshot.data());
       return admin.messaging().sendToTopic('ads', {
-        notification: {
-          title: snapshot.data().title,
-          body: snapshot.data().message,
-          clickAction: 'FLUTTER_NOTIFICATION_CLICK',
-        },
       });
     });
 
