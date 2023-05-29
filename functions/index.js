@@ -73,6 +73,11 @@ exports.adFunction = functions
     .onCreate((snapshot, context) => {
       console.log(snapshot.data());
       return admin.messaging().sendToTopic('ads', {
+        notification: {
+          title: snapshot.data().title,
+          body: snapshot.data().message,
+          clickAction: 'FLUTTER_NOTIFICATION_CLICK',
+        },
       });
     });
 
@@ -102,6 +107,10 @@ exports.reservationFunction = functions
           title: 'request : table reservation',
           body: snapshot.data().name + ' - ' + snapshot.data().guestsCount,
           clickAction: 'FLUTTER_NOTIFICATION_CLICK',
+        },
+        data: {
+          type: 'reservations',
+          document: JSON.stringify(snapshot.data()),
         },
       });
     });
