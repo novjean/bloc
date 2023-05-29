@@ -84,7 +84,7 @@ exports.partyGuestFunction = functions
       console.log(snapshot.data());
       return admin.messaging().sendToTopic('party_guest', {
         notification: {
-          title: 'guest list request',
+          title: 'request : guest list',
           body: snapshot.data().name + ' ' + snapshot.data().surname,
           clickAction: 'FLUTTER_NOTIFICATION_CLICK',
         },
@@ -99,14 +99,14 @@ exports.reservationFunction = functions
       console.log(snapshot.data());
       return admin.messaging().sendToTopic('reservations', {
         notification: {
-          title: 'reservation table request',
+          title: 'request : table reservation',
           body: snapshot.data().name + ' - ' + snapshot.data().guestsCount,
           clickAction: 'FLUTTER_NOTIFICATION_CLICK',
         },
       });
     });
 
-exports.reservationFunction = functions
+exports.celebrationFunction = functions
     .region('asia-south1')
     .firestore
     .document('celebrations/{document}')
@@ -114,7 +114,7 @@ exports.reservationFunction = functions
       console.log(snapshot.data());
       return admin.messaging().sendToTopic('celebrations', {
         notification: {
-          title: 'celebration request',
+          title: 'request : celebration',
           body: snapshot.data().name + ' - ' + snapshot.data().guestsCount,
           clickAction: 'FLUTTER_NOTIFICATION_CLICK',
         },
