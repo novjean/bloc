@@ -10,6 +10,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
+import 'package:awesome_notifications/awesome_notifications.dart';
 
 import 'db/shared_preferences/user_preferences.dart';
 import 'firebase_options.dart';
@@ -103,6 +104,9 @@ Future<void> main() async {
   ]);
 
   await UserPreferences.init();
+
+  // Always initialize Awesome Notifications
+  await NotificationController.initializeLocalNotifications();
 
   runApp(const MyApp());
 }
