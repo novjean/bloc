@@ -108,6 +108,10 @@ exports.reservationFunction = functions
           body: snapshot.data().name + ' - ' + snapshot.data().guestsCount,
           clickAction: 'FLUTTER_NOTIFICATION_CLICK',
         },
+        data: {
+          type: 'reservations',
+          document: JSON.stringify(snapshot.data()),
+        },
       });
     });
 

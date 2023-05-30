@@ -12,8 +12,10 @@ import '../db/shared_preferences/user_preferences.dart';
 import '../helpers/firestore_helper.dart';
 import '../helpers/fresh.dart';
 import '../main.dart';
+import '../services/notification_service.dart';
 import '../utils/logx.dart';
 import 'home_screen.dart';
+import 'login_screen.dart';
 import 'parties/party_screen.dart';
 import 'profile/profile_add_edit_register_page.dart';
 import 'profile/profile_screen.dart';
@@ -112,41 +114,72 @@ class _MainScreenState extends State<MainScreen> {
       final fbm = FirebaseMessaging.instance;
       fbm.requestPermission();
 
-      FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
+        Map<String, dynamic> data = message.data;
+
+        // String type = data['type'];
+        // Reservation reservation = Fresh.freshReservationMap(jsonDecode(data['document']), false);
+
         RemoteNotification? notification = message.notification;
         AndroidNotification? android = message.notification?.android;
+
+        // AppleNotification? apple = message.notification?.apple;
+
+        // if (message.data['notification_type'] == 'party_guest') {
+        // Navigator.pushNamed(context, '/chat',
+        //   arguments: ChatArguments(message),
+        // );
+        // }
+
         if (notification != null && android != null) {
-          flutterLocalNotificationsPlugin.show(
-            notification.hashCode,
-            notification.title,
-            notification.body,
-            NotificationDetails(
-              android: AndroidNotificationDetails(
-                channel.id,
-                channel.name,
-                // channel.description,
-                // TODO add a proper drawable resource to android, for now using
-                //      one that already exists in example app.
-                icon: '@mipmap/launcher_icon',
-              ),
-            ),
+          String? title = notification.title;
+          String? body = notification.body;
+
+          await NotificationService.showNotification(
+            title: title??'bloc',
+            body: body??'#blocCommunity',
           );
+
+          // await NotificationService.showNotification(
+          //   title: "Title of the notification",
+          //   body: "Body of the notification",
+          //   summary: "Small Summary",
+          //   notificationLayout: NotificationLayout.ProgressBar,
+          // );
+
+          // flutterLocalNotificationsPlugin.show(
+          //   notification.hashCode,
+          //   notification.title,
+          //   notification.body,
+          //   NotificationDetails(
+          //     android: AndroidNotificationDetails(
+          //       channel.id,
+          //       channel.name,
+          //       // channel.description,
+          //       // TODO add a proper drawable resource to android, for now using
+          //       //      one that already exists in example app.
+          //       icon: '@mipmap/launcher_icon',
+          //     ),
+          //   ),
+          // );
         }
       });
 
-      FirebaseMessaging.onMessageOpenedApp.listen((message) {
-        Logx.i(_TAG, 'a new onMessageOpenedApp event was published!');
-        Navigator.of(context).push(
-          MaterialPageRoute(builder: (ctx) => HomeScreen()
-              // MainScreen(user: UserPreferences.myUser,)
-          ),
-        );
+      FirebaseMessaging.onMessageOpenedApp.listen(_handleMessage);
 
-        return;
-      });
+      // FirebaseMessaging.onMessageOpenedApp.listen((message) {
+      //   Logx.i(_TAG, 'a new onMessageOpenedApp event was published!');
+      //   Navigator.of(context).push(
+      //     MaterialPageRoute(builder: (ctx) => HomeScreen()
+      //         // MainScreen(user: UserPreferences.myUser,)
+      //     ),
+      //   );
+      //
+      //   return;
+      // });
+
       // fbm.subscribeToTopic('chat');
       fbm.subscribeToTopic('offer');
-      fbm.subscribeToTopic('ads');
 
       blocUser.User user = UserPreferences.getUser();
       if (user.clearanceLevel >= Constants.CAPTAIN_LEVEL) {
@@ -161,6 +194,7 @@ class _MainScreenState extends State<MainScreen> {
       if (user.clearanceLevel >= Constants.MANAGER_LEVEL) {
         fbm.subscribeToTopic('reservations');
         fbm.subscribeToTopic('celebrations');
+        fbm.subscribeToTopic('ads');
       }
 
       if(UserPreferences.isUserLoggedIn()){
@@ -172,11 +206,26 @@ class _MainScreenState extends State<MainScreen> {
     } else {
       // in web mode
       if(UserPreferences.isUserLoggedIn()){
-        // update the user is in app mode
+        // update the user is in web mode
         User user = UserPreferences.myUser;
         user.isAppUser = false;
         FirestoreHelper.pushUser(user);
       }
+    }
+  }
+
+  void _handleMessage(RemoteMessage message) {
+    if (message.data['notification_type'] == 'party_guest') {
+      Navigator.of(context).push(
+        MaterialPageRoute(builder: (ctx) => HomeScreen()
+          // MainScreen(user: UserPreferences.myUser,)
+        ),
+      );
+    } else {
+      Navigator.of(context).push(
+        MaterialPageRoute(builder: (ctx) => LoginScreen(shouldTriggerSkip: false)
+        ),
+      );
     }
   }
 

@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:bloc/screens/login_screen.dart';
+import 'package:bloc/services/notification_service.dart';
 import 'package:bloc/utils/logx.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
@@ -51,6 +52,7 @@ Future<void> main() async {
   const String _TAG = 'main';
 
   WidgetsFlutterBinding.ensureInitialized();
+  await NotificationService.initializeNotification();
 
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
@@ -68,23 +70,23 @@ Future<void> main() async {
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
   if (!kIsWeb) {
-    channel = const AndroidNotificationChannel(
-      'high_importance_channel', // id
-      'High Importance Notifications', // title
-      // 'This channel is used for important notifications.', // description
-      importance: Importance.high,
-    );
+    // channel = const AndroidNotificationChannel(
+    //   'high_importance_channel', // id
+    //   'High Importance Notifications', // title
+    //   // 'This channel is used for important notifications.', // description
+    //   importance: Importance.high,
+    // );
 
-    flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+    // flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
     /// Create an Android Notification Channel.
     ///
     /// We use this channel in the `AndroidManifest.xml` file to override the
     /// default FCM channel to enable heads up notifications.
-    await flutterLocalNotificationsPlugin
-        .resolvePlatformSpecificImplementation<
-        AndroidFlutterLocalNotificationsPlugin>()
-        ?.createNotificationChannel(channel);
+    // await flutterLocalNotificationsPlugin
+    //     .resolvePlatformSpecificImplementation<
+    //     AndroidFlutterLocalNotificationsPlugin>()
+    //     ?.createNotificationChannel(channel);
 
     /// Update the iOS foreground notification presentation options to allow
     /// heads up notifications.
@@ -109,6 +111,8 @@ Future<void> main() async {
 
 class MyApp extends StatefulWidget {
   const MyApp({Key? key}) : super(key: key);
+
+  static GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
   @override
   State<MyApp> createState() => _MyAppState();
@@ -135,14 +139,14 @@ class _MyAppState extends State<MyApp> {
             return MaterialApp(
               debugShowCheckedModeBanner: false,
               title: kAppTitle,
+              navigatorKey: MyApp.navigatorKey,
               theme: ThemeData(
-                //rgba(211,167,130,255)
-                primaryColor: const Color.fromRGBO(211, 167, 130, 1),
+                primaryColor: Constants.primary,
                 // 222,193,170
-                primaryColorLight: const Color.fromRGBO(222, 193, 170, 1),
-                primaryColorDark: const Color.fromRGBO(42, 33, 26, 1),
+                primaryColorLight: Constants.lightPrimary,
+                primaryColorDark: Constants.darkPrimary,
 
-                backgroundColor: const Color.fromRGBO(38, 50, 56, 1.0),
+                backgroundColor: Constants.background,
                 // focusColor: const Color.fromRGBO(31, 31, 33, 1.0),
                 shadowColor: const Color.fromRGBO(158, 158, 158, 1.0),
 
@@ -170,14 +174,12 @@ class _MyAppState extends State<MyApp> {
               // HomeScreen.routeName: (ctx) => HomeScreen(),
               // ManagerScreen.routeName: (ctx) => ManagerScreen(),
               // OwnerScreen.routeName: (ctx) => OwnerScreen(),
-              // CityDetailScreen.routeName: (ctx) => CityDetailScreen(),
-              // NewBlocScreen.routeName: (ctx) => NewBlocScreen(),
-              // BlocDetailScreen.routeName: (ctx) => BlocDetailScreen(),
               // }
             );
           }),
     );
   }
-
 }
+
+
 
