@@ -52,7 +52,7 @@ Future<void> main() async {
   const String _TAG = 'main';
 
   WidgetsFlutterBinding.ensureInitialized();
-  await NotificationService.initializeNotification();
+  // await NotificationService.initializeNotification();
 
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,

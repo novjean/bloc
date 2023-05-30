@@ -135,10 +135,10 @@ class _MainScreenState extends State<MainScreen> {
           String? title = notification.title;
           String? body = notification.body;
 
-          await NotificationService.showNotification(
-            title: title??'bloc',
-            body: body??'#blocCommunity',
-          );
+          // await NotificationService.showNotification(
+          //   title: title??'bloc',
+          //   body: body??'#blocCommunity',
+          // );
 
           // await NotificationService.showNotification(
           //   title: "Title of the notification",
@@ -147,21 +147,21 @@ class _MainScreenState extends State<MainScreen> {
           //   notificationLayout: NotificationLayout.ProgressBar,
           // );
 
-          // flutterLocalNotificationsPlugin.show(
-          //   notification.hashCode,
-          //   notification.title,
-          //   notification.body,
-          //   NotificationDetails(
-          //     android: AndroidNotificationDetails(
-          //       channel.id,
-          //       channel.name,
-          //       // channel.description,
-          //       // TODO add a proper drawable resource to android, for now using
-          //       //      one that already exists in example app.
-          //       icon: '@mipmap/launcher_icon',
-          //     ),
-          //   ),
-          // );
+          flutterLocalNotificationsPlugin.show(
+            notification.hashCode,
+            notification.title,
+            notification.body,
+            NotificationDetails(
+              android: AndroidNotificationDetails(
+                channel.id,
+                channel.name,
+                // channel.description,
+                // TODO add a proper drawable resource to android, for now using
+                //      one that already exists in example app.
+                icon: '@mipmap/launcher_icon',
+              ),
+            ),
+          );
         }
       });
 
@@ -214,7 +214,7 @@ class _MainScreenState extends State<MainScreen> {
     }
   }
 
-  void _handleMessage(RemoteMessage message) {
+    void _handleMessage(RemoteMessage message) {
     if (message.data['notification_type'] == 'party_guest') {
       Navigator.of(context).push(
         MaterialPageRoute(builder: (ctx) => HomeScreen()
