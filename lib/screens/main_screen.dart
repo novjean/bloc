@@ -114,7 +114,6 @@ class _MainScreenState extends State<MainScreen> {
 
       FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
         Map<String, dynamic> data = message.data;
-
         // String type = data['type'];
         // Reservation reservation = Fresh.freshReservationMap(jsonDecode(data['document']), false);
 
@@ -123,20 +122,9 @@ class _MainScreenState extends State<MainScreen> {
 
         // AppleNotification? apple = message.notification?.apple;
 
-        // if (message.data['notification_type'] == 'party_guest') {
-        // Navigator.pushNamed(context, '/chat',
-        //   arguments: ChatArguments(message),
-        // );
-        // }
-
         if (notification != null && android != null) {
           String? title = notification.title;
           String? body = notification.body;
-
-          // await NotificationService.showNotification(
-          //   title: title??'bloc',
-          //   body: body??'#blocCommunity',
-          // );
 
           // await NotificationService.showNotification(
           //   title: "Title of the notification",
@@ -176,9 +164,6 @@ class _MainScreenState extends State<MainScreen> {
       //   return;
       // });
 
-      // fbm.subscribeToTopic('chat');
-      fbm.subscribeToTopic('offer');
-
       blocUser.User user = UserPreferences.getUser();
       if (user.clearanceLevel >= Constants.CAPTAIN_LEVEL) {
         fbm.subscribeToTopic('sos');
@@ -187,12 +172,14 @@ class _MainScreenState extends State<MainScreen> {
 
       if (user.clearanceLevel >= Constants.PROMOTER_LEVEL) {
         fbm.subscribeToTopic('party_guest');
+        fbm.subscribeToTopic('reservations');
       }
 
       if (user.clearanceLevel >= Constants.MANAGER_LEVEL) {
-        fbm.subscribeToTopic('reservations');
         fbm.subscribeToTopic('celebrations');
         fbm.subscribeToTopic('ads');
+        fbm.subscribeToTopic('chat');
+        fbm.subscribeToTopic('offer');
       }
 
       if(UserPreferences.isUserLoggedIn()){
