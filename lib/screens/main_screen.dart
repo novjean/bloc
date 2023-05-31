@@ -55,60 +55,60 @@ class _MainScreenState extends State<MainScreen> {
         .collection(FirestoreHelper.USERS)
         .where('phoneNumber', isEqualTo: widget.user.phoneNumber)
         .get()
-        .then(
-      (res) {
-        if (res.docs.isEmpty) {
-          Logx.i(_TAG, 'user not found, registering ${widget.user.phoneNumber}');
-          // register the user, and we might need to get more info about the user
-          User user = widget.user;
+        .then((res) {
+      if (res.docs.isEmpty) {
+        Logx.i(_TAG, 'user not found, registering ${widget.user.phoneNumber}');
+        // register the user, and we might need to get more info about the user
+        User user = widget.user;
 
-          if(kIsWeb){
-            user.isAppUser = false;
-          } else {
-            user.isAppUser = true;
-          }
-
-          FirestoreHelper.pushUser(user);
-          Logx.i(_TAG, '${user.phoneNumber} is now registered with bloc!');
-
-          UserPreferences.setUser(user);
-
-          // lets grab more user details
-          Navigator.of(context).push(
-            MaterialPageRoute(
-                builder: (context) => ProfileAddEditRegisterPage(
-                    user: user, task: 'register')),
-          );
+        if (kIsWeb) {
+          user.isAppUser = false;
         } else {
-          Logx.i(_TAG, 'user found for ${widget.user.phoneNumber}');
-          List<blocUser.User> users = [];
+          user.isAppUser = true;
+        }
 
-          for (int i = 0; i < res.docs.length; i++) {
-            DocumentSnapshot document = res.docs[i];
-            Map<String, dynamic> data =
-                document.data()! as Map<String, dynamic>;
-            final blocUser.User user = Fresh.freshUserMap(data, false);
-            users.add(user);
+        FirestoreHelper.pushUser(user);
+        Logx.i(_TAG, '${user.phoneNumber} is now registered with bloc!');
 
-            if (i == res.docs.length - 1) {
-              user.lastSeenAt = Timestamp.now().millisecondsSinceEpoch;
-              if(UserPreferences.isUserLoggedIn()){
-                if(kIsWeb){
-                  user.isAppUser = false;
-                } else {
-                  user.isAppUser = true;
-                }
+        UserPreferences.setUser(user);
+
+        // lets grab more user details
+        Navigator.of(context).push(
+          MaterialPageRoute(
+              builder: (context) =>
+                  ProfileAddEditRegisterPage(user: user, task: 'register')),
+        );
+      } else {
+        Logx.i(_TAG, 'user found for ${widget.user.phoneNumber}');
+        List<blocUser.User> users = [];
+
+        for (int i = 0; i < res.docs.length; i++) {
+          DocumentSnapshot document = res.docs[i];
+          Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+          final blocUser.User user = Fresh.freshUserMap(data, false);
+          users.add(user);
+
+          if (i == res.docs.length - 1) {
+            user.lastSeenAt = Timestamp.now().millisecondsSinceEpoch;
+            if (UserPreferences.isUserLoggedIn()) {
+              if (kIsWeb) {
+                user.isAppUser = false;
+              } else {
+                user.isAppUser = true;
               }
-              FirestoreHelper.pushUser(user);
-              UserPreferences.setUser(user);
             }
+            FirestoreHelper.pushUser(user);
+            UserPreferences.setUser(user);
           }
         }
-      },
-      onError: (e,s) {
-        Logx.ex(_TAG, "error completing retrieving users for phone number : ${widget.user.phoneNumber}", e, s);
       }
-    );
+    }, onError: (e, s) {
+      Logx.ex(
+          _TAG,
+          "error completing retrieving users for phone number : ${widget.user.phoneNumber}",
+          e,
+          s);
+    });
 
     if (!kIsWeb) {
       //the following lines are essential for notification to work in iOS
@@ -184,7 +184,7 @@ class _MainScreenState extends State<MainScreen> {
         fbm.subscribeToTopic('offer');
       }
 
-      if(UserPreferences.isUserLoggedIn()){
+      if (UserPreferences.isUserLoggedIn()) {
         // update the user is in app mode
         User user = UserPreferences.myUser;
         user.isAppUser = true;
@@ -192,7 +192,7 @@ class _MainScreenState extends State<MainScreen> {
       }
     } else {
       // in web mode
-      if(UserPreferences.isUserLoggedIn()){
+      if (UserPreferences.isUserLoggedIn()) {
         // update the user is in web mode
         User user = UserPreferences.myUser;
         user.isAppUser = false;
@@ -201,11 +201,11 @@ class _MainScreenState extends State<MainScreen> {
     }
   }
 
-    void _handleMessage(RemoteMessage message) {
-      Navigator.of(context).push(
-        MaterialPageRoute(builder: (ctx) => HomeScreen()
-        ),
-      );
+  void _handleMessage(RemoteMessage message) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+          builder: (ctx) => MainScreen(user: UserPreferences.myUser)),
+    );
 
     // if (message.data['notification_type'] == 'party_guest') {
     //   Navigator.of(context).push(
@@ -302,10 +302,32 @@ class _MainScreenState extends State<MainScreen> {
   void dispose() {
     super.dispose();
     _pageController.dispose();
+
+    if(!kIsWeb){
+      final fbm = FirebaseMessaging.instance;
+
+      blocUser.User user = UserPreferences.getUser();
+      if (user.clearanceLevel >= Constants.CAPTAIN_LEVEL) {
+        fbm.unsubscribeFromTopic('sos');
+        fbm.unsubscribeFromTopic('order');
+      }
+
+      if (user.clearanceLevel >= Constants.PROMOTER_LEVEL) {
+        fbm.unsubscribeFromTopic('party_guest');
+        fbm.unsubscribeFromTopic('reservations');
+      }
+
+      if (user.clearanceLevel >= Constants.MANAGER_LEVEL) {
+        fbm.unsubscribeFromTopic('celebrations');
+        fbm.unsubscribeFromTopic('ads');
+        fbm.unsubscribeFromTopic('chat');
+        fbm.unsubscribeFromTopic('offer');
+      }
+    }
   }
 
   void onPageChanged(int page) {
-    if(mounted) {
+    if (mounted) {
       setState(() {
         this._page = page;
       });

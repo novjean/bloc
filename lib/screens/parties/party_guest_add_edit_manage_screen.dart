@@ -18,6 +18,7 @@ import 'package:pinput/pinput.dart';
 import 'package:http/http.dart' as http;
 import 'package:share_plus/share_plus.dart';
 
+import '../../api/apis.dart';
 import '../../db/entity/challenge.dart';
 import '../../db/entity/party.dart';
 import '../../db/entity/party_guest.dart';
@@ -615,7 +616,7 @@ class _PartyGuestAddEditManageScreenState
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 32),
                 child: ButtonWidget(
-                  text: (widget.task == 'edit') ? 'save changes' : 'join list',
+                  text: (widget.task == 'edit' || widget.task == 'manage') ? 'save changes' : 'join list',
                   onClicked: () {
                     if (isDataValid()) {
                       if (isLoggedIn) {
@@ -654,6 +655,37 @@ class _PartyGuestAddEditManageScreenState
                         ),
                       ],
                     )
+                  : const SizedBox(),
+              widget.task == 'manage'
+                  ? Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const SizedBox(height: 24),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 32),
+                    child: ButtonWidget(
+                      text: 'approve',
+                      onClicked: () {
+                        widget.partyGuest = widget.partyGuest.copyWith(isApproved: true);
+                        FirestoreHelper.pushPartyGuest(widget.partyGuest);
+
+                        //here we should notify the user
+                        if(bloc_user.fcmToken.isNotEmpty){
+                          String title = '${widget.party.name}';
+                          String message = 'guest list request has been approved, see you soon!';
+
+                          //send a notification
+                          Apis.sendPushNotification(bloc_user.fcmToken, title, message);
+                        }
+
+                        Logx.i(_TAG, 'party guest ${widget.partyGuest.name} is approved');
+                        Toaster.longToast('party guest ${widget.partyGuest.name} is approved');
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ),
+                ],
+              )
                   : const SizedBox(),
               const SizedBox(height: 24),
             ],

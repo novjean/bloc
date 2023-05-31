@@ -41,8 +41,7 @@ dependencies:
   collection: ^1.16.0
   #1.17.0
 
-  http: ^0.13.0
-  #0.13.5
+  http: ^0.13.5
 
   image_picker: ^0.8.6
   #0.8.6+4
