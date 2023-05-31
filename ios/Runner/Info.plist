@@ -41,10 +41,6 @@
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
-	<key>NSLocationAlwaysUsageDescription</key>
-	<string>Need to get your location!</string>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Need to get your location!</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>

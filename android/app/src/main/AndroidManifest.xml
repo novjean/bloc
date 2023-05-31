@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.novatech.bloc">
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+<!--    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />-->
     <!-- The INTERNET permission is required for development. Specifically,
          flutter needs it to communicate with the running application
          to allow setting breakpoints, to provide hot reload, etc.
@@ -9,7 +9,7 @@
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
     <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY"/>
-    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>
+<!--    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>-->
    <application
         android:label="bloc"
         android:icon="@mipmap/launcher_icon">
@@ -45,8 +45,7 @@
             android:value="2" />
        <meta-data
            android:name="com.google.firebase.messaging.default_notification_icon"
-           android:resource="@drawable/ic_launcher" />
-
+           android:resource="@drawable/launcher_icon" />
        <meta-data
            android:name="com.google.firebase.messaging.default_notification_channel_id"
            android:value="high_importance_channel" />

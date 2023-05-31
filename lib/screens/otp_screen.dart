@@ -271,19 +271,17 @@ class _OTPScreenState extends State<OTPScreen> {
                     if (value.user != null) {
                       Logx.i(_TAG, 'user is in firebase auth');
 
-                      String? fcmToken = await FirebaseMessaging.instance.getToken();
+                      String? fcmToken = '';
+
+                      if(!kIsWeb) {
+                        fcmToken = await FirebaseMessaging.instance.getToken();
+                      }
 
                       Logx.i(
                           _TAG,
-                          'checking for bloc registration, id ' +
-                              value.user!.uid);
+                          'checking for bloc registration, id ${value.user!.uid}');
 
                       FirestoreHelper.pullUser(value.user!.uid).then((res) {
-                        Logx.i(
-                            _TAG,
-                            "successfully retrieved bloc user for id " +
-                                value.user!.uid);
-
                         if (res.docs.isEmpty) {
                           Logx.i(_TAG,
                               'user is not already registered in bloc, registering...');
@@ -306,12 +304,17 @@ class _OTPScreenState extends State<OTPScreen> {
                           Map<String, dynamic> data =
                               document.data()! as Map<String, dynamic>;
 
-                          final blocUser.User user =
-                              Fresh.freshUserMap(data, false);
-                          user.fcmToken = fcmToken!;
-                          FirestoreHelper.pushUser(user);
-
+                          blocUser.User user;
+                          if(kIsWeb){
+                            user = Fresh.freshUserMap(data, true);
+                          } else {
+                            user = Fresh.freshUserMap(data, false);
+                            user.fcmToken = fcmToken!;
+                            FirestoreHelper.pushUser(user);
+                          }
                           UserPreferences.setUser(user);
+
+                          Toaster.shortToast('hey ${user.name}, welcome back');
 
                           Navigator.of(context).pushReplacement(
                               MaterialPageRoute(
@@ -322,7 +325,7 @@ class _OTPScreenState extends State<OTPScreen> {
                     }
                   });
                 } catch (e) {
-                  Logx.em(_TAG, 'otp error ' + e.toString());
+                  Logx.em(_TAG, 'otp error $e');
 
                   String exception = e.toString();
                   if (exception.contains('session-expired')) {

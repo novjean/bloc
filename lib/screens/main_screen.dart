@@ -1,4 +1,5 @@
 import 'package:bloc/db/entity/user.dart' as blocUser;
+import 'package:bloc/screens/login_screen.dart';
 import 'package:bloc/screens/profile/profile_login_screen.dart';
 import 'package:bloc/utils/constants.dart';
 import 'package:bloc/widgets/app_drawer.dart';
@@ -175,11 +176,11 @@ class _MainScreenState extends State<MainScreen> {
       if (user.clearanceLevel >= Constants.PROMOTER_LEVEL) {
         fbm.subscribeToTopic('party_guest');
         fbm.subscribeToTopic('reservations');
+        fbm.subscribeToTopic('ads');
       }
 
       if (user.clearanceLevel >= Constants.MANAGER_LEVEL) {
         fbm.subscribeToTopic('celebrations');
-        fbm.subscribeToTopic('ads');
         fbm.subscribeToTopic('chat');
         fbm.subscribeToTopic('offer');
       }
@@ -202,10 +203,19 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   void _handleMessage(RemoteMessage message) {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-          builder: (ctx) => MainScreen(user: UserPreferences.myUser)),
-    );
+    if(UserPreferences.myUser.id.isNotEmpty){
+      Navigator.of(context).push(
+        MaterialPageRoute(
+            builder: (ctx) => MainScreen(user: UserPreferences.myUser)),
+      );
+    } else {
+      Navigator.of(context).push(
+        MaterialPageRoute(
+            builder: (ctx) => const LoginScreen(shouldTriggerSkip: true)),
+      );
+    }
+
+
 
     // if (message.data['notification_type'] == 'party_guest') {
     //   Navigator.of(context).push(
@@ -319,7 +329,7 @@ class _MainScreenState extends State<MainScreen> {
 
       if (user.clearanceLevel >= Constants.MANAGER_LEVEL) {
         fbm.unsubscribeFromTopic('celebrations');
-        fbm.unsubscribeFromTopic('ads');
+        // fbm.unsubscribeFromTopic('ads');
         fbm.unsubscribeFromTopic('chat');
         fbm.unsubscribeFromTopic('offer');
       }
