@@ -11,6 +11,7 @@ import '../db/entity/user.dart';
 import '../db/shared_preferences/user_preferences.dart';
 import '../helpers/firestore_helper.dart';
 import '../helpers/fresh.dart';
+import '../helpers/token_monitor.dart';
 import '../main.dart';
 import '../utils/logx.dart';
 import 'home_screen.dart';
@@ -31,6 +32,8 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   static const String _TAG = 'MainScreen';
+
+  String? fcmToken = '';
 
   late PageController _pageController;
   int _page = 0;
@@ -160,7 +163,6 @@ class _MainScreenState extends State<MainScreen> {
       //         // MainScreen(user: UserPreferences.myUser,)
       //     ),
       //   );
-      //
       //   return;
       // });
 

@@ -117,7 +117,7 @@ class _LoginScreenState extends State<LoginScreen> {
           } else {
             if (widget.shouldTriggerSkip) {
               _verifyUsingSkipPhone();
-              return LoadingWidget();
+              return const LoadingWidget();
             } else {
               return signInWidget();
             }
@@ -179,7 +179,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 }
               },
               onCountryChanged: (country) {
-                Logx.i(_TAG, 'country changed to: ' + country.name);
+                Logx.i(_TAG, 'country changed to: ${country.name}');
                 maxPhoneNumberLength = country.maxLength;
               },
             ),
@@ -282,13 +282,13 @@ class _LoginScreenState extends State<LoginScreen> {
         await FirebaseAuth.instance.verifyPhoneNumber(
             phoneNumber: '${phone}',
             verificationCompleted: (PhoneAuthCredential credential) async {
-              print(
+              Logx.i(_TAG,
                   'verifyPhoneNumber: ${phone} is verified. attempting sign in with credentials...');
               await FirebaseAuth.instance
                   .signInWithCredential(credential)
                   .then((value) async {
                 if (value.user != null) {
-                  print('signInWithCredential: success. user logged in');
+                  Logx.i(_TAG, 'signInWithCredential: success. user logged in');
                 }
               });
             },

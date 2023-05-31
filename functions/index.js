@@ -1,9 +1,6 @@
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 
-// firebase deploy should be called after
-// defining the function
-
 admin.initializeApp();
 
 exports.chatFunction = functions
@@ -78,6 +75,10 @@ exports.adFunction = functions
           body: snapshot.data().message,
           clickAction: 'FLUTTER_NOTIFICATION_CLICK',
         },
+        data: {
+          type: 'ads',
+          document: JSON.stringify(snapshot.data()),
+        },
       });
     });
 
@@ -92,6 +93,10 @@ exports.partyGuestFunction = functions
           title: 'request : guest list',
           body: snapshot.data().name + ' ' + snapshot.data().surname,
           clickAction: 'FLUTTER_NOTIFICATION_CLICK',
+        },
+        data: {
+          type: 'party_guests',
+          document: JSON.stringify(snapshot.data()),
         },
       });
     });
@@ -126,6 +131,10 @@ exports.celebrationFunction = functions
           title: 'request : celebration',
           body: snapshot.data().name + ' - ' + snapshot.data().guestsCount,
           clickAction: 'FLUTTER_NOTIFICATION_CLICK',
+        },
+        data: {
+          type: 'celebrations',
+          document: JSON.stringify(snapshot.data()),
         },
       });
     });

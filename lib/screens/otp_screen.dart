@@ -3,6 +3,7 @@ import 'package:bloc/helpers/dummy.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:delayed_display/delayed_display.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:pinput/pinput.dart';
 
@@ -269,6 +270,9 @@ class _OTPScreenState extends State<OTPScreen> {
                       .then((value) async {
                     if (value.user != null) {
                       Logx.i(_TAG, 'user is in firebase auth');
+
+                      String? fcmToken = await FirebaseMessaging.instance.getToken();
+
                       Logx.i(
                           _TAG,
                           'checking for bloc registration, id ' +
@@ -288,6 +292,7 @@ class _OTPScreenState extends State<OTPScreen> {
                           registeredUser.id = value.user!.uid;
                           registeredUser.phoneNumber =
                               StringUtils.getInt(value.user!.phoneNumber!);
+                          registeredUser.fcmToken = fcmToken!;
 
                           Navigator.of(context).pushReplacement(
                               MaterialPageRoute(
@@ -302,7 +307,10 @@ class _OTPScreenState extends State<OTPScreen> {
                               document.data()! as Map<String, dynamic>;
 
                           final blocUser.User user =
-                              Fresh.freshUserMap(data, true);
+                              Fresh.freshUserMap(data, false);
+                          user.fcmToken = fcmToken!;
+                          FirestoreHelper.pushUser(user);
+
                           UserPreferences.setUser(user);
 
                           Navigator.of(context).pushReplacement(
