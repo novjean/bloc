@@ -215,18 +215,23 @@ class _MainScreenState extends State<MainScreen> {
   }
 
     void _handleMessage(RemoteMessage message) {
-    if (message.data['notification_type'] == 'party_guest') {
       Navigator.of(context).push(
         MaterialPageRoute(builder: (ctx) => HomeScreen()
-          // MainScreen(user: UserPreferences.myUser,)
         ),
       );
-    } else {
-      Navigator.of(context).push(
-        MaterialPageRoute(builder: (ctx) => LoginScreen(shouldTriggerSkip: false)
-        ),
-      );
-    }
+
+    // if (message.data['notification_type'] == 'party_guest') {
+    //   Navigator.of(context).push(
+    //     MaterialPageRoute(builder: (ctx) => HomeScreen()
+    //       // MainScreen(user: UserPreferences.myUser,)
+    //     ),
+    //   );
+    // } else {
+    //   Navigator.of(context).push(
+    //     MaterialPageRoute(builder: (ctx) => LoginScreen(shouldTriggerSkip: false)
+    //     ),
+    //   );
+    // }
   }
 
   @override
