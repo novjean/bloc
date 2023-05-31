@@ -1,7 +1,6 @@
 import 'dart:ui';
 
 import 'package:bloc/screens/login_screen.dart';
-import 'package:bloc/services/notification_service.dart';
 import 'package:bloc/utils/logx.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
