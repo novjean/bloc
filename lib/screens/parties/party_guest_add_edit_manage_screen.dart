@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:bloc/db/entity/history_music.dart';
 import 'package:bloc/db/entity/reservation.dart';
+import 'package:bloc/screens/box_office/box_office_screen.dart';
 import 'package:bloc/utils/date_time_utils.dart';
 import 'package:bloc/widgets/ui/dark_button_widget.dart';
 import 'package:bloc/widgets/ui/loading_widget.dart';
@@ -734,7 +735,7 @@ class _PartyGuestAddEditManageScreenState
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Text(
-                        widget.party.eventName + ' | ' + widget.party.name,
+                        '${widget.party.eventName} | ${widget.party.name}',
                         style: const TextStyle(fontSize: 18),
                       ),
                     ],
@@ -846,6 +847,8 @@ class _PartyGuestAddEditManageScreenState
 
                   Navigator.of(context).pushReplacement(MaterialPageRoute(
                       builder: (context) => MainScreen(user: bloc_user)));
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => BoxOfficeScreen()));
                 }
               },
             ),
@@ -864,8 +867,10 @@ class _PartyGuestAddEditManageScreenState
       // all challenges are completed
       Navigator.of(context).pop();
 
-      Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => MainScreen(user: bloc_user)));
+      Navigator.of(context).pushReplacement(MaterialPageRoute(
+          builder: (context) => MainScreen(user: bloc_user)));
+      Navigator.of(context).push(MaterialPageRoute(
+          builder: (context) => BoxOfficeScreen()));
     } else {
       return showDialog(
         context: context,
@@ -1079,6 +1084,8 @@ class _PartyGuestAddEditManageScreenState
 
                 Navigator.of(context).pushReplacement(MaterialPageRoute(
                     builder: (context) => MainScreen(user: bloc_user)));
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => BoxOfficeScreen()));
               },
             ),
             TextButton(

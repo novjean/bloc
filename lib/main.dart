@@ -106,19 +106,19 @@ Future<void> main() async {
 
   await UserPreferences.init();
 
-  runApp(const MyApp());
+  runApp(const BlocApp());
 }
 
-class MyApp extends StatefulWidget {
-  const MyApp({Key? key}) : super(key: key);
+class BlocApp extends StatefulWidget {
+  const BlocApp({Key? key}) : super(key: key);
 
   static GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
   @override
-  State<MyApp> createState() => _MyAppState();
+  State<BlocApp> createState() => _BlocAppState();
 }
 
-class _MyAppState extends State<MyApp> {
+class _BlocAppState extends State<BlocApp> {
   static const String _TAG = 'MyApp';
 
   @override
@@ -139,7 +139,7 @@ class _MyAppState extends State<MyApp> {
             return MaterialApp(
               debugShowCheckedModeBanner: false,
               title: kAppTitle,
-              navigatorKey: MyApp.navigatorKey,
+              navigatorKey: BlocApp.navigatorKey,
               theme: ThemeData(
                 primaryColor: Constants.primary,
                 // 222,193,170
