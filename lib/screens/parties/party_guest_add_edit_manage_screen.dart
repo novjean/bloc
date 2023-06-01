@@ -986,6 +986,12 @@ class _PartyGuestAddEditManageScreenState
                         NetworkUtils.launchInBrowser(uri);
                         break;
                       }
+                    case 4:{
+                      //share or invite your friends
+                      final uri = Uri.parse(widget.party.instagramUrl);
+                      NetworkUtils.launchInBrowser(uri);
+                      break;
+                    }
                     case 100:
                       {
                         final urlImage = widget.party.storyImageUrl.isNotEmpty
