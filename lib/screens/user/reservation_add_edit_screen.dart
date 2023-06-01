@@ -25,6 +25,7 @@ import '../../utils/string_utils.dart';
 import '../../widgets/ui/button_widget.dart';
 import '../../widgets/ui/dark_textfield_widget.dart';
 import '../../widgets/ui/toaster.dart';
+import '../box_office/box_office_screen.dart';
 import '../main_screen.dart';
 
 class ReservationAddEditScreen extends StatefulWidget {
@@ -881,6 +882,9 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
                 Navigator.of(ctx).pop();
                 Navigator.of(context).pushReplacement(MaterialPageRoute(
                     builder: (context) => MainScreen(user: bloc_user)));
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => BoxOfficeScreen()));
+
               },
             ),
           ],
