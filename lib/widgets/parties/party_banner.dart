@@ -12,6 +12,7 @@ import '../../db/entity/user.dart';
 import '../../helpers/dummy.dart';
 import '../../helpers/firestore_helper.dart';
 import '../../helpers/fresh.dart';
+import '../../screens/box_office/box_office_screen.dart';
 import '../../screens/parties/artist_screen.dart';
 import '../../screens/parties/party_guest_add_edit_manage_screen.dart';
 import '../../utils/logx.dart';
@@ -22,12 +23,14 @@ class PartyBanner extends StatelessWidget {
   final Party party;
   final bool isClickable;
   final bool shouldShowButton;
+  final bool isGuestListRequested;
 
   const PartyBanner(
       {Key? key,
       required this.party,
       required this.isClickable,
-      required this.shouldShowButton})
+      required this.shouldShowButton,
+      required this.isGuestListRequested})
       : super(key: key);
 
   @override
@@ -64,13 +67,14 @@ class PartyBanner extends StatelessWidget {
                         padding: const EdgeInsets.only(left: 5.0),
                         child: RichText(
                           text: TextSpan(
-                              text: party.name.toLowerCase() + ' ',
-                              style: TextStyle(color: Colors.black,
+                              text: '${party.name.toLowerCase()} ',
+                              style: const TextStyle(color: Colors.black,
+                                  overflow: TextOverflow.ellipsis,
                                   fontSize: 22,
                                   fontWeight: FontWeight.bold),
                               children: <TextSpan>[
                                 TextSpan(text: party.chapter,
-                                    style: TextStyle(color: Colors.black,
+                                    style: const TextStyle(color: Colors.black,
                                         fontSize: 18,
                                         fontWeight: FontWeight.normal,
                                         fontStyle: FontStyle.italic)),
@@ -109,7 +113,8 @@ class PartyBanner extends StatelessWidget {
                           ? !party.isTBA && party.ticketUrl.isNotEmpty
                               ? showBuyTixButton(context)
                               : isGuestListActive
-                                  ? displayGuestListButton(context)
+                                  ? !isGuestListRequested
+                          ? displayGuestListButton(context): showBoxOfficeButton(context)
                                   : showListenOrInstaDialog(context)
                           : const SizedBox()
                     ],
@@ -242,6 +247,30 @@ class PartyBanner extends StatelessWidget {
       ),
       icon: const Icon(
         Icons.star_half,
+        size: 24.0,
+      ),
+    );
+  }
+
+  showBoxOfficeButton(BuildContext context) {
+    return ElevatedButton.icon(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Constants.background,
+        foregroundColor: Constants.primary,
+        shadowColor: Colors.white30,
+        elevation: 3,
+        minimumSize: const Size.fromHeight(60),
+      ),
+      onPressed: () {
+        Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) => BoxOfficeScreen()));
+      },
+      label: const Text(
+        'box office',
+        style: TextStyle(fontSize: 20, color: Constants.primary),
+      ),
+      icon: const Icon(
+        Icons.keyboard_command_key_sharp,
         size: 24.0,
       ),
     );

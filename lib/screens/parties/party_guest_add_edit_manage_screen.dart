@@ -189,6 +189,7 @@ class _PartyGuestAddEditManageScreenState
                 party: widget.party,
                 isClickable: false,
                 shouldShowButton: false,
+                isGuestListRequested: false,
               ),
               const SizedBox(height: 24),
               Padding(

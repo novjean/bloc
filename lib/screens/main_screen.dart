@@ -215,8 +215,6 @@ class _MainScreenState extends State<MainScreen> {
       );
     }
 
-
-
     // if (message.data['notification_type'] == 'party_guest') {
     //   Navigator.of(context).push(
     //     MaterialPageRoute(builder: (ctx) => HomeScreen()

@@ -74,7 +74,7 @@ class AppDrawer extends StatelessWidget {
               ? Column(
                   children: [
                     ListTile(
-                      leading: const Icon(Icons.play_arrow_outlined),
+                      leading: const Icon(Icons.keyboard_command_key_sharp),
                       title: const Text('box office'),
                       onTap: () {
                         Navigator.of(context).pop();

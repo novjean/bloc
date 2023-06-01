@@ -10,6 +10,7 @@ import 'package:upgrader/upgrader.dart';
 import '../db/entity/bloc.dart';
 import '../db/entity/guest_wifi.dart';
 import '../db/entity/party.dart';
+import '../db/entity/party_guest.dart';
 import '../db/shared_preferences/user_preferences.dart';
 import '../helpers/dummy.dart';
 import '../helpers/firestore_helper.dart';
@@ -39,6 +40,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
   GuestWifi mGuestWifi = Dummy.getDummyGuestWifi(Constants.blocServiceId);
   var _isGuestWifiDetailsLoading = true;
+
+  List<PartyGuest> mPartyGuestRequests = [];
+  var _isPartyGuestsLoading = true;
 
   ScrollController _scrollController = ScrollController();
 
@@ -120,6 +124,34 @@ class _HomeScreenState extends State<HomeScreen> {
             }
           });
 
+    FirestoreHelper.pullGuestListRequested(UserPreferences.myUser.id)
+        .then((res) {
+      Logx.i(_TAG, "successfully pulled in requested guest list");
+
+      if (res.docs.isNotEmpty) {
+        // found party guests
+        List<PartyGuest> partyGuestRequests = [];
+        for (int i = 0; i < res.docs.length; i++) {
+          DocumentSnapshot document = res.docs[i];
+          Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+          final PartyGuest partyGuest = Fresh.freshPartyGuestMap(data, false);
+          partyGuestRequests.add(partyGuest);
+        }
+        if(mounted) {
+          setState(() {
+            mPartyGuestRequests = partyGuestRequests;
+            _isPartyGuestsLoading = false;
+          });
+        }
+      } else {
+        Logx.i(_TAG, 'no party guest requests found!');
+        const SizedBox();
+        setState(() {
+          _isPartyGuestsLoading = false;
+        });
+      }
+    });
+
     FirestoreHelper.pullGuestWifi(Constants.blocServiceId).then((res) {
       Logx.i(_TAG, "successfully pulled in guest wifi");
 
@@ -169,7 +201,7 @@ class _HomeScreenState extends State<HomeScreen> {
           body: Column(
             children: <Widget>[
               _isBlocsLoading ? const LoadingWidget() : _displayBlocs(context),
-              _displayPartiesNFooter(context),
+              _isPartyGuestsLoading? const LoadingWidget(): _displayPartiesNFooter(context),
             ],
           ),
         ),
@@ -345,14 +377,23 @@ class _HomeScreenState extends State<HomeScreen> {
         itemBuilder: (BuildContext context, int index) {
           Party party = parties[index];
 
+          bool isGuestListRequested = false;
+          for (PartyGuest partyGuest in mPartyGuestRequests) {
+            if (partyGuest.partyId == party.id) {
+              isGuestListRequested = true;
+              break;
+            }
+          }
+
           if (parties.length == 1) {
-            _displayLastParty(party);
+            _displayLastParty(party, isGuestListRequested);
             return Column(
               children: [
                 PartyBanner(
                   party: party,
                   isClickable: true,
                   shouldShowButton: true,
+                  isGuestListRequested: isGuestListRequested,
                 ),
                 const SizedBox(height: 10.0),
                 UserPreferences.isUserLoggedIn()
@@ -375,6 +416,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     party: party,
                     isClickable: true,
                     shouldShowButton: true,
+                    isGuestListRequested: isGuestListRequested,
                   ),
                   const SizedBox(height: 10.0),
                   UserPreferences.isUserLoggedIn()
@@ -393,6 +435,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 party: party,
                 isClickable: true,
                 shouldShowButton: true,
+                isGuestListRequested: isGuestListRequested,
               );
             }
           }
@@ -401,13 +444,14 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  _displayLastParty(Party party) {
+  _displayLastParty(Party party, bool isGuestListRequested) {
     return Column(
       children: [
         PartyBanner(
           party: party,
           isClickable: true,
           shouldShowButton: true,
+          isGuestListRequested: isGuestListRequested,
         ),
         const SizedBox(height: 10.0),
         UserPreferences.isUserLoggedIn()
