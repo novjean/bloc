@@ -615,6 +615,37 @@ class _PartyGuestAddEditManageScreenState
                   ),
                 ],
               ),
+              widget.task == 'manage'
+                  ? Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 32),
+                    child: ButtonWidget(
+                      text: 'approve',
+                      onClicked: () {
+                        widget.partyGuest = widget.partyGuest.copyWith(isApproved: true);
+                        FirestoreHelper.pushPartyGuest(widget.partyGuest);
+
+                        //here we should notify the user
+                        if(bloc_user.fcmToken.isNotEmpty){
+                          String title = widget.party.name;
+                          String message = 'guest list request has been approved, see you soon!';
+
+                          //send a notification
+                          Apis.sendPushNotification(bloc_user.fcmToken, title, message);
+                        }
+
+                        Logx.i(_TAG, 'party guest ${widget.partyGuest.name} is approved');
+                        Toaster.longToast('party guest ${widget.partyGuest.name} is approved');
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                ],
+              )
+                  : const SizedBox(),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 32),
                 child: ButtonWidget(
@@ -641,7 +672,7 @@ class _PartyGuestAddEditManageScreenState
                         const SizedBox(height: 24),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 32),
-                          child: ButtonWidget(
+                          child: DarkButtonWidget(
                             text: 'delete',
                             onClicked: () {
                               FirestoreHelper.deletePartyGuest(
@@ -657,37 +688,6 @@ class _PartyGuestAddEditManageScreenState
                         ),
                       ],
                     )
-                  : const SizedBox(),
-              widget.task == 'manage'
-                  ? Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  const SizedBox(height: 24),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 32),
-                    child: ButtonWidget(
-                      text: 'approve',
-                      onClicked: () {
-                        widget.partyGuest = widget.partyGuest.copyWith(isApproved: true);
-                        FirestoreHelper.pushPartyGuest(widget.partyGuest);
-
-                        //here we should notify the user
-                        if(bloc_user.fcmToken.isNotEmpty){
-                          String title = '${widget.party.name}';
-                          String message = 'guest list request has been approved, see you soon!';
-
-                          //send a notification
-                          Apis.sendPushNotification(bloc_user.fcmToken, title, message);
-                        }
-
-                        Logx.i(_TAG, 'party guest ${widget.partyGuest.name} is approved');
-                        Toaster.longToast('party guest ${widget.partyGuest.name} is approved');
-                        Navigator.of(context).pop();
-                      },
-                    ),
-                  ),
-                ],
-              )
                   : const SizedBox(),
               const SizedBox(height: 24),
             ],
@@ -737,7 +737,8 @@ class _PartyGuestAddEditManageScreenState
                     children: [
                       Text(
                         '${widget.party.eventName} | ${widget.party.name}',
-                        style: const TextStyle(fontSize: 18),
+                        style: const TextStyle(fontSize: 18,
+                            overflow: TextOverflow.ellipsis),
                       ),
                     ],
                   ),
