@@ -14,27 +14,11 @@
       },
       "oauth_client": [
         {
-          "client_id": "328003399661-3akfgi2ero4sfqihq7h8571nf2a0m8l8.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.novatech.bloc",
-            "certificate_hash": "87d571b334aa171f889d9c030d80d256ff5da80d"
-          }
-        },
-        {
           "client_id": "328003399661-u3n4ms70m97scpig5tbe9gca4pjuqp8o.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.novatech.bloc",
             "certificate_hash": "fafc4fb574df7f0fbb8f25bbe1893e3a3e2c8a87"
-          }
-        },
-        {
-          "client_id": "328003399661-vfsefip2kfced7e56rda17k4rtd3p59i.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.novatech.bloc",
-            "certificate_hash": "60180178f66d255ce65f89abedef7d135b1ad2f9"
           }
         },
         {
