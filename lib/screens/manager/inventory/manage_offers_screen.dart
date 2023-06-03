@@ -3,7 +3,6 @@ import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-import '../../../db/dao/bloc_dao.dart';
 import '../../../helpers/firestore_helper.dart';
 import '../../../widgets/ui/listview_block.dart';
 
