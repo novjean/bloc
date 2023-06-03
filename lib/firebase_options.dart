@@ -25,10 +25,7 @@ class DefaultFirebaseOptions {
       case TargetPlatform.iOS:
         return ios;
       case TargetPlatform.macOS:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for macos - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return macos;
       case TargetPlatform.windows:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for windows - '
@@ -65,6 +62,17 @@ class DefaultFirebaseOptions {
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
+    apiKey: 'AIzaSyB7cmqXE3nEhNBXKNw5W9EQGFJA85yClHQ',
+    appId: '1:328003399661:ios:17bbcd5fe7c373f94781e4',
+    messagingSenderId: '328003399661',
+    projectId: 'bloc-novatech',
+    storageBucket: 'bloc-novatech.appspot.com',
+    androidClientId: '328003399661-3akfgi2ero4sfqihq7h8571nf2a0m8l8.apps.googleusercontent.com',
+    iosClientId: '328003399661-82of5hp7sf8qd8r478csnq53k8sr5oup.apps.googleusercontent.com',
+    iosBundleId: 'com.novatech.bloc',
+  );
+
+  static const FirebaseOptions macos = FirebaseOptions(
     apiKey: 'AIzaSyB7cmqXE3nEhNBXKNw5W9EQGFJA85yClHQ',
     appId: '1:328003399661:ios:17bbcd5fe7c373f94781e4',
     messagingSenderId: '328003399661',

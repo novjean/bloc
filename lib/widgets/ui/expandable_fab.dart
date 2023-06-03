@@ -1,6 +1,8 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 
+import '../../utils/constants.dart';
+
 @immutable
 class ExpandableFab extends StatefulWidget {
   const ExpandableFab({
@@ -196,18 +198,20 @@ class ActionButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return Material(
-      shape: const CircleBorder(),
-      clipBehavior: Clip.antiAlias,
-      color: theme.accentColor,
-      elevation: 4.0,
-      child: IconTheme.merge(
-        data: theme.accentIconTheme,
-        child: IconButton(
-          onPressed: onPressed,
-          icon: icon,
-        ),
-      ),
-    );
+    return SizedBox();
+
+    // return Material(
+    //   shape: const CircleBorder(),
+    //   clipBehavior: Clip.antiAlias,
+    //   color: Constants.primary,
+    //   elevation: 4.0,
+    //   child: IconTheme.merge(
+    //     data: theme.accentIconTheme,
+    //     child: IconButton(
+    //       onPressed: onPressed,
+    //       icon: icon,
+    //     ),
+    //   ),
+    // );
   }
 }
