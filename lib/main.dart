@@ -156,8 +156,8 @@ class _BlocAppState extends State<BlocApp> {
                 // app bar and buttons by default
                 primarySwatch: Colors.brown,
 
-                accentColor: Colors.grey,
-                accentColorBrightness: Brightness.dark,
+                // accentColor: Colors.grey,
+                // accentColorBrightness: Brightness.dark,
                 buttonTheme: ButtonTheme.of(context).copyWith(
                   buttonColor: Colors.red,
                   textTheme: ButtonTextTheme.primary,

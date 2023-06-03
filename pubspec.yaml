@@ -50,8 +50,7 @@ dependencies:
   #1.3.0
 
   # formatting
-  intl: ^0.17.0
-  #0.18.1
+  intl: ^0.18.0
 
   # persist locally data
   shared_preferences: ^2.0.5

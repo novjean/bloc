@@ -233,8 +233,10 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               onPressed: () {
                 if (completePhoneNumber.isNotEmpty) {
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => OTPScreen(completePhoneNumber)));
+
+
+                  // Navigator.of(context).push(MaterialPageRoute(
+                  //     builder: (context) => OTPScreen(completePhoneNumber)));
                 } else {
                   Logx.i(
                       _TAG,
@@ -252,6 +254,51 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
       ],
     );
+  }
+
+  _verifyPhone(String phoneNumber) async {
+    if (kIsWeb) {
+      await FirebaseAuth.instance
+          .signInWithPhoneNumber('${phoneNumber}', null)
+          .then((user) {
+        Logx.i(
+            _TAG,
+            'signInWithPhoneNumber: user verification id ' +
+                user.verificationId);
+        // setState(() {
+        //   _verificationCode = user.verificationId;
+        // });
+      }).catchError((e, s) {
+        Logx.e(_TAG, e, s);
+      });
+    } else {
+      await FirebaseAuth.instance.verifyPhoneNumber(
+          phoneNumber: '${phoneNumber}',
+          verificationCompleted: (PhoneAuthCredential credential) async {
+            Logx.i(_TAG,
+                'verifyPhoneNumber: ${phoneNumber} is verified. attempting sign in with credentials...');
+          },
+          verificationFailed: (FirebaseAuthException e) {
+            Logx.em(_TAG, 'verificationFailed $e');
+          },
+          codeSent: (String verificationID, int? resendToken) {
+            Logx.i(_TAG, 'verification id : ' + verificationID);
+
+            // if (mounted) {
+            //   setState(() {
+            //     _verificationCode = verificationID;
+            //   });
+            // }
+          },
+          codeAutoRetrievalTimeout: (String verificationId) {
+            // if (mounted) {
+            //   setState(() {
+            //     _verificationCode = verificationId;
+            //   });
+            // }
+          },
+          timeout: const Duration(seconds: 60));
+    }
   }
 
   _verifyUsingSkipPhone() async {

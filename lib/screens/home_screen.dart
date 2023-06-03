@@ -542,38 +542,38 @@ class _HomeScreenState extends State<HomeScreen> {
   // }
 
   /** Unimplemented **/
-  buildRestaurantRow(String restaurant, BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: <Widget>[
-        Text(
-          "$restaurant",
-          style: TextStyle(
-            fontSize: 20.0,
-            fontWeight: FontWeight.w800,
-          ),
-        ),
-        ElevatedButton(
-          child: Text(
-            "See all (9)",
-            style: TextStyle(
-              color: Theme.of(context).accentColor,
-            ),
-          ),
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (BuildContext context) {
-                  return Trending();
-                },
-              ),
-            );
-          },
-        ),
-      ],
-    );
-  }
+  // buildRestaurantRow(String restaurant, BuildContext context) {
+  //   return Row(
+  //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //     children: <Widget>[
+  //       Text(
+  //         "$restaurant",
+  //         style: TextStyle(
+  //           fontSize: 20.0,
+  //           fontWeight: FontWeight.w800,
+  //         ),
+  //       ),
+  //       ElevatedButton(
+  //         child: Text(
+  //           "See all (9)",
+  //           style: TextStyle(
+  //             color: Theme.of(context).accentColor,
+  //           ),
+  //         ),
+  //         onPressed: () {
+  //           Navigator.push(
+  //             context,
+  //             MaterialPageRoute(
+  //               builder: (BuildContext context) {
+  //                 return Trending();
+  //               },
+  //             ),
+  //           );
+  //         },
+  //       ),
+  //     ],
+  //   );
+  // }
 
   buildSearchBar(BuildContext context) {
     return Container(
