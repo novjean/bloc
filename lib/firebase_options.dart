@@ -70,7 +70,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '328003399661',
     projectId: 'bloc-novatech',
     storageBucket: 'bloc-novatech.appspot.com',
-    androidClientId: '328003399661-u3n4ms70m97scpig5tbe9gca4pjuqp8o.apps.googleusercontent.com',
+    androidClientId: '328003399661-egha6baep3m6et4300gttlnqr3u5qbl2.apps.googleusercontent.com',
     iosClientId: '328003399661-82of5hp7sf8qd8r478csnq53k8sr5oup.apps.googleusercontent.com',
     iosBundleId: 'com.novatech.bloc',
   );
