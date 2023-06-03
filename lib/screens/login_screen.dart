@@ -87,10 +87,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   }
 
                   if (snapshot.hasError) {
-                    Logx.em(
-                        _TAG,
-                        'user snapshot has error: ' +
-                            snapshot.error.toString());
+                    Logx.em(_TAG, 'user snapshot has error: ${snapshot.error}');
                     return signInWidget();
                   }
 
@@ -233,10 +230,8 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               onPressed: () {
                 if (completePhoneNumber.isNotEmpty) {
-
-
-                  // Navigator.of(context).push(MaterialPageRoute(
-                  //     builder: (context) => OTPScreen(completePhoneNumber)));
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => OTPScreen(completePhoneNumber)));
                 } else {
                   Logx.i(
                       _TAG,
