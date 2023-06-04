@@ -65,8 +65,6 @@ class _LoginScreenState extends State<LoginScreen> {
             }
           }
 
-          Logx.i(_TAG, 'user snapshot received');
-
           if (userSnapshot.hasData) {
             Logx.i(_TAG, 'user snapshot has data');
 
@@ -235,8 +233,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 } else {
                   Logx.i(
                       _TAG,
-                      'user entered invalid phone number ' +
-                          completePhoneNumber);
+                      'user entered invalid phone number $completePhoneNumber');
                   Toaster.longToast('please enter a valid phone number');
                 }
               },
@@ -249,51 +246,6 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
       ],
     );
-  }
-
-  _verifyPhone(String phoneNumber) async {
-    if (kIsWeb) {
-      await FirebaseAuth.instance
-          .signInWithPhoneNumber('${phoneNumber}', null)
-          .then((user) {
-        Logx.i(
-            _TAG,
-            'signInWithPhoneNumber: user verification id ' +
-                user.verificationId);
-        // setState(() {
-        //   _verificationCode = user.verificationId;
-        // });
-      }).catchError((e, s) {
-        Logx.e(_TAG, e, s);
-      });
-    } else {
-      await FirebaseAuth.instance.verifyPhoneNumber(
-          phoneNumber: '${phoneNumber}',
-          verificationCompleted: (PhoneAuthCredential credential) async {
-            Logx.i(_TAG,
-                'verifyPhoneNumber: ${phoneNumber} is verified. attempting sign in with credentials...');
-          },
-          verificationFailed: (FirebaseAuthException e) {
-            Logx.em(_TAG, 'verificationFailed $e');
-          },
-          codeSent: (String verificationID, int? resendToken) {
-            Logx.i(_TAG, 'verification id : ' + verificationID);
-
-            // if (mounted) {
-            //   setState(() {
-            //     _verificationCode = verificationID;
-            //   });
-            // }
-          },
-          codeAutoRetrievalTimeout: (String verificationId) {
-            // if (mounted) {
-            //   setState(() {
-            //     _verificationCode = verificationId;
-            //   });
-            // }
-          },
-          timeout: const Duration(seconds: 60));
-    }
   }
 
   _verifyUsingSkipPhone() async {
@@ -350,6 +302,7 @@ class _LoginScreenState extends State<LoginScreen> {
         Logx.e(_TAG, e, s);
       } catch (e) {
         logger.e(e);
+        Toaster.longToast('login failed. error: $e');
       }
     }
   }
@@ -408,6 +361,7 @@ class _LoginScreenState extends State<LoginScreen> {
       Logx.e(_TAG, e, s);
     } catch (e) {
       logger.e(e);
+      Toaster.longToast('auto login failed. $e');
       FocusScope.of(context).unfocus();
     }
   }
