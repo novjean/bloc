@@ -81,7 +81,6 @@ dependencies:
   flutter_spinkit: ^5.1.0
   delayed_display: ^2.0.0
   expandable: ^5.0.1
-  multiselect: ^0.1.0
   intl_phone_field: ^3.1.0
   pinput: ^2.2.31
   carousel_slider: ^4.2.1
