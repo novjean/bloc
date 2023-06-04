@@ -1135,17 +1135,27 @@ class _PartyGuestAddEditManageScreenState
   Challenge findChallenge() {
     Challenge returnChallenge = challenges.last;
 
-    for (Challenge challenge in challenges) {
-      if (challenge.level >= bloc_user.challengeLevel) {
-        return challenge;
+    if(widget.party.overrideChallengeNum>0){
+      for (Challenge challenge in challenges) {
+        if (challenge.level == widget.party.overrideChallengeNum) {
+          return challenge;
+        }
+      }
+    } else {
+      for (Challenge challenge in challenges) {
+        if (challenge.level >= bloc_user.challengeLevel) {
+          return challenge;
+        }
       }
     }
+
+
     return returnChallenge;
   }
 
   /** phone registration **/
   void _verifyPhone() async {
-    Logx.i(_TAG, '_verifyPhone: registering ' + completePhoneNumber.toString());
+    Logx.i(_TAG, '_verifyPhone: registering $completePhoneNumber');
 
     if (kIsWeb) {
       await FirebaseAuth.instance
@@ -1153,8 +1163,7 @@ class _PartyGuestAddEditManageScreenState
           .then((firebaseUser) {
         Logx.i(
             _TAG,
-            'signInWithPhoneNumber: user verification id ' +
-                firebaseUser.verificationId);
+            'signInWithPhoneNumber: user verification id ${firebaseUser.verificationId}');
 
         showOTPDialog(context);
 
@@ -1346,14 +1355,12 @@ class _PartyGuestAddEditManageScreenState
                       Logx.i(_TAG, 'user is in firebase auth');
                       Logx.i(
                           _TAG,
-                          'checking for bloc registration, id ' +
-                              value.user!.uid);
+                          'checking for bloc registration, id ${value.user!.uid}');
 
                       FirestoreHelper.pullUser(value.user!.uid).then((res) {
                         Logx.i(
                             _TAG,
-                            "successfully retrieved bloc user for id " +
-                                value.user!.uid);
+                            "successfully retrieved bloc user for id ${value.user!.uid}");
 
                         if (res.docs.isEmpty) {
                           Logx.i(_TAG,
@@ -1364,7 +1371,7 @@ class _PartyGuestAddEditManageScreenState
                               StringUtils.getInt(value.user!.phoneNumber!);
 
                           FirestoreHelper.pushUser(bloc_user);
-                          Logx.i(_TAG, 'registered user ' + bloc_user.id);
+                          Logx.i(_TAG, 'registered user ${bloc_user.id}');
 
                           UserPreferences.setUser(bloc_user);
                           widget.partyGuest.guestId = bloc_user.id;
@@ -1401,7 +1408,7 @@ class _PartyGuestAddEditManageScreenState
                     }
                   });
                 } catch (e) {
-                  Logx.em(_TAG, 'otp error ' + e.toString());
+                  Logx.em(_TAG, 'otp error $e');
 
                   String exception = e.toString();
                   if (exception.contains('session-expired')) {

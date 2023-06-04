@@ -10,6 +10,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 
+import '../../../db/entity/challenge.dart';
 import '../../../db/entity/genre.dart';
 import '../../../db/entity/party.dart';
 import '../../../helpers/firestorage_helper.dart';
@@ -68,6 +69,11 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
   List<Genre> mGenres = [];
   List<String> mGenreNames = [''];
   bool isGenresLoading = true;
+
+  List<Challenge> mChallenges =  [];
+  List<String> mChallengeNames = ['none'];
+  bool isChallengesLoading = true;
+  String sOverrideChallenge = 'none';
 
   @override
   void initState() {
@@ -147,6 +153,33 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
       }
     });
 
+    FirestoreHelper.pullChallenges().then((res) {
+      if (res.docs.isNotEmpty) {
+        Logx.i(_TAG, "successfully pulled in all challenges");
+
+        for (int i = 0; i < res.docs.length; i++) {
+          DocumentSnapshot document = res.docs[i];
+          Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+          final Challenge challenge = Fresh.freshChallengeMap(data, false);
+          mChallenges.add(challenge);
+          mChallengeNames.add(challenge.title);
+
+          if(challenge.level == widget.party.overrideChallengeNum){
+            sOverrideChallenge = challenge.title;
+          }
+        }
+
+        setState(() {
+          isChallengesLoading = false;
+        });
+      } else {
+        Logx.em(_TAG, 'no challenges found, setting default');
+        setState(() {
+          isChallengesLoading = false;
+        });
+      }
+    });
+
     for (int i = 1; i <= 10; i++) {
       guestCounts.add(i.toString());
     }
@@ -162,7 +195,7 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
       );
 
   _buildBody(BuildContext context) {
-    return _isBlocServicesLoading && isGenresLoading
+    return _isBlocServicesLoading && isGenresLoading && isChallengesLoading
         ? const LoadingWidget()
         : ListView(
             padding: const EdgeInsets.symmetric(horizontal: 32),
@@ -648,6 +681,50 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
                     },
                   ), //Checkbox
                 ], //<Widget>[]
+              ),
+              const SizedBox(height: 24),
+              FormField<String>(
+                builder: (FormFieldState<String> state) {
+                  return InputDecorator(
+                    key: const ValueKey('override_challenge'),
+                    decoration: InputDecoration(
+                        errorStyle: TextStyle(
+                            color: Theme.of(context).errorColor,
+                            fontSize: 16.0),
+                        hintText: 'please select override challenge',
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(5.0))),
+                    isEmpty: sOverrideChallenge == '',
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton<String>(
+                        value: sOverrideChallenge,
+                        isDense: true,
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            sOverrideChallenge = newValue!;
+
+                            int sChallengeNum = 0;
+                            for(Challenge ch in mChallenges){
+                              if(ch.title == sOverrideChallenge){
+                                sChallengeNum = ch.level;
+                                break;
+                              }
+                            }
+                            widget.party = widget.party
+                                .copyWith(overrideChallengeNum: sChallengeNum);
+                            state.didChange(newValue);
+                          });
+                        },
+                        items: mChallengeNames.map((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList(),
+                      ),
+                    ),
+                  );
+                },
               ),
 
               const SizedBox(height: 24),

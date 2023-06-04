@@ -1069,13 +1069,19 @@ class Fresh {
       shouldPushParty = true;
     }
     try {
+      party = party.copyWith(overrideChallengeNum: map['overrideChallengeNum'] as int);
+    } catch (e) {
+      Logx.em(
+          _TAG, 'party overrideChallengeNum not exist for id: ${party.id}');
+      shouldPushParty = true;
+    }
+    try {
       party = party.copyWith(genre: map['genre'] as String);
     } catch (e) {
       Logx.em(
           _TAG, 'party genre not exist for party id: ' + party.id);
       shouldPushParty = true;
     }
-
 
     if (shouldPushParty &&
         shouldUpdate &&
@@ -1257,9 +1263,15 @@ class Fresh {
     }
     try{
       freshParty =
+          freshParty.copyWith(overrideChallengeNum: party.overrideChallengeNum);
+    } catch (e) {
+      Logx.em(_TAG, 'party overrideChallengeNum not exist for id: ${party.id}');
+    }
+    try{
+      freshParty =
           freshParty.copyWith(genre: party.genre);
     } catch (e) {
-      Logx.em(_TAG, 'party genre not exist for party id: ' + party.id);
+      Logx.em(_TAG, 'party genre not exist for party id: ${party.id}');
     }
 
     return freshParty;

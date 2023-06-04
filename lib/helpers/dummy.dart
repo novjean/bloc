@@ -200,6 +200,7 @@ class Dummy {
         isBigAct: true,
         genre: '',
         isChallengeActive: false,
+        overrideChallengeNum: 0,
         chapter: '');
 
     return dummyParty;

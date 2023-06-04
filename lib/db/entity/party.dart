@@ -30,6 +30,7 @@ class Party {
   final String clubRules;
 
   final bool isChallengeActive;
+  final int overrideChallengeNum;
   final String genre;
 
   final bool isTicketed;
@@ -64,6 +65,7 @@ class Party {
     required this.guestListRules,
     required this.clubRules,
     required this.isChallengeActive,
+    required this.overrideChallengeNum,
     required this.genre,
     required this.isTicketed,
     required this.ticketsSoldCount,
@@ -101,6 +103,7 @@ class Party {
           guestListRules == other.guestListRules &&
           clubRules == other.clubRules &&
           isChallengeActive == other.isChallengeActive &&
+          overrideChallengeNum == other.overrideChallengeNum &&
           genre == other.genre &&
           isTicketed == other.isTicketed &&
           ticketsSoldCount == other.ticketsSoldCount &&
@@ -134,6 +137,7 @@ class Party {
       guestListRules.hashCode ^
       clubRules.hashCode ^
       isChallengeActive.hashCode ^
+      overrideChallengeNum.hashCode ^
       genre.hashCode ^
       isTicketed.hashCode ^
       ticketsSoldCount.hashCode ^
@@ -168,6 +172,7 @@ class Party {
         ' guestListRules: $guestListRules,' +
         ' clubRules: $clubRules,' +
         ' isChallengeActive: $isChallengeActive,' +
+        ' overrideChallengeNum: $overrideChallengeNum,' +
         ' genre: $genre,' +
         ' isTicketed: $isTicketed,' +
         ' ticketsSoldCount: $ticketsSoldCount,' +
@@ -202,6 +207,7 @@ class Party {
     String? guestListRules,
     String? clubRules,
     bool? isChallengeActive,
+    int? overrideChallengeNum,
     String? genre,
     bool? isTicketed,
     int? ticketsSoldCount,
@@ -234,6 +240,7 @@ class Party {
       guestListRules: guestListRules ?? this.guestListRules,
       clubRules: clubRules ?? this.clubRules,
       isChallengeActive: isChallengeActive ?? this.isChallengeActive,
+      overrideChallengeNum: overrideChallengeNum ?? this.overrideChallengeNum,
       genre: genre ?? this.genre,
       isTicketed: isTicketed ?? this.isTicketed,
       ticketsSoldCount: ticketsSoldCount ?? this.ticketsSoldCount,
@@ -269,6 +276,7 @@ class Party {
       'guestListRules': this.guestListRules,
       'clubRules': this.clubRules,
       'isChallengeActive': this.isChallengeActive,
+      'overrideChallengeNum': this.overrideChallengeNum,
       'genre': this.genre,
       'isTicketed': this.isTicketed,
       'ticketsSoldCount': this.ticketsSoldCount,
@@ -304,6 +312,7 @@ class Party {
       guestListRules: map['guestListRules'] as String,
       clubRules: map['clubRules'] as String,
       isChallengeActive: map['isChallengeActive'] as bool,
+      overrideChallengeNum: map['overrideChallengeNum'] as int,
       genre: map['genre'] as String,
       isTicketed: map['isTicketed'] as bool,
       ticketsSoldCount: map['ticketsSoldCount'] as int,
