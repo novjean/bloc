@@ -163,6 +163,7 @@ class _PromoterGuestsScreenState extends State<PromoterGuestsScreen> {
             partyGuest: guests[index],
             party: widget.party,
             isClickable: true,
+            challenges: [],
           );
         },
       ),

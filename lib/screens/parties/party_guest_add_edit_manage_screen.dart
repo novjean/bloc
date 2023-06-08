@@ -92,7 +92,6 @@ class _PartyGuestAddEditManageScreenState
   final focusNode = FocusNode();
 
   List<Challenge> challenges = [];
-
   bool isChallengesLoading = true;
 
   @override

@@ -52,10 +52,8 @@ class _OTPScreenState extends State<OTPScreen> {
       await FirebaseAuth.instance
           .signInWithPhoneNumber('${widget.phone}', null)
           .then((user) {
-        Logx.i(
-            _TAG,
-            'signInWithPhoneNumber: user verification id ' +
-                user.verificationId);
+        Logx.i(_TAG,
+            'signInWithPhoneNumber: user verification id ${user.verificationId}');
         setState(() {
           _verificationCode = user.verificationId;
         });
@@ -110,8 +108,9 @@ class _OTPScreenState extends State<OTPScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Flexible(
+                flex: 1,
                 child: Container(
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     image: DecorationImage(
                         image: AssetImage("assets/icons/logo-adaptive.png"),
                         fit: BoxFit.fitHeight
@@ -119,7 +118,6 @@ class _OTPScreenState extends State<OTPScreen> {
                         ),
                   ),
                 ),
-                flex: 1,
               ),
               Flexible(
                 flex: 3,
@@ -273,12 +271,11 @@ class _OTPScreenState extends State<OTPScreen> {
 
                       String? fcmToken = '';
 
-                      if(!kIsWeb) {
+                      if (!kIsWeb) {
                         fcmToken = await FirebaseMessaging.instance.getToken();
                       }
 
-                      Logx.i(
-                          _TAG,
+                      Logx.i(_TAG,
                           'checking for bloc registration, id ${value.user!.uid}');
 
                       FirestoreHelper.pullUser(value.user!.uid).then((res) {
@@ -305,7 +302,7 @@ class _OTPScreenState extends State<OTPScreen> {
                               document.data()! as Map<String, dynamic>;
 
                           blocUser.User user;
-                          if(kIsWeb){
+                          if (kIsWeb) {
                             user = Fresh.freshUserMap(data, true);
                           } else {
                             user = Fresh.freshUserMap(data, false);

@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import '../../db/entity/celebration.dart';
+import '../../db/entity/challenge.dart';
 import '../../db/entity/party.dart';
 import '../../db/entity/party_guest.dart';
 import '../../db/entity/reservation.dart';
@@ -39,6 +40,9 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
   late List<String> mOptions;
   String sOption = '';
 
+  List<Challenge> challenges = [];
+  bool isChallengesLoading = true;
+
   @override
   void initState() {
     mOptions = ['guest list', 'reservations', 'celebrations'];
@@ -69,6 +73,28 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
         Logx.i(_TAG, 'no parties found!');
         setState(() {
           _isPartiesLoading = false;
+        });
+      }
+    });
+
+    FirestoreHelper.pullChallenges().then((res) {
+      if (res.docs.isNotEmpty) {
+        Logx.i(_TAG, "successfully pulled in all challenges");
+
+        for (int i = 0; i < res.docs.length; i++) {
+          DocumentSnapshot document = res.docs[i];
+          Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+          final Challenge challenge = Fresh.freshChallengeMap(data, false);
+          challenges.add(challenge);
+        }
+
+        setState(() {
+          isChallengesLoading = false;
+        });
+      } else {
+        Logx.em(_TAG, 'no challenges found, setting default');
+        setState(() {
+          isChallengesLoading = false;
         });
       }
     });
@@ -385,6 +411,7 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
               partyGuest: sPartyGuest,
               party: sParty,
               isClickable: true,
+              challenges: challenges,
             );
           }
         },
