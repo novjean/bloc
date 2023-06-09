@@ -103,11 +103,7 @@ class _MainScreenState extends State<MainScreen> {
         }
       }
     }, onError: (e, s) {
-      Logx.ex(
-          _TAG,
-          "error completing retrieving users for phone number : ${widget.user.phoneNumber}",
-          e,
-          s);
+      Logx.ex(_TAG, "error completing retrieving users for phone number : ${widget.user.phoneNumber}", e, s);
     });
 
     if (!kIsWeb) {
@@ -166,6 +162,8 @@ class _MainScreenState extends State<MainScreen> {
       //   return;
       // });
 
+      fbm.subscribeToTopic('ads');
+
       blocUser.User user = UserPreferences.getUser();
       if (user.clearanceLevel >= Constants.CAPTAIN_LEVEL) {
         fbm.subscribeToTopic('sos');
@@ -175,7 +173,6 @@ class _MainScreenState extends State<MainScreen> {
       if (user.clearanceLevel >= Constants.PROMOTER_LEVEL) {
         fbm.subscribeToTopic('party_guest');
         fbm.subscribeToTopic('reservations');
-        fbm.subscribeToTopic('ads');
       }
 
       if (user.clearanceLevel >= Constants.MANAGER_LEVEL) {
