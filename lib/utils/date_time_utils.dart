@@ -1,7 +1,12 @@
 import 'package:flutter/src/material/time.dart';
 import 'package:intl/intl.dart';
 
+import '../widgets/ui/toaster.dart';
+import 'logx.dart';
+
 class DateTimeUtils {
+  static const String _TAG = 'DateTimeUtils';
+
   static int millisecondsHour = 3600000;
   static int millisecondsDay = 86400000;
   static int millisecondsWeek = 604800000;
@@ -65,8 +70,17 @@ class DateTimeUtils {
 
   // 6:30 PM
   static TimeOfDay stringToTimeOfDay(String tod) {
-    final format = DateFormat.jm(); //"6:00 AM"
-    return TimeOfDay.fromDateTime(format.parse(tod));
+    TimeOfDay timeOfDay;
+    final format = DateFormat.jm();
+    //"6:00 AM"
+    try{
+      timeOfDay = TimeOfDay.fromDateTime(format.parse(tod));
+    } catch (e){
+      Logx.em(_TAG, e.toString());
+      timeOfDay = TimeOfDay.fromDateTime(DateTime.now());
+      Toaster.shortToast('dev error: stringToTimeOfDay failed parse');
+    }
+    return timeOfDay;
   }
 
 }
