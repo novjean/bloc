@@ -72,12 +72,11 @@ class DateTimeUtils {
   static TimeOfDay stringToTimeOfDay(String tod) {
     TimeOfDay timeOfDay;
     final format = DateFormat.jm();
-    //"6:00 AM"
     try{
       timeOfDay = TimeOfDay.fromDateTime(format.parse(tod));
     } catch (e){
       Logx.em(_TAG, e.toString());
-      timeOfDay = TimeOfDay.fromDateTime(DateTime.now());
+      timeOfDay = const TimeOfDay(hour: 0, minute: 0); //00:00 AM
       Toaster.shortToast('dev error: stringToTimeOfDay failed parse');
     }
     return timeOfDay;
