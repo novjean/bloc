@@ -10,7 +10,10 @@ import 'package:flutter/material.dart';
 import '../../../db/entity/user.dart';
 import '../../../helpers/firestore_helper.dart';
 import '../../../helpers/fresh.dart';
+import '../../../utils/constants.dart';
+import '../../../utils/file_utils.dart';
 import '../../../utils/logx.dart';
+import '../../../utils/string_utils.dart';
 import '../../../widgets/manager/user_item.dart';
 
 class ManageUsersScreen extends StatefulWidget {
@@ -91,14 +94,14 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
       appBar: AppBar(title: const Text('manage | users')),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          showFilterDialog(context);
+          showActionsDialog(context);
         },
         backgroundColor: Theme.of(context).primaryColor,
-        tooltip: 'filter',
+        tooltip: 'actions',
         elevation: 5,
         splashColor: Colors.grey,
         child: const Icon(
-          Icons.filter_list_outlined,
+          Icons.science,
           color: Colors.black,
           size: 29,
         ),
@@ -440,6 +443,124 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
               }),
         ),
       ],
+    );
+  }
+
+  showActionsDialog(BuildContext context) {
+    return showDialog(
+      context: context,
+      builder: (BuildContext ctx) {
+        return AlertDialog(
+          contentPadding: const EdgeInsets.all(16.0),
+          content: SizedBox(
+            height: 250,
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.only(bottom: 20),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Text(
+                          'actions',
+                          style: TextStyle(fontSize: 18),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(
+                    height: 200,
+                    width: 300,
+                    child: SingleChildScrollView(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text('filter'),
+                              SizedBox.fromSize(
+                                size: const Size(50, 50),
+                                child: ClipOval(
+                                  child: Material(
+                                    color: Constants.primary,
+                                    child: InkWell(
+                                      splashColor: Constants.darkPrimary,
+                                      onTap: () {
+                                        Navigator.of(ctx).pop();
+                                        showFilterDialog(context);
+                                      },
+                                      child: const Column(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: <Widget>[
+                                          Icon(Icons.filter_list),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
+                          const SizedBox(height:10),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text('share users'),
+                              SizedBox.fromSize(
+                                size: const Size(50, 50),
+                                child: ClipOval(
+                                  child: Material(
+                                    color: Constants.primary,
+                                    child: InkWell(
+                                      splashColor: Constants.darkPrimary,
+                                      onTap: () async {
+                                        Navigator.of(ctx).pop();
+
+                                        String listText = '';
+                                        for(User user in mUsers){
+                                          listText += '${user.name} ${user.surname},'
+                                              '+${user.phoneNumber}\n';
+                                        }
+
+                                        String rand = StringUtils.getRandomString(5);
+                                        String fileName = '$sUserLevelName-$sGender-$sMode-$rand.csv';
+                                        FileUtils.shareCsvFile(fileName, listText, sUserLevelName);
+                                      },
+                                      child: const Column(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: <Widget>[
+                                          Icon(Icons.share_outlined),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
+                          const SizedBox(height:10),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          actions: [
+            TextButton(
+              child: const Text('close'),
+              onPressed: () {
+                Navigator.of(ctx).pop();
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 }

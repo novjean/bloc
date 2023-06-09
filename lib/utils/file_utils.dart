@@ -24,7 +24,7 @@ class FileUtils {
   static void shareCsvFile(String fileName, String text, String shareMessage) async {
     var temp = await getTemporaryDirectory();
     final path = '${temp.path}/$fileName';
-    File(path).writeAsString(text);
+    await File(path).writeAsString(text);
 
     final files = <XFile>[];
     files.add(
