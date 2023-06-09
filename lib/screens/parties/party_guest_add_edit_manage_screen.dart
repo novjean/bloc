@@ -219,78 +219,6 @@ class _PartyGuestAddEditManageScreenState
                   },
                 ),
               ),
-              widget.task == 'manage'
-                  ? Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 32.0),
-                    child: Column(
-                        children: [
-                          const SizedBox(height: 24),
-                          DarkTextFieldWidget(
-                            label: 'banned ',
-                            text: bloc_user.isBanned.toString(),
-                            onChanged: (value) {},
-                          ),
-                          const SizedBox(height: 24),
-                          DarkTextFieldWidget(
-                            label: 'phone number \*',
-                            text: bloc_user.phoneNumber.toString(),
-                            onChanged: (value) {},
-                          ),
-                          const SizedBox(height: 24),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.only(bottom: 10),
-                                child: Text(
-                                  'challenge level \*',
-                                  style: TextStyle(
-                                      color:
-                                          Theme.of(context).primaryColorLight,
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                              ),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  ButtonWidget(
-                                    text: '  down  ',
-                                    onClicked: () {
-                                      int level = bloc_user.challengeLevel;
-                                      level--;
-                                      setState(() {
-                                        bloc_user = bloc_user.copyWith(
-                                            challengeLevel: level);
-                                        FirestoreHelper.pushUser(bloc_user);
-                                      });
-                                    },
-                                  ),
-                                  DarkButtonWidget(
-                                    text: bloc_user.challengeLevel.toString(),
-                                    onClicked: () {},
-                                  ),
-                                  ButtonWidget(
-                                    text: 'level up',
-                                    onClicked: () {
-                                      int level = bloc_user.challengeLevel;
-                                      level++;
-                                      setState(() {
-                                        bloc_user = bloc_user.copyWith(
-                                            challengeLevel: level);
-                                        FirestoreHelper.pushUser(bloc_user);
-                                      });
-                                    },
-                                  ),
-                                ],
-                              )
-                            ],
-                          ),
-                        ],
-                      ),
-                  )
-                  : const SizedBox(),
               !isLoggedIn
                   ? Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 32.0),
@@ -596,6 +524,126 @@ class _PartyGuestAddEditManageScreenState
                   ],
                 ),
               ),
+              const SizedBox(height: 24),
+              widget.task == 'manage'
+                  ? Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 32.0),
+                child: Column(
+                  children: [
+                    const SizedBox(height: 24),
+                    DarkTextFieldWidget(
+                      label: 'phone number \*',
+                      text: bloc_user.phoneNumber.toString(),
+                      onChanged: (value) {},
+                    ),
+                    const SizedBox(height: 24),
+                    DarkTextFieldWidget(
+                      label: 'challenge task \*',
+                      text: findChallenge().title,
+                      onChanged: (value) {},
+                    ),
+                    const SizedBox(height: 24),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 10),
+                          child: Text(
+                            'challenge level \*',
+                            style: TextStyle(
+                                color:
+                                Theme.of(context).primaryColorLight,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        Row(
+                          mainAxisAlignment:
+                          MainAxisAlignment.spaceBetween,
+                          children: [
+                            ButtonWidget(
+                              text: '  down  ',
+                              onClicked: () {
+                                int level = bloc_user.challengeLevel;
+                                level--;
+                                setState(() {
+                                  bloc_user = bloc_user.copyWith(
+                                      challengeLevel: level);
+                                  FirestoreHelper.pushUser(bloc_user);
+                                });
+                              },
+                            ),
+                            DarkButtonWidget(
+                              text: bloc_user.challengeLevel.toString(),
+                              onClicked: () {},
+                            ),
+                            ButtonWidget(
+                              text: 'level up',
+                              onClicked: () {
+                                int level = bloc_user.challengeLevel;
+                                level++;
+                                setState(() {
+                                  bloc_user = bloc_user.copyWith(
+                                      challengeLevel: level);
+                                  FirestoreHelper.pushUser(bloc_user);
+                                });
+                              },
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 24),
+                        Row(
+                          children: [
+                            const Text('supported: ', style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                              color: Constants.lightPrimary,
+                            )),
+                            Checkbox(
+                              value: widget.partyGuest.isChallengeClicked,
+                              onChanged: (value) {
+                                widget.partyGuest = widget.partyGuest.copyWith(isChallengeClicked: value);
+                                PartyGuest freshPartyGuest = Fresh.freshPartyGuest(widget.partyGuest);
+                                FirestoreHelper.pushPartyGuest(freshPartyGuest);
+
+                                Logx.i(_TAG, 'guest ${'${widget.partyGuest.name} '} : supported $value');
+
+                                setState(() {
+                                });
+                              },
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 12),
+                        Row(
+                          children: [
+                            const Text('banned: ', style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                              color: Constants.lightPrimary,
+                            )),
+                            Checkbox(
+                              value: bloc_user.isBanned,
+                              onChanged: (value) {
+                                bloc_user = bloc_user.copyWith(isBanned: value);
+                                blocUser.User freshUser = Fresh.freshUser(bloc_user);
+                                FirestoreHelper.pushUser(freshUser);
+
+                                Logx.i(_TAG, 'user ${'${bloc_user.name} ${bloc_user.surname}'} : banned $value');
+                                Toaster.longToast('user ${'${bloc_user.name} ${bloc_user.surname}'} : banned $value');
+
+                                setState(() {
+                                });
+                              },
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              )
+                  : const SizedBox(),
               const SizedBox(height: 24),
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,

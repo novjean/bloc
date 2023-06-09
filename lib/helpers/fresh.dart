@@ -37,56 +37,56 @@ class Fresh {
     try {
       ad = ad.copyWith(title: map['title'] as String);
     } catch (e) {
-      Logx.em(_TAG, 'ad title not exist for ad id: ' + ad.id);
+      Logx.em(_TAG, 'ad title not exist for ad id: ${ad.id}');
       shouldPush = true;
     }
     try {
       ad = ad.copyWith(message: map['message'] as String);
     } catch (e) {
-      Logx.em(_TAG, 'ad message not exist for ad id: ' + ad.id);
+      Logx.em(_TAG, 'ad message not exist for ad id: ${ad.id}');
       shouldPush = true;
     }
     try {
       ad = ad.copyWith(type: map['type'] as String);
     } catch (e) {
-      Logx.em(_TAG, 'ad type not exist for ad id: ' + ad.id);
+      Logx.em(_TAG, 'ad type not exist for ad id: ${ad.id}');
       shouldPush = true;
     }
     try {
       ad = ad.copyWith(blocId: map['blocId'] as String);
     } catch (e) {
-      Logx.em(_TAG, 'ad blocId not exist for ad id: ' + ad.id);
+      Logx.em(_TAG, 'ad blocId not exist for ad id: ${ad.id}');
       shouldPush = true;
     }
     try {
       ad = ad.copyWith(partyId: map['partyId'] as String);
     } catch (e) {
-      Logx.em(_TAG, 'ad partyId not exist for ad id: ' + ad.id);
+      Logx.em(_TAG, 'ad partyId not exist for ad id: ${ad.id}');
       shouldPush = true;
     }
     try {
       ad = ad.copyWith(hits: map['hits'] as int);
     } catch (e) {
-      Logx.em(_TAG, 'ad hits not exist for ad id: ' + ad.id);
+      Logx.em(_TAG, 'ad hits not exist for ad id: ${ad.id}');
       shouldPush = true;
     }
     try {
       ad = ad.copyWith(createdAt: map['createdAt'] as int);
     } catch (e) {
-      Logx.em(_TAG, 'ad createdAt not exist for ad id: ' + ad.id);
+      Logx.em(_TAG, 'ad createdAt not exist for ad id: ${ad.id}');
       shouldPush = true;
     }
     try {
       ad = ad.copyWith(isActive: map['isActive'] as bool);
     } catch (e) {
-      Logx.em(_TAG, 'ad isActive not exist for ad id: ' + ad.id);
+      Logx.em(_TAG, 'ad isActive not exist for ad id: ${ad.id}');
       shouldPush = true;
     }
 
     if (shouldPush &&
         shouldUpdate &&
         UserPreferences.myUser.clearanceLevel >= Constants.MANAGER_LEVEL) {
-      Logx.i(_TAG, 'updating ad ' + ad.id);
+      Logx.i(_TAG, 'updating ad ${ad.id}');
       FirestoreHelper.pushAd(ad);
     }
 
@@ -104,22 +104,22 @@ class Fresh {
     try {
       freshAd = freshAd.copyWith(title: ad.title);
     } catch (e) {
-      Logx.em(_TAG, 'ad title not exist for ad id: ' + ad.id);
+      Logx.em(_TAG, 'ad title not exist for ad id: ${ad.id}');
     }
     try {
       freshAd = freshAd.copyWith(message: ad.message);
     } catch (e) {
-      Logx.em(_TAG, 'ad message not exist for ad id: ' + ad.id);
+      Logx.em(_TAG, 'ad message not exist for ad id: ${ad.id}');
     }
     try {
       freshAd = freshAd.copyWith(type: ad.type);
     } catch (e) {
-      Logx.em(_TAG, 'ad type not exist for ad id: ' + ad.id);
+      Logx.em(_TAG, 'ad type not exist for ad id: ${ad.id}');
     }
     try {
       freshAd = freshAd.copyWith(blocId: ad.blocId);
     } catch (e) {
-      Logx.em(_TAG, 'ad blocId not exist for ad id: ' + ad.id);
+      Logx.em(_TAG, 'ad blocId not exist for ad id: ${ad.id}');
     }
     try {
       freshAd = freshAd.copyWith(partyId: ad.partyId);
@@ -2260,7 +2260,7 @@ class Fresh {
     try {
       user = user.copyWith(isAppUser: map['isAppUser'] as bool);
     } catch (e) {
-      Logx.em(_TAG, 'user isAppUser not exist for id: ' + user.id);
+      Logx.em(_TAG, 'user isAppUser not exist for id: ${user.id}');
       shouldPushUser = true;
     }
 

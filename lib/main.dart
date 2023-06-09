@@ -119,7 +119,7 @@ class BlocApp extends StatefulWidget {
 }
 
 class _BlocAppState extends State<BlocApp> {
-  static const String _TAG = 'MyApp';
+  static const String _TAG = 'BlocApp';
 
   @override
   Widget build(BuildContext context) {

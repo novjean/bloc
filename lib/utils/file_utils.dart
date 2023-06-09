@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:bloc/utils/string_utils.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:universal_html/html.dart' as html;
 import 'package:path_provider/path_provider.dart';
