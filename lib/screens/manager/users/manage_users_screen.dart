@@ -457,7 +457,7 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
             child: SingleChildScrollView(
               child: Column(
                 children: [
-                  const Padding(
+                  Padding(
                     padding: EdgeInsets.only(bottom: 20),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
