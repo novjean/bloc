@@ -29,6 +29,7 @@ import '../../helpers/dummy.dart';
 import '../../helpers/firestore_helper.dart';
 import '../../helpers/fresh.dart';
 import '../../main.dart';
+import '../../utils/challenge_utils.dart';
 import '../../utils/constants.dart';
 import '../../utils/file_utils.dart';
 import '../../utils/logx.dart';
@@ -538,8 +539,14 @@ class _PartyGuestAddEditManageScreenState
                     ),
                     const SizedBox(height: 24),
                     DarkTextFieldWidget(
-                      label: 'challenge task *',
+                      label: 'challenge task',
                       text: findChallenge().title,
+                      onChanged: (value) {},
+                    ),
+                    const SizedBox(height: 24),
+                    DarkTextFieldWidget(
+                      label: 'challenge url',
+                      text: findChallengeUrl(),
                       onChanged: (value) {},
                     ),
                     const SizedBox(height: 24),
@@ -985,15 +992,14 @@ class _PartyGuestAddEditManageScreenState
                   switch (challenge.level) {
                     case 3:{
                       //android download
-                      final uri = Uri.parse(
-                          'https://play.google.com/store/apps/details?id=com.novatech.bloc');
+                      final uri = Uri.parse(ChallengeUtils.urlBlocPlayStore);
                       NetworkUtils.launchInBrowser(uri);
                       break;
                     }
                     default:
                       {
                         final uri =
-                        Uri.parse('https://www.instagram.com/bloc.india/');
+                        Uri.parse(ChallengeUtils.urlBlocInsta);
                         NetworkUtils.launchInBrowser(uri);
                         break;
                       }
@@ -1015,21 +1021,20 @@ class _PartyGuestAddEditManageScreenState
                     case 1:
                       {
                         final uri =
-                            Uri.parse('https://www.instagram.com/bloc.india/');
+                            Uri.parse(ChallengeUtils.urlBlocInsta);
                         NetworkUtils.launchInBrowser(uri);
                         break;
                       }
                     case 2:
                       {
-                        final uri =
-                        Uri.parse('https://www.instagram.com/freq.club/');
+                        final uri = Uri.parse(ChallengeUtils.urlFreqInsta);
                         NetworkUtils.launchInBrowser(uri);
                         break;
                       }
                       case 3:{
                         //ios download
                         final uri = Uri.parse(
-                            'https://apps.apple.com/in/app/bloc-community/id1672736309');
+                            ChallengeUtils.urlBlocAppStore);
                         NetworkUtils.launchInBrowser(uri);
                         break;
                       }
@@ -1502,6 +1507,15 @@ class _PartyGuestAddEditManageScreenState
         ],
       ),
     );
+  }
+
+  findChallengeUrl() {
+    String url = ChallengeUtils.challengeUrl(findChallenge());
+
+    if(url == ChallengeUtils.partyInsta){
+      url = widget.party.instagramUrl;
+    }
+    return url;
   }
 }
 
