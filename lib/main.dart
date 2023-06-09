@@ -1,7 +1,9 @@
 import 'dart:ui';
 
+import 'package:bloc/routes/app_route_config.dart';
 import 'package:bloc/screens/login_screen.dart';
 import 'package:bloc/utils/logx.dart';
+import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -112,7 +114,7 @@ Future<void> main() async {
 class BlocApp extends StatefulWidget {
   const BlocApp({Key? key}) : super(key: key);
 
-  static GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+  // static GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
   @override
   State<BlocApp> createState() => _BlocAppState();
@@ -136,46 +138,47 @@ class _BlocAppState extends State<BlocApp> {
           future: _initialization,
           builder: (ctx, appSnapshot) {
 
-            return MaterialApp(
-              debugShowCheckedModeBanner: false,
-              title: kAppTitle,
-              navigatorKey: BlocApp.navigatorKey,
-              theme: ThemeData(
-                primaryColor: Constants.primary,
-                // 222,193,170
-                primaryColorLight: Constants.lightPrimary,
-                primaryColorDark: Constants.darkPrimary,
+            if(appSnapshot.connectionState == ConnectionState.done){
+              return MaterialApp.router(
+                debugShowCheckedModeBanner: false,
+                title: kAppTitle,
+                theme: ThemeData(
+                  primaryColor: Constants.primary,
+                  // 222,193,170
+                  primaryColorLight: Constants.lightPrimary,
+                  primaryColorDark: Constants.darkPrimary,
 
-                backgroundColor: Constants.background,
-                // focusColor: const Color.fromRGBO(31, 31, 33, 1.0),
-                shadowColor: const Color.fromRGBO(158, 158, 158, 1.0),
+                  backgroundColor: Constants.background,
+                  // focusColor: const Color.fromRGBO(31, 31, 33, 1.0),
+                  shadowColor: const Color.fromRGBO(158, 158, 158, 1.0),
 
-                highlightColor: const Color.fromRGBO(255, 255, 255, 1.0),
-                bottomAppBarColor: const Color.fromRGBO(255, 255, 255, 1.0),
+                  highlightColor: const Color.fromRGBO(255, 255, 255, 1.0),
+                  bottomAppBarColor: const Color.fromRGBO(255, 255, 255, 1.0),
 
-                // app bar and buttons by default
-                primarySwatch: Colors.brown,
+                  // app bar and buttons by default
+                  primarySwatch: Colors.brown,
 
-                // accentColor: Colors.grey,
-                // accentColorBrightness: Brightness.dark,
-                buttonTheme: ButtonTheme.of(context).copyWith(
-                  buttonColor: Colors.red,
-                  textTheme: ButtonTextTheme.primary,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
+                  // accentColor: Colors.grey,
+                  // accentColorBrightness: Brightness.dark,
+                  buttonTheme: ButtonTheme.of(context).copyWith(
+                    buttonColor: Colors.red,
+                    textTheme: ButtonTextTheme.primary,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
                   ),
                 ),
-              ),
-              home: appSnapshot.connectionState != ConnectionState.done
-                  ? SplashScreen()
-                  : const LoginScreen(shouldTriggerSkip: true),
+                routeInformationParser: BlocRouter.returnRouter(true).routeInformationParser,
+                routerDelegate: BlocRouter.returnRouter(true).routerDelegate,
 
-              // routes: {
-              // HomeScreen.routeName: (ctx) => HomeScreen(),
-              // ManagerScreen.routeName: (ctx) => ManagerScreen(),
-              // OwnerScreen.routeName: (ctx) => OwnerScreen(),
-              // }
-            );
+                // home: appSnapshot.connectionState != ConnectionState.done
+                //     ? SplashScreen()
+                //     : const LoginScreen(shouldTriggerSkip: true),
+
+              );
+            } else {
+              return LoadingWidget();
+            }
           }),
     );
   }

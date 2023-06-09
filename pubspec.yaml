@@ -56,6 +56,9 @@ dependencies:
   #2.0.18
   provider: ^6.0.5
 
+  #routing
+  go_router: ^5.2.0
+
   # store image
   path_provider: ^2.0.12
   #2.0.13
@@ -70,6 +73,7 @@ dependencies:
   # barcode scanner
   barcode_widget: ^2.0.2
   flutter_barcode_scanner: ^2.0.0
+
 
   #utility
   upgrader: ^6.4.0

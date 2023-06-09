@@ -23,7 +23,6 @@ import '../widgets/search_card.dart';
 import '../widgets/store_badge_item.dart';
 import '../widgets/ui/dark_button_widget.dart';
 import '../widgets/ui/toaster.dart';
-import 'experimental/trending.dart';
 
 class HomeScreen extends StatefulWidget {
   HomeScreen({key}) : super(key: key);
