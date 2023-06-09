@@ -129,7 +129,7 @@ class PartyBanner extends StatelessWidget {
                       borderRadius: const BorderRadius.all(Radius.circular(0)),
                       image: DecorationImage(
                         image: NetworkImage(party.imageUrl),
-                        fit: BoxFit.fitHeight,
+                        fit: BoxFit.cover,
                         // AssetImage(food['image']),
                       ),
                     ),

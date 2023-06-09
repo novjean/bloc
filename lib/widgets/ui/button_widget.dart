@@ -14,7 +14,7 @@ class ButtonWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => SizedBox(
-    height: height ?? 50,
+    height: height ?? 40,
     child: ElevatedButton(
           style: ElevatedButton.styleFrom(
             backgroundColor: Theme.of(context).primaryColor,

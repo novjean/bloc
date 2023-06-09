@@ -178,7 +178,7 @@ class _BoxOfficeItemState extends State<BoxOfficeItem> {
                       borderRadius: const BorderRadius.all(Radius.circular(2)),
                       image: DecorationImage(
                         image: NetworkImage(widget.party.imageUrl),
-                        fit: BoxFit.fitHeight,
+                        fit: BoxFit.cover,
                         // AssetImage(food['image']),
                       ),
                     ),
