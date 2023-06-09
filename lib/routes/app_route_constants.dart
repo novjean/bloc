@@ -3,4 +3,9 @@ class MyAppRouteConstants {
   static const String aboutRouteName = 'about';
   static const String profileRouteName = 'profile';
   static const String contactUsRouteName = 'contact_us';
+
+  static const String loginRouteName = 'login';
+  static const String eventRouteName = 'event';
+
+
 }

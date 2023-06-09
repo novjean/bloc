@@ -702,6 +702,14 @@ class FirestoreHelper {
         .get();
   }
 
+  static Future<QuerySnapshot<Map<String, dynamic>>> pullPartyByNameChapter(String name, String chapter) {
+    return FirebaseFirestore.instance
+        .collection(FirestoreHelper.PARTIES)
+        .where('name', isEqualTo: name)
+        .where('chapter', isEqualTo: chapter)
+        .get();
+  }
+
   static Future<QuerySnapshot<Map<String, dynamic>>> pullPartiesByEndTime(
       int timeNow, bool isActive) {
     return FirebaseFirestore.instance

@@ -1,9 +1,11 @@
 import 'package:bloc/db/shared_preferences/user_preferences.dart';
+import 'package:bloc/screens/parties/event_screen.dart';
 import 'package:bloc/utils/constants.dart';
 import 'package:bloc/utils/date_time_utils.dart';
 import 'package:bloc/utils/network_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../db/entity/history_music.dart';
 import '../../db/entity/party.dart';
@@ -12,6 +14,7 @@ import '../../db/entity/user.dart';
 import '../../helpers/dummy.dart';
 import '../../helpers/firestore_helper.dart';
 import '../../helpers/fresh.dart';
+import '../../routes/app_route_constants.dart';
 import '../../screens/box_office/box_office_screen.dart';
 import '../../screens/parties/artist_screen.dart';
 import '../../screens/parties/party_guest_add_edit_manage_screen.dart';
@@ -41,11 +44,25 @@ class PartyBanner extends StatelessWidget {
 
     return GestureDetector(
       onTap: () {
-        isClickable
-            ? Navigator.of(context).push(
-                MaterialPageRoute(builder: (ctx) => ArtistScreen(party: party)),
-              )
-            : Logx.i(_TAG, 'party banner no click');
+        if(isClickable){
+          if(party.type=='event'){
+            GoRouter.of(context)
+                .pushNamed(MyAppRouteConstants.eventRouteName, params: {
+              'partyName': party.name,
+              'partyChapter': party.chapter
+            });
+
+            // Navigator.of(context).push(
+            //   MaterialPageRoute(builder: (ctx) => EventScreen(partyName: party.name, partyChapter: party.chapter,)),
+            // );
+          } else {
+            Navigator.of(context).push(
+              MaterialPageRoute(builder: (ctx) => ArtistScreen(party: party)),
+            );
+          }
+        } else {
+          Logx.i(_TAG, 'party banner no click');
+        }
       },
       child: Hero(
         tag: party.id,

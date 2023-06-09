@@ -1,4 +1,6 @@
+import 'package:bloc/db/shared_preferences/user_preferences.dart';
 import 'package:bloc/screens/home_screen.dart';
+import 'package:bloc/screens/parties/event_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -16,12 +18,28 @@ class BlocRouter{
     GoRouter router = GoRouter(
       routes: [
         GoRoute(
-          name: MyAppRouteConstants.homeRouteName,
+          name: MyAppRouteConstants.loginRouteName,
           path: '/',
           pageBuilder: (context, state) {
-            return MaterialPage(child: Home());
+            if(UserPreferences.isUserLoggedIn()){
+              return MaterialPage(child: HomeScreen());
+            } else {
+              return MaterialPage(child: LoginScreen(shouldTriggerSkip: true,));
+            }
           },
         ),
+        GoRoute(
+          name: MyAppRouteConstants.eventRouteName,
+          path: '/event/:partyName/:partyChapter',
+          pageBuilder: (context, state) {
+            return MaterialPage(
+                child: EventScreen(
+                  partyName: state.params['partyName']!,
+                  partyChapter: state.params['partyChapter']!,
+                ));
+          },
+        ),
+
         GoRoute(
           name: MyAppRouteConstants.profileRouteName,
           path: '/profile/:username/:userid',
