@@ -157,17 +157,6 @@ class _BoxOfficeItemState extends State<BoxOfficeItem> {
                             padding: const EdgeInsets.only(left: 5.0),
                             child: widget.partyGuest.isApproved? showApprovedButton(context)
                                 :showPendingButton(context)
-
-
-                            // Text('status:\n' +
-                            //     (widget.partyGuest.isApproved
-                            //         ? widget.partyGuest.guestsRemaining == 0
-                            //             ? 'completed'
-                            //             : widget.partyGuest.guestsRemaining
-                            //                     .toString() +
-                            //                 ' ' +
-                            //                 widget.partyGuest.guestStatus
-                            //         : )),
                           ),
                           const Spacer(),
                           UserPreferences.myUser.clearanceLevel>=Constants.PROMOTER_LEVEL?
@@ -231,7 +220,7 @@ class _BoxOfficeItemState extends State<BoxOfficeItem> {
       padding: const EdgeInsets.only(right: 5, bottom: 5),
       child: widget.partyGuest.isApproved
           ? SizedBox(
-              height: 50,
+              height: 40,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Theme.of(context).primaryColorDark,
@@ -399,7 +388,7 @@ class _BoxOfficeItemState extends State<BoxOfficeItem> {
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.transparent,
               shape: const RoundedRectangleBorder(),
-              foregroundColor: Colors.white,
+              foregroundColor: Constants.lightPrimary,
               padding:
               const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
             ),
@@ -420,9 +409,9 @@ class _BoxOfficeItemState extends State<BoxOfficeItem> {
           height: 40,
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.transparent,
+              backgroundColor: Constants.lightPrimary,
               shape: const RoundedRectangleBorder(),
-              foregroundColor: Colors.white,
+              foregroundColor: Constants.darkPrimary,
               padding:
               const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
             ),

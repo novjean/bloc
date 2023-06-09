@@ -14,7 +14,7 @@ class DarkButtonWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => SizedBox(
-    height: height ?? 50,
+    height: height ?? 40,
     child: ElevatedButton(
           style: ElevatedButton.styleFrom(
             backgroundColor: Theme.of(context).primaryColorDark,
@@ -22,7 +22,7 @@ class DarkButtonWidget extends StatelessWidget {
               borderRadius: BorderRadius.circular(5),
             ),
             foregroundColor: Colors.white,
-            padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 15),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
           ),
           child: Text(text),
           onPressed: onClicked,
