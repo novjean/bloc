@@ -22,7 +22,7 @@ class ButtonWidget extends StatelessWidget {
               borderRadius: BorderRadius.circular(5),
             ),
             foregroundColor: Colors.white,
-            padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 15),
+            padding: const EdgeInsets.symmetric(horizontal: 20),
           ),
           child: Text(text),
           onPressed: onClicked,
