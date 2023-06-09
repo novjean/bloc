@@ -285,7 +285,7 @@ class _PartyGuestAddEditManageScreenState
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 32),
                 child: DarkTextFieldWidget(
-                    label: 'email${widget.party.isEmailRequired ? ' \*' : ''}',
+                    label: 'email${widget.party.isEmailRequired ? ' *' : ''}',
                     text: bloc_user.email,
                     onChanged: (email) {
                       bloc_user = bloc_user.copyWith(email: email);
@@ -532,13 +532,13 @@ class _PartyGuestAddEditManageScreenState
                   children: [
                     const SizedBox(height: 24),
                     DarkTextFieldWidget(
-                      label: 'phone number \*',
+                      label: 'phone number *',
                       text: bloc_user.phoneNumber.toString(),
                       onChanged: (value) {},
                     ),
                     const SizedBox(height: 24),
                     DarkTextFieldWidget(
-                      label: 'challenge task \*',
+                      label: 'challenge task *',
                       text: findChallenge().title,
                       onChanged: (value) {},
                     ),
@@ -549,7 +549,7 @@ class _PartyGuestAddEditManageScreenState
                         Padding(
                           padding: const EdgeInsets.only(bottom: 10),
                           child: Text(
-                            'challenge level \*',
+                            'challenge level *',
                             style: TextStyle(
                                 color:
                                 Theme.of(context).primaryColorLight,
