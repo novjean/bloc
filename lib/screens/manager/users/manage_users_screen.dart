@@ -143,7 +143,7 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
                         _displayUserLevelsDropdown(context),
                         const Text('\ngender:\n'),
                         _displayGenderDropdown(context),
-                        const Text('\mode:\n'),
+                        const Text('\nmode:\n'),
                         _displayModesDropdown(context)
                       ],
                     ),
