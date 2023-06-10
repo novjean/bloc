@@ -8,6 +8,7 @@ import 'package:delayed_display/delayed_display.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl_phone_field/country_picker_dialog.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 
@@ -16,6 +17,7 @@ import '../helpers/dummy.dart';
 import '../helpers/firestore_helper.dart';
 import '../helpers/fresh.dart';
 import '../main.dart';
+import '../routes/app_route_constants.dart';
 import '../utils/logx.dart';
 import '../utils/string_utils.dart';
 import '../widgets/ui/toaster.dart';
@@ -102,7 +104,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     final blocUser.User user = Fresh.freshUserMap(data, true);
                     UserPreferences.setUser(user);
 
-                    return MainScreen(user: user);
+                    return MainScreen();
                   }
                   Logx.i(_TAG, 'loading user...');
                   return const LoadingWidget();
@@ -330,8 +332,10 @@ class _LoginScreenState extends State<LoginScreen> {
               registeredUser.phoneNumber =
                   StringUtils.getInt(value.user!.phoneNumber!);
 
-              Navigator.of(context).pushReplacement(MaterialPageRoute(
-                  builder: (context) => MainScreen(user: registeredUser)));
+              UserPreferences.setUser(registeredUser);
+
+              GoRouter.of(context)
+                  .pushNamed(MyAppRouteConstants.homeRouteName);
             } else {
               Logx.i(_TAG, 'user is a bloc member. navigating to main...');
               try {
@@ -342,8 +346,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 final blocUser.User user = Fresh.freshUserMap(data, false);
                 UserPreferences.setUser(user);
 
-                Navigator.of(context).pushReplacement(MaterialPageRoute(
-                    builder: (context) => MainScreen(user: user)));
+                GoRouter.of(context)
+                    .pushNamed(MyAppRouteConstants.homeRouteName);
               } on PlatformException catch (e, s) {
                 Logx.e(_TAG, e, s);
               } on Exception catch (e, s) {

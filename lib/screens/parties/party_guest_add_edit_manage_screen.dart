@@ -12,6 +12,7 @@ import 'package:delayed_display/delayed_display.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl_phone_field/country_picker_dialog.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:path_provider/path_provider.dart';
@@ -29,6 +30,7 @@ import '../../helpers/dummy.dart';
 import '../../helpers/firestore_helper.dart';
 import '../../helpers/fresh.dart';
 import '../../main.dart';
+import '../../routes/app_route_constants.dart';
 import '../../utils/challenge_utils.dart';
 import '../../utils/constants.dart';
 import '../../utils/file_utils.dart';
@@ -901,8 +903,10 @@ class _PartyGuestAddEditManageScreenState
                 } else {
                   Navigator.of(context).pop();
 
-                  Navigator.of(context).pushReplacement(MaterialPageRoute(
-                      builder: (context) => MainScreen(user: bloc_user)));
+                  UserPreferences.setUser(bloc_user);
+                  GoRouter.of(context)
+                      .pushNamed(MyAppRouteConstants.homeRouteName);
+
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (context) => BoxOfficeScreen()));
                 }
@@ -923,8 +927,10 @@ class _PartyGuestAddEditManageScreenState
       // all challenges are completed
       Navigator.of(context).pop();
 
-      Navigator.of(context).pushReplacement(MaterialPageRoute(
-          builder: (context) => MainScreen(user: bloc_user)));
+      UserPreferences.setUser(bloc_user);
+      GoRouter.of(context)
+          .pushNamed(MyAppRouteConstants.homeRouteName);
+
       Navigator.of(context).push(MaterialPageRoute(
           builder: (context) => BoxOfficeScreen()));
     } else {
@@ -1142,8 +1148,12 @@ class _PartyGuestAddEditManageScreenState
                 Navigator.of(ctx).pop();
                 Navigator.of(context).pop();
 
-                Navigator.of(context).pushReplacement(MaterialPageRoute(
-                    builder: (context) => MainScreen(user: bloc_user)));
+                UserPreferences.setUser(bloc_user);
+                GoRouter.of(context)
+                    .pushNamed(MyAppRouteConstants.homeRouteName);
+
+                // Navigator.of(context).pushReplacement(MaterialPageRoute(
+                //     builder: (context) => MainScreen()));
                 Navigator.of(context).push(MaterialPageRoute(
                     builder: (context) => BoxOfficeScreen()));
               },
@@ -1165,8 +1175,12 @@ class _PartyGuestAddEditManageScreenState
                 Navigator.of(ctx).pop();
                 Navigator.of(context).pop();
 
-                Navigator.of(context).pushReplacement(MaterialPageRoute(
-                    builder: (context) => MainScreen(user: bloc_user)));
+                UserPreferences.setUser(bloc_user);
+                GoRouter.of(context)
+                    .pushNamed(MyAppRouteConstants.homeRouteName);
+
+                // Navigator.of(context).pushReplacement(MaterialPageRoute(
+                //     builder: (context) => MainScreen()));
 
                 Navigator.of(context).push(
                   MaterialPageRoute(

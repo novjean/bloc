@@ -5,12 +5,14 @@ import 'package:delayed_display/delayed_display.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:pinput/pinput.dart';
 
 import '../db/shared_preferences/user_preferences.dart';
 import '../helpers/firestore_helper.dart';
 import '../helpers/fresh.dart';
 import '../main.dart';
+import '../routes/app_route_constants.dart';
 import '../utils/logx.dart';
 import '../utils/string_utils.dart';
 import '../widgets/ui/toaster.dart';
@@ -289,10 +291,10 @@ class _OTPScreenState extends State<OTPScreen> {
                               StringUtils.getInt(value.user!.phoneNumber!);
                           registeredUser.fcmToken = fcmToken!;
 
-                          Navigator.of(context).pushReplacement(
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      MainScreen(user: registeredUser)));
+                          UserPreferences.setUser(registeredUser);
+
+                          GoRouter.of(context)
+                              .pushNamed(MyAppRouteConstants.homeRouteName);
                         } else {
                           Logx.i(_TAG,
                               'user is a bloc member. navigating to main...');
@@ -310,13 +312,10 @@ class _OTPScreenState extends State<OTPScreen> {
                             FirestoreHelper.pushUser(user);
                           }
                           UserPreferences.setUser(user);
+                          GoRouter.of(context)
+                              .pushNamed(MyAppRouteConstants.homeRouteName);
 
                           Toaster.shortToast('hey ${user.name}, welcome back');
-
-                          Navigator.of(context).pushReplacement(
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      MainScreen(user: user)));
                         }
                       });
                     }

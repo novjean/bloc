@@ -7,12 +7,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:go_router/go_router.dart';
 
-import '../db/entity/user.dart';
 import '../db/shared_preferences/user_preferences.dart';
 import '../helpers/firestore_helper.dart';
 import '../helpers/fresh.dart';
 import '../main.dart';
+import '../routes/app_route_constants.dart';
 import '../utils/logx.dart';
 import 'home_screen.dart';
 import 'parties/party_screen.dart';
@@ -20,11 +21,7 @@ import 'profile/profile_add_edit_register_page.dart';
 import 'profile/profile_screen.dart';
 
 class MainScreen extends StatefulWidget {
-  static const routeName = '/home-screen';
-
-  final blocUser.User user;
-
-  const MainScreen({key, required this.user}) : super(key: key);
+  const MainScreen();
 
   @override
   State<MainScreen> createState() => _MainScreenState();
@@ -32,6 +29,8 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   static const String _TAG = 'MainScreen';
+
+  late blocUser.User user;
 
   String? fcmToken = '';
 
@@ -50,16 +49,16 @@ class _MainScreenState extends State<MainScreen> {
     super.initState();
     _pageController = PageController();
 
+    user = UserPreferences.myUser;
+
     // lets check if the user is already registered
     FirebaseFirestore.instance
         .collection(FirestoreHelper.USERS)
-        .where('phoneNumber', isEqualTo: widget.user.phoneNumber)
+        .where('phoneNumber', isEqualTo: user.phoneNumber)
         .get()
         .then((res) {
       if (res.docs.isEmpty) {
-        Logx.i(_TAG, 'user not found, registering ${widget.user.phoneNumber}');
-        // register the user, and we might need to get more info about the user
-        User user = widget.user;
+        Logx.i(_TAG, 'user not found, registering ${user.phoneNumber}');
 
         if (kIsWeb) {
           user.isAppUser = false;
@@ -79,17 +78,20 @@ class _MainScreenState extends State<MainScreen> {
                   ProfileAddEditRegisterPage(user: user, task: 'register')),
         );
       } else {
-        Logx.i(_TAG, 'user found for ${widget.user.phoneNumber}');
+        Logx.i(_TAG, 'user found for ${user.phoneNumber}');
         List<blocUser.User> users = [];
 
         for (int i = 0; i < res.docs.length; i++) {
           DocumentSnapshot document = res.docs[i];
-          Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+          Map<String, dynamic> data = document.data()! as Map<String,
+              dynamic>;
           final blocUser.User user = Fresh.freshUserMap(data, false);
           users.add(user);
 
           if (i == res.docs.length - 1) {
-            user.lastSeenAt = Timestamp.now().millisecondsSinceEpoch;
+            user.lastSeenAt = Timestamp
+                .now()
+                .millisecondsSinceEpoch;
             if (UserPreferences.isUserLoggedIn()) {
               if (kIsWeb) {
                 user.isAppUser = false;
@@ -103,7 +105,7 @@ class _MainScreenState extends State<MainScreen> {
         }
       }
     }, onError: (e, s) {
-      Logx.ex(_TAG, "error completing retrieving users for phone number : ${widget.user.phoneNumber}", e, s);
+      Logx.ex(_TAG, "error completing retrieving users for phone number : ${user.phoneNumber}", e, s);
     });
 
     if (!kIsWeb) {
@@ -122,8 +124,8 @@ class _MainScreenState extends State<MainScreen> {
         // AppleNotification? apple = message.notification?.apple;
 
         if (notification != null && android != null) {
-          String? title = notification.title;
-          String? body = notification.body;
+          // String? title = notification.title;
+          // String? body = notification.body;
 
           // await NotificationService.showNotification(
           //   title: "Title of the notification",
@@ -152,16 +154,6 @@ class _MainScreenState extends State<MainScreen> {
 
       FirebaseMessaging.onMessageOpenedApp.listen(_handleMessage);
 
-      // FirebaseMessaging.onMessageOpenedApp.listen((message) {
-      //   Logx.i(_TAG, 'a new onMessageOpenedApp event was published!');
-      //   Navigator.of(context).push(
-      //     MaterialPageRoute(builder: (ctx) => HomeScreen()
-      //         // MainScreen(user: UserPreferences.myUser,)
-      //     ),
-      //   );
-      //   return;
-      // });
-
       fbm.subscribeToTopic('ads');
 
       blocUser.User user = UserPreferences.getUser();
@@ -183,7 +175,7 @@ class _MainScreenState extends State<MainScreen> {
 
       if (UserPreferences.isUserLoggedIn()) {
         // update the user is in app mode
-        User user = UserPreferences.myUser;
+        blocUser.User user = UserPreferences.myUser;
         user.isAppUser = true;
         FirestoreHelper.pushUser(user);
       }
@@ -191,20 +183,21 @@ class _MainScreenState extends State<MainScreen> {
       // in web mode
       if (UserPreferences.isUserLoggedIn()) {
         // update the user is in web mode
-        User user = UserPreferences.myUser;
+        blocUser.User user = UserPreferences.myUser;
         user.isAppUser = false;
         FirestoreHelper.pushUser(user);
       }
     }
   }
 
+
+
   void _handleMessage(RemoteMessage message) {
     if(UserPreferences.myUser.id.isNotEmpty){
-      Navigator.of(context).push(
-        MaterialPageRoute(
-            builder: (ctx) => MainScreen(user: UserPreferences.myUser)),
-      );
+      GoRouter.of(context)
+          .pushNamed(MyAppRouteConstants.homeRouteName);
     } else {
+
       Navigator.of(context).push(
         MaterialPageRoute(
             builder: (ctx) => const LoginScreen(shouldTriggerSkip: true)),
@@ -323,7 +316,6 @@ class _MainScreenState extends State<MainScreen> {
 
       if (user.clearanceLevel >= Constants.MANAGER_LEVEL) {
         fbm.unsubscribeFromTopic('celebrations');
-        // fbm.unsubscribeFromTopic('ads');
         fbm.unsubscribeFromTopic('chat');
         fbm.unsubscribeFromTopic('offer');
       }

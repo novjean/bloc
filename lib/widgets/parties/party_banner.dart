@@ -51,10 +51,6 @@ class PartyBanner extends StatelessWidget {
               'partyName': party.name,
               'partyChapter': party.chapter
             });
-
-            // Navigator.of(context).push(
-            //   MaterialPageRoute(builder: (ctx) => EventScreen(partyName: party.name, partyChapter: party.chapter,)),
-            // );
           } else {
             Navigator.of(context).push(
               MaterialPageRoute(builder: (ctx) => ArtistScreen(party: party)),
