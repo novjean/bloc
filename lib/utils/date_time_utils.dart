@@ -69,16 +69,13 @@ class DateTimeUtils {
   }
 
   // 6:30 PM
-  static TimeOfDay stringToTimeOfDay(String tod) {
-    TimeOfDay timeOfDay;
-    final format = DateFormat.jm();
-    try{
-      timeOfDay = TimeOfDay.fromDateTime(format.parse(tod));
-    } catch (e){
-      Logx.em(_TAG, e.toString());
-      timeOfDay = const TimeOfDay(hour: 0, minute: 0); //00:00 AM
-      Toaster.shortToast('dev error: stringToTimeOfDay failed parse');
-    }
+  static TimeOfDay convertTimeString(String timeString) {
+    final DateFormat dateFormat = DateFormat('hh:mm a');
+    final DateTime dateTime = dateFormat.parse(timeString);
+    final TimeOfDay timeOfDay = TimeOfDay(
+      hour: dateTime.hour,
+      minute: dateTime.minute,
+    );
     return timeOfDay;
   }
 

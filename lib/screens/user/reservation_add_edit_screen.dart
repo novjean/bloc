@@ -97,7 +97,7 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
       sArrivalTime = TimeOfDay.now();
     } else {
       sArrivalTime =
-          DateTimeUtils.stringToTimeOfDay(widget.reservation.arrivalTime);
+          DateTimeUtils.convertTimeString(widget.reservation.arrivalTime);
     }
 
     FirestoreHelper.pullProductsByBottle(Constants.blocServiceId).then((res) {

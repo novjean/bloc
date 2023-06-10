@@ -132,7 +132,7 @@ class _CelebrationAddEditScreenState extends State<CelebrationAddEditScreen> {
       sArrivalTime = TimeOfDay.now();
     } else {
       sArrivalTime =
-          DateTimeUtils.stringToTimeOfDay(widget.celebration.arrivalTime);
+          DateTimeUtils.convertTimeString(widget.celebration.arrivalTime);
     }
 
     FirestoreHelper.pullProductsByBottle(Constants.blocServiceId).then((res) {
