@@ -1,8 +1,6 @@
 import 'package:flutter/src/material/time.dart';
 import 'package:intl/intl.dart';
 
-import '../widgets/ui/toaster.dart';
-import 'logx.dart';
 
 class DateTimeUtils {
   static const String _TAG = 'DateTimeUtils';
@@ -63,13 +61,8 @@ class DateTimeUtils {
     return DateTime.fromMillisecondsSinceEpoch(millis);
   }
 
-  static TimeOfDay getTimeOfDay(String sTimeOfDay) {
-    TimeOfDay time = TimeOfDay(hour:int.parse(sTimeOfDay.split(":")[0]),minute: int.parse(sTimeOfDay.split(":")[1]));
-    return time;
-  }
-
   // 6:30 PM
-  static TimeOfDay convertTimeString(String timeString) {
+  static TimeOfDay convertStringToTime(String timeString) {
     final DateFormat dateFormat = DateFormat('hh:mm a');
     final DateTime dateTime = dateFormat.parse(timeString);
     final TimeOfDay timeOfDay = TimeOfDay(
@@ -77,6 +70,13 @@ class DateTimeUtils {
       minute: dateTime.minute,
     );
     return timeOfDay;
+  }
+  // 6:30 PM
+  static String convertTimeToString(TimeOfDay tod){
+    final now = new DateTime.now();
+    final dt = DateTime(now.year, now.month, now.day, tod.hour, tod.minute);
+    final DateFormat dateFormat = DateFormat('hh:mm a');
+    return dateFormat.format(dt);
   }
 
 }

@@ -132,7 +132,7 @@ class _CelebrationAddEditScreenState extends State<CelebrationAddEditScreen> {
       sArrivalTime = TimeOfDay.now();
     } else {
       sArrivalTime =
-          DateTimeUtils.convertTimeString(widget.celebration.arrivalTime);
+          DateTimeUtils.convertStringToTime(widget.celebration.arrivalTime);
     }
 
     FirestoreHelper.pullProductsByBottle(Constants.blocServiceId).then((res) {
@@ -1173,7 +1173,7 @@ class _CelebrationAddEditScreenState extends State<CelebrationAddEditScreen> {
     setState(() {
       sArrivalTime = pickedTime!;
       widget.celebration = widget.celebration
-          .copyWith(arrivalTime: sArrivalTime.format(context));
+          .copyWith(arrivalTime: DateTimeUtils.convertTimeToString(sArrivalTime));
     });
   }
 
