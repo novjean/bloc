@@ -22,7 +22,7 @@ class DarkButtonWidget extends StatelessWidget {
               borderRadius: BorderRadius.circular(5),
             ),
             foregroundColor: Colors.white,
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            padding: const EdgeInsets.symmetric(horizontal: 20),
           ),
           child: Text(text),
           onPressed: onClicked,
