@@ -1,5 +1,4 @@
 import 'package:bloc/db/shared_preferences/user_preferences.dart';
-import 'package:bloc/screens/parties/event_screen.dart';
 import 'package:bloc/utils/constants.dart';
 import 'package:bloc/utils/date_time_utils.dart';
 import 'package:bloc/utils/network_utils.dart';
@@ -23,12 +22,12 @@ import '../../utils/logx.dart';
 class PartyBanner extends StatelessWidget {
   static const String _TAG = 'PartyBanner';
 
-  final Party party;
+  Party party;
   final bool isClickable;
   final bool shouldShowButton;
   final bool isGuestListRequested;
 
-  const PartyBanner(
+  PartyBanner(
       {Key? key,
       required this.party,
       required this.isClickable,
@@ -44,13 +43,13 @@ class PartyBanner extends StatelessWidget {
 
     return GestureDetector(
       onTap: () {
-        if(isClickable){
-          if(party.type=='event'){
-            GoRouter.of(context)
-                .pushNamed(MyAppRouteConstants.eventRouteName, params: {
-              'partyName': party.name,
-              'partyChapter': party.chapter
-            });
+        if (isClickable) {
+          if (party.type == 'event') {
+            GoRouter.of(context).pushNamed(MyAppRouteConstants.eventRouteName,
+                params: {
+                  'partyName': party.name,
+                  'partyChapter': party.chapter
+                });
           } else {
             Navigator.of(context).push(
               MaterialPageRoute(builder: (ctx) => ArtistScreen(party: party)),
@@ -81,18 +80,22 @@ class PartyBanner extends StatelessWidget {
                         child: RichText(
                           text: TextSpan(
                               text: '${party.name.toLowerCase()} ',
-                              style: const TextStyle(color: Colors.black,
+                              style: const TextStyle(
+                                  color: Colors.black,
                                   overflow: TextOverflow.ellipsis,
                                   fontSize: 22,
                                   fontWeight: FontWeight.bold),
                               children: <TextSpan>[
-                                TextSpan(text: party.chapter,
-                                    style: const TextStyle(color: Colors.black,
+                                TextSpan(
+                                    text: party.chapter == 'I'
+                                        ? ''
+                                        : party.chapter,
+                                    style: const TextStyle(
+                                        color: Colors.black,
                                         fontSize: 18,
                                         fontWeight: FontWeight.normal,
                                         fontStyle: FontStyle.italic)),
-                              ]
-                          ),
+                              ]),
                         ),
                       ),
                       party.eventName.isNotEmpty
@@ -127,7 +130,8 @@ class PartyBanner extends StatelessWidget {
                               ? showBuyTixButton(context)
                               : isGuestListActive
                                   ? !isGuestListRequested
-                          ? displayGuestListButton(context): showBoxOfficeButton(context)
+                                      ? displayGuestListButton(context)
+                                      : showBoxOfficeButton(context)
                                   : showListenOrInstaDialog(context)
                           : const SizedBox()
                     ],
@@ -230,12 +234,11 @@ class PartyBanner extends StatelessWidget {
         final uri = Uri.parse(party.ticketUrl);
         NetworkUtils.launchInBrowser(uri);
 
-        if(UserPreferences.isUserLoggedIn()){
+        if (UserPreferences.isUserLoggedIn()) {
           User user = UserPreferences.myUser;
 
-          FirestoreHelper.pullHistoryMusic(user.id, party.genre)
-              .then((res) {
-            if(res.docs.isEmpty){
+          FirestoreHelper.pullHistoryMusic(user.id, party.genre).then((res) {
+            if (res.docs.isEmpty) {
               // no history, add new one
               HistoryMusic historyMusic = Dummy.getDummyHistoryMusic();
               historyMusic.userId = user.id;
@@ -245,8 +248,10 @@ class PartyBanner extends StatelessWidget {
             } else {
               for (int i = 0; i < res.docs.length; i++) {
                 DocumentSnapshot document = res.docs[i];
-                Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-                final HistoryMusic historyMusic = Fresh.freshHistoryMusicMap(data, false);
+                Map<String, dynamic> data =
+                    document.data()! as Map<String, dynamic>;
+                final HistoryMusic historyMusic =
+                    Fresh.freshHistoryMusicMap(data, false);
                 historyMusic.count++;
                 FirestoreHelper.pushHistoryMusic(historyMusic);
               }
@@ -275,8 +280,8 @@ class PartyBanner extends StatelessWidget {
         minimumSize: const Size.fromHeight(60),
       ),
       onPressed: () {
-        Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) => BoxOfficeScreen()));
+        Navigator.of(context)
+            .push(MaterialPageRoute(builder: (context) => BoxOfficeScreen()));
       },
       label: const Text(
         'box office',
