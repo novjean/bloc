@@ -118,7 +118,7 @@ class _CelebrationAddEditScreenState extends State<CelebrationAddEditScreen> {
       '1500'
     ];
 
-    for(int i=1; i<=12; i++){
+    for (int i = 1; i <= 12; i++) {
       durationHours.add(i.toString());
     }
     sDurationHours = widget.celebration.durationHours.toString();
@@ -443,7 +443,6 @@ class _CelebrationAddEditScreenState extends State<CelebrationAddEditScreen> {
                   ],
                 ),
               ),
-
               const SizedBox(height: 24),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 32.0),
@@ -498,7 +497,8 @@ class _CelebrationAddEditScreenState extends State<CelebrationAddEditScreen> {
                                   sDurationHours = newValue!;
                                   widget.celebration = widget.celebration
                                       .copyWith(
-                                      durationHours: int.parse(sDurationHours));
+                                          durationHours:
+                                              int.parse(sDurationHours));
                                   state.didChange(newValue);
                                 });
                               },
@@ -517,7 +517,6 @@ class _CelebrationAddEditScreenState extends State<CelebrationAddEditScreen> {
                   ],
                 ),
               ),
-
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 32.0),
                 child: Column(
@@ -708,7 +707,7 @@ class _CelebrationAddEditScreenState extends State<CelebrationAddEditScreen> {
                               Navigator.of(context).pop();
                             },
                           ),
-                          const SizedBox(height: 10),
+                          const SizedBox(height: 15),
                           ButtonWidget(
                               text: 'delete',
                               onClicked: () {
@@ -720,7 +719,8 @@ class _CelebrationAddEditScreenState extends State<CelebrationAddEditScreen> {
                         ],
                       )
                     : ButtonWidget(
-                        text: 'confim',
+                        height: 50,
+                        text: 'confirm',
                         onClicked: () {
                           if (UserPreferences.isUserLoggedIn()) {
                             showConfirmationDialog(context, false);
@@ -1172,8 +1172,8 @@ class _CelebrationAddEditScreenState extends State<CelebrationAddEditScreen> {
 
     setState(() {
       sArrivalTime = pickedTime!;
-      widget.celebration = widget.celebration
-          .copyWith(arrivalTime: DateTimeUtils.convertTimeToString(sArrivalTime));
+      widget.celebration = widget.celebration.copyWith(
+          arrivalTime: DateTimeUtils.convertTimeToString(sArrivalTime));
     });
   }
 

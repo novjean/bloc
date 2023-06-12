@@ -1,6 +1,7 @@
 import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../db/entity/history_music.dart';
 import '../../db/entity/party.dart';
@@ -10,7 +11,9 @@ import '../../db/shared_preferences/user_preferences.dart';
 import '../../helpers/dummy.dart';
 import '../../helpers/firestore_helper.dart';
 import '../../helpers/fresh.dart';
+import '../../routes/app_route_constants.dart';
 import '../../utils/constants.dart';
+import '../../utils/date_time_utils.dart';
 import '../../utils/logx.dart';
 import '../../utils/network_utils.dart';
 import '../../widgets/ui/button_widget.dart';
@@ -66,11 +69,12 @@ class _EventScreenState extends State<EventScreen> {
     return Scaffold(
         appBar: AppBar(
           backgroundColor: Theme.of(context).backgroundColor,
-          title: const Text(''),
+          title: Text('bloc | ${mParty.name.toLowerCase()}'),
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
             onPressed: () {
-              Navigator.of(context).pop();
+              GoRouter.of(context)
+                  .pushNamed(MyAppRouteConstants.landingRouteName);
             },
           ),
         ),
@@ -128,6 +132,17 @@ class _EventScreenState extends State<EventScreen> {
                     child: showGuestListOrTicketButton(context),
                   ),
                 ],
+              ),
+              const SizedBox(height: 10),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                width: double.infinity,
+                child: Text(
+                  mParty.isTBA
+                      ? 'tba'
+                      : '${DateTimeUtils.getFormattedDate(mParty.startTime)}, ${DateTimeUtils.getFormattedTime(mParty.startTime)}',
+                  style: const TextStyle(fontSize: 18, color: Constants.lightPrimary),
+                )
               ),
               const SizedBox(height: 10),
               Container(
@@ -205,7 +220,7 @@ class _EventScreenState extends State<EventScreen> {
       return Container(
         height: 50,
         width: 150,
-        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
+        padding: const EdgeInsets.only(left: 5, right: 10, bottom: 1, top: 1),
         child: ElevatedButton.icon(
           style: ElevatedButton.styleFrom(
             backgroundColor: Constants.primary,
@@ -244,12 +259,12 @@ class _EventScreenState extends State<EventScreen> {
             }
           },
           label: const Text(
-            'buy\nticket',
+            'buy ticket',
             style: TextStyle(fontSize: 18, color: Constants.darkPrimary),
           ),
           icon: const Icon(
             Icons.star_half,
-            size: 34.0,
+            size: 24.0,
           ),
         ),
       );
@@ -278,10 +293,10 @@ class _EventScreenState extends State<EventScreen> {
           },
           icon: const Icon(
             Icons.app_registration,
-            size: 34.0,
+            size: 24.0,
           ),
           label: const Text(
-            'guest\nlist',
+            'guest list',
             style: TextStyle(fontSize: 18, color: Constants.darkPrimary),
           ),
         ),

@@ -499,7 +499,7 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
                       Navigator.of(context).pop();
                     },
                   ),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 15),
                   ButtonWidget(
                       text: 'delete',
                       onClicked: () {
@@ -512,6 +512,7 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
               )
             : ButtonWidget(
                 text: 'reserve',
+                height: 50,
                 onClicked: () {
                   if (UserPreferences.isUserLoggedIn()) {
                     showConfirmationDialog(context, false);
