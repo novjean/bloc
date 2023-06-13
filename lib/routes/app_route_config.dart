@@ -136,7 +136,7 @@ class BlocRouter{
         //           partyChapter: state.params['partyChapter']!,
         //         ));
         //   },
-        ),
+        // ),
       ],
       errorPageBuilder: (context, state) {
         return MaterialPage(child: ErrorPage());
