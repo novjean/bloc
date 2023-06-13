@@ -26,18 +26,8 @@ class ArtistBanner extends StatelessWidget {
           Navigator.of(context).push(
             MaterialPageRoute(builder: (ctx) => ArtistScreen(party: party)),
           );
-          //
-          // if (party.type == 'event') {
-          //   GoRouter.of(context).pushNamed(MyAppRouteConstants.eventRouteName,
-          //       params: {
-          //         'partyName': party.name,
-          //         'partyChapter': party.chapter
-          //       });
-          // } else {
-          //
-          // }
         } else {
-          Logx.i(_TAG, 'party banner no click');
+          Logx.i(_TAG, 'artist banner no click');
         }
       },
       child: Padding(

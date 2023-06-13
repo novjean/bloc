@@ -18,7 +18,6 @@ import '../../../db/entity/genre.dart';
 import '../../../db/entity/party.dart';
 import '../../../helpers/firestorage_helper.dart';
 import '../../../helpers/firestore_helper.dart';
-import '../../../utils/constants.dart';
 import '../../../utils/logx.dart';
 import '../../../utils/string_utils.dart';
 import '../../../widgets/profile_widget.dart';
