@@ -7,6 +7,9 @@ import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:multi_select_flutter/dialog/multi_select_dialog_field.dart';
+import 'package:multi_select_flutter/util/multi_select_item.dart';
+import 'package:multi_select_flutter/util/multi_select_list_type.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -15,6 +18,7 @@ import '../../../db/entity/genre.dart';
 import '../../../db/entity/party.dart';
 import '../../../helpers/firestorage_helper.dart';
 import '../../../helpers/firestore_helper.dart';
+import '../../../utils/constants.dart';
 import '../../../utils/logx.dart';
 import '../../../utils/string_utils.dart';
 import '../../../widgets/profile_widget.dart';
@@ -74,6 +78,12 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
   List<String> mChallengeNames = ['none'];
   bool isChallengesLoading = true;
   String sOverrideChallenge = 'none';
+
+  List<Party> mArtists = [];
+  bool isArtistsLoading = true;
+  List<String> sArtistNames = [];
+  List<Party> sArtists = [];
+  List<String> sArtistIds = [];
 
   @override
   void initState() {
@@ -180,6 +190,32 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
       }
     });
 
+    sArtistIds = widget.party.artistIds;
+    FirestoreHelper.pullPartyArtists().then((res) {
+      if(res.docs.isNotEmpty){
+        for (int i = 0; i < res.docs.length; i++) {
+          DocumentSnapshot document = res.docs[i];
+          Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+          final Party artist = Fresh.freshPartyMap(data, false);
+          mArtists.add(artist);
+
+          if(sArtistIds.contains(artist.id)){
+            sArtists.add(artist);
+            sArtistNames.add('${artist.name} [${artist.genre}]');
+          }
+        }
+
+        setState(() {
+          isArtistsLoading = false;
+        });
+      } else {
+        Logx.em(_TAG,'no artists found!');
+        setState(() {
+          isArtistsLoading = false;
+        });
+      }
+    });
+
     for (int i = 1; i <= 10; i++) {
       guestCounts.add(i.toString());
     }
@@ -211,8 +247,8 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
                     onClicked: () async {
                       final image = await ImagePicker().pickImage(
                           source: ImageSource.gallery,
-                          imageQuality: 90,
-                          maxWidth: 500);
+                          imageQuality: 95,
+                          maxWidth: 768);
                       if (image == null) return;
 
                       final directory = await getApplicationDocumentsDirectory();
@@ -277,41 +313,59 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
               ),
 
               const SizedBox(height: 24),
-              FormField<String>(
-                builder: (FormFieldState<String> state) {
-                  return InputDecorator(
-                    key: const ValueKey('party_type'),
-                    decoration: InputDecoration(
-                        errorStyle: TextStyle(
-                            color: Theme.of(context).errorColor,
-                            fontSize: 16.0),
-                        hintText: 'please select party type',
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(5.0))),
-                    isEmpty: _sPartyType == '',
-                    child: DropdownButtonHideUnderline(
-                      child: DropdownButton<String>(
-                        value: _sPartyType,
-                        isDense: true,
-                        onChanged: (String? newValue) {
-                          setState(() {
-                            _sPartyType = newValue!;
-
-                            widget.party = widget.party
-                                .copyWith(type: _sPartyType);
-                            state.didChange(newValue);
-                          });
-                        },
-                        items: partyTypes.map((String value) {
-                          return DropdownMenuItem<String>(
-                            value: value,
-                            child: Text(value),
-                          );
-                        }).toList(),
+              Column(
+                children: [
+                  const Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.only(bottom: 8.0),
+                        child: Text(
+                          'type',
+                          style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold),
+                        ),
                       ),
-                    ),
-                  );
-                },
+                    ],
+                  ),
+                  FormField<String>(
+                    builder: (FormFieldState<String> state) {
+                      return InputDecorator(
+                        key: const ValueKey('party_type'),
+                        decoration: InputDecoration(
+                            errorStyle: TextStyle(
+                                color: Theme.of(context).errorColor,
+                                fontSize: 16.0),
+                            hintText: 'please select party type',
+                            border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(5.0))),
+                        isEmpty: _sPartyType == '',
+                        child: DropdownButtonHideUnderline(
+                          child: DropdownButton<String>(
+                            value: _sPartyType,
+                            isDense: true,
+                            onChanged: (String? newValue) {
+                              setState(() {
+                                _sPartyType = newValue!;
+
+                                widget.party = widget.party
+                                    .copyWith(type: _sPartyType);
+                                state.didChange(newValue);
+                              });
+                            },
+                            items: partyTypes.map((String value) {
+                              return DropdownMenuItem<String>(
+                                value: value,
+                                child: Text(value),
+                              );
+                            }).toList(),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ],
               ),
 
               const SizedBox(height: 24),
@@ -331,91 +385,193 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
               ),
 
               const SizedBox(height: 24),
-              FormField<String>(
-                builder: (FormFieldState<String> state) {
-                  return InputDecorator(
-                    key: const ValueKey('party_genre'),
-                    decoration: InputDecoration(
-                        errorStyle: TextStyle(
-                            color: Theme.of(context).errorColor,
-                            fontSize: 16.0),
-                        hintText: 'please select party genre',
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(5.0))),
-                    isEmpty: sGenre == '',
-                    child: DropdownButtonHideUnderline(
-                      child: DropdownButton<String>(
-                        value: sGenre,
-                        isDense: true,
-                        onChanged: (String? newValue) {
-                          sGenre = newValue!;
-                          widget.party = widget.party.copyWith(genre: sGenre);
-                          state.didChange(newValue);
-                        },
-                        items: mGenreNames.map((String value) {
-                          return DropdownMenuItem<String>(
-                            value: value,
-                            child: Text(value),
-                          );
-                        }).toList(),
+              Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 8.0),
+                        child: Text(
+                          'genre',
+                          style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold),
+                        ),
                       ),
-                    ),
-                  );
-                },
+                    ],
+                  ),
+                  FormField<String>(
+                    builder: (FormFieldState<String> state) {
+                      return InputDecorator(
+                        key: const ValueKey('party_genre'),
+                        decoration: InputDecoration(
+                            errorStyle: TextStyle(
+                                color: Theme.of(context).errorColor,
+                                fontSize: 16.0),
+                            hintText: 'please select party genre',
+                            border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(5.0))),
+                        isEmpty: sGenre == '',
+                        child: DropdownButtonHideUnderline(
+                          child: DropdownButton<String>(
+                            value: sGenre,
+                            isDense: true,
+                            onChanged: (String? newValue) {
+                              sGenre = newValue!;
+                              widget.party = widget.party.copyWith(genre: sGenre);
+                              state.didChange(newValue);
+                            },
+                            items: mGenreNames.map((String value) {
+                              return DropdownMenuItem<String>(
+                                value: value,
+                                child: Text(value),
+                              );
+                            }).toList(),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ],
               ),
 
               const SizedBox(height: 24),
               TextFieldWidget(
                 label: 'description',
                 text: widget.party.description,
-                maxLines: 5,
+                maxLines: 8,
                 onChanged: (value) {
                   widget.party = widget.party.copyWith(description: value);
                 },
               ),
 
               const SizedBox(height: 24),
-              FormField<String>(
-                builder: (FormFieldState<String> state) {
-                  return InputDecorator(
-                    key: const ValueKey('bloc_service_id'),
-                    decoration: InputDecoration(
-                        errorStyle: TextStyle(
-                            color: Theme.of(context).errorColor,
-                            fontSize: 16.0),
-                        hintText: 'please select bloc service',
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(5.0))),
-                    isEmpty: _sBlocServiceName == '',
-                    child: DropdownButtonHideUnderline(
-                      child: DropdownButton<String>(
-                        value: _sBlocServiceName,
-                        isDense: true,
-                        onChanged: (String? newValue) {
-                          setState(() {
-                            _sBlocServiceName = newValue!;
-
-                            for (BlocService service in blocServices) {
-                              if (service.name == _sBlocServiceName) {
-                                _sBlocServiceId = service.id;
-                              }
-                            }
-
-                            widget.party = widget.party
-                                .copyWith(blocServiceId: _sBlocServiceId);
-                            state.didChange(newValue);
-                          });
-                        },
-                        items: blocServiceNames.map((String value) {
-                          return DropdownMenuItem<String>(
-                            value: value,
-                            child: Text(value),
-                          );
-                        }).toList(),
+              Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 8.0),
+                        child: Text(
+                          'artists',
+                          style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ],
+                  ),
+                  MultiSelectDialogField(
+                    items: mArtists
+                        .map((e) => MultiSelectItem(e,
+                        '${e.name.toLowerCase()} | ${e.genre.toLowerCase()}'))
+                        .toList(),
+                    initialValue: sArtists.map((e) => e).toList(),
+                    listType: MultiSelectListType.CHIP,
+                    buttonIcon: Icon(
+                      Icons.arrow_drop_down,
+                      color: Colors.grey.shade700,
+                    ),
+                    title: const Text('performing artists'),
+                    buttonText: const Text(
+                      'select',
+                    ),
+                    decoration: BoxDecoration(
+                      borderRadius: const BorderRadius.all(Radius.circular(5)),
+                      border: Border.all(
+                        width: 0.0,
                       ),
                     ),
-                  );
-                },
+                    searchable: true,
+                    onConfirm: (values) {
+                      sArtists = values as List<Party>;
+                      sArtistIds = [];
+                      sArtistNames = [];
+
+                      for (Party artist in sArtists) {
+                        sArtistIds.add(artist.id);
+                        sArtistNames.add(artist.name);
+                      }
+
+                      if (sArtistIds.isEmpty) {
+                        Logx.i(_TAG, 'no artists selected');
+                        // widget.party =
+                        //     widget.party.copyWith(bottleNames: []);
+                        widget.party =
+                            widget.party.copyWith(artistIds: []);
+                      } else {
+                        // widget.reservation =
+                        //     widget.reservation.copyWith(bottleNames: sBottleNames);
+                        widget.party =
+                            widget.party.copyWith(artistIds: sArtistIds);
+                      }
+                    },
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 24),
+              Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 8.0),
+                        child: Text(
+                          'bloc',
+                          style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ],
+                  ),
+                  FormField<String>(
+                    builder: (FormFieldState<String> state) {
+                      return InputDecorator(
+                        key: const ValueKey('bloc_service_id'),
+                        decoration: InputDecoration(
+                            errorStyle: TextStyle(
+                                color: Theme.of(context).errorColor,
+                                fontSize: 16.0),
+                            hintText: 'please select bloc service',
+                            border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(5.0))),
+                        isEmpty: _sBlocServiceName == '',
+                        child: DropdownButtonHideUnderline(
+                          child: DropdownButton<String>(
+                            value: _sBlocServiceName,
+                            isDense: true,
+                            onChanged: (String? newValue) {
+                              setState(() {
+                                _sBlocServiceName = newValue!;
+
+                                for (BlocService service in blocServices) {
+                                  if (service.name == _sBlocServiceName) {
+                                    _sBlocServiceId = service.id;
+                                  }
+                                }
+
+                                widget.party = widget.party
+                                    .copyWith(blocServiceId: _sBlocServiceId);
+                                state.didChange(newValue);
+                              });
+                            },
+                            items: blocServiceNames.map((String value) {
+                              return DropdownMenuItem<String>(
+                                value: value,
+                                child: Text(value),
+                              );
+                            }).toList(),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ],
               ),
 
               const SizedBox(height: 24),
@@ -553,15 +709,14 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
               const SizedBox(height: 24),
               Column(
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 8.0),
+                  const Padding(
+                    padding: EdgeInsets.only(bottom: 8.0),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         Text(
                           'guests count',
                           style: TextStyle(
-                              color: Theme.of(context).primaryColorLight,
                               fontSize: 16,
                               fontWeight: FontWeight.bold),
                         ),
@@ -580,21 +735,15 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
                             hintText: 'please select guest count',
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(5.0),
-                              borderSide: BorderSide(
-                                  color: Theme.of(context).primaryColor),
                             ),
                             enabledBorder: OutlineInputBorder(
                               // width: 0.0 produces a thin "hairline" border
                               borderSide: BorderSide(
-                                  color: Theme.of(context).primaryColor,
                                   width: 0.0),
                             )),
                         isEmpty: sGuestCount == '',
                         child: DropdownButtonHideUnderline(
                           child: DropdownButton<String>(
-                            style: TextStyle(
-                                color: Theme.of(context).primaryColorLight),
-                            dropdownColor: Theme.of(context).backgroundColor,
                             value: sGuestCount,
                             isDense: true,
                             onChanged: (String? newValue) {

@@ -11,11 +11,15 @@ import '../../db/shared_preferences/user_preferences.dart';
 import '../../helpers/dummy.dart';
 import '../../helpers/firestore_helper.dart';
 import '../../helpers/fresh.dart';
+import '../../main.dart';
 import '../../routes/app_route_constants.dart';
 import '../../utils/constants.dart';
 import '../../utils/date_time_utils.dart';
 import '../../utils/logx.dart';
 import '../../utils/network_utils.dart';
+import '../../widgets/footer.dart';
+import '../../widgets/parties/artist_banner.dart';
+import '../../widgets/store_badge_item.dart';
 import '../../widgets/ui/button_widget.dart';
 import 'party_guest_add_edit_manage_screen.dart';
 
@@ -34,6 +38,8 @@ class _EventScreenState extends State<EventScreen> {
 
   Party mParty = Dummy.getDummyParty('');
   var _isPartyLoading = true;
+  List<Party> mArtists = [];
+  var _isArtistsLoading = true;
 
   @override
   void initState() {
@@ -50,12 +56,37 @@ class _EventScreenState extends State<EventScreen> {
           mParty = party;
         }
 
-        setState(() {
-          _isPartyLoading = false;
-        });
+        if(mParty.artistIds.isNotEmpty){
+          FirestoreHelper.pullPartyArtistsByIds(mParty.artistIds).then((res) {
+            if(res.docs.isNotEmpty){
+              for (int i = 0; i < res.docs.length; i++) {
+                DocumentSnapshot document = res.docs[i];
+                Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+                final Party artist = Fresh.freshPartyMap(data, false);
+                mArtists.add(artist);
+              }
+
+              setState(() {
+                _isArtistsLoading = false;
+                _isPartyLoading = false;
+              });
+            } else {
+              setState(() {
+                _isArtistsLoading = false;
+                _isPartyLoading = false;
+              });
+            }
+          });
+        } else {
+          setState(() {
+            _isArtistsLoading = false;
+            _isPartyLoading = false;
+          });
+        }
       } else {
         Logx.i(_TAG, 'no party found!');
         setState(() {
+          _isArtistsLoading = false;
           _isPartyLoading = false;
         });
       }
@@ -68,7 +99,7 @@ class _EventScreenState extends State<EventScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          backgroundColor: Theme.of(context).backgroundColor,
+          backgroundColor: Constants.background,
           title: Text('bloc | ${mParty.name.toLowerCase()}'),
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
@@ -83,120 +114,165 @@ class _EventScreenState extends State<EventScreen> {
   }
 
   _buildBody(BuildContext context) {
-    return _isPartyLoading
+    return _isPartyLoading && _isArtistsLoading
         ? const LoadingWidget()
-        : ListView(
-            children: [
-              SizedBox(
-                width: double.infinity,
-                child: Hero(
-                  tag: mParty.id,
-                  child: Image.network(
-                    mParty.imageUrl,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 10),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Flexible(
-                    flex: 2,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10),
-                      child: RichText(
-                        text: TextSpan(
-                            text: '${mParty.name.toLowerCase()} ',
-                            style: const TextStyle(
-                                color: Constants.lightPrimary,
-                                overflow: TextOverflow.ellipsis,
-                                fontSize: 22,
-                                fontWeight: FontWeight.bold),
-                            children: <TextSpan>[
-                              TextSpan(
-                                  text: mParty.chapter == 'I'
-                                      ? ''
-                                      : mParty.chapter,
-                                  style: const TextStyle(
-                                      color: Constants.lightPrimary,
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.normal,
-                                      fontStyle: FontStyle.italic)),
-                            ]),
-                      ),
+        : SingleChildScrollView(
+      physics: ScrollPhysics(),
+          child: Column(
+              children: [
+                SizedBox(
+                  width: double.infinity,
+                  child: Hero(
+                    tag: mParty.id,
+                    child: Image.network(
+                      mParty.imageUrl,
+                      fit: BoxFit.cover,
                     ),
                   ),
-                  Flexible(
-                    flex: 1,
-                    child: showGuestListOrTicketButton(context),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 10),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                width: double.infinity,
-                child: Text(
-                  mParty.isTBA
-                      ? 'tba'
-                      : '${DateTimeUtils.getFormattedDate(mParty.startTime)}, ${DateTimeUtils.getFormattedTime(mParty.startTime)}',
-                  style: const TextStyle(fontSize: 18, color: Constants.lightPrimary),
-                )
-              ),
-              const SizedBox(height: 10),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                width: double.infinity,
-                child: Text(mParty.description.toLowerCase(),
-                    textAlign: TextAlign.start,
-                    softWrap: true,
-                    style: TextStyle(
-                      color: Theme.of(context).primaryColorLight,
-                      fontSize: 18,
-                    )),
-              ),
-              const SizedBox(height: 10),
-              mParty.listenUrl.isNotEmpty
-                  ? Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          ButtonWidget(
-                              text:
-                                  'listen' + findListenSource(mParty.listenUrl),
-                              onClicked: () {
-                                final uri = Uri.parse(mParty.listenUrl);
-                                NetworkUtils.launchInBrowser(uri);
-                              }),
-                          const SizedBox(height: 10),
-                        ],
+                ),
+                const SizedBox(height: 10),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Flexible(
+                      flex: 2,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10),
+                        child: RichText(
+                          text: TextSpan(
+                              text: '${mParty.name.toLowerCase()} ',
+                              style: const TextStyle(
+                                  color: Constants.lightPrimary,
+                                  overflow: TextOverflow.ellipsis,
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.bold),
+                              children: <TextSpan>[
+                                TextSpan(
+                                    text: mParty.chapter == 'I'
+                                        ? ''
+                                        : mParty.chapter,
+                                    style: const TextStyle(
+                                        color: Constants.lightPrimary,
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.normal,
+                                        fontStyle: FontStyle.italic)),
+                              ]),
+                        ),
                       ),
-                    )
-                  : const SizedBox(),
-              mParty.instagramUrl.isNotEmpty
-                  ? Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          ButtonWidget(
-                              text: 'social profile',
-                              onClicked: () {
-                                final uri = Uri.parse(mParty.instagramUrl);
-                                NetworkUtils.launchInBrowser(uri);
-                              }),
-                          const SizedBox(height: 10),
-                        ],
-                      ),
-                    )
-                  : const SizedBox(),
-              const SizedBox(height: 10),
+                    ),
+                    Flexible(
+                      flex: 1,
+                      child: showGuestListOrTicketButton(context),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  width: double.infinity,
+                  child: Text(
+                    mParty.isTBA
+                        ? 'tba'
+                        : '${DateTimeUtils.getFormattedDate(mParty.startTime)}, ${DateTimeUtils.getFormattedTime(mParty.startTime)}',
+                    style: const TextStyle(fontSize: 18, color: Constants.lightPrimary),
+                  )
+                ),
+                const SizedBox(height: 10),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  width: double.infinity,
+                  child: Text(mParty.description.toLowerCase(),
+                      textAlign: TextAlign.start,
+                      softWrap: true,
+                      style: TextStyle(
+                        color: Theme.of(context).primaryColorLight,
+                        fontSize: 18,
+                      )),
+                ),
+                const SizedBox(height: 10),
+
+                mParty.artistIds.isNotEmpty?
+
+                _loadArtists(context): const SizedBox(),
+
+                const SizedBox(height: 15.0),
+                kIsWeb ? const StoreBadgeItem() : const SizedBox(),
+                const SizedBox(height: 10.0),
+                Footer(),
+              ],
+            ),
+        );
+  }
+
+  Widget _loadArtists(BuildContext context) {
+    return StreamBuilder<QuerySnapshot>(
+      stream: FirestoreHelper.getPartyArtists(mParty.artistIds),
+      builder: (ctx, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const LoadingWidget();
+        }
+
+        if (snapshot.hasData) {
+          List<Party> parties = [];
+          for (int i = 0; i < snapshot.data!.docs.length; i++) {
+            DocumentSnapshot document = snapshot.data!.docs[i];
+            Map<String, dynamic> data =
+            document.data()! as Map<String, dynamic>;
+            final Party bloc = Fresh.freshPartyMap(data, false);
+            parties.add(bloc);
+
+            if (i == snapshot.data!.docs.length - 1) {
+              return _showArtists(context, parties);
+            }
+          }
+        }
+        return LoadingWidget();
+      },
+    );
+  }
+
+  _showArtists(BuildContext context, List<Party> parties) {
+    return ListView.builder(
+      physics: NeverScrollableScrollPhysics(),
+      shrinkWrap: true,
+      itemCount: parties.length,
+      scrollDirection: Axis.vertical,
+      itemBuilder: (BuildContext context, int index) {
+        Party party = parties[index];
+
+        if(index == 0){
+          return Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(right: 15, top: 10.0, bottom: 5),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Text('lineup',
+                        style: const TextStyle(
+                        color: Constants.lightPrimary,
+                        overflow: TextOverflow.ellipsis,
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold)),
+                  ],
+                ),
+              ),
+              ArtistBanner(
+                party: party,
+                isClickable: true,
+                shouldShowButton: true,
+              ),
             ],
           );
+        } else {
+          return ArtistBanner(
+            party: party,
+            isClickable: false,
+            shouldShowButton: false,
+          );
+        }
+      },
+    );
   }
 
   String findListenSource(String listenUrl) {

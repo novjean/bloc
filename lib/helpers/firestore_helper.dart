@@ -741,6 +741,22 @@ class FirestoreHelper {
         .get();
   }
 
+  static Future<QuerySnapshot<Map<String, dynamic>>> pullPartyArtists() {
+    return FirebaseFirestore.instance
+        .collection(PARTIES)
+        .where('type', isEqualTo: 'artist')
+        .orderBy('name', descending: false)
+        .get();
+  }
+
+  static Future<QuerySnapshot<Map<String, dynamic>>> pullPartyArtistsByIds(List<String> artistIds) {
+    return FirebaseFirestore.instance
+        .collection(PARTIES)
+        .where('id', whereIn: artistIds)
+        // .orderBy('name', descending: false)
+        .get();
+  }
+
   static getPartyByType(String blocServiceId, String type) {
     return FirebaseFirestore.instance
         .collection(PARTIES)
@@ -750,6 +766,12 @@ class FirestoreHelper {
         .snapshots();
   }
 
+  static getPartyArtists(List<String> artistIds) {
+    return FirebaseFirestore.instance
+        .collection(PARTIES)
+        .where('id', whereIn: artistIds)
+        .snapshots();
+  }
 
   static getUpcomingParties(int timeNow) {
     return FirebaseFirestore.instance

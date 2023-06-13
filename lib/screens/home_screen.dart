@@ -354,7 +354,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ? const LoadingWidget()
                       : buildWifi(context)
                   : const SizedBox(),
-              const SizedBox(height: 10.0),
+              const SizedBox(height: 15.0),
               kIsWeb ? const StoreBadgeItem() : const SizedBox(),
               const SizedBox(height: 10.0),
               Footer(),

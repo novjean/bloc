@@ -37,6 +37,8 @@ class Party {
   int ticketsSoldCount;
   double ticketsSalesTotal;
 
+  List<String> artistIds;
+
 //<editor-fold desc="Data Methods">
   Party({
     required this.id,
@@ -70,6 +72,7 @@ class Party {
     required this.isTicketed,
     required this.ticketsSoldCount,
     required this.ticketsSalesTotal,
+    required this.artistIds,
   });
 
   @override
@@ -107,7 +110,8 @@ class Party {
           genre == other.genre &&
           isTicketed == other.isTicketed &&
           ticketsSoldCount == other.ticketsSoldCount &&
-          ticketsSalesTotal == other.ticketsSalesTotal);
+          ticketsSalesTotal == other.ticketsSalesTotal &&
+          artistIds == other.artistIds);
 
   @override
   int get hashCode =>
@@ -141,7 +145,8 @@ class Party {
       genre.hashCode ^
       isTicketed.hashCode ^
       ticketsSoldCount.hashCode ^
-      ticketsSalesTotal.hashCode;
+      ticketsSalesTotal.hashCode ^
+      artistIds.hashCode;
 
   @override
   String toString() {
@@ -177,6 +182,7 @@ class Party {
         ' isTicketed: $isTicketed,' +
         ' ticketsSoldCount: $ticketsSoldCount,' +
         ' ticketsSalesTotal: $ticketsSalesTotal,' +
+        ' artistIds: $artistIds,' +
         '}';
   }
 
@@ -212,6 +218,7 @@ class Party {
     bool? isTicketed,
     int? ticketsSoldCount,
     double? ticketsSalesTotal,
+    List<String>? artistIds,
   }) {
     return Party(
       id: id ?? this.id,
@@ -245,6 +252,7 @@ class Party {
       isTicketed: isTicketed ?? this.isTicketed,
       ticketsSoldCount: ticketsSoldCount ?? this.ticketsSoldCount,
       ticketsSalesTotal: ticketsSalesTotal ?? this.ticketsSalesTotal,
+      artistIds: artistIds ?? this.artistIds,
     );
   }
 
@@ -281,6 +289,7 @@ class Party {
       'isTicketed': this.isTicketed,
       'ticketsSoldCount': this.ticketsSoldCount,
       'ticketsSalesTotal': this.ticketsSalesTotal,
+      'artistIds': this.artistIds,
     };
   }
 
@@ -317,6 +326,7 @@ class Party {
       isTicketed: map['isTicketed'] as bool,
       ticketsSoldCount: map['ticketsSoldCount'] as int,
       ticketsSalesTotal: map['ticketsSalesTotal'] as double,
+      artistIds: map['artistIds'] as List<String>,
     );
   }
 

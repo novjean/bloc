@@ -1,11 +1,12 @@
 import 'package:bloc/utils/date_time_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../db/entity/party.dart';
 import '../../db/entity/party_guest.dart';
-import '../../db/shared_preferences/user_preferences.dart';
 import '../../helpers/dummy.dart';
+import '../../routes/app_route_constants.dart';
 import '../../screens/parties/artist_screen.dart';
 import '../../screens/parties/party_guest_add_edit_manage_screen.dart';
 import '../../utils/network_utils.dart';
@@ -31,9 +32,17 @@ class PartyItem extends StatelessWidget {
 
     return GestureDetector(
       onTap: () {
-        Navigator.of(context).push(
-          MaterialPageRoute(builder: (ctx) => ArtistScreen(party: party)),
-        );
+        if (party.type == 'event') {
+          GoRouter.of(context).pushNamed(MyAppRouteConstants.eventRouteName,
+              params: {
+                'partyName': party.name,
+                'partyChapter': party.chapter
+              });
+        } else {
+          Navigator.of(context).push(
+            MaterialPageRoute(builder: (ctx) => ArtistScreen(party: party)),
+          );
+        }
       },
       child: Hero(
         tag: party.id,
