@@ -5,10 +5,12 @@ import 'package:bloc/screens/terms_and_conditions_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../db/entity/user.dart' as blocUser;
 import '../helpers/firestorage_helper.dart';
 import '../helpers/firestore_helper.dart';
+import '../routes/app_route_constants.dart';
 import '../utils/logx.dart';
 import '../widgets/ui/sized_listview_block.dart';
 import 'login_screen.dart';
@@ -116,9 +118,10 @@ class AccountScreen extends StatelessWidget {
                             Logx.em(_TAG, 'account delete failed ' + e.toString());
                           }
 
-                          Navigator.of(context).pushReplacement(
-                            MaterialPageRoute(builder: (context) => const LoginScreen(shouldTriggerSkip: false,)),
-                          );
+                          GoRouter.of(context)
+                              .pushNamed(MyAppRouteConstants.loginRouteName, params: {
+                            'skip': 'false',
+                          });
                         },
                       ),
                       TextButton(

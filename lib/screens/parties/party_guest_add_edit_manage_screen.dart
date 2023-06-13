@@ -705,6 +705,7 @@ class _PartyGuestAddEditManageScreenState
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 32),
                 child: ButtonWidget(
+                  height: 50,
                   text: (widget.task == 'edit' || widget.task == 'manage') ? 'save changes' : 'join list',
                   onClicked: () {
                     if (isDataValid()) {
@@ -729,6 +730,7 @@ class _PartyGuestAddEditManageScreenState
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 32),
                           child: DarkButtonWidget(
+                            height: 50,
                             text: 'delete',
                             onClicked: () {
                               FirestoreHelper.deletePartyGuest(
@@ -745,7 +747,7 @@ class _PartyGuestAddEditManageScreenState
                       ],
                     )
                   : const SizedBox(),
-              const SizedBox(height: 24),
+              const SizedBox(height: 48),
             ],
           );
   }

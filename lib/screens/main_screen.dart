@@ -190,18 +190,15 @@ class _MainScreenState extends State<MainScreen> {
     }
   }
 
-
-
   void _handleMessage(RemoteMessage message) {
     if(UserPreferences.myUser.id.isNotEmpty){
       GoRouter.of(context)
           .pushNamed(MyAppRouteConstants.homeRouteName);
     } else {
-
-      Navigator.of(context).push(
-        MaterialPageRoute(
-            builder: (ctx) => const LoginScreen(shouldTriggerSkip: true)),
-      );
+      GoRouter.of(context)
+          .pushNamed(MyAppRouteConstants.loginRouteName, params: {
+        'skip': 'true',
+      });
     }
 
     // if (message.data['notification_type'] == 'party_guest') {

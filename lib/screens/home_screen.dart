@@ -198,6 +198,7 @@ class _HomeScreenState extends State<HomeScreen> {
           backgroundColor: Constants.background,
           resizeToAvoidBottomInset: false,
           body: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
               _isBlocsLoading ? const LoadingWidget() : _displayBlocs(context),
               _isPartyGuestsLoading? const LoadingWidget(): _displayPartiesNFooter(context),
@@ -226,20 +227,20 @@ class _HomeScreenState extends State<HomeScreen> {
 
   buildWifi(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 5),
+      margin: const EdgeInsets.symmetric(horizontal: 10),
       decoration: BoxDecoration(
         border: Border.all(),
         color: Theme.of(context).primaryColor,
-        borderRadius: const BorderRadius.all(Radius.circular(5)),
+        borderRadius: const BorderRadius.all(Radius.circular(15)),
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            padding: const EdgeInsets.only(top: 10, left: 10.0, right: 0.0),
+            padding: const EdgeInsets.only(top: 10, left: 10.0),
             child: Text(
-              "connect",
+              "connect 🌀",
               style: TextStyle(
                 fontSize: 24.0,
                 color: Theme.of(context).primaryColorDark,
@@ -282,39 +283,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               )
             ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  displayStoreBadge(BuildContext context) {
-    return SizedBox(
-      height: 100,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          Container(
-            height: 100,
-            decoration: BoxDecoration(
-              border: Border.all(color: Theme.of(context).primaryColor),
-              borderRadius: const BorderRadius.all(Radius.circular(0)),
-              image: const DecorationImage(
-                image: AssetImage('assets/images/google-play-badge.png'),
-                fit: BoxFit.fitWidth,
-              ),
-            ),
-          ),
-          Container(
-            height: 100,
-            decoration: BoxDecoration(
-              border: Border.all(color: Theme.of(context).primaryColor),
-              borderRadius: const BorderRadius.all(Radius.circular(0)),
-              image: const DecorationImage(
-                image: AssetImage('assets/images/google-play-badge.png'),
-                fit: BoxFit.fitWidth,
-              ),
-            ),
           ),
         ],
       ),
@@ -370,6 +338,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Expanded(
       child: ListView.builder(
+        shrinkWrap: true,
         itemCount: parties.length,
         controller: _scrollController,
         scrollDirection: Axis.vertical,
@@ -395,6 +364,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   isGuestListRequested: isGuestListRequested,
                 ),
                 const SizedBox(height: 10.0),
+
                 UserPreferences.isUserLoggedIn()
                     ? _isGuestWifiDetailsLoading
                         ? const LoadingWidget()

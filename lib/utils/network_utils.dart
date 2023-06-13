@@ -1,17 +1,21 @@
 import 'dart:io';
 import 'package:url_launcher/url_launcher.dart';
 
+import 'logx.dart';
+
 
 class NetworkUtils {
+  static const String _TAG = 'NetworkUtils';
+
   static Future<bool> hasNetwork() async {
     try {
       final result = await InternetAddress.lookup('google.com');
       if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
-        print('bloc is connected');
+        Logx.i(_TAG, 'bloc is connected');
         return true;
       }
     } on SocketException catch (_) {
-      print('not connected');
+      Logx.em(_TAG, 'internet connection is not present, bloc is not connected');
       return false;
     }
     return false;

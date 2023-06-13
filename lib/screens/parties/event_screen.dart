@@ -55,12 +55,13 @@ class _EventScreenState extends State<EventScreen> {
           mParty = party;
         }
 
-        if(mParty.artistIds.isNotEmpty){
+        if (mParty.artistIds.isNotEmpty) {
           FirestoreHelper.pullPartyArtistsByIds(mParty.artistIds).then((res) {
-            if(res.docs.isNotEmpty){
+            if (res.docs.isNotEmpty) {
               for (int i = 0; i < res.docs.length; i++) {
                 DocumentSnapshot document = res.docs[i];
-                Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+                Map<String, dynamic> data =
+                    document.data()! as Map<String, dynamic>;
                 final Party artist = Fresh.freshPartyMap(data, false);
                 mArtists.add(artist);
               }
@@ -99,16 +100,25 @@ class _EventScreenState extends State<EventScreen> {
     return Scaffold(
         appBar: AppBar(
           backgroundColor: Constants.background,
-          title: Text('bloc | ${mParty.name.toLowerCase()}'),
+          title: InkWell(
+              onTap: () {
+                GoRouter.of(context)
+                    .pushNamed(MyAppRouteConstants.homeRouteName);
+              },
+              child: Text('bloc | ${mParty.name.toLowerCase()}')),
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
             onPressed: () {
-              GoRouter.of(context)
-                  .pushNamed(MyAppRouteConstants.landingRouteName);
+              if (kIsWeb) {
+                GoRouter.of(context)
+                    .pushNamed(MyAppRouteConstants.landingRouteName);
+              } else {
+                Navigator.of(context).pop();
+              }
             },
           ),
         ),
-        backgroundColor: Theme.of(context).backgroundColor,
+        backgroundColor: Constants.background,
         body: _buildBody(context));
   }
 
@@ -116,8 +126,8 @@ class _EventScreenState extends State<EventScreen> {
     return _isPartyLoading && _isArtistsLoading
         ? const LoadingWidget()
         : SingleChildScrollView(
-      physics: ScrollPhysics(),
-          child: Column(
+            physics: ScrollPhysics(),
+            child: Column(
               children: [
                 SizedBox(
                   width: double.infinity,
@@ -167,15 +177,15 @@ class _EventScreenState extends State<EventScreen> {
                 ),
                 const SizedBox(height: 10),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  width: double.infinity,
-                  child: Text(
-                    mParty.isTBA
-                        ? 'tba'
-                        : '${DateTimeUtils.getFormattedDate(mParty.startTime)}, ${DateTimeUtils.getFormattedTime(mParty.startTime)}',
-                    style: const TextStyle(fontSize: 18, color: Constants.lightPrimary),
-                  )
-                ),
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    width: double.infinity,
+                    child: Text(
+                      mParty.isTBA
+                          ? 'tba'
+                          : '${DateTimeUtils.getFormattedDate(mParty.startTime)}, ${DateTimeUtils.getFormattedTime(mParty.startTime)}',
+                      style: const TextStyle(
+                          fontSize: 18, color: Constants.lightPrimary),
+                    )),
                 const SizedBox(height: 10),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -189,18 +199,16 @@ class _EventScreenState extends State<EventScreen> {
                       )),
                 ),
                 const SizedBox(height: 10),
-
-                mParty.artistIds.isNotEmpty?
-
-                _loadArtists(context): const SizedBox(),
-
+                mParty.artistIds.isNotEmpty
+                    ? _loadArtists(context)
+                    : const SizedBox(),
                 const SizedBox(height: 15.0),
                 kIsWeb ? const StoreBadgeItem() : const SizedBox(),
                 const SizedBox(height: 10.0),
                 Footer(),
               ],
             ),
-        );
+          );
   }
 
   Widget _loadArtists(BuildContext context) {
@@ -216,7 +224,7 @@ class _EventScreenState extends State<EventScreen> {
           for (int i = 0; i < snapshot.data!.docs.length; i++) {
             DocumentSnapshot document = snapshot.data!.docs[i];
             Map<String, dynamic> data =
-            document.data()! as Map<String, dynamic>;
+                document.data()! as Map<String, dynamic>;
             final Party bloc = Fresh.freshPartyMap(data, false);
             parties.add(bloc);
 
@@ -239,7 +247,7 @@ class _EventScreenState extends State<EventScreen> {
       itemBuilder: (BuildContext context, int index) {
         Party party = parties[index];
 
-        if(index == 0){
+        if (index == 0) {
           return Column(
             children: [
               Padding(
@@ -249,10 +257,10 @@ class _EventScreenState extends State<EventScreen> {
                   children: [
                     Text('lineup',
                         style: const TextStyle(
-                        color: Constants.lightPrimary,
-                        overflow: TextOverflow.ellipsis,
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold)),
+                            color: Constants.lightPrimary,
+                            overflow: TextOverflow.ellipsis,
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold)),
                   ],
                 ),
               ),

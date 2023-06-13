@@ -15,7 +15,6 @@ import '../../helpers/firestore_helper.dart';
 import '../../helpers/fresh.dart';
 import '../../routes/app_route_constants.dart';
 import '../../screens/box_office/box_office_screen.dart';
-import '../../screens/parties/artist_screen.dart';
 import '../../screens/parties/party_guest_add_edit_manage_screen.dart';
 import '../../utils/logx.dart';
 
@@ -51,108 +50,116 @@ class PartyBanner extends StatelessWidget {
                   'partyChapter': party.chapter
                 });
           } else {
-            Navigator.of(context).push(
-              MaterialPageRoute(builder: (ctx) => ArtistScreen(party: party)),
-            );
+            GoRouter.of(context).pushNamed(MyAppRouteConstants.artistRouteName,
+                params: {
+                  'name': party.name,
+                  'genre': party.genre
+                });
           }
         } else {
           Logx.i(_TAG, 'party banner no click');
         }
       },
-      child: Hero(
-        tag: party.id,
-        child: Card(
-          elevation: 1,
-          color: Theme.of(context).primaryColorLight,
-          child: SizedBox(
-            height: 200,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Flexible(
-                  flex: 2,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(left: 5.0),
-                        child: RichText(
-                          text: TextSpan(
-                              text: '${party.name.toLowerCase()} ',
-                              style: const TextStyle(
-                                  color: Colors.black,
-                                  overflow: TextOverflow.ellipsis,
-                                  fontSize: 22,
-                                  fontWeight: FontWeight.bold),
-                              children: <TextSpan>[
-                                TextSpan(
-                                    text: party.chapter == 'I'
-                                        ? ''
-                                        : party.chapter,
-                                    style: const TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.normal,
-                                        fontStyle: FontStyle.italic)),
-                              ]),
-                        ),
-                      ),
-                      party.eventName.isNotEmpty
-                          ? Padding(
-                              padding:
-                                  const EdgeInsets.only(left: 5.0, top: 10),
-                              child: Text(
-                                party.eventName.toLowerCase(),
-                                style: const TextStyle(fontSize: 18),
-                              ),
-                            )
-                          : const SizedBox(),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 5.0),
-                        child: Text(
-                          party.isTBA
-                              ? 'tba'
-                              : '${DateTimeUtils.getFormattedDate(party.startTime)}, ${DateTimeUtils.getFormattedTime(party.startTime)}',
-                          style: const TextStyle(fontSize: 18),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 5.0),
-                        child: Text(
-                          party.genre.isNotEmpty ? '[${party.genre}]' : '',
-                          style: const TextStyle(fontSize: 18),
-                        ),
-                      ),
-                      const Spacer(),
-                      shouldShowButton
-                          ? !party.isTBA && party.ticketUrl.isNotEmpty
-                              ? showBuyTixButton(context)
-                              : isGuestListActive
-                                  ? !isGuestListRequested
-                                      ? displayGuestListButton(context)
-                                      : showBoxOfficeButton(context)
-                                  : showListenOrInstaDialog(context)
-                          : const SizedBox()
-                    ],
-                  ),
-                ),
-                Flexible(
-                  flex: 1,
-                  child: Container(
-                    height: 200,
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Theme.of(context).primaryColor),
-                      borderRadius: const BorderRadius.all(Radius.circular(0)),
-                      image: DecorationImage(
-                        image: NetworkImage(party.imageUrl),
-                        fit: BoxFit.cover,
-                        // AssetImage(food['image']),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 3),
+        child: ClipRRect(
+          borderRadius:  BorderRadius.circular(15),
+          child: Hero(
+            tag: party.id,
+            child: Card(
+              elevation: 1,
+              color: Theme.of(context).primaryColorLight,
+              child: SizedBox(
+                height: 200,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Flexible(
+                      flex: 2,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(left: 5.0),
+                            child: RichText(
+                              text: TextSpan(
+                                  text: '${party.name.toLowerCase()} ',
+                                  style: const TextStyle(
+                                      color: Colors.black,
+                                      overflow: TextOverflow.ellipsis,
+                                      fontSize: 22,
+                                      fontWeight: FontWeight.bold),
+                                  children: <TextSpan>[
+                                    TextSpan(
+                                        text: party.chapter == 'I'
+                                            ? ''
+                                            : party.chapter,
+                                        style: const TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.normal,
+                                            fontStyle: FontStyle.italic)),
+                                  ]),
+                            ),
+                          ),
+                          party.eventName.isNotEmpty
+                              ? Padding(
+                                  padding:
+                                      const EdgeInsets.only(left: 5.0, top: 10),
+                                  child: Text(
+                                    party.eventName.toLowerCase(),
+                                    style: const TextStyle(fontSize: 18),
+                                  ),
+                                )
+                              : const SizedBox(),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 5.0),
+                            child: Text(
+                              party.isTBA
+                                  ? 'tba'
+                                  : '${DateTimeUtils.getFormattedDate(party.startTime)}, ${DateTimeUtils.getFormattedTime(party.startTime)}',
+                              style: const TextStyle(fontSize: 18),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 5.0),
+                            child: Text(
+                              party.genre.isNotEmpty ? '[${party.genre}]' : '',
+                              style: const TextStyle(fontSize: 18),
+                            ),
+                          ),
+                          const Spacer(),
+                          shouldShowButton
+                              ? !party.isTBA && party.ticketUrl.isNotEmpty
+                                  ? showBuyTixButton(context)
+                                  : isGuestListActive
+                                      ? !isGuestListRequested
+                                          ? displayGuestListButton(context)
+                                          : showBoxOfficeButton(context)
+                                      : showListenOrInstaDialog(context)
+                              : const SizedBox()
+                        ],
                       ),
                     ),
-                  ),
+                    Flexible(
+                      flex: 1,
+                      child: Container(
+                        height: 200,
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Theme.of(context).primaryColor),
+                          borderRadius: const BorderRadius.all(Radius.circular(0)),
+                          image: DecorationImage(
+                            image: NetworkImage(party.imageUrl),
+                            fit: BoxFit.cover,
+                            // AssetImage(food['image']),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
         ),

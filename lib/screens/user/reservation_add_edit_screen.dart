@@ -521,7 +521,7 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
                   }
                 },
               ),
-        const SizedBox(height: 24),
+        const SizedBox(height: 48),
       ],
     );
   }

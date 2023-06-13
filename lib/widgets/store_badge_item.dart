@@ -11,7 +11,7 @@ class StoreBadgeItem extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 10.0),
+          padding: const EdgeInsets.only(top: 25, left: 15.0, right: 15),
           child: Text(
             'download the app to receive push notifications, guest list and ticket status updates, and be a part of the ever expanding #blocCommunity',
             textAlign: TextAlign.center,
@@ -24,8 +24,8 @@ class StoreBadgeItem extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             SizedBox(
-              height: 55,
-              width: 110,
+              height: 80,
+              width: 165,
               child: GestureDetector(
                 onTap: () {
                   final uri = Uri.parse(
@@ -45,8 +45,8 @@ class StoreBadgeItem extends StatelessWidget {
               ),
             ),
             SizedBox(
-              height: 60,
-              width: 120,
+              height: 90,
+              width: 180,
               child: GestureDetector(
                 onTap: () {
                   final uri = Uri.parse(

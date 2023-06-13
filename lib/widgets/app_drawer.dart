@@ -48,11 +48,6 @@ class AppDrawer extends StatelessWidget {
 
               GoRouter.of(context)
                   .pushNamed(MyAppRouteConstants.homeRouteName);
-
-              // Navigator.of(context).pushReplacement(
-              //   MaterialPageRoute(
-              //       builder: (ctx) => MainScreen()),
-              // );
             },
           ),
           const Divider(),

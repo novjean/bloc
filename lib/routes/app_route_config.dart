@@ -13,6 +13,7 @@ import '../helpers/fresh.dart';
 import '../main.dart';
 import '../screens/error_page.dart';
 import '../screens/login_screen.dart';
+import '../screens/parties/artist_screen.dart';
 import '../screens/ui/splash_screen.dart';
 import '../utils/logx.dart';
 import '../widgets/ui/loading_widget.dart';
@@ -126,17 +127,17 @@ class BlocRouter{
           },
         ),
 
-        // GoRoute(
-        //   name: MyAppRouteConstants.eventRouteName,
-        //   path: '/artist/:genre/:name',
-        //   pageBuilder: (context, state) {
-        //     return MaterialPage(
-        //         child: ArtistScreen(
-        //           partyName: state.params['partyName']!,
-        //           partyChapter: state.params['partyChapter']!,
-        //         ));
-        //   },
-        // ),
+        GoRoute(
+          name: MyAppRouteConstants.artistRouteName,
+          path: '/artist/:genre/:name',
+          pageBuilder: (context, state) {
+            return MaterialPage(
+                child: ArtistScreen(
+                  name: state.params['name']!,
+                  genre: state.params['genre']!,
+                ));
+          },
+        ),
       ],
       errorPageBuilder: (context, state) {
         return MaterialPage(child: ErrorPage());

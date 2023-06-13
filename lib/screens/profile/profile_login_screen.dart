@@ -1,8 +1,10 @@
 import 'package:bloc/widgets/ui/button_widget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../db/shared_preferences/user_preferences.dart';
+import '../../routes/app_route_constants.dart';
 import '../login_screen.dart';
 
 class ProfileLoginScreen extends StatelessWidget {
@@ -18,9 +20,10 @@ class ProfileLoginScreen extends StatelessWidget {
 
               await FirebaseAuth.instance.signOut();
 
-              Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (context) => LoginScreen(shouldTriggerSkip: false,)),
-              );
+              GoRouter.of(context)
+                  .pushNamed(MyAppRouteConstants.loginRouteName, params: {
+                'skip': 'false',
+              });
             }),
       ),
     );

@@ -7,8 +7,8 @@ import '../../db/entity/party.dart';
 import '../../db/entity/party_guest.dart';
 import '../../helpers/dummy.dart';
 import '../../routes/app_route_constants.dart';
-import '../../screens/parties/artist_screen.dart';
 import '../../screens/parties/party_guest_add_edit_manage_screen.dart';
+import '../../utils/constants.dart';
 import '../../utils/network_utils.dart';
 import '../../utils/string_utils.dart';
 
@@ -39,9 +39,11 @@ class PartyItem extends StatelessWidget {
                 'partyChapter': party.chapter
               });
         } else {
-          Navigator.of(context).push(
-            MaterialPageRoute(builder: (ctx) => ArtistScreen(party: party)),
-          );
+          GoRouter.of(context).pushNamed(MyAppRouteConstants.artistRouteName,
+              params: {
+                'name': party.name,
+                'genre': party.genre
+              });
         }
       },
       child: Hero(
@@ -79,34 +81,26 @@ class PartyItem extends StatelessWidget {
                           width: MediaQuery.of(context).size.width,
                           padding:
                               const EdgeInsets.only(left: 15.0, right: 15.0),
-                          child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Text(
-                                  party.name.toLowerCase(),
-                                  style: const TextStyle(
+                          child: RichText(
+                            text: TextSpan(
+                                text: '${party.name.toLowerCase()} ',
+                                style: const TextStyle(
                                     color: Colors.white,
-                                    fontSize: 26.0,
-                                    fontWeight: FontWeight.w800,
-                                  ),
-                                  textAlign: TextAlign.left,
-                                ),
-                                party.chapter.isNotEmpty
-                                    ? Padding(
-                                        padding:
-                                            const EdgeInsets.only(top: 0.0),
-                                        child: Text(
-                                          ' ${party.chapter}',
-                                          style: const TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 26,
-                                            fontWeight: FontWeight.w400,
-                                          ),
-                                          textAlign: TextAlign.right,
-                                        ),
-                                      )
-                                    : const SizedBox(),
-                              ]),
+                                    overflow: TextOverflow.ellipsis,
+                                    fontSize: 26,
+                                    fontWeight: FontWeight.bold),
+                                children: <TextSpan>[
+                                  TextSpan(
+                                      text: party.chapter == 'I'
+                                          ? ''
+                                          : party.chapter,
+                                      style: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 24,
+                                          fontWeight: FontWeight.normal,
+                                          fontStyle: FontStyle.italic)),
+                                ]),
+                          ),
                         ),
                       )
                     ],

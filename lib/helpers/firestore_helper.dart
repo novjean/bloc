@@ -710,6 +710,14 @@ class FirestoreHelper {
         .get();
   }
 
+  static Future<QuerySnapshot<Map<String, dynamic>>> pullPartyByNameGenre(String name, String genre) {
+    return FirebaseFirestore.instance
+        .collection(FirestoreHelper.PARTIES)
+        .where('name', isEqualTo: name)
+        .where('genre', isEqualTo: genre)
+        .get();
+  }
+
   static Future<QuerySnapshot<Map<String, dynamic>>> pullPartiesByEndTime(
       int timeNow, bool isActive) {
     return FirebaseFirestore.instance
@@ -1569,5 +1577,6 @@ class FirestoreHelper {
         .orderBy('level', descending: false)
         .get();
   }
+
 
 }
