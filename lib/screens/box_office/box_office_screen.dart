@@ -1,6 +1,7 @@
 import 'package:bloc/main.dart';
 import 'package:bloc/screens/user/reservation_add_edit_screen.dart';
 import 'package:bloc/utils/scan_utils.dart';
+import 'package:bloc/widgets/ui/button_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -110,6 +111,7 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
       appBar: AppBar(
         title: const Text('bloc | box office'),
       ),
+      backgroundColor: Constants.background,
       floatingActionButton:
           (user.clearanceLevel >= Constants.PROMOTER_LEVEL && !kIsWeb)
               ? FloatingActionButton(
@@ -214,8 +216,7 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
         if (snapshot.hasData) {
           List<Reservation> reservations = [];
           if (snapshot.data!.docs.isEmpty) {
-            return const Expanded(
-                child: Center(child: Text('no reservations found!')));
+            return showReserveTableButton();
           } else {
             for (int i = 0; i < snapshot.data!.docs.length; i++) {
               DocumentSnapshot document = snapshot.data!.docs[i];
@@ -231,8 +232,7 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
             }
           }
         } else {
-          return const Expanded(
-              child: Center(child: Text('no reservations found!')));
+          return showReserveTableButton();
         }
         return const LoadingWidget();
       },
@@ -252,8 +252,7 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
         if (snapshot.hasData) {
           List<Reservation> reservations = [];
           if (snapshot.data!.docs.isEmpty) {
-            return const Expanded(
-                child: Center(child: Text('no reservations found!')));
+            return showReserveTableButton();
           } else {
             for (int i = 0; i < snapshot.data!.docs.length; i++) {
               DocumentSnapshot document = snapshot.data!.docs[i];
@@ -267,8 +266,7 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
             }
           }
         } else {
-          return const Expanded(
-              child: Center(child: Text('no reservations found!')));
+          return showReserveTableButton();
         }
         return const LoadingWidget();
       },
@@ -285,8 +283,7 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
         if (snapshot.hasData) {
           List<Celebration> celebrations = [];
           if (snapshot.data!.docs.isEmpty) {
-            return const Expanded(
-                child: Center(child: Text('no celebrations found!')));
+            return showCelebrateButton();
           } else {
             for (int i = 0; i < snapshot.data!.docs.length; i++) {
               DocumentSnapshot document = snapshot.data!.docs[i];
@@ -302,8 +299,7 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
             }
           }
         } else {
-          return const Expanded(
-              child: Center(child: Text('no reservations found!')));
+          return showCelebrateButton();
         }
         return const LoadingWidget();
       },
@@ -323,8 +319,7 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
         if (snapshot.hasData) {
           List<Celebration> celebrations = [];
           if (snapshot.data!.docs.isEmpty) {
-            return const Expanded(
-                child: Center(child: Text('no celebrations found!')));
+            return showCelebrateButton();
           } else {
             for (int i = 0; i < snapshot.data!.docs.length; i++) {
               DocumentSnapshot document = snapshot.data!.docs[i];
@@ -338,8 +333,7 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
             }
           }
         } else {
-          return const Expanded(
-              child: Center(child: Text('no reservations found!')));
+          return showCelebrateButton();
         }
         return const LoadingWidget();
       },
@@ -358,8 +352,7 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
         if (snapshot.hasData) {
           List<PartyGuest> partyGuestRequests = [];
           if (snapshot.data!.docs.isEmpty) {
-            return const Expanded(
-                child: Center(child: Text('no guest list requests found!')));
+            return showPartiesButton();
           } else {
             for (int i = 0; i < snapshot.data!.docs.length; i++) {
               DocumentSnapshot document = snapshot.data!.docs[i];
@@ -376,8 +369,7 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
             }
           }
         } else {
-          return const Expanded(
-              child: Center(child: Text('no guest list requests found!')));
+          return showPartiesButton();
         }
         return const LoadingWidget();
       },
@@ -454,7 +446,7 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
                 onTap: () {
                   Reservation _sReservation = reservations[index];
                   Logx.i(
-                      _TAG, _sReservation.name + '\'s reservation is selected');
+                      _TAG, '${_sReservation.name}\'s reservation is selected');
 
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (ctx) => ReservationAddEditScreen(
@@ -489,6 +481,91 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
                       )));
                 });
           }),
+    );
+  }
+
+  showPartiesButton() {
+    return Expanded(
+      child: Center(child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            '⚡ Warning: FOMO alert! Our party radar is buzzing, and it seems like you\'re missing out on the hottest 🔥🔥🔥 gathering in town. Hurry up, grab your spot, and prepare for an unforgettable experience! 🪩'.toLowerCase(),
+            style: TextStyle(fontSize: 22, color: Constants.primary),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            'click to check out our parties!'.toLowerCase(),
+            style: TextStyle(fontSize: 16, color: Constants.primary),
+          ),
+          const SizedBox(height: 16),
+          ButtonWidget(text: 'parties', height: 50, onClicked: () {
+            Navigator.of(context).pop();
+          },),
+        ],
+      )),
+    );
+  }
+
+  showReserveTableButton() {
+    return Expanded(
+      child: Center(child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            'Family and food, the perfect recipe for love! Reserve a table, lay a foundation of laughter and good food, and watch your beautiful memories take shape! 💛'.toLowerCase(),
+            style: TextStyle(fontSize: 22, color: Constants.primary),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            'click to reserve your table!'.toLowerCase(),
+            style: TextStyle(fontSize: 16, color: Constants.primary),
+          ),
+          const SizedBox(height: 16),
+          ButtonWidget(text: 'reserve', height: 50, onClicked: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                  builder: (ctx) =>
+                      ReservationAddEditScreen(
+                          reservation:
+                          Dummy.getDummyReservation(
+                             ''),
+                          task: 'add')),
+            );
+          },),
+        ],
+      )),
+    );
+  }
+
+  showCelebrateButton() {
+    return Expanded(
+      child: Center(child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            'Step into a world of celebration and sophistication at our cocktail rooftop bar. Whether it\'s your anniversary, birthday, or a corporate event, our venue is tailor-made to accommodate large groups, ensuring a night to remember. Come and indulge in the magic of elevated celebrations! 🍾'.toLowerCase(),
+            style: TextStyle(fontSize: 22, color: Constants.primary),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            'click to celebrate with us!'.toLowerCase(),
+            style: TextStyle(fontSize: 16, color: Constants.primary),
+          ),
+          const SizedBox(height: 16),
+          ButtonWidget(text: 'celebrate', height: 50, onClicked: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                  builder: (ctx) =>
+                      CelebrationAddEditScreen(
+                          celebration:
+                          Dummy.getDummyCelebration(
+                              ''),
+                          task: 'add')),
+            );
+          },),
+        ],
+      )),
     );
   }
 

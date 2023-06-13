@@ -179,7 +179,6 @@ class _BoxOfficeItemState extends State<BoxOfficeItem> {
                       image: DecorationImage(
                         image: NetworkImage(widget.party.imageUrl),
                         fit: BoxFit.cover,
-                        // AssetImage(food['image']),
                       ),
                     ),
                   ),

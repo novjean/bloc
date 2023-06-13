@@ -11,7 +11,7 @@ class ErrorPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("bloc | error"),
+        title: const Text("bloc | error"),
       ),
       backgroundColor: Constants.background,
       body: Padding(

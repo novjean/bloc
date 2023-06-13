@@ -1,5 +1,4 @@
 import 'package:bloc/db/shared_preferences/user_preferences.dart';
-import 'package:bloc/screens/main_screen.dart';
 import 'package:bloc/screens/manager/manager_main_screen.dart';
 import 'package:bloc/screens/owner/owner_screen.dart';
 import 'package:bloc/utils/constants.dart';
@@ -11,8 +10,6 @@ import '../routes/app_route_constants.dart';
 import '../screens/account_screen.dart';
 import '../screens/box_office/box_office_screen.dart';
 import '../screens/captain/captain_main_screen.dart';
-import '../screens/login_screen.dart';
-import '../screens/user/order_history_screen.dart';
 import '../utils/logx.dart';
 
 class AppDrawer extends StatelessWidget {
@@ -33,6 +30,7 @@ class AppDrawer extends StatelessWidget {
     }
 
     return Drawer(
+      backgroundColor: Colors.white70,
       width: MediaQuery.of(context).size.width / 2,
       child: Column(
         children: [

@@ -25,6 +25,7 @@ import '../../utils/date_time_utils.dart';
 import '../../utils/logx.dart';
 import '../../utils/string_utils.dart';
 import '../../widgets/ui/button_widget.dart';
+import '../../widgets/ui/dark_button_widget.dart';
 import '../../widgets/ui/dark_textfield_widget.dart';
 import '../../widgets/ui/toaster.dart';
 import '../box_office/box_office_screen.dart';
@@ -207,7 +208,7 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
                       completePhoneNumber = phone.completeNumber;
                     },
                     onCountryChanged: (country) {
-                      Logx.i(_TAG, 'country changed to: ' + country.name);
+                      Logx.i(_TAG, 'country changed to: ${country.name}');
                     },
                   ),
                 ],
@@ -490,6 +491,7 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   ButtonWidget(
+                    height: 50,
                     text: 'save',
                     onClicked: () {
                       Reservation freshReservation =
@@ -499,8 +501,9 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
                       Navigator.of(context).pop();
                     },
                   ),
-                  const SizedBox(height: 15),
-                  ButtonWidget(
+                  const SizedBox(height: 36),
+                  DarkButtonWidget(
+                    height: 50,
                       text: 'delete',
                       onClicked: () {
                         FirestoreHelper.deleteReservation(
