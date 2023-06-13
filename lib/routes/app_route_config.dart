@@ -1,5 +1,4 @@
 import 'package:bloc/db/shared_preferences/user_preferences.dart';
-import 'package:bloc/screens/home_screen.dart';
 import 'package:bloc/screens/main_screen.dart';
 import 'package:bloc/screens/parties/event_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -12,11 +11,7 @@ import 'package:bloc/db/entity/user.dart' as blocUser;
 import '../helpers/firestore_helper.dart';
 import '../helpers/fresh.dart';
 import '../main.dart';
-import '../pages/about.dart';
-import '../pages/contact_us.dart';
-import '../pages/error_page.dart';
-import '../pages/home.dart';
-import '../pages/profile.dart';
+import '../screens/error_page.dart';
 import '../screens/login_screen.dart';
 import '../screens/ui/splash_screen.dart';
 import '../utils/logx.dart';
@@ -115,7 +110,7 @@ class BlocRouter{
           name: MyAppRouteConstants.homeRouteName,
           path: '/home',
           pageBuilder: (context, state) {
-            return MaterialPage(child: MainScreen());
+            return const MaterialPage(child: MainScreen());
           },
         ),
 
@@ -131,44 +126,30 @@ class BlocRouter{
           },
         ),
 
-        GoRoute(
-          name: MyAppRouteConstants.profileRouteName,
-          path: '/profile/:username/:userid',
-          pageBuilder: (context, state) {
-            return MaterialPage(
-                child: Profile(
-                  userid: state.params['userid']!,
-                  username: state.params['username']!,
-                ));
-          },
+        // GoRoute(
+        //   name: MyAppRouteConstants.eventRouteName,
+        //   path: '/artist/:genre/:name',
+        //   pageBuilder: (context, state) {
+        //     return MaterialPage(
+        //         child: ArtistScreen(
+        //           partyName: state.params['partyName']!,
+        //           partyChapter: state.params['partyChapter']!,
+        //         ));
+        //   },
         ),
-        GoRoute(
-          name: MyAppRouteConstants.aboutRouteName,
-          path: '/about',
-          pageBuilder: (context, state) {
-            return MaterialPage(child: About());
-          },
-        ),
-        GoRoute(
-          name: MyAppRouteConstants.contactUsRouteName,
-          path: '/contact_us',
-          pageBuilder: (context, state) {
-            return MaterialPage(child: ContactUS());
-          },
-        )
       ],
       errorPageBuilder: (context, state) {
         return MaterialPage(child: ErrorPage());
       },
-      redirect: (context, state) {
-        if (!isAuth &&
-            state.location
-                .startsWith('/${MyAppRouteConstants.profileRouteName}')) {
-          return context.namedLocation(MyAppRouteConstants.contactUsRouteName);
-        } else {
-          return null;
-        }
-      },
+      // redirect: (context, state) {
+      //   if (!isAuth &&
+      //       state.location
+      //           .startsWith('/${MyAppRouteConstants.profileRouteName}')) {
+      //     return context.namedLocation(MyAppRouteConstants.contactUsRouteName);
+      //   } else {
+      //     return null;
+      //   }
+      // },
     );
     return router;
   }

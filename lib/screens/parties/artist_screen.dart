@@ -10,6 +10,9 @@ import '../../widgets/ui/button_widget.dart';
 import 'party_guest_add_edit_manage_screen.dart';
 
 class ArtistScreen extends StatefulWidget {
+  // final String name;
+  // final String genre;
+
   final Party party;
 
   const ArtistScreen({required this.party, Key? key}) : super(key: key);

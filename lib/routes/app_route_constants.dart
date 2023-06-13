@@ -1,10 +1,10 @@
 class MyAppRouteConstants {
   static const String landingRouteName = 'landing';
-
   static const String loginRouteName = 'login';
   static const String homeRouteName = 'home';
 
   static const String eventRouteName = 'event';
+  static const String artistRouteName = 'artist';
 
 
   static const String aboutRouteName = 'about';

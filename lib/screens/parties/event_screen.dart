@@ -20,7 +20,6 @@ import '../../utils/network_utils.dart';
 import '../../widgets/footer.dart';
 import '../../widgets/parties/artist_banner.dart';
 import '../../widgets/store_badge_item.dart';
-import '../../widgets/ui/button_widget.dart';
 import 'party_guest_add_edit_manage_screen.dart';
 
 class EventScreen extends StatefulWidget {
