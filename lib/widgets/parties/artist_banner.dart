@@ -5,20 +5,17 @@ import '../../db/entity/party.dart';
 import '../../screens/parties/artist_screen.dart';
 import '../../utils/constants.dart';
 import '../../utils/logx.dart';
-import '../../utils/string_utils.dart';
 
 class ArtistBanner extends StatelessWidget {
   static const String _TAG = 'ArtistBanner';
 
   Party party;
   final bool isClickable;
-  final bool shouldShowButton;
 
   ArtistBanner(
       {Key? key,
       required this.party,
-      required this.isClickable,
-      required this.shouldShowButton})
+      required this.isClickable})
       : super(key: key);
 
   @override
@@ -53,7 +50,7 @@ class ArtistBanner extends StatelessWidget {
             child: ClipRRect(
               borderRadius: BorderRadius.circular(15),
               child: SizedBox(
-                height: 110,
+                height: 100,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
@@ -99,11 +96,11 @@ class ArtistBanner extends StatelessWidget {
                           Padding(
                             padding:
                                 const EdgeInsets.symmetric(horizontal: 5.0),
-                            child: Text(
-                              StringUtils.truncateWithEllipsis(
-                                  100, party.description.toLowerCase()),
+                            child: Text(party.description.toLowerCase(),
+                              maxLines: 3,
                               style: TextStyle(
                                   fontSize: 15,
+                                  overflow: TextOverflow.ellipsis,
                                   color: Theme.of(context).primaryColorDark),
                             ),
                           ),

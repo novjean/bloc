@@ -260,15 +260,13 @@ class _EventScreenState extends State<EventScreen> {
               ArtistBanner(
                 party: party,
                 isClickable: true,
-                shouldShowButton: true,
               ),
             ],
           );
         } else {
           return ArtistBanner(
             party: party,
-            isClickable: false,
-            shouldShowButton: false,
+            isClickable: true,
           );
         }
       },
