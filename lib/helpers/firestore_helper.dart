@@ -761,7 +761,7 @@ class FirestoreHelper {
     return FirebaseFirestore.instance
         .collection(PARTIES)
         .where('id', whereIn: artistIds)
-        // .orderBy('name', descending: false)
+        // .orderBy('endTime', descending: false)
         .get();
   }
 

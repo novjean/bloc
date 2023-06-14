@@ -26,7 +26,7 @@ class EventScreen extends StatefulWidget {
   final String partyName;
   final String partyChapter;
 
-  const EventScreen({required this.partyName, required this.partyChapter});
+  const EventScreen({Key? key, required this.partyName, required this.partyChapter}): super(key: key);
 
   @override
   State<EventScreen> createState() => _EventScreenState();
@@ -37,8 +37,6 @@ class _EventScreenState extends State<EventScreen> {
 
   Party mParty = Dummy.getDummyParty('');
   var _isPartyLoading = true;
-  List<Party> mArtists = [];
-  var _isArtistsLoading = true;
 
   @override
   void initState() {
@@ -55,38 +53,12 @@ class _EventScreenState extends State<EventScreen> {
           mParty = party;
         }
 
-        if (mParty.artistIds.isNotEmpty) {
-          FirestoreHelper.pullPartyArtistsByIds(mParty.artistIds).then((res) {
-            if (res.docs.isNotEmpty) {
-              for (int i = 0; i < res.docs.length; i++) {
-                DocumentSnapshot document = res.docs[i];
-                Map<String, dynamic> data =
-                    document.data()! as Map<String, dynamic>;
-                final Party artist = Fresh.freshPartyMap(data, false);
-                mArtists.add(artist);
-              }
-
-              setState(() {
-                _isArtistsLoading = false;
-                _isPartyLoading = false;
-              });
-            } else {
-              setState(() {
-                _isArtistsLoading = false;
-                _isPartyLoading = false;
-              });
-            }
-          });
-        } else {
-          setState(() {
-            _isArtistsLoading = false;
-            _isPartyLoading = false;
-          });
-        }
-      } else {
-        Logx.i(_TAG, 'no party found!');
         setState(() {
-          _isArtistsLoading = false;
+          _isPartyLoading = false;
+        });
+      } else {
+        Logx.em(_TAG, 'no party found!');
+        setState(() {
           _isPartyLoading = false;
         });
       }
@@ -123,10 +95,10 @@ class _EventScreenState extends State<EventScreen> {
   }
 
   _buildBody(BuildContext context) {
-    return _isPartyLoading && _isArtistsLoading
+    return _isPartyLoading
         ? const LoadingWidget()
         : SingleChildScrollView(
-            physics: ScrollPhysics(),
+            physics: const ScrollPhysics(),
             child: Column(
               children: [
                 SizedBox(
@@ -220,16 +192,17 @@ class _EventScreenState extends State<EventScreen> {
         }
 
         if (snapshot.hasData) {
-          List<Party> parties = [];
+          List<Party> artists = [];
           for (int i = 0; i < snapshot.data!.docs.length; i++) {
             DocumentSnapshot document = snapshot.data!.docs[i];
             Map<String, dynamic> data =
                 document.data()! as Map<String, dynamic>;
             final Party bloc = Fresh.freshPartyMap(data, false);
-            parties.add(bloc);
+            artists.add(bloc);
 
             if (i == snapshot.data!.docs.length - 1) {
-              return _showArtists(context, parties);
+              artists.sort((a, b) => a.endTime.compareTo(b.endTime));
+              return _showArtists(context, artists);
             }
           }
         }
