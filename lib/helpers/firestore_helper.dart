@@ -358,7 +358,7 @@ class FirestoreHelper {
     }
   }
 
-  static pullCategories(String blocServiceId) {
+  static Future<QuerySnapshot<Map<String, dynamic>>> pullCategories(String blocServiceId) {
     return FirebaseFirestore.instance
         .collection(CATEGORIES)
         .where('serviceId', isEqualTo: blocServiceId)
@@ -366,7 +366,7 @@ class FirestoreHelper {
         .get();
   }
 
-  static pullCategoriesNew(String blocServiceId) {
+  static pullCategoriesInBlocIds(String blocServiceId) {
     return FirebaseFirestore.instance
         .collection(CATEGORIES)
         .where('blocIds', arrayContains: blocServiceId)
@@ -944,6 +944,15 @@ class FirestoreHelper {
         .collection(PRODUCTS)
         .where('serviceId', isEqualTo: serviceId)
         .where('category', isEqualTo: category)
+        .where('isAvailable', isEqualTo: true)
+        .snapshots();
+  }
+
+  Stream<QuerySnapshot<Object?>> getProductByCategories(String serviceId, List<String> categoryNames) {
+    return FirebaseFirestore.instance
+        .collection(PRODUCTS)
+        .where('serviceId', isEqualTo: serviceId)
+        .where('category', whereIn: categoryNames)
         .where('isAvailable', isEqualTo: true)
         .snapshots();
   }
@@ -1577,6 +1586,5 @@ class FirestoreHelper {
         .orderBy('level', descending: false)
         .get();
   }
-
 
 }
