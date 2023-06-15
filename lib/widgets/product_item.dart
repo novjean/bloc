@@ -71,7 +71,7 @@ class _ProductItemState extends State<ProductItem> {
                         decoration: BoxDecoration(
                           image: DecorationImage(
                               image: NetworkImage(widget.product.imageUrl),
-                              fit: BoxFit.fitHeight
+                              fit: BoxFit.cover
                               // AssetImage(food['image']),
                               ),
                         ),

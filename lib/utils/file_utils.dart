@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:bloc/utils/string_utils.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:universal_html/html.dart' as html;
 import 'package:path_provider/path_provider.dart';
@@ -25,7 +24,7 @@ class FileUtils {
   static void shareCsvFile(String fileName, String text, String shareMessage) async {
     var temp = await getTemporaryDirectory();
     final path = '${temp.path}/$fileName';
-    File(path).writeAsString(text);
+    await File(path).writeAsString(text);
 
     final files = <XFile>[];
     files.add(

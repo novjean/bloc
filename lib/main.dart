@@ -1,7 +1,9 @@
 import 'dart:ui';
 
+import 'package:bloc/routes/app_route_config.dart';
 import 'package:bloc/screens/login_screen.dart';
 import 'package:bloc/utils/logx.dart';
+import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -29,6 +31,7 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   // If you're going to use other Firebase services in the background, such as Firestore,
   // make sure you call `initializeApp` before using other Firebase services.
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
   Logx.i('main', 'handling a background message ${message.messageId}');
 }
 
@@ -51,6 +54,7 @@ Future<void> main() async {
   const String _TAG = 'main';
 
   WidgetsFlutterBinding.ensureInitialized();
+  // await NotificationService.initializeNotification();
 
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
@@ -104,18 +108,20 @@ Future<void> main() async {
 
   await UserPreferences.init();
 
-  runApp(const MyApp());
+  runApp(const BlocApp());
 }
 
-class MyApp extends StatefulWidget {
-  const MyApp({Key? key}) : super(key: key);
+class BlocApp extends StatefulWidget {
+  const BlocApp({Key? key}) : super(key: key);
+
+  // static GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
   @override
-  State<MyApp> createState() => _MyAppState();
+  State<BlocApp> createState() => _BlocAppState();
 }
 
-class _MyAppState extends State<MyApp> {
-  static const String _TAG = 'MyApp';
+class _BlocAppState extends State<BlocApp> {
+  static const String _TAG = 'BlocApp';
 
   @override
   Widget build(BuildContext context) {
@@ -132,52 +138,51 @@ class _MyAppState extends State<MyApp> {
           future: _initialization,
           builder: (ctx, appSnapshot) {
 
-            return MaterialApp(
-              debugShowCheckedModeBanner: false,
-              title: kAppTitle,
-              theme: ThemeData(
-                //rgba(211,167,130,255)
-                primaryColor: const Color.fromRGBO(211, 167, 130, 1),
-                // 222,193,170
-                primaryColorLight: const Color.fromRGBO(222, 193, 170, 1),
-                primaryColorDark: const Color.fromRGBO(42, 33, 26, 1),
+            if(appSnapshot.connectionState == ConnectionState.done){
+              return MaterialApp.router(
+                debugShowCheckedModeBanner: false,
+                title: kAppTitle,
+                theme: ThemeData(
+                  primaryColor: Constants.primary,
+                  // 222,193,170
+                  primaryColorLight: Constants.lightPrimary,
+                  primaryColorDark: Constants.darkPrimary,
 
-                backgroundColor: const Color.fromRGBO(38, 50, 56, 1.0),
-                // focusColor: const Color.fromRGBO(31, 31, 33, 1.0),
-                shadowColor: const Color.fromRGBO(158, 158, 158, 1.0),
+                  backgroundColor: Constants.background,
+                  // focusColor: const Color.fromRGBO(31, 31, 33, 1.0),
+                  shadowColor: const Color.fromRGBO(158, 158, 158, 1.0),
 
-                highlightColor: const Color.fromRGBO(255, 255, 255, 1.0),
-                bottomAppBarColor: const Color.fromRGBO(255, 255, 255, 1.0),
+                  highlightColor: const Color.fromRGBO(255, 255, 255, 1.0),
+                  bottomAppBarColor: const Color.fromRGBO(255, 255, 255, 1.0),
 
-                // app bar and buttons by default
-                primarySwatch: Colors.brown,
+                  // app bar and buttons by default
+                  primarySwatch: Colors.brown,
 
-                accentColor: Colors.grey,
-                accentColorBrightness: Brightness.dark,
-                buttonTheme: ButtonTheme.of(context).copyWith(
-                  buttonColor: Colors.red,
-                  textTheme: ButtonTextTheme.primary,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
+                  // accentColor: Colors.grey,
+                  // accentColorBrightness: Brightness.dark,
+                  buttonTheme: ButtonTheme.of(context).copyWith(
+                    buttonColor: Colors.red,
+                    textTheme: ButtonTextTheme.primary,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
                   ),
                 ),
-              ),
-              home: appSnapshot.connectionState != ConnectionState.done
-                  ? SplashScreen()
-                  : const LoginScreen(shouldTriggerSkip: true),
+                routeInformationParser: BlocRouter.returnRouter(true).routeInformationParser,
+                routerDelegate: BlocRouter.returnRouter(true).routerDelegate,
 
-              // routes: {
-              // HomeScreen.routeName: (ctx) => HomeScreen(),
-              // ManagerScreen.routeName: (ctx) => ManagerScreen(),
-              // OwnerScreen.routeName: (ctx) => OwnerScreen(),
-              // CityDetailScreen.routeName: (ctx) => CityDetailScreen(),
-              // NewBlocScreen.routeName: (ctx) => NewBlocScreen(),
-              // BlocDetailScreen.routeName: (ctx) => BlocDetailScreen(),
-              // }
-            );
+                // home: appSnapshot.connectionState != ConnectionState.done
+                //     ? SplashScreen()
+                //     : const LoginScreen(shouldTriggerSkip: true),
+
+              );
+            } else {
+              return LoadingWidget();
+            }
           }),
     );
   }
-
 }
+
+
 

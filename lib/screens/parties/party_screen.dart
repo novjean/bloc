@@ -151,7 +151,7 @@ class _PartyScreenState extends State<PartyScreen> {
                 elevation: 5,
                 splashColor: Colors.grey,
                 child: Icon(
-                  Icons.play_arrow_outlined,
+                  Icons.keyboard_command_key_sharp,
                   color: Theme.of(context).primaryColorDark,
                   size: 29,
                 ),

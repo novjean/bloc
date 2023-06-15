@@ -262,11 +262,11 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
             child: SingleChildScrollView(
               child: Column(
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 20),
+                  const Padding(
+                    padding: EdgeInsets.only(bottom: 20),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
-                      children: const [
+                      children: [
                         Text(
                           'actions',
                           style: TextStyle(fontSize: 18),
@@ -308,9 +308,9 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
                                         String fileName = '$sPartyName-$rand.csv';
                                         FileUtils.shareCsvFile(fileName, guestListText, sPartyName);
                                       },
-                                      child: Column(
+                                      child: const Column(
                                         mainAxisAlignment: MainAxisAlignment.center,
-                                        children: const <Widget>[
+                                        children: <Widget>[
                                           Icon(Icons.share_outlined),
                                         ],
                                       ),
@@ -358,7 +358,7 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
                               )
                             ],
                           ),
-                          const SizedBox(height:10),
+                          const SizedBox(height:30),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
@@ -367,9 +367,9 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
                                 size: const Size(50, 50),
                                 child: ClipOval(
                                   child: Material(
-                                    color: Constants.primary,
+                                    color: Constants.darkPrimary,
                                     child: InkWell(
-                                      splashColor: Constants.darkPrimary,
+                                      splashColor: Constants.primary,
                                       onTap: () {
                                         Navigator.of(ctx).pop();
 
@@ -377,7 +377,7 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
                                             context: context,
                                             builder: (BuildContext context) {
                                               return AlertDialog(
-                                                title: Text('delete all ${sPartyName=='all'?'':sPartyName} guest lists'),
+                                                title: Text('delete all ${sPartyName=='all'?'':sPartyName} guest lists', style: const TextStyle(color: Colors.redAccent),),
                                                 content: Text('deleting ${mPartyGuests.length} guest list requests. are you sure you want to continue?'),
                                                 actions: [
                                                   TextButton(

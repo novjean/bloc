@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../db/entity/chat.dart';
+import '../../utils/constants.dart';
 
 class MessageBubble extends StatelessWidget {
   // MessageBubble(this.chat, this.isMe, this.key,
@@ -22,7 +23,7 @@ class MessageBubble extends StatelessWidget {
           children: [
             Container(
               decoration: BoxDecoration(
-                color: isMe ? Colors.grey[300] : Theme.of(context).accentColor,
+                color: isMe ? Colors.grey[300] : Constants.primary,
                 borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(12),
                   topRight: Radius.circular(12),
@@ -49,18 +50,18 @@ class MessageBubble extends StatelessWidget {
                       fontWeight: FontWeight.bold,
                       color: isMe
                           ? Colors.black
-                          : Theme.of(context).accentTextTheme.headline1!.color,
+                          : Constants.primary,
                     ),
                   ),
                   Text(
                     chat.text,
-                    style: TextStyle(
-                        color: isMe
-                            ? Colors.black
-                            : Theme.of(context)
-                            .accentTextTheme
-                            .headline1!
-                            .color),
+                    // style: TextStyle(
+                    //     color: isMe
+                    //         ? Colors.black
+                    //         : Theme.of(context)
+                    //         .accentTextTheme
+                    //         .headline1!
+                    //         .color),
                     textAlign: isMe ? TextAlign.end : TextAlign.start,
                   ),
                 ],

@@ -3,13 +3,16 @@ import 'package:bloc/helpers/dummy.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:delayed_display/delayed_display.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:pinput/pinput.dart';
 
 import '../db/shared_preferences/user_preferences.dart';
 import '../helpers/firestore_helper.dart';
 import '../helpers/fresh.dart';
 import '../main.dart';
+import '../routes/app_route_constants.dart';
 import '../utils/logx.dart';
 import '../utils/string_utils.dart';
 import '../widgets/ui/toaster.dart';
@@ -51,10 +54,8 @@ class _OTPScreenState extends State<OTPScreen> {
       await FirebaseAuth.instance
           .signInWithPhoneNumber('${widget.phone}', null)
           .then((user) {
-        Logx.i(
-            _TAG,
-            'signInWithPhoneNumber: user verification id ' +
-                user.verificationId);
+        Logx.i(_TAG,
+            'signInWithPhoneNumber: user verification id ${user.verificationId}');
         setState(() {
           _verificationCode = user.verificationId;
         });
@@ -109,8 +110,9 @@ class _OTPScreenState extends State<OTPScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Flexible(
+                flex: 1,
                 child: Container(
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     image: DecorationImage(
                         image: AssetImage("assets/icons/logo-adaptive.png"),
                         fit: BoxFit.fitHeight
@@ -118,7 +120,6 @@ class _OTPScreenState extends State<OTPScreen> {
                         ),
                   ),
                 ),
-                flex: 1,
               ),
               Flexible(
                 flex: 3,
@@ -269,17 +270,17 @@ class _OTPScreenState extends State<OTPScreen> {
                       .then((value) async {
                     if (value.user != null) {
                       Logx.i(_TAG, 'user is in firebase auth');
-                      Logx.i(
-                          _TAG,
-                          'checking for bloc registration, id ' +
-                              value.user!.uid);
+
+                      String? fcmToken = '';
+
+                      if (!kIsWeb) {
+                        fcmToken = await FirebaseMessaging.instance.getToken();
+                      }
+
+                      Logx.i(_TAG,
+                          'checking for bloc registration, id ${value.user!.uid}');
 
                       FirestoreHelper.pullUser(value.user!.uid).then((res) {
-                        Logx.i(
-                            _TAG,
-                            "successfully retrieved bloc user for id " +
-                                value.user!.uid);
-
                         if (res.docs.isEmpty) {
                           Logx.i(_TAG,
                               'user is not already registered in bloc, registering...');
@@ -288,11 +289,12 @@ class _OTPScreenState extends State<OTPScreen> {
                           registeredUser.id = value.user!.uid;
                           registeredUser.phoneNumber =
                               StringUtils.getInt(value.user!.phoneNumber!);
+                          registeredUser.fcmToken = fcmToken!;
 
-                          Navigator.of(context).pushReplacement(
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      MainScreen(user: registeredUser)));
+                          UserPreferences.setUser(registeredUser);
+
+                          GoRouter.of(context)
+                              .pushNamed(MyAppRouteConstants.homeRouteName);
                         } else {
                           Logx.i(_TAG,
                               'user is a bloc member. navigating to main...');
@@ -301,20 +303,25 @@ class _OTPScreenState extends State<OTPScreen> {
                           Map<String, dynamic> data =
                               document.data()! as Map<String, dynamic>;
 
-                          final blocUser.User user =
-                              Fresh.freshUserMap(data, true);
+                          blocUser.User user;
+                          if (kIsWeb) {
+                            user = Fresh.freshUserMap(data, true);
+                          } else {
+                            user = Fresh.freshUserMap(data, false);
+                            user.fcmToken = fcmToken!;
+                            FirestoreHelper.pushUser(user);
+                          }
                           UserPreferences.setUser(user);
+                          GoRouter.of(context)
+                              .pushNamed(MyAppRouteConstants.homeRouteName);
 
-                          Navigator.of(context).pushReplacement(
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      MainScreen(user: user)));
+                          Toaster.shortToast('hey ${user.name}, welcome back');
                         }
                       });
                     }
                   });
                 } catch (e) {
-                  Logx.em(_TAG, 'otp error ' + e.toString());
+                  Logx.em(_TAG, 'otp error $e');
 
                   String exception = e.toString();
                   if (exception.contains('session-expired')) {

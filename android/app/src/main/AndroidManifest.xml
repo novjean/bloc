@@ -8,6 +8,8 @@
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY"/>
+<!--    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>-->
    <application
         android:label="bloc"
         android:icon="@mipmap/launcher_icon">
@@ -41,5 +43,11 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
+       <meta-data
+           android:name="com.google.firebase.messaging.default_notification_icon"
+           android:resource="@drawable/ic_launcher" />
+       <meta-data
+           android:name="com.google.firebase.messaging.default_notification_channel_id"
+           android:value="high_importance_channel" />
     </application>
 </manifest>

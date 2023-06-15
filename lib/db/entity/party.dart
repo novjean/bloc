@@ -30,11 +30,14 @@ class Party {
   final String clubRules;
 
   final bool isChallengeActive;
+  final int overrideChallengeNum;
   final String genre;
 
   final bool isTicketed;
   int ticketsSoldCount;
   double ticketsSalesTotal;
+
+  List<String> artistIds;
 
 //<editor-fold desc="Data Methods">
   Party({
@@ -64,10 +67,12 @@ class Party {
     required this.guestListRules,
     required this.clubRules,
     required this.isChallengeActive,
+    required this.overrideChallengeNum,
     required this.genre,
     required this.isTicketed,
     required this.ticketsSoldCount,
     required this.ticketsSalesTotal,
+    required this.artistIds,
   });
 
   @override
@@ -101,10 +106,12 @@ class Party {
           guestListRules == other.guestListRules &&
           clubRules == other.clubRules &&
           isChallengeActive == other.isChallengeActive &&
+          overrideChallengeNum == other.overrideChallengeNum &&
           genre == other.genre &&
           isTicketed == other.isTicketed &&
           ticketsSoldCount == other.ticketsSoldCount &&
-          ticketsSalesTotal == other.ticketsSalesTotal);
+          ticketsSalesTotal == other.ticketsSalesTotal &&
+          artistIds == other.artistIds);
 
   @override
   int get hashCode =>
@@ -134,10 +141,12 @@ class Party {
       guestListRules.hashCode ^
       clubRules.hashCode ^
       isChallengeActive.hashCode ^
+      overrideChallengeNum.hashCode ^
       genre.hashCode ^
       isTicketed.hashCode ^
       ticketsSoldCount.hashCode ^
-      ticketsSalesTotal.hashCode;
+      ticketsSalesTotal.hashCode ^
+      artistIds.hashCode;
 
   @override
   String toString() {
@@ -168,10 +177,12 @@ class Party {
         ' guestListRules: $guestListRules,' +
         ' clubRules: $clubRules,' +
         ' isChallengeActive: $isChallengeActive,' +
+        ' overrideChallengeNum: $overrideChallengeNum,' +
         ' genre: $genre,' +
         ' isTicketed: $isTicketed,' +
         ' ticketsSoldCount: $ticketsSoldCount,' +
         ' ticketsSalesTotal: $ticketsSalesTotal,' +
+        ' artistIds: $artistIds,' +
         '}';
   }
 
@@ -202,10 +213,12 @@ class Party {
     String? guestListRules,
     String? clubRules,
     bool? isChallengeActive,
+    int? overrideChallengeNum,
     String? genre,
     bool? isTicketed,
     int? ticketsSoldCount,
     double? ticketsSalesTotal,
+    List<String>? artistIds,
   }) {
     return Party(
       id: id ?? this.id,
@@ -234,10 +247,12 @@ class Party {
       guestListRules: guestListRules ?? this.guestListRules,
       clubRules: clubRules ?? this.clubRules,
       isChallengeActive: isChallengeActive ?? this.isChallengeActive,
+      overrideChallengeNum: overrideChallengeNum ?? this.overrideChallengeNum,
       genre: genre ?? this.genre,
       isTicketed: isTicketed ?? this.isTicketed,
       ticketsSoldCount: ticketsSoldCount ?? this.ticketsSoldCount,
       ticketsSalesTotal: ticketsSalesTotal ?? this.ticketsSalesTotal,
+      artistIds: artistIds ?? this.artistIds,
     );
   }
 
@@ -269,10 +284,12 @@ class Party {
       'guestListRules': this.guestListRules,
       'clubRules': this.clubRules,
       'isChallengeActive': this.isChallengeActive,
+      'overrideChallengeNum': this.overrideChallengeNum,
       'genre': this.genre,
       'isTicketed': this.isTicketed,
       'ticketsSoldCount': this.ticketsSoldCount,
       'ticketsSalesTotal': this.ticketsSalesTotal,
+      'artistIds': this.artistIds,
     };
   }
 
@@ -304,10 +321,12 @@ class Party {
       guestListRules: map['guestListRules'] as String,
       clubRules: map['clubRules'] as String,
       isChallengeActive: map['isChallengeActive'] as bool,
+      overrideChallengeNum: map['overrideChallengeNum'] as int,
       genre: map['genre'] as String,
       isTicketed: map['isTicketed'] as bool,
       ticketsSoldCount: map['ticketsSoldCount'] as int,
       ticketsSalesTotal: map['ticketsSalesTotal'] as double,
+      artistIds: map['artistIds'] as List<String>,
     );
   }
 

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 const String kAppTitle = 'bloc';
 
 class Constants {
-  static const String appVersion = '1.7.3';
+  static const String appVersion = '1.9.4';
 
   //Colors for theme
   static const Color primary = Color.fromRGBO(211, 167, 130, 1);
@@ -21,17 +21,17 @@ class Constants {
   static ThemeData lightTheme = ThemeData(
     backgroundColor: lightBG,
     primaryColor: lightPrimary,
-    accentColor: lightAccent,
+    // accentColor: lightAccent,
     // cursorColor: lightAccent,
     scaffoldBackgroundColor: lightBG,
     appBarTheme: AppBarTheme(
-      textTheme: TextTheme(
-        headline6: TextStyle(
-          color: darkBG,
-          fontSize: 18.0,
-          fontWeight: FontWeight.w800,
-        ),
-      ),
+      // textTheme: TextTheme(
+      //   headline6: TextStyle(
+      //     color: darkBG,
+      //     fontSize: 18.0,
+      //     fontWeight: FontWeight.w800,
+      //   ),
+      // ),
     ),
   );
 
@@ -39,17 +39,17 @@ class Constants {
     brightness: Brightness.dark,
     backgroundColor: darkBG,
     primaryColor: darkPrimary,
-    accentColor: darkAccent,
+    // accentColor: darkAccent,
     scaffoldBackgroundColor: darkBG,
     // cursorColor: darkAccent,
     appBarTheme: AppBarTheme(
-      textTheme: TextTheme(
-        headline6: TextStyle(
-          color: lightBG,
-          fontSize: 18.0,
-          fontWeight: FontWeight.w800,
-        ),
-      ),
+      // textTheme: TextTheme(
+      //   headline6: TextStyle(
+      //     color: lightBG,
+      //     fontSize: 18.0,
+      //     fontWeight: FontWeight.w800,
+      //   ),
+      // ),
     ),
   );
 
@@ -65,7 +65,7 @@ class Constants {
 
   static int skipPhoneNumber = 911234567890;
 
-  static String clubRules = '- Entry is restricted to the age of 21+ \n- We are a community. Respect everyone and their space on the floor. Don’t be a killjoy!! \n- Do not carry illegal substances. There isn\'t a better drug than Music! \n- Keep a smile and respect other patrons, artists, staff, bouncers, and the community. \n- Please refrain from using the phrase \'You don\'t know who I am\'. We are all Humans here and unfortunately, pets are not allowed.\n- You are being shot by our cameras. No guns and ammunition in the club allowed.\n- Violence will not be tolerated. Keep P.L.U.R on your Mind: Peace, Love, Unity & Respect.\n- Always toast before a shot. Have fun and stay classy.\n- You are responsible for your valuable belongings, that includes your partners. Keep an eye!\n- Open footwear is not allowed. No one likes an “Ouch” moment!\n- Rights of admission reserved for the ones who deserve.\n- You are important to us. Do not Drink & Drive.';
+  static String clubRules = '- entry is restricted to the age of 21+ \n- we are a community. respect everyone and their space on the floor. don’t be a killjoy!! \n- do not carry illegal substances. there isn\'t a better drug than music! \n- keep a smile and respect other patrons, artists, staff, bouncers, and the community. \n- please refrain from using the phrase \'you don\'t know who I am\'. we are all humans here and unfortunately, pets are not allowed.\n- you are being shot by our cameras. no guns and ammunition in the club allowed.\n- violence will not be tolerated. keep P.L.U.R on your mind: peace, love, unity & respect.\n- always toast before a shot. have fun and stay classy.\n- you are responsible for your valuable belongings, that includes your partners. Keep an eye!\n- Open footwear is not allowed. No one likes an “Ouch” moment!\n- Rights of admission reserved for the ones who deserve.\n- You are important to us. Do not Drink & Drive.';
   static String guestListRules = 'guest list shuts at 11 pm on the day of the event. club entry charges apply.';
 
 }

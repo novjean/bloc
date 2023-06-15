@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:delayed_display/delayed_display.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl_phone_field/country_picker_dialog.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:multi_select_flutter/dialog/multi_select_dialog_field.dart';
@@ -21,6 +22,7 @@ import '../../helpers/dummy.dart';
 import '../../helpers/firestore_helper.dart';
 import '../../helpers/fresh.dart';
 import '../../main.dart';
+import '../../routes/app_route_constants.dart';
 import '../../utils/constants.dart';
 import '../../utils/date_time_utils.dart';
 import '../../utils/logx.dart';
@@ -116,7 +118,7 @@ class _CelebrationAddEditScreenState extends State<CelebrationAddEditScreen> {
       '1500'
     ];
 
-    for(int i=1; i<=12; i++){
+    for (int i = 1; i <= 12; i++) {
       durationHours.add(i.toString());
     }
     sDurationHours = widget.celebration.durationHours.toString();
@@ -130,7 +132,7 @@ class _CelebrationAddEditScreenState extends State<CelebrationAddEditScreen> {
       sArrivalTime = TimeOfDay.now();
     } else {
       sArrivalTime =
-          DateTimeUtils.stringToTimeOfDay(widget.celebration.arrivalTime);
+          DateTimeUtils.convertStringToTime(widget.celebration.arrivalTime);
     }
 
     FirestoreHelper.pullProductsByBottle(Constants.blocServiceId).then((res) {
@@ -441,7 +443,6 @@ class _CelebrationAddEditScreenState extends State<CelebrationAddEditScreen> {
                   ],
                 ),
               ),
-
               const SizedBox(height: 24),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 32.0),
@@ -496,7 +497,8 @@ class _CelebrationAddEditScreenState extends State<CelebrationAddEditScreen> {
                                   sDurationHours = newValue!;
                                   widget.celebration = widget.celebration
                                       .copyWith(
-                                      durationHours: int.parse(sDurationHours));
+                                          durationHours:
+                                              int.parse(sDurationHours));
                                   state.didChange(newValue);
                                 });
                               },
@@ -515,7 +517,6 @@ class _CelebrationAddEditScreenState extends State<CelebrationAddEditScreen> {
                   ],
                 ),
               ),
-
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 32.0),
                 child: Column(
@@ -706,7 +707,7 @@ class _CelebrationAddEditScreenState extends State<CelebrationAddEditScreen> {
                               Navigator.of(context).pop();
                             },
                           ),
-                          const SizedBox(height: 10),
+                          const SizedBox(height: 15),
                           ButtonWidget(
                               text: 'delete',
                               onClicked: () {
@@ -718,7 +719,8 @@ class _CelebrationAddEditScreenState extends State<CelebrationAddEditScreen> {
                         ],
                       )
                     : ButtonWidget(
-                        text: 'confim',
+                        height: 50,
+                        text: 'confirm',
                         onClicked: () {
                           if (UserPreferences.isUserLoggedIn()) {
                             showConfirmationDialog(context, false);
@@ -1090,8 +1092,10 @@ class _CelebrationAddEditScreenState extends State<CelebrationAddEditScreen> {
                 }
 
                 Navigator.of(ctx).pop();
-                Navigator.of(context).pushReplacement(MaterialPageRoute(
-                    builder: (context) => MainScreen(user: bloc_user)));
+
+                UserPreferences.setUser(bloc_user);
+                GoRouter.of(context)
+                    .pushNamed(MyAppRouteConstants.homeRouteName);
               },
             ),
           ],
@@ -1168,8 +1172,8 @@ class _CelebrationAddEditScreenState extends State<CelebrationAddEditScreen> {
 
     setState(() {
       sArrivalTime = pickedTime!;
-      widget.celebration = widget.celebration
-          .copyWith(arrivalTime: sArrivalTime.format(context));
+      widget.celebration = widget.celebration.copyWith(
+          arrivalTime: DateTimeUtils.convertTimeToString(sArrivalTime));
     });
   }
 

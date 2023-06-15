@@ -9,6 +9,7 @@ import '../../db/entity/bloc.dart';
 import '../../screens/bloc/bloc_menu_screen.dart';
 import '../../screens/user/celebration_add_edit_screen.dart';
 import '../../screens/user/reservation_add_edit_screen.dart';
+import '../../utils/constants.dart';
 import '../../utils/logx.dart';
 
 class BlocSlideItem extends StatefulWidget {
@@ -33,7 +34,7 @@ class _BlocSlideItemState extends State<BlocSlideItem> {
     FirestoreHelper.pullBlocService(widget.bloc.id).then((res) {
       if (res.docs.isNotEmpty) {
         Logx.i(_TAG,
-            "successfully pulled in bloc service for id " + widget.bloc.id);
+            "successfully pulled in bloc service for id ${widget.bloc.id}");
 
         List<BlocService> blocServices = [];
         for (int i = 0; i < res.docs.length; i++) {
@@ -52,7 +53,7 @@ class _BlocSlideItemState extends State<BlocSlideItem> {
           Logx.em(_TAG, 'state is not mounted');
         }
       } else {
-        Logx.em(_TAG, 'no bloc service found for id ' + widget.bloc.id);
+        Logx.em(_TAG, 'no bloc service found for id ${widget.bloc.id}');
         setState(() {
           _isBlocServiceLoading = false;
         });
@@ -75,10 +76,10 @@ class _BlocSlideItemState extends State<BlocSlideItem> {
           : Hero(
               tag: widget.bloc.id,
               child: Card(
-                elevation: 1,
-                color: Theme.of(context).primaryColor,
+                elevation: 2,
+                color: Constants.primary,
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(0.0)),
+                    borderRadius: BorderRadius.circular(15.0)),
                 child: SizedBox(
                   width: MediaQuery.of(context).size.width - 10,
                   child: Column(
@@ -103,14 +104,12 @@ class _BlocSlideItemState extends State<BlocSlideItem> {
                                 aspectRatio: 2.0,
                               ),
                               items: widget.bloc.imageUrls
-                                  .map((item) => Container(
-                                        child: Center(
-                                            child: Image.network(item,
-                                                fit: BoxFit.fitWidth,
-                                                width: MediaQuery.of(context)
-                                                    .size
-                                                    .width)),
-                                      ))
+                                  .map((item) => Center(
+                                      child: Image.network(item,
+                                          fit: BoxFit.cover,
+                                          width: MediaQuery.of(context)
+                                              .size
+                                              .width)))
                                   .toList(),
                             )),
                       ),
@@ -122,7 +121,7 @@ class _BlocSlideItemState extends State<BlocSlideItem> {
                             padding: const EdgeInsets.symmetric(horizontal: 10.0),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              crossAxisAlignment: CrossAxisAlignment.end,
+                              crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                 SizedBox(
                                   height: 50,

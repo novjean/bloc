@@ -10,6 +10,7 @@ import 'package:upgrader/upgrader.dart';
 import '../db/entity/bloc.dart';
 import '../db/entity/guest_wifi.dart';
 import '../db/entity/party.dart';
+import '../db/entity/party_guest.dart';
 import '../db/shared_preferences/user_preferences.dart';
 import '../helpers/dummy.dart';
 import '../helpers/firestore_helper.dart';
@@ -22,7 +23,6 @@ import '../widgets/search_card.dart';
 import '../widgets/store_badge_item.dart';
 import '../widgets/ui/dark_button_widget.dart';
 import '../widgets/ui/toaster.dart';
-import 'experimental/trending.dart';
 
 class HomeScreen extends StatefulWidget {
   HomeScreen({key}) : super(key: key);
@@ -39,6 +39,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
   GuestWifi mGuestWifi = Dummy.getDummyGuestWifi(Constants.blocServiceId);
   var _isGuestWifiDetailsLoading = true;
+
+  List<PartyGuest> mPartyGuestRequests = [];
+  var _isPartyGuestsLoading = true;
 
   ScrollController _scrollController = ScrollController();
 
@@ -122,6 +125,34 @@ class _HomeScreenState extends State<HomeScreen> {
             }
           });
 
+    FirestoreHelper.pullGuestListRequested(UserPreferences.myUser.id)
+        .then((res) {
+      Logx.i(_TAG, "successfully pulled in requested guest list");
+
+      if (res.docs.isNotEmpty) {
+        // found party guests
+        List<PartyGuest> partyGuestRequests = [];
+        for (int i = 0; i < res.docs.length; i++) {
+          DocumentSnapshot document = res.docs[i];
+          Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+          final PartyGuest partyGuest = Fresh.freshPartyGuestMap(data, false);
+          partyGuestRequests.add(partyGuest);
+        }
+        if(mounted) {
+          setState(() {
+            mPartyGuestRequests = partyGuestRequests;
+            _isPartyGuestsLoading = false;
+          });
+        }
+      } else {
+        Logx.i(_TAG, 'no party guest requests found!');
+        const SizedBox();
+        setState(() {
+          _isPartyGuestsLoading = false;
+        });
+      }
+    });
+
     FirestoreHelper.pullGuestWifi(Constants.blocServiceId).then((res) {
       Logx.i(_TAG, "successfully pulled in guest wifi");
 
@@ -169,9 +200,10 @@ class _HomeScreenState extends State<HomeScreen> {
           backgroundColor: Constants.background,
           resizeToAvoidBottomInset: false,
           body: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
               _isBlocsLoading ? const LoadingWidget() : _displayBlocs(context),
-              _displayPartiesNFooter(context),
+              _isPartyGuestsLoading? const LoadingWidget(): _displayPartiesNFooter(context),
             ],
           ),
         ),
@@ -197,20 +229,20 @@ class _HomeScreenState extends State<HomeScreen> {
 
   buildWifi(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 5),
+      margin: const EdgeInsets.symmetric(horizontal: 10),
       decoration: BoxDecoration(
         border: Border.all(),
         color: Theme.of(context).primaryColor,
-        borderRadius: const BorderRadius.all(Radius.circular(5)),
+        borderRadius: const BorderRadius.all(Radius.circular(15)),
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            padding: const EdgeInsets.only(top: 10, left: 10.0, right: 0.0),
+            padding: const EdgeInsets.only(top: 10, left: 10.0),
             child: Text(
-              "connect",
+              "connect 🌀",
               style: TextStyle(
                 fontSize: 24.0,
                 color: Theme.of(context).primaryColorDark,
@@ -259,39 +291,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  displayStoreBadge(BuildContext context) {
-    return SizedBox(
-      height: 100,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          Container(
-            height: 100,
-            decoration: BoxDecoration(
-              border: Border.all(color: Theme.of(context).primaryColor),
-              borderRadius: const BorderRadius.all(Radius.circular(0)),
-              image: const DecorationImage(
-                image: AssetImage('assets/images/google-play-badge.png'),
-                fit: BoxFit.fitWidth,
-              ),
-            ),
-          ),
-          Container(
-            height: 100,
-            decoration: BoxDecoration(
-              border: Border.all(color: Theme.of(context).primaryColor),
-              borderRadius: const BorderRadius.all(Radius.circular(0)),
-              image: const DecorationImage(
-                image: AssetImage('assets/images/google-play-badge.png'),
-                fit: BoxFit.fitWidth,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   _displayPartiesNFooter(BuildContext context) {
     int timeNow = Timestamp.now().millisecondsSinceEpoch;
 
@@ -325,7 +324,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ? const LoadingWidget()
                       : buildWifi(context)
                   : const SizedBox(),
-              const SizedBox(height: 10.0),
+              const SizedBox(height: 15.0),
               kIsWeb ? const StoreBadgeItem() : const SizedBox(),
               const SizedBox(height: 10.0),
               Footer(),
@@ -341,22 +340,33 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Expanded(
       child: ListView.builder(
+        shrinkWrap: true,
         itemCount: parties.length,
         controller: _scrollController,
         scrollDirection: Axis.vertical,
         itemBuilder: (BuildContext context, int index) {
           Party party = parties[index];
 
+          bool isGuestListRequested = false;
+          for (PartyGuest partyGuest in mPartyGuestRequests) {
+            if (partyGuest.partyId == party.id) {
+              isGuestListRequested = true;
+              break;
+            }
+          }
+
           if (parties.length == 1) {
-            _displayLastParty(party);
+            _displayLastParty(party, isGuestListRequested);
             return Column(
               children: [
                 PartyBanner(
                   party: party,
                   isClickable: true,
                   shouldShowButton: true,
+                  isGuestListRequested: isGuestListRequested,
                 ),
                 const SizedBox(height: 10.0),
+
                 UserPreferences.isUserLoggedIn()
                     ? _isGuestWifiDetailsLoading
                         ? const LoadingWidget()
@@ -377,6 +387,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     party: party,
                     isClickable: true,
                     shouldShowButton: true,
+                    isGuestListRequested: isGuestListRequested,
                   ),
                   const SizedBox(height: 10.0),
                   UserPreferences.isUserLoggedIn()
@@ -395,6 +406,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 party: party,
                 isClickable: true,
                 shouldShowButton: true,
+                isGuestListRequested: isGuestListRequested,
               );
             }
           }
@@ -403,13 +415,14 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  _displayLastParty(Party party) {
+  _displayLastParty(Party party, bool isGuestListRequested) {
     return Column(
       children: [
         PartyBanner(
           party: party,
           isClickable: true,
           shouldShowButton: true,
+          isGuestListRequested: isGuestListRequested,
         ),
         const SizedBox(height: 10.0),
         UserPreferences.isUserLoggedIn()
@@ -500,38 +513,38 @@ class _HomeScreenState extends State<HomeScreen> {
   // }
 
   /** Unimplemented **/
-  buildRestaurantRow(String restaurant, BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: <Widget>[
-        Text(
-          "$restaurant",
-          style: TextStyle(
-            fontSize: 20.0,
-            fontWeight: FontWeight.w800,
-          ),
-        ),
-        ElevatedButton(
-          child: Text(
-            "See all (9)",
-            style: TextStyle(
-              color: Theme.of(context).accentColor,
-            ),
-          ),
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (BuildContext context) {
-                  return Trending();
-                },
-              ),
-            );
-          },
-        ),
-      ],
-    );
-  }
+  // buildRestaurantRow(String restaurant, BuildContext context) {
+  //   return Row(
+  //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //     children: <Widget>[
+  //       Text(
+  //         "$restaurant",
+  //         style: TextStyle(
+  //           fontSize: 20.0,
+  //           fontWeight: FontWeight.w800,
+  //         ),
+  //       ),
+  //       ElevatedButton(
+  //         child: Text(
+  //           "See all (9)",
+  //           style: TextStyle(
+  //             color: Theme.of(context).accentColor,
+  //           ),
+  //         ),
+  //         onPressed: () {
+  //           Navigator.push(
+  //             context,
+  //             MaterialPageRoute(
+  //               builder: (BuildContext context) {
+  //                 return Trending();
+  //               },
+  //             ),
+  //           );
+  //         },
+  //       ),
+  //     ],
+  //   );
+  // }
 
   buildSearchBar(BuildContext context) {
     return Container(

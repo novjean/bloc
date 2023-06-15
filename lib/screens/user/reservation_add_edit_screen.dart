@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:delayed_display/delayed_display.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl_phone_field/country_picker_dialog.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:multi_select_flutter/dialog/multi_select_dialog_field.dart';
@@ -18,14 +19,16 @@ import '../../helpers/dummy.dart';
 import '../../helpers/firestore_helper.dart';
 import '../../helpers/fresh.dart';
 import '../../main.dart';
+import '../../routes/app_route_constants.dart';
 import '../../utils/constants.dart';
 import '../../utils/date_time_utils.dart';
 import '../../utils/logx.dart';
 import '../../utils/string_utils.dart';
 import '../../widgets/ui/button_widget.dart';
+import '../../widgets/ui/dark_button_widget.dart';
 import '../../widgets/ui/dark_textfield_widget.dart';
 import '../../widgets/ui/toaster.dart';
-import '../main_screen.dart';
+import '../box_office/box_office_screen.dart';
 
 class ReservationAddEditScreen extends StatefulWidget {
   Reservation reservation;
@@ -95,7 +98,7 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
       sArrivalTime = TimeOfDay.now();
     } else {
       sArrivalTime =
-          DateTimeUtils.stringToTimeOfDay(widget.reservation.arrivalTime);
+          DateTimeUtils.convertStringToTime(widget.reservation.arrivalTime);
     }
 
     FirestoreHelper.pullProductsByBottle(Constants.blocServiceId).then((res) {
@@ -205,7 +208,7 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
                       completePhoneNumber = phone.completeNumber;
                     },
                     onCountryChanged: (country) {
-                      Logx.i(_TAG, 'country changed to: ' + country.name);
+                      Logx.i(_TAG, 'country changed to: ${country.name}');
                     },
                   ),
                 ],
@@ -488,6 +491,7 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   ButtonWidget(
+                    height: 50,
                     text: 'save',
                     onClicked: () {
                       Reservation freshReservation =
@@ -497,8 +501,9 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
                       Navigator.of(context).pop();
                     },
                   ),
-                  const SizedBox(height: 10),
-                  ButtonWidget(
+                  const SizedBox(height: 36),
+                  DarkButtonWidget(
+                    height: 50,
                       text: 'delete',
                       onClicked: () {
                         FirestoreHelper.deleteReservation(
@@ -510,6 +515,7 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
               )
             : ButtonWidget(
                 text: 'reserve',
+                height: 50,
                 onClicked: () {
                   if (UserPreferences.isUserLoggedIn()) {
                     showConfirmationDialog(context, false);
@@ -518,7 +524,7 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
                   }
                 },
               ),
-        const SizedBox(height: 24),
+        const SizedBox(height: 48),
       ],
     );
   }
@@ -879,8 +885,14 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
                 }
 
                 Navigator.of(ctx).pop();
-                Navigator.of(context).pushReplacement(MaterialPageRoute(
-                    builder: (context) => MainScreen(user: bloc_user)));
+
+                UserPreferences.setUser(bloc_user);
+                GoRouter.of(context)
+                    .pushNamed(MyAppRouteConstants.homeRouteName);
+
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => BoxOfficeScreen()));
+
               },
             ),
           ],
@@ -957,8 +969,9 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
 
     setState(() {
       sArrivalTime = pickedTime!;
+
       widget.reservation = widget.reservation
-          .copyWith(arrivalTime: sArrivalTime.format(context));
+          .copyWith(arrivalTime: DateTimeUtils.convertTimeToString(sArrivalTime));
     });
   }
 

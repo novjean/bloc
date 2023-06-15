@@ -17,13 +17,13 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   void initState() {
-    super.initState();
     TokenMonitor((token) {
       _token = token;
       return token == null
           ? const SizedBox()
           : Text(token, style: const TextStyle(fontSize: 12));
     });
+    super.initState();
   }
 
   @override

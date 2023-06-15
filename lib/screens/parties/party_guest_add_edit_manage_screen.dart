@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:bloc/db/entity/history_music.dart';
 import 'package:bloc/db/entity/reservation.dart';
+import 'package:bloc/screens/box_office/box_office_screen.dart';
 import 'package:bloc/utils/date_time_utils.dart';
 import 'package:bloc/widgets/ui/dark_button_widget.dart';
 import 'package:bloc/widgets/ui/loading_widget.dart';
@@ -11,6 +12,7 @@ import 'package:delayed_display/delayed_display.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl_phone_field/country_picker_dialog.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:path_provider/path_provider.dart';
@@ -18,6 +20,7 @@ import 'package:pinput/pinput.dart';
 import 'package:http/http.dart' as http;
 import 'package:share_plus/share_plus.dart';
 
+import '../../api/apis.dart';
 import '../../db/entity/challenge.dart';
 import '../../db/entity/party.dart';
 import '../../db/entity/party_guest.dart';
@@ -27,6 +30,8 @@ import '../../helpers/dummy.dart';
 import '../../helpers/firestore_helper.dart';
 import '../../helpers/fresh.dart';
 import '../../main.dart';
+import '../../routes/app_route_constants.dart';
+import '../../utils/challenge_utils.dart';
 import '../../utils/constants.dart';
 import '../../utils/file_utils.dart';
 import '../../utils/logx.dart';
@@ -90,7 +95,6 @@ class _PartyGuestAddEditManageScreenState
   final focusNode = FocusNode();
 
   List<Challenge> challenges = [];
-
   bool isChallengesLoading = true;
 
   @override
@@ -187,6 +191,7 @@ class _PartyGuestAddEditManageScreenState
                 party: widget.party,
                 isClickable: false,
                 shouldShowButton: false,
+                isGuestListRequested: false,
               ),
               const SizedBox(height: 24),
               Padding(
@@ -217,78 +222,6 @@ class _PartyGuestAddEditManageScreenState
                   },
                 ),
               ),
-              widget.task == 'manage'
-                  ? Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 32.0),
-                    child: Column(
-                        children: [
-                          const SizedBox(height: 24),
-                          DarkTextFieldWidget(
-                            label: 'banned ',
-                            text: bloc_user.isBanned.toString(),
-                            onChanged: (value) {},
-                          ),
-                          const SizedBox(height: 24),
-                          DarkTextFieldWidget(
-                            label: 'phone number \*',
-                            text: bloc_user.phoneNumber.toString(),
-                            onChanged: (value) {},
-                          ),
-                          const SizedBox(height: 24),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.only(bottom: 10),
-                                child: Text(
-                                  'challenge level \*',
-                                  style: TextStyle(
-                                      color:
-                                          Theme.of(context).primaryColorLight,
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                              ),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  ButtonWidget(
-                                    text: '  down  ',
-                                    onClicked: () {
-                                      int level = bloc_user.challengeLevel;
-                                      level--;
-                                      setState(() {
-                                        bloc_user = bloc_user.copyWith(
-                                            challengeLevel: level);
-                                        FirestoreHelper.pushUser(bloc_user);
-                                      });
-                                    },
-                                  ),
-                                  DarkButtonWidget(
-                                    text: bloc_user.challengeLevel.toString(),
-                                    onClicked: () {},
-                                  ),
-                                  ButtonWidget(
-                                    text: 'level up',
-                                    onClicked: () {
-                                      int level = bloc_user.challengeLevel;
-                                      level++;
-                                      setState(() {
-                                        bloc_user = bloc_user.copyWith(
-                                            challengeLevel: level);
-                                        FirestoreHelper.pushUser(bloc_user);
-                                      });
-                                    },
-                                  ),
-                                ],
-                              )
-                            ],
-                          ),
-                        ],
-                      ),
-                  )
-                  : const SizedBox(),
               !isLoggedIn
                   ? Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 32.0),
@@ -355,7 +288,7 @@ class _PartyGuestAddEditManageScreenState
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 32),
                 child: DarkTextFieldWidget(
-                    label: 'email${widget.party.isEmailRequired ? ' \*' : ''}',
+                    label: 'email${widget.party.isEmailRequired ? ' *' : ''}',
                     text: bloc_user.email,
                     onChanged: (email) {
                       bloc_user = bloc_user.copyWith(email: email);
@@ -595,6 +528,132 @@ class _PartyGuestAddEditManageScreenState
                 ),
               ),
               const SizedBox(height: 24),
+              widget.task == 'manage'
+                  ? Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 32.0),
+                child: Column(
+                  children: [
+                    const SizedBox(height: 24),
+                    DarkTextFieldWidget(
+                      label: 'phone number *',
+                      text: bloc_user.phoneNumber.toString(),
+                      onChanged: (value) {},
+                    ),
+                    const SizedBox(height: 24),
+                    DarkTextFieldWidget(
+                      label: 'challenge task',
+                      text: findChallenge().title,
+                      onChanged: (value) {},
+                    ),
+                    const SizedBox(height: 24),
+                    DarkTextFieldWidget(
+                      label: 'challenge url',
+                      text: findChallengeUrl(),
+                      onChanged: (value) {},
+                    ),
+                    const SizedBox(height: 24),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 10),
+                          child: Text(
+                            'challenge level *',
+                            style: TextStyle(
+                                color:
+                                Theme.of(context).primaryColorLight,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        Row(
+                          mainAxisAlignment:
+                          MainAxisAlignment.spaceBetween,
+                          children: [
+                            ButtonWidget(
+                              text: '  down  ',
+                              onClicked: () {
+                                int level = bloc_user.challengeLevel;
+                                level--;
+                                setState(() {
+                                  bloc_user = bloc_user.copyWith(
+                                      challengeLevel: level);
+                                  FirestoreHelper.pushUser(bloc_user);
+                                });
+                              },
+                            ),
+                            DarkButtonWidget(
+                              text: bloc_user.challengeLevel.toString(),
+                              onClicked: () {},
+                            ),
+                            ButtonWidget(
+                              text: 'level up',
+                              onClicked: () {
+                                int level = bloc_user.challengeLevel;
+                                level++;
+                                setState(() {
+                                  bloc_user = bloc_user.copyWith(
+                                      challengeLevel: level);
+                                  FirestoreHelper.pushUser(bloc_user);
+                                });
+                              },
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 24),
+                        Row(
+                          children: [
+                            const Text('supported: ', style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                              color: Constants.lightPrimary,
+                            )),
+                            Checkbox(
+                              value: widget.partyGuest.isChallengeClicked,
+                              onChanged: (value) {
+                                widget.partyGuest = widget.partyGuest.copyWith(isChallengeClicked: value);
+                                PartyGuest freshPartyGuest = Fresh.freshPartyGuest(widget.partyGuest);
+                                FirestoreHelper.pushPartyGuest(freshPartyGuest);
+
+                                Logx.i(_TAG, 'guest ${'${widget.partyGuest.name} '} : supported $value');
+
+                                setState(() {
+                                });
+                              },
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 12),
+                        Row(
+                          children: [
+                            const Text('banned: ', style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                              color: Constants.lightPrimary,
+                            )),
+                            Checkbox(
+                              value: bloc_user.isBanned,
+                              onChanged: (value) {
+                                bloc_user = bloc_user.copyWith(isBanned: value);
+                                blocUser.User freshUser = Fresh.freshUser(bloc_user);
+                                FirestoreHelper.pushUser(freshUser);
+
+                                Logx.i(_TAG, 'user ${'${bloc_user.name} ${bloc_user.surname}'} : banned $value');
+                                Toaster.longToast('user ${'${bloc_user.name} ${bloc_user.surname}'} : banned $value');
+
+                                setState(() {
+                                });
+                              },
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              )
+                  : const SizedBox(),
+              const SizedBox(height: 24),
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
@@ -612,10 +671,42 @@ class _PartyGuestAddEditManageScreenState
                   ),
                 ],
               ),
+              widget.task == 'manage'
+                  ? Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 32),
+                    child: ButtonWidget(
+                      text: 'approve',
+                      onClicked: () {
+                        widget.partyGuest = widget.partyGuest.copyWith(isApproved: true);
+                        FirestoreHelper.pushPartyGuest(widget.partyGuest);
+
+                        //here we should notify the user
+                        if(bloc_user.fcmToken.isNotEmpty){
+                          String title = widget.party.name;
+                          String message = 'guest list request has been approved, see you soon!';
+
+                          //send a notification
+                          Apis.sendPushNotification(bloc_user.fcmToken, title, message);
+                        }
+
+                        Logx.i(_TAG, 'party guest ${widget.partyGuest.name} is approved');
+                        Toaster.longToast('party guest ${widget.partyGuest.name} is approved');
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                ],
+              )
+                  : const SizedBox(),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 32),
                 child: ButtonWidget(
-                  text: (widget.task == 'edit') ? 'save changes' : 'join list',
+                  height: 50,
+                  text: (widget.task == 'edit' || widget.task == 'manage') ? 'save changes' : 'join list',
                   onClicked: () {
                     if (isDataValid()) {
                       if (isLoggedIn) {
@@ -638,7 +729,8 @@ class _PartyGuestAddEditManageScreenState
                         const SizedBox(height: 24),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 32),
-                          child: ButtonWidget(
+                          child: DarkButtonWidget(
+                            height: 50,
                             text: 'delete',
                             onClicked: () {
                               FirestoreHelper.deletePartyGuest(
@@ -655,7 +747,7 @@ class _PartyGuestAddEditManageScreenState
                       ],
                     )
                   : const SizedBox(),
-              const SizedBox(height: 24),
+              const SizedBox(height: 48),
             ],
           );
   }
@@ -702,8 +794,9 @@ class _PartyGuestAddEditManageScreenState
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Text(
-                        widget.party.eventName + ' | ' + widget.party.name,
-                        style: const TextStyle(fontSize: 18),
+                        '${widget.party.eventName} | ${widget.party.name}',
+                        style: const TextStyle(fontSize: 18,
+                            overflow: TextOverflow.ellipsis),
                       ),
                     ],
                   ),
@@ -812,8 +905,12 @@ class _PartyGuestAddEditManageScreenState
                 } else {
                   Navigator.of(context).pop();
 
-                  Navigator.of(context).pushReplacement(MaterialPageRoute(
-                      builder: (context) => MainScreen(user: bloc_user)));
+                  UserPreferences.setUser(bloc_user);
+                  GoRouter.of(context)
+                      .pushNamed(MyAppRouteConstants.homeRouteName);
+
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => BoxOfficeScreen()));
                 }
               },
             ),
@@ -832,8 +929,12 @@ class _PartyGuestAddEditManageScreenState
       // all challenges are completed
       Navigator.of(context).pop();
 
-      Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => MainScreen(user: bloc_user)));
+      UserPreferences.setUser(bloc_user);
+      GoRouter.of(context)
+          .pushNamed(MyAppRouteConstants.homeRouteName);
+
+      Navigator.of(context).push(MaterialPageRoute(
+          builder: (context) => BoxOfficeScreen()));
     } else {
       return showDialog(
         context: context,
@@ -899,15 +1000,14 @@ class _PartyGuestAddEditManageScreenState
                   switch (challenge.level) {
                     case 3:{
                       //android download
-                      final uri = Uri.parse(
-                          'https://play.google.com/store/apps/details?id=com.novatech.bloc');
+                      final uri = Uri.parse(ChallengeUtils.urlBlocPlayStore);
                       NetworkUtils.launchInBrowser(uri);
                       break;
                     }
                     default:
                       {
                         final uri =
-                        Uri.parse('https://www.instagram.com/bloc.india/');
+                        Uri.parse(ChallengeUtils.urlBlocInsta);
                         NetworkUtils.launchInBrowser(uri);
                         break;
                       }
@@ -929,24 +1029,29 @@ class _PartyGuestAddEditManageScreenState
                     case 1:
                       {
                         final uri =
-                            Uri.parse('https://www.instagram.com/bloc.india/');
+                            Uri.parse(ChallengeUtils.urlBlocInsta);
                         NetworkUtils.launchInBrowser(uri);
                         break;
                       }
                     case 2:
                       {
-                        final uri =
-                        Uri.parse('https://www.instagram.com/freq.club/');
+                        final uri = Uri.parse(ChallengeUtils.urlFreqInsta);
                         NetworkUtils.launchInBrowser(uri);
                         break;
                       }
                       case 3:{
                         //ios download
                         final uri = Uri.parse(
-                            'https://apps.apple.com/in/app/bloc-community/id1672736309');
+                            ChallengeUtils.urlBlocAppStore);
                         NetworkUtils.launchInBrowser(uri);
                         break;
                       }
+                    case 4:{
+                      //share or invite your friends
+                      final uri = Uri.parse(widget.party.instagramUrl);
+                      NetworkUtils.launchInBrowser(uri);
+                      break;
+                    }
                     case 100:
                       {
                         final urlImage = widget.party.storyImageUrl.isNotEmpty
@@ -1045,8 +1150,14 @@ class _PartyGuestAddEditManageScreenState
                 Navigator.of(ctx).pop();
                 Navigator.of(context).pop();
 
-                Navigator.of(context).pushReplacement(MaterialPageRoute(
-                    builder: (context) => MainScreen(user: bloc_user)));
+                UserPreferences.setUser(bloc_user);
+                GoRouter.of(context)
+                    .pushNamed(MyAppRouteConstants.homeRouteName);
+
+                // Navigator.of(context).pushReplacement(MaterialPageRoute(
+                //     builder: (context) => MainScreen()));
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => BoxOfficeScreen()));
               },
             ),
             TextButton(
@@ -1066,8 +1177,12 @@ class _PartyGuestAddEditManageScreenState
                 Navigator.of(ctx).pop();
                 Navigator.of(context).pop();
 
-                Navigator.of(context).pushReplacement(MaterialPageRoute(
-                    builder: (context) => MainScreen(user: bloc_user)));
+                UserPreferences.setUser(bloc_user);
+                GoRouter.of(context)
+                    .pushNamed(MyAppRouteConstants.homeRouteName);
+
+                // Navigator.of(context).pushReplacement(MaterialPageRoute(
+                //     builder: (context) => MainScreen()));
 
                 Navigator.of(context).push(
                   MaterialPageRoute(
@@ -1088,17 +1203,27 @@ class _PartyGuestAddEditManageScreenState
   Challenge findChallenge() {
     Challenge returnChallenge = challenges.last;
 
-    for (Challenge challenge in challenges) {
-      if (challenge.level >= bloc_user.challengeLevel) {
-        return challenge;
+    if(widget.party.overrideChallengeNum>0){
+      for (Challenge challenge in challenges) {
+        if (challenge.level == widget.party.overrideChallengeNum) {
+          return challenge;
+        }
+      }
+    } else {
+      for (Challenge challenge in challenges) {
+        if (challenge.level >= bloc_user.challengeLevel) {
+          return challenge;
+        }
       }
     }
+
+
     return returnChallenge;
   }
 
   /** phone registration **/
   void _verifyPhone() async {
-    Logx.i(_TAG, '_verifyPhone: registering ' + completePhoneNumber.toString());
+    Logx.i(_TAG, '_verifyPhone: registering $completePhoneNumber');
 
     if (kIsWeb) {
       await FirebaseAuth.instance
@@ -1106,8 +1231,7 @@ class _PartyGuestAddEditManageScreenState
           .then((firebaseUser) {
         Logx.i(
             _TAG,
-            'signInWithPhoneNumber: user verification id ' +
-                firebaseUser.verificationId);
+            'signInWithPhoneNumber: user verification id ${firebaseUser.verificationId}');
 
         showOTPDialog(context);
 
@@ -1299,14 +1423,12 @@ class _PartyGuestAddEditManageScreenState
                       Logx.i(_TAG, 'user is in firebase auth');
                       Logx.i(
                           _TAG,
-                          'checking for bloc registration, id ' +
-                              value.user!.uid);
+                          'checking for bloc registration, id ${value.user!.uid}');
 
                       FirestoreHelper.pullUser(value.user!.uid).then((res) {
                         Logx.i(
                             _TAG,
-                            "successfully retrieved bloc user for id " +
-                                value.user!.uid);
+                            "successfully retrieved bloc user for id ${value.user!.uid}");
 
                         if (res.docs.isEmpty) {
                           Logx.i(_TAG,
@@ -1317,7 +1439,7 @@ class _PartyGuestAddEditManageScreenState
                               StringUtils.getInt(value.user!.phoneNumber!);
 
                           FirestoreHelper.pushUser(bloc_user);
-                          Logx.i(_TAG, 'registered user ' + bloc_user.id);
+                          Logx.i(_TAG, 'registered user ${bloc_user.id}');
 
                           UserPreferences.setUser(bloc_user);
                           widget.partyGuest.guestId = bloc_user.id;
@@ -1354,7 +1476,7 @@ class _PartyGuestAddEditManageScreenState
                     }
                   });
                 } catch (e) {
-                  Logx.em(_TAG, 'otp error ' + e.toString());
+                  Logx.em(_TAG, 'otp error $e');
 
                   String exception = e.toString();
                   if (exception.contains('session-expired')) {
@@ -1401,6 +1523,15 @@ class _PartyGuestAddEditManageScreenState
         ],
       ),
     );
+  }
+
+  findChallengeUrl() {
+    String url = ChallengeUtils.challengeUrl(findChallenge());
+
+    if(url == ChallengeUtils.partyInsta){
+      url = widget.party.instagramUrl;
+    }
+    return url;
   }
 }
 

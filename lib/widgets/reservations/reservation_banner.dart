@@ -87,12 +87,13 @@ class ReservationBanner extends StatelessWidget {
                     ),
                     Padding(
                       padding: const EdgeInsets.only(
-                          right: 5.0, top: 10, bottom: 10),
+                          right: 5.0, top: 10, bottom: 5),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           ButtonWidget(
-                            text: 'edit',
+                            height: 50,
+                            text: '✏️ edit',
                             onClicked: () {
                               Navigator.of(context).push(MaterialPageRoute(
                                   builder: (ctx) => ReservationAddEditScreen(

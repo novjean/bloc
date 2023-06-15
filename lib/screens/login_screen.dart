@@ -8,6 +8,7 @@ import 'package:delayed_display/delayed_display.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl_phone_field/country_picker_dialog.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 
@@ -16,6 +17,7 @@ import '../helpers/dummy.dart';
 import '../helpers/firestore_helper.dart';
 import '../helpers/fresh.dart';
 import '../main.dart';
+import '../routes/app_route_constants.dart';
 import '../utils/logx.dart';
 import '../utils/string_utils.dart';
 import '../widgets/ui/toaster.dart';
@@ -65,8 +67,6 @@ class _LoginScreenState extends State<LoginScreen> {
             }
           }
 
-          Logx.i(_TAG, 'user snapshot received');
-
           if (userSnapshot.hasData) {
             Logx.i(_TAG, 'user snapshot has data');
 
@@ -87,10 +87,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   }
 
                   if (snapshot.hasError) {
-                    Logx.em(
-                        _TAG,
-                        'user snapshot has error: ' +
-                            snapshot.error.toString());
+                    Logx.em(_TAG, 'user snapshot has error: ${snapshot.error}');
                     return signInWidget();
                   }
 
@@ -107,7 +104,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     final blocUser.User user = Fresh.freshUserMap(data, true);
                     UserPreferences.setUser(user);
 
-                    return MainScreen(user: user);
+                    return MainScreen();
                   }
                   Logx.i(_TAG, 'loading user...');
                   return const LoadingWidget();
@@ -117,7 +114,7 @@ class _LoginScreenState extends State<LoginScreen> {
           } else {
             if (widget.shouldTriggerSkip) {
               _verifyUsingSkipPhone();
-              return LoadingWidget();
+              return const LoadingWidget();
             } else {
               return signInWidget();
             }
@@ -179,7 +176,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 }
               },
               onCountryChanged: (country) {
-                Logx.i(_TAG, 'country changed to: ' + country.name);
+                Logx.i(_TAG, 'country changed to: ${country.name}');
                 maxPhoneNumberLength = country.maxLength;
               },
             ),
@@ -238,8 +235,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 } else {
                   Logx.i(
                       _TAG,
-                      'user entered invalid phone number ' +
-                          completePhoneNumber);
+                      'user entered invalid phone number $completePhoneNumber');
                   Toaster.longToast('please enter a valid phone number');
                 }
               },
@@ -282,13 +278,13 @@ class _LoginScreenState extends State<LoginScreen> {
         await FirebaseAuth.instance.verifyPhoneNumber(
             phoneNumber: '${phone}',
             verificationCompleted: (PhoneAuthCredential credential) async {
-              print(
+              Logx.i(_TAG,
                   'verifyPhoneNumber: ${phone} is verified. attempting sign in with credentials...');
               await FirebaseAuth.instance
                   .signInWithCredential(credential)
                   .then((value) async {
                 if (value.user != null) {
-                  print('signInWithCredential: success. user logged in');
+                  Logx.i(_TAG, 'signInWithCredential: success. user logged in');
                 }
               });
             },
@@ -308,6 +304,7 @@ class _LoginScreenState extends State<LoginScreen> {
         Logx.e(_TAG, e, s);
       } catch (e) {
         logger.e(e);
+        Toaster.longToast('login failed. error: $e');
       }
     }
   }
@@ -335,8 +332,10 @@ class _LoginScreenState extends State<LoginScreen> {
               registeredUser.phoneNumber =
                   StringUtils.getInt(value.user!.phoneNumber!);
 
-              Navigator.of(context).pushReplacement(MaterialPageRoute(
-                  builder: (context) => MainScreen(user: registeredUser)));
+              UserPreferences.setUser(registeredUser);
+
+              GoRouter.of(context)
+                  .pushNamed(MyAppRouteConstants.homeRouteName);
             } else {
               Logx.i(_TAG, 'user is a bloc member. navigating to main...');
               try {
@@ -347,8 +346,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 final blocUser.User user = Fresh.freshUserMap(data, false);
                 UserPreferences.setUser(user);
 
-                Navigator.of(context).pushReplacement(MaterialPageRoute(
-                    builder: (context) => MainScreen(user: user)));
+                GoRouter.of(context)
+                    .pushNamed(MyAppRouteConstants.homeRouteName);
               } on PlatformException catch (e, s) {
                 Logx.e(_TAG, e, s);
               } on Exception catch (e, s) {
@@ -366,6 +365,7 @@ class _LoginScreenState extends State<LoginScreen> {
       Logx.e(_TAG, e, s);
     } catch (e) {
       logger.e(e);
+      Toaster.longToast('auto login failed. $e');
       FocusScope.of(context).unfocus();
     }
   }

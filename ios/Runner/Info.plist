@@ -2,6 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+    <key>FirebaseAppDelegateProxyEnabled</key>
+    <false/>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>This app requires access to the photo library to upload your profile photo</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
@@ -39,10 +41,6 @@
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
-	<key>NSLocationAlwaysUsageDescription</key>
-	<string>Need to get your location!</string>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Need to get your location!</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>

@@ -1,28 +1,42 @@
+import 'dart:io';
+
 import 'package:barcode_widget/barcode_widget.dart';
 import 'package:bloc/db/entity/party_guest.dart';
 import 'package:bloc/db/shared_preferences/user_preferences.dart';
 import 'package:bloc/helpers/firestore_helper.dart';
 import 'package:bloc/widgets/ui/dark_button_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:toggle_switch/toggle_switch.dart';
+import 'package:http/http.dart' as http;
 
+
+import '../../db/entity/challenge.dart';
 import '../../db/entity/party.dart';
+import '../../main.dart';
 import '../../screens/parties/party_guest_add_edit_manage_screen.dart';
 import '../../utils/constants.dart';
 import '../../utils/date_time_utils.dart';
+import '../../utils/file_utils.dart';
+import '../../utils/logx.dart';
+import '../../utils/network_utils.dart';
 import '../ui/button_widget.dart';
 import '../ui/toaster.dart';
 
 class BoxOfficeItem extends StatefulWidget {
-  final PartyGuest partyGuest;
+  PartyGuest partyGuest;
   final Party party;
   final bool isClickable;
+  final List<Challenge> challenges;
 
-  const BoxOfficeItem(
+  BoxOfficeItem(
       {Key? key,
       required this.partyGuest,
       required this.isClickable,
-      required this.party})
+      required this.party,
+        required this.challenges})
       : super(key: key);
 
   @override
@@ -30,13 +44,15 @@ class BoxOfficeItem extends StatefulWidget {
 }
 
 class _BoxOfficeItemState extends State<BoxOfficeItem> {
+  static const String _TAG = 'BoxOfficeItem';
+
   @override
   Widget build(BuildContext context) {
     String title = widget.partyGuest.name.toLowerCase();
     int friendsCount = widget.partyGuest.guestsCount - 1;
 
     if (friendsCount > 0) {
-      title += ' +' + friendsCount.toString();
+      title += ' +$friendsCount';
     }
 
     return GestureDetector(
@@ -98,7 +114,7 @@ class _BoxOfficeItemState extends State<BoxOfficeItem> {
                                     totalSwitches: 2,
                                     labels: ['👍🏼', '👎🏼'],
                                     onToggle: (index) {
-                                      print('switched to: $index');
+                                      debugPrint('switched to: $index');
                                       if (index == 0) {
                                         widget.partyGuest.guestsRemaining = 0;
                                         FirestoreHelper.pushPartyGuest(
@@ -129,11 +145,8 @@ class _BoxOfficeItemState extends State<BoxOfficeItem> {
                         child: Text(
                           widget.party.isTBA
                               ? 'tba'
-                              : DateTimeUtils.getFormattedDate(
-                                      widget.party.startTime) +
-                                  ', ' +
-                                  DateTimeUtils.getFormattedTime(
-                                      widget.party.startTime),
+                              : '${DateTimeUtils.getFormattedDate(widget.party.startTime)}, '
+                              '${DateTimeUtils.getFormattedTime(widget.party.startTime)}',
                           style: const TextStyle(fontSize: 18),
                         ),
                       ),
@@ -142,17 +155,10 @@ class _BoxOfficeItemState extends State<BoxOfficeItem> {
                         children: [
                           Padding(
                             padding: const EdgeInsets.only(left: 5.0),
-                            child: Text('status:\n' +
-                                (widget.partyGuest.isApproved
-                                    ? widget.partyGuest.guestsRemaining == 0
-                                        ? 'completed'
-                                        : widget.partyGuest.guestsRemaining
-                                                .toString() +
-                                            ' ' +
-                                            widget.partyGuest.guestStatus
-                                    : 'pending')),
+                            child: widget.partyGuest.isApproved? showApprovedButton(context)
+                                :showPendingButton(context)
                           ),
-                          Spacer(),
+                          const Spacer(),
                           UserPreferences.myUser.clearanceLevel>=Constants.PROMOTER_LEVEL?
                           displayBanUserButton(context) : const SizedBox(),
                           UserPreferences.myUser.clearanceLevel>=Constants.PROMOTER_LEVEL?
@@ -172,8 +178,7 @@ class _BoxOfficeItemState extends State<BoxOfficeItem> {
                       borderRadius: const BorderRadius.all(Radius.circular(2)),
                       image: DecorationImage(
                         image: NetworkImage(widget.party.imageUrl),
-                        fit: BoxFit.fitHeight,
-                        // AssetImage(food['image']),
+                        fit: BoxFit.cover,
                       ),
                     ),
                   ),
@@ -194,73 +199,6 @@ class _BoxOfficeItemState extends State<BoxOfficeItem> {
         text: '🎟 entry',
         onClicked: () {
           showTicketEntryDialog(context);
-          // showDialog(
-          //   context: context,
-          //   builder: (BuildContext context) {
-          //     return AlertDialog(
-          //       contentPadding: const EdgeInsets.all(16.0),
-          //       content: SizedBox(
-          //         height: 300,
-          //         child: Column(
-          //           children: [
-          //             Padding(
-          //               padding: const EdgeInsets.only(bottom: 20),
-          //               child: Row(
-          //                 mainAxisAlignment: MainAxisAlignment.start,
-          //                 children: [
-          //                   Text(
-          //                     '${widget.party.eventName} | ${widget.party.name}',
-          //                     style: TextStyle(fontSize: 18),
-          //                   ),
-          //                 ],
-          //               ),
-          //             ),
-          //             Center(
-          //                 child: BarcodeWidget(
-          //                   color: Theme.of(context).primaryColorDark,
-          //                   barcode: Barcode.qrCode(),
-          //                   // Barcode type and settings
-          //                   data: widget.partyGuest.id,
-          //                   // Content
-          //                   width: 200,
-          //                   height: 200,
-          //                 )),
-          //             Padding(
-          //               padding: const EdgeInsets.only(top: 20),
-          //               child: Column(
-          //                 mainAxisAlignment: MainAxisAlignment.start,
-          //                 children: [
-          //                   Align(
-          //                     alignment: Alignment.centerRight,
-          //                     child: Text(
-          //                       '${widget.partyGuest.guestStatus} entry. ${widget.partyGuest.guestsRemaining} guests remaining',
-          //                       style: const TextStyle(fontSize: 16),
-          //                     ),
-          //                   ),
-          //                   Align(
-          //                     alignment: Alignment.centerRight,
-          //                     child: Text(
-          //                       'valid until ${DateTimeUtils.getFormattedTime(widget.party.guestListEndTime)}',
-          //                       style: TextStyle(fontSize: 16),
-          //                     ),
-          //                   ),
-          //                 ],
-          //               ),
-          //             ),
-          //           ],
-          //         ),
-          //       ),
-          //       actions: [
-          //         TextButton(
-          //           child: const Text("close"),
-          //           onPressed: () {
-          //             Navigator.of(context).pop();
-          //           },
-          //         ),
-          //       ],
-          //     );
-          //   },
-          // );
         },
       ): ButtonWidget(
         text: '✏️ edit',
@@ -281,7 +219,7 @@ class _BoxOfficeItemState extends State<BoxOfficeItem> {
       padding: const EdgeInsets.only(right: 5, bottom: 5),
       child: widget.partyGuest.isApproved
           ? SizedBox(
-              height: 50,
+              height: 40,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Theme.of(context).primaryColorDark,
@@ -331,7 +269,7 @@ class _BoxOfficeItemState extends State<BoxOfficeItem> {
         padding: const EdgeInsets.only(bottom: 5),
         child: !widget.partyGuest.shouldBanUser
             ? SizedBox(
-                height: 50,
+                height: 40,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Theme.of(context).primaryColorDark,
@@ -352,7 +290,7 @@ class _BoxOfficeItemState extends State<BoxOfficeItem> {
                 ),
               )
             : SizedBox(
-                height: 50,
+                height: 40,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Theme.of(context).primaryColorDark,
@@ -438,5 +376,273 @@ class _BoxOfficeItemState extends State<BoxOfficeItem> {
         );
       },
     );
+  }
+
+  showApprovedButton(BuildContext context) {
+    return Container(
+        padding: const EdgeInsets.only(bottom: 5),
+        child:SizedBox(
+          height: 40,
+          child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.transparent,
+              shape: const RoundedRectangleBorder(),
+              foregroundColor: Constants.lightPrimary,
+              padding:
+              const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
+            ),
+            child: const Text(
+              '😃 approved',
+              style: TextStyle(fontSize: 16),
+            ),
+            onPressed: () {
+            },
+          ),
+        ));
+  }
+
+  showPendingButton(BuildContext context) {
+    return Container(
+        padding: const EdgeInsets.only(bottom: 5),
+        child:SizedBox(
+          height: 40,
+          child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Constants.lightPrimary,
+              shape: const RoundedRectangleBorder(),
+              foregroundColor: Constants.darkPrimary,
+              padding:
+              const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
+            ),
+            child: const Text(
+              '⏳ pending',
+              style: TextStyle(fontSize: 16),
+            ),
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: const Text("guest list is pending"),
+                    content: const Text("your guest list is pending, which means it's waiting for approval. like a kid waiting for santa, you're excited but also a little bit anxious. but don't worry, our team will deliver on your request."),
+                    actions: [
+                      !widget.partyGuest.isChallengeClicked?
+                      TextButton(
+                        child: const Text("🎟 win entry"),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                          showChallengeDialog(context);
+                        },
+                      ): const SizedBox(),
+                      TextButton(
+                        child: const Text("👍 okay"),
+                        onPressed: () async {
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                    ],
+                  );
+                },
+              );
+            },
+          ),
+        ));
+  }
+
+  Challenge findChallenge() {
+    Challenge returnChallenge = widget.challenges.last;
+
+    if(widget.party.overrideChallengeNum>0){
+      for (Challenge challenge in widget.challenges) {
+        if (challenge.level == widget.party.overrideChallengeNum) {
+          return challenge;
+        }
+      }
+    } else {
+      for (Challenge challenge in widget.challenges) {
+        if (challenge.level >= UserPreferences.myUser.challengeLevel) {
+          return challenge;
+        }
+      }
+    }
+
+    return returnChallenge;
+  }
+
+  showChallengeDialog(BuildContext context) {
+    Challenge challenge = findChallenge();
+
+    String challengeText = challenge.description;
+
+    if (challengeText.isEmpty) {
+      // all challenges are completed
+      Navigator.of(context).pop();
+    } else {
+      showDialog(
+        context: context,
+        builder: (BuildContext ctx) {
+          return AlertDialog(
+            contentPadding: const EdgeInsets.all(16.0),
+            content: SizedBox(
+              height: 300,
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 20),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: Text(
+                            '#blocCommunity  | ${widget.party.name}',
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(fontSize: 18),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(
+                    height: 250,
+                    width: 300,
+                    child: SingleChildScrollView(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Text('${challenge.dialogTitle}:\n'),
+                          Text(challenge.description.toLowerCase()),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            actions: [
+              TextButton(
+                child: const Text('close'),
+                onPressed: () {
+                  Navigator.of(ctx).pop();
+                  },
+              ),
+              challenge.dialogAccept2Text.isNotEmpty?
+              TextButton(
+                child: Text(challenge.dialogAccept2Text),
+                onPressed: () async {
+                  Logx.i(_TAG, 'user accepts challenge');
+                  Toaster.longToast('thank you for supporting us!');
+
+                  widget.partyGuest = widget.partyGuest.copyWith(isChallengeClicked: true);
+                  FirestoreHelper.pushPartyGuest(widget.partyGuest);
+
+                  switch (challenge.level) {
+                    case 3:{
+                      //android download
+                      final uri = Uri.parse(
+                          'https://play.google.com/store/apps/details?id=com.novatech.bloc');
+                      NetworkUtils.launchInBrowser(uri);
+                      break;
+                    }
+                    default:
+                      {
+                        final uri =
+                        Uri.parse('https://www.instagram.com/bloc.india/');
+                        NetworkUtils.launchInBrowser(uri);
+                        break;
+                      }
+                  }
+                },
+              )
+                  : const SizedBox(),
+
+              TextButton(
+                child: Text(challenge.dialogAcceptText),
+                onPressed: () async {
+                  Logx.i(_TAG, 'user accepts challenge');
+                  Toaster.longToast('thank you for supporting us!');
+
+                  widget.partyGuest = widget.partyGuest.copyWith(isChallengeClicked: true);
+                  FirestoreHelper.pushPartyGuest(widget.partyGuest);
+
+                  switch (challenge.level) {
+                    case 1:
+                      {
+                        final uri =
+                        Uri.parse('https://www.instagram.com/bloc.india/');
+                        NetworkUtils.launchInBrowser(uri);
+                        break;
+                      }
+                    case 2:
+                      {
+                        final uri =
+                        Uri.parse('https://www.instagram.com/freq.club/');
+                        NetworkUtils.launchInBrowser(uri);
+                        break;
+                      }
+                    case 3:{
+                      //ios download
+                      final uri = Uri.parse(
+                          'https://apps.apple.com/in/app/bloc-community/id1672736309');
+                      NetworkUtils.launchInBrowser(uri);
+                      break;
+                    }
+                    case 4:{
+                      //share or invite your friends
+                      final uri = Uri.parse(widget.party.instagramUrl);
+                      NetworkUtils.launchInBrowser(uri);
+                      break;
+                    }
+                    case 100:
+                      {
+                        final urlImage = widget.party.storyImageUrl.isNotEmpty
+                            ? widget.party.storyImageUrl
+                            : widget.party.imageUrl;
+                        final Uri url = Uri.parse(urlImage);
+                        final response = await http.get(url);
+                        final Uint8List bytes = response.bodyBytes;
+
+                        try {
+                          if (kIsWeb) {
+                            FileUtils.openFileNewTabForWeb(urlImage);
+
+                            // Image? fromPicker = await ImagePickerWeb.getImageAsWidget();
+                          } else {
+                            var temp = await getTemporaryDirectory();
+                            final path = '${temp.path}/${widget.party.id}.jpg';
+                            File(path).writeAsBytesSync(bytes);
+
+                            final files = <XFile>[];
+                            files.add(
+                                XFile(path, name: '${widget.party.id}.jpg'));
+
+                            await Share.shareXFiles(files,
+                                text: '#blocCommunity');
+                          }
+                        } on PlatformException catch (e, s) {
+                          Logx.e(_TAG, e, s);
+                        } on Exception catch (e, s) {
+                          Logx.e(_TAG, e, s);
+                        } catch (e) {
+                          logger.e(e);
+                        }
+                        break;
+                      }
+                    default:
+                      {
+                        final uri =
+                        Uri.parse('https://www.instagram.com/bloc.india/');
+                        NetworkUtils.launchInBrowser(uri);
+                        break;
+                      }
+                  }
+                },
+              ),
+            ],
+          );
+        },
+      );
+    }
   }
 }

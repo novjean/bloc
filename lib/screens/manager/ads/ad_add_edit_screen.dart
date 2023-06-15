@@ -28,7 +28,7 @@ class _AdAddEditScreenState extends State<AdAddEditScreen> {
   @override
   Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(
-          title: Text('ad | ' + widget.task),
+          title: Text('ad | ${widget.task}'),
         ),
         body: _buildBody(context),
       );

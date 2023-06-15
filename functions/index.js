@@ -1,9 +1,6 @@
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 
-// firebase deploy should be called after
-// defining the function
-
 admin.initializeApp();
 
 exports.chatFunction = functions
@@ -78,6 +75,10 @@ exports.adFunction = functions
           body: snapshot.data().message,
           clickAction: 'FLUTTER_NOTIFICATION_CLICK',
         },
+        data: {
+          type: 'ads',
+          document: JSON.stringify(snapshot.data()),
+        },
       });
     });
 
@@ -89,9 +90,13 @@ exports.partyGuestFunction = functions
       console.log(snapshot.data());
       return admin.messaging().sendToTopic('party_guest', {
         notification: {
-          title: 'guest list request',
+          title: 'request : guest list',
           body: snapshot.data().name + ' ' + snapshot.data().surname,
           clickAction: 'FLUTTER_NOTIFICATION_CLICK',
+        },
+        data: {
+          type: 'party_guests',
+          document: JSON.stringify(snapshot.data()),
         },
       });
     });
@@ -104,14 +109,18 @@ exports.reservationFunction = functions
       console.log(snapshot.data());
       return admin.messaging().sendToTopic('reservations', {
         notification: {
-          title: 'reservation table request',
+          title: 'request : table reservation',
           body: snapshot.data().name + ' - ' + snapshot.data().guestsCount,
           clickAction: 'FLUTTER_NOTIFICATION_CLICK',
+        },
+        data: {
+          type: 'reservations',
+          document: JSON.stringify(snapshot.data()),
         },
       });
     });
 
-exports.reservationFunction = functions
+exports.celebrationFunction = functions
     .region('asia-south1')
     .firestore
     .document('celebrations/{document}')
@@ -119,9 +128,13 @@ exports.reservationFunction = functions
       console.log(snapshot.data());
       return admin.messaging().sendToTopic('celebrations', {
         notification: {
-          title: 'celebration request',
+          title: 'request : celebration',
           body: snapshot.data().name + ' - ' + snapshot.data().guestsCount,
           clickAction: 'FLUTTER_NOTIFICATION_CLICK',
+        },
+        data: {
+          type: 'celebrations',
+          document: JSON.stringify(snapshot.data()),
         },
       });
     });

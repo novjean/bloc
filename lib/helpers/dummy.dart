@@ -93,24 +93,27 @@ class Dummy {
 
   static Celebration getDummyCelebration(String blocServiceId) {
     Celebration dummy = Celebration(
-        id: StringUtils.getRandomString(28),
-        blocServiceId: blocServiceId,
-        customerId: UserPreferences.myUser.id,
-        name: UserPreferences.isUserLoggedIn() ? UserPreferences.myUser.name : '',
-        surname: UserPreferences.isUserLoggedIn() ? UserPreferences.myUser.surname : '',
-        phone: UserPreferences.isUserLoggedIn()
-            ? UserPreferences.myUser.phoneNumber
-            : 0,
-        guestsCount: 25,
-        createdAt: Timestamp.now().millisecondsSinceEpoch,
-        arrivalDate: Timestamp.now().millisecondsSinceEpoch,
-        arrivalTime: '',
-        durationHours: 1,
-        bottleProductIds: [],
-        bottleNames: [],
-        specialRequest: '',
-        occasion: 'none',
-        isApproved: false,);
+      id: StringUtils.getRandomString(28),
+      blocServiceId: blocServiceId,
+      customerId: UserPreferences.myUser.id,
+      name: UserPreferences.isUserLoggedIn() ? UserPreferences.myUser.name : '',
+      surname: UserPreferences.isUserLoggedIn()
+          ? UserPreferences.myUser.surname
+          : '',
+      phone: UserPreferences.isUserLoggedIn()
+          ? UserPreferences.myUser.phoneNumber
+          : 0,
+      guestsCount: 25,
+      createdAt: Timestamp.now().millisecondsSinceEpoch,
+      arrivalDate: Timestamp.now().millisecondsSinceEpoch,
+      arrivalTime: '',
+      durationHours: 1,
+      bottleProductIds: [],
+      bottleNames: [],
+      specialRequest: '',
+      occasion: 'none',
+      isApproved: false,
+    );
     return dummy;
   }
 
@@ -123,7 +126,8 @@ class Dummy {
         points: 0,
         clickCount: 0,
         dialogTitle: '',
-        dialogAcceptText: '',dialogAccept2Text: '');
+        dialogAcceptText: '',
+        dialogAccept2Text: '');
     return dummyChallenge;
   }
 
@@ -200,7 +204,9 @@ class Dummy {
         isBigAct: true,
         genre: '',
         isChallengeActive: false,
-        chapter: '');
+        overrideChallengeNum: 0,
+        chapter: '',
+        artistIds: []);
 
     return dummyParty;
   }
@@ -316,11 +322,8 @@ class Dummy {
   }
 
   static UiPhoto getDummyUiPhoto() {
-    UiPhoto uiPhoto = UiPhoto(
-      id: StringUtils.getRandomString(28),
-      name: '',
-      imageUrls: []
-    );
+    UiPhoto uiPhoto =
+        UiPhoto(id: StringUtils.getRandomString(28), name: '', imageUrls: []);
     return uiPhoto;
   }
 
