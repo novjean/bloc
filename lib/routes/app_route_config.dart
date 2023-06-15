@@ -110,8 +110,8 @@ class BlocRouter{
         GoRoute(
           name: MyAppRouteConstants.homeRouteName,
           path: '/home',
-          pageBuilder: (context, state) {
-            return const MaterialPage(child: MainScreen());
+          builder: (context, state) {
+            return MainScreen();
           },
         ),
 

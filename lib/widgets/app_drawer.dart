@@ -44,8 +44,10 @@ class AppDrawer extends StatelessWidget {
             onTap: () {
               Navigator.of(context).pop();
 
+              // GoRouter.of(context).go('home');
+
               GoRouter.of(context)
-                  .pushNamed(MyAppRouteConstants.homeRouteName);
+                  .goNamed(MyAppRouteConstants.homeRouteName);
             },
           ),
           const Divider(),

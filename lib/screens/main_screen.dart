@@ -297,6 +297,8 @@ class _MainScreenState extends State<MainScreen> {
   @override
   void dispose() {
     super.dispose();
+    Logx.d(_TAG, 'dispose()');
+
     _pageController.dispose();
 
     if(!kIsWeb){
@@ -322,18 +324,22 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   void onPageChanged(int page) {
-    // setState(() {
-    //   this._page = page;
-    // });
+    Logx.d(_TAG, 'onPageChanged() : $page');
 
-    if (mounted) {
-      setState(() {
-        this._page = page;
-      });
-    }
+    setState(() {
+      this._page = page;
+    });
+
+    // if (mounted) {
+    //   setState(() {
+    //     this._page = page;
+    //   });
+    // }
   }
 
   buildTabIcon(int index) {
+    Logx.d(_TAG, 'buildTabIcon() : $index');
+
     return Container(
       // margin:
       //     EdgeInsets.fromLTRB(index == 3 ? 0 : 0, 0, index == 1 ? 30 : 0, 0),
@@ -345,7 +351,10 @@ class _MainScreenState extends State<MainScreen> {
         color: _page == index
             ? Theme.of(context).highlightColor
             : Constants.background,
-        onPressed: () => _pageController.jumpToPage(index),
+        onPressed: () {
+          Logx.d(_TAG, 'jump to page : ' + index.toString());
+
+          _pageController.jumpToPage(index);},
       ),
     );
   }
