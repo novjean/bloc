@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../../utils/constants.dart';
-import '../../widgets/chat/recent_chats.dart';
-
 class ChatHomeScreen extends StatefulWidget {
 
   ChatHomeScreen({key}):super(key: key);
@@ -30,7 +27,7 @@ class _ChatHomeScreenState extends State<ChatHomeScreen> {
               ),
               child: Column(
                 children:  <Widget>[
-                  loadLounges(context), // need to define lounges - community and artists
+                  // loadLounges(context), // need to define lounges - community and artists
 
                   // RecentChats(),
                 ],

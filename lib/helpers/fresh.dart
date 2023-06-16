@@ -8,6 +8,7 @@ import '../db/entity/category.dart';
 import '../db/entity/celebration.dart';
 import '../db/entity/challenge.dart';
 import '../db/entity/genre.dart';
+import '../db/entity/lounge.dart';
 import '../db/entity/party.dart';
 import '../db/entity/product.dart';
 import '../db/entity/reservation.dart';
@@ -917,6 +918,110 @@ class Fresh {
 
     return fresh;
   }
+
+  /** lounge **/
+  static Lounge freshLoungeMap(
+      Map<String, dynamic> map, bool shouldUpdate) {
+    Lounge lounge = Dummy.getDummyLounge();
+
+    bool shouldPush = true;
+
+    try {
+      lounge = lounge.copyWith(id: map['id'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'lounge id not exist');
+    }
+    try {
+      lounge = lounge.copyWith(name: map['name'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'lounge name not exist for id: ${lounge.id}');
+      shouldPush = true;
+    }
+    try {
+      lounge = lounge.copyWith(type: map['type'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'lounge type not exist for id: ${lounge.id}');
+      shouldPush = true;
+    }
+
+    try {
+      lounge = lounge.copyWith(admins: List<String>.from(map['admins']));
+    } catch (e) {
+      Logx.em(_TAG, 'lounge admins not exist for id: ${lounge.id}');
+      shouldPush = true;
+    }
+    try {
+      lounge = lounge.copyWith(members: List<String>.from(map['members']));
+    } catch (e) {
+      Logx.em(_TAG, 'lounge members not exist for id: ${lounge.id}');
+      shouldPush = true;
+    }
+
+    try {
+      lounge = lounge.copyWith(creationTime: map['creationTime'] as int);
+    } catch (e) {
+      Logx.em(_TAG, 'lounge creationTime not exist for id: ${lounge.id}');
+      shouldPush = true;
+    }
+    try {
+      lounge = lounge.copyWith(isActive: map['isActive'] as bool);
+    } catch (e) {
+      Logx.em(_TAG, 'lounge isActive not exist for id: ${lounge.id}');
+      shouldPush = true;
+    }
+
+
+    if (shouldPush && shouldUpdate &&
+        UserPreferences.myUser.clearanceLevel >= Constants.MANAGER_LEVEL) {
+      Logx.i(_TAG, 'updating lounge ${lounge.id}');
+      FirestoreHelper.pushLounge(lounge);
+    }
+
+    return lounge;
+  }
+
+  static Lounge freshLounge(Lounge lounge) {
+    Lounge fresh = Dummy.getDummyLounge();
+
+    try {
+      fresh = fresh.copyWith(id: lounge.id);
+    } catch (e) {
+      Logx.em(_TAG, 'lounge id not exist');
+    }
+    try {
+      fresh = fresh.copyWith(name: lounge.name);
+    } catch (e) {
+      Logx.em(_TAG, 'lounge name not exist for id: ${lounge.id}');
+    }
+    try {
+      fresh = fresh.copyWith(type: lounge.type);
+    } catch (e) {
+      Logx.em(_TAG, 'lounge type not exist for id: ${lounge.id}');
+    }
+    try {
+      fresh = fresh.copyWith(admins: lounge.admins);
+    } catch (e) {
+      Logx.em(_TAG, 'lounge admins not exist for id: ${lounge.id}');
+    }
+    try {
+      fresh = fresh.copyWith(members: lounge.members);
+    } catch (e) {
+      Logx.em(_TAG, 'lounge members not exist for id: ${lounge.id}');
+    }
+    try {
+      fresh = fresh.copyWith(creationTime: lounge.creationTime);
+    } catch (e) {
+      Logx.em(_TAG, 'lounge creationTime not exist for id: ${lounge.id}');
+    }
+    try {
+      fresh = fresh.copyWith(isActive: lounge.isActive);
+    } catch (e) {
+      Logx.em(_TAG, 'lounge isActive not exist for id: ${lounge.id}');
+    }
+
+    return fresh;
+  }
+
 
   /** party **/
   static Party freshPartyMap(Map<String, dynamic> map, bool shouldUpdate) {

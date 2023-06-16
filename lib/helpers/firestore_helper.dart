@@ -25,6 +25,7 @@ import 'package:flutter/services.dart';
 import 'package:logger/logger.dart';
 
 import '../db/entity/ad.dart';
+import '../db/entity/lounge.dart';
 import '../db/entity/product.dart';
 import '../db/entity/service_table.dart';
 import '../db/entity/sos.dart';
@@ -52,6 +53,8 @@ class FirestoreHelper {
   static String GUEST_WIFIS = 'guest_wifis';
   static String HISTORY_MUSIC = 'history_music';
   static String INVENTORY_OPTIONS = 'inventory_options';
+  static String LOUNGES = 'lounges';
+
   static String MANAGER_SERVICES = 'manager_services';
   static String MANAGER_SERVICE_OPTIONS = 'manager_service_options';
   static String OFFERS = 'offers';
@@ -601,6 +604,34 @@ class FirestoreHelper {
         .snapshots();
   }
 
+  /** lounge **/
+  static void pushLounge(Lounge lounge) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection(LOUNGES)
+          .doc(lounge.id)
+          .set(lounge.toMap());
+    } on PlatformException catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } on Exception catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } catch (e) {
+      logger.e(e);
+    }
+  }
+
+  static Stream<QuerySnapshot<Object?>> getLounges() {
+    return FirebaseFirestore.instance
+        .collection(LOUNGES)
+        .orderBy('name', descending: false)
+        .snapshots();
+  }
+
+  static void deleteLounge(String docId) {
+    FirebaseFirestore.instance.collection(LOUNGES).doc(docId).delete();
+  }
+
+
   /** manager services **/
   static Stream<QuerySnapshot<Object?>> getManagerServicesSnapshot() {
     return FirebaseFirestore.instance
@@ -800,17 +831,6 @@ class FirestoreHelper {
         .orderBy('endTime', descending: false)
         .snapshots();
   }
-
-  // static Future<QuerySnapshot<Map<String, dynamic>>> pullUpcomingPartyByEndTime(
-  //     int timeNow) {
-  //   return FirebaseFirestore.instance
-  //       .collection(FirestoreHelper.PARTIES)
-  //       .where('endTime', isGreaterThan: timeNow)
-  //       .where('isActive', isEqualTo: true)
-  //       .orderBy('endTime', descending: false)
-  //       .limit(1)
-  //       .get();
-  // }
 
   static void deleteParty(Party party) {
     FirebaseFirestore.instance

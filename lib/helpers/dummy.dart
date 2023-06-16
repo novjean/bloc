@@ -17,6 +17,7 @@ import '../db/entity/bloc.dart';
 import '../db/entity/bloc_service.dart';
 import '../db/entity/celebration.dart';
 import '../db/entity/genre.dart';
+import '../db/entity/lounge.dart';
 import '../db/entity/offer.dart';
 import '../db/entity/party.dart';
 import '../db/entity/product.dart';
@@ -152,6 +153,18 @@ class Dummy {
   static HistoryMusic getDummyHistoryMusic() {
     HistoryMusic dummy = HistoryMusic(
         id: StringUtils.getRandomString(28), userId: '', genre: '', count: 0);
+    return dummy;
+  }
+
+  static Lounge getDummyLounge() {
+    Lounge dummy = Lounge(
+        id: StringUtils.getRandomString(28),
+        name: '',
+        type: 'community',
+        admins: [],
+        members: [],
+        creationTime: Timestamp.now().millisecondsSinceEpoch,
+        isActive: true);
     return dummy;
   }
 

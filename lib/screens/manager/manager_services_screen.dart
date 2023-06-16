@@ -17,6 +17,7 @@ import 'celebrations/manage_celebrations_screen.dart';
 import 'challenges/manage_challenges_screen.dart';
 import 'guest_wifi_edit_screen.dart';
 import 'inventory/manage_inventory_screen.dart';
+import 'lounges/manage_lounges_screen.dart';
 import 'tables/manage_tables_screen.dart';
 
 class ManagerServicesScreen extends StatelessWidget {
@@ -137,7 +138,7 @@ class ManagerServicesScreen extends StatelessWidget {
                                 )));
                         break;
                       }
-                    case 'Inventory':
+                    case 'inventory':
                       {
                         Navigator.of(context).push(MaterialPageRoute(
                             builder: (ctx) => ManageInventoryScreen(
@@ -145,7 +146,13 @@ class ManagerServicesScreen extends StatelessWidget {
                                 managerService: _managerService)));
                         break;
                       }
-                    case 'Orders':
+                    case 'lounges':
+                      {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (ctx) => ManageLoungesScreen()));
+                        break;
+                      }
+                    case 'orders':
                       {
                         Navigator.of(context).push(MaterialPageRoute(
                             builder: (ctx) => ManageOrdersScreen(
@@ -162,7 +169,7 @@ class ManagerServicesScreen extends StatelessWidget {
                                 managerService: _managerService)));
                         break;
                       }
-                    case 'Tables':
+                    case 'tables':
                       {
                         Navigator.of(context).push(MaterialPageRoute(
                             builder: (ctx) => ManageTablesScreen(
@@ -172,7 +179,7 @@ class ManagerServicesScreen extends StatelessWidget {
                                 )));
                         break;
                       }
-                    case 'Users':
+                    case 'users':
                       {
                         Navigator.of(context).push(MaterialPageRoute(
                             builder: (ctx) => ManageUsersScreen()));
