@@ -30,10 +30,10 @@ class _ChatScreenState extends State<ChatScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Column(
-        children: [
-          Expanded(
-            child: Messages(),
-          ),
+        children: <Widget>[
+          // Expanded(
+          //   child: Messages(),
+          // ),
           NewMessage(_token),
         ],
       ),

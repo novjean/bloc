@@ -1,6 +1,6 @@
 # bloc
 
-the socializing bar. 
+the socializing bar. #blocCommunity
 
 ## Getting Started
 

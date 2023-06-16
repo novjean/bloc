@@ -26,7 +26,9 @@ class EventScreen extends StatefulWidget {
   final String partyName;
   final String partyChapter;
 
-  const EventScreen({Key? key, required this.partyName, required this.partyChapter}): super(key: key);
+  const EventScreen(
+      {Key? key, required this.partyName, required this.partyChapter})
+      : super(key: key);
 
   @override
   State<EventScreen> createState() => _EventScreenState();
@@ -206,14 +208,14 @@ class _EventScreenState extends State<EventScreen> {
             }
           }
         }
-        return LoadingWidget();
+        return const LoadingWidget();
       },
     );
   }
 
   _showArtists(BuildContext context, List<Party> parties) {
     return ListView.builder(
-      physics: NeverScrollableScrollPhysics(),
+      physics: const NeverScrollableScrollPhysics(),
       shrinkWrap: true,
       itemCount: parties.length,
       scrollDirection: Axis.vertical,
@@ -223,13 +225,13 @@ class _EventScreenState extends State<EventScreen> {
         if (index == 0) {
           return Column(
             children: [
-              Padding(
-                padding: const EdgeInsets.only(right: 15, top: 10.0, bottom: 5),
+              const Padding(
+                padding: EdgeInsets.only(right: 15, top: 10.0, bottom: 5),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     Text('lineup',
-                        style: const TextStyle(
+                        style: TextStyle(
                             color: Constants.lightPrimary,
                             overflow: TextOverflow.ellipsis,
                             fontSize: 22,

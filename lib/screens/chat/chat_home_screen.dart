@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../utils/constants.dart';
 import '../../widgets/chat/recent_chats.dart';
 
 class ChatHomeScreen extends StatefulWidget {
@@ -14,7 +15,7 @@ class _ChatHomeScreenState extends State<ChatHomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).primaryColor,
+
       body: Column(
         children: <Widget>[
           // const  CategorySelector(),
@@ -29,8 +30,9 @@ class _ChatHomeScreenState extends State<ChatHomeScreen> {
               ),
               child: Column(
                 children:  <Widget>[
-                  // FavoriteContacts(),
-                  RecentChats(),
+                  loadLounges(context), // need to define lounges - community and artists
+
+                  // RecentChats(),
                 ],
               ),
             ),

@@ -190,7 +190,7 @@ class _HomeScreenState extends State<HomeScreen> {
         if (!currentFocus.hasPrimaryFocus) {
           currentFocus.unfocus();
         }
-      },
+      } ,
       child: UpgradeAlert(
         upgrader: Upgrader(
             dialogStyle: Theme.of(context).platform == TargetPlatform.iOS
