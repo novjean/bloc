@@ -938,6 +938,12 @@ class Fresh {
       shouldPush = true;
     }
     try {
+      lounge = lounge.copyWith(description: map['description'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'lounge description not exist for id: ${lounge.id}');
+      shouldPush = true;
+    }
+    try {
       lounge = lounge.copyWith(type: map['type'] as String);
     } catch (e) {
       Logx.em(_TAG, 'lounge type not exist for id: ${lounge.id}');
@@ -992,6 +998,11 @@ class Fresh {
       fresh = fresh.copyWith(name: lounge.name);
     } catch (e) {
       Logx.em(_TAG, 'lounge name not exist for id: ${lounge.id}');
+    }
+    try {
+      fresh = fresh.copyWith(description: lounge.description);
+    } catch (e) {
+      Logx.em(_TAG, 'lounge description not exist for id: ${lounge.id}');
     }
     try {
       fresh = fresh.copyWith(type: lounge.type);

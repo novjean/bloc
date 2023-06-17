@@ -160,6 +160,7 @@ class Dummy {
     Lounge dummy = Lounge(
         id: StringUtils.getRandomString(28),
         name: '',
+        description: '',
         type: 'community',
         admins: [],
         members: [],

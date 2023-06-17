@@ -13,7 +13,6 @@ import '../helpers/firestore_helper.dart';
 import '../routes/app_route_constants.dart';
 import '../utils/logx.dart';
 import '../widgets/ui/sized_listview_block.dart';
-import 'login_screen.dart';
 
 class AccountScreen extends StatelessWidget {
   static const String _TAG = 'AccountScreen';
@@ -89,7 +88,7 @@ class AccountScreen extends StatelessWidget {
                 context: context,
                 builder: (BuildContext context) {
                   return AlertDialog(
-                    title: const Text("delete account"),
+                    title: const Text('delete account'),
                     content: const Text("deleting your account will delete your access and all your information on this site. are you sure you want to continue?"),
                     actions: [
                       TextButton(

@@ -53,7 +53,7 @@ class Constants {
     ),
   );
 
-  static int USER_LEVEL = 1;
+  static int CUSTOMER_LEVEL = 1;
   static int CAPTAIN_LEVEL = 3;
   static int PROMOTER_LEVEL = 4;
   static int MANAGER_LEVEL = 5;

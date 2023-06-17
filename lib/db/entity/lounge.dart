@@ -1,6 +1,7 @@
 class Lounge{
   String id;
   String name;
+  String description;
   String type;
 
   List<String> admins;
@@ -13,6 +14,7 @@ class Lounge{
   Lounge({
     required this.id,
     required this.name,
+    required this.description,
     required this.type,
     required this.admins,
     required this.members,
@@ -27,6 +29,7 @@ class Lounge{
           runtimeType == other.runtimeType &&
           id == other.id &&
           name == other.name &&
+          description == other.description &&
           type == other.type &&
           admins == other.admins &&
           members == other.members &&
@@ -37,6 +40,7 @@ class Lounge{
   int get hashCode =>
       id.hashCode ^
       name.hashCode ^
+      description.hashCode ^
       type.hashCode ^
       admins.hashCode ^
       members.hashCode ^
@@ -48,6 +52,7 @@ class Lounge{
     return 'Lounge{' +
         ' id: $id,' +
         ' name: $name,' +
+        ' description: $description,' +
         ' type: $type,' +
         ' admins: $admins,' +
         ' members: $members,' +
@@ -59,6 +64,7 @@ class Lounge{
   Lounge copyWith({
     String? id,
     String? name,
+    String? description,
     String? type,
     List<String>? admins,
     List<String>? members,
@@ -68,6 +74,7 @@ class Lounge{
     return Lounge(
       id: id ?? this.id,
       name: name ?? this.name,
+      description: description ?? this.description,
       type: type ?? this.type,
       admins: admins ?? this.admins,
       members: members ?? this.members,
@@ -80,6 +87,7 @@ class Lounge{
     return {
       'id': this.id,
       'name': this.name,
+      'description': this.description,
       'type': this.type,
       'admins': this.admins,
       'members': this.members,
@@ -92,6 +100,7 @@ class Lounge{
     return Lounge(
       id: map['id'] as String,
       name: map['name'] as String,
+      description: map['description'] as String,
       type: map['type'] as String,
       admins: map['admins'] as List<String>,
       members: map['members'] as List<String>,
