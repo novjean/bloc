@@ -1,12 +1,21 @@
+import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:bloc/widgets/ui/textfield_widget.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:delayed_display/delayed_display.dart';
 import 'package:flutter/material.dart';
+import 'package:multi_select_flutter/dialog/mult_select_dialog.dart';
+import 'package:multi_select_flutter/dialog/multi_select_dialog_field.dart';
+import 'package:multi_select_flutter/util/multi_select_item.dart';
+import 'package:multi_select_flutter/util/multi_select_list_type.dart';
 
 import '../../../db/entity/lounge.dart';
 import '../../../db/entity/user.dart' as blocUser;
 
+import '../../../db/entity/user.dart';
 import '../../../helpers/firestore_helper.dart';
 import '../../../helpers/fresh.dart';
+import '../../../utils/constants.dart';
+import '../../../utils/logx.dart';
 import '../../../widgets/ui/button_widget.dart';
 import '../../../widgets/ui/dark_button_widget.dart';
 import '../../../widgets/ui/toaster.dart';
@@ -27,31 +36,45 @@ class LoungeAddEditScreen extends StatefulWidget {
 class _LoungeAddEditScreenState extends State<LoungeAddEditScreen> {
   static const String _TAG = 'LoungeAddEditScreen';
 
-  final TextEditingController _controller = TextEditingController();
-
-  DateTime sDateArrival = DateTime.now();
-  TimeOfDay sArrivalTime = TimeOfDay.now();
-
-  List<String> guestCounts = [];
-  late String sGuestCount;
-
   List<String> loungeTypes = ['artist', 'community'];
   late String sType;
 
-  final pinController = TextEditingController();
-  final focusNode = FocusNode();
-  bool isLoggedIn = false;
-  String completePhoneNumber = '';
-  String _verificationCode = '';
+  List<User> mUsers = [];
+  var isUsersLoading = true;
 
-  late blocUser.User bloc_user;
-  bool isEdit = false;
-
-
+  List<User> sAdmins = [];
+  List<String> sAdminIds = [];
+  List<String> sAdminNames = [];
 
   @override
   void initState() {
     sType = widget.lounge.type;
+
+    sAdminIds = widget.lounge.admins;
+
+    FirestoreHelper.pullUsersGreaterThanLevel(Constants.MANAGER_LEVEL).then((res) {
+      if(res.docs.isNotEmpty){
+        for(int i=0;i<res.docs.length; i++){
+          DocumentSnapshot document = res.docs[i];
+          Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+          final User user = Fresh.freshUserMap(data, false);
+          mUsers.add(user);
+
+          if(sAdminIds.contains(user.id)){
+            sAdmins.add(user);
+            sAdminNames.add('${user.name} ${user.surname}');
+          }
+
+          setState(() {
+            isUsersLoading = false;
+          });
+        }
+      } else {
+        setState(() {
+          isUsersLoading = false;
+        });
+      }
+    });
 
     super.initState();
   }
@@ -60,7 +83,7 @@ class _LoungeAddEditScreenState extends State<LoungeAddEditScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text('lounge | ${widget.task}')),
-      body: _buildBody(context),
+      body: isUsersLoading? const LoadingWidget(): _buildBody(context),
     );
   }
 
@@ -78,53 +101,132 @@ class _LoungeAddEditScreenState extends State<LoungeAddEditScreen> {
             }),
         const SizedBox(height: 24),
 
-        FormField<String>(
-          builder: (FormFieldState<String> state) {
-            return InputDecorator(
-              key: const ValueKey('lounge_type'),
-              decoration: InputDecoration(
-                  fillColor: Colors.white,
-                  errorStyle: TextStyle(
-                      color: Theme.of(context).errorColor, fontSize: 16.0),
-                  hintText: 'please select lounge type',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(5.0),
-                    borderSide: BorderSide(color: Theme.of(context).primaryColor),
+        Column(
+          children: [
+            const Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(bottom: 8.0),
+                  child: Text(
+                    'type *',
+                    style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold),
                   ),
-                  enabledBorder: OutlineInputBorder(
-                    // width: 0.0 produces a thin "hairline" border
-                    borderSide: BorderSide(
-                        color: Theme.of(context).primaryColor, width: 0.0),
-                  )),
-              isEmpty: sType == '',
-              child: DropdownButtonHideUnderline(
-                child: DropdownButton<String>(
-                  style:
-                  TextStyle(color: Theme.of(context).primaryColorLight),
-                  dropdownColor: Theme.of(context).backgroundColor,
-                  value: sType,
-                  isDense: true,
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      sType = newValue!;
-                      widget.lounge =
-                          widget.lounge.copyWith(type: sType);
-                      state.didChange(newValue);
-                    });
-                  },
-                  items: loungeTypes.map((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
+                ),
+              ],
+            ),
+            FormField<String>(
+              builder: (FormFieldState<String> state) {
+                return InputDecorator(
+                  key: const ValueKey('lounge_type'),
+                  decoration: InputDecoration(
+                      fillColor: Colors.white,
+                      errorStyle: TextStyle(
+                          color: Theme.of(context).errorColor, fontSize: 16.0),
+                      hintText: 'please select lounge type',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(5.0),
+                        borderSide: const BorderSide(),
+                      ),
+                      enabledBorder: const OutlineInputBorder(
+                        // width: 0.0 produces a thin "hairline" border
+                        borderSide: BorderSide(width: 0.0),
+                      )),
+                  isEmpty: sType == '',
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton<String>(
+                      value: sType,
+                      isDense: true,
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          sType = newValue!;
+                          widget.lounge =
+                              widget.lounge.copyWith(type: sType);
+                          state.didChange(newValue);
+                        });
+                      },
+                      items: loungeTypes.map((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
+        const SizedBox(height: 24),
+
+        Column(
+          children: [
+            const Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(bottom: 8.0),
+                  child: Text(
+                    'admins *',
+                    style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ],
+            ),
+            MultiSelectDialogField(
+              items: mUsers
+                  .map((e) => MultiSelectItem(e,
+                  '${e.name.toLowerCase()} ${e.surname.toLowerCase()}'))
+                  .toList(),
+              initialValue: sAdmins.map((e) => e).toList(),
+              listType: MultiSelectListType.CHIP,
+              buttonIcon: Icon(
+                Icons.arrow_drop_down,
+                color: Colors.grey.shade700,
+              ),
+              title: const Text('select admins'),
+              buttonText: const Text(
+                'select',
+                style: TextStyle(color: Constants.darkPrimary),
+              ),
+              decoration: BoxDecoration(
+                // color: Constants.background,
+                borderRadius: const BorderRadius.all(Radius.circular(5)),
+                border: Border.all(
+                  // color: Constants.primary,
+                  width: 0.0,
                 ),
               ),
-            );
-          },
-        ),
+              searchable: true,
+              onConfirm: (values) {
+                sAdmins = values as List<User>;
+                sAdminIds = [];
+                sAdminNames = [];
 
+                for (User user in sAdmins) {
+                  sAdminIds.add(user.id);
+                  sAdminNames.add('${user.name} ${user.surname}');
+                }
+
+                if (sAdminIds.isEmpty) {
+                  Logx.i(_TAG, 'no admins selected');
+                  widget.lounge =
+                      widget.lounge.copyWith(admins: []);
+                } else {
+                  widget.lounge =
+                      widget.lounge.copyWith(admins: sAdminIds);
+                }
+              },
+            ),
+          ],
+        ),
         const SizedBox(height: 24),
+
         Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [

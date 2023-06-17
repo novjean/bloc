@@ -441,7 +441,7 @@ class _HomeScreenState extends State<HomeScreen> {
   /** optional **/
   buildSuperstarsList(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
-      stream: FirestoreHelper.getUsers(Constants.MANAGER_LEVEL),
+      stream: FirestoreHelper.getUsersLessThanLevel(Constants.MANAGER_LEVEL),
       builder: (ctx, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           Logx.i(_TAG, 'loading users...');

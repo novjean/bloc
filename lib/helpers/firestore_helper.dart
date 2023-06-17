@@ -1473,7 +1473,14 @@ class FirestoreHelper {
         .get();
   }
 
-  static Stream<QuerySnapshot<Object?>> getUsers(int clearanceLevel) {
+  static Future<QuerySnapshot<Object?>> pullUsersGreaterThanLevel(int clearanceLevel) {
+    return FirebaseFirestore.instance
+        .collection(USERS)
+        .where('clearanceLevel', isGreaterThanOrEqualTo: clearanceLevel)
+        .get();
+  }
+
+  static Stream<QuerySnapshot<Object?>> getUsersLessThanLevel(int clearanceLevel) {
     return FirebaseFirestore.instance
         .collection(USERS)
         .where('clearanceLevel', isLessThan: clearanceLevel)
