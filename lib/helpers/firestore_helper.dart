@@ -648,6 +648,13 @@ class FirestoreHelper {
     }
   }
 
+  static Future<QuerySnapshot<Map<String, dynamic>>> pullLounge(String id) {
+    return FirebaseFirestore.instance
+        .collection(LOUNGES)
+        .where('id', isEqualTo: id)
+        .get();
+  }
+
   static Stream<QuerySnapshot<Object?>> getLounges() {
     return FirebaseFirestore.instance
         .collection(LOUNGES)
@@ -658,7 +665,6 @@ class FirestoreHelper {
   static void deleteLounge(String docId) {
     FirebaseFirestore.instance.collection(LOUNGES).doc(docId).delete();
   }
-
 
   /** manager services **/
   static Stream<QuerySnapshot<Object?>> getManagerServicesSnapshot() {

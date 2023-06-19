@@ -1,7 +1,6 @@
 import 'dart:ui';
 
 import 'package:bloc/routes/app_route_config.dart';
-import 'package:bloc/screens/login_screen.dart';
 import 'package:bloc/utils/logx.dart';
 import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -16,7 +15,6 @@ import 'package:provider/provider.dart';
 import 'db/shared_preferences/user_preferences.dart';
 import 'firebase_options.dart';
 import 'providers/cart.dart';
-import 'screens/ui/splash_screen.dart';
 import 'utils/constants.dart';
 
 var logger = Logger(

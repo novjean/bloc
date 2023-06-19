@@ -13,6 +13,7 @@ import '../helpers/fresh.dart';
 import '../main.dart';
 import '../screens/error_page.dart';
 import '../screens/login_screen.dart';
+import '../screens/lounge/lounge_chat_screen.dart';
 import '../screens/parties/artist_screen.dart';
 import '../screens/ui/splash_screen.dart';
 import '../utils/logx.dart';
@@ -126,7 +127,6 @@ class BlocRouter{
                 ));
           },
         ),
-
         GoRoute(
           name: MyAppRouteConstants.artistRouteName,
           path: '/artist/:genre/:name',
@@ -135,6 +135,17 @@ class BlocRouter{
                 child: ArtistScreen(
                   name: state.params['name']!,
                   genre: state.params['genre']!,
+                ));
+          },
+        ),
+
+        GoRoute(
+          name: MyAppRouteConstants.loungeRouteName,
+          path: '/lounge/:id',
+          pageBuilder: (context, state) {
+            return MaterialPage(
+                child: LoungeChatScreen(
+                  id: state.params['id']!,
                 ));
           },
         ),

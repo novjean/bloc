@@ -22,7 +22,7 @@ import 'profile/profile_add_edit_register_page.dart';
 import 'profile/profile_screen.dart';
 
 class MainScreen extends StatefulWidget {
-  const MainScreen();
+  MainScreen({Key? key}) : super(key: key);
 
   @override
   State<MainScreen> createState() => _MainScreenState();
@@ -33,9 +33,7 @@ class _MainScreenState extends State<MainScreen> {
 
   late blocUser.User user;
 
-  String? fcmToken = '';
-
-  late PageController _pageController;
+  PageController _pageController = PageController();
   int _page = 0;
 
   List icons = [
@@ -47,9 +45,6 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   void initState() {
-    super.initState();
-    _pageController = PageController();
-
     user = UserPreferences.myUser;
 
     // lets check if the user is already registered
@@ -189,6 +184,8 @@ class _MainScreenState extends State<MainScreen> {
         FirestoreHelper.pushUser(user);
       }
     }
+
+    super.initState();
   }
 
   void _handleMessage(RemoteMessage message) {
@@ -221,51 +218,16 @@ class _MainScreenState extends State<MainScreen> {
     List pages = [
       HomeScreen(),
       // OfferScreen(),
-      PartyScreen(),
+      const PartyScreen(),
       LoungesScreen(),
-      // ChatHomeScreen(),
-      UserPreferences.isUserLoggedIn() ? ProfileScreen() : ProfileLoginScreen(),
+      UserPreferences.isUserLoggedIn() ? const ProfileScreen() : ProfileLoginScreen(),
     ];
 
     return Scaffold(
-      backgroundColor: Theme.of(context).backgroundColor,
+      backgroundColor: Constants.background,
       appBar: AppBar(
         title: const Text('bloc'),
-        backgroundColor: Theme.of(context).backgroundColor,
-        // actions: [
-        //   DropdownButton(
-        //     dropdownColor: Theme.of(context).primaryColorLight,
-        //     underline: Container(),
-        //     icon: Icon(Icons.more_vert,
-        //         color: Theme.of(context).primaryIconTheme.color),
-        //     items: [
-        //       DropdownMenuItem(
-        //         child: Container(
-        //           child: Row(
-        //             children: [
-        //               Icon(Icons.exit_to_app),
-        //               SizedBox(
-        //                 width: 8,
-        //               ),
-        //               Text(UserPreferences.isUserLoggedIn() ? 'logout' : 'login'),
-        //             ],
-        //           ),
-        //         ),
-        //         value: UserPreferences.isUserLoggedIn() ? 'logout' : 'login',
-        //       ),
-        //     ],
-        //     onChanged: (itemIdentifier) {
-        //       if (itemIdentifier == 'logout' || itemIdentifier == 'login') {
-        //         UserPreferences.resetUser();
-        //
-        //         FirebaseAuth.instance.signOut();
-        //         Navigator.of(context).pushReplacement(
-        //           MaterialPageRoute(builder: (context) => LoginScreen()),
-        //         );
-        //       }
-        //     },
-        //   )
-        // ],
+        backgroundColor: Constants.background,
       ),
       drawer: const AppDrawer(),
       body: PageView(
@@ -297,8 +259,6 @@ class _MainScreenState extends State<MainScreen> {
   @override
   void dispose() {
     super.dispose();
-    Logx.d(_TAG, 'dispose()');
-
     _pageController.dispose();
 
     if(!kIsWeb){
@@ -325,37 +285,24 @@ class _MainScreenState extends State<MainScreen> {
 
   void onPageChanged(int page) {
     Logx.d(_TAG, 'onPageChanged() : $page');
-
     setState(() {
       this._page = page;
     });
-
-    // if (mounted) {
-    //   setState(() {
-    //     this._page = page;
-    //   });
-    // }
   }
 
   buildTabIcon(int index) {
     Logx.d(_TAG, 'buildTabIcon() : $index');
 
-    return Container(
-      // margin:
-      //     EdgeInsets.fromLTRB(index == 3 ? 0 : 0, 0, index == 1 ? 30 : 0, 0),
-      child: IconButton(
-        icon: Icon(
-          icons[index],
-          size: 24.0,
-        ),
-        color: _page == index
-            ? Theme.of(context).highlightColor
-            : Constants.background,
-        onPressed: () {
-          Logx.d(_TAG, 'jump to page : ' + index.toString());
-
-          _pageController.jumpToPage(index);},
+    return IconButton(
+      icon: Icon(
+        icons[index],
+        size: 24.0,
       ),
+      color: _page == index
+          ? Theme.of(context).highlightColor
+          : Constants.background,
+      onPressed: () {
+        _pageController.jumpToPage(index);},
     );
   }
 }

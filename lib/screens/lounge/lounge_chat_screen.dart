@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import '../../db/entity/chat.dart';
 import '../../db/entity/lounge.dart';
 import '../../db/shared_preferences/user_preferences.dart';
+import '../../helpers/dummy.dart';
 import '../../helpers/fresh.dart';
 import '../../helpers/token_monitor.dart';
 import '../../utils/constants.dart';
@@ -14,9 +15,9 @@ import '../../widgets/chat/message_bubble.dart';
 import '../../widgets/chat/new_message.dart';
 
 class LoungeChatScreen extends StatefulWidget {
-  Lounge lounge;
+  String id;
 
-  LoungeChatScreen({Key? key, required this.lounge}) : super(key: key);
+  LoungeChatScreen({Key? key, required this.id}) : super(key: key);
 
   @override
   State<LoungeChatScreen> createState() => _LoungeChatScreenState();
@@ -25,10 +26,30 @@ class LoungeChatScreen extends StatefulWidget {
 class _LoungeChatScreenState extends State<LoungeChatScreen> {
   static const String _TAG = 'LoungeChatScreen';
 
+  Lounge mLounge = Dummy.getDummyLounge();
+  var isLoungeLoading = true;
+
   // String? _token;
 
   @override
   void initState() {
+    FirestoreHelper.pullLounge(widget.id).then((res) {
+      if(res.docs.isNotEmpty){
+        for(int i=0;i<res.docs.length;i++){
+          DocumentSnapshot document = res.docs[i];
+          Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+          mLounge = Fresh.freshLoungeMap(data, false);
+        }
+        setState(() {
+          isLoungeLoading = false;
+        });
+      } else {
+        setState(() {
+          isLoungeLoading = false;
+        });
+      }
+    });
+
     // TokenMonitor((token) {
     //   _token = token;
     //   return token == null
@@ -42,7 +63,7 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('bloc | ${widget.lounge.name}'),
+        title: Text('bloc | ${mLounge.name}'),
       ),
       backgroundColor: Constants.background,
       body: _buildBody(context),
@@ -56,14 +77,14 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
         Expanded(
           child: loadMessages(),
         ),
-        NewMessage(loungeId: widget.lounge.id),
+        NewMessage(loungeId: mLounge.id),
       ],
     );
   }
 
   loadMessages() {
     return StreamBuilder<QuerySnapshot>(
-      stream: FirestoreHelper.getChats(widget.lounge.id),
+      stream: FirestoreHelper.getChats(mLounge.id),
       builder: (ctx, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const LoadingWidget();
@@ -114,7 +135,7 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
     );
   }
 
-  ScrollController _scrollController = ScrollController();
+  final ScrollController _scrollController = ScrollController();
 
   _scrollToBottom() {
     _scrollController.animateTo(_scrollController.position.maxScrollExtent,

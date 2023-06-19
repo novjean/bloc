@@ -59,7 +59,6 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
 
   @override
   void initState() {
-    super.initState();
     WidgetsBinding.instance?.addObserver(this);
 
     blocUser.User user = UserPreferences.myUser;
@@ -154,6 +153,8 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
         }
       }
     });
+
+    super.initState();
   }
 
   @override

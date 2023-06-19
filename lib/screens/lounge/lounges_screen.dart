@@ -4,9 +4,11 @@ import 'package:bloc/screens/lounge/lounge_chat_screen.dart';
 import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../db/entity/lounge.dart';
 import '../../helpers/fresh.dart';
+import '../../routes/app_route_constants.dart';
 import '../../utils/constants.dart';
 import '../../utils/logx.dart';
 import '../../widgets/lounge_item.dart';
@@ -28,15 +30,14 @@ class _LoungesScreenState extends State<LoungesScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
-        backgroundColor: Constants.background, body: _buildBody(context));
+      backgroundColor: Constants.background,
+      body: _buildBody(context),
+    );
   }
 
   _buildBody(BuildContext context) {
     return Column(
-      children: [
-        _loadLounges(context)
-      ],
+      children: [_loadLounges(context)],
     );
   }
 
@@ -86,11 +87,10 @@ class _LoungesScreenState extends State<LoungesScreen> {
                   lounge: lounge,
                 ),
                 onTap: () {
-                  // open lounge
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (ctx) => LoungeChatScreen(
-                            lounge: lounge,
-                          )));
+                  GoRouter.of(context).pushNamed(MyAppRouteConstants.loungeRouteName,
+                      params: {
+                        'id': lounge.id,
+                      });
                 });
           }),
     );
