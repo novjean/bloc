@@ -30,7 +30,7 @@ import '../../helpers/dummy.dart';
 import '../../helpers/firestore_helper.dart';
 import '../../helpers/fresh.dart';
 import '../../main.dart';
-import '../../routes/app_route_constants.dart';
+import '../../routes/route_constants.dart';
 import '../../utils/challenge_utils.dart';
 import '../../utils/constants.dart';
 import '../../utils/file_utils.dart';
@@ -907,7 +907,7 @@ class _PartyGuestAddEditManageScreenState
 
                   UserPreferences.setUser(bloc_user);
                   GoRouter.of(context)
-                      .pushNamed(MyAppRouteConstants.homeRouteName);
+                      .pushNamed(RouteConstants.homeRouteName);
 
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (context) => BoxOfficeScreen()));
@@ -931,7 +931,7 @@ class _PartyGuestAddEditManageScreenState
 
       UserPreferences.setUser(bloc_user);
       GoRouter.of(context)
-          .pushNamed(MyAppRouteConstants.homeRouteName);
+          .pushNamed(RouteConstants.homeRouteName);
 
       Navigator.of(context).push(MaterialPageRoute(
           builder: (context) => BoxOfficeScreen()));
@@ -1152,7 +1152,7 @@ class _PartyGuestAddEditManageScreenState
 
                 UserPreferences.setUser(bloc_user);
                 GoRouter.of(context)
-                    .pushNamed(MyAppRouteConstants.homeRouteName);
+                    .pushNamed(RouteConstants.homeRouteName);
 
                 // Navigator.of(context).pushReplacement(MaterialPageRoute(
                 //     builder: (context) => MainScreen()));
@@ -1179,7 +1179,7 @@ class _PartyGuestAddEditManageScreenState
 
                 UserPreferences.setUser(bloc_user);
                 GoRouter.of(context)
-                    .pushNamed(MyAppRouteConstants.homeRouteName);
+                    .pushNamed(RouteConstants.homeRouteName);
 
                 // Navigator.of(context).pushReplacement(MaterialPageRoute(
                 //     builder: (context) => MainScreen()));

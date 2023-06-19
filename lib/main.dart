@@ -1,6 +1,6 @@
 import 'dart:ui';
 
-import 'package:bloc/routes/app_route_config.dart';
+import 'package:bloc/routes/bloc_router.dart';
 import 'package:bloc/screens/login_screen.dart';
 import 'package:bloc/utils/logx.dart';
 import 'package:bloc/widgets/ui/loading_widget.dart';

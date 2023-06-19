@@ -19,7 +19,7 @@ import '../../helpers/dummy.dart';
 import '../../helpers/firestore_helper.dart';
 import '../../helpers/fresh.dart';
 import '../../main.dart';
-import '../../routes/app_route_constants.dart';
+import '../../routes/route_constants.dart';
 import '../../utils/constants.dart';
 import '../../utils/date_time_utils.dart';
 import '../../utils/logx.dart';
@@ -888,7 +888,7 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
 
                 UserPreferences.setUser(bloc_user);
                 GoRouter.of(context)
-                    .pushNamed(MyAppRouteConstants.homeRouteName);
+                    .pushNamed(RouteConstants.homeRouteName);
 
                 Navigator.of(context).push(MaterialPageRoute(
                     builder: (context) => BoxOfficeScreen()));

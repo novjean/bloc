@@ -17,7 +17,7 @@ import '../screens/parties/artist_screen.dart';
 import '../screens/ui/splash_screen.dart';
 import '../utils/logx.dart';
 import '../widgets/ui/loading_widget.dart';
-import 'app_route_constants.dart';
+import 'route_constants.dart';
 
 class BlocRouter{
   static const String _TAG = 'BlocRouter';
@@ -26,7 +26,7 @@ class BlocRouter{
     GoRouter router = GoRouter(
       routes: [
         GoRoute(
-          name: MyAppRouteConstants.landingRouteName,
+          name: RouteConstants.landingRouteName,
           path: '/',
           builder: (context, state) {
 
@@ -89,7 +89,7 @@ class BlocRouter{
           },
         ),
         GoRoute(
-          name: MyAppRouteConstants.loginRouteName,
+          name: RouteConstants.loginRouteName,
           path: '/login/:skip',
           pageBuilder: (context, state) {
             String skipString = state.params['skip']!;
@@ -108,7 +108,7 @@ class BlocRouter{
         ),
 
         GoRoute(
-          name: MyAppRouteConstants.homeRouteName,
+          name: RouteConstants.homeRouteName,
           path: '/home',
           pageBuilder: (context, state) {
             return const MaterialPage(child: MainScreen());
@@ -116,7 +116,7 @@ class BlocRouter{
         ),
 
         GoRoute(
-          name: MyAppRouteConstants.eventRouteName,
+          name: RouteConstants.eventRouteName,
           path: '/event/:partyName/:partyChapter',
           pageBuilder: (context, state) {
             return MaterialPage(
@@ -128,7 +128,7 @@ class BlocRouter{
         ),
 
         GoRoute(
-          name: MyAppRouteConstants.artistRouteName,
+          name: RouteConstants.artistRouteName,
           path: '/artist/:genre/:name',
           pageBuilder: (context, state) {
             return MaterialPage(

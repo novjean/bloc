@@ -22,7 +22,7 @@ import '../../helpers/dummy.dart';
 import '../../helpers/firestore_helper.dart';
 import '../../helpers/fresh.dart';
 import '../../main.dart';
-import '../../routes/app_route_constants.dart';
+import '../../routes/route_constants.dart';
 import '../../utils/constants.dart';
 import '../../utils/date_time_utils.dart';
 import '../../utils/logx.dart';
@@ -1095,7 +1095,7 @@ class _CelebrationAddEditScreenState extends State<CelebrationAddEditScreen> {
 
                 UserPreferences.setUser(bloc_user);
                 GoRouter.of(context)
-                    .pushNamed(MyAppRouteConstants.homeRouteName);
+                    .pushNamed(RouteConstants.homeRouteName);
               },
             ),
           ],

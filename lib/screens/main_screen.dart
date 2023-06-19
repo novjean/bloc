@@ -13,7 +13,7 @@ import '../db/shared_preferences/user_preferences.dart';
 import '../helpers/firestore_helper.dart';
 import '../helpers/fresh.dart';
 import '../main.dart';
-import '../routes/app_route_constants.dart';
+import '../routes/route_constants.dart';
 import '../utils/logx.dart';
 import 'home_screen.dart';
 import 'parties/party_screen.dart';
@@ -193,10 +193,10 @@ class _MainScreenState extends State<MainScreen> {
   void _handleMessage(RemoteMessage message) {
     if(UserPreferences.myUser.id.isNotEmpty){
       GoRouter.of(context)
-          .pushNamed(MyAppRouteConstants.homeRouteName);
+          .pushNamed(RouteConstants.homeRouteName);
     } else {
       GoRouter.of(context)
-          .pushNamed(MyAppRouteConstants.loginRouteName, params: {
+          .pushNamed(RouteConstants.loginRouteName, params: {
         'skip': 'true',
       });
     }

@@ -10,7 +10,7 @@ import 'package:go_router/go_router.dart';
 import '../../db/entity/user.dart' as blocUser;
 import '../helpers/firestorage_helper.dart';
 import '../helpers/firestore_helper.dart';
-import '../routes/app_route_constants.dart';
+import '../routes/route_constants.dart';
 import '../utils/logx.dart';
 import '../widgets/ui/sized_listview_block.dart';
 import 'login_screen.dart';
@@ -119,7 +119,7 @@ class AccountScreen extends StatelessWidget {
                           }
 
                           GoRouter.of(context)
-                              .pushNamed(MyAppRouteConstants.loginRouteName, params: {
+                              .pushNamed(RouteConstants.loginRouteName, params: {
                             'skip': 'false',
                           });
                         },
