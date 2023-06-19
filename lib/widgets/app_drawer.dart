@@ -22,10 +22,10 @@ class AppDrawer extends StatelessWidget {
     final user = UserPreferences.getUser();
 
     bool showCaptain = false;
-    if(user.clearanceLevel >= Constants.CAPTAIN_LEVEL){
+    if (user.clearanceLevel >= Constants.CAPTAIN_LEVEL) {
       showCaptain = true;
     }
-    if(user.clearanceLevel == Constants.PROMOTER_LEVEL){
+    if (user.clearanceLevel == Constants.PROMOTER_LEVEL) {
       showCaptain = false;
     }
 
@@ -46,8 +46,7 @@ class AppDrawer extends StatelessWidget {
 
               // GoRouter.of(context).go('home');
 
-              GoRouter.of(context)
-                  .goNamed(MyAppRouteConstants.homeRouteName);
+              GoRouter.of(context).goNamed(MyAppRouteConstants.homeRouteName);
             },
           ),
           const Divider(),
@@ -93,7 +92,8 @@ class AppDrawer extends StatelessWidget {
                     leading: const Icon(Icons.adjust),
                     title: const Text('captain'),
                     onTap: () {
-                      Logx.i(_TAG, 'captain of bloc id : ' + user.blocServiceId);
+                      Logx.i(
+                          _TAG, 'captain of bloc id : ' + user.blocServiceId);
 
                       Navigator.of(context).pop();
                       Navigator.of(context).push(

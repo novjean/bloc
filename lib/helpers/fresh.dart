@@ -14,6 +14,7 @@ import '../db/entity/product.dart';
 import '../db/entity/reservation.dart';
 import '../db/entity/ticket.dart';
 import '../db/entity/user.dart';
+import '../db/entity/user_lounge.dart';
 import '../db/shared_preferences/user_preferences.dart';
 import '../utils/constants.dart';
 import '../utils/logx.dart';
@@ -949,6 +950,12 @@ class Fresh {
       Logx.em(_TAG, 'lounge type not exist for id: ${lounge.id}');
       shouldPush = true;
     }
+    try {
+      lounge = lounge.copyWith(imageUrl: map['imageUrl'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'lounge imageUrl not exist for id: ${lounge.id}');
+      shouldPush = true;
+    }
 
     try {
       lounge = lounge.copyWith(admins: List<String>.from(map['admins']));
@@ -969,6 +976,20 @@ class Fresh {
       Logx.em(_TAG, 'lounge creationTime not exist for id: ${lounge.id}');
       shouldPush = true;
     }
+
+    try {
+      lounge = lounge.copyWith(lastChat: map['lastChat'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'lounge lastChat not exist for id: ${lounge.id}');
+      shouldPush = true;
+    }
+    try {
+      lounge = lounge.copyWith(lastChatTime: map['lastChatTime'] as int);
+    } catch (e) {
+      Logx.em(_TAG, 'lounge lastChatTime not exist for id: ${lounge.id}');
+      shouldPush = true;
+    }
+
     try {
       lounge = lounge.copyWith(isActive: map['isActive'] as bool);
     } catch (e) {
@@ -1010,6 +1031,12 @@ class Fresh {
       Logx.em(_TAG, 'lounge type not exist for id: ${lounge.id}');
     }
     try {
+      fresh = fresh.copyWith(imageUrl: lounge.imageUrl);
+    } catch (e) {
+      Logx.em(_TAG, 'lounge imageUrl not exist for id: ${lounge.id}');
+    }
+
+    try {
       fresh = fresh.copyWith(admins: lounge.admins);
     } catch (e) {
       Logx.em(_TAG, 'lounge admins not exist for id: ${lounge.id}');
@@ -1024,6 +1051,18 @@ class Fresh {
     } catch (e) {
       Logx.em(_TAG, 'lounge creationTime not exist for id: ${lounge.id}');
     }
+
+    try {
+      fresh = fresh.copyWith(lastChat: lounge.lastChat);
+    } catch (e) {
+      Logx.em(_TAG, 'lounge lastChat not exist for id: ${lounge.id}');
+    }
+    try {
+      fresh = fresh.copyWith(lastChatTime: lounge.lastChatTime);
+    } catch (e) {
+      Logx.em(_TAG, 'lounge lastChatTime not exist for id: ${lounge.id}');
+    }
+
     try {
       fresh = fresh.copyWith(isActive: lounge.isActive);
     } catch (e) {
@@ -2512,7 +2551,7 @@ class Fresh {
     try {
       user = user.copyWith(isBanned: map['isBanned'] as bool);
     } catch (e) {
-      Logx.em(_TAG, 'user isBanned not exist for id: ' + user.id);
+      Logx.em(_TAG, 'user isBanned not exist for id: ${user.id}');
       shouldPushUser = true;
     }
     try {
@@ -2523,7 +2562,7 @@ class Fresh {
     }
 
     if (shouldPushUser && shouldUpdate) {
-      Logx.i(_TAG, 'updating user ' + user.id);
+      Logx.i(_TAG, 'updating user ${user.id}');
       FirestoreHelper.pushUser(user);
     }
 
@@ -2610,5 +2649,60 @@ class Fresh {
     }
 
     return freshUser;
+  }
+
+  /** user lounge **/
+  static UserLounge freshUserLoungeMap(Map<String, dynamic> map, bool shouldUpdate) {
+    UserLounge userLounge = Dummy.getDummyUserLounge();
+    bool shouldPush = true;
+
+    try {
+      userLounge = userLounge.copyWith(id: map['id'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'userLounge id not exist');
+    }
+    try {
+      userLounge = userLounge.copyWith(userId: map['userId'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'userLounge userId not exist for id: ${userLounge.id}');
+      shouldPush = true;
+    }
+    try {
+      userLounge = userLounge.copyWith(loungeIds: List<String>.from(map['loungeIds']));
+    } catch (e) {
+      Logx.em(_TAG, 'userLounge loungeIds not exist for id: ${userLounge.id}');
+      List<String> temp = [];
+      userLounge = userLounge.copyWith(loungeIds: temp);
+      shouldPush = true;
+    }
+
+    if (shouldPush && shouldUpdate) {
+      Logx.i(_TAG, 'updating userLounge ${userLounge.id}');
+      FirestoreHelper.pushUserLounge(userLounge);
+    }
+
+    return userLounge;
+  }
+
+  static UserLounge freshUserLounge(UserLounge userLounge) {
+    UserLounge freshUserLounge = Dummy.getDummyUserLounge();
+
+    try {
+      freshUserLounge = freshUserLounge.copyWith(id: userLounge.id);
+    } catch (e) {
+      Logx.em(_TAG, 'userLounge id not exist');
+    }
+    try {
+      freshUserLounge = freshUserLounge.copyWith(userId: userLounge.userId);
+    } catch (e) {
+      Logx.em(_TAG, 'userLounge userId exist for id: ${userLounge.id}');
+    }
+    try {
+      freshUserLounge = freshUserLounge.copyWith(loungeIds: userLounge.loungeIds);
+    } catch (e) {
+      Logx.em(_TAG, 'userLounge loungeIds not exist for id: ${userLounge.id}');
+    }
+
+    return freshUserLounge;
   }
 }

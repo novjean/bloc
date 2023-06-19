@@ -23,6 +23,7 @@ import '../db/entity/party.dart';
 import '../db/entity/product.dart';
 import '../db/entity/seat.dart';
 import '../db/entity/user.dart';
+import '../db/entity/user_lounge.dart';
 import '../db/shared_preferences/user_preferences.dart';
 import 'firestore_helper.dart';
 
@@ -164,7 +165,10 @@ class Dummy {
         type: 'community',
         admins: [],
         members: [],
+        imageUrl: '',
         creationTime: Timestamp.now().millisecondsSinceEpoch,
+        lastChat: '',
+        lastChatTime: Timestamp.now().millisecondsSinceEpoch,
         isActive: true);
     return dummy;
   }
@@ -368,5 +372,11 @@ class Dummy {
         const UserLevel(id: '84ub8bC0m3NQH9KfWCkD', name: 'customer', level: 1);
 
     return dummyUserLevel;
+  }
+
+  static UserLounge getDummyUserLounge() {
+    UserLounge dummyUserLounge = UserLounge(
+        id: StringUtils.getRandomString(28), userId: '', loungeIds: []);
+    return dummyUserLounge;
   }
 }

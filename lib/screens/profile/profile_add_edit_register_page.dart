@@ -33,7 +33,7 @@ class ProfileAddEditRegisterPage extends StatefulWidget {
 
 class _ProfileAddEditRegisterPageState
     extends State<ProfileAddEditRegisterPage> {
-  static const String _TAG = '_ProfileAddEditRegisterPageState';
+  static const String _TAG = 'ProfileAddEditRegisterPage';
 
   bool isPhotoChanged = false;
 

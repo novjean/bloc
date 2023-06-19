@@ -1,19 +1,27 @@
+import 'dart:io';
+
 import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:bloc/widgets/ui/textfield_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:delayed_display/delayed_display.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:path/path.dart';
 import 'package:multi_select_flutter/dialog/multi_select_dialog_field.dart';
 import 'package:multi_select_flutter/util/multi_select_item.dart';
 import 'package:multi_select_flutter/util/multi_select_list_type.dart';
+import 'package:path_provider/path_provider.dart';
 
 import '../../../db/entity/lounge.dart';
 
 import '../../../db/entity/user.dart';
+import '../../../helpers/firestorage_helper.dart';
 import '../../../helpers/firestore_helper.dart';
 import '../../../helpers/fresh.dart';
 import '../../../utils/constants.dart';
 import '../../../utils/logx.dart';
+import '../../../utils/string_utils.dart';
+import '../../../widgets/profile_widget.dart';
 import '../../../widgets/ui/button_widget.dart';
 import '../../../widgets/ui/dark_button_widget.dart';
 import '../../../widgets/ui/toaster.dart';
@@ -41,6 +49,11 @@ class _LoungeAddEditScreenState extends State<LoungeAddEditScreen> {
   List<User> sAdmins = [];
   List<String> sAdminIds = [];
   List<String> sAdminNames = [];
+
+  String imagePath = '';
+  late String oldImageUrl;
+  late String newImageUrl;
+  bool isPhotoChanged = false;
 
   @override
   void initState() {
@@ -89,6 +102,31 @@ class _LoungeAddEditScreenState extends State<LoungeAddEditScreen> {
       physics: const BouncingScrollPhysics(),
       children: [
         const SizedBox(height: 15),
+        ProfileWidget(
+          imagePath: imagePath.isEmpty ? widget.lounge.imageUrl : imagePath,
+          isEdit: true,
+          onClicked: () async {
+            final image = await ImagePicker().pickImage(
+                source: ImageSource.gallery, imageQuality: 95, maxWidth: 768);
+            if (image == null) return;
+
+            final directory = await getApplicationDocumentsDirectory();
+            final name = basename(image.path);
+            final imageFile = File('${directory.path}/$name');
+            final newImage = await File(image.path).copy(imageFile.path);
+
+            oldImageUrl = widget.lounge.imageUrl;
+            newImageUrl = await FirestorageHelper.uploadFile(
+                FirestorageHelper.LOUNGE_IMAGES,
+                StringUtils.getRandomString(28),
+                newImage);
+
+            setState(() {
+              imagePath = imageFile.path;
+              isPhotoChanged = true;
+            });
+          },
+        ),
         TextFieldWidget(
             label: 'name *',
             text: widget.lounge.name,
@@ -315,6 +353,12 @@ class _LoungeAddEditScreenState extends State<LoungeAddEditScreen> {
               height: 50,
               text: 'save',
               onClicked: () {
+                if (isPhotoChanged) {
+                  widget.lounge = widget.lounge.copyWith(imageUrl: newImageUrl);
+                  if (oldImageUrl.isNotEmpty) {
+                    FirestorageHelper.deleteFile(oldImageUrl);
+                  }
+                }
                 Lounge freshLounge = Fresh.freshLounge(widget.lounge);
                 FirestoreHelper.pushLounge(freshLounge);
 

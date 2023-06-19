@@ -1,4 +1,5 @@
 import 'package:bloc/db/entity/user.dart' as blocUser;
+import 'package:bloc/screens/lounge/lounges_screen.dart';
 
 import 'package:bloc/screens/profile/profile_login_screen.dart';
 import 'package:bloc/utils/constants.dart';
@@ -223,8 +224,8 @@ class _MainScreenState extends State<MainScreen> {
       HomeScreen(),
       // OfferScreen(),
       PartyScreen(),
-      ChatHomeScreen(),
-      // ChatScreen(),
+      LoungesScreen(),
+      // ChatHomeScreen(),
       UserPreferences.isUserLoggedIn() ? ProfileScreen() : ProfileLoginScreen(),
     ];
 

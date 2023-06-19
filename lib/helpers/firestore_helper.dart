@@ -18,6 +18,7 @@ import 'package:bloc/db/entity/seat.dart';
 import 'package:bloc/db/entity/ticket.dart';
 import 'package:bloc/db/entity/ui_photo.dart';
 import 'package:bloc/db/entity/user.dart' as blocUser;
+import 'package:bloc/db/entity/user_lounge.dart';
 import 'package:bloc/helpers/firestorage_helper.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -71,9 +72,11 @@ class FirestoreHelper {
   static String UI_PHOTOS = 'ui_photos';
   static String USERS = 'users';
   static String USER_LEVELS = 'user_levels';
+  static String USER_LOUNGES = 'user_lounges';
 
   static int TABLE_PRIVATE_TYPE_ID = 1;
   static int TABLE_COMMUNITY_TYPE_ID = 2;
+
 
   /** Ads **/
   static void pushAd(Ad ad) async {
@@ -1612,6 +1615,22 @@ class FirestoreHelper {
         .where('level', isLessThan: clearanceLevel)
         .orderBy('level', descending: false)
         .get();
+  }
+
+  /** user lounge **/
+  static void pushUserLounge(UserLounge userLounge) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection(USER_LOUNGES)
+          .doc(userLounge.id)
+          .set(userLounge.toMap());
+    } on PlatformException catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } on Exception catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } catch (e) {
+      logger.e(e);
+    }
   }
 
 }
