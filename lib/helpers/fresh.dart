@@ -7,6 +7,7 @@ import '../db/entity/bloc.dart';
 import '../db/entity/category.dart';
 import '../db/entity/celebration.dart';
 import '../db/entity/challenge.dart';
+import '../db/entity/chat.dart';
 import '../db/entity/genre.dart';
 import '../db/entity/lounge.dart';
 import '../db/entity/party.dart';
@@ -808,6 +809,151 @@ class Fresh {
 
     return freshChallenge;
   }
+
+  /** chat **/
+  static Chat freshChatMap(
+      Map<String, dynamic> map, bool shouldUpdate) {
+    Chat chat = Dummy.getDummyChat();
+    bool shouldPush = true;
+
+    try {
+      chat = chat.copyWith(id: map['id'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'chat id not exist');
+    }
+    try {
+      chat = chat.copyWith(loungeId: map['loungeId'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'chat loungeId not exist for id: ${chat.id}');
+      shouldPush = true;
+    }
+    try {
+      chat = chat.copyWith(userId: map['userId'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'chat userId not exist for id: ${chat.id}');
+      shouldPush = true;
+    }
+    try {
+      chat = chat.copyWith(userName: map['userName'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'chat userName not exist for id: ${chat.id}');
+      shouldPush = true;
+    }
+    try {
+      chat = chat.copyWith(userImage: map['userImage'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'chat userImage not exist for id: ${chat.id}');
+      shouldPush = true;
+    }
+
+    try {
+      chat = chat.copyWith(message: map['message'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'chat message not exist for id: ${chat.id}');
+      shouldPush = true;
+    }
+    try {
+      chat = chat.copyWith(time: map['time'] as int);
+    } catch (e) {
+      Logx.em(_TAG, 'chat time not exist for id: ${chat.id}');
+      shouldPush = true;
+    }
+
+    try {
+      chat = chat.copyWith(vote: map['vote'] as int);
+    } catch (e) {
+      Logx.em(_TAG, 'chat vote not exist for id: ${chat.id}');
+      shouldPush = true;
+    }
+    try {
+      chat = chat.copyWith(upVoters: List<String>.from(map['upVoters']));
+    } catch (e) {
+      Logx.em(_TAG, 'chat upVoters not exist for id: ${chat.id}');
+      shouldPush = true;
+    }
+    try {
+      chat = chat.copyWith(downVoters: List<String>.from(map['downVoters']));
+    } catch (e) {
+      Logx.em(_TAG, 'chat downVoters not exist for id: ${chat.id}');
+      shouldPush = true;
+    }
+
+    if (shouldPush && shouldUpdate) {
+      Logx.i(_TAG, 'updating chat ' + chat.id);
+      FirestoreHelper.pushChat(chat);
+    }
+
+    return chat;
+  }
+
+  static Chat freshChat(Chat chat) {
+    Chat freshChat = Dummy.getDummyChat();
+
+    try {
+      freshChat = freshChat.copyWith(id: chat.id);
+    } catch (e) {
+      Logx.em(_TAG, 'chat id not exist');
+    }
+    try {
+      freshChat = freshChat.copyWith(loungeId: chat.loungeId);
+    } catch (e) {
+      Logx.em(
+          _TAG, 'chat loungeId not exist for id: ${chat.id}');
+    }
+    try {
+      freshChat = freshChat.copyWith(userId: chat.userId);
+    } catch (e) {
+      Logx.em(
+          _TAG, 'chat userId not exist for id: ${chat.id}');
+    }
+    try {
+      freshChat = freshChat.copyWith(userName: chat.userName);
+    } catch (e) {
+      Logx.em(
+          _TAG, 'chat userName not exist for id: ${chat.id}');
+    }
+    try {
+      freshChat = freshChat.copyWith(userImage: chat.userImage);
+    } catch (e) {
+      Logx.em(
+          _TAG, 'chat userImage not exist for id: ${chat.id}');
+    }
+
+    try {
+      freshChat = freshChat.copyWith(message: chat.message);
+    } catch (e) {
+      Logx.em(
+          _TAG, 'chat message not exist for id: ${chat.id}');
+    }
+    try {
+      freshChat = freshChat.copyWith(time: chat.time);
+    } catch (e) {
+      Logx.em(
+          _TAG, 'chat time not exist for id: ${chat.id}');
+    }
+
+    try {
+      freshChat = freshChat.copyWith(vote: chat.vote);
+    } catch (e) {
+      Logx.em(
+          _TAG, 'chat vote not exist for id: ${chat.id}');
+    }
+    try {
+      freshChat = freshChat.copyWith(upVoters: chat.upVoters);
+    } catch (e) {
+      Logx.em(
+          _TAG, 'chat upVoters not exist for id: ${chat.id}');
+    }
+    try {
+      freshChat = freshChat.copyWith(downVoters: chat.downVoters);
+    } catch (e) {
+      Logx.em(
+          _TAG, 'chat downVoters not exist for id: ${chat.id}');
+    }
+
+    return freshChat;
+  }
+
 
   /** genre **/
   static Genre freshGenreMap(Map<String, dynamic> map, bool shouldUpdate) {

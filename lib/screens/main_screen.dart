@@ -16,8 +16,6 @@ import '../helpers/fresh.dart';
 import '../main.dart';
 import '../routes/app_route_constants.dart';
 import '../utils/logx.dart';
-import 'chat/chat_home_screen.dart';
-import 'chat/chat_screen.dart';
 import 'home_screen.dart';
 import 'parties/party_screen.dart';
 import 'profile/profile_add_edit_register_page.dart';

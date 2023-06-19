@@ -16,6 +16,7 @@ import '../db/entity/ad.dart';
 import '../db/entity/bloc.dart';
 import '../db/entity/bloc_service.dart';
 import '../db/entity/celebration.dart';
+import '../db/entity/chat.dart';
 import '../db/entity/genre.dart';
 import '../db/entity/lounge.dart';
 import '../db/entity/offer.dart';
@@ -131,6 +132,22 @@ class Dummy {
         dialogAcceptText: '',
         dialogAccept2Text: '');
     return dummyChallenge;
+  }
+
+  static Chat getDummyChat() {
+    Chat dummyChat = Chat(
+      id: StringUtils.getRandomString(28),
+      loungeId: '',
+      userId: UserPreferences.myUser.id,
+      userName: UserPreferences.myUser.name,
+      userImage: UserPreferences.myUser.imageUrl,
+      message: '',
+      time: Timestamp.now().millisecondsSinceEpoch,
+      vote: 0,
+      upVoters: [],
+      downVoters: []
+    );
+    return dummyChat;
   }
 
   static Genre getDummyGenre() {

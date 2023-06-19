@@ -26,8 +26,8 @@ class RecentChats extends StatelessWidget {
           for (int i=0; i<chatSnapshot.data!.docs.length; i++) {
             DocumentSnapshot document = chatSnapshot.data!.docs[i];
             Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-            final Chat chat = Chat.fromJson(data);
-            chats.add(chat);
+            // final Chat chat = Chat.fromJson(data);
+            // chats.add(chat);
 
             if (i == chatSnapshot.data!.docs.length - 1) {
               return _displayChats(context, chats);
@@ -152,7 +152,7 @@ class RecentChats extends StatelessWidget {
     Message message = Message(
       sender: UserPreferences.getUser(),
       time: "4:20",
-      text: chat.text,
+      text: chat.message,
       isLiked: true,
       unread: true,
     );

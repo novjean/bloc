@@ -1,86 +1,136 @@
+import 'package:bloc/helpers/firestore_helper.dart';
 import 'package:flutter/material.dart';
 
 import '../../db/entity/chat.dart';
+import '../../db/shared_preferences/user_preferences.dart';
 import '../../utils/constants.dart';
+import '../../utils/date_time_utils.dart';
 
-class MessageBubble extends StatelessWidget {
-  // MessageBubble(this.chat, this.isMe, this.key,
-  //     {required this.key});
-
-  MessageBubble({required this.chat, required this.isMe, required this.key});
-
-  final Key key;
+class MessageBubble extends StatefulWidget {
   final Chat chat;
   final bool isMe;
 
+  const MessageBubble({Key? key, required this.chat, required this.isMe})
+      : super(key: key);
+
+  @override
+  State<MessageBubble> createState() => _MessageBubbleState();
+}
+
+class _MessageBubbleState extends State<MessageBubble> {
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        Row(
-          mainAxisAlignment:
-          isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
-          children: [
-            Container(
-              decoration: BoxDecoration(
-                color: isMe ? Colors.grey[300] : Constants.primary,
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(12),
-                  topRight: Radius.circular(12),
-                  bottomLeft: isMe ? Radius.circular(0) : Radius.circular(12),
-                  bottomRight: isMe ? Radius.circular(0) : Radius.circular(12),
-                ),
-              ),
-              width: 140,
-              padding: EdgeInsets.symmetric(
-                vertical: 10,
-                horizontal: 16,
-              ),
-              margin: EdgeInsets.symmetric(
-                vertical: 16,
-                horizontal: 8,
-              ),
-              child: Column(
-                crossAxisAlignment:
-                isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    chat.userName,
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: isMe
-                          ? Colors.black
-                          : Constants.primary,
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 10.0),
+      child: Hero(
+        tag: widget.chat.id,
+        child: Card(
+          color: Constants.lightPrimary,
+
+          child: Padding(
+            padding: const EdgeInsets.only(top: 2.0, left: 5, right: 5),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                  child: CircleAvatar(
+                    backgroundImage: NetworkImage(
+                      widget.chat.userImage,
                     ),
                   ),
-                  Text(
-                    chat.text,
-                    // style: TextStyle(
-                    //     color: isMe
-                    //         ? Colors.black
-                    //         : Theme.of(context)
-                    //         .accentTextTheme
-                    //         .headline1!
-                    //         .color),
-                    textAlign: isMe ? TextAlign.end : TextAlign.start,
+                ),
+                Expanded(
+                  child: Container(
+                    padding: const EdgeInsets.only(
+                      left: 10, right: 5
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 2.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                widget.chat.userName,
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: widget.isMe ? Colors.black : Constants.darkPrimary,
+                                ),
+                              ),
+                              Text(DateTimeUtils.getChatDate(widget.chat.time))
+                            ],
+                          ),
+                        ),
+                        Text(
+                          widget.chat.message,
+                          style: TextStyle(fontSize: 16),
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            IconButton(
+                                icon: const Icon(Icons.keyboard_arrow_up),
+                                tooltip: 'up vote',
+                                onPressed: () {
+                                  if(widget.chat.upVoters.contains(UserPreferences.myUser.id)){
+                                    // nothing to do
+                                  } else if(widget.chat.downVoters.contains(UserPreferences.myUser.id)) {
+                                    widget.chat.downVoters.remove(UserPreferences.myUser.id);
+                                    widget.chat.vote++;
+                                    FirestoreHelper.pushChat(widget.chat);
+                                    setState(() {
+                                    });
+                                  } else{
+                                    widget.chat.upVoters.add(UserPreferences.myUser.id);
+                                    widget.chat.vote++;
+                                    FirestoreHelper.pushChat(widget.chat);
+                                    setState(() {
+                                    });
+                                  }
+
+                                },
+                                iconSize: 18.0
+                            ),
+                            Text(widget.chat.vote.toString()),
+                            IconButton(
+                                icon: const Icon(Icons.keyboard_arrow_down),
+                                tooltip: 'down vote',
+                                onPressed: () {
+                                  if(widget.chat.downVoters.contains(UserPreferences.myUser.id)){
+                                    // nothing to do
+                                  } else if(widget.chat.upVoters.contains(UserPreferences.myUser.id)){
+                                    widget.chat.upVoters.remove(UserPreferences.myUser.id);
+                                    widget.chat.vote--;
+                                    FirestoreHelper.pushChat(widget.chat);
+                                    setState(() {
+                                    });
+                                  }
+                                  else {
+                                    widget.chat.downVoters.add(UserPreferences.myUser.id);
+                                    widget.chat.vote--;
+                                    FirestoreHelper.pushChat(widget.chat);
+                                    setState(() {
+                                    });
+                                  }
+                                },
+                                iconSize: 18.0
+                            ),
+                          ],
+                        )
+                      ],
+                    ),
                   ),
-                ],
-              ),
-            ),
-          ],
-        ),
-        Positioned(
-          top: 0,
-          left: isMe ? null : 120,
-          right: isMe ? 120 : null,
-          child: CircleAvatar(
-            backgroundImage: NetworkImage(
-              chat.userImage,
+                ),
+              ],
             ),
           ),
         ),
-      ],
-      clipBehavior: Clip.none,
+      ),
     );
   }
 }

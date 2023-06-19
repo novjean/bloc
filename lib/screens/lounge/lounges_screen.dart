@@ -1,5 +1,6 @@
 import 'package:bloc/db/shared_preferences/user_preferences.dart';
 import 'package:bloc/helpers/firestore_helper.dart';
+import 'package:bloc/screens/lounge/lounge_chat_screen.dart';
 import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -27,15 +28,14 @@ class _LoungesScreenState extends State<LoungesScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+
         backgroundColor: Constants.background, body: _buildBody(context));
   }
 
   _buildBody(BuildContext context) {
     return Column(
       children: [
-        UserPreferences.isUserLoggedIn()
-            ? _loadLounges(context)
-            : LoadingWidget(),
+        _loadLounges(context)
       ],
     );
   }
@@ -87,12 +87,10 @@ class _LoungesScreenState extends State<LoungesScreen> {
                 ),
                 onTap: () {
                   // open lounge
-                  // Navigator.of(context).push(MaterialPageRoute(
-                  //     builder: (ctx) =>
-                  //         CelebrationAddEditScreen(
-                  //       celebration: celebration,
-                  //       task: 'edit',
-                  //     )));
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (ctx) => LoungeChatScreen(
+                            lounge: lounge,
+                          )));
                 });
           }),
     );

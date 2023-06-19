@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/src/material/time.dart';
 import 'package:intl/intl.dart';
 
@@ -30,6 +31,12 @@ class DateTimeUtils {
     return date.toLowerCase();
   }
 
+
+  static String getFormattedDate3(int millis) {
+    var dt = DateTime.fromMillisecondsSinceEpoch(millis);
+    String date = DateFormat('MMMMd').format(dt);
+    return date.toLowerCase();
+  }
   //saturday, may 6
   static String getFormattedDate2(int millis) {
     var dt = DateTime.fromMillisecondsSinceEpoch(millis);
@@ -77,6 +84,17 @@ class DateTimeUtils {
     final dt = DateTime(now.year, now.month, now.day, tod.hour, tod.minute);
     final DateFormat dateFormat = DateFormat('hh:mm a');
     return dateFormat.format(dt);
+  }
+
+  //
+  static String getChatDate(int time) {
+    int now = Timestamp.now().millisecondsSinceEpoch;
+
+    if(now-time<millisecondsDay){
+      return getFormattedTime2(time);
+    } else {
+      return getFormattedDate3(time);
+    }
   }
 
 }

@@ -6,6 +6,7 @@ import 'package:bloc/db/entity/cart_item.dart';
 import 'package:bloc/db/entity/category.dart';
 import 'package:bloc/db/entity/celebration.dart';
 import 'package:bloc/db/entity/challenge.dart';
+import 'package:bloc/db/entity/chat.dart';
 import 'package:bloc/db/entity/genre.dart';
 import 'package:bloc/db/entity/guest_wifi.dart';
 import 'package:bloc/db/entity/history_music.dart';
@@ -474,6 +475,30 @@ class FirestoreHelper {
   }
 
   /** chats **/
+  static void pushChat(Chat chat) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection(CHATS)
+          .doc(chat.id)
+          .set(chat.toMap());
+    } on PlatformException catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } on Exception catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } catch (e) {
+      logger.e(e);
+    }
+  }
+
+  static Stream<QuerySnapshot<Object?>> getChats(String loungeId) {
+    return FirebaseFirestore.instance
+        .collection(CHATS)
+        .where('loungeId', isEqualTo: loungeId)
+        .orderBy('time', descending: false)
+        .snapshots();
+  }
+
+
   static void sendChatMessage(String enteredMessage) async {
     try {
       final user = FirebaseAuth.instance.currentUser;
@@ -501,7 +526,7 @@ class FirestoreHelper {
   static Stream<QuerySnapshot<Object?>> getChatsSnapshot() {
     return FirebaseFirestore.instance
         .collection(CHATS)
-        .orderBy('createdAt', descending: false)
+        .orderBy('time', descending: false)
         .snapshots();
   }
 
