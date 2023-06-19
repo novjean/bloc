@@ -6,7 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../routes/app_route_constants.dart';
+import '../routes/route_constants.dart';
 import '../screens/account_screen.dart';
 import '../screens/box_office/box_office_screen.dart';
 import '../screens/captain/captain_main_screen.dart';
@@ -46,7 +46,7 @@ class AppDrawer extends StatelessWidget {
 
               // GoRouter.of(context).go('home');
 
-              GoRouter.of(context).goNamed(MyAppRouteConstants.homeRouteName);
+              GoRouter.of(context).goNamed(RouteConstants.homeRouteName);
             },
           ),
           const Divider(),
@@ -181,7 +181,7 @@ class AppDrawer extends StatelessWidget {
               Navigator.of(context).pop();
 
               GoRouter.of(context)
-                  .pushNamed(MyAppRouteConstants.loginRouteName, params: {
+                  .pushNamed(RouteConstants.loginRouteName, params: {
                 'skip': 'false',
               });
             },

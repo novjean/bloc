@@ -1,4 +1,4 @@
-class MyAppRouteConstants {
+class RouteConstants {
   static const String landingRouteName = 'landing';
   static const String loginRouteName = 'login';
   static const String homeRouteName = 'home';
@@ -8,11 +8,6 @@ class MyAppRouteConstants {
 
   static const String loungeRouteName = 'lounge';
 
-
-
   static const String aboutRouteName = 'about';
   static const String profileRouteName = 'profile';
-  static const String contactUsRouteName = 'contact_us';
-
-
 }

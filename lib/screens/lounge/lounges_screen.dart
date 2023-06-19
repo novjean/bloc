@@ -8,7 +8,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../db/entity/lounge.dart';
 import '../../helpers/fresh.dart';
-import '../../routes/app_route_constants.dart';
+import '../../routes/route_constants.dart';
 import '../../utils/constants.dart';
 import '../../utils/logx.dart';
 import '../../widgets/lounge_item.dart';
@@ -87,7 +87,7 @@ class _LoungesScreenState extends State<LoungesScreen> {
                   lounge: lounge,
                 ),
                 onTap: () {
-                  GoRouter.of(context).pushNamed(MyAppRouteConstants.loungeRouteName,
+                  GoRouter.of(context).pushNamed(RouteConstants.loungeRouteName,
                       params: {
                         'id': lounge.id,
                       });

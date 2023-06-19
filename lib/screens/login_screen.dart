@@ -17,7 +17,7 @@ import '../helpers/dummy.dart';
 import '../helpers/firestore_helper.dart';
 import '../helpers/fresh.dart';
 import '../main.dart';
-import '../routes/app_route_constants.dart';
+import '../routes/route_constants.dart';
 import '../utils/logx.dart';
 import '../utils/string_utils.dart';
 import '../widgets/ui/toaster.dart';
@@ -335,7 +335,7 @@ class _LoginScreenState extends State<LoginScreen> {
               UserPreferences.setUser(registeredUser);
 
               GoRouter.of(context)
-                  .pushNamed(MyAppRouteConstants.homeRouteName);
+                  .pushNamed(RouteConstants.homeRouteName);
             } else {
               Logx.i(_TAG, 'user is a bloc member. navigating to main...');
               try {
@@ -347,7 +347,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 UserPreferences.setUser(user);
 
                 GoRouter.of(context)
-                    .pushNamed(MyAppRouteConstants.homeRouteName);
+                    .pushNamed(RouteConstants.homeRouteName);
               } on PlatformException catch (e, s) {
                 Logx.e(_TAG, e, s);
               } on Exception catch (e, s) {

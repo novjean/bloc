@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:go_router/go_router.dart';
 
-import '../routes/app_route_constants.dart';
+import '../routes/route_constants.dart';
 import '../utils/constants.dart';
 
 class ErrorPage extends StatelessWidget {
@@ -34,7 +34,7 @@ class ErrorPage extends StatelessWidget {
                 text:  'home',
                 onClicked: () {
                   GoRouter.of(context)
-                      .pushNamed(MyAppRouteConstants.landingRouteName);
+                      .pushNamed(RouteConstants.landingRouteName);
                 },
               ),
             ],

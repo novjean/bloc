@@ -13,7 +13,7 @@ import '../../db/entity/user.dart';
 import '../../helpers/dummy.dart';
 import '../../helpers/firestore_helper.dart';
 import '../../helpers/fresh.dart';
-import '../../routes/app_route_constants.dart';
+import '../../routes/route_constants.dart';
 import '../../screens/box_office/box_office_screen.dart';
 import '../../screens/parties/party_guest_add_edit_manage_screen.dart';
 import '../../utils/logx.dart';
@@ -44,13 +44,13 @@ class PartyBanner extends StatelessWidget {
       onTap: () {
         if (isClickable) {
           if (party.type == 'event') {
-            GoRouter.of(context).pushNamed(MyAppRouteConstants.eventRouteName,
+            GoRouter.of(context).pushNamed(RouteConstants.eventRouteName,
                 params: {
                   'partyName': party.name,
                   'partyChapter': party.chapter
                 });
           } else {
-            GoRouter.of(context).pushNamed(MyAppRouteConstants.artistRouteName,
+            GoRouter.of(context).pushNamed(RouteConstants.artistRouteName,
                 params: {
                   'name': party.name,
                   'genre': party.genre

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../db/entity/party.dart';
-import '../../routes/app_route_constants.dart';
+import '../../routes/route_constants.dart';
 import '../../screens/parties/artist_screen.dart';
 import '../../utils/constants.dart';
 import '../../utils/logx.dart';
@@ -25,7 +25,7 @@ class ArtistBanner extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         if (isClickable) {
-          GoRouter.of(context).pushNamed(MyAppRouteConstants.artistRouteName,
+          GoRouter.of(context).pushNamed(RouteConstants.artistRouteName,
               params: {
                 'name': party.name,
                 'genre': party.genre

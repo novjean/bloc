@@ -1,6 +1,6 @@
 import 'dart:ui';
 
-import 'package:bloc/routes/app_route_config.dart';
+import 'package:bloc/routes/bloc_router.dart';
 import 'package:bloc/utils/logx.dart';
 import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -52,7 +52,6 @@ Future<void> main() async {
   const String _TAG = 'main';
 
   WidgetsFlutterBinding.ensureInitialized();
-  // await NotificationService.initializeNotification();
 
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
@@ -112,8 +111,6 @@ Future<void> main() async {
 class BlocApp extends StatefulWidget {
   const BlocApp({Key? key}) : super(key: key);
 
-  // static GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
-
   @override
   State<BlocApp> createState() => _BlocAppState();
 }
@@ -156,8 +153,6 @@ class _BlocAppState extends State<BlocApp> {
                   // app bar and buttons by default
                   primarySwatch: Colors.brown,
 
-                  // accentColor: Colors.grey,
-                  // accentColorBrightness: Brightness.dark,
                   buttonTheme: ButtonTheme.of(context).copyWith(
                     buttonColor: Colors.red,
                     textTheme: ButtonTextTheme.primary,
@@ -168,11 +163,6 @@ class _BlocAppState extends State<BlocApp> {
                 ),
                 routeInformationParser: BlocRouter.returnRouter(true).routeInformationParser,
                 routerDelegate: BlocRouter.returnRouter(true).routerDelegate,
-
-                // home: appSnapshot.connectionState != ConnectionState.done
-                //     ? SplashScreen()
-                //     : const LoginScreen(shouldTriggerSkip: true),
-
               );
             } else {
               return LoadingWidget();

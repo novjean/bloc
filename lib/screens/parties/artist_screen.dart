@@ -8,7 +8,7 @@ import '../../db/entity/party.dart';
 import '../../helpers/dummy.dart';
 import '../../helpers/fresh.dart';
 import '../../main.dart';
-import '../../routes/app_route_constants.dart';
+import '../../routes/route_constants.dart';
 import '../../utils/constants.dart';
 import '../../utils/network_utils.dart';
 import '../../widgets/ui/button_widget.dart';
@@ -62,7 +62,7 @@ class _ArtistScreenState extends State<ArtistScreen> {
           title: InkWell(
               onTap: () {
                 GoRouter.of(context)
-                    .pushNamed(MyAppRouteConstants.homeRouteName);
+                    .pushNamed(RouteConstants.homeRouteName);
               },
               child: Text('bloc | ${mParty.name.toLowerCase()}')),
           leading: IconButton(
