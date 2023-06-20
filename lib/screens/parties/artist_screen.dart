@@ -62,7 +62,7 @@ class _ArtistScreenState extends State<ArtistScreen> {
           title: InkWell(
               onTap: () {
                 GoRouter.of(context)
-                    .pushNamed(RouteConstants.homeRouteName);
+                    .pushNamed(RouteConstants.landingRouteName);
               },
               child: Text('bloc | ${mParty.name.toLowerCase()}')),
           leading: IconButton(

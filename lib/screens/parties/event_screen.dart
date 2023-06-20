@@ -77,7 +77,7 @@ class _EventScreenState extends State<EventScreen> {
           title: InkWell(
               onTap: () {
                 GoRouter.of(context)
-                    .pushNamed(RouteConstants.homeRouteName);
+                    .pushNamed(RouteConstants.landingRouteName);
               },
               child: Text('bloc | ${mParty.name.toLowerCase()}')),
           leading: IconButton(

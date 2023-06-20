@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:bloc/db/shared_preferences/ui_preferences.dart';
 import 'package:bloc/routes/bloc_router.dart';
 import 'package:bloc/utils/logx.dart';
 import 'package:bloc/widgets/ui/loading_widget.dart';
@@ -104,6 +105,7 @@ Future<void> main() async {
   ]);
 
   await UserPreferences.init();
+  await UiPreferences.init();
 
   runApp(const BlocApp());
 }

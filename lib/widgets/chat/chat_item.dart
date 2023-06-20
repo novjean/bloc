@@ -6,18 +6,18 @@ import '../../db/shared_preferences/user_preferences.dart';
 import '../../utils/constants.dart';
 import '../../utils/date_time_utils.dart';
 
-class MessageBubble extends StatefulWidget {
+class ChatItem extends StatefulWidget {
   final Chat chat;
   final bool isMe;
 
-  const MessageBubble({Key? key, required this.chat, required this.isMe})
+  const ChatItem({Key? key, required this.chat, required this.isMe})
       : super(key: key);
 
   @override
-  State<MessageBubble> createState() => _MessageBubbleState();
+  State<ChatItem> createState() => _ChatItemState();
 }
 
-class _MessageBubbleState extends State<MessageBubble> {
+class _ChatItemState extends State<ChatItem> {
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -31,9 +31,10 @@ class _MessageBubbleState extends State<MessageBubble> {
             padding: const EdgeInsets.only(top: 2.0, left: 5, right: 5),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                  padding: const EdgeInsets.only(right: 5.0, top: 2),
                   child: CircleAvatar(
                     backgroundImage: NetworkImage(
                       widget.chat.userImage,

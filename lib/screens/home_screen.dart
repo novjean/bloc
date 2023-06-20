@@ -191,21 +191,15 @@ class _HomeScreenState extends State<HomeScreen> {
           currentFocus.unfocus();
         }
       } ,
-      child: UpgradeAlert(
-        upgrader: Upgrader(
-            dialogStyle: Theme.of(context).platform == TargetPlatform.iOS
-                ? UpgradeDialogStyle.cupertino
-                : UpgradeDialogStyle.material),
-        child: Scaffold(
-          backgroundColor: Constants.background,
-          resizeToAvoidBottomInset: false,
-          body: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: <Widget>[
-              _isBlocsLoading ? const LoadingWidget() : _displayBlocs(context),
-              _isPartyGuestsLoading? const LoadingWidget(): _displayPartiesNFooter(context),
-            ],
-          ),
+      child: Scaffold(
+        backgroundColor: Constants.background,
+        resizeToAvoidBottomInset: false,
+        body: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: <Widget>[
+            _isBlocsLoading ? const LoadingWidget() : _displayBlocs(context),
+            _isPartyGuestsLoading? const LoadingWidget(): _displayPartiesNFooter(context),
+          ],
         ),
       ),
     );

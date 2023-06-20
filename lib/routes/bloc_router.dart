@@ -14,6 +14,8 @@ import '../main.dart';
 import '../screens/error_page.dart';
 import '../screens/login_screen.dart';
 import '../screens/lounge/lounge_chat_screen.dart';
+import '../screens/lounge/lounge_detail_screen.dart';
+import '../screens/lounge/lounges_screen.dart';
 import '../screens/parties/artist_screen.dart';
 import '../screens/ui/splash_screen.dart';
 import '../utils/logx.dart';
@@ -76,7 +78,6 @@ class BlocRouter{
 
                         return MainScreen();
                       }
-                      // Logx.i(_TAG, 'loading user...');
                       return const LoadingWidget();
                     },
                   );
@@ -149,6 +150,8 @@ class BlocRouter{
                 ));
           },
         ),
+
+
       ],
       errorPageBuilder: (context, state) {
         return MaterialPage(child: ErrorPage());

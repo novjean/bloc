@@ -123,10 +123,10 @@ class PartyBanner extends StatelessWidget {
                             ),
                           ),
                           Padding(
-                            padding: const EdgeInsets.only(left: 5.0),
+                            padding: const EdgeInsets.only(left: 5.0, top: 3),
                             child: Text(
                               party.genre.isNotEmpty ? '[${party.genre}]' : '',
-                              style: const TextStyle(fontSize: 18),
+                              style: const TextStyle(fontSize: 16),
                             ),
                           ),
                           const Spacer(),

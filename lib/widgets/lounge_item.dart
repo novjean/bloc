@@ -1,3 +1,4 @@
+import 'package:bloc/utils/date_time_utils.dart';
 import 'package:flutter/material.dart';
 
 import '../db/entity/lounge.dart';
@@ -7,10 +8,7 @@ class LoungeItem extends StatelessWidget {
 
   Lounge lounge;
 
-  LoungeItem(
-      {Key? key,
-      required this.lounge})
-      : super(key: key);
+  LoungeItem({Key? key, required this.lounge}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -24,14 +22,14 @@ class LoungeItem extends StatelessWidget {
             elevation: 1,
             color: Theme.of(context).primaryColorLight,
             child: SizedBox(
-              height: 100,
+              height: 75,
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
                   Flexible(
                     flex: 1,
                     child: Container(
-                      height: 80,
+                      height: 75,
                       decoration: BoxDecoration(
                         border:
                             Border.all(color: Theme.of(context).primaryColor),
@@ -46,21 +44,58 @@ class LoungeItem extends StatelessWidget {
                     ),
                   ),
                   Flexible(
-                    flex: 2,
+                    flex: 3,
                     child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(left: 5.0, top: 5),
+                              child: RichText(
+                                text: TextSpan(
+                                  text: '${lounge.name} ',
+                                  style: const TextStyle(
+                                      color: Colors.black,
+                                      overflow: TextOverflow.ellipsis,
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding:
+                                  const EdgeInsets.only(right: 5.0, top: 5),
+                              child: RichText(
+                                text: TextSpan(
+                                  text:
+                                      '${DateTimeUtils.getChatDate(lounge.lastChatTime)} ',
+                                  style: const TextStyle(
+                                    color: Colors.black,
+                                    fontStyle: FontStyle.italic,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                         Padding(
-                          padding: const EdgeInsets.only(left: 5.0),
-                          child: RichText(
-                            text: TextSpan(
-                              text: '${lounge.name.toLowerCase()} ',
+                          padding: const EdgeInsets.all(5),
+                          child: SingleChildScrollView(
+                            scrollDirection: Axis.vertical,
+                            child: Text(
+                              '${lounge.lastChat}',
+                              // children: <TextSpan>[
+                              //   TextSpan(text: lounge.lastChat),
+                              // ],
                               style: const TextStyle(
                                   color: Colors.black,
                                   overflow: TextOverflow.ellipsis,
-                                  fontSize: 22,
-                                  fontWeight: FontWeight.bold),
+                                  fontSize: 14,
+                                  fontStyle: FontStyle.italic),
                             ),
                           ),
                         ),
@@ -75,6 +110,4 @@ class LoungeItem extends StatelessWidget {
       ),
     );
   }
-
-
 }

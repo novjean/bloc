@@ -78,7 +78,6 @@ class FirestoreHelper {
   static int TABLE_PRIVATE_TYPE_ID = 1;
   static int TABLE_COMMUNITY_TYPE_ID = 2;
 
-
   /** Ads **/
   static void pushAd(Ad ad) async {
     try {
@@ -365,7 +364,8 @@ class FirestoreHelper {
     }
   }
 
-  static Future<QuerySnapshot<Map<String, dynamic>>> pullCategories(String blocServiceId) {
+  static Future<QuerySnapshot<Map<String, dynamic>>> pullCategories(
+      String blocServiceId) {
     return FirebaseFirestore.instance
         .collection(CATEGORIES)
         .where('serviceId', isEqualTo: blocServiceId)
@@ -413,7 +413,8 @@ class FirestoreHelper {
     }
   }
 
-  static Stream<QuerySnapshot<Object?>> getCelebrationsByBlocId(String blocServiceId) {
+  static Stream<QuerySnapshot<Object?>> getCelebrationsByBlocId(
+      String blocServiceId) {
     return FirebaseFirestore.instance
         .collection(CELEBRATIONS)
         .where('blocServiceId', isEqualTo: blocServiceId)
@@ -438,7 +439,6 @@ class FirestoreHelper {
   static void deleteCelebration(String docId) {
     FirebaseFirestore.instance.collection(CELEBRATIONS).doc(docId).delete();
   }
-
 
   /** challenges **/
   static void pushChallenge(Challenge challenge) async {
@@ -495,9 +495,10 @@ class FirestoreHelper {
         .collection(CHATS)
         .where('loungeId', isEqualTo: loungeId)
         .orderBy('time', descending: false)
+        // .limitToLast(30)
+        // .limit(30)
         .snapshots();
   }
-
 
   static void sendChatMessage(String enteredMessage) async {
     try {
@@ -552,9 +553,7 @@ class FirestoreHelper {
   }
 
   static Future<QuerySnapshot<Map<String, dynamic>>> pullGenres() {
-    return FirebaseFirestore.instance
-        .collection(GENRES)
-        .get();
+    return FirebaseFirestore.instance.collection(GENRES).get();
   }
 
   static getGenres() {
@@ -608,7 +607,8 @@ class FirestoreHelper {
     }
   }
 
-  static Future<QuerySnapshot<Map<String, dynamic>>> pullHistoryMusic(String userId, String genre) {
+  static Future<QuerySnapshot<Map<String, dynamic>>> pullHistoryMusic(
+      String userId, String genre) {
     return FirebaseFirestore.instance
         .collection(FirestoreHelper.HISTORY_MUSIC)
         .where('userId', isEqualTo: userId)
@@ -617,7 +617,8 @@ class FirestoreHelper {
         .get();
   }
 
-  static Future<QuerySnapshot<Map<String, dynamic>>> pullHistoryMusicByUser(String userId) {
+  static Future<QuerySnapshot<Map<String, dynamic>>> pullHistoryMusicByUser(
+      String userId) {
     return FirebaseFirestore.instance
         .collection(FirestoreHelper.HISTORY_MUSIC)
         .where('userId', isEqualTo: userId)
@@ -639,6 +640,22 @@ class FirestoreHelper {
           .collection(LOUNGES)
           .doc(lounge.id)
           .set(lounge.toMap());
+    } on PlatformException catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } on Exception catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } catch (e) {
+      logger.e(e);
+    }
+  }
+
+  static void updateLoungeLastChat(
+      String loungeId, String lastChat, int lastChatTime) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection(LOUNGES)
+          .doc(loungeId)
+          .update({'lastChat': lastChat, 'lastChatTime': lastChatTime});
     } on PlatformException catch (e, s) {
       Logx.e(_TAG, e, s);
     } on Exception catch (e, s) {
@@ -767,7 +784,8 @@ class FirestoreHelper {
         .get();
   }
 
-  static Future<QuerySnapshot<Map<String, dynamic>>> pullPartyByNameChapter(String name, String chapter) {
+  static Future<QuerySnapshot<Map<String, dynamic>>> pullPartyByNameChapter(
+      String name, String chapter) {
     return FirebaseFirestore.instance
         .collection(FirestoreHelper.PARTIES)
         .where('name', isEqualTo: name)
@@ -775,7 +793,8 @@ class FirestoreHelper {
         .get();
   }
 
-  static Future<QuerySnapshot<Map<String, dynamic>>> pullPartyByNameGenre(String name, String genre) {
+  static Future<QuerySnapshot<Map<String, dynamic>>> pullPartyByNameGenre(
+      String name, String genre) {
     return FirebaseFirestore.instance
         .collection(FirestoreHelper.PARTIES)
         .where('name', isEqualTo: name)
@@ -822,7 +841,8 @@ class FirestoreHelper {
         .get();
   }
 
-  static Future<QuerySnapshot<Map<String, dynamic>>> pullPartyArtistsByIds(List<String> artistIds) {
+  static Future<QuerySnapshot<Map<String, dynamic>>> pullPartyArtistsByIds(
+      List<String> artistIds) {
     return FirebaseFirestore.instance
         .collection(PARTIES)
         .where('id', whereIn: artistIds)
@@ -867,10 +887,7 @@ class FirestoreHelper {
   }
 
   static void deleteParty(Party party) {
-    FirebaseFirestore.instance
-        .collection(PARTIES)
-        .doc(party.id)
-        .delete();
+    FirebaseFirestore.instance.collection(PARTIES).doc(party.id).delete();
   }
 
   /** party guests **/
@@ -891,8 +908,8 @@ class FirestoreHelper {
         .snapshots();
   }
 
-
-  static Future<QuerySnapshot<Map<String, dynamic>>> pullPartyGuestByUser(String guestId, String partyId) {
+  static Future<QuerySnapshot<Map<String, dynamic>>> pullPartyGuestByUser(
+      String guestId, String partyId) {
     return FirebaseFirestore.instance
         .collection(FirestoreHelper.PARTY_GUESTS)
         .where('partyId', isEqualTo: partyId)
@@ -900,8 +917,8 @@ class FirestoreHelper {
         .get();
   }
 
-
-  static Future<QuerySnapshot<Map<String, dynamic>>> pullGuestListRequested(String userId) {
+  static Future<QuerySnapshot<Map<String, dynamic>>> pullGuestListRequested(
+      String userId) {
     return FirebaseFirestore.instance
         .collection(FirestoreHelper.PARTY_GUESTS)
         .where('guestId', isEqualTo: userId)
@@ -924,7 +941,8 @@ class FirestoreHelper {
   }
 
   static getGuestLists() {
-    return FirebaseFirestore.instance.collection(PARTY_GUESTS)
+    return FirebaseFirestore.instance
+        .collection(PARTY_GUESTS)
         .orderBy('createdAt', descending: true)
         .snapshots();
   }
@@ -1002,7 +1020,8 @@ class FirestoreHelper {
         .snapshots();
   }
 
-  Stream<QuerySnapshot<Object?>> getProductByCategories(String serviceId, List<String> categoryNames) {
+  Stream<QuerySnapshot<Object?>> getProductByCategories(
+      String serviceId, List<String> categoryNames) {
     return FirebaseFirestore.instance
         .collection(PRODUCTS)
         .where('serviceId', isEqualTo: serviceId)
@@ -1119,7 +1138,8 @@ class FirestoreHelper {
         .snapshots();
   }
 
-  static Stream<QuerySnapshot<Object?>> getReservationsByBlocId(String blocServiceId) {
+  static Stream<QuerySnapshot<Object?>> getReservationsByBlocId(
+      String blocServiceId) {
     return FirebaseFirestore.instance
         .collection(RESERVATIONS)
         .where('blocServiceId', isEqualTo: blocServiceId)
@@ -1133,7 +1153,6 @@ class FirestoreHelper {
         .where('customerId', isEqualTo: userId)
         .snapshots();
   }
-
 
   static void deleteReservation(String docId) {
     FirebaseFirestore.instance.collection(RESERVATIONS).doc(docId).delete();
@@ -1475,7 +1494,6 @@ class FirestoreHelper {
         .get();
   }
 
-
   /** user **/
   static void pushUser(blocUser.User user) async {
     try {
@@ -1507,14 +1525,16 @@ class FirestoreHelper {
         .get();
   }
 
-  static Future<QuerySnapshot<Object?>> pullUsersGreaterThanLevel(int clearanceLevel) {
+  static Future<QuerySnapshot<Object?>> pullUsersGreaterThanLevel(
+      int clearanceLevel) {
     return FirebaseFirestore.instance
         .collection(USERS)
         .where('clearanceLevel', isGreaterThanOrEqualTo: clearanceLevel)
         .get();
   }
 
-  static Stream<QuerySnapshot<Object?>> getUsersLessThanLevel(int clearanceLevel) {
+  static Stream<QuerySnapshot<Object?>> getUsersLessThanLevel(
+      int clearanceLevel) {
     return FirebaseFirestore.instance
         .collection(USERS)
         .where('clearanceLevel', isLessThan: clearanceLevel)
@@ -1538,7 +1558,8 @@ class FirestoreHelper {
         .snapshots();
   }
 
-  static getUsersByLevelAndGenderAndMode(int level, String gender, bool isAppUser) {
+  static getUsersByLevelAndGenderAndMode(
+      int level, String gender, bool isAppUser) {
     return FirebaseFirestore.instance
         .collection(USERS)
         .where('clearanceLevel', isEqualTo: level)
@@ -1663,5 +1684,4 @@ class FirestoreHelper {
       logger.e(e);
     }
   }
-
 }

@@ -1,27 +1,26 @@
-import 'dart:convert';
-
 import 'package:bloc/db/shared_preferences/user_preferences.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 
 import '../../db/entity/chat.dart';
 import '../../helpers/dummy.dart';
 import '../../helpers/firestore_helper.dart';
+import '../../utils/constants.dart';
 import '../../utils/logx.dart';
 import '../ui/toaster.dart';
 
-class NewMessage extends StatefulWidget {
+class NewChat extends StatefulWidget {
   // String? token;
   String loungeId;
 
-  NewMessage({Key? key, required this.loungeId}) : super(key: key);
+  NewChat({Key? key, required this.loungeId}) : super(key: key);
 
   @override
-  _NewMessageState createState() => _NewMessageState();
+  _NewChatState createState() => _NewChatState();
 }
 
-class _NewMessageState extends State<NewMessage> {
-  static const String _TAG = 'NewMessage';
+class _NewChatState extends State<NewChat> {
+  static const String _TAG = 'NewChat';
 
   final _controller = TextEditingController();
   var _enteredMessage = '';
@@ -74,17 +73,23 @@ class _NewMessageState extends State<NewMessage> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.only(top: 8),
-      padding: const EdgeInsets.all(8),
+      padding: const EdgeInsets.only(left: 20, right: 10, bottom: 5),
       child: Row(
         children: [
           Expanded(
             child: TextField(
               controller: _controller,
               textCapitalization: TextCapitalization.sentences,
+              style: TextStyle(color: Colors.white),
               autocorrect: true,
               enableSuggestions: true,
-              decoration: const InputDecoration(labelText: 'send a message...'),
+              maxLength: 160,
+              decoration: const InputDecoration(labelText: 'send a sms...',
+                labelStyle: TextStyle(color: Constants.primary),
+                hintStyle: TextStyle(color: Constants.primary),
+                counterStyle:
+                TextStyle(color: Constants.primary),
+              ),
               onChanged: (value) {
                 setState(() {
                   _enteredMessage = value;
@@ -106,14 +111,16 @@ class _NewMessageState extends State<NewMessage> {
                   Chat chat = Dummy.getDummyChat();
                   chat.loungeId = widget.loungeId;
                   chat.message = _enteredMessage;
-
+                  chat.time = Timestamp.now().millisecondsSinceEpoch;
                   FirestoreHelper.pushChat(chat);
+
+                  FirestoreHelper.updateLoungeLastChat(widget.loungeId, chat.message, chat.time);
 
                   _controller.clear();
                 }
               } else {
                 Logx.em(_TAG, 'user is not logged in to chat in lounge ${widget.loungeId}');
-                Toaster.longToast('log in to chat in the community');
+                Toaster.longToast('please log in to chat in the community');
               }
             }
           )

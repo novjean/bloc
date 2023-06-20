@@ -16,7 +16,6 @@ import '../routes/route_constants.dart';
 import '../utils/logx.dart';
 import '../utils/string_utils.dart';
 import '../widgets/ui/toaster.dart';
-import 'main_screen.dart';
 
 class OTPScreen extends StatefulWidget {
   final String phone;

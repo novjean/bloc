@@ -40,7 +40,6 @@ import '../../utils/string_utils.dart';
 import '../../widgets/ui/button_widget.dart';
 import '../../widgets/ui/dark_textfield_widget.dart';
 import '../../widgets/parties/party_banner.dart';
-import '../main_screen.dart';
 import '../user/reservation_add_edit_screen.dart';
 
 class PartyGuestAddEditManageScreen extends StatefulWidget {
@@ -172,10 +171,10 @@ class _PartyGuestAddEditManageScreenState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).backgroundColor,
+      backgroundColor: Constants.background,
       appBar: AppBar(
         title: Text('party guest | ${widget.task}'),
-        backgroundColor: Theme.of(context).backgroundColor,
+        backgroundColor: Constants.background,
       ),
       body: _buildBody(context),
     );

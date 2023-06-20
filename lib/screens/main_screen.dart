@@ -1,4 +1,5 @@
 import 'package:bloc/db/entity/user.dart' as blocUser;
+import 'package:bloc/db/shared_preferences/ui_preferences.dart';
 import 'package:bloc/screens/lounge/lounges_screen.dart';
 
 import 'package:bloc/screens/profile/profile_login_screen.dart';
@@ -9,6 +10,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:go_router/go_router.dart';
+import 'package:upgrader/upgrader.dart';
 
 import '../db/shared_preferences/user_preferences.dart';
 import '../helpers/firestore_helper.dart';
@@ -33,8 +35,8 @@ class _MainScreenState extends State<MainScreen> {
 
   late blocUser.User user;
 
-  PageController _pageController = PageController();
-  int _page = 0;
+  late PageController _pageController;
+  late int _page;
 
   List icons = [
     Icons.home,
@@ -46,6 +48,9 @@ class _MainScreenState extends State<MainScreen> {
   @override
   void initState() {
     user = UserPreferences.myUser;
+
+    _page = UiPreferences.getHomePageIndex();
+    _pageController = PageController(initialPage: _page);
 
     // lets check if the user is already registered
     FirebaseFirestore.instance
@@ -79,15 +84,12 @@ class _MainScreenState extends State<MainScreen> {
 
         for (int i = 0; i < res.docs.length; i++) {
           DocumentSnapshot document = res.docs[i];
-          Map<String, dynamic> data = document.data()! as Map<String,
-              dynamic>;
+          Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
           final blocUser.User user = Fresh.freshUserMap(data, false);
           users.add(user);
 
           if (i == res.docs.length - 1) {
-            user.lastSeenAt = Timestamp
-                .now()
-                .millisecondsSinceEpoch;
+            user.lastSeenAt = Timestamp.now().millisecondsSinceEpoch;
             if (UserPreferences.isUserLoggedIn()) {
               if (kIsWeb) {
                 user.isAppUser = false;
@@ -101,7 +103,8 @@ class _MainScreenState extends State<MainScreen> {
         }
       }
     }, onError: (e, s) {
-      Logx.ex(_TAG, "error completing retrieving users for phone number : ${user.phoneNumber}", e, s);
+      Logx.ex(
+          _TAG, "error retrieving users for phone : ${user.phoneNumber}", e, s);
     });
 
     if (!kIsWeb) {
@@ -116,8 +119,6 @@ class _MainScreenState extends State<MainScreen> {
 
         RemoteNotification? notification = message.notification;
         AndroidNotification? android = message.notification?.android;
-
-        // AppleNotification? apple = message.notification?.apple;
 
         if (notification != null && android != null) {
           // String? title = notification.title;
@@ -184,17 +185,14 @@ class _MainScreenState extends State<MainScreen> {
         FirestoreHelper.pushUser(user);
       }
     }
-
     super.initState();
   }
 
   void _handleMessage(RemoteMessage message) {
-    if(UserPreferences.myUser.id.isNotEmpty){
-      GoRouter.of(context)
-          .pushNamed(RouteConstants.homeRouteName);
+    if (UserPreferences.myUser.id.isNotEmpty) {
+      GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
     } else {
-      GoRouter.of(context)
-          .pushNamed(RouteConstants.loginRouteName, params: {
+      GoRouter.of(context).pushNamed(RouteConstants.loginRouteName, params: {
         'skip': 'true',
       });
     }
@@ -220,37 +218,45 @@ class _MainScreenState extends State<MainScreen> {
       // OfferScreen(),
       const PartyScreen(),
       LoungesScreen(),
-      UserPreferences.isUserLoggedIn() ? const ProfileScreen() : ProfileLoginScreen(),
+      UserPreferences.isUserLoggedIn()
+          ? const ProfileScreen()
+          : ProfileLoginScreen(),
     ];
 
-    return Scaffold(
-      backgroundColor: Constants.background,
-      appBar: AppBar(
-        title: const Text('bloc'),
+    return UpgradeAlert(
+      upgrader: Upgrader(
+          dialogStyle: Theme.of(context).platform == TargetPlatform.iOS
+              ? UpgradeDialogStyle.cupertino
+              : UpgradeDialogStyle.material),
+      child: Scaffold(
         backgroundColor: Constants.background,
-      ),
-      drawer: const AppDrawer(),
-      body: PageView(
-        physics: const NeverScrollableScrollPhysics(),
-        controller: _pageController,
-        onPageChanged: onPageChanged,
-        children: List.generate(4, (index) => pages[index]),
-      ),
-      bottomNavigationBar: BottomAppBar(
-        elevation: 1,
-        color: Theme.of(context).primaryColor,
-        shape: const CircularNotchedRectangle(),
-        child: Row(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: <Widget>[
-            // SizedBox(width: 7),
-            buildTabIcon(0),
-            buildTabIcon(1),
-            buildTabIcon(2),
-            buildTabIcon(3),
-            // SizedBox(width: 7),
-          ],
+        appBar: AppBar(
+          title: const Text('bloc'),
+          backgroundColor: Constants.background,
+        ),
+        drawer: const AppDrawer(),
+        body: PageView(
+          physics: const NeverScrollableScrollPhysics(),
+          controller: _pageController,
+          onPageChanged: onPageChanged,
+          children: List.generate(4, (index) => pages[index]),
+        ),
+        bottomNavigationBar: BottomAppBar(
+          elevation: 1,
+          color: Theme.of(context).primaryColor,
+          shape: const CircularNotchedRectangle(),
+          child: Row(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: <Widget>[
+              // SizedBox(width: 7),
+              buildTabIcon(0),
+              buildTabIcon(1),
+              buildTabIcon(2),
+              buildTabIcon(3),
+              // SizedBox(width: 7),
+            ],
+          ),
         ),
       ),
     );
@@ -261,7 +267,7 @@ class _MainScreenState extends State<MainScreen> {
     super.dispose();
     _pageController.dispose();
 
-    if(!kIsWeb){
+    if (!kIsWeb) {
       final fbm = FirebaseMessaging.instance;
 
       blocUser.User user = UserPreferences.getUser();
@@ -285,6 +291,9 @@ class _MainScreenState extends State<MainScreen> {
 
   void onPageChanged(int page) {
     Logx.d(_TAG, 'onPageChanged() : $page');
+
+    UiPreferences.setHomePageIndex(page);
+
     setState(() {
       this._page = page;
     });
@@ -302,7 +311,8 @@ class _MainScreenState extends State<MainScreen> {
           ? Theme.of(context).highlightColor
           : Constants.background,
       onPressed: () {
-        _pageController.jumpToPage(index);},
+        _pageController.jumpToPage(index);
+      },
     );
   }
 }

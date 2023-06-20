@@ -1,7 +1,9 @@
 import 'package:bloc/helpers/firestore_helper.dart';
+import 'package:bloc/widgets/lounge/lounge_banner.dart';
 import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../db/entity/chat.dart';
 import '../../db/entity/lounge.dart';
@@ -9,10 +11,11 @@ import '../../db/shared_preferences/user_preferences.dart';
 import '../../helpers/dummy.dart';
 import '../../helpers/fresh.dart';
 import '../../helpers/token_monitor.dart';
+import '../../routes/route_constants.dart';
 import '../../utils/constants.dart';
 import '../../utils/logx.dart';
-import '../../widgets/chat/message_bubble.dart';
-import '../../widgets/chat/new_message.dart';
+import '../../widgets/chat/chat_item.dart';
+import '../../widgets/chat/new_chat.dart';
 
 class LoungeChatScreen extends StatefulWidget {
   String id;
@@ -29,13 +32,13 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
   Lounge mLounge = Dummy.getDummyLounge();
   var isLoungeLoading = true;
 
-  // String? _token;
+  var showDetails = false;
 
   @override
   void initState() {
     FirestoreHelper.pullLounge(widget.id).then((res) {
-      if(res.docs.isNotEmpty){
-        for(int i=0;i<res.docs.length;i++){
+      if (res.docs.isNotEmpty) {
+        for (int i = 0; i < res.docs.length; i++) {
           DocumentSnapshot document = res.docs[i];
           Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
           mLounge = Fresh.freshLoungeMap(data, false);
@@ -49,13 +52,6 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
         });
       }
     });
-
-    // TokenMonitor((token) {
-    //   _token = token;
-    //   return token == null
-    //       ? const SizedBox()
-    //       : Text(token, style: const TextStyle(fontSize: 12));
-    // });
     super.initState();
   }
 
@@ -63,10 +59,56 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('bloc | ${mLounge.name}'),
+        title: GestureDetector(
+          onTap: () {
+            // setState(() {
+            //   showDetails = !showDetails;
+            // });
+          },
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Text(mLounge.name),
+              Padding(
+                padding: const EdgeInsets.only(left: 8.0),
+                child: CircleAvatar(
+                  backgroundImage: NetworkImage(
+                    mLounge.imageUrl,
+                  ),
+                ),
+              )
+            ],
+          ),
+        ),
       ),
       backgroundColor: Constants.background,
-      body: _buildBody(context),
+      body: isLoungeLoading
+          ? const LoadingWidget()
+          : showDetails
+              ? _buildDetailsBody(context)
+              : _buildBody(context),
+    );
+  }
+
+  _buildDetailsBody(BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        Expanded(
+            child: LoungeBanner(
+          lounge: mLounge,
+        )),
+        // mLounge.description.isNotEmpty
+        //     ? Padding(
+        //   padding:
+        //   const EdgeInsets.only(left: 5.0, top: 10),
+        //   child: Text(
+        //     mLounge.description.toLowerCase(),
+        //     style: const TextStyle(fontSize: 18),
+        //   ),
+        // )
+        //     : const SizedBox(),
+      ],
     );
   }
 
@@ -74,10 +116,11 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
     return Column(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
+        // LoungeBanner(lounge: mLounge,),
         Expanded(
           child: loadMessages(),
         ),
-        NewMessage(loungeId: mLounge.id),
+        NewChat(loungeId: mLounge.id),
       ],
     );
   }
@@ -94,8 +137,8 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
           List<Chat> chats = [];
           for (int i = 0; i < snapshot.data!.docs.length; i++) {
             DocumentSnapshot document = snapshot.data!.docs[i];
-            Map<String, dynamic> data = document.data()! as Map<String,
-                dynamic>;
+            Map<String, dynamic> data =
+                document.data()! as Map<String, dynamic>;
             final Chat chat = Fresh.freshChatMap(data, false);
             chats.add(chat);
 
@@ -103,7 +146,7 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
               return _showChats(context, chats);
             }
           }
-        } catch (e){
+        } catch (e) {
           Logx.em(_TAG, e.toString());
         }
 
@@ -122,14 +165,14 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
           scrollDirection: Axis.vertical,
           itemBuilder: (ctx, index) {
             return GestureDetector(
-                child: MessageBubble(
+                child: ChatItem(
                   chat: chats[index],
                   isMe: chats[index].userId == UserPreferences.myUser.id,
                   // use key for better efficiency
                   key: ValueKey(chats[index].userId),
                 ),
                 onTap: () {
-                  Logx.d(_TAG, 'chat selected : ' + index.toString());
+                  Logx.d(_TAG, 'chat selected: $index');
                 });
           }),
     );
@@ -139,6 +182,6 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
 
   _scrollToBottom() {
     _scrollController.animateTo(_scrollController.position.maxScrollExtent,
-        duration: const Duration(seconds: 1), curve: Curves.linear);
+        duration: const Duration(seconds: 1), curve: Curves.easeIn);
   }
 }
