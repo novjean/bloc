@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import '../../db/entity/party.dart';
 import '../../db/entity/party_guest.dart';
 import '../../helpers/fresh.dart';
+import '../../utils/constants.dart';
 import '../../utils/logx.dart';
 import '../../widgets/parties/party_item.dart';
 import '../../widgets/ui/sized_listview_block.dart';
@@ -138,7 +139,7 @@ class _PartyScreenState extends State<PartyScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Theme.of(context).backgroundColor,
+        backgroundColor: Constants.background,
         floatingActionButton: UserPreferences.isUserLoggedIn()
             ? FloatingActionButton(
                 onPressed: () {

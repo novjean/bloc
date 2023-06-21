@@ -1,3 +1,4 @@
+import 'package:bloc/db/shared_preferences/user_preferences.dart';
 import 'package:bloc/helpers/firestore_helper.dart';
 import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -61,8 +62,13 @@ class _ArtistScreenState extends State<ArtistScreen> {
           backgroundColor: Constants.background,
           title: InkWell(
               onTap: () {
-                GoRouter.of(context)
-                    .pushNamed(RouteConstants.landingRouteName);
+                if(UserPreferences.isUserLoggedIn()){
+                  GoRouter.of(context)
+                      .pushNamed(RouteConstants.homeRouteName);
+                } else {
+                  GoRouter.of(context)
+                      .pushNamed(RouteConstants.landingRouteName);
+                }
               },
               child: Text('bloc | ${mParty.name.toLowerCase()}')),
           leading: IconButton(

@@ -76,8 +76,13 @@ class _EventScreenState extends State<EventScreen> {
           backgroundColor: Constants.background,
           title: InkWell(
               onTap: () {
-                GoRouter.of(context)
-                    .pushNamed(RouteConstants.landingRouteName);
+                if(UserPreferences.isUserLoggedIn()){
+                  GoRouter.of(context)
+                      .pushNamed(RouteConstants.homeRouteName);
+                } else {
+                  GoRouter.of(context)
+                      .pushNamed(RouteConstants.landingRouteName);
+                }
               },
               child: Text('bloc | ${mParty.name.toLowerCase()}')),
           leading: IconButton(
