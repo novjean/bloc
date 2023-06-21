@@ -252,7 +252,7 @@ class _MainScreenState extends State<MainScreen> {
                 drawerIconSize: 35,
                 isTitleCenter: false,
                 title: Padding(
-                  padding: kIsWeb? EdgeInsets.only(top:10.0, left: 10): EdgeInsets.only(left: 27, top:5.0) ,
+                  padding: kIsWeb? EdgeInsets.only(top:10.0, left: 20): EdgeInsets.only(left: 15, top:5.0) ,
                   child: Text('bloc',
                       style: TextStyle(
                         color: Constants.primary,
