@@ -13,6 +13,7 @@ class ProductDetailScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Theme.of(context).primaryColorLight,
       appBar: AppBar(
+        backgroundColor: Colors.black,
         title: Text(product.category.toLowerCase() +
             ' | ' +
             product.name.toLowerCase()),

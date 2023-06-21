@@ -176,103 +176,113 @@ class PartyBanner extends StatelessWidget {
     }
 
     return Padding(
-      padding: const EdgeInsets.only(right: 5.0),
-      child: ElevatedButton(
+      padding: const EdgeInsets.symmetric(horizontal: 5.0),
+      child:  ElevatedButton.icon(
         style: ElevatedButton.styleFrom(
-          backgroundColor: Theme.of(context).highlightColor,
-          foregroundColor: Colors.white,
-          shadowColor: Colors.white30,
+          backgroundColor: Constants.background,
+          foregroundColor: Constants.primary,
+          shadowColor: Colors.white10,
           elevation: 3,
           minimumSize: const Size.fromHeight(60),
         ),
         onPressed: () {
           final uri =
-              Uri.parse(isListen ? party.listenUrl : party.instagramUrl);
+          Uri.parse(isListen ? party.listenUrl : party.instagramUrl);
           NetworkUtils.launchInBrowser(uri);
         },
-        child: Text(
+        icon: Icon(
+          isListen? Icons.music_note_outlined : Icons.join_right,
+          size: 24.0,
+        ),
+        label: Text(
           isListen ? 'listen' : 'social',
-          style: const TextStyle(fontSize: 20, color: Colors.black),
+          style: const TextStyle(fontSize: 20, color: Constants.primary),
         ),
       ),
     );
   }
 
   displayGuestListButton(BuildContext context) {
-    return ElevatedButton.icon(
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Constants.background,
-        foregroundColor: Constants.primary,
-        shadowColor: Colors.white10,
-        elevation: 3,
-        minimumSize: const Size.fromHeight(60),
-      ),
-      onPressed: () {
-        PartyGuest partyGuest = Dummy.getDummyPartyGuest();
-        partyGuest.partyId = party.id;
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 5.0),
+      child: ElevatedButton.icon(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Constants.background,
+          foregroundColor: Constants.primary,
+          shadowColor: Colors.white10,
+          elevation: 3,
+          minimumSize: const Size.fromHeight(60),
+        ),
+        onPressed: () {
+          PartyGuest partyGuest = Dummy.getDummyPartyGuest();
+          partyGuest.partyId = party.id;
 
-        Navigator.of(context).push(
-          MaterialPageRoute(
-              builder: (context) => PartyGuestAddEditManageScreen(
-                  partyGuest: partyGuest, party: party, task: 'add')),
-        );
-      },
-      icon: const Icon(
-        Icons.app_registration,
-        size: 24.0,
-      ),
-      label: const Text(
-        'guest list',
-        style: TextStyle(fontSize: 20, color: Constants.primary),
+          Navigator.of(context).push(
+            MaterialPageRoute(
+                builder: (context) => PartyGuestAddEditManageScreen(
+                    partyGuest: partyGuest, party: party, task: 'add')),
+          );
+        },
+        icon: const Icon(
+          Icons.app_registration,
+          size: 24.0,
+        ),
+        label: const Text(
+          'guest list',
+          style: TextStyle(fontSize: 20, color: Constants.primary),
+        ),
       ),
     );
   }
 
   showBuyTixButton(BuildContext context) {
-    return ElevatedButton.icon(
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Constants.background,
-        foregroundColor: Constants.primary,
-        shadowColor: Colors.white30,
-        elevation: 3,
-        minimumSize: const Size.fromHeight(60),
-      ),
-      onPressed: () {
-        final uri = Uri.parse(party.ticketUrl);
-        NetworkUtils.launchInBrowser(uri);
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 5.0),
+      child: ElevatedButton.icon(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Constants.background,
+          foregroundColor: Constants.primary,
+          shadowColor: Colors.white30,
+          elevation: 3,
+          minimumSize: const Size.fromHeight(60),
+        ),
+        onPressed: () {
+          final uri = Uri.parse(party.ticketUrl);
+          NetworkUtils.launchInBrowser(uri);
 
-        if (UserPreferences.isUserLoggedIn()) {
-          User user = UserPreferences.myUser;
+          if (UserPreferences.isUserLoggedIn()) {
+            User user = UserPreferences.myUser;
 
-          FirestoreHelper.pullHistoryMusic(user.id, party.genre).then((res) {
-            if (res.docs.isEmpty) {
-              // no history, add new one
-              HistoryMusic historyMusic = Dummy.getDummyHistoryMusic();
-              historyMusic.userId = user.id;
-              historyMusic.genre = party.genre;
-              historyMusic.count = 1;
-              FirestoreHelper.pushHistoryMusic(historyMusic);
-            } else {
-              for (int i = 0; i < res.docs.length; i++) {
-                DocumentSnapshot document = res.docs[i];
-                Map<String, dynamic> data =
-                    document.data()! as Map<String, dynamic>;
-                final HistoryMusic historyMusic =
-                    Fresh.freshHistoryMusicMap(data, false);
-                historyMusic.count++;
+            FirestoreHelper.pullHistoryMusic(user.id, party.genre).then((res) {
+              if (res.docs.isEmpty) {
+                // no history, add new one
+                HistoryMusic historyMusic = Dummy.getDummyHistoryMusic();
+                historyMusic.userId = user.id;
+                historyMusic.genre = party.genre;
+                historyMusic.count = 1;
                 FirestoreHelper.pushHistoryMusic(historyMusic);
+              } else {
+                for (int i = 0; i < res.docs.length; i++) {
+                  DocumentSnapshot document = res.docs[i];
+                  Map<String, dynamic> data =
+                      document.data()! as Map<String, dynamic>;
+                  final HistoryMusic historyMusic =
+                      Fresh.freshHistoryMusicMap(data, false);
+                  historyMusic.count++;
+                  FirestoreHelper.pushHistoryMusic(historyMusic);
+                }
               }
-            }
-          });
-        }
-      },
-      label: const Text(
-        'buy ticket',
-        style: TextStyle(fontSize: 20, color: Constants.primary),
-      ),
-      icon: const Icon(
-        Icons.star_half,
-        size: 24.0,
+            });
+          }
+        },
+        label: const Text(
+          'buy ticket',
+          style: TextStyle(fontSize: 20, color: Constants.primary),
+        ),
+        icon: const Icon(
+          Icons.star_half,
+          size: 24.0,
+        ),
       ),
     );
   }

@@ -59,7 +59,7 @@ class _ArtistScreenState extends State<ArtistScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          backgroundColor: Constants.background,
+          backgroundColor: Colors.black,
           title: InkWell(
               onTap: () {
                 if(UserPreferences.isUserLoggedIn()){

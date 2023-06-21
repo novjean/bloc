@@ -21,6 +21,7 @@ class BlocDetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.black,
         title: Text(bloc.name),
       ),
       // drawer: AppDrawer(),

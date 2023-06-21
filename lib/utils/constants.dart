@@ -10,7 +10,7 @@ class Constants {
   static const Color lightPrimary =  Color.fromRGBO(222, 193, 170, 1);
   static const Color darkPrimary = Color.fromRGBO(42, 33, 26, 1);
 
-  static const Color background = Color.fromRGBO(38, 50, 56, 1.0);
+  static const Color background = Color.fromRGBO(27, 26, 23, 1);
 
   static Color lightAccent = const Color(0xff5563ff);
   static Color darkAccent = const Color(0xff5563ff);

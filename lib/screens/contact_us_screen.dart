@@ -9,6 +9,7 @@ class ContactUsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.black,
         title: const Text('bloc | contact us'),
       ),
       backgroundColor: Theme.of(context).backgroundColor,

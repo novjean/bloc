@@ -109,6 +109,7 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
 
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.black,
         title: const Text('bloc | box office'),
       ),
       backgroundColor: Constants.background,

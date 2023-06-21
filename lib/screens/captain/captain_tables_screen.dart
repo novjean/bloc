@@ -61,7 +61,8 @@ class _CaptainTablesScreenState extends State<CaptainTablesScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('captain | tables')),
+      appBar: AppBar(
+          title: Text('captain | tables')),
       body: _buildBody(context),
     );
   }

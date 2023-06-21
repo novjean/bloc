@@ -21,6 +21,7 @@ class AccountScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.black,
         title: const Text('bloc | account'),
       ),
       backgroundColor: Theme.of(context).backgroundColor,

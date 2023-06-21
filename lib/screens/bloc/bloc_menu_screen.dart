@@ -18,6 +18,7 @@ import '../../db/entity/seat.dart';
 import '../../db/shared_preferences/user_preferences.dart';
 import '../../helpers/fresh.dart';
 import '../../main.dart';
+import '../../utils/constants.dart';
 import '../../utils/logx.dart';
 import '../../widgets/cart_widget.dart';
 import '../../widgets/category_item.dart';
@@ -282,10 +283,10 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).backgroundColor,
+      backgroundColor: Constants.background,
       appBar: AppBar(
         title: Text(widget.blocService.name),
-        backgroundColor: Theme.of(context).backgroundColor,
+        backgroundColor: Colors.black,
         actions: [
           UserPreferences.isUserLoggedIn()
               ?

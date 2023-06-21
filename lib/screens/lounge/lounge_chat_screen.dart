@@ -59,6 +59,7 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.black,
         title: GestureDetector(
           onTap: () {
             // setState(() {

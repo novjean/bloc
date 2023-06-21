@@ -27,6 +27,7 @@ class _BillScreenState extends State<BillScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.black,
         title: const Text('bills'),
       ),
       body: _buildBody(context),

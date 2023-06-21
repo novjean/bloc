@@ -12,6 +12,7 @@ class _CategoriesState extends State<Categories> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.black,
         elevation: 0.0,
         title: Text('Categories'),
         centerTitle: true,

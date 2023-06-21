@@ -4,7 +4,6 @@ import 'package:bloc/screens/lounge/lounges_screen.dart';
 
 import 'package:bloc/screens/profile/profile_login_screen.dart';
 import 'package:bloc/utils/constants.dart';
-import 'package:bloc/widgets/app_drawer.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -247,17 +246,17 @@ class _MainScreenState extends State<MainScreen> {
         body: SliderDrawer(
             appBar: const SliderAppBar(
                 appBarColor: Colors.black,
-                appBarHeight: kIsWeb? 60: 130,
-                appBarPadding: kIsWeb?(EdgeInsets.only(top: 10)) : (EdgeInsets.only(top: 80)) ,
+                appBarHeight: kIsWeb? 60: 100,
+                appBarPadding: kIsWeb?(EdgeInsets.only(top: 10)) : (EdgeInsets.only(top: 50)) ,
                 drawerIconColor: Constants.primary,
                 drawerIconSize: 35,
-                isTitleCenter: true,
+                isTitleCenter: false,
                 title: Padding(
-                  padding: kIsWeb? EdgeInsets.only(top:10.0): EdgeInsets.only(top:5.0) ,
+                  padding: kIsWeb? EdgeInsets.only(top:10.0, left: 10): EdgeInsets.only(left: 27, top:5.0) ,
                   child: Text('bloc',
                       style: TextStyle(
                         color: Constants.primary,
-                          fontSize: 24, fontWeight: FontWeight.w700)),
+                          fontSize: 24, fontWeight: FontWeight.w500)),
                 )),
             key: _sliderDrawerKey,
             sliderOpenSize: 179,
@@ -272,12 +271,10 @@ class _MainScreenState extends State<MainScreen> {
               onPageChanged: onPageChanged,
               children: List.generate(4, (index) => pages[index]),
             ))
-
-
         ,
         bottomNavigationBar: BottomAppBar(
           elevation: 1,
-          color: Theme.of(context).primaryColor,
+          color: Colors.black,
           shape: const CircularNotchedRectangle(),
           child: Row(
             mainAxisSize: MainAxisSize.max,
@@ -327,6 +324,8 @@ class _MainScreenState extends State<MainScreen> {
     Logx.d(_TAG, 'onPageChanged() : $page');
 
     UiPreferences.setHomePageIndex(page);
+    _sliderDrawerKey.currentState!.closeSlider();
+
     setState(() {
       _page = page;
     });
@@ -342,7 +341,7 @@ class _MainScreenState extends State<MainScreen> {
       ),
       color: _page == index
           ? Theme.of(context).highlightColor
-          : Constants.background,
+          : Constants.primary,
       onPressed: () {
         _pageController.jumpToPage(index);
       },
@@ -485,26 +484,19 @@ List<Menu> getMenuList(){
   }
 
   menuItems.add(Menu(Icons.home, 'home'));
-
   if(UserPreferences.isUserLoggedIn()){
     menuItems.add(Menu(Icons.keyboard_command_key_sharp, 'box office'));
-
     if(showCaptain){
       menuItems.add(Menu(Icons.adjust, 'captain'));
     }
-
     if(user.clearanceLevel >= Constants.MANAGER_LEVEL){
       menuItems.add(Menu(Icons.account_circle_outlined, 'manager'));
     }
-
     if(user.clearanceLevel >= Constants.OWNER_LEVEL){
         menuItems.add(Menu(Icons.play_circle_outlined, 'owner'));
     }
-
     menuItems.add(Menu(Icons.settings, 'account'));
-
     menuItems.add(Menu(Icons.exit_to_app, 'logout'));
-
   } else {
     menuItems.add(Menu(Icons.exit_to_app, 'login'));
   }

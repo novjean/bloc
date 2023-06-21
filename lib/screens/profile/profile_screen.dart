@@ -165,7 +165,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget buildName(blocUser.User user) => Column(
         children: [
           Text(
-            user.name.isNotEmpty ? user.name.toLowerCase() + user.surname.toLowerCase() : 'bloc star',
+            user.name.isNotEmpty ? '${user.name.toLowerCase()} ${user.surname.toLowerCase()}' : 'bloc star',
             style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 26,
