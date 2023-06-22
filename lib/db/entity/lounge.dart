@@ -2,6 +2,7 @@ class Lounge{
   String id;
   String name;
   String description;
+  String rules;
   String type;
   String imageUrl;
 
@@ -19,6 +20,7 @@ class Lounge{
     required this.id,
     required this.name,
     required this.description,
+    required this.rules,
     required this.type,
     required this.imageUrl,
     required this.admins,
@@ -37,6 +39,7 @@ class Lounge{
           id == other.id &&
           name == other.name &&
           description == other.description &&
+          rules == other.rules &&
           type == other.type &&
           imageUrl == other.imageUrl &&
           admins == other.admins &&
@@ -51,6 +54,7 @@ class Lounge{
       id.hashCode ^
       name.hashCode ^
       description.hashCode ^
+      rules.hashCode ^
       type.hashCode ^
       imageUrl.hashCode ^
       admins.hashCode ^
@@ -66,6 +70,7 @@ class Lounge{
         ' id: $id,' +
         ' name: $name,' +
         ' description: $description,' +
+        ' rules: $rules,' +
         ' type: $type,' +
         ' imageUrl: $imageUrl,' +
         ' admins: $admins,' +
@@ -81,6 +86,7 @@ class Lounge{
     String? id,
     String? name,
     String? description,
+    String? rules,
     String? type,
     String? imageUrl,
     List<String>? admins,
@@ -94,6 +100,7 @@ class Lounge{
       id: id ?? this.id,
       name: name ?? this.name,
       description: description ?? this.description,
+      rules: rules ?? this.rules,
       type: type ?? this.type,
       imageUrl: imageUrl ?? this.imageUrl,
       admins: admins ?? this.admins,
@@ -110,6 +117,7 @@ class Lounge{
       'id': this.id,
       'name': this.name,
       'description': this.description,
+      'rules': this.rules,
       'type': this.type,
       'imageUrl': this.imageUrl,
       'admins': this.admins,
@@ -126,6 +134,7 @@ class Lounge{
       id: map['id'] as String,
       name: map['name'] as String,
       description: map['description'] as String,
+      rules: map['rules'] as String,
       type: map['type'] as String,
       imageUrl: map['imageUrl'] as String,
       admins: map['admins'] as List<String>,

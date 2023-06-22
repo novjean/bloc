@@ -121,24 +121,25 @@ dev_dependencies:
 # following page: https://dart.dev/tools/pub/pubspec
 
 flutter_icons:
-  android: "launcher_icon"
+  android: "ic_launcher"
   ios: true
   image_path: "assets/icons/logo.png"
   adaptive_icon_background: "#191919"
   adaptive_icon_foreground: "assets/icons/logo-adaptive.png"
   min_sdk_android: 21 # android min sdk min:16, default 21
+  remove_alpha_ios: true
   web:
       generate: true
       image_path: "assets/icons/logo.png"
       background_color: "#191919"
       theme_color: "#f7e7ce"
-  windows:
-      generate: true
-      image_path: "assets/icons/logo.png"
-      icon_size: 48 # min:48, max:256, default: 48
-  macos:
-      generate: true
-      image_path: "assets/icons/logo.png"
+#  windows:
+#      generate: true
+#      image_path: "assets/icons/logo.png"
+#      icon_size: 48 # min:48, max:256, default: 48
+#  macos:
+#      generate: true
+#      image_path: "assets/icons/logo.png"
 
 # The following section is specific to Flutter.
 flutter:
@@ -153,7 +154,7 @@ flutter:
     - assets/
     - assets/images/
     - assets/icons/
-    - assets/temp/
+#    - assets/temp/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

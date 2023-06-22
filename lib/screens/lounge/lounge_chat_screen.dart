@@ -1,17 +1,13 @@
 import 'package:bloc/helpers/firestore_helper.dart';
-import 'package:bloc/widgets/lounge/lounge_banner.dart';
 import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 
 import '../../db/entity/chat.dart';
 import '../../db/entity/lounge.dart';
 import '../../db/shared_preferences/user_preferences.dart';
 import '../../helpers/dummy.dart';
 import '../../helpers/fresh.dart';
-import '../../helpers/token_monitor.dart';
-import '../../routes/route_constants.dart';
 import '../../utils/constants.dart';
 import '../../utils/logx.dart';
 import '../../widgets/chat/chat_item.dart';
@@ -53,6 +49,36 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
       }
     });
     super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // Show the dialog after the screen finishes loading.
+      showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+          title: Center(child: Text('how are you feeling today?')),
+          content: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Icon(Icons.star),
+              Icon(Icons.favorite),
+              Icon(Icons.add),
+              Icon(Icons.thumb_up),
+              Icon(Icons.thumb_down),
+            ],),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          actions: [
+            // TextButton(
+            //   onPressed: () {
+            //     Navigator.pop(context);
+            //   },
+            //   child: Text('OK'),
+            // ),
+          ],
+        ),
+      );
+    });
   }
 
   @override
@@ -62,9 +88,7 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
         backgroundColor: Colors.black,
         title: GestureDetector(
           onTap: () {
-            // setState(() {
-            //   showDetails = !showDetails;
-            // });
+            showLoungeDetails(context);
           },
           child: Row(
             mainAxisAlignment: MainAxisAlignment.end,
@@ -84,32 +108,7 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
       ),
       backgroundColor: Constants.background,
       body: isLoungeLoading
-          ? const LoadingWidget()
-          : showDetails
-              ? _buildDetailsBody(context)
-              : _buildBody(context),
-    );
-  }
-
-  _buildDetailsBody(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: [
-        Expanded(
-            child: LoungeBanner(
-          lounge: mLounge,
-        )),
-        // mLounge.description.isNotEmpty
-        //     ? Padding(
-        //   padding:
-        //   const EdgeInsets.only(left: 5.0, top: 10),
-        //   child: Text(
-        //     mLounge.description.toLowerCase(),
-        //     style: const TextStyle(fontSize: 18),
-        //   ),
-        // )
-        //     : const SizedBox(),
-      ],
+          ? const LoadingWidget() : _buildBody(context),
     );
   }
 
@@ -117,7 +116,6 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
     return Column(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
-        // LoungeBanner(lounge: mLounge,),
         Expanded(
           child: loadMessages(),
         ),
@@ -184,5 +182,71 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
   _scrollToBottom() {
     _scrollController.animateTo(_scrollController.position.maxScrollExtent,
         duration: const Duration(seconds: 1), curve: Curves.easeIn);
+  }
+
+  void showLoungeDetails(BuildContext context) {
+    showModalBottomSheet<void>(
+      isScrollControlled: true,
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(15), topRight: Radius.circular(15)),
+      ),
+      builder: (BuildContext context) {
+        return Container(
+          color: Constants.background,
+          height: 400,
+          margin:
+              EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+          child: Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.only(top: 10.0),
+                    child: Text(
+                      mLounge.description,
+                      textAlign: TextAlign.left,
+                      style: const TextStyle(
+                    color: Constants.primary,
+                    fontWeight: FontWeight.normal,
+                    fontSize: 18,
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 10, right: 10, bottom: 5),
+                    child: Text('rules',
+                      textAlign: TextAlign.left,
+                      style: const TextStyle(
+                        color: Constants.primary,
+                        fontWeight: FontWeight.normal,
+                        fontSize: 22,
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 5.0, left: 10, right: 10),
+                    child: Text(
+                      mLounge.rules,
+                      textAlign: TextAlign.left,
+                      style: const TextStyle(
+                        color: Constants.primary,
+                        fontWeight: FontWeight.normal,
+                        fontSize: 18,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
   }
 }

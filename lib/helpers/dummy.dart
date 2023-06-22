@@ -179,6 +179,7 @@ class Dummy {
         id: StringUtils.getRandomString(28),
         name: '',
         description: '',
+        rules: Constants.loungeRules,
         type: 'community',
         admins: [],
         members: [],
