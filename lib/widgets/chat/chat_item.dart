@@ -1,10 +1,10 @@
-import 'package:bloc/helpers/firestore_helper.dart';
+import 'package:bloc/utils/date_time_utils.dart';
 import 'package:flutter/material.dart';
 
 import '../../db/entity/chat.dart';
 import '../../db/shared_preferences/user_preferences.dart';
+import '../../helpers/firestore_helper.dart';
 import '../../utils/constants.dart';
-import '../../utils/date_time_utils.dart';
 
 class ChatItem extends StatefulWidget {
   final Chat chat;
@@ -21,19 +21,18 @@ class _ChatItemState extends State<ChatItem> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10.0),
+      padding: const EdgeInsets.symmetric(horizontal: 5.0),
       child: Hero(
         tag: widget.chat.id,
         child: Card(
+          elevation: 0.5,
           color: Constants.lightPrimary,
-
+          shape:
+          RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
           child: Padding(
-            padding: const EdgeInsets.only(top: 2.0, left: 5, right: 5),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
+              padding: const EdgeInsets.only(top: 2.0, left: 5, right: 5),
+              child: ListTile(
+                leading: Padding(
                   padding: const EdgeInsets.only(right: 5.0, top: 2),
                   child: CircleAvatar(
                     backgroundImage: NetworkImage(
@@ -41,41 +40,30 @@ class _ChatItemState extends State<ChatItem> {
                     ),
                   ),
                 ),
-                Expanded(
-                  child: Container(
-                    padding: const EdgeInsets.only(
-                      left: 10, right: 5
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: 2.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                widget.chat.userName,
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                  color: widget.isMe ? Colors.black : Constants.darkPrimary,
-                                ),
-                              ),
-                              Text(DateTimeUtils.getChatDate(widget.chat.time))
-                            ],
-                          ),
-                        ),
-                        Text(
-                          widget.chat.message,
-                          style: TextStyle(fontSize: 16),
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            IconButton(
+                title: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(widget.chat.userName.toLowerCase()),
+                    Text(DateTimeUtils.getChatDate(widget.chat.time), style:
+                      TextStyle(fontSize: 12),)
+                  ],
+                ),
+                subtitle: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(widget.chat.message),
+
+                    Padding(
+                      padding: EdgeInsets.only(right: 0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(right: 5.0),
+                            child: IconButton(
                                 icon: const Icon(Icons.keyboard_arrow_up),
+                                padding: EdgeInsets.zero,
+                                constraints: const BoxConstraints(),
                                 tooltip: 'up vote',
                                 onPressed: () {
                                   if(widget.chat.upVoters.contains(UserPreferences.myUser.id)){
@@ -97,9 +85,14 @@ class _ChatItemState extends State<ChatItem> {
                                 },
                                 iconSize: 18.0
                             ),
-                            Text(widget.chat.vote.toString()),
-                            IconButton(
+                          ),
+                          Text(widget.chat.vote.toString(), style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 5.0),
+                            child: IconButton(
                                 icon: const Icon(Icons.keyboard_arrow_down),
+                                padding: EdgeInsets.zero,
+                                constraints: BoxConstraints(),
                                 tooltip: 'down vote',
                                 onPressed: () {
                                   if(widget.chat.downVoters.contains(UserPreferences.myUser.id)){
@@ -121,15 +114,17 @@ class _ChatItemState extends State<ChatItem> {
                                 },
                                 iconSize: 18.0
                             ),
-                          ],
-                        )
-                      ],
-                    ),
-                  ),
+                          ),
+                        ],
+                      ),
+                    )
+
+                  ],
                 ),
-              ],
-            ),
-          ),
+                // leadingAndTrailingTextStyle: TextStyle(
+                //     color: Colors.black, fontFamily: 'BalsamiqSans_Regular'),
+                // trailing: Text(time, style: TextStyle(fontSize: 10),),
+              )),
         ),
       ),
     );

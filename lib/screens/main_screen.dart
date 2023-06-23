@@ -40,7 +40,7 @@ class _MainScreenState extends State<MainScreen> {
   static const String _TAG = 'MainScreen';
 
   final GlobalKey<SliderDrawerState> _sliderDrawerKey =
-  GlobalKey<SliderDrawerState>();
+      GlobalKey<SliderDrawerState>();
 
   late blocUser.User user;
 
@@ -226,6 +226,8 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
+    mq = MediaQuery.of(context).size;
+
     List pages = [
       HomeScreen(),
       // OfferScreen(),
@@ -246,17 +248,22 @@ class _MainScreenState extends State<MainScreen> {
         body: SliderDrawer(
             appBar: const SliderAppBar(
                 appBarColor: Colors.black,
-                appBarHeight: kIsWeb? 60: 100,
-                appBarPadding: kIsWeb?(EdgeInsets.only(top: 10)) : (EdgeInsets.only(top: 50)) ,
+                appBarHeight: kIsWeb ? 60 : 100,
+                appBarPadding: kIsWeb
+                    ? (EdgeInsets.only(top: 10))
+                    : (EdgeInsets.only(top: 50)),
                 drawerIconColor: Constants.primary,
                 drawerIconSize: 35,
                 isTitleCenter: false,
                 title: Padding(
-                  padding: kIsWeb? EdgeInsets.only(top:10.0, left: 20): EdgeInsets.only(left: 15, top:5.0) ,
+                  padding: kIsWeb
+                      ? EdgeInsets.only(top: 10.0, left: 20)
+                      : EdgeInsets.only(left: 15, top: 5.0),
                   child: Text('bloc',
                       style: TextStyle(
-                        color: Constants.primary,
-                          fontSize: 24, fontWeight: FontWeight.w500)),
+                          color: Constants.primary,
+                          fontSize: 24,
+                          fontWeight: FontWeight.w500)),
                 )),
             key: _sliderDrawerKey,
             sliderOpenSize: 179,
@@ -270,8 +277,7 @@ class _MainScreenState extends State<MainScreen> {
               controller: _pageController,
               onPageChanged: onPageChanged,
               children: List.generate(4, (index) => pages[index]),
-            ))
-        ,
+            )),
         bottomNavigationBar: BottomAppBar(
           elevation: 1,
           color: Colors.black,
@@ -339,9 +345,8 @@ class _MainScreenState extends State<MainScreen> {
         icons[index],
         size: 24.0,
       ),
-      color: _page == index
-          ? Theme.of(context).highlightColor
-          : Constants.primary,
+      color:
+          _page == index ? Theme.of(context).highlightColor : Constants.primary,
       onPressed: () {
         _pageController.jumpToPage(index);
       },
@@ -349,65 +354,77 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   void handleAppDrawerClick(BuildContext context, String title) async {
-    switch(title){
-      case 'home': {
-        GoRouter.of(context).goNamed(RouteConstants.homeRouteName);
-        break;
-      }
-      case 'box office': {
+    switch (title) {
+      case 'home':
+        {
+          GoRouter.of(context).goNamed(RouteConstants.homeRouteName);
+          break;
+        }
+      case 'box office':
+        {
+          Navigator.of(context).push(
+            MaterialPageRoute(builder: (ctx) => BoxOfficeScreen()),
+          );
+          break;
+        }
+      case 'captain':
+        {
           Navigator.of(context).push(
             MaterialPageRoute(
-                builder: (ctx) => BoxOfficeScreen()),
+                builder: (ctx) => CaptainMainScreen(
+                      blocServiceId: user.blocServiceId,
+                    )),
           );
-        break;
-      }case 'captain': {
-      Navigator.of(context).push(
-        MaterialPageRoute(
-            builder: (ctx) => CaptainMainScreen(
-              blocServiceId: user.blocServiceId,
-            )),
-      );
-        break;
-    }case 'manager':{
-      Navigator.of(context).push(
-        MaterialPageRoute(
-            builder: (ctx) => ManagerMainScreen()),
-      );
-      break;
-    }case 'owner':{
-      Navigator.of(context).push(
-        MaterialPageRoute(builder: (ctx) => OwnerScreen()),
-      );
-      break;
-    }case 'account': {
-      Navigator.of(context).push(
-        MaterialPageRoute(
-            builder: (context) => AccountScreen()),
-      );
-      break;
-    } case 'login': {
-      UserPreferences.resetUser();
-      await FirebaseAuth.instance.signOut();
+          break;
+        }
+      case 'manager':
+        {
+          Navigator.of(context).push(
+            MaterialPageRoute(builder: (ctx) => ManagerMainScreen()),
+          );
+          break;
+        }
+      case 'owner':
+        {
+          Navigator.of(context).push(
+            MaterialPageRoute(builder: (ctx) => OwnerScreen()),
+          );
+          break;
+        }
+      case 'account':
+        {
+          Navigator.of(context).push(
+            MaterialPageRoute(builder: (context) => AccountScreen()),
+          );
+          break;
+        }
+      case 'login':
+        {
+          UserPreferences.resetUser();
+          await FirebaseAuth.instance.signOut();
 
-      GoRouter.of(context)
-          .pushNamed(RouteConstants.loginRouteName, params: {
-        'skip': 'false',
-      });
-      break;
-    } case 'logout': {
-      UserPreferences.resetUser();
-      await FirebaseAuth.instance.signOut();
+          GoRouter.of(context)
+              .pushNamed(RouteConstants.loginRouteName, params: {
+            'skip': 'false',
+          });
+          break;
+        }
+      case 'logout':
+        {
+          UserPreferences.resetUser();
+          await FirebaseAuth.instance.signOut();
 
-      GoRouter.of(context)
-          .pushNamed(RouteConstants.loginRouteName, params: {
-        'skip': 'false',
-      });
-      break;
-    }
-      default:{
-        break;
-
-      }
+          GoRouter.of(context)
+              .pushNamed(RouteConstants.loginRouteName, params: {
+            'skip': 'false',
+          });
+          break;
+        }
+      default:
+        {
+          GoRouter.of(context).goNamed(RouteConstants.homeRouteName);
+          break;
+        }
     }
 
     _sliderDrawerKey.currentState!.closeSlider();
@@ -437,9 +454,8 @@ class _SliderView extends StatelessWidget {
             backgroundColor: Colors.grey,
             child: CircleAvatar(
               radius: 60,
-              backgroundImage: Image.network(
-                  UserPreferences.myUser.imageUrl)
-                  .image,
+              backgroundImage:
+                  Image.network(UserPreferences.myUser.imageUrl).image,
             ),
           ),
           const SizedBox(
@@ -457,12 +473,11 @@ class _SliderView extends StatelessWidget {
           const SizedBox(
             height: 20,
           ),
-
           ...getMenuList()
               .map((menu) => _SliderMenuItem(
-              title: menu.title,
-              iconData: menu.iconData,
-              onTap: onItemClick))
+                  title: menu.title,
+                  iconData: menu.iconData,
+                  onTap: onItemClick))
               .toList(),
         ],
       ),
@@ -470,8 +485,8 @@ class _SliderView extends StatelessWidget {
   }
 }
 
-List<Menu> getMenuList(){
-  List<Menu> menuItems=[];
+List<Menu> getMenuList() {
+  List<Menu> menuItems = [];
 
   final user = UserPreferences.getUser();
 
@@ -484,16 +499,16 @@ List<Menu> getMenuList(){
   }
 
   menuItems.add(Menu(Icons.home, 'home'));
-  if(UserPreferences.isUserLoggedIn()){
+  if (UserPreferences.isUserLoggedIn()) {
     menuItems.add(Menu(Icons.keyboard_command_key_sharp, 'box office'));
-    if(showCaptain){
+    if (showCaptain) {
       menuItems.add(Menu(Icons.adjust, 'captain'));
     }
-    if(user.clearanceLevel >= Constants.MANAGER_LEVEL){
+    if (user.clearanceLevel >= Constants.MANAGER_LEVEL) {
       menuItems.add(Menu(Icons.account_circle_outlined, 'manager'));
     }
-    if(user.clearanceLevel >= Constants.OWNER_LEVEL){
-        menuItems.add(Menu(Icons.play_circle_outlined, 'owner'));
+    if (user.clearanceLevel >= Constants.OWNER_LEVEL) {
+      menuItems.add(Menu(Icons.play_circle_outlined, 'owner'));
     }
     menuItems.add(Menu(Icons.settings, 'account'));
     menuItems.add(Menu(Icons.exit_to_app, 'logout'));
@@ -511,9 +526,9 @@ class _SliderMenuItem extends StatelessWidget {
 
   const _SliderMenuItem(
       {Key? key,
-        required this.title,
-        required this.iconData,
-        required this.onTap})
+      required this.title,
+      required this.iconData,
+      required this.onTap})
       : super(key: key);
 
   @override
@@ -526,7 +541,6 @@ class _SliderMenuItem extends StatelessWidget {
         onTap: () => onTap?.call(title));
   }
 }
-
 
 class Menu {
   final IconData iconData;

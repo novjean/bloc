@@ -10,8 +10,8 @@ import '../../helpers/dummy.dart';
 import '../../helpers/fresh.dart';
 import '../../utils/constants.dart';
 import '../../utils/logx.dart';
-import '../../widgets/chat/chat_item.dart';
 import '../../widgets/chat/new_chat.dart';
+import '../../widgets/chat/chat_item.dart';
 
 class LoungeChatScreen extends StatefulWidget {
   String id;

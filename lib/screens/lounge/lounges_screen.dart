@@ -22,6 +22,8 @@ class _LoungesScreenState extends State<LoungesScreen> {
   static const String _TAG = 'LoungesScreen';
   var isLoungesLoading = true;
 
+  List<Lounge> mLounges = [];
+
   @override
   void initState() {
     super.initState();
@@ -29,70 +31,56 @@ class _LoungesScreenState extends State<LoungesScreen> {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
-      backgroundColor: Constants.background,
-      body: _buildBody(context),
-    );
-  }
+        backgroundColor: Constants.background,
+        body: StreamBuilder<QuerySnapshot>(
+            stream: FirestoreHelper.getLounges(),
+            builder: (ctx, snapshot) {
+              switch (snapshot.connectionState) {
+                case ConnectionState.waiting:
+                case ConnectionState.none:
+                  return const LoadingWidget();
+                case ConnectionState.active:
+                case ConnectionState.done:
+                  {
+                    List<Lounge> lounges = [];
 
-  _buildBody(BuildContext context) {
-    return Column(
-      children: [_loadLounges(context)],
-    );
-  }
+                    try {
+                      for (int i = 0; i < snapshot.data!.docs.length; i++) {
+                        DocumentSnapshot document = snapshot.data!.docs[i];
+                        Map<String, dynamic> map =
+                            document.data()! as Map<String, dynamic>;
+                        final Lounge lounge = Fresh.freshLoungeMap(map, false);
+                        lounges.add(lounge);
+                      }
+                      return ListView.builder(
+                          itemCount: lounges.length,
+                          physics: const BouncingScrollPhysics(),
+                          scrollDirection: Axis.vertical,
+                          itemBuilder: (ctx, index) {
+                            Lounge lounge = lounges[index];
 
-  _loadLounges(BuildContext context) {
-    return StreamBuilder<QuerySnapshot>(
-        stream: FirestoreHelper.getLounges(),
-        builder: (ctx, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const LoadingWidget();
-          }
-          List<Lounge> lounges = [];
-
-          if (snapshot.data!.docs.isNotEmpty) {
-            try {
-              for (int i = 0; i < snapshot.data!.docs.length; i++) {
-                DocumentSnapshot document = snapshot.data!.docs[i];
-                Map<String, dynamic> map =
-                    document.data()! as Map<String, dynamic>;
-                final Lounge lounge = Fresh.freshLoungeMap(map, false);
-                lounges.add(lounge);
-
-                if (i == snapshot.data!.docs.length - 1) {
-                  return _showLounges(context, lounges);
-                }
+                            return GestureDetector(
+                                child: LoungeItem(
+                                  lounge: lounge,
+                                ),
+                                onTap: () {
+                                  GoRouter.of(context).pushNamed(
+                                      RouteConstants.loungeRouteName,
+                                      params: {
+                                        'id': lounge.id,
+                                      });
+                                });
+                          });
+                    } on Exception catch (e, s) {
+                      Logx.e(_TAG, e, s);
+                    } catch (e) {
+                      Logx.em(_TAG, 'error loading lounges : $e');
+                    }
+                  }
               }
-            } on Exception catch (e, s) {
-              Logx.e(_TAG, e, s);
-            } catch (e) {
-              Logx.em(_TAG, 'error loading lounges : $e');
-            }
-          }
-
-          return const LoadingWidget();
-        });
-  }
-
-  _showLounges(BuildContext context, List<Lounge> lounges) {
-    return Expanded(
-      child: ListView.builder(
-          itemCount: lounges.length,
-          scrollDirection: Axis.vertical,
-          itemBuilder: (ctx, index) {
-            Lounge lounge = lounges[index];
-
-            return GestureDetector(
-                child: LoungeItem(
-                  lounge: lounge,
-                ),
-                onTap: () {
-                  GoRouter.of(context).pushNamed(RouteConstants.loungeRouteName,
-                      params: {
-                        'id': lounge.id,
-                      });
-                });
-          }),
-    );
+              return const LoadingWidget();
+            }));
   }
 }

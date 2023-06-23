@@ -49,6 +49,8 @@ late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
 /// VM.
 const bool kIsWeb = identical(0, 0.0);
 
+late Size mq;
+
 Future<void> main() async {
   const String _TAG = 'main';
 
@@ -98,16 +100,16 @@ Future<void> main() async {
     );
   }
 
+  await UserPreferences.init();
+  await UiPreferences.init();
+
   // disabling landscape until all ui issues are resolved
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
-  ]);
-
-  await UserPreferences.init();
-  await UiPreferences.init();
-
-  runApp(const BlocApp());
+  ]).then((value){
+    runApp(const BlocApp());
+  });
 }
 
 class BlocApp extends StatefulWidget {

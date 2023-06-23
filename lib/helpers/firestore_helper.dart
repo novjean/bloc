@@ -500,6 +500,15 @@ class FirestoreHelper {
         .snapshots();
   }
 
+  static Stream<QuerySnapshot<Object?>> getLastChat(String loungeId) {
+    return FirebaseFirestore.instance
+        .collection(CHATS)
+        .where('loungeId', isEqualTo: loungeId)
+        .orderBy('time', descending: true)
+        .limit(1)
+        .snapshots();
+  }
+
   static void sendChatMessage(String enteredMessage) async {
     try {
       final user = FirebaseAuth.instance.currentUser;
