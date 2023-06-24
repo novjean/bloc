@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 
 import '../../db/entity/party.dart';
 import '../../routes/route_constants.dart';
-import '../../screens/parties/artist_screen.dart';
 import '../../utils/constants.dart';
 import '../../utils/logx.dart';
 
@@ -44,7 +43,7 @@ class ArtistBanner extends StatelessWidget {
             child: ClipRRect(
               borderRadius: BorderRadius.circular(15),
               child: SizedBox(
-                height: 100,
+                height: 110,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
@@ -57,19 +56,6 @@ class ArtistBanner extends StatelessWidget {
                           backgroundImage: NetworkImage(party.imageUrl),
                         ),
                       ),
-
-                      // Container(
-                      //   height: 100,
-                      //   decoration: BoxDecoration(
-                      //     border: Border.all(color: Theme.of(context).primaryColor),
-                      //     borderRadius: const BorderRadius.all(Radius.circular(50)),
-                      //     image: DecorationImage(
-                      //       image: NetworkImage(party.imageUrl),
-                      //       fit: BoxFit.cover,
-                      //       // AssetImage(food['image']),
-                      //     ),
-                      //   ),
-                      // ),
                     ),
                     Flexible(
                       flex: 3,

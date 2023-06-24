@@ -8,7 +8,6 @@ import '../../db/entity/party_guest.dart';
 import '../../helpers/dummy.dart';
 import '../../routes/route_constants.dart';
 import '../../screens/parties/party_guest_add_edit_manage_screen.dart';
-import '../../utils/constants.dart';
 import '../../utils/network_utils.dart';
 import '../../utils/string_utils.dart';
 
@@ -85,6 +84,7 @@ class PartyItem extends StatelessWidget {
                             text: TextSpan(
                                 text: '${party.name.toLowerCase()} ',
                                 style: const TextStyle(
+                                  fontFamily: 'Oswald',
                                     color: Colors.white,
                                     overflow: TextOverflow.ellipsis,
                                     fontSize: 26,
@@ -95,6 +95,7 @@ class PartyItem extends StatelessWidget {
                                           ? ''
                                           : party.chapter,
                                       style: const TextStyle(
+                                        fontFamily: 'Oswald',
                                           color: Colors.white,
                                           fontSize: 24,
                                           fontWeight: FontWeight.normal,

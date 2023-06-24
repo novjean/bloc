@@ -25,7 +25,7 @@ import 'captain/captain_main_screen.dart';
 import 'home_screen.dart';
 import 'manager/manager_main_screen.dart';
 import 'owner/owner_screen.dart';
-import 'parties/party_screen.dart';
+import 'parties/parties_screen.dart';
 import 'profile/profile_add_edit_register_page.dart';
 import 'profile/profile_screen.dart';
 
@@ -231,7 +231,7 @@ class _MainScreenState extends State<MainScreen> {
     List pages = [
       HomeScreen(),
       // OfferScreen(),
-      const PartyScreen(),
+      const PartiesScreen(),
       LoungesScreen(),
       UserPreferences.isUserLoggedIn()
           ? const ProfileScreen()

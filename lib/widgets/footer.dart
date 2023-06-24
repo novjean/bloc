@@ -12,7 +12,7 @@ class Footer extends StatelessWidget {
     return ClipRRect(
       borderRadius: const BorderRadius.only(topLeft: Radius.circular(15), topRight: Radius.circular(15)),
       child: Container(
-        height: 75,
+        height: 85,
         width: MediaQuery.of(context).size.width,
         color: Colors.black,
         child: Padding(

@@ -20,6 +20,7 @@ import '../../utils/network_utils.dart';
 import '../../widgets/footer.dart';
 import '../../widgets/parties/artist_banner.dart';
 import '../../widgets/store_badge_item.dart';
+import '../../widgets/ui/app_bar_title.dart';
 import 'party_guest_add_edit_manage_screen.dart';
 
 class EventScreen extends StatefulWidget {
@@ -74,23 +75,18 @@ class _EventScreenState extends State<EventScreen> {
     return Scaffold(
         appBar: AppBar(
           backgroundColor: Constants.background,
-          title: InkWell(
-              onTap: () {
-                if(UserPreferences.isUserLoggedIn()){
-                  GoRouter.of(context)
-                      .pushNamed(RouteConstants.homeRouteName);
-                } else {
-                  GoRouter.of(context)
-                      .pushNamed(RouteConstants.landingRouteName);
-                }
-              },
-              child: Text('bloc | ${mParty.name.toLowerCase()}')),
+          title: AppBarTitle(title: mParty.name.toLowerCase(),),
+          titleSpacing: 0,
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
             onPressed: () {
               if (kIsWeb) {
-                GoRouter.of(context)
-                    .pushNamed(RouteConstants.landingRouteName);
+                if (UserPreferences.isUserLoggedIn()) {
+                  GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
+                } else {
+                  GoRouter.of(context)
+                      .pushNamed(RouteConstants.landingRouteName);
+                }
               } else {
                 Navigator.of(context).pop();
               }
@@ -130,6 +126,7 @@ class _EventScreenState extends State<EventScreen> {
                           text: TextSpan(
                               text: '${mParty.name.toLowerCase()} ',
                               style: const TextStyle(
+                                  fontFamily: 'Oswald',
                                   color: Constants.lightPrimary,
                                   overflow: TextOverflow.ellipsis,
                                   fontSize: 22,
@@ -140,6 +137,7 @@ class _EventScreenState extends State<EventScreen> {
                                         ? ''
                                         : mParty.chapter,
                                     style: const TextStyle(
+                                        fontFamily: 'Oswald',
                                         color: Constants.lightPrimary,
                                         fontSize: 18,
                                         fontWeight: FontWeight.normal,
@@ -280,7 +278,7 @@ class _EventScreenState extends State<EventScreen> {
     if (!mParty.isTBA && mParty.ticketUrl.isNotEmpty) {
       return Container(
         height: 50,
-        width: 150,
+        width: 160,
         padding: const EdgeInsets.only(left: 5, right: 10, bottom: 1, top: 1),
         child: ElevatedButton.icon(
           style: ElevatedButton.styleFrom(
@@ -320,7 +318,7 @@ class _EventScreenState extends State<EventScreen> {
             }
           },
           label: const Text(
-            'buy ticket',
+            'ticket',
             style: TextStyle(fontSize: 18, color: Constants.darkPrimary),
           ),
           icon: const Icon(

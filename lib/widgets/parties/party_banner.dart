@@ -51,10 +51,7 @@ class PartyBanner extends StatelessWidget {
                 });
           } else {
             GoRouter.of(context).pushNamed(RouteConstants.artistRouteName,
-                params: {
-                  'name': party.name,
-                  'genre': party.genre
-                });
+                params: {'name': party.name, 'genre': party.genre});
           }
         } else {
           Logx.i(_TAG, 'party banner no click');
@@ -63,105 +60,124 @@ class PartyBanner extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 3),
         child: ClipRRect(
-          borderRadius:  BorderRadius.circular(15),
-          child: Hero(
-            tag: party.id,
-            child: Card(
-              elevation: 1,
-              color: Theme.of(context).primaryColorLight,
-              child: SizedBox(
-                height: 200,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Flexible(
-                      flex: 2,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(left: 5.0),
-                            child: RichText(
-                              text: TextSpan(
-                                  text: '${party.name.toLowerCase()} ',
-                                  style: const TextStyle(
-                                      color: Colors.black,
-                                      overflow: TextOverflow.ellipsis,
-                                      fontSize: 22,
-                                      fontWeight: FontWeight.bold),
-                                  children: <TextSpan>[
-                                    TextSpan(
-                                        text: party.chapter == 'I'
-                                            ? ''
-                                            : party.chapter,
-                                        style: const TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.normal,
-                                            fontStyle: FontStyle.italic)),
-                                  ]),
+          borderRadius: BorderRadius.circular(15),
+          child: Stack(children: [
+            Hero(
+              tag: party.id,
+              child: Card(
+                elevation: 1,
+                color: Theme.of(context).primaryColorLight,
+                child: SizedBox(
+                  height: 200,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Flexible(
+                        flex: 2,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(left: 5.0),
+                              child: RichText(
+                                text: TextSpan(
+                                    text: '${party.name.toLowerCase()} ',
+                                    style: const TextStyle(
+                                        color: Colors.black,
+                                        fontFamily: 'Oswald',
+                                        overflow: TextOverflow.ellipsis,
+                                        fontSize: 22,
+                                        fontWeight: FontWeight.bold),
+                                    children: <TextSpan>[
+                                      TextSpan(
+                                          text: party.chapter == 'I'
+                                              ? ''
+                                              : party.chapter,
+                                          style: const TextStyle(
+                                              color: Colors.black,
+                                              fontFamily: 'Oswald',
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.normal,
+                                              fontStyle: FontStyle.italic)),
+                                    ]),
+                              ),
                             ),
-                          ),
-                          party.eventName.isNotEmpty
-                              ? Padding(
-                                  padding:
-                                      const EdgeInsets.only(left: 5.0, top: 10),
-                                  child: Text(
-                                    party.eventName.toLowerCase(),
-                                    style: const TextStyle(fontSize: 18),
-                                  ),
-                                )
-                              : const SizedBox(),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 5.0),
-                            child: Text(
-                              party.isTBA
-                                  ? 'tba'
-                                  : '${DateTimeUtils.getFormattedDate(party.startTime)}, ${DateTimeUtils.getFormattedTime(party.startTime)}',
-                              style: const TextStyle(fontSize: 18),
+                            party.eventName.isNotEmpty
+                                ? Padding(
+                                    padding: const EdgeInsets.only(
+                                        left: 5.0, top: 10),
+                                    child: Text(
+                                      party.eventName.toLowerCase(),
+                                      style: const TextStyle(fontSize: 18),
+                                    ),
+                                  )
+                                : const SizedBox(),
+                            Padding(
+                              padding: const EdgeInsets.only(left: 5.0),
+                              child: Text(
+                                party.isTBA
+                                    ? 'tba'
+                                    : '${DateTimeUtils.getFormattedDate(party.startTime)}, ${DateTimeUtils.getFormattedTime(party.startTime)}',
+                                style: const TextStyle(fontSize: 18),
+                              ),
                             ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 5.0, top: 3),
-                            child: Text(
-                              party.genre.isNotEmpty ? '[${party.genre}]' : '',
-                              style: const TextStyle(fontSize: 16),
-                            ),
-                          ),
-                          const Spacer(),
-                          shouldShowButton
-                              ? !party.isTBA && party.ticketUrl.isNotEmpty
-                                  ? showBuyTixButton(context)
-                                  : isGuestListActive
-                                      ? !isGuestListRequested
-                                          ? displayGuestListButton(context)
-                                          : showBoxOfficeButton(context)
-                                      : showListenOrInstaDialog(context)
-                              : const SizedBox()
-                        ],
+                            const Spacer(),
+                            shouldShowButton
+                                ? !party.isTBA && party.ticketUrl.isNotEmpty
+                                    ? showBuyTixButton(context)
+                                    : isGuestListActive
+                                        ? !isGuestListRequested
+                                            ? displayGuestListButton(context)
+                                            : showBoxOfficeButton(context)
+                                        : showListenOrInstaDialog(context)
+                                : const SizedBox()
+                          ],
+                        ),
                       ),
-                    ),
-                    Flexible(
-                      flex: 1,
-                      child: Container(
-                        height: 200,
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Theme.of(context).primaryColor),
-                          borderRadius: const BorderRadius.all(Radius.circular(0)),
-                          image: DecorationImage(
-                            image: NetworkImage(party.imageUrl),
-                            fit: BoxFit.cover,
-                            // AssetImage(food['image']),
+                      Flexible(
+                        flex: 1,
+                        child: Container(
+                          height: 200,
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                                color: Theme.of(context).primaryColor),
+                            borderRadius:
+                                const BorderRadius.all(Radius.circular(0)),
+                            image: DecorationImage(
+                              image: NetworkImage(party.imageUrl),
+                              fit: BoxFit.cover,
+                              // AssetImage(food['image']),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            party.genre.isNotEmpty
+                ? Positioned(
+                    bottom: 5,
+                    right: 4,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 2),
+                        child: Text(
+                          party.genre,
+                          style: TextStyle(
+                              fontSize: 14,
+                              backgroundColor: Constants.lightPrimary.withOpacity(0.5),
+
                           ),
                         ),
                       ),
                     ),
-                  ],
-                ),
-              ),
-            ),
-          ),
+                  )
+                : const SizedBox()
+          ]),
         ),
       ),
     );
@@ -177,7 +193,7 @@ class PartyBanner extends StatelessWidget {
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 5.0),
-      child:  ElevatedButton.icon(
+      child: ElevatedButton.icon(
         style: ElevatedButton.styleFrom(
           backgroundColor: Constants.background,
           foregroundColor: Constants.primary,
@@ -187,11 +203,11 @@ class PartyBanner extends StatelessWidget {
         ),
         onPressed: () {
           final uri =
-          Uri.parse(isListen ? party.listenUrl : party.instagramUrl);
+              Uri.parse(isListen ? party.listenUrl : party.instagramUrl);
           NetworkUtils.launchInBrowser(uri);
         },
         icon: Icon(
-          isListen? Icons.music_note_outlined : Icons.join_right,
+          isListen ? Icons.music_note_outlined : Icons.join_right,
           size: 24.0,
         ),
         label: Text(

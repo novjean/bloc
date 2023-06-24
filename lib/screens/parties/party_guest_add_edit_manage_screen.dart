@@ -4,6 +4,7 @@ import 'package:bloc/db/entity/history_music.dart';
 import 'package:bloc/db/entity/reservation.dart';
 import 'package:bloc/screens/box_office/box_office_screen.dart';
 import 'package:bloc/utils/date_time_utils.dart';
+import 'package:bloc/widgets/ui/app_bar_title.dart';
 import 'package:bloc/widgets/ui/dark_button_widget.dart';
 import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:bloc/widgets/ui/toaster.dart';
@@ -173,7 +174,7 @@ class _PartyGuestAddEditManageScreenState
     return Scaffold(
       backgroundColor: Constants.background,
       appBar: AppBar(
-        title: Text('party guest | ${widget.task}'),
+        title: AppBarTitle(title: 'guest list | ${widget.party.name.toLowerCase()}'),
         backgroundColor: Constants.background,
       ),
       body: _buildBody(context),

@@ -28,7 +28,7 @@ class _ChatItemState extends State<ChatItem> {
           elevation: 0.5,
           color: Constants.lightPrimary,
           shape:
-          RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
           child: Padding(
               padding: const EdgeInsets.only(top: 2.0, left: 5, right: 5),
               child: ListTile(
@@ -43,82 +43,89 @@ class _ChatItemState extends State<ChatItem> {
                 title: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(widget.chat.userName.toLowerCase()),
-                    Text(DateTimeUtils.getChatDate(widget.chat.time), style:
-                      TextStyle(fontSize: 12),)
+                    Text(
+                      widget.chat.userName.toLowerCase(),
+                      style: TextStyle(fontSize: 18),
+                    ),
+                    Text(
+                      DateTimeUtils.getChatDate(widget.chat.time),
+                      style: TextStyle(fontSize: 12),
+                    )
                   ],
                 ),
                 subtitle: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(widget.chat.message),
-
-                    Padding(
-                      padding: EdgeInsets.only(right: 0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(right: 5.0),
-                            child: IconButton(
-                                icon: const Icon(Icons.keyboard_arrow_up),
-                                padding: EdgeInsets.zero,
-                                constraints: const BoxConstraints(),
-                                tooltip: 'up vote',
-                                onPressed: () {
-                                  if(widget.chat.upVoters.contains(UserPreferences.myUser.id)){
-                                    // nothing to do
-                                  } else if(widget.chat.downVoters.contains(UserPreferences.myUser.id)) {
-                                    widget.chat.downVoters.remove(UserPreferences.myUser.id);
-                                    widget.chat.vote++;
-                                    FirestoreHelper.pushChat(widget.chat);
-                                    setState(() {
-                                    });
-                                  } else{
-                                    widget.chat.upVoters.add(UserPreferences.myUser.id);
-                                    widget.chat.vote++;
-                                    FirestoreHelper.pushChat(widget.chat);
-                                    setState(() {
-                                    });
-                                  }
-
-                                },
-                                iconSize: 18.0
-                            ),
-                          ),
-                          Text(widget.chat.vote.toString(), style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 5.0),
-                            child: IconButton(
-                                icon: const Icon(Icons.keyboard_arrow_down),
-                                padding: EdgeInsets.zero,
-                                constraints: BoxConstraints(),
-                                tooltip: 'down vote',
-                                onPressed: () {
-                                  if(widget.chat.downVoters.contains(UserPreferences.myUser.id)){
-                                    // nothing to do
-                                  } else if(widget.chat.upVoters.contains(UserPreferences.myUser.id)){
-                                    widget.chat.upVoters.remove(UserPreferences.myUser.id);
-                                    widget.chat.vote--;
-                                    FirestoreHelper.pushChat(widget.chat);
-                                    setState(() {
-                                    });
-                                  }
-                                  else {
-                                    widget.chat.downVoters.add(UserPreferences.myUser.id);
-                                    widget.chat.vote--;
-                                    FirestoreHelper.pushChat(widget.chat);
-                                    setState(() {
-                                    });
-                                  }
-                                },
-                                iconSize: 18.0
-                            ),
-                          ),
-                        ],
-                      ),
+                    Text(
+                      widget.chat.message,
+                      style: TextStyle(fontSize: 16),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(right: 5.0),
+                          child: IconButton(
+                              icon: const Icon(Icons.keyboard_arrow_up),
+                              padding: EdgeInsets.zero,
+                              constraints: const BoxConstraints(),
+                              tooltip: 'up vote',
+                              onPressed: () {
+                                if (widget.chat.upVoters
+                                    .contains(UserPreferences.myUser.id)) {
+                                  // nothing to do
+                                } else if (widget.chat.downVoters
+                                    .contains(UserPreferences.myUser.id)) {
+                                  widget.chat.downVoters
+                                      .remove(UserPreferences.myUser.id);
+                                  widget.chat.vote++;
+                                  FirestoreHelper.pushChat(widget.chat);
+                                  setState(() {});
+                                } else {
+                                  widget.chat.upVoters
+                                      .add(UserPreferences.myUser.id);
+                                  widget.chat.vote++;
+                                  FirestoreHelper.pushChat(widget.chat);
+                                  setState(() {});
+                                }
+                              },
+                              iconSize: 18.0),
+                        ),
+                        Text(
+                          widget.chat.vote.toString(),
+                          style: TextStyle(
+                              fontSize: 12, fontWeight: FontWeight.bold),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 5.0),
+                          child: IconButton(
+                              icon: const Icon(Icons.keyboard_arrow_down),
+                              padding: EdgeInsets.zero,
+                              constraints: BoxConstraints(),
+                              tooltip: 'down vote',
+                              onPressed: () {
+                                if (widget.chat.downVoters
+                                    .contains(UserPreferences.myUser.id)) {
+                                  // nothing to do
+                                } else if (widget.chat.upVoters
+                                    .contains(UserPreferences.myUser.id)) {
+                                  widget.chat.upVoters
+                                      .remove(UserPreferences.myUser.id);
+                                  widget.chat.vote--;
+                                  FirestoreHelper.pushChat(widget.chat);
+                                  setState(() {});
+                                } else {
+                                  widget.chat.downVoters
+                                      .add(UserPreferences.myUser.id);
+                                  widget.chat.vote--;
+                                  FirestoreHelper.pushChat(widget.chat);
+                                  setState(() {});
+                                }
+                              },
+                              iconSize: 18.0),
+                        ),
+                      ],
                     )
-
                   ],
                 ),
                 // leadingAndTrailingTextStyle: TextStyle(

@@ -13,15 +13,15 @@ import '../../widgets/parties/party_item.dart';
 import '../../widgets/ui/sized_listview_block.dart';
 import '../box_office/box_office_screen.dart';
 
-class PartyScreen extends StatefulWidget {
-  const PartyScreen({Key? key}) : super(key: key);
+class PartiesScreen extends StatefulWidget {
+  const PartiesScreen({Key? key}) : super(key: key);
 
   @override
-  State<PartyScreen> createState() => _PartyScreenState();
+  State<PartiesScreen> createState() => _PartiesScreenState();
 }
 
-class _PartyScreenState extends State<PartyScreen> {
-  static const String _TAG = 'PartyScreen';
+class _PartiesScreenState extends State<PartiesScreen> {
+  static const String _TAG = 'PartiesScreen';
 
   List<Party> mParties = [];
   var _isPartiesLoading = true;
@@ -49,7 +49,7 @@ class _PartyScreenState extends State<PartyScreen> {
           final Party party = Fresh.freshPartyMap(data, false);
           parties.add(party);
         }
-        if(mounted){
+        if (mounted) {
           setState(() {
             mParties = parties;
             _isPartiesLoading = false;
@@ -60,7 +60,7 @@ class _PartyScreenState extends State<PartyScreen> {
         const Center(
           child: Text('no parties assigned yet!'),
         );
-        if(mounted) {
+        if (mounted) {
           setState(() {
             _isPartiesLoading = false;
           });
@@ -82,7 +82,7 @@ class _PartyScreenState extends State<PartyScreen> {
           final Party bloc = Fresh.freshPartyMap(data, false);
           parties.add(bloc);
         }
-        if(mounted) {
+        if (mounted) {
           setState(() {
             mPastParties = parties;
             _isPastPartiesLoading = false;
@@ -95,7 +95,7 @@ class _PartyScreenState extends State<PartyScreen> {
         const Center(
           child: Text('no past parties found yet!'),
         );
-        if(mounted) {
+        if (mounted) {
           setState(() {
             _isPastPartiesLoading = false;
           });
@@ -118,7 +118,7 @@ class _PartyScreenState extends State<PartyScreen> {
           final PartyGuest partyGuest = Fresh.freshPartyGuestMap(data, false);
           partyGuestRequests.add(partyGuest);
         }
-        if(mounted) {
+        if (mounted) {
           setState(() {
             mPartyGuestRequests = partyGuestRequests;
             _isPartyGuestsLoading = false;
@@ -219,8 +219,7 @@ class _PartyScreenState extends State<PartyScreen> {
                       color: Theme.of(context).primaryColor,
                     ),
                     onTap: () {
-                      Logx.i(
-                          _TAG, 'show upcoming parties button clicked');
+                      Logx.i(_TAG, 'show upcoming parties button clicked');
                       setState(() {
                         _showPastParties = !_showPastParties;
                       });
@@ -248,8 +247,7 @@ class _PartyScreenState extends State<PartyScreen> {
                       color: Theme.of(context).primaryColor,
                     ),
                     onTap: () {
-                      Logx.i(
-                          _TAG, 'show upcoming parties button clicked');
+                      Logx.i(_TAG, 'show upcoming parties button clicked');
                       setState(() {
                         _showPastParties = !_showPastParties;
                       });
@@ -271,8 +269,7 @@ class _PartyScreenState extends State<PartyScreen> {
                         color: Theme.of(context).primaryColor,
                       ),
                       onTap: () {
-                        Logx.i(
-                            _TAG, 'show upcoming parties button clicked');
+                        Logx.i(_TAG, 'show upcoming parties button clicked');
                         setState(() {
                           _showPastParties = !_showPastParties;
                         });
