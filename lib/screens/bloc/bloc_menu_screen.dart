@@ -95,7 +95,7 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
 
     FirestoreHelper.pullCustomerSeat(widget.blocService.id, user.id)
         .then((res) {
-      Logx.i(_TAG, "successfully retrieved seat of user " + user.name);
+      Logx.i(_TAG, "successfully retrieved seat of user ${user.name}");
 
       if (res.docs.isEmpty) {
         // the user has not selected a table yet
@@ -148,7 +148,7 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
     });
 
     FirestoreHelper.pullOffers(widget.blocService.id).then((res) {
-      Logx.i(_TAG,"successfully retrieved offers at bloc " + widget.blocService.name);
+      Logx.i(_TAG,"successfully retrieved offers at bloc ${widget.blocService.name}");
 
       if (res.docs.isNotEmpty) {
         for (int i = 0; i < res.docs.length; i++) {
@@ -186,6 +186,68 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
     super.didChangeDependencies();
   }
 
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        FocusScope.of(context).unfocus();
+      },
+      child: Scaffold(
+        backgroundColor: Constants.background,
+        appBar: AppBar(
+          title: isSearching ? Container(
+            margin: const EdgeInsets.all(8.0),
+            child: TextField(
+              decoration: const InputDecoration(
+              border: InputBorder.none,
+                hintText: 'search by name or ingredients',
+                  hintStyle: TextStyle(color: Constants.primary)
+              ),
+              autofocus: true,
+              style: const TextStyle(fontSize: 17, color: Constants.primary),
+              onChanged: (val) {
+                searchList.clear();
+
+                for(var i in mProducts){
+                  if(i.name.toLowerCase().contains(val.toLowerCase()) ||
+                      i.description.toLowerCase().contains(val.toLowerCase())){
+                    searchList.add(i);
+                  }
+                }
+                setState(() {
+                });
+              } ,
+            ),
+          ): Text(widget.blocService.name),
+          backgroundColor: Colors.black,
+          actions: showActionIcons(),
+        ),
+        body: _isLoading && _isCategoriesLoading
+            ? const LoadingWidget()
+            : _buildBody(context, widget.blocService),
+      ),
+    );
+  }
+
+  Widget _buildBody(BuildContext context, BlocService service) {
+    if (mTable.type == FirestoreHelper.TABLE_COMMUNITY_TYPE_ID) {
+      _isCommunity = true;
+    }
+
+    return Column(
+      children: [
+        const SizedBox(height: 5.0),
+        _showCategories(context),
+        const SizedBox(height: 5.0),
+        buildProducts(context),
+        const SizedBox(height: 5.0),
+        _updateOffers(context),
+        !_isCustomerSeated ? _searchTableNumber(context) : CartWidget()
+      ],
+    );
+  }
+
+  /** table user **/
   Future<void> scanTableQR(blocUser.User user) async {
     String scanTableId;
     // Platform messages may fail, so we use a try/catch PlatformException.
@@ -220,299 +282,72 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
       FirestoreHelper.setTableOccupyStatus(tableId, true);
 
       FirestoreHelper.pullSeats(tableId).then(
-        (result) {
-          bool isSeatAvailable = false;
-          if (result.docs.isNotEmpty) {
-            for (int i = 0; i < result.docs.length; i++) {
-              DocumentSnapshot document = result.docs[i];
-              Map<String, dynamic> data =
-                  document.data()! as Map<String, dynamic>;
-              final Seat seat = Seat.fromMap(data);
+              (result) {
+            bool isSeatAvailable = false;
+            if (result.docs.isNotEmpty) {
+              for (int i = 0; i < result.docs.length; i++) {
+                DocumentSnapshot document = result.docs[i];
+                Map<String, dynamic> data =
+                document.data()! as Map<String, dynamic>;
+                final Seat seat = Seat.fromMap(data);
 
-              if (seat.custId.isEmpty) {
-                // set the table as occupied
-                FirestoreHelper.updateSeat(seat.id, userId);
-                // here we update the user's bloc service id
-                FirestoreHelper.updateUserBlocId(userId, seat.serviceId);
+                if (seat.custId.isEmpty) {
+                  // set the table as occupied
+                  FirestoreHelper.updateSeat(seat.id, userId);
+                  // here we update the user's bloc service id
+                  FirestoreHelper.updateUserBlocId(userId, seat.serviceId);
 
-                if (!kIsWeb) {
-                  // keeping this here since android/ios does not set table
-                  FirestoreHelper.pullTableById(widget.blocService.id, tableId)
-                      .then((res) {
-                    Logx.i(_TAG, 'successfully pulled in table for id ' + tableId);
+                  if (!kIsWeb) {
+                    // keeping this here since android/ios does not set table
+                    FirestoreHelper.pullTableById(widget.blocService.id, tableId)
+                        .then((res) {
+                      Logx.i(_TAG, 'successfully pulled in table for id ' + tableId);
 
-                    if (res.docs.isNotEmpty) {
-                      DocumentSnapshot document = res.docs[0];
-                      Map<String, dynamic> data =
-                          document.data()! as Map<String, dynamic>;
-                      final ServiceTable table = ServiceTable.fromMap(data);
+                      if (res.docs.isNotEmpty) {
+                        DocumentSnapshot document = res.docs[0];
+                        Map<String, dynamic> data =
+                        document.data()! as Map<String, dynamic>;
+                        final ServiceTable table = ServiceTable.fromMap(data);
 
-                      TablePreferences.setTable(table);
-                      setState(() {
-                        mTable = table;
-                      });
-                    } else {
-                      Logx.i(_TAG, 'table could not be found for id ' + tableId);
-                    }
-                  });
+                        TablePreferences.setTable(table);
+                        setState(() {
+                          mTable = table;
+                        });
+                      } else {
+                        Logx.i(_TAG, 'table could not be found for id ' + tableId);
+                      }
+                    });
+                  }
+
+                  break;
                 }
 
-                break;
-              }
-
-              if (i == result.docs.length - 1) {
-                if (!isSeatAvailable) {
-                  Logx.i(_TAG, mTable.tableNumber.toString() +
-                      ' does not have a seat for ' +
-                      UserPreferences.myUser.name);
+                if (i == result.docs.length - 1) {
+                  if (!isSeatAvailable) {
+                    Logx.i(_TAG, mTable.tableNumber.toString() +
+                        ' does not have a seat for ' +
+                        UserPreferences.myUser.name);
+                  }
+                  // we should still let them be part of the table
+                  // and notify the main person that someone has joined the table.
+                  Toaster.shortToast('no seats left on the table!');
                 }
-                // we should still let them be part of the table
-                // and notify the main person that someone has joined the table.
-                Toaster.shortToast('no seats left on the table!');
               }
+              Toaster.longToast(
+                  'welcome ' + UserPreferences.myUser.name.toLowerCase());
+            } else {
+              Logx.i(_TAG, 'seats could not be found for table id ' + tableId);
             }
-            Toaster.longToast(
-                'welcome ' + UserPreferences.myUser.name.toLowerCase());
-          } else {
-            Logx.i(_TAG, 'seats could not be found for table id ' + tableId);
-          }
-        },
-        onError: (e,s){
-          Logx.ex(_TAG, "error completing", e, s);}
+          },
+          onError: (e,s){
+            Logx.ex(_TAG, "error completing", e, s);}
       );
     } else {
       Logx.i(_TAG, 'user not signed in, logging out');
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Constants.background,
-      appBar: AppBar(
-        title: isSearching ? Container(
-          margin: const EdgeInsets.all(8.0),
-          child: TextField(
-            decoration: const InputDecoration(
-            border: InputBorder.none,
-              hintText: 'search by name or ingredients',
-                hintStyle: TextStyle(color: Constants.primary)
-            ),
-            autofocus: true,
-            style: const TextStyle(fontSize: 17, color: Constants.primary),
-            onChanged: (val) {
-              searchList.clear();
-
-              for(var i in mProducts){
-                if(i.name.toLowerCase().contains(val.toLowerCase()) ||
-                    i.description.toLowerCase().contains(val.toLowerCase())){
-                  searchList.add(i);
-                }
-              }
-              setState(() {
-              });
-            } ,
-          ),
-        ): Text(widget.blocService.name),
-        backgroundColor: Colors.black,
-        actions: [
-          IconButton(
-            icon: Icon(
-              isSearching? CupertinoIcons.clear_circled_solid : Icons.search,
-            ),
-            onPressed: () {
-
-              setState(() {
-                isSearching = !isSearching;
-              });
-            },
-          ),
-
-          UserPreferences.isUserLoggedIn()
-              ?
-              // need to check if the person is seated
-              _isCustomerSeated
-                  ? IconButton(
-                      icon: const Icon(
-                        Icons.back_hand_outlined,
-                      ),
-                      onPressed: () {
-                        Toaster.longToast(
-                            'we are sending someone over to assist you soon');
-
-                        blocUser.User user = UserPreferences.myUser;
-
-                        FirestoreHelper.sendSOSMessage(
-                            user.fcmToken,
-                            user.name,
-                            user.phoneNumber,
-                            mTable.tableNumber,
-                            mTable.id,
-                            mSeat.id);
-                      },
-                    )
-                  : kIsWeb
-                      ? IconButton(
-                          icon: const Icon(
-                            Icons.table_bar,
-                          ),
-                          onPressed: () {
-                            Toaster.longToast('enter your table number');
-
-                            TablePreferences.resetTable();
-                            int tableNum = -1;
-
-                            showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return SystemPadding(
-                                  child: AlertDialog(
-                                    contentPadding: const EdgeInsets.all(16.0),
-                                    content: Row(
-                                      children: <Widget>[
-                                        Expanded(
-                                          child: TextField(
-                                            autofocus: true,
-                                            keyboardType: TextInputType.number,
-                                            onChanged: (text) {
-                                              try {
-                                                tableNum = int.parse(text);
-                                              }on Exception catch (e, s) {
-                                                Logx.e(_TAG, e, s);
-                                              } catch (e) {
-                                                Logx.em(_TAG, e.toString());
-                                              }
-                                            },
-                                            decoration: const InputDecoration(
-                                                labelText: 'table number',
-                                                hintText: 'eg. 12'),
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                    actions: [
-                                      TextButton(
-                                        child: const Text("no"),
-                                        onPressed: () {
-                                          Navigator.of(context).pop();
-                                        },
-                                      ),
-                                      TextButton(
-                                        child: const Text("continue"),
-                                        onPressed: () {
-                                          Logx.i(_TAG, 'table num is ' +
-                                              tableNum.toString());
-
-                                          FirestoreHelper.pullTableByNumber(
-                                                  widget.blocService.id,
-                                                  tableNum)
-                                              .then(
-                                            (result) {
-                                              if (result.docs.isNotEmpty) {
-                                                for (int i = 0;
-                                                    i < result.docs.length;
-                                                    i++) {
-                                                  DocumentSnapshot document =
-                                                      result.docs[i];
-                                                  Map<String, dynamic> data =
-                                                      document.data()! as Map<
-                                                          String, dynamic>;
-                                                  final ServiceTable table =
-                                                      ServiceTable.fromMap(
-                                                          data);
-                                                  Logx.i(_TAG, 'table found ' +
-                                                      table.tableNumber
-                                                          .toString());
-
-                                                  // check if table is occupied
-                                                  if (table.isActive &&
-                                                      !table.isOccupied) {
-                                                    updateTableWithUser(
-                                                        table.id,
-                                                        UserPreferences
-                                                            .myUser.id);
-
-                                                    TablePreferences.setTable(
-                                                        table);
-                                                  } else {
-                                                    Toaster.longToast('table ' +
-                                                        tableNum.toString() +
-                                                        ' is occupied');
-                                                  }
-                                                }
-                                              } else {
-                                                Logx.i(_TAG,
-                                                    'table could not be found for table number ' +
-                                                        tableNum.toString());
-                                              }
-                                            },
-                                            onError: (e,s) => Logx.ex(_TAG,
-                                                "error searching for table", e, s),
-                                          );
-
-                                          Navigator.of(context).pop();
-                                        },
-                                      ),
-                                    ],
-                                  ),
-                                );
-                              },
-                            );
-                          },
-                        )
-                      : IconButton(
-                          icon: const Icon(
-                            Icons.qr_code,
-                          ),
-                          onPressed: () {
-                            Toaster.longToast('scan your table now');
-
-                            TablePreferences.resetTable();
-
-                            blocUser.User user = UserPreferences.myUser;
-                            scanTableQR(user);
-                          },
-                        )
-              : const SizedBox(),
-          UserPreferences.isUserLoggedIn()
-              ? IconButton(
-                  icon: const Icon(
-                    Icons.shopping_cart,
-                  ),
-                  onPressed: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(builder: (ctx) => CartScreen()),
-                    );
-                  },
-                )
-              : const SizedBox(),
-        ],
-      ),
-      body: _isLoading
-          ? const LoadingWidget()
-          : _buildBody(context, widget.blocService),
-    );
-  }
-
-  Widget _buildBody(BuildContext context, BlocService service) {
-    if (mTable.type == FirestoreHelper.TABLE_COMMUNITY_TYPE_ID) {
-      _isCommunity = true;
-    }
-
-    return Column(
-      children: [
-        const SizedBox(height: 5.0),
-        _isCategoriesLoading ? const LoadingWidget() : _displayCategories(context),
-        const SizedBox(height: 5.0),
-        buildProducts(context, 'Beer'),
-        const SizedBox(height: 5.0),
-        _updateOffers(context),
-        !_isCustomerSeated ? _searchTableNumber(context) : CartWidget()
-      ],
-    );
-  }
-
-  /** Offer Update **/
+  /** offer update **/
   _updateOffers(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
       stream: FirestoreHelper.getActiveOffers(widget.blocService.id, true),
@@ -544,7 +379,7 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
     );
   }
 
-  /** Table Info **/
+  /** table info **/
   _searchTableNumber(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
         stream: FirestoreHelper.findTableNumber(
@@ -596,8 +431,8 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
         });
   }
 
-  /** Categories List **/
-  _displayCategories(BuildContext context) {
+  /** categories list **/
+  _showCategories(BuildContext context) {
     mCategoryTypes.clear();
     mAlcoholSubCategories.clear();
     mFoodSubCategories.clear();
@@ -637,7 +472,7 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
   }
 
   /** Products List **/
-  buildProducts(BuildContext context, String category) {
+  buildProducts(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
       stream: FirestoreHelper.getProductsByCategoryTypeNew(
           widget.blocService.id, _sCategoryType),
@@ -825,5 +660,181 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
         ],
       ),
     );
+  }
+
+  List<Widget> showActionIcons() {
+    List<Widget> actionIcons = [
+      IconButton(
+        icon: Icon(
+          isSearching? CupertinoIcons.clear_circled_solid : Icons.search,
+        ),
+        onPressed: () {
+
+          setState(() {
+            isSearching = !isSearching;
+          });
+        },
+      ),
+
+      UserPreferences.isUserLoggedIn()
+          ?
+      // need to check if the person is seated
+      _isCustomerSeated
+          ? IconButton(
+        icon: const Icon(
+          Icons.back_hand_outlined,
+        ),
+        onPressed: () {
+          Toaster.longToast(
+              'we are sending someone over to assist you soon');
+
+          blocUser.User user = UserPreferences.myUser;
+
+          FirestoreHelper.sendSOSMessage(
+              user.fcmToken,
+              user.name,
+              user.phoneNumber,
+              mTable.tableNumber,
+              mTable.id,
+              mSeat.id);
+        },
+      )
+          : kIsWeb
+          ? IconButton(
+        icon: const Icon(
+          Icons.table_bar,
+        ),
+        onPressed: () {
+          Toaster.longToast('enter your table number');
+
+          TablePreferences.resetTable();
+          int tableNum = -1;
+
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return SystemPadding(
+                child: AlertDialog(
+                  contentPadding: const EdgeInsets.all(16.0),
+                  content: Row(
+                    children: <Widget>[
+                      Expanded(
+                        child: TextField(
+                          autofocus: true,
+                          keyboardType: TextInputType.number,
+                          onChanged: (text) {
+                            try {
+                              tableNum = int.parse(text);
+                            }on Exception catch (e, s) {
+                              Logx.e(_TAG, e, s);
+                            } catch (e) {
+                              Logx.em(_TAG, e.toString());
+                            }
+                          },
+                          decoration: const InputDecoration(
+                              labelText: 'table number',
+                              hintText: 'eg. 12'),
+                        ),
+                      )
+                    ],
+                  ),
+                  actions: [
+                    TextButton(
+                      child: const Text("no"),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                    TextButton(
+                      child: const Text("continue"),
+                      onPressed: () {
+                        Logx.i(_TAG, 'table num is ' +
+                            tableNum.toString());
+
+                        FirestoreHelper.pullTableByNumber(
+                            widget.blocService.id,
+                            tableNum)
+                            .then(
+                              (result) {
+                            if (result.docs.isNotEmpty) {
+                              for (int i = 0;
+                              i < result.docs.length;
+                              i++) {
+                                DocumentSnapshot document =
+                                result.docs[i];
+                                Map<String, dynamic> data =
+                                document.data()! as Map<
+                                    String, dynamic>;
+                                final ServiceTable table =
+                                ServiceTable.fromMap(
+                                    data);
+                                Logx.i(_TAG, 'table found ' +
+                                    table.tableNumber
+                                        .toString());
+
+                                // check if table is occupied
+                                if (table.isActive &&
+                                    !table.isOccupied) {
+                                  updateTableWithUser(
+                                      table.id,
+                                      UserPreferences
+                                          .myUser.id);
+
+                                  TablePreferences.setTable(
+                                      table);
+                                } else {
+                                  Toaster.longToast('table ' +
+                                      tableNum.toString() +
+                                      ' is occupied');
+                                }
+                              }
+                            } else {
+                              Logx.i(_TAG,
+                                  'table could not be found for table number ' +
+                                      tableNum.toString());
+                            }
+                          },
+                          onError: (e,s) => Logx.ex(_TAG,
+                              "error searching for table", e, s),
+                        );
+
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ],
+                ),
+              );
+            },
+          );
+        },
+      )
+          : IconButton(
+        icon: const Icon(
+          Icons.qr_code,
+        ),
+        onPressed: () {
+          Toaster.longToast('scan your table now');
+
+          TablePreferences.resetTable();
+
+          blocUser.User user = UserPreferences.myUser;
+          scanTableQR(user);
+        },
+      )
+          : const SizedBox(),
+      UserPreferences.isUserLoggedIn()
+          ? IconButton(
+        icon: const Icon(
+          Icons.shopping_cart,
+        ),
+        onPressed: () {
+          Navigator.of(context).push(
+            MaterialPageRoute(builder: (ctx) => CartScreen()),
+          );
+        },
+      )
+          : const SizedBox(),
+    ];
+    return actionIcons;
   }
 }
