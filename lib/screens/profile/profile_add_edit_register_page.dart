@@ -189,7 +189,7 @@ class _ProfileAddEditRegisterPageState
 
                         // Pick an image
                         final XFile? image = await picker.pickImage(
-                            source: ImageSource.gallery, imageQuality: 80);
+                            source: ImageSource.gallery, imageQuality: 95, maxWidth: 300);
                         if (image != null) {
                           Logx.i(_TAG, 'image path: ${image.path}');
 
@@ -226,7 +226,7 @@ class _ProfileAddEditRegisterPageState
 
                         // Pick an image
                         final XFile? image = await picker.pickImage(
-                            source: ImageSource.camera, imageQuality: 80);
+                            source: ImageSource.camera, imageQuality: 95, maxWidth: 300);
                         if (image != null) {
                           Logx.i(_TAG, 'image path: ${image.path}');
 

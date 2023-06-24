@@ -50,35 +50,35 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
     });
     super.initState();
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      // Show the dialog after the screen finishes loading.
-      showDialog(
-        context: context,
-        builder: (_) => AlertDialog(
-          title: Center(child: Text('how are you feeling today?')),
-          content: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Icon(Icons.star),
-              Icon(Icons.favorite),
-              Icon(Icons.add),
-              Icon(Icons.thumb_up),
-              Icon(Icons.thumb_down),
-            ],),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10.0),
-          ),
-          actions: [
-            // TextButton(
-            //   onPressed: () {
-            //     Navigator.pop(context);
-            //   },
-            //   child: Text('OK'),
-            // ),
-          ],
-        ),
-      );
-    });
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   // Show the dialog after the screen finishes loading.
+    //   showDialog(
+    //     context: context,
+    //     builder: (_) => AlertDialog(
+    //       title: Center(child: Text('how are you feeling today?')),
+    //       content: Row(
+    //         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+    //         children: [
+    //           Icon(Icons.star),
+    //           Icon(Icons.favorite),
+    //           Icon(Icons.add),
+    //           Icon(Icons.thumb_up),
+    //           Icon(Icons.thumb_down),
+    //         ],),
+    //       shape: RoundedRectangleBorder(
+    //         borderRadius: BorderRadius.circular(10.0),
+    //       ),
+    //       actions: [
+    //         // TextButton(
+    //         //   onPressed: () {
+    //         //     Navigator.pop(context);
+    //         //   },
+    //         //   child: Text('OK'),
+    //         // ),
+    //       ],
+    //     ),
+    //   );
+    // });
   }
 
   @override
