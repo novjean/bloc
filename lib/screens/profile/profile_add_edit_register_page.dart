@@ -38,8 +38,6 @@ class _ProfileAddEditRegisterPageState
     extends State<ProfileAddEditRegisterPage> {
   static const String _TAG = 'ProfileAddEditRegisterPage';
 
-  bool isPhotoChanged = false;
-
   late String oldImageUrl;
   late String newImageUrl;
   String imagePath = '';
@@ -122,13 +120,6 @@ class _ProfileAddEditRegisterPageState
           onClicked: () {
             // we should have some validation here
             if (isDataValid()) {
-              if (isPhotoChanged) {
-                widget.user = widget.user.copyWith(imageUrl: newImageUrl);
-                if (oldImageUrl.isNotEmpty) {
-                  FirestorageHelper.deleteFile(oldImageUrl);
-                }
-              }
-
               User freshUser = Fresh.freshUser(widget.user);
 
               UserPreferences.setUser(freshUser);
@@ -204,10 +195,14 @@ class _ProfileAddEditRegisterPageState
                               StringUtils.getRandomString(28),
                               newImage);
 
+                          widget.user = widget.user.copyWith(imageUrl: newImageUrl);
+                          FirestoreHelper.pushUser(widget.user);
+                          FirestorageHelper.deleteFile(oldImageUrl);
+
+                          Toaster.shortToast('profile photo updated');
 
                           setState(() {
                             imagePath = image.path;
-                            isPhotoChanged = true;
                           });
 
                           Navigator.pop(context);
@@ -241,9 +236,14 @@ class _ProfileAddEditRegisterPageState
                               StringUtils.getRandomString(28),
                               newImage);
 
+                          widget.user = widget.user.copyWith(imageUrl: newImageUrl);
+                          FirestoreHelper.pushUser(widget.user);
+                          FirestorageHelper.deleteFile(oldImageUrl);
+
+                          Toaster.shortToast('profile photo updated');
+
                           setState(() {
                             imagePath = image.path;
-                            isPhotoChanged = true;
                           });
 
                           Navigator.pop(context);
