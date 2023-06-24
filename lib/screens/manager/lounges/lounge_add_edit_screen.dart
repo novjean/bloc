@@ -329,6 +329,15 @@ class _LoungeAddEditScreenState extends State<LoungeAddEditScreen> {
           ], //<Widget>[]
         ),
         const SizedBox(height: 24),
+        TextFieldWidget(
+          label: 'rules',
+          text: widget.lounge.rules,
+          maxLines: 5,
+          onChanged: (value) {
+            widget.lounge = widget.lounge.copyWith(rules: value);
+          },
+        ),
+        const SizedBox(height: 24),
         Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [

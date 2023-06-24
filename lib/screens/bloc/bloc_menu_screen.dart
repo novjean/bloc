@@ -7,6 +7,7 @@ import 'package:bloc/helpers/dummy.dart';
 import 'package:bloc/helpers/firestore_helper.dart';
 import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
@@ -45,6 +46,10 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
 
   late ServiceTable mTable;
   late Seat mSeat;
+
+  List<Product> mProducts = [];
+  List<Product> searchList = [];
+  bool isSearching = false;
 
   List<Offer> mOffers = [];
   List<Category> mCategories = [];
@@ -285,9 +290,44 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
     return Scaffold(
       backgroundColor: Constants.background,
       appBar: AppBar(
-        title: Text(widget.blocService.name),
+        title: isSearching ? Container(
+          margin: const EdgeInsets.all(8.0),
+          child: TextField(
+            decoration: const InputDecoration(
+            border: InputBorder.none,
+              hintText: 'search by name or ingredients',
+                hintStyle: TextStyle(color: Constants.primary)
+            ),
+            autofocus: true,
+            style: const TextStyle(fontSize: 17, color: Constants.primary),
+            onChanged: (val) {
+              searchList.clear();
+
+              for(var i in mProducts){
+                if(i.name.toLowerCase().contains(val.toLowerCase()) ||
+                    i.description.toLowerCase().contains(val.toLowerCase())){
+                  searchList.add(i);
+                }
+              }
+              setState(() {
+              });
+            } ,
+          ),
+        ): Text(widget.blocService.name),
         backgroundColor: Colors.black,
         actions: [
+          IconButton(
+            icon: Icon(
+              isSearching? CupertinoIcons.clear_circled_solid : Icons.search,
+            ),
+            onPressed: () {
+
+              setState(() {
+                isSearching = !isSearching;
+              });
+            },
+          ),
+
           UserPreferences.isUserLoggedIn()
               ?
               // need to check if the person is seated
@@ -607,18 +647,15 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
         }
 
         if (snapshot.hasData) {
-          List<Product> products = [];
+          mProducts = [];
           for (int i = 0; i < snapshot.data!.docs.length; i++) {
             DocumentSnapshot document = snapshot.data!.docs[i];
             Map<String, dynamic> data =
                 document.data()! as Map<String, dynamic>;
             final Product product = Fresh.freshProductMap(data, false);
-            products.add(product);
-
-            if (i == snapshot.data!.docs.length - 1) {
-              return _displayProductsList(context, products);
-            }
+            mProducts.add(product);
           }
+          return _displayProductsList(context);
         } else {
           return const Expanded(
               child: Center(child: Text('no products found!')));
@@ -628,7 +665,7 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
     );
   }
 
-  _displayProductsList(BuildContext context, List<Product> _categoryProducts) {
+  _displayProductsList(BuildContext context) {
     bool isProductOnOffer;
     Offer productOffer = Dummy.getDummyOffer();
     String categoryTitle = '';
@@ -639,10 +676,12 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
     List<Product> subProducts = [];
     String curCategory = '';
 
+    List<Product> products = isSearching? searchList: mProducts;
+
     for (Category sub in _sCategoryType == 'Food'
         ? mFoodSubCategories
         : mAlcoholSubCategories) {
-      for (Product product in _categoryProducts) {
+      for (Product product in products) {
         if (product.category == sub.name) {
           subProducts.add(product);
 
