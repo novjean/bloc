@@ -175,6 +175,7 @@ class _PartyGuestAddEditManageScreenState
       backgroundColor: Constants.background,
       appBar: AppBar(
         title: AppBarTitle(title: 'guest list | ${widget.party.name.toLowerCase()}'),
+        titleSpacing: 0,
         backgroundColor: Constants.background,
       ),
       body: _buildBody(context),

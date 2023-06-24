@@ -50,6 +50,7 @@ class _ProfileAddEditRegisterPageState
       backgroundColor: Constants.background,
       appBar: AppBar(
         title: AppBarTitle(title: 'profile',),
+        titleSpacing: 0,
         backgroundColor: Constants.background,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
@@ -208,7 +209,7 @@ class _ProfileAddEditRegisterPageState
                             imagePath = image.path;
                             isPhotoChanged = true;
                           });
-                          
+
                           Navigator.pop(context);
                         }
                       },
