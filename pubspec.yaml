@@ -77,7 +77,6 @@ dependencies:
   barcode_widget: ^2.0.2
   flutter_barcode_scanner: ^2.0.0
 
-
   #utility
   upgrader: ^6.4.0
 

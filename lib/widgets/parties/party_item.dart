@@ -8,6 +8,7 @@ import '../../db/entity/party_guest.dart';
 import '../../helpers/dummy.dart';
 import '../../routes/route_constants.dart';
 import '../../screens/parties/party_guest_add_edit_manage_screen.dart';
+import '../../utils/constants.dart';
 import '../../utils/network_utils.dart';
 import '../../utils/string_utils.dart';
 
@@ -63,16 +64,11 @@ class PartyItem extends StatelessWidget {
                       Container(
                         height: imageHeight,
                         width: MediaQuery.of(context).size.width,
-                        decoration: BoxDecoration(
-                          border:
-                              Border.all(color: Theme.of(context).primaryColor),
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(10)),
-                          image: DecorationImage(
-                            image: NetworkImage(party.imageUrl),
-                            fit: BoxFit.fitWidth,
-                          ),
-                        ),
+                        child: FadeInImage(
+                          placeholder: const AssetImage(
+                              'assets/icons/logo.png'),
+                          image: NetworkImage(party.imageUrl),
+                          fit: BoxFit.cover,),
                       ),
                       Positioned(
                         bottom: 5.0,
@@ -84,7 +80,7 @@ class PartyItem extends StatelessWidget {
                             text: TextSpan(
                                 text: '${party.name.toLowerCase()} ',
                                 style: const TextStyle(
-                                  fontFamily: 'Oswald',
+                                  fontFamily: Constants.fontDefault,
                                     color: Colors.white,
                                     overflow: TextOverflow.ellipsis,
                                     fontSize: 26,
@@ -95,7 +91,7 @@ class PartyItem extends StatelessWidget {
                                           ? ''
                                           : party.chapter,
                                       style: const TextStyle(
-                                        fontFamily: 'Oswald',
+                                        fontFamily: Constants.fontDefault,
                                           color: Colors.white,
                                           fontSize: 24,
                                           fontWeight: FontWeight.normal,

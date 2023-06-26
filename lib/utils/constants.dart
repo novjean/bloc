@@ -5,6 +5,8 @@ const String kAppTitle = 'bloc';
 class Constants {
   static const String appVersion = '2.0.0b';
 
+  static const String fontDefault = 'Oswald';
+
   //Colors for theme
   static const Color primary = Color.fromRGBO(211, 167, 130, 1);
   static const Color lightPrimary =  Color.fromRGBO(222, 193, 170, 1);

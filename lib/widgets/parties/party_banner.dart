@@ -85,7 +85,7 @@ class PartyBanner extends StatelessWidget {
                                     text: '${party.name.toLowerCase()} ',
                                     style: const TextStyle(
                                         color: Colors.black,
-                                        fontFamily: 'Oswald',
+                                        fontFamily: Constants.fontDefault,
                                         overflow: TextOverflow.ellipsis,
                                         fontSize: 22,
                                         fontWeight: FontWeight.bold),
@@ -96,7 +96,7 @@ class PartyBanner extends StatelessWidget {
                                               : party.chapter,
                                           style: const TextStyle(
                                               color: Colors.black,
-                                              fontFamily: 'Oswald',
+                                              fontFamily: Constants.fontDefault,
                                               fontSize: 18,
                                               fontWeight: FontWeight.normal,
                                               fontStyle: FontStyle.italic)),
@@ -139,17 +139,11 @@ class PartyBanner extends StatelessWidget {
                         flex: 1,
                         child: Container(
                           height: 200,
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                                color: Theme.of(context).primaryColor),
-                            borderRadius:
-                                const BorderRadius.all(Radius.circular(0)),
-                            image: DecorationImage(
-                              image: NetworkImage(party.imageUrl),
-                              fit: BoxFit.cover,
-                              // AssetImage(food['image']),
-                            ),
-                          ),
+                          child: FadeInImage(
+                            placeholder: const AssetImage(
+                                'assets/icons/logo.png'),
+                            image: NetworkImage(party.imageUrl),
+                            fit: BoxFit.cover,),
                         ),
                       ),
                     ],

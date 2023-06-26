@@ -6,6 +6,7 @@ class Chat{
   String userImage;
 
   String message;
+  String type;
   int time;
 
   int vote;
@@ -20,6 +21,7 @@ class Chat{
     required this.userName,
     required this.userImage,
     required this.message,
+    required this.type,
     required this.time,
     required this.vote,
     required this.upVoters,
@@ -37,6 +39,7 @@ class Chat{
           userName == other.userName &&
           userImage == other.userImage &&
           message == other.message &&
+          type == other.type &&
           time == other.time &&
           vote == other.vote &&
           upVoters == other.upVoters &&
@@ -50,6 +53,7 @@ class Chat{
       userName.hashCode ^
       userImage.hashCode ^
       message.hashCode ^
+      type.hashCode ^
       time.hashCode ^
       vote.hashCode ^
       upVoters.hashCode ^
@@ -64,6 +68,7 @@ class Chat{
         ' userName: $userName,' +
         ' userImage: $userImage,' +
         ' message: $message,' +
+        ' type: $type,' +
         ' time: $time,' +
         ' vote: $vote,' +
         ' upVoters: $upVoters,' +
@@ -78,6 +83,7 @@ class Chat{
     String? userName,
     String? userImage,
     String? message,
+    String? type,
     int? time,
     int? vote,
     List<String>? upVoters,
@@ -90,6 +96,7 @@ class Chat{
       userName: userName ?? this.userName,
       userImage: userImage ?? this.userImage,
       message: message ?? this.message,
+      type: type ?? this.type,
       time: time ?? this.time,
       vote: vote ?? this.vote,
       upVoters: upVoters ?? this.upVoters,
@@ -105,6 +112,7 @@ class Chat{
       'userName': this.userName,
       'userImage': this.userImage,
       'message': this.message,
+      'type': this.type,
       'time': this.time,
       'vote': this.vote,
       'upVoters': this.upVoters,
@@ -120,6 +128,7 @@ class Chat{
       userName: map['userName'] as String,
       userImage: map['userImage'] as String,
       message: map['message'] as String,
+      type: map['type'] as String,
       time: map['time'] as int,
       vote: map['vote'] as int,
       upVoters: map['upVoters'] as List<String>,

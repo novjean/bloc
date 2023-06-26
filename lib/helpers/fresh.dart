@@ -853,6 +853,12 @@ class Fresh {
       shouldPush = true;
     }
     try {
+      chat = chat.copyWith(type: map['type'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'chat type not exist for id: ${chat.id}');
+      shouldPush = true;
+    }
+    try {
       chat = chat.copyWith(time: map['time'] as int);
     } catch (e) {
       Logx.em(_TAG, 'chat time not exist for id: ${chat.id}');
@@ -879,7 +885,7 @@ class Fresh {
     }
 
     if (shouldPush && shouldUpdate) {
-      Logx.i(_TAG, 'updating chat ' + chat.id);
+      Logx.i(_TAG, 'updating chat ${chat.id}');
       FirestoreHelper.pushChat(chat);
     }
 
@@ -924,6 +930,12 @@ class Fresh {
     } catch (e) {
       Logx.em(
           _TAG, 'chat message not exist for id: ${chat.id}');
+    }
+    try {
+      freshChat = freshChat.copyWith(type: chat.type);
+    } catch (e) {
+      Logx.em(
+          _TAG, 'chat type not exist for id: ${chat.id}');
     }
     try {
       freshChat = freshChat.copyWith(time: chat.time);

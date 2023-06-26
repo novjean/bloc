@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import '../../db/entity/chat.dart';
 import '../../db/shared_preferences/user_preferences.dart';
 import '../../helpers/firestore_helper.dart';
+import '../../main.dart';
 import '../../utils/constants.dart';
 
 class ChatItem extends StatefulWidget {
@@ -53,13 +54,34 @@ class _ChatItemState extends State<ChatItem> {
                     )
                   ],
                 ),
+
                 subtitle: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      widget.chat.message,
-                      style: TextStyle(fontSize: 16),
-                    ),
+                    widget.chat.type == 'text'
+                        ? Text(
+                            widget.chat.message,
+                            style: TextStyle(fontSize: 16),
+                          )
+                        : Container(
+                            width: mq.width * 0.5, // Set your desired width
+                            // height: 150, // Set your desired height
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10.0),
+                              // Set your desired border radius
+                              color: Colors
+                                  .white, // Set your desired background color
+                            ),
+                            child: ClipRRect(
+                                borderRadius: BorderRadius.circular(10.0),
+                                child: FadeInImage(
+                                  placeholder: const AssetImage(
+                                      'assets/images/logo.png'),
+                                  image: NetworkImage(widget.chat.message),
+                                  fit: BoxFit.cover,
+                                )
+                             ),
+                          ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
@@ -93,7 +115,7 @@ class _ChatItemState extends State<ChatItem> {
                         ),
                         Text(
                           widget.chat.vote.toString(),
-                          style: TextStyle(
+                          style: const TextStyle(
                               fontSize: 12, fontWeight: FontWeight.bold),
                         ),
                         Padding(

@@ -126,7 +126,7 @@ class _EventScreenState extends State<EventScreen> {
                           text: TextSpan(
                               text: '${mParty.name.toLowerCase()} ',
                               style: const TextStyle(
-                                  fontFamily: 'Oswald',
+                                  fontFamily: Constants.fontDefault,
                                   color: Constants.lightPrimary,
                                   overflow: TextOverflow.ellipsis,
                                   fontSize: 22,
@@ -137,7 +137,7 @@ class _EventScreenState extends State<EventScreen> {
                                         ? ''
                                         : mParty.chapter,
                                     style: const TextStyle(
-                                        fontFamily: 'Oswald',
+                                        fontFamily: Constants.fontDefault,
                                         color: Constants.lightPrimary,
                                         fontSize: 18,
                                         fontWeight: FontWeight.normal,

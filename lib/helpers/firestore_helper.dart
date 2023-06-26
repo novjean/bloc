@@ -494,9 +494,7 @@ class FirestoreHelper {
     return FirebaseFirestore.instance
         .collection(CHATS)
         .where('loungeId', isEqualTo: loungeId)
-        .orderBy('time', descending: false)
-        // .limitToLast(30)
-        // .limit(30)
+        .orderBy('time', descending: true)
         .snapshots();
   }
 
@@ -509,35 +507,8 @@ class FirestoreHelper {
         .snapshots();
   }
 
-  static void sendChatMessage(String enteredMessage) async {
-    try {
-      final user = FirebaseAuth.instance.currentUser;
-
-      final userData = await FirebaseFirestore.instance
-          .collection(USERS)
-          .doc(user!.uid)
-          .get();
-      FirebaseFirestore.instance.collection(CHATS).add({
-        'text': enteredMessage,
-        'createdAt': Timestamp.now(),
-        'userId': user.uid,
-        'username': userData.data()!['username'],
-        'userImage': userData.data()!['imageUrl']
-      });
-    } on PlatformException catch (e, s) {
-      Logx.e(_TAG, e, s);
-    } on Exception catch (e, s) {
-      Logx.e(_TAG, e, s);
-    } catch (e) {
-      logger.e(e);
-    }
-  }
-
-  static Stream<QuerySnapshot<Object?>> getChatsSnapshot() {
-    return FirebaseFirestore.instance
-        .collection(CHATS)
-        .orderBy('time', descending: false)
-        .snapshots();
+  static void deleteChat(String docId) {
+    FirebaseFirestore.instance.collection(CHATS).doc(docId).delete();
   }
 
   /** cities **/
@@ -1693,4 +1664,5 @@ class FirestoreHelper {
       logger.e(e);
     }
   }
+
 }

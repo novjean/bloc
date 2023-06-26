@@ -11,23 +11,15 @@ import '../../helpers/fresh.dart';
 import '../../routes/route_constants.dart';
 import '../../utils/constants.dart';
 import '../../utils/logx.dart';
-import '../../widgets/lounge_item.dart';
+import '../../widgets/lounge/lounge_item.dart';
+import '../../widgets/ui/toaster.dart';
 
-class LoungesScreen extends StatefulWidget {
-  @override
-  State<LoungesScreen> createState() => _LoungesScreenState();
-}
+class LoungesScreen extends StatelessWidget {
 
-class _LoungesScreenState extends State<LoungesScreen> {
   static const String _TAG = 'LoungesScreen';
   var isLoungesLoading = true;
 
   List<Lounge> mLounges = [];
-
-  @override
-  void initState() {
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -64,13 +56,18 @@ class _LoungesScreenState extends State<LoungesScreen> {
                             return GestureDetector(
                                 child: LoungeItem(
                                   lounge: lounge,
+                                    key: ValueKey(lounge.id)
                                 ),
                                 onTap: () {
-                                  GoRouter.of(context).pushNamed(
-                                      RouteConstants.loungeRouteName,
-                                      params: {
-                                        'id': lounge.id,
-                                      });
+                                  if(UserPreferences.isUserLoggedIn()){
+                                    GoRouter.of(context).pushNamed(
+                                        RouteConstants.loungeRouteName,
+                                        params: {
+                                          'id': lounge.id,
+                                        });
+                                  } else {
+                                    Toaster.shortToast('log in to access community');
+                                  }
                                 });
                           });
                     } on Exception catch (e, s) {
