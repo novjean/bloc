@@ -158,7 +158,7 @@ class _ProfileAddEditRegisterPageState
             EdgeInsets.only(top: mq.height * .03, bottom: mq.height * .05),
             children: [
               //pick profile picture label
-              const Text('pick profile picture',
+              const Text('pick or click 🤳 your best photo 🤩',
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 20, color: Colors.black, fontWeight: FontWeight.w500)),
 
@@ -176,37 +176,45 @@ class _ProfileAddEditRegisterPageState
                           shape: const CircleBorder(),
                           fixedSize: Size(mq.width * .3, mq.height * .15)),
                       onPressed: () async {
-                        final ImagePicker picker = ImagePicker();
 
-                        // Pick an image
-                        final XFile? image = await picker.pickImage(
-                            source: ImageSource.gallery, imageQuality: 95, maxWidth: 300);
-                        if (image != null) {
-                          Logx.i(_TAG, 'image path: ${image.path}');
+                        if(!kIsWeb){
+                          final ImagePicker picker = ImagePicker();
 
-                          final directory = await getApplicationDocumentsDirectory();
-                          final name = basename(image.path);
-                          final imageFile = File('${directory.path}/$name');
-                          final newImage = await File(image.path).copy(imageFile.path);
+                          // Pick an image
+                          final XFile? image = await picker.pickImage(
+                              source: ImageSource.gallery, imageQuality: 95, maxWidth: 300);
+                          if (image != null) {
+                            Logx.i(_TAG, 'image path: ${image.path}');
 
-                          oldImageUrl = widget.user.imageUrl;
-                          newImageUrl = await FirestorageHelper.uploadFile(
-                              FirestorageHelper.USER_IMAGES,
-                              StringUtils.getRandomString(28),
-                              newImage);
+                            final directory = await getApplicationDocumentsDirectory();
+                            final name = basename(image.path);
+                            final imageFile = File('${directory.path}/$name');
+                            final newImage = await File(image.path).copy(imageFile.path);
 
-                          widget.user = widget.user.copyWith(imageUrl: newImageUrl);
-                          FirestoreHelper.pushUser(widget.user);
-                          FirestorageHelper.deleteFile(oldImageUrl);
+                            oldImageUrl = widget.user.imageUrl;
+                            newImageUrl = await FirestorageHelper.uploadFile(
+                                FirestorageHelper.USER_IMAGES,
+                                StringUtils.getRandomString(28),
+                                newImage);
 
-                          Toaster.shortToast('profile photo updated');
+                            widget.user = widget.user.copyWith(imageUrl: newImageUrl);
+                            FirestoreHelper.pushUser(widget.user);
+                            FirestorageHelper.deleteFile(oldImageUrl);
 
-                          setState(() {
-                            imagePath = image.path;
-                          });
+                            Toaster.shortToast('profile photo updated');
 
-                          Navigator.pop(context);
+                            setState(() {
+                              imagePath = image.path;
+                            });
+
+                          }
+                        } else {
+                          Toaster.shortToast('download our app to upload your photo and more');
+                          //todo: need to add dialog to download the app
                         }
+
+                        Navigator.pop(context);
+
                       },
                       child: Image.asset('assets/images/add_image.png')),
 
@@ -217,37 +225,42 @@ class _ProfileAddEditRegisterPageState
                           shape: const CircleBorder(),
                           fixedSize: Size(mq.width * .3, mq.height * .15)),
                       onPressed: () async {
-                        final ImagePicker picker = ImagePicker();
+                        if(!kIsWeb){
+                          final ImagePicker picker = ImagePicker();
 
-                        // Pick an image
-                        final XFile? image = await picker.pickImage(
-                            source: ImageSource.camera, imageQuality: 95, maxWidth: 300);
-                        if (image != null) {
-                          Logx.i(_TAG, 'image path: ${image.path}');
+                          // Pick an image
+                          final XFile? image = await picker.pickImage(
+                              source: ImageSource.camera, imageQuality: 95, maxWidth: 300);
+                          if (image != null) {
+                            Logx.i(_TAG, 'image path: ${image.path}');
 
-                          final directory = await getApplicationDocumentsDirectory();
-                          final name = basename(image.path);
-                          final imageFile = File('${directory.path}/$name');
-                          final newImage = await File(image.path).copy(imageFile.path);
+                            final directory = await getApplicationDocumentsDirectory();
+                            final name = basename(image.path);
+                            final imageFile = File('${directory.path}/$name');
+                            final newImage = await File(image.path).copy(imageFile.path);
 
-                          oldImageUrl = widget.user.imageUrl;
-                          newImageUrl = await FirestorageHelper.uploadFile(
-                              FirestorageHelper.USER_IMAGES,
-                              StringUtils.getRandomString(28),
-                              newImage);
+                            oldImageUrl = widget.user.imageUrl;
+                            newImageUrl = await FirestorageHelper.uploadFile(
+                                FirestorageHelper.USER_IMAGES,
+                                StringUtils.getRandomString(28),
+                                newImage);
 
-                          widget.user = widget.user.copyWith(imageUrl: newImageUrl);
-                          FirestoreHelper.pushUser(widget.user);
-                          FirestorageHelper.deleteFile(oldImageUrl);
+                            widget.user = widget.user.copyWith(imageUrl: newImageUrl);
+                            FirestoreHelper.pushUser(widget.user);
+                            FirestorageHelper.deleteFile(oldImageUrl);
 
-                          Toaster.shortToast('profile photo updated');
+                            Toaster.shortToast('profile photo updated');
 
-                          setState(() {
-                            imagePath = image.path;
-                          });
-
-                          Navigator.pop(context);
+                            setState(() {
+                              imagePath = image.path;
+                            });
+                          }
+                        }else {
+                          Toaster.shortToast('download our app to upload your photo and more');
                         }
+
+                        Navigator.pop(context);
+
                       },
                       child: Image.asset('assets/images/camera.png')),
                 ],
