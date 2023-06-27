@@ -1,4 +1,5 @@
 import 'package:bloc/db/entity/user.dart' as blocUser;
+import 'package:bloc/db/shared_preferences/ui_preferences.dart';
 import 'package:bloc/helpers/dummy.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:delayed_display/delayed_display.dart';
@@ -291,6 +292,9 @@ class _OTPScreenState extends State<OTPScreen> {
                           registeredUser.fcmToken = fcmToken!;
 
                           UserPreferences.setUser(registeredUser);
+                          UiPreferences.setHomePageIndex(0);
+
+                          Toaster.shortToast('hey there, welcome to bloc! 🦖');
 
                           GoRouter.of(context)
                               .pushNamed(RouteConstants.homeRouteName);
@@ -311,10 +315,11 @@ class _OTPScreenState extends State<OTPScreen> {
                             FirestoreHelper.pushUser(user);
                           }
                           UserPreferences.setUser(user);
+                          UiPreferences.setHomePageIndex(0);
                           GoRouter.of(context)
                               .pushNamed(RouteConstants.homeRouteName);
 
-                          Toaster.shortToast('hey ${user.name}, welcome back');
+                          Toaster.shortToast('hey ${user.name.toLowerCase()}, welcome back! 🦖');
                         }
                       });
                     }

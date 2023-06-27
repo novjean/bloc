@@ -1160,7 +1160,12 @@ class Fresh {
       Logx.em(_TAG, 'lounge isActive not exist for id: ${lounge.id}');
       shouldPush = true;
     }
-
+    try {
+      lounge = lounge.copyWith(isVip: map['isVip'] as bool);
+    } catch (e) {
+      Logx.em(_TAG, 'lounge isVip not exist for id: ${lounge.id}');
+      shouldPush = true;
+    }
 
     if (shouldPush && shouldUpdate &&
         UserPreferences.myUser.clearanceLevel >= Constants.MANAGER_LEVEL) {
@@ -1236,6 +1241,11 @@ class Fresh {
       fresh = fresh.copyWith(isActive: lounge.isActive);
     } catch (e) {
       Logx.em(_TAG, 'lounge isActive not exist for id: ${lounge.id}');
+    }
+    try {
+      fresh = fresh.copyWith(isVip: lounge.isVip);
+    } catch (e) {
+      Logx.em(_TAG, 'lounge isVip not exist for id: ${lounge.id}');
     }
 
     return fresh;
@@ -2837,11 +2847,21 @@ class Fresh {
       shouldPush = true;
     }
     try {
-      userLounge = userLounge.copyWith(loungeIds: List<String>.from(map['loungeIds']));
+      userLounge = userLounge.copyWith(loungeId: map['loungeId'] as String);
     } catch (e) {
-      Logx.em(_TAG, 'userLounge loungeIds not exist for id: ${userLounge.id}');
-      List<String> temp = [];
-      userLounge = userLounge.copyWith(loungeIds: temp);
+      Logx.em(_TAG, 'userLounge loungeId not exist for id: ${userLounge.id}');
+      shouldPush = true;
+    }
+    try {
+      userLounge = userLounge.copyWith(lastAccessedTime: map['lastAccessedTime'] as int);
+    } catch (e) {
+      Logx.em(_TAG, 'userLounge lastAccessedTime not exist for id: ${userLounge.id}');
+      shouldPush = true;
+    }
+    try {
+      userLounge = userLounge.copyWith(isAccepted: map['isAccepted'] as bool);
+    } catch (e) {
+      Logx.em(_TAG, 'userLounge isAccepted not exist for id: ${userLounge.id}');
       shouldPush = true;
     }
 
@@ -2867,9 +2887,19 @@ class Fresh {
       Logx.em(_TAG, 'userLounge userId exist for id: ${userLounge.id}');
     }
     try {
-      freshUserLounge = freshUserLounge.copyWith(loungeIds: userLounge.loungeIds);
+      freshUserLounge = freshUserLounge.copyWith(loungeId: userLounge.loungeId);
     } catch (e) {
-      Logx.em(_TAG, 'userLounge loungeIds not exist for id: ${userLounge.id}');
+      Logx.em(_TAG, 'userLounge userLounge not exist for id: ${userLounge.id}');
+    }
+    try {
+      freshUserLounge = freshUserLounge.copyWith(lastAccessedTime: userLounge.lastAccessedTime);
+    } catch (e) {
+      Logx.em(_TAG, 'userLounge lastAccessedTime not exist for id: ${userLounge.id}');
+    }
+    try {
+      freshUserLounge = freshUserLounge.copyWith(isAccepted: userLounge.isAccepted);
+    } catch (e) {
+      Logx.em(_TAG, 'userLounge isAccepted not exist for id: ${userLounge.id}');
     }
 
     return freshUserLounge;

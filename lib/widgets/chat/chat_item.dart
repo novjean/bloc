@@ -6,12 +6,14 @@ import '../../db/shared_preferences/user_preferences.dart';
 import '../../helpers/firestore_helper.dart';
 import '../../main.dart';
 import '../../utils/constants.dart';
+import '../ui/toaster.dart';
 
 class ChatItem extends StatefulWidget {
   final Chat chat;
   final bool isMe;
+  final bool isMember;
 
-  const ChatItem({Key? key, required this.chat, required this.isMe})
+  const ChatItem({Key? key, required this.chat, required this.isMe, required this.isMember})
       : super(key: key);
 
   @override
@@ -46,11 +48,11 @@ class _ChatItemState extends State<ChatItem> {
                   children: [
                     Text(
                       widget.chat.userName.toLowerCase(),
-                      style: TextStyle(fontSize: 18),
+                      style: const TextStyle(fontSize: 18),
                     ),
                     Text(
                       DateTimeUtils.getChatDate(widget.chat.time),
-                      style: TextStyle(fontSize: 12),
+                      style: const TextStyle(fontSize: 12),
                     )
                   ],
                 ),
@@ -93,23 +95,29 @@ class _ChatItemState extends State<ChatItem> {
                               constraints: const BoxConstraints(),
                               tooltip: 'up vote',
                               onPressed: () {
-                                if (widget.chat.upVoters
-                                    .contains(UserPreferences.myUser.id)) {
-                                  // nothing to do
-                                } else if (widget.chat.downVoters
-                                    .contains(UserPreferences.myUser.id)) {
-                                  widget.chat.downVoters
-                                      .remove(UserPreferences.myUser.id);
-                                  widget.chat.vote++;
-                                  FirestoreHelper.pushChat(widget.chat);
-                                  setState(() {});
+                                if(widget.isMember){
+                                  if (widget.chat.upVoters
+                                      .contains(UserPreferences.myUser.id)) {
+                                    // nothing to do
+                                  } else if (widget.chat.downVoters
+                                      .contains(UserPreferences.myUser.id)) {
+                                    widget.chat.downVoters
+                                        .remove(UserPreferences.myUser.id);
+                                    widget.chat.vote++;
+                                    FirestoreHelper.pushChat(widget.chat);
+                                    setState(() {});
+                                  } else {
+                                    widget.chat.upVoters
+                                        .add(UserPreferences.myUser.id);
+                                    widget.chat.vote++;
+                                    FirestoreHelper.pushChat(widget.chat);
+                                    setState(() {});
+                                  }
                                 } else {
-                                  widget.chat.upVoters
-                                      .add(UserPreferences.myUser.id);
-                                  widget.chat.vote++;
-                                  FirestoreHelper.pushChat(widget.chat);
-                                  setState(() {});
+                                  Toaster.shortToast('have a 🍕 slice and join us to vote');
                                 }
+
+
                               },
                               iconSize: 18.0),
                         ),
@@ -123,25 +131,29 @@ class _ChatItemState extends State<ChatItem> {
                           child: IconButton(
                               icon: const Icon(Icons.keyboard_arrow_down),
                               padding: EdgeInsets.zero,
-                              constraints: BoxConstraints(),
+                              constraints: const BoxConstraints(),
                               tooltip: 'down vote',
                               onPressed: () {
-                                if (widget.chat.downVoters
-                                    .contains(UserPreferences.myUser.id)) {
-                                  // nothing to do
-                                } else if (widget.chat.upVoters
-                                    .contains(UserPreferences.myUser.id)) {
-                                  widget.chat.upVoters
-                                      .remove(UserPreferences.myUser.id);
-                                  widget.chat.vote--;
-                                  FirestoreHelper.pushChat(widget.chat);
-                                  setState(() {});
+                                if(widget.isMember){
+                                  if (widget.chat.downVoters
+                                      .contains(UserPreferences.myUser.id)) {
+                                    // nothing to do
+                                  } else if (widget.chat.upVoters
+                                      .contains(UserPreferences.myUser.id)) {
+                                    widget.chat.upVoters
+                                        .remove(UserPreferences.myUser.id);
+                                    widget.chat.vote--;
+                                    FirestoreHelper.pushChat(widget.chat);
+                                    setState(() {});
+                                  } else {
+                                    widget.chat.downVoters
+                                        .add(UserPreferences.myUser.id);
+                                    widget.chat.vote--;
+                                    FirestoreHelper.pushChat(widget.chat);
+                                    setState(() {});
+                                  }
                                 } else {
-                                  widget.chat.downVoters
-                                      .add(UserPreferences.myUser.id);
-                                  widget.chat.vote--;
-                                  FirestoreHelper.pushChat(widget.chat);
-                                  setState(() {});
+                                  Toaster.shortToast('have a 🍕 slice and join us to vote');
                                 }
                               },
                               iconSize: 18.0),

@@ -174,7 +174,7 @@ class _PartyGuestAddEditManageScreenState
     return Scaffold(
       backgroundColor: Constants.background,
       appBar: AppBar(
-        title: AppBarTitle(title: 'guest list | ${widget.party.name.toLowerCase()}'),
+        title: AppBarTitle(title: 'guest list'),
         titleSpacing: 0,
         backgroundColor: Constants.background,
       ),

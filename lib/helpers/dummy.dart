@@ -188,7 +188,7 @@ class Dummy {
         creationTime: Timestamp.now().millisecondsSinceEpoch,
         lastChat: '',
         lastChatTime: Timestamp.now().millisecondsSinceEpoch,
-        isActive: true);
+        isActive: true, isVip: false);
     return dummy;
   }
 
@@ -395,7 +395,11 @@ class Dummy {
 
   static UserLounge getDummyUserLounge() {
     UserLounge dummyUserLounge = UserLounge(
-        id: StringUtils.getRandomString(28), userId: '', loungeIds: []);
+        id: StringUtils.getRandomString(28),
+        userId: '',
+        loungeId: '',
+        lastAccessedTime: Timestamp.now().millisecondsSinceEpoch,
+        isAccepted: true);
     return dummyUserLounge;
   }
 }

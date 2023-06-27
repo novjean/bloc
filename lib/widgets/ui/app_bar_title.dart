@@ -34,7 +34,7 @@ class AppBarTitle extends StatelessWidget {
             child: const Text('bloc')),
         const Spacer(),
         Padding(
-          padding: const EdgeInsets.only(right: 20.0),
+          padding: const EdgeInsets.only(right: 20.0, left: 10),
           child: Text(title.toLowerCase(), overflow: TextOverflow.ellipsis,),
         )
       ],),

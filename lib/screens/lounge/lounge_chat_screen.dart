@@ -1,11 +1,13 @@
 import 'dart:io';
 
+import 'package:bloc/db/entity/user_lounge.dart';
 import 'package:bloc/helpers/firestore_helper.dart';
 import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:path/path.dart';
+import 'package:path/path.dart' as Path;
 import 'package:path_provider/path_provider.dart';
 
 import '../../db/entity/chat.dart';
@@ -15,6 +17,7 @@ import '../../helpers/dummy.dart';
 import '../../helpers/firestorage_helper.dart';
 import '../../helpers/fresh.dart';
 import '../../main.dart';
+import '../../routes/route_constants.dart';
 import '../../utils/constants.dart';
 import '../../utils/logx.dart';
 import '../../utils/string_utils.dart';
@@ -22,9 +25,9 @@ import '../../widgets/chat/chat_item.dart';
 import '../../widgets/ui/toaster.dart';
 
 class LoungeChatScreen extends StatefulWidget {
-  String id;
+  String loungeId;
 
-  LoungeChatScreen({Key? key, required this.id}) : super(key: key);
+  LoungeChatScreen({Key? key, required this.loungeId}) : super(key: key);
 
   @override
   State<LoungeChatScreen> createState() => _LoungeChatScreenState();
@@ -35,6 +38,10 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
 
   Lounge mLounge = Dummy.getDummyLounge();
   var isLoungeLoading = true;
+
+  UserLounge mUserLounge = Dummy.getDummyUserLounge();
+  var isUserLoungeLoading = true;
+  var isMember = false;
 
   List<Chat> mChats = [];
 
@@ -48,15 +55,42 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
 
   @override
   void initState() {
-    FirestoreHelper.pullLounge(widget.id).then((res) {
+    super.initState();
+
+    FirestoreHelper.pullLounge(widget.loungeId).then((res) {
       if (res.docs.isNotEmpty) {
         for (int i = 0; i < res.docs.length; i++) {
           DocumentSnapshot document = res.docs[i];
           Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
           mLounge = Fresh.freshLoungeMap(data, false);
         }
-        setState(() {
-          isLoungeLoading = false;
+        isLoungeLoading = false;
+
+        FirestoreHelper.pullUserLounge(UserPreferences.myUser.id, widget.loungeId).then((res) {
+          if(res.docs.isNotEmpty){
+            for (int i = 0; i < res.docs.length; i++) {
+              DocumentSnapshot document = res.docs[i];
+              Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+              mUserLounge = Fresh.freshUserLoungeMap(data, false);
+            }
+
+            setState(() {
+              isMember = true;
+              isUserLoungeLoading = false;
+            });
+          } else {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              if(mLounge.isVip){
+                showPrivateLoungeDialog(context);
+              }
+            });
+
+            setState(() {
+              isMember = false;
+              isUserLoungeLoading = false;
+            });
+            // todo: popup dialog with lil bit about the community
+          }
         });
       } else {
         setState(() {
@@ -64,37 +98,6 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
         });
       }
     });
-    super.initState();
-
-    // WidgetsBinding.instance.addPostFrameCallback((_) {
-    //   // Show the dialog after the screen finishes loading.
-    //   showDialog(
-    //     context: context,
-    //     builder: (_) => AlertDialog(
-    //       title: Center(child: Text('how are you feeling today?')),
-    //       content: Row(
-    //         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-    //         children: [
-    //           Icon(Icons.star),
-    //           Icon(Icons.favorite),
-    //           Icon(Icons.add),
-    //           Icon(Icons.thumb_up),
-    //           Icon(Icons.thumb_down),
-    //         ],),
-    //       shape: RoundedRectangleBorder(
-    //         borderRadius: BorderRadius.circular(10.0),
-    //       ),
-    //       actions: [
-    //         // TextButton(
-    //         //   onPressed: () {
-    //         //     Navigator.pop(context);
-    //         //   },
-    //         //   child: Text('OK'),
-    //         // ),
-    //       ],
-    //     ),
-    //   );
-    // });
   }
 
   @override
@@ -106,42 +109,114 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.black,
-          title: GestureDetector(
-            onTap: () {
-              showLoungeDetails(context);
-            },
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Text(mLounge.name),
-                Padding(
-                  padding: const EdgeInsets.only(left: 8.0),
+          titleSpacing: 0,
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Container(
+                height: 40,
+                width: 35,
+                decoration: const BoxDecoration(
+                  image: DecorationImage(
+                      image: AssetImage("assets/icons/logo-adaptive.png"),
+                      fit: BoxFit.fitHeight),
+                ),
+              ),
+              InkWell(
+                  onTap: () {
+                    if (UserPreferences.isUserLoggedIn()) {
+                      GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
+                    } else {
+                      GoRouter.of(context)
+                          .pushNamed(RouteConstants.landingRouteName);
+                    }
+                  },
+                  child: const Text('bloc')),
+              const Spacer(),
+              Text(mLounge.name, overflow: TextOverflow.ellipsis,),
+              Padding(
+                padding: const EdgeInsets.only(left: 8.0, right: 10),
+                child: GestureDetector(
+                  onTap: () {
+                    showLoungeDetails(context);
+                  },
                   child: CircleAvatar(
                     backgroundImage: NetworkImage(
                       mLounge.imageUrl,
                     ),
                   ),
-                )
-              ],
-            ),
+                ),
+              )
+            ],
           ),
         ),
         backgroundColor: Constants.background,
-        body: isLoungeLoading ? const LoadingWidget() : _buildBody(context),
+        floatingActionButton: !isMember? SizedBox(
+          height: 150,
+          width: 150,
+          child: FloatingActionButton(
+            onPressed: () async {
+              UserLounge userLounge = Dummy.getDummyUserLounge();
+              userLounge = userLounge.copyWith(userId: UserPreferences.myUser.id);
+              userLounge = userLounge.copyWith(loungeId: widget.loungeId);
+              FirestoreHelper.pushUserLounge(userLounge);
+
+              setState(() {
+                isMember = true;
+              });
+            },
+            backgroundColor: Theme.of(context).primaryColor,
+            tooltip: 'join lounge',
+            elevation: 5,
+            splashColor: Colors.grey,
+            shape: BeveledRectangleBorder(
+                borderRadius: BorderRadius.zero
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.local_pizza_outlined,
+                  color: Theme.of(context).primaryColorDark,
+                  size: 28,
+                ),
+                const Text('join'),
+              ],
+            ),
+          ),
+        ): const SizedBox(),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+
+        body: isLoungeLoading && isUserLoungeLoading ? const LoadingWidget() : _buildBody(context),
       ),
     );
   }
 
-  _buildBody(BuildContext context) {
-    // return loadMessages();
+  @override
+  void dispose() {
+    _textController.dispose();
 
+    FirestoreHelper.updateUserLoungeLastAccessed(mUserLounge.id);
+
+    super.dispose();
+  }
+
+  _buildBody(BuildContext context) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
         Expanded(
           child: loadMessages(),
         ),
-        // NewChat(loungeId: mLounge.id),
+
+        if (_isUploading)
+          const Align(
+              alignment: Alignment.centerRight,
+              child: Padding(
+                  padding:
+                  EdgeInsets.symmetric(vertical: 8, horizontal: 20),
+                  child: CircularProgressIndicator(strokeWidth: 2))),
+
         _chatInput(context),
       ],
     );
@@ -168,10 +243,14 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
                   mChats.add(chat);
                 }
 
-                if(mChats.isNotEmpty){
+                if (mChats.isNotEmpty) {
                   return _showChats();
                 } else {
-                  return const Center(child: Text('say hi 👋', style: TextStyle(fontSize: 18),));
+                  return const Center(
+                      child: Text(
+                    'say hi 👋',
+                    style: TextStyle(fontSize: 18, color: Constants.lightPrimary),
+                  ));
                 }
               } catch (e) {
                 Logx.em(_TAG, e.toString());
@@ -184,46 +263,34 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
   }
 
   Widget _showChats() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (_scrollController.hasClients) {
-        _scrollToBottom();
-      }
-    });
-
     return Expanded(
       child: ListView.builder(
           reverse: true,
           itemCount: mChats.length,
-          // controller: _scrollController,
           scrollDirection: Axis.vertical,
           physics: const BouncingScrollPhysics(),
           itemBuilder: (ctx, index) {
             return GestureDetector(
-                child: ChatItem(
-                  chat: mChats[index],
-                  isMe: mChats[index].userId == UserPreferences.myUser.id,
-                  // use key for better efficiency
-                  key: ValueKey(mChats[index].id),
-                ),
-                onTap: () {
-                  Logx.d(_TAG, 'chat selected: $index');
-                }, onLongPress: () {
-                  if(UserPreferences.myUser.clearanceLevel> Constants.MANAGER_LEVEL){
-                    Chat chat = mChats[index];
-                    FirestoreHelper.deleteChat(chat.id);
-                  }
-            },
-
-                );
+              child: ChatItem(
+                chat: mChats[index],
+                isMe: mChats[index].userId == UserPreferences.myUser.id,
+                isMember: isMember,
+                // use key for better efficiency
+                key: ValueKey(mChats[index].id),
+              ),
+              onTap: () {
+                Logx.d(_TAG, 'chat selected: $index');
+              },
+              onLongPress: () {
+                if (UserPreferences.myUser.clearanceLevel >
+                    Constants.MANAGER_LEVEL) {
+                  Chat chat = mChats[index];
+                  FirestoreHelper.deleteChat(chat.id);
+                }
+              },
+            );
           }),
     );
-  }
-
-  final ScrollController _scrollController = ScrollController();
-
-  _scrollToBottom() {
-    _scrollController.animateTo(_scrollController.position.maxScrollExtent,
-        duration: const Duration(seconds: 1), curve: Curves.easeIn);
   }
 
   void showLoungeDetails(BuildContext context) {
@@ -308,6 +375,8 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
                   borderRadius: BorderRadius.circular(15)),
               child: Row(
                 children: [
+                  //adding some space
+                  SizedBox(width: mq.width * .02),
                   Expanded(
                       child: TextField(
                     controller: _textController,
@@ -324,25 +393,29 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
                   //pick image from gallery button
                   IconButton(
                       onPressed: () async {
-                        final ImagePicker picker = ImagePicker();
-                        final XFile? image = await picker.pickImage(
-                            source: ImageSource.gallery,
-                            imageQuality: 95,
-                            maxWidth: 768);
-                        storePhotoChat(image);
+                        if(isMember){
+                          final ImagePicker picker = ImagePicker();
+                          final XFile? image = await picker.pickImage(
+                              source: ImageSource.gallery,
+                              imageQuality: 95,
+                              maxWidth: 768);
+                          storePhotoChat(image);
 
-                        // // Picking multiple images
-                        // final List<XFile> images =
-                        // await picker.pickMultiImage(imageQuality: 70);
-                        //
-                        // // uploading & sending image one by one
-                        // for (var i in images) {
-                        //   Logx.i(_TAG, 'image path: ${i.path}');
-                        //   setState(() => _isUploading = true);
-                        //
-                        //   // await APIs.sendChatImage(widget.user, File(i.path));
-                        //   setState(() => _isUploading = false);
-                        // }
+                          // // Picking multiple images
+                          // final List<XFile> images =
+                          // await picker.pickMultiImage(imageQuality: 70);
+                          //
+                          // // uploading & sending image one by one
+                          // for (var i in images) {
+                          //   Logx.i(_TAG, 'image path: ${i.path}');
+                          //   setState(() => _isUploading = true);
+                          //
+                          //   // await APIs.sendChatImage(widget.user, File(i.path));
+                          //   setState(() => _isUploading = false);
+                          // }
+                        } else {
+                          Toaster.shortToast('have the 🍕 and join us to post photo');
+                        }
                       },
                       icon: const Icon(Icons.image,
                           color: Constants.primary, size: 26)),
@@ -350,12 +423,16 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
                   //take image from camera button
                   IconButton(
                       onPressed: () async {
-                        final ImagePicker picker = ImagePicker();
-                        final XFile? image = await picker.pickImage(
-                            source: ImageSource.camera,
-                            imageQuality: 95,
-                            maxWidth: 768);
-                        storePhotoChat(image);
+                        if(isMember){
+                          final ImagePicker picker = ImagePicker();
+                          final XFile? image = await picker.pickImage(
+                              source: ImageSource.camera,
+                              imageQuality: 95,
+                              maxWidth: 768);
+                          storePhotoChat(image);
+                        } else {
+                          Toaster.longToast('have the 🍕 and join us to post photo');
+                        }
                       },
                       icon: const Icon(Icons.camera_alt_rounded,
                           color: Constants.primary, size: 26)),
@@ -370,7 +447,7 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
           //send message button
           MaterialButton(
             onPressed: () {
-              if (UserPreferences.isUserLoggedIn()) {
+              if(isMember) {
                 if (_textController.text.isNotEmpty) {
                   Chat chat = Dummy.getDummyChat();
                   chat.loungeId = mLounge.id;
@@ -383,14 +460,16 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
                       mLounge.id, chat.message, chat.time);
                   _textController.text = '';
                 }
+              } else {
+                Toaster.shortToast('have the 🍕 slice and join us to chat');
               }
             },
             minWidth: 0,
             padding:
                 const EdgeInsets.only(top: 10, bottom: 10, right: 5, left: 10),
             shape: const CircleBorder(),
-            color: Colors.green,
-            child: const Icon(Icons.send, color: Colors.white, size: 28),
+            color: Constants.primary,
+            child: const Icon(Icons.send, color: Colors.black, size: 22),
           )
         ],
       ),
@@ -403,7 +482,7 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
       setState(() => _isUploading = true);
 
       final directory = await getApplicationDocumentsDirectory();
-      final name = basename(image.path);
+      final name = Path.basename(image.path);
       final imageFile = File('${directory.path}/$name');
       final newImage = await File(image.path).copy(imageFile.path);
 
@@ -424,4 +503,90 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
       setState(() => _isUploading = false);
     }
   }
+
+  showPrivateLoungeDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierColor: Constants.background,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          contentPadding: const EdgeInsets.all(16.0),
+          backgroundColor: Constants.lightPrimary,
+          content: SizedBox(
+            height: mq.height * 0.5,
+            width: mq.width * 0.75,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  '${mLounge.name} ⚜️ vip lounge',
+                  style: const TextStyle(fontSize: 22, color: Colors.black),
+                ),
+                Text(
+                  'Welcome to our exclusive community lounge! Access is reserved for VIPs only. Secure your spot by registering for our upcoming ${mLounge.name} party or impress the community leaders with a compelling request. Get ready for a lounge of fun, laughter, and connections!'.toLowerCase(),
+                  textAlign: TextAlign.center,
+                  // overflow: TextOverflow.ellipsis,
+                    softWrap: true,
+                  style: const TextStyle(fontSize: 18, color: Colors.black),
+                )
+              ],
+            ),
+          ),
+          actions: [
+            mLounge.name.isNotEmpty? TextButton(
+              child: const Text("request access"),
+              onPressed: () {
+                Navigator.of(context).pop();
+                UserLounge userLounge = Dummy.getDummyUserLounge();
+                userLounge = userLounge.copyWith(userId :UserPreferences.myUser.id,
+                    loungeId: mLounge.id, isAccepted: false);
+                FirestoreHelper.pushUserLounge(userLounge);
+                Toaster.longToast('request to join the vip lounge has been sent');
+
+                GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
+              },
+            ): const SizedBox(),
+            TextButton(
+              child: const Text("exit"),
+              onPressed: () {
+                Navigator.of(context).pop();
+                GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  // showMoodDialog(){
+    // showDialog(
+    //   context: context,
+    //   builder: (_) => AlertDialog(
+    //     title: Center(child: Text('how are you feeling today?')),
+    //     content: Row(
+    //       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+    //       children: [
+    //         Icon(Icons.star),
+    //         Icon(Icons.favorite),
+    //         Icon(Icons.add),
+    //         Icon(Icons.thumb_up),
+    //         Icon(Icons.thumb_down),
+    //       ],),
+    //     shape: RoundedRectangleBorder(
+    //       borderRadius: BorderRadius.circular(10.0),
+    //     ),
+    //     actions: [
+    //       // TextButton(
+    //       //   onPressed: () {
+    //       //     Navigator.pop(context);
+    //       //   },
+    //       //   child: Text('OK'),
+    //       // ),
+    //     ],
+    //   ),
+    // );
+  // }
+
 }

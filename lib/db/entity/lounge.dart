@@ -14,6 +14,7 @@ class Lounge{
 
   int creationTime;
   bool isActive;
+  bool isVip;
 
 //<editor-fold desc="Data Methods">
   Lounge({
@@ -29,6 +30,7 @@ class Lounge{
     required this.lastChatTime,
     required this.creationTime,
     required this.isActive,
+    required this.isVip,
   });
 
   @override
@@ -47,7 +49,8 @@ class Lounge{
           lastChat == other.lastChat &&
           lastChatTime == other.lastChatTime &&
           creationTime == other.creationTime &&
-          isActive == other.isActive);
+          isActive == other.isActive &&
+          isVip == other.isVip);
 
   @override
   int get hashCode =>
@@ -62,7 +65,8 @@ class Lounge{
       lastChat.hashCode ^
       lastChatTime.hashCode ^
       creationTime.hashCode ^
-      isActive.hashCode;
+      isActive.hashCode ^
+      isVip.hashCode;
 
   @override
   String toString() {
@@ -79,6 +83,7 @@ class Lounge{
         ' lastChatTime: $lastChatTime,' +
         ' creationTime: $creationTime,' +
         ' isActive: $isActive,' +
+        ' isVip: $isVip,' +
         '}';
   }
 
@@ -95,6 +100,7 @@ class Lounge{
     int? lastChatTime,
     int? creationTime,
     bool? isActive,
+    bool? isVip,
   }) {
     return Lounge(
       id: id ?? this.id,
@@ -109,6 +115,7 @@ class Lounge{
       lastChatTime: lastChatTime ?? this.lastChatTime,
       creationTime: creationTime ?? this.creationTime,
       isActive: isActive ?? this.isActive,
+      isVip: isVip ?? this.isVip,
     );
   }
 
@@ -126,6 +133,7 @@ class Lounge{
       'lastChatTime': this.lastChatTime,
       'creationTime': this.creationTime,
       'isActive': this.isActive,
+      'isVip': this.isVip,
     };
   }
 
@@ -143,6 +151,7 @@ class Lounge{
       lastChatTime: map['lastChatTime'] as int,
       creationTime: map['creationTime'] as int,
       isActive: map['isActive'] as bool,
+      isVip: map['isVip'] as bool,
     );
   }
 

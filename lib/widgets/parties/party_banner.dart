@@ -128,7 +128,7 @@ class PartyBanner extends StatelessWidget {
                                     ? showBuyTixButton(context)
                                     : isGuestListActive
                                         ? !isGuestListRequested
-                                            ? displayGuestListButton(context)
+                                            ? showGuestListButton(context)
                                             : showBoxOfficeButton(context)
                                         : showListenOrInstaDialog(context)
                                 : const SizedBox()
@@ -143,7 +143,8 @@ class PartyBanner extends StatelessWidget {
                             placeholder: const AssetImage(
                                 'assets/icons/logo.png'),
                             image: NetworkImage(party.imageUrl),
-                            fit: BoxFit.cover,),
+                            fit: BoxFit.cover,
+                          ),
                         ),
                       ),
                     ],
@@ -212,7 +213,7 @@ class PartyBanner extends StatelessWidget {
     );
   }
 
-  displayGuestListButton(BuildContext context) {
+  showGuestListButton(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 5.0),
       child: ElevatedButton.icon(

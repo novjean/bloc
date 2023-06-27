@@ -1,13 +1,17 @@
 class UserLounge {
   final String id;
   final String userId;
-  final List<String> loungeIds;
+  final String loungeId;
+  final int lastAccessedTime;
+  final bool isAccepted;
 
 //<editor-fold desc="Data Methods">
   const UserLounge({
     required this.id,
     required this.userId,
-    required this.loungeIds,
+    required this.loungeId,
+    required this.lastAccessedTime,
+    required this.isAccepted,
   });
 
   @override
@@ -17,29 +21,42 @@ class UserLounge {
           runtimeType == other.runtimeType &&
           id == other.id &&
           userId == other.userId &&
-          loungeIds == other.loungeIds);
+          loungeId == other.loungeId &&
+          lastAccessedTime == other.lastAccessedTime &&
+          isAccepted == other.isAccepted);
 
   @override
-  int get hashCode => id.hashCode ^ userId.hashCode ^ loungeIds.hashCode;
+  int get hashCode =>
+      id.hashCode ^
+      userId.hashCode ^
+      loungeId.hashCode ^
+      lastAccessedTime.hashCode ^
+      isAccepted.hashCode;
 
   @override
   String toString() {
     return 'UserLounge{' +
         ' id: $id,' +
         ' userId: $userId,' +
-        ' loungeIds: $loungeIds,' +
+        ' loungeId: $loungeId,' +
+        ' lastAccessedTime: $lastAccessedTime,' +
+        ' isAccepted: $isAccepted,' +
         '}';
   }
 
   UserLounge copyWith({
     String? id,
     String? userId,
-    List<String>? loungeIds,
+    String? loungeId,
+    int? lastAccessedTime,
+    bool? isAccepted,
   }) {
     return UserLounge(
       id: id ?? this.id,
       userId: userId ?? this.userId,
-      loungeIds: loungeIds ?? this.loungeIds,
+      loungeId: loungeId ?? this.loungeId,
+      lastAccessedTime: lastAccessedTime ?? this.lastAccessedTime,
+      isAccepted: isAccepted ?? this.isAccepted,
     );
   }
 
@@ -47,7 +64,9 @@ class UserLounge {
     return {
       'id': this.id,
       'userId': this.userId,
-      'loungeIds': this.loungeIds,
+      'loungeId': this.loungeId,
+      'lastAccessedTime': this.lastAccessedTime,
+      'isAccepted': this.isAccepted,
     };
   }
 
@@ -55,7 +74,9 @@ class UserLounge {
     return UserLounge(
       id: map['id'] as String,
       userId: map['userId'] as String,
-      loungeIds: map['loungeIds'] as List<String>,
+      loungeId: map['loungeId'] as String,
+      lastAccessedTime: map['lastAccessedTime'] as int,
+      isAccepted: map['isAccepted'] as bool,
     );
   }
 

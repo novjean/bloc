@@ -333,8 +333,6 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
                   Toaster.shortToast('no seats left on the table!');
                 }
               }
-              Toaster.longToast(
-                  'welcome ' + UserPreferences.myUser.name.toLowerCase());
             } else {
               Logx.i(_TAG, 'seats could not be found for table id ' + tableId);
             }

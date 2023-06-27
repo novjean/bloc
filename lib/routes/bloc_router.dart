@@ -146,7 +146,7 @@ class BlocRouter{
           pageBuilder: (context, state) {
             return MaterialPage(
                 child: LoungeChatScreen(
-                  id: state.params['id']!,
+                  loungeId: state.params['id']!,
                 ));
           },
         ),

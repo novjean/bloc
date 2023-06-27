@@ -301,7 +301,11 @@ class _LoungeAddEditScreenState extends State<LoungeAddEditScreen> {
                       minimumSize: const Size(50, 50), //////// HERE
                     ),
                     onPressed: () {
-                      // navigate to members view page
+                      // Navigator.of(context).push(
+                      //   MaterialPageRoute(
+                      //       builder: (ctx) =>
+                      //           LoungeMembersScreen(loungeId: widget.lounge.id)),
+                      // );
                     },
                     child: const Text('show'),
                   ),
@@ -323,6 +327,24 @@ class _LoungeAddEditScreenState extends State<LoungeAddEditScreen> {
               onChanged: (value) {
                 setState(() {
                   widget.lounge = widget.lounge.copyWith(isActive: value);
+                });
+              },
+            ), //Checkbox
+          ], //<Widget>[]
+        ),
+        const SizedBox(height: 24),
+        Row(
+          children: <Widget>[
+            const Text(
+              'vip : ',
+              style: TextStyle(fontSize: 17.0),
+            ), //Text
+            const SizedBox(width: 10), //SizedBox
+            Checkbox(
+              value: widget.lounge.isVip,
+              onChanged: (value) {
+                setState(() {
+                  widget.lounge = widget.lounge.copyWith(isVip: value);
                 });
               },
             ), //Checkbox

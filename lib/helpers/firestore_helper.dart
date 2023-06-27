@@ -56,7 +56,6 @@ class FirestoreHelper {
   static String HISTORY_MUSIC = 'history_music';
   static String INVENTORY_OPTIONS = 'inventory_options';
   static String LOUNGES = 'lounges';
-
   static String MANAGER_SERVICES = 'manager_services';
   static String MANAGER_SERVICE_OPTIONS = 'manager_service_options';
   static String OFFERS = 'offers';
@@ -1623,7 +1622,7 @@ class FirestoreHelper {
         'blocServiceId': blocServiceId,
       }).then((value) {
         Logx.i(_TAG,
-            userId + " user bloc service id updated to : " + blocServiceId);
+            "$userId user bloc service id updated to : $blocServiceId");
       }).catchError((e, s) {
         Logx.ex(_TAG, 'failed to update user bloc service id', e, s);
       });
@@ -1650,12 +1649,35 @@ class FirestoreHelper {
   }
 
   /** user lounge **/
-  static void pushUserLounge(UserLounge userLounge) async {
+  static pushUserLounge(UserLounge userLounge) async {
     try {
       await FirebaseFirestore.instance
           .collection(USER_LOUNGES)
           .doc(userLounge.id)
           .set(userLounge.toMap());
+    } on PlatformException catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } on Exception catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } catch (e) {
+      logger.e(e);
+    }
+  }
+
+  static pullUserLounge(String userId, String loungeId) {
+    return FirebaseFirestore.instance
+        .collection(USER_LOUNGES)
+        .where('userId', isEqualTo: userId)
+        .where('loungeId', isEqualTo: loungeId)
+        .get();
+  }
+
+  static void updateUserLoungeLastAccessed(String userLoungeId) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection(USER_LOUNGES)
+          .doc(userLoungeId)
+          .update({'lastAccessedTime': Timestamp.now().millisecondsSinceEpoch});
     } on PlatformException catch (e, s) {
       Logx.e(_TAG, e, s);
     } on Exception catch (e, s) {
