@@ -1672,6 +1672,13 @@ class FirestoreHelper {
         .get();
   }
 
+  static getUserLoungeMembers(String loungeId) {
+    return FirebaseFirestore.instance
+        .collection(USER_LOUNGES)
+        .where('loungeId', isEqualTo: loungeId)
+        .snapshots();
+  }
+
   static void updateUserLoungeLastAccessed(String userLoungeId) async {
     try {
       await FirebaseFirestore.instance
@@ -1686,5 +1693,10 @@ class FirestoreHelper {
       logger.e(e);
     }
   }
+
+  static void deleteUserLounge(String docId) {
+    FirebaseFirestore.instance.collection(USER_LOUNGES).doc(docId).delete();
+  }
+
 
 }

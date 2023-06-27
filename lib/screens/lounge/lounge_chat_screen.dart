@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:bloc/db/entity/user_lounge.dart';
 import 'package:bloc/helpers/firestore_helper.dart';
+import 'package:bloc/widgets/ui/button_widget.dart';
 import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -22,6 +23,7 @@ import '../../utils/constants.dart';
 import '../../utils/logx.dart';
 import '../../utils/string_utils.dart';
 import '../../widgets/chat/chat_item.dart';
+import '../../widgets/ui/dark_button_widget.dart';
 import '../../widgets/ui/toaster.dart';
 
 class LoungeChatScreen extends StatefulWidget {
@@ -169,7 +171,7 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
             tooltip: 'join lounge',
             elevation: 5,
             splashColor: Colors.grey,
-            shape: BeveledRectangleBorder(
+            shape: const BeveledRectangleBorder(
                 borderRadius: BorderRadius.zero
             ),
             child: Column(
@@ -315,6 +317,20 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      showMembersCount(),
+                      DarkButtonWidget(text: 'leave lounge', onClicked: () {
+                        FirestoreHelper.deleteUserLounge(mUserLounge.id);
+
+                        Toaster.longToast('you have exited the lounge');
+                        Logx.i(_TAG, 'user has exited the lounge');
+                        GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
+
+                      },)
+                    ],
+                  ),
                   Padding(
                     padding: const EdgeInsets.only(top: 10.0),
                     child: Text(
@@ -543,7 +559,7 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
                     loungeId: mLounge.id, isAccepted: false);
                 FirestoreHelper.pushUserLounge(userLounge);
                 Toaster.longToast('request to join the vip lounge has been sent');
-
+                Logx.i(_TAG, 'user requested to join the vip lounge');
                 GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
               },
             ): const SizedBox(),
@@ -556,6 +572,36 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
             ),
           ],
         );
+      },
+    );
+  }
+
+  showMembersCount() {
+    return StreamBuilder<QuerySnapshot>(
+      stream: FirestoreHelper.getUserLoungeMembers(mLounge.id),
+      builder: (ctx, snapshot) {
+        switch (snapshot.connectionState) {
+          case ConnectionState.waiting:
+          case ConnectionState.none:
+            return Text('...');
+          case ConnectionState.active:
+          case ConnectionState.done:
+            {
+              try {
+                int count = snapshot.data!.docs.length;
+
+                return Text('$count members', style: const TextStyle(
+                  color: Constants.primary,
+                  fontWeight: FontWeight.normal,
+                  fontSize: 18,
+                ),
+                );
+              } catch (e) {
+                Logx.em(_TAG, e.toString());
+              }
+            }
+        }
+        return const LoadingWidget();
       },
     );
   }
