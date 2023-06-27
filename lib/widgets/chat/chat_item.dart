@@ -66,7 +66,7 @@ class _ChatItemState extends State<ChatItem> {
                             style: TextStyle(fontSize: 16),
                           )
                         : Container(
-                            width: mq.width * 0.5, // Set your desired width
+                            width: mq.width * 0.75, // Set your desired width
                             // height: 150, // Set your desired height
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(10.0),
