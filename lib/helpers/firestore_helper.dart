@@ -1512,12 +1512,32 @@ class FirestoreHelper {
         .get();
   }
 
+  static Future<QuerySnapshot<Object?>> pullUsersLesserThanLevel(
+      int clearanceLevel) {
+    return FirebaseFirestore.instance
+        .collection(USERS)
+        .where('clearanceLevel', isLessThanOrEqualTo: clearanceLevel)
+        .orderBy('name', descending: false)
+        .get();
+  }
+
+  static Future<QuerySnapshot<Object?>> pullUsersSortedName() {
+    return FirebaseFirestore.instance
+        .collection(USERS)
+        .orderBy('name', descending: false)
+        .get();
+  }
+
   static Stream<QuerySnapshot<Object?>> getUsersLessThanLevel(
       int clearanceLevel) {
     return FirebaseFirestore.instance
         .collection(USERS)
         .where('clearanceLevel', isLessThan: clearanceLevel)
         .snapshots();
+  }
+
+  static getUsers() {
+
   }
 
   static getUsersByLevel(int level) {
@@ -1664,6 +1684,13 @@ class FirestoreHelper {
     }
   }
 
+  static Future<QuerySnapshot<Object?>> pullUserLoungeMembers(String loungeId) {
+    return FirebaseFirestore.instance
+        .collection(USER_LOUNGES)
+        .where('loungeId', isEqualTo: loungeId)
+        .get();
+  }
+
   static pullUserLounge(String userId, String loungeId) {
     return FirebaseFirestore.instance
         .collection(USER_LOUNGES)
@@ -1697,6 +1724,4 @@ class FirestoreHelper {
   static void deleteUserLounge(String docId) {
     FirebaseFirestore.instance.collection(USER_LOUNGES).doc(docId).delete();
   }
-
-
 }

@@ -36,7 +36,6 @@ class LoungeBanner extends StatelessWidget {
                         image: DecorationImage(
                           image: NetworkImage(lounge.imageUrl),
                           fit: BoxFit.cover,
-                          // AssetImage(food['image']),
                         ),
                       ),
                     ),

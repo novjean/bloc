@@ -45,7 +45,6 @@ class LoungeItem extends StatelessWidget{
                           color: Colors.black,
                           overflow: TextOverflow.ellipsis,
                           fontSize: 18,
-                          letterSpacing: 1,
                           fontWeight: FontWeight.bold),
                     ),
                   ),

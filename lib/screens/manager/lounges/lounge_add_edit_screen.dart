@@ -25,6 +25,7 @@ import '../../../widgets/profile_widget.dart';
 import '../../../widgets/ui/button_widget.dart';
 import '../../../widgets/ui/dark_button_widget.dart';
 import '../../../widgets/ui/toaster.dart';
+import 'manage_lounge_members_screen.dart';
 
 class LoungeAddEditScreen extends StatefulWidget {
   Lounge lounge;
@@ -301,11 +302,11 @@ class _LoungeAddEditScreenState extends State<LoungeAddEditScreen> {
                       minimumSize: const Size(50, 50), //////// HERE
                     ),
                     onPressed: () {
-                      // Navigator.of(context).push(
-                      //   MaterialPageRoute(
-                      //       builder: (ctx) =>
-                      //           LoungeMembersScreen(loungeId: widget.lounge.id)),
-                      // );
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                            builder: (ctx) =>
+                                ManageLoungeMembersScreen(loungeId: widget.lounge.id)),
+                      );
                     },
                     child: const Text('show'),
                   ),

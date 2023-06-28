@@ -60,6 +60,7 @@ class Constants {
   static int PROMOTER_LEVEL = 4;
   static int MANAGER_LEVEL = 5;
   static int OWNER_LEVEL = 7;
+  static int ADMIN_LEVEL = 69;
 
 
   // flagship store kept for ease of reference
