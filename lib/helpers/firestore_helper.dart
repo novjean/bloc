@@ -1623,7 +1623,7 @@ class FirestoreHelper {
       await FirebaseFirestore.instance.collection(USERS).doc(userId).update({
         'fcmToken': token,
       }).then((value) {
-        Logx.i(_TAG, userId + " user fcm token updated to : " + token!);
+        Logx.i(_TAG, "$userId user fcm token updated to : ${token!}");
       }).catchError((e, s) {
         Logx.ex(_TAG, 'failed to update user fcm token', e, s);
       });

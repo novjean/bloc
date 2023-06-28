@@ -120,68 +120,11 @@ class _MainScreenState extends State<MainScreen> {
           _TAG, "error retrieving users for phone : ${user.phoneNumber}", e, s);
     });
 
+
+
+
     if (!kIsWeb) {
-      //the following lines are essential for notification to work in iOS
-      final fbm = FirebaseMessaging.instance;
-      fbm.requestPermission();
-
-      FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
-        // Map<String, dynamic> data = message.data;
-        // String type = data['type'];
-        // Reservation reservation = Fresh.freshReservationMap(jsonDecode(data['document']), false);
-
-        RemoteNotification? notification = message.notification;
-        AndroidNotification? android = message.notification?.android;
-
-        if (notification != null && android != null) {
-          // String? title = notification.title;
-          // String? body = notification.body;
-
-          // await NotificationService.showNotification(
-          //   title: "Title of the notification",
-          //   body: "Body of the notification",
-          //   summary: "Small Summary",
-          //   notificationLayout: NotificationLayout.ProgressBar,
-          // );
-
-          flutterLocalNotificationsPlugin.show(
-            notification.hashCode,
-            notification.title,
-            notification.body,
-            NotificationDetails(
-              android: AndroidNotificationDetails(
-                channel.id,
-                channel.name,
-                // channel.description,
-                // TODO add a proper drawable resource to android, for now using
-                //      one that already exists in example app.
-                icon: '@mipmap/launcher_icon',
-              ),
-            ),
-          );
-        }
-      });
-
-      FirebaseMessaging.onMessageOpenedApp.listen(_handleMessage);
-
-      fbm.subscribeToTopic('ads');
-
-      blocUser.User user = UserPreferences.getUser();
-      if (user.clearanceLevel >= Constants.CAPTAIN_LEVEL) {
-        fbm.subscribeToTopic('sos');
-        fbm.subscribeToTopic('order');
-      }
-
-      if (user.clearanceLevel >= Constants.PROMOTER_LEVEL) {
-        fbm.subscribeToTopic('party_guest');
-        fbm.subscribeToTopic('reservations');
-      }
-
-      if (user.clearanceLevel >= Constants.MANAGER_LEVEL) {
-        fbm.subscribeToTopic('celebrations');
-        fbm.subscribeToTopic('chat');
-        fbm.subscribeToTopic('offer');
-      }
+      setupAppNotification();
 
       if (UserPreferences.isUserLoggedIn()) {
         // update the user is in app mode
@@ -431,6 +374,81 @@ class _MainScreenState extends State<MainScreen> {
     setState(() {
       this.title = title;
     });
+  }
+
+  void setupAppNotification() async {
+    //the following lines are essential for notification to work in iOS
+    final fbm = FirebaseMessaging.instance;
+    await fbm.requestPermission();
+
+    await fbm.getToken().then((t) {
+      if(t!=null){
+        UserPreferences.myUser.fcmToken = t;
+
+        FirestoreHelper.updateUserFcmToken(UserPreferences.myUser.id, t);
+        Logx.d(_TAG, 'user token: $t');
+      }else {
+        Logx.em(_TAG, 'fcm token came in null');
+      }
+    });
+
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
+      // Map<String, dynamic> data = message.data;
+      // String type = data['type'];
+      // Reservation reservation = Fresh.freshReservationMap(jsonDecode(data['document']), false);
+
+      RemoteNotification? notification = message.notification;
+      AndroidNotification? android = message.notification?.android;
+
+      if (notification != null && android != null) {
+        // String? title = notification.title;
+        // String? body = notification.body;
+
+        // await NotificationService.showNotification(
+        //   title: "Title of the notification",
+        //   body: "Body of the notification",
+        //   summary: "Small Summary",
+        //   notificationLayout: NotificationLayout.ProgressBar,
+        // );
+
+        flutterLocalNotificationsPlugin.show(
+          notification.hashCode,
+          notification.title,
+          notification.body,
+          NotificationDetails(
+            android: AndroidNotificationDetails(
+              channel.id,
+              channel.name,
+              // channel.description,
+              // TODO add a proper drawable resource to android, for now using
+              //      one that already exists in example app.
+              icon: '@mipmap/launcher_icon',
+            ),
+          ),
+        );
+      }
+    });
+
+    FirebaseMessaging.onMessageOpenedApp.listen(_handleMessage);
+
+    fbm.subscribeToTopic('ads');
+
+    blocUser.User user = UserPreferences.getUser();
+    if (user.clearanceLevel >= Constants.CAPTAIN_LEVEL) {
+      fbm.subscribeToTopic('sos');
+      fbm.subscribeToTopic('order');
+    }
+
+    if (user.clearanceLevel >= Constants.PROMOTER_LEVEL) {
+      fbm.subscribeToTopic('party_guest');
+      fbm.subscribeToTopic('reservations');
+    }
+
+    if (user.clearanceLevel >= Constants.MANAGER_LEVEL) {
+      fbm.subscribeToTopic('celebrations');
+      fbm.subscribeToTopic('chat');
+      fbm.subscribeToTopic('offer');
+    }
   }
 }
 
