@@ -45,7 +45,7 @@ class _LoungeMemberItemState extends State<LoungeMemberItem> {
                         'assets/icons/logo.png'),
                     image: NetworkImage(widget.user.imageUrl),
                     fit: BoxFit.cover,):
-                  CircleAvatar(
+                  const CircleAvatar(
                     radius: 20.0,
                     backgroundImage: AssetImage('assets/icons/logo.png'),
                   ),
@@ -73,6 +73,8 @@ class _LoungeMemberItemState extends State<LoungeMemberItem> {
                   trailing: Checkbox(
                     value: widget.isMember,
                     onChanged: (value) {
+                      widget.isMember = value!;
+
                       if(value!){
                         UserLounge userLounge = Dummy.getDummyUserLounge();
                         userLounge = userLounge.copyWith(loungeId : widget.loungeId, userId: widget.user.id);
