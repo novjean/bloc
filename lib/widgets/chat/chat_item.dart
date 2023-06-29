@@ -63,7 +63,7 @@ class _ChatItemState extends State<ChatItem> {
                     widget.chat.type == 'text'
                         ? Text(
                             widget.chat.message,
-                            style: TextStyle(fontSize: 16),
+                            style: TextStyle(fontSize: 17, color: Colors.black),
                           )
                         : Container(
                             width: mq.width * 0.75, // Set your desired width

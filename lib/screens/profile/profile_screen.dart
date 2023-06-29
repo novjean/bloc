@@ -132,9 +132,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
         // const SizedBox(height: 24),
         // NumbersWidget(),
         const Divider(),
-
-        Padding(
-          padding: const EdgeInsets.only(left:10.0),
+        const Padding(
+          padding: EdgeInsets.only(left:15.0),
           child: Text('history',textAlign: TextAlign.start,style: TextStyle(color: Constants.primary, fontSize: 20),),
         ),
         showMusicHistory?
