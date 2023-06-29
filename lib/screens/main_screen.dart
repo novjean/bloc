@@ -136,7 +136,81 @@ class _MainScreenState extends State<MainScreen> {
     });
 
     if (!kIsWeb) {
-      setupAppNotification();
+      //the following lines are essential for notification to work in iOS
+      final fbm = FirebaseMessaging.instance;
+      fbm.requestPermission();
+
+      fbm.getToken().then((t) {
+        if(t!=null){
+          UserPreferences.myUser.fcmToken = t;
+
+          FirestoreHelper.updateUserFcmToken(UserPreferences.myUser.id, t);
+          Logx.d(_TAG, 'user token: $t');
+        }else {
+          Logx.em(_TAG, 'fcm token came in null');
+        }
+      });
+
+      FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+        Map<String, dynamic> data = message.data;
+        String type = data['type'];
+
+        switch(type){
+          case 'chat':{
+            UiPreferences.setHomePageIndex(2);
+            showNotificationChatChannel(message);
+            break;
+          }
+          case 'ads':{
+            Ad ad = Fresh.freshAdMap(jsonDecode(data['document']), false);
+            showNotificationHighChannel(message);
+            break;
+          }
+          case 'party_guest':{
+            PartyGuest partyGuest = Fresh.freshPartyGuestMap(jsonDecode(data['document']), false);
+            showNotificationHighChannel(message);
+            break;
+          }
+          case 'reservations':{
+            Reservation reservation = Fresh.freshReservationMap(jsonDecode(data['document']), false);
+            showNotificationHighChannel(message);
+            break;
+          }
+          case 'celebrations':{
+            Celebration celebration = Fresh.freshCelebrationMap(jsonDecode(data['document']), false);
+            showNotificationHighChannel(message);
+            break;
+          }
+          case 'offer':
+          case 'order':
+          case 'sos':
+          default:{
+            showNotificationHighChannel(message);
+          }
+        }
+      });
+
+      FirebaseMessaging.onMessageOpenedApp.listen(_handleMessage);
+
+      fbm.subscribeToTopic('ads');
+      fbm.subscribeToTopic('chat');
+
+      blocUser.User user = UserPreferences.getUser();
+      if (user.clearanceLevel >= Constants.CAPTAIN_LEVEL) {
+        fbm.subscribeToTopic('sos');
+        fbm.subscribeToTopic('order');
+      }
+
+      if (user.clearanceLevel >= Constants.PROMOTER_LEVEL) {
+        fbm.subscribeToTopic('party_guest');
+        fbm.subscribeToTopic('reservations');
+        fbm.subscribeToTopic('celebrations');
+      }
+
+      if (user.clearanceLevel >= Constants.MANAGER_LEVEL) {
+        fbm.subscribeToTopic('offer');
+      }
+
 
       if (UserPreferences.isUserLoggedIn()) {
         // update the user is in app mode
@@ -398,116 +472,9 @@ class _MainScreenState extends State<MainScreen> {
     });
   }
 
-  void setupAppNotification() async {
-    //the following lines are essential for notification to work in iOS
-    final fbm = FirebaseMessaging.instance;
-    await fbm.requestPermission();
-
-    await fbm.getToken().then((t) {
-      if(t!=null){
-        UserPreferences.myUser.fcmToken = t;
-
-        FirestoreHelper.updateUserFcmToken(UserPreferences.myUser.id, t);
-        Logx.d(_TAG, 'user token: $t');
-      }else {
-        Logx.em(_TAG, 'fcm token came in null');
-      }
-    });
-
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
-      Map<String, dynamic> data = message.data;
-      String type = data['type'];
-
-      switch(type){
-        case 'chat':{
-          Chat chat = Fresh.freshChatMap(jsonDecode(data['document']), false);
-          showNotificationChatChannel(message);
-          break;
-        }
-        case 'ads':{
-          Ad ad = Fresh.freshAdMap(jsonDecode(data['document']), false);
-          showNotificationHighChannel(message);
-          break;
-        }
-        case 'party_guest':{
-          PartyGuest partyGuest = Fresh.freshPartyGuestMap(jsonDecode(data['document']), false);
-          showNotificationHighChannel(message);
-          break;
-        }
-        case 'reservations':{
-          Reservation reservation = Fresh.freshReservationMap(jsonDecode(data['document']), false);
-          showNotificationHighChannel(message);
-          break;
-        }
-        case 'celebrations':{
-          Celebration celebration = Fresh.freshCelebrationMap(jsonDecode(data['document']), false);
-          showNotificationHighChannel(message);
-          break;
-        }
-        case 'offer':
-        case 'order':
-        case 'sos':
-        default:{
-        showNotificationHighChannel(message);
-        }
-      }
-
-
-      // RemoteNotification? notification = message.notification;
-      // AndroidNotification? android = message.notification?.android;
-      //
-      // if (notification != null && android != null) {
-      //   // String? title = notification.title;
-      //   // String? body = notification.body;
-      //
-      //   // await NotificationService.showNotification(
-      //   //   title: "Title of the notification",
-      //   //   body: "Body of the notification",
-      //   //   summary: "Small Summary",
-      //   //   notificationLayout: NotificationLayout.ProgressBar,
-      //   // );
-      //
-      //   flutterLocalNotificationsPlugin.show(
-      //     notification.hashCode,
-      //     notification.title,
-      //     notification.body,
-      //     NotificationDetails(
-      //       android: AndroidNotificationDetails(
-      //         chatChannel.id,
-      //         chatChannel.name,
-      //         // channel.description,
-      //         // TODO add a proper drawable resource to android, for now using
-      //         //      one that already exists in example app.
-      //         icon: '@mipmap/launcher_icon',
-      //       ),
-      //     ),
-      //   );
-      // }
-    });
-
-    FirebaseMessaging.onMessageOpenedApp.listen(_handleMessage);
-
-    fbm.subscribeToTopic('ads');
-    fbm.subscribeToTopic('chat');
-
-    blocUser.User user = UserPreferences.getUser();
-    if (user.clearanceLevel >= Constants.CAPTAIN_LEVEL) {
-      fbm.subscribeToTopic('sos');
-      fbm.subscribeToTopic('order');
-    }
-
-    if (user.clearanceLevel >= Constants.PROMOTER_LEVEL) {
-      fbm.subscribeToTopic('party_guest');
-      fbm.subscribeToTopic('reservations');
-    }
-
-    if (user.clearanceLevel >= Constants.MANAGER_LEVEL) {
-      fbm.subscribeToTopic('celebrations');
-      fbm.subscribeToTopic('offer');
-    }
-  }
-
   void showNotificationChatChannel(RemoteMessage message) {
+    Logx.d(_TAG, 'showNotificationChatChannel');
+
     RemoteNotification? notification = message.notification;
 
     if(notification!=null){
@@ -522,7 +489,7 @@ class _MainScreenState extends State<MainScreen> {
             // channel.description,
             // TODO add a proper drawable resource to android, for now using
             //      one that already exists in example app.
-            icon: '@mipmap/ic_launcher',
+            icon: '@drawable/ic_launcher',
           ),
         ),
       );
@@ -530,6 +497,8 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   void showNotificationHighChannel(RemoteMessage message) {
+    Logx.d(_TAG, 'showNotificationHighChannel');
+
     RemoteNotification? notification = message.notification;
 
     if(notification!=null){
@@ -542,9 +511,7 @@ class _MainScreenState extends State<MainScreen> {
             channel.id,
             channel.name,
             // channel.description,
-            // TODO add a proper drawable resource to android, for now using
-            //      one that already exists in example app.
-            icon: '@mipmap/ic_launcher',
+            icon: '@drawable/ic_launcher',
           ),
         ),
       );

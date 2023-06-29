@@ -11,13 +11,12 @@ exports.chatFunction = functions
       console.log(snapshot.data());
       return admin.messaging().sendToTopic('chat', {
         notification: {
-          title: snapshot.data().username,
-          body: snapshot.data().text,
+          title: snapshot.data().userName,
+          body: snapshot.data().message,
           clickAction: 'FLUTTER_NOTIFICATION_CLICK',
         },
         data: {
           type: 'chat',
-          document: JSON.stringify(snapshot.data()),
         },
       });
     });
@@ -34,10 +33,6 @@ exports.sosFunction = functions
           body: snapshot.data().name,
           clickAction: 'FLUTTER_NOTIFICATION_CLICK',
         },
-        data: {
-          type: 'sos',
-          document: JSON.stringify(snapshot.data()),
-        },
       });
     });
 
@@ -53,10 +48,6 @@ exports.orderFunction = functions
           body: 'order has been received!',
           clickAction: 'FLUTTER_NOTIFICATION_CLICK',
         },
-        data: {
-          type: 'order',
-          document: JSON.stringify(snapshot.data()),
-        },
       });
     });
 
@@ -71,10 +62,6 @@ exports.offerFunction = functions
           title: 'offer : ' + snapshot.data().productName + '!',
           body: 'grab one now!',
           clickAction: 'FLUTTER_NOTIFICATION_CLICK',
-        },
-        data: {
-          type: 'offer',
-          document: JSON.stringify(snapshot.data()),
         },
       });
     });
