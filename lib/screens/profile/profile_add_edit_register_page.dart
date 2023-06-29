@@ -42,6 +42,22 @@ class _ProfileAddEditRegisterPageState
   late String newImageUrl;
   String imagePath = '';
 
+  String sGender = 'male';
+  List<String> genders = [
+    'male',
+    'female',
+    'transgender',
+    'non-binary/non-conforming',
+    'prefer not to respond'
+  ];
+
+  @override
+  void initState() {
+    sGender = widget.user.gender;
+
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -89,6 +105,75 @@ class _ProfileAddEditRegisterPageState
           label: 'surname',
           text: widget.user.surname,
           onChanged: (text) => widget.user = widget.user.copyWith(surname: text),
+        ),
+        const SizedBox(height: 24),
+        Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(bottom: 8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Text(
+                    'gender *',
+                    style: TextStyle(
+                        color: Theme.of(context).primaryColorLight,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
+            ),
+            FormField<String>(
+              builder: (FormFieldState<String> state) {
+                return InputDecorator(
+                  key: const ValueKey('gender_dropdown'),
+                  decoration: InputDecoration(
+                      fillColor: Colors.white,
+                      errorStyle: TextStyle(
+                          color: Theme.of(context).errorColor,
+                          fontSize: 16.0),
+                      hintText: 'please select gender',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(5.0),
+                        borderSide: BorderSide(
+                            color: Theme.of(context).primaryColor),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        // width: 0.0 produces a thin "hairline" border
+                        borderSide: BorderSide(
+                            color: Theme.of(context).primaryColor,
+                            width: 0.0),
+                      )),
+                  isEmpty: sGender == '',
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton<String>(
+                      style: TextStyle(
+                          color: Theme.of(context).primaryColorLight),
+                      dropdownColor: Constants.background,
+                      value: sGender,
+                      isDense: true,
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          sGender = newValue!;
+
+                          widget.user =
+                              widget.user.copyWith(gender: sGender);
+                          state.didChange(newValue);
+                        });
+                      },
+                      items: genders.map((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ],
         ),
         const SizedBox(height: 24),
         DarkTextFieldWidget(

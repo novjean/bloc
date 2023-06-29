@@ -310,7 +310,7 @@ class _PartyGuestAddEditManageScreenState
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           Text(
-                            'gender \*',
+                            'gender *',
                             style: TextStyle(
                                 color: Theme.of(context).primaryColorLight,
                                 fontSize: 16,
@@ -345,7 +345,7 @@ class _PartyGuestAddEditManageScreenState
                             child: DropdownButton<String>(
                               style: TextStyle(
                                   color: Theme.of(context).primaryColorLight),
-                              dropdownColor: Theme.of(context).backgroundColor,
+                              dropdownColor: Constants.background,
                               value: sGender,
                               isDense: true,
                               onChanged: (String? newValue) {
@@ -909,9 +909,8 @@ class _PartyGuestAddEditManageScreenState
                   UserPreferences.setUser(bloc_user);
                   GoRouter.of(context)
                       .pushNamed(RouteConstants.homeRouteName);
-
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => BoxOfficeScreen()));
+                  GoRouter.of(context)
+                      .pushNamed(RouteConstants.boxOfficeRouteName);
                 }
               },
             ),
@@ -933,9 +932,8 @@ class _PartyGuestAddEditManageScreenState
       UserPreferences.setUser(bloc_user);
       GoRouter.of(context)
           .pushNamed(RouteConstants.homeRouteName);
-
-      Navigator.of(context).push(MaterialPageRoute(
-          builder: (context) => BoxOfficeScreen()));
+      GoRouter.of(context)
+          .pushNamed(RouteConstants.boxOfficeRouteName);
     } else {
       return showDialog(
         context: context,
@@ -1149,16 +1147,12 @@ class _PartyGuestAddEditManageScreenState
               child: const Text('close'),
               onPressed: () {
                 Navigator.of(ctx).pop();
-                Navigator.of(context).pop();
 
                 UserPreferences.setUser(bloc_user);
                 GoRouter.of(context)
                     .pushNamed(RouteConstants.homeRouteName);
-
-                // Navigator.of(context).pushReplacement(MaterialPageRoute(
-                //     builder: (context) => MainScreen()));
-                Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => BoxOfficeScreen()));
+                GoRouter.of(context)
+                    .pushNamed(RouteConstants.boxOfficeRouteName);
               },
             ),
             TextButton(

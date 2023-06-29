@@ -377,7 +377,7 @@ class Dummy {
         imageUrl: '',
         name: '',
         surname: '',
-        gender: 'male',
+        gender: 'female',
         phoneNumber: 0,
         isBanned: false,
         isAppUser: false,

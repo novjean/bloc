@@ -1,5 +1,6 @@
 import 'package:bloc/db/shared_preferences/user_preferences.dart';
 import 'package:bloc/screens/bloc/bloc_menu_screen.dart';
+import 'package:bloc/screens/box_office/box_office_screen.dart';
 import 'package:bloc/screens/main_screen.dart';
 import 'package:bloc/screens/parties/event_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -15,15 +16,13 @@ import '../main.dart';
 import '../screens/error_page.dart';
 import '../screens/login_screen.dart';
 import '../screens/lounge/lounge_chat_screen.dart';
-import '../screens/lounge/lounge_detail_screen.dart';
-import '../screens/lounge/lounges_screen.dart';
 import '../screens/parties/artist_screen.dart';
 import '../screens/ui/splash_screen.dart';
 import '../utils/logx.dart';
 import '../widgets/ui/loading_widget.dart';
 import 'route_constants.dart';
 
-class BlocRouter{
+class BlocRouter {
   static const String _TAG = 'BlocRouter';
 
   static GoRouter returnRouter(bool isAuth) {
@@ -33,7 +32,6 @@ class BlocRouter{
           name: RouteConstants.landingRouteName,
           path: '/',
           builder: (context, state) {
-
             return StreamBuilder(
               stream: FirebaseAuth.instance.authStateChanges(),
               builder: (ctx, userSnapshot) {
@@ -49,7 +47,8 @@ class BlocRouter{
 
                 if (userSnapshot.hasData) {
                   final user = FirebaseAuth.instance.currentUser;
-                  CollectionReference users = FirestoreHelper.getUsersCollection();
+                  CollectionReference users =
+                      FirestoreHelper.getUsersCollection();
 
                   return FutureBuilder<DocumentSnapshot>(
                     future: users.doc(user!.uid).get(),
@@ -60,7 +59,8 @@ class BlocRouter{
                       }
 
                       if (snapshot.hasError) {
-                        Logx.em(_TAG, 'user snapshot has error: ${snapshot.error}');
+                        Logx.em(
+                            _TAG, 'user snapshot has error: ${snapshot.error}');
                         return LoginScreen(shouldTriggerSkip: false);
                       }
 
@@ -73,8 +73,9 @@ class BlocRouter{
 
                       if (snapshot.connectionState == ConnectionState.done) {
                         Map<String, dynamic> data =
-                        snapshot.data!.data() as Map<String, dynamic>;
-                        final blocUser.User user = Fresh.freshUserMap(data, true);
+                            snapshot.data!.data() as Map<String, dynamic>;
+                        final blocUser.User user =
+                            Fresh.freshUserMap(data, true);
                         UserPreferences.setUser(user);
 
                         return MainScreen();
@@ -83,12 +84,12 @@ class BlocRouter{
                     },
                   );
                 } else {
-                  return LoginScreen(shouldTriggerSkip: true,);
+                  return LoginScreen(
+                    shouldTriggerSkip: true,
+                  );
                 }
               },
             );
-
-            // return LoadingWidget();
           },
         ),
         GoRoute(
@@ -98,18 +99,15 @@ class BlocRouter{
             String skipString = state.params['skip']!;
 
             bool val = false;
-            if(skipString == 'true'){
+            if (skipString == 'true') {
               val = true;
             } else {
               val = false;
             }
 
-            return MaterialPage(child: LoginScreen(
-                shouldTriggerSkip: val
-            ));
+            return MaterialPage(child: LoginScreen(shouldTriggerSkip: val));
           },
         ),
-
         GoRoute(
           name: RouteConstants.homeRouteName,
           path: '/home',
@@ -117,16 +115,15 @@ class BlocRouter{
             return MainScreen();
           },
         ),
-
         GoRoute(
           name: RouteConstants.eventRouteName,
           path: '/event/:partyName/:partyChapter',
           pageBuilder: (context, state) {
             return MaterialPage(
                 child: EventScreen(
-                  partyName: state.params['partyName']!,
-                  partyChapter: state.params['partyChapter']!,
-                ));
+              partyName: state.params['partyName']!,
+              partyChapter: state.params['partyChapter']!,
+            ));
           },
         ),
         GoRoute(
@@ -135,34 +132,38 @@ class BlocRouter{
           pageBuilder: (context, state) {
             return MaterialPage(
                 child: ArtistScreen(
-                  name: state.params['name']!,
-                  genre: state.params['genre']!,
-                ));
+              name: state.params['name']!,
+              genre: state.params['genre']!,
+            ));
           },
         ),
-
         GoRoute(
           name: RouteConstants.loungeRouteName,
           path: '/lounge/:id',
           pageBuilder: (context, state) {
             return MaterialPage(
                 child: LoungeChatScreen(
-                  loungeId: state.params['id']!,
-                ));
+              loungeId: state.params['id']!,
+            ));
           },
         ),
-
         GoRoute(
           name: RouteConstants.menuRouteName,
           path: '/menu/:id',
           pageBuilder: (context, state) {
             return MaterialPage(
                 child: BlocMenuScreen(
-                  blocId: state.params['id']!,
-                ));
+              blocId: state.params['id']!,
+            ));
           },
         ),
-
+        GoRoute(
+          name: RouteConstants.boxOfficeRouteName,
+          path: '/box_office',
+          pageBuilder: (context, state) {
+            return MaterialPage(child: BoxOfficeScreen());
+          },
+        ),
       ],
       errorPageBuilder: (context, state) {
         return MaterialPage(child: ErrorPage());
@@ -179,5 +180,4 @@ class BlocRouter{
     );
     return router;
   }
-
 }

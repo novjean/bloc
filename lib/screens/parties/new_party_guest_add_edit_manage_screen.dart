@@ -963,12 +963,8 @@ class _NewPartyGuestAddEditManageScreenState
                   UserPreferences.setUser(mPartyGuestUser);
                   GoRouter.of(context)
                       .pushNamed(RouteConstants.homeRouteName);
-
-
-                  // Navigator.of(context).pushReplacement(MaterialPageRoute(
-                  //     builder: (context) => MainScreen()));
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => BoxOfficeScreen()));
+                  GoRouter.of(context)
+                      .pushNamed(RouteConstants.boxOfficeRouteName);
                 }
               },
             ),
@@ -990,11 +986,8 @@ class _NewPartyGuestAddEditManageScreenState
       UserPreferences.setUser(mPartyGuestUser);
       GoRouter.of(context)
           .pushNamed(RouteConstants.homeRouteName);
-
-      // Navigator.of(context).pushReplacement(MaterialPageRoute(
-      //     builder: (context) => MainScreen()));
-      Navigator.of(context).push(MaterialPageRoute(
-          builder: (context) => BoxOfficeScreen()));
+      GoRouter.of(context)
+          .pushNamed(RouteConstants.boxOfficeRouteName);
     } else {
       return showDialog(
         context: context,
@@ -1213,11 +1206,8 @@ class _NewPartyGuestAddEditManageScreenState
                 UserPreferences.setUser(mPartyGuestUser);
                 GoRouter.of(context)
                     .pushNamed(RouteConstants.homeRouteName);
-
-                // Navigator.of(context).pushReplacement(MaterialPageRoute(
-                //     builder: (context) => MainScreen()));
-                Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => BoxOfficeScreen()));
+                GoRouter.of(context)
+                    .pushNamed(RouteConstants.boxOfficeRouteName);
               },
             ),
             TextButton(

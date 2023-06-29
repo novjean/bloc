@@ -779,7 +779,7 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
                     }
                   });
                 } catch (e) {
-                  Logx.em(_TAG, 'otp error ' + e.toString());
+                  Logx.em(_TAG, 'otp error $e');
 
                   String exception = e.toString();
                   if (exception.contains('session-expired')) {
@@ -876,6 +876,10 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
               child: const Text('close'),
               onPressed: () {
                 Navigator.of(ctx).pop();
+
+                GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
+                GoRouter.of(context)
+                    .pushNamed(RouteConstants.boxOfficeRouteName);
               },
             ),
             TextButton(
@@ -896,9 +900,8 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
                 UserPreferences.setUser(bloc_user);
 
                 GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
-
-                Navigator.of(context).push(
-                    MaterialPageRoute(builder: (context) => BoxOfficeScreen()));
+                GoRouter.of(context)
+                    .pushNamed(RouteConstants.boxOfficeRouteName);
               },
             ),
           ],

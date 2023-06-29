@@ -320,8 +320,8 @@ class PartyBanner extends StatelessWidget {
         minimumSize: const Size.fromHeight(60),
       ),
       onPressed: () {
-        Navigator.of(context)
-            .push(MaterialPageRoute(builder: (context) => BoxOfficeScreen()));
+        GoRouter.of(context)
+            .pushNamed(RouteConstants.boxOfficeRouteName);
       },
       label: const Text(
         'box office',

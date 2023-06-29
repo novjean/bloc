@@ -330,9 +330,7 @@ class _MainScreenState extends State<MainScreen> {
         }
       case 'box office':
         {
-          Navigator.of(context).push(
-            MaterialPageRoute(builder: (ctx) => BoxOfficeScreen()),
-          );
+          GoRouter.of(context).pushNamed(RouteConstants.boxOfficeRouteName);
           break;
         }
       case 'captain':

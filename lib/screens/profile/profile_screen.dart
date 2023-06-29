@@ -133,10 +133,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
         // NumbersWidget(),
         const Divider(),
 
+        Padding(
+          padding: const EdgeInsets.only(left:10.0),
+          child: Text('history',textAlign: TextAlign.start,style: TextStyle(color: Constants.primary, fontSize: 20),),
+        ),
         showMusicHistory?
         Center(
           child: SfCircularChart(
-              title: ChartTitle(text: 'music history', textStyle: TextStyle(
+              title: ChartTitle(text: '', textStyle: TextStyle(
                 color: Constants.primary, fontSize: 18, fontWeight: FontWeight.bold
               )),
               legend: Legend(isVisible: true,textStyle: TextStyle(color: Constants.lightPrimary)),
@@ -172,10 +176,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 color: Theme.of(context).primaryColor),
           ),
           const SizedBox(height: 5),
-          Text(
-            user.email.isNotEmpty ? user.email : '',
-            style: TextStyle(color: Theme.of(context).primaryColorLight),
-          )
+          // Text(
+          //   user.email.isNotEmpty ? user.email : '',
+          //   style: TextStyle(color: Theme.of(context).primaryColorLight),
+          // )
         ],
       );
 

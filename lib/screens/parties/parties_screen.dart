@@ -3,15 +3,16 @@ import 'package:bloc/helpers/firestore_helper.dart';
 import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../db/entity/party.dart';
 import '../../db/entity/party_guest.dart';
 import '../../helpers/fresh.dart';
+import '../../routes/route_constants.dart';
 import '../../utils/constants.dart';
 import '../../utils/logx.dart';
 import '../../widgets/parties/party_item.dart';
 import '../../widgets/ui/sized_listview_block.dart';
-import '../box_office/box_office_screen.dart';
 
 class PartiesScreen extends StatefulWidget {
   const PartiesScreen({Key? key}) : super(key: key);
@@ -143,9 +144,8 @@ class _PartiesScreenState extends State<PartiesScreen> {
         floatingActionButton: UserPreferences.isUserLoggedIn()
             ? FloatingActionButton(
                 onPressed: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(builder: (ctx) => BoxOfficeScreen()),
-                  );
+                  GoRouter.of(context)
+                      .pushNamed(RouteConstants.boxOfficeRouteName);
                 },
                 backgroundColor: Theme.of(context).primaryColor,
                 tooltip: 'box office',
