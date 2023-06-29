@@ -2,6 +2,7 @@ import 'package:bloc/db/shared_preferences/user_preferences.dart';
 import 'package:bloc/screens/privacy_policy_screen.dart';
 import 'package:bloc/screens/refund_policy_screen.dart';
 import 'package:bloc/screens/terms_and_conditions_screen.dart';
+import 'package:bloc/widgets/ui/app_bar_title.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -11,6 +12,7 @@ import '../../db/entity/user.dart' as blocUser;
 import '../helpers/firestorage_helper.dart';
 import '../helpers/firestore_helper.dart';
 import '../routes/route_constants.dart';
+import '../utils/constants.dart';
 import '../utils/logx.dart';
 import '../widgets/ui/sized_listview_block.dart';
 
@@ -22,9 +24,10 @@ class AccountScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.black,
-        title: const Text('bloc | account'),
+        title: AppBarTitle(title: 'account',),
+        titleSpacing: 0,
       ),
-      backgroundColor: Theme.of(context).backgroundColor,
+      backgroundColor: Constants.background,
       body: _buildBody(context),
     );
   }

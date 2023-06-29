@@ -14,6 +14,7 @@ import '../helpers/firestore_helper.dart';
 import '../helpers/fresh.dart';
 import '../main.dart';
 import '../routes/route_constants.dart';
+import '../utils/constants.dart';
 import '../utils/logx.dart';
 import '../utils/string_utils.dart';
 import '../widgets/ui/toaster.dart';
@@ -70,10 +71,10 @@ class _OTPScreenState extends State<OTPScreen> {
                 'verifyPhoneNumber: ${widget.phone} is verified. attempting sign in with credentials...');
           },
           verificationFailed: (FirebaseAuthException e) {
-            Logx.i(_TAG, 'verificationFailed ' + e.toString());
+            Logx.i(_TAG, 'verificationFailed $e');
           },
           codeSent: (String verificationID, int? resendToken) {
-            Logx.i(_TAG, 'verification id : ' + verificationID);
+            Logx.i(_TAG, 'verification id : $verificationID');
 
             if (mounted) {
               setState(() {
@@ -96,7 +97,7 @@ class _OTPScreenState extends State<OTPScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          backgroundColor: Theme.of(context).backgroundColor,
+          backgroundColor: Constants.background,
           title: const Text(''),
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
@@ -105,7 +106,7 @@ class _OTPScreenState extends State<OTPScreen> {
             },
           ),
         ),
-        backgroundColor: Theme.of(context).backgroundColor,
+        backgroundColor: Constants.background,
         body: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [

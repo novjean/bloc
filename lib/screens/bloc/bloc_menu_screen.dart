@@ -30,9 +30,9 @@ import 'cart_screen.dart';
 import 'package:bloc/db/entity/user.dart' as blocUser;
 
 class BlocMenuScreen extends StatefulWidget {
-  BlocService blocService;
+  String blocId;
 
-  BlocMenuScreen({key, required this.blocService}) : super(key: key);
+  BlocMenuScreen({key, required this.blocId}) : super(key: key);
 
   @override
   State<BlocMenuScreen> createState() => _BlocMenuScreenState();
@@ -44,8 +44,8 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
 
   String _sCategoryType = 'Alcohol';
 
-  late ServiceTable mTable;
-  late Seat mSeat;
+  ServiceTable mTable = Dummy.getDummyTable('');
+  Seat mSeat = Dummy.getDummySeat('', UserPreferences.myUser.id);
 
   List<Product> mProducts = [];
   List<Product> searchList = [];
@@ -57,7 +57,10 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
   List<Category> mAlcoholSubCategories = [];
   List<Category> mFoodSubCategories = [];
 
-  var _isLoading = true;
+  var _isBlocLoading = true;
+  BlocService mBlocService = Dummy.getDummyBlocService('');
+
+  var _isTableLoading = true;
   var _isCategoriesLoading = true;
   var _isCustomerSeated = false;
 
@@ -69,94 +72,109 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
 
     blocUser.User user = UserPreferences.myUser;
 
-    FirestoreHelper.pullCategoriesInBlocIds(widget.blocService.id).then((res) {
-      Logx.i(_TAG, "successfully retrieved categories");
+    FirestoreHelper.pullBlocService(widget.blocId).then((res) {
+      if(res.docs.isNotEmpty){
+        DocumentSnapshot document = res.docs[0];
+        Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+        mBlocService = BlocService.fromMap(data);
 
-      if (res.docs.isNotEmpty) {
-        List<Category> _categories = [];
-        for (int i = 0; i < res.docs.length; i++) {
-          DocumentSnapshot document = res.docs[i];
-          Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-          final Category category = Fresh.freshCategoryMap(data, false);
-          _categories.add(category);
-        }
+        _isBlocLoading = false;
 
-        setState(() {
-          mCategories = _categories;
-          _isCategoriesLoading = false;
-        });
-      } else {
-        Logx.i(_TAG, 'no categories found!');
-        setState(() {
-          _isCategoriesLoading = false;
-        });
-      }
-    });
+        FirestoreHelper.pullCategoriesInBlocIds(mBlocService.id).then((res) {
+          Logx.i(_TAG, "successfully retrieved categories");
 
-    FirestoreHelper.pullCustomerSeat(widget.blocService.id, user.id)
-        .then((res) {
-      Logx.i(_TAG, "successfully retrieved seat of user ${user.name}");
+          if (res.docs.isNotEmpty) {
+            List<Category> _categories = [];
+            for (int i = 0; i < res.docs.length; i++) {
+              DocumentSnapshot document = res.docs[i];
+              Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+              final Category category = Fresh.freshCategoryMap(data, false);
+              _categories.add(category);
+            }
 
-      if (res.docs.isEmpty) {
-        // the user has not selected a table yet
-        // notify user to scan the table
-
-        ServiceTable dummyTable = Dummy.getDummyTable(widget.blocService.id);
-        Seat dummySeat = Dummy.getDummySeat(widget.blocService.id, user.id);
-
-        setState(() {
-          mTable = dummyTable;
-          mSeat = dummySeat;
-          _isLoading = false;
-          _isCustomerSeated = false;
-        });
-      } else {
-        // we should receive only 1 seat for a user
-        for (int i = 0; i < res.docs.length; i++) {
-          DocumentSnapshot document = res.docs[i];
-          Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-          final Seat userSeat = Seat.fromMap(data);
-          mSeat = userSeat;
-
-          if (i == res.docs.length - 1) {
-            FirestoreHelper.pullSeatTable(userSeat.tableId).then(
-              (result) {
-                if (result.docs.isNotEmpty) {
-                  for (int i = 0; i < result.docs.length; i++) {
-                    DocumentSnapshot document = result.docs[i];
-                    Map<String, dynamic> data =
-                        document.data()! as Map<String, dynamic>;
-                    final ServiceTable _table = ServiceTable.fromMap(data);
-
-                    setState(() {
-                      mTable = _table;
-                      _isLoading = false;
-                      _isCustomerSeated = true;
-                    });
-                  }
-                } else {
-                  Logx.i(_TAG,'table could not be found for ' + userSeat.tableId);
-                }
-              },
-              onError: (e,s) {
-                Logx.ex(_TAG, "error searching for table", e, s);
-              },
-            );
+            setState(() {
+              mCategories = _categories;
+              _isCategoriesLoading = false;
+            });
+          } else {
+            Logx.i(_TAG, 'no categories found!');
+            setState(() {
+              _isCategoriesLoading = false;
+            });
           }
-        }
-      }
-    });
+        });
 
-    FirestoreHelper.pullOffers(widget.blocService.id).then((res) {
-      Logx.i(_TAG,"successfully retrieved offers at bloc ${widget.blocService.name}");
+        FirestoreHelper.pullCustomerSeat(mBlocService.id, user.id)
+            .then((res) {
+          Logx.i(_TAG, "successfully retrieved seat of user ${user.name}");
 
-      if (res.docs.isNotEmpty) {
-        for (int i = 0; i < res.docs.length; i++) {
-          DocumentSnapshot document = res.docs[i];
-          Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-          final Offer offer = Offer.fromMap(data);
-          mOffers.add(offer);
-        }
+          if (res.docs.isEmpty) {
+            // the user has not selected a table yet
+            // notify user to scan the table
+
+            ServiceTable dummyTable = Dummy.getDummyTable(mBlocService.id);
+            Seat dummySeat = Dummy.getDummySeat(mBlocService.id, user.id);
+
+            setState(() {
+              mTable = dummyTable;
+              mSeat = dummySeat;
+              _isTableLoading = false;
+              _isCustomerSeated = false;
+            });
+          } else {
+            // we should receive only 1 seat for a user
+            for (int i = 0; i < res.docs.length; i++) {
+              DocumentSnapshot document = res.docs[i];
+              Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+              final Seat userSeat = Seat.fromMap(data);
+              mSeat = userSeat;
+
+              if (i == res.docs.length - 1) {
+                FirestoreHelper.pullSeatTable(userSeat.tableId).then(
+                      (result) {
+                    if (result.docs.isNotEmpty) {
+                      for (int i = 0; i < result.docs.length; i++) {
+                        DocumentSnapshot document = result.docs[i];
+                        Map<String, dynamic> data =
+                        document.data()! as Map<String, dynamic>;
+                        final ServiceTable _table = ServiceTable.fromMap(data);
+
+                        setState(() {
+                          mTable = _table;
+                          _isTableLoading = false;
+                          _isCustomerSeated = true;
+                        });
+                      }
+                    } else {
+                      Logx.i(_TAG,'table could not be found for ${userSeat.tableId}');
+                    }
+                  },
+                  onError: (e,s) {
+                    Logx.ex(_TAG, "error searching for table", e, s);
+                  },
+                );
+              }
+            }
+          }
+        });
+
+        FirestoreHelper.pullOffers(mBlocService.id).then((res) {
+          Logx.i(_TAG,"successfully retrieved offers at bloc ${mBlocService.name}");
+
+          if (res.docs.isNotEmpty) {
+            for (int i = 0; i < res.docs.length; i++) {
+              DocumentSnapshot document = res.docs[i];
+              Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+              final Offer offer = Offer.fromMap(data);
+              mOffers.add(offer);
+            }
+          }
+        });
+
+
+
+      } else {
+
       }
     });
 
@@ -218,18 +236,18 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
                 });
               } ,
             ),
-          ): Text(widget.blocService.name),
+          ): Text(mBlocService.name),
           backgroundColor: Colors.black,
           actions: showActionIcons(),
         ),
-        body: _isLoading && _isCategoriesLoading
+        body: _isBlocLoading && _isTableLoading && _isCategoriesLoading
             ? const LoadingWidget()
-            : _buildBody(context, widget.blocService),
+            : _buildBody(context),
       ),
     );
   }
 
-  Widget _buildBody(BuildContext context, BlocService service) {
+  Widget _buildBody(BuildContext context) {
     if (mTable.type == FirestoreHelper.TABLE_COMMUNITY_TYPE_ID) {
       _isCommunity = true;
     }
@@ -254,7 +272,7 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
     try {
       scanTableId = await FlutterBarcodeScanner.scanBarcode(
           '#ff6666', 'cancel', true, ScanMode.QR);
-      Logx.i(_TAG, 'table id scanned ' + scanTableId);
+      Logx.i(_TAG, 'table id scanned $scanTableId');
     } on PlatformException catch (e, s) {
       scanTableId = 'failed to get platform version.';
       Logx.e(_TAG, e, s);
@@ -299,7 +317,7 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
 
                   if (!kIsWeb) {
                     // keeping this here since android/ios does not set table
-                    FirestoreHelper.pullTableById(widget.blocService.id, tableId)
+                    FirestoreHelper.pullTableById(mBlocService.id, tableId)
                         .then((res) {
                       Logx.i(_TAG, 'successfully pulled in table for id ' + tableId);
 
@@ -324,9 +342,7 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
 
                 if (i == result.docs.length - 1) {
                   if (!isSeatAvailable) {
-                    Logx.i(_TAG, mTable.tableNumber.toString() +
-                        ' does not have a seat for ' +
-                        UserPreferences.myUser.name);
+                    Logx.i(_TAG, '${mTable.tableNumber} does not have a seat for ${UserPreferences.myUser.name}');
                   }
                   // we should still let them be part of the table
                   // and notify the main person that someone has joined the table.
@@ -334,7 +350,7 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
                 }
               }
             } else {
-              Logx.i(_TAG, 'seats could not be found for table id ' + tableId);
+              Logx.i(_TAG, 'seats could not be found for table id $tableId');
             }
           },
           onError: (e,s){
@@ -348,7 +364,7 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
   /** offer update **/
   _updateOffers(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
-      stream: FirestoreHelper.getActiveOffers(widget.blocService.id, true),
+      stream: FirestoreHelper.getActiveOffers(mBlocService.id, true),
       builder: (ctx, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           Logx.i(_TAG,'loading offers...');
@@ -381,7 +397,7 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
   _searchTableNumber(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
         stream: FirestoreHelper.findTableNumber(
-            widget.blocService.id, UserPreferences.myUser.id),
+            mBlocService.id, UserPreferences.myUser.id),
         builder: (ctx, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             Logx.i(_TAG, 'loading table number...');
@@ -473,7 +489,7 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
   buildProducts(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
       stream: FirestoreHelper.getProductsByCategoryTypeNew(
-          widget.blocService.id, _sCategoryType),
+          mBlocService.id, _sCategoryType),
       builder: (ctx, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const LoadingWidget();
@@ -493,7 +509,6 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
           return const Expanded(
               child: Center(child: Text('no products found!')));
         }
-        return const LoadingWidget();
       },
     );
   }
@@ -610,7 +625,7 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
                     : const SizedBox(),
                 GestureDetector(
                     child: ProductItem(
-                      serviceId: widget.blocService.id,
+                      serviceId: mBlocService.id,
                       product: subProducts[index],
                       tableNumber: mTable.tableNumber,
                       isCommunity: _isCommunity,
@@ -750,7 +765,7 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
                             tableNum.toString());
 
                         FirestoreHelper.pullTableByNumber(
-                            widget.blocService.id,
+                            mBlocService.id,
                             tableNum)
                             .then(
                               (result) {
@@ -781,15 +796,12 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
                                   TablePreferences.setTable(
                                       table);
                                 } else {
-                                  Toaster.longToast('table ' +
-                                      tableNum.toString() +
-                                      ' is occupied');
+                                  Toaster.longToast('table $tableNum is occupied');
                                 }
                               }
                             } else {
                               Logx.i(_TAG,
-                                  'table could not be found for table number ' +
-                                      tableNum.toString());
+                                  'table could not be found for table number $tableNum');
                             }
                           },
                           onError: (e,s) => Logx.ex(_TAG,

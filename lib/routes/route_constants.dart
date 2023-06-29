@@ -8,6 +8,9 @@ class RouteConstants {
 
   static const String loungeRouteName = 'lounge';
 
+  static const String menuRouteName = 'menu';
+
+
   static const String aboutRouteName = 'about';
   static const String profileRouteName = 'profile';
 }

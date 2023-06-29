@@ -230,7 +230,7 @@ class _MainScreenState extends State<MainScreen> {
                   padding: kIsWeb
                       ? EdgeInsets.only(top: 10.0, left: 20)
                       : EdgeInsets.only(left: 15, top: 5.0),
-                  child: Text('bloc',
+                  child: Text('bloc.',
                       style: TextStyle(
                           color: Constants.primary,
                           fontSize: 24,

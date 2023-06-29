@@ -31,7 +31,7 @@ class AppBarTitle extends StatelessWidget {
                     .pushNamed(RouteConstants.landingRouteName);
               }
             },
-            child: const Text('bloc')),
+            child: const Text('bloc.')),
         const Spacer(),
         Padding(
           padding: const EdgeInsets.only(right: 20.0, left: 10),

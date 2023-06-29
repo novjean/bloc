@@ -1,4 +1,5 @@
 import 'package:bloc/db/shared_preferences/user_preferences.dart';
+import 'package:bloc/screens/bloc/bloc_menu_screen.dart';
 import 'package:bloc/screens/main_screen.dart';
 import 'package:bloc/screens/parties/event_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -151,6 +152,16 @@ class BlocRouter{
           },
         ),
 
+        GoRoute(
+          name: RouteConstants.menuRouteName,
+          path: '/menu/:id',
+          pageBuilder: (context, state) {
+            return MaterialPage(
+                child: BlocMenuScreen(
+                  blocId: state.params['id']!,
+                ));
+          },
+        ),
 
       ],
       errorPageBuilder: (context, state) {

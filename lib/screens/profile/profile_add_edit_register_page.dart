@@ -49,7 +49,7 @@ class _ProfileAddEditRegisterPageState
       appBar: AppBar(
         title: AppBarTitle(title: 'profile',),
         titleSpacing: 0,
-        backgroundColor: Constants.background,
+        backgroundColor: Colors.black,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {

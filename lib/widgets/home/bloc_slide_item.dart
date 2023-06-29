@@ -6,9 +6,11 @@ import 'package:bloc/widgets/ui/dark_button_widget.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../db/entity/bloc.dart';
 import '../../main.dart';
+import '../../routes/route_constants.dart';
 import '../../screens/bloc/bloc_menu_screen.dart';
 import '../../screens/user/celebration_add_edit_screen.dart';
 import '../../screens/user/reservation_add_edit_screen.dart';
@@ -70,10 +72,11 @@ class _BlocSlideItemState extends State<BlocSlideItem> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.of(context).push(
-          MaterialPageRoute(
-              builder: (ctx) => BlocMenuScreen(blocService: mBlocService)),
-        );
+        GoRouter.of(context).pushNamed(
+            RouteConstants.menuRouteName,
+            params: {
+              'id': mBlocService.blocId,
+            });
       },
       child: _isBlocServiceLoading
           ? const SizedBox()
@@ -117,11 +120,11 @@ class _BlocSlideItemState extends State<BlocSlideItem> {
                           text: 'menu',
                           height: 60,
                           onClicked: () {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                    builder: (ctx) => BlocMenuScreen(
-                                        blocService: mBlocService)),
-                              );
+                            GoRouter.of(context).pushNamed(
+                                RouteConstants.menuRouteName,
+                                params: {
+                                  'id': mBlocService.blocId,
+                                });
                           },
                           fontSize: 24,
                         )

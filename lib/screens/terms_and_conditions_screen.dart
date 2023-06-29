@@ -1,13 +1,18 @@
 import 'package:flutter/material.dart';
 
+import '../utils/constants.dart';
+import '../widgets/ui/app_bar_title.dart';
+
 class TermsAndConditionsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('bloc | t&c'),
+        backgroundColor: Colors.black,
+        title: AppBarTitle(title: 't&c',),
+        titleSpacing: 0,
       ),
-      backgroundColor: Theme.of(context).backgroundColor,
+      backgroundColor: Constants.background,
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 10),
         child: SingleChildScrollView(

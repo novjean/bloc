@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 
+import '../utils/constants.dart';
+import '../widgets/ui/app_bar_title.dart';
+
 class RefundPolicyScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('bloc | refund policy'),
-      ),
-      backgroundColor: Theme.of(context).backgroundColor,
+        backgroundColor: Colors.black,
+        title: AppBarTitle(title: 'refund policy',),
+        titleSpacing: 0,      ),
+      backgroundColor: Constants.background,
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 10),
         child: SingleChildScrollView(
