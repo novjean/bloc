@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:bloc/db/entity/celebration.dart';
 import 'package:bloc/db/entity/user.dart' as blocUser;
 import 'package:bloc/db/shared_preferences/ui_preferences.dart';
 import 'package:bloc/screens/lounge/lounges_screen.dart';
@@ -8,11 +11,16 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_slider_drawer/flutter_slider_drawer.dart';
 import 'package:go_router/go_router.dart';
 import 'package:upgrader/upgrader.dart';
 
+import '../db/entity/ad.dart';
+import '../db/entity/chat.dart';
+import '../db/entity/party_guest.dart';
+import '../db/entity/reservation.dart';
 import '../db/shared_preferences/user_preferences.dart';
 import '../helpers/firestore_helper.dart';
 import '../helpers/fresh.dart';
@@ -48,6 +56,18 @@ class _MainScreenState extends State<MainScreen> {
   late int _page;
 
   late String title;
+
+  String _statusText = "Waiting...";
+  final String _finished = "Finished creating channel";
+  final String _error = "Error while creating channel";
+
+  static const MethodChannel _channel = MethodChannel('bloc.novatech.com/channel_test');
+
+  Map<String, String> channelMap = {
+    "id": "CHAT_MESSAGES",
+    "name": "Chats",
+    "description": "Chat notifications",
+  };
 
   List icons = [
     Icons.home,
@@ -120,9 +140,6 @@ class _MainScreenState extends State<MainScreen> {
           _TAG, "error retrieving users for phone : ${user.phoneNumber}", e, s);
     });
 
-
-
-
     if (!kIsWeb) {
       setupAppNotification();
 
@@ -142,6 +159,8 @@ class _MainScreenState extends State<MainScreen> {
       }
     }
     super.initState();
+
+    _createNewChannel();
   }
 
   void _handleMessage(RemoteMessage message) {
@@ -165,6 +184,18 @@ class _MainScreenState extends State<MainScreen> {
     //     ),
     //   );
     // }
+  }
+
+  void _createNewChannel() async {
+    try {
+      await _channel.invokeMethod('createNotificationChannel', channelMap);
+      setState(() {
+        _statusText = _finished;
+      });
+    } on PlatformException catch (e) {
+      _statusText = _error;
+      Logx.em(_TAG, e.toString());
+    }
   }
 
   @override
@@ -393,40 +424,74 @@ class _MainScreenState extends State<MainScreen> {
     });
 
     FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
-      // Map<String, dynamic> data = message.data;
-      // String type = data['type'];
-      // Reservation reservation = Fresh.freshReservationMap(jsonDecode(data['document']), false);
+      Map<String, dynamic> data = message.data;
+      String type = data['type'];
 
-      RemoteNotification? notification = message.notification;
-      AndroidNotification? android = message.notification?.android;
-
-      if (notification != null && android != null) {
-        // String? title = notification.title;
-        // String? body = notification.body;
-
-        // await NotificationService.showNotification(
-        //   title: "Title of the notification",
-        //   body: "Body of the notification",
-        //   summary: "Small Summary",
-        //   notificationLayout: NotificationLayout.ProgressBar,
-        // );
-
-        flutterLocalNotificationsPlugin.show(
-          notification.hashCode,
-          notification.title,
-          notification.body,
-          NotificationDetails(
-            android: AndroidNotificationDetails(
-              channel.id,
-              channel.name,
-              // channel.description,
-              // TODO add a proper drawable resource to android, for now using
-              //      one that already exists in example app.
-              icon: '@mipmap/launcher_icon',
-            ),
-          ),
-        );
+      switch(type){
+        case 'chat':{
+          Chat chat = Fresh.freshChatMap(jsonDecode(data['document']), false);
+          showNotificationChatChannel(message);
+          break;
+        }
+        case 'ads':{
+          Ad ad = Fresh.freshAdMap(jsonDecode(data['document']), false);
+          showNotificationHighChannel(message);
+          break;
+        }
+        case 'party_guest':{
+          PartyGuest partyGuest = Fresh.freshPartyGuestMap(jsonDecode(data['document']), false);
+          showNotificationHighChannel(message);
+          break;
+        }
+        case 'reservations':{
+          Reservation reservation = Fresh.freshReservationMap(jsonDecode(data['document']), false);
+          showNotificationHighChannel(message);
+          break;
+        }
+        case 'celebrations':{
+          Celebration celebration = Fresh.freshCelebrationMap(jsonDecode(data['document']), false);
+          showNotificationHighChannel(message);
+          break;
+        }
+        case 'offer':
+        case 'order':
+        case 'sos':
+        default:{
+        showNotificationHighChannel(message);
+        }
       }
+
+
+      // RemoteNotification? notification = message.notification;
+      // AndroidNotification? android = message.notification?.android;
+      //
+      // if (notification != null && android != null) {
+      //   // String? title = notification.title;
+      //   // String? body = notification.body;
+      //
+      //   // await NotificationService.showNotification(
+      //   //   title: "Title of the notification",
+      //   //   body: "Body of the notification",
+      //   //   summary: "Small Summary",
+      //   //   notificationLayout: NotificationLayout.ProgressBar,
+      //   // );
+      //
+      //   flutterLocalNotificationsPlugin.show(
+      //     notification.hashCode,
+      //     notification.title,
+      //     notification.body,
+      //     NotificationDetails(
+      //       android: AndroidNotificationDetails(
+      //         chatChannel.id,
+      //         chatChannel.name,
+      //         // channel.description,
+      //         // TODO add a proper drawable resource to android, for now using
+      //         //      one that already exists in example app.
+      //         icon: '@mipmap/launcher_icon',
+      //       ),
+      //     ),
+      //   );
+      // }
     });
 
     FirebaseMessaging.onMessageOpenedApp.listen(_handleMessage);
@@ -448,6 +513,50 @@ class _MainScreenState extends State<MainScreen> {
       fbm.subscribeToTopic('celebrations');
       fbm.subscribeToTopic('chat');
       fbm.subscribeToTopic('offer');
+    }
+  }
+
+  void showNotificationChatChannel(RemoteMessage message) {
+    RemoteNotification? notification = message.notification;
+
+    if(notification!=null){
+      flutterLocalNotificationsPlugin.show(
+        notification.hashCode,
+        notification.title,
+        notification.body,
+        NotificationDetails(
+          android: AndroidNotificationDetails(
+            chatChannel.id,
+            chatChannel.name,
+            // channel.description,
+            // TODO add a proper drawable resource to android, for now using
+            //      one that already exists in example app.
+            icon: '@mipmap/ic_launcher',
+          ),
+        ),
+      );
+    }
+  }
+
+  void showNotificationHighChannel(RemoteMessage message) {
+    RemoteNotification? notification = message.notification;
+
+    if(notification!=null){
+      flutterLocalNotificationsPlugin.show(
+        notification.hashCode,
+        notification.title,
+        notification.body,
+        NotificationDetails(
+          android: AndroidNotificationDetails(
+            channel.id,
+            channel.name,
+            // channel.description,
+            // TODO add a proper drawable resource to android, for now using
+            //      one that already exists in example app.
+            icon: '@mipmap/ic_launcher',
+          ),
+        ),
+      );
     }
   }
 }

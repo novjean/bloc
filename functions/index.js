@@ -15,6 +15,10 @@ exports.chatFunction = functions
           body: snapshot.data().text,
           clickAction: 'FLUTTER_NOTIFICATION_CLICK',
         },
+        data: {
+          type: 'chat',
+          document: JSON.stringify(snapshot.data()),
+        },
       });
     });
 
@@ -29,6 +33,10 @@ exports.sosFunction = functions
           title: 'help : table ' + snapshot.data().tableNumber.toString(),
           body: snapshot.data().name,
           clickAction: 'FLUTTER_NOTIFICATION_CLICK',
+        },
+        data: {
+          type: 'sos',
+          document: JSON.stringify(snapshot.data()),
         },
       });
     });
@@ -45,6 +53,10 @@ exports.sosFunction = functions
           body: 'order has been received!',
           clickAction: 'FLUTTER_NOTIFICATION_CLICK',
         },
+        data: {
+          type: 'order',
+          document: JSON.stringify(snapshot.data()),
+        },
       });
     });
 
@@ -59,6 +71,10 @@ exports.offerFunction = functions
           title: 'offer : ' + snapshot.data().productName + '!',
           body: 'grab one now!',
           clickAction: 'FLUTTER_NOTIFICATION_CLICK',
+        },
+        data: {
+          type: 'offer',
+          document: JSON.stringify(snapshot.data()),
         },
       });
     });
