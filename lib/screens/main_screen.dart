@@ -189,12 +189,9 @@ class _MainScreenState extends State<MainScreen> {
   void _createNewChannel() async {
     try {
       await _channel.invokeMethod('createNotificationChannel', channelMap);
-      setState(() {
-        _statusText = _finished;
-      });
+      Logx.i(_TAG, 'finished creating chat notification channel');
     } on PlatformException catch (e) {
-      _statusText = _error;
-      Logx.em(_TAG, e.toString());
+      Logx.em(_TAG, 'error creating notification channel $e');
     }
   }
 

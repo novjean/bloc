@@ -111,7 +111,7 @@ exports.partyGuestFunction = functions
           clickAction: 'FLUTTER_NOTIFICATION_CLICK',
         },
         data: {
-          type: 'party_guests',
+          type: 'party_guest',
           document: JSON.stringify(snapshot.data()),
         },
       });

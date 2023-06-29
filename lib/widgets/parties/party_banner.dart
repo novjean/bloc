@@ -195,6 +195,10 @@ class PartyBanner extends StatelessWidget {
           shadowColor: Colors.white10,
           elevation: 3,
           minimumSize: const Size.fromHeight(60),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(topLeft: Radius.circular(10),
+                topRight: Radius.circular(10)),
+          ),
         ),
         onPressed: () {
           final uri =
@@ -223,6 +227,10 @@ class PartyBanner extends StatelessWidget {
           shadowColor: Colors.white10,
           elevation: 3,
           minimumSize: const Size.fromHeight(60),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(topLeft: Radius.circular(10),
+                topRight: Radius.circular(10)),
+          ),
         ),
         onPressed: () {
           PartyGuest partyGuest = Dummy.getDummyPartyGuest();
@@ -256,6 +264,10 @@ class PartyBanner extends StatelessWidget {
           shadowColor: Colors.white30,
           elevation: 3,
           minimumSize: const Size.fromHeight(60),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(topLeft: Radius.circular(10),
+                topRight: Radius.circular(10)),
+          ),
         ),
         onPressed: () {
           final uri = Uri.parse(party.ticketUrl);
