@@ -41,7 +41,7 @@ exports.sosFunction = functions
       });
     });
 
-exports.sosFunction = functions
+exports.orderFunction = functions
     .region('asia-south1')
     .firestore
     .document('orders/{order}')

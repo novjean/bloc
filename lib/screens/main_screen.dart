@@ -488,6 +488,7 @@ class _MainScreenState extends State<MainScreen> {
     FirebaseMessaging.onMessageOpenedApp.listen(_handleMessage);
 
     fbm.subscribeToTopic('ads');
+    fbm.subscribeToTopic('chat');
 
     blocUser.User user = UserPreferences.getUser();
     if (user.clearanceLevel >= Constants.CAPTAIN_LEVEL) {
@@ -502,7 +503,6 @@ class _MainScreenState extends State<MainScreen> {
 
     if (user.clearanceLevel >= Constants.MANAGER_LEVEL) {
       fbm.subscribeToTopic('celebrations');
-      fbm.subscribeToTopic('chat');
       fbm.subscribeToTopic('offer');
     }
   }
