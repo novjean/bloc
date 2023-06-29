@@ -319,7 +319,8 @@ class _BoxOfficeItemState extends State<BoxOfficeItem> {
         return AlertDialog(
           contentPadding: const EdgeInsets.all(16.0),
           content: SizedBox(
-            height: 300,
+            height: mq.height * 0.4,
+            width: mq.width * 0.75,
             child: Column(
               children: [
                 Padding(
@@ -337,29 +338,31 @@ class _BoxOfficeItemState extends State<BoxOfficeItem> {
                       // Barcode type and settings
                       data: widget.partyGuest.id,
                       // Content
-                      width: 200,
-                      height: 200,
+                      width: mq.width * 0.5,
+                      height: mq.width * 0.5,
                     )),
                 Padding(
                   padding: const EdgeInsets.only(top: 20),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Align(
-                        alignment: Alignment.centerRight,
-                        child: Text(
-                          '${widget.partyGuest.guestStatus} entry. ${widget.partyGuest.guestsRemaining} guests remaining',
-                          style: const TextStyle(fontSize: 16),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: Text(
+                            '${widget.partyGuest.guestStatus} entry. ${widget.partyGuest.guestsRemaining} guests remaining',
+                            style: const TextStyle(fontSize: 16),
+                          ),
                         ),
-                      ),
-                      Align(
-                        alignment: Alignment.centerRight,
-                        child: Text(
-                          'valid until ${DateTimeUtils.getFormattedTime(widget.party.guestListEndTime)}',
-                          style: TextStyle(fontSize: 16),
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: Text(
+                            'valid until ${DateTimeUtils.getFormattedTime(widget.party.guestListEndTime)}',
+                            style: TextStyle(fontSize: 16),
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ],

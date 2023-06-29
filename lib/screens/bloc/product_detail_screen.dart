@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../db/entity/product.dart';
+import '../../widgets/ui/app_bar_title.dart';
 
 class ProductDetailScreen extends StatelessWidget {
   static const routeName = '/product-detail';
@@ -13,9 +14,9 @@ class ProductDetailScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Theme.of(context).primaryColorLight,
       appBar: AppBar(
-        title: Text(product.category.toLowerCase() +
-            ' | ' +
-            product.name.toLowerCase()),
+        backgroundColor: Colors.black,
+        title: AppBarTitle(title: product.name.toLowerCase(),),
+        titleSpacing: 0,
       ),
       body: _buildBody(context),
     );

@@ -9,6 +9,7 @@ import '../../helpers/fresh.dart';
 import '../../main.dart';
 import '../../utils/logx.dart';
 import '../../widgets/box_office/box_office_item.dart';
+import '../../widgets/ui/app_bar_title.dart';
 import '../../widgets/ui/loading_widget.dart';
 import '../../widgets/ui/sized_listview_block.dart';
 
@@ -40,7 +41,9 @@ class _PromoterGuestsScreenState extends State<PromoterGuestsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('bloc | promoter box office'),
+        backgroundColor: Colors.black,
+        title: AppBarTitle(title: 'promoter box office',),
+        titleSpacing: 0,
       ),
       floatingActionButton:
       !kIsWeb

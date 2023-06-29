@@ -5,7 +5,6 @@ import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:upgrader/upgrader.dart';
 
 import '../db/entity/bloc.dart';
 import '../db/entity/guest_wifi.dart';
@@ -99,10 +98,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 final Bloc bloc = Fresh.freshBlocMap(data, false);
                 blocs.add(bloc);
 
-                setState(() {
-                  mBlocs = blocs;
-                  _isBlocsLoading = false;
-                });
+                if(mounted) {
+                  setState(() {
+                    mBlocs = blocs;
+                    _isBlocsLoading = false;
+                  });
+                }
               }
             } else {
               Logx.em(_TAG, 'no blocs found!!!');
@@ -188,22 +189,16 @@ class _HomeScreenState extends State<HomeScreen> {
         if (!currentFocus.hasPrimaryFocus) {
           currentFocus.unfocus();
         }
-      },
-      child: UpgradeAlert(
-        upgrader: Upgrader(
-            dialogStyle: Theme.of(context).platform == TargetPlatform.iOS
-                ? UpgradeDialogStyle.cupertino
-                : UpgradeDialogStyle.material),
-        child: Scaffold(
-          backgroundColor: Constants.background,
-          resizeToAvoidBottomInset: false,
-          body: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: <Widget>[
-              _isBlocsLoading ? const LoadingWidget() : _displayBlocs(context),
-              _isPartyGuestsLoading? const LoadingWidget(): _displayPartiesNFooter(context),
-            ],
-          ),
+      } ,
+      child: Scaffold(
+        backgroundColor: Constants.background,
+        resizeToAvoidBottomInset: false,
+        body: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: <Widget>[
+            _isBlocsLoading ? const LoadingWidget() : _displayBlocs(context),
+            _isPartyGuestsLoading? const LoadingWidget(): _displayPartiesNFooter(context),
+          ],
         ),
       ),
     );
@@ -439,7 +434,7 @@ class _HomeScreenState extends State<HomeScreen> {
   /** optional **/
   buildSuperstarsList(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
-      stream: FirestoreHelper.getUsers(Constants.MANAGER_LEVEL),
+      stream: FirestoreHelper.getUsersLessThanLevel(Constants.MANAGER_LEVEL),
       builder: (ctx, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           Logx.i(_TAG, 'loading users...');

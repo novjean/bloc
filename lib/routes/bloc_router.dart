@@ -1,4 +1,5 @@
 import 'package:bloc/db/shared_preferences/user_preferences.dart';
+import 'package:bloc/screens/bloc/bloc_menu_screen.dart';
 import 'package:bloc/screens/main_screen.dart';
 import 'package:bloc/screens/parties/event_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -13,6 +14,9 @@ import '../helpers/fresh.dart';
 import '../main.dart';
 import '../screens/error_page.dart';
 import '../screens/login_screen.dart';
+import '../screens/lounge/lounge_chat_screen.dart';
+import '../screens/lounge/lounge_detail_screen.dart';
+import '../screens/lounge/lounges_screen.dart';
 import '../screens/parties/artist_screen.dart';
 import '../screens/ui/splash_screen.dart';
 import '../utils/logx.dart';
@@ -75,7 +79,6 @@ class BlocRouter{
 
                         return MainScreen();
                       }
-                      // Logx.i(_TAG, 'loading user...');
                       return const LoadingWidget();
                     },
                   );
@@ -110,8 +113,8 @@ class BlocRouter{
         GoRoute(
           name: RouteConstants.homeRouteName,
           path: '/home',
-          pageBuilder: (context, state) {
-            return const MaterialPage(child: MainScreen());
+          builder: (context, state) {
+            return MainScreen();
           },
         ),
 
@@ -126,7 +129,6 @@ class BlocRouter{
                 ));
           },
         ),
-
         GoRoute(
           name: RouteConstants.artistRouteName,
           path: '/artist/:genre/:name',
@@ -138,6 +140,29 @@ class BlocRouter{
                 ));
           },
         ),
+
+        GoRoute(
+          name: RouteConstants.loungeRouteName,
+          path: '/lounge/:id',
+          pageBuilder: (context, state) {
+            return MaterialPage(
+                child: LoungeChatScreen(
+                  loungeId: state.params['id']!,
+                ));
+          },
+        ),
+
+        GoRoute(
+          name: RouteConstants.menuRouteName,
+          path: '/menu/:id',
+          pageBuilder: (context, state) {
+            return MaterialPage(
+                child: BlocMenuScreen(
+                  blocId: state.params['id']!,
+                ));
+          },
+        ),
+
       ],
       errorPageBuilder: (context, state) {
         return MaterialPage(child: ErrorPage());

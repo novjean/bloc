@@ -1,4 +1,6 @@
+import 'package:bloc/db/shared_preferences/user_preferences.dart';
 import 'package:bloc/helpers/firestore_helper.dart';
+import 'package:bloc/widgets/ui/app_bar_title.dart';
 import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -7,7 +9,7 @@ import 'package:go_router/go_router.dart';
 import '../../db/entity/party.dart';
 import '../../helpers/dummy.dart';
 import '../../helpers/fresh.dart';
-import '../../main.dart';
+
 import '../../routes/route_constants.dart';
 import '../../utils/constants.dart';
 import '../../utils/network_utils.dart';
@@ -58,13 +60,19 @@ class _ArtistScreenState extends State<ArtistScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          backgroundColor: Constants.background,
+          backgroundColor: Colors.black,
           title: InkWell(
               onTap: () {
-                GoRouter.of(context)
-                    .pushNamed(RouteConstants.homeRouteName);
+                if(UserPreferences.isUserLoggedIn()){
+                  GoRouter.of(context)
+                      .pushNamed(RouteConstants.homeRouteName);
+                } else {
+                  GoRouter.of(context)
+                      .pushNamed(RouteConstants.landingRouteName);
+                }
               },
-              child: Text('bloc | ${mParty.name.toLowerCase()}')),
+              child: AppBarTitle (title: mParty.name.toLowerCase())),
+          titleSpacing: 0,
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
             onPressed: () {

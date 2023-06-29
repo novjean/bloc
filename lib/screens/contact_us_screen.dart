@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../widgets/ui/app_bar_title.dart';
 import '../widgets/ui/toaster.dart';
 
 class ContactUsScreen extends StatelessWidget {
@@ -9,7 +10,9 @@ class ContactUsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('bloc | contact us'),
+        backgroundColor: Colors.black,
+        title: AppBarTitle(title: 'contact us',),
+        titleSpacing: 0,
       ),
       backgroundColor: Theme.of(context).backgroundColor,
       body: Padding(

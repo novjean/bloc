@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:bloc/widgets/ui/app_bar_title.dart';
 import 'package:bloc/widgets/ui/toaster.dart';
 import 'package:delayed_display/delayed_display.dart';
 import 'package:flutter/material.dart';
@@ -13,6 +14,8 @@ import '../../db/shared_preferences/user_preferences.dart';
 import '../../helpers/firestorage_helper.dart';
 import '../../helpers/firestore_helper.dart';
 import '../../helpers/fresh.dart';
+import '../../main.dart';
+import '../../utils/constants.dart';
 import '../../utils/logx.dart';
 import '../../utils/string_utils.dart';
 import '../../widgets/profile_widget.dart';
@@ -33,9 +36,7 @@ class ProfileAddEditRegisterPage extends StatefulWidget {
 
 class _ProfileAddEditRegisterPageState
     extends State<ProfileAddEditRegisterPage> {
-  static const String _TAG = '_ProfileAddEditRegisterPageState';
-
-  bool isPhotoChanged = false;
+  static const String _TAG = 'ProfileAddEditRegisterPage';
 
   late String oldImageUrl;
   late String newImageUrl;
@@ -44,10 +45,11 @@ class _ProfileAddEditRegisterPageState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).backgroundColor,
+      backgroundColor: Constants.background,
       appBar: AppBar(
-        title: Text('profile | ${widget.task}'),
-        backgroundColor: Theme.of(context).backgroundColor,
+        title: AppBarTitle(title: 'profile',),
+        titleSpacing: 0,
+        backgroundColor: Colors.black,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
@@ -69,35 +71,16 @@ class _ProfileAddEditRegisterPageState
       padding: const EdgeInsets.symmetric(horizontal: 32),
       physics: const BouncingScrollPhysics(),
       children: [
-        const SizedBox(height: 15),
         ProfileWidget(
           imagePath: imagePath.isEmpty ? widget.user.imageUrl : imagePath,
           isEdit: true,
           onClicked: () async {
-            final image = await ImagePicker().pickImage(
-                source: ImageSource.gallery, imageQuality: 90, maxWidth: 300);
-            if (image == null) return;
-
-            final directory = await getApplicationDocumentsDirectory();
-            final name = basename(image.path);
-            final imageFile = File('${directory.path}/$name');
-            final newImage = await File(image.path).copy(imageFile.path);
-
-            oldImageUrl = widget.user.imageUrl;
-            newImageUrl = await FirestorageHelper.uploadFile(
-                FirestorageHelper.USER_IMAGES,
-                StringUtils.getRandomString(28),
-                newImage);
-
-            setState(() {
-              imagePath = imageFile.path;
-              isPhotoChanged = true;
-            });
+            _showBottomSheet(context);
           },
         ),
         const SizedBox(height: 24),
         DarkTextFieldWidget(
-          label: 'name \*',
+          label: 'name *',
           text: widget.user.name,
           onChanged: (name) => widget.user = widget.user.copyWith(name: name),
         ),
@@ -137,13 +120,6 @@ class _ProfileAddEditRegisterPageState
           onClicked: () {
             // we should have some validation here
             if (isDataValid()) {
-              if (isPhotoChanged) {
-                widget.user = widget.user.copyWith(imageUrl: newImageUrl);
-                if (oldImageUrl.isNotEmpty) {
-                  FirestorageHelper.deleteFile(oldImageUrl);
-                }
-              }
-
               User freshUser = Fresh.freshUser(widget.user);
 
               UserPreferences.setUser(freshUser);
@@ -166,5 +142,131 @@ class _ProfileAddEditRegisterPageState
     }
 
     return true;
+  }
+
+  void _showBottomSheet(BuildContext context) {
+    showModalBottomSheet(
+      backgroundColor: Constants.lightPrimary,
+        context: context,
+        shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(20), topRight: Radius.circular(20))),
+        builder: (_) {
+          return ListView(
+            shrinkWrap: true,
+            padding:
+            EdgeInsets.only(top: mq.height * .03, bottom: mq.height * .05),
+            children: [
+              //pick profile picture label
+              const Text('pick or click 🤳 your best photo 🤩',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 20, color: Colors.black, fontWeight: FontWeight.w500)),
+
+              //for adding some space
+              SizedBox(height: mq.height * .02),
+
+              //buttons
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  //pick from gallery button
+                  ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          shape: const CircleBorder(),
+                          fixedSize: Size(mq.width * .3, mq.height * .15)),
+                      onPressed: () async {
+
+                        if(!kIsWeb){
+                          final ImagePicker picker = ImagePicker();
+
+                          // Pick an image
+                          final XFile? image = await picker.pickImage(
+                              source: ImageSource.gallery, imageQuality: 95, maxWidth: 300);
+                          if (image != null) {
+                            Logx.i(_TAG, 'image path: ${image.path}');
+
+                            final directory = await getApplicationDocumentsDirectory();
+                            final name = basename(image.path);
+                            final imageFile = File('${directory.path}/$name');
+                            final newImage = await File(image.path).copy(imageFile.path);
+
+                            oldImageUrl = widget.user.imageUrl;
+                            newImageUrl = await FirestorageHelper.uploadFile(
+                                FirestorageHelper.USER_IMAGES,
+                                StringUtils.getRandomString(28),
+                                newImage);
+
+                            widget.user = widget.user.copyWith(imageUrl: newImageUrl);
+                            FirestoreHelper.pushUser(widget.user);
+                            FirestorageHelper.deleteFile(oldImageUrl);
+
+                            Toaster.shortToast('profile photo updated');
+
+                            setState(() {
+                              imagePath = image.path;
+                            });
+
+                          }
+                        } else {
+                          Toaster.shortToast('download our app to upload your photo and more');
+                          //todo: need to add dialog to download the app
+                        }
+
+                        Navigator.pop(context);
+
+                      },
+                      child: Image.asset('assets/images/add_image.png')),
+
+                  //take picture from camera button
+                  ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          shape: const CircleBorder(),
+                          fixedSize: Size(mq.width * .3, mq.height * .15)),
+                      onPressed: () async {
+                        if(!kIsWeb){
+                          final ImagePicker picker = ImagePicker();
+
+                          // Pick an image
+                          final XFile? image = await picker.pickImage(
+                              source: ImageSource.camera, imageQuality: 95, maxWidth: 300);
+                          if (image != null) {
+                            Logx.i(_TAG, 'image path: ${image.path}');
+
+                            final directory = await getApplicationDocumentsDirectory();
+                            final name = basename(image.path);
+                            final imageFile = File('${directory.path}/$name');
+                            final newImage = await File(image.path).copy(imageFile.path);
+
+                            oldImageUrl = widget.user.imageUrl;
+                            newImageUrl = await FirestorageHelper.uploadFile(
+                                FirestorageHelper.USER_IMAGES,
+                                StringUtils.getRandomString(28),
+                                newImage);
+
+                            widget.user = widget.user.copyWith(imageUrl: newImageUrl);
+                            FirestoreHelper.pushUser(widget.user);
+                            FirestorageHelper.deleteFile(oldImageUrl);
+
+                            Toaster.shortToast('profile photo updated');
+
+                            setState(() {
+                              imagePath = image.path;
+                            });
+                          }
+                        }else {
+                          Toaster.shortToast('download our app to upload your photo and more');
+                        }
+
+                        Navigator.pop(context);
+
+                      },
+                      child: Image.asset('assets/images/camera.png')),
+                ],
+              )
+            ],
+          );
+        });
   }
 }

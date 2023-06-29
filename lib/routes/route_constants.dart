@@ -6,10 +6,11 @@ class RouteConstants {
   static const String eventRouteName = 'event';
   static const String artistRouteName = 'artist';
 
+  static const String loungeRouteName = 'lounge';
+
+  static const String menuRouteName = 'menu';
+
 
   static const String aboutRouteName = 'about';
   static const String profileRouteName = 'profile';
-  static const String contactUsRouteName = 'contact_us';
-
-
 }

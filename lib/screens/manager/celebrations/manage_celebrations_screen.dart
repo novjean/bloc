@@ -95,9 +95,6 @@ class _ManageCelebrationsScreenState extends State<ManageCelebrationsScreen> {
   _buildBody(BuildContext context) {
     return Column(
       children: [
-        // const SizedBox(height: 2.0),
-        // _displayOptions(context),
-        // const Divider(),
         const SizedBox(height: 5.0),
         _buildCelebrations(context),
         const SizedBox(height: 5.0),

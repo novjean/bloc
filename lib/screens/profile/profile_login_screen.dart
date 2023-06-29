@@ -6,26 +6,26 @@ import 'package:go_router/go_router.dart';
 import '../../db/shared_preferences/user_preferences.dart';
 import '../../routes/route_constants.dart';
 import '../../utils/constants.dart';
-import '../login_screen.dart';
 
 class ProfileLoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).backgroundColor,
+      backgroundColor: Constants.background,
       body: Padding(
         padding: const EdgeInsets.all(10.0),
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(
-                'Attention, human! Access to the realm of wonders requires proper authentication. Please login and let the magic unfold! ✨'.toLowerCase(),
+              const Text(
+                'attention, human! access to the realm of wonders requires proper authentication. please login and let the magic unfold! ✨',
+                textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 22, color: Constants.primary,),
               ),
               const SizedBox(height: 16),
-              Text(
-                'click below to login!'.toLowerCase(),
+              const Text(
+                'click below to login!',
                 style: TextStyle(fontSize: 16, color: Constants.primary),
               ),
               const SizedBox(height: 16),

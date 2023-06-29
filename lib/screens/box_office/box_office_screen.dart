@@ -1,6 +1,7 @@
 import 'package:bloc/main.dart';
 import 'package:bloc/screens/user/reservation_add_edit_screen.dart';
 import 'package:bloc/utils/scan_utils.dart';
+import 'package:bloc/widgets/ui/app_bar_title.dart';
 import 'package:bloc/widgets/ui/button_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -109,7 +110,9 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('bloc | box office'),
+        backgroundColor: Colors.black,
+        titleSpacing: 0,
+        title: AppBarTitle(title: 'box office',)
       ),
       backgroundColor: Constants.background,
       floatingActionButton:
@@ -423,7 +426,7 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
                 ),
                 onTap: () {
                   Party _sParty = mGuestListParties[index];
-                  Logx.i(_TAG, _sParty.name + ' is selected');
+                  Logx.i(_TAG, '${_sParty.name} is selected');
 
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (ctx) => PromoterGuestsScreen(party: _sParty)));
@@ -491,6 +494,7 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
         children: [
           Text(
             '⚡ Warning: FOMO alert! Our party radar is buzzing, and it seems like you\'re missing out on the hottest 🔥🔥🔥 gathering in town. Hurry up, grab your spot, and prepare for an unforgettable experience! 🪩'.toLowerCase(),
+            textAlign: TextAlign.center,
             style: TextStyle(fontSize: 22, color: Constants.primary),
           ),
           const SizedBox(height: 16),
@@ -514,6 +518,7 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
         children: [
           Text(
             'Family and food, the perfect recipe for love! Reserve a table, lay a foundation of laughter and good food, and watch your beautiful memories take shape! 💛'.toLowerCase(),
+            textAlign: TextAlign.center,
             style: TextStyle(fontSize: 22, color: Constants.primary),
           ),
           const SizedBox(height: 16),
@@ -545,6 +550,7 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
         children: [
           Text(
             'Step into a world of celebration and sophistication at our cocktail rooftop bar. Whether it\'s your anniversary, birthday, or a corporate event, our venue is tailor-made to accommodate large groups, ensuring a night to remember. Come and indulge in the magic of elevated celebrations! 🍾'.toLowerCase(),
+            textAlign: TextAlign.center,
             style: TextStyle(fontSize: 22, color: Constants.primary),
           ),
           const SizedBox(height: 16),

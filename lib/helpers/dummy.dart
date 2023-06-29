@@ -16,12 +16,15 @@ import '../db/entity/ad.dart';
 import '../db/entity/bloc.dart';
 import '../db/entity/bloc_service.dart';
 import '../db/entity/celebration.dart';
+import '../db/entity/chat.dart';
 import '../db/entity/genre.dart';
+import '../db/entity/lounge.dart';
 import '../db/entity/offer.dart';
 import '../db/entity/party.dart';
 import '../db/entity/product.dart';
 import '../db/entity/seat.dart';
 import '../db/entity/user.dart';
+import '../db/entity/user_lounge.dart';
 import '../db/shared_preferences/user_preferences.dart';
 import 'firestore_helper.dart';
 
@@ -131,6 +134,23 @@ class Dummy {
     return dummyChallenge;
   }
 
+  static Chat getDummyChat() {
+    Chat dummyChat = Chat(
+      id: StringUtils.getRandomString(28),
+      loungeId: '',
+      userId: UserPreferences.myUser.id,
+      userName: UserPreferences.myUser.name,
+      userImage: UserPreferences.myUser.imageUrl,
+      message: '',
+      type: 'text',
+      time: Timestamp.now().millisecondsSinceEpoch,
+      vote: 0,
+      upVoters: [],
+      downVoters: []
+    );
+    return dummyChat;
+  }
+
   static Genre getDummyGenre() {
     Genre dummyGenre = Genre(
       id: StringUtils.getRandomString(28),
@@ -152,6 +172,23 @@ class Dummy {
   static HistoryMusic getDummyHistoryMusic() {
     HistoryMusic dummy = HistoryMusic(
         id: StringUtils.getRandomString(28), userId: '', genre: '', count: 0);
+    return dummy;
+  }
+
+  static Lounge getDummyLounge() {
+    Lounge dummy = Lounge(
+        id: StringUtils.getRandomString(28),
+        name: '',
+        description: '',
+        rules: Constants.loungeRules,
+        type: 'community',
+        admins: [],
+        members: [],
+        imageUrl: '',
+        creationTime: Timestamp.now().millisecondsSinceEpoch,
+        lastChat: '',
+        lastChatTime: Timestamp.now().millisecondsSinceEpoch,
+        isActive: true, isVip: false);
     return dummy;
   }
 
@@ -354,5 +391,15 @@ class Dummy {
         const UserLevel(id: '84ub8bC0m3NQH9KfWCkD', name: 'customer', level: 1);
 
     return dummyUserLevel;
+  }
+
+  static UserLounge getDummyUserLounge() {
+    UserLounge dummyUserLounge = UserLounge(
+        id: StringUtils.getRandomString(28),
+        userId: '',
+        loungeId: '',
+        lastAccessedTime: Timestamp.now().millisecondsSinceEpoch,
+        isAccepted: true);
+    return dummyUserLounge;
   }
 }

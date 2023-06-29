@@ -30,7 +30,7 @@ class ReservationBanner extends StatelessWidget {
         elevation: 1,
         color: Theme.of(context).primaryColorLight,
         child: SizedBox(
-          height: 130,
+          height: 150,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
@@ -127,7 +127,8 @@ class ReservationBanner extends StatelessWidget {
                                       padding:
                                           const EdgeInsets.only(left: 10.0),
                                       child: ButtonWidget(
-                                        text: 'approve',
+                                        height: 50,
+                                        text: '🎩 approve',
                                         onClicked: () {
                                           bool value = true;
                                           Reservation updatedReservation =

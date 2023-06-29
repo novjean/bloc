@@ -12,6 +12,7 @@ import '../../db/entity/order_bloc.dart';
 import '../../providers/cart.dart' show Cart;
 import '../../utils/string_utils.dart';
 import '../../widgets/cart_block.dart';
+import '../../widgets/ui/app_bar_title.dart';
 import '../../widgets/ui/toaster.dart';
 
 class CartScreen extends StatelessWidget {
@@ -24,8 +25,9 @@ class CartScreen extends StatelessWidget {
     final cart = Provider.of<Cart>(context);
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).backgroundColor,
-        title: const Text('bloc | cart'),
+        backgroundColor: Colors.black,
+        title: AppBarTitle(title: 'cart',),
+        titleSpacing: 0,
       ),
       backgroundColor: Theme.of(context).backgroundColor,
       body: Column(

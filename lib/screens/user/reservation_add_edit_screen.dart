@@ -1,4 +1,5 @@
 import 'package:bloc/db/shared_preferences/user_preferences.dart';
+import 'package:bloc/widgets/ui/app_bar_title.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:delayed_display/delayed_display.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -141,7 +142,13 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('reserve | table')),
+      appBar: AppBar(
+        backgroundColor: Colors.black,
+        titleSpacing: 0,
+        title: AppBarTitle(
+          title: 'reservation',
+        ),
+      ),
       backgroundColor: Constants.background,
       body: _buildBody(context),
     );
@@ -188,8 +195,8 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
                         counterStyle:
                             TextStyle(color: Theme.of(context).primaryColor),
                         border: OutlineInputBorder(
-                          borderSide: BorderSide(
-                              color: Theme.of(context).primaryColor),
+                          borderSide:
+                              BorderSide(color: Theme.of(context).primaryColor),
                         ),
                         enabledBorder: OutlineInputBorder(
                           // width: 0.0 produces a thin "hairline" border
@@ -503,7 +510,7 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
                   ),
                   const SizedBox(height: 36),
                   DarkButtonWidget(
-                    height: 50,
+                      height: 50,
                       text: 'delete',
                       onClicked: () {
                         FirestoreHelper.deleteReservation(
@@ -887,12 +894,11 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
                 Navigator.of(ctx).pop();
 
                 UserPreferences.setUser(bloc_user);
-                GoRouter.of(context)
-                    .pushNamed(RouteConstants.homeRouteName);
 
-                Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => BoxOfficeScreen()));
+                GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
 
+                Navigator.of(context).push(
+                    MaterialPageRoute(builder: (context) => BoxOfficeScreen()));
               },
             ),
           ],
@@ -970,8 +976,8 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
     setState(() {
       sArrivalTime = pickedTime!;
 
-      widget.reservation = widget.reservation
-          .copyWith(arrivalTime: DateTimeUtils.convertTimeToString(sArrivalTime));
+      widget.reservation = widget.reservation.copyWith(
+          arrivalTime: DateTimeUtils.convertTimeToString(sArrivalTime));
     });
   }
 

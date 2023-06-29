@@ -90,7 +90,6 @@ class PartyGuestListBanner extends StatelessWidget {
                     image: DecorationImage(
                       image: NetworkImage(party.imageUrl),
                       fit: BoxFit.fitHeight,
-                      // AssetImage(food['image']),
                     ),
                   ),
                 ),

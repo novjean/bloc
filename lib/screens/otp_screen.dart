@@ -1,4 +1,5 @@
 import 'package:bloc/db/entity/user.dart' as blocUser;
+import 'package:bloc/db/shared_preferences/ui_preferences.dart';
 import 'package:bloc/helpers/dummy.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:delayed_display/delayed_display.dart';
@@ -13,10 +14,10 @@ import '../helpers/firestore_helper.dart';
 import '../helpers/fresh.dart';
 import '../main.dart';
 import '../routes/route_constants.dart';
+import '../utils/constants.dart';
 import '../utils/logx.dart';
 import '../utils/string_utils.dart';
 import '../widgets/ui/toaster.dart';
-import 'main_screen.dart';
 
 class OTPScreen extends StatefulWidget {
   final String phone;
@@ -70,10 +71,10 @@ class _OTPScreenState extends State<OTPScreen> {
                 'verifyPhoneNumber: ${widget.phone} is verified. attempting sign in with credentials...');
           },
           verificationFailed: (FirebaseAuthException e) {
-            Logx.i(_TAG, 'verificationFailed ' + e.toString());
+            Logx.i(_TAG, 'verificationFailed $e');
           },
           codeSent: (String verificationID, int? resendToken) {
-            Logx.i(_TAG, 'verification id : ' + verificationID);
+            Logx.i(_TAG, 'verification id : $verificationID');
 
             if (mounted) {
               setState(() {
@@ -96,7 +97,7 @@ class _OTPScreenState extends State<OTPScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          backgroundColor: Theme.of(context).backgroundColor,
+          backgroundColor: Constants.background,
           title: const Text(''),
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
@@ -105,7 +106,7 @@ class _OTPScreenState extends State<OTPScreen> {
             },
           ),
         ),
-        backgroundColor: Theme.of(context).backgroundColor,
+        backgroundColor: Constants.background,
         body: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -292,6 +293,9 @@ class _OTPScreenState extends State<OTPScreen> {
                           registeredUser.fcmToken = fcmToken!;
 
                           UserPreferences.setUser(registeredUser);
+                          UiPreferences.setHomePageIndex(0);
+
+                          Toaster.shortToast('hey there, welcome to bloc! 🦖');
 
                           GoRouter.of(context)
                               .pushNamed(RouteConstants.homeRouteName);
@@ -312,10 +316,11 @@ class _OTPScreenState extends State<OTPScreen> {
                             FirestoreHelper.pushUser(user);
                           }
                           UserPreferences.setUser(user);
+                          UiPreferences.setHomePageIndex(0);
                           GoRouter.of(context)
                               .pushNamed(RouteConstants.homeRouteName);
 
-                          Toaster.shortToast('hey ${user.name}, welcome back');
+                          Toaster.shortToast('hey ${user.name.toLowerCase()}, welcome back! 🦖');
                         }
                       });
                     }

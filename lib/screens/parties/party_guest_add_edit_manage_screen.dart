@@ -4,6 +4,7 @@ import 'package:bloc/db/entity/history_music.dart';
 import 'package:bloc/db/entity/reservation.dart';
 import 'package:bloc/screens/box_office/box_office_screen.dart';
 import 'package:bloc/utils/date_time_utils.dart';
+import 'package:bloc/widgets/ui/app_bar_title.dart';
 import 'package:bloc/widgets/ui/dark_button_widget.dart';
 import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:bloc/widgets/ui/toaster.dart';
@@ -40,7 +41,6 @@ import '../../utils/string_utils.dart';
 import '../../widgets/ui/button_widget.dart';
 import '../../widgets/ui/dark_textfield_widget.dart';
 import '../../widgets/parties/party_banner.dart';
-import '../main_screen.dart';
 import '../user/reservation_add_edit_screen.dart';
 
 class PartyGuestAddEditManageScreen extends StatefulWidget {
@@ -172,10 +172,11 @@ class _PartyGuestAddEditManageScreenState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).backgroundColor,
+      backgroundColor: Constants.background,
       appBar: AppBar(
-        title: Text('party guest | ${widget.task}'),
-        backgroundColor: Theme.of(context).backgroundColor,
+        title: AppBarTitle(title: 'guest list'),
+        titleSpacing: 0,
+        backgroundColor: Constants.background,
       ),
       body: _buildBody(context),
     );
@@ -1534,88 +1535,3 @@ class _PartyGuestAddEditManageScreenState
     return url;
   }
 }
-
-//  void showOTPModal(BuildContext context) {
-//     showModalBottomSheet<void>(
-//       isScrollControlled: true,
-//       context: context,
-//       builder: (BuildContext context) {
-//         return Container(
-//           height: 200,
-//           margin: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-//           child: Center(
-//             child: SingleChildScrollView(
-//               child: Column(
-//                 mainAxisAlignment: MainAxisAlignment.start,
-//                 mainAxisSize: MainAxisSize.min,
-//                 children: <Widget>[
-//                   Flexible(
-//                     flex: 1,
-//                     child: Padding(
-//                       padding: const EdgeInsets.only(left: 20, right: 20),
-//                       child: Column(
-//                         mainAxisAlignment: MainAxisAlignment.end,
-//                         children: [
-//                           Container(
-//                             margin: const EdgeInsets.only(bottom: 20),
-//                             child: FractionallySizedBox(
-//                                 widthFactor: 1,
-//                                 child: OTPVerifyWidget(
-//                                   completePhoneNumber,
-//                                 )),
-//                           ),
-//                           Center(
-//                               child: Text(
-//                                 'enter the six digit code you received on \n${completePhoneNumber}',
-//                                 textAlign: TextAlign.center,
-//                                 style: TextStyle(
-//                                   color: Theme.of(context).primaryColorDark,
-//                                   fontWeight: FontWeight.normal,
-//                                   fontSize: 16,
-//                                 ),
-//                               )),
-//                           Padding(
-//                             padding: const EdgeInsets.only(
-//                                 left: 10.0, right: 10, top: 2, bottom: 5),
-//                             child: Row(
-//                               mainAxisAlignment: MainAxisAlignment.center,
-//                               children: [
-//                                 DelayedDisplay(
-//                                   delay: const Duration(seconds: 9),
-//                                   child: Text('didn\'t receive code. ',
-//                                       style: TextStyle(
-//                                         color: Theme.of(context).primaryColorDark,
-//                                         fontSize: 16,
-//                                       )),
-//                                 ),
-//                                 InkWell(
-//                                   onTap: () {
-//                                     Toaster.longToast('refreshing');
-//                                     _verifyPhone();
-//                                   },
-//                                   child: DelayedDisplay(
-//                                     delay: const Duration(seconds: 10),
-//                                     child: Text(
-//                                       'resend?',
-//                                       style: TextStyle(
-//                                         color: Theme.of(context).primaryColor,
-//                                         fontSize: 16,
-//                                       ),
-//                                     ),
-//                                   ),
-//                                 ),
-//                               ],
-//                             ),
-//                           )
-//                         ],
-//                       ),
-//                     ),
-//                   ),
-//                 ],
-//               ),
-//             ),
-//           ),
-//         );
-//       },
-//     );
-//   }

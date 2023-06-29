@@ -1,7 +1,8 @@
 import 'dart:ui';
 
 import 'package:bloc/routes/bloc_router.dart';
-import 'package:bloc/screens/login_screen.dart';
+
+import 'package:bloc/db/shared_preferences/ui_preferences.dart';
 import 'package:bloc/utils/logx.dart';
 import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -16,7 +17,6 @@ import 'package:provider/provider.dart';
 import 'db/shared_preferences/user_preferences.dart';
 import 'firebase_options.dart';
 import 'providers/cart.dart';
-import 'screens/ui/splash_screen.dart';
 import 'utils/constants.dart';
 
 var logger = Logger(
@@ -37,6 +37,8 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 
 /// Create a [AndroidNotificationChannel] for heads up notifications
 late AndroidNotificationChannel channel;
+late AndroidNotificationChannel chatChannel;
+
 
 /// Initialize the [FlutterLocalNotificationsPlugin] package.
 late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
@@ -50,32 +52,29 @@ late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
 /// VM.
 const bool kIsWeb = identical(0, 0.0);
 
+late Size mq;
+
 Future<void> main() async {
   const String _TAG = 'main';
 
   WidgetsFlutterBinding.ensureInitialized();
-  // await NotificationService.initializeNotification();
 
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-
-  // Pass all uncaught "fatal" errors from the framework to Crashlytics
-  FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
-  // Pass all uncaught asynchronous errors that aren't handled by the Flutter framework to Crashlytics
-  PlatformDispatcher.instance.onError = (error, stack) {
-    FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
-    return true;
-  };
-
-  // Set the background messaging handler early on, as a named top-level function
-  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
   if (!kIsWeb) {
     channel = const AndroidNotificationChannel(
       'high_importance_channel', // id
       'High Importance Notifications', // title
       // 'This channel is used for important notifications.', // description
+      importance: Importance.high,
+    );
+
+    chatChannel = const AndroidNotificationChannel(
+      'CHAT_MESSAGES', // id
+      'Chats',
+      // description: 'Chat notifications',
       importance: Importance.high,
     );
 
@@ -90,6 +89,11 @@ Future<void> main() async {
         AndroidFlutterLocalNotificationsPlugin>()
         ?.createNotificationChannel(channel);
 
+    await flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<
+        AndroidFlutterLocalNotificationsPlugin>()
+        ?.createNotificationChannel(chatChannel);
+
     /// Update the iOS foreground notification presentation options to allow
     /// heads up notifications.
     await FirebaseMessaging.instance
@@ -100,21 +104,32 @@ Future<void> main() async {
     );
   }
 
+  // Pass all uncaught "fatal" errors from the framework to Crashlytics
+  FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
+  // Pass all uncaught asynchronous errors that aren't handled by the Flutter framework to Crashlytics
+  PlatformDispatcher.instance.onError = (error, stack) {
+    FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+    return true;
+  };
+
+  // Set the background messaging handler early on, as a named top-level function
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
+
+  await UserPreferences.init();
+  await UiPreferences.init();
+
   // disabling landscape until all ui issues are resolved
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
-  ]);
-
-  await UserPreferences.init();
-
-  runApp(const BlocApp());
+  ]).then((value){
+    runApp(const BlocApp());
+  });
 }
 
 class BlocApp extends StatefulWidget {
   const BlocApp({Key? key}) : super(key: key);
-
-  // static GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
   @override
   State<BlocApp> createState() => _BlocAppState();
@@ -157,9 +172,8 @@ class _BlocAppState extends State<BlocApp> {
 
                   // app bar and buttons by default
                   primarySwatch: Colors.brown,
+                  fontFamily: Constants.fontDefault,
 
-                  // accentColor: Colors.grey,
-                  // accentColorBrightness: Brightness.dark,
                   buttonTheme: ButtonTheme.of(context).copyWith(
                     buttonColor: Colors.red,
                     textTheme: ButtonTextTheme.primary,
@@ -170,11 +184,6 @@ class _BlocAppState extends State<BlocApp> {
                 ),
                 routeInformationParser: BlocRouter.returnRouter(true).routeInformationParser,
                 routerDelegate: BlocRouter.returnRouter(true).routerDelegate,
-
-                // home: appSnapshot.connectionState != ConnectionState.done
-                //     ? SplashScreen()
-                //     : const LoginScreen(shouldTriggerSkip: true),
-
               );
             } else {
               return LoadingWidget();

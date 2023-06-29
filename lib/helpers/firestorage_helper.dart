@@ -15,6 +15,8 @@ class FirestorageHelper {
   static String BLOCS_IMAGES = 'bloc_image';
   static String BLOCS_SERVICES_IMAGES = 'bloc_service_image';
   static String CATEGORY_IMAGES = 'service_category_image';
+  static String CHAT_IMAGES = 'chat_image';
+  static String LOUNGE_IMAGES = 'lounge_image';
   static String PRODUCT_IMAGES = 'product_image';
   static String PARTY_IMAGES = 'party_image';
   static String PARTY_STORY_IMAGES = 'party_story_image';
@@ -41,7 +43,7 @@ class FirestorageHelper {
   }
 
   static uploadFile(String directory, String docId, File file) async {
-    logger.d("uploadFile : " + file.path);
+    Logx.d(_TAG, "uploadFile : ${file.path}");
 
     String url = '';
 
@@ -50,9 +52,12 @@ class FirestorageHelper {
           .ref()
           .child(directory)
           .child(docId + '.jpg');
-      await ref.putFile(file);
+
+      await ref.putFile(file, SettableMetadata(contentType: 'image/jpg')).then((pO){
+        Logx.i(_TAG, 'data transferred: ${pO.bytesTransferred / 1000} kb');
+      });
       url = await ref.getDownloadURL();
-      Logx.i(_TAG, 'uploadFile success: ' + url.toString());
+      Logx.i(_TAG, 'uploadFile success: $url');
     } on PlatformException catch (e, s) {
       Logx.e(_TAG, e, s);
     } on Exception catch (e, s) {

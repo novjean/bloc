@@ -62,7 +62,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).backgroundColor,
+      backgroundColor: Constants.background,
       body: _buildBody(context),
     );
   }
@@ -165,7 +165,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget buildName(blocUser.User user) => Column(
         children: [
           Text(
-            user.name.isNotEmpty ? user.name.toLowerCase() + user.surname.toLowerCase() : 'bloc star',
+            user.name.isNotEmpty ? '${user.name.toLowerCase()} ${user.surname.toLowerCase()}' : 'bloc star',
             style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 26,

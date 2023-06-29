@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 
 import '../../db/entity/city.dart';
+import '../../widgets/ui/app_bar_title.dart';
 
 class OwnerScreen extends StatelessWidget {
   static const routeName = '/owner-screen';
@@ -19,7 +20,9 @@ class OwnerScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Owner'),
+        backgroundColor: Colors.black,
+        title: AppBarTitle(title: 'owner',),
+        titleSpacing: 0,
       ),
       // drawer: AppDrawer(),
       body: _buildBody(context),
@@ -47,7 +50,7 @@ class OwnerScreen extends StatelessWidget {
         stream: _citiesStream,
         builder: (ctx, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return LoadingWidget();
+            return const LoadingWidget();
           }
           if (snapshot.hasError) {
             return Center(child: Text("something went wrong"));

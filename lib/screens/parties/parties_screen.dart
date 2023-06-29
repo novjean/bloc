@@ -7,20 +7,21 @@ import 'package:flutter/material.dart';
 import '../../db/entity/party.dart';
 import '../../db/entity/party_guest.dart';
 import '../../helpers/fresh.dart';
+import '../../utils/constants.dart';
 import '../../utils/logx.dart';
 import '../../widgets/parties/party_item.dart';
 import '../../widgets/ui/sized_listview_block.dart';
 import '../box_office/box_office_screen.dart';
 
-class PartyScreen extends StatefulWidget {
-  const PartyScreen({Key? key}) : super(key: key);
+class PartiesScreen extends StatefulWidget {
+  const PartiesScreen({Key? key}) : super(key: key);
 
   @override
-  State<PartyScreen> createState() => _PartyScreenState();
+  State<PartiesScreen> createState() => _PartiesScreenState();
 }
 
-class _PartyScreenState extends State<PartyScreen> {
-  static const String _TAG = 'PartyScreen';
+class _PartiesScreenState extends State<PartiesScreen> {
+  static const String _TAG = 'PartiesScreen';
 
   List<Party> mParties = [];
   var _isPartiesLoading = true;
@@ -48,7 +49,7 @@ class _PartyScreenState extends State<PartyScreen> {
           final Party party = Fresh.freshPartyMap(data, false);
           parties.add(party);
         }
-        if(mounted){
+        if (mounted) {
           setState(() {
             mParties = parties;
             _isPartiesLoading = false;
@@ -59,7 +60,7 @@ class _PartyScreenState extends State<PartyScreen> {
         const Center(
           child: Text('no parties assigned yet!'),
         );
-        if(mounted) {
+        if (mounted) {
           setState(() {
             _isPartiesLoading = false;
           });
@@ -81,7 +82,7 @@ class _PartyScreenState extends State<PartyScreen> {
           final Party bloc = Fresh.freshPartyMap(data, false);
           parties.add(bloc);
         }
-        if(mounted) {
+        if (mounted) {
           setState(() {
             mPastParties = parties;
             _isPastPartiesLoading = false;
@@ -94,7 +95,7 @@ class _PartyScreenState extends State<PartyScreen> {
         const Center(
           child: Text('no past parties found yet!'),
         );
-        if(mounted) {
+        if (mounted) {
           setState(() {
             _isPastPartiesLoading = false;
           });
@@ -117,7 +118,7 @@ class _PartyScreenState extends State<PartyScreen> {
           final PartyGuest partyGuest = Fresh.freshPartyGuestMap(data, false);
           partyGuestRequests.add(partyGuest);
         }
-        if(mounted) {
+        if (mounted) {
           setState(() {
             mPartyGuestRequests = partyGuestRequests;
             _isPartyGuestsLoading = false;
@@ -138,7 +139,7 @@ class _PartyScreenState extends State<PartyScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Theme.of(context).backgroundColor,
+        backgroundColor: Constants.background,
         floatingActionButton: UserPreferences.isUserLoggedIn()
             ? FloatingActionButton(
                 onPressed: () {
@@ -191,139 +192,130 @@ class _PartyScreenState extends State<PartyScreen> {
       }
     }
 
-    return Column(
-      children: [
-        Expanded(
-          child: ListView.builder(
-            itemCount: parties.length,
-            scrollDirection: Axis.vertical,
-            physics: const BouncingScrollPhysics(),
-            itemBuilder: (BuildContext context, int index) {
-              bool isGuestListRequested = false;
+    return ListView.builder(
+      itemCount: parties.length,
+      scrollDirection: Axis.vertical,
+      physics: const BouncingScrollPhysics(),
+      itemBuilder: (BuildContext context, int index) {
+        bool isGuestListRequested = false;
 
-              Party party = parties[index];
-              for (PartyGuest partyGuest in mPartyGuestRequests) {
-                if (partyGuest.partyId == party.id) {
-                  isGuestListRequested = true;
-                  break;
-                }
-              }
+        Party party = parties[index];
+        for (PartyGuest partyGuest in mPartyGuestRequests) {
+          if (partyGuest.partyId == party.id) {
+            isGuestListRequested = true;
+            break;
+          }
+        }
 
-              if (parties.length == 1) {
-                if (_showPastParties) {
-                  return Column(
-                    children: [
-                      GestureDetector(
-                          child: SizedListViewBlock(
-                            title: 'show upcoming parties',
-                            height: 50,
-                            width: MediaQuery.of(context).size.width,
-                            color: Theme.of(context).primaryColor,
-                          ),
-                          onTap: () {
-                            Logx.i(
-                                _TAG, 'show upcoming parties button clicked');
-                            setState(() {
-                              _showPastParties = !_showPastParties;
-                            });
-                          }),
-                      PartyItem(
-                        party: parties[index],
-                        imageHeight: 300,
-                        isGuestListRequested: isGuestListRequested,
-                      ),
-                    ],
-                  );
-                } else {
-                  return Column(
-                    children: [
-                      PartyItem(
-                        party: parties[index],
-                        imageHeight: 300,
-                        isGuestListRequested: isGuestListRequested,
-                      ),
-                      GestureDetector(
-                          child: SizedListViewBlock(
-                            title: 'show past parties',
-                            height: 50,
-                            width: MediaQuery.of(context).size.width,
-                            color: Theme.of(context).primaryColor,
-                          ),
-                          onTap: () {
-                            Logx.i(
-                                _TAG, 'show upcoming parties button clicked');
-                            setState(() {
-                              _showPastParties = !_showPastParties;
-                            });
-                          }),
-                    ],
-                  );
-                }
-              }
-
-              if (index == 0) {
-                return Column(
-                  children: [
-                    _showPastParties
-                        ? GestureDetector(
-                            child: SizedListViewBlock(
-                              title: 'show upcoming parties',
-                              height: 50,
-                              width: MediaQuery.of(context).size.width,
-                              color: Theme.of(context).primaryColor,
-                            ),
-                            onTap: () {
-                              Logx.i(
-                                  _TAG, 'show upcoming parties button clicked');
-                              setState(() {
-                                _showPastParties = !_showPastParties;
-                              });
-                            })
-                        : const SizedBox(),
-                    PartyItem(
-                      party: parties[index],
-                      imageHeight: 300,
-                      isGuestListRequested: isGuestListRequested,
+        if (parties.length == 1) {
+          if (_showPastParties) {
+            return Column(
+              children: [
+                GestureDetector(
+                    child: SizedListViewBlock(
+                      title: 'show upcoming parties',
+                      height: 50,
+                      width: MediaQuery.of(context).size.width,
+                      color: Theme.of(context).primaryColor,
                     ),
-                  ],
-                );
-              }
-              if (index == parties.length - 1) {
-                return Column(
-                  children: [
-                    PartyItem(
-                      party: parties[index],
-                      imageHeight: 300,
-                      isGuestListRequested: isGuestListRequested,
-                    ),
-                    !_showPastParties
-                        ? GestureDetector(
-                            child: SizedListViewBlock(
-                              title: 'show past parties',
-                              height: 50,
-                              width: MediaQuery.of(context).size.width,
-                              color: Theme.of(context).primaryColor,
-                            ),
-                            onTap: () {
-                              Logx.i(_TAG, 'load parties button clicked');
-                              setState(() {
-                                _showPastParties = !_showPastParties;
-                              });
-                            })
-                        : const SizedBox()
-                  ],
-                );
-              } else {
-                return PartyItem(
+                    onTap: () {
+                      Logx.i(_TAG, 'show upcoming parties button clicked');
+                      setState(() {
+                        _showPastParties = !_showPastParties;
+                      });
+                    }),
+                PartyItem(
                   party: parties[index],
                   imageHeight: 300,
                   isGuestListRequested: isGuestListRequested,
-                );
-              }
-            },
-          ),
-        ),
-      ],
+                ),
+              ],
+            );
+          } else {
+            return Column(
+              children: [
+                PartyItem(
+                  party: parties[index],
+                  imageHeight: 300,
+                  isGuestListRequested: isGuestListRequested,
+                ),
+                GestureDetector(
+                    child: SizedListViewBlock(
+                      title: 'show past parties',
+                      height: 50,
+                      width: MediaQuery.of(context).size.width,
+                      color: Theme.of(context).primaryColor,
+                    ),
+                    onTap: () {
+                      Logx.i(_TAG, 'show upcoming parties button clicked');
+                      setState(() {
+                        _showPastParties = !_showPastParties;
+                      });
+                    }),
+              ],
+            );
+          }
+        }
+
+        if (index == 0) {
+          return Column(
+            children: [
+              _showPastParties
+                  ? GestureDetector(
+                      child: SizedListViewBlock(
+                        title: 'show upcoming parties',
+                        height: 50,
+                        width: MediaQuery.of(context).size.width,
+                        color: Theme.of(context).primaryColor,
+                      ),
+                      onTap: () {
+                        Logx.i(_TAG, 'show upcoming parties button clicked');
+                        setState(() {
+                          _showPastParties = !_showPastParties;
+                        });
+                      })
+                  : const SizedBox(),
+              PartyItem(
+                party: parties[index],
+                imageHeight: 300,
+                isGuestListRequested: isGuestListRequested,
+              ),
+            ],
+          );
+        }
+        if (index == parties.length - 1) {
+          return Column(
+            children: [
+              PartyItem(
+                party: parties[index],
+                imageHeight: 300,
+                isGuestListRequested: isGuestListRequested,
+              ),
+              !_showPastParties
+                  ? GestureDetector(
+                      child: SizedListViewBlock(
+                        title: 'show past parties',
+                        height: 50,
+                        width: MediaQuery.of(context).size.width,
+                        color: Theme.of(context).primaryColor,
+                      ),
+                      onTap: () {
+                        Logx.i(_TAG, 'load parties button clicked');
+                        setState(() {
+                          _showPastParties = !_showPastParties;
+                        });
+                      })
+                  : const SizedBox()
+            ],
+          );
+        } else {
+          return PartyItem(
+            party: parties[index],
+            imageHeight: 300,
+            isGuestListRequested: isGuestListRequested,
+          );
+        }
+      },
     );
   }
 }

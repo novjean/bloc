@@ -9,6 +9,7 @@ import '../../db/entity/cart_item.dart';
 import '../../db/shared_preferences/user_preferences.dart';
 import '../../utils/cart_item_utils.dart';
 import '../../widgets/manager/orders/order_card.dart';
+import '../../widgets/ui/app_bar_title.dart';
 
 class OrderHistoryScreen extends StatefulWidget {
   const OrderHistoryScreen({Key? key}) : super(key: key);
@@ -95,7 +96,9 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text('bloc | orders'),
+          backgroundColor: Colors.black,
+          title: AppBarTitle(title: 'orders',),
+          titleSpacing: 0,
         ),
         body: _buildBody(context));
   }

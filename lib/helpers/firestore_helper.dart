@@ -6,6 +6,7 @@ import 'package:bloc/db/entity/cart_item.dart';
 import 'package:bloc/db/entity/category.dart';
 import 'package:bloc/db/entity/celebration.dart';
 import 'package:bloc/db/entity/challenge.dart';
+import 'package:bloc/db/entity/chat.dart';
 import 'package:bloc/db/entity/genre.dart';
 import 'package:bloc/db/entity/guest_wifi.dart';
 import 'package:bloc/db/entity/history_music.dart';
@@ -18,6 +19,7 @@ import 'package:bloc/db/entity/seat.dart';
 import 'package:bloc/db/entity/ticket.dart';
 import 'package:bloc/db/entity/ui_photo.dart';
 import 'package:bloc/db/entity/user.dart' as blocUser;
+import 'package:bloc/db/entity/user_lounge.dart';
 import 'package:bloc/helpers/firestorage_helper.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -25,6 +27,7 @@ import 'package:flutter/services.dart';
 import 'package:logger/logger.dart';
 
 import '../db/entity/ad.dart';
+import '../db/entity/lounge.dart';
 import '../db/entity/product.dart';
 import '../db/entity/service_table.dart';
 import '../db/entity/sos.dart';
@@ -52,6 +55,7 @@ class FirestoreHelper {
   static String GUEST_WIFIS = 'guest_wifis';
   static String HISTORY_MUSIC = 'history_music';
   static String INVENTORY_OPTIONS = 'inventory_options';
+  static String LOUNGES = 'lounges';
   static String MANAGER_SERVICES = 'manager_services';
   static String MANAGER_SERVICE_OPTIONS = 'manager_service_options';
   static String OFFERS = 'offers';
@@ -68,6 +72,7 @@ class FirestoreHelper {
   static String UI_PHOTOS = 'ui_photos';
   static String USERS = 'users';
   static String USER_LEVELS = 'user_levels';
+  static String USER_LOUNGES = 'user_lounges';
 
   static int TABLE_PRIVATE_TYPE_ID = 1;
   static int TABLE_COMMUNITY_TYPE_ID = 2;
@@ -358,7 +363,8 @@ class FirestoreHelper {
     }
   }
 
-  static Future<QuerySnapshot<Map<String, dynamic>>> pullCategories(String blocServiceId) {
+  static Future<QuerySnapshot<Map<String, dynamic>>> pullCategories(
+      String blocServiceId) {
     return FirebaseFirestore.instance
         .collection(CATEGORIES)
         .where('serviceId', isEqualTo: blocServiceId)
@@ -406,7 +412,8 @@ class FirestoreHelper {
     }
   }
 
-  static Stream<QuerySnapshot<Object?>> getCelebrationsByBlocId(String blocServiceId) {
+  static Stream<QuerySnapshot<Object?>> getCelebrationsByBlocId(
+      String blocServiceId) {
     return FirebaseFirestore.instance
         .collection(CELEBRATIONS)
         .where('blocServiceId', isEqualTo: blocServiceId)
@@ -431,7 +438,6 @@ class FirestoreHelper {
   static void deleteCelebration(String docId) {
     FirebaseFirestore.instance.collection(CELEBRATIONS).doc(docId).delete();
   }
-
 
   /** challenges **/
   static void pushChallenge(Challenge challenge) async {
@@ -468,21 +474,12 @@ class FirestoreHelper {
   }
 
   /** chats **/
-  static void sendChatMessage(String enteredMessage) async {
+  static void pushChat(Chat chat) async {
     try {
-      final user = FirebaseAuth.instance.currentUser;
-
-      final userData = await FirebaseFirestore.instance
-          .collection(USERS)
-          .doc(user!.uid)
-          .get();
-      FirebaseFirestore.instance.collection(CHATS).add({
-        'text': enteredMessage,
-        'createdAt': Timestamp.now(),
-        'userId': user.uid,
-        'username': userData.data()!['username'],
-        'userImage': userData.data()!['imageUrl']
-      });
+      await FirebaseFirestore.instance
+          .collection(CHATS)
+          .doc(chat.id)
+          .set(chat.toMap());
     } on PlatformException catch (e, s) {
       Logx.e(_TAG, e, s);
     } on Exception catch (e, s) {
@@ -492,11 +489,25 @@ class FirestoreHelper {
     }
   }
 
-  static Stream<QuerySnapshot<Object?>> getChatsSnapshot() {
+  static Stream<QuerySnapshot<Object?>> getChats(String loungeId) {
     return FirebaseFirestore.instance
         .collection(CHATS)
-        .orderBy('createdAt', descending: false)
+        .where('loungeId', isEqualTo: loungeId)
+        .orderBy('time', descending: true)
         .snapshots();
+  }
+
+  static Stream<QuerySnapshot<Object?>> getLastChat(String loungeId) {
+    return FirebaseFirestore.instance
+        .collection(CHATS)
+        .where('loungeId', isEqualTo: loungeId)
+        .orderBy('time', descending: true)
+        .limit(1)
+        .snapshots();
+  }
+
+  static void deleteChat(String docId) {
+    FirebaseFirestore.instance.collection(CHATS).doc(docId).delete();
   }
 
   /** cities **/
@@ -523,6 +534,7 @@ class FirestoreHelper {
   static Future<QuerySnapshot<Map<String, dynamic>>> pullGenres() {
     return FirebaseFirestore.instance
         .collection(GENRES)
+        .orderBy('name', descending: false)
         .get();
   }
 
@@ -577,7 +589,8 @@ class FirestoreHelper {
     }
   }
 
-  static Future<QuerySnapshot<Map<String, dynamic>>> pullHistoryMusic(String userId, String genre) {
+  static Future<QuerySnapshot<Map<String, dynamic>>> pullHistoryMusic(
+      String userId, String genre) {
     return FirebaseFirestore.instance
         .collection(FirestoreHelper.HISTORY_MUSIC)
         .where('userId', isEqualTo: userId)
@@ -586,7 +599,8 @@ class FirestoreHelper {
         .get();
   }
 
-  static Future<QuerySnapshot<Map<String, dynamic>>> pullHistoryMusicByUser(String userId) {
+  static Future<QuerySnapshot<Map<String, dynamic>>> pullHistoryMusicByUser(
+      String userId) {
     return FirebaseFirestore.instance
         .collection(FirestoreHelper.HISTORY_MUSIC)
         .where('userId', isEqualTo: userId)
@@ -599,6 +613,56 @@ class FirestoreHelper {
         .collection(INVENTORY_OPTIONS)
         .orderBy('sequence', descending: false)
         .snapshots();
+  }
+
+  /** lounge **/
+  static void pushLounge(Lounge lounge) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection(LOUNGES)
+          .doc(lounge.id)
+          .set(lounge.toMap());
+    } on PlatformException catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } on Exception catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } catch (e) {
+      logger.e(e);
+    }
+  }
+
+  static void updateLoungeLastChat(
+      String loungeId, String lastChat, int lastChatTime) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection(LOUNGES)
+          .doc(loungeId)
+          .update({'lastChat': lastChat, 'lastChatTime': lastChatTime});
+    } on PlatformException catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } on Exception catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } catch (e) {
+      logger.e(e);
+    }
+  }
+
+  static Future<QuerySnapshot<Map<String, dynamic>>> pullLounge(String id) {
+    return FirebaseFirestore.instance
+        .collection(LOUNGES)
+        .where('id', isEqualTo: id)
+        .get();
+  }
+
+  static Stream<QuerySnapshot<Object?>> getLounges() {
+    return FirebaseFirestore.instance
+        .collection(LOUNGES)
+        .orderBy('name', descending: false)
+        .snapshots();
+  }
+
+  static void deleteLounge(String docId) {
+    FirebaseFirestore.instance.collection(LOUNGES).doc(docId).delete();
   }
 
   /** manager services **/
@@ -702,7 +766,8 @@ class FirestoreHelper {
         .get();
   }
 
-  static Future<QuerySnapshot<Map<String, dynamic>>> pullPartyByNameChapter(String name, String chapter) {
+  static Future<QuerySnapshot<Map<String, dynamic>>> pullPartyByNameChapter(
+      String name, String chapter) {
     return FirebaseFirestore.instance
         .collection(FirestoreHelper.PARTIES)
         .where('name', isEqualTo: name)
@@ -710,7 +775,8 @@ class FirestoreHelper {
         .get();
   }
 
-  static Future<QuerySnapshot<Map<String, dynamic>>> pullPartyByNameGenre(String name, String genre) {
+  static Future<QuerySnapshot<Map<String, dynamic>>> pullPartyByNameGenre(
+      String name, String genre) {
     return FirebaseFirestore.instance
         .collection(FirestoreHelper.PARTIES)
         .where('name', isEqualTo: name)
@@ -757,7 +823,8 @@ class FirestoreHelper {
         .get();
   }
 
-  static Future<QuerySnapshot<Map<String, dynamic>>> pullPartyArtistsByIds(List<String> artistIds) {
+  static Future<QuerySnapshot<Map<String, dynamic>>> pullPartyArtistsByIds(
+      List<String> artistIds) {
     return FirebaseFirestore.instance
         .collection(PARTIES)
         .where('id', whereIn: artistIds)
@@ -801,22 +868,8 @@ class FirestoreHelper {
         .snapshots();
   }
 
-  // static Future<QuerySnapshot<Map<String, dynamic>>> pullUpcomingPartyByEndTime(
-  //     int timeNow) {
-  //   return FirebaseFirestore.instance
-  //       .collection(FirestoreHelper.PARTIES)
-  //       .where('endTime', isGreaterThan: timeNow)
-  //       .where('isActive', isEqualTo: true)
-  //       .orderBy('endTime', descending: false)
-  //       .limit(1)
-  //       .get();
-  // }
-
   static void deleteParty(Party party) {
-    FirebaseFirestore.instance
-        .collection(PARTIES)
-        .doc(party.id)
-        .delete();
+    FirebaseFirestore.instance.collection(PARTIES).doc(party.id).delete();
   }
 
   /** party guests **/
@@ -837,8 +890,8 @@ class FirestoreHelper {
         .snapshots();
   }
 
-
-  static Future<QuerySnapshot<Map<String, dynamic>>> pullPartyGuestByUser(String guestId, String partyId) {
+  static Future<QuerySnapshot<Map<String, dynamic>>> pullPartyGuestByUser(
+      String guestId, String partyId) {
     return FirebaseFirestore.instance
         .collection(FirestoreHelper.PARTY_GUESTS)
         .where('partyId', isEqualTo: partyId)
@@ -846,8 +899,8 @@ class FirestoreHelper {
         .get();
   }
 
-
-  static Future<QuerySnapshot<Map<String, dynamic>>> pullGuestListRequested(String userId) {
+  static Future<QuerySnapshot<Map<String, dynamic>>> pullGuestListRequested(
+      String userId) {
     return FirebaseFirestore.instance
         .collection(FirestoreHelper.PARTY_GUESTS)
         .where('guestId', isEqualTo: userId)
@@ -870,7 +923,8 @@ class FirestoreHelper {
   }
 
   static getGuestLists() {
-    return FirebaseFirestore.instance.collection(PARTY_GUESTS)
+    return FirebaseFirestore.instance
+        .collection(PARTY_GUESTS)
         .orderBy('createdAt', descending: true)
         .snapshots();
   }
@@ -948,7 +1002,8 @@ class FirestoreHelper {
         .snapshots();
   }
 
-  Stream<QuerySnapshot<Object?>> getProductByCategories(String serviceId, List<String> categoryNames) {
+  Stream<QuerySnapshot<Object?>> getProductByCategories(
+      String serviceId, List<String> categoryNames) {
     return FirebaseFirestore.instance
         .collection(PRODUCTS)
         .where('serviceId', isEqualTo: serviceId)
@@ -1065,7 +1120,8 @@ class FirestoreHelper {
         .snapshots();
   }
 
-  static Stream<QuerySnapshot<Object?>> getReservationsByBlocId(String blocServiceId) {
+  static Stream<QuerySnapshot<Object?>> getReservationsByBlocId(
+      String blocServiceId) {
     return FirebaseFirestore.instance
         .collection(RESERVATIONS)
         .where('blocServiceId', isEqualTo: blocServiceId)
@@ -1079,7 +1135,6 @@ class FirestoreHelper {
         .where('customerId', isEqualTo: userId)
         .snapshots();
   }
-
 
   static void deleteReservation(String docId) {
     FirebaseFirestore.instance.collection(RESERVATIONS).doc(docId).delete();
@@ -1421,7 +1476,6 @@ class FirestoreHelper {
         .get();
   }
 
-
   /** user **/
   static void pushUser(blocUser.User user) async {
     try {
@@ -1453,7 +1507,32 @@ class FirestoreHelper {
         .get();
   }
 
-  static Stream<QuerySnapshot<Object?>> getUsers(int clearanceLevel) {
+  static Future<QuerySnapshot<Object?>> pullUsersGreaterThanLevel(
+      int clearanceLevel) {
+    return FirebaseFirestore.instance
+        .collection(USERS)
+        .where('clearanceLevel', isGreaterThanOrEqualTo: clearanceLevel)
+        .get();
+  }
+
+  static Future<QuerySnapshot<Object?>> pullUsersLesserThanLevel(
+      int clearanceLevel) {
+    return FirebaseFirestore.instance
+        .collection(USERS)
+        .where('clearanceLevel', isLessThanOrEqualTo: clearanceLevel)
+        .orderBy('name', descending: false)
+        .get();
+  }
+
+  static Future<QuerySnapshot<Object?>> pullUsersSortedName() {
+    return FirebaseFirestore.instance
+        .collection(USERS)
+        .orderBy('name', descending: false)
+        .get();
+  }
+
+  static Stream<QuerySnapshot<Object?>> getUsersLessThanLevel(
+      int clearanceLevel) {
     return FirebaseFirestore.instance
         .collection(USERS)
         .where('clearanceLevel', isLessThan: clearanceLevel)
@@ -1477,7 +1556,8 @@ class FirestoreHelper {
         .snapshots();
   }
 
-  static getUsersByLevelAndGenderAndMode(int level, String gender, bool isAppUser) {
+  static getUsersByLevelAndGenderAndMode(
+      int level, String gender, bool isAppUser) {
     return FirebaseFirestore.instance
         .collection(USERS)
         .where('clearanceLevel', isEqualTo: level)
@@ -1542,7 +1622,7 @@ class FirestoreHelper {
       await FirebaseFirestore.instance.collection(USERS).doc(userId).update({
         'fcmToken': token,
       }).then((value) {
-        Logx.i(_TAG, userId + " user fcm token updated to : " + token!);
+        Logx.i(_TAG, "$userId user fcm token updated to : ${token!}");
       }).catchError((e, s) {
         Logx.ex(_TAG, 'failed to update user fcm token', e, s);
       });
@@ -1560,8 +1640,8 @@ class FirestoreHelper {
       await FirebaseFirestore.instance.collection(USERS).doc(userId).update({
         'blocServiceId': blocServiceId,
       }).then((value) {
-        Logx.i(_TAG,
-            userId + " user bloc service id updated to : " + blocServiceId);
+        Logx.i(
+            _TAG, "$userId user bloc service id updated to : $blocServiceId");
       }).catchError((e, s) {
         Logx.ex(_TAG, 'failed to update user bloc service id', e, s);
       });
@@ -1587,4 +1667,60 @@ class FirestoreHelper {
         .get();
   }
 
+  /** user lounge **/
+  static pushUserLounge(UserLounge userLounge) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection(USER_LOUNGES)
+          .doc(userLounge.id)
+          .set(userLounge.toMap());
+    } on PlatformException catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } on Exception catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } catch (e) {
+      logger.e(e);
+    }
+  }
+
+  static Future<QuerySnapshot<Object?>> pullUserLoungeMembers(String loungeId) {
+    return FirebaseFirestore.instance
+        .collection(USER_LOUNGES)
+        .where('loungeId', isEqualTo: loungeId)
+        .get();
+  }
+
+  static pullUserLounge(String userId, String loungeId) {
+    return FirebaseFirestore.instance
+        .collection(USER_LOUNGES)
+        .where('userId', isEqualTo: userId)
+        .where('loungeId', isEqualTo: loungeId)
+        .get();
+  }
+
+  static getUserLoungeMembers(String loungeId) {
+    return FirebaseFirestore.instance
+        .collection(USER_LOUNGES)
+        .where('loungeId', isEqualTo: loungeId)
+        .snapshots();
+  }
+
+  static void updateUserLoungeLastAccessed(String userLoungeId) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection(USER_LOUNGES)
+          .doc(userLoungeId)
+          .update({'lastAccessedTime': Timestamp.now().millisecondsSinceEpoch});
+    } on PlatformException catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } on Exception catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } catch (e) {
+      logger.e(e);
+    }
+  }
+
+  static void deleteUserLounge(String docId) {
+    FirebaseFirestore.instance.collection(USER_LOUNGES).doc(docId).delete();
+  }
 }

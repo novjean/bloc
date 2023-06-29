@@ -2,6 +2,7 @@ import 'package:bloc/db/shared_preferences/user_preferences.dart';
 import 'package:bloc/screens/privacy_policy_screen.dart';
 import 'package:bloc/screens/refund_policy_screen.dart';
 import 'package:bloc/screens/terms_and_conditions_screen.dart';
+import 'package:bloc/widgets/ui/app_bar_title.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -11,9 +12,10 @@ import '../../db/entity/user.dart' as blocUser;
 import '../helpers/firestorage_helper.dart';
 import '../helpers/firestore_helper.dart';
 import '../routes/route_constants.dart';
+
+import '../utils/constants.dart';
 import '../utils/logx.dart';
 import '../widgets/ui/sized_listview_block.dart';
-import 'login_screen.dart';
 
 class AccountScreen extends StatelessWidget {
   static const String _TAG = 'AccountScreen';
@@ -22,9 +24,11 @@ class AccountScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('bloc | account'),
+        backgroundColor: Colors.black,
+        title: AppBarTitle(title: 'account',),
+        titleSpacing: 0,
       ),
-      backgroundColor: Theme.of(context).backgroundColor,
+      backgroundColor: Constants.background,
       body: _buildBody(context),
     );
   }
@@ -89,7 +93,7 @@ class AccountScreen extends StatelessWidget {
                 context: context,
                 builder: (BuildContext context) {
                   return AlertDialog(
-                    title: const Text("delete account"),
+                    title: const Text('delete account'),
                     content: const Text("deleting your account will delete your access and all your information on this site. are you sure you want to continue?"),
                     actions: [
                       TextButton(
@@ -136,7 +140,8 @@ class AccountScreen extends StatelessWidget {
               );
             }),
         const Divider(),
-        const SizedBox(height: 10.0),
+        const Spacer(),
+        const Text('v ${Constants.appVersion}', textAlign: TextAlign.center, style: TextStyle(color: Constants.primary),)
       ],
     );
   }
