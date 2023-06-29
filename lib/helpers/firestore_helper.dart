@@ -1690,6 +1690,13 @@ class FirestoreHelper {
         .get();
   }
 
+  static pullUserLounges(String userId) {
+    return FirebaseFirestore.instance
+        .collection(USER_LOUNGES)
+        .where('userId', isEqualTo: userId)
+        .get();
+  }
+
   static pullUserLounge(String userId, String loungeId) {
     return FirebaseFirestore.instance
         .collection(USER_LOUNGES)
@@ -1723,4 +1730,6 @@ class FirestoreHelper {
   static void deleteUserLounge(String docId) {
     FirebaseFirestore.instance.collection(USER_LOUNGES).doc(docId).delete();
   }
+
+
 }

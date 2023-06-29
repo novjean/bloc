@@ -2,12 +2,31 @@ import 'dart:convert';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../utils/logx.dart';
 import '../entity/user.dart';
 
 class UserPreferences {
+  static const String _TAG = 'UserPreferences';
+
   static late SharedPreferences _preferences;
 
   static const _keyUser = 'user';
+
+  static const _keyListLounges = 'list_lounges';
+
+  static Future setListLounges(List<String> listLounges) async {
+    await _preferences.setStringList(_keyListLounges, listLounges);
+  }
+
+  static List<String> getListLounges() {
+    List<String> list = [];
+    try{
+      list = _preferences.getStringList(_keyListLounges)!;
+    } catch(e){
+      Logx.em(_TAG, e.toString());
+    }
+    return list;
+  }
 
   static var myUser = User(
       id: '',
@@ -58,6 +77,8 @@ class UserPreferences {
         lastSeenAt: 0,
         isBanned: false,
         isAppUser: false));
+
+    setListLounges([]);
   }
 
   static void setUserFcmToken(String token) {

@@ -17,6 +17,7 @@ exports.loungeChatFunction = functions
         },
         data: {
           type: 'lounge_chats',
+          document: JSON.stringify(snapshot.data()),
         },
       });
     });

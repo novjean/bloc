@@ -241,7 +241,7 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
                   DocumentSnapshot document = snapshot.data!.docs[i];
                   Map<String, dynamic> data =
                       document.data()! as Map<String, dynamic>;
-                  final LoungeChat chat = Fresh.freshChatMap(data, false);
+                  final LoungeChat chat = Fresh.freshLoungeChatMap(data, false);
                   mChats.add(chat);
                 }
 

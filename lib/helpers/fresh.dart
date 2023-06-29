@@ -772,21 +772,21 @@ class Fresh {
       freshChallenge = freshChallenge.copyWith(points: challenge.points);
     } catch (e) {
       Logx.em(
-          _TAG, 'challenge points not exist for challenge id: ' + challenge.id);
+          _TAG, 'challenge points not exist for id: ${challenge.id}');
     }
     try {
       freshChallenge =
           freshChallenge.copyWith(clickCount: challenge.clickCount);
     } catch (e) {
       Logx.em(_TAG,
-          'challenge clickCount not exist for challenge id: ' + challenge.id);
+          'challenge clickCount not exist for id: ${challenge.id}');
     }
     try {
       freshChallenge =
           freshChallenge.copyWith(dialogTitle: challenge.dialogTitle);
     } catch (e) {
       Logx.em(_TAG,
-          'challenge dialogTitle not exist for challenge id: ' + challenge.id);
+          'challenge dialogTitle not exist for challenge id: ${challenge.id}');
     }
     try {
       freshChallenge =
@@ -794,8 +794,7 @@ class Fresh {
     } catch (e) {
       Logx.em(
           _TAG,
-          'challenge dialogAcceptText not exist for challenge id: ' +
-              challenge.id);
+          'challenge dialogAcceptText not exist for challenge id: ${challenge.id}');
     }
     try {
       freshChallenge = freshChallenge.copyWith(
@@ -803,15 +802,14 @@ class Fresh {
     } catch (e) {
       Logx.em(
           _TAG,
-          'challenge dialogAccept2Text not exist for challenge id: ' +
-              challenge.id);
+          'challenge dialogAccept2Text not exist for challenge id: ${challenge.id}');
     }
 
     return freshChallenge;
   }
 
-  /** chat **/
-  static LoungeChat freshChatMap(
+  /** lounge chat **/
+  static LoungeChat freshLoungeChatMap(
       Map<String, dynamic> map, bool shouldUpdate) {
     LoungeChat chat = Dummy.getDummyLoungeChat();
     bool shouldPush = true;

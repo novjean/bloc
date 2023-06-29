@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:bloc/db/entity/celebration.dart';
+import 'package:bloc/db/entity/lounge_chat.dart';
 import 'package:bloc/db/entity/user.dart' as blocUser;
 import 'package:bloc/db/shared_preferences/ui_preferences.dart';
 import 'package:bloc/screens/lounge/lounges_screen.dart';
@@ -20,6 +21,7 @@ import 'package:upgrader/upgrader.dart';
 import '../db/entity/ad.dart';
 import '../db/entity/party_guest.dart';
 import '../db/entity/reservation.dart';
+import '../db/entity/user_lounge.dart';
 import '../db/shared_preferences/user_preferences.dart';
 import '../helpers/firestore_helper.dart';
 import '../helpers/fresh.dart';
@@ -134,6 +136,22 @@ class _MainScreenState extends State<MainScreen> {
           _TAG, "error retrieving users for phone : ${user.phoneNumber}", e, s);
     });
 
+    if(UserPreferences.isUserLoggedIn()){
+      FirestoreHelper.pullUserLounges(UserPreferences.myUser.id).then((res) {
+        if(res.docs.isNotEmpty){
+          List<String> userLounges = [];
+          for (int i = 0; i < res.docs.length; i++) {
+            DocumentSnapshot document = res.docs[i];
+            Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+            UserLounge userLounge = Fresh.freshUserLoungeMap(data, false);
+
+            userLounges.add(userLounge.loungeId);
+          }
+          UserPreferences.setListLounges(userLounges);
+        }
+      });
+    }
+
     if (!kIsWeb) {
       //the following lines are essential for notification to work in iOS
       final fbm = FirebaseMessaging.instance;
@@ -157,7 +175,12 @@ class _MainScreenState extends State<MainScreen> {
         switch(type){
           case 'lounge_chats':{
             UiPreferences.setHomePageIndex(2);
-            showNotificationChatChannel(message);
+            LoungeChat chat = Fresh.freshLoungeChatMap(jsonDecode(data['document']), false);
+            if(UserPreferences.isUserLoggedIn() && chat.userId != UserPreferences.myUser.id){
+              if(UserPreferences.getListLounges().contains(chat.loungeId)){
+                showNotificationChatChannel(message);
+              }
+            }
             break;
           }
           case 'ads':{
@@ -450,6 +473,7 @@ class _MainScreenState extends State<MainScreen> {
       case 'logout':
         {
           UserPreferences.resetUser();
+
           await FirebaseAuth.instance.signOut();
 
           GoRouter.of(context)

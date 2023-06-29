@@ -88,7 +88,7 @@ class LoungeItem extends StatelessWidget{
               DocumentSnapshot document = snapshot.data!.docs[0];
               Map<String, dynamic> data =
               document.data()! as Map<String, dynamic>;
-              final LoungeChat chat = Fresh.freshChatMap(data, false);
+              final LoungeChat chat = Fresh.freshLoungeChatMap(data, false);
 
               return Padding(
                 padding: const EdgeInsets.all(5),
