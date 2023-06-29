@@ -1,5 +1,6 @@
 import 'package:bloc/db/shared_preferences/user_preferences.dart';
 import 'package:bloc/helpers/firestore_helper.dart';
+import 'package:bloc/main.dart';
 import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -65,7 +66,11 @@ class LoungesScreen extends StatelessWidget {
                                           'id': lounge.id,
                                         });
                                   } else {
-                                    Toaster.shortToast('log in to access community');
+                                    if(!kIsWeb){
+                                      Toaster.shortToast('please log in to access community');
+                                    } else {
+                                      Toaster.shortToast('log in to the bloc app to access community');
+                                    }
                                   }
                                 });
                           });

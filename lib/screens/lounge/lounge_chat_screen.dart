@@ -409,28 +409,32 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
                   //pick image from gallery button
                   IconButton(
                       onPressed: () async {
-                        if(isMember){
-                          final ImagePicker picker = ImagePicker();
-                          final XFile? image = await picker.pickImage(
-                              source: ImageSource.gallery,
-                              imageQuality: 95,
-                              maxWidth: 768);
-                          storePhotoChat(image);
+                        if(!kIsWeb){
+                          if(isMember){
+                            final ImagePicker picker = ImagePicker();
+                            final XFile? image = await picker.pickImage(
+                                source: ImageSource.gallery,
+                                imageQuality: 95,
+                                maxWidth: 768);
+                            storePhotoChat(image);
 
-                          // // Picking multiple images
-                          // final List<XFile> images =
-                          // await picker.pickMultiImage(imageQuality: 70);
-                          //
-                          // // uploading & sending image one by one
-                          // for (var i in images) {
-                          //   Logx.i(_TAG, 'image path: ${i.path}');
-                          //   setState(() => _isUploading = true);
-                          //
-                          //   // await APIs.sendChatImage(widget.user, File(i.path));
-                          //   setState(() => _isUploading = false);
-                          // }
+                            // // Picking multiple images
+                            // final List<XFile> images =
+                            // await picker.pickMultiImage(imageQuality: 70);
+                            //
+                            // // uploading & sending image one by one
+                            // for (var i in images) {
+                            //   Logx.i(_TAG, 'image path: ${i.path}');
+                            //   setState(() => _isUploading = true);
+                            //
+                            //   // await APIs.sendChatImage(widget.user, File(i.path));
+                            //   setState(() => _isUploading = false);
+                            // }
+                          } else {
+                            Toaster.shortToast('have the 🍕 and join us to post photo');
+                          }
                         } else {
-                          Toaster.shortToast('have the 🍕 and join us to post photo');
+                          Toaster.shortToast('bloc app is required to be able to post photo');
                         }
                       },
                       icon: const Icon(Icons.image,
@@ -439,15 +443,19 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
                   //take image from camera button
                   IconButton(
                       onPressed: () async {
-                        if(isMember){
-                          final ImagePicker picker = ImagePicker();
-                          final XFile? image = await picker.pickImage(
-                              source: ImageSource.camera,
-                              imageQuality: 95,
-                              maxWidth: 768);
-                          storePhotoChat(image);
+                        if(!kIsWeb){
+                          if(isMember){
+                            final ImagePicker picker = ImagePicker();
+                            final XFile? image = await picker.pickImage(
+                                source: ImageSource.camera,
+                                imageQuality: 95,
+                                maxWidth: 768);
+                            storePhotoChat(image);
+                          } else {
+                            Toaster.longToast('have the 🍕 and join us to post photo');
+                          }
                         } else {
-                          Toaster.longToast('have the 🍕 and join us to post photo');
+                          Toaster.shortToast('bloc app is required to be able to post photo');
                         }
                       },
                       icon: const Icon(Icons.camera_alt_rounded,
@@ -463,21 +471,25 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
           //send message button
           MaterialButton(
             onPressed: () {
-              if(isMember) {
-                if (_textController.text.isNotEmpty) {
-                  Chat chat = Dummy.getDummyChat();
-                  chat.loungeId = mLounge.id;
-                  chat.message = _textController.text;
-                  chat.type = 'text';
-                  chat.time = Timestamp.now().millisecondsSinceEpoch;
-                  FirestoreHelper.pushChat(chat);
+              if(!kIsWeb){
+                if(isMember) {
+                  if (_textController.text.isNotEmpty) {
+                    Chat chat = Dummy.getDummyChat();
+                    chat.loungeId = mLounge.id;
+                    chat.message = _textController.text;
+                    chat.type = 'text';
+                    chat.time = Timestamp.now().millisecondsSinceEpoch;
+                    FirestoreHelper.pushChat(chat);
 
-                  FirestoreHelper.updateLoungeLastChat(
-                      mLounge.id, chat.message, chat.time);
-                  _textController.text = '';
+                    FirestoreHelper.updateLoungeLastChat(
+                        mLounge.id, chat.message, chat.time);
+                    _textController.text = '';
+                  }
+                } else {
+                  Toaster.shortToast('have the 🍕 slice and join us to chat');
                 }
               } else {
-                Toaster.shortToast('have the 🍕 slice and join us to chat');
+                Toaster.shortToast('bloc app is required to be able to chat');
               }
             },
             minWidth: 0,

@@ -28,7 +28,6 @@ import '../main.dart';
 import '../routes/route_constants.dart';
 import '../utils/logx.dart';
 import 'account_screen.dart';
-import 'box_office/box_office_screen.dart';
 import 'captain/captain_main_screen.dart';
 import 'home_screen.dart';
 import 'manager/manager_main_screen.dart';
@@ -276,6 +275,7 @@ class _MainScreenState extends State<MainScreen> {
       final fbm = FirebaseMessaging.instance;
 
       blocUser.User user = UserPreferences.getUser();
+
       if (user.clearanceLevel >= Constants.CAPTAIN_LEVEL) {
         fbm.unsubscribeFromTopic('sos');
         fbm.unsubscribeFromTopic('order');
@@ -288,7 +288,6 @@ class _MainScreenState extends State<MainScreen> {
 
       if (user.clearanceLevel >= Constants.MANAGER_LEVEL) {
         fbm.unsubscribeFromTopic('celebrations');
-        fbm.unsubscribeFromTopic('chat');
         fbm.unsubscribeFromTopic('offer');
       }
     }
