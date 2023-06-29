@@ -139,7 +139,8 @@ class AccountScreen extends StatelessWidget {
               );
             }),
         const Divider(),
-        const SizedBox(height: 10.0),
+        const Spacer(),
+        const Text('v ${Constants.appVersion}', textAlign: TextAlign.center, style: TextStyle(color: Constants.primary),)
       ],
     );
   }
