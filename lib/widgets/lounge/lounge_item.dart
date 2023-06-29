@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-import '../../db/entity/chat.dart';
+import '../../db/entity/lounge_chat.dart';
 import '../../db/entity/lounge.dart';
 import '../../helpers/firestore_helper.dart';
 import '../../helpers/fresh.dart';
@@ -76,7 +76,7 @@ class LoungeItem extends StatelessWidget{
 
   _showLastChat(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
-      stream: FirestoreHelper.getLastChat(lounge.id),
+      stream: FirestoreHelper.getLastLoungeChat(lounge.id),
       builder: (ctx, snapshot) {
         switch (snapshot.connectionState) {
           case ConnectionState.waiting:
@@ -88,7 +88,7 @@ class LoungeItem extends StatelessWidget{
               DocumentSnapshot document = snapshot.data!.docs[0];
               Map<String, dynamic> data =
               document.data()! as Map<String, dynamic>;
-              final Chat chat = Fresh.freshChatMap(data, false);
+              final LoungeChat chat = Fresh.freshChatMap(data, false);
 
               return Padding(
                 padding: const EdgeInsets.all(5),

@@ -16,7 +16,7 @@ import '../db/entity/ad.dart';
 import '../db/entity/bloc.dart';
 import '../db/entity/bloc_service.dart';
 import '../db/entity/celebration.dart';
-import '../db/entity/chat.dart';
+import '../db/entity/lounge_chat.dart';
 import '../db/entity/genre.dart';
 import '../db/entity/lounge.dart';
 import '../db/entity/offer.dart';
@@ -134,8 +134,8 @@ class Dummy {
     return dummyChallenge;
   }
 
-  static Chat getDummyChat() {
-    Chat dummyChat = Chat(
+  static LoungeChat getDummyLoungeChat() {
+    LoungeChat dummyChat = LoungeChat(
       id: StringUtils.getRandomString(28),
       loungeId: '',
       userId: UserPreferences.myUser.id,

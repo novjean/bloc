@@ -7,7 +7,7 @@ import '../db/entity/bloc.dart';
 import '../db/entity/category.dart';
 import '../db/entity/celebration.dart';
 import '../db/entity/challenge.dart';
-import '../db/entity/chat.dart';
+import '../db/entity/lounge_chat.dart';
 import '../db/entity/genre.dart';
 import '../db/entity/lounge.dart';
 import '../db/entity/party.dart';
@@ -811,9 +811,9 @@ class Fresh {
   }
 
   /** chat **/
-  static Chat freshChatMap(
+  static LoungeChat freshChatMap(
       Map<String, dynamic> map, bool shouldUpdate) {
-    Chat chat = Dummy.getDummyChat();
+    LoungeChat chat = Dummy.getDummyLoungeChat();
     bool shouldPush = true;
 
     try {
@@ -886,14 +886,14 @@ class Fresh {
 
     if (shouldPush && shouldUpdate) {
       Logx.i(_TAG, 'updating chat ${chat.id}');
-      FirestoreHelper.pushChat(chat);
+      FirestoreHelper.pushLoungeChat(chat);
     }
 
     return chat;
   }
 
-  static Chat freshChat(Chat chat) {
-    Chat freshChat = Dummy.getDummyChat();
+  static LoungeChat freshLoungeChat(LoungeChat chat) {
+    LoungeChat freshChat = Dummy.getDummyLoungeChat();
 
     try {
       freshChat = freshChat.copyWith(id: chat.id);

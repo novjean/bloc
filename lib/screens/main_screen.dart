@@ -18,7 +18,6 @@ import 'package:go_router/go_router.dart';
 import 'package:upgrader/upgrader.dart';
 
 import '../db/entity/ad.dart';
-import '../db/entity/chat.dart';
 import '../db/entity/party_guest.dart';
 import '../db/entity/reservation.dart';
 import '../db/shared_preferences/user_preferences.dart';
@@ -156,7 +155,7 @@ class _MainScreenState extends State<MainScreen> {
         String type = data['type'];
 
         switch(type){
-          case 'chat':{
+          case 'lounge_chats':{
             UiPreferences.setHomePageIndex(2);
             showNotificationChatChannel(message);
             break;
@@ -193,7 +192,7 @@ class _MainScreenState extends State<MainScreen> {
       FirebaseMessaging.onMessageOpenedApp.listen(_handleMessage);
 
       fbm.subscribeToTopic('ads');
-      fbm.subscribeToTopic('chat');
+      fbm.subscribeToTopic('lounge_chats');
 
       blocUser.User user = UserPreferences.getUser();
       if (user.clearanceLevel >= Constants.CAPTAIN_LEVEL) {

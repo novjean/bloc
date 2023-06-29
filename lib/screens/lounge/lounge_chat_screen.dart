@@ -11,7 +11,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart' as Path;
 import 'package:path_provider/path_provider.dart';
 
-import '../../db/entity/chat.dart';
+import '../../db/entity/lounge_chat.dart';
 import '../../db/entity/lounge.dart';
 import '../../db/shared_preferences/user_preferences.dart';
 import '../../helpers/dummy.dart';
@@ -45,7 +45,7 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
   var isUserLoungeLoading = true;
   var isMember = false;
 
-  List<Chat> mChats = [];
+  List<LoungeChat> mChats = [];
 
   //for handling message text changes
   final _textController = TextEditingController();
@@ -226,7 +226,7 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
 
   loadMessages() {
     return StreamBuilder<QuerySnapshot>(
-      stream: FirestoreHelper.getChats(mLounge.id),
+      stream: FirestoreHelper.getLoungeChats(mLounge.id),
       builder: (ctx, snapshot) {
         switch (snapshot.connectionState) {
           case ConnectionState.waiting:
@@ -241,7 +241,7 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
                   DocumentSnapshot document = snapshot.data!.docs[i];
                   Map<String, dynamic> data =
                       document.data()! as Map<String, dynamic>;
-                  final Chat chat = Fresh.freshChatMap(data, false);
+                  final LoungeChat chat = Fresh.freshChatMap(data, false);
                   mChats.add(chat);
                 }
 
@@ -286,8 +286,8 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
               onLongPress: () {
                 if (UserPreferences.myUser.clearanceLevel >
                     Constants.MANAGER_LEVEL) {
-                  Chat chat = mChats[index];
-                  FirestoreHelper.deleteChat(chat.id);
+                  LoungeChat chat = mChats[index];
+                  FirestoreHelper.deleteLoungeChat(chat.id);
                 }
               },
             );
@@ -474,12 +474,12 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
               if(!kIsWeb){
                 if(isMember) {
                   if (_textController.text.isNotEmpty) {
-                    Chat chat = Dummy.getDummyChat();
+                    LoungeChat chat = Dummy.getDummyLoungeChat();
                     chat.loungeId = mLounge.id;
                     chat.message = _textController.text;
                     chat.type = 'text';
                     chat.time = Timestamp.now().millisecondsSinceEpoch;
-                    FirestoreHelper.pushChat(chat);
+                    FirestoreHelper.pushLoungeChat(chat);
 
                     FirestoreHelper.updateLoungeLastChat(
                         mLounge.id, chat.message, chat.time);
@@ -519,12 +519,12 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
           StringUtils.getRandomString(28),
           newImage);
 
-      Chat chat = Dummy.getDummyChat();
+      LoungeChat chat = Dummy.getDummyLoungeChat();
       chat.loungeId = mLounge.id;
       chat.message = imageUrl;
       chat.type = 'image';
       chat.time = Timestamp.now().millisecondsSinceEpoch;
-      FirestoreHelper.pushChat(chat);
+      FirestoreHelper.pushLoungeChat(chat);
 
       FirestoreHelper.updateLoungeLastChat(mLounge.id, chat.message, chat.time);
 

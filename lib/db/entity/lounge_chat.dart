@@ -1,4 +1,4 @@
-class Chat{
+class LoungeChat{
   String id;
   String loungeId;
   String userId;
@@ -14,7 +14,7 @@ class Chat{
   List<String> downVoters;
 
 //<editor-fold desc="Data Methods">
-  Chat({
+  LoungeChat({
     required this.id,
     required this.loungeId,
     required this.userId,
@@ -31,7 +31,7 @@ class Chat{
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      (other is Chat &&
+      (other is LoungeChat &&
           runtimeType == other.runtimeType &&
           id == other.id &&
           loungeId == other.loungeId &&
@@ -76,7 +76,7 @@ class Chat{
         '}';
   }
 
-  Chat copyWith({
+  LoungeChat copyWith({
     String? id,
     String? loungeId,
     String? userId,
@@ -89,7 +89,7 @@ class Chat{
     List<String>? upVoters,
     List<String>? downVoters,
   }) {
-    return Chat(
+    return LoungeChat(
       id: id ?? this.id,
       loungeId: loungeId ?? this.loungeId,
       userId: userId ?? this.userId,
@@ -120,8 +120,8 @@ class Chat{
     };
   }
 
-  factory Chat.fromMap(Map<String, dynamic> map) {
-    return Chat(
+  factory LoungeChat.fromMap(Map<String, dynamic> map) {
+    return LoungeChat(
       id: map['id'] as String,
       loungeId: map['loungeId'] as String,
       userId: map['userId'] as String,

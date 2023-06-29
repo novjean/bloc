@@ -6,7 +6,7 @@ import 'package:bloc/db/entity/cart_item.dart';
 import 'package:bloc/db/entity/category.dart';
 import 'package:bloc/db/entity/celebration.dart';
 import 'package:bloc/db/entity/challenge.dart';
-import 'package:bloc/db/entity/chat.dart';
+import 'package:bloc/db/entity/lounge_chat.dart';
 import 'package:bloc/db/entity/genre.dart';
 import 'package:bloc/db/entity/guest_wifi.dart';
 import 'package:bloc/db/entity/history_music.dart';
@@ -44,7 +44,6 @@ class FirestoreHelper {
 
   static String ADS = 'ads';
   static String BLOCS = 'blocs';
-  static String CHATS = 'chats';
   static String CAPTAIN_SERVICES = 'captain_services';
   static String CATEGORIES = 'categories';
   static String CART_ITEMS = 'cart_items';
@@ -56,6 +55,7 @@ class FirestoreHelper {
   static String HISTORY_MUSIC = 'history_music';
   static String INVENTORY_OPTIONS = 'inventory_options';
   static String LOUNGES = 'lounges';
+  static String LOUNGE_CHATS = 'lounge_chats';
   static String MANAGER_SERVICES = 'manager_services';
   static String MANAGER_SERVICE_OPTIONS = 'manager_service_options';
   static String OFFERS = 'offers';
@@ -473,11 +473,11 @@ class FirestoreHelper {
     FirebaseFirestore.instance.collection(CHALLENGES).doc(docId).delete();
   }
 
-  /** chats **/
-  static void pushChat(Chat chat) async {
+  /** lounge chats **/
+  static void pushLoungeChat(LoungeChat chat) async {
     try {
       await FirebaseFirestore.instance
-          .collection(CHATS)
+          .collection(LOUNGE_CHATS)
           .doc(chat.id)
           .set(chat.toMap());
     } on PlatformException catch (e, s) {
@@ -489,25 +489,25 @@ class FirestoreHelper {
     }
   }
 
-  static Stream<QuerySnapshot<Object?>> getChats(String loungeId) {
+  static Stream<QuerySnapshot<Object?>> getLoungeChats(String loungeId) {
     return FirebaseFirestore.instance
-        .collection(CHATS)
+        .collection(LOUNGE_CHATS)
         .where('loungeId', isEqualTo: loungeId)
         .orderBy('time', descending: true)
         .snapshots();
   }
 
-  static Stream<QuerySnapshot<Object?>> getLastChat(String loungeId) {
+  static Stream<QuerySnapshot<Object?>> getLastLoungeChat(String loungeId) {
     return FirebaseFirestore.instance
-        .collection(CHATS)
+        .collection(LOUNGE_CHATS)
         .where('loungeId', isEqualTo: loungeId)
         .orderBy('time', descending: true)
         .limit(1)
         .snapshots();
   }
 
-  static void deleteChat(String docId) {
-    FirebaseFirestore.instance.collection(CHATS).doc(docId).delete();
+  static void deleteLoungeChat(String docId) {
+    FirebaseFirestore.instance.collection(LOUNGE_CHATS).doc(docId).delete();
   }
 
   /** cities **/

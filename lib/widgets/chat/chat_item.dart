@@ -1,7 +1,7 @@
 import 'package:bloc/utils/date_time_utils.dart';
 import 'package:flutter/material.dart';
 
-import '../../db/entity/chat.dart';
+import '../../db/entity/lounge_chat.dart';
 import '../../db/shared_preferences/user_preferences.dart';
 import '../../helpers/firestore_helper.dart';
 import '../../main.dart';
@@ -9,7 +9,7 @@ import '../../utils/constants.dart';
 import '../ui/toaster.dart';
 
 class ChatItem extends StatefulWidget {
-  final Chat chat;
+  final LoungeChat chat;
   final bool isMe;
   final bool isMember;
 
@@ -104,13 +104,13 @@ class _ChatItemState extends State<ChatItem> {
                                     widget.chat.downVoters
                                         .remove(UserPreferences.myUser.id);
                                     widget.chat.vote++;
-                                    FirestoreHelper.pushChat(widget.chat);
+                                    FirestoreHelper.pushLoungeChat(widget.chat);
                                     setState(() {});
                                   } else {
                                     widget.chat.upVoters
                                         .add(UserPreferences.myUser.id);
                                     widget.chat.vote++;
-                                    FirestoreHelper.pushChat(widget.chat);
+                                    FirestoreHelper.pushLoungeChat(widget.chat);
                                     setState(() {});
                                   }
                                 } else {
@@ -143,13 +143,13 @@ class _ChatItemState extends State<ChatItem> {
                                     widget.chat.upVoters
                                         .remove(UserPreferences.myUser.id);
                                     widget.chat.vote--;
-                                    FirestoreHelper.pushChat(widget.chat);
+                                    FirestoreHelper.pushLoungeChat(widget.chat);
                                     setState(() {});
                                   } else {
                                     widget.chat.downVoters
                                         .add(UserPreferences.myUser.id);
                                     widget.chat.vote--;
-                                    FirestoreHelper.pushChat(widget.chat);
+                                    FirestoreHelper.pushLoungeChat(widget.chat);
                                     setState(() {});
                                   }
                                 } else {
