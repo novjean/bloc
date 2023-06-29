@@ -206,7 +206,7 @@ class _EventScreenState extends State<EventScreen> {
             artists.add(bloc);
 
             if (i == snapshot.data!.docs.length - 1) {
-              artists.sort((a, b) => a.endTime.compareTo(b.endTime));
+              artists.sort((a, b) => a.name.compareTo(b.name));
               return _showArtists(context, artists);
             }
           }

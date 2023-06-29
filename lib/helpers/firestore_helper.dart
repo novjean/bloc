@@ -532,7 +532,10 @@ class FirestoreHelper {
   }
 
   static Future<QuerySnapshot<Map<String, dynamic>>> pullGenres() {
-    return FirebaseFirestore.instance.collection(GENRES).get();
+    return FirebaseFirestore.instance
+        .collection(GENRES)
+        .orderBy('name', descending: false)
+        .get();
   }
 
   static getGenres() {
@@ -1536,10 +1539,6 @@ class FirestoreHelper {
         .snapshots();
   }
 
-  static getUsers() {
-
-  }
-
   static getUsersByLevel(int level) {
     return FirebaseFirestore.instance
         .collection(USERS)
@@ -1641,8 +1640,8 @@ class FirestoreHelper {
       await FirebaseFirestore.instance.collection(USERS).doc(userId).update({
         'blocServiceId': blocServiceId,
       }).then((value) {
-        Logx.i(_TAG,
-            "$userId user bloc service id updated to : $blocServiceId");
+        Logx.i(
+            _TAG, "$userId user bloc service id updated to : $blocServiceId");
       }).catchError((e, s) {
         Logx.ex(_TAG, 'failed to update user bloc service id', e, s);
       });
