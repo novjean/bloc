@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:bloc/db/entity/history_music.dart';
 import 'package:bloc/db/entity/reservation.dart';
-import 'package:bloc/screens/box_office/box_office_screen.dart';
+import 'package:bloc/db/entity/user_lounge.dart';
 import 'package:bloc/utils/date_time_utils.dart';
 import 'package:bloc/widgets/ui/app_bar_title.dart';
 import 'package:bloc/widgets/ui/dark_button_widget.dart';
@@ -684,13 +684,31 @@ class _PartyGuestAddEditManageScreenState
                         widget.partyGuest = widget.partyGuest.copyWith(isApproved: true);
                         FirestoreHelper.pushPartyGuest(widget.partyGuest);
 
-                        //here we should notify the user
-                        if(bloc_user.fcmToken.isNotEmpty){
-                          String title = widget.party.name;
-                          String message = 'guest list request has been approved, see you soon!';
+                        if(widget.party.loungeId.isNotEmpty){
+                          FirestoreHelper.pullUserLounge(bloc_user.id, widget.party.loungeId).then((res) {
+                            if(res.docs.isEmpty){
+                              UserLounge userLounge = Dummy.getDummyUserLounge();
+                              userLounge = userLounge.copyWith(loungeId: widget.party.loungeId,
+                                userId: bloc_user.id, isAccepted: true);
+                              FirestoreHelper.pushUserLounge(userLounge);
 
-                          //send a notification
-                          Apis.sendPushNotification(bloc_user.fcmToken, title, message);
+                              if(bloc_user.fcmToken.isNotEmpty){
+                                String title = widget.party.name;
+                                String message = 'welcome to ${widget.party.name} family, your guest list request is approved!';
+
+                                //send a notification
+                                Apis.sendPushNotification(bloc_user.fcmToken, title, message);
+                              }
+                            }
+                          });
+                        } else {
+                          if(bloc_user.fcmToken.isNotEmpty){
+                            String title = widget.party.name;
+                            String message = 'your guest list request has been approved, see you soon!';
+
+                            //send a notification
+                            Apis.sendPushNotification(bloc_user.fcmToken, title, message);
+                          }
                         }
 
                         Logx.i(_TAG, 'party guest ${widget.partyGuest.name} is approved');

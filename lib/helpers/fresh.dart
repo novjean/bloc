@@ -1466,7 +1466,14 @@ class Fresh {
     try {
       party = party.copyWith(artistIds: List<String>.from(map['artistIds']));
     } catch (e) {
-      Logx.em(_TAG, 'party artistIds not exist for id: ' + party.id);
+      Logx.em(_TAG, 'party artistIds not exist for id: ${party.id}');
+      shouldPushParty = true;
+    }
+
+    try {
+      party = party.copyWith(loungeId: map['loungeId'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'party loungeId not exist for id: ${party.id}');
       shouldPushParty = true;
     }
 
@@ -1668,6 +1675,12 @@ class Fresh {
       freshParty = freshParty.copyWith(artistIds: party.artistIds);
     } catch (e) {
       Logx.em(_TAG, 'party artistIds not exist for id: ${party.id}');
+    }
+
+    try {
+      freshParty = freshParty.copyWith(loungeId: party.loungeId);
+    } catch (e) {
+      Logx.em(_TAG, 'party loungeId not exist for id: ${party.id}');
     }
 
     return freshParty;

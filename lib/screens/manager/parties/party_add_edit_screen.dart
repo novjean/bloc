@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:bloc/db/entity/bloc_service.dart';
 import 'package:bloc/helpers/fresh.dart';
 import 'package:bloc/utils/date_time_utils.dart';
+import 'package:bloc/widgets/ui/app_bar_title.dart';
 import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -15,7 +16,9 @@ import 'package:path_provider/path_provider.dart';
 
 import '../../../db/entity/challenge.dart';
 import '../../../db/entity/genre.dart';
+import '../../../db/entity/lounge.dart';
 import '../../../db/entity/party.dart';
+import '../../../helpers/dummy.dart';
 import '../../../helpers/firestorage_helper.dart';
 import '../../../helpers/firestore_helper.dart';
 import '../../../utils/logx.dart';
@@ -83,6 +86,16 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
   List<String> sArtistNames = [];
   List<Party> sArtists = [];
   List<String> sArtistIds = [];
+
+  List<Lounge> mLounges = [];
+  List<Lounge> sLounges = [];
+  List<String> sLoungeIds = [];
+  List<String> sLoungeNames = [];
+
+  late Lounge sLounge;
+  late String sLoungeId;
+  List<String> mLoungeNames=[];
+  bool isLoungesLoading = true;
 
   @override
   void initState() {
@@ -215,6 +228,34 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
       }
     });
 
+    sLounge = Dummy.getDummyLounge();
+    sLoungeId = widget.party.loungeId;
+    sLoungeIds.add(sLoungeId);
+
+    FirestoreHelper.pullLounges().then((res) {
+      if(res.docs.isNotEmpty){
+        for(int i=0;i<res.docs.length; i++){
+          DocumentSnapshot document = res.docs[i];
+          Map<String, dynamic> map = document.data()! as Map<String, dynamic>;
+          final Lounge lounge = Fresh.freshLoungeMap(map, false);
+          mLounges.add(lounge);
+          mLoungeNames.add(lounge.name);
+          if(lounge.id == sLoungeId){
+            sLounge = lounge;
+            sLounges.add(lounge);
+            sLoungeNames.add(lounge.name);
+          }
+        }
+        setState(() {
+          isLoungesLoading = false;
+        });
+      } else {
+        setState(() {
+          isLoungesLoading = false;
+        });
+      }
+    });
+
     for (int i = 1; i <= 10; i++) {
       guestCounts.add(i.toString());
     }
@@ -224,13 +265,14 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
   @override
   Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(
-          title: Text('party | ${widget.task}'),
+          titleSpacing: 0,
+          title: AppBarTitle(title: '${widget.task} party',)
         ),
         body: _buildBody(context),
       );
 
   _buildBody(BuildContext context) {
-    return _isBlocServicesLoading && isGenresLoading && isChallengesLoading
+    return _isBlocServicesLoading && isGenresLoading && isChallengesLoading && isLoungesLoading
         ? const LoadingWidget()
         : ListView(
             padding: const EdgeInsets.symmetric(horizontal: 32),
@@ -305,7 +347,7 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
               ),
               const SizedBox(height: 24),
               TextFieldWidget(
-                label: 'name \*',
+                label: 'name *',
                 text: widget.party.name,
                 onChanged: (name) =>
                     widget.party = widget.party.copyWith(name: name),
@@ -386,11 +428,74 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
               const SizedBox(height: 24),
               Column(
                 children: [
-                  Row(
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 8.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Text(
+                          'lounge',
+                          style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  MultiSelectDialogField(
+                    items: mLounges
+                        .map((e) => MultiSelectItem(e,
+                        e.name))
+                        .toList(),
+                    initialValue: sLounges.map((e) => e).toList(),
+                    listType: MultiSelectListType.CHIP,
+                    buttonIcon: Icon(
+                      Icons.arrow_drop_down,
+                      color: Colors.grey.shade700,
+                    ),
+                    title: const Text('select lounge'),
+                    buttonText: const Text(
+                      'select',
+                    ),
+                    decoration: BoxDecoration(
+                      borderRadius: const BorderRadius.all(Radius.circular(5)),
+                      border: Border.all(
+                        width: 0.0,
+                      ),
+                    ),
+                    searchable: true,
+                    onConfirm: (values) {
+                      sLounges = values as List<Lounge>;
+                      sLoungeIds = [];
+                      sLoungeNames = [];
+
+                      for (Lounge lounge in sLounges) {
+                        sLoungeIds.add(lounge.id);
+                        sLoungeNames.add(lounge.name);
+                      }
+
+                      if (sLoungeIds.isEmpty) {
+                        Logx.i(_TAG, 'no lounges selected');
+                        widget.party =
+                            widget.party.copyWith(loungeId: '');
+                      } else {
+                        widget.party =
+                            widget.party.copyWith(loungeId: sLoungeIds.first);
+                      }
+                    },
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 24),
+              Column(
+                children: [
+                  const Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Padding(
-                        padding: const EdgeInsets.only(bottom: 8.0),
+                        padding: EdgeInsets.only(bottom: 8.0),
                         child: Text(
                           'genre',
                           style: TextStyle(

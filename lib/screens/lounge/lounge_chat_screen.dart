@@ -81,17 +81,22 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
               isUserLoungeLoading = false;
             });
           } else {
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              if(mLounge.isVip){
-                showPrivateLoungeDialog(context);
-              }
-            });
-
-            setState(() {
-              isMember = false;
-              isUserLoungeLoading = false;
-            });
-            // todo: popup dialog with lil bit about the community
+            if(UserPreferences.myUser.clearanceLevel>=Constants.MANAGER_LEVEL){
+              setState(() {
+                isMember = false;
+                isUserLoungeLoading = false;
+              });
+            } else {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                if(mLounge.isVip){
+                  showPrivateLoungeDialog(context);
+                }
+              });
+              setState(() {
+                isMember = false;
+                isUserLoungeLoading = false;
+              });
+            }
           }
         });
       } else {

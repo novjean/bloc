@@ -243,7 +243,8 @@ class Dummy {
         isChallengeActive: false,
         overrideChallengeNum: 0,
         chapter: '',
-        artistIds: []);
+        artistIds: [],
+        loungeId: '');
 
     return dummyParty;
   }

@@ -39,6 +39,8 @@ class Party {
 
   List<String> artistIds;
 
+  String loungeId;
+
 //<editor-fold desc="Data Methods">
   Party({
     required this.id,
@@ -73,6 +75,7 @@ class Party {
     required this.ticketsSoldCount,
     required this.ticketsSalesTotal,
     required this.artistIds,
+    required this.loungeId,
   });
 
   @override
@@ -111,7 +114,8 @@ class Party {
           isTicketed == other.isTicketed &&
           ticketsSoldCount == other.ticketsSoldCount &&
           ticketsSalesTotal == other.ticketsSalesTotal &&
-          artistIds == other.artistIds);
+          artistIds == other.artistIds &&
+          loungeId == other.loungeId);
 
   @override
   int get hashCode =>
@@ -146,7 +150,8 @@ class Party {
       isTicketed.hashCode ^
       ticketsSoldCount.hashCode ^
       ticketsSalesTotal.hashCode ^
-      artistIds.hashCode;
+      artistIds.hashCode ^
+      loungeId.hashCode;
 
   @override
   String toString() {
@@ -183,6 +188,7 @@ class Party {
         ' ticketsSoldCount: $ticketsSoldCount,' +
         ' ticketsSalesTotal: $ticketsSalesTotal,' +
         ' artistIds: $artistIds,' +
+        ' loungeId: $loungeId,' +
         '}';
   }
 
@@ -219,6 +225,7 @@ class Party {
     int? ticketsSoldCount,
     double? ticketsSalesTotal,
     List<String>? artistIds,
+    String? loungeId,
   }) {
     return Party(
       id: id ?? this.id,
@@ -253,6 +260,7 @@ class Party {
       ticketsSoldCount: ticketsSoldCount ?? this.ticketsSoldCount,
       ticketsSalesTotal: ticketsSalesTotal ?? this.ticketsSalesTotal,
       artistIds: artistIds ?? this.artistIds,
+      loungeId: loungeId ?? this.loungeId,
     );
   }
 
@@ -290,6 +298,7 @@ class Party {
       'ticketsSoldCount': this.ticketsSoldCount,
       'ticketsSalesTotal': this.ticketsSalesTotal,
       'artistIds': this.artistIds,
+      'loungeId': this.loungeId,
     };
   }
 
@@ -327,6 +336,7 @@ class Party {
       ticketsSoldCount: map['ticketsSoldCount'] as int,
       ticketsSalesTotal: map['ticketsSalesTotal'] as double,
       artistIds: map['artistIds'] as List<String>,
+      loungeId: map['loungeId'] as String,
     );
   }
 

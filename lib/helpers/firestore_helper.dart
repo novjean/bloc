@@ -647,6 +647,13 @@ class FirestoreHelper {
     }
   }
 
+  static Future<QuerySnapshot<Map<String, dynamic>>> pullLounges() {
+    return FirebaseFirestore.instance
+        .collection(LOUNGES)
+        .orderBy('name', descending: false)
+        .get();
+  }
+
   static Future<QuerySnapshot<Map<String, dynamic>>> pullLounge(String id) {
     return FirebaseFirestore.instance
         .collection(LOUNGES)
@@ -1730,6 +1737,5 @@ class FirestoreHelper {
   static void deleteUserLounge(String docId) {
     FirebaseFirestore.instance.collection(USER_LOUNGES).doc(docId).delete();
   }
-
 
 }
