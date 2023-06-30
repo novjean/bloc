@@ -14,6 +14,7 @@ import '../../../helpers/firestore_helper.dart';
 import '../../../utils/logx.dart';
 import '../../../utils/string_utils.dart';
 import '../../../widgets/profile_widget.dart';
+import '../../../widgets/ui/app_bar_title.dart';
 import '../../../widgets/ui/button_widget.dart';
 import '../../../widgets/ui/dark_button_widget.dart';
 import '../../../widgets/ui/loading_widget.dart';
@@ -56,8 +57,19 @@ class _UserAddEditScreenState extends State<UserAddEditScreen> {
   TimeOfDay _sTimeOfDay = TimeOfDay.now();
   bool _isStartDateBeingSet = true;
 
+  String sGender = 'female';
+  List<String> genders = [
+    'male',
+    'female',
+    'transgender',
+    'non-binary/non-conforming',
+    'prefer not to respond'
+  ];
+
   @override
   void initState() {
+    sGender = widget.user.gender;
+
     super.initState();
 
     for(UserLevel userLevel in widget.userLevels){
@@ -105,7 +117,8 @@ class _UserAddEditScreenState extends State<UserAddEditScreen> {
   @override
   Widget build(BuildContext context) => Scaffold(
     appBar: AppBar(
-      title: Text('user | ${widget.task}'),
+      titleSpacing: 0,
+      title: AppBarTitle(title: '${widget.task} user',),
     ),
     body: _buildBody(context),
   );
@@ -177,6 +190,61 @@ class _UserAddEditScreenState extends State<UserAddEditScreen> {
           onChanged: (value) {
             widget.user = widget.user.copyWith(email: value);
           },
+        ),
+        const SizedBox(height: 24),
+        Column(
+          children: [
+            const Padding(
+              padding: EdgeInsets.only(bottom: 8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Text(
+                    'gender',
+                  ),
+                ],
+              ),
+            ),
+            FormField<String>(
+              builder: (FormFieldState<String> state) {
+                return InputDecorator(
+                  key: const ValueKey('gender_dropdown'),
+                  decoration: InputDecoration(
+                      fillColor: Colors.white,
+                      errorStyle: TextStyle(
+                          color: Theme.of(context).errorColor,
+                          fontSize: 16.0),
+                      hintText: 'please select gender',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      ),
+                  isEmpty: sGender == '',
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton<String>(
+                      value: sGender,
+                      isDense: true,
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          sGender = newValue!;
+
+                          widget.user =
+                              widget.user.copyWith(gender: sGender);
+                          state.didChange(newValue);
+                        });
+                      },
+                      items: genders.map((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ],
         ),
         const SizedBox(height: 24),
         Column(

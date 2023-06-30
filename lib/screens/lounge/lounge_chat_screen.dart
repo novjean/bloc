@@ -471,7 +471,7 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
           //send message button
           MaterialButton(
             onPressed: () {
-              if(!kIsWeb){
+              // if(!kIsWeb){
                 if(isMember) {
                   if (_textController.text.isNotEmpty) {
                     LoungeChat chat = Dummy.getDummyLoungeChat();
@@ -488,9 +488,9 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
                 } else {
                   Toaster.shortToast('have the 🍕 slice and join us to chat');
                 }
-              } else {
-                Toaster.shortToast('bloc app is required to be able to chat');
-              }
+              // } else {
+              //   Toaster.shortToast('bloc app is required to be able to chat');
+              // }
             },
             minWidth: 0,
             padding:
