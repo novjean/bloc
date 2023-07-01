@@ -15,8 +15,10 @@ class LoungeMemberItem extends StatefulWidget{
   User user;
   String loungeId;
   bool isMember;
+  bool isUserLoungePresent;
 
-  LoungeMemberItem({Key? key, required this.user, required this.loungeId, required this.isMember}) : super(key: key);
+  LoungeMemberItem({Key? key, required this.user, required this.loungeId,
+    required this.isMember, required this.isUserLoungePresent}) : super(key: key);
 
   @override
   State<LoungeMemberItem> createState() => _LoungeMemberItemState();
@@ -73,30 +75,35 @@ class _LoungeMemberItemState extends State<LoungeMemberItem> {
                   trailing: Checkbox(
                     value: widget.isMember,
                     onChanged: (value) {
-                      widget.isMember = value!;
+                      if(widget.isUserLoungePresent){
+                        if(value!){
+                          FirestoreHelper.pullUserLounge(widget.user.id, widget.loungeId).then((res) {
+                            if(res.docs.isNotEmpty){
+                              DocumentSnapshot document = res.docs[0];
+                              Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+                              UserLounge userLounge = Fresh.freshUserLoungeMap(data, false);
 
-                      if(value!){
-                        UserLounge userLounge = Dummy.getDummyUserLounge();
-                        userLounge = userLounge.copyWith(loungeId : widget.loungeId, userId: widget.user.id);
-                        FirestoreHelper.pushUserLounge(userLounge);
-
-                        Logx.ist(LoungeMemberItem._TAG, '${widget.user.name} ${widget.user.surname} is a new member');
+                              userLounge = userLounge.copyWith(isAccepted: true);
+                              FirestoreHelper.pushUserLounge(userLounge);
+                              Logx.ist(LoungeMemberItem._TAG, '${widget.user.name} ${widget.user.surname} is a new member');
+                            }
+                          });
+                        } else {
+                          deleteUserLounge();
+                        }
                       } else {
-                        FirestoreHelper.pullUserLounge(widget.user.id, widget.loungeId).then((res) {
-                          if(res.docs.isNotEmpty){
-                            DocumentSnapshot document = res.docs[0];
-                            Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-                            UserLounge userLounge = Fresh.freshUserLoungeMap(data, false);
+                        if(value!){
+                          UserLounge userLounge = Dummy.getDummyUserLounge();
+                          userLounge = userLounge.copyWith(loungeId : widget.loungeId, userId: widget.user.id);
+                          FirestoreHelper.pushUserLounge(userLounge);
 
-                            FirestoreHelper.deleteUserLounge(userLounge.id);
-                            Logx.ist(LoungeMemberItem._TAG, '${widget.user.name} ${widget.user.surname} is removed from the lounge');
-                          } else {
-                            Logx.i(LoungeMemberItem._TAG, 'user lounge not found. so nothing to delete');
-                          }
-                        });
+                          Logx.ist(LoungeMemberItem._TAG, '${widget.user.name} ${widget.user.surname} is a new member');
+                        } else {
+                          deleteUserLounge();
+                        }
                       }
                       setState(() {
-
+                        widget.isMember = !widget.isMember;
                       });
                     },
                   ),
@@ -109,5 +116,20 @@ class _LoungeMemberItemState extends State<LoungeMemberItem> {
         ),
       ),
     );
+  }
+
+  void deleteUserLounge() {
+    FirestoreHelper.pullUserLounge(widget.user.id, widget.loungeId).then((res) {
+      if(res.docs.isNotEmpty){
+        DocumentSnapshot document = res.docs[0];
+        Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+        UserLounge userLounge = Fresh.freshUserLoungeMap(data, false);
+
+        FirestoreHelper.deleteUserLounge(userLounge.id);
+        Logx.ist(LoungeMemberItem._TAG, '${widget.user.name} ${widget.user.surname} is removed from the lounge');
+      } else {
+        Logx.i(LoungeMemberItem._TAG, 'user lounge not found. so nothing to delete');
+      }
+    });
   }
 }

@@ -38,7 +38,7 @@ import 'profile/profile_add_edit_register_page.dart';
 import 'profile/profile_screen.dart';
 
 class MainScreen extends StatefulWidget {
-  MainScreen({Key? key}) : super(key: key);
+  const MainScreen({Key? key}) : super(key: key);
 
   @override
   State<MainScreen> createState() => _MainScreenState();
@@ -56,14 +56,6 @@ class _MainScreenState extends State<MainScreen> {
   late int _page;
 
   late String title;
-
-  static const MethodChannel _channel = MethodChannel('bloc.novatech.com/channel_test');
-
-  Map<String, String> channelMap = {
-    "id": "CHAT_MESSAGES",
-    "name": "Chats",
-    "description": "Chat notifications",
-  };
 
   List icons = [
     Icons.home,
@@ -232,7 +224,6 @@ class _MainScreenState extends State<MainScreen> {
       if (user.clearanceLevel >= Constants.MANAGER_LEVEL) {
         fbm.subscribeToTopic('offer');
       }
-
 
       if (UserPreferences.isUserLoggedIn()) {
         // update the user is in app mode

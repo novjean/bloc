@@ -7,10 +7,10 @@ import 'package:flutter/material.dart';
 import '../../../db/entity/user.dart';
 import '../../../db/entity/user_lounge.dart';
 import '../../../helpers/fresh.dart';
-import '../../../utils/constants.dart';
+import '../../../main.dart';
 import '../../../utils/logx.dart';
 import '../../../widgets/lounge/lounge_member_item.dart';
-import 'manage_lounge_members_add_screen.dart';
+import '../../../widgets/ui/sized_listview_block.dart';
 
 class ManageLoungeMembersScreen extends StatefulWidget {
   String loungeId;
@@ -31,13 +31,23 @@ class _ManageLoungeMembersScreenState extends State<ManageLoungeMembersScreen> {
 
   List<User> mMembers = [];
   List<User> mNonMembers = [];
+  List<User> mPendingMembers = [];
+  List<User> mBannedMembers = [];
   List<String> mMemberIds = [];
+  List<String> mPendingMemberIds = [];
+  List<String> mBannedMemberIds = [];
 
   List<User> mUsers = [];
   bool isMembersLoading = true;
 
+  late List<String> mOptions;
+  String sOption = '';
+
   @override
   void initState() {
+    mOptions = ['pending', 'members', 'add', 'banned'];
+    sOption = mOptions.first;
+
     FirestoreHelper.pullUserLoungeMembers(widget.loungeId).then((res) {
       if (res.docs.isNotEmpty) {
         for (int i = 0; i < res.docs.length; i++) {
@@ -45,7 +55,16 @@ class _ManageLoungeMembersScreenState extends State<ManageLoungeMembersScreen> {
           Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
           UserLounge userLounge = Fresh.freshUserLoungeMap(data, false);
           mUserLounges.add(userLounge);
-          mMemberIds.add(userLounge.userId);
+
+          if(userLounge.isBanned){
+            mBannedMemberIds.add(userLounge.userId);
+          } else {
+            if (userLounge.isAccepted) {
+              mMemberIds.add(userLounge.userId);
+            } else if (!userLounge.isAccepted){
+              mPendingMemberIds.add(userLounge.userId);
+            }
+          }
         }
         Logx.i(_TAG, 'members in the lounge: ${mUserLounges.length}');
       } else {
@@ -67,6 +86,10 @@ class _ManageLoungeMembersScreenState extends State<ManageLoungeMembersScreen> {
 
             if (mMemberIds.contains(user.id)) {
               mMembers.add(user);
+            } else if(mPendingMemberIds.contains(user.id)) {
+              mPendingMembers.add(user);
+            }  else if(mBannedMemberIds.contains(user.id)) {
+              mBannedMembers.add(user);
             } else {
               mNonMembers.add(user);
             }
@@ -95,92 +118,124 @@ class _ManageLoungeMembersScreenState extends State<ManageLoungeMembersScreen> {
             title: '${mMembers.length} members',
           ),
         ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                  builder: (ctx) =>
-                      ManageLoungeMembersAddScreen(loungeId: widget.loungeId,
-                        nonMembers: mNonMembers,)),
-            );
-          },
-          backgroundColor: Theme
-              .of(context)
-              .primaryColor,
-          tooltip: 'add members',
-          elevation: 5,
-          splashColor: Colors.grey,
-          child: const Icon(
-            Icons.add,
-            color: Colors.black,
-            size: 29,
-          ),
-        ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-
         body: isUserLoungesLoading && isMembersLoading
             ? const LoadingWidget()
             : _buildBody(context));
   }
 
   _buildBody(BuildContext context) {
-    return ListView.builder(
-        itemCount: mMembers.length,
-        scrollDirection: Axis.vertical,
-        itemBuilder: (ctx, index) {
-          return GestureDetector(
-              child: LoungeMemberItem(
-                user: mMembers[index],
-                loungeId: widget.loungeId,
-                isMember: true,
-              ),
-              onDoubleTap: () {
-                User sUser = mMembers[index];
-                Logx.i(_TAG, 'double tap user selected : ${sUser.name}');
+    List<User> list = [];
+    bool isMember = false;
+    bool isUserLoungePresent = true;
 
-                // showDialog(
-                //   context: context,
-                //   builder: (BuildContext context) {
-                //     return AlertDialog(
-                //       title: Text("delete user : ${sUser.name}"),
-                //       content: const Text(
-                //           "would you like to delete the user?"),
-                //       actions: [
-                //         TextButton(
-                //           child: const Text("yes"),
-                //           onPressed: () {
-                //             if (sUser.imageUrl.isNotEmpty) {
-                //               FirestorageHelper.deleteFile(
-                //                   sUser.imageUrl);
-                //             }
-                //             FirestoreHelper.deleteUser(sUser);
-                //             Logx.i(_TAG, 'user is deleted');
-                //
-                //             Navigator.of(context).pop();
-                //           },
-                //         ),
-                //         TextButton(
-                //           child: const Text("no"),
-                //           onPressed: () {
-                //             Navigator.of(context).pop();
-                //           },
-                //         )
-                //       ],
-                //     );
-                //   },
-                // );
-              },
-              onTap: () {
-                User sUser = mUsers[index];
-                Logx.i(_TAG, 'user selected : ${sUser.name}');
+    if(sOption == mOptions.first){
+      list = mPendingMembers;
+    } else if(sOption == mOptions[1]){
+      list = mMembers;
+      isMember = true;
+    } else if(sOption == mOptions[2]) {
+      list = mNonMembers;
+      isUserLoungePresent = false;
+    } else {
+      list = mBannedMembers;
+    }
 
-                // Navigator.of(context).push(MaterialPageRoute(
-                //     builder: (ctx) => UserAddEditScreen(
-                //       user: sUser,
-                //       task: 'edit',
-                //       userLevels: mUserLevels,
-                //     )));
-              });
-        });
+    return Column(
+      children: [
+        displayOptions(context),
+        const Divider(),
+        Expanded(
+          child: ListView.builder(
+              itemCount: list.length,
+              scrollDirection: Axis.vertical,
+              itemBuilder: (ctx, index) {
+                return
+
+                  GestureDetector(
+                    child: LoungeMemberItem(
+                      user: list[index],
+                      loungeId: widget.loungeId,
+                      isMember: isMember,
+                      isUserLoungePresent:  isUserLoungePresent,
+                    ),
+                    onDoubleTap: () {
+                      User sUser = mMembers[index];
+                      Logx.i(_TAG, 'double tap user selected : ${sUser.name}');
+
+                      // showDialog(
+                      //   context: context,
+                      //   builder: (BuildContext context) {
+                      //     return AlertDialog(
+                      //       title: Text("delete user : ${sUser.name}"),
+                      //       content: const Text(
+                      //           "would you like to delete the user?"),
+                      //       actions: [
+                      //         TextButton(
+                      //           child: const Text("yes"),
+                      //           onPressed: () {
+                      //             if (sUser.imageUrl.isNotEmpty) {
+                      //               FirestorageHelper.deleteFile(
+                      //                   sUser.imageUrl);
+                      //             }
+                      //             FirestoreHelper.deleteUser(sUser);
+                      //             Logx.i(_TAG, 'user is deleted');
+                      //
+                      //             Navigator.of(context).pop();
+                      //           },
+                      //         ),
+                      //         TextButton(
+                      //           child: const Text("no"),
+                      //           onPressed: () {
+                      //             Navigator.of(context).pop();
+                      //           },
+                      //         )
+                      //       ],
+                      //     );
+                      //   },
+                      // );
+                    },
+                    onTap: () {
+                      User sUser = mUsers[index];
+                      Logx.i(_TAG, 'user selected : ${sUser.name}');
+
+                      // Navigator.of(context).push(MaterialPageRoute(
+                      //     builder: (ctx) => UserAddEditScreen(
+                      //       user: sUser,
+                      //       task: 'edit',
+                      //       userLevels: mUserLevels,
+                      //     )));
+                    });
+              }),
+        ),
+      ],
+    );
   }
+
+  displayOptions(BuildContext context) {
+    double containerHeight = mq.height / 20;
+
+    return SizedBox(
+      key: UniqueKey(),
+      // this height has to match with category item container height
+      height: mq.height / 15,
+      child: ListView.builder(
+          itemCount: mOptions.length,
+          scrollDirection: Axis.horizontal,
+          itemBuilder: (ctx, index) {
+            return GestureDetector(
+                child: SizedListViewBlock(
+                  title: mOptions[index],
+                  height: containerHeight,
+                  width: mq.width / 4,
+                  color: Theme.of(context).primaryColor,
+                ),
+                onTap: () {
+                  setState(() {
+                    sOption = mOptions[index];
+                  });
+                });
+          }),
+    );
+  }
+
 }

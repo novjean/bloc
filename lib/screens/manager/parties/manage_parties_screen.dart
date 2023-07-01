@@ -1,4 +1,5 @@
 import 'package:bloc/helpers/dummy.dart';
+import 'package:bloc/widgets/ui/app_bar_title.dart';
 import 'package:bloc/widgets/ui/button_widget.dart';
 import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -45,7 +46,8 @@ class _ManagePartiesScreenState extends State<ManagePartiesScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('manage | parties'),
+        titleSpacing: 0,
+        title: AppBarTitle(title: 'manage parties',)
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -69,7 +71,7 @@ class _ManagePartiesScreenState extends State<ManagePartiesScreen> {
   _buildBody(BuildContext context) {
     return Column(
       children: [
-        displayBoxOfficeOptions(context),
+        displayOptions(context),
         const Divider(),
         sOption == 'event' || sOption == 'artist' ? _buildParties(context) : _buildGenres(context),
         const SizedBox(height: 5.0),
@@ -77,7 +79,7 @@ class _ManagePartiesScreenState extends State<ManagePartiesScreen> {
     );
   }
 
-  displayBoxOfficeOptions(BuildContext context) {
+  displayOptions(BuildContext context) {
     double containerHeight = MediaQuery.of(context).size.height / 20;
 
     return SizedBox(
@@ -97,9 +99,7 @@ class _ManagePartiesScreenState extends State<ManagePartiesScreen> {
                 ),
                 onTap: () {
                   setState(() {
-                    sOption = mOptions[index];
-                    Logx.i(_TAG, '$sOption at box office is selected');
-                  });
+                    sOption = mOptions[index];});
                 });
           }),
     );
