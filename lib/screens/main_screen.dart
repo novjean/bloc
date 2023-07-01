@@ -250,8 +250,6 @@ class _MainScreenState extends State<MainScreen> {
       }
     }
     super.initState();
-
-    _createNewChannel();
   }
 
   void _handleMessage(RemoteMessage message) {
@@ -276,15 +274,6 @@ class _MainScreenState extends State<MainScreen> {
     //     ),
     //   );
     // }
-  }
-
-  void _createNewChannel() async {
-    try {
-      await _channel.invokeMethod('createNotificationChannel', channelMap);
-      Logx.i(_TAG, 'finished creating chat notification channel');
-    } on PlatformException catch (e) {
-      Logx.em(_TAG, 'error creating notification channel $e');
-    }
   }
 
   @override

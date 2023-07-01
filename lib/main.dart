@@ -114,8 +114,7 @@ Future<void> main() async {
 
   // Set the background messaging handler early on, as a named top-level function
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-
-
+  
   await UserPreferences.init();
   await UiPreferences.init();
 
@@ -186,7 +185,7 @@ class _BlocAppState extends State<BlocApp> {
                 routerDelegate: BlocRouter.returnRouter(true).routerDelegate,
               );
             } else {
-              return LoadingWidget();
+              return const LoadingWidget();
             }
           }),
     );
