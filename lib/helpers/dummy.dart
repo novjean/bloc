@@ -400,7 +400,7 @@ class Dummy {
         userId: '',
         loungeId: '',
         lastAccessedTime: Timestamp.now().millisecondsSinceEpoch,
-        isAccepted: true);
+        isAccepted: true, isBanned: false);
     return dummyUserLounge;
   }
 }

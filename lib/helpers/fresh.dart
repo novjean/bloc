@@ -2875,6 +2875,12 @@ class Fresh {
       Logx.em(_TAG, 'userLounge isAccepted not exist for id: ${userLounge.id}');
       shouldPush = true;
     }
+    try {
+      userLounge = userLounge.copyWith(isBanned: map['isBanned'] as bool);
+    } catch (e) {
+      Logx.em(_TAG, 'userLounge isBanned not exist for id: ${userLounge.id}');
+      shouldPush = true;
+    }
 
     if (shouldPush && shouldUpdate) {
       Logx.i(_TAG, 'updating userLounge ${userLounge.id}');
@@ -2911,6 +2917,11 @@ class Fresh {
       freshUserLounge = freshUserLounge.copyWith(isAccepted: userLounge.isAccepted);
     } catch (e) {
       Logx.em(_TAG, 'userLounge isAccepted not exist for id: ${userLounge.id}');
+    }
+    try {
+      freshUserLounge = freshUserLounge.copyWith(isBanned: userLounge.isBanned);
+    } catch (e) {
+      Logx.em(_TAG, 'userLounge isBanned not exist for id: ${userLounge.id}');
     }
 
     return freshUserLounge;

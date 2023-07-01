@@ -407,13 +407,13 @@ class _UserAddEditScreenState extends State<UserAddEditScreen> {
                 ),
                 actions: [
                   ElevatedButton(
-                    child: Text('no'),
+                    child: const Text('no'),
                     onPressed: () {
                       Navigator.of(ctx).pop(false);
                     },
                   ),
                   ElevatedButton(
-                    child: Text('yes'),
+                    child: const Text('yes'),
                     onPressed: () {
                       if(widget.user.imageUrl.isNotEmpty){
                         FirestorageHelper.deleteFile(widget.user.imageUrl);

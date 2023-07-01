@@ -97,6 +97,14 @@ class _PartyGuestAddEditManageScreenState
   List<Challenge> challenges = [];
   bool isChallengesLoading = true;
 
+  List<Party> mParties = [];
+  var _isPartiesLoading = true;
+  List<String> mPartyNames = [];
+  Party sParty = Dummy.getDummyParty('');
+  String sPartyName = 'all';
+  String sPartyId = '';
+
+
   @override
   void initState() {
     if (!UserPreferences.isUserLoggedIn()) {
@@ -149,6 +157,34 @@ class _PartyGuestAddEditManageScreenState
         Logx.em(_TAG, 'no challenges found, setting default');
         setState(() {
           isChallengesLoading = false;
+        });
+      }
+    });
+
+    FirestoreHelper.pullActiveGuestListParties(Timestamp.now().millisecondsSinceEpoch).then((res) {
+      if (res.docs.isNotEmpty) {
+        // found parties
+        List<Party> parties = [];
+        List<String> _partyNames = ['all'];
+        for (int i = 0; i < res.docs.length; i++) {
+          DocumentSnapshot document = res.docs[i];
+          Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+          final Party party = Fresh.freshPartyMap(data, true);
+          parties.add(party);
+          _partyNames.add('${party.name} ${party.chapter}');
+        }
+        setState(() {
+          mParties = parties;
+          mPartyNames = _partyNames;
+          _isPartiesLoading = false;
+        });
+      } else {
+        Logx.i(_TAG, 'no parties found!');
+        const Center(
+          child: Text('no parties assigned yet!'),
+        );
+        setState(() {
+          _isPartiesLoading = false;
         });
       }
     });
@@ -529,10 +565,12 @@ class _PartyGuestAddEditManageScreenState
                 ),
               ),
               const SizedBox(height: 24),
+              /** admin section **/
               widget.task == 'manage'
                   ? Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 32.0),
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const SizedBox(height: 24),
                     DarkTextFieldWidget(
@@ -541,6 +579,20 @@ class _PartyGuestAddEditManageScreenState
                       onChanged: (value) {},
                     ),
                     const SizedBox(height: 24),
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 10),
+                      child: Text(
+                        'party',
+                        style: TextStyle(
+                            color:
+                            Theme.of(context).primaryColorLight,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    _displayPartiesDropdown(context),
+                    const SizedBox(height: 24),
+
                     DarkTextFieldWidget(
                       label: 'challenge task',
                       text: findChallenge().title,
@@ -1194,9 +1246,6 @@ class _PartyGuestAddEditManageScreenState
                 GoRouter.of(context)
                     .pushNamed(RouteConstants.homeRouteName);
 
-                // Navigator.of(context).pushReplacement(MaterialPageRoute(
-                //     builder: (context) => MainScreen()));
-
                 Navigator.of(context).push(
                   MaterialPageRoute(
                       builder: (ctx) =>
@@ -1259,13 +1308,13 @@ class _PartyGuestAddEditManageScreenState
           phoneNumber: '${completePhoneNumber}',
           verificationCompleted: (PhoneAuthCredential credential) async {
             Logx.i(_TAG,
-                'verifyPhoneNumber: ${completePhoneNumber} is verified. attempting sign in with credentials...');
+                'verifyPhoneNumber: $completePhoneNumber is verified. attempting sign in with credentials...');
           },
           verificationFailed: (FirebaseAuthException e) {
-            Logx.em(_TAG, 'verificationFailed ' + e.toString());
+            Logx.em(_TAG, 'verificationFailed $e');
           },
           codeSent: (String verificationID, int? resendToken) {
-            Logx.i(_TAG, 'verification id : ' + verificationID);
+            Logx.i(_TAG, 'verification id : $verificationID');
 
             if (mounted) {
               showOTPDialog(context);
@@ -1297,11 +1346,11 @@ class _PartyGuestAddEditManageScreenState
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 20),
+                const Padding(
+                  padding: EdgeInsets.only(bottom: 20),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
-                    children: const [
+                    children: [
                       Text(
                         'phone number verification',
                         style: TextStyle(fontSize: 18),
@@ -1546,4 +1595,66 @@ class _PartyGuestAddEditManageScreenState
     }
     return url;
   }
+
+  _displayPartiesDropdown(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 0.0),
+      child: FormField<String>(
+        builder: (FormFieldState<String> state) {
+          return InputDecorator(
+            key: const ValueKey('parties_key'),
+            decoration: InputDecoration(
+                fillColor: Colors.white,
+                errorStyle: TextStyle(
+                    color: Theme.of(context).errorColor, fontSize: 16.0),
+                hintText: 'please select party',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(5.0),
+                  borderSide: BorderSide(color: Theme.of(context).primaryColor),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  // width: 0.0 produces a thin "hairline" border
+                  borderSide: BorderSide(
+                      color: Theme.of(context).primaryColor, width: 0.0),
+                )),
+            isEmpty: sPartyName == '',
+            child: DropdownButtonHideUnderline(
+              child: DropdownButton<String>(
+                style: TextStyle(color: Theme.of(context).primaryColor),
+                dropdownColor: Theme.of(context).backgroundColor,
+                value: sPartyName,
+                isDense: true,
+                onChanged: (String? newValue) {
+                  setState(() {
+                    sPartyName = newValue!;
+
+                    for (Party party in mParties) {
+                      if ('${party.name} ${party.chapter}' == sPartyName) {
+                        sPartyId = party.id;
+                        sParty = party;
+                        break;
+                      }
+                    }
+
+                    widget.partyGuest = widget.partyGuest.copyWith(partyId: sPartyId);
+                    FirestoreHelper.pushPartyGuest(widget.partyGuest);
+                    Logx.ist(_TAG, 'guest list updated to party: $sPartyName');
+
+                    state.didChange(newValue);
+                  });
+                },
+                items: mPartyNames.map((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
 }

@@ -4,6 +4,7 @@ class UserLounge {
   final String loungeId;
   final int lastAccessedTime;
   final bool isAccepted;
+  final bool isBanned;
 
 //<editor-fold desc="Data Methods">
   const UserLounge({
@@ -12,6 +13,7 @@ class UserLounge {
     required this.loungeId,
     required this.lastAccessedTime,
     required this.isAccepted,
+    required this.isBanned,
   });
 
   @override
@@ -23,7 +25,8 @@ class UserLounge {
           userId == other.userId &&
           loungeId == other.loungeId &&
           lastAccessedTime == other.lastAccessedTime &&
-          isAccepted == other.isAccepted);
+          isAccepted == other.isAccepted &&
+          isBanned == other.isBanned);
 
   @override
   int get hashCode =>
@@ -31,7 +34,8 @@ class UserLounge {
       userId.hashCode ^
       loungeId.hashCode ^
       lastAccessedTime.hashCode ^
-      isAccepted.hashCode;
+      isAccepted.hashCode ^
+      isBanned.hashCode;
 
   @override
   String toString() {
@@ -41,6 +45,7 @@ class UserLounge {
         ' loungeId: $loungeId,' +
         ' lastAccessedTime: $lastAccessedTime,' +
         ' isAccepted: $isAccepted,' +
+        ' isBanned: $isBanned,' +
         '}';
   }
 
@@ -50,6 +55,7 @@ class UserLounge {
     String? loungeId,
     int? lastAccessedTime,
     bool? isAccepted,
+    bool? isBanned,
   }) {
     return UserLounge(
       id: id ?? this.id,
@@ -57,6 +63,7 @@ class UserLounge {
       loungeId: loungeId ?? this.loungeId,
       lastAccessedTime: lastAccessedTime ?? this.lastAccessedTime,
       isAccepted: isAccepted ?? this.isAccepted,
+      isBanned: isBanned ?? this.isBanned,
     );
   }
 
@@ -67,6 +74,7 @@ class UserLounge {
       'loungeId': this.loungeId,
       'lastAccessedTime': this.lastAccessedTime,
       'isAccepted': this.isAccepted,
+      'isBanned': this.isBanned,
     };
   }
 
@@ -77,6 +85,7 @@ class UserLounge {
       loungeId: map['loungeId'] as String,
       lastAccessedTime: map['lastAccessedTime'] as int,
       isAccepted: map['isAccepted'] as bool,
+      isBanned: map['isBanned'] as bool,
     );
   }
 

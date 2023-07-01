@@ -76,8 +76,14 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
               mUserLounge = Fresh.freshUserLoungeMap(data, false);
             }
 
-            setState(() {
+            if(mUserLounge.isBanned){
+              isMember = false;
+              GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
+            } else {
               isMember = true;
+            }
+
+            setState(() {
               isUserLoungeLoading = false;
             });
           } else {
@@ -292,11 +298,136 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
                 if (UserPreferences.myUser.clearanceLevel >
                     Constants.MANAGER_LEVEL) {
                   LoungeChat chat = mChats[index];
-                  FirestoreHelper.deleteLoungeChat(chat.id);
+
+                  showActionsDialog(context, chat);
                 }
               },
             );
           }),
+    );
+  }
+
+  showActionsDialog(BuildContext context, LoungeChat chat) {
+    return showDialog(
+      context: context,
+      builder: (BuildContext ctx) {
+        return AlertDialog(
+          contentPadding: const EdgeInsets.all(16.0),
+          content: SizedBox(
+            height: 250,
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.only(bottom: 20),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Text(
+                          'actions',
+                          style: TextStyle(fontSize: 18),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(
+                    height: 200,
+                    width: 300,
+                    child: SingleChildScrollView(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text('ban user'),
+                              SizedBox.fromSize(
+                                size: const Size(50, 50),
+                                child: ClipOval(
+                                  child: Material(
+                                    color: Constants.primary,
+                                    child: InkWell(
+                                      splashColor: Constants.darkPrimary,
+                                      onTap: () {
+                                        FirestoreHelper.pullUserLounge(chat.userId, mLounge.id).then((res){
+                                          if(res.docs.isNotEmpty){
+                                            DocumentSnapshot document = res.docs[0];
+                                            Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+                                            UserLounge userLounge = Fresh.freshUserLoungeMap(data, false);
+                                            userLounge = userLounge.copyWith(isBanned: true);
+                                            FirestoreHelper.pushUserLounge(userLounge);
+
+                                            Logx.ist(_TAG, 'user is banned!');
+                                          }
+                                        });
+
+                                        Navigator.of(ctx).pop();
+                                      },
+                                      child: const Column(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: <Widget>[
+                                          Icon(Icons.cancel),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
+                          const SizedBox(height:10),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text('delete chat'),
+                              SizedBox.fromSize(
+                                size: const Size(50, 50),
+                                child: ClipOval(
+                                  child: Material(
+                                    color: Constants.primary,
+                                    child: InkWell(
+                                      splashColor: Constants.darkPrimary,
+                                      onTap: () async {
+                                        FirestoreHelper.deleteLoungeChat(chat.id);
+
+                                        if(chat.type == 'image'){
+                                          FirestorageHelper.deleteFile(chat.message);
+                                        }
+                                        Navigator.of(ctx).pop();
+                                      },
+                                      child: const Column(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: <Widget>[
+                                          Icon(Icons.delete),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
+                          const SizedBox(height:10),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          actions: [
+            TextButton(
+              child: const Text('close'),
+              onPressed: () {
+                Navigator.of(ctx).pop();
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 

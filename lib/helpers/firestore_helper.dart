@@ -1734,6 +1734,21 @@ class FirestoreHelper {
     }
   }
 
+  static void updateUserLoungeBanned(String userLoungeId, bool isBanned) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection(USER_LOUNGES)
+          .doc(userLoungeId)
+          .update({'isBanned': Timestamp.now().millisecondsSinceEpoch});
+    } on PlatformException catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } on Exception catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } catch (e) {
+      logger.e(e);
+    }
+  }
+
   static void deleteUserLounge(String docId) {
     FirebaseFirestore.instance.collection(USER_LOUNGES).doc(docId).delete();
   }
