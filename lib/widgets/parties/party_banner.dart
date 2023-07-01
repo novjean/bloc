@@ -3,58 +3,95 @@ import 'package:bloc/utils/constants.dart';
 import 'package:bloc/utils/date_time_utils.dart';
 import 'package:bloc/utils/network_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:delayed_display/delayed_display.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../db/entity/history_music.dart';
 import '../../db/entity/party.dart';
 import '../../db/entity/party_guest.dart';
+import '../../db/entity/party_interest.dart';
 import '../../db/entity/user.dart';
 import '../../helpers/dummy.dart';
 import '../../helpers/firestore_helper.dart';
 import '../../helpers/fresh.dart';
 import '../../routes/route_constants.dart';
-import '../../screens/box_office/box_office_screen.dart';
 import '../../screens/parties/party_guest_add_edit_manage_screen.dart';
 import '../../utils/logx.dart';
 
-class PartyBanner extends StatelessWidget {
+class PartyBanner extends StatefulWidget {
   static const String _TAG = 'PartyBanner';
 
   Party party;
   final bool isClickable;
   final bool shouldShowButton;
   final bool isGuestListRequested;
+  final bool shouldShowInterestCount;
 
   PartyBanner(
       {Key? key,
       required this.party,
       required this.isClickable,
       required this.shouldShowButton,
-      required this.isGuestListRequested})
+      required this.isGuestListRequested,
+      required this.shouldShowInterestCount})
       : super(key: key);
+
+  @override
+  State<PartyBanner> createState() => _PartyBannerState();
+}
+
+class _PartyBannerState extends State<PartyBanner> {
+  static const String _TAG = 'PartyBanner';
+
+  PartyInterest mPartyInterest = Dummy.getDummyPartyInterest();
+
+  @override
+  void initState() {
+    if (widget.shouldShowInterestCount) {
+      mPartyInterest.partyId = widget.party.id;
+
+      FirestoreHelper.pullPartyInterest(widget.party.id).then((res) {
+        if (res.docs.isNotEmpty) {
+          DocumentSnapshot document = res.docs[0];
+          Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+          final PartyInterest partyInterest =
+              Fresh.freshPartyInterestMap(data, false);
+          setState(() {
+            mPartyInterest = partyInterest;
+          });
+        } else {
+          // party interest does not exist
+        }
+      });
+    }
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     int timeNow = Timestamp.now().millisecondsSinceEpoch;
-    bool isGuestListActive =
-        party.isGuestListActive & (timeNow < party.guestListEndTime);
+    bool isGuestListActive = widget.party.isGuestListActive &
+        (timeNow < widget.party.guestListEndTime);
 
     return GestureDetector(
       onTap: () {
-        if (isClickable) {
-          if (party.type == 'event') {
+        if (widget.isClickable) {
+          if (widget.party.type == 'event') {
             GoRouter.of(context).pushNamed(RouteConstants.eventRouteName,
                 params: {
-                  'partyName': party.name,
-                  'partyChapter': party.chapter
+                  'partyName': widget.party.name,
+                  'partyChapter': widget.party.chapter
                 });
           } else {
             GoRouter.of(context).pushNamed(RouteConstants.artistRouteName,
-                params: {'name': party.name, 'genre': party.genre});
+                params: {
+                  'name': widget.party.name,
+                  'genre': widget.party.genre
+                });
           }
         } else {
-          Logx.i(_TAG, 'party banner no click');
+          Logx.i(PartyBanner._TAG, 'party banner no click');
         }
       },
       child: Padding(
@@ -63,7 +100,7 @@ class PartyBanner extends StatelessWidget {
           borderRadius: BorderRadius.circular(15),
           child: Stack(children: [
             Hero(
-              tag: party.id,
+              tag: widget.party.id,
               child: Card(
                 elevation: 1,
                 color: Theme.of(context).primaryColorLight,
@@ -82,7 +119,7 @@ class PartyBanner extends StatelessWidget {
                               padding: const EdgeInsets.only(left: 5.0),
                               child: RichText(
                                 text: TextSpan(
-                                    text: '${party.name.toLowerCase()} ',
+                                    text: '${widget.party.name.toLowerCase()} ',
                                     style: const TextStyle(
                                         color: Colors.black,
                                         fontFamily: Constants.fontDefault,
@@ -91,9 +128,9 @@ class PartyBanner extends StatelessWidget {
                                         fontWeight: FontWeight.bold),
                                     children: <TextSpan>[
                                       TextSpan(
-                                          text: party.chapter == 'I'
+                                          text: widget.party.chapter == 'I'
                                               ? ''
-                                              : party.chapter,
+                                              : widget.party.chapter,
                                           style: const TextStyle(
                                               color: Colors.black,
                                               fontFamily: Constants.fontDefault,
@@ -103,12 +140,12 @@ class PartyBanner extends StatelessWidget {
                                     ]),
                               ),
                             ),
-                            party.eventName.isNotEmpty
+                            widget.party.eventName.isNotEmpty
                                 ? Padding(
                                     padding: const EdgeInsets.only(
                                         left: 5.0, top: 10),
                                     child: Text(
-                                      party.eventName.toLowerCase(),
+                                      widget.party.eventName.toLowerCase(),
                                       style: const TextStyle(fontSize: 18),
                                     ),
                                   )
@@ -116,18 +153,41 @@ class PartyBanner extends StatelessWidget {
                             Padding(
                               padding: const EdgeInsets.only(left: 5.0),
                               child: Text(
-                                party.isTBA
+                                widget.party.isTBA
                                     ? 'tba'
-                                    : '${DateTimeUtils.getFormattedDate(party.startTime)}, ${DateTimeUtils.getFormattedTime(party.startTime)}',
+                                    : '${DateTimeUtils.getFormattedDate(widget.party.startTime)}, ${DateTimeUtils.getFormattedTime(widget.party.startTime)}',
                                 style: const TextStyle(fontSize: 18),
                               ),
                             ),
                             const Spacer(),
-                            shouldShowButton
-                                ? !party.isTBA && party.ticketUrl.isNotEmpty
+                            widget.shouldShowInterestCount
+                                ? Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.only(
+                                            right: 5, bottom: 1),
+                                        child: DelayedDisplay(
+                                          delay: const Duration(seconds: 1),
+                                          child: Text(
+                                            mPartyInterest.userIds.length >= 9 || UserPreferences.myUser.clearanceLevel>= Constants.ADMIN_LEVEL
+                                                ? '${mPartyInterest.userIds.length} 🖤'
+                                                : '',
+                                            style: const TextStyle(
+                                              color: Colors.black,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  )
+                                : const SizedBox(),
+                            widget.shouldShowButton
+                                ? !widget.party.isTBA &&
+                                        widget.party.ticketUrl.isNotEmpty
                                     ? showBuyTixButton(context)
                                     : isGuestListActive
-                                        ? !isGuestListRequested
+                                        ? !widget.isGuestListRequested
                                             ? showGuestListButton(context)
                                             : showBoxOfficeButton(context)
                                         : showListenOrInstaDialog(context)
@@ -137,12 +197,12 @@ class PartyBanner extends StatelessWidget {
                       ),
                       Flexible(
                         flex: 1,
-                        child: Container(
+                        child: SizedBox(
                           height: 200,
                           child: FadeInImage(
-                            placeholder: const AssetImage(
-                                'assets/icons/logo.png'),
-                            image: NetworkImage(party.imageUrl),
+                            placeholder:
+                                const AssetImage('assets/icons/logo.png'),
+                            image: NetworkImage(widget.party.imageUrl),
                             fit: BoxFit.cover,
                           ),
                         ),
@@ -152,20 +212,21 @@ class PartyBanner extends StatelessWidget {
                 ),
               ),
             ),
-            party.genre.isNotEmpty
+            widget.party.genre.isNotEmpty
                 ? Positioned(
                     bottom: 5,
                     right: 4,
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(10),
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 2),
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 2, horizontal: 2),
                         child: Text(
-                          party.genre,
+                          widget.party.genre,
                           style: TextStyle(
-                              fontSize: 14,
-                              backgroundColor: Constants.lightPrimary.withOpacity(0.5),
-
+                            fontSize: 14,
+                            backgroundColor:
+                                Constants.lightPrimary.withOpacity(0.5),
                           ),
                         ),
                       ),
@@ -179,8 +240,8 @@ class PartyBanner extends StatelessWidget {
   }
 
   showListenOrInstaDialog(BuildContext context) {
-    bool isListen = party.listenUrl.isNotEmpty;
-    bool isInsta = party.instagramUrl.isNotEmpty;
+    bool isListen = widget.party.listenUrl.isNotEmpty;
+    bool isInsta = widget.party.instagramUrl.isNotEmpty;
 
     if (!isListen && !isInsta) {
       return const SizedBox();
@@ -195,14 +256,14 @@ class PartyBanner extends StatelessWidget {
           shadowColor: Colors.white10,
           elevation: 3,
           minimumSize: const Size.fromHeight(60),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.only(topLeft: Radius.circular(10),
-                topRight: Radius.circular(10)),
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(10), topRight: Radius.circular(10)),
           ),
         ),
         onPressed: () {
-          final uri =
-              Uri.parse(isListen ? party.listenUrl : party.instagramUrl);
+          final uri = Uri.parse(
+              isListen ? widget.party.listenUrl : widget.party.instagramUrl);
           NetworkUtils.launchInBrowser(uri);
         },
         icon: Icon(
@@ -227,19 +288,19 @@ class PartyBanner extends StatelessWidget {
           shadowColor: Colors.white10,
           elevation: 3,
           minimumSize: const Size.fromHeight(60),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.only(topLeft: Radius.circular(10),
-                topRight: Radius.circular(10)),
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(10), topRight: Radius.circular(10)),
           ),
         ),
         onPressed: () {
           PartyGuest partyGuest = Dummy.getDummyPartyGuest();
-          partyGuest.partyId = party.id;
+          partyGuest.partyId = widget.party.id;
 
           Navigator.of(context).push(
             MaterialPageRoute(
                 builder: (context) => PartyGuestAddEditManageScreen(
-                    partyGuest: partyGuest, party: party, task: 'add')),
+                    partyGuest: partyGuest, party: widget.party, task: 'add')),
           );
         },
         icon: const Icon(
@@ -265,23 +326,24 @@ class PartyBanner extends StatelessWidget {
           elevation: 3,
           minimumSize: const Size.fromHeight(60),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.only(topLeft: Radius.circular(10),
-                topRight: Radius.circular(10)),
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(10), topRight: Radius.circular(10)),
           ),
         ),
         onPressed: () {
-          final uri = Uri.parse(party.ticketUrl);
+          final uri = Uri.parse(widget.party.ticketUrl);
           NetworkUtils.launchInBrowser(uri);
 
           if (UserPreferences.isUserLoggedIn()) {
             User user = UserPreferences.myUser;
 
-            FirestoreHelper.pullHistoryMusic(user.id, party.genre).then((res) {
+            FirestoreHelper.pullHistoryMusic(user.id, widget.party.genre)
+                .then((res) {
               if (res.docs.isEmpty) {
                 // no history, add new one
                 HistoryMusic historyMusic = Dummy.getDummyHistoryMusic();
                 historyMusic.userId = user.id;
-                historyMusic.genre = party.genre;
+                historyMusic.genre = widget.party.genre;
                 historyMusic.count = 1;
                 FirestoreHelper.pushHistoryMusic(historyMusic);
               } else {
@@ -296,6 +358,15 @@ class PartyBanner extends StatelessWidget {
                 }
               }
             });
+
+            if (UserPreferences.isUserLoggedIn()) {
+              if (!mPartyInterest.userIds.contains(UserPreferences.myUser.id)) {
+                mPartyInterest.userIds.add(UserPreferences.myUser.id);
+                FirestoreHelper.pushPartyInterest(mPartyInterest);
+
+                Logx.d(_TAG, 'user added to party interest');
+              }
+            }
           }
         },
         label: const Text(
@@ -320,8 +391,7 @@ class PartyBanner extends StatelessWidget {
         minimumSize: const Size.fromHeight(60),
       ),
       onPressed: () {
-        GoRouter.of(context)
-            .pushNamed(RouteConstants.boxOfficeRouteName);
+        GoRouter.of(context).pushNamed(RouteConstants.boxOfficeRouteName);
       },
       label: const Text(
         'box office',

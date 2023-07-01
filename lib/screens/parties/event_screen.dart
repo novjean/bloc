@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import '../../db/entity/history_music.dart';
 import '../../db/entity/party.dart';
 import '../../db/entity/party_guest.dart';
+import '../../db/entity/party_interest.dart';
 import '../../db/entity/user.dart';
 import '../../db/shared_preferences/user_preferences.dart';
 import '../../helpers/dummy.dart';
@@ -59,6 +60,31 @@ class _EventScreenState extends State<EventScreen> {
         setState(() {
           _isPartyLoading = false;
         });
+
+        if(UserPreferences.isUserLoggedIn()){
+          FirestoreHelper.pullPartyInterest(mParty.id).then((res) {
+            if(res.docs.isNotEmpty){
+              DocumentSnapshot document = res.docs[0];
+              Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+              final PartyInterest partyInterest = Fresh.freshPartyInterestMap(data, false);
+              if(!partyInterest.userIds.contains(UserPreferences.myUser.id)){
+                partyInterest.userIds.add(UserPreferences.myUser.id);
+                FirestoreHelper.pushPartyInterest(partyInterest);
+                Logx.d(_TAG, 'user interest recorded for party');
+              } else {
+                Logx.d(_TAG, 'user interest previously recorded for party');
+              }
+
+            } else {
+              PartyInterest partyInterest = Dummy.getDummyPartyInterest();
+              partyInterest = partyInterest.copyWith(partyId: mParty.id, userIds: [UserPreferences.myUser.id]);
+              FirestoreHelper.pushPartyInterest(partyInterest);
+
+              Logx.d(_TAG, 'party interest created for party');
+            }
+          });
+        }
+
       } else {
         Logx.em(_TAG, 'no party found!');
         setState(() {

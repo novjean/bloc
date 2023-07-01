@@ -357,6 +357,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   isClickable: true,
                   shouldShowButton: true,
                   isGuestListRequested: isGuestListRequested,
+                  shouldShowInterestCount: true,
                 ),
                 const SizedBox(height: 10.0),
 
@@ -381,6 +382,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     isClickable: true,
                     shouldShowButton: true,
                     isGuestListRequested: isGuestListRequested,
+                    shouldShowInterestCount: true,
                   ),
                   const SizedBox(height: 10.0),
                   UserPreferences.isUserLoggedIn()
@@ -400,6 +402,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 isClickable: true,
                 shouldShowButton: true,
                 isGuestListRequested: isGuestListRequested,
+                shouldShowInterestCount: true,
               );
             }
           }
@@ -416,6 +419,7 @@ class _HomeScreenState extends State<HomeScreen> {
           isClickable: true,
           shouldShowButton: true,
           isGuestListRequested: isGuestListRequested,
+          shouldShowInterestCount: true,
         ),
         const SizedBox(height: 10.0),
         UserPreferences.isUserLoggedIn()

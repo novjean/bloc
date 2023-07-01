@@ -11,6 +11,7 @@ import '../db/entity/lounge_chat.dart';
 import '../db/entity/genre.dart';
 import '../db/entity/lounge.dart';
 import '../db/entity/party.dart';
+import '../db/entity/party_interest.dart';
 import '../db/entity/product.dart';
 import '../db/entity/reservation.dart';
 import '../db/entity/ticket.dart';
@@ -1854,7 +1855,7 @@ class Fresh {
           partyGuest.copyWith(guestsRemaining: map['guestsRemaining'] as int);
     } catch (e) {
       Logx.em(_TAG,
-          'partyGuest guestsRemaining not exist for id: ' + partyGuest.id);
+          'partyGuest guestsRemaining not exist for id: ${partyGuest.id}');
       shouldPush = true;
     }
     try {
@@ -1908,6 +1909,63 @@ class Fresh {
     }
 
     return partyGuest;
+  }
+
+  /** Party Interest **/
+  static PartyInterest freshPartyInterest(PartyInterest partyInterest) {
+    PartyInterest fresh = Dummy.getDummyPartyInterest();
+
+    try {
+      fresh = fresh.copyWith(id: partyInterest.id);
+    } catch (e) {
+      Logx.em(_TAG, 'party interest id not exist');
+    }
+    try {
+      fresh = fresh.copyWith(partyId: partyInterest.partyId);
+    } catch (e) {
+      Logx.em(_TAG,
+          'party interest name not exist for id: ${partyInterest.id}');
+    }
+    try {
+      fresh = fresh.copyWith(userIds: partyInterest.userIds);
+    } catch (e) {
+      Logx.em(_TAG,
+          'party interest userIds not exist for id: ${partyInterest.id}');
+    }
+
+    return fresh;
+  }
+
+  static PartyInterest freshPartyInterestMap(
+      Map<String, dynamic> map, bool shouldUpdate) {
+    PartyInterest partyInterest = Dummy.getDummyPartyInterest();
+    bool shouldPush = true;
+
+    try {
+      partyInterest = partyInterest.copyWith(id: map['id'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'partyInterest id not exist');
+    }
+    try {
+      partyInterest = partyInterest.copyWith(partyId: map['partyId'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'partyInterest partyId not exist for id: ${partyInterest.id}');
+      shouldPush = true;
+    }
+    try {
+      partyInterest = partyInterest.copyWith(userIds: List<String>.from(map['userIds']));
+    } catch (e) {
+      Logx.em(_TAG, 'party artistIds not exist for id: ${partyInterest.id}');
+      shouldPush = true;
+    }
+
+
+    if (shouldPush && shouldUpdate) {
+      Logx.i(_TAG, 'updating party interest ${partyInterest.id}');
+      FirestoreHelper.pushPartyInterest(partyInterest);
+    }
+
+    return partyInterest;
   }
 
   /** product **/

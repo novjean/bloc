@@ -25,6 +25,7 @@ import '../../api/apis.dart';
 import '../../db/entity/challenge.dart';
 import '../../db/entity/party.dart';
 import '../../db/entity/party_guest.dart';
+import '../../db/entity/party_interest.dart';
 import '../../db/entity/user.dart' as blocUser;
 import '../../db/shared_preferences/user_preferences.dart';
 import '../../helpers/dummy.dart';
@@ -104,6 +105,7 @@ class _PartyGuestAddEditManageScreenState
   String sPartyName = 'all';
   String sPartyId = '';
 
+  PartyInterest mPartyInterest = Dummy.getDummyPartyInterest();
 
   @override
   void initState() {
@@ -196,6 +198,37 @@ class _PartyGuestAddEditManageScreenState
     sGuestStatus = widget.partyGuest.guestStatus;
     sGender = widget.partyGuest.gender;
     super.initState();
+
+    if(UserPreferences.isUserLoggedIn()){
+      FirestoreHelper.pullPartyInterest(widget.party.id).then((res) {
+        if(res.docs.isNotEmpty){
+          DocumentSnapshot document = res.docs[0];
+          Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+          mPartyInterest = Fresh.freshPartyInterestMap(data, false);
+          if(!mPartyInterest.userIds.contains(UserPreferences.myUser.id)){
+            mPartyInterest.userIds.add(UserPreferences.myUser.id);
+            FirestoreHelper.pushPartyInterest(mPartyInterest);
+            Logx.d(_TAG, 'user interest recorded for party');
+          } else {
+            Logx.d(_TAG, 'user interest previously recorded for party');
+          }
+
+        } else {
+          mPartyInterest = mPartyInterest.copyWith(partyId: widget.party.id, userIds: [UserPreferences.myUser.id]);
+          FirestoreHelper.pushPartyInterest(mPartyInterest);
+
+          Logx.d(_TAG, 'party interest created for party');
+        }
+
+        if(widget.task == 'manage'){
+          if(!mPartyInterest.userIds.contains(widget.partyGuest.guestId)){
+            mPartyInterest.userIds.add(widget.partyGuest.guestId);
+            FirestoreHelper.pushPartyInterest(mPartyInterest);
+          }
+        }
+      });
+    }
+
   }
 
   @override
@@ -219,7 +252,7 @@ class _PartyGuestAddEditManageScreenState
   }
 
   _buildBody(BuildContext context) {
-    return isCustomerLoading && isChallengesLoading
+    return isCustomerLoading && isChallengesLoading && _isPartiesLoading
         ? const LoadingWidget()
         : ListView(
             physics: const BouncingScrollPhysics(),
@@ -229,12 +262,13 @@ class _PartyGuestAddEditManageScreenState
                 isClickable: false,
                 shouldShowButton: false,
                 isGuestListRequested: false,
+                shouldShowInterestCount: false,
               ),
               const SizedBox(height: 24),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 32),
                 child: DarkTextFieldWidget(
-                  label: 'name \*',
+                  label: 'name *',
                   text: bloc_user.name,
                   onChanged: (name) {
                     bloc_user = bloc_user.copyWith(name: name);
@@ -248,7 +282,7 @@ class _PartyGuestAddEditManageScreenState
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 32),
                 child: DarkTextFieldWidget(
-                  label: 'surname \*',
+                  label: 'surname *',
                   text: bloc_user.surname,
                   onChanged: (surname) {
                     bloc_user = bloc_user.copyWith(surname: surname);

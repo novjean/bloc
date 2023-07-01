@@ -21,6 +21,7 @@ import '../db/entity/genre.dart';
 import '../db/entity/lounge.dart';
 import '../db/entity/offer.dart';
 import '../db/entity/party.dart';
+import '../db/entity/party_interest.dart';
 import '../db/entity/product.dart';
 import '../db/entity/seat.dart';
 import '../db/entity/user.dart';
@@ -267,6 +268,15 @@ class Dummy {
         shouldBanUser: false,
         gender: 'male');
     return dummyGuest;
+  }
+
+  static PartyInterest getDummyPartyInterest(){
+    PartyInterest partyInterest = PartyInterest(
+      id: StringUtils.getRandomString(28),
+      partyId: '',
+      userIds: []
+    );
+    return partyInterest;
   }
 
   static Product getDummyProduct(String blocServiceId, String userId) {

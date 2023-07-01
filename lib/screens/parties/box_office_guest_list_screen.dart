@@ -104,7 +104,8 @@ class _BoxOfficeGuestListScreenState extends State<BoxOfficeGuestListScreen> {
                 party: mParty,
                 isClickable: false,
                 shouldShowButton: false,
-                  isGuestListRequested: true
+                  isGuestListRequested: true, shouldShowInterestCount: false,
+
               ),
               const SizedBox(height: 24),
               Padding(

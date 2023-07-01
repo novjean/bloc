@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:bloc/db/entity/user_lounge.dart';
 import 'package:bloc/helpers/firestore_helper.dart';
-import 'package:bloc/widgets/ui/button_widget.dart';
 import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -551,7 +550,8 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
                             final XFile? image = await picker.pickImage(
                                 source: ImageSource.gallery,
                                 imageQuality: 95,
-                                maxWidth: 768);
+                                maxHeight: 768,
+                                maxWidth: 440);
                             storePhotoChat(image);
 
                             // // Picking multiple images
@@ -585,7 +585,8 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
                             final XFile? image = await picker.pickImage(
                                 source: ImageSource.camera,
                                 imageQuality: 95,
-                                maxWidth: 768);
+                                maxHeight: 768,
+                                maxWidth: 440);
                             storePhotoChat(image);
                           } else {
                             Toaster.longToast('have the 🍕 and join us to post photo');
@@ -690,7 +691,6 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
                 Text(
                   'Welcome to our exclusive community lounge! Access is reserved for VIPs only. Secure your spot by registering for our upcoming ${mLounge.name} party or impress the community leaders with a compelling request. Get ready for a lounge of fun, laughter, and connections!'.toLowerCase(),
                   textAlign: TextAlign.center,
-                  // overflow: TextOverflow.ellipsis,
                     softWrap: true,
                   style: const TextStyle(fontSize: 18, color: Colors.black),
                 )
@@ -731,7 +731,7 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
         switch (snapshot.connectionState) {
           case ConnectionState.waiting:
           case ConnectionState.none:
-            return Text('...');
+            return const Text('...');
           case ConnectionState.active:
           case ConnectionState.done:
             {

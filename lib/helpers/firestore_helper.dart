@@ -14,6 +14,7 @@ import 'package:bloc/db/entity/offer.dart';
 import 'package:bloc/db/entity/order_bloc.dart';
 import 'package:bloc/db/entity/party.dart';
 import 'package:bloc/db/entity/party_guest.dart';
+import 'package:bloc/db/entity/party_interest.dart';
 import 'package:bloc/db/entity/reservation.dart';
 import 'package:bloc/db/entity/seat.dart';
 import 'package:bloc/db/entity/ticket.dart';
@@ -62,6 +63,7 @@ class FirestoreHelper {
   static String ORDERS = 'orders';
   static String PARTIES = 'parties';
   static String PARTY_GUESTS = 'party_guests';
+  static String PARTY_INTERESTS = 'party_interests';
   static String PRODUCTS = 'products';
   static String BLOC_SERVICES = 'services';
   static String RESERVATIONS = 'reservations';
@@ -958,6 +960,30 @@ class FirestoreHelper {
         .delete();
   }
 
+  /** party interest **/
+  static void pushPartyInterest(PartyInterest partyInterest) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection(PARTY_INTERESTS)
+          .doc(partyInterest.id)
+          .set(partyInterest.toMap());
+    } on PlatformException catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } on Exception catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } catch (e) {
+      logger.e(e);
+    }
+  }
+
+  static pullPartyInterest(String partyId) {
+    return FirebaseFirestore.instance
+        .collection(FirestoreHelper.PARTY_INTERESTS)
+        .where('partyId', isEqualTo: partyId)
+        .get();
+  }
+
+
   /** products **/
   static void pushProduct(Product product) async {
     try {
@@ -1752,5 +1778,6 @@ class FirestoreHelper {
   static void deleteUserLounge(String docId) {
     FirebaseFirestore.instance.collection(USER_LOUNGES).doc(docId).delete();
   }
+
 
 }

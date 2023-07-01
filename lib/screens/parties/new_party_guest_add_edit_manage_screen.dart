@@ -249,6 +249,7 @@ class _NewPartyGuestAddEditManageScreenState
           isClickable: false,
           shouldShowButton: false,
           isGuestListRequested: false,
+          shouldShowInterestCount: false,
         ),
         const SizedBox(height: 24),
         Padding(
