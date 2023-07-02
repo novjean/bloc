@@ -11,6 +11,7 @@ class FirestorageHelper {
   static const String _TAG = 'FirestorageHelper';
   static var logger = Logger();
 
+  static String AD_CAMPAIGN_IMAGES = 'ad_campaign_image';
   static String USERS = 'user_image';
   static String BLOCS_IMAGES = 'bloc_image';
   static String BLOCS_SERVICES_IMAGES = 'bloc_service_image';

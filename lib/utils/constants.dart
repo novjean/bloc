@@ -14,6 +14,9 @@ class Constants {
 
   static const Color background = Color.fromRGBO(27, 26, 23, 1);
 
+  static const Color hopp = Color.fromRGBO(248, 194, 32, 1);
+
+
   static Color lightAccent = const Color(0xff5563ff);
   static Color darkAccent = const Color(0xff5563ff);
   static Color lightBG = const Color(0xfffcfcff);

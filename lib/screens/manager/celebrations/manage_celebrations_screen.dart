@@ -12,10 +12,10 @@ import 'package:path_provider/path_provider.dart';
 import '../../../helpers/dummy.dart';
 import '../../../helpers/firestorage_helper.dart';
 import '../../../helpers/fresh.dart';
-import '../../../utils/constants.dart';
 import '../../../utils/logx.dart';
 import '../../../utils/string_utils.dart';
 import '../../../widgets/celebrations/celebration_item.dart';
+import '../../../widgets/ui/app_bar_title.dart';
 import '../../../widgets/ui/button_widget.dart';
 import '../../../widgets/ui/loading_widget.dart';
 import '../../user/celebration_add_edit_screen.dart';
@@ -25,10 +25,10 @@ class ManageCelebrationsScreen extends StatefulWidget {
   String serviceName;
   String userTitle;
 
-  ManageCelebrationsScreen({
-    required this.blocServiceId,
-    required this.serviceName,
-    required this.userTitle});
+  ManageCelebrationsScreen(
+      {required this.blocServiceId,
+      required this.serviceName,
+      required this.userTitle});
 
   @override
   State<StatefulWidget> createState() => _ManageCelebrationsScreenState();
@@ -42,7 +42,6 @@ class _ManageCelebrationsScreenState extends State<ManageCelebrationsScreen> {
 
   String newImageUrl = '';
 
-
   @override
   void initState() {
     uiPhoto.name = 'celebration';
@@ -50,7 +49,7 @@ class _ManageCelebrationsScreenState extends State<ManageCelebrationsScreen> {
     FirestoreHelper.pullUiPhoto(uiPhoto.name).then((res) {
       Logx.i(_TAG, 'successfully pulled in ui photos');
 
-      if(res.docs.isNotEmpty){
+      if (res.docs.isNotEmpty) {
         DocumentSnapshot document = res.docs[0];
         Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
 
@@ -72,7 +71,8 @@ class _ManageCelebrationsScreenState extends State<ManageCelebrationsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          title: Text('manage | ${widget.serviceName}')),
+          titleSpacing: 0,
+          title: AppBarTitle(title: 'manage ${widget.serviceName}')),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           showActionsDialog(context);
@@ -115,8 +115,10 @@ class _ManageCelebrationsScreenState extends State<ManageCelebrationsScreen> {
             try {
               for (int i = 0; i < snapshot.data!.docs.length; i++) {
                 DocumentSnapshot document = snapshot.data!.docs[i];
-                Map<String, dynamic> map = document.data()! as Map<String, dynamic>;
-                final Celebration celebration = Fresh.freshCelebrationMap(map, false);
+                Map<String, dynamic> map =
+                    document.data()! as Map<String, dynamic>;
+                final Celebration celebration =
+                    Fresh.freshCelebrationMap(map, false);
                 celebrations.add(celebration);
 
                 if (i == snapshot.data!.docs.length - 1) {
@@ -149,9 +151,9 @@ class _ManageCelebrationsScreenState extends State<ManageCelebrationsScreen> {
                 onTap: () {
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (ctx) => CelebrationAddEditScreen(
-                        celebration: celebration,
-                        task: 'edit',
-                      )));
+                            celebration: celebration,
+                            task: 'edit',
+                          )));
                 });
           }),
     );
@@ -204,20 +206,25 @@ class _ManageCelebrationsScreenState extends State<ManageCelebrationsScreen> {
                                       maxWidth: 1024);
                                   if (image == null) return;
 
-                                  final directory = await getApplicationDocumentsDirectory();
+                                  final directory =
+                                      await getApplicationDocumentsDirectory();
                                   final name = basename(image.path);
-                                  final imageFile = File('${directory.path}/$name');
-                                  final newImage = await File(image.path).copy(imageFile.path);
+                                  final imageFile =
+                                      File('${directory.path}/$name');
+                                  final newImage = await File(image.path)
+                                      .copy(imageFile.path);
 
-                                  newImageUrl = await FirestorageHelper.uploadFile(
-                                      FirestorageHelper.UI_PHOTO_IMAGES,
-                                      StringUtils.getRandomString(28),
-                                      newImage);
+                                  newImageUrl =
+                                      await FirestorageHelper.uploadFile(
+                                          FirestorageHelper.UI_PHOTO_IMAGES,
+                                          StringUtils.getRandomString(28),
+                                          newImage);
 
                                   uiPhoto.imageUrls.add(newImageUrl);
 
                                   setState(() {
-                                    uiPhoto = uiPhoto.copyWith(imageUrls: uiPhoto.imageUrls);
+                                    uiPhoto = uiPhoto.copyWith(
+                                        imageUrls: uiPhoto.imageUrls);
                                     FirestoreHelper.pushUiPhoto(uiPhoto);
                                   });
                                 },
@@ -242,7 +249,8 @@ class _ManageCelebrationsScreenState extends State<ManageCelebrationsScreen> {
                                               });
                                         },
                                         child: Column(
-                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
                                           children: <Widget>[
                                             Icon(Icons.delete_forever),
                                           ],
@@ -254,36 +262,7 @@ class _ManageCelebrationsScreenState extends State<ManageCelebrationsScreen> {
                               )
                             ],
                           ),
-
-                          // Row(
-                          //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          //   children: [
-                          //     const Text('display photos'),
-                          //     SizedBox.fromSize(
-                          //       size: const Size(50, 50),
-                          //       child: ClipOval(
-                          //         child: Material(
-                          //           color: Constants.primary,
-                          //           child: InkWell(
-                          //             splashColor: Constants.darkPrimary,
-                          //             onTap: () async {
-                          //               Navigator.of(ctx).pop();
-                          //
-                          //
-                          //             },
-                          //             child: Column(
-                          //               mainAxisAlignment: MainAxisAlignment.center,
-                          //               children: const <Widget>[
-                          //                 Icon(Icons.photo_sharp),
-                          //               ],
-                          //             ),
-                          //           ),
-                          //         ),
-                          //       ),
-                          //     )
-                          //   ],
-                          // ),
-                          const SizedBox(height:10),
+                          SizedBox(height: 10),
                         ],
                       ),
                     ),
@@ -318,17 +297,12 @@ class _ManageCelebrationsScreenState extends State<ManageCelebrationsScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 1),
-                  child:
-                  ClipRRect(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 5.0, vertical: 1),
+                  child: ClipRRect(
                     borderRadius: BorderRadius.circular(8),
-                    child: Image.network(
-                        uiPhoto.imageUrls[index],
-                        width: 110,
-                        height: 70,
-                        fit:BoxFit.fill
-
-                    ),
+                    child: Image.network(uiPhoto.imageUrls[index],
+                        width: 110, height: 70, fit: BoxFit.fill),
                   ),
                 ),
                 SizedBox.fromSize(
@@ -339,15 +313,16 @@ class _ManageCelebrationsScreenState extends State<ManageCelebrationsScreen> {
                       child: InkWell(
                         splashColor: Colors.red,
                         onTap: () {
-                          FirestorageHelper.deleteFile(uiPhoto.imageUrls[index]);
+                          FirestorageHelper.deleteFile(
+                              uiPhoto.imageUrls[index]);
                           uiPhoto.imageUrls.removeAt(index);
 
-                          uiPhoto = uiPhoto.copyWith(imageUrls: uiPhoto.imageUrls);
+                          uiPhoto =
+                              uiPhoto.copyWith(imageUrls: uiPhoto.imageUrls);
                           FirestoreHelper.pushUiPhoto(uiPhoto);
 
                           Navigator.of(context).pop();
-                          setState(() {
-                          });
+                          setState(() {});
                         },
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -366,6 +341,4 @@ class _ManageCelebrationsScreenState extends State<ManageCelebrationsScreen> {
       ),
     );
   }
-
-
 }

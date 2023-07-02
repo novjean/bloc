@@ -6,6 +6,7 @@ import 'package:bloc/screens/manager/reservations/manage_reservations_screen.dar
 
 import 'package:bloc/screens/manager/users/manage_users_screen.dart';
 import 'package:bloc/screens/parties/manage_guest_list_screen.dart';
+import 'package:bloc/widgets/ui/app_bar_title.dart';
 import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -13,6 +14,7 @@ import 'package:flutter/material.dart';
 import '../../db/entity/bloc_service.dart';
 import '../../helpers/firestore_helper.dart';
 import '../../widgets/ui/listview_block.dart';
+import 'ad_campaigns/manage_ad_campaigns_screen.dart';
 import 'celebrations/manage_celebrations_screen.dart';
 import 'challenges/manage_challenges_screen.dart';
 import 'guest_wifi_edit_screen.dart';
@@ -31,7 +33,8 @@ class ManagerServicesScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('manager | services'),
+        titleSpacing: 0,
+        title: AppBarTitle(title: 'manager services',),
       ),
       // drawer: AppDrawer(),
       body: _buildBody(context),
@@ -94,6 +97,13 @@ class ManagerServicesScreen extends StatelessWidget {
                         Navigator.of(context).push(MaterialPageRoute(
                             builder: (ctx) =>
                                 ManageAdsScreen(serviceId: blocService.id)));
+                        break;
+                      }
+                    case 'ad campaigns':
+                      {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (ctx) =>
+                                ManageAdCampaignsScreen(serviceId: blocService.id)));
                         break;
                       }
                     case 'challenges':

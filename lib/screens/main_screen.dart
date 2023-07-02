@@ -19,6 +19,7 @@ import 'package:go_router/go_router.dart';
 import 'package:upgrader/upgrader.dart';
 
 import '../db/entity/ad.dart';
+import '../db/entity/lounge.dart';
 import '../db/entity/party_guest.dart';
 import '../db/entity/reservation.dart';
 import '../db/entity/user_lounge.dart';
@@ -170,7 +171,24 @@ class _MainScreenState extends State<MainScreen> {
             LoungeChat chat = Fresh.freshLoungeChatMap(jsonDecode(data['document']), false);
             if(UserPreferences.isUserLoggedIn() && chat.userId != UserPreferences.myUser.id){
               if(UserPreferences.getListLounges().contains(chat.loungeId)){
-                showNotificationChatChannel(message);
+
+                FirestoreHelper.pullLounge(chat.loungeId).then((res) {
+                  if(res.docs.isNotEmpty){
+                    DocumentSnapshot document = res.docs[0];
+                    Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+                    Lounge lounge = Fresh.freshLoungeMap(data, false);
+
+                    RemoteNotification notification = RemoteNotification(
+                        title: lounge.name,
+                        body: chat.message,
+                    );
+                    showNotificationChatChannel(notification);
+                  } else {
+                    showNotificationChatChannel(message.notification);
+                  }
+                });
+
+
               }
             }
             break;
@@ -475,10 +493,8 @@ class _MainScreenState extends State<MainScreen> {
     });
   }
 
-  void showNotificationChatChannel(RemoteMessage message) {
+  void showNotificationChatChannel(RemoteNotification? notification) {
     Logx.d(_TAG, 'showNotificationChatChannel');
-
-    RemoteNotification? notification = message.notification;
 
     if(notification!=null){
       flutterLocalNotificationsPlugin.show(

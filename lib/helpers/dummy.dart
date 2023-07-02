@@ -13,6 +13,7 @@ import 'package:bloc/utils/string_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../db/entity/ad.dart';
+import '../db/entity/ad_campaign.dart';
 import '../db/entity/bloc.dart';
 import '../db/entity/bloc_service.dart';
 import '../db/entity/celebration.dart';
@@ -43,6 +44,18 @@ class Dummy {
         hits: 0);
 
     return dummyAd;
+  }
+
+  static AdCampaign getDummyAdCampaign() {
+    AdCampaign dummy = AdCampaign(
+        id: StringUtils.getRandomString(28),
+        name: '',
+        imageUrls: [],
+        adClick: 0,
+        linkUrl: '',
+        isActive: false);
+
+    return dummy;
   }
 
   static Bloc getDummyBloc(String cityId) {
@@ -137,18 +150,17 @@ class Dummy {
 
   static LoungeChat getDummyLoungeChat() {
     LoungeChat dummyChat = LoungeChat(
-      id: StringUtils.getRandomString(28),
-      loungeId: '',
-      userId: UserPreferences.myUser.id,
-      userName: UserPreferences.myUser.name,
-      userImage: UserPreferences.myUser.imageUrl,
-      message: '',
-      type: 'text',
-      time: Timestamp.now().millisecondsSinceEpoch,
-      vote: 0,
-      upVoters: [],
-      downVoters: []
-    );
+        id: StringUtils.getRandomString(28),
+        loungeId: '',
+        userId: UserPreferences.myUser.id,
+        userName: UserPreferences.myUser.name,
+        userImage: UserPreferences.myUser.imageUrl,
+        message: '',
+        type: 'text',
+        time: Timestamp.now().millisecondsSinceEpoch,
+        vote: 0,
+        upVoters: [],
+        downVoters: []);
     return dummyChat;
   }
 
@@ -189,7 +201,8 @@ class Dummy {
         creationTime: Timestamp.now().millisecondsSinceEpoch,
         lastChat: '',
         lastChatTime: Timestamp.now().millisecondsSinceEpoch,
-        isActive: true, isVip: false);
+        isActive: true,
+        isVip: false);
     return dummy;
   }
 
@@ -270,12 +283,9 @@ class Dummy {
     return dummyGuest;
   }
 
-  static PartyInterest getDummyPartyInterest(){
+  static PartyInterest getDummyPartyInterest() {
     PartyInterest partyInterest = PartyInterest(
-      id: StringUtils.getRandomString(28),
-      partyId: '',
-      userIds: []
-    );
+        id: StringUtils.getRandomString(28), partyId: '', userIds: []);
     return partyInterest;
   }
 
@@ -410,7 +420,8 @@ class Dummy {
         userId: '',
         loungeId: '',
         lastAccessedTime: Timestamp.now().millisecondsSinceEpoch,
-        isAccepted: true, isBanned: false);
+        isAccepted: true,
+        isBanned: false);
     return dummyUserLounge;
   }
 }

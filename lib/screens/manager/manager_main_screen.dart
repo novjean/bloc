@@ -1,5 +1,6 @@
 import 'package:bloc/db/entity/bloc_service.dart';
 import 'package:bloc/helpers/firestore_helper.dart';
+import 'package:bloc/widgets/ui/app_bar_title.dart';
 import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -18,7 +19,7 @@ class ManagerMainScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('manager | home'),
+        title: AppBarTitle(title: 'manager',),
       ),
       body: _buildBody(context),
     );

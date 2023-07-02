@@ -3,6 +3,7 @@ import 'package:bloc/db/entity/party_guest.dart';
 import 'package:bloc/db/entity/ui_photo.dart';
 
 import '../db/entity/ad.dart';
+import '../db/entity/ad_campaign.dart';
 import '../db/entity/bloc.dart';
 import '../db/entity/category.dart';
 import '../db/entity/celebration.dart';
@@ -146,6 +147,96 @@ class Fresh {
     }
 
     return freshAd;
+  }
+
+  /** ad campaign **/
+  static AdCampaign freshAdCampaignMap(Map<String, dynamic> map, bool shouldUpdate) {
+    AdCampaign adCampaign = Dummy.getDummyAdCampaign();
+
+    bool shouldPush = true;
+
+    try {
+      adCampaign = adCampaign.copyWith(id: map['id'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'adCampaign id not exist');
+    }
+    try {
+      adCampaign = adCampaign.copyWith(name: map['name'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'adCampaign name not exist for ad campaign id: ${adCampaign.id}');
+      shouldPush = true;
+    }
+    try {
+      adCampaign = adCampaign.copyWith(imageUrls: List<String>.from(map['imageUrls']));
+    } catch (e) {
+      Logx.em(_TAG, 'adCampaign imageUrls not exist for ad campaign id: ${adCampaign.id}');
+      adCampaign = adCampaign.copyWith(imageUrls: []);
+      shouldPush = true;
+    }
+    try {
+      adCampaign = adCampaign.copyWith(linkUrl: map['linkUrl'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'adCampaign linkUrl not exist for ad campaign id: ${adCampaign.id}');
+      shouldPush = true;
+    }
+    try {
+      adCampaign = adCampaign.copyWith(adClick: map['adClick'] as int);
+    } catch (e) {
+      Logx.em(_TAG, 'adCampaign adClick not exist for ad campaign id: ${adCampaign.id}');
+      shouldPush = true;
+    }
+    try {
+      adCampaign = adCampaign.copyWith(isActive: map['isActive'] as bool);
+    } catch (e) {
+      Logx.em(_TAG, 'adCampaign isActive not exist for ad campaign id: ${adCampaign.id}');
+      shouldPush = true;
+    }
+
+    if (shouldPush &&
+        shouldUpdate &&
+        UserPreferences.myUser.clearanceLevel >= Constants.MANAGER_LEVEL) {
+      Logx.i(_TAG, 'updating ad campaign ${adCampaign.id}');
+      FirestoreHelper.pushAdCampaign(adCampaign);
+    }
+
+    return adCampaign;
+  }
+
+  static AdCampaign freshAdCampaign(AdCampaign adCampaign) {
+    AdCampaign fresh = Dummy.getDummyAdCampaign();
+
+    try {
+      fresh = fresh.copyWith(id: adCampaign.id);
+    } catch (e) {
+      Logx.em(_TAG, 'adCampaign id not exist');
+    }
+    try {
+      fresh = fresh.copyWith(name: adCampaign.name);
+    } catch (e) {
+      Logx.em(_TAG, 'adCampaign name not exist for ad campaign id: ${adCampaign.id}');
+    }
+    try {
+      fresh = fresh.copyWith(imageUrls: adCampaign.imageUrls);
+    } catch (e) {
+      Logx.em(_TAG, 'adCampaign imageUrls not exist for ad campaign id: ${adCampaign.id}');
+    }
+    try {
+      fresh = fresh.copyWith(linkUrl: adCampaign.linkUrl);
+    } catch (e) {
+      Logx.em(_TAG, 'adCampaign linkUrl not exist for ad campaign id: ${adCampaign.id}');
+    }
+    try {
+      fresh = fresh.copyWith(adClick: adCampaign.adClick);
+    } catch (e) {
+      Logx.em(_TAG, 'adCampaign adClick not exist for ad campaign id: ${adCampaign.id}');
+    }
+    try {
+      fresh = fresh.copyWith(isActive: adCampaign.isActive);
+    } catch (e) {
+      Logx.em(_TAG, 'adCampaign isActive not exist for ad campaign id: ${adCampaign.id}');
+    }
+
+    return fresh;
   }
 
   /** bloc **/

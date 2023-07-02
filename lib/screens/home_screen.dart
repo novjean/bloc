@@ -6,6 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../db/entity/ad_campaign.dart';
 import '../db/entity/bloc.dart';
 import '../db/entity/guest_wifi.dart';
 import '../db/entity/party.dart';
@@ -15,6 +16,7 @@ import '../helpers/dummy.dart';
 import '../helpers/firestore_helper.dart';
 import '../helpers/fresh.dart';
 import '../utils/logx.dart';
+import '../widgets/ad_campaign_slide_item.dart';
 import '../widgets/footer.dart';
 import '../widgets/home/bloc_slide_item.dart';
 import '../widgets/parties/party_banner.dart';
@@ -50,6 +52,8 @@ class _HomeScreenState extends State<HomeScreen> {
         duration: const Duration(seconds: 30),
         curve: Curves.linear);
   }
+
+  AdCampaign mAdCampaign = Dummy.getDummyAdCampaign();
 
   @override
   void initState() {
@@ -176,6 +180,18 @@ class _HomeScreenState extends State<HomeScreen> {
         }
       } else {
         Logx.i(_TAG, 'no guest wifi found!');
+      }
+    });
+
+    FirestoreHelper.pullAdCampaign().then((res) {
+      if(res.docs.isNotEmpty){
+        DocumentSnapshot document = res.docs[0];
+        Map<String, dynamic> data =
+        document.data()! as Map<String, dynamic>;
+        mAdCampaign = Fresh.freshAdCampaignMap(data, false);
+        setState(() {
+
+        });
       }
     });
     super.initState();
@@ -361,6 +377,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 const SizedBox(height: 10.0),
 
+                Container(
+                    width: mq.width * 0.95,
+                    height: mq.height * 0.25,
+                    child: AdCampaignSlideItem(adCampaign: mAdCampaign)),
+                const SizedBox(height: 10.0),
+
                 UserPreferences.isUserLoggedIn()
                     ? _isGuestWifiDetailsLoading
                         ? const LoadingWidget()
@@ -385,6 +407,12 @@ class _HomeScreenState extends State<HomeScreen> {
                     shouldShowInterestCount: true,
                   ),
                   const SizedBox(height: 10.0),
+                  Container(
+                      width: mq.width * 0.95,
+                      height: 300,
+                      child: AdCampaignSlideItem(adCampaign: mAdCampaign)),
+                  const SizedBox(height: 10.0),
+
                   UserPreferences.isUserLoggedIn()
                       ? _isGuestWifiDetailsLoading
                           ? const LoadingWidget()

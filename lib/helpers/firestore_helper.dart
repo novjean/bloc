@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:bloc/db/entity/ad_campaign.dart';
 import 'package:bloc/db/entity/bloc.dart';
 import 'package:bloc/db/entity/bloc_service.dart';
 import 'package:bloc/db/entity/cart_item.dart';
@@ -44,6 +45,7 @@ class FirestoreHelper {
   static var logger = Logger();
 
   static String ADS = 'ads';
+  static String AD_CAMPAIGNS = 'ad_campaigns';
   static String BLOCS = 'blocs';
   static String CAPTAIN_SERVICES = 'captain_services';
   static String CATEGORIES = 'categories';
@@ -105,6 +107,39 @@ class FirestoreHelper {
 
   static void deleteAd(String docId) {
     FirebaseFirestore.instance.collection(ADS).doc(docId).delete();
+  }
+
+  /** Ad Campaigns **/
+  static void pushAdCampaign(AdCampaign adCampaign) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection(AD_CAMPAIGNS)
+          .doc(adCampaign.id)
+          .set(adCampaign.toMap());
+    } on PlatformException catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } on Exception catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } catch (e) {
+      logger.e(e);
+    }
+  }
+
+  static pullAdCampaign() {
+    return FirebaseFirestore.instance
+        .collection(AD_CAMPAIGNS)
+        .where('isActive', isEqualTo: true)
+        .get();
+  }
+
+  static getAdCampaigns() {
+    return FirebaseFirestore.instance
+        .collection(AD_CAMPAIGNS)
+        .snapshots();
+  }
+
+  static void deleteAdCampaign(String docId) {
+    FirebaseFirestore.instance.collection(AD_CAMPAIGNS).doc(docId).delete();
   }
 
   /** Blocs **/
