@@ -5,7 +5,6 @@ import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-import '../../utils/logx.dart';
 import '../../widgets/bloc_service_item.dart';
 
 class ManagerMainScreen extends StatelessWidget {
@@ -15,10 +14,9 @@ class ManagerMainScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Logx.i(_TAG, 'manager screen is loading...');
-
     return Scaffold(
       appBar: AppBar(
+        titleSpacing: 0,
         title: AppBarTitle(title: 'manager',),
       ),
       body: _buildBody(context),

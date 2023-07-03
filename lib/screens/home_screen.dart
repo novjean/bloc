@@ -26,7 +26,7 @@ import '../widgets/ui/dark_button_widget.dart';
 import '../widgets/ui/toaster.dart';
 
 class HomeScreen extends StatefulWidget {
-  HomeScreen({key}) : super(key: key);
+  const HomeScreen({key}) : super(key: key);
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -44,7 +44,7 @@ class _HomeScreenState extends State<HomeScreen> {
   List<PartyGuest> mPartyGuestRequests = [];
   var _isPartyGuestsLoading = true;
 
-  ScrollController _scrollController = ScrollController();
+  final ScrollController _scrollController = ScrollController();
 
   _scrollToBottom() {
     _scrollController.animateTo(
@@ -120,7 +120,7 @@ class _HomeScreenState extends State<HomeScreen> {
               }
             }
           }).catchError((err) {
-            Logx.em(_TAG, 'error loading blocs ' + err.toString());
+            Logx.em(_TAG, 'error loading blocs $err');
             if (mounted) {
               setState(() {
                 _isBlocsLoading = false;
@@ -180,17 +180,20 @@ class _HomeScreenState extends State<HomeScreen> {
         }
       } else {
         Logx.i(_TAG, 'no guest wifi found!');
+        if (mounted) {
+          setState(() {
+            _isGuestWifiDetailsLoading = false;
+          });
+        }
       }
     });
 
     FirestoreHelper.pullAdCampaign().then((res) {
       if(res.docs.isNotEmpty){
         DocumentSnapshot document = res.docs[0];
-        Map<String, dynamic> data =
-        document.data()! as Map<String, dynamic>;
+        Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
         mAdCampaign = Fresh.freshAdCampaignMap(data, false);
         setState(() {
-
         });
       }
     });
@@ -212,16 +215,18 @@ class _HomeScreenState extends State<HomeScreen> {
         body: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
-            _isBlocsLoading ? const LoadingWidget() : _displayBlocs(context),
-            _isPartyGuestsLoading? const LoadingWidget(): _displayPartiesNFooter(context),
+            _isBlocsLoading ? const LoadingWidget() : _showBlocs(context),
+            _isPartyGuestsLoading? const LoadingWidget(): _showPartiesAndFooter(context),
           ],
         ),
       ),
     );
   }
 
-  _displayBlocs(context) {
-    return Expanded(
+  _showBlocs(context) {
+    return SizedBox(
+      height: mq.height * 0.35,
+      width: mq.width * 0.99,
       child: ListView.builder(
           shrinkWrap: true,
           itemCount: mBlocs.length,
@@ -236,71 +241,8 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  buildWifi(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 10),
-      decoration: BoxDecoration(
-        border: Border.all(),
-        color: Theme.of(context).primaryColor,
-        borderRadius: const BorderRadius.all(Radius.circular(15)),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            padding: const EdgeInsets.only(top: 10, left: 10.0),
-            child: Text(
-              "connect 🌀",
-              style: TextStyle(
-                fontSize: 24.0,
-                color: Theme.of(context).primaryColorDark,
-                fontWeight: FontWeight.w800,
-              ),
-              textAlign: TextAlign.left,
-            ),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Flexible(
-                flex: 1,
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 10.0),
-                  child: Text(
-                    'wifi: ${mGuestWifi.name.toLowerCase()}',
-                    style: TextStyle(
-                      fontSize: 18,
-                      color: Theme.of(context).primaryColorDark,
-                    ),
-                  ),
-                ),
-              ),
-              Flexible(
-                flex: 1,
-                child: Container(
-                  padding: const EdgeInsets.only(right: 10),
-                  margin: const EdgeInsets.only(bottom: 10),
-                  child: DarkButtonWidget(
-                    text: 'copy password',
-                    onClicked: () {
-                      Clipboard.setData(
-                              ClipboardData(text: mGuestWifi.password))
-                          .then((value) {
-                        Toaster.shortToast('wifi password copied');
-                      });
-                    },
-                  ),
-                ),
-              )
-            ],
-          ),
-        ],
-      ),
-    );
-  }
 
-  _displayPartiesNFooter(BuildContext context) {
+  _showPartiesAndFooter(BuildContext context) {
     int timeNow = Timestamp.now().millisecondsSinceEpoch;
 
     return StreamBuilder<QuerySnapshot>(
@@ -460,6 +402,70 @@ class _HomeScreenState extends State<HomeScreen> {
         const SizedBox(height: 10.0),
         Footer(),
       ],
+    );
+  }
+
+  buildWifi(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 10),
+      decoration: BoxDecoration(
+        border: Border.all(),
+        color: Theme.of(context).primaryColor,
+        borderRadius: const BorderRadius.all(Radius.circular(15)),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.only(top: 10, left: 10.0),
+            child: Text(
+              "connect 🌀",
+              style: TextStyle(
+                fontSize: 24.0,
+                color: Theme.of(context).primaryColorDark,
+                fontWeight: FontWeight.w800,
+              ),
+              textAlign: TextAlign.left,
+            ),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Flexible(
+                flex: 1,
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 10.0),
+                  child: Text(
+                    'wifi: ${mGuestWifi.name.toLowerCase()}',
+                    style: TextStyle(
+                      fontSize: 18,
+                      color: Theme.of(context).primaryColorDark,
+                    ),
+                  ),
+                ),
+              ),
+              Flexible(
+                flex: 1,
+                child: Container(
+                  padding: const EdgeInsets.only(right: 10),
+                  margin: const EdgeInsets.only(bottom: 10),
+                  child: DarkButtonWidget(
+                    text: 'copy password',
+                    onClicked: () {
+                      Clipboard.setData(
+                          ClipboardData(text: mGuestWifi.password))
+                          .then((value) {
+                        Toaster.shortToast('wifi password copied');
+                      });
+                    },
+                  ),
+                ),
+              )
+            ],
+          ),
+        ],
+      ),
     );
   }
 

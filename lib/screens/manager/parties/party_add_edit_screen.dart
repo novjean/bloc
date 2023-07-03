@@ -18,6 +18,7 @@ import '../../../db/entity/challenge.dart';
 import '../../../db/entity/genre.dart';
 import '../../../db/entity/lounge.dart';
 import '../../../db/entity/party.dart';
+import '../../../db/entity/party_interest.dart';
 import '../../../helpers/dummy.dart';
 import '../../../helpers/firestorage_helper.dart';
 import '../../../helpers/firestore_helper.dart';
@@ -96,6 +97,9 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
   late String sLoungeId;
   List<String> mLoungeNames=[];
   bool isLoungesLoading = true;
+
+  PartyInterest mPartyInterest = Dummy.getDummyPartyInterest();
+  bool isPartyInterestLoading = true;
 
   @override
   void initState() {
@@ -228,6 +232,21 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
       }
     });
 
+    FirestoreHelper.pullPartyInterest(widget.party.id).then((res) {
+      if(res.docs.isNotEmpty){
+        DocumentSnapshot document = res.docs[0];
+        Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+        mPartyInterest = Fresh.freshPartyInterestMap(data, false);
+        setState(() {
+          isPartyInterestLoading = false;
+        });
+      } else {
+        setState(() {
+          isPartyInterestLoading = false;
+        });
+      }
+    });
+
     sLounge = Dummy.getDummyLounge();
     sLoungeId = widget.party.loungeId;
     sLoungeIds.add(sLoungeId);
@@ -272,7 +291,8 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
       );
 
   _buildBody(BuildContext context) {
-    return _isBlocServicesLoading && isGenresLoading && isChallengesLoading && isLoungesLoading
+    return _isBlocServicesLoading && isGenresLoading && isChallengesLoading
+        && isLoungesLoading && isPartyInterestLoading
         ? const LoadingWidget()
         : ListView(
             padding: const EdgeInsets.symmetric(horizontal: 32),
@@ -428,8 +448,8 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
               const SizedBox(height: 24),
               Column(
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 8.0),
+                  const Padding(
+                    padding: EdgeInsets.only(bottom: 8.0),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
@@ -553,11 +573,11 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
               const SizedBox(height: 24),
               Column(
                 children: [
-                  Row(
+                  const Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Padding(
-                        padding: const EdgeInsets.only(bottom: 8.0),
+                        padding: EdgeInsets.only(bottom: 8.0),
                         child: Text(
                           'artists',
                           style: TextStyle(
@@ -601,13 +621,9 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
 
                       if (sArtistIds.isEmpty) {
                         Logx.i(_TAG, 'no artists selected');
-                        // widget.party =
-                        //     widget.party.copyWith(bottleNames: []);
                         widget.party =
                             widget.party.copyWith(artistIds: []);
                       } else {
-                        // widget.reservation =
-                        //     widget.reservation.copyWith(bottleNames: sBottleNames);
                         widget.party =
                             widget.party.copyWith(artistIds: sArtistIds);
                       }
@@ -619,11 +635,11 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
               const SizedBox(height: 24),
               Column(
                 children: [
-                  Row(
+                  const Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Padding(
-                        padding: const EdgeInsets.only(bottom: 8.0),
+                        padding: EdgeInsets.only(bottom: 8.0),
                         child: Text(
                           'bloc',
                           style: TextStyle(
@@ -707,6 +723,32 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
                   widget.party = widget.party.copyWith(listenUrl: value);
                 },
               ),
+
+              const SizedBox(height: 24),
+              TextFieldWidget(
+                label: 'interest initial count',
+                text: mPartyInterest.initCount.toString(),
+                maxLines: 1,
+                onChanged: (value) {
+                  int? initialCount = int.tryParse(value);
+                  mPartyInterest = mPartyInterest.copyWith(initCount: initialCount);
+                  FirestoreHelper.pushPartyInterest(mPartyInterest);
+                },
+              ),
+              const SizedBox(height: 24),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text('interest user count: ${mPartyInterest.userIds.length}'),
+                  ButtonWidget(text: 'reset', onClicked: () {
+                    mPartyInterest.userIds = [];
+                    FirestoreHelper.pushPartyInterest(mPartyInterest);
+                    setState(() {
+                    });
+                  },)
+                ],
+              ),
+
               const SizedBox(height: 24),
               dateTimeContainer(context, 'start'),
 
@@ -795,7 +837,7 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
               const SizedBox(height: 24),
               Row(
                 children: <Widget>[
-                  Text(
+                  const Text(
                     'guestlist active : ',
                     style: TextStyle(fontSize: 17.0),
                   ), //Text
@@ -840,8 +882,7 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(5.0),
                             ),
-                            enabledBorder: OutlineInputBorder(
-                              // width: 0.0 produces a thin "hairline" border
+                            enabledBorder: const OutlineInputBorder(
                               borderSide: BorderSide(
                                   width: 0.0),
                             )),
@@ -1010,7 +1051,7 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
                   }
 
                   FirestoreHelper.deleteParty(widget.party);
-                  Toaster.shortToast('deleted party ' + widget.party.name);
+                  Toaster.shortToast('deleted party : ${widget.party.name}');
                   Navigator.of(context).pop();
                 },
               ),

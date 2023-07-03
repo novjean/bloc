@@ -2023,6 +2023,12 @@ class Fresh {
       Logx.em(_TAG,
           'party interest userIds not exist for id: ${partyInterest.id}');
     }
+    try {
+      fresh = fresh.copyWith(initCount: partyInterest.initCount);
+    } catch (e) {
+      Logx.em(_TAG,
+          'party interest initCount not exist for id: ${partyInterest.id}');
+    }
 
     return fresh;
   }
@@ -2049,13 +2055,17 @@ class Fresh {
       Logx.em(_TAG, 'party artistIds not exist for id: ${partyInterest.id}');
       shouldPush = true;
     }
-
+    try {
+      partyInterest = partyInterest.copyWith(initCount: map['initCount'] as int);
+    } catch (e) {
+      Logx.em(_TAG, 'partyInterest initCount not exist for id: ${partyInterest.id}');
+      shouldPush = true;
+    }
 
     if (shouldPush && shouldUpdate) {
       Logx.i(_TAG, 'updating party interest ${partyInterest.id}');
       FirestoreHelper.pushPartyInterest(partyInterest);
     }
-
     return partyInterest;
   }
 

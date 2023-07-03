@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:bloc/widgets/ui/app_bar_title.dart';
 import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -147,7 +148,8 @@ class _ProductAddEditScreenState extends State<ProductAddEditScreen> {
   @override
   Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(
-          title: Text('product | ${widget.task}'),
+          titleSpacing: 0,
+          title: AppBarTitle(title:'${widget.task} product'),
         ),
         body: _buildBody(context),
       );

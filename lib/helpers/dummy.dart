@@ -285,7 +285,10 @@ class Dummy {
 
   static PartyInterest getDummyPartyInterest() {
     PartyInterest partyInterest = PartyInterest(
-        id: StringUtils.getRandomString(28), partyId: '', userIds: []);
+        id: StringUtils.getRandomString(28),
+        partyId: '',
+        userIds: [],
+        initCount: 0);
     return partyInterest;
   }
 

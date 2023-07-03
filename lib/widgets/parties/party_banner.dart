@@ -98,106 +98,109 @@ class _PartyBannerState extends State<PartyBanner> {
         padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 3),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(15),
-          child: Stack(children: [
-            Hero(
-              tag: widget.party.id,
-              child: Card(
-                elevation: 1,
-                color: Theme.of(context).primaryColorLight,
-                child: SizedBox(
-                  height: 200,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Flexible(
-                        flex: 2,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(left: 5.0),
-                              child: RichText(
-                                text: TextSpan(
-                                    text: '${widget.party.name.toLowerCase()} ',
-                                    style: const TextStyle(
-                                        color: Colors.black,
-                                        fontFamily: Constants.fontDefault,
-                                        overflow: TextOverflow.ellipsis,
-                                        fontSize: 22,
-                                        fontWeight: FontWeight.bold),
-                                    children: <TextSpan>[
-                                      TextSpan(
-                                          text: widget.party.chapter == 'I'
-                                              ? ''
-                                              : widget.party.chapter,
+          child: Hero(
+            tag: widget.party.id,
+            child: Card(
+              elevation: 1,
+              color: Theme.of(context).primaryColorLight,
+              child: SizedBox(
+                height: 200,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Flexible(
+                      flex: 2,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(left: 5.0),
+                            child: RichText(
+                              text: TextSpan(
+                                  text: '${widget.party.name.toLowerCase()} ',
+                                  style: const TextStyle(
+                                      color: Colors.black,
+                                      fontFamily: Constants.fontDefault,
+                                      overflow: TextOverflow.ellipsis,
+                                      fontSize: 22,
+                                      fontWeight: FontWeight.bold),
+                                  children: <TextSpan>[
+                                    TextSpan(
+                                        text: widget.party.chapter == 'I'
+                                            ? ''
+                                            : widget.party.chapter,
+                                        style: const TextStyle(
+                                            color: Colors.black,
+                                            fontFamily: Constants.fontDefault,
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.normal,
+                                            fontStyle: FontStyle.italic)),
+                                  ]),
+                            ),
+                          ),
+                          widget.party.eventName.isNotEmpty
+                              ? Padding(
+                                  padding:
+                                      const EdgeInsets.only(left: 5.0, top: 10),
+                                  child: Text(
+                                    widget.party.eventName.toLowerCase(),
+                                    style: const TextStyle(fontSize: 18),
+                                  ),
+                                )
+                              : const SizedBox(),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 5.0),
+                            child: Text(
+                              widget.party.isTBA
+                                  ? 'tba'
+                                  : '${DateTimeUtils.getFormattedDate(widget.party.startTime)}, ${DateTimeUtils.getFormattedTime(widget.party.startTime)}',
+                              style: const TextStyle(fontSize: 18),
+                            ),
+                          ),
+                          const Spacer(),
+                          widget.shouldShowInterestCount
+                              ? Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                          right: 5, bottom: 1),
+                                      child: DelayedDisplay(
+                                        delay: const Duration(seconds: 1),
+                                        child: Text(
+                                          mPartyInterest.userIds.length >= 9 ||
+                                                  UserPreferences.myUser
+                                                          .clearanceLevel >=
+                                                      Constants.ADMIN_LEVEL
+                                              ? '${mPartyInterest.initCount + mPartyInterest.userIds.length} 🖤'
+                                              : '',
                                           style: const TextStyle(
-                                              color: Colors.black,
-                                              fontFamily: Constants.fontDefault,
-                                              fontSize: 18,
-                                              fontWeight: FontWeight.normal,
-                                              fontStyle: FontStyle.italic)),
-                                    ]),
-                              ),
-                            ),
-                            widget.party.eventName.isNotEmpty
-                                ? Padding(
-                                    padding: const EdgeInsets.only(
-                                        left: 5.0, top: 10),
-                                    child: Text(
-                                      widget.party.eventName.toLowerCase(),
-                                      style: const TextStyle(fontSize: 18),
-                                    ),
-                                  )
-                                : const SizedBox(),
-                            Padding(
-                              padding: const EdgeInsets.only(left: 5.0),
-                              child: Text(
-                                widget.party.isTBA
-                                    ? 'tba'
-                                    : '${DateTimeUtils.getFormattedDate(widget.party.startTime)}, ${DateTimeUtils.getFormattedTime(widget.party.startTime)}',
-                                style: const TextStyle(fontSize: 18),
-                              ),
-                            ),
-                            const Spacer(),
-                            widget.shouldShowInterestCount
-                                ? Row(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    children: [
-                                      Padding(
-                                        padding: const EdgeInsets.only(
-                                            right: 5, bottom: 1),
-                                        child: DelayedDisplay(
-                                          delay: const Duration(seconds: 1),
-                                          child: Text(
-                                            mPartyInterest.userIds.length >= 9 || UserPreferences.myUser.clearanceLevel>= Constants.ADMIN_LEVEL
-                                                ? '${mPartyInterest.userIds.length} 🖤'
-                                                : '',
-                                            style: const TextStyle(
-                                              color: Colors.black,
-                                            ),
+                                            color: Colors.black,
                                           ),
                                         ),
                                       ),
-                                    ],
-                                  )
-                                : const SizedBox(),
-                            widget.shouldShowButton
-                                ? !widget.party.isTBA &&
-                                        widget.party.ticketUrl.isNotEmpty
-                                    ? showBuyTixButton(context)
-                                    : isGuestListActive
-                                        ? !widget.isGuestListRequested
-                                            ? showGuestListButton(context)
-                                            : showBoxOfficeButton(context)
-                                        : showListenOrInstaDialog(context)
-                                : const SizedBox()
-                          ],
-                        ),
+                                    ),
+                                  ],
+                                )
+                              : const SizedBox(),
+                          widget.shouldShowButton
+                              ? !widget.party.isTBA &&
+                                      widget.party.ticketUrl.isNotEmpty
+                                  ? showBuyTixButton(context)
+                                  : isGuestListActive
+                                      ? !widget.isGuestListRequested
+                                          ? showGuestListButton(context)
+                                          : showBoxOfficeButton(context)
+                                      : showListenOrInstaDialog(context)
+                              : const SizedBox()
+                        ],
                       ),
-                      Flexible(
-                        flex: 1,
-                        child: SizedBox(
+                    ),
+                    Flexible(
+                      flex: 1,
+                      child: Stack(children: [
+                        SizedBox(
                           height: 200,
                           child: FadeInImage(
                             placeholder:
@@ -206,34 +209,34 @@ class _PartyBannerState extends State<PartyBanner> {
                             fit: BoxFit.cover,
                           ),
                         ),
-                      ),
-                    ],
-                  ),
+                        widget.party.genre.isNotEmpty
+                            ? Positioned(
+                                bottom: 3,
+                                right: 3,
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(10),
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 2, horizontal: 2),
+                                    child: Text(
+                                      widget.party.genre,
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        backgroundColor: Constants.lightPrimary
+                                            .withOpacity(0.7),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              )
+                            : const SizedBox()
+                      ]),
+                    ),
+                  ],
                 ),
               ),
             ),
-            widget.party.genre.isNotEmpty
-                ? Positioned(
-                    bottom: 5,
-                    right: 4,
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(10),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 2, horizontal: 2),
-                        child: Text(
-                          widget.party.genre,
-                          style: TextStyle(
-                            fontSize: 14,
-                            backgroundColor:
-                                Constants.lightPrimary.withOpacity(0.5),
-                          ),
-                        ),
-                      ),
-                    ),
-                  )
-                : const SizedBox()
-          ]),
+          ),
         ),
       ),
     );
@@ -299,8 +302,9 @@ class _PartyBannerState extends State<PartyBanner> {
 
           Navigator.of(context).push(
             MaterialPageRoute(
-                builder: (context) => PartyGuestAddEditManageScreen(
-                    partyGuest: partyGuest, party: widget.party, task: 'add')),
+              builder: (context) => PartyGuestAddEditManageScreen(
+                  partyGuest: partyGuest, party: widget.party, task: 'add'),
+            ),
           );
         },
         icon: const Icon(
@@ -325,7 +329,7 @@ class _PartyBannerState extends State<PartyBanner> {
           shadowColor: Colors.white30,
           elevation: 3,
           minimumSize: const Size.fromHeight(60),
-          shape: RoundedRectangleBorder(
+          shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(10), topRight: Radius.circular(10)),
           ),
