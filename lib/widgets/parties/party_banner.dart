@@ -74,6 +74,8 @@ class _PartyBannerState extends State<PartyBanner> {
     bool isGuestListActive = widget.party.isGuestListActive &
         (timeNow < widget.party.guestListEndTime);
 
+    int interestCount = mPartyInterest.initCount + mPartyInterest.userIds.length;
+
     return GestureDetector(
       onTap: () {
         if (widget.isClickable) {
@@ -169,11 +171,11 @@ class _PartyBannerState extends State<PartyBanner> {
                                       child: DelayedDisplay(
                                         delay: const Duration(seconds: 1),
                                         child: Text(
-                                          mPartyInterest.userIds.length >= 9 ||
+                                          interestCount >= 9 ||
                                                   UserPreferences.myUser
                                                           .clearanceLevel >=
                                                       Constants.ADMIN_LEVEL
-                                              ? '${mPartyInterest.initCount + mPartyInterest.userIds.length} 🖤'
+                                              ? '$interestCount 🖤'
                                               : '',
                                           style: const TextStyle(
                                             color: Colors.black,

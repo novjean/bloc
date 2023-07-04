@@ -163,6 +163,7 @@ class _PartyGuestAddEditManageScreenState
       }
     });
 
+    sPartyId = widget.partyGuest.partyId;
     FirestoreHelper.pullActiveGuestListParties(Timestamp.now().millisecondsSinceEpoch).then((res) {
       if (res.docs.isNotEmpty) {
         // found parties
@@ -173,7 +174,13 @@ class _PartyGuestAddEditManageScreenState
           Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
           final Party party = Fresh.freshPartyMap(data, true);
           parties.add(party);
-          _partyNames.add('${party.name} ${party.chapter}');
+          String partyTitle = '${party.name} ${party.chapter}';
+          _partyNames.add(partyTitle);
+
+          if(party.id == sPartyId){
+            sPartyName = partyTitle;
+            sParty = party;
+          }
         }
         setState(() {
           mParties = parties;
@@ -1644,18 +1651,17 @@ class _PartyGuestAddEditManageScreenState
                 hintText: 'please select party',
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(5.0),
-                  borderSide: BorderSide(color: Theme.of(context).primaryColor),
+                  borderSide: BorderSide(color: Constants.primary),
                 ),
-                enabledBorder: OutlineInputBorder(
-                  // width: 0.0 produces a thin "hairline" border
+                enabledBorder: const OutlineInputBorder(
                   borderSide: BorderSide(
-                      color: Theme.of(context).primaryColor, width: 0.0),
+                      color: Constants.primary, width: 0.0),
                 )),
             isEmpty: sPartyName == '',
             child: DropdownButtonHideUnderline(
               child: DropdownButton<String>(
-                style: TextStyle(color: Theme.of(context).primaryColor),
-                dropdownColor: Theme.of(context).backgroundColor,
+                style: const TextStyle(color: Constants.lightPrimary),
+                dropdownColor: Constants.background,
                 value: sPartyName,
                 isDense: true,
                 onChanged: (String? newValue) {

@@ -5,6 +5,7 @@ import 'package:bloc/widgets/ui/app_bar_title.dart';
 import 'package:bloc/widgets/ui/button_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../db/entity/celebration.dart';
 import '../../db/entity/challenge.dart';
@@ -16,6 +17,7 @@ import '../../db/shared_preferences/user_preferences.dart';
 import '../../helpers/dummy.dart';
 import '../../helpers/firestore_helper.dart';
 import '../../helpers/fresh.dart';
+import '../../routes/route_constants.dart';
 import '../../utils/constants.dart';
 import '../../utils/logx.dart';
 import '../../widgets/box_office/box_office_item.dart';
@@ -112,7 +114,23 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
       appBar: AppBar(
         backgroundColor: Colors.black,
         titleSpacing: 0,
-        title: AppBarTitle(title: 'box office',)
+        title: AppBarTitle(
+          title: 'box office',
+        ),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            if (kIsWeb) {
+              if (UserPreferences.isUserLoggedIn()) {
+                GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
+              } else {
+                GoRouter.of(context).pushNamed(RouteConstants.landingRouteName);
+              }
+            } else {
+              Navigator.of(context).pop();
+            }
+          },
+        ),
       ),
       backgroundColor: Constants.background,
       floatingActionButton:
@@ -161,10 +179,9 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
       return displayGuestListParties(context);
     } else if (sOption == 'reservations') {
       return buildReservations(context);
-    }  else if (sOption == 'celebrations') {
+    } else if (sOption == 'celebrations') {
       return buildCelebrations(context);
-    }
-    else {
+    } else {
       // unsupported
     }
   }
@@ -174,7 +191,7 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
       return buildUserPartyGuestList(context);
     } else if (sOption == 'reservations') {
       return buildUserReservations(context);
-    }  else if (sOption == 'celebrations') {
+    } else if (sOption == 'celebrations') {
       return buildUserCelebrations(context);
     } else {
       // unsupported
@@ -243,7 +260,8 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
   }
 
   buildUserReservations(BuildContext context) {
-    Logx.i(_TAG, 'searching for reservations for user ${UserPreferences.myUser.id}');
+    Logx.i(_TAG,
+        'searching for reservations for user ${UserPreferences.myUser.id}');
 
     return StreamBuilder<QuerySnapshot>(
       stream: FirestoreHelper.getReservationsByUser(UserPreferences.myUser.id),
@@ -259,8 +277,10 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
           } else {
             for (int i = 0; i < snapshot.data!.docs.length; i++) {
               DocumentSnapshot document = snapshot.data!.docs[i];
-              Map<String, dynamic> map = document.data()! as Map<String, dynamic>;
-              final Reservation reservation = Fresh.freshReservationMap(map, false);
+              Map<String, dynamic> map =
+                  document.data()! as Map<String, dynamic>;
+              final Reservation reservation =
+                  Fresh.freshReservationMap(map, false);
               reservations.add(reservation);
 
               if (i == snapshot.data!.docs.length - 1) {
@@ -291,9 +311,9 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
             for (int i = 0; i < snapshot.data!.docs.length; i++) {
               DocumentSnapshot document = snapshot.data!.docs[i];
               Map<String, dynamic> map =
-              document.data()! as Map<String, dynamic>;
+                  document.data()! as Map<String, dynamic>;
               final Celebration celebration =
-              Fresh.freshCelebrationMap(map, false);
+                  Fresh.freshCelebrationMap(map, false);
               celebrations.add(celebration);
 
               if (i == snapshot.data!.docs.length - 1) {
@@ -310,7 +330,8 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
   }
 
   buildUserCelebrations(BuildContext context) {
-    Logx.i(_TAG, 'searching for celebrations for user ${UserPreferences.myUser.id}');
+    Logx.i(_TAG,
+        'searching for celebrations for user ${UserPreferences.myUser.id}');
 
     return StreamBuilder<QuerySnapshot>(
       stream: FirestoreHelper.getCelebrationsByUser(UserPreferences.myUser.id),
@@ -326,8 +347,10 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
           } else {
             for (int i = 0; i < snapshot.data!.docs.length; i++) {
               DocumentSnapshot document = snapshot.data!.docs[i];
-              Map<String, dynamic> map = document.data()! as Map<String, dynamic>;
-              final Celebration celebration = Fresh.freshCelebrationMap(map, false);
+              Map<String, dynamic> map =
+                  document.data()! as Map<String, dynamic>;
+              final Celebration celebration =
+                  Fresh.freshCelebrationMap(map, false);
               celebrations.add(celebration);
 
               if (i == snapshot.data!.docs.length - 1) {
@@ -444,7 +467,8 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
             return GestureDetector(
                 child: ReservationBanner(
                   reservation: reservations[index],
-                  isPromoter: UserPreferences.myUser.clearanceLevel >= Constants.PROMOTER_LEVEL,
+                  isPromoter: UserPreferences.myUser.clearanceLevel >=
+                      Constants.PROMOTER_LEVEL,
                 ),
                 onTap: () {
                   Reservation _sReservation = reservations[index];
@@ -470,7 +494,8 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
             return GestureDetector(
                 child: CelebrationBanner(
                   celebration: celebrations[index],
-                  isPromoter: UserPreferences.myUser.clearanceLevel >= Constants.PROMOTER_LEVEL,
+                  isPromoter: UserPreferences.myUser.clearanceLevel >=
+                      Constants.PROMOTER_LEVEL,
                 ),
                 onTap: () {
                   Celebration _sCelebration = celebrations[index];
@@ -479,9 +504,9 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
 
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (ctx) => CelebrationAddEditScreen(
-                        celebration: _sCelebration,
-                        task: 'edit',
-                      )));
+                            celebration: _sCelebration,
+                            task: 'edit',
+                          )));
                 });
           }),
     );
@@ -489,23 +514,29 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
 
   showPartiesButton() {
     return Expanded(
-      child: Center(child: Column(
+      child: Center(
+          child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
-            '⚡ Warning: FOMO alert! Our party radar is buzzing, and it seems like you\'re missing out on the hottest 🔥🔥🔥 gathering in town. Hurry up, grab your spot, and prepare for an unforgettable experience! 🪩'.toLowerCase(),
+            '⚡ Warning: FOMO alert! Our party radar is buzzing, and it seems like you\'re missing out on the hottest 🔥🔥🔥 gathering in town. Hurry up, grab your spot, and prepare for an unforgettable experience! 🪩'
+                .toLowerCase(),
             textAlign: TextAlign.center,
             style: TextStyle(fontSize: 22, color: Constants.primary),
           ),
           const SizedBox(height: 16),
           Text(
             'click to check out our parties!'.toLowerCase(),
-            style: TextStyle(fontSize: 16, color: Constants.primary),
+            style: const TextStyle(fontSize: 16, color: Constants.primary),
           ),
           const SizedBox(height: 16),
-          ButtonWidget(text: 'parties', height: 50, onClicked: () {
-            Navigator.of(context).pop();
-          },),
+          ButtonWidget(
+            text: 'parties',
+            height: 50,
+            onClicked: () {
+              Navigator.of(context).pop();
+            },
+          ),
         ],
       )),
     );
@@ -513,31 +544,34 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
 
   showReserveTableButton() {
     return Expanded(
-      child: Center(child: Column(
+      child: Center(
+          child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
-            'Family and food, the perfect recipe for love! Reserve a table, lay a foundation of laughter and good food, and watch your beautiful memories take shape! 💛'.toLowerCase(),
+            'Family and food, the perfect recipe for love! Reserve a table, lay a foundation of laughter and good food, and watch your beautiful memories take shape! 💛'
+                .toLowerCase(),
             textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 22, color: Constants.primary),
+            style: const TextStyle(fontSize: 22, color: Constants.primary),
           ),
           const SizedBox(height: 16),
           Text(
             'click to reserve your table!'.toLowerCase(),
-            style: TextStyle(fontSize: 16, color: Constants.primary),
+            style: const TextStyle(fontSize: 16, color: Constants.primary),
           ),
           const SizedBox(height: 16),
-          ButtonWidget(text: 'reserve', height: 50, onClicked: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                  builder: (ctx) =>
-                      ReservationAddEditScreen(
-                          reservation:
-                          Dummy.getDummyReservation(
-                             ''),
-                          task: 'add')),
-            );
-          },),
+          ButtonWidget(
+            text: 'reserve',
+            height: 50,
+            onClicked: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                    builder: (ctx) => ReservationAddEditScreen(
+                        reservation: Dummy.getDummyReservation(''),
+                        task: 'add')),
+              );
+            },
+          ),
         ],
       )),
     );
@@ -545,34 +579,36 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
 
   showCelebrateButton() {
     return Expanded(
-      child: Center(child: Column(
+      child: Center(
+          child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
-            'Step into a world of celebration and sophistication at our cocktail rooftop bar. Whether it\'s your anniversary, birthday, or a corporate event, our venue is tailor-made to accommodate large groups, ensuring a night to remember. Come and indulge in the magic of elevated celebrations! 🍾'.toLowerCase(),
+            'Step into a world of celebration and sophistication at our cocktail rooftop bar. Whether it\'s your anniversary, birthday, or a corporate event, our venue is tailor-made to accommodate large groups, ensuring a night to remember. Come and indulge in the magic of elevated celebrations! 🍾'
+                .toLowerCase(),
             textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 22, color: Constants.primary),
+            style: const TextStyle(fontSize: 22, color: Constants.primary),
           ),
           const SizedBox(height: 16),
           Text(
             'click to celebrate with us!'.toLowerCase(),
-            style: TextStyle(fontSize: 16, color: Constants.primary),
+            style: const TextStyle(fontSize: 16, color: Constants.primary),
           ),
           const SizedBox(height: 16),
-          ButtonWidget(text: 'celebrate', height: 50, onClicked: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                  builder: (ctx) =>
-                      CelebrationAddEditScreen(
-                          celebration:
-                          Dummy.getDummyCelebration(
-                              ''),
-                          task: 'add')),
-            );
-          },),
+          ButtonWidget(
+            text: 'celebrate',
+            height: 50,
+            onClicked: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                    builder: (ctx) => CelebrationAddEditScreen(
+                        celebration: Dummy.getDummyCelebration(''),
+                        task: 'add')),
+              );
+            },
+          ),
         ],
       )),
     );
   }
-
 }

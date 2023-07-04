@@ -55,136 +55,96 @@ class _BoxOfficeItemState extends State<BoxOfficeItem> {
       title += ' +$friendsCount';
     }
 
-    return GestureDetector(
-      onTap: () {
-        // isClickable
-        //     ? Navigator.of(context).push(
-        //         MaterialPageRoute(builder: (ctx) => ArtistScreen(party: party)),
-        //       )
-        //     : print('party guest item no click');
-      },
-      child: Hero(
-        tag: widget.partyGuest.id,
-        child: Card(
-          elevation: 1,
-          color: Theme.of(context).primaryColorLight,
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)),
-          child: SizedBox(
-            height: 150,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Flexible(
-                  flex: 2,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding:
-                            const EdgeInsets.only(left: 5.0, right: 5, top: 3),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              title,
-                              style: const TextStyle(
-                                fontSize: 24.0,
-                                fontWeight: FontWeight.w800,
-                              ),
-                              textAlign: TextAlign.left,
-                            ),
-                            UserPreferences.myUser.clearanceLevel >=
-                                    Constants.PROMOTER_LEVEL
-                                ? ToggleSwitch(
-                                    customWidths: [40.0, 40.0],
-                                    cornerRadius: 20.0,
-                                    activeBgColors: [
-                                      [Constants.background],
-                                      [Colors.redAccent]
-                                    ],
-                                    activeFgColor: Colors.white,
-                                    inactiveBgColor: Colors.grey,
-                                    inactiveFgColor: Colors.white,
-                                    initialLabelIndex:
-                                        widget.partyGuest.guestsRemaining == 0
-                                            ? 0
-                                            : 1,
-                                    totalSwitches: 2,
-                                    labels: ['👍🏼', '👎🏼'],
-                                    onToggle: (index) {
-                                      debugPrint('switched to: $index');
-                                      if (index == 0) {
-                                        widget.partyGuest.guestsRemaining = 0;
-                                        FirestoreHelper.pushPartyGuest(
-                                            widget.partyGuest);
-                                      } else {
-                                        widget.partyGuest.guestsRemaining =
-                                            widget.partyGuest.guestsCount;
-                                        FirestoreHelper.pushPartyGuest(
-                                            widget.partyGuest);
-                                      }
-                                    },
-                                  )
-                                : const SizedBox(),
-                          ],
-                        ),
-                      ),
-                      widget.party.eventName.isNotEmpty
-                          ? Padding(
-                              padding: const EdgeInsets.only(left: 5.0),
-                              child: Text(
-                                widget.party.eventName.toLowerCase(),
-                                style: const TextStyle(fontSize: 18),
-                              ),
-                            )
-                          : const SizedBox(),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 5.0),
-                        child: Text(
-                          widget.party.isTBA
-                              ? 'tba'
-                              : '${DateTimeUtils.getFormattedDate(widget.party.startTime)}, '
-                              '${DateTimeUtils.getFormattedTime(widget.party.startTime)}',
-                          style: const TextStyle(fontSize: 18),
-                        ),
-                      ),
-                      Row(
+    return Hero(
+      tag: widget.partyGuest.id,
+      child: Card(
+        elevation: 1,
+        color: Theme.of(context).primaryColorLight,
+        shape:
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)),
+        child: SizedBox(
+          height: mq.height * 0.2,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Flexible(
+                flex: 2,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding:
+                          const EdgeInsets.only(left: 5.0, right: 5, top: 3),
+                      child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Padding(
-                            padding: const EdgeInsets.only(left: 5.0),
-                            child: widget.partyGuest.isApproved? showApprovedButton(context)
-                                :showPendingButton(context)
+                          Text(
+                            title,
+                            style: const TextStyle(
+                              fontSize: 24.0,
+                              fontWeight: FontWeight.w800,
+                            ),
+                            textAlign: TextAlign.left,
                           ),
-                          const Spacer(),
-                          UserPreferences.myUser.clearanceLevel>=Constants.PROMOTER_LEVEL?
-                          displayBanUserButton(context) : const SizedBox(),
-                          UserPreferences.myUser.clearanceLevel>=Constants.PROMOTER_LEVEL?
-                          displayEntryEditButton(context):displayUserEntryEditButton(context),
                         ],
                       ),
-                    ],
-                  ),
-                ),
-                Flexible(
-                  flex: 1,
-                  child: Container(
-                    height: 150,
-                    width: 150,
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Theme.of(context).primaryColor),
-                      borderRadius: const BorderRadius.all(Radius.circular(2)),
-                      image: DecorationImage(
-                        image: NetworkImage(widget.party.imageUrl),
-                        fit: BoxFit.cover,
+                    ),
+                    // widget.party.eventName.isNotEmpty
+                    //     ? Padding(
+                    //         padding: const EdgeInsets.only(left: 5.0),
+                    //         child: Text(
+                    //           widget.party.eventName.toLowerCase(),
+                    //           style: const TextStyle(fontSize: 18),
+                    //         ),
+                    //       )
+                    //     : const SizedBox(),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 5.0),
+                      child: Text(
+                        widget.party.isTBA
+                            ? 'tba'
+                            : '${DateTimeUtils.getFormattedDate(widget.party.startTime)}, '
+                            '${DateTimeUtils.getFormattedTime(widget.party.startTime)} onwards',
+                        style: const TextStyle(fontSize: 18),
                       ),
                     ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 5.0),
+                      child: Text(
+                        'reach by: ${DateTimeUtils.getFormattedTime(widget.party.guestListEndTime)}',
+                        style: const TextStyle(fontSize: 18),
+                      ),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(left: 5.0),
+                          child: widget.partyGuest.isApproved? showApprovedButton(context)
+                              :showPendingButton(context)
+                        ),
+                        const Spacer(),
+                        displayUserEntryEditButton(context),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              Flexible(
+                flex: 1,
+                child: SizedBox(
+                  height: mq.height * 0.2,
+                  width: mq.height * 0.2,
+                  child: FadeInImage(
+                    placeholder:
+                    const AssetImage('assets/icons/logo.png'),
+                    image: NetworkImage(widget.party.imageUrl),
+                    fit: BoxFit.cover,
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),
@@ -214,104 +174,6 @@ class _BoxOfficeItemState extends State<BoxOfficeItem> {
     );
   }
 
-  displayEntryEditButton(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(right: 5, bottom: 5),
-      child: widget.partyGuest.isApproved
-          ? SizedBox(
-              height: 40,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Theme.of(context).primaryColorDark,
-                  shape: const CircleBorder(),
-                  foregroundColor: Colors.white,
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
-                ),
-                child: const Text(
-                  '🎟',
-                  style: TextStyle(fontSize: 18),
-                ),
-                onPressed: () {
-                  showTicketEntryDialog(context);
-                },
-              ),
-            )
-          : SizedBox(
-        height: 50,
-        child: ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Theme.of(context).primaryColorDark,
-            shape: const CircleBorder(),
-            foregroundColor: Colors.white,
-            padding:
-            const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
-          ),
-          child: const Text(
-            '✏️',
-            style: TextStyle(fontSize: 18),
-          ),
-          onPressed: () {
-            Navigator.of(context).push(MaterialPageRoute(
-                builder: (ctx) => PartyGuestAddEditManageScreen(
-                  partyGuest: widget.partyGuest,
-                  party: widget.party,
-                  task: 'edit',
-                )));
-          },
-        ),
-      )
-    );
-  }
-
-  displayBanUserButton(BuildContext context) {
-    return Padding(
-        padding: const EdgeInsets.only(bottom: 5),
-        child: !widget.partyGuest.shouldBanUser
-            ? SizedBox(
-                height: 40,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Theme.of(context).primaryColorDark,
-                    shape: const CircleBorder(),
-                    foregroundColor: Colors.white,
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
-                  ),
-                  child: const Text(
-                    '🚷',
-                    style: TextStyle(fontSize: 18),
-                  ),
-                  onPressed: () {
-                    widget.partyGuest.shouldBanUser = true;
-                    FirestoreHelper.pushPartyGuest(widget.partyGuest);
-                    Toaster.longToast('request to ban has been sent');
-                  },
-                ),
-              )
-            : SizedBox(
-                height: 40,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Theme.of(context).primaryColorDark,
-                    shape: const CircleBorder(),
-                    foregroundColor: Colors.white,
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
-                  ),
-                  child: const Text(
-                    '🤝',
-                    style: TextStyle(fontSize: 18),
-                  ),
-                  onPressed: () {
-                    widget.partyGuest.shouldBanUser = false;
-                    FirestoreHelper.pushPartyGuest(widget.partyGuest);
-                    Toaster.longToast('request to ban has been canceled');
-                  },
-                ),
-              ));
-  }
-
   showTicketEntryDialog(BuildContext context) {
     showDialog(
       context: context,
@@ -319,7 +181,7 @@ class _BoxOfficeItemState extends State<BoxOfficeItem> {
         return AlertDialog(
           contentPadding: const EdgeInsets.all(16.0),
           content: SizedBox(
-            height: mq.height * 0.4,
+            height: mq.height * 0.5,
             width: mq.width * 0.75,
             child: Column(
               children: [
@@ -328,7 +190,7 @@ class _BoxOfficeItemState extends State<BoxOfficeItem> {
                   child: Text(
                     '${widget.party.eventName} | ${widget.party.name}',
                     overflow: TextOverflow.ellipsis,
-                    style: TextStyle(fontSize: 18),
+                    style: const TextStyle(fontSize: 18),
                   ),
                 ),
                 Center(
@@ -388,14 +250,15 @@ class _BoxOfficeItemState extends State<BoxOfficeItem> {
           height: 40,
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.transparent,
-              shape: const RoundedRectangleBorder(),
-              foregroundColor: Constants.lightPrimary,
+              backgroundColor: Constants.darkPrimary,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0)
+              ),
               padding:
               const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
             ),
             child: const Text(
-              '😃 approved',
+              '😎 approved',
               style: TextStyle(fontSize: 16),
             ),
             onPressed: () {
@@ -411,9 +274,10 @@ class _BoxOfficeItemState extends State<BoxOfficeItem> {
           height: 40,
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(
-              backgroundColor: Constants.lightPrimary,
-              shape: const RoundedRectangleBorder(),
-              foregroundColor: Constants.darkPrimary,
+              backgroundColor: Constants.darkPrimary ,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0)
+              ),
               padding:
               const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
             ),

@@ -925,11 +925,12 @@ class FirestoreHelper {
         .get();
   }
 
+  //todo: need to remove the index a couple of builds later
   static getPartyGuestsByPartyId(String partyId) {
     return FirebaseFirestore.instance
         .collection(PARTY_GUESTS)
         .where('partyId', isEqualTo: partyId)
-        .where('isApproved', isEqualTo: true)
+        // .where('isApproved', isEqualTo: true)
         .orderBy('name', descending: false)
         .snapshots();
   }

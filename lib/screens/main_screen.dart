@@ -187,8 +187,6 @@ class _MainScreenState extends State<MainScreen> {
                     showNotificationChatChannel(message.notification);
                   }
                 });
-
-
               }
             }
             break;
@@ -224,21 +222,33 @@ class _MainScreenState extends State<MainScreen> {
 
       FirebaseMessaging.onMessageOpenedApp.listen(_handleMessage);
 
+      //clear out any previous subscriptions
+      blocUser.User user = UserPreferences.getUser();
+      if (user.clearanceLevel >= Constants.CAPTAIN_LEVEL) {
+        fbm.unsubscribeFromTopic('sos');
+        fbm.unsubscribeFromTopic('order');
+      }
+      if (user.clearanceLevel >= Constants.PROMOTER_LEVEL) {
+        fbm.unsubscribeFromTopic('party_guest');
+        fbm.unsubscribeFromTopic('reservations');
+      }
+      if (user.clearanceLevel >= Constants.MANAGER_LEVEL) {
+        fbm.unsubscribeFromTopic('celebrations');
+        fbm.unsubscribeFromTopic('offer');
+      }
+
+      // subscribe to topics
       fbm.subscribeToTopic('ads');
       fbm.subscribeToTopic('lounge_chats');
-
-      blocUser.User user = UserPreferences.getUser();
       if (user.clearanceLevel >= Constants.CAPTAIN_LEVEL) {
         fbm.subscribeToTopic('sos');
         fbm.subscribeToTopic('order');
       }
-
       if (user.clearanceLevel >= Constants.PROMOTER_LEVEL) {
         fbm.subscribeToTopic('party_guest');
         fbm.subscribeToTopic('reservations');
         fbm.subscribeToTopic('celebrations');
       }
-
       if (user.clearanceLevel >= Constants.MANAGER_LEVEL) {
         fbm.subscribeToTopic('offer');
       }
