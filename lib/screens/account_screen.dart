@@ -141,7 +141,10 @@ class AccountScreen extends StatelessWidget {
             }),
         const Divider(),
         const Spacer(),
-        const Text('v ${Constants.appVersion}', textAlign: TextAlign.center, style: TextStyle(color: Constants.primary),)
+        Padding(
+          padding: const EdgeInsets.only(bottom: 2.0),
+          child: const Text('v ${Constants.appVersion}', textAlign: TextAlign.center, style: TextStyle(color: Constants.primary),),
+        )
       ],
     );
   }
