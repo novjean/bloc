@@ -18,6 +18,8 @@ class PartyGuest {
 
   String guestStatus;
 
+  final String promoterId;
+
 //<editor-fold desc="Data Methods">
   PartyGuest({
     required this.id,
@@ -35,6 +37,7 @@ class PartyGuest {
     required this.isApproved,
     required this.shouldBanUser,
     required this.guestStatus,
+    required this.promoterId,
   });
 
   @override
@@ -56,7 +59,8 @@ class PartyGuest {
           isChallengeClicked == other.isChallengeClicked &&
           isApproved == other.isApproved &&
           shouldBanUser == other.shouldBanUser &&
-          guestStatus == other.guestStatus);
+          guestStatus == other.guestStatus &&
+          promoterId == other.promoterId);
 
   @override
   int get hashCode =>
@@ -74,7 +78,8 @@ class PartyGuest {
       isChallengeClicked.hashCode ^
       isApproved.hashCode ^
       shouldBanUser.hashCode ^
-      guestStatus.hashCode;
+      guestStatus.hashCode ^
+      promoterId.hashCode;
 
   @override
   String toString() {
@@ -94,6 +99,7 @@ class PartyGuest {
         ' isApproved: $isApproved,' +
         ' shouldBanUser: $shouldBanUser,' +
         ' guestStatus: $guestStatus,' +
+        ' promoterId: $promoterId,' +
         '}';
   }
 
@@ -113,6 +119,7 @@ class PartyGuest {
     bool? isApproved,
     bool? shouldBanUser,
     String? guestStatus,
+    String? promoterId,
   }) {
     return PartyGuest(
       id: id ?? this.id,
@@ -130,6 +137,7 @@ class PartyGuest {
       isApproved: isApproved ?? this.isApproved,
       shouldBanUser: shouldBanUser ?? this.shouldBanUser,
       guestStatus: guestStatus ?? this.guestStatus,
+      promoterId: promoterId ?? this.promoterId,
     );
   }
 
@@ -150,6 +158,7 @@ class PartyGuest {
       'isApproved': this.isApproved,
       'shouldBanUser': this.shouldBanUser,
       'guestStatus': this.guestStatus,
+      'promoterId': this.promoterId,
     };
   }
 
@@ -170,6 +179,7 @@ class PartyGuest {
       isApproved: map['isApproved'] as bool,
       shouldBanUser: map['shouldBanUser'] as bool,
       guestStatus: map['guestStatus'] as String,
+      promoterId: map['promoterId'] as String,
     );
   }
 

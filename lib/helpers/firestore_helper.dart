@@ -16,6 +16,7 @@ import 'package:bloc/db/entity/order_bloc.dart';
 import 'package:bloc/db/entity/party.dart';
 import 'package:bloc/db/entity/party_guest.dart';
 import 'package:bloc/db/entity/party_interest.dart';
+import 'package:bloc/db/entity/promoter.dart';
 import 'package:bloc/db/entity/reservation.dart';
 import 'package:bloc/db/entity/seat.dart';
 import 'package:bloc/db/entity/ticket.dart';
@@ -67,6 +68,7 @@ class FirestoreHelper {
   static String PARTY_GUESTS = 'party_guests';
   static String PARTY_INTERESTS = 'party_interests';
   static String PRODUCTS = 'products';
+  static String PROMOTERS = 'promoters';
   static String BLOC_SERVICES = 'services';
   static String RESERVATIONS = 'reservations';
   static String SEATS = 'seats';
@@ -1137,10 +1139,7 @@ class FirestoreHelper {
           .update({'isOfferRunning': isOfferRunning}).then((value) {
         Logx.i(
             _TAG,
-            "product id " +
-                productId +
-                " is set to offer " +
-                isOfferRunning.toString());
+            "product id $productId is set to offer $isOfferRunning");
       }).catchError((e, s) {
         Logx.ex(_TAG, 'failed to update product offer status', e, s);
       });
@@ -1155,6 +1154,41 @@ class FirestoreHelper {
 
   static void deleteProduct(String productId) {
     FirebaseFirestore.instance.collection(PRODUCTS).doc(productId).delete();
+  }
+
+  /** promoter **/
+  static void pushPromoter(Promoter promoter) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection(PROMOTERS)
+          .doc(promoter.id)
+          .set(promoter.toMap());
+    } on PlatformException catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } on Exception catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } catch (e) {
+      logger.e(e);
+    }
+  }
+
+  static pullPromoters() {
+    return FirebaseFirestore.instance
+        .collection(FirestoreHelper.PROMOTERS)
+        .orderBy('name', descending: false)
+        .get();
+  }
+
+
+  static getPromoters() {
+    return FirebaseFirestore.instance
+        .collection(PROMOTERS)
+        .orderBy('name', descending: true)
+        .snapshots();
+  }
+
+  static void deletePromoter(String docId) {
+    FirebaseFirestore.instance.collection(PROMOTERS).doc(docId).delete();
   }
 
   /** reservations **/
@@ -1173,14 +1207,14 @@ class FirestoreHelper {
     }
   }
 
-  static pullReservationsByEndTime(int timeNow, bool isApproved) {
-    return FirebaseFirestore.instance
-        .collection(FirestoreHelper.RESERVATIONS)
-        .where('arrivalDate', isGreaterThan: timeNow)
-        .where('isApproved', isEqualTo: isApproved)
-        .orderBy('arrivalDate', descending: false)
-        .get();
-  }
+  // static pullReservationsByEndTime(int timeNow, bool isApproved) {
+  //   return FirebaseFirestore.instance
+  //       .collection(FirestoreHelper.RESERVATIONS)
+  //       .where('arrivalDate', isGreaterThan: timeNow)
+  //       .where('isApproved', isEqualTo: isApproved)
+  //       .orderBy('arrivalDate', descending: false)
+  //       .get();
+  // }
 
   static Stream<QuerySnapshot<Object?>> getReservations() {
     return FirebaseFirestore.instance
@@ -1255,9 +1289,9 @@ class FirestoreHelper {
           .doc(seatId)
           .update({'custId': custId}).then((value) {
         if (custId.isEmpty) {
-          Logx.i(_TAG, "seat is now free : " + seatId);
+          Logx.i(_TAG, "seat is now free : $seatId");
         } else {
-          Logx.i(_TAG, "seat is occupied by cust id: " + custId);
+          Logx.i(_TAG, "seat is occupied by cust id: $custId");
         }
       }).catchError((e, s) {
         Logx.ex(_TAG, 'failed to update seat with cust', e, s);
@@ -1406,7 +1440,7 @@ class FirestoreHelper {
           .collection(TABLES)
           .doc(tableId)
           .update({'isOccupied': isOccupied}).then((value) {
-        Logx.i(_TAG, "table is occupied : " + tableId);
+        Logx.i(_TAG, "table is occupied : $tableId");
       }).catchError((e, s) {
         Logx.ex(_TAG, 'failed to set isOccupy table', e, s);
       });
@@ -1427,10 +1461,7 @@ class FirestoreHelper {
           .update({'type': newType}).then((value) {
         Logx.i(
             _TAG,
-            "table " +
-                table.tableNumber.toString() +
-                " type changed to type id " +
-                newType.toString());
+            "table ${table.tableNumber} type changed to type id $newType");
       }).catchError((e, s) {
         Logx.ex(_TAG, 'failed to change table color', e, s);
       });
@@ -1449,7 +1480,7 @@ class FirestoreHelper {
           .collection(TABLES)
           .doc(tableId)
           .update({'captainId': userId}).then((value) {
-        Logx.i(_TAG, "table id " + tableId + " has captain id " + userId);
+        Logx.i(_TAG, "table id $tableId has captain id $userId");
       }).catchError((e, s) {
         Logx.ex(_TAG, 'failed to set captain to table', e, s);
       });
@@ -1470,10 +1501,7 @@ class FirestoreHelper {
           .update({'isActive': isActive}).then((value) {
         Logx.i(
             _TAG,
-            "table id " +
-                tableId +
-                " has active status of " +
-                isActive.toString());
+            "table id $tableId has active status of $isActive");
       }).catchError((e, s) {
         Logx.ex(_TAG, 'Failed to set isActive to table', e, s);
       });
@@ -1493,7 +1521,7 @@ class FirestoreHelper {
             ? FirestoreHelper.TABLE_PRIVATE_TYPE_ID
             : FirestoreHelper.TABLE_COMMUNITY_TYPE_ID
       }).then((value) {
-        Logx.i(_TAG, "table color status changed for: " + table.id);
+        Logx.i(_TAG, "table color status changed for: ${table.id}");
       }).catchError((e, s) {
         Logx.ex(_TAG, 'failed to change table color', e, s);
       });

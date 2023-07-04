@@ -1,5 +1,6 @@
 import 'package:bloc/helpers/firestore_helper.dart';
 import 'package:bloc/utils/scan_utils.dart';
+import 'package:bloc/widgets/ui/button_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -8,11 +9,11 @@ import '../../db/entity/party_guest.dart';
 import '../../helpers/fresh.dart';
 import '../../main.dart';
 import '../../utils/logx.dart';
-import '../../widgets/box_office/box_office_item.dart';
 import '../../widgets/box_office/promoter_box_office_item.dart';
 import '../../widgets/ui/app_bar_title.dart';
 import '../../widgets/ui/loading_widget.dart';
 import '../../widgets/ui/sized_listview_block.dart';
+import '../../widgets/ui/textfield_widget.dart';
 
 class PromoterGuestsScreen extends StatefulWidget {
   final Party party;
@@ -155,7 +156,7 @@ class _PromoterGuestsScreenState extends State<PromoterGuestsScreen> {
                   } else if (sOption == mOptions[2]) {
                     return displayGuests(context, unapprovedRequests);
                   } else {
-                    return const SizedBox();
+                    return showAddListPage(context);
                   }
                 }
               } else {
@@ -183,6 +184,27 @@ class _PromoterGuestsScreenState extends State<PromoterGuestsScreen> {
           );
         },
       ),
+    );
+  }
+
+  showAddListPage(BuildContext context) {
+    return Column(
+      children: [
+        const SizedBox(height: 12),
+        TextFieldWidget(
+          label: 'add guest list',
+          text: '',
+          maxLines: 10,
+          onChanged: (value) {
+            // we need to process this text
+          },
+        ),
+        const SizedBox(height: 24),
+        ButtonWidget(text: 'add',
+          onClicked: () {
+
+        },),
+      ],
     );
   }
 }

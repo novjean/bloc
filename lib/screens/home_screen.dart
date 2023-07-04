@@ -228,6 +228,7 @@ class _HomeScreenState extends State<HomeScreen> {
       height: mq.height * 0.35,
       width: mq.width * 0.99,
       child: ListView.builder(
+          padding: EdgeInsets.zero,
           shrinkWrap: true,
           itemCount: mBlocs.length,
           scrollDirection: Axis.horizontal,

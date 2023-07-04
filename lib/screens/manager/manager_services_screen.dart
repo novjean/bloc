@@ -2,6 +2,7 @@ import 'package:bloc/db/entity/manager_service.dart';
 import 'package:bloc/screens/manager/ads/manage_ads_screen.dart';
 import 'package:bloc/screens/manager/orders/manage_orders_screen.dart';
 import 'package:bloc/screens/manager/parties/manage_parties_screen.dart';
+import 'package:bloc/screens/manager/promoters/manage_promoters_screen.dart';
 import 'package:bloc/screens/manager/reservations/manage_reservations_screen.dart';
 
 import 'package:bloc/screens/manager/users/manage_users_screen.dart';
@@ -55,23 +56,31 @@ class ManagerServicesScreen extends StatelessWidget {
     return StreamBuilder<QuerySnapshot>(
         stream: FirestoreHelper.getManagerServicesSnapshot(),
         builder: (ctx, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const LoadingWidget();
-          }
-
-          List<ManagerService> _managerServices = [];
-          for (int i = 0; i < snapshot.data!.docs.length; i++) {
-            DocumentSnapshot document = snapshot.data!.docs[i];
-            Map<String, dynamic> data =
+          switch (snapshot.connectionState) {
+            case ConnectionState.waiting:
+            case ConnectionState.none:
+              return const LoadingWidget();
+            case ConnectionState.active:
+            case ConnectionState.done:
+            {
+              List<ManagerService> _managerServices = [];
+              for (int i = 0; i < snapshot.data!.docs.length; i++) {
+                DocumentSnapshot document = snapshot.data!.docs[i];
+                Map<String, dynamic> data =
                 document.data()! as Map<String, dynamic>;
-            final ManagerService ms = ManagerService.fromMap(data);
-            _managerServices.add(ms);
-
-            if (i == snapshot.data!.docs.length - 1) {
+                final ManagerService ms = ManagerService.fromMap(data);
+                _managerServices.add(ms);
+                }
               return _displayManagerServices(context, _managerServices);
             }
           }
-          return const LoadingWidget();
+
+          // if (snapshot.connectionState == ConnectionState.waiting) {
+          //   return const LoadingWidget();
+          // }
+          //   if (i == snapshot.data!.docs.length - 1) {
+          //   }
+          // }
         });
   }
 
@@ -123,16 +132,6 @@ class ManagerServicesScreen extends StatelessWidget {
                             )));
                         break;
                       }
-                    case 'reservations':
-                      {
-                        Navigator.of(context).push(MaterialPageRoute(
-                            builder: (ctx) => ManageReservationsScreen(
-                                  blocServiceId: blocService.id,
-                                  serviceName: _managerService.name,
-                                  userTitle: userTitle,
-                                )));
-                        break;
-                      }
                     case 'guest list':
                       {
                         Navigator.of(context).push(MaterialPageRoute(
@@ -177,6 +176,23 @@ class ManagerServicesScreen extends StatelessWidget {
                             builder: (ctx) => ManagePartiesScreen(
                                 serviceId: blocService.id,
                                 managerService: _managerService)));
+                        break;
+                      }
+                    case 'promoters':
+                      {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (ctx) => ManagePromotersScreen(
+                                serviceId: blocService.id)));
+                        break;
+                      }
+                    case 'reservations':
+                      {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (ctx) => ManageReservationsScreen(
+                              blocServiceId: blocService.id,
+                              serviceName: _managerService.name,
+                              userTitle: userTitle,
+                            )));
                         break;
                       }
                     case 'tables':

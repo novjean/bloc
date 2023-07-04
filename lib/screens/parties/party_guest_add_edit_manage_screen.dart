@@ -16,6 +16,9 @@ import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl_phone_field/country_picker_dialog.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
+import 'package:multi_select_flutter/dialog/multi_select_dialog_field.dart';
+import 'package:multi_select_flutter/util/multi_select_item.dart';
+import 'package:multi_select_flutter/util/multi_select_list_type.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pinput/pinput.dart';
 import 'package:http/http.dart' as http;
@@ -26,6 +29,7 @@ import '../../db/entity/challenge.dart';
 import '../../db/entity/party.dart';
 import '../../db/entity/party_guest.dart';
 import '../../db/entity/party_interest.dart';
+import '../../db/entity/promoter.dart';
 import '../../db/entity/user.dart' as blocUser;
 import '../../db/shared_preferences/user_preferences.dart';
 import '../../helpers/dummy.dart';
@@ -106,6 +110,11 @@ class _PartyGuestAddEditManageScreenState
   String sPartyId = '';
 
   PartyInterest mPartyInterest = Dummy.getDummyPartyInterest();
+
+  List<Promoter> mPromoters = [];
+  var _isPromotersLoading = true;
+  List<Promoter> sPromoters = [];
+  String sPromoterId = '';
 
   @override
   void initState() {
@@ -198,6 +207,29 @@ class _PartyGuestAddEditManageScreenState
       }
     });
 
+    sPromoterId =  widget.partyGuest.promoterId;
+    FirestoreHelper.pullPromoters().then((res) {
+      if(res.docs.isNotEmpty){
+        for (int i = 0; i < res.docs.length; i++) {
+          DocumentSnapshot document = res.docs[i];
+          Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+          final Promoter promoter = Fresh.freshPromoterMap(data, false);
+          mPromoters.add(promoter);
+
+          if(promoter.id == sPromoterId){
+            sPromoters.add(promoter);
+          }
+        }
+        setState(() {
+          _isPromotersLoading = false;
+        });
+      } else {
+        setState(() {
+          _isPromotersLoading = false;
+        });
+      }
+    });
+
     for (int i = 1; i <= widget.party.guestListCount; i++) {
       guestCounts.add(i.toString());
     }
@@ -259,7 +291,8 @@ class _PartyGuestAddEditManageScreenState
   }
 
   _buildBody(BuildContext context) {
-    return isCustomerLoading && isChallengesLoading && _isPartiesLoading
+    return isCustomerLoading && isChallengesLoading
+        && _isPartiesLoading && _isPromotersLoading
         ? const LoadingWidget()
         : ListView(
             physics: const BouncingScrollPhysics(),
@@ -695,6 +728,62 @@ class _PartyGuestAddEditManageScreenState
                           ],
                         ),
                         const SizedBox(height: 24),
+                        Column(
+                          children: [
+                            const Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: EdgeInsets.only(bottom: 8.0),
+                                  child: Text(
+                                    'promoter',
+                                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold,
+                                        color: Constants.lightPrimary),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            MultiSelectDialogField(
+                              items: mPromoters
+                                  .map((e) => MultiSelectItem(
+                                  e, '${e.name.toLowerCase()} | ${e.type.toLowerCase()}'))
+                                  .toList(),
+                              initialValue: sPromoters.map((e) => e).toList(),
+                              listType: MultiSelectListType.CHIP,
+                              buttonIcon: Icon(
+                                Icons.arrow_drop_down,
+                                color: Colors.grey.shade700,
+                              ),
+                              title: const Text('select a promoter'),
+                              buttonText: const Text(
+                                'select promoter',
+                                style: TextStyle(color: Constants.lightPrimary),
+                              ),
+                              decoration: BoxDecoration(
+                                color: Constants.background,
+                                borderRadius: const BorderRadius.all(Radius.circular(5)),
+                                border: Border.all(
+                                  color: Constants.primary,
+                                  width: 0.0,
+                                ),
+                              ),
+                              searchable: true,
+                              onConfirm: (values) {
+                                sPromoters = values as List<Promoter>;
+
+                                if(sPromoters.isNotEmpty){
+                                  sPromoterId = sPromoters.first.id;
+                                } else {
+                                  sPromoterId = '';
+                                }
+                                setState(() {
+                                  widget.partyGuest = widget.partyGuest.copyWith(promoterId: sPromoterId);
+                                });
+                              },
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 24),
                         Row(
                           children: [
                             const Text('supported: ', style: TextStyle(
@@ -704,6 +793,9 @@ class _PartyGuestAddEditManageScreenState
                             )),
                             Checkbox(
                               value: widget.partyGuest.isChallengeClicked,
+                              side: MaterialStateBorderSide.resolveWith(
+                                    (states) => BorderSide(width: 1.0, color: Constants.primary),
+                              ),
                               onChanged: (value) {
                                 widget.partyGuest = widget.partyGuest.copyWith(isChallengeClicked: value);
                                 PartyGuest freshPartyGuest = Fresh.freshPartyGuest(widget.partyGuest);
@@ -711,8 +803,7 @@ class _PartyGuestAddEditManageScreenState
 
                                 Logx.i(_TAG, 'guest ${'${widget.partyGuest.name} '} : supported $value');
 
-                                setState(() {
-                                });
+                                setState(() {});
                               },
                             ),
                           ],
@@ -727,6 +818,9 @@ class _PartyGuestAddEditManageScreenState
                             )),
                             Checkbox(
                               value: bloc_user.isBanned,
+                              side: MaterialStateBorderSide.resolveWith(
+                                    (states) => BorderSide(width: 1.0, color: Constants.primary),
+                              ),
                               onChanged: (value) {
                                 bloc_user = bloc_user.copyWith(isBanned: value);
                                 blocUser.User freshUser = Fresh.freshUser(bloc_user);
@@ -822,7 +916,30 @@ class _PartyGuestAddEditManageScreenState
                   onClicked: () {
                     if (isDataValid()) {
                       if (isLoggedIn) {
-                        showRulesConfirmationDialog(context, false);
+                        if(widget.task == 'manage'){
+                          FirestoreHelper.pushPartyGuest(widget.partyGuest);
+
+                          GoRouter.of(context)
+                              .pushNamed(RouteConstants.homeRouteName);
+                          GoRouter.of(context)
+                              .pushNamed(RouteConstants.boxOfficeRouteName);
+                        } else if(widget.task == 'edit') {
+                          FirestoreHelper.pushPartyGuest(widget.partyGuest);
+
+                          if (hasUserChanged) {
+                            blocUser.User freshUser = Fresh.freshUser(bloc_user);
+                            if (freshUser.id == UserPreferences.myUser.id) {
+                              UserPreferences.setUser(freshUser);
+                            }
+                            FirestoreHelper.pushUser(freshUser);
+                          }
+                          GoRouter.of(context)
+                              .pushNamed(RouteConstants.homeRouteName);
+                          GoRouter.of(context)
+                              .pushNamed(RouteConstants.boxOfficeRouteName);
+                        } else {
+                          showRulesConfirmationDialog(context, false);
+                        }
                       } else {
                         // need to register the user first
                         _verifyPhone();
@@ -845,13 +962,8 @@ class _PartyGuestAddEditManageScreenState
                             height: 50,
                             text: 'delete',
                             onClicked: () {
-                              FirestoreHelper.deletePartyGuest(
-                                  widget.partyGuest);
-
-                              Logx.i(_TAG, 'guest list request is deleted');
-
-                              Toaster.longToast(
-                                  'guest list request is deleted');
+                              FirestoreHelper.deletePartyGuest(widget.partyGuest);
+                              Logx.ist(_TAG, 'guest list request is deleted!');
                               Navigator.of(context).pop();
                             },
                           ),
@@ -1003,9 +1115,7 @@ class _PartyGuestAddEditManageScreenState
                       });
                     } else {
                       //already requested
-                      Logx.i(_TAG, 'duplicate guest list request');
-                      Toaster.longToast(
-                          'guest list has already been requested');
+                      Logx.ist(_TAG, 'guest list has already been requested!');
                     }
                   });
                 }
@@ -1017,7 +1127,6 @@ class _PartyGuestAddEditManageScreenState
                 } else {
                   Navigator.of(context).pop();
 
-                  UserPreferences.setUser(bloc_user);
                   GoRouter.of(context)
                       .pushNamed(RouteConstants.homeRouteName);
                   GoRouter.of(context)
@@ -1040,7 +1149,6 @@ class _PartyGuestAddEditManageScreenState
       // all challenges are completed
       Navigator.of(context).pop();
 
-      UserPreferences.setUser(bloc_user);
       GoRouter.of(context)
           .pushNamed(RouteConstants.homeRouteName);
       GoRouter.of(context)
@@ -1129,8 +1237,7 @@ class _PartyGuestAddEditManageScreenState
               TextButton(
                 child: Text(challenge.dialogAcceptText),
                 onPressed: () async {
-                  Logx.i(_TAG, 'user accepts challenge');
-                  Toaster.longToast('thank you for supporting us!');
+                  Logx.ist(_TAG, 'thank you for supporting us!');
 
                   widget.partyGuest = widget.partyGuest.copyWith(isChallengeClicked: true);
                   FirestoreHelper.pushPartyGuest(widget.partyGuest);

@@ -447,11 +447,11 @@ class _ProductAddEditScreenState extends State<ProductAddEditScreen> {
           Row(
             children: <Widget>[
               //SizedBox
-              Text(
+              const Text(
                 'veg : ',
                 style: TextStyle(fontSize: 17.0),
               ), //Text
-              SizedBox(width: 10), //SizedBox
+              const SizedBox(width: 10), //SizedBox
               Checkbox(
                 value: widget.product.isVeg,
                 onChanged: (value) {
@@ -470,7 +470,7 @@ class _ProductAddEditScreenState extends State<ProductAddEditScreen> {
                 'available : ',
                 style: TextStyle(fontSize: 17.0),
               ), //Text
-              SizedBox(width: 10), //SizedBox
+              const SizedBox(width: 10), //SizedBox
               Checkbox(
                 value: widget.product.isAvailable,
                 onChanged: (value) {

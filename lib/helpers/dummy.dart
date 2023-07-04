@@ -24,6 +24,7 @@ import '../db/entity/offer.dart';
 import '../db/entity/party.dart';
 import '../db/entity/party_interest.dart';
 import '../db/entity/product.dart';
+import '../db/entity/promoter.dart';
 import '../db/entity/seat.dart';
 import '../db/entity/user.dart';
 import '../db/entity/user_lounge.dart';
@@ -279,6 +280,7 @@ class Dummy {
         guestStatus: 'couple',
         isChallengeClicked: false,
         shouldBanUser: false,
+        promoterId: '',
         gender: 'male');
     return dummyGuest;
   }
@@ -318,6 +320,16 @@ class Dummy {
         priceBottle: 0);
 
     return dummyProduct;
+  }
+
+  static Promoter getDummyPromoter() {
+    Promoter dummy = Promoter(
+      id: StringUtils.getRandomString(28),
+      name: '',
+      type: 'brand'
+    );
+
+    return dummy;
   }
 
   static Reservation getDummyReservation(String blocServiceId) {
