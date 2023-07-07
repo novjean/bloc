@@ -995,7 +995,7 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(sArrivalTime.format(context),
+          Text(DateTimeUtils.convertTimeToString(sArrivalTime),
               style: const TextStyle(
                 color: Constants.lightPrimary,
                 fontSize: 18,
