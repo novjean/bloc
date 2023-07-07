@@ -81,7 +81,7 @@ class _PartyGuestAddEditManageScreenState
   List<String> guestCounts = [];
 
   String sGuestStatus = 'couple';
-  List<String> guestStatuses = ['couple', 'ladies', 'lgbtq+', 'stag'];
+  List<String> guestStatuses = ['couple', 'ladies', 'lgbtq+', 'stag', 'promoter'];
 
   String sGender = 'male';
   List<String> genders = [

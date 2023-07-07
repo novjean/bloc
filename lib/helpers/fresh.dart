@@ -1781,7 +1781,7 @@ class Fresh {
 
   /** Party Guest **/
   static PartyGuest freshPartyGuest(PartyGuest partyGuest) {
-    PartyGuest freshGuest = Dummy.getDummyPartyGuest();
+    PartyGuest freshGuest = Dummy.getDummyPartyGuest(true);
 
     try {
       freshGuest = freshGuest.copyWith(id: partyGuest.id);
@@ -1897,7 +1897,7 @@ class Fresh {
 
   static PartyGuest freshPartyGuestMap(
       Map<String, dynamic> map, bool shouldUpdate) {
-    PartyGuest partyGuest = Dummy.getDummyPartyGuest();
+    PartyGuest partyGuest = Dummy.getDummyPartyGuest(true);
     bool shouldPush = true;
 
     try {

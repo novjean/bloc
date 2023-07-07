@@ -1179,7 +1179,6 @@ class FirestoreHelper {
         .get();
   }
 
-
   static getPromoters() {
     return FirebaseFirestore.instance
         .collection(PROMOTERS)

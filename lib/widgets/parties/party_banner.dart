@@ -299,7 +299,7 @@ class _PartyBannerState extends State<PartyBanner> {
           ),
         ),
         onPressed: () {
-          PartyGuest partyGuest = Dummy.getDummyPartyGuest();
+          PartyGuest partyGuest = Dummy.getDummyPartyGuest(true);
           partyGuest.partyId = widget.party.id;
 
           Navigator.of(context).push(

@@ -90,15 +90,6 @@ class _BoxOfficeItemState extends State<BoxOfficeItem> {
                         ],
                       ),
                     ),
-                    // widget.party.eventName.isNotEmpty
-                    //     ? Padding(
-                    //         padding: const EdgeInsets.only(left: 5.0),
-                    //         child: Text(
-                    //           widget.party.eventName.toLowerCase(),
-                    //           style: const TextStyle(fontSize: 18),
-                    //         ),
-                    //       )
-                    //     : const SizedBox(),
                     Padding(
                       padding: const EdgeInsets.only(left: 5.0),
                       child: Text(
@@ -220,7 +211,7 @@ class _BoxOfficeItemState extends State<BoxOfficeItem> {
                           alignment: Alignment.centerRight,
                           child: Text(
                             'valid until ${DateTimeUtils.getFormattedTime(widget.party.guestListEndTime)}',
-                            style: TextStyle(fontSize: 16),
+                            style: const TextStyle(fontSize: 16),
                           ),
                         ),
                       ],

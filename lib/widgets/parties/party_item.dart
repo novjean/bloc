@@ -182,7 +182,7 @@ class PartyItem extends StatelessWidget {
         child: const Text('join\nguest\nlist'),
         onPressed: () {
           // nav to guest list add page
-          PartyGuest partyGuest = Dummy.getDummyPartyGuest();
+          PartyGuest partyGuest = Dummy.getDummyPartyGuest(true);
           partyGuest.partyId = party.id;
 
           Navigator.of(context).push(

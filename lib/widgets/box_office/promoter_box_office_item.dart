@@ -275,7 +275,7 @@ class _PromoterBoxOfficeItemState extends State<PromoterBoxOfficeItem> {
 
   showUnapproveButton(BuildContext context) {
     return Container(
-      padding: EdgeInsets.only(right: 5),
+      padding: const EdgeInsets.only(right: 5),
       height: 40,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(

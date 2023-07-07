@@ -1,7 +1,7 @@
 import 'dart:math';
 
 class StringUtils {
-  static String _chars =
+  static const String _chars =
       'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
   static Random _rnd = Random();
 
@@ -10,13 +10,13 @@ class StringUtils {
           length, (_) => _chars.codeUnitAt(_rnd.nextInt(_chars.length))));
 
   static int getInt(String word) {
-    String aStr = word.replaceAll(new RegExp(r'[^0-9]'),'');
+    String aStr = word.replaceAll(RegExp(r'[^0-9]'),'');
     int value = int.parse(aStr);
     return value;
   }
 
   static double getDouble(String word) {
-    String aStr = word.replaceAll(new RegExp(r'[^0-9]'),'');
+    String aStr = word.replaceAll(RegExp(r'[^0-9]'),'');
     double value = double.parse(aStr);
     return value;
   }

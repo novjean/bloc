@@ -368,7 +368,7 @@ class _EventScreenState extends State<EventScreen> {
             // minimumSize: const Size.fromHeight(60),
           ),
           onPressed: () {
-            PartyGuest partyGuest = Dummy.getDummyPartyGuest();
+            PartyGuest partyGuest = Dummy.getDummyPartyGuest(true);
             partyGuest.partyId = mParty.id;
 
             Navigator.of(context).push(

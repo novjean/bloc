@@ -45,7 +45,7 @@ class _BoxOfficeGuestListScreenState extends State<BoxOfficeGuestListScreen> {
 
   @override
   void initState() {
-    mPartyGuest = Dummy.getDummyPartyGuest();
+    mPartyGuest = Dummy.getDummyPartyGuest(true);
 
     FirestoreHelper.pullPartyGuest(widget.partyGuestId).then((res) {
       Logx.i(_TAG, "successfully pulled in party guest");

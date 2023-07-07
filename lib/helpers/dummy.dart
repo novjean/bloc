@@ -264,20 +264,20 @@ class Dummy {
     return dummyParty;
   }
 
-  static PartyGuest getDummyPartyGuest() {
+  static PartyGuest getDummyPartyGuest(bool isLoggedInUser) {
     PartyGuest dummyGuest = PartyGuest(
         id: StringUtils.getRandomString(28),
         partyId: '',
-        guestId: UserPreferences.myUser.id,
-        name: UserPreferences.myUser.name,
-        surname: UserPreferences.myUser.surname,
-        phone: UserPreferences.myUser.phoneNumber.toString(),
-        email: UserPreferences.myUser.email,
+        guestId: isLoggedInUser? UserPreferences.myUser.id:'',
+        name: isLoggedInUser? UserPreferences.myUser.name:'',
+        surname: isLoggedInUser? UserPreferences.myUser.surname:'',
+        phone: isLoggedInUser? UserPreferences.myUser.phoneNumber.toString():'',
+        email: isLoggedInUser? UserPreferences.myUser.email:'',
         guestsCount: 1,
         guestsRemaining: 1,
         createdAt: Timestamp.now().millisecondsSinceEpoch,
         isApproved: false,
-        guestStatus: 'couple',
+        guestStatus: isLoggedInUser? 'couple':'promoter',
         isChallengeClicked: false,
         shouldBanUser: false,
         promoterId: '',

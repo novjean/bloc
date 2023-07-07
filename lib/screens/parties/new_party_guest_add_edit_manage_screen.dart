@@ -114,7 +114,7 @@ class _NewPartyGuestAddEditManageScreenState
       mPartyGuestUser = UserPreferences.myUser;
     }
 
-    mPartyGuest = Dummy.getDummyPartyGuest();
+    mPartyGuest = Dummy.getDummyPartyGuest(true);
 
     FirestoreHelper.pullPartyGuest(widget.partyGuestId).then((res) {
       Logx.i(_TAG, "successfully pulled in party guest");

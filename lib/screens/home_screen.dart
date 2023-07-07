@@ -157,8 +157,6 @@ class _HomeScreenState extends State<HomeScreen> {
     });
 
     FirestoreHelper.pullGuestWifi(Constants.blocServiceId).then((res) {
-      Logx.i(_TAG, "successfully pulled in guest wifi");
-
       if (res.docs.isNotEmpty) {
         try {
           DocumentSnapshot document = res.docs[0];

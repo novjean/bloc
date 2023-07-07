@@ -1,21 +1,14 @@
-import 'dart:io';
 
-import 'package:bloc/db/entity/ad_campaign.dart';
 import 'package:bloc/helpers/fresh.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:multi_select_flutter/dialog/multi_select_dialog_field.dart';
 import 'package:multi_select_flutter/util/multi_select_item.dart';
 import 'package:multi_select_flutter/util/multi_select_list_type.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:path/path.dart';
 
 import '../../../db/entity/promoter.dart';
-import '../../../helpers/firestorage_helper.dart';
 import '../../../helpers/firestore_helper.dart';
 import '../../../utils/constants.dart';
 import '../../../utils/logx.dart';
-import '../../../utils/string_utils.dart';
 import '../../../widgets/ui/app_bar_title.dart';
 import '../../../widgets/ui/button_widget.dart';
 import '../../../widgets/ui/textfield_widget.dart';
