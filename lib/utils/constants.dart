@@ -13,6 +13,8 @@ class Constants {
   static const Color darkPrimary = Color.fromRGBO(42, 33, 26, 1);
 
   static const Color background = Color.fromRGBO(27, 26, 23, 1);
+  static const Color backgroundWhite = Color.fromRGBO(255, 255, 240, 1);
+
 
   static const Color hopp = Color.fromRGBO(248, 194, 32, 1);
 

@@ -935,8 +935,6 @@ class FirestoreHelper {
     return FirebaseFirestore.instance
         .collection(PARTY_GUESTS)
         .where('partyId', isEqualTo: partyId)
-        // .where('isApproved', isEqualTo: true)
-        .orderBy('name', descending: false)
         .snapshots();
   }
 

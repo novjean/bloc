@@ -11,6 +11,7 @@ import '../../db/entity/promoter.dart';
 import '../../helpers/dummy.dart';
 import '../../helpers/fresh.dart';
 import '../../main.dart';
+import '../../utils/constants.dart';
 import '../../utils/logx.dart';
 import '../../utils/string_utils.dart';
 import '../../widgets/box_office/promoter_box_office_item.dart';
@@ -78,6 +79,7 @@ class _PromoterGuestsScreenState extends State<PromoterGuestsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Constants.backgroundWhite,
       appBar: AppBar(
         backgroundColor: Colors.black,
         title: AppBarTitle(
@@ -321,6 +323,7 @@ class _PromoterGuestsScreenState extends State<PromoterGuestsScreen> {
         const SizedBox(height: 24),
         ButtonWidget(
           text: '🍪 add guests',
+          height: 50,
           onClicked: () {
             try {
               List<String> splitLines = mLines.split("\n");
@@ -345,6 +348,7 @@ class _PromoterGuestsScreenState extends State<PromoterGuestsScreen> {
                   } catch (e) {
                     Logx.em(_TAG, e.toString());
                   }
+                  guestCount++;
                   partyGuest = partyGuest.copyWith(
                     name: name,
                     phone: phone,
