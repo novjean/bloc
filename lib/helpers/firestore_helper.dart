@@ -17,6 +17,7 @@ import 'package:bloc/db/entity/party.dart';
 import 'package:bloc/db/entity/party_guest.dart';
 import 'package:bloc/db/entity/party_interest.dart';
 import 'package:bloc/db/entity/promoter.dart';
+import 'package:bloc/db/entity/promoter_guest.dart';
 import 'package:bloc/db/entity/reservation.dart';
 import 'package:bloc/db/entity/seat.dart';
 import 'package:bloc/db/entity/ticket.dart';
@@ -69,6 +70,7 @@ class FirestoreHelper {
   static String PARTY_INTERESTS = 'party_interests';
   static String PRODUCTS = 'products';
   static String PROMOTERS = 'promoters';
+  static String PROMOTER_GUESTS = 'promoter_guests';
   static String BLOC_SERVICES = 'services';
   static String RESERVATIONS = 'reservations';
   static String SEATS = 'seats';
@@ -82,6 +84,7 @@ class FirestoreHelper {
 
   static int TABLE_PRIVATE_TYPE_ID = 1;
   static int TABLE_COMMUNITY_TYPE_ID = 2;
+
 
   /** Ads **/
   static void pushAd(Ad ad) async {
@@ -1188,6 +1191,22 @@ class FirestoreHelper {
 
   static void deletePromoter(String docId) {
     FirebaseFirestore.instance.collection(PROMOTERS).doc(docId).delete();
+  }
+
+  /** promoter guest **/
+  static void pushPromoterGuest(PromoterGuest promoterGuest) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection(PROMOTER_GUESTS)
+          .doc(promoterGuest.id)
+          .set(promoterGuest.toMap());
+    } on PlatformException catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } on Exception catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } catch (e) {
+      logger.e(e);
+    }
   }
 
   /** reservations **/

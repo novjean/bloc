@@ -15,6 +15,7 @@ import '../db/entity/party.dart';
 import '../db/entity/party_interest.dart';
 import '../db/entity/product.dart';
 import '../db/entity/promoter.dart';
+import '../db/entity/promoter_guest.dart';
 import '../db/entity/reservation.dart';
 import '../db/entity/ticket.dart';
 import '../db/entity/user.dart';
@@ -2369,7 +2370,9 @@ class Fresh {
     return freshProduct;
   }
 
-  /** ad campaign **/
+
+
+  /** promoter **/
   static Promoter freshPromoterMap(Map<String, dynamic> map, bool shouldUpdate) {
     Promoter promoter = Dummy.getDummyPromoter();
     bool shouldPush = true;
@@ -2424,6 +2427,82 @@ class Fresh {
     return fresh;
   }
 
+  /** promoter guest **/
+  static PromoterGuest freshPromoterGuestMap(Map<String, dynamic> map, bool shouldUpdate) {
+    PromoterGuest promoterGuest = Dummy.getDummyPromoterGuest();
+    bool shouldPush = true;
+
+    try {
+      promoterGuest = promoterGuest.copyWith(id: map['id'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'promoter guest id not exist');
+    }
+    try {
+      promoterGuest = promoterGuest.copyWith(name: map['name'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'promoter guest name not exist for id: ${promoterGuest.id}');
+      shouldPush = true;
+    }
+    try {
+      promoterGuest = promoterGuest.copyWith(phone: map['phone'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'promoter guest phone not exist for id: ${promoterGuest.id}');
+      shouldPush = true;
+    }
+    try {
+      promoterGuest = promoterGuest.copyWith(promoterId: map['promoterId'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'promoter guest promoterId not exist for id: ${promoterGuest.id}');
+      shouldPush = true;
+    }
+    try {
+      promoterGuest = promoterGuest.copyWith(blocUserId: map['blocUserId'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'promoter guest blocUserId not exist for id: ${promoterGuest.id}');
+      shouldPush = true;
+    }
+
+    if (shouldPush &&
+        shouldUpdate &&
+        UserPreferences.myUser.clearanceLevel >= Constants.PROMOTER_LEVEL) {
+      Logx.i(_TAG, 'updating promoter guest ${promoterGuest.id}');
+      FirestoreHelper.pushPromoterGuest(promoterGuest);
+    }
+
+    return promoterGuest;
+  }
+
+  static PromoterGuest freshPromoterGuest(PromoterGuest promoterGuest) {
+    PromoterGuest fresh = Dummy.getDummyPromoterGuest();
+
+    try {
+      fresh = fresh.copyWith(id: promoterGuest.id);
+    } catch (e) {
+      Logx.em(_TAG, 'promoter guest id not exist');
+    }
+    try {
+      fresh = fresh.copyWith(name: promoterGuest.name);
+    } catch (e) {
+      Logx.em(_TAG, 'promoter guest name not exist for id: ${promoterGuest.id}');
+    }
+    try {
+      fresh = fresh.copyWith(phone: promoterGuest.phone);
+    } catch (e) {
+      Logx.em(_TAG, 'promoter guest phone not exist for id: ${promoterGuest.id}');
+    }
+    try {
+      fresh = fresh.copyWith(promoterId: promoterGuest.promoterId);
+    } catch (e) {
+      Logx.em(_TAG, 'promoter guest promoterId not exist for id: ${promoterGuest.id}');
+    }
+    try {
+      fresh = fresh.copyWith(blocUserId: promoterGuest.blocUserId);
+    } catch (e) {
+      Logx.em(_TAG, 'promoter guest blocUserId not exist for id: ${promoterGuest.id}');
+    }
+
+    return fresh;
+  }
 
   /** reservation **/
   static Reservation freshReservationMap(

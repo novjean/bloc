@@ -25,6 +25,7 @@ import '../db/entity/party.dart';
 import '../db/entity/party_interest.dart';
 import '../db/entity/product.dart';
 import '../db/entity/promoter.dart';
+import '../db/entity/promoter_guest.dart';
 import '../db/entity/seat.dart';
 import '../db/entity/user.dart';
 import '../db/entity/user_lounge.dart';
@@ -268,16 +269,17 @@ class Dummy {
     PartyGuest dummyGuest = PartyGuest(
         id: StringUtils.getRandomString(28),
         partyId: '',
-        guestId: isLoggedInUser? UserPreferences.myUser.id:'',
-        name: isLoggedInUser? UserPreferences.myUser.name:'',
-        surname: isLoggedInUser? UserPreferences.myUser.surname:'',
-        phone: isLoggedInUser? UserPreferences.myUser.phoneNumber.toString():'',
-        email: isLoggedInUser? UserPreferences.myUser.email:'',
+        guestId: isLoggedInUser ? UserPreferences.myUser.id : '',
+        name: isLoggedInUser ? UserPreferences.myUser.name : '',
+        surname: isLoggedInUser ? UserPreferences.myUser.surname : '',
+        phone:
+            isLoggedInUser ? UserPreferences.myUser.phoneNumber.toString() : '',
+        email: isLoggedInUser ? UserPreferences.myUser.email : '',
         guestsCount: 1,
         guestsRemaining: 1,
         createdAt: Timestamp.now().millisecondsSinceEpoch,
         isApproved: false,
-        guestStatus: isLoggedInUser? 'couple':'promoter',
+        guestStatus: isLoggedInUser ? 'couple' : 'promoter',
         isChallengeClicked: false,
         shouldBanUser: false,
         promoterId: '',
@@ -323,10 +325,19 @@ class Dummy {
   }
 
   static Promoter getDummyPromoter() {
-    Promoter dummy = Promoter(
+    Promoter dummy =
+        Promoter(id: StringUtils.getRandomString(28), name: '', type: 'brand');
+
+    return dummy;
+  }
+
+  static PromoterGuest getDummyPromoterGuest() {
+    PromoterGuest dummy = PromoterGuest(
       id: StringUtils.getRandomString(28),
       name: '',
-      type: 'brand'
+      phone: '',
+      promoterId: '',
+      blocUserId: '',
     );
 
     return dummy;

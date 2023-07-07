@@ -1,3 +1,4 @@
+import 'package:bloc/db/entity/promoter_guest.dart';
 import 'package:bloc/helpers/firestore_helper.dart';
 import 'package:bloc/utils/scan_utils.dart';
 import 'package:bloc/widgets/ui/button_widget.dart';
@@ -234,7 +235,8 @@ class _PromoterGuestsScreenState extends State<PromoterGuestsScreen> {
             label: 'add guest list',
             text: '',
             maxLines: 10,
-            hintText: 'John Doe, 9696126969, 3\nJohn Doe, 9696126969\nJohn Doe\n',
+            hintText:
+                'John Doe, 9696126969, 3\nJohn Doe, 9696126969\nJohn Doe\n',
             onChanged: (lines) {
               mLines = lines;
             },
@@ -327,9 +329,7 @@ class _PromoterGuestsScreenState extends State<PromoterGuestsScreen> {
 
                 PartyGuest partyGuest = Dummy.getDummyPartyGuest(false);
                 partyGuest = partyGuest.copyWith(
-                  partyId: widget.party.id,
-                  promoterId: sPromoterId
-                );
+                    partyId: widget.party.id, promoterId: sPromoterId);
 
                 if (data.length == 3) {
                   // name, number and count present
@@ -373,6 +373,13 @@ class _PromoterGuestsScreenState extends State<PromoterGuestsScreen> {
                 }
                 partyGuests.add(partyGuest);
                 FirestoreHelper.pushPartyGuest(partyGuest);
+
+                PromoterGuest promoterGuest = Dummy.getDummyPromoterGuest();
+                promoterGuest.copyWith(
+                    name: partyGuest.name,
+                    phone: partyGuest.phone,
+                    promoterId: partyGuest.promoterId);
+                FirestoreHelper.pushPromoterGuest(promoterGuest);
               }
 
               showGuestsConfirmationDialog(context, partyGuests);
@@ -389,9 +396,9 @@ class _PromoterGuestsScreenState extends State<PromoterGuestsScreen> {
             Navigator.of(context).push(
               MaterialPageRoute(
                   builder: (ctx) => PromoterAddEditScreen(
-                    promoter: Dummy.getDummyPromoter(),
-                    task: 'add',
-                  )),
+                        promoter: Dummy.getDummyPromoter(),
+                        task: 'add',
+                      )),
             );
           },
         ),
@@ -414,7 +421,10 @@ class _PromoterGuestsScreenState extends State<PromoterGuestsScreen> {
                   itemCount: partyGuests.length,
                   scrollDirection: Axis.horizontal,
                   itemBuilder: (ctx, index) {
-                    return PartyGuestWidget(partyGuest: partyGuests[index], promoters: mPromoters,);
+                    return PartyGuestWidget(
+                      partyGuest: partyGuests[index],
+                      promoters: mPromoters,
+                    );
                   }),
             ),
           ),
