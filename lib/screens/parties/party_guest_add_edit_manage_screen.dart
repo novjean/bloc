@@ -811,6 +811,30 @@ class _PartyGuestAddEditManageScreenState
                         const SizedBox(height: 12),
                         Row(
                           children: [
+                            const Text('vip: ', style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                              color: Constants.lightPrimary,
+                            )),
+                            Checkbox(
+                              value: widget.partyGuest.isVip,
+                              side: MaterialStateBorderSide.resolveWith(
+                                    (states) => const BorderSide(width: 1.0, color: Constants.primary),
+                              ),
+                              onChanged: (value) {
+                                widget.partyGuest = widget.partyGuest.copyWith(isVip: value);
+                                FirestoreHelper.pushPartyGuest(widget.partyGuest);
+
+                                Logx.ist(_TAG, 'guest vip status: $value');
+                                setState(() {
+                                });
+                              },
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 12),
+                        Row(
+                          children: [
                             const Text('banned: ', style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 16,
@@ -819,7 +843,7 @@ class _PartyGuestAddEditManageScreenState
                             Checkbox(
                               value: bloc_user.isBanned,
                               side: MaterialStateBorderSide.resolveWith(
-                                    (states) => BorderSide(width: 1.0, color: Constants.primary),
+                                    (states) => const BorderSide(width: 1.0, color: Constants.primary),
                               ),
                               onChanged: (value) {
                                 bloc_user = bloc_user.copyWith(isBanned: value);

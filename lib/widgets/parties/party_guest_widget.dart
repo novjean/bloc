@@ -2,6 +2,7 @@ import 'package:bloc/db/entity/party_guest.dart';
 import 'package:flutter/material.dart';
 
 import '../../db/entity/promoter.dart';
+import '../../helpers/firestore_helper.dart';
 import '../../main.dart';
 import '../ui/textfield_widget.dart';
 
@@ -68,6 +69,7 @@ class _PartyGuestWidgetState extends State<PartyGuestWidget> {
                     onChanged: (text) {
                       widget.partyGuest =
                           widget.partyGuest.copyWith(name: text);
+                      FirestoreHelper.pushPartyGuest(widget.partyGuest);
                     },
                   ),
                 ),
@@ -80,6 +82,7 @@ class _PartyGuestWidgetState extends State<PartyGuestWidget> {
                     onChanged: (text) {
                       widget.partyGuest =
                           widget.partyGuest.copyWith(surname: text);
+                      FirestoreHelper.pushPartyGuest(widget.partyGuest);
                     },
                   ),
                 ),
@@ -92,6 +95,7 @@ class _PartyGuestWidgetState extends State<PartyGuestWidget> {
                     onChanged: (text) {
                       widget.partyGuest =
                           widget.partyGuest.copyWith(phone: text);
+                      FirestoreHelper.pushPartyGuest(widget.partyGuest);
                     },
                   ),
                 ),
@@ -133,7 +137,6 @@ class _PartyGuestWidgetState extends State<PartyGuestWidget> {
                             isEmpty: sGender == '',
                             child: DropdownButtonHideUnderline(
                               child: DropdownButton<String>(
-                                // dropdownColor: Constants.background,
                                 value: sGender,
                                 isDense: true,
                                 onChanged: (String? newValue) {
@@ -142,6 +145,7 @@ class _PartyGuestWidgetState extends State<PartyGuestWidget> {
 
                                     widget.partyGuest = widget.partyGuest
                                         .copyWith(gender: sGender);
+                                    FirestoreHelper.pushPartyGuest(widget.partyGuest);
                                     state.didChange(newValue);
                                   });
                                 },
@@ -217,6 +221,7 @@ class _PartyGuestWidgetState extends State<PartyGuestWidget> {
 
                                     widget.partyGuest = widget.partyGuest
                                         .copyWith(promoterId: sPromoterId);
+                                    FirestoreHelper.pushPartyGuest(widget.partyGuest);
                                     state.didChange(newValue);
                                   });
                                 },
@@ -233,6 +238,24 @@ class _PartyGuestWidgetState extends State<PartyGuestWidget> {
                       ),
                     ],
                   ),
+                ),
+                const SizedBox(height: 12),
+                Row(
+                  children: [
+                    const Text('vip: ', style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    )),
+                    Checkbox(
+                      value: widget.partyGuest.isVip,
+                      onChanged: (value) {
+                        widget.partyGuest = widget.partyGuest.copyWith(isVip: value);
+                        FirestoreHelper.pushPartyGuest(widget.partyGuest);
+                        setState(() {
+                        });
+                      },
+                    ),
+                  ],
                 ),
               ],
             ),

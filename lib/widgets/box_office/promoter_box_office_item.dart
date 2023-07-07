@@ -45,11 +45,15 @@ class _PromoterBoxOfficeItemState extends State<PromoterBoxOfficeItem> {
   @override
   Widget build(BuildContext context) {
     String title =
-        '${widget.partyGuest.name.toLowerCase()} ${widget.partyGuest.surname}';
+        '${widget.partyGuest.name.toLowerCase()} ${widget.partyGuest.surname.toLowerCase()}';
     int friendsCount = widget.partyGuest.guestsCount - 1;
 
     if (friendsCount > 0) {
       title += ' +$friendsCount';
+    }
+
+    if(widget.partyGuest.isVip){
+      title += ' 🧲';
     }
 
     return GestureDetector(

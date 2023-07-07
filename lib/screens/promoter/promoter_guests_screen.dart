@@ -188,10 +188,13 @@ class _PromoterGuestsScreenState extends State<PromoterGuestsScreen> {
                     }
                   }
                   if (sOption == mOptions.first) {
+                    arrivingRequests.sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
                     return displayGuests(context, arrivingRequests);
                   } else if (sOption == mOptions[1]) {
+                    completedRequests.sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
                     return displayGuests(context, completedRequests);
                   } else if (sOption == mOptions[2]) {
+                    unapprovedRequests.sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
                     return displayGuests(context, unapprovedRequests);
                   } else {
                     return showAddListPage(context);
@@ -402,6 +405,7 @@ class _PromoterGuestsScreenState extends State<PromoterGuestsScreen> {
             );
           },
         ),
+        const SizedBox(height: 12),
       ],
     );
   }

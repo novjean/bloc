@@ -19,6 +19,7 @@ class PartyGuest {
   String guestStatus;
 
   final String promoterId;
+  bool isVip;
 
 //<editor-fold desc="Data Methods">
   PartyGuest({
@@ -38,6 +39,7 @@ class PartyGuest {
     required this.shouldBanUser,
     required this.guestStatus,
     required this.promoterId,
+    required this.isVip,
   });
 
   @override
@@ -60,7 +62,8 @@ class PartyGuest {
           isApproved == other.isApproved &&
           shouldBanUser == other.shouldBanUser &&
           guestStatus == other.guestStatus &&
-          promoterId == other.promoterId);
+          promoterId == other.promoterId &&
+          isVip == other.isVip);
 
   @override
   int get hashCode =>
@@ -79,7 +82,8 @@ class PartyGuest {
       isApproved.hashCode ^
       shouldBanUser.hashCode ^
       guestStatus.hashCode ^
-      promoterId.hashCode;
+      promoterId.hashCode ^
+      isVip.hashCode;
 
   @override
   String toString() {
@@ -100,6 +104,7 @@ class PartyGuest {
         ' shouldBanUser: $shouldBanUser,' +
         ' guestStatus: $guestStatus,' +
         ' promoterId: $promoterId,' +
+        ' isVip: $isVip,' +
         '}';
   }
 
@@ -120,6 +125,7 @@ class PartyGuest {
     bool? shouldBanUser,
     String? guestStatus,
     String? promoterId,
+    bool? isVip,
   }) {
     return PartyGuest(
       id: id ?? this.id,
@@ -138,6 +144,7 @@ class PartyGuest {
       shouldBanUser: shouldBanUser ?? this.shouldBanUser,
       guestStatus: guestStatus ?? this.guestStatus,
       promoterId: promoterId ?? this.promoterId,
+      isVip: isVip ?? this.isVip,
     );
   }
 
@@ -159,6 +166,7 @@ class PartyGuest {
       'shouldBanUser': this.shouldBanUser,
       'guestStatus': this.guestStatus,
       'promoterId': this.promoterId,
+      'isVip': this.isVip,
     };
   }
 
@@ -180,6 +188,7 @@ class PartyGuest {
       shouldBanUser: map['shouldBanUser'] as bool,
       guestStatus: map['guestStatus'] as String,
       promoterId: map['promoterId'] as String,
+      isVip: map['isVip'] as bool,
     );
   }
 

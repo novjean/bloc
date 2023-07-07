@@ -281,9 +281,10 @@ class Dummy {
         isApproved: false,
         guestStatus: isLoggedInUser ? 'couple' : 'promoter',
         isChallengeClicked: false,
+        isVip: false,
         shouldBanUser: false,
         promoterId: '',
-        gender: 'male');
+        gender: 'male' );
     return dummyGuest;
   }
 
