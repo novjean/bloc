@@ -366,8 +366,8 @@ class _PromoterBoxOfficeItemState extends State<PromoterBoxOfficeItem> {
         ),
         child: Text(
           widget.partyGuest.guestsRemaining != 0
-              ? '👍🏼 arrived'
-              : '👎🏼 not arrived',
+              ? '👍🏿 arrived'
+              : '👎🏿 not arrived',
           style: const TextStyle(fontSize: 16),
         ),
         onPressed: () {

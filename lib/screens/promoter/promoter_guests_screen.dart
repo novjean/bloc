@@ -44,6 +44,10 @@ class _PromoterGuestsScreenState extends State<PromoterGuestsScreen> {
   String sPromoterId = '';
   var _isPromotersLoading = true;
 
+  List<PartyGuest> mPartyGuests = [];
+  List<PartyGuest> searchList = [];
+  bool isSearching = false;
+
   String mLines = '';
 
   @override
@@ -116,6 +120,39 @@ class _PromoterGuestsScreenState extends State<PromoterGuestsScreen> {
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           displayBoxOfficeOptions(context),
+          const Divider(),
+
+          Container(
+            margin: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 0),
+            child: TextField(
+              decoration: const InputDecoration(
+                  border: InputBorder.none,
+                  hintText: 'search by name or phone',
+                  hintStyle: TextStyle(color: Constants.primary)
+              ),
+              autofocus: true,
+              style: const TextStyle(fontSize: 17, color: Constants.primary),
+              onChanged: (val) {
+                if(val.trim().isNotEmpty){
+                  isSearching = true;
+                } else {
+                  isSearching = false;
+                }
+
+                searchList.clear();
+
+                for(var i in mPartyGuests){
+                  if(i.name.toLowerCase().contains(val.toLowerCase()) ||
+                      i.surname.toLowerCase().contains(val.toLowerCase()) ||
+                      i.phone.toLowerCase().contains(val.toLowerCase())){
+                    searchList.add(i);
+                  }
+                }
+                setState(() {
+                });
+              } ,
+            ),
+          ),
           const Divider(),
           sOption == 'add' ? showAddListPage(context) : buildGuestsList(context)
         ],
@@ -191,13 +228,16 @@ class _PromoterGuestsScreenState extends State<PromoterGuestsScreen> {
                   }
                   if (sOption == mOptions.first) {
                     arrivingRequests.sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
-                    return displayGuests(context, arrivingRequests);
+                    mPartyGuests = arrivingRequests;
+                    return displayGuests(context, isSearching? searchList: mPartyGuests);
                   } else if (sOption == mOptions[1]) {
                     completedRequests.sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
-                    return displayGuests(context, completedRequests);
+                    mPartyGuests = completedRequests;
+                    return displayGuests(context, isSearching? searchList: mPartyGuests);
                   } else if (sOption == mOptions[2]) {
                     unapprovedRequests.sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
-                    return displayGuests(context, unapprovedRequests);
+                    mPartyGuests = unapprovedRequests;
+                    return displayGuests(context, isSearching? searchList: mPartyGuests);
                   } else {
                     return showAddListPage(context);
                   }

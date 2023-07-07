@@ -179,7 +179,7 @@ class _MainScreenState extends State<MainScreen> {
                     Lounge lounge = Fresh.freshLoungeMap(data, false);
 
                     RemoteNotification notification = RemoteNotification(
-                        title: '🫶 ' + lounge.name,
+                        title: '🫶 ${lounge.name}',
                         body: chat.type == 'text'? chat.message : '🖼️ photo' ,
                     );
                     showNotificationChatChannel(notification);
