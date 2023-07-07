@@ -7,6 +7,7 @@ import 'package:bloc/db/shared_preferences/ui_preferences.dart';
 import 'package:bloc/screens/lounge/lounges_screen.dart';
 
 import 'package:bloc/screens/profile/profile_login_screen.dart';
+import 'package:bloc/screens/promoter/promoter_main_screen.dart';
 import 'package:bloc/utils/constants.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -446,6 +447,14 @@ class _MainScreenState extends State<MainScreen> {
           );
           break;
         }
+      case 'promoter':
+        {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+                builder: (ctx) => PromoterMainScreen()),
+          );
+          break;
+        }
       case 'manager':
         {
           Navigator.of(context).push(
@@ -578,7 +587,7 @@ class _SliderView extends StatelessWidget {
           Text(
             UserPreferences.myUser.name,
             textAlign: TextAlign.center,
-            style: TextStyle(
+            style: const TextStyle(
               color: Colors.black,
               fontWeight: FontWeight.bold,
               fontSize: 30,
@@ -604,20 +613,19 @@ List<Menu> getMenuList() {
 
   final user = UserPreferences.getUser();
 
-  bool showCaptain = false;
-  if (user.clearanceLevel >= Constants.CAPTAIN_LEVEL) {
-    showCaptain = true;
-  }
-  if (user.clearanceLevel == Constants.PROMOTER_LEVEL) {
-    showCaptain = false;
-  }
-
   menuItems.add(Menu(Icons.home, 'home'));
   if (UserPreferences.isUserLoggedIn()) {
     menuItems.add(Menu(Icons.keyboard_command_key_sharp, 'box office'));
-    if (showCaptain) {
+    if (user.clearanceLevel == Constants.CAPTAIN_LEVEL ||
+        user.clearanceLevel >= Constants.MANAGER_LEVEL) {
       menuItems.add(Menu(Icons.adjust, 'captain'));
     }
+
+    if (user.clearanceLevel == Constants.PROMOTER_LEVEL ||
+        user.clearanceLevel >= Constants.MANAGER_LEVEL) {
+      menuItems.add(Menu(Icons.adjust, 'promoter'));
+    }
+
     if (user.clearanceLevel >= Constants.MANAGER_LEVEL) {
       menuItems.add(Menu(Icons.account_circle_outlined, 'manager'));
     }

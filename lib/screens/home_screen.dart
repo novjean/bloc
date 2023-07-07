@@ -20,7 +20,6 @@ import '../widgets/ad_campaign_slide_item.dart';
 import '../widgets/footer.dart';
 import '../widgets/home/bloc_slide_item.dart';
 import '../widgets/parties/party_banner.dart';
-import '../widgets/search_card.dart';
 import '../widgets/store_badge_item.dart';
 import '../widgets/ui/dark_button_widget.dart';
 import '../widgets/ui/toaster.dart';
@@ -520,64 +519,5 @@ class _HomeScreenState extends State<HomeScreen> {
         },
       ),
     );
-  }
-
-  /** Non functional **/
-  // buildBookTableRow(BuildContext context) {
-  //   return Row(
-  //     mainAxisAlignment: MainAxisAlignment.center,
-  //     children: <Widget>[
-  //       // NumbersWidget(),
-  //       ButtonWidget(
-  //           text: 'book a table',
-  //           onClicked: () async {
-  //             await Navigator.of(context).push(
-  //               MaterialPageRoute(
-  //                   builder: (context) => ReservationAddEditScreen(
-  //                          reservation: null, task: 'add',
-  //                       )),
-  //             );
-  //           }),
-  //     ],
-  //   );
-  // }
-
-  /** Unimplemented **/
-  // buildRestaurantRow(String restaurant, BuildContext context) {
-  //   return Row(
-  //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //     children: <Widget>[
-  //       Text(
-  //         "$restaurant",
-  //         style: TextStyle(
-  //           fontSize: 20.0,
-  //           fontWeight: FontWeight.w800,
-  //         ),
-  //       ),
-  //       ElevatedButton(
-  //         child: Text(
-  //           "See all (9)",
-  //           style: TextStyle(
-  //             color: Theme.of(context).accentColor,
-  //           ),
-  //         ),
-  //         onPressed: () {
-  //           Navigator.push(
-  //             context,
-  //             MaterialPageRoute(
-  //               builder: (BuildContext context) {
-  //                 return Trending();
-  //               },
-  //             ),
-  //           );
-  //         },
-  //       ),
-  //     ],
-  //   );
-  // }
-
-  buildSearchBar(BuildContext context) {
-    return Container(
-        margin: EdgeInsets.fromLTRB(10, 5, 10, 0), child: SearchCard());
   }
 }

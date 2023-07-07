@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart';
@@ -10,7 +11,9 @@ import '../../../helpers/firestore_helper.dart';
 import '../../../widgets/ui/button_widget.dart';
 import '../../../widgets/ui/textfield_widget.dart';
 import '../../db/entity/bloc.dart';
+import '../../utils/logx.dart';
 import '../../utils/string_utils.dart';
+import '../../widgets/ui/app_bar_title.dart';
 
 class BlocAddEditScreen extends StatefulWidget {
   Bloc bloc;
@@ -24,26 +27,29 @@ class BlocAddEditScreen extends StatefulWidget {
 }
 
 class _BlocAddEditScreenState extends State<BlocAddEditScreen> {
+  static const String _TAG = 'BlocAddEditScreen';
+
   bool isPhotoChanged = false;
 
   String imagePath = '';
   String oldImageUrl = '';
   String newImageUrl = '';
 
-  List<String> imageUrls = [];
+  List<String> mImageUrls = [];
   List<String> oldImageUrls = [];
 
   @override
   void initState() {
     super.initState();
 
-    imageUrls.addAll(widget.bloc.imageUrls);
+    mImageUrls.addAll(widget.bloc.imageUrls);
   }
 
   @override
   Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(
-          title: Text('bloc | ${widget.task}'),
+          title: AppBarTitle(title: '${widget.task} bloc'),
+          titleSpacing: 0,
         ),
         body: _buildBody(context),
       );
@@ -57,7 +63,7 @@ class _BlocAddEditScreenState extends State<BlocAddEditScreen> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text('${imageUrls.length} photos : '),
+            Text('${mImageUrls.length} photos: '),
             const Spacer(),
             ButtonWidget(
               text: 'pick file',
@@ -79,18 +85,17 @@ class _BlocAddEditScreenState extends State<BlocAddEditScreen> {
                     StringUtils.getRandomString(28),
                     newImage);
 
-                imageUrls.add(newImageUrl);
+                mImageUrls.add(newImageUrl);
 
                 setState(() {
-                  widget.bloc = widget.bloc.copyWith(imageUrls: imageUrls);
-                  // isPhotoChanged = true;
+                  widget.bloc = widget.bloc.copyWith(imageUrls: mImageUrls);
                 });
               },
             ),
             Padding(
               padding: const EdgeInsets.only(left: 10.0),
               child: SizedBox.fromSize(
-                size: Size(56, 56),
+                size: const Size(56, 56),
                 child: ClipOval(
                   child: Material(
                     color: Colors.redAccent,
@@ -101,12 +106,12 @@ class _BlocAddEditScreenState extends State<BlocAddEditScreen> {
                             context: context,
                             builder: (BuildContext context) {
                               return AlertDialog(
-                                title: Text('photos'),
+                                title: const Text('photos'),
                                 content: photosListDialog(),
                               );
                             });
                       },
-                      child: Column(
+                      child: const Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
                           Icon(Icons.delete_forever),
@@ -150,14 +155,11 @@ class _BlocAddEditScreenState extends State<BlocAddEditScreen> {
         ),
         Row(
           children: <Widget>[
-            SizedBox(
-              width: 0,
-            ), //SizedBox
             const Text(
               'active : ',
               style: TextStyle(fontSize: 17.0),
             ), //Text
-            SizedBox(width: 10), //SizedBox
+            const SizedBox(width: 10), //SizedBox
             Checkbox(
               value: widget.bloc.isActive,
               onChanged: (value) {
@@ -187,7 +189,7 @@ class _BlocAddEditScreenState extends State<BlocAddEditScreen> {
         width: 300.0, // Change as per your requirement
         child: ListView.builder(
           shrinkWrap: true,
-          itemCount: imageUrls.length,
+          itemCount: mImageUrls.length,
           itemBuilder: (BuildContext context, int index) {
             return Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -198,7 +200,7 @@ class _BlocAddEditScreenState extends State<BlocAddEditScreen> {
                   ClipRRect(
                     borderRadius: BorderRadius.circular(8),
                     child: Image.network(
-                        imageUrls[index],
+                        mImageUrls[index],
                         width: 110,
                         height: 70,
                         fit:BoxFit.fill
@@ -206,6 +208,72 @@ class _BlocAddEditScreenState extends State<BlocAddEditScreen> {
                     ),
                   ),
                 ),
+
+                SizedBox.fromSize(
+                  size: const Size(50, 50),
+                  child: ClipOval(
+                    child: Material(
+                      color: Colors.orangeAccent,
+                      child: InkWell(
+                        splashColor: Colors.orange,
+                        onTap: () {
+                          int prevIndex = index--;
+                          if(prevIndex>=0){
+                            mImageUrls.swap(index, prevIndex);
+                            widget.bloc = widget.bloc.copyWith(imageUrls: mImageUrls);
+                            FirestoreHelper.pushBloc(widget.bloc);
+                          } else {
+                            Logx.ist(_TAG, 'photo is already the first');
+                          }
+
+                          setState(() {
+                          });
+                        },
+                        child: const Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Icon(Icons.arrow_circle_up_outlined),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox.fromSize(
+                  size: const Size(50, 50),
+                  child: ClipOval(
+                    child: Material(
+                      color: Colors.orangeAccent,
+                      child: InkWell(
+                        splashColor: Colors.orange,
+                        onTap: () {
+                          int nextIndex = index++;
+                          if(nextIndex<=mImageUrls.length-1){
+                            mImageUrls.swap(index, nextIndex);
+                            widget.bloc = widget.bloc.copyWith(imageUrls: mImageUrls);
+                            FirestoreHelper.pushBloc(widget.bloc);
+                          } else {
+                            Logx.ist(_TAG, 'photo is already the last');
+                          }
+
+                          widget.bloc = widget.bloc.copyWith(imageUrls: mImageUrls);
+                          FirestoreHelper.pushBloc(widget.bloc);
+
+                          setState(() {
+                          });
+                        },
+                        child: const Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Icon(Icons.arrow_circle_down_outlined),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+
+
                 SizedBox.fromSize(
                   size: const Size(50, 50),
                   child: ClipOval(
@@ -214,19 +282,18 @@ class _BlocAddEditScreenState extends State<BlocAddEditScreen> {
                       child: InkWell(
                         splashColor: Colors.red,
                         onTap: () {
-                          FirestorageHelper.deleteFile(imageUrls[index]);
-                          imageUrls.removeAt(index);
+                          FirestorageHelper.deleteFile(mImageUrls[index]);
+                          mImageUrls.removeAt(index);
 
-                          widget.bloc = widget.bloc.copyWith(imageUrls: imageUrls);
+                          widget.bloc = widget.bloc.copyWith(imageUrls: mImageUrls);
                           FirestoreHelper.pushBloc(widget.bloc);
 
-                          Navigator.of(context).pop();
                           setState(() {
                           });
                         },
-                        child: Column(
+                        child: const Column(
                           mainAxisAlignment: MainAxisAlignment.center,
-                          children: const <Widget>[
+                          children: <Widget>[
                             Icon(Icons.delete_forever),
                           ],
                         ),

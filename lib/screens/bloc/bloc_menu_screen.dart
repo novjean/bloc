@@ -691,7 +691,6 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
 
       UserPreferences.isUserLoggedIn()
           ?
-      // need to check if the person is seated
       _isCustomerSeated
           ? IconButton(
         icon: const Icon(

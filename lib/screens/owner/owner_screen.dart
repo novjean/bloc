@@ -3,21 +3,17 @@ import 'package:bloc/widgets/city_item.dart';
 import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:logger/logger.dart';
 
 import '../../db/entity/city.dart';
 import '../../widgets/ui/app_bar_title.dart';
 
 class OwnerScreen extends StatelessWidget {
-  static const routeName = '/owner-screen';
+  static const String _TAG = 'OwnerScreen';
 
-  OwnerScreen({key}) : super(key: key);
+  const OwnerScreen({key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    var logger = Logger();
-    logger.i('owner screen is loading...');
-
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.black,
