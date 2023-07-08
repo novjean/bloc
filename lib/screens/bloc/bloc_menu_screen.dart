@@ -11,6 +11,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../db/entity/category.dart';
 import '../../db/entity/offer.dart';
@@ -19,6 +20,7 @@ import '../../db/entity/seat.dart';
 import '../../db/shared_preferences/user_preferences.dart';
 import '../../helpers/fresh.dart';
 import '../../main.dart';
+import '../../routes/route_constants.dart';
 import '../../utils/constants.dart';
 import '../../utils/logx.dart';
 import '../../widgets/cart_widget.dart';
@@ -236,7 +238,17 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
                 });
               } ,
             ),
-          ): Text(mBlocService.name),
+          ):
+          InkWell(
+              onTap: () {
+                if (UserPreferences.isUserLoggedIn()) {
+                  GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
+                } else {
+                  GoRouter.of(context)
+                      .pushNamed(RouteConstants.landingRouteName);
+                }
+              },
+              child: const Text('bloc.')),
           backgroundColor: Colors.black,
           actions: showActionIcons(),
         ),

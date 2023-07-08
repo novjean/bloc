@@ -86,7 +86,7 @@ class FirestoreHelper {
   static int TABLE_COMMUNITY_TYPE_ID = 2;
 
 
-  /** Ads **/
+  /** ads **/
   static void pushAd(Ad ad) async {
     try {
       await FirebaseFirestore.instance

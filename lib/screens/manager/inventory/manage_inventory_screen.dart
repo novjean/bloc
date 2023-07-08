@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import '../../../db/entity/manager_service.dart';
 import '../../../helpers/firestore_helper.dart';
 import '../../../utils/logx.dart';
+import '../../../widgets/ui/app_bar_title.dart';
 import 'manage_category_screen.dart';
 import 'manage_offers_screen.dart';
 import 'manage_products_screen.dart';
@@ -25,7 +26,8 @@ class ManageInventoryScreen extends StatelessWidget{
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('manage | inventory'),
+        title: AppBarTitle(title:'manage inventory'),
+        titleSpacing: 0,
       ),
       body: _buildBody(context),
     );
@@ -69,7 +71,7 @@ class ManageInventoryScreen extends StatelessWidget{
   }
 
   _displayInventoryOptions(BuildContext context, List<InventoryOption> _invOptions) {
-    return Container(
+    return SizedBox(
       height: MediaQuery.of(context).size.height,
       child: ListView.builder(
           itemCount: _invOptions.length,

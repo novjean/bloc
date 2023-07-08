@@ -18,6 +18,7 @@ import '../../../utils/file_utils.dart';
 import '../../../utils/logx.dart';
 import '../../../utils/string_utils.dart';
 import '../../../widgets/manager/manage_product_item.dart';
+import '../../../widgets/ui/app_bar_title.dart';
 import '../../../widgets/ui/sized_listview_block.dart';
 
 class ManageProductsScreen extends StatefulWidget {
@@ -44,6 +45,8 @@ class _ManageProductsScreenState extends State<ManageProductsScreen> {
   List<String> sCategoryIds = [];
 
   List<Product> mProducts = [];
+  List<Product> searchList = [];
+  bool isSearching = false;
 
   @override
   void initState() {
@@ -73,21 +76,22 @@ class _ManageProductsScreenState extends State<ManageProductsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('inventory | products'),
+        title: AppBarTitle(title: 'manage products'),
+        titleSpacing: 0,
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           showActionsDialog(context);
         },
-        child: Icon(
-          Icons.science,
-          color: Colors.black,
-          size: 29,
-        ),
         backgroundColor: Theme.of(context).primaryColor,
         tooltip: 'actions',
         elevation: 5,
         splashColor: Colors.grey,
+        child: const Icon(
+          Icons.science,
+          color: Colors.black,
+          size: 29,
+        ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       body: isCategoriesLoading? const LoadingWidget(): _buildBody(context),
@@ -97,12 +101,40 @@ class _ManageProductsScreenState extends State<ManageProductsScreen> {
   _buildBody(BuildContext context) {
     return Column(
       children: [
-        const SizedBox(height: 2.0),
         _displayOptions(context),
         const Divider(),
-        const SizedBox(height: 2.0),
+        Container(
+          margin: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 0),
+          child: TextField(
+            decoration: const InputDecoration(
+                border: InputBorder.none,
+                hintText: 'search by name ',
+                hintStyle: TextStyle(color: Constants.primary)
+            ),
+            autofocus: true,
+            style: const TextStyle(fontSize: 17, color: Constants.primary),
+            onChanged: (val) {
+              if(val.trim().isNotEmpty){
+                isSearching = true;
+              } else {
+                isSearching = false;
+              }
+
+              searchList.clear();
+
+              for(var i in mProducts){
+                if(i.name.toLowerCase().contains(val.toLowerCase())){
+                  searchList.add(i);
+                }
+              }
+              setState(() {
+              });
+            } ,
+          ),
+        ),
+        const Divider(),
         buildProducts(context),
-        const SizedBox(height: 2.0),
+        const SizedBox(height: 10.0),
       ],
     );
   }
@@ -129,7 +161,7 @@ class _ManageProductsScreenState extends State<ManageProductsScreen> {
                 onTap: () {
                   setState(() {
                     _sType = _options[index];
-                    print(_sType + ' products display option is selected');
+                    Logx.i(_TAG, '$_sType products display option is selected');
                   });
                 });
           }),
@@ -174,19 +206,21 @@ class _ManageProductsScreenState extends State<ManageProductsScreen> {
   }
 
   _displayProductsList(BuildContext context) {
+    List<Product> products = isSearching?searchList:mProducts;
+
     return Expanded(
       child: ListView.builder(
-          itemCount: mProducts.length,
+          itemCount: products.length,
           scrollDirection: Axis.vertical,
           itemBuilder: (ctx, index) {
             return GestureDetector(
                 child: ManageProductItem(
                   serviceId: widget.serviceId,
-                  product: mProducts[index],
+                  product: products[index],
                 ),
                 onTap: () {
-                  Product _sProduct = mProducts[index];
-                  print(_sProduct.name + ' is selected');
+                  Product _sProduct = products[index];
+                  print('${_sProduct.name} is selected');
                 });
           }),
     );

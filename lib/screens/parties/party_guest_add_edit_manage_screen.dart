@@ -23,6 +23,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:pinput/pinput.dart';
 import 'package:http/http.dart' as http;
 import 'package:share_plus/share_plus.dart';
+import 'package:telephony/telephony.dart';
 
 import '../../api/apis.dart';
 import '../../db/entity/challenge.dart';
@@ -794,7 +795,7 @@ class _PartyGuestAddEditManageScreenState
                             Checkbox(
                               value: widget.partyGuest.isChallengeClicked,
                               side: MaterialStateBorderSide.resolveWith(
-                                    (states) => BorderSide(width: 1.0, color: Constants.primary),
+                                    (states) => const BorderSide(width: 1.0, color: Constants.primary),
                               ),
                               onChanged: (value) {
                                 widget.partyGuest = widget.partyGuest.copyWith(isChallengeClicked: value);
@@ -859,6 +860,25 @@ class _PartyGuestAddEditManageScreenState
                             ),
                           ],
                         ),
+                        const SizedBox(height: 12),
+                        Row(
+                          children: [
+                            const Text('app user: ', style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                              color: Constants.lightPrimary,
+                            )),
+                            Checkbox(
+                              value: bloc_user.isAppUser,
+                              side: MaterialStateBorderSide.resolveWith(
+                                    (states) => const BorderSide(width: 1.0, color: Constants.primary),
+                              ),
+                              onChanged: (value) {
+                                Logx.ist(_TAG, 'app user status cannot be changed manually');
+                              },
+                            ),
+                          ],
+                        ),
                       ],
                     ),
                   ],
@@ -891,9 +911,30 @@ class _PartyGuestAddEditManageScreenState
                     padding: const EdgeInsets.symmetric(horizontal: 32),
                     child: ButtonWidget(
                       text: 'approve',
-                      onClicked: () {
+                      onClicked: () async {
                         widget.partyGuest = widget.partyGuest.copyWith(isApproved: true);
                         FirestoreHelper.pushPartyGuest(widget.partyGuest);
+
+                        if(bloc_user.phoneNumber!=0){
+                          final Telephony telephony = Telephony.instance;
+
+                          bool? permissionsGranted = await telephony.requestPhoneAndSmsPermissions;
+
+                          final SmsSendStatusListener listener = (SendStatus status) {
+                            Logx.d(_TAG, 'sms status: ${status.name}');
+                          };
+
+                          telephony.sendSms(
+                              to: widget.partyGuest.phone.toString(),
+                              message: "yayyy your guest list has been approved, see you at ${widget.party.name}!",
+                          );
+
+                          Logx.ist(_TAG, 'message has been sent');
+
+                          // SmsUtils.sendSms(bloc_user.phoneNumber.toString(), 'welcome to ${widget.party.name} family, your guest list request is approved!');
+                        } else {
+                          Logx.ist(_TAG, 'promoter guest and sms cannot be sent!');
+                        }
 
                         if(widget.party.loungeId.isNotEmpty){
                           FirestoreHelper.pullUserLounge(bloc_user.id, widget.party.loungeId).then((res) {
@@ -903,23 +944,43 @@ class _PartyGuestAddEditManageScreenState
                                 userId: bloc_user.id, isAccepted: true);
                               FirestoreHelper.pushUserLounge(userLounge);
 
-                              if(bloc_user.fcmToken.isNotEmpty){
+                              if(bloc_user.isAppUser && bloc_user.fcmToken.isNotEmpty){
                                 String title = widget.party.name;
                                 String message = 'welcome to ${widget.party.name} family, your guest list request is approved!';
 
                                 //send a notification
                                 Apis.sendPushNotification(bloc_user.fcmToken, title, message);
+                                Logx.ist(_TAG, 'notification has been sent to ${bloc_user.name} ${bloc_user.surname}');
                               }
+                              // else {
+                                // if(bloc_user.phoneNumber!=0){
+                                //   SmsUtils.sendSms(bloc_user.phoneNumber.toString(), 'welcome to ${widget.party.name} family, your guest list request is approved!');
+                                // } else {
+                                //   Logx.ist(_TAG, 'promoter guest and sms cannot be sent!');
+                                // }
+                              // }
+                            } else {
+                              // if(bloc_user.phoneNumber!=0){
+                              //   SmsUtils.sendSms(bloc_user.phoneNumber.toString(), 'welcome to ${widget.party.name} family, your guest list request is approved!');
+                              // } else {
+                              //   Logx.ist(_TAG, 'promoter guest and sms cannot be sent!');
+                              // }
                             }
                           });
                         } else {
-                          if(bloc_user.fcmToken.isNotEmpty){
+                          if(bloc_user.isAppUser && bloc_user.fcmToken.isNotEmpty){
                             String title = widget.party.name;
                             String message = 'your guest list request has been approved, see you soon!';
 
                             //send a notification
                             Apis.sendPushNotification(bloc_user.fcmToken, title, message);
                           }
+
+                          // if(bloc_user.phoneNumber!=0){
+                          //   SmsUtils.sendSms(bloc_user.phoneNumber.toString(), 'welcome to ${widget.party.name} family, your guest list request is approved!');
+                          // } else {
+                          //   Logx.ist(_TAG, 'promoter guest and sms cannot be sent!');
+                          // }
                         }
 
                         Logx.i(_TAG, 'party guest ${widget.partyGuest.name} is approved');

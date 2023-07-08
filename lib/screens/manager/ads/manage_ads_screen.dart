@@ -24,6 +24,7 @@ class ManageAdsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        titleSpacing: 0,
         title: AppBarTitle(title:'manage ads'),
       ),
       floatingActionButton: FloatingActionButton(
