@@ -4,7 +4,6 @@ import 'package:bloc/widgets/ui/app_bar_title.dart';
 import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:telephony/telephony.dart';
 
 import '../../utils/logx.dart';
 import '../../widgets/bloc_service_item.dart';
@@ -21,35 +20,35 @@ class ManagerMainScreen extends StatelessWidget {
         titleSpacing: 0,
         title: AppBarTitle(title: 'manager',),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          final Telephony telephony = Telephony.instance;
-
-          bool? permissionsGranted = await telephony.requestPhoneAndSmsPermissions;
-
-          final SmsSendStatusListener listener = (SendStatus status) {
-            Logx.d(_TAG, 'sms status: ${status.name}');
-          };
-
-          telephony.sendSms(
-              to: "918421836994",
-              message: "May the force be with you!",
-              statusListener: listener
-          );
-
-          Logx.ist(_TAG, 'message has been sent');
-        },
-        backgroundColor: Theme.of(context).primaryColor,
-        tooltip: 'test sms',
-        elevation: 5,
-        splashColor: Colors.grey,
-        child: Icon(
-          Icons.sms,
-          color: Theme.of(context).primaryColorDark,
-          size: 29,
-        ),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: () async {
+      //     final Telephony telephony = Telephony.instance;
+      //
+      //     bool? permissionsGranted = await telephony.requestPhoneAndSmsPermissions;
+      //
+      //     final SmsSendStatusListener listener = (SendStatus status) {
+      //       Logx.d(_TAG, 'sms status: ${status.name}');
+      //     };
+      //
+      //     telephony.sendSms(
+      //         to: "918421836994",
+      //         message: "May the force be with you!",
+      //         statusListener: listener
+      //     );
+      //
+      //     Logx.ist(_TAG, 'message has been sent');
+      //   },
+      //   backgroundColor: Theme.of(context).primaryColor,
+      //   tooltip: 'test sms',
+      //   elevation: 5,
+      //   splashColor: Colors.grey,
+      //   child: Icon(
+      //     Icons.sms,
+      //     color: Theme.of(context).primaryColorDark,
+      //     size: 29,
+      //   ),
+      // ),
+      // floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       body: _buildBody(context),
     );
   }

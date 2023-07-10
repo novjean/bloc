@@ -23,7 +23,6 @@ import 'package:path_provider/path_provider.dart';
 import 'package:pinput/pinput.dart';
 import 'package:http/http.dart' as http;
 import 'package:share_plus/share_plus.dart';
-import 'package:telephony/telephony.dart';
 
 import '../../api/apis.dart';
 import '../../db/entity/challenge.dart';
@@ -915,26 +914,19 @@ class _PartyGuestAddEditManageScreenState
                         widget.partyGuest = widget.partyGuest.copyWith(isApproved: true);
                         FirestoreHelper.pushPartyGuest(widget.partyGuest);
 
-                        if(bloc_user.phoneNumber!=0){
-                          final Telephony telephony = Telephony.instance;
-
-                          bool? permissionsGranted = await telephony.requestPhoneAndSmsPermissions;
-
-                          final SmsSendStatusListener listener = (SendStatus status) {
-                            Logx.d(_TAG, 'sms status: ${status.name}');
-                          };
-
-                          telephony.sendSms(
-                              to: widget.partyGuest.phone.toString(),
-                              message: "yayyy your guest list has been approved, see you at ${widget.party.name}!",
-                          );
-
-                          Logx.ist(_TAG, 'message has been sent');
-
-                          // SmsUtils.sendSms(bloc_user.phoneNumber.toString(), 'welcome to ${widget.party.name} family, your guest list request is approved!');
-                        } else {
-                          Logx.ist(_TAG, 'promoter guest and sms cannot be sent!');
-                        }
+                        // if(bloc_user.phoneNumber!=0){
+                        //   String message = "This is a test message!";
+                        //   List<String> recipents = [widget.partyGuest.phone.toString()];
+                        //
+                        //   String _result = await sendSMS(message: message, recipients: recipents, sendDirect: true)
+                        //       .catchError((onError) {
+                        //     print(onError);
+                        //   });
+                        //
+                        //   Logx.ist(_TAG, 'message has been sent');
+                        // } else {
+                        //   Logx.ist(_TAG, 'promoter guest and sms cannot be sent!');
+                        // }
 
                         if(widget.party.loungeId.isNotEmpty){
                           FirestoreHelper.pullUserLounge(bloc_user.id, widget.party.loungeId).then((res) {
@@ -952,19 +944,8 @@ class _PartyGuestAddEditManageScreenState
                                 Apis.sendPushNotification(bloc_user.fcmToken, title, message);
                                 Logx.ist(_TAG, 'notification has been sent to ${bloc_user.name} ${bloc_user.surname}');
                               }
-                              // else {
-                                // if(bloc_user.phoneNumber!=0){
-                                //   SmsUtils.sendSms(bloc_user.phoneNumber.toString(), 'welcome to ${widget.party.name} family, your guest list request is approved!');
-                                // } else {
-                                //   Logx.ist(_TAG, 'promoter guest and sms cannot be sent!');
-                                // }
-                              // }
                             } else {
-                              // if(bloc_user.phoneNumber!=0){
-                              //   SmsUtils.sendSms(bloc_user.phoneNumber.toString(), 'welcome to ${widget.party.name} family, your guest list request is approved!');
-                              // } else {
-                              //   Logx.ist(_TAG, 'promoter guest and sms cannot be sent!');
-                              // }
+
                             }
                           });
                         } else {

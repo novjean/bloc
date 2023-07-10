@@ -741,6 +741,7 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
                 children: [
                   Text('interest user count: ${mPartyInterest.userIds.length}'),
                   ButtonWidget(text: 'reset', onClicked: () {
+                    mPartyInterest = mPartyInterest.copyWith(initCount: 0);
                     mPartyInterest.userIds = [];
                     FirestoreHelper.pushPartyInterest(mPartyInterest);
                     setState(() {

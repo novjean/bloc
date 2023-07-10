@@ -170,13 +170,7 @@ class _PartyBannerState extends State<PartyBanner> {
                                           right: 5, bottom: 1),
                                       child: DelayedDisplay(
                                         delay: const Duration(seconds: 1),
-                                        child: Text(
-                                          interestCount >= 9 ||
-                                                  UserPreferences.myUser
-                                                          .clearanceLevel >=
-                                                      Constants.ADMIN_LEVEL
-                                              ? '$interestCount 🖤'
-                                              : '',
+                                        child: Text(interestCount>0 ? '$interestCount 🖤':'',
                                           style: const TextStyle(
                                             color: Colors.black,
                                           ),
