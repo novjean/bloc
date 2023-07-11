@@ -339,6 +339,7 @@ class Dummy {
       phone: '',
       promoterId: '',
       blocUserId: '',
+      createdAt: Timestamp.now().millisecondsSinceEpoch,
     );
 
     return dummy;

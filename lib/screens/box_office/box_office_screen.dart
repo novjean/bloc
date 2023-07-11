@@ -174,7 +174,7 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
           );
   }
 
-  switchPromoterOptions(BuildContext context) {
+  switchPromoterOptions(BuildContext context  ) {
     if (sOption == 'guest list') {
       return displayGuestListParties(context);
     } else if (sOption == 'reservations') {

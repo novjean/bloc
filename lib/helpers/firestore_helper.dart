@@ -1207,6 +1207,14 @@ class FirestoreHelper {
     }
   }
 
+  static pullPromoterGuests(String promoterId) {
+    return FirebaseFirestore.instance
+        .collection(PROMOTER_GUESTS)
+        .where('promoterId', isEqualTo: promoterId)
+        .get();
+  }
+
+
   /** reservations **/
   static void pushReservation(Reservation reservation) async {
     try {
@@ -1858,6 +1866,7 @@ class FirestoreHelper {
   static void deleteUserLounge(String docId) {
     FirebaseFirestore.instance.collection(USER_LOUNGES).doc(docId).delete();
   }
+
 
 
 }

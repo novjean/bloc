@@ -3,20 +3,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../utils/constants.dart';
-import '../db/entity/promoter.dart';
+import '../db/entity/promoter_guest.dart';
 
-class PromoterItem extends StatefulWidget {
-  Promoter promoter;
+class PromoterGuestItem extends StatefulWidget {
+  PromoterGuest promoterGuest;
 
-  PromoterItem({Key? key, required this.promoter })
+  PromoterGuestItem({Key? key, required this.promoterGuest })
       : super(key: key);
 
   @override
-  State<PromoterItem> createState() => _PromoterItemState();
+  State<PromoterGuestItem> createState() => _PromoterGuestItemState();
 }
 
-class _PromoterItemState extends State<PromoterItem> {
-  static const String _TAG = 'PromoterItem';
+class _PromoterGuestItemState extends State<PromoterGuestItem> {
+  static const String _TAG = 'PromoterGuestItem';
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +25,7 @@ class _PromoterItemState extends State<PromoterItem> {
       child: ClipRRect(
         borderRadius: BorderRadius.circular(15),
         child: Hero(
-          tag: widget.promoter.id,
+          tag: widget.promoterGuest.id,
           child: Card(
             elevation: 1,
             color: Constants.lightPrimary,
@@ -40,7 +40,7 @@ class _PromoterItemState extends State<PromoterItem> {
                   //   fit: BoxFit.cover,),
                   title: RichText(
                     text: TextSpan(
-                      text: '${widget.promoter.name} ',
+                      text: '${widget.promoterGuest.name} ',
                       style: const TextStyle(
                           fontFamily: Constants.fontDefault,
                           color: Colors.black,
@@ -49,8 +49,8 @@ class _PromoterItemState extends State<PromoterItem> {
                           fontWeight: FontWeight.bold),
                     ),
                   ),
+                  subtitle: Text('phone: ${widget.promoterGuest.phone}'),
 
-                  // subtitle: _showLastChat(context),
                   // trailing: RichText(
                   //   text: TextSpan(
                   //     text:

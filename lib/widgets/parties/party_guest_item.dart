@@ -15,11 +15,14 @@ class PartyGuestItem extends StatelessWidget {
   final PartyGuest partyGuest;
   final String partyName;
 
-  const PartyGuestItem({Key? key, required this.partyGuest, required this.partyName}) : super(key: key);
+  const PartyGuestItem(
+      {Key? key, required this.partyGuest, required this.partyName})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    String title = '${partyGuest.name.toLowerCase()} ${partyGuest.surname.toLowerCase()}';
+    String title =
+        '${partyGuest.name.toLowerCase()} ${partyGuest.surname.toLowerCase()}';
     int friendsCount = partyGuest.guestsCount - 1;
 
     if (friendsCount > 0) {
@@ -48,45 +51,11 @@ class PartyGuestItem extends StatelessWidget {
                         title,
                         style: const TextStyle(fontSize: 18),
                       ),
-                      partyGuest.shouldBanUser?
-                      SizedBox.fromSize(
-                        size: const Size(25, 25),
-                        child: ClipOval(
-                          child: Material(
-                            color: Colors.redAccent,
-                            child: InkWell(
-                              splashColor: Colors.red,
-                              onTap: () {
-                                // here we should write the ban user
-                                FirestoreHelper.pullUser(partyGuest.guestId).then((res) {
-                                  Logx.i(_TAG, 'successfully pulled in user for id ${partyGuest.guestId}');
-
-                                  if (res.docs.isNotEmpty) {
-                                    DocumentSnapshot document = res.docs[0];
-                                    Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-
-                                    final User user = Fresh.freshUserMap(data, false);
-                                    user.isBanned = true;
-                                    FirestoreHelper.pushUser(user);
-
-                                    Logx.i(_TAG, '${user.name} ${user.surname} is banned');
-                                    Toaster.shortToast('${user.name} ${user.surname} is banned');
-                                  }
-                                });
-
-                              },
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: const <Widget>[
-                                  Icon(Icons.dangerous),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                      ): const SizedBox(),
-                      Text(' ${DateTimeUtils.getFormattedDateString(
-                          partyGuest.createdAt)}'),
+                      partyGuest.shouldBanUser
+                          ? showBannedIcon(context)
+                          : const SizedBox(),
+                      Text(
+                          ' ${DateTimeUtils.getFormattedDateString(partyGuest.createdAt)}'),
                     ],
                   ),
                 ),
@@ -99,7 +68,8 @@ class PartyGuestItem extends StatelessWidget {
                         partyName,
                       ),
                     ),
-                ],),
+                  ],
+                ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
@@ -109,41 +79,86 @@ class PartyGuestItem extends StatelessWidget {
                         'status : ${partyGuest.guestStatus}',
                       ),
                     ),
-                  ],),
+                  ],
+                ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Padding(
-                      padding:
-                      const EdgeInsets.only(left: 5, bottom: 5),
+                      padding: const EdgeInsets.only(left: 5, bottom: 5),
                       child: Row(
                         children: [
                           Text('supported : ${partyGuest.isChallengeClicked}'),
                         ],
                       ),
                     ),
-                    Padding(
-                      padding:
-                          const EdgeInsets.only(right: 5, bottom: 5),
-                      child: Row(
-                        children: [
-                          const Text('approved: '),
-                          Checkbox(
-                            value: partyGuest.isApproved,
-                            onChanged: (value) {
-                              PartyGuest updatedPartyGuest =
-                                  partyGuest.copyWith(isApproved: value);
-                              Logx.i(_TAG, 'party guest ${updatedPartyGuest.name} approved $value');
-                              PartyGuest freshPartyGuest =
-                                  Fresh.freshPartyGuest(updatedPartyGuest);
-                              FirestoreHelper.pushPartyGuest(freshPartyGuest);
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
+                    // Padding(
+                    //   padding:
+                    //       const EdgeInsets.only(right: 5, bottom: 5),
+                    //   child: Row(
+                    //     children: [
+                    //       const Text('approved: '),
+                    //       Checkbox(
+                    //         value: partyGuest.isApproved,
+                    //         onChanged: (value) {
+                    //           PartyGuest updatedPartyGuest =
+                    //               partyGuest.copyWith(isApproved: value);
+                    //           Logx.i(_TAG, 'party guest ${updatedPartyGuest.name} approved $value');
+                    //           PartyGuest freshPartyGuest =
+                    //               Fresh.freshPartyGuest(updatedPartyGuest);
+                    //           FirestoreHelper.pushPartyGuest(freshPartyGuest);
+                    //         },
+                    //       ),
+                    //     ],
+                    //   ),
+                    // ),
                   ],
                 ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  showBannedIcon(BuildContext context) {
+    SizedBox.fromSize(
+      size: const Size(25, 25),
+      child: ClipOval(
+        child: Material(
+          color: Colors.redAccent,
+          child: InkWell(
+            splashColor: Colors.red,
+            onTap: () {
+              // here we should write the ban user
+              FirestoreHelper.pullUser(
+                  partyGuest.guestId)
+                  .then((res) {
+                Logx.i(_TAG,
+                    'successfully pulled in user for id ${partyGuest.guestId}');
+
+                if (res.docs.isNotEmpty) {
+                  DocumentSnapshot document =
+                  res.docs[0];
+                  Map<String, dynamic> data = document
+                      .data()! as Map<String, dynamic>;
+
+                  final User user =
+                  Fresh.freshUserMap(data, false);
+                  user.isBanned = true;
+                  FirestoreHelper.pushUser(user);
+
+                  Logx.ist(_TAG,
+                      '${user.name} ${user.surname} is banned');
+                }
+              });
+            },
+            child: const Column(
+              mainAxisAlignment:
+              MainAxisAlignment.center,
+              children: <Widget>[
+                Icon(Icons.dangerous),
               ],
             ),
           ),

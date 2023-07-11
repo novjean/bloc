@@ -2473,6 +2473,12 @@ class Fresh {
       Logx.em(_TAG, 'promoter guest blocUserId not exist for id: ${promoterGuest.id}');
       shouldPush = true;
     }
+    try {
+      promoterGuest = promoterGuest.copyWith(createdAt: map['createdAt'] as int);
+    } catch (e) {
+      Logx.em(_TAG, 'promoter guest createdAt not exist for id: ${promoterGuest.id}');
+      shouldPush = true;
+    }
 
     if (shouldPush &&
         shouldUpdate &&
@@ -2512,6 +2518,11 @@ class Fresh {
     } catch (e) {
       Logx.em(_TAG, 'promoter guest blocUserId not exist for id: ${promoterGuest.id}');
     }
+    try {
+      fresh = fresh.copyWith(createdAt: promoterGuest.createdAt);
+    } catch (e) {
+      Logx.em(_TAG, 'promoter guest createdAt not exist for id: ${promoterGuest.id}');
+    }
 
     return fresh;
   }
@@ -2532,7 +2543,7 @@ class Fresh {
       reservation = reservation.copyWith(name: map['name'] as String);
     } catch (e) {
       Logx.em(_TAG,
-          'reservation name not exist for reservation id: ' + reservation.id);
+          'reservation name not exist for reservation id: ${reservation.id}');
       shouldPush = true;
     }
     try {
