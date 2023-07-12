@@ -13,6 +13,7 @@ import 'package:http/http.dart' as http;
 import '../../db/entity/challenge.dart';
 import '../../db/entity/party.dart';
 import '../../main.dart';
+import '../../screens/parties/box_office_guest_confirm_screen.dart';
 import '../../screens/parties/party_guest_add_edit_manage_screen.dart';
 import '../../utils/constants.dart';
 import '../../utils/date_time_utils.dart';
@@ -58,6 +59,14 @@ class _PromoterBoxOfficeItemState extends State<PromoterBoxOfficeItem> {
 
     return GestureDetector(
       onTap: () {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+              builder: (ctx) => BoxOfficeGuestConfirmScreen(
+                partyGuestId: widget.partyGuest.id,
+              )),
+        );
+      },
+      onDoubleTap: () {
         if(UserPreferences.myUser.clearanceLevel>=Constants.MANAGER_LEVEL){
           Navigator.of(context).push(MaterialPageRoute(
               builder: (ctx) => PartyGuestAddEditManageScreen(
@@ -371,14 +380,51 @@ class _PromoterBoxOfficeItemState extends State<PromoterBoxOfficeItem> {
           style: const TextStyle(fontSize: 16),
         ),
         onPressed: () {
-          if (widget.partyGuest.guestsRemaining != 0) {
-            widget.partyGuest = widget.partyGuest
-                .copyWith(guestsRemaining: 0, isApproved: true);
-            FirestoreHelper.pushPartyGuest(widget.partyGuest);
-          } else {
-            widget.partyGuest.guestsRemaining = widget.partyGuest.guestsCount;
-            FirestoreHelper.pushPartyGuest(widget.partyGuest);
-          }
+          Navigator.of(context).push(
+            MaterialPageRoute(
+                builder: (ctx) => BoxOfficeGuestConfirmScreen(
+                  partyGuestId: widget.partyGuest.id,
+                )),
+          );
+
+          // if (widget.partyGuest.guestsRemaining != 0) {
+          //   widget.partyGuest = widget.partyGuest
+          //       .copyWith(guestsRemaining: 0, isApproved: true);
+          //   FirestoreHelper.pushPartyGuest(widget.partyGuest);
+          //
+          //   if(widget.partyGuest.guestStatus == 'promoter'){
+          //     FirestoreHelper.pullPromoterGuest(widget.partyGuest.id).then((res) {
+          //       if(res.docs.isNotEmpty){
+          //         DocumentSnapshot document = res.docs[0];
+          //         Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+          //         PromoterGuest promoterGuest = Fresh.freshPromoterGuestMap(data, false);
+          //         promoterGuest = promoterGuest.copyWith(hasAttended: true);
+          //         FirestoreHelper.pushPromoterGuest(promoterGuest);
+          //
+          //         Logx.i(_TAG, 'promoter guest ${promoterGuest.name} has attended');
+          //       } else {
+          //         Logx.em(_TAG, 'promoter guest could not be found for the party guest id: ${widget.partyGuest.id}');
+          //       }
+          //     });
+          //   }
+          // } else {
+          //   widget.partyGuest.guestsRemaining = widget.partyGuest.guestsCount;
+          //   FirestoreHelper.pushPartyGuest(widget.partyGuest);
+          //
+          //   FirestoreHelper.pullPromoterGuest(widget.partyGuest.id).then((res) {
+          //     if(res.docs.isNotEmpty){
+          //       DocumentSnapshot document = res.docs[0];
+          //       Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+          //       PromoterGuest promoterGuest = Fresh.freshPromoterGuestMap(data, false);
+          //       promoterGuest = promoterGuest.copyWith(hasAttended: false);
+          //       FirestoreHelper.pushPromoterGuest(promoterGuest);
+          //
+          //       Logx.i(_TAG, 'promoter guest ${promoterGuest.name} has not attended');
+          //     } else {
+          //       Logx.em(_TAG, 'promoter guest could not be found for the party guest id: ${widget.partyGuest.id}');
+          //     }
+          //   });
+          // }
         },
       ),
     );

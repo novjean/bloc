@@ -337,9 +337,11 @@ class Dummy {
       id: StringUtils.getRandomString(28),
       name: '',
       phone: '',
-      promoterId: '',
+      promoterId: Constants.blocPromoterId,
       blocUserId: '',
+      partyGuestId: '',
       createdAt: Timestamp.now().millisecondsSinceEpoch,
+      hasAttended: false
     );
 
     return dummy;
@@ -426,7 +428,7 @@ class Dummy {
         imageUrl: '',
         name: '',
         surname: '',
-        gender: 'female',
+        gender: 'male',
         phoneNumber: 0,
         isBanned: false,
         isAppUser: false,

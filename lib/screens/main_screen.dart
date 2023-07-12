@@ -199,7 +199,11 @@ class _MainScreenState extends State<MainScreen> {
           }
           case 'party_guest':{
             PartyGuest partyGuest = Fresh.freshPartyGuestMap(jsonDecode(data['document']), false);
-            showNotificationHighChannel(message);
+            if(!partyGuest.isApproved){
+              showNotificationHighChannel(message);
+            } else {
+              Logx.ist(_TAG, 'guest list: ${partyGuest.name} added');
+            }
             break;
           }
           case 'reservations':{

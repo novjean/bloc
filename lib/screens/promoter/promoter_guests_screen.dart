@@ -39,9 +39,9 @@ class _PromoterGuestsScreenState extends State<PromoterGuestsScreen> {
   late String sOption;
 
   List<Promoter> mPromoters = [];
-  late List<String> mPromoterNames;
+  List<String> mPromoterNames = [];
   late String sPromoterName;
-  String sPromoterId = '';
+  late String sPromoterId;
   var _isPromotersLoading = true;
 
   List<PartyGuest> mPartyGuests = [];
@@ -49,14 +49,15 @@ class _PromoterGuestsScreenState extends State<PromoterGuestsScreen> {
   bool isSearching = false;
 
   String mLines = '';
+  TextEditingController controller = TextEditingController();
 
   @override
   void initState() {
     mOptions = ['arriving', 'completed', 'unapproved', 'add'];
     sOption = mOptions.first;
 
-    mPromoterNames = [''];
-    sPromoterName = mPromoterNames.first;
+    sPromoterName = 'bloc';
+    sPromoterId = Constants.blocPromoterId;
 
     FirestoreHelper.pullPromoters().then((res) {
       if (res.docs.isNotEmpty) {
@@ -122,7 +123,7 @@ class _PromoterGuestsScreenState extends State<PromoterGuestsScreen> {
           displayBoxOfficeOptions(context),
           const Divider(),
 
-          Container(
+          sOption!='add'?Container(
             margin: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 0),
             child: TextField(
               decoration: const InputDecoration(
@@ -152,7 +153,7 @@ class _PromoterGuestsScreenState extends State<PromoterGuestsScreen> {
                 });
               } ,
             ),
-          ),
+          ):const SizedBox(),
           const Divider(),
           sOption == 'add' ? showAddListPage(context) : buildGuestsList(context)
         ],
@@ -271,186 +272,195 @@ class _PromoterGuestsScreenState extends State<PromoterGuestsScreen> {
   }
 
   showAddListPage(BuildContext context) {
-    return Column(
-      children: [
-        const SizedBox(height: 12),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12),
-          child: TextFieldWidget(
-            label: 'add guest list',
-            text: '',
-            maxLines: 10,
-            hintText:
-                'John Doe, 9696126969, 3\nJohn Doe, 9696126969\nJohn Doe\n',
-            onChanged: (lines) {
-              mLines = lines;
-            },
-          ),
-        ),
-        const SizedBox(height: 24),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12),
-          child: Column(
-            children: [
-              const Padding(
-                padding: EdgeInsets.only(bottom: 8.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Text(
-                      'promoter',
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                    ),
-                  ],
-                ),
-              ),
-              FormField<String>(
-                builder: (FormFieldState<String> state) {
-                  return InputDecorator(
-                    key: const ValueKey('promoter_dropdown'),
-                    decoration: InputDecoration(
-                        fillColor: Colors.white,
-                        errorStyle: TextStyle(
-                            color: Theme.of(context).errorColor,
-                            fontSize: 16.0),
-                        hintText: 'please select a promoter',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(5.0),
-                          borderSide: const BorderSide(),
-                        ),
-                        enabledBorder: const OutlineInputBorder(
-                          borderSide: BorderSide(width: 0.0),
-                        )),
-                    isEmpty: sPromoterName == '',
-                    child: DropdownButtonHideUnderline(
-                      child: DropdownButton<String>(
-                        // dropdownColor: Constants.background,
-                        value: sPromoterName,
-                        isDense: true,
-                        onChanged: (String? newValue) {
-                          setState(() {
-                            sPromoterName = newValue!;
-
-                            if (sPromoterName.isEmpty) {
-                              sPromoterId = '';
-                            } else {
-                              for (Promoter promoter in mPromoters) {
-                                if (promoter.name == sPromoterName) {
-                                  sPromoterId = promoter.id;
-                                  break;
-                                }
-                              }
-                            }
-
-                            state.didChange(newValue);
-                          });
-                        },
-                        items: mPromoterNames.map((String value) {
-                          return DropdownMenuItem<String>(
-                            value: value,
-                            child: Text(value),
-                          );
-                        }).toList(),
-                      ),
-                    ),
-                  );
+    return Container(
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            const SizedBox(height: 12),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              child: TextFieldWidget(
+                label: 'add guest list',
+                text: '',
+                maxLines: 10,
+                hintText:
+                    'John Doe, 9696126969, 3\nJohn Doe, 9696126969\nJohn Doe\n',
+                userController: controller,
+                onChanged: (lines) {
+                  mLines = lines;
                 },
               ),
-            ],
-          ),
-        ),
-        const SizedBox(height: 24),
-        ButtonWidget(
-          text: '🍪 add guests',
-          height: 50,
-          onClicked: () {
-            try {
-              List<String> splitLines = mLines.split("\n");
+            ),
+            const SizedBox(height: 24),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              child: Column(
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.only(bottom: 8.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Text(
+                          'promoter',
+                          style:
+                              TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                        ),
+                      ],
+                    ),
+                  ),
+                  FormField<String>(
+                    builder: (FormFieldState<String> state) {
+                      return InputDecorator(
+                        key: const ValueKey('promoter_dropdown'),
+                        decoration: InputDecoration(
+                            fillColor: Colors.white,
+                            errorStyle: TextStyle(
+                                color: Theme.of(context).errorColor,
+                                fontSize: 16.0),
+                            hintText: 'please select a promoter',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(5.0),
+                              borderSide: const BorderSide(),
+                            ),
+                            enabledBorder: const OutlineInputBorder(
+                              borderSide: BorderSide(width: 0.0),
+                            )),
+                        isEmpty: sPromoterName == '',
+                        child: DropdownButtonHideUnderline(
+                          child: DropdownButton<String>(
+                            // dropdownColor: Constants.background,
+                            value: sPromoterName,
+                            isDense: true,
+                            onChanged: (String? newValue) {
+                              setState(() {
+                                sPromoterName = newValue!;
 
-              List<PartyGuest> partyGuests = [];
+                                if (sPromoterName.isEmpty) {
+                                  sPromoterId = '';
+                                } else {
+                                  for (Promoter promoter in mPromoters) {
+                                    if (promoter.name == sPromoterName) {
+                                      sPromoterId = promoter.id;
+                                      break;
+                                    }
+                                  }
+                                }
 
-              for (String line in splitLines) {
-                List<String> data = line.split(",");
+                                state.didChange(newValue);
+                              });
+                            },
+                            items: mPromoterNames.map((String value) {
+                              return DropdownMenuItem<String>(
+                                value: value,
+                                child: Text(value),
+                              );
+                            }).toList(),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 24),
+            ButtonWidget(
+              text: '🍪 add guests',
+              height: 50,
+              onClicked: () {
+                try {
+                  List<String> splitLines = mLines.split("\n");
 
-                PartyGuest partyGuest = Dummy.getDummyPartyGuest(false);
-                partyGuest = partyGuest.copyWith(
-                    partyId: widget.party.id, promoterId: sPromoterId);
+                  List<PartyGuest> partyGuests = [];
 
-                if (data.length == 3) {
-                  // name, number and count present
-                  String name = data[0];
-                  int phoneNum = StringUtils.getInt(data[1].trim());
-                  String phone = '91$phoneNum';
-                  int guestCount = 1;
-                  try {
-                    guestCount = int.tryParse(data[2])!;
-                  } catch (e) {
-                    Logx.em(_TAG, e.toString());
+                  for (String line in splitLines) {
+                    List<String> data = line.split(",");
+
+                    PartyGuest partyGuest = Dummy.getDummyPartyGuest(false);
+                    partyGuest = partyGuest.copyWith(
+                        partyId: widget.party.id, promoterId: sPromoterId);
+
+                    if (data.length == 3) {
+                      // name, number and count present
+                      String name = data[0];
+                      int phoneNum = StringUtils.getInt(data[1].trim());
+                      String phone = '91$phoneNum';
+                      int guestCount = 1;
+                      try {
+                        guestCount = int.tryParse(data[2])!;
+                      } catch (e) {
+                        Logx.em(_TAG, e.toString());
+                      }
+                      guestCount++;
+                      partyGuest = partyGuest.copyWith(
+                        name: name,
+                        phone: phone,
+                        guestsCount: guestCount,
+                        guestStatus: 'promoter',
+                        guestsRemaining: guestCount,
+                      );
+                    } else if (data.length == 2) {
+                      // name and number present
+                      String name = data[0];
+                      int phoneNum = StringUtils.getInt(data[1].trim());
+                      String phone = '91$phoneNum';
+                      partyGuest = partyGuest.copyWith(
+                        name: name,
+                        phone: phone,
+                        guestsCount: 1,
+                        guestsRemaining: 1,
+                        guestStatus: 'promoter',
+                        isApproved: true,
+                      );
+                    } else {
+                      // only name
+                      String name = data[0];
+                      partyGuest = partyGuest.copyWith(
+                        name: name,
+                        phone: '0',
+                        guestsCount: 1,
+                        guestsRemaining: 1,
+                        guestStatus: 'promoter',
+                        isApproved: true,
+                      );
+                    }
+                    partyGuests.add(partyGuest);
+                    FirestoreHelper.pushPartyGuest(partyGuest);
+
+                    PromoterGuest promoterGuest = Dummy.getDummyPromoterGuest();
+                    promoterGuest = promoterGuest.copyWith(
+                        name: partyGuest.name,
+                        phone: partyGuest.phone,
+                        partyGuestId: partyGuest.id,
+                        promoterId: partyGuest.promoterId);
+                    FirestoreHelper.pushPromoterGuest(promoterGuest);
                   }
-                  guestCount++;
-                  partyGuest = partyGuest.copyWith(
-                    name: name,
-                    phone: phone,
-                    guestsCount: guestCount,
-                    guestsRemaining: guestCount,
-                  );
-                } else if (data.length == 2) {
-                  // name and number present
-                  String name = data[0];
-                  int phoneNum = StringUtils.getInt(data[1].trim());
-                  String phone = '91$phoneNum';
-                  partyGuest = partyGuest.copyWith(
-                    name: name,
-                    phone: phone,
-                    guestsCount: 1,
-                    guestsRemaining: 1,
-                    isApproved: true,
-                  );
-                } else {
-                  // only name
-                  String name = data[0];
-                  partyGuest = partyGuest.copyWith(
-                    name: name,
-                    phone: '0',
-                    guestsCount: 1,
-                    guestsRemaining: 1,
-                    isApproved: true,
-                  );
+
+                  showGuestsConfirmationDialog(context, partyGuests);
+                  Logx.d(_TAG, 'party guests created');
+                } catch (e) {
+                  Logx.em(_TAG, e.toString());
                 }
-                partyGuests.add(partyGuest);
-                FirestoreHelper.pushPartyGuest(partyGuest);
-
-                PromoterGuest promoterGuest = Dummy.getDummyPromoterGuest();
-                promoterGuest.copyWith(
-                    name: partyGuest.name,
-                    phone: partyGuest.phone,
-                    promoterId: partyGuest.promoterId);
-                FirestoreHelper.pushPromoterGuest(promoterGuest);
-              }
-
-              showGuestsConfirmationDialog(context, partyGuests);
-              Logx.d(_TAG, 'party guests created');
-            } catch (e) {
-              Logx.em(_TAG, e.toString());
-            }
-          },
+              },
+            ),
+            const SizedBox(height: 24),
+            DarkButtonWidget(
+              text: '🧞 add promoter',
+              onClicked: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                      builder: (ctx) => PromoterAddEditScreen(
+                            promoter: Dummy.getDummyPromoter(),
+                            task: 'add',
+                          )),
+                );
+              },
+            ),
+            const SizedBox(height: 12),
+          ],
         ),
-        const SizedBox(height: 24),
-        DarkButtonWidget(
-          text: '🧞 add promoter',
-          onClicked: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                  builder: (ctx) => PromoterAddEditScreen(
-                        promoter: Dummy.getDummyPromoter(),
-                        task: 'add',
-                      )),
-            );
-          },
-        ),
-        const SizedBox(height: 12),
-      ],
+      ),
     );
   }
 
@@ -467,7 +477,7 @@ class _PromoterGuestsScreenState extends State<PromoterGuestsScreen> {
             child: Expanded(
               child: ListView.builder(
                   itemCount: partyGuests.length,
-                  scrollDirection: Axis.horizontal,
+                  scrollDirection: Axis.vertical,
                   itemBuilder: (ctx, index) {
                     return PartyGuestWidget(
                       partyGuest: partyGuests[index],
@@ -478,8 +488,9 @@ class _PromoterGuestsScreenState extends State<PromoterGuestsScreen> {
           ),
           actions: [
             TextButton(
-              child: const Text("🛸 done"),
+              child: const Text("🛸 finish"),
               onPressed: () {
+                controller.clear();
                 Navigator.of(context).pop();
               },
             ),

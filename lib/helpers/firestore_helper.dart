@@ -1180,6 +1180,14 @@ class FirestoreHelper {
         .get();
   }
 
+  static pullPromoter(String id) {
+    return FirebaseFirestore.instance
+        .collection(FirestoreHelper.PROMOTERS)
+        .where('id', isEqualTo: id)
+        .get();
+  }
+
+
   static getPromoters() {
     return FirebaseFirestore.instance
         .collection(PROMOTERS)
@@ -1214,6 +1222,19 @@ class FirestoreHelper {
         .get();
   }
 
+  static pullPromoterGuestsByBlocUserId(String blocUserId) {
+    return FirebaseFirestore.instance
+        .collection(PROMOTER_GUESTS)
+        .where('blocUserId', isEqualTo: blocUserId)
+        .get();
+  }
+
+  static pullPromoterGuest(String partyGuestId) {
+    return FirebaseFirestore.instance
+        .collection(PROMOTER_GUESTS)
+        .where('partyGuestId', isEqualTo: partyGuestId)
+        .get();
+  }
 
   /** reservations **/
   static void pushReservation(Reservation reservation) async {
@@ -1620,6 +1641,13 @@ class FirestoreHelper {
         .get();
   }
 
+  static pullUserByPhoneNumber(int phone) {
+    return FirebaseFirestore.instance
+        .collection(USERS)
+        .where('phoneNumber', isEqualTo: phone)
+        .get();
+  }
+
   static Future<QuerySnapshot<Map<String, dynamic>>> pullUsersByLevel(
       int level) {
     return FirebaseFirestore.instance
@@ -1775,8 +1803,8 @@ class FirestoreHelper {
     }
   }
 
-  static void deleteUser(blocUser.User user) {
-    FirebaseFirestore.instance.collection(USERS).doc(user.id).delete();
+  static void deleteUser(String docId) {
+    FirebaseFirestore.instance.collection(USERS).doc(docId).delete();
   }
 
   /** user level **/

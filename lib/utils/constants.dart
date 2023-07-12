@@ -69,6 +69,7 @@ class Constants {
 
   // flagship store kept for ease of reference
   static String blocServiceId = 'UVU4XPqTYr3U0YhQzEhg';
+  static String blocPromoterId = 'QQEck1k84xT49iLPtRaPWeKtOIhp';
 
   static int skipPhoneNumber = 911234567890;
 

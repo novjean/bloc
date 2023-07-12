@@ -1,9 +1,11 @@
+import 'package:bloc/utils/permission_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import '../main.dart';
-import '../screens/parties/box_office_guest_list_screen.dart';
+import '../screens/parties/box_office_guest_confirm_screen.dart';
 import '../widgets/ui/toaster.dart';
 import 'logx.dart';
 
@@ -20,7 +22,7 @@ class ScanUtils {
       if (scanCode != '-1') {
         Navigator.of(context).push(
           MaterialPageRoute(
-              builder: (ctx) => BoxOfficeGuestListScreen(
+              builder: (ctx) => BoxOfficeGuestConfirmScreen(
                     partyGuestId: scanCode,
                   )),
         );
@@ -32,10 +34,10 @@ class ScanUtils {
       Toaster.longToast('code scan failed, not get platform version');
     } on Exception catch (e, s) {
       Logx.e(_TAG, e, s);
-      Toaster.longToast('scan failed : ' + e.toString());
+      Toaster.longToast('scan failed : $e');
     } catch (e) {
       logger.e(e);
-      Toaster.longToast('scan failed : ' + e.toString());
+      Toaster.longToast('scan failed : $e');
     }
 
     if (!context.mounted) {

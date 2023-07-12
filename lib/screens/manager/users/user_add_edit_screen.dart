@@ -57,7 +57,7 @@ class _UserAddEditScreenState extends State<UserAddEditScreen> {
   TimeOfDay _sTimeOfDay = TimeOfDay.now();
   bool _isStartDateBeingSet = true;
 
-  String sGender = 'female';
+  String sGender = 'male';
   List<String> genders = [
     'male',
     'female',
@@ -419,7 +419,7 @@ class _UserAddEditScreenState extends State<UserAddEditScreen> {
                         FirestorageHelper.deleteFile(widget.user.imageUrl);
                       }
 
-                      FirestoreHelper.deleteUser(widget.user);
+                      FirestoreHelper.deleteUser(widget.user.id);
                       Toaster.shortToast('user deleted');
 
                       Navigator.of(ctx).pop(true);

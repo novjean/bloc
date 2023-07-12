@@ -2474,11 +2474,24 @@ class Fresh {
       shouldPush = true;
     }
     try {
+      promoterGuest = promoterGuest.copyWith(partyGuestId: map['partyGuestId'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'promoter guest partyGuestId not exist for id: ${promoterGuest.id}');
+      shouldPush = true;
+    }
+    try {
       promoterGuest = promoterGuest.copyWith(createdAt: map['createdAt'] as int);
     } catch (e) {
       Logx.em(_TAG, 'promoter guest createdAt not exist for id: ${promoterGuest.id}');
       shouldPush = true;
     }
+    try {
+      promoterGuest = promoterGuest.copyWith(hasAttended: map['hasAttended'] as bool);
+    } catch (e) {
+      Logx.em(_TAG, 'promoter guest hasAttended not exist for id: ${promoterGuest.id}');
+      shouldPush = true;
+    }
+
 
     if (shouldPush &&
         shouldUpdate &&
@@ -2519,9 +2532,19 @@ class Fresh {
       Logx.em(_TAG, 'promoter guest blocUserId not exist for id: ${promoterGuest.id}');
     }
     try {
+      fresh = fresh.copyWith(partyGuestId: promoterGuest.partyGuestId);
+    } catch (e) {
+      Logx.em(_TAG, 'promoter guest partyGuestId not exist for id: ${promoterGuest.id}');
+    }
+    try {
       fresh = fresh.copyWith(createdAt: promoterGuest.createdAt);
     } catch (e) {
       Logx.em(_TAG, 'promoter guest createdAt not exist for id: ${promoterGuest.id}');
+    }
+    try {
+      fresh = fresh.copyWith(hasAttended: promoterGuest.hasAttended);
+    } catch (e) {
+      Logx.em(_TAG, 'promoter guest hasAttended not exist for id: ${promoterGuest.id}');
     }
 
     return fresh;

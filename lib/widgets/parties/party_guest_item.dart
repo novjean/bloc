@@ -7,7 +7,6 @@ import '../../db/entity/user.dart';
 import '../../helpers/firestore_helper.dart';
 import '../../helpers/fresh.dart';
 import '../../utils/logx.dart';
-import '../ui/toaster.dart';
 
 class PartyGuestItem extends StatelessWidget {
   static const String _TAG = 'PartyGuestItem';
@@ -92,26 +91,20 @@ class PartyGuestItem extends StatelessWidget {
                         ],
                       ),
                     ),
-                    // Padding(
-                    //   padding:
-                    //       const EdgeInsets.only(right: 5, bottom: 5),
-                    //   child: Row(
-                    //     children: [
-                    //       const Text('approved: '),
-                    //       Checkbox(
-                    //         value: partyGuest.isApproved,
-                    //         onChanged: (value) {
-                    //           PartyGuest updatedPartyGuest =
-                    //               partyGuest.copyWith(isApproved: value);
-                    //           Logx.i(_TAG, 'party guest ${updatedPartyGuest.name} approved $value');
-                    //           PartyGuest freshPartyGuest =
-                    //               Fresh.freshPartyGuest(updatedPartyGuest);
-                    //           FirestoreHelper.pushPartyGuest(freshPartyGuest);
-                    //         },
-                    //       ),
-                    //     ],
-                    //   ),
-                    // ),
+                    Padding(
+                      padding:
+                          const EdgeInsets.only(right: 5, bottom: 5),
+                      child: Row(
+                        children: [
+                          const Text('approved: '),
+                          Checkbox(
+                            value: partyGuest.isApproved,
+                            onChanged: (value) {
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
                   ],
                 ),
               ],

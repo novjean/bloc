@@ -412,7 +412,7 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
                                     FirestorageHelper.deleteFile(
                                         sUser.imageUrl);
                                   }
-                                  FirestoreHelper.deleteUser(sUser);
+                                  FirestoreHelper.deleteUser(sUser.id);
                                   Logx.i(_TAG, 'user is deleted');
 
                                   Navigator.of(context).pop();

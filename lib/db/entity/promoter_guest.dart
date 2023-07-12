@@ -3,8 +3,11 @@ class PromoterGuest{
   final String name;
   final String phone;
   final String promoterId;
+  final String partyGuestId;
   final String blocUserId;
+
   final int createdAt;
+  final bool hasAttended;
 
 //<editor-fold desc="Data Methods">
   const PromoterGuest({
@@ -12,8 +15,10 @@ class PromoterGuest{
     required this.name,
     required this.phone,
     required this.promoterId,
+    required this.partyGuestId,
     required this.blocUserId,
     required this.createdAt,
+    required this.hasAttended,
   });
 
   @override
@@ -25,8 +30,10 @@ class PromoterGuest{
           name == other.name &&
           phone == other.phone &&
           promoterId == other.promoterId &&
+          partyGuestId == other.partyGuestId &&
           blocUserId == other.blocUserId &&
-          createdAt == other.createdAt);
+          createdAt == other.createdAt &&
+          hasAttended == other.hasAttended);
 
   @override
   int get hashCode =>
@@ -34,8 +41,10 @@ class PromoterGuest{
       name.hashCode ^
       phone.hashCode ^
       promoterId.hashCode ^
+      partyGuestId.hashCode ^
       blocUserId.hashCode ^
-      createdAt.hashCode;
+      createdAt.hashCode ^
+      hasAttended.hashCode;
 
   @override
   String toString() {
@@ -44,8 +53,10 @@ class PromoterGuest{
         ' name: $name,' +
         ' phone: $phone,' +
         ' promoterId: $promoterId,' +
+        ' partyGuestId: $partyGuestId,' +
         ' blocUserId: $blocUserId,' +
         ' createdAt: $createdAt,' +
+        ' hasAttended: $hasAttended,' +
         '}';
   }
 
@@ -54,16 +65,20 @@ class PromoterGuest{
     String? name,
     String? phone,
     String? promoterId,
+    String? partyGuestId,
     String? blocUserId,
     int? createdAt,
+    bool? hasAttended,
   }) {
     return PromoterGuest(
       id: id ?? this.id,
       name: name ?? this.name,
       phone: phone ?? this.phone,
       promoterId: promoterId ?? this.promoterId,
+      partyGuestId: partyGuestId ?? this.partyGuestId,
       blocUserId: blocUserId ?? this.blocUserId,
       createdAt: createdAt ?? this.createdAt,
+      hasAttended: hasAttended ?? this.hasAttended,
     );
   }
 
@@ -73,8 +88,10 @@ class PromoterGuest{
       'name': this.name,
       'phone': this.phone,
       'promoterId': this.promoterId,
+      'partyGuestId': this.partyGuestId,
       'blocUserId': this.blocUserId,
       'createdAt': this.createdAt,
+      'hasAttended': this.hasAttended,
     };
   }
 
@@ -84,8 +101,10 @@ class PromoterGuest{
       name: map['name'] as String,
       phone: map['phone'] as String,
       promoterId: map['promoterId'] as String,
+      partyGuestId: map['partyGuestId'] as String,
       blocUserId: map['blocUserId'] as String,
       createdAt: map['createdAt'] as int,
+      hasAttended: map['hasAttended'] as bool,
     );
   }
 

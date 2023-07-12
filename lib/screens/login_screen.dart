@@ -104,7 +104,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     final blocUser.User user = Fresh.freshUserMap(data, true);
                     UserPreferences.setUser(user);
 
-                    return MainScreen();
+                    return const MainScreen();
                   }
                   Logx.i(_TAG, 'loading user...');
                   return const LoadingWidget();

@@ -42,7 +42,7 @@ class _ProfileAddEditRegisterPageState
   late String newImageUrl;
   String imagePath = '';
 
-  String sGender = 'female';
+  String sGender = 'male';
   List<String> genders = [
     'male',
     'female',

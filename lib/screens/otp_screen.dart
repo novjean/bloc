@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pinput/pinput.dart';
 
+import '../db/entity/promoter_guest.dart';
 import '../db/shared_preferences/user_preferences.dart';
 import '../helpers/firestore_helper.dart';
 import '../helpers/fresh.dart';
@@ -278,27 +279,63 @@ class _OTPScreenState extends State<OTPScreen> {
                         fcmToken = await FirebaseMessaging.instance.getToken();
                       }
 
-                      Logx.i(_TAG,
-                          'checking for bloc registration, id ${value.user!.uid}');
+                      Logx.i(_TAG, 'checking for bloc registration by id ${value.user!.uid}');
 
                       FirestoreHelper.pullUser(value.user!.uid).then((res) {
                         if (res.docs.isEmpty) {
-                          Logx.i(_TAG,
-                              'user is not already registered in bloc, registering...');
 
-                          blocUser.User registeredUser = Dummy.getDummyUser();
-                          registeredUser.id = value.user!.uid;
-                          registeredUser.phoneNumber =
-                              StringUtils.getInt(value.user!.phoneNumber!);
-                          registeredUser.fcmToken = fcmToken!;
+                          Logx.i(_TAG, 'checking for bloc registration by phone ${widget.phone}');
 
-                          UserPreferences.setUser(registeredUser);
-                          UiPreferences.setHomePageIndex(0);
+                          int phoneNumber = StringUtils.getInt(widget.phone);
+                          FirestoreHelper.pullUserByPhoneNumber(phoneNumber).then((res) {
+                            if(res.docs.isNotEmpty) {
+                              DocumentSnapshot document = res.docs[0];
+                              Map<String, dynamic> data =
+                              document.data()! as Map<String, dynamic>;
+                              blocUser.User user = Fresh.freshUserMap(data, true);
 
-                          Toaster.shortToast('hey there, welcome to bloc! 🦖');
+                              String oldUserDocId = user.id;
+                              FirestoreHelper.deleteUser(oldUserDocId);
 
-                          GoRouter.of(context)
-                              .pushNamed(RouteConstants.homeRouteName);
+                              FirestoreHelper.pullPromoterGuestsByBlocUserId(user.id).then((res) {
+                                    if(res.docs.isNotEmpty){
+                                      for (int i = 0; i < res.docs.length; i++) {
+                                        DocumentSnapshot document = res.docs[i];
+                                        Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+                                        final PromoterGuest pg = Fresh.freshPromoterGuestMap(data, false);
+                                        pg.copyWith(blocUserId: value.user!.uid);
+                                        FirestoreHelper.pushPromoterGuest(pg);
+                                      }
+                                    }
+                                  }
+                              );
+
+                              user = user.copyWith(id: value.user!.uid,
+                                  fcmToken: fcmToken);
+                              FirestoreHelper.pushUser(user);
+
+                              UserPreferences.setUser(user);
+                              UiPreferences.setHomePageIndex(0);
+
+                              Logx.ist(_TAG, 'hey there, welcome to bloc! 🦖');
+
+                              GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
+                            } else {
+                              Logx.i(_TAG, 'user is not already registered in bloc, registering...');
+
+                              blocUser.User registeredUser = Dummy.getDummyUser();
+                              registeredUser.copyWith(id: value.user!.uid,
+                                  phoneNumber: StringUtils.getInt(value.user!.phoneNumber!),
+                                  fcmToken: fcmToken!);
+
+                              UserPreferences.setUser(registeredUser);
+                              UiPreferences.setHomePageIndex(0);
+
+                              Logx.ist(_TAG, 'hey there, welcome to bloc! 🦖');
+
+                              GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
+                            }
+                          });
                         } else {
                           Logx.i(_TAG,
                               'user is a bloc member. navigating to main...');
@@ -374,4 +411,5 @@ class _OTPScreenState extends State<OTPScreen> {
       ),
     );
   }
+
 }

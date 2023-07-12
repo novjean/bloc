@@ -257,6 +257,8 @@ class _PartyGuestWidgetState extends State<PartyGuestWidget> {
                     ),
                   ],
                 ),
+                const SizedBox(height: 12),
+                const Divider(),
               ],
             ),
           );

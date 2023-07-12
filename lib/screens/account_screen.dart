@@ -11,6 +11,7 @@ import 'package:go_router/go_router.dart';
 import '../../db/entity/user.dart' as blocUser;
 import '../helpers/firestorage_helper.dart';
 import '../helpers/firestore_helper.dart';
+import '../main.dart';
 import '../routes/route_constants.dart';
 
 import '../utils/constants.dart';
@@ -71,7 +72,7 @@ class AccountScreen extends StatelessWidget {
             child: SizedListViewBlock(
               title: 'terms and conditions',
               height: 50,
-              width: MediaQuery.of(context).size.width,
+              width: mq.width,
               color: Theme.of(context).primaryColor,
             ),
             onTap: () {
@@ -85,7 +86,7 @@ class AccountScreen extends StatelessWidget {
             child: SizedListViewBlock(
               title: 'delete account',
               height: 50,
-              width: MediaQuery.of(context).size.width,
+              width: mq.width,
               color: Theme.of(context).errorColor,
             ),
             onTap: () {
@@ -102,11 +103,10 @@ class AccountScreen extends StatelessWidget {
                           blocUser.User sUser = UserPreferences.myUser;
 
                           if(sUser.imageUrl.isNotEmpty) {
-                            FirestorageHelper.deleteFile(sUser.imageUrl);
+                            await FirestorageHelper.deleteFile(sUser.imageUrl);
                           }
 
-                          await FirebaseAuth.instance.signOut();
-                          FirestoreHelper.deleteUser(sUser);
+                          FirestoreHelper.deleteUser(sUser.id);
                           UserPreferences.resetUser();
 
                           Logx.i(_TAG, 'user account is deleted');
@@ -119,8 +119,10 @@ class AccountScreen extends StatelessWidget {
                           } on Exception catch (e, s) {
                             Logx.e(_TAG, e, s);
                           } catch (e) {
-                            Logx.em(_TAG, 'account delete failed ' + e.toString());
+                            Logx.em(_TAG, 'account delete failed $e');
                           }
+
+                          await FirebaseAuth.instance.signOut();
 
                           GoRouter.of(context)
                               .pushNamed(RouteConstants.loginRouteName, params: {

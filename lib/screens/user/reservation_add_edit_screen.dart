@@ -536,7 +536,7 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
   }
 
   void _verifyPhone() async {
-    Logx.i(_TAG, '_verifyPhone: registering ' + completePhoneNumber.toString());
+    Logx.i(_TAG, '_verifyPhone: registering $completePhoneNumber');
 
     if (kIsWeb) {
       await FirebaseAuth.instance
@@ -594,7 +594,8 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
         return AlertDialog(
           contentPadding: const EdgeInsets.all(16.0),
           content: SizedBox(
-            height: 250,
+            height: mq.height*0.4,
+            width: mq.width*0.8,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [

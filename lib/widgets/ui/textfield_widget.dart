@@ -7,6 +7,7 @@ class TextFieldWidget extends StatefulWidget {
   final ValueChanged<String> onChanged;
   late final int? maxLength;
   late final String? hintText;
+  late final TextEditingController? userController;
 
   TextFieldWidget({
     Key? key,
@@ -14,7 +15,7 @@ class TextFieldWidget extends StatefulWidget {
     required this.label,
     required this.text,
     required this.onChanged,
-    this.maxLength, this.hintText
+    this.maxLength, this.hintText, this.userController
   }) : super(key: key);
 
   @override
@@ -27,7 +28,7 @@ class _TextFieldWidgetState extends State<TextFieldWidget> {
   @override
   void initState() {
     super.initState();
-    controller = TextEditingController(text: widget.text);
+    controller = widget.userController ?? TextEditingController(text: widget.text);
   }
 
   @override
