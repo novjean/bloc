@@ -64,13 +64,13 @@ class _PartyGuestWidgetState extends State<PartyGuestWidget> {
     return SizedBox(
             height: mq.height * 0.7,
             width: mq.width * 0.8,
-            child: ListView(
-              physics: const BouncingScrollPhysics(),
-              children: [
-                const SizedBox(height: 12),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 12),
-                  child: TextFieldWidget(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10.0),
+              child: ListView(
+                physics: const BouncingScrollPhysics(),
+                children: [
+                  const SizedBox(height: 12),
+                  TextFieldWidget(
                     label: 'name *',
                     text: widget.partyGuest.name,
                     onChanged: (text) {
@@ -79,11 +79,8 @@ class _PartyGuestWidgetState extends State<PartyGuestWidget> {
                       FirestoreHelper.pushPartyGuest(widget.partyGuest);
                     },
                   ),
-                ),
-                const SizedBox(height: 12),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 12),
-                  child: TextFieldWidget(
+                  const SizedBox(height: 12),
+                  TextFieldWidget(
                     label: 'surname',
                     text: widget.partyGuest.surname,
                     onChanged: (text) {
@@ -92,11 +89,8 @@ class _PartyGuestWidgetState extends State<PartyGuestWidget> {
                       FirestoreHelper.pushPartyGuest(widget.partyGuest);
                     },
                   ),
-                ),
-                const SizedBox(height: 12),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 12),
-                  child: widget.partyGuest.phone == '0' ?
+                  const SizedBox(height: 12),
+                  widget.partyGuest.phone == '0' ?
                   IntlPhoneField(
                     style: const TextStyle(
                         fontSize: 18),
@@ -134,11 +128,8 @@ class _PartyGuestWidgetState extends State<PartyGuestWidget> {
                       FirestoreHelper.pushPartyGuest(widget.partyGuest);
                     },
                   ),
-                ),
-                const SizedBox(height: 12),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 12),
-                  child: Column(
+                  const SizedBox(height: 12),
+                  Column(
                     children: [
                       const Padding(
                         padding: EdgeInsets.only(bottom: 8.0),
@@ -198,11 +189,8 @@ class _PartyGuestWidgetState extends State<PartyGuestWidget> {
                       ),
                     ],
                   ),
-                ),
-                const SizedBox(height: 12),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 12),
-                  child: Column(
+                  const SizedBox(height: 12),
+                  Column(
                     children: [
                       const Padding(
                         padding: EdgeInsets.only(bottom: 8.0),
@@ -274,28 +262,28 @@ class _PartyGuestWidgetState extends State<PartyGuestWidget> {
                       ),
                     ],
                   ),
-                ),
-                const SizedBox(height: 12),
-                Row(
-                  children: [
-                    const Text('vip: ', style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                    )),
-                    Checkbox(
-                      value: widget.partyGuest.isVip,
-                      onChanged: (value) {
-                        widget.partyGuest = widget.partyGuest.copyWith(isVip: value);
-                        FirestoreHelper.pushPartyGuest(widget.partyGuest);
-                        setState(() {
-                        });
-                      },
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                const Divider(),
-              ],
+                  const SizedBox(height: 12),
+                  Row(
+                    children: [
+                      const Text('vip: ', style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      )),
+                      Checkbox(
+                        value: widget.partyGuest.isVip,
+                        onChanged: (value) {
+                          widget.partyGuest = widget.partyGuest.copyWith(isVip: value);
+                          FirestoreHelper.pushPartyGuest(widget.partyGuest);
+                          setState(() {
+                          });
+                        },
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  const Divider(),
+                ],
+              ),
             ),
           );
   }
