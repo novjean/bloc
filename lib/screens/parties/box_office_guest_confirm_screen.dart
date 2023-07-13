@@ -54,6 +54,9 @@ class _BoxOfficeGuestConfirmScreenState
   Promoter mPromoter = Dummy.getDummyPromoter();
   var _isPromoterLoading = true;
 
+  var _isUserRegistered = false;
+  var _isUserLoading = true;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -61,7 +64,7 @@ class _BoxOfficeGuestConfirmScreenState
         title: AppBarTitle(title: 'confirm guest'),
         titleSpacing: 0,
       ),
-      body: _isPartyLoading && _isPartyGuestLoading && _isPromoterLoading
+      body: _isPartyLoading && _isPartyGuestLoading && _isPromoterLoading && _isUserLoading
           ? const LoadingWidget()
           : _buildBody(context),
     );
@@ -106,9 +109,27 @@ class _BoxOfficeGuestConfirmScreenState
               });
             }
           });
+
+          FirestoreHelper.pullUserByPhoneNumber(
+                  StringUtils.getInt(mPartyGuest.phone))
+              .then((res) {
+            if (res.docs.isNotEmpty) {
+              setState(() {
+                _isUserRegistered = true;
+                _isUserLoading = false;
+              });
+            } else {
+              setState(() {
+                _isUserRegistered = false;
+                _isUserLoading = false;
+              });
+            }
+          });
         } else {
           setState(() {
             _isPromoterLoading = false;
+            _isUserRegistered = true;
+            _isUserLoading = false;
           });
         }
 
@@ -150,7 +171,10 @@ class _BoxOfficeGuestConfirmScreenState
   }
 
   _buildBody(BuildContext context) {
-    return _isPartyGuestLoading && _isPartyLoading && _isPromoterLoading
+    return _isPartyGuestLoading &&
+            _isPartyLoading &&
+            _isPromoterLoading &&
+            _isUserLoading
         ? const LoadingWidget()
         : ListView(
             physics: const BouncingScrollPhysics(),
@@ -187,8 +211,7 @@ class _BoxOfficeGuestConfirmScreenState
                       margin:
                           const EdgeInsets.only(top: 0, right: 32, left: 32),
                       child: IntlPhoneField(
-                        style: const TextStyle(
-                            fontSize: 18),
+                        style: const TextStyle(fontSize: 18),
                         decoration: const InputDecoration(
                             labelText: 'phone number',
                             border: OutlineInputBorder(
@@ -205,7 +228,7 @@ class _BoxOfficeGuestConfirmScreenState
                           completePhoneNumber = phone.completeNumber;
 
                           if (phone.number.length == maxPhoneNumberLength) {
-                            verifyPhoneNumber(phone.number);
+                            verifyPhoneNumber(phone.completeNumber);
                           }
                         },
                         onCountryChanged: (country) {
@@ -282,10 +305,8 @@ class _BoxOfficeGuestConfirmScreenState
                                   Logx.i(_TAG,
                                       'increment guests count to ${mPartyGuest.guestsRemaining}');
                                 } else {
-                                  Logx.i(_TAG,
-                                      'max guests count of ${mPartyGuest.guestsRemaining}');
-                                  Toaster.shortToast(
-                                      'max limit of guest count is hit');
+                                  Logx.ist(_TAG,
+                                      'max guests count of ${mPartyGuest.guestsRemaining} is hit');
                                 }
                               });
                             },
@@ -329,11 +350,13 @@ class _BoxOfficeGuestConfirmScreenState
                         }
                       });
 
-                      if(mPartyGuest.phone == '0'){
-                        if(completePhoneNumber!='0') {
+                      if (mPartyGuest.phone == '0') {
+                        if (completePhoneNumber != '0') {
                           mPartyGuest =
                               mPartyGuest.copyWith(phone: completePhoneNumber);
                         }
+                      } else if(mPartyGuest.phone != '0' && !_isUserRegistered) {
+                        verifyPhoneNumber('91${mPartyGuest.phone}');
                       }
                     }
 
@@ -346,23 +369,31 @@ class _BoxOfficeGuestConfirmScreenState
           );
   }
 
-  void verifyPhoneNumber(String number) async {
+  void verifyPhoneNumber(String sFullNumber) async {
+    Logx.ist(_TAG, 'verifying $sFullNumber');
+
     await FirebaseAuth.instance.verifyPhoneNumber(
-        phoneNumber: completePhoneNumber,
+        phoneNumber: sFullNumber,
         verificationCompleted: (PhoneAuthCredential credential) async {
           Logx.ist(_TAG,
-              '$completePhoneNumber is verified and user is registered in bloc.');
+              '$sFullNumber is verified and user is registered in bloc.');
         },
         verificationFailed: (FirebaseAuthException e) {
           Logx.em(_TAG, 'verificationFailed $e');
+          Logx.ilt(_TAG, 'verifying $sFullNumber failed with error: $e');
+
         },
         codeSent: (String verificationID, int? resendToken) {
-          Logx.i(_TAG, 'verification id : $verificationID');
+          Logx.d(_TAG, 'verification id : $verificationID');
+          Logx.ist(_TAG, 'code sent to $sFullNumber');
 
-          mPartyGuest = mPartyGuest.copyWith(phone: StringUtils.getInt(completePhoneNumber).toString());
+          int number = StringUtils.getInt(sFullNumber);
+
+          mPartyGuest = mPartyGuest.copyWith(
+              phone: number.toString());
           FirestoreHelper.pushPartyGuest(mPartyGuest);
 
-          FirestoreHelper.pullUserByPhoneNumber(StringUtils.getInt(completePhoneNumber))
+          FirestoreHelper.pullUserByPhoneNumber(number)
               .then((res) {
             if (res.docs.isNotEmpty) {
               DocumentSnapshot document = res.docs[0];
@@ -378,12 +409,15 @@ class _BoxOfficeGuestConfirmScreenState
               Logx.i(_TAG,
                   'user is not already registered in bloc, registering...');
 
-              mBlocUser = mBlocUser.copyWith(
-                  id: StringUtils.getRandomString(28),
-                  name: mPartyGuest.name,
-                  phoneNumber: StringUtils.getInt(completePhoneNumber));
+              if (!_isUserRegistered) {
+                mBlocUser = mBlocUser.copyWith(
+                    id: StringUtils.getRandomString(28),
+                    name: mPartyGuest.name,
+                    phoneNumber: number);
 
-              FirestoreHelper.pushUser(mBlocUser);
+                FirestoreHelper.pushUser(mBlocUser);
+              }
+
               Logx.i(_TAG,
                   '${mBlocUser.name} is registered with id ${mBlocUser.id}');
 
@@ -396,13 +430,11 @@ class _BoxOfficeGuestConfirmScreenState
                       Fresh.freshPromoterGuestMap(data, false);
                   promoterGuest = promoterGuest.copyWith(
                       blocUserId: mBlocUser.id,
-                      phone: StringUtils.getInt(completePhoneNumber).toString(),
+                      phone: number.toString(),
                       hasAttended: true);
                   FirestoreHelper.pushPromoterGuest(promoterGuest);
                 }
               });
-
-
             }
           });
         },

@@ -125,7 +125,7 @@ class _PartyBannerState extends State<PartyBanner> {
                                       color: Colors.black,
                                       fontFamily: Constants.fontDefault,
                                       overflow: TextOverflow.ellipsis,
-                                      fontSize: 22,
+                                      fontSize: 20,
                                       fontWeight: FontWeight.bold),
                                   children: <TextSpan>[
                                     TextSpan(
@@ -147,7 +147,7 @@ class _PartyBannerState extends State<PartyBanner> {
                                       const EdgeInsets.only(left: 5.0, top: 10),
                                   child: Text(
                                     widget.party.eventName.toLowerCase(),
-                                    style: const TextStyle(fontSize: 18),
+                                    style: const TextStyle(fontSize: 17),
                                   ),
                                 )
                               : const SizedBox(),
@@ -157,7 +157,7 @@ class _PartyBannerState extends State<PartyBanner> {
                               widget.party.isTBA
                                   ? 'tba'
                                   : '${DateTimeUtils.getFormattedDate(widget.party.startTime)}, ${DateTimeUtils.getFormattedTime(widget.party.startTime)}',
-                              style: const TextStyle(fontSize: 18),
+                              style: const TextStyle(fontSize: 17),
                             ),
                           ),
                           const Spacer(),

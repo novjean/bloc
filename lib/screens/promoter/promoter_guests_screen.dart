@@ -272,8 +272,9 @@ class _PromoterGuestsScreenState extends State<PromoterGuestsScreen> {
   }
 
   showAddListPage(BuildContext context) {
-    return Container(
+    return Expanded(
       child: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
         child: Column(
           children: [
             const SizedBox(height: 12),

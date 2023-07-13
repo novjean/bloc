@@ -75,7 +75,7 @@ class _PartyGuestAddEditManageScreenState
   String imagePath = '';
 
   bool hasUserChanged = false;
-  bool isCustomerLoading = true;
+  bool _isCustomerLoading = true;
 
   late String sGuestCount;
   List<String> guestCounts = [];
@@ -100,7 +100,7 @@ class _PartyGuestAddEditManageScreenState
   final focusNode = FocusNode();
 
   List<Challenge> challenges = [];
-  bool isChallengesLoading = true;
+  bool _isChallengesLoading = true;
 
   List<Party> mParties = [];
   var _isPartiesLoading = true;
@@ -140,12 +140,12 @@ class _PartyGuestAddEditManageScreenState
             bloc_user = _user;
             isLoggedIn = true;
           }
-          isCustomerLoading = false;
+          _isCustomerLoading = false;
         });
       } else {
         setState(() {
           isLoggedIn = false;
-          isCustomerLoading = false;
+          _isCustomerLoading = false;
         });
       }
     });
@@ -162,12 +162,12 @@ class _PartyGuestAddEditManageScreenState
         }
 
         setState(() {
-          isChallengesLoading = false;
+          _isChallengesLoading = false;
         });
       } else {
         Logx.em(_TAG, 'no challenges found, setting default');
         setState(() {
-          isChallengesLoading = false;
+          _isChallengesLoading = false;
         });
       }
     });
@@ -286,12 +286,12 @@ class _PartyGuestAddEditManageScreenState
         titleSpacing: 0,
         backgroundColor: Constants.background,
       ),
-      body: _buildBody(context),
+      body:  _buildBody(context),
     );
   }
 
   _buildBody(BuildContext context) {
-    return isCustomerLoading && isChallengesLoading
+    return _isCustomerLoading && _isChallengesLoading
         && _isPartiesLoading && _isPromotersLoading
         ? const LoadingWidget()
         : ListView(

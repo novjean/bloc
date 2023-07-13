@@ -1,9 +1,11 @@
 import 'package:bloc/db/entity/party_guest.dart';
 import 'package:flutter/material.dart';
+import 'package:intl_phone_field/intl_phone_field.dart';
 
 import '../../db/entity/promoter.dart';
 import '../../helpers/firestore_helper.dart';
 import '../../main.dart';
+import '../../utils/logx.dart';
 import '../ui/textfield_widget.dart';
 
 class PartyGuestWidget extends StatefulWidget {
@@ -17,6 +19,8 @@ class PartyGuestWidget extends StatefulWidget {
 }
 
 class _PartyGuestWidgetState extends State<PartyGuestWidget> {
+  static const String _TAG = 'PartyGuestWidget';
+
   String sGender = 'male';
   List<String> genders = [
     'male',
@@ -30,6 +34,9 @@ class _PartyGuestWidgetState extends State<PartyGuestWidget> {
   List<String> mPromoterNames = [''];
   String sPromoterName = '';
   String sPromoterId = '';
+
+  String completePhoneNumber = '';
+  int maxPhoneNumberLength = 10;
 
   @override
   void initState() {
@@ -89,7 +96,40 @@ class _PartyGuestWidgetState extends State<PartyGuestWidget> {
                 const SizedBox(height: 12),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 12),
-                  child: TextFieldWidget(
+                  child: widget.partyGuest.phone == '0' ?
+                  Container(
+                    margin:
+                    const EdgeInsets.only(top: 0, right: 32, left: 32),
+                    child: IntlPhoneField(
+                      style: const TextStyle(
+                          fontSize: 18),
+                      decoration: const InputDecoration(
+                          labelText: 'phone number',
+                          border: OutlineInputBorder(
+                            borderSide: BorderSide(),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(width: 0.0),
+                          )),
+                      // controller: _controller,
+                      initialCountryCode: 'IN',
+                      dropdownTextStyle: const TextStyle(fontSize: 20),
+                      onChanged: (phone) async {
+                        Logx.i(_TAG, phone.completeNumber);
+                        completePhoneNumber = phone.completeNumber;
+
+                        if (phone.number.length == maxPhoneNumberLength) {
+                          widget.partyGuest = widget.partyGuest.copyWith(phone: completePhoneNumber);
+                          FirestoreHelper.pushPartyGuest(widget.partyGuest);
+                        }
+                      },
+                      onCountryChanged: (country) {
+                        Logx.i(_TAG, 'country changed to: ${country.name}');
+                        maxPhoneNumberLength = country.maxLength;
+                      },
+                    ),
+                  )
+                  : TextFieldWidget(
                     label: 'phone',
                     text: widget.partyGuest.phone,
                     onChanged: (text) {
