@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import '../../db/entity/promoter.dart';
+import '../../helpers/dummy.dart';
 import '../../helpers/fresh.dart';
 import '../../main.dart';
 import '../../utils/constants.dart';
@@ -12,6 +13,7 @@ import '../../utils/logx.dart';
 import '../../widgets/promoter_item.dart';
 import '../../widgets/ui/app_bar_title.dart';
 import '../../widgets/ui/sized_listview_block.dart';
+import '../manager/promoters/promoter_add_edit_screen.dart';
 
 class PromoterMainScreen extends StatefulWidget {
   static const String _TAG = 'PromoterMainScreen';
@@ -83,6 +85,27 @@ class _PromoterMainScreenState extends State<PromoterMainScreen> {
           titleSpacing: 0,
         ),
         backgroundColor: Constants.background,
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                  builder: (ctx) => PromoterAddEditScreen(
+                    promoter: Dummy.getDummyPromoter(),
+                    task: 'add',
+                  )),
+            );
+          },
+          backgroundColor: Theme.of(context).primaryColor,
+          tooltip: 'add promoter',
+          elevation: 5,
+          splashColor: Colors.grey,
+          child: Icon(
+            Icons.add,
+            color: Theme.of(context).primaryColorDark,
+            size: 29,
+          ),
+        ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
         body: _isPromotersLoading? const LoadingWidget(): _buildBody()
     );
   }

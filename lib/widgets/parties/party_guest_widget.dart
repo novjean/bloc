@@ -97,37 +97,33 @@ class _PartyGuestWidgetState extends State<PartyGuestWidget> {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 12),
                   child: widget.partyGuest.phone == '0' ?
-                  Container(
-                    margin:
-                    const EdgeInsets.only(top: 0, right: 32, left: 32),
-                    child: IntlPhoneField(
-                      style: const TextStyle(
-                          fontSize: 18),
-                      decoration: const InputDecoration(
-                          labelText: 'phone number',
-                          border: OutlineInputBorder(
-                            borderSide: BorderSide(),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(width: 0.0),
-                          )),
-                      // controller: _controller,
-                      initialCountryCode: 'IN',
-                      dropdownTextStyle: const TextStyle(fontSize: 20),
-                      onChanged: (phone) async {
-                        Logx.i(_TAG, phone.completeNumber);
-                        completePhoneNumber = phone.completeNumber;
+                  IntlPhoneField(
+                    style: const TextStyle(
+                        fontSize: 18),
+                    decoration: const InputDecoration(
+                        labelText: 'phone number',
+                        border: OutlineInputBorder(
+                          borderSide: BorderSide(),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(width: 0.0),
+                        )),
+                    // controller: _controller,
+                    initialCountryCode: 'IN',
+                    dropdownTextStyle: const TextStyle(fontSize: 20),
+                    onChanged: (phone) async {
+                      Logx.i(_TAG, phone.completeNumber);
+                      completePhoneNumber = phone.completeNumber;
 
-                        if (phone.number.length == maxPhoneNumberLength) {
-                          widget.partyGuest = widget.partyGuest.copyWith(phone: completePhoneNumber);
-                          FirestoreHelper.pushPartyGuest(widget.partyGuest);
-                        }
-                      },
-                      onCountryChanged: (country) {
-                        Logx.i(_TAG, 'country changed to: ${country.name}');
-                        maxPhoneNumberLength = country.maxLength;
-                      },
-                    ),
+                      if (phone.number.length == maxPhoneNumberLength) {
+                        widget.partyGuest = widget.partyGuest.copyWith(phone: completePhoneNumber);
+                        FirestoreHelper.pushPartyGuest(widget.partyGuest);
+                      }
+                    },
+                    onCountryChanged: (country) {
+                      Logx.i(_TAG, 'country changed to: ${country.name}');
+                      maxPhoneNumberLength = country.maxLength;
+                    },
                   )
                   : TextFieldWidget(
                     label: 'phone',

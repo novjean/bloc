@@ -478,7 +478,7 @@ class _PromoterGuestsScreenState extends State<PromoterGuestsScreen> {
             child: Expanded(
               child: ListView.builder(
                   itemCount: partyGuests.length,
-                  scrollDirection: Axis.vertical,
+                  scrollDirection: Axis.horizontal,
                   itemBuilder: (ctx, index) {
                     return PartyGuestWidget(
                       partyGuest: partyGuests[index],

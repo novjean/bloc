@@ -124,31 +124,44 @@ class _PartyGuestAddEditManageScreenState
       bloc_user = UserPreferences.myUser;
     }
 
-    FirestoreHelper.pullUser(widget.partyGuest.guestId).then((res) {
-      Logx.i(_TAG, 'successfully pulled in user');
+    if(widget.partyGuest.guestId.isEmpty){
+      bloc_user = Dummy.getDummyUser();
+      bloc_user = bloc_user.copyWith(name: widget.partyGuest.name,
+          gender: widget.partyGuest.gender,
+          phoneNumber: StringUtils.getInt(widget.partyGuest.phone),
+          surname: widget.partyGuest.surname);
+      setState(() {
+        isLoggedIn = true;
+        _isCustomerLoading = false;
+      });
+    } else {
+      FirestoreHelper.pullUser(widget.partyGuest.guestId).then((res) {
+        Logx.i(_TAG, 'successfully pulled in user');
 
-      if (res.docs.isNotEmpty) {
-        DocumentSnapshot document = res.docs[0];
-        Map<String, dynamic> map = document.data()! as Map<String, dynamic>;
-        final blocUser.User _user = Fresh.freshUserMap(map, true);
+        if (res.docs.isNotEmpty) {
+          DocumentSnapshot document = res.docs[0];
+          Map<String, dynamic> map = document.data()! as Map<String, dynamic>;
+          final blocUser.User _user = Fresh.freshUserMap(map, true);
 
-        setState(() {
-          if (_user.phoneNumber == Constants.skipPhoneNumber) {
-            //user will be the dummy
+          setState(() {
+            if (_user.phoneNumber == Constants.skipPhoneNumber) {
+              //user will be the dummy
+              isLoggedIn = false;
+            } else {
+              bloc_user = _user;
+              isLoggedIn = true;
+            }
+            _isCustomerLoading = false;
+          });
+        } else {
+          setState(() {
             isLoggedIn = false;
-          } else {
-            bloc_user = _user;
-            isLoggedIn = true;
-          }
-          _isCustomerLoading = false;
-        });
-      } else {
-        setState(() {
-          isLoggedIn = false;
-          _isCustomerLoading = false;
-        });
-      }
-    });
+            _isCustomerLoading = false;
+          });
+        }
+      });
+    }
+
 
     FirestoreHelper.pullChallenges().then((res) {
       if (res.docs.isNotEmpty) {
@@ -909,9 +922,10 @@ class _PartyGuestAddEditManageScreenState
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 32),
                     child: ButtonWidget(
-                      text: 'approve',
+                      text: !widget.partyGuest.isApproved? 'approve': 'unapprove',
                       onClicked: () async {
-                        widget.partyGuest = widget.partyGuest.copyWith(isApproved: true);
+
+                        widget.partyGuest = widget.partyGuest.copyWith(isApproved: !widget.partyGuest.isApproved);
                         FirestoreHelper.pushPartyGuest(widget.partyGuest);
 
                         // if(bloc_user.phoneNumber!=0){
@@ -938,34 +952,33 @@ class _PartyGuestAddEditManageScreenState
 
                               if(bloc_user.isAppUser && bloc_user.fcmToken.isNotEmpty){
                                 String title = widget.party.name;
-                                String message = 'welcome to ${widget.party.name} family, your guest list request is approved!';
+                                String message = '🥳 yayyy! welcome to ${widget.party.name} family, your guest list for${widget.party.name} has been approved 🎉, see you and your gang soon! 😎🍾';
 
                                 //send a notification
                                 Apis.sendPushNotification(bloc_user.fcmToken, title, message);
                                 Logx.ist(_TAG, 'notification has been sent to ${bloc_user.name} ${bloc_user.surname}');
                               }
                             } else {
+                              if(bloc_user.isAppUser && bloc_user.fcmToken.isNotEmpty){
+                                String title = widget.party.name;
+                                String message = '🥳 yayyy! your guest list for${widget.party.name} has been approved 🎉, see you and your gang soon! 😎🍾';
 
+                                //send a notification
+                                Apis.sendPushNotification(bloc_user.fcmToken, title, message);
+                              }
                             }
                           });
                         } else {
                           if(bloc_user.isAppUser && bloc_user.fcmToken.isNotEmpty){
                             String title = widget.party.name;
-                            String message = 'your guest list request has been approved, see you soon!';
+                            String message = '🥳 yayyy! your guest list for${widget.party.name} has been approved 🎉, see you and your gang soon! 😎🍾';
 
                             //send a notification
                             Apis.sendPushNotification(bloc_user.fcmToken, title, message);
                           }
-
-                          // if(bloc_user.phoneNumber!=0){
-                          //   SmsUtils.sendSms(bloc_user.phoneNumber.toString(), 'welcome to ${widget.party.name} family, your guest list request is approved!');
-                          // } else {
-                          //   Logx.ist(_TAG, 'promoter guest and sms cannot be sent!');
-                          // }
                         }
 
-                        Logx.i(_TAG, 'party guest ${widget.partyGuest.name} is approved');
-                        Toaster.longToast('party guest ${widget.partyGuest.name} is approved');
+                        Logx.ist(_TAG, 'party guest ${widget.partyGuest.name} is approved');
                         Navigator.of(context).pop();
                       },
                     ),

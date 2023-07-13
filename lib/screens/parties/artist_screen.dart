@@ -151,7 +151,7 @@ class _ArtistScreenState extends State<ArtistScreen> {
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
                           ButtonWidget(
-                              text: 'social profile',
+                              text: 'instagram',
                               onClicked: () {
                                 final uri = Uri.parse(mParty.instagramUrl);
                                 NetworkUtils.launchInBrowser(uri);

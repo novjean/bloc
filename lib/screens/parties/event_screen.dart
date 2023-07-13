@@ -206,6 +206,45 @@ class _EventScreenState extends State<EventScreen> {
                 mParty.artistIds.isNotEmpty
                     ? _loadArtists(context)
                     : const SizedBox(),
+                const SizedBox(height: 10),
+                mParty.instagramUrl.isNotEmpty?
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                      child: Text('links',
+                          style: TextStyle(
+                              color: Constants.lightPrimary,
+                              overflow: TextOverflow.ellipsis,
+                              fontSize: 22,
+                              fontWeight: FontWeight.bold)),
+                    ),
+                  ],
+                ):const SizedBox(),
+                mParty.instagramUrl.isNotEmpty? Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    InkWell(
+                      onTap: () {
+                        final uri = Uri.parse(mParty.instagramUrl);
+                        NetworkUtils.launchInBrowser(uri);
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 2),
+                        child: Text(
+                          'instagram post 🧡',
+                          style: TextStyle(
+                            fontSize: 18,
+                            color: Theme.of(context).primaryColor,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ):const SizedBox(),
+
+
                 const SizedBox(height: 15.0),
                 kIsWeb ? const StoreBadgeItem() : const SizedBox(),
                 const SizedBox(height: 10.0),
