@@ -366,6 +366,10 @@ class _PartyBannerState extends State<PartyBanner> {
 
                 Logx.d(_TAG, 'user added to party interest');
               }
+            } else {
+              int initCount = mPartyInterest.initCount + 1;
+              mPartyInterest = mPartyInterest.copyWith(initCount: initCount);
+              FirestoreHelper.pushPartyInterest(mPartyInterest);
             }
           }
         },

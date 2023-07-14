@@ -61,12 +61,13 @@ class _EventScreenState extends State<EventScreen> {
           _isPartyLoading = false;
         });
 
-        if(UserPreferences.isUserLoggedIn()){
-          FirestoreHelper.pullPartyInterest(mParty.id).then((res) {
-            if(res.docs.isNotEmpty){
-              DocumentSnapshot document = res.docs[0];
-              Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-              final PartyInterest partyInterest = Fresh.freshPartyInterestMap(data, false);
+        FirestoreHelper.pullPartyInterest(mParty.id).then((res) {
+          if(res.docs.isNotEmpty){
+            DocumentSnapshot document = res.docs[0];
+            Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+            PartyInterest partyInterest = Fresh.freshPartyInterestMap(data, false);
+
+            if(UserPreferences.isUserLoggedIn()){
               if(!partyInterest.userIds.contains(UserPreferences.myUser.id)){
                 partyInterest.userIds.add(UserPreferences.myUser.id);
                 FirestoreHelper.pushPartyInterest(partyInterest);
@@ -74,17 +75,19 @@ class _EventScreenState extends State<EventScreen> {
               } else {
                 Logx.d(_TAG, 'user interest previously recorded for party');
               }
-
             } else {
-              PartyInterest partyInterest = Dummy.getDummyPartyInterest();
-              partyInterest = partyInterest.copyWith(partyId: mParty.id, userIds: [UserPreferences.myUser.id]);
+              int initCount = partyInterest.initCount + 1;
+              partyInterest = partyInterest.copyWith(initCount: initCount);
               FirestoreHelper.pushPartyInterest(partyInterest);
-
-              Logx.d(_TAG, 'party interest created for party');
             }
-          });
-        }
+          } else {
+            PartyInterest partyInterest = Dummy.getDummyPartyInterest();
+            partyInterest = partyInterest.copyWith(partyId: mParty.id, userIds: [UserPreferences.myUser.id]);
+            FirestoreHelper.pushPartyInterest(partyInterest);
 
+            Logx.d(_TAG, 'party interest created for party');
+          }
+        });
       } else {
         Logx.em(_TAG, 'no party found!');
         setState(() {
