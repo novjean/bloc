@@ -920,6 +920,12 @@ class Fresh {
       shouldPush = true;
     }
     try {
+      chat = chat.copyWith(loungeName: map['loungeName'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'chat loungeName not exist for id: ${chat.id}');
+      shouldPush = true;
+    }
+    try {
       chat = chat.copyWith(userId: map['userId'] as String);
     } catch (e) {
       Logx.em(_TAG, 'chat userId not exist for id: ${chat.id}');
@@ -997,6 +1003,12 @@ class Fresh {
     } catch (e) {
       Logx.em(
           _TAG, 'chat loungeId not exist for id: ${chat.id}');
+    }
+    try {
+      freshChat = freshChat.copyWith(loungeName: chat.loungeName);
+    } catch (e) {
+      Logx.em(
+          _TAG, 'chat loungeName not exist for id: ${chat.id}');
     }
     try {
       freshChat = freshChat.copyWith(userId: chat.userId);

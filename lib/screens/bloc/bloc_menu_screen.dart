@@ -417,7 +417,7 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
           }
 
           List<Seat> seats = [];
-          if (snapshot.data!.docs.length > 0) {
+          if (snapshot.data!.docs.isNotEmpty) {
             for (int i = 0; i < snapshot.data!.docs.length; i++) {
               DocumentSnapshot document = snapshot.data!.docs[i];
               Map<String, dynamic> data =
@@ -475,7 +475,7 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
       }
     }
 
-    return Container(
+    return SizedBox(
       key: UniqueKey(),
       // this height has to match with category item container height
       height: MediaQuery.of(context).size.height / 12,
@@ -490,7 +490,7 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
                 onTap: () {
                   setState(() {
                     _sCategoryType = mCategoryTypes[index].name;
-                    Logx.i(_TAG, _sCategoryType + ' category type is selected');
+                    Logx.i(_TAG, '$_sCategoryType category type is selected');
                   });
                 });
           }),
@@ -516,7 +516,7 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
             final Product product = Fresh.freshProductMap(data, false);
             mProducts.add(product);
           }
-          return _displayProductsList(context);
+          return _showProducts(context);
         } else {
           return const Expanded(
               child: Center(child: Text('no products found!')));
@@ -525,7 +525,7 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
     );
   }
 
-  _displayProductsList(BuildContext context) {
+  _showProducts(BuildContext context) {
     bool isProductOnOffer;
     Offer productOffer = Dummy.getDummyOffer();
     String categoryTitle = '';
@@ -599,12 +599,12 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
                             child: Container(
                               padding: const EdgeInsets.only(
                                   top: 10.0, bottom: 4, right: 20),
-                              color: Theme.of(context).backgroundColor,
+                              color: Constants.background,
                               child: Text(
                                 categoryTitle.toLowerCase(),
                                 textAlign: TextAlign.right,
-                                style: TextStyle(
-                                    color: Theme.of(context).primaryColorLight,
+                                style: const TextStyle(
+                                    color: Constants.lightPrimary,
                                     fontSize: 20,
                                     fontWeight: FontWeight.bold),
                               ),
@@ -619,13 +619,12 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
                                         bottom: 8,
                                         left: 20,
                                         right: 20),
-                                    color: Theme.of(context).backgroundColor,
+                                    color: Constants.background,
                                     child: Text(
                                       vCategory.description.toLowerCase(),
                                       textAlign: TextAlign.right,
-                                      style: TextStyle(
-                                          color: Theme.of(context)
-                                              .primaryColorLight,
+                                      style: const TextStyle(
+                                          color: Constants.lightPrimary,
                                           fontSize: 16,
                                           fontWeight: FontWeight.normal),
                                     ),
@@ -647,11 +646,11 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
                     ),
                     onTap: () {
                       Product _sProduct = subProducts[index];
-                      Logx.i(_TAG, _sProduct.name.toLowerCase() + ' is selected');
+                      Logx.i(_TAG, '${_sProduct.name.toLowerCase()} is selected');
                     }),
                 index == subProducts.length - 1
                     ? displayExtraInfo()
-                    : SizedBox()
+                    : const SizedBox()
               ],
             );
           }),
@@ -792,9 +791,7 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
                                 final ServiceTable table =
                                 ServiceTable.fromMap(
                                     data);
-                                Logx.i(_TAG, 'table found ' +
-                                    table.tableNumber
-                                        .toString());
+                                Logx.i(_TAG, 'table found ${table.tableNumber}');
 
                                 // check if table is occupied
                                 if (table.isActive &&

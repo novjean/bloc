@@ -20,7 +20,6 @@ import 'package:go_router/go_router.dart';
 import 'package:upgrader/upgrader.dart';
 
 import '../db/entity/ad.dart';
-import '../db/entity/lounge.dart';
 import '../db/entity/party_guest.dart';
 import '../db/entity/reservation.dart';
 import '../db/entity/user_lounge.dart';
@@ -173,21 +172,11 @@ class _MainScreenState extends State<MainScreen> {
             if(UserPreferences.isUserLoggedIn() && chat.userId != UserPreferences.myUser.id){
               if(UserPreferences.getListLounges().contains(chat.loungeId)){
 
-                FirestoreHelper.pullLounge(chat.loungeId).then((res) {
-                  if(res.docs.isNotEmpty){
-                    DocumentSnapshot document = res.docs[0];
-                    Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-                    Lounge lounge = Fresh.freshLoungeMap(data, false);
-
-                    RemoteNotification notification = RemoteNotification(
-                        title: '🫶 ${lounge.name}',
-                        body: chat.type == 'text'? chat.message : '🖼️ photo' ,
-                    );
-                    showNotificationChatChannel(notification);
-                  } else {
-                    showNotificationChatChannel(message.notification);
-                  }
-                });
+                RemoteNotification notification = RemoteNotification(
+                  title: '🫶 ${chat.loungeName}',
+                  body: chat.type == 'text'? chat.message : '🖼️ photo' ,
+                );
+                showNotificationChatChannel(notification);
               }
             }
             break;

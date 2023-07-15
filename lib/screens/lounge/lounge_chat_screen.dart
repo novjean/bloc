@@ -613,6 +613,7 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
                   if (_textController.text.isNotEmpty) {
                     LoungeChat chat = Dummy.getDummyLoungeChat();
                     chat.loungeId = mLounge.id;
+                    chat.loungeName = mLounge.name;
                     chat.message = _textController.text;
                     chat.type = 'text';
                     chat.time = Timestamp.now().millisecondsSinceEpoch;
@@ -658,6 +659,7 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
 
       LoungeChat chat = Dummy.getDummyLoungeChat();
       chat.loungeId = mLounge.id;
+      chat.loungeName = mLounge.name;
       chat.message = imageUrl;
       chat.type = 'image';
       chat.time = Timestamp.now().millisecondsSinceEpoch;

@@ -154,6 +154,7 @@ class Dummy {
     LoungeChat dummyChat = LoungeChat(
         id: StringUtils.getRandomString(28),
         loungeId: '',
+        loungeName: '',
         userId: UserPreferences.myUser.id,
         userName: UserPreferences.myUser.name,
         userImage: UserPreferences.myUser.imageUrl,

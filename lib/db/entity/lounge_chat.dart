@@ -1,6 +1,7 @@
 class LoungeChat{
   String id;
   String loungeId;
+  String loungeName;
   String userId;
   String userName;
   String userImage;
@@ -17,6 +18,7 @@ class LoungeChat{
   LoungeChat({
     required this.id,
     required this.loungeId,
+    required this.loungeName,
     required this.userId,
     required this.userName,
     required this.userImage,
@@ -35,6 +37,7 @@ class LoungeChat{
           runtimeType == other.runtimeType &&
           id == other.id &&
           loungeId == other.loungeId &&
+          loungeName == other.loungeName &&
           userId == other.userId &&
           userName == other.userName &&
           userImage == other.userImage &&
@@ -49,6 +52,7 @@ class LoungeChat{
   int get hashCode =>
       id.hashCode ^
       loungeId.hashCode ^
+      loungeName.hashCode ^
       userId.hashCode ^
       userName.hashCode ^
       userImage.hashCode ^
@@ -61,9 +65,10 @@ class LoungeChat{
 
   @override
   String toString() {
-    return 'Chat{' +
+    return 'LoungeChat{' +
         ' id: $id,' +
         ' loungeId: $loungeId,' +
+        ' loungeName: $loungeName,' +
         ' userId: $userId,' +
         ' userName: $userName,' +
         ' userImage: $userImage,' +
@@ -79,6 +84,7 @@ class LoungeChat{
   LoungeChat copyWith({
     String? id,
     String? loungeId,
+    String? loungeName,
     String? userId,
     String? userName,
     String? userImage,
@@ -92,6 +98,7 @@ class LoungeChat{
     return LoungeChat(
       id: id ?? this.id,
       loungeId: loungeId ?? this.loungeId,
+      loungeName: loungeName ?? this.loungeName,
       userId: userId ?? this.userId,
       userName: userName ?? this.userName,
       userImage: userImage ?? this.userImage,
@@ -108,6 +115,7 @@ class LoungeChat{
     return {
       'id': this.id,
       'loungeId': this.loungeId,
+      'loungeName': this.loungeName,
       'userId': this.userId,
       'userName': this.userName,
       'userImage': this.userImage,
@@ -124,6 +132,7 @@ class LoungeChat{
     return LoungeChat(
       id: map['id'] as String,
       loungeId: map['loungeId'] as String,
+      loungeName: map['loungeName'] as String,
       userId: map['userId'] as String,
       userName: map['userName'] as String,
       userImage: map['userImage'] as String,
