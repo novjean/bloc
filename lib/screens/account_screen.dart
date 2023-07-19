@@ -9,6 +9,7 @@ import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../db/entity/user.dart' as blocUser;
+import '../db/shared_preferences/table_preferences.dart';
 import '../helpers/firestorage_helper.dart';
 import '../helpers/firestore_helper.dart';
 import '../main.dart';
@@ -108,6 +109,7 @@ class AccountScreen extends StatelessWidget {
 
                           FirestoreHelper.deleteUser(sUser.id);
                           UserPreferences.resetUser();
+                          TablePreferences.resetQuickTable();
 
                           Logx.i(_TAG, 'user account is deleted');
 

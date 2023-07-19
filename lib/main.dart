@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:bloc/db/shared_preferences/table_preferences.dart';
 import 'package:bloc/routes/bloc_router.dart';
 
 import 'package:bloc/db/shared_preferences/ui_preferences.dart';
@@ -117,6 +118,7 @@ Future<void> main() async {
   
   await UserPreferences.init();
   await UiPreferences.init();
+  await TablePreferences.init();
 
   // disabling landscape until all ui issues are resolved
   await SystemChrome.setPreferredOrientations([

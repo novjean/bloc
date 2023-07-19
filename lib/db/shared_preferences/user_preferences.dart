@@ -12,6 +12,26 @@ class UserPreferences {
 
   static const _keyUser = 'user';
 
+  static const _keyVerificationId = 'verification_id';
+
+  static Future setVerificationId(String verificationId) async {
+    await _preferences.setString(_keyVerificationId, verificationId);
+  }
+
+  static String getVerificationId() {
+    return _preferences.getString(_keyVerificationId)!;
+  }
+
+  static const _keyUserBlocId = 'user_bloc_id';
+
+  static Future setBlocId(String blocId) async {
+    await _preferences.setString(_keyUserBlocId, blocId);
+  }
+
+  static String getBlocId() {
+    return _preferences.getString(_keyUserBlocId)!;
+  }
+
   static const _keyListLounges = 'list_lounges';
 
   static Future setListLounges(List<String> listLounges) async {

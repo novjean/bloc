@@ -8,6 +8,7 @@ import 'package:bloc/db/entity/service_table.dart';
 import 'package:bloc/db/entity/ticket.dart';
 import 'package:bloc/db/entity/ui_photo.dart';
 import 'package:bloc/db/entity/user_level.dart';
+import 'package:bloc/db/shared_preferences/table_preferences.dart';
 import 'package:bloc/utils/constants.dart';
 import 'package:bloc/utils/string_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -26,6 +27,8 @@ import '../db/entity/party_interest.dart';
 import '../db/entity/product.dart';
 import '../db/entity/promoter.dart';
 import '../db/entity/promoter_guest.dart';
+import '../db/entity/quick_order.dart';
+import '../db/entity/quick_table.dart';
 import '../db/entity/seat.dart';
 import '../db/entity/user.dart';
 import '../db/entity/user_lounge.dart';
@@ -343,6 +346,32 @@ class Dummy {
       partyGuestId: '',
       createdAt: Timestamp.now().millisecondsSinceEpoch,
       hasAttended: false
+    );
+
+    return dummy;
+  }
+
+  static QuickOrder getDummyQuickOrder() {
+    QuickOrder dummy = QuickOrder(
+        id: StringUtils.getRandomString(28),
+        custId: '',
+        custPhone: 0,
+        productId: '',
+        quantity: 1,
+        table: '',
+        createdAt: Timestamp.now().millisecondsSinceEpoch,
+        isAccepted: false
+    );
+
+    return dummy;
+  }
+
+  static QuickTable getDummyQuickTable() {
+    QuickTable dummy = QuickTable(
+        id: StringUtils.getRandomString(28),
+        phone: 0,
+        tableName: '',
+        createdAt: Timestamp.now().millisecondsSinceEpoch,
     );
 
     return dummy;

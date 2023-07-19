@@ -18,6 +18,8 @@ import 'package:bloc/db/entity/party_guest.dart';
 import 'package:bloc/db/entity/party_interest.dart';
 import 'package:bloc/db/entity/promoter.dart';
 import 'package:bloc/db/entity/promoter_guest.dart';
+import 'package:bloc/db/entity/quick_order.dart';
+import 'package:bloc/db/entity/quick_table.dart';
 import 'package:bloc/db/entity/reservation.dart';
 import 'package:bloc/db/entity/seat.dart';
 import 'package:bloc/db/entity/ticket.dart';
@@ -27,14 +29,17 @@ import 'package:bloc/db/entity/user_lounge.dart';
 import 'package:bloc/helpers/firestorage_helper.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:logger/logger.dart';
+import 'package:go_router/go_router.dart';
 
 import '../db/entity/ad.dart';
 import '../db/entity/lounge.dart';
 import '../db/entity/product.dart';
 import '../db/entity/service_table.dart';
 import '../db/entity/sos.dart';
+import '../db/shared_preferences/user_preferences.dart';
+import '../routes/route_constants.dart';
 import '../utils/logx.dart';
 import '../utils/string_utils.dart';
 
@@ -44,7 +49,6 @@ import '../utils/string_utils.dart';
  * **/
 class FirestoreHelper {
   static const String _TAG = 'FirestoreHelper';
-  static var logger = Logger();
 
   static String ADS = 'ads';
   static String AD_CAMPAIGNS = 'ad_campaigns';
@@ -72,6 +76,8 @@ class FirestoreHelper {
   static String PROMOTERS = 'promoters';
   static String PROMOTER_GUESTS = 'promoter_guests';
   static String BLOC_SERVICES = 'services';
+  static String QUICK_ORDERS = 'quick_orders';
+  static String QUICK_TABLES = 'quick_tables';
   static String RESERVATIONS = 'reservations';
   static String SEATS = 'seats';
   static String SOS = 'sos';
@@ -98,7 +104,7 @@ class FirestoreHelper {
     } on Exception catch (e, s) {
       Logx.e(_TAG, e, s);
     } catch (e) {
-      logger.e(e);
+      Logx.em(_TAG, e.toString());
     }
   }
 
@@ -126,7 +132,7 @@ class FirestoreHelper {
     } on Exception catch (e, s) {
       Logx.e(_TAG, e, s);
     } catch (e) {
-      logger.e(e);
+      Logx.em(_TAG, e.toString());
     }
   }
 
@@ -159,7 +165,7 @@ class FirestoreHelper {
     } on Exception catch (e, s) {
       Logx.e(_TAG, e, s);
     } catch (e) {
-      logger.e(e);
+      Logx.em(_TAG, e.toString());
     }
   }
 
@@ -203,7 +209,7 @@ class FirestoreHelper {
     } on Exception catch (e, s) {
       Logx.e(_TAG, e, s);
     } catch (e) {
-      logger.e(e);
+      Logx.em(_TAG, e.toString());
     }
   }
 
@@ -219,7 +225,7 @@ class FirestoreHelper {
     } on Exception catch (e, s) {
       Logx.e(_TAG, e, s);
     } catch (e) {
-      logger.e(e);
+      Logx.em(_TAG, e.toString());
     }
   }
 
@@ -257,7 +263,7 @@ class FirestoreHelper {
     } on Exception catch (e, s) {
       Logx.e(_TAG, e, s);
     } catch (e) {
-      logger.e(e);
+      Logx.em(_TAG, e.toString());
     }
   }
 
@@ -359,7 +365,7 @@ class FirestoreHelper {
     } on Exception catch (e, s) {
       Logx.e(_TAG, e, s);
     } catch (e) {
-      logger.e(e);
+      Logx.em(_TAG, e.toString());
     }
   }
 
@@ -381,7 +387,7 @@ class FirestoreHelper {
     } on Exception catch (e, s) {
       Logx.e(_TAG, e, s);
     } catch (e) {
-      logger.e(e);
+      Logx.em(_TAG, e.toString());
     }
   }
 
@@ -401,7 +407,7 @@ class FirestoreHelper {
     } on Exception catch (e, s) {
       Logx.e(_TAG, e, s);
     } catch (e) {
-      logger.e(e);
+      Logx.em(_TAG, e.toString());
     }
   }
 
@@ -450,7 +456,7 @@ class FirestoreHelper {
     } on Exception catch (e, s) {
       Logx.e(_TAG, e, s);
     } catch (e) {
-      logger.e(e);
+      Logx.em(_TAG, e.toString());
     }
   }
 
@@ -493,7 +499,7 @@ class FirestoreHelper {
     } on Exception catch (e, s) {
       Logx.e(_TAG, e, s);
     } catch (e) {
-      logger.e(e);
+      Logx.em(_TAG, e.toString());
     }
   }
 
@@ -527,7 +533,7 @@ class FirestoreHelper {
     } on Exception catch (e, s) {
       Logx.e(_TAG, e, s);
     } catch (e) {
-      logger.e(e);
+      Logx.em(_TAG, e.toString());
     }
   }
 
@@ -569,7 +575,7 @@ class FirestoreHelper {
     } on Exception catch (e, s) {
       Logx.e(_TAG, e, s);
     } catch (e) {
-      logger.e(e);
+      Logx.em(_TAG, e.toString());
     }
   }
 
@@ -611,7 +617,7 @@ class FirestoreHelper {
     } on Exception catch (e, s) {
       Logx.e(_TAG, e, s);
     } catch (e) {
-      logger.e(e);
+      Logx.em(_TAG, e.toString());
     }
   }
 
@@ -627,7 +633,7 @@ class FirestoreHelper {
     } on Exception catch (e, s) {
       Logx.e(_TAG, e, s);
     } catch (e) {
-      logger.e(e);
+      Logx.em(_TAG, e.toString());
     }
   }
 
@@ -669,7 +675,7 @@ class FirestoreHelper {
     } on Exception catch (e, s) {
       Logx.e(_TAG, e, s);
     } catch (e) {
-      logger.e(e);
+      Logx.em(_TAG, e.toString());
     }
   }
 
@@ -685,7 +691,7 @@ class FirestoreHelper {
     } on Exception catch (e, s) {
       Logx.e(_TAG, e, s);
     } catch (e) {
-      logger.e(e);
+      Logx.em(_TAG, e.toString());
     }
   }
 
@@ -744,7 +750,7 @@ class FirestoreHelper {
     } on Exception catch (e, s) {
       Logx.e(_TAG, e, s);
     } catch (e) {
-      logger.e(e);
+      Logx.em(_TAG, e.toString());
     }
   }
 
@@ -788,7 +794,7 @@ class FirestoreHelper {
     } on Exception catch (e, s) {
       Logx.e(_TAG, e, s);
     } catch (e) {
-      logger.e(e);
+      Logx.em(_TAG, e.toString());
     }
   }
 
@@ -804,7 +810,7 @@ class FirestoreHelper {
     } on Exception catch (e, s) {
       Logx.e(_TAG, e, s);
     } catch (e) {
-      logger.e(e);
+      Logx.em(_TAG, e.toString());
     }
   }
 
@@ -966,7 +972,7 @@ class FirestoreHelper {
     } on Exception catch (e, s) {
       Logx.e(_TAG, e, s);
     } catch (e) {
-      logger.e(e);
+      Logx.em(_TAG, e.toString());
     }
   }
 
@@ -1011,7 +1017,7 @@ class FirestoreHelper {
     } on Exception catch (e, s) {
       Logx.e(_TAG, e, s);
     } catch (e) {
-      logger.e(e);
+      Logx.em(_TAG, e.toString());
     }
   }
 
@@ -1035,7 +1041,7 @@ class FirestoreHelper {
     } on Exception catch (e, s) {
       Logx.e(_TAG, e, s);
     } catch (e) {
-      logger.e(e);
+      Logx.em(_TAG, e.toString());
     }
   }
 
@@ -1127,7 +1133,7 @@ class FirestoreHelper {
     } on Exception catch (e, s) {
       Logx.e(_TAG, e, s);
     } catch (e) {
-      logger.e(e);
+      Logx.em(_TAG, e.toString());
     }
   }
 
@@ -1149,7 +1155,7 @@ class FirestoreHelper {
     } on Exception catch (e, s) {
       Logx.e(_TAG, e, s);
     } catch (e) {
-      logger.e(e);
+      Logx.em(_TAG, e.toString());
     }
   }
 
@@ -1169,7 +1175,7 @@ class FirestoreHelper {
     } on Exception catch (e, s) {
       Logx.e(_TAG, e, s);
     } catch (e) {
-      logger.e(e);
+      Logx.em(_TAG, e.toString());
     }
   }
 
@@ -1211,7 +1217,7 @@ class FirestoreHelper {
     } on Exception catch (e, s) {
       Logx.e(_TAG, e, s);
     } catch (e) {
-      logger.e(e);
+      Logx.em(_TAG, e.toString());
     }
   }
 
@@ -1236,6 +1242,56 @@ class FirestoreHelper {
         .get();
   }
 
+  /** quick order **/
+  static void pushQuickOrder(QuickOrder quickOrder) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection(QUICK_ORDERS)
+          .doc(quickOrder.id)
+          .set(quickOrder.toMap()).then((res){
+            Logx.ist(_TAG, 'your order has been placed, thank you!');
+      });
+    } on PlatformException catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } on Exception catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } catch (e) {
+      Logx.em(_TAG, e.toString());
+    }
+  }
+
+  /** quick table **/
+  static Future<void> pushQuickTable(QuickTable quickTable, BuildContext context) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection(QUICK_TABLES)
+          .doc(quickTable.id)
+          .set(quickTable.toMap()).then((res) {
+        GoRouter.of(context).pushNamed(RouteConstants.menuRouteName,
+            params: {
+              'id': UserPreferences.getBlocId(),
+            });
+      });
+    } on PlatformException catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } on Exception catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } catch (e) {
+      Logx.em(_TAG, e.toString());
+    }
+  }
+
+  static pullQuickTable(int phoneNumber) {
+    return FirebaseFirestore.instance
+        .collection(QUICK_TABLES)
+        .where('phone', isEqualTo: phoneNumber)
+        .get();
+  }
+
+  static void deleteQuickTable(String docId) {
+    FirebaseFirestore.instance.collection(QUICK_TABLES).doc(docId).delete();
+  }
+
   /** reservations **/
   static void pushReservation(Reservation reservation) async {
     try {
@@ -1248,7 +1304,7 @@ class FirestoreHelper {
     } on Exception catch (e, s) {
       Logx.e(_TAG, e, s);
     } catch (e) {
-      logger.e(e);
+      Logx.em(_TAG, e.toString());
     }
   }
 
@@ -1323,7 +1379,7 @@ class FirestoreHelper {
     } on Exception catch (e, s) {
       Logx.e(_TAG, e, s);
     } catch (e) {
-      logger.e(e);
+      Logx.em(_TAG, e.toString());
     }
   }
 
@@ -1346,7 +1402,7 @@ class FirestoreHelper {
     } on Exception catch (e, s) {
       Logx.e(_TAG, e, s);
     } catch (e) {
-      logger.e(e);
+      Logx.em(_TAG, e.toString());
     }
   }
 
@@ -1475,7 +1531,7 @@ class FirestoreHelper {
     } on Exception catch (e, s) {
       Logx.e(_TAG, e, s);
     } catch (e) {
-      logger.e(e);
+      Logx.em(_TAG, e.toString());
     }
   }
 
@@ -1494,7 +1550,7 @@ class FirestoreHelper {
     } on Exception catch (e, s) {
       Logx.e(_TAG, e, s);
     } catch (e) {
-      logger.e(e);
+      Logx.em(_TAG, e.toString());
     }
   }
 
@@ -1515,7 +1571,7 @@ class FirestoreHelper {
     } on Exception catch (e, s) {
       Logx.e(_TAG, e, s);
     } catch (e) {
-      logger.e(e);
+      Logx.em(_TAG, e.toString());
     }
   }
 
@@ -1534,7 +1590,7 @@ class FirestoreHelper {
     } on Exception catch (e, s) {
       Logx.e(_TAG, e, s);
     } catch (e) {
-      logger.e(e);
+      Logx.em(_TAG, e.toString());
     }
   }
 
@@ -1555,7 +1611,7 @@ class FirestoreHelper {
     } on Exception catch (e, s) {
       Logx.e(_TAG, e, s);
     } catch (e) {
-      logger.e(e);
+      Logx.em(_TAG, e.toString());
     }
   }
 
@@ -1575,7 +1631,7 @@ class FirestoreHelper {
     } on Exception catch (e, s) {
       Logx.e(_TAG, e, s);
     } catch (e) {
-      logger.e(e);
+      Logx.em(_TAG, e.toString());
     }
   }
 
@@ -1591,7 +1647,7 @@ class FirestoreHelper {
     } on Exception catch (e, s) {
       Logx.e(_TAG, e, s);
     } catch (e) {
-      logger.e(e);
+      Logx.em(_TAG, e.toString());
     }
   }
 
@@ -1607,7 +1663,7 @@ class FirestoreHelper {
     } on Exception catch (e, s) {
       Logx.e(_TAG, e, s);
     } catch (e) {
-      logger.e(e);
+      Logx.em(_TAG, e.toString());
     }
   }
 
@@ -1630,7 +1686,7 @@ class FirestoreHelper {
     } on Exception catch (e, s) {
       Logx.e(_TAG, e, s);
     } catch (e) {
-      logger.e(e);
+      Logx.em(_TAG, e.toString());
     }
   }
 
@@ -1743,7 +1799,7 @@ class FirestoreHelper {
       } on Exception catch (e, s) {
         Logx.e(_TAG, e, s);
       } catch (e) {
-        logger.e(e);
+        Logx.em(_TAG, e.toString());
       }
     }
 
@@ -1762,7 +1818,7 @@ class FirestoreHelper {
     } on Exception catch (e, s) {
       Logx.e(_TAG, e, s);
     } catch (e) {
-      logger.e(e);
+      Logx.em(_TAG, e.toString());
     }
   }
 
@@ -1780,7 +1836,7 @@ class FirestoreHelper {
     } on Exception catch (e, s) {
       Logx.e(_TAG, e, s);
     } catch (e) {
-      logger.e(e);
+      Logx.em(_TAG, e.toString());
     }
   }
 
@@ -1799,7 +1855,7 @@ class FirestoreHelper {
     } on Exception catch (e, s) {
       Logx.e(_TAG, e, s);
     } catch (e) {
-      logger.e(e);
+      Logx.em(_TAG, e.toString());
     }
   }
 
@@ -1828,7 +1884,7 @@ class FirestoreHelper {
     } on Exception catch (e, s) {
       Logx.e(_TAG, e, s);
     } catch (e) {
-      logger.e(e);
+      Logx.em(_TAG, e.toString());
     }
   }
 
@@ -1872,7 +1928,7 @@ class FirestoreHelper {
     } on Exception catch (e, s) {
       Logx.e(_TAG, e, s);
     } catch (e) {
-      logger.e(e);
+      Logx.em(_TAG, e.toString());
     }
   }
 
@@ -1887,14 +1943,13 @@ class FirestoreHelper {
     } on Exception catch (e, s) {
       Logx.e(_TAG, e, s);
     } catch (e) {
-      logger.e(e);
+      Logx.em(_TAG, e.toString());
     }
   }
 
   static void deleteUserLounge(String docId) {
     FirebaseFirestore.instance.collection(USER_LOUNGES).doc(docId).delete();
   }
-
 
 
 }

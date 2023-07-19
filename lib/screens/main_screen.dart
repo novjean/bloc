@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:bloc/db/entity/celebration.dart';
 import 'package:bloc/db/entity/lounge_chat.dart';
 import 'package:bloc/db/entity/user.dart' as blocUser;
+import 'package:bloc/db/shared_preferences/table_preferences.dart';
 import 'package:bloc/db/shared_preferences/ui_preferences.dart';
 import 'package:bloc/screens/lounge/lounges_screen.dart';
 
@@ -472,6 +473,8 @@ class _MainScreenState extends State<MainScreen> {
       case 'login':
         {
           UserPreferences.resetUser();
+          TablePreferences.resetQuickTable();
+
           await FirebaseAuth.instance.signOut();
 
           GoRouter.of(context)
@@ -483,6 +486,7 @@ class _MainScreenState extends State<MainScreen> {
       case 'logout':
         {
           UserPreferences.resetUser();
+          TablePreferences.resetQuickTable();
 
           await FirebaseAuth.instance.signOut();
 

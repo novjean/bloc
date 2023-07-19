@@ -285,7 +285,7 @@ class _PromoterGuestsScreenState extends State<PromoterGuestsScreen> {
                 text: '',
                 maxLines: 10,
                 hintText:
-                    'John Doe, 9696126969, 3\nJohn Doe, 9696126969\nJohn Doe\n',
+                    'John Doe, 9696126969, 3\nJohn Doe, 9696126969\nJohn Doe, 3\nJohn Doe\n',
                 userController: controller,
                 onChanged: (lines) {
                   mLines = lines;
@@ -385,8 +385,8 @@ class _PromoterGuestsScreenState extends State<PromoterGuestsScreen> {
                     if (data.length == 3) {
                       // name, number and count present
                       String name = data[0];
-                      int phoneNum = StringUtils.getInt(data[1].trim());
-                      String phone = '91$phoneNum';
+                      int num = StringUtils.getInt(data[1].trim());
+                      String phone = '91$num';
                       int guestCount = 1;
                       try {
                         guestCount = int.tryParse(data[2])!;
@@ -404,16 +404,30 @@ class _PromoterGuestsScreenState extends State<PromoterGuestsScreen> {
                     } else if (data.length == 2) {
                       // name and number present
                       String name = data[0];
-                      int phoneNum = StringUtils.getInt(data[1].trim());
-                      String phone = '91$phoneNum';
-                      partyGuest = partyGuest.copyWith(
-                        name: name,
-                        phone: phone,
-                        guestsCount: 1,
-                        guestsRemaining: 1,
-                        guestStatus: 'promoter',
-                        isApproved: true,
-                      );
+                      int num = StringUtils.getInt(data[1].trim());
+
+                      if(num<100){
+                        //guest count
+                        int guestCount = num;
+                        partyGuest = partyGuest.copyWith(
+                          name: name,
+                          phone: '0',
+                          guestsCount: guestCount,
+                          guestsRemaining: 1,
+                          guestStatus: 'promoter',
+                          isApproved: true,
+                        );
+                      } else {
+                        String phone = '91$num';
+                        partyGuest = partyGuest.copyWith(
+                          name: name,
+                          phone: phone,
+                          guestsCount: 1,
+                          guestsRemaining: 1,
+                          guestStatus: 'promoter',
+                          isApproved: true,
+                        );
+                      }
                     } else {
                       // only name
                       String name = data[0];

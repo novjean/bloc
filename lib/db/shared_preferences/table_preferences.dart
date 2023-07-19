@@ -7,7 +7,28 @@ import 'package:shared_preferences/shared_preferences.dart';
 class TablePreferences {
   static late SharedPreferences _preferences;
 
+  static Future init() async =>
+      _preferences = await SharedPreferences.getInstance();
+
   static const _keyTable = 'table';
+
+  static const _keyQuickTable = 'quick_table';
+
+  static Future setQuickTable(String tableName) async {
+    await _preferences.setString(_keyQuickTable, tableName);
+  }
+
+  static String getQuickTable() {
+    return _preferences.getString(_keyQuickTable)!;
+  }
+
+  static bool isUserQuickSeated() {
+    return getQuickTable().isEmpty?false:true;
+  }
+
+  static void resetQuickTable(){
+    setQuickTable('');
+  }
 
   static var myTable = ServiceTable(
       id: '',
@@ -18,9 +39,6 @@ class TablePreferences {
       isOccupied: false,
       isActive: true,
       type: FirestoreHelper.TABLE_PRIVATE_TYPE_ID);
-
-  static Future init() async =>
-      _preferences = await SharedPreferences.getInstance();
 
   static Future setTable(ServiceTable table) async {
     final json = jsonEncode(table.toMap());

@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../db/shared_preferences/table_preferences.dart';
 import '../../db/shared_preferences/user_preferences.dart';
 import '../../routes/route_constants.dart';
 import '../../utils/constants.dart';
@@ -34,6 +35,7 @@ class ProfileLoginScreen extends StatelessWidget {
                 text:  'login',
                 onClicked: () async {
                   UserPreferences.resetUser();
+                  TablePreferences.resetQuickTable();
 
                   await FirebaseAuth.instance.signOut();
 

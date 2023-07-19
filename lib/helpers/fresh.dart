@@ -16,6 +16,8 @@ import '../db/entity/party_interest.dart';
 import '../db/entity/product.dart';
 import '../db/entity/promoter.dart';
 import '../db/entity/promoter_guest.dart';
+import '../db/entity/quick_order.dart';
+import '../db/entity/quick_table.dart';
 import '../db/entity/reservation.dart';
 import '../db/entity/ticket.dart';
 import '../db/entity/user.dart';
@@ -2557,6 +2559,177 @@ class Fresh {
       fresh = fresh.copyWith(hasAttended: promoterGuest.hasAttended);
     } catch (e) {
       Logx.em(_TAG, 'promoter guest hasAttended not exist for id: ${promoterGuest.id}');
+    }
+
+    return fresh;
+  }
+
+  /** quick order **/
+  static QuickOrder freshQuickOrderMap(Map<String, dynamic> map, bool shouldUpdate) {
+    QuickOrder quickOrder = Dummy.getDummyQuickOrder();
+    bool shouldPush = true;
+
+    try {
+      quickOrder = quickOrder.copyWith(id: map['id'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'quick order id not exist');
+    }
+    try {
+      quickOrder = quickOrder.copyWith(custId: map['custId'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'quick order custId not exist for id: ${quickOrder.id}');
+      shouldPush = true;
+    }
+    try {
+      quickOrder = quickOrder.copyWith(custPhone: map['custPhone'] as int);
+    } catch (e) {
+      Logx.em(_TAG, 'quick order custPhone not exist for id: ${quickOrder.id}');
+      shouldPush = true;
+    }
+    try {
+      quickOrder = quickOrder.copyWith(productId: map['productId'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'quick order productId not exist for id: ${quickOrder.id}');
+      shouldPush = true;
+    }
+    try {
+      quickOrder = quickOrder.copyWith(quantity: map['quantity'] as int);
+    } catch (e) {
+      Logx.em(_TAG, 'quick order quantity not exist for id: ${quickOrder.id}');
+      shouldPush = true;
+    }
+    try {
+      quickOrder = quickOrder.copyWith(table: map['table'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'quick order table not exist for id: ${quickOrder.id}');
+      shouldPush = true;
+    }
+    try {
+      quickOrder = quickOrder.copyWith(createdAt: map['createdAt'] as int);
+    } catch (e) {
+      Logx.em(_TAG, 'quick order createdAt not exist for id: ${quickOrder.id}');
+      shouldPush = true;
+    }
+    try {
+      quickOrder = quickOrder.copyWith(isAccepted: map['isAccepted'] as bool);
+    } catch (e) {
+      Logx.em(_TAG, 'quick order isAccepted not exist for id: ${quickOrder.id}');
+      shouldPush = true;
+    }
+    if (shouldPush && shouldUpdate) {
+      Logx.i(_TAG, 'updating quick order ${quickOrder.id}');
+      FirestoreHelper.pushQuickOrder(quickOrder);
+    }
+
+    return quickOrder;
+  }
+
+  static QuickOrder freshQuickOrder(QuickOrder quickOrder) {
+    QuickOrder fresh = Dummy.getDummyQuickOrder();
+
+    try {
+      fresh = fresh.copyWith(id: quickOrder.id);
+    } catch (e) {
+      Logx.em(_TAG, 'quick order id not exist');
+    }
+    try {
+      fresh = fresh.copyWith(custId: quickOrder.custId);
+    } catch (e) {
+      Logx.em(_TAG, 'quick order custId not exist for id: ${quickOrder.id}');
+    }
+    try {
+      fresh = fresh.copyWith(custPhone: quickOrder.custPhone);
+    } catch (e) {
+      Logx.em(_TAG, 'quick order custPhone not exist for id: ${quickOrder.id}');
+    }
+    try {
+      fresh = fresh.copyWith(productId: quickOrder.productId);
+    } catch (e) {
+      Logx.em(_TAG, 'quick order productId not exist for id: ${quickOrder.id}');
+    }
+    try {
+      fresh = fresh.copyWith(quantity: quickOrder.quantity);
+    } catch (e) {
+      Logx.em(_TAG, 'quick order quantity not exist for id: ${quickOrder.id}');
+    }
+    try {
+      fresh = fresh.copyWith(table: quickOrder.table);
+    } catch (e) {
+      Logx.em(_TAG, 'quick order table not exist for id: ${quickOrder.id}');
+    }
+    try {
+      fresh = fresh.copyWith(createdAt: quickOrder.createdAt);
+    } catch (e) {
+      Logx.em(_TAG, 'quick order createdAt not exist for id: ${quickOrder.id}');
+    }
+    try {
+      fresh = fresh.copyWith(isAccepted: quickOrder.isAccepted);
+    } catch (e) {
+      Logx.em(_TAG, 'quick order isAccepted not exist for id: ${quickOrder.id}');
+    }
+
+    return fresh;
+  }
+
+  /** quick table **/
+  static QuickTable freshQuickTableMap(Map<String, dynamic> map, bool shouldUpdate) {
+    QuickTable quickTable = Dummy.getDummyQuickTable();
+    bool shouldPush = true;
+
+    try {
+      quickTable = quickTable.copyWith(id: map['id'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'quick table id not exist');
+    }
+    try {
+      quickTable = quickTable.copyWith(phone: map['phone'] as int);
+    } catch (e) {
+      Logx.em(_TAG, 'quick table phone not exist for id: ${quickTable.id}');
+      shouldPush = true;
+    }
+    try {
+      quickTable = quickTable.copyWith(tableName: map['tableName'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'quick table tableName not exist for id: ${quickTable.id}');
+      shouldPush = true;
+    }
+    try {
+      quickTable = quickTable.copyWith(createdAt: map['createdAt'] as int);
+    } catch (e) {
+      Logx.em(_TAG, 'quick table createdAt not exist for id: ${quickTable.id}');
+      shouldPush = true;
+    }
+
+    // if (shouldPush && shouldUpdate) {
+    //   Logx.i(_TAG, 'updating quick table ${quickTable.id}');
+    //   FirestoreHelper.pushQuickTable(quickTable);
+    // }
+
+    return quickTable;
+  }
+
+  static QuickTable freshQuickTable(QuickTable quickTable) {
+    QuickTable fresh = Dummy.getDummyQuickTable();
+
+    try {
+      fresh = fresh.copyWith(id: quickTable.id);
+    } catch (e) {
+      Logx.em(_TAG, 'quick table id not exist');
+    }
+    try {
+      fresh = fresh.copyWith(phone: quickTable.phone);
+    } catch (e) {
+      Logx.em(_TAG, 'quick table phone not exist for id: ${quickTable.id}');
+    }
+    try {
+      fresh = fresh.copyWith(tableName: quickTable.tableName);
+    } catch (e) {
+      Logx.em(_TAG, 'quick table tableName not exist for id: ${quickTable.id}');
+    }
+    try {
+      fresh = fresh.copyWith(createdAt: quickTable.createdAt);
+    } catch (e) {
+      Logx.em(_TAG, 'quick table createdAt not exist for id: ${quickTable.id}');
     }
 
     return fresh;

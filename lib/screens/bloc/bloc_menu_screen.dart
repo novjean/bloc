@@ -5,6 +5,8 @@ import 'package:bloc/db/entity/service_table.dart';
 import 'package:bloc/db/shared_preferences/table_preferences.dart';
 import 'package:bloc/helpers/dummy.dart';
 import 'package:bloc/helpers/firestore_helper.dart';
+import 'package:bloc/utils/date_time_utils.dart';
+import 'package:bloc/utils/layout_utils.dart';
 import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
@@ -16,6 +18,7 @@ import 'package:go_router/go_router.dart';
 import '../../db/entity/category.dart';
 import '../../db/entity/offer.dart';
 import '../../db/entity/product.dart';
+import '../../db/entity/quick_table.dart';
 import '../../db/entity/seat.dart';
 import '../../db/shared_preferences/user_preferences.dart';
 import '../../helpers/fresh.dart';
@@ -41,7 +44,8 @@ class BlocMenuScreen extends StatefulWidget {
 }
 
 class _BlocMenuScreenState extends State<BlocMenuScreen>
-    with WidgetsBindingObserver {
+    // with WidgetsBindingObserver
+{
   static const String _TAG = 'BlocMenuScreen';
 
   String _sCategoryType = 'Alcohol';
@@ -68,10 +72,16 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
 
   var _isCommunity = false;
 
+  String qTableName = '';
+
+  late QuickTable mQuickTable;
+  var _isQuickTableLoading = true;
+
   @override
   void initState() {
-    WidgetsBinding.instance?.addObserver(this);
+    // WidgetsBinding.instance?.addObserver(this);
 
+    UserPreferences.setBlocId(widget.blocId);
     blocUser.User user = UserPreferences.myUser;
 
     FirestoreHelper.pullBlocService(widget.blocId).then((res) {
@@ -79,6 +89,12 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
         DocumentSnapshot document = res.docs[0];
         Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
         mBlocService = BlocService.fromMap(data);
+
+        if(UserPreferences.myUser.blocServiceId != mBlocService.id){
+          UserPreferences.myUser = UserPreferences.myUser.copyWith(blocServiceId: mBlocService.id);
+          FirestoreHelper.pushUser(UserPreferences.myUser);
+          Logx.d(_TAG, 'user bloc service id updated to ${UserPreferences.myUser.blocServiceId}');
+        }
 
         _isBlocLoading = false;
 
@@ -173,38 +189,85 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
           }
         });
 
-
-
       } else {
 
       }
     });
 
+    mQuickTable = Dummy.getDummyQuickTable();
+
+    if(UserPreferences.isUserLoggedIn()){
+      FirestoreHelper.pullQuickTable(user.phoneNumber).then((res) {
+        if(res.docs.isNotEmpty){
+          for (int i = 0; i < res.docs.length; i++) {
+            DocumentSnapshot document = res.docs[i];
+            Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+            final QuickTable qt = Fresh.freshQuickTableMap(data, false);
+
+            if(mQuickTable.phone == 0){
+              mQuickTable = qt;
+
+            } else {
+              int now = Timestamp.now().millisecondsSinceEpoch;
+
+              if(now - qt.createdAt < DateTimeUtils.millisecondsDay){
+                FirestoreHelper.deleteQuickTable(qt.id);
+              } else {
+                if(mQuickTable.phone == 0){
+                  mQuickTable = qt;
+                } else {
+                  if(qt.createdAt > mQuickTable.createdAt){
+                    mQuickTable = qt;
+                  } else {
+                    // let the quick table be there in db for a day
+                  }
+                }
+              }
+            }
+          }
+
+          setState(() {
+            TablePreferences.setQuickTable(mQuickTable.tableName);
+            mQuickTable;
+            _isQuickTableLoading = false;
+          });
+        } else {
+          setState(() {
+            _isQuickTableLoading = false;
+          });
+        }
+      });
+    } else {
+      setState(() {
+        _isQuickTableLoading = false;
+      });
+    }
+
     super.initState();
   }
 
-  @override
-  void dispose() {
-    WidgetsBinding.instance?.removeObserver(this);
-    super.dispose();
-  }
+  // @override
+  // void dispose() {
+  //   WidgetsBinding.instance?.removeObserver(this);
+  //   super.dispose();
+  // }
 
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    // keeping this here, could be useful
-    if (state == AppLifecycleState.resumed) {
-      // user returned to our app
-    } else if (state == AppLifecycleState.inactive) {
-      // app is inactive
-    } else if (state == AppLifecycleState.paused) {
-      // user is about quit our app temporally
-    }
-  }
+  // @override
+  // void didChangeAppLifecycleState(AppLifecycleState state) {
+  //   // keeping this here, could be useful
+  //   if (state == AppLifecycleState.resumed) {
+  //     // user returned to our app
+  //   } else if (state == AppLifecycleState.inactive) {
+  //     // app is inactive
+  //   } else if (state == AppLifecycleState.paused) {
+  //     // user is about quit our app temporally
+  //   }
+  // }
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-  }
+  // @override
+  // void didChangeDependencies() {
+  //   super.didChangeDependencies();
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -253,6 +316,7 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
           actions: showActionIcons(),
         ),
         body: _isBlocLoading && _isTableLoading && _isCategoriesLoading
+              && _isQuickTableLoading
             ? const LoadingWidget()
             : _buildBody(context),
       ),
@@ -700,158 +764,189 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
         },
       ),
 
-      UserPreferences.isUserLoggedIn()
-          ?
-      _isCustomerSeated
-          ? IconButton(
-        icon: const Icon(
-          Icons.back_hand_outlined,
-        ),
-        onPressed: () {
-          Toaster.longToast(
-              'we are sending someone over to assist you soon');
-
-          blocUser.User user = UserPreferences.myUser;
-
-          FirestoreHelper.sendSOSMessage(
-              user.fcmToken,
-              user.name,
-              user.phoneNumber,
-              mTable.tableNumber,
-              mTable.id,
-              mSeat.id);
-        },
-      )
-          : kIsWeb
-          ? IconButton(
-        icon: const Icon(
-          Icons.table_bar,
-        ),
-        onPressed: () {
-          Toaster.longToast('enter your table number');
-
-          TablePreferences.resetTable();
-          int tableNum = -1;
-
-          showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return SystemPadding(
-                child: AlertDialog(
-                  contentPadding: const EdgeInsets.all(16.0),
-                  content: Row(
-                    children: <Widget>[
-                      Expanded(
-                        child: TextField(
-                          autofocus: true,
-                          keyboardType: TextInputType.number,
-                          onChanged: (text) {
-                            try {
-                              tableNum = int.parse(text);
-                            }on Exception catch (e, s) {
-                              Logx.e(_TAG, e, s);
-                            } catch (e) {
-                              Logx.em(_TAG, e.toString());
-                            }
-                          },
-                          decoration: const InputDecoration(
-                              labelText: 'table number',
-                              hintText: 'eg. 12'),
-                        ),
-                      )
-                    ],
+      mQuickTable.phone != 0 ?
+        InkWell(
+          onTap: () {
+            LayoutUtils layoutUtils = LayoutUtils(context: context,
+                blocServiceId: widget.blocId);
+            layoutUtils.showTableSelectBottomSheet();
+          },
+          child: Center(child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10.0),
+            child: Container(
+              decoration:  BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                  color: Colors.blue,
+                  width: 2,
                   ),
-                  actions: [
-                    TextButton(
-                      child: const Text("no"),
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                    ),
-                    TextButton(
-                      child: const Text("continue"),
-                      onPressed: () {
-                        Logx.i(_TAG, 'table num is ' +
-                            tableNum.toString());
-
-                        FirestoreHelper.pullTableByNumber(
-                            mBlocService.id,
-                            tableNum)
-                            .then(
-                              (result) {
-                            if (result.docs.isNotEmpty) {
-                              for (int i = 0;
-                              i < result.docs.length;
-                              i++) {
-                                DocumentSnapshot document =
-                                result.docs[i];
-                                Map<String, dynamic> data =
-                                document.data()! as Map<
-                                    String, dynamic>;
-                                final ServiceTable table =
-                                ServiceTable.fromMap(
-                                    data);
-                                Logx.i(_TAG, 'table found ${table.tableNumber}');
-
-                                // check if table is occupied
-                                if (table.isActive &&
-                                    !table.isOccupied) {
-                                  updateTableWithUser(
-                                      table.id,
-                                      UserPreferences
-                                          .myUser.id);
-
-                                  TablePreferences.setTable(
-                                      table);
-                                } else {
-                                  Toaster.longToast('table $tableNum is occupied');
-                                }
-                              }
-                            } else {
-                              Logx.i(_TAG,
-                                  'table could not be found for table number $tableNum');
-                            }
-                          },
-                          onError: (e,s) => Logx.ex(_TAG,
-                              "error searching for table", e, s),
-                        );
-
-                        Navigator.of(context).pop();
-                      },
-                    ),
-                  ],
-                ),
-              );
-            },
-          );
-        },
-      )
+                  ),
+                child: Text(mQuickTable.tableName, style: const TextStyle(fontSize: 18),)),
+          )),
+        )
           : IconButton(
-        icon: const Icon(
-          Icons.qr_code,
+        icon: const Icon(Icons.table_bar_outlined,
         ),
         onPressed: () {
-          Toaster.longToast('scan your table now');
+          if(UserPreferences.isUserLoggedIn()){
+            LayoutUtils layoutUtils = LayoutUtils(context: context,
+                blocServiceId: widget.blocId);
+            layoutUtils.showTableSelectBottomSheet();
+          } else {
 
-          TablePreferences.resetTable();
-
-          blocUser.User user = UserPreferences.myUser;
-          scanTableQR(user);
+          }
         },
       )
-          : const SizedBox(),
-      UserPreferences.isUserLoggedIn()
-          ? IconButton(
-        icon: const Icon(
-          Icons.shopping_cart,
-        ),
-        onPressed: () {
-          Navigator.of(context).push(
-            MaterialPageRoute(builder: (ctx) => CartScreen()),
-          );
-        },
-      )
-          : const SizedBox(),
+
+
+      // UserPreferences.isUserLoggedIn() ?
+      // _isCustomerSeated
+      //     ? IconButton(
+      //   icon: const Icon(
+      //     Icons.back_hand_outlined,
+      //   ),
+      //   onPressed: () {
+      //     Toaster.longToast(
+      //         'we are sending someone over to assist you soon');
+      //
+      //     blocUser.User user = UserPreferences.myUser;
+      //
+      //     FirestoreHelper.sendSOSMessage(
+      //         user.fcmToken,
+      //         user.name,
+      //         user.phoneNumber,
+      //         mTable.tableNumber,
+      //         mTable.id,
+      //         mSeat.id);
+      //   },
+      // ) : kIsWeb
+      //     ? IconButton(
+      //   icon: const Icon(
+      //     Icons.table_bar,
+      //   ),
+      //   onPressed: () {
+      //     Toaster.longToast('enter your table number');
+      //
+      //     TablePreferences.resetTable();
+      //     int tableNum = -1;
+      //
+      //     showDialog(
+      //       context: context,
+      //       builder: (BuildContext context) {
+      //         return SystemPadding(
+      //           child: AlertDialog(
+      //             contentPadding: const EdgeInsets.all(16.0),
+      //             content: Row(
+      //               children: <Widget>[
+      //                 Expanded(
+      //                   child: TextField(
+      //                     autofocus: true,
+      //                     keyboardType: TextInputType.number,
+      //                     onChanged: (text) {
+      //                       try {
+      //                         tableNum = int.parse(text);
+      //                       }on Exception catch (e, s) {
+      //                         Logx.e(_TAG, e, s);
+      //                       } catch (e) {
+      //                         Logx.em(_TAG, e.toString());
+      //                       }
+      //                     },
+      //                     decoration: const InputDecoration(
+      //                         labelText: 'table number',
+      //                         hintText: 'eg. 12'),
+      //                   ),
+      //                 )
+      //               ],
+      //             ),
+      //             actions: [
+      //               TextButton(
+      //                 child: const Text("no"),
+      //                 onPressed: () {
+      //                   Navigator.of(context).pop();
+      //                 },
+      //               ),
+      //               TextButton(
+      //                 child: const Text("continue"),
+      //                 onPressed: () {
+      //                   Logx.i(_TAG, 'table num is ' +
+      //                       tableNum.toString());
+      //
+      //                   FirestoreHelper.pullTableByNumber(
+      //                       mBlocService.id,
+      //                       tableNum)
+      //                       .then(
+      //                         (result) {
+      //                       if (result.docs.isNotEmpty) {
+      //                         for (int i = 0;
+      //                         i < result.docs.length;
+      //                         i++) {
+      //                           DocumentSnapshot document =
+      //                           result.docs[i];
+      //                           Map<String, dynamic> data =
+      //                           document.data()! as Map<
+      //                               String, dynamic>;
+      //                           final ServiceTable table =
+      //                           ServiceTable.fromMap(
+      //                               data);
+      //                           Logx.i(_TAG, 'table found ${table.tableNumber}');
+      //
+      //                           // check if table is occupied
+      //                           if (table.isActive &&
+      //                               !table.isOccupied) {
+      //                             updateTableWithUser(
+      //                                 table.id,
+      //                                 UserPreferences
+      //                                     .myUser.id);
+      //
+      //                             TablePreferences.setTable(
+      //                                 table);
+      //                           } else {
+      //                             Toaster.longToast('table $tableNum is occupied');
+      //                           }
+      //                         }
+      //                       } else {
+      //                         Logx.i(_TAG,
+      //                             'table could not be found for table number $tableNum');
+      //                       }
+      //                     },
+      //                     onError: (e,s) => Logx.ex(_TAG,
+      //                         "error searching for table", e, s),
+      //                   );
+      //
+      //                   Navigator.of(context).pop();
+      //                 },
+      //               ),
+      //             ],
+      //           ),
+      //         );
+      //       },
+      //     );
+      //   },
+      // ) : IconButton(
+      //   icon: const Icon(
+      //     Icons.qr_code,
+      //   ),
+      //   onPressed: () {
+      //     Toaster.longToast('scan your table now');
+      //
+      //     TablePreferences.resetTable();
+      //
+      //     blocUser.User user = UserPreferences.myUser;
+      //     scanTableQR(user);
+      //   },
+      // )
+      //     : const SizedBox(),
+      // UserPreferences.isUserLoggedIn()
+      //     ? IconButton(
+      //   icon: const Icon(
+      //     Icons.shopping_cart,
+      //   ),
+      //   onPressed: () {
+      //     Navigator.of(context).push(
+      //       MaterialPageRoute(builder: (ctx) => CartScreen()),
+      //     );
+      //   },
+      // ) : const SizedBox(),
     ];
     return actionIcons;
   }

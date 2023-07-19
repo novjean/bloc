@@ -18,6 +18,7 @@ import '../helpers/firestore_helper.dart';
 import '../helpers/fresh.dart';
 import '../main.dart';
 import '../routes/route_constants.dart';
+import '../utils/constants.dart';
 import '../utils/logx.dart';
 import '../utils/string_utils.dart';
 import '../widgets/ui/toaster.dart';
@@ -52,7 +53,7 @@ class _LoginScreenState extends State<LoginScreen> {
     isIOS = Theme.of(context).platform == TargetPlatform.iOS;
 
     return Scaffold(
-      backgroundColor: Theme.of(context).backgroundColor,
+      backgroundColor: Constants.background,
       resizeToAvoidBottomInset : false,
       body: StreamBuilder(
         stream: FirebaseAuth.instance.authStateChanges(),
@@ -71,7 +72,6 @@ class _LoginScreenState extends State<LoginScreen> {
             Logx.i(_TAG, 'user snapshot has data');
 
             final user = FirebaseAuth.instance.currentUser;
-
             CollectionReference users = FirestoreHelper.getUsersCollection();
 
             if (user!.uid.isEmpty || widget.shouldTriggerSkip == false) {
