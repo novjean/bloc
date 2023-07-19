@@ -7,6 +7,7 @@ import 'package:bloc/helpers/dummy.dart';
 import 'package:bloc/helpers/firestore_helper.dart';
 import 'package:bloc/utils/date_time_utils.dart';
 import 'package:bloc/utils/layout_utils.dart';
+import 'package:bloc/utils/login_utils.dart';
 import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
@@ -768,20 +769,12 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
         InkWell(
           onTap: () {
             LayoutUtils layoutUtils = LayoutUtils(context: context,
-                blocServiceId: widget.blocId);
+                blocServiceId: mBlocService.id);
             layoutUtils.showTableSelectBottomSheet();
           },
           child: Center(child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10.0),
-            child: Container(
-              decoration:  BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                  color: Colors.blue,
-                  width: 2,
-                  ),
-                  ),
-                child: Text(mQuickTable.tableName, style: const TextStyle(fontSize: 18),)),
+            child: Text(mQuickTable.tableName, style: const TextStyle(fontSize: 18),),
           )),
         )
           : IconButton(
@@ -790,10 +783,11 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
         onPressed: () {
           if(UserPreferences.isUserLoggedIn()){
             LayoutUtils layoutUtils = LayoutUtils(context: context,
-                blocServiceId: widget.blocId);
+                blocServiceId: mBlocService.id);
             layoutUtils.showTableSelectBottomSheet();
           } else {
-
+            LoginUtils loginUtils = LoginUtils(context: context);
+            loginUtils.showLoginDialog();
           }
         },
       )
