@@ -125,7 +125,7 @@ class _PartyBannerState extends State<PartyBanner> {
                                       color: Colors.black,
                                       fontFamily: Constants.fontDefault,
                                       overflow: TextOverflow.ellipsis,
-                                      fontSize: 20,
+                                      fontSize: 19,
                                       fontWeight: FontWeight.bold),
                                   children: <TextSpan>[
                                     TextSpan(
@@ -135,7 +135,7 @@ class _PartyBannerState extends State<PartyBanner> {
                                         style: const TextStyle(
                                             color: Colors.black,
                                             fontFamily: Constants.fontDefault,
-                                            fontSize: 18,
+                                            fontSize: 17,
                                             fontWeight: FontWeight.normal,
                                             fontStyle: FontStyle.italic)),
                                   ]),
@@ -144,7 +144,7 @@ class _PartyBannerState extends State<PartyBanner> {
                           widget.party.eventName.isNotEmpty
                               ? Padding(
                                   padding:
-                                      const EdgeInsets.only(left: 5.0, top: 10),
+                                      const EdgeInsets.only(left: 5.0, top: 5),
                                   child: Text(
                                     widget.party.eventName.toLowerCase(),
                                     style: const TextStyle(fontSize: 17),

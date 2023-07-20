@@ -25,8 +25,8 @@ class ButtonWidget extends StatelessWidget {
             foregroundColor: Colors.white,
             padding: const EdgeInsets.symmetric(horizontal: 20),
           ),
-          child: Text(text, style: TextStyle(fontSize: fontSize?? 18),),
           onPressed: onClicked,
+          child: Text(text, style: TextStyle(fontSize: fontSize?? 18),),
         ),
   );
 }

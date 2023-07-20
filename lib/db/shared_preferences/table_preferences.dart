@@ -12,22 +12,22 @@ class TablePreferences {
 
   static const _keyTable = 'table';
 
-  static const _keyQuickTable = 'quick_table';
+  static const _keyQuickTableName = 'quick_table_name';
 
-  static Future setQuickTable(String tableName) async {
-    await _preferences.setString(_keyQuickTable, tableName);
+  static Future setQuickTableName(String tableName) async {
+    await _preferences.setString(_keyQuickTableName, tableName);
   }
 
-  static String getQuickTable() {
-    return _preferences.getString(_keyQuickTable)!;
+  static String getQuickTableName() {
+    return _preferences.getString(_keyQuickTableName)!;
   }
 
   static bool isUserQuickSeated() {
-    return getQuickTable().isEmpty?false:true;
+    return getQuickTableName().isEmpty?false:true;
   }
 
   static void resetQuickTable(){
-    setQuickTable('');
+    setQuickTableName('');
   }
 
   static var myTable = ServiceTable(

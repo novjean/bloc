@@ -3,6 +3,7 @@ import 'package:bloc/db/shared_preferences/table_preferences.dart';
 import 'package:bloc/db/shared_preferences/user_preferences.dart';
 import 'package:bloc/utils/logx.dart';
 import 'package:bloc/widgets/ui/button_widget.dart';
+import 'package:bloc/widgets/ui/dark_button_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -55,6 +56,8 @@ class _ProductItemState extends State<ProductItem> {
   final formKey = GlobalKey<FormState>();
   final pinController = TextEditingController();
   final focusNode = FocusNode();
+
+  int quantity = 1;
 
   @override
   void dispose() {
@@ -116,7 +119,7 @@ class _ProductItemState extends State<ProductItem> {
                                 child: Text(
                                   widget.product.name.toLowerCase(),
                                   style: const TextStyle(
-                                    fontSize: 19,
+                                    fontSize: 20,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
@@ -147,7 +150,38 @@ class _ProductItemState extends State<ProductItem> {
                             ],
                           ),
                         ),
-                        const SizedBox(height: 5),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            widget.product.type == 'Food'
+                                ? Image.asset(
+                              widget.product.isVeg
+                                  ? 'assets/icons/ic_veg_food.png'
+                                  : 'assets/icons/ic_non_veg_food.png',
+                              width: 15,
+                              height: 15,
+                            )
+                                : widget.product.priceBottle != 0
+                                ? Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Image.asset(
+                                  'assets/icons/ic_bottle.png',
+                                  width: 15,
+                                  height: 15,
+                                ),
+                                Text(
+                                    widget.product.priceBottle
+                                        .toStringAsFixed(0),
+                                    style: const TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w500))
+                              ],
+                            )
+                                : const SizedBox(),
+                          ],
+                        ),
+                        // const SizedBox(height: 5),
                         widget.isCommunity
                             ? Row(
                                 mainAxisAlignment: MainAxisAlignment.start,
@@ -193,64 +227,78 @@ class _ProductItemState extends State<ProductItem> {
                             overflow: TextOverflow.ellipsis,
                             maxLines: 2,
                             style: TextStyle(
-                                fontSize: 15,
+                                fontSize: 16,
                                 color: Theme.of(context).primaryColorDark)),
-                        const SizedBox(
-                          height: 2,
-                        ),
 
                         // widget.isCustomerSeated
                         //     ? showAddMinusButtons(cart)
                         //     : const SizedBox(),
 
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            ButtonWidget(
-                              text: 'order',
-                              onClicked: () {
-                                handleOrderClicked(context);
-                              },
-                            ),
-                          ],
+                        Padding(
+                          padding: const EdgeInsets.only(top:5.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              Ink(
+                                decoration: ShapeDecoration(
+                                  color: Theme.of(context).primaryColorLight,
+                                  shape: const CircleBorder(
+                                  ),
+                                ),
+                                child: IconButton(
+                                  icon: const Icon(Icons.remove),
+                                  color: Colors.black,
+                                  onPressed: () {
+                                    setState(() {
+
+                                      if (quantity > 1) {
+                                        quantity--;
+                                      }
+                                    });
+                                  },
+                                ),
+                              ),
+                              Container(
+                                // color: primaryColor,
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 2.0, horizontal: 10),
+                                child: Text(
+                                  quantity.toString(),
+                                  style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(right: 20.0),
+                                child: Ink(
+                                  decoration: ShapeDecoration(
+                                    color: Theme.of(context).primaryColorLight,
+                                    shape: const CircleBorder(),
+                                  ),
+                                  child: IconButton(
+                                    icon: const Icon(Icons.add),
+                                    color: Colors.black87,
+                                    onPressed: () {
+                                      setState(() {
+                                        quantity++;
+                                      });
+                                    },
+                                  ),
+                                ),
+                              ),
+                              DarkButtonWidget(
+                                text: 'order',
+                                onClicked: () {
+                                  handleOrderClicked(context, quantity);
+
+                                  setState(() {
+                                    quantity = 1;
+                                  });
+                                },
+                              ),
+                            ],
+                          ),
                         ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            widget.product.type == 'Food'
-                                ? Image.asset(
-                                    widget.product.isVeg
-                                        ? 'assets/icons/ic_veg_food.png'
-                                        : 'assets/icons/ic_non_veg_food.png',
-                                    width: 15,
-                                    height: 15,
-                                  )
-                                : widget.product.priceBottle != 0
-                                    ? Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        children: [
-                                          Image.asset(
-                                            'assets/icons/ic_bottle.png',
-                                            width: 15,
-                                            height: 15,
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.only(
-                                                left: 2.0),
-                                            child: Text(
-                                                widget.product.priceBottle
-                                                    .toStringAsFixed(0),
-                                                style: const TextStyle(
-                                                    fontSize: 16,
-                                                    fontWeight:
-                                                        FontWeight.w500)),
-                                          )
-                                        ],
-                                      )
-                                    : const SizedBox(),
-                          ],
-                        ),
+
                         const SizedBox(height: 5),
                       ],
                     ),
@@ -382,19 +430,19 @@ class _ProductItemState extends State<ProductItem> {
     );
   }
 
-  void handleOrderClicked(BuildContext context) {
+  void handleOrderClicked(BuildContext context, int quantity) {
     if (UserPreferences.isUserLoggedIn()) {
       if(TablePreferences.isUserQuickSeated()){
         blocUser.User user = UserPreferences.myUser;
 
-        String tableName = TablePreferences.getQuickTable();
-
+        String tableName = TablePreferences.getQuickTableName();
 
         QuickOrder quickOrder = Dummy.getDummyQuickOrder();
         quickOrder = quickOrder.copyWith(
             custId: user.id,
             table: tableName,
             custPhone: user.phoneNumber,
+            quantity: quantity,
             productId: widget.product.id);
         FirestoreHelper.pushQuickOrder(quickOrder);
       } else {

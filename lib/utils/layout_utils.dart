@@ -296,7 +296,7 @@ class LayoutUtils {
 
   void updateQuickTable(String tableName) async {
     Logx.d(_TAG, 'table selected $tableName');
-    TablePreferences.setQuickTable(tableName);
+    TablePreferences.setQuickTableName(tableName);
 
     User user;
 

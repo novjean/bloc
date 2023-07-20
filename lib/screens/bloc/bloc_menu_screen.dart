@@ -228,7 +228,7 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
           }
 
           setState(() {
-            TablePreferences.setQuickTable(mQuickTable.tableName);
+            TablePreferences.setQuickTableName(mQuickTable.tableName);
             mQuickTable;
             _isQuickTableLoading = false;
           });

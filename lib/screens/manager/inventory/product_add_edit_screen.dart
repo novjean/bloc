@@ -168,7 +168,7 @@ class _ProductAddEditScreenState extends State<ProductAddEditScreen> {
             isEdit: true,
             onClicked: () async {
               final image = await ImagePicker().pickImage(
-                  source: ImageSource.gallery, imageQuality: 90, maxWidth: 500);
+                  source: ImageSource.gallery, imageQuality: 95, maxWidth: 500);
               if (image == null) return;
 
               final directory = await getApplicationDocumentsDirectory();
