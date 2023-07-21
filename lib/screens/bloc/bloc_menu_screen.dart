@@ -30,9 +30,7 @@ import '../../utils/logx.dart';
 import '../../widgets/cart_widget.dart';
 import '../../widgets/category_item.dart';
 import '../../widgets/product_item.dart';
-import '../../widgets/ui/system_padding.dart';
 import '../../widgets/ui/toaster.dart';
-import 'cart_screen.dart';
 import 'package:bloc/db/entity/user.dart' as blocUser;
 
 class BlocMenuScreen extends StatefulWidget {

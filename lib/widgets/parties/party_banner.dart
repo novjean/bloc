@@ -147,6 +147,8 @@ class _PartyBannerState extends State<PartyBanner> {
                                       const EdgeInsets.only(left: 5.0, top: 5),
                                   child: Text(
                                     widget.party.eventName.toLowerCase(),
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 1,
                                     style: const TextStyle(fontSize: 17),
                                   ),
                                 )
