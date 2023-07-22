@@ -247,6 +247,7 @@ class _ProductItemState extends State<ProductItem> {
                                 ),
                                 child: IconButton(
                                   icon: const Icon(Icons.remove),
+                                  splashRadius: 10.0,
                                   color: Colors.black,
                                   onPressed: () {
                                     setState(() {
@@ -276,6 +277,7 @@ class _ProductItemState extends State<ProductItem> {
                                   ),
                                   child: IconButton(
                                     icon: const Icon(Icons.add),
+                                    splashRadius: 10.0,
                                     color: Colors.black87,
                                     onPressed: () {
                                       setState(() {

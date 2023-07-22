@@ -30,10 +30,7 @@ class _CommunityOfferScreenState extends State<CommunityOfferScreen> {
 
   @override
   void initState() {
-    super.initState();
-
     FirestoreHelper.pullProduct(widget.cartItem.productId).then((res) {
-      print("successfully retrieved product");
       for (int i = 0; i < res.docs.length; i++) {
         DocumentSnapshot document = res.docs[i];
         Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
@@ -44,6 +41,8 @@ class _CommunityOfferScreenState extends State<CommunityOfferScreen> {
         }
       }
     });
+
+    super.initState();
   }
 
   void setProduct(Product? product) {

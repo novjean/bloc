@@ -33,6 +33,8 @@ import '../../widgets/product_item.dart';
 import '../../widgets/ui/toaster.dart';
 import 'package:bloc/db/entity/user.dart' as blocUser;
 
+import 'orders_screen.dart';
+
 class BlocMenuScreen extends StatefulWidget {
   String blocId;
 
@@ -70,8 +72,6 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
   var _isCustomerSeated = false;
 
   var _isCommunity = false;
-
-  String qTableName = '';
 
   late QuickTable mQuickTable;
   var _isQuickTableLoading = true;
@@ -788,7 +788,18 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
             loginUtils.showLoginDialog();
           }
         },
-      )
+      ),
+
+      mQuickTable.phone != 0? IconButton(
+        icon: const Icon(Icons.receipt_long,
+        ),
+        onPressed: () {
+          Navigator.of(context).push(
+            MaterialPageRoute(builder: (ctx) => OrdersScreen()),
+          );
+
+        },
+      ): const SizedBox()
 
 
       // UserPreferences.isUserLoggedIn() ?

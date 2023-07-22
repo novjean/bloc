@@ -39,9 +39,17 @@ class Logx {
     FirebaseCrashlytics.instance.recordError(e, s);
   }
 
+  static void est(String tag, String message) {
+    String text = '$tag:$message';
+    logger.e(text);
+    FirebaseCrashlytics.instance.log(text);
+    Toaster.shortToast(message);
+  }
+
   static void d(String tag, String message) {
     String text = tag + ':' + message;
     logger.d(text);
   }
+
 
 }

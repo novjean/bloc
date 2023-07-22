@@ -1260,6 +1260,19 @@ class FirestoreHelper {
     }
   }
 
+  static pullQuickOrders(String custId) {
+    return FirebaseFirestore.instance
+        .collection(QUICK_ORDERS)
+        .where('custId', isEqualTo: custId)
+        .orderBy('createdAt', descending: true)
+        .get();
+  }
+
+  static void deleteQuickOrder(String docId) {
+    FirebaseFirestore.instance.collection(QUICK_ORDERS).doc(docId).delete();
+  }
+
+
   /** quick table **/
   static Future<void> pushQuickTable(QuickTable quickTable, BuildContext context) async {
     try {
