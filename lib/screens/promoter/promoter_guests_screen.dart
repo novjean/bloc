@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 
 import '../../db/entity/party.dart';
 import '../../db/entity/party_guest.dart';
+import '../../db/entity/party_interest.dart';
 import '../../db/entity/promoter.dart';
 import '../../helpers/dummy.dart';
 import '../../helpers/fresh.dart';
@@ -51,6 +52,9 @@ class _PromoterGuestsScreenState extends State<PromoterGuestsScreen> {
   String mLines = '';
   TextEditingController controller = TextEditingController();
 
+  PartyInterest mPartyInterest = Dummy.getDummyPartyInterest();
+  bool _isPartyInterestLoading = true;
+
   @override
   void initState() {
     mOptions = ['arriving', 'completed', 'unapproved', 'add'];
@@ -74,6 +78,21 @@ class _PromoterGuestsScreenState extends State<PromoterGuestsScreen> {
       } else {
         setState(() {
           _isPromotersLoading = false;
+        });
+      }
+    });
+
+    FirestoreHelper.pullPartyInterest(widget.party.id).then((res) {
+      if(res.docs.isNotEmpty){
+        DocumentSnapshot document = res.docs[0];
+        Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+        mPartyInterest = Fresh.freshPartyInterestMap(data, false);
+        setState(() {
+          _isPartyInterestLoading = false;
+        });
+      } else {
+        setState(() {
+          _isPartyInterestLoading = false;
         });
       }
     });
@@ -110,7 +129,7 @@ class _PromoterGuestsScreenState extends State<PromoterGuestsScreen> {
             )
           : const SizedBox(),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-      body: _isPromotersLoading ? const LoadingWidget() : _buildBody(context),
+      body: _isPromotersLoading && _isPartyInterestLoading ? const LoadingWidget() : _buildBody(context),
     );
   }
 
@@ -375,7 +394,13 @@ class _PromoterGuestsScreenState extends State<PromoterGuestsScreen> {
 
                   List<PartyGuest> partyGuests = [];
 
+                  int exactCount = 0;
+
                   for (String line in splitLines) {
+                    if(line.trim().isEmpty){
+                      continue;
+                    }
+
                     List<String> data = line.split(",");
 
                     PartyGuest partyGuest = Dummy.getDummyPartyGuest(false);
@@ -389,11 +414,10 @@ class _PromoterGuestsScreenState extends State<PromoterGuestsScreen> {
                       String phone = '91$num';
                       int guestCount = 1;
                       try {
-                        guestCount = int.tryParse(data[2])!;
+                        guestCount = int.tryParse(data[2])!+1;
                       } catch (e) {
                         Logx.em(_TAG, e.toString());
                       }
-                      guestCount++;
                       partyGuest = partyGuest.copyWith(
                         name: name,
                         phone: phone,
@@ -401,6 +425,7 @@ class _PromoterGuestsScreenState extends State<PromoterGuestsScreen> {
                         guestStatus: 'promoter',
                         guestsRemaining: guestCount,
                       );
+                      exactCount += guestCount;
                     } else if (data.length == 2) {
                       // name and number present
                       String name = data[0];
@@ -408,7 +433,7 @@ class _PromoterGuestsScreenState extends State<PromoterGuestsScreen> {
 
                       if(num<100){
                         //guest count
-                        int guestCount = num;
+                        int guestCount = num+1;
                         partyGuest = partyGuest.copyWith(
                           name: name,
                           phone: '0',
@@ -417,6 +442,7 @@ class _PromoterGuestsScreenState extends State<PromoterGuestsScreen> {
                           guestStatus: 'promoter',
                           isApproved: true,
                         );
+                        exactCount += guestCount;
                       } else {
                         String phone = '91$num';
                         partyGuest = partyGuest.copyWith(
@@ -427,6 +453,7 @@ class _PromoterGuestsScreenState extends State<PromoterGuestsScreen> {
                           guestStatus: 'promoter',
                           isApproved: true,
                         );
+                        exactCount += 1;
                       }
                     } else {
                       // only name
@@ -439,6 +466,7 @@ class _PromoterGuestsScreenState extends State<PromoterGuestsScreen> {
                         guestStatus: 'promoter',
                         isApproved: true,
                       );
+                      exactCount += 1;
                     }
                     partyGuests.add(partyGuest);
                     FirestoreHelper.pushPartyGuest(partyGuest);
@@ -451,6 +479,11 @@ class _PromoterGuestsScreenState extends State<PromoterGuestsScreen> {
                         promoterId: partyGuest.promoterId);
                     FirestoreHelper.pushPromoterGuest(promoterGuest);
                   }
+
+                  //update interest count
+                  exactCount = mPartyInterest.initCount + exactCount;
+                  mPartyInterest = mPartyInterest.copyWith(initCount: exactCount);
+                  FirestoreHelper.pushPartyInterest(mPartyInterest);
 
                   showGuestsConfirmationDialog(context, partyGuests);
                   Logx.d(_TAG, 'party guests created');

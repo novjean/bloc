@@ -99,7 +99,7 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
   bool isLoungesLoading = true;
 
   PartyInterest mPartyInterest = Dummy.getDummyPartyInterest();
-  bool isPartyInterestLoading = true;
+  bool _isPartyInterestLoading = true;
 
   @override
   void initState() {
@@ -238,11 +238,11 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
         Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
         mPartyInterest = Fresh.freshPartyInterestMap(data, false);
         setState(() {
-          isPartyInterestLoading = false;
+          _isPartyInterestLoading = false;
         });
       } else {
         setState(() {
-          isPartyInterestLoading = false;
+          _isPartyInterestLoading = false;
         });
       }
     });
@@ -292,7 +292,7 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
 
   _buildBody(BuildContext context) {
     return _isBlocServicesLoading && isGenresLoading && isChallengesLoading
-        && isLoungesLoading && isPartyInterestLoading
+        && isLoungesLoading && _isPartyInterestLoading
         ? const LoadingWidget()
         : ListView(
             padding: const EdgeInsets.symmetric(horizontal: 32),
