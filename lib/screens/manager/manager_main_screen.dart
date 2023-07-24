@@ -5,7 +5,6 @@ import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-import '../../utils/logx.dart';
 import '../../widgets/bloc_service_item.dart';
 
 class ManagerMainScreen extends StatelessWidget {

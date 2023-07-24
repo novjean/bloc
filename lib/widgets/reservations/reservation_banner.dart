@@ -1,21 +1,25 @@
+import 'package:bloc/db/shared_preferences/user_preferences.dart';
 import 'package:bloc/utils/date_time_utils.dart';
 import 'package:bloc/widgets/ui/button_widget.dart';
 import 'package:bloc/widgets/ui/dark_button_widget.dart';
 import 'package:flutter/material.dart';
 
+import '../../db/entity/party.dart';
 import '../../db/entity/reservation.dart';
 import '../../helpers/firestore_helper.dart';
 import '../../helpers/fresh.dart';
 import '../../screens/user/reservation_add_edit_screen.dart';
+import '../../utils/constants.dart';
 import '../../utils/logx.dart';
 
 class ReservationBanner extends StatelessWidget {
   static const String _TAG = 'ReservationBanner';
   final Reservation reservation;
   final bool isPromoter;
+  final List<Party> parties;
 
   const ReservationBanner(
-      {Key? key, required this.reservation, required this.isPromoter})
+      {Key? key, required this.reservation, required this.isPromoter, required this.parties})
       : super(key: key);
 
   @override
@@ -102,6 +106,26 @@ class ReservationBanner extends StatelessWidget {
                                       )));
                             },
                           ),
+                          UserPreferences.myUser.clearanceLevel == Constants.ADMIN_LEVEL?
+                          Padding(
+                              padding:
+                              const EdgeInsets.only(left: 10.0),
+                              child: DarkButtonWidget(
+                                  text: 'party interest',
+                                  onClicked: () {
+                                    bool value = false;
+                                    Reservation updatedReservation =
+                                    reservation.copyWith(
+                                        isApproved: value);
+                                    Logx.i(_TAG,
+                                        'reservation for ${updatedReservation.name} approved $value');
+                                    Reservation freshReservation =
+                                    Fresh.freshReservation(
+                                        updatedReservation);
+                                    FirestoreHelper.pushReservation(
+                                        freshReservation);
+                                  }),)
+                              : const SizedBox(),
                           isPromoter
                               ? reservation.isApproved
                                   ? Padding(

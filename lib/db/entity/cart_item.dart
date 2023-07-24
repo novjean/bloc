@@ -1,4 +1,3 @@
-
 class CartItem {
   final String cartId;
   final String serviceId;

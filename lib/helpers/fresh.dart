@@ -8,6 +8,7 @@ import '../db/entity/bloc.dart';
 import '../db/entity/category.dart';
 import '../db/entity/celebration.dart';
 import '../db/entity/challenge.dart';
+import '../db/entity/config.dart';
 import '../db/entity/lounge_chat.dart';
 import '../db/entity/genre.dart';
 import '../db/entity/lounge.dart';
@@ -1072,6 +1073,72 @@ class Fresh {
     return freshChat;
   }
 
+  /** config **/
+  static Config freshConfigMap(Map<String, dynamic> map, bool shouldUpdate) {
+    Config config = Dummy.getDummyConfig(Constants.blocServiceId);
+
+    bool shouldPush = true;
+
+    try {
+      config = config.copyWith(id: map['id'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'config id not exist');
+    }
+    try {
+      config = config.copyWith(name: map['name'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'config name not exist for id: ${config.id}');
+      shouldPush = true;
+    }
+    try {
+      config = config.copyWith(blocServiceId: map['blocServiceId'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'config blocServiceId not exist for id: ${config.id}');
+      shouldPush = true;
+    }
+    try {
+      config = config.copyWith(value: map['value'] as bool);
+    } catch (e) {
+      Logx.em(_TAG, 'config value not exist for id: ${config.id}');
+      shouldPush = true;
+    }
+
+    if (shouldPush &&
+        shouldUpdate &&
+        UserPreferences.myUser.clearanceLevel >= Constants.MANAGER_LEVEL) {
+      Logx.i(_TAG, 'updating config ${config.id}');
+      FirestoreHelper.pushConfig(config);
+    }
+
+    return config;
+  }
+
+  static Config freshConfig(Config config) {
+    Config freshConfig = Dummy.getDummyConfig(Constants.blocServiceId);
+
+    try {
+      freshConfig = freshConfig.copyWith(id: config.id);
+    } catch (e) {
+      Logx.em(_TAG, 'config id not exist');
+    }
+    try {
+      freshConfig = freshConfig.copyWith(name: config.name);
+    } catch (e) {
+      Logx.em(_TAG, 'config name not exist for id: ${config.id}');
+    }
+    try {
+      freshConfig = freshConfig.copyWith(blocServiceId: config.blocServiceId);
+    } catch (e) {
+      Logx.em(_TAG, 'config blocServiceId not exist for id: ${config.id}');
+    }
+    try {
+      freshConfig = freshConfig.copyWith(value: config.value);
+    } catch (e) {
+      Logx.em(_TAG, 'config value not exist for id: ${config.id}');
+    }
+
+    return freshConfig;
+  }
 
   /** genre **/
   static Genre freshGenreMap(Map<String, dynamic> map, bool shouldUpdate) {

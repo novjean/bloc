@@ -469,6 +469,7 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
                   reservation: reservations[index],
                   isPromoter: UserPreferences.myUser.clearanceLevel >=
                       Constants.PROMOTER_LEVEL,
+                  parties: mParties,
                 ),
                 onTap: () {
                   Reservation _sReservation = reservations[index];

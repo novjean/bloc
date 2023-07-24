@@ -8,7 +8,6 @@ import 'package:bloc/db/entity/service_table.dart';
 import 'package:bloc/db/entity/ticket.dart';
 import 'package:bloc/db/entity/ui_photo.dart';
 import 'package:bloc/db/entity/user_level.dart';
-import 'package:bloc/db/shared_preferences/table_preferences.dart';
 import 'package:bloc/utils/constants.dart';
 import 'package:bloc/utils/string_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -18,6 +17,7 @@ import '../db/entity/ad_campaign.dart';
 import '../db/entity/bloc.dart';
 import '../db/entity/bloc_service.dart';
 import '../db/entity/celebration.dart';
+import '../db/entity/config.dart';
 import '../db/entity/lounge_chat.dart';
 import '../db/entity/genre.dart';
 import '../db/entity/lounge.dart';
@@ -151,6 +151,16 @@ class Dummy {
         dialogAcceptText: '',
         dialogAccept2Text: '');
     return dummyChallenge;
+  }
+
+  static Config getDummyConfig(String blocServiceId) {
+    Config dummyConfig = Config(
+      id: StringUtils.getRandomString(28),
+      name: '',
+      blocServiceId: blocServiceId,
+      value: true
+    );
+    return dummyConfig;
   }
 
   static LoungeChat getDummyLoungeChat() {

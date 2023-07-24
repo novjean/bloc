@@ -243,9 +243,16 @@ class _PartyGuestAddEditManageScreenState
       }
     });
 
-    for (int i = 1; i <= widget.party.guestListCount; i++) {
-      guestCounts.add(i.toString());
+    if(widget.partyGuest.guestStatus == 'promoter'){
+      for (int i = 1; i <= 30; i++) {
+        guestCounts.add(i.toString());
+      }
+    } else {
+      for (int i = 1; i <= widget.party.guestListCount; i++) {
+        guestCounts.add(i.toString());
+      }
     }
+
     sGuestCount = widget.partyGuest.guestsCount.toString();
     sGuestStatus = widget.partyGuest.guestStatus;
     sGender = widget.partyGuest.gender;
@@ -984,57 +991,102 @@ class _PartyGuestAddEditManageScreenState
                     ),
                   ),
                   const SizedBox(height: 24),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 32),
+                    child: ButtonWidget(
+                      height: 50,
+                      text: 'update',
+                      onClicked: () {
+                        FirestoreHelper.pushPartyGuest(widget.partyGuest);
+                        Logx.ist(_TAG, 'guest list updated');
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ),
+                  const SizedBox(height: 24),
                 ],
               )
                   : const SizedBox(),
+
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 32),
                 child: ButtonWidget(
                   height: 50,
                   text: (widget.task == 'edit' || widget.task == 'manage') ? 'save changes' : 'join list',
                   onClicked: () {
-                    if (isDataValid()) {
-                      if (isLoggedIn) {
-                        if(widget.task == 'manage'){
-                          FirestoreHelper.pushPartyGuest(widget.partyGuest);
-
-                          GoRouter.of(context)
-                              .pushNamed(RouteConstants.homeRouteName);
-                          GoRouter.of(context)
-                              .pushNamed(RouteConstants.boxOfficeRouteName);
-                        } else if(widget.task == 'edit') {
-                          FirestoreHelper.pushPartyGuest(widget.partyGuest);
-
-                          if (hasUserChanged) {
-                            blocUser.User freshUser = Fresh.freshUser(bloc_user);
-                            if (freshUser.id == UserPreferences.myUser.id) {
-                              UserPreferences.setUser(freshUser);
-                            }
-                            FirestoreHelper.pushUser(freshUser);
-                          }
-                          GoRouter.of(context)
-                              .pushNamed(RouteConstants.homeRouteName);
-                          GoRouter.of(context)
-                              .pushNamed(RouteConstants.boxOfficeRouteName);
-                        } else {
-                          showRulesConfirmationDialog(context, false);
-                        }
-                      } else {
-                        // need to register the user first
-                        _verifyPhone();
-                      }
+                    if(widget.task == 'manage'){
+                      FirestoreHelper.pushPartyGuest(widget.partyGuest);
+                      Logx.ist(_TAG, 'guest list updated');
+                      Navigator.of(context).pop();
                     } else {
-                      Logx.em(
-                          _TAG, 'user cannot be entered as data is incomplete');
+                        if (isDataValid()) {
+                          if (isLoggedIn){
+                            FirestoreHelper.pushPartyGuest(widget.partyGuest);
+
+                            if (hasUserChanged) {
+                              blocUser.User freshUser = Fresh.freshUser(bloc_user);
+                              if (freshUser.id == UserPreferences.myUser.id) {
+                                UserPreferences.setUser(freshUser);
+                              }
+                              FirestoreHelper.pushUser(freshUser);
+                            }
+                            GoRouter.of(context)
+                                .pushNamed(RouteConstants.homeRouteName);
+                            GoRouter.of(context)
+                                .pushNamed(RouteConstants.boxOfficeRouteName);
+                          } else {
+                            // need to register the user first
+                            _verifyPhone();
+                          }
+                        } else {
+                          Logx.em(
+                              _TAG, 'user cannot be entered as data is incomplete');
+                        }
                     }
+
+                    // if (isDataValid()) {
+                    //   if (isLoggedIn) {
+                    //     if(widget.task == 'manage'){
+                    //       FirestoreHelper.pushPartyGuest(widget.partyGuest);
+                    //
+                    //       GoRouter.of(context)
+                    //           .pushNamed(RouteConstants.homeRouteName);
+                    //       GoRouter.of(context)
+                    //           .pushNamed(RouteConstants.boxOfficeRouteName);
+                    //     } else if(widget.task == 'edit') {
+                    //       FirestoreHelper.pushPartyGuest(widget.partyGuest);
+                    //
+                    //       if (hasUserChanged) {
+                    //         blocUser.User freshUser = Fresh.freshUser(bloc_user);
+                    //         if (freshUser.id == UserPreferences.myUser.id) {
+                    //           UserPreferences.setUser(freshUser);
+                    //         }
+                    //         FirestoreHelper.pushUser(freshUser);
+                    //       }
+                    //       GoRouter.of(context)
+                    //           .pushNamed(RouteConstants.homeRouteName);
+                    //       GoRouter.of(context)
+                    //           .pushNamed(RouteConstants.boxOfficeRouteName);
+                    //     } else {
+                    //       showRulesConfirmationDialog(context, false);
+                    //     }
+                    //   } else {
+                    //     // need to register the user first
+                    //     _verifyPhone();
+                    //   }
+                    // } else {
+                    //   Logx.em(
+                    //       _TAG, 'user cannot be entered as data is incomplete');
+                    // }
                   },
                 ),
               ),
+
               widget.task == 'edit' || widget.task == 'manage'
                   ? Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        const SizedBox(height: 24),
+                        const SizedBox(height: 36),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 32),
                           child: DarkButtonWidget(

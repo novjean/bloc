@@ -7,6 +7,7 @@ import 'package:bloc/db/entity/cart_item.dart';
 import 'package:bloc/db/entity/category.dart';
 import 'package:bloc/db/entity/celebration.dart';
 import 'package:bloc/db/entity/challenge.dart';
+import 'package:bloc/db/entity/config.dart';
 import 'package:bloc/db/entity/lounge_chat.dart';
 import 'package:bloc/db/entity/genre.dart';
 import 'package:bloc/db/entity/guest_wifi.dart';
@@ -59,6 +60,7 @@ class FirestoreHelper {
   static String CHALLENGES = 'challenges';
   static String CELEBRATIONS = 'celebrations';
   static String CITIES = 'cities';
+  static String CONFIGS = 'configs';
   static String GENRES = 'genres';
   static String GUEST_WIFIS = 'guest_wifis';
   static String HISTORY_MUSIC = 'history_music';
@@ -561,6 +563,41 @@ class FirestoreHelper {
   /** cities **/
   static Stream<QuerySnapshot<Object?>> getCitiesSnapshot() {
     return FirebaseFirestore.instance.collection(CITIES).snapshots();
+  }
+
+  /** config **/
+  static void pushConfig(Config config) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection(CONFIGS)
+          .doc(config.id)
+          .set(config.toMap());
+    } on PlatformException catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } on Exception catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } catch (e) {
+      Logx.em(_TAG, e.toString());
+    }
+  }
+
+  static pullConfig(String blocServiceId, String configName) {
+    return FirebaseFirestore.instance
+        .collection(CONFIGS)
+        .where('blocServiceId', isEqualTo: blocServiceId)
+        .where('name', isEqualTo: configName)
+        .get();
+  }
+
+  static getConfigs() {
+    return FirebaseFirestore.instance
+        .collection(CONFIGS)
+        .orderBy('name', descending: false)
+        .snapshots();
+  }
+
+  static void deleteConfig(String docId) {
+    FirebaseFirestore.instance.collection(CONFIGS).doc(docId).delete();
   }
 
   /** genre **/
@@ -1963,6 +2000,5 @@ class FirestoreHelper {
   static void deleteUserLounge(String docId) {
     FirebaseFirestore.instance.collection(USER_LOUNGES).doc(docId).delete();
   }
-
 
 }

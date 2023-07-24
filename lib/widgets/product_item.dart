@@ -31,6 +31,8 @@ class ProductItem extends StatefulWidget {
   final bool isCustomerSeated;
   int addCount = 1;
 
+  bool showQuickOrder;
+
   ProductItem(
       {Key? key,
       required this.serviceId,
@@ -39,7 +41,8 @@ class ProductItem extends StatefulWidget {
       required this.isCommunity,
       required this.isOnOffer,
       required this.offer,
-      required this.isCustomerSeated})
+      required this.isCustomerSeated,
+      required this.showQuickOrder})
       : super(key: key);
 
   @override
@@ -49,7 +52,7 @@ class ProductItem extends StatefulWidget {
 class _ProductItemState extends State<ProductItem> {
   static const String _TAG = 'ProductItem';
 
-  final TextEditingController _controller = TextEditingController();
+  // final TextEditingController _controller = TextEditingController();
   String completePhoneNumber = '';
   int maxPhoneNumberLength = 10;
 
@@ -234,7 +237,7 @@ class _ProductItemState extends State<ProductItem> {
                         //     ? showAddMinusButtons(cart)
                         //     : const SizedBox(),
 
-                        Padding(
+                        widget.showQuickOrder? Padding(
                           padding: const EdgeInsets.only(top:5.0),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.end,
@@ -299,8 +302,7 @@ class _ProductItemState extends State<ProductItem> {
                               ),
                             ],
                           ),
-                        ),
-
+                        ): const SizedBox(),
                         const SizedBox(height: 5),
                       ],
                     ),

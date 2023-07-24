@@ -150,7 +150,7 @@ class _PromoterGuestsScreenState extends State<PromoterGuestsScreen> {
                   hintText: 'search by name or phone',
                   hintStyle: TextStyle(color: Constants.primary)
               ),
-              autofocus: true,
+              autofocus: false,
               style: const TextStyle(fontSize: 17, color: Constants.primary),
               onChanged: (val) {
                 if(val.trim().isNotEmpty){

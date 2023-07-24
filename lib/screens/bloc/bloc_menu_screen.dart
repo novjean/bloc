@@ -17,6 +17,7 @@ import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../db/entity/category.dart';
+import '../../db/entity/config.dart';
 import '../../db/entity/offer.dart';
 import '../../db/entity/product.dart';
 import '../../db/entity/quick_table.dart';
@@ -76,12 +77,17 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
   late QuickTable mQuickTable;
   var _isQuickTableLoading = true;
 
+  late Config mConfigQuickOrder;
+  var _isConfigQuickOrderLoading= true;
+
   @override
   void initState() {
     // WidgetsBinding.instance?.addObserver(this);
 
     UserPreferences.setBlocId(widget.blocId);
     blocUser.User user = UserPreferences.myUser;
+
+    mConfigQuickOrder = Dummy.getDummyConfig(widget.blocId);
 
     FirestoreHelper.pullBlocService(widget.blocId).then((res) {
       if(res.docs.isNotEmpty){
@@ -96,6 +102,18 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
         }
 
         _isBlocLoading = false;
+
+        FirestoreHelper.pullConfig(mBlocService.id, Constants.configQuickOrder).then((res) {
+          if(res.docs.isNotEmpty){
+            DocumentSnapshot document = res.docs[0];
+            Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+            mConfigQuickOrder = Fresh.freshConfigMap(data, false);
+          }
+
+          setState(() {
+            _isConfigQuickOrderLoading = false;
+          });
+        });
 
         FirestoreHelper.pullCategoriesInBlocIds(mBlocService.id).then((res) {
           Logx.i(_TAG, "successfully retrieved categories");
@@ -209,7 +227,7 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
             } else {
               int now = Timestamp.now().millisecondsSinceEpoch;
 
-              if(now - qt.createdAt < DateTimeUtils.millisecondsDay){
+              if(now - qt.createdAt > DateTimeUtils.millisecondsDay){
                 FirestoreHelper.deleteQuickTable(qt.id);
               } else {
                 if(mQuickTable.phone == 0){
@@ -315,7 +333,7 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
           actions: showActionIcons(),
         ),
         body: _isBlocLoading && _isTableLoading && _isCategoriesLoading
-              && _isQuickTableLoading
+              && _isQuickTableLoading && _isConfigQuickOrderLoading
             ? const LoadingWidget()
             : _buildBody(context),
       ),
@@ -407,7 +425,7 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
                           mTable = table;
                         });
                       } else {
-                        Logx.i(_TAG, 'table could not be found for id ' + tableId);
+                        Logx.i(_TAG, 'table could not be found for id $tableId');
                       }
                     });
                   }
@@ -624,6 +642,7 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
 
     return Expanded(
       child: ListView.builder(
+          key: UniqueKey(),
           itemCount: subProducts.length,
           scrollDirection: Axis.vertical,
           itemBuilder: (ctx, index) {
@@ -706,6 +725,7 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
                       isOnOffer: isProductOnOffer,
                       offer: productOffer,
                       isCustomerSeated: _isCustomerSeated,
+                      showQuickOrder: mConfigQuickOrder.value,
                     ),
                     onTap: () {
                       Product _sProduct = subProducts[index];

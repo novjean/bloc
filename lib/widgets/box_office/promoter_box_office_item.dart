@@ -54,7 +54,8 @@ class _PromoterBoxOfficeItemState extends State<PromoterBoxOfficeItem> {
     }
 
     if(widget.partyGuest.isVip){
-      title += ' 🧲';
+      title += widget.partyGuest.gender == 'male' ? '🫅': '👸';
+      // title += ' [vip]';
     }
 
     return GestureDetector(
@@ -84,7 +85,7 @@ class _PromoterBoxOfficeItemState extends State<PromoterBoxOfficeItem> {
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
           child: SizedBox(
-            height: mq.height * 0.2,
+            height: mq.height * 0.15,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
@@ -96,14 +97,14 @@ class _PromoterBoxOfficeItemState extends State<PromoterBoxOfficeItem> {
                     children: [
                       Padding(
                         padding:
-                            const EdgeInsets.only(left: 5.0, right: 5, top: 3),
+                            const EdgeInsets.only(left: 5.0, right: 5, top: 1),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
                               title,
                               style: const TextStyle(
-                                fontSize: 22.0,
+                                fontSize: 20.0,
                                 fontWeight: FontWeight.w800,
                               ),
                               overflow: TextOverflow.ellipsis,
@@ -113,31 +114,38 @@ class _PromoterBoxOfficeItemState extends State<PromoterBoxOfficeItem> {
                           ],
                         ),
                       ),
-                      widget.partyGuest.guestsRemaining != 0
-                          ? Padding(
-                              padding: const EdgeInsets.only(left: 5.0),
-                              child: Text(
-                                '${widget.partyGuest.guestsRemaining} guests remaining',
-                                style: const TextStyle(fontSize: 18),
-                              ),
-                            )
-                          : Padding(
-                              padding: const EdgeInsets.only(left: 5.0),
-                              child: Text(
-                                '${widget.partyGuest.guestsCount} guests entered',
-                                style: const TextStyle(fontSize: 18),
-                              ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(left: 5.0),
+                            child: Text(
+                              '+${widget.partyGuest.phone}',
+                              style: const TextStyle(fontSize: 16),
                             ),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 5.0),
-                        child: Text(
-                          '+${widget.partyGuest.phone}',
-                          style: const TextStyle(fontSize: 18),
-                        ),
+                          ),
+                          widget.partyGuest.guestsRemaining != 0
+                              ? Padding(
+                            padding: const EdgeInsets.only(right: 5.0),
+                            child: Text(
+                              '${widget.partyGuest.guestsRemaining} guests remaining',
+                              style: const TextStyle(fontSize: 16),
+                            ),
+                          )
+                              : Padding(
+                            padding: const EdgeInsets.only(right: 5.0),
+                            child: Text(
+                              '${widget.partyGuest.guestsCount} guests entered',
+                              style: const TextStyle(fontSize: 16),
+                            ),
+                          ),
+                        ],
                       ),
+
+
                       Padding(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 5.0, vertical: 2),
+                            horizontal: 5.0, vertical: 1),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
