@@ -58,7 +58,7 @@ class AdCampaignSlideItem extends StatelessWidget {
               child: RotatedBox(
                 quarterTurns: 1,
                 child: Text(
-                  '#itsHoppilicious',
+                  'india\'s largest pav-sub!!!',
                   style: TextStyle(color: Constants.hopp, fontSize: 30),
                 ),
               ),

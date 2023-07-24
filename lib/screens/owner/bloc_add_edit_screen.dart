@@ -290,6 +290,7 @@ class _BlocAddEditScreenState extends State<BlocAddEditScreen> {
 
                           setState(() {
                           });
+                          Navigator.of(context).pop();
                         },
                         child: const Column(
                           mainAxisAlignment: MainAxisAlignment.center,

@@ -48,7 +48,7 @@ class _HomeScreenState extends State<HomeScreen> {
   _scrollToBottom() {
     _scrollController.animateTo(
         _scrollController.position.maxScrollExtent,
-        duration: const Duration(seconds: 30),
+        duration: const Duration(seconds: 45),
         curve: Curves.linear);
   }
 
@@ -317,7 +317,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 const SizedBox(height: 10.0),
 
-                Container(
+                SizedBox(
                     width: mq.width * 0.95,
                     height: mq.height * 0.25,
                     child: AdCampaignSlideItem(adCampaign: mAdCampaign)),

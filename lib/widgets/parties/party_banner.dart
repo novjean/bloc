@@ -130,7 +130,7 @@ class _PartyBannerState extends State<PartyBanner> {
                                   children: <TextSpan>[
                                     TextSpan(
                                         text: widget.party.chapter == 'I'
-                                            ? ''
+                                            ? ' '
                                             : widget.party.chapter,
                                         style: const TextStyle(
                                             color: Colors.black,
