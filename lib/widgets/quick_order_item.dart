@@ -93,7 +93,7 @@ class _QuickOrderItemState extends State<QuickOrderItem> {
                                     child: Text(
                                       mProduct.name.toLowerCase(),
                                       style: const TextStyle(
-                                        fontSize: 18,
+                                        fontSize: 20,
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),
@@ -126,14 +126,17 @@ class _QuickOrderItemState extends State<QuickOrderItem> {
                                 overflow: TextOverflow.ellipsis,
                                 maxLines: 2,
                                 style: const TextStyle(
-                                    fontSize: 14,
+                                    fontSize: 16,
                                     color: Constants.darkPrimary)),
+                            const SizedBox(height: 2),
                             widget.quickOrder.status == 'ordered'
                                 ? _showAddMinusButton(context)
                                 : Text(
-                                    widget.quickOrder.status == 'confirmed'? 'order is confirmed and it shall reach you soon!' : 'sorry, ${mProduct.name} is temporarily not available.',
-                                    style: TextStyle(
-                                        fontSize: 14,
+                                    widget.quickOrder.status == 'confirmed'? '✅ order is confirmed and it shall reach you soon!' : '❌ sorry, ${mProduct.name} is temporarily not available.',
+                                maxLines: 3,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                        fontSize: 16,
                                         color: Constants.darkPrimary)),
 
                             const SizedBox(height: 5),
@@ -219,6 +222,8 @@ class _QuickOrderItemState extends State<QuickOrderItem> {
                       quantity--;
                       widget.quickOrder =
                           widget.quickOrder.copyWith(quantity: quantity);
+                      FirestoreHelper.pushQuickOrder(widget.quickOrder);
+                      Logx.ist(_TAG, 'order has been updated!');
                     });
                   } else {
                     _showOrderRemoveDialog(context);
@@ -232,11 +237,11 @@ class _QuickOrderItemState extends State<QuickOrderItem> {
             padding: const EdgeInsets.symmetric(vertical: 2.0, horizontal: 10),
             child: Text(
               widget.quickOrder.quantity.toString(),
-              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
             ),
           ),
           Padding(
-            padding: const EdgeInsets.only(right: 10.0),
+            padding: const EdgeInsets.only(right: 0.0),
             child: Ink(
               decoration: const ShapeDecoration(
                 color: Constants.lightPrimary,
@@ -253,6 +258,8 @@ class _QuickOrderItemState extends State<QuickOrderItem> {
                     quantity++;
                     widget.quickOrder =
                         widget.quickOrder.copyWith(quantity: quantity);
+                    FirestoreHelper.pushQuickOrder(widget.quickOrder);
+                    Logx.ist(_TAG, 'order has been updated!');
                   });
                 },
               ),

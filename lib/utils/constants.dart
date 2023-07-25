@@ -70,6 +70,8 @@ class Constants {
   static String blocServiceId = 'UVU4XPqTYr3U0YhQzEhg';
   static String blocPromoterId = 'QQEck1k84xT49iLPtRaPWeKtOIhp';
 
+  static String blocInstaHandle = 'https://www.instagram.com/bloc.india/';
+
   static int skipPhoneNumber = 911234567890;
 
   static String clubRules = '- entry is restricted to the age of 21+ \n- we are a community. respect everyone and their space on the floor. don’t be a killjoy!! \n- do not carry illegal substances. there isn\'t a better drug than music! \n- keep a smile and respect other patrons, artists, staff, bouncers, and the community. \n- please refrain from using the phrase \'you don\'t know who I am\'. we are all humans here and unfortunately, pets are not allowed.\n- you are being shot by our cameras. no guns and ammunition in the club allowed.\n- violence will not be tolerated. keep P.L.U.R on your mind: peace, love, unity & respect.\n- always toast before a shot. have fun and stay classy.\n- you are responsible for your valuable belongings, that includes your partners. Keep an eye!\n- Open footwear is not allowed. No one likes an “Ouch” moment!\n- Rights of admission reserved for the ones who deserve.\n- You are important to us. Do not Drink & Drive.';

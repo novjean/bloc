@@ -264,7 +264,7 @@ class Dummy {
         description: '',
         blocServiceId: '',
         endTime: Timestamp.now().millisecondsSinceEpoch,
-        instagramUrl: '',
+        instagramUrl: Constants.blocInstaHandle,
         startTime: Timestamp.now().millisecondsSinceEpoch,
         ticketUrl: '',
         listenUrl: '',

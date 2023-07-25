@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 
 import '../../db/entity/product.dart';
 import '../../db/entity/quick_order.dart';
+import '../../db/entity/user.dart';
 import '../../helpers/dummy.dart';
 import '../../helpers/firestore_helper.dart';
 import '../../helpers/fresh.dart';
@@ -28,6 +29,9 @@ class _CaptainQuickOrderItemState extends State<CaptainQuickOrderItem> {
   Product mProduct = Dummy.getDummyProduct('', UserPreferences.myUser.id);
   var _isProductLoading = true;
 
+  User mCustomerUser = Dummy.getDummyUser();
+  var _isCustomerUserLoading = true;
+
   @override
   void initState() {
     FirestoreHelper.pullProduct(widget.quickOrder.productId).then((res) {
@@ -47,12 +51,24 @@ class _CaptainQuickOrderItemState extends State<CaptainQuickOrderItem> {
       }
     });
 
+    FirestoreHelper.pullUser(widget.quickOrder.custId).then((res) {
+      if (res.docs.isNotEmpty) {
+        DocumentSnapshot document = res.docs[0];
+        Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+        mCustomerUser = Fresh.freshUserMap(data, false);
+
+        setState(() {
+          _isCustomerUserLoading = false;
+        });
+      }
+    });
+
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return _isProductLoading
+    return _isProductLoading && _isCustomerUserLoading
         ? const SizedBox()
         : Container(
             padding: const EdgeInsets.symmetric(horizontal: 5),
@@ -94,7 +110,7 @@ class _CaptainQuickOrderItemState extends State<CaptainQuickOrderItem> {
                                     child: Text(
                                       '${widget.quickOrder.table} | ${mProduct.name.toLowerCase()} x ${widget.quickOrder.quantity}',
                                       style: const TextStyle(
-                                        fontSize: 20,
+                                        fontSize: 18,
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),
@@ -107,26 +123,20 @@ class _CaptainQuickOrderItemState extends State<CaptainQuickOrderItem> {
                                 ],
                               ),
                             ),
-                            // const SizedBox(height: 5),
-                            // Row(
-                            //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            //   children: [
-                            //     Text('table ${widget.quickOrder.table}',
-                            //         style: const TextStyle(
-                            //       fontSize: 18,
-                            //       fontWeight: FontWeight.bold,
-                            //     )),
-                            //     mProduct.type == 'Food'
-                            //         ? Image.asset(
-                            //             mProduct.isVeg
-                            //                 ? 'assets/icons/ic_veg_food.png'
-                            //                 : 'assets/icons/ic_non_veg_food.png',
-                            //             width: 15,
-                            //             height: 15,
-                            //           )
-                            //         : const SizedBox()
-                            //   ],
-                            // ),
+                            const SizedBox(height: 5),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text('${mCustomerUser.name} ${mCustomerUser.surname}',
+                                    style: const TextStyle(
+                                  fontSize: 14,
+                                )),
+                                Text('+${mCustomerUser.phoneNumber}',
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                    )),
+                              ],
+                            ),
                             const SizedBox(height: 2),
                             Text(mProduct.description.toLowerCase(),
                                 overflow: TextOverflow.ellipsis,
@@ -137,38 +147,44 @@ class _CaptainQuickOrderItemState extends State<CaptainQuickOrderItem> {
                             const SizedBox(height: 5),
                             widget.quickOrder.status == 'ordered'
                                 ? Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    ButtonWidget(
-                                      text: '❌ reject',
-                                      onClicked: () {
-                                        widget.quickOrder = widget.quickOrder
-                                            .copyWith(status: 'rejected');
-                                        FirestoreHelper.pushQuickOrder(widget.quickOrder);
-                                        Logx.ist(_TAG, 'order is rejected!');
-                                      },
-                                    ),
-                                    ButtonWidget(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      ButtonWidget(
+                                        text: '❌ reject',
+                                        onClicked: () {
+                                          widget.quickOrder = widget.quickOrder
+                                              .copyWith(status: 'rejected');
+                                          FirestoreHelper.pushQuickOrder(
+                                              widget.quickOrder);
+                                          Logx.ist(_TAG, 'order is rejected!');
+                                        },
+                                      ),
+                                      ButtonWidget(
                                         text: '✅ confirm',
                                         onClicked: () {
                                           widget.quickOrder = widget.quickOrder
                                               .copyWith(status: 'confirmed');
-                                          FirestoreHelper.pushQuickOrder(widget.quickOrder);
+                                          FirestoreHelper.pushQuickOrder(
+                                              widget.quickOrder);
                                           Logx.ist(_TAG, 'order is confirmed!');
                                         },
                                       ),
-                                  ],
-                                )
+                                    ],
+                                  )
                                 : Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                                  children: [
-                                    Text(
-                                    widget.quickOrder.status == 'confirmed'? '✅ confirmed': '❌ rejected',
-                                        style: TextStyle(
-                                            fontSize: 14,
-                                            color: Constants.darkPrimary)),
-                                  ],
-                                ),
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      Text(
+                                          widget.quickOrder.status ==
+                                                  'confirmed'
+                                              ? '✅ confirmed'
+                                              : '❌ rejected',
+                                          style: TextStyle(
+                                              fontSize: 14,
+                                              color: Constants.darkPrimary)),
+                                    ],
+                                  ),
 
                             const SizedBox(height: 5),
                           ],

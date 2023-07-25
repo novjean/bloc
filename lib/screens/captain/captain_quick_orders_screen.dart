@@ -2,6 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import '../../db/entity/quick_order.dart';
+import '../../db/entity/user.dart';
+import '../../helpers/dummy.dart';
 import '../../helpers/firestore_helper.dart';
 import '../../helpers/fresh.dart';
 import '../../main.dart';
@@ -60,7 +62,7 @@ class _CaptainQuickOrdersScreenState extends State<CaptainQuickOrdersScreen> {
           elevation: 5,
           splashColor: Colors.grey,
           child: const Icon(
-            Icons.science,
+            Icons.sort_outlined,
             color: Colors.black,
             size: 29,
           ),

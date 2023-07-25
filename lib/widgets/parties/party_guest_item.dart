@@ -92,15 +92,13 @@ class PartyGuestItem extends StatelessWidget {
                       ),
                     ),
                     Padding(
-                      padding:
-                          const EdgeInsets.only(right: 5, bottom: 5),
+                      padding: const EdgeInsets.only(right: 5, bottom: 5),
                       child: Row(
                         children: [
                           const Text('approved: '),
                           Checkbox(
                             value: partyGuest.isApproved,
-                            onChanged: (value) {
-                            },
+                            onChanged: (value) {},
                           ),
                         ],
                       ),
@@ -125,31 +123,25 @@ class PartyGuestItem extends StatelessWidget {
             splashColor: Colors.red,
             onTap: () {
               // here we should write the ban user
-              FirestoreHelper.pullUser(
-                  partyGuest.guestId)
-                  .then((res) {
+              FirestoreHelper.pullUser(partyGuest.guestId).then((res) {
                 Logx.i(_TAG,
                     'successfully pulled in user for id ${partyGuest.guestId}');
 
                 if (res.docs.isNotEmpty) {
-                  DocumentSnapshot document =
-                  res.docs[0];
-                  Map<String, dynamic> data = document
-                      .data()! as Map<String, dynamic>;
+                  DocumentSnapshot document = res.docs[0];
+                  Map<String, dynamic> data =
+                      document.data()! as Map<String, dynamic>;
 
-                  final User user =
-                  Fresh.freshUserMap(data, false);
+                  final User user = Fresh.freshUserMap(data, false);
                   user.isBanned = true;
                   FirestoreHelper.pushUser(user);
 
-                  Logx.ist(_TAG,
-                      '${user.name} ${user.surname} is banned');
+                  Logx.ist(_TAG, '${user.name} ${user.surname} is banned');
                 }
               });
             },
             child: const Column(
-              mainAxisAlignment:
-              MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Icon(Icons.dangerous),
               ],
