@@ -15,6 +15,7 @@ import '../../../utils/file_utils.dart';
 import '../../../utils/logx.dart';
 import '../../../utils/string_utils.dart';
 import '../../../widgets/manager/user_item.dart';
+import '../../../widgets/ui/app_bar_title.dart';
 
 class ManageUsersScreen extends StatefulWidget {
   ManageUsersScreen({Key? key}) : super(key: key);
@@ -91,10 +92,13 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('manage | users')),
+      appBar: AppBar(
+        title: AppBarTitle(title: 'manage | users'),
+        titleSpacing: 0,
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          showActionsDialog(context);
+          _showActionsDialog(context);
         },
         backgroundColor: Theme.of(context).primaryColor,
         tooltip: 'actions',
@@ -329,12 +333,15 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
 
     if (sGender == 'all' && sMode == 'all') {
       stream = FirestoreHelper.getUsersByLevel(sUserLevel.level);
-    } else if(sGender == 'all' && sMode != 'all') {
-      stream = FirestoreHelper.getUsersByLevelAndMode(sUserLevel.level, sMode == 'app'?true:false );
-    } else if(sGender != 'all' && sMode == 'all'){
-      stream = FirestoreHelper.getUsersByLevelAndGender(sUserLevel.level, sGender);
+    } else if (sGender == 'all' && sMode != 'all') {
+      stream = FirestoreHelper.getUsersByLevelAndMode(
+          sUserLevel.level, sMode == 'app' ? true : false);
+    } else if (sGender != 'all' && sMode == 'all') {
+      stream =
+          FirestoreHelper.getUsersByLevelAndGender(sUserLevel.level, sGender);
     } else {
-      stream = FirestoreHelper.getUsersByLevelAndGenderAndMode(sUserLevel.level, sGender, sMode == 'app'?true:false);
+      stream = FirestoreHelper.getUsersByLevelAndGenderAndMode(
+          sUserLevel.level, sGender, sMode == 'app' ? true : false);
     }
 
     return StreamBuilder<QuerySnapshot>(
@@ -446,7 +453,7 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
     );
   }
 
-  showActionsDialog(BuildContext context) {
+  _showActionsDialog(BuildContext context) {
     return showDialog(
       context: context,
       builder: (BuildContext ctx) {
@@ -494,7 +501,8 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
                                         showFilterDialog(context);
                                       },
                                       child: const Column(
-                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
                                         children: <Widget>[
                                           Icon(Icons.filter_list),
                                         ],
@@ -505,7 +513,7 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
                               )
                             ],
                           ),
-                          const SizedBox(height:10),
+                          const SizedBox(height: 10),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
@@ -521,17 +529,22 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
                                         Navigator.of(ctx).pop();
 
                                         String listText = '';
-                                        for(User user in mUsers){
-                                          listText += '${user.name} ${user.surname},'
+                                        for (User user in mUsers) {
+                                          listText +=
+                                              '${user.name} ${user.surname},'
                                               '+${user.phoneNumber}\n';
                                         }
 
-                                        String rand = StringUtils.getRandomString(5);
-                                        String fileName = '$sUserLevelName-$sGender-$sMode-$rand.csv';
-                                        FileUtils.shareCsvFile(fileName, listText, sUserLevelName);
+                                        String rand =
+                                            StringUtils.getRandomString(5);
+                                        String fileName =
+                                            '$sUserLevelName-$sGender-$sMode-$rand.csv';
+                                        FileUtils.shareCsvFile(
+                                            fileName, listText, sUserLevelName);
                                       },
                                       child: const Column(
-                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
                                         children: <Widget>[
                                           Icon(Icons.share_outlined),
                                         ],
@@ -542,7 +555,7 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
                               )
                             ],
                           ),
-                          const SizedBox(height:10),
+                          const SizedBox(height: 10),
                         ],
                       ),
                     ),

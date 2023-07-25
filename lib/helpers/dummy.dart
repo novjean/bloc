@@ -381,7 +381,7 @@ class Dummy {
         quantity: 1,
         table: '',
         createdAt: Timestamp.now().millisecondsSinceEpoch,
-        isAccepted: false
+        status: 'ordered'
     );
 
     return dummy;

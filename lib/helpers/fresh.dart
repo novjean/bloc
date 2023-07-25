@@ -37,7 +37,7 @@ class Fresh {
   static Ad freshAdMap(Map<String, dynamic> map, bool shouldUpdate) {
     Ad ad = Dummy.getDummyAd('');
 
-    bool shouldPush = true;
+    bool isModelChanged = false;
 
     try {
       ad = ad.copyWith(id: map['id'] as String);
@@ -48,52 +48,52 @@ class Fresh {
       ad = ad.copyWith(title: map['title'] as String);
     } catch (e) {
       Logx.em(_TAG, 'ad title not exist for ad id: ${ad.id}');
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       ad = ad.copyWith(message: map['message'] as String);
     } catch (e) {
       Logx.em(_TAG, 'ad message not exist for ad id: ${ad.id}');
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       ad = ad.copyWith(type: map['type'] as String);
     } catch (e) {
       Logx.em(_TAG, 'ad type not exist for ad id: ${ad.id}');
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       ad = ad.copyWith(blocId: map['blocId'] as String);
     } catch (e) {
       Logx.em(_TAG, 'ad blocId not exist for ad id: ${ad.id}');
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       ad = ad.copyWith(partyId: map['partyId'] as String);
     } catch (e) {
       Logx.em(_TAG, 'ad partyId not exist for ad id: ${ad.id}');
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       ad = ad.copyWith(hits: map['hits'] as int);
     } catch (e) {
       Logx.em(_TAG, 'ad hits not exist for ad id: ${ad.id}');
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       ad = ad.copyWith(createdAt: map['createdAt'] as int);
     } catch (e) {
       Logx.em(_TAG, 'ad createdAt not exist for ad id: ${ad.id}');
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       ad = ad.copyWith(isActive: map['isActive'] as bool);
     } catch (e) {
       Logx.em(_TAG, 'ad isActive not exist for ad id: ${ad.id}');
-      shouldPush = true;
+      isModelChanged = true;
     }
 
-    if (shouldPush &&
+    if (isModelChanged &&
         shouldUpdate &&
         UserPreferences.myUser.clearanceLevel >= Constants.MANAGER_LEVEL) {
       Logx.i(_TAG, 'updating ad ${ad.id}');
@@ -159,7 +159,7 @@ class Fresh {
   static AdCampaign freshAdCampaignMap(Map<String, dynamic> map, bool shouldUpdate) {
     AdCampaign adCampaign = Dummy.getDummyAdCampaign();
 
-    bool shouldPush = true;
+    bool isModelChanged = false;
 
     try {
       adCampaign = adCampaign.copyWith(id: map['id'] as String);
@@ -170,35 +170,35 @@ class Fresh {
       adCampaign = adCampaign.copyWith(name: map['name'] as String);
     } catch (e) {
       Logx.em(_TAG, 'adCampaign name not exist for ad campaign id: ${adCampaign.id}');
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       adCampaign = adCampaign.copyWith(imageUrls: List<String>.from(map['imageUrls']));
     } catch (e) {
       Logx.em(_TAG, 'adCampaign imageUrls not exist for ad campaign id: ${adCampaign.id}');
       adCampaign = adCampaign.copyWith(imageUrls: []);
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       adCampaign = adCampaign.copyWith(linkUrl: map['linkUrl'] as String);
     } catch (e) {
       Logx.em(_TAG, 'adCampaign linkUrl not exist for ad campaign id: ${adCampaign.id}');
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       adCampaign = adCampaign.copyWith(adClick: map['adClick'] as int);
     } catch (e) {
       Logx.em(_TAG, 'adCampaign adClick not exist for ad campaign id: ${adCampaign.id}');
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       adCampaign = adCampaign.copyWith(isActive: map['isActive'] as bool);
     } catch (e) {
       Logx.em(_TAG, 'adCampaign isActive not exist for ad campaign id: ${adCampaign.id}');
-      shouldPush = true;
+      isModelChanged = true;
     }
 
-    if (shouldPush &&
+    if (isModelChanged &&
         shouldUpdate &&
         UserPreferences.myUser.clearanceLevel >= Constants.MANAGER_LEVEL) {
       Logx.i(_TAG, 'updating ad campaign ${adCampaign.id}');
@@ -249,7 +249,7 @@ class Fresh {
   static Bloc freshBlocMap(Map<String, dynamic> map, bool shouldUpdate) {
     Bloc bloc = Dummy.getDummyBloc('');
 
-    bool shouldPush = true;
+    bool isModelChanged = false;
 
     try {
       bloc = bloc.copyWith(id: map['id'] as String);
@@ -260,49 +260,49 @@ class Fresh {
       bloc = bloc.copyWith(name: map['name'] as String);
     } catch (e) {
       Logx.em(_TAG, 'bloc name not exist for bloc id: ' + bloc.id);
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       bloc = bloc.copyWith(cityId: map['cityId'] as String);
     } catch (e) {
       Logx.em(_TAG, 'bloc cityId not exist for bloc id: ' + bloc.id);
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       bloc = bloc.copyWith(addressLine1: map['addressLine1'] as String);
     } catch (e) {
       Logx.em(_TAG, 'bloc addressLine1 not exist for bloc id: ' + bloc.id);
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       bloc = bloc.copyWith(addressLine2: map['addressLine2'] as String);
     } catch (e) {
       Logx.em(_TAG, 'bloc addressLine2 not exist for bloc id: ' + bloc.id);
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       bloc = bloc.copyWith(pinCode: map['pinCode'] as String);
     } catch (e) {
       Logx.em(_TAG, 'bloc pinCode not exist for bloc id: ' + bloc.id);
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       bloc = bloc.copyWith(ownerId: map['ownerId'] as String);
     } catch (e) {
       Logx.em(_TAG, 'bloc ownerId not exist for bloc id: ' + bloc.id);
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       bloc = bloc.copyWith(createdAt: map['createdAt'] as String);
     } catch (e) {
       Logx.em(_TAG, 'bloc createdAt not exist for bloc id: ' + bloc.id);
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       bloc = bloc.copyWith(isActive: map['isActive'] as bool);
     } catch (e) {
       Logx.em(_TAG, 'bloc isActive not exist for bloc id: ' + bloc.id);
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       bloc = bloc.copyWith(imageUrls: List<String>.from(map['imageUrls']));
@@ -310,10 +310,10 @@ class Fresh {
       Logx.em(_TAG, 'bloc imageUrls not exist for bloc id: ' + bloc.id);
       List<String> temp = [];
       bloc = bloc.copyWith(imageUrls: temp);
-      shouldPush = true;
+      isModelChanged = true;
     }
 
-    if (shouldPush &&
+    if (isModelChanged &&
         shouldUpdate &&
         UserPreferences.myUser.clearanceLevel >= Constants.MANAGER_LEVEL) {
       Logx.em(_TAG, 'updating bloc ' + bloc.id);
@@ -384,7 +384,7 @@ class Fresh {
   static CaptainService freshCaptainServiceMap(Map<String, dynamic> map, bool shouldUpdate) {
     CaptainService captainService = Dummy.getDummyCaptainService();
 
-    bool shouldPush = true;
+    bool isModelChanged = false;
 
     try {
       captainService = captainService.copyWith(id: map['id'] as String);
@@ -395,24 +395,24 @@ class Fresh {
       captainService = captainService.copyWith(name: map['name'] as String);
     } catch (e) {
       Logx.em(_TAG, 'captain service name not exist for id: ${captainService.id}');
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       captainService = captainService.copyWith(sequence: map['sequence'] as int);
     } catch (e) {
       Logx.em(
           _TAG, 'captain service sequence not exist for id: ${captainService.id}');
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       captainService = captainService.copyWith(isActive: map['isActive'] as bool);
     } catch (e) {
       Logx.em(
           _TAG, 'captain service sequence not exist for id: ${captainService.id}');
-      shouldPush = true;
+      isModelChanged = true;
     }
 
-    if (shouldPush &&
+    if (isModelChanged &&
         shouldUpdate &&
         UserPreferences.myUser.clearanceLevel >= Constants.MANAGER_LEVEL) {
       Logx.i(_TAG, 'updating captain service ${captainService.id}');
@@ -457,7 +457,7 @@ class Fresh {
       Map<String, dynamic> map, bool shouldUpdate) {
     Category category = Dummy.getDummyCategory('');
 
-    bool shouldPush = true;
+    bool isModelChanged = false;
 
     try {
       category = category.copyWith(id: map['id'] as String);
@@ -468,55 +468,55 @@ class Fresh {
       category = category.copyWith(name: map['name'] as String);
     } catch (e) {
       Logx.em(_TAG, 'category name not exist for category id: ' + category.id);
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       category = category.copyWith(type: map['type'] as String);
     } catch (e) {
       Logx.em(_TAG, 'category type not exist for category id: ' + category.id);
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       category = category.copyWith(serviceId: map['serviceId'] as String);
     } catch (e) {
       Logx.em(
           _TAG, 'category serviceId not exist for category id: ' + category.id);
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       category = category.copyWith(imageUrl: map['imageUrl'] as String);
     } catch (e) {
       Logx.em(
           _TAG, 'category imageUrl not exist for category id: ' + category.id);
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       category = category.copyWith(ownerId: map['ownerId'] as String);
     } catch (e) {
       Logx.em(
           _TAG, 'category ownerId not exist for category id: ' + category.id);
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       category = category.copyWith(createdAt: map['createdAt'] as int);
     } catch (e) {
       Logx.em(
           _TAG, 'category createdAt not exist for category id: ' + category.id);
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       category = category.copyWith(sequence: map['sequence'] as int);
     } catch (e) {
       Logx.em(
           _TAG, 'category sequence not exist for category id: ' + category.id);
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       category = category.copyWith(description: map['description'] as String);
     } catch (e) {
       Logx.em(_TAG,
           'category description not exist for category id: ' + category.id);
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       category = category.copyWith(blocIds: List<String>.from(map['blocIds']));
@@ -525,10 +525,10 @@ class Fresh {
           _TAG, 'category blocIds not exist for category id: ' + category.id);
       List<String> existingBlocIds = [category.serviceId];
       category = category.copyWith(blocIds: existingBlocIds);
-      shouldPush = true;
+      isModelChanged = true;
     }
 
-    if (shouldPush &&
+    if (isModelChanged &&
         shouldUpdate &&
         UserPreferences.myUser.clearanceLevel >= Constants.MANAGER_LEVEL) {
       Logx.i(_TAG, 'updating category ' + category.id);
@@ -607,7 +607,7 @@ class Fresh {
       Map<String, dynamic> map, bool shouldUpdate) {
     Celebration celebration =
         Dummy.getDummyCelebration(Constants.blocServiceId);
-    bool shouldPush = true;
+    bool isModelChanged = false;
 
     try {
       celebration = celebration.copyWith(id: map['id'] as String);
@@ -618,13 +618,13 @@ class Fresh {
       celebration = celebration.copyWith(name: map['name'] as String);
     } catch (e) {
       Logx.em(_TAG, 'celebration name not exist for id: ' + celebration.id);
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       celebration = celebration.copyWith(surname: map['surname'] as String);
     } catch (e) {
       Logx.em(_TAG, 'celebration surname not exist for id: ' + celebration.id);
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       celebration =
@@ -632,7 +632,7 @@ class Fresh {
     } catch (e) {
       Logx.em(_TAG,
           'celebration blocServiceId not exist for id: ' + celebration.id);
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       celebration =
@@ -640,13 +640,13 @@ class Fresh {
     } catch (e) {
       Logx.em(
           _TAG, 'celebration customerId not exist for id: ' + celebration.id);
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       celebration = celebration.copyWith(phone: map['phone'] as int);
     } catch (e) {
       Logx.em(_TAG, 'celebration phone not exist for id: ' + celebration.id);
-      shouldPush = true;
+      isModelChanged = true;
     }
 
     try {
@@ -655,14 +655,14 @@ class Fresh {
     } catch (e) {
       Logx.em(
           _TAG, 'celebration guestsCount not exist for id: ' + celebration.id);
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       celebration = celebration.copyWith(createdAt: map['createdAt'] as int);
     } catch (e) {
       Logx.em(
           _TAG, 'celebration createdAt not exist for id: ' + celebration.id);
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       celebration =
@@ -670,7 +670,7 @@ class Fresh {
     } catch (e) {
       Logx.em(
           _TAG, 'celebration arrivalDate not exist for id: ' + celebration.id);
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       celebration =
@@ -678,7 +678,7 @@ class Fresh {
     } catch (e) {
       Logx.em(
           _TAG, 'celebration arrivalTime not exist for id: ' + celebration.id);
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       celebration =
@@ -686,7 +686,7 @@ class Fresh {
     } catch (e) {
       Logx.em(_TAG,
           'celebration durationHours not exist for id: ' + celebration.id);
-      shouldPush = true;
+      isModelChanged = true;
     }
 
     try {
@@ -695,7 +695,7 @@ class Fresh {
     } catch (e) {
       Logx.em(_TAG,
           'celebration bottleProductIds not exist for id: ' + celebration.id);
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       celebration = celebration.copyWith(
@@ -703,7 +703,7 @@ class Fresh {
     } catch (e) {
       Logx.em(
           _TAG, 'celebration bottleNames not exist for id: ' + celebration.id);
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       celebration =
@@ -711,23 +711,23 @@ class Fresh {
     } catch (e) {
       Logx.em(_TAG,
           'celebration specialRequest not exist for id: ' + celebration.id);
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       celebration = celebration.copyWith(occasion: map['occasion'] as String);
     } catch (e) {
       Logx.em(_TAG, 'reservation occasion not exist for id: ' + celebration.id);
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       celebration = celebration.copyWith(isApproved: map['isApproved'] as bool);
     } catch (e) {
       Logx.em(
           _TAG, 'celebration isApproved not exist for id: ' + celebration.id);
-      shouldPush = true;
+      isModelChanged = true;
     }
 
-    if (shouldPush && shouldUpdate) {
+    if (isModelChanged && shouldUpdate) {
       Logx.i(_TAG, 'updating celebration ' + celebration.id);
       FirestoreHelper.pushCelebration(celebration);
     }
@@ -841,7 +841,7 @@ class Fresh {
       Map<String, dynamic> map, bool shouldUpdate) {
     Challenge challenge = Dummy.getDummyChallenge();
 
-    bool shouldPush = true;
+    bool isModelChanged = false;
 
     try {
       challenge = challenge.copyWith(id: map['id'] as String);
@@ -852,37 +852,37 @@ class Fresh {
       challenge = challenge.copyWith(level: map['level'] as int);
     } catch (e) {
       Logx.em(_TAG, 'challenge level not exist for id: ' + challenge.id);
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       challenge = challenge.copyWith(title: map['title'] as String);
     } catch (e) {
       Logx.em(_TAG, 'challenge title not exist for id: ' + challenge.id);
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       challenge = challenge.copyWith(description: map['description'] as String);
     } catch (e) {
       Logx.em(_TAG, 'challenge description not exist for id: ' + challenge.id);
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       challenge = challenge.copyWith(points: map['points'] as int);
     } catch (e) {
       Logx.em(_TAG, 'challenge points not exist for id: ' + challenge.id);
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       challenge = challenge.copyWith(clickCount: map['clickCount'] as int);
     } catch (e) {
       Logx.em(_TAG, 'challenge clickCount not exist for id: ' + challenge.id);
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       challenge = challenge.copyWith(dialogTitle: map['dialogTitle'] as String);
     } catch (e) {
       Logx.em(_TAG, 'challenge dialogTitle not exist for id: ' + challenge.id);
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       challenge = challenge.copyWith(
@@ -890,7 +890,7 @@ class Fresh {
     } catch (e) {
       Logx.em(
           _TAG, 'challenge dialogAcceptText not exist for id: ' + challenge.id);
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       challenge = challenge.copyWith(
@@ -898,10 +898,10 @@ class Fresh {
     } catch (e) {
       Logx.em(_TAG,
           'challenge dialogAccept2Text not exist for id: ' + challenge.id);
-      shouldPush = true;
+      isModelChanged = true;
     }
 
-    if (shouldPush &&
+    if (isModelChanged &&
         shouldUpdate &&
         UserPreferences.myUser.clearanceLevel >= Constants.MANAGER_LEVEL) {
       Logx.i(_TAG, 'updating challenge ' + challenge.id);
@@ -982,7 +982,7 @@ class Fresh {
   static LoungeChat freshLoungeChatMap(
       Map<String, dynamic> map, bool shouldUpdate) {
     LoungeChat chat = Dummy.getDummyLoungeChat();
-    bool shouldPush = true;
+    bool isModelChanged = false;
 
     try {
       chat = chat.copyWith(id: map['id'] as String);
@@ -993,72 +993,72 @@ class Fresh {
       chat = chat.copyWith(loungeId: map['loungeId'] as String);
     } catch (e) {
       Logx.em(_TAG, 'chat loungeId not exist for id: ${chat.id}');
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       chat = chat.copyWith(loungeName: map['loungeName'] as String);
     } catch (e) {
       Logx.em(_TAG, 'chat loungeName not exist for id: ${chat.id}');
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       chat = chat.copyWith(userId: map['userId'] as String);
     } catch (e) {
       Logx.em(_TAG, 'chat userId not exist for id: ${chat.id}');
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       chat = chat.copyWith(userName: map['userName'] as String);
     } catch (e) {
       Logx.em(_TAG, 'chat userName not exist for id: ${chat.id}');
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       chat = chat.copyWith(userImage: map['userImage'] as String);
     } catch (e) {
       Logx.em(_TAG, 'chat userImage not exist for id: ${chat.id}');
-      shouldPush = true;
+      isModelChanged = true;
     }
 
     try {
       chat = chat.copyWith(message: map['message'] as String);
     } catch (e) {
       Logx.em(_TAG, 'chat message not exist for id: ${chat.id}');
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       chat = chat.copyWith(type: map['type'] as String);
     } catch (e) {
       Logx.em(_TAG, 'chat type not exist for id: ${chat.id}');
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       chat = chat.copyWith(time: map['time'] as int);
     } catch (e) {
       Logx.em(_TAG, 'chat time not exist for id: ${chat.id}');
-      shouldPush = true;
+      isModelChanged = true;
     }
 
     try {
       chat = chat.copyWith(vote: map['vote'] as int);
     } catch (e) {
       Logx.em(_TAG, 'chat vote not exist for id: ${chat.id}');
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       chat = chat.copyWith(upVoters: List<String>.from(map['upVoters']));
     } catch (e) {
       Logx.em(_TAG, 'chat upVoters not exist for id: ${chat.id}');
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       chat = chat.copyWith(downVoters: List<String>.from(map['downVoters']));
     } catch (e) {
       Logx.em(_TAG, 'chat downVoters not exist for id: ${chat.id}');
-      shouldPush = true;
+      isModelChanged = true;
     }
 
-    if (shouldPush && shouldUpdate) {
+    if (isModelChanged && shouldUpdate) {
       Logx.i(_TAG, 'updating chat ${chat.id}');
       FirestoreHelper.pushLoungeChat(chat);
     }
@@ -1150,7 +1150,7 @@ class Fresh {
   static Config freshConfigMap(Map<String, dynamic> map, bool shouldUpdate) {
     Config config = Dummy.getDummyConfig(Constants.blocServiceId);
 
-    bool shouldPush = true;
+    bool isModelChanged = false;
 
     try {
       config = config.copyWith(id: map['id'] as String);
@@ -1161,22 +1161,22 @@ class Fresh {
       config = config.copyWith(name: map['name'] as String);
     } catch (e) {
       Logx.em(_TAG, 'config name not exist for id: ${config.id}');
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       config = config.copyWith(blocServiceId: map['blocServiceId'] as String);
     } catch (e) {
       Logx.em(_TAG, 'config blocServiceId not exist for id: ${config.id}');
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       config = config.copyWith(value: map['value'] as bool);
     } catch (e) {
       Logx.em(_TAG, 'config value not exist for id: ${config.id}');
-      shouldPush = true;
+      isModelChanged = true;
     }
 
-    if (shouldPush &&
+    if (isModelChanged &&
         shouldUpdate &&
         UserPreferences.myUser.clearanceLevel >= Constants.MANAGER_LEVEL) {
       Logx.i(_TAG, 'updating config ${config.id}');
@@ -1217,7 +1217,7 @@ class Fresh {
   static Genre freshGenreMap(Map<String, dynamic> map, bool shouldUpdate) {
     Genre genre = Dummy.getDummyGenre();
 
-    bool shouldPush = true;
+    bool isModelChanged = false;
 
     try {
       genre = genre.copyWith(id: map['id'] as String);
@@ -1228,10 +1228,10 @@ class Fresh {
       genre = genre.copyWith(name: map['name'] as String);
     } catch (e) {
       Logx.em(_TAG, 'genre name not exist for id: ' + genre.id);
-      shouldPush = true;
+      isModelChanged = true;
     }
 
-    if (shouldPush &&
+    if (isModelChanged &&
         shouldUpdate &&
         UserPreferences.myUser.clearanceLevel >= Constants.MANAGER_LEVEL) {
       Logx.i(_TAG, 'updating genre ' + genre.id);
@@ -1263,7 +1263,7 @@ class Fresh {
       Map<String, dynamic> map, bool shouldUpdate) {
     HistoryMusic historyMusic = Dummy.getDummyHistoryMusic();
 
-    bool shouldPush = true;
+    bool isModelChanged = false;
 
     try {
       historyMusic = historyMusic.copyWith(id: map['id'] as String);
@@ -1274,22 +1274,22 @@ class Fresh {
       historyMusic = historyMusic.copyWith(userId: map['userId'] as String);
     } catch (e) {
       Logx.em(_TAG, 'historyMusic userId not exist for id: ${historyMusic.id}');
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       historyMusic = historyMusic.copyWith(genre: map['genre'] as String);
     } catch (e) {
       Logx.em(_TAG, 'historyMusic genre not exist for id: ${historyMusic.id}');
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       historyMusic = historyMusic.copyWith(count: map['count'] as int);
     } catch (e) {
       Logx.em(_TAG, 'historyMusic count not exist for id: ${historyMusic.id}');
-      shouldPush = true;
+      isModelChanged = true;
     }
 
-    if (shouldPush && shouldUpdate) {
+    if (isModelChanged && shouldUpdate) {
       Logx.i(_TAG, 'updating history music ${historyMusic.id}');
       FirestoreHelper.pushHistoryMusic(historyMusic);
     }
@@ -1329,7 +1329,7 @@ class Fresh {
       Map<String, dynamic> map, bool shouldUpdate) {
     Lounge lounge = Dummy.getDummyLounge();
 
-    bool shouldPush = true;
+    bool isModelChanged = false;
 
     try {
       lounge = lounge.copyWith(id: map['id'] as String);
@@ -1340,80 +1340,80 @@ class Fresh {
       lounge = lounge.copyWith(name: map['name'] as String);
     } catch (e) {
       Logx.em(_TAG, 'lounge name not exist for id: ${lounge.id}');
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       lounge = lounge.copyWith(description: map['description'] as String);
     } catch (e) {
       Logx.em(_TAG, 'lounge description not exist for id: ${lounge.id}');
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       lounge = lounge.copyWith(rules: map['rules'] as String);
     } catch (e) {
       Logx.em(_TAG, 'lounge rules not exist for id: ${lounge.id}');
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       lounge = lounge.copyWith(type: map['type'] as String);
     } catch (e) {
       Logx.em(_TAG, 'lounge type not exist for id: ${lounge.id}');
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       lounge = lounge.copyWith(imageUrl: map['imageUrl'] as String);
     } catch (e) {
       Logx.em(_TAG, 'lounge imageUrl not exist for id: ${lounge.id}');
-      shouldPush = true;
+      isModelChanged = true;
     }
 
     try {
       lounge = lounge.copyWith(admins: List<String>.from(map['admins']));
     } catch (e) {
       Logx.em(_TAG, 'lounge admins not exist for id: ${lounge.id}');
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       lounge = lounge.copyWith(members: List<String>.from(map['members']));
     } catch (e) {
       Logx.em(_TAG, 'lounge members not exist for id: ${lounge.id}');
-      shouldPush = true;
+      isModelChanged = true;
     }
 
     try {
       lounge = lounge.copyWith(creationTime: map['creationTime'] as int);
     } catch (e) {
       Logx.em(_TAG, 'lounge creationTime not exist for id: ${lounge.id}');
-      shouldPush = true;
+      isModelChanged = true;
     }
 
     try {
       lounge = lounge.copyWith(lastChat: map['lastChat'] as String);
     } catch (e) {
       Logx.em(_TAG, 'lounge lastChat not exist for id: ${lounge.id}');
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       lounge = lounge.copyWith(lastChatTime: map['lastChatTime'] as int);
     } catch (e) {
       Logx.em(_TAG, 'lounge lastChatTime not exist for id: ${lounge.id}');
-      shouldPush = true;
+      isModelChanged = true;
     }
 
     try {
       lounge = lounge.copyWith(isActive: map['isActive'] as bool);
     } catch (e) {
       Logx.em(_TAG, 'lounge isActive not exist for id: ${lounge.id}');
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       lounge = lounge.copyWith(isVip: map['isVip'] as bool);
     } catch (e) {
       Logx.em(_TAG, 'lounge isVip not exist for id: ${lounge.id}');
-      shouldPush = true;
+      isModelChanged = true;
     }
 
-    if (shouldPush && shouldUpdate &&
+    if (isModelChanged && shouldUpdate &&
         UserPreferences.myUser.clearanceLevel >= Constants.MANAGER_LEVEL) {
       Logx.i(_TAG, 'updating lounge ${lounge.id}');
       FirestoreHelper.pushLounge(lounge);
@@ -2058,7 +2058,7 @@ class Fresh {
   static PartyGuest freshPartyGuestMap(
       Map<String, dynamic> map, bool shouldUpdate) {
     PartyGuest partyGuest = Dummy.getDummyPartyGuest(true);
-    bool shouldPush = true;
+    bool isModelChanged = false;
 
     try {
       partyGuest = partyGuest.copyWith(id: map['id'] as String);
@@ -2069,44 +2069,44 @@ class Fresh {
       partyGuest = partyGuest.copyWith(partyId: map['partyId'] as String);
     } catch (e) {
       Logx.em(_TAG, 'partyGuest partyId not exist for id: ' + partyGuest.id);
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       partyGuest = partyGuest.copyWith(guestId: map['guestId'] as String);
     } catch (e) {
       Logx.em(_TAG, 'partyGuest guestId not exist for id: ' + partyGuest.id);
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       partyGuest = partyGuest.copyWith(name: map['name'] as String);
     } catch (e) {
       Logx.em(_TAG, 'partyGuest name not exist for id: ' + partyGuest.id);
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       partyGuest = partyGuest.copyWith(surname: map['surname'] as String);
     } catch (e) {
       Logx.em(_TAG, 'partyGuest surname not exist for id: ' + partyGuest.id);
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       partyGuest = partyGuest.copyWith(phone: map['phone'] as String);
     } catch (e) {
       Logx.em(_TAG, 'partyGuest phone not exist for id: ' + partyGuest.id);
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       partyGuest = partyGuest.copyWith(email: map['email'] as String);
     } catch (e) {
       Logx.em(_TAG, 'partyGuest email not exist for id: ' + partyGuest.id);
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       partyGuest = partyGuest.copyWith(guestsCount: map['guestsCount'] as int);
     } catch (e) {
       Logx.em(
           _TAG, 'partyGuest guestsCount not exist for id: ' + partyGuest.id);
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       partyGuest =
@@ -2114,19 +2114,19 @@ class Fresh {
     } catch (e) {
       Logx.em(_TAG,
           'partyGuest guestsRemaining not exist for id: ${partyGuest.id}');
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       partyGuest = partyGuest.copyWith(createdAt: map['createdAt'] as int);
     } catch (e) {
       Logx.em(_TAG, 'partyGuest createdAt not exist for id: ${partyGuest.id}');
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       partyGuest = partyGuest.copyWith(isApproved: map['isApproved'] as bool);
     } catch (e) {
       Logx.em(_TAG, 'partyGuest isApproved not exist for id: ${partyGuest.id}');
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       partyGuest = partyGuest.copyWith(
@@ -2134,7 +2134,7 @@ class Fresh {
     } catch (e) {
       Logx.em(_TAG,
           'partyGuest isChallengeClicked not exist for id: ${partyGuest.id}');
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       partyGuest =
@@ -2142,7 +2142,7 @@ class Fresh {
     } catch (e) {
       Logx.em(
           _TAG, 'partyGuest shouldBanUser not exist for id: ${partyGuest.id}');
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       partyGuest =
@@ -2150,30 +2150,30 @@ class Fresh {
     } catch (e) {
       Logx.em(
           _TAG, 'partyGuest guestStatus not exist for id: ${partyGuest.id}');
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       partyGuest = partyGuest.copyWith(gender: map['gender'] as String);
     } catch (e) {
       Logx.em(_TAG, 'partyGuest gender not exist for id: ${partyGuest.id}');
-      shouldPush = true;
+      isModelChanged = true;
     }
 
     try {
       partyGuest = partyGuest.copyWith(promoterId: map['promoterId'] as String);
     } catch (e) {
       Logx.em(_TAG, 'partyGuest promoterId not exist for id: ${partyGuest.id}');
-      shouldPush = true;
+      isModelChanged = true;
     }
 
     try {
       partyGuest = partyGuest.copyWith(isVip: map['isVip'] as bool);
     } catch (e) {
       Logx.em(_TAG, 'partyGuest isVip not exist for id: ${partyGuest.id}');
-      shouldPush = true;
+      isModelChanged = true;
     }
 
-    if (shouldPush &&
+    if (isModelChanged &&
         shouldUpdate &&
         UserPreferences.myUser.clearanceLevel >= Constants.PROMOTER_LEVEL) {
       Logx.i(_TAG, 'updating party guest ${partyGuest.id}');
@@ -2217,7 +2217,7 @@ class Fresh {
   static PartyInterest freshPartyInterestMap(
       Map<String, dynamic> map, bool shouldUpdate) {
     PartyInterest partyInterest = Dummy.getDummyPartyInterest();
-    bool shouldPush = true;
+    bool isModelChanged = false;
 
     try {
       partyInterest = partyInterest.copyWith(id: map['id'] as String);
@@ -2228,22 +2228,22 @@ class Fresh {
       partyInterest = partyInterest.copyWith(partyId: map['partyId'] as String);
     } catch (e) {
       Logx.em(_TAG, 'partyInterest partyId not exist for id: ${partyInterest.id}');
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       partyInterest = partyInterest.copyWith(userIds: List<String>.from(map['userIds']));
     } catch (e) {
       Logx.em(_TAG, 'party artistIds not exist for id: ${partyInterest.id}');
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       partyInterest = partyInterest.copyWith(initCount: map['initCount'] as int);
     } catch (e) {
       Logx.em(_TAG, 'partyInterest initCount not exist for id: ${partyInterest.id}');
-      shouldPush = true;
+      isModelChanged = true;
     }
 
-    if (shouldPush && shouldUpdate) {
+    if (isModelChanged && shouldUpdate) {
       Logx.i(_TAG, 'updating party interest ${partyInterest.id}');
       FirestoreHelper.pushPartyInterest(partyInterest);
     }
@@ -2254,7 +2254,7 @@ class Fresh {
   static Product freshProductMap(Map<String, dynamic> map, bool shouldUpdate) {
     Product product = Dummy.getDummyProduct('', UserPreferences.myUser.id);
 
-    bool shouldPushProduct = true;
+    bool shouldPushProduct = false;
     int intPrice = 0;
 
     try {
@@ -2541,7 +2541,7 @@ class Fresh {
   /** promoter **/
   static Promoter freshPromoterMap(Map<String, dynamic> map, bool shouldUpdate) {
     Promoter promoter = Dummy.getDummyPromoter();
-    bool shouldPush = true;
+    bool isModelChanged = false;
 
     try {
       promoter = promoter.copyWith(id: map['id'] as String);
@@ -2552,16 +2552,16 @@ class Fresh {
       promoter = promoter.copyWith(name: map['name'] as String);
     } catch (e) {
       Logx.em(_TAG, 'promoter name not exist for id: ${promoter.id}');
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       promoter = promoter.copyWith(type: map['type'] as String);
     } catch (e) {
       Logx.em(_TAG, 'promoter type not exist for id: ${promoter.id}');
-      shouldPush = true;
+      isModelChanged = true;
     }
 
-    if (shouldPush &&
+    if (isModelChanged &&
         shouldUpdate &&
         UserPreferences.myUser.clearanceLevel >= Constants.MANAGER_LEVEL) {
       Logx.i(_TAG, 'updating promoter ${promoter.id}');
@@ -2596,7 +2596,7 @@ class Fresh {
   /** promoter guest **/
   static PromoterGuest freshPromoterGuestMap(Map<String, dynamic> map, bool shouldUpdate) {
     PromoterGuest promoterGuest = Dummy.getDummyPromoterGuest();
-    bool shouldPush = true;
+    bool isModelChanged = false;
 
     try {
       promoterGuest = promoterGuest.copyWith(id: map['id'] as String);
@@ -2607,47 +2607,47 @@ class Fresh {
       promoterGuest = promoterGuest.copyWith(name: map['name'] as String);
     } catch (e) {
       Logx.em(_TAG, 'promoter guest name not exist for id: ${promoterGuest.id}');
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       promoterGuest = promoterGuest.copyWith(phone: map['phone'] as String);
     } catch (e) {
       Logx.em(_TAG, 'promoter guest phone not exist for id: ${promoterGuest.id}');
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       promoterGuest = promoterGuest.copyWith(promoterId: map['promoterId'] as String);
     } catch (e) {
       Logx.em(_TAG, 'promoter guest promoterId not exist for id: ${promoterGuest.id}');
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       promoterGuest = promoterGuest.copyWith(blocUserId: map['blocUserId'] as String);
     } catch (e) {
       Logx.em(_TAG, 'promoter guest blocUserId not exist for id: ${promoterGuest.id}');
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       promoterGuest = promoterGuest.copyWith(partyGuestId: map['partyGuestId'] as String);
     } catch (e) {
       Logx.em(_TAG, 'promoter guest partyGuestId not exist for id: ${promoterGuest.id}');
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       promoterGuest = promoterGuest.copyWith(createdAt: map['createdAt'] as int);
     } catch (e) {
       Logx.em(_TAG, 'promoter guest createdAt not exist for id: ${promoterGuest.id}');
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       promoterGuest = promoterGuest.copyWith(hasAttended: map['hasAttended'] as bool);
     } catch (e) {
       Logx.em(_TAG, 'promoter guest hasAttended not exist for id: ${promoterGuest.id}');
-      shouldPush = true;
+      isModelChanged = true;
     }
 
 
-    if (shouldPush &&
+    if (isModelChanged &&
         shouldUpdate &&
         UserPreferences.myUser.clearanceLevel >= Constants.PROMOTER_LEVEL) {
       Logx.i(_TAG, 'updating promoter guest ${promoterGuest.id}');
@@ -2707,7 +2707,7 @@ class Fresh {
   /** quick order **/
   static QuickOrder freshQuickOrderMap(Map<String, dynamic> map, bool shouldUpdate) {
     QuickOrder quickOrder = Dummy.getDummyQuickOrder();
-    bool shouldPush = true;
+    bool isModelChanged = false;
 
     try {
       quickOrder = quickOrder.copyWith(id: map['id'] as String);
@@ -2718,45 +2718,45 @@ class Fresh {
       quickOrder = quickOrder.copyWith(custId: map['custId'] as String);
     } catch (e) {
       Logx.em(_TAG, 'quick order custId not exist for id: ${quickOrder.id}');
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       quickOrder = quickOrder.copyWith(custPhone: map['custPhone'] as int);
     } catch (e) {
       Logx.em(_TAG, 'quick order custPhone not exist for id: ${quickOrder.id}');
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       quickOrder = quickOrder.copyWith(productId: map['productId'] as String);
     } catch (e) {
       Logx.em(_TAG, 'quick order productId not exist for id: ${quickOrder.id}');
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       quickOrder = quickOrder.copyWith(quantity: map['quantity'] as int);
     } catch (e) {
       Logx.em(_TAG, 'quick order quantity not exist for id: ${quickOrder.id}');
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       quickOrder = quickOrder.copyWith(table: map['table'] as String);
     } catch (e) {
       Logx.em(_TAG, 'quick order table not exist for id: ${quickOrder.id}');
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       quickOrder = quickOrder.copyWith(createdAt: map['createdAt'] as int);
     } catch (e) {
       Logx.em(_TAG, 'quick order createdAt not exist for id: ${quickOrder.id}');
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
-      quickOrder = quickOrder.copyWith(isAccepted: map['isAccepted'] as bool);
+      quickOrder = quickOrder.copyWith(status: map['status'] as String);
     } catch (e) {
-      Logx.em(_TAG, 'quick order isAccepted not exist for id: ${quickOrder.id}');
-      shouldPush = true;
+      Logx.em(_TAG, 'quick order status not exist for id: ${quickOrder.id}');
+      isModelChanged = true;
     }
-    if (shouldPush && shouldUpdate) {
+    if (isModelChanged && shouldUpdate) {
       Logx.i(_TAG, 'updating quick order ${quickOrder.id}');
       FirestoreHelper.pushQuickOrder(quickOrder);
     }
@@ -2803,9 +2803,9 @@ class Fresh {
       Logx.em(_TAG, 'quick order createdAt not exist for id: ${quickOrder.id}');
     }
     try {
-      fresh = fresh.copyWith(isAccepted: quickOrder.isAccepted);
+      fresh = fresh.copyWith(status: quickOrder.status);
     } catch (e) {
-      Logx.em(_TAG, 'quick order isAccepted not exist for id: ${quickOrder.id}');
+      Logx.em(_TAG, 'quick order status not exist for id: ${quickOrder.id}');
     }
 
     return fresh;
@@ -2814,7 +2814,7 @@ class Fresh {
   /** quick table **/
   static QuickTable freshQuickTableMap(Map<String, dynamic> map, bool shouldUpdate) {
     QuickTable quickTable = Dummy.getDummyQuickTable();
-    bool shouldPush = true;
+    bool isModelChanged = true;
 
     try {
       quickTable = quickTable.copyWith(id: map['id'] as String);
@@ -2825,22 +2825,22 @@ class Fresh {
       quickTable = quickTable.copyWith(phone: map['phone'] as int);
     } catch (e) {
       Logx.em(_TAG, 'quick table phone not exist for id: ${quickTable.id}');
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       quickTable = quickTable.copyWith(tableName: map['tableName'] as String);
     } catch (e) {
       Logx.em(_TAG, 'quick table tableName not exist for id: ${quickTable.id}');
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       quickTable = quickTable.copyWith(createdAt: map['createdAt'] as int);
     } catch (e) {
       Logx.em(_TAG, 'quick table createdAt not exist for id: ${quickTable.id}');
-      shouldPush = true;
+      isModelChanged = true;
     }
 
-    // if (shouldPush && shouldUpdate) {
+    // if (isModelChanged && shouldUpdate) {
     //   Logx.i(_TAG, 'updating quick table ${quickTable.id}');
     //   FirestoreHelper.pushQuickTable(quickTable);
     // }
@@ -2880,7 +2880,7 @@ class Fresh {
       Map<String, dynamic> map, bool shouldUpdate) {
     Reservation reservation =
         Dummy.getDummyReservation(Constants.blocServiceId);
-    bool shouldPush = true;
+    bool isModelChanged = false;
 
     try {
       reservation = reservation.copyWith(id: map['id'] as String);
@@ -2892,7 +2892,7 @@ class Fresh {
     } catch (e) {
       Logx.em(_TAG,
           'reservation name not exist for reservation id: ${reservation.id}');
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       reservation =
@@ -2902,7 +2902,7 @@ class Fresh {
           _TAG,
           'reservation blocServiceId not exist for reservation id: ' +
               reservation.id);
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       reservation =
@@ -2912,14 +2912,14 @@ class Fresh {
           _TAG,
           'reservation customerId not exist for reservation id: ' +
               reservation.id);
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       reservation = reservation.copyWith(phone: map['phone'] as int);
     } catch (e) {
       Logx.em(_TAG,
           'reservation phone not exist for reservation id: ' + reservation.id);
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       reservation =
@@ -2929,7 +2929,7 @@ class Fresh {
           _TAG,
           'reservation guestsCount not exist for reservation id: ' +
               reservation.id);
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       reservation = reservation.copyWith(createdAt: map['createdAt'] as int);
@@ -2938,7 +2938,7 @@ class Fresh {
           _TAG,
           'reservation createdAt not exist for reservation id: ' +
               reservation.id);
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       reservation =
@@ -2948,7 +2948,7 @@ class Fresh {
           _TAG,
           'reservation arrivalDate not exist for reservation id: ' +
               reservation.id);
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       reservation =
@@ -2958,7 +2958,7 @@ class Fresh {
           _TAG,
           'reservation arrivalTime not exist for reservation id: ' +
               reservation.id);
-      shouldPush = true;
+      isModelChanged = true;
     }
 
     try {
@@ -2967,7 +2967,7 @@ class Fresh {
     } catch (e) {
       Logx.em(_TAG,
           'reservation bottleProductIds not exist for id: ' + reservation.id);
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       reservation = reservation.copyWith(
@@ -2975,7 +2975,7 @@ class Fresh {
     } catch (e) {
       Logx.em(
           _TAG, 'reservation bottleNames not exist for id: ' + reservation.id);
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       reservation =
@@ -2983,13 +2983,13 @@ class Fresh {
     } catch (e) {
       Logx.em(_TAG,
           'reservation specialRequest not exist for id: ' + reservation.id);
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       reservation = reservation.copyWith(occasion: map['occasion'] as String);
     } catch (e) {
       Logx.em(_TAG, 'reservation occasion not exist for id: ' + reservation.id);
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       reservation = reservation.copyWith(isApproved: map['isApproved'] as bool);
@@ -2998,10 +2998,10 @@ class Fresh {
           _TAG,
           'reservation isApproved not exist for reservation id: ' +
               reservation.id);
-      shouldPush = true;
+      isModelChanged = true;
     }
 
-    if (shouldPush && shouldUpdate) {
+    if (isModelChanged && shouldUpdate) {
       Logx.i(_TAG, 'updating reservation ' + reservation.id);
       FirestoreHelper.pushReservation(reservation);
     }
@@ -3130,7 +3130,7 @@ class Fresh {
   /** ticket **/
   static Ticket freshTicketMap(Map<String, dynamic> map, bool shouldUpdate) {
     Ticket ticket = Dummy.getDummyTicket();
-    bool shouldPush = true;
+    bool isModelChanged = false;
 
     try {
       ticket = ticket.copyWith(id: map['id'] as String);
@@ -3141,45 +3141,45 @@ class Fresh {
       ticket = ticket.copyWith(name: map['name'] as String);
     } catch (e) {
       Logx.em(_TAG, 'ticket name not exist for ticket id: ' + ticket.id);
-      shouldPush = true;
+      isModelChanged = true;
     }
 
     try {
       ticket = ticket.copyWith(partyId: map['partyId'] as String);
     } catch (e) {
       Logx.em(_TAG, 'ticket partyId not exist for ticket id: ' + ticket.id);
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       ticket = ticket.copyWith(customerId: map['customerId'] as String);
     } catch (e) {
       Logx.em(_TAG, 'ticket customerId not exist for ticket id: ' + ticket.id);
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       ticket = ticket.copyWith(transactionId: map['transactionId'] as String);
     } catch (e) {
       Logx.em(
           _TAG, 'ticket transactionId not exist for ticket id: ' + ticket.id);
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       ticket = ticket.copyWith(phone: map['phone'] as String);
     } catch (e) {
       Logx.em(_TAG, 'ticket phone not exist for ticket id: ' + ticket.id);
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       ticket = ticket.copyWith(email: map['email'] as String);
     } catch (e) {
       Logx.em(_TAG, 'ticket email not exist for ticket id: ' + ticket.id);
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       ticket = ticket.copyWith(entryCount: map['entryCount'] as int);
     } catch (e) {
       Logx.em(_TAG, 'ticket entryCount not exist for ticket id: ' + ticket.id);
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       ticket =
@@ -3187,22 +3187,22 @@ class Fresh {
     } catch (e) {
       Logx.em(_TAG,
           'ticket entriesRemaining not exist for ticket id: ' + ticket.id);
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       ticket = ticket.copyWith(createdAt: map['createdAt'] as int);
     } catch (e) {
       Logx.em(_TAG, 'ticket createdAt not exist for ticket id: ' + ticket.id);
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       ticket = ticket.copyWith(isPaid: map['isPaid'] as bool);
     } catch (e) {
       Logx.em(_TAG, 'ticket isPaid not exist for ticket id: ' + ticket.id);
-      shouldPush = true;
+      isModelChanged = true;
     }
 
-    if (shouldPush && shouldUpdate) {
+    if (isModelChanged && shouldUpdate) {
       Logx.i(_TAG, 'updating ticket ' + ticket.id);
       FirestoreHelper.pushTicket(ticket);
     }
@@ -3278,7 +3278,7 @@ class Fresh {
   /** ui photo **/
   static UiPhoto freshUiPhotoMap(Map<String, dynamic> map, bool shouldUpdate) {
     UiPhoto uiPhoto = Dummy.getDummyUiPhoto();
-    bool shouldPush = true;
+    bool isModelChanged = false;
 
     try {
       uiPhoto = uiPhoto.copyWith(id: map['id'] as String);
@@ -3289,7 +3289,7 @@ class Fresh {
       uiPhoto = uiPhoto.copyWith(name: map['name'] as String);
     } catch (e) {
       Logx.em(_TAG, 'uiPhoto name not exist for id: ' + uiPhoto.id);
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       uiPhoto =
@@ -3298,10 +3298,10 @@ class Fresh {
       Logx.em(_TAG, 'uiPhoto imageUrls not exist for id: ' + uiPhoto.id);
       List<String> temp = [];
       uiPhoto = uiPhoto.copyWith(imageUrls: temp);
-      shouldPush = true;
+      isModelChanged = true;
     }
 
-    if (shouldPush && shouldUpdate) {
+    if (isModelChanged && shouldUpdate) {
       Logx.i(_TAG, 'updating uiPhoto ' + uiPhoto.id);
       FirestoreHelper.pushUiPhoto(uiPhoto);
     }
@@ -3523,7 +3523,7 @@ class Fresh {
   /** user lounge **/
   static UserLounge freshUserLoungeMap(Map<String, dynamic> map, bool shouldUpdate) {
     UserLounge userLounge = Dummy.getDummyUserLounge();
-    bool shouldPush = true;
+    bool isModelChanged = false;
 
     try {
       userLounge = userLounge.copyWith(id: map['id'] as String);
@@ -3534,34 +3534,34 @@ class Fresh {
       userLounge = userLounge.copyWith(userId: map['userId'] as String);
     } catch (e) {
       Logx.em(_TAG, 'userLounge userId not exist for id: ${userLounge.id}');
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       userLounge = userLounge.copyWith(loungeId: map['loungeId'] as String);
     } catch (e) {
       Logx.em(_TAG, 'userLounge loungeId not exist for id: ${userLounge.id}');
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       userLounge = userLounge.copyWith(lastAccessedTime: map['lastAccessedTime'] as int);
     } catch (e) {
       Logx.em(_TAG, 'userLounge lastAccessedTime not exist for id: ${userLounge.id}');
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       userLounge = userLounge.copyWith(isAccepted: map['isAccepted'] as bool);
     } catch (e) {
       Logx.em(_TAG, 'userLounge isAccepted not exist for id: ${userLounge.id}');
-      shouldPush = true;
+      isModelChanged = true;
     }
     try {
       userLounge = userLounge.copyWith(isBanned: map['isBanned'] as bool);
     } catch (e) {
       Logx.em(_TAG, 'userLounge isBanned not exist for id: ${userLounge.id}');
-      shouldPush = true;
+      isModelChanged = true;
     }
 
-    if (shouldPush && shouldUpdate) {
+    if (isModelChanged && shouldUpdate) {
       Logx.i(_TAG, 'updating userLounge ${userLounge.id}');
       FirestoreHelper.pushUserLounge(userLounge);
     }

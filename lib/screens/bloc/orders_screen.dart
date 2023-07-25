@@ -22,14 +22,14 @@ class _OrdersScreenState extends State<OrdersScreen> {
   static const String _TAG = 'OrdersScreen';
 
   List<QuickOrder> mPendingOrders = [];
-  List<QuickOrder> mAcceptedOrders = [];
+  List<QuickOrder> mCompletedOrders = [];
 
   late List<String> mOptions;
   String sOption = '';
 
   @override
   void initState() {
-    mOptions = ['pending', 'accepted'];
+    mOptions = ['pending', 'completed'];
     sOption = mOptions.first;
 
     super.initState();
@@ -94,7 +94,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
           }
 
           mPendingOrders = [];
-          mAcceptedOrders = [];
+          mCompletedOrders = [];
 
           if(snapshot.data!.docs.isNotEmpty){
             for (int i = 0; i < snapshot.data!.docs.length; i++) {
@@ -102,10 +102,10 @@ class _OrdersScreenState extends State<OrdersScreen> {
               Map<String, dynamic> map = document.data()! as Map<String, dynamic>;
               final QuickOrder quickOrder = Fresh.freshQuickOrderMap(map, false);
 
-              if(quickOrder.isAccepted){
-                mAcceptedOrders.add(quickOrder);
-              } else {
+              if(quickOrder.status == 'ordered'){
                 mPendingOrders.add(quickOrder);
+              } else {
+                mCompletedOrders.add(quickOrder);
               }
 
               if (i == snapshot.data!.docs.length - 1) {
@@ -125,7 +125,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
   }
 
   _showOrders(BuildContext context) {
-    List<QuickOrder> quickOrders = sOption == mOptions.first? mPendingOrders : mAcceptedOrders;
+    List<QuickOrder> quickOrders = sOption == mOptions.first? mPendingOrders : mCompletedOrders;
     return Expanded(
       child: ListView.builder(
           itemCount: quickOrders.length,

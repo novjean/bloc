@@ -1,28 +1,29 @@
 import 'package:bloc/db/shared_preferences/user_preferences.dart';
 import 'package:bloc/utils/date_time_utils.dart';
+import 'package:bloc/widgets/ui/button_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
+import '../../db/entity/product.dart';
+import '../../db/entity/quick_order.dart';
+import '../../helpers/dummy.dart';
 import '../../helpers/firestore_helper.dart';
 import '../../helpers/fresh.dart';
+import '../../main.dart';
 import '../../utils/constants.dart';
 import '../../utils/logx.dart';
-import '../db/entity/product.dart';
-import '../db/entity/quick_order.dart';
-import '../helpers/dummy.dart';
-import '../main.dart';
 
-class QuickOrderItem extends StatefulWidget {
+class CaptainQuickOrderItem extends StatefulWidget {
   QuickOrder quickOrder;
 
-  QuickOrderItem({Key? key, required this.quickOrder}) : super(key: key);
+  CaptainQuickOrderItem({Key? key, required this.quickOrder}) : super(key: key);
 
   @override
-  State<QuickOrderItem> createState() => _QuickOrderItemState();
+  State<CaptainQuickOrderItem> createState() => _CaptainQuickOrderItemState();
 }
 
-class _QuickOrderItemState extends State<QuickOrderItem> {
-  static const String _TAG = 'QuickOrderItem';
+class _CaptainQuickOrderItemState extends State<CaptainQuickOrderItem> {
+  static const String _TAG = 'CaptainQuickOrderItem';
 
   Product mProduct = Dummy.getDummyProduct('', UserPreferences.myUser.id);
   var _isProductLoading = true;
@@ -91,9 +92,9 @@ class _QuickOrderItemState extends State<QuickOrderItem> {
                                   Flexible(
                                     flex: 4,
                                     child: Text(
-                                      mProduct.name.toLowerCase(),
+                                      '${widget.quickOrder.table} | ${mProduct.name.toLowerCase()} x ${widget.quickOrder.quantity}',
                                       style: const TextStyle(
-                                        fontSize: 18,
+                                        fontSize: 20,
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),
@@ -107,20 +108,25 @@ class _QuickOrderItemState extends State<QuickOrderItem> {
                               ),
                             ),
                             // const SizedBox(height: 5),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                mProduct.type == 'Food'
-                                    ? Image.asset(
-                                        mProduct.isVeg
-                                            ? 'assets/icons/ic_veg_food.png'
-                                            : 'assets/icons/ic_non_veg_food.png',
-                                        width: 15,
-                                        height: 15,
-                                      )
-                                    : const SizedBox()
-                              ],
-                            ),
+                            // Row(
+                            //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            //   children: [
+                            //     Text('table ${widget.quickOrder.table}',
+                            //         style: const TextStyle(
+                            //       fontSize: 18,
+                            //       fontWeight: FontWeight.bold,
+                            //     )),
+                            //     mProduct.type == 'Food'
+                            //         ? Image.asset(
+                            //             mProduct.isVeg
+                            //                 ? 'assets/icons/ic_veg_food.png'
+                            //                 : 'assets/icons/ic_non_veg_food.png',
+                            //             width: 15,
+                            //             height: 15,
+                            //           )
+                            //         : const SizedBox()
+                            //   ],
+                            // ),
                             const SizedBox(height: 2),
                             Text(mProduct.description.toLowerCase(),
                                 overflow: TextOverflow.ellipsis,
@@ -128,13 +134,41 @@ class _QuickOrderItemState extends State<QuickOrderItem> {
                                 style: const TextStyle(
                                     fontSize: 14,
                                     color: Constants.darkPrimary)),
+                            const SizedBox(height: 5),
                             widget.quickOrder.status == 'ordered'
-                                ? _showAddMinusButton(context)
-                                : Text(
-                                    widget.quickOrder.status == 'confirmed'? 'order is confirmed and it shall reach you soon!' : 'sorry, ${mProduct.name} is temporarily not available.',
-                                    style: TextStyle(
-                                        fontSize: 14,
-                                        color: Constants.darkPrimary)),
+                                ? Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    ButtonWidget(
+                                      text: '❌ reject',
+                                      onClicked: () {
+                                        widget.quickOrder = widget.quickOrder
+                                            .copyWith(status: 'rejected');
+                                        FirestoreHelper.pushQuickOrder(widget.quickOrder);
+                                        Logx.ist(_TAG, 'order is rejected!');
+                                      },
+                                    ),
+                                    ButtonWidget(
+                                        text: '✅ confirm',
+                                        onClicked: () {
+                                          widget.quickOrder = widget.quickOrder
+                                              .copyWith(status: 'confirmed');
+                                          FirestoreHelper.pushQuickOrder(widget.quickOrder);
+                                          Logx.ist(_TAG, 'order is confirmed!');
+                                        },
+                                      ),
+                                  ],
+                                )
+                                : Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    Text(
+                                    widget.quickOrder.status == 'confirmed'? '✅ confirmed': '❌ rejected',
+                                        style: TextStyle(
+                                            fontSize: 14,
+                                            color: Constants.darkPrimary)),
+                                  ],
+                                ),
 
                             const SizedBox(height: 5),
                           ],
@@ -195,7 +229,7 @@ class _QuickOrderItemState extends State<QuickOrderItem> {
     );
   }
 
-  _showAddMinusButton(BuildContext context) {
+  _showAcceptButton(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(top: 5.0),
       child: Row(

@@ -8,7 +8,8 @@ class QuickOrder{
 
   final String table;
   final int createdAt;
-  final bool isAccepted;
+
+  final String status;
 
 //<editor-fold desc="Data Methods">
   const QuickOrder({
@@ -19,7 +20,7 @@ class QuickOrder{
     required this.quantity,
     required this.table,
     required this.createdAt,
-    required this.isAccepted,
+    required this.status,
   });
 
   @override
@@ -34,7 +35,7 @@ class QuickOrder{
           quantity == other.quantity &&
           table == other.table &&
           createdAt == other.createdAt &&
-          isAccepted == other.isAccepted);
+          status == other.status);
 
   @override
   int get hashCode =>
@@ -45,7 +46,7 @@ class QuickOrder{
       quantity.hashCode ^
       table.hashCode ^
       createdAt.hashCode ^
-      isAccepted.hashCode;
+      status.hashCode;
 
   @override
   String toString() {
@@ -57,7 +58,7 @@ class QuickOrder{
         ' quantity: $quantity,' +
         ' table: $table,' +
         ' createdAt: $createdAt,' +
-        ' isAccepted: $isAccepted,' +
+        ' status: $status,' +
         '}';
   }
 
@@ -69,7 +70,7 @@ class QuickOrder{
     int? quantity,
     String? table,
     int? createdAt,
-    bool? isAccepted,
+    String? status,
   }) {
     return QuickOrder(
       id: id ?? this.id,
@@ -79,7 +80,7 @@ class QuickOrder{
       quantity: quantity ?? this.quantity,
       table: table ?? this.table,
       createdAt: createdAt ?? this.createdAt,
-      isAccepted: isAccepted ?? this.isAccepted,
+      status: status ?? this.status,
     );
   }
 
@@ -92,7 +93,7 @@ class QuickOrder{
       'quantity': this.quantity,
       'table': this.table,
       'createdAt': this.createdAt,
-      'isAccepted': this.isAccepted,
+      'status': this.status,
     };
   }
 
@@ -105,7 +106,7 @@ class QuickOrder{
       quantity: map['quantity'] as int,
       table: map['table'] as String,
       createdAt: map['createdAt'] as int,
-      isAccepted: map['isAccepted'] as bool,
+      status: map['status'] as String,
     );
   }
 
