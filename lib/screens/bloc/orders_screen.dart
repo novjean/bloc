@@ -6,10 +6,13 @@ import 'package:flutter/material.dart';
 
 import '../../db/entity/quick_order.dart';
 import '../../helpers/fresh.dart';
+import '../../main.dart';
 import '../../utils/constants.dart';
 import '../../utils/date_time_utils.dart';
+import '../../utils/logx.dart';
 import '../../widgets/quick_order_item.dart';
 import '../../widgets/ui/app_bar_title.dart';
+import '../../widgets/ui/sized_listview_block.dart';
 
 class OrdersScreen extends StatefulWidget {
   @override
@@ -19,36 +22,16 @@ class OrdersScreen extends StatefulWidget {
 class _OrdersScreenState extends State<OrdersScreen> {
   static const String _TAG = 'OrdersScreen';
 
-  List<QuickOrder> mQuickOrders = [];
-  var _isOrdersLoading = true;
+  List<QuickOrder> mPendingOrders = [];
+  List<QuickOrder> mAcceptedOrders = [];
+
+  late List<String> mOptions;
+  String sOption = '';
 
   @override
   void initState() {
-    FirestoreHelper.pullQuickOrders(UserPreferences.myUser.id).then((res) {
-      int now = Timestamp.now().millisecondsSinceEpoch;
-
-      if (res.docs.isNotEmpty) {
-        for (int i = 0; i < res.docs.length; i++) {
-          DocumentSnapshot document = res.docs[i];
-          Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-          final QuickOrder quickOrder = Fresh.freshQuickOrderMap(data, false);
-
-          if (now - quickOrder.createdAt > DateTimeUtils.millisecondsDay) {
-            FirestoreHelper.deleteQuickOrder(quickOrder.id);
-          } else {
-            mQuickOrders.add(quickOrder);
-          }
-        }
-        setState(() {
-          _isOrdersLoading = false;
-        });
-      } else {
-        //no orders
-        setState(() {
-          _isOrdersLoading = false;
-        });
-      }
-    });
+    mOptions = ['pending', 'accepted'];
+    sOption = mOptions.first;
 
     super.initState();
   }
@@ -61,30 +44,95 @@ class _OrdersScreenState extends State<OrdersScreen> {
           title: AppBarTitle(title: 'orders'),
           titleSpacing: 0,
         ),
-        body: _isOrdersLoading ? const LoadingWidget() : _buildBody(context));
+        body: _buildBody(context));
   }
 
   _buildBody(BuildContext context) {
     return Column(
       children: [
         const SizedBox(height: 5.0),
-        mQuickOrders.isNotEmpty
-            ? _showOrders(context)
-            : const Center(
-                child: Text('no orders placed yet! 😲'),
-              ),
+            _showOrderOptions(context),
+            _loadOrders(context),
         const SizedBox(height: 10.0),
       ],
     );
   }
 
+  _showOrderOptions(BuildContext context) {
+    double containerHeight = mq.height * 0.2;
+
+    return SizedBox(
+      key: UniqueKey(),
+      // this height has to match with category item container height
+      height: MediaQuery.of(context).size.height / 15,
+      child: ListView.builder(
+          itemCount: mOptions.length,
+          scrollDirection: Axis.horizontal,
+          itemBuilder: (ctx, index) {
+            return GestureDetector(
+                child: SizedListViewBlock(
+                  title: mOptions[index],
+                  height: containerHeight,
+                  width: mq.width / 2,
+                  color: Constants.primary,
+                ),
+                onTap: () {
+                  setState(() {
+                    sOption = mOptions[index];
+                    Logx.i(_TAG, '$sOption at box office is selected');
+                  });
+                });
+          }),
+    );
+  }
+
+  _loadOrders(BuildContext context) {
+    return StreamBuilder<QuerySnapshot>(
+        stream: FirestoreHelper.getQuickOrders(UserPreferences.myUser.id),
+        builder: (ctx, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const LoadingWidget();
+          }
+
+          mPendingOrders = [];
+          mAcceptedOrders = [];
+
+          if(snapshot.data!.docs.isNotEmpty){
+            for (int i = 0; i < snapshot.data!.docs.length; i++) {
+              DocumentSnapshot document = snapshot.data!.docs[i];
+              Map<String, dynamic> map = document.data()! as Map<String, dynamic>;
+              final QuickOrder quickOrder = Fresh.freshQuickOrderMap(map, false);
+
+              if(quickOrder.isAccepted){
+                mAcceptedOrders.add(quickOrder);
+              } else {
+                mPendingOrders.add(quickOrder);
+              }
+
+              if (i == snapshot.data!.docs.length - 1) {
+                return _showOrders(context);
+              }
+            }
+          } else {
+          return const Center(
+            child: Text('no orders placed yet! 😲',
+            style: TextStyle(fontSize: 20, color: Constants.primary)),
+            );
+          }
+
+          Logx.i(_TAG, 'loading orders...');
+          return const LoadingWidget();
+        });
+  }
+
   _showOrders(BuildContext context) {
+    List<QuickOrder> quickOrders = sOption == mOptions.first? mPendingOrders : mAcceptedOrders;
     return Expanded(
       child: ListView.builder(
-          itemCount: mQuickOrders.length,
+          itemCount: quickOrders.length,
           scrollDirection: Axis.vertical,
           itemBuilder: (ctx, index) {
-            QuickOrder quickOrder = mQuickOrders[index];
+            QuickOrder quickOrder = quickOrders[index];
             return QuickOrderItem(
               quickOrder: quickOrder,
             );

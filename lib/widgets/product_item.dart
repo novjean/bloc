@@ -316,6 +316,34 @@ class _ProductItemState extends State<ProductItem> {
     );
   }
 
+  // new order
+  void handleOrderClicked(BuildContext context, int quantity) {
+    if (UserPreferences.isUserLoggedIn()) {
+      if(TablePreferences.isUserQuickSeated()){
+        blocUser.User user = UserPreferences.myUser;
+
+        String tableName = TablePreferences.getQuickTableName();
+
+        QuickOrder quickOrder = Dummy.getDummyQuickOrder();
+        quickOrder = quickOrder.copyWith(
+            custId: user.id,
+            table: tableName,
+            custPhone: user.phoneNumber,
+            quantity: quantity,
+            productId: widget.product.id);
+        FirestoreHelper.pushQuickOrder(quickOrder);
+      } else {
+        LayoutUtils layoutUtils = LayoutUtils(context: context,
+            blocServiceId: widget.serviceId);
+        layoutUtils.showTableSelectBottomSheet();
+      }
+    } else {
+      LoginUtils loginUtils = LoginUtils(context: context);
+      loginUtils.showLoginDialog();
+    }
+  }
+
+  // old order
   addProductToCart(Cart cart) {
     // add it to the cart
     String cartId = StringUtils.getRandomString(20);
@@ -434,29 +462,4 @@ class _ProductItemState extends State<ProductItem> {
     );
   }
 
-  void handleOrderClicked(BuildContext context, int quantity) {
-    if (UserPreferences.isUserLoggedIn()) {
-      if(TablePreferences.isUserQuickSeated()){
-        blocUser.User user = UserPreferences.myUser;
-
-        String tableName = TablePreferences.getQuickTableName();
-
-        QuickOrder quickOrder = Dummy.getDummyQuickOrder();
-        quickOrder = quickOrder.copyWith(
-            custId: user.id,
-            table: tableName,
-            custPhone: user.phoneNumber,
-            quantity: quantity,
-            productId: widget.product.id);
-        FirestoreHelper.pushQuickOrder(quickOrder);
-      } else {
-        LayoutUtils layoutUtils = LayoutUtils(context: context,
-            blocServiceId: widget.serviceId);
-        layoutUtils.showTableSelectBottomSheet();
-      }
-    } else {
-      LoginUtils loginUtils = LoginUtils(context: context);
-      loginUtils.showLoginDialog();
-    }
-  }
 }

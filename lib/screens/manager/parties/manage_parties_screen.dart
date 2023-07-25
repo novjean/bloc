@@ -10,6 +10,7 @@ import '../../../db/entity/manager_service.dart';
 import '../../../db/entity/party.dart';
 import '../../../helpers/firestore_helper.dart';
 import '../../../helpers/fresh.dart';
+import '../../../main.dart';
 import '../../../utils/logx.dart';
 import '../../../widgets/ui/listview_block.dart';
 import '../../../widgets/ui/sized_listview_block.dart';
@@ -80,12 +81,12 @@ class _ManagePartiesScreenState extends State<ManagePartiesScreen> {
   }
 
   displayOptions(BuildContext context) {
-    double containerHeight = MediaQuery.of(context).size.height / 20;
+    double containerHeight = mq.height *0.2;
 
     return SizedBox(
       key: UniqueKey(),
       // this height has to match with category item container height
-      height: MediaQuery.of(context).size.height / 15,
+      height: mq.height / 15,
       child: ListView.builder(
           itemCount: mOptions.length,
           scrollDirection: Axis.horizontal,
@@ -94,7 +95,7 @@ class _ManagePartiesScreenState extends State<ManagePartiesScreen> {
                 child: SizedListViewBlock(
                   title: mOptions[index],
                   height: containerHeight,
-                  width: MediaQuery.of(context).size.width / 3,
+                  width: mq.width / 3,
                   color: Theme.of(context).primaryColor,
                 ),
                 onTap: () {

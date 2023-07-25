@@ -11,6 +11,7 @@ import '../../../helpers/firestore_helper.dart';
 import '../../../widgets/ui/button_widget.dart';
 import '../../../widgets/ui/textfield_widget.dart';
 import '../../db/entity/bloc.dart';
+import '../../main.dart';
 import '../../utils/logx.dart';
 import '../../utils/string_utils.dart';
 import '../../widgets/ui/app_bar_title.dart';
@@ -185,8 +186,8 @@ class _BlocAddEditScreenState extends State<BlocAddEditScreen> {
   Widget photosListDialog() {
     return SingleChildScrollView(
       child: SizedBox(
-        height: 300.0, // Change as per your requirement
-        width: 300.0, // Change as per your requirement
+        height: mq.height*0.5, // Change as per your requirement
+        width: mq.width*0.8, // Change as per your requirement
         child: ListView.builder(
           shrinkWrap: true,
           itemCount: mImageUrls.length,

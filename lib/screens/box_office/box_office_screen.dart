@@ -163,7 +163,7 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                displayBoxOfficeOptions(context),
+                _showBoxOfficeOptions(context),
                 const Divider(),
                 UserPreferences.myUser.clearanceLevel >=
                         Constants.PROMOTER_LEVEL
@@ -198,8 +198,8 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
     }
   }
 
-  displayBoxOfficeOptions(BuildContext context) {
-    double containerHeight = MediaQuery.of(context).size.height / 20;
+  _showBoxOfficeOptions(BuildContext context) {
+    double containerHeight = mq.height * 0.2;
 
     return SizedBox(
       key: UniqueKey(),
@@ -501,7 +501,7 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
                 onTap: () {
                   Celebration _sCelebration = celebrations[index];
                   Logx.i(
-                      _TAG, _sCelebration.name + '\'s celebration is selected');
+                      _TAG, '${_sCelebration.name}\'s celebration is selected');
 
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (ctx) => CelebrationAddEditScreen(
@@ -523,7 +523,7 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
             '⚡ Warning: FOMO alert! Our party radar is buzzing, and it seems like you\'re missing out on the hottest 🔥🔥🔥 gathering in town. Hurry up, grab your spot, and prepare for an unforgettable experience! 🪩'
                 .toLowerCase(),
             textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 22, color: Constants.primary),
+            style: const TextStyle(fontSize: 22, color: Constants.primary),
           ),
           const SizedBox(height: 16),
           Text(

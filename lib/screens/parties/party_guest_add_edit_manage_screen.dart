@@ -1568,7 +1568,7 @@ class _PartyGuestAddEditManageScreenState
 
     if (kIsWeb) {
       await FirebaseAuth.instance
-          .signInWithPhoneNumber('${completePhoneNumber}', null)
+          .signInWithPhoneNumber(completePhoneNumber, null)
           .then((firebaseUser) {
         Logx.i(
             _TAG,
@@ -1584,7 +1584,7 @@ class _PartyGuestAddEditManageScreenState
       });
     } else {
       await FirebaseAuth.instance.verifyPhoneNumber(
-          phoneNumber: '${completePhoneNumber}',
+          phoneNumber: completePhoneNumber,
           verificationCompleted: (PhoneAuthCredential credential) async {
             Logx.i(_TAG,
                 'verifyPhoneNumber: $completePhoneNumber is verified. attempting sign in with credentials...');
@@ -1650,7 +1650,7 @@ class _PartyGuestAddEditManageScreenState
                 ),
                 Center(
                     child: Text(
-                  'enter the six digit code you received on \n${completePhoneNumber}',
+                  'enter the six digit code you received on \n$completePhoneNumber',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: Theme.of(context).primaryColorDark,

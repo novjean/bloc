@@ -1305,6 +1305,15 @@ class FirestoreHelper {
         .get();
   }
 
+  static getQuickOrders(String custId) {
+    return FirebaseFirestore.instance
+        .collection(QUICK_ORDERS)
+        .where('custId', isEqualTo: custId)
+        .orderBy('createdAt', descending: true)
+        .snapshots();
+  }
+
+
   static void deleteQuickOrder(String docId) {
     FirebaseFirestore.instance.collection(QUICK_ORDERS).doc(docId).delete();
   }
@@ -2000,5 +2009,6 @@ class FirestoreHelper {
   static void deleteUserLounge(String docId) {
     FirebaseFirestore.instance.collection(USER_LOUNGES).doc(docId).delete();
   }
+
 
 }
