@@ -1,13 +1,16 @@
 import 'package:bloc/screens/captain/captain_orders_screen.dart';
 import 'package:bloc/screens/captain/captain_tables_screen.dart';
-import 'package:bloc/screens/manager/users/manage_users_screen.dart';
+import 'package:bloc/widgets/ui/app_bar_title.dart';
 import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import '../../db/entity/captain_service.dart';
 import '../../helpers/firestore_helper.dart';
+import '../../helpers/fresh.dart';
+import '../../utils/logx.dart';
 import '../../widgets/ui/listview_block.dart';
+import 'captain_quick_orders_screen.dart';
 
 class CaptainMainScreen extends StatelessWidget {
   static const String _TAG = 'CaptainMainScreen';
@@ -20,9 +23,9 @@ class CaptainMainScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('captain | services'),
+        title: AppBarTitle(title: 'captain',),
+        titleSpacing: 0,
       ),
-      // drawer: AppDrawer(),
       body: _buildBody(context),
     );
   }
@@ -42,7 +45,7 @@ class CaptainMainScreen extends StatelessWidget {
         stream: FirestoreHelper.getCaptainServices(),
         builder: (ctx, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return LoadingWidget();
+            return const LoadingWidget();
           }
 
           List<CaptainService> _captainServices = [];
@@ -50,15 +53,17 @@ class CaptainMainScreen extends StatelessWidget {
             DocumentSnapshot document = snapshot.data!.docs[i];
             Map<String, dynamic> data =
                 document.data()! as Map<String, dynamic>;
-            final CaptainService cs = CaptainService.fromMap(data);
-            _captainServices.add(cs);
+            final CaptainService cs = Fresh.freshCaptainServiceMap(data, true);
+            if(cs.isActive){
+              _captainServices.add(cs);
+            }
 
             if (i == snapshot.data!.docs.length - 1) {
               return _displayCaptainServices(context, _captainServices);
             }
           }
-          print('loading captain services...');
-          return LoadingWidget();
+          Logx.i(_TAG, 'loading captain services...');
+          return const LoadingWidget();
         });
   }
 
@@ -78,6 +83,14 @@ class CaptainMainScreen extends StatelessWidget {
                 ),
                 onTap: () {
                   switch (captainServices[index].name) {
+                    case 'orders':
+                      {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (ctx) => CaptainQuickOrdersScreen(
+                              blocServiceId: blocServiceId,
+                            )));
+                        break;
+                      }
                     case 'Orders':
                       {
                         Navigator.of(context).push(MaterialPageRoute(
@@ -94,21 +107,6 @@ class CaptainMainScreen extends StatelessWidget {
                                   serviceName: captainService.name,
                                   userTitle: userTitle,
                                 )));
-                        break;
-                      }
-                    case 'Revenue':
-                      {
-                        // Navigator.of(context).push(MaterialPageRoute(
-                        //     builder: (ctx) => TablesManagementScreen(
-                        //         serviceId: blocService.id,
-                        //         managerService: captainService,
-                        //         dao: dao)));
-                        break;
-                      }
-                    case 'Profile':
-                      {
-                        Navigator.of(context).push(MaterialPageRoute(
-                            builder: (ctx) => ManageUsersScreen()));
                         break;
                       }
                     default:

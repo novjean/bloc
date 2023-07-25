@@ -5,6 +5,7 @@ import 'package:bloc/db/entity/ui_photo.dart';
 import '../db/entity/ad.dart';
 import '../db/entity/ad_campaign.dart';
 import '../db/entity/bloc.dart';
+import '../db/entity/captain_service.dart';
 import '../db/entity/category.dart';
 import '../db/entity/celebration.dart';
 import '../db/entity/challenge.dart';
@@ -378,6 +379,78 @@ class Fresh {
 
     return freshBloc;
   }
+
+  /** captain service **/
+  static CaptainService freshCaptainServiceMap(Map<String, dynamic> map, bool shouldUpdate) {
+    CaptainService captainService = Dummy.getDummyCaptainService();
+
+    bool shouldPush = true;
+
+    try {
+      captainService = captainService.copyWith(id: map['id'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'captain service id not exist');
+    }
+    try {
+      captainService = captainService.copyWith(name: map['name'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'captain service name not exist for id: ${captainService.id}');
+      shouldPush = true;
+    }
+    try {
+      captainService = captainService.copyWith(sequence: map['sequence'] as int);
+    } catch (e) {
+      Logx.em(
+          _TAG, 'captain service sequence not exist for id: ${captainService.id}');
+      shouldPush = true;
+    }
+    try {
+      captainService = captainService.copyWith(isActive: map['isActive'] as bool);
+    } catch (e) {
+      Logx.em(
+          _TAG, 'captain service sequence not exist for id: ${captainService.id}');
+      shouldPush = true;
+    }
+
+    if (shouldPush &&
+        shouldUpdate &&
+        UserPreferences.myUser.clearanceLevel >= Constants.MANAGER_LEVEL) {
+      Logx.i(_TAG, 'updating captain service ${captainService.id}');
+      FirestoreHelper.pushCaptainService(captainService);
+    }
+
+    return captainService;
+  }
+
+  static CaptainService freshCaptainService(CaptainService captainService) {
+    CaptainService fresh = Dummy.getDummyCaptainService();
+
+    try {
+      fresh = fresh.copyWith(id: captainService.id);
+    } catch (e) {
+      Logx.em(_TAG, 'captain service id not exist');
+    }
+    try {
+      fresh = fresh.copyWith(name: captainService.name);
+    } catch (e) {
+      Logx.em(_TAG, 'captain service name not exist for id: ${captainService.id}');
+    }
+    try {
+      fresh = fresh.copyWith(sequence: captainService.sequence);
+    } catch (e) {
+      Logx.em(
+          _TAG, 'captain service sequence not exist for id: ${captainService.id}');
+    }
+    try {
+      fresh = fresh.copyWith(isActive: captainService.isActive);
+    } catch (e) {
+      Logx.em(
+          _TAG, 'captain service isActive not exist for id: ${captainService.id}');
+    }
+
+    return fresh;
+  }
+
 
   /** category **/
   static Category freshCategoryMap(

@@ -1,24 +1,27 @@
-import 'package:bloc/db/shared_preferences/user_preferences.dart';
-import 'package:bloc/helpers/firestore_helper.dart';
-import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import '../../db/entity/quick_order.dart';
+import '../../helpers/firestore_helper.dart';
 import '../../helpers/fresh.dart';
 import '../../main.dart';
 import '../../utils/constants.dart';
 import '../../utils/logx.dart';
 import '../../widgets/quick_order_item.dart';
 import '../../widgets/ui/app_bar_title.dart';
+import '../../widgets/ui/loading_widget.dart';
 import '../../widgets/ui/sized_listview_block.dart';
 
-class OrdersScreen extends StatefulWidget {
+class CaptainQuickOrdersScreen extends StatefulWidget {
+  String blocServiceId;
+
+  CaptainQuickOrdersScreen({required this.blocServiceId});
+
   @override
-  State<OrdersScreen> createState() => _OrdersScreenState();
+  State<CaptainQuickOrdersScreen> createState() => _CaptainQuickOrdersScreenState();
 }
 
-class _OrdersScreenState extends State<OrdersScreen> {
+class _CaptainQuickOrdersScreenState extends State<CaptainQuickOrdersScreen> {
   static const String _TAG = 'OrdersScreen';
 
   List<QuickOrder> mPendingOrders = [];
@@ -38,9 +41,9 @@ class _OrdersScreenState extends State<OrdersScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Constants.background,
+        // backgroundColor: Constants.background,
         appBar: AppBar(
-          title: AppBarTitle(title: 'orders'),
+          title: AppBarTitle(title: 'captain orders'),
           titleSpacing: 0,
         ),
         body: _buildBody(context));
@@ -50,8 +53,8 @@ class _OrdersScreenState extends State<OrdersScreen> {
     return Column(
       children: [
         const SizedBox(height: 5.0),
-            _showOrderOptions(context),
-            _loadOrders(context),
+        _showOrderOptions(context),
+        _loadOrders(context),
         const SizedBox(height: 10.0),
       ],
     );
@@ -87,7 +90,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
 
   _loadOrders(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
-        stream: FirestoreHelper.getQuickOrders(UserPreferences.myUser.id),
+        stream: FirestoreHelper.getAllQuickOrders(),
         builder: (ctx, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const LoadingWidget();
@@ -113,9 +116,9 @@ class _OrdersScreenState extends State<OrdersScreen> {
               }
             }
           } else {
-          return const Center(
-            child: Text('no orders placed yet! 😲',
-            style: TextStyle(fontSize: 20, color: Constants.primary)),
+            return const Center(
+              child: Text('no orders placed yet! 😲',
+                  style: TextStyle(fontSize: 20, color: Constants.darkPrimary)),
             );
           }
 

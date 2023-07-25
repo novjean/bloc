@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:bloc/db/entity/ad_campaign.dart';
 import 'package:bloc/db/entity/bloc.dart';
 import 'package:bloc/db/entity/bloc_service.dart';
+import 'package:bloc/db/entity/captain_service.dart';
 import 'package:bloc/db/entity/cart_item.dart';
 import 'package:bloc/db/entity/category.dart';
 import 'package:bloc/db/entity/celebration.dart';
@@ -439,6 +440,21 @@ class FirestoreHelper {
   }
 
   /** captain services **/
+  static void pushCaptainService(CaptainService captainService) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection(CAPTAIN_SERVICES)
+          .doc(captainService.id)
+          .set(captainService.toMap());
+    } on PlatformException catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } on Exception catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } catch (e) {
+      Logx.em(_TAG, e.toString());
+    }
+  }
+
   static Stream<QuerySnapshot<Object?>> getCaptainServices() {
     return FirebaseFirestore.instance
         .collection(CAPTAIN_SERVICES)
@@ -1309,10 +1325,16 @@ class FirestoreHelper {
     return FirebaseFirestore.instance
         .collection(QUICK_ORDERS)
         .where('custId', isEqualTo: custId)
-        .orderBy('createdAt', descending: true)
+        .orderBy('createdAt', descending: false)
         .snapshots();
   }
 
+  static getAllQuickOrders() {
+    return FirebaseFirestore.instance
+        .collection(QUICK_ORDERS)
+        .orderBy('createdAt', descending: false)
+        .snapshots();
+  }
 
   static void deleteQuickOrder(String docId) {
     FirebaseFirestore.instance.collection(QUICK_ORDERS).doc(docId).delete();
@@ -2009,6 +2031,5 @@ class FirestoreHelper {
   static void deleteUserLounge(String docId) {
     FirebaseFirestore.instance.collection(USER_LOUNGES).doc(docId).delete();
   }
-
 
 }

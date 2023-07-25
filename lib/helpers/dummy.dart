@@ -16,6 +16,7 @@ import '../db/entity/ad.dart';
 import '../db/entity/ad_campaign.dart';
 import '../db/entity/bloc.dart';
 import '../db/entity/bloc_service.dart';
+import '../db/entity/captain_service.dart';
 import '../db/entity/celebration.dart';
 import '../db/entity/config.dart';
 import '../db/entity/lounge_chat.dart';
@@ -97,6 +98,16 @@ class Dummy {
 
     return dummyBlocService;
   }
+
+  static CaptainService getDummyCaptainService() {
+    CaptainService dummy = CaptainService(
+        id: StringUtils.getRandomString(28),
+        name: '',
+        sequence:0,
+        isActive: false);
+    return dummy;
+  }
+
 
   static Category getDummyCategory(String serviceId) {
     Category dummyCategory = Category(

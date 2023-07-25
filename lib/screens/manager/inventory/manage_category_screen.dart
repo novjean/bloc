@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import '../../../helpers/dummy.dart';
 import '../../../helpers/firestore_helper.dart';
 import '../../../helpers/fresh.dart';
+import '../../../widgets/ui/app_bar_title.dart';
 import 'category_add_edit_screen.dart';
 
 class ManageCategoryScreen extends StatelessWidget {
@@ -20,7 +21,8 @@ class ManageCategoryScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('inventory | category'),
+        title: AppBarTitle(title:'manage inventory category'),
+        titleSpacing: 0,
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -48,7 +50,7 @@ class ManageCategoryScreen extends StatelessWidget {
         stream: FirestoreHelper.getCategories(serviceId),
         builder: (ctx, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return LoadingWidget();
+            return const LoadingWidget();
           }
 
           List<Category> _categories = [];
@@ -62,7 +64,7 @@ class ManageCategoryScreen extends StatelessWidget {
               return _displayCategories(context, _categories);
             }
           }
-          return Center(child: Text('loading categories...'));
+          return const LoadingWidget();
         });
   }
 
@@ -75,13 +77,10 @@ class ManageCategoryScreen extends StatelessWidget {
           itemBuilder: (ctx, index) {
             return GestureDetector(
                 child: ListViewBlock(
-                  title: _categories[index].sequence.toString() +
-                      ' : ' +
-                      _categories[index].name,
+                  title: '${_categories[index].sequence} : ${_categories[index].name}',
                 ),
                 onTap: () {
                   Category _sCategory = _categories[index];
-                  print(_sCategory.name + ' is selected');
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (ctx) => CategoryAddEditScreen(
                           category: _sCategory, task: 'edit')));
