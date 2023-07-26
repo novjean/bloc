@@ -333,7 +333,7 @@ class LoginUtils {
 
                 String verificationCode = UserPreferences.getVerificationId();
 
-                Logx.ist(_TAG, 'verifying $phone');
+                Logx.ist(_TAG, 'verifying $phone, please wait.');
                 try {
                   await FirebaseAuth.instance
                       .signInWithCredential(PhoneAuthProvider.credential(

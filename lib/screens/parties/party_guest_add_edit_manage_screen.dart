@@ -1,9 +1,7 @@
 import 'dart:io';
 
 import 'package:bloc/db/entity/history_music.dart';
-import 'package:bloc/db/entity/reservation.dart';
 import 'package:bloc/db/entity/user_lounge.dart';
-import 'package:bloc/utils/date_time_utils.dart';
 import 'package:bloc/widgets/ui/app_bar_title.dart';
 import 'package:bloc/widgets/ui/dark_button_widget.dart';
 import 'package:bloc/widgets/ui/loading_widget.dart';
@@ -43,10 +41,10 @@ import '../../utils/file_utils.dart';
 import '../../utils/logx.dart';
 import '../../utils/network_utils.dart';
 import '../../utils/string_utils.dart';
+import '../../widgets/party_guest_entry_widget.dart';
 import '../../widgets/ui/button_widget.dart';
 import '../../widgets/ui/dark_textfield_widget.dart';
 import '../../widgets/parties/party_banner.dart';
-import '../user/reservation_add_edit_screen.dart';
 
 class PartyGuestAddEditManageScreen extends StatefulWidget {
   PartyGuest partyGuest;
@@ -66,14 +64,9 @@ class _PartyGuestAddEditManageScreenState
     extends State<PartyGuestAddEditManageScreen> {
   static const String _TAG = 'PartyGuestAddEditManageScreen';
 
+  bool testMode = false;
+
   late blocUser.User bloc_user;
-
-  bool isPhotoChanged = false;
-
-  late String oldImageUrl;
-  late String newImageUrl;
-  String imagePath = '';
-
   bool hasUserChanged = false;
   bool _isCustomerLoading = true;
 
@@ -81,7 +74,13 @@ class _PartyGuestAddEditManageScreenState
   List<String> guestCounts = [];
 
   String sGuestStatus = 'couple';
-  List<String> guestStatuses = ['couple', 'ladies', 'lgbtq+', 'stag', 'promoter'];
+  List<String> guestStatuses = [
+    'couple',
+    'ladies',
+    'lgbtq+',
+    'stag',
+    'promoter'
+  ];
 
   String sGender = 'male';
   List<String> genders = [
@@ -116,6 +115,8 @@ class _PartyGuestAddEditManageScreenState
   List<Promoter> sPromoters = [];
   String sPromoterId = '';
 
+  int initGuestCount = 1;
+
   @override
   void initState() {
     if (!UserPreferences.isUserLoggedIn()) {
@@ -124,9 +125,10 @@ class _PartyGuestAddEditManageScreenState
       bloc_user = UserPreferences.myUser;
     }
 
-    if(widget.partyGuest.guestId.isEmpty){
+    if (widget.partyGuest.guestId.isEmpty) {
       bloc_user = Dummy.getDummyUser();
-      bloc_user = bloc_user.copyWith(name: widget.partyGuest.name,
+      bloc_user = bloc_user.copyWith(
+          name: widget.partyGuest.name,
           gender: widget.partyGuest.gender,
           phoneNumber: StringUtils.getInt(widget.partyGuest.phone),
           surname: widget.partyGuest.surname);
@@ -162,7 +164,6 @@ class _PartyGuestAddEditManageScreenState
       });
     }
 
-
     FirestoreHelper.pullChallenges().then((res) {
       if (res.docs.isNotEmpty) {
         Logx.i(_TAG, "successfully pulled in all challenges");
@@ -186,7 +187,9 @@ class _PartyGuestAddEditManageScreenState
     });
 
     sPartyId = widget.partyGuest.partyId;
-    FirestoreHelper.pullActiveGuestListParties(Timestamp.now().millisecondsSinceEpoch).then((res) {
+    FirestoreHelper.pullActiveGuestListParties(
+            Timestamp.now().millisecondsSinceEpoch)
+        .then((res) {
       if (res.docs.isNotEmpty) {
         // found parties
         List<Party> parties = [];
@@ -199,7 +202,7 @@ class _PartyGuestAddEditManageScreenState
           String partyTitle = '${party.name} ${party.chapter}';
           _partyNames.add(partyTitle);
 
-          if(party.id == sPartyId){
+          if (party.id == sPartyId) {
             sPartyName = partyTitle;
             sParty = party;
           }
@@ -220,16 +223,16 @@ class _PartyGuestAddEditManageScreenState
       }
     });
 
-    sPromoterId =  widget.partyGuest.promoterId;
+    sPromoterId = widget.partyGuest.promoterId;
     FirestoreHelper.pullPromoters().then((res) {
-      if(res.docs.isNotEmpty){
+      if (res.docs.isNotEmpty) {
         for (int i = 0; i < res.docs.length; i++) {
           DocumentSnapshot document = res.docs[i];
           Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
           final Promoter promoter = Fresh.freshPromoterMap(data, false);
           mPromoters.add(promoter);
 
-          if(promoter.id == sPromoterId){
+          if (promoter.id == sPromoterId) {
             sPromoters.add(promoter);
           }
         }
@@ -243,7 +246,7 @@ class _PartyGuestAddEditManageScreenState
       }
     });
 
-    if(widget.partyGuest.guestStatus == 'promoter'){
+    if (widget.partyGuest.guestStatus == 'promoter') {
       for (int i = 1; i <= 30; i++) {
         guestCounts.add(i.toString());
       }
@@ -258,29 +261,29 @@ class _PartyGuestAddEditManageScreenState
     sGender = widget.partyGuest.gender;
     super.initState();
 
-    if(UserPreferences.isUserLoggedIn()){
+    if (UserPreferences.isUserLoggedIn()) {
       FirestoreHelper.pullPartyInterest(widget.party.id).then((res) {
-        if(res.docs.isNotEmpty){
+        if (res.docs.isNotEmpty) {
           DocumentSnapshot document = res.docs[0];
           Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
           mPartyInterest = Fresh.freshPartyInterestMap(data, false);
-          if(!mPartyInterest.userIds.contains(UserPreferences.myUser.id)){
+          if (!mPartyInterest.userIds.contains(UserPreferences.myUser.id)) {
             mPartyInterest.userIds.add(UserPreferences.myUser.id);
             FirestoreHelper.pushPartyInterest(mPartyInterest);
             Logx.d(_TAG, 'user interest recorded for party');
           } else {
             Logx.d(_TAG, 'user interest previously recorded for party');
           }
-
         } else {
-          mPartyInterest = mPartyInterest.copyWith(partyId: widget.party.id, userIds: [UserPreferences.myUser.id]);
+          mPartyInterest = mPartyInterest.copyWith(
+              partyId: widget.party.id, userIds: [UserPreferences.myUser.id]);
           FirestoreHelper.pushPartyInterest(mPartyInterest);
 
           Logx.d(_TAG, 'party interest created for party');
         }
 
-        if(widget.task == 'manage'){
-          if(!mPartyInterest.userIds.contains(widget.partyGuest.guestId)){
+        if (widget.task == 'manage') {
+          if (!mPartyInterest.userIds.contains(widget.partyGuest.guestId)) {
             mPartyInterest.userIds.add(widget.partyGuest.guestId);
             FirestoreHelper.pushPartyInterest(mPartyInterest);
           }
@@ -288,6 +291,9 @@ class _PartyGuestAddEditManageScreenState
       });
     }
 
+    if(widget.task == 'edit'){
+      initGuestCount = widget.partyGuest.guestsCount;
+    }
   }
 
   @override
@@ -306,13 +312,15 @@ class _PartyGuestAddEditManageScreenState
         titleSpacing: 0,
         backgroundColor: Constants.background,
       ),
-      body:  _buildBody(context),
+      body: _buildBody(context),
     );
   }
 
   _buildBody(BuildContext context) {
-    return _isCustomerLoading && _isChallengesLoading
-        && _isPartiesLoading && _isPromotersLoading
+    return _isCustomerLoading &&
+            _isChallengesLoading &&
+            _isPartiesLoading &&
+            _isPromotersLoading
         ? const LoadingWidget()
         : ListView(
             physics: const BouncingScrollPhysics(),
@@ -372,41 +380,41 @@ class _PartyGuestAddEditManageScreenState
                           ),
                           IntlPhoneField(
                             style: TextStyle(
-                                color: Theme.of(context).primaryColor,
+                                color: Constants.primary,
                                 fontSize: 18),
                             decoration: InputDecoration(
                                 labelText: '',
                                 labelStyle: TextStyle(
-                                    color: Theme.of(context).primaryColor),
+                                    color: Constants.primary),
                                 hintStyle: TextStyle(
-                                    color: Theme.of(context).primaryColor),
+                                    color: Constants.primary),
                                 counterStyle: TextStyle(
-                                    color: Theme.of(context).primaryColor),
+                                    color: Constants.primary),
                                 border: OutlineInputBorder(
                                   borderSide: BorderSide(
-                                      color: Theme.of(context).primaryColor),
+                                      color: Constants.primary),
                                 ),
                                 enabledBorder: OutlineInputBorder(
                                   // width: 0.0 produces a thin "hairline" border
                                   borderSide: BorderSide(
-                                      color: Theme.of(context).primaryColor,
+                                      color: Constants.primary,
                                       width: 0.0),
                                 )),
                             controller: _controller,
                             initialCountryCode: 'IN',
                             dropdownTextStyle: TextStyle(
-                                color: Theme.of(context).primaryColor,
+                                color: Constants.primary,
                                 fontSize: 18),
                             pickerDialogStyle: PickerDialogStyle(
                                 backgroundColor:
-                                    Theme.of(context).primaryColor),
+                                    Constants.primary),
                             onChanged: (phone) {
                               Logx.i(_TAG, phone.completeNumber);
                               completePhoneNumber = phone.completeNumber;
                             },
                             onCountryChanged: (country) {
-                              Logx.i(_TAG,
-                                  'country changed to: ' + country.name);
+                              Logx.i(
+                                  _TAG, 'country changed to: ' + country.name);
                             },
                           ),
                         ],
@@ -456,18 +464,17 @@ class _PartyGuestAddEditManageScreenState
                           decoration: InputDecoration(
                               fillColor: Colors.white,
                               errorStyle: TextStyle(
-                                  color: Theme.of(context).errorColor,
-                                  fontSize: 16.0),
+                                  color: Constants.errorColor, fontSize: 16.0),
                               hintText: 'please select gender',
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(5.0),
                                 borderSide: BorderSide(
-                                    color: Theme.of(context).primaryColor),
+                                    color: Constants.primary),
                               ),
                               enabledBorder: OutlineInputBorder(
                                 // width: 0.0 produces a thin "hairline" border
                                 borderSide: BorderSide(
-                                    color: Theme.of(context).primaryColor,
+                                    color: Constants.primary,
                                     width: 0.0),
                               )),
                           isEmpty: sGender == '',
@@ -534,30 +541,25 @@ class _PartyGuestAddEditManageScreenState
                                 key: const ValueKey('guest_count'),
                                 decoration: InputDecoration(
                                     fillColor: Colors.white,
-                                    errorStyle: TextStyle(
-                                        color: Theme.of(context).errorColor,
+                                    errorStyle: const TextStyle(
+                                        color: Constants.errorColor,
                                         fontSize: 16.0),
                                     hintText: 'please select guest count',
                                     border: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(5.0),
-                                      borderSide: BorderSide(
-                                          color:
-                                              Theme.of(context).primaryColor),
+                                      borderSide: const BorderSide(
+                                          color: Constants.primary),
                                     ),
-                                    enabledBorder: OutlineInputBorder(
-                                      // width: 0.0 produces a thin "hairline" border
+                                    enabledBorder: const OutlineInputBorder(
                                       borderSide: BorderSide(
-                                          color: Theme.of(context).primaryColor,
-                                          width: 0.0),
+                                          color: Constants.primary, width: 0.0),
                                     )),
                                 isEmpty: sGuestCount == '',
                                 child: DropdownButtonHideUnderline(
                                   child: DropdownButton<String>(
-                                    style: TextStyle(
-                                        color: Theme.of(context)
-                                            .primaryColorLight),
-                                    dropdownColor:
-                                        Theme.of(context).backgroundColor,
+                                    style: const TextStyle(
+                                        color: Constants.lightPrimary),
+                                    dropdownColor: Constants.background,
                                     value: sGuestCount,
                                     isDense: true,
                                     onChanged: (String? newValue) {
@@ -591,15 +593,15 @@ class _PartyGuestAddEditManageScreenState
                 padding: const EdgeInsets.symmetric(horizontal: 32),
                 child: Column(
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 8.0),
+                    const Padding(
+                      padding: EdgeInsets.only(bottom: 8.0),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           Text(
                             'guests status',
                             style: TextStyle(
-                                color: Theme.of(context).primaryColorLight,
+                                color: Constants.lightPrimary,
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold),
                           ),
@@ -612,27 +614,24 @@ class _PartyGuestAddEditManageScreenState
                           key: const ValueKey('guests_status'),
                           decoration: InputDecoration(
                               fillColor: Colors.white,
-                              errorStyle: TextStyle(
-                                  color: Theme.of(context).errorColor,
-                                  fontSize: 16.0),
+                              errorStyle: const TextStyle(
+                                  color: Constants.errorColor, fontSize: 16.0),
                               hintText: 'please select guest status',
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(5.0),
-                                borderSide: BorderSide(
-                                    color: Theme.of(context).primaryColor),
+                                borderSide: const BorderSide(
+                                    color: Constants.lightPrimary),
                               ),
-                              enabledBorder: OutlineInputBorder(
-                                // width: 0.0 produces a thin "hairline" border
+                              enabledBorder: const OutlineInputBorder(
                                 borderSide: BorderSide(
-                                    color: Theme.of(context).primaryColor,
-                                    width: 0.0),
+                                    color: Constants.lightPrimary, width: 0.0),
                               )),
                           isEmpty: sGuestStatus == '',
                           child: DropdownButtonHideUnderline(
                             child: DropdownButton<String>(
-                              style: TextStyle(
-                                  color: Theme.of(context).primaryColorLight),
-                              dropdownColor: Theme.of(context).backgroundColor,
+                              style: const TextStyle(
+                                  color: Constants.lightPrimary),
+                              dropdownColor: Constants.background,
                               value: sGuestStatus,
                               isDense: true,
                               onChanged: (String? newValue) {
@@ -662,247 +661,270 @@ class _PartyGuestAddEditManageScreenState
               /** admin section **/
               widget.task == 'manage'
                   ? Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 32.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: 24),
-                    DarkTextFieldWidget(
-                      label: 'phone number *',
-                      text: bloc_user.phoneNumber.toString(),
-                      onChanged: (value) {},
-                    ),
-                    const SizedBox(height: 24),
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 10),
-                      child: Text(
-                        'party',
-                        style: TextStyle(
-                            color:
-                            Theme.of(context).primaryColorLight,
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                    _displayPartiesDropdown(context),
-                    const SizedBox(height: 24),
-
-                    DarkTextFieldWidget(
-                      label: 'challenge task',
-                      text: findChallenge().title,
-                      onChanged: (value) {},
-                    ),
-                    const SizedBox(height: 24),
-                    DarkTextFieldWidget(
-                      label: 'challenge url',
-                      text: findChallengeUrl(),
-                      onChanged: (value) {},
-                    ),
-                    const SizedBox(height: 24),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: 10),
-                          child: Text(
-                            'challenge level *',
-                            style: TextStyle(
-                                color:
-                                Theme.of(context).primaryColorLight,
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold),
+                      padding: const EdgeInsets.symmetric(horizontal: 32.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const SizedBox(height: 24),
+                          DarkTextFieldWidget(
+                            label: 'phone number *',
+                            text: bloc_user.phoneNumber.toString(),
+                            onChanged: (value) {},
                           ),
-                        ),
-                        Row(
-                          mainAxisAlignment:
-                          MainAxisAlignment.spaceBetween,
-                          children: [
-                            ButtonWidget(
-                              text: '  down  ',
-                              onClicked: () {
-                                int level = bloc_user.challengeLevel;
-                                level--;
-                                setState(() {
-                                  bloc_user = bloc_user.copyWith(
-                                      challengeLevel: level);
-                                  FirestoreHelper.pushUser(bloc_user);
-                                });
-                              },
+                          const SizedBox(height: 24),
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 10),
+                            child: Text(
+                              'party',
+                              style: TextStyle(
+                                  color: Theme.of(context).primaryColorLight,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold),
                             ),
-                            DarkButtonWidget(
-                              text: bloc_user.challengeLevel.toString(),
-                              onClicked: () {},
-                            ),
-                            ButtonWidget(
-                              text: 'level up',
-                              onClicked: () {
-                                int level = bloc_user.challengeLevel;
-                                level++;
-                                setState(() {
-                                  bloc_user = bloc_user.copyWith(
-                                      challengeLevel: level);
-                                  FirestoreHelper.pushUser(bloc_user);
-                                });
-                              },
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 24),
-                        Column(
-                          children: [
-                            const Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Padding(
-                                  padding: EdgeInsets.only(bottom: 8.0),
-                                  child: Text(
-                                    'promoter',
-                                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold,
-                                        color: Constants.lightPrimary),
+                          ),
+                          _displayPartiesDropdown(context),
+                          const SizedBox(height: 24),
+                          DarkTextFieldWidget(
+                            label: 'challenge task',
+                            text: findChallenge().title,
+                            onChanged: (value) {},
+                          ),
+                          const SizedBox(height: 24),
+                          DarkTextFieldWidget(
+                            label: 'challenge url',
+                            text: findChallengeUrl(),
+                            onChanged: (value) {},
+                          ),
+                          const SizedBox(height: 24),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(bottom: 10),
+                                child: Text(
+                                  'challenge level *',
+                                  style: TextStyle(
+                                      color:
+                                          Theme.of(context).primaryColorLight,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  ButtonWidget(
+                                    text: '  down  ',
+                                    onClicked: () {
+                                      int level = bloc_user.challengeLevel;
+                                      level--;
+                                      setState(() {
+                                        bloc_user = bloc_user.copyWith(
+                                            challengeLevel: level);
+                                        FirestoreHelper.pushUser(bloc_user);
+                                      });
+                                    },
                                   ),
-                                ),
-                              ],
-                            ),
-                            MultiSelectDialogField(
-                              items: mPromoters
-                                  .map((e) => MultiSelectItem(
-                                  e, '${e.name.toLowerCase()} | ${e.type.toLowerCase()}'))
-                                  .toList(),
-                              initialValue: sPromoters.map((e) => e).toList(),
-                              listType: MultiSelectListType.CHIP,
-                              buttonIcon: Icon(
-                                Icons.arrow_drop_down,
-                                color: Colors.grey.shade700,
+                                  DarkButtonWidget(
+                                    text: bloc_user.challengeLevel.toString(),
+                                    onClicked: () {},
+                                  ),
+                                  ButtonWidget(
+                                    text: 'level up',
+                                    onClicked: () {
+                                      int level = bloc_user.challengeLevel;
+                                      level++;
+                                      setState(() {
+                                        bloc_user = bloc_user.copyWith(
+                                            challengeLevel: level);
+                                        FirestoreHelper.pushUser(bloc_user);
+                                      });
+                                    },
+                                  ),
+                                ],
                               ),
-                              title: const Text('select a promoter'),
-                              buttonText: const Text(
-                                'select promoter',
-                                style: TextStyle(color: Constants.lightPrimary),
-                              ),
-                              decoration: BoxDecoration(
-                                color: Constants.background,
-                                borderRadius: const BorderRadius.all(Radius.circular(5)),
-                                border: Border.all(
-                                  color: Constants.primary,
-                                  width: 0.0,
-                                ),
-                              ),
-                              searchable: true,
-                              onConfirm: (values) {
-                                sPromoters = values as List<Promoter>;
+                              const SizedBox(height: 24),
+                              Column(
+                                children: [
+                                  const Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      Padding(
+                                        padding: EdgeInsets.only(bottom: 8.0),
+                                        child: Text(
+                                          'promoter',
+                                          style: TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold,
+                                              color: Constants.lightPrimary),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  MultiSelectDialogField(
+                                    items: mPromoters
+                                        .map((e) => MultiSelectItem(e,
+                                            '${e.name.toLowerCase()} | ${e.type.toLowerCase()}'))
+                                        .toList(),
+                                    initialValue:
+                                        sPromoters.map((e) => e).toList(),
+                                    listType: MultiSelectListType.CHIP,
+                                    buttonIcon: Icon(
+                                      Icons.arrow_drop_down,
+                                      color: Colors.grey.shade700,
+                                    ),
+                                    title: const Text('select a promoter'),
+                                    buttonText: const Text(
+                                      'select promoter',
+                                      style: TextStyle(
+                                          color: Constants.lightPrimary),
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: Constants.background,
+                                      borderRadius: const BorderRadius.all(
+                                          Radius.circular(5)),
+                                      border: Border.all(
+                                        color: Constants.primary,
+                                        width: 0.0,
+                                      ),
+                                    ),
+                                    searchable: true,
+                                    onConfirm: (values) {
+                                      sPromoters = values as List<Promoter>;
 
-                                if(sPromoters.isNotEmpty){
-                                  sPromoterId = sPromoters.first.id;
-                                } else {
-                                  sPromoterId = '';
-                                }
-                                setState(() {
-                                  widget.partyGuest = widget.partyGuest.copyWith(promoterId: sPromoterId);
-                                });
-                              },
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 24),
-                        Row(
-                          children: [
-                            const Text('supported: ', style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                              color: Constants.lightPrimary,
-                            )),
-                            Checkbox(
-                              value: widget.partyGuest.isChallengeClicked,
-                              side: MaterialStateBorderSide.resolveWith(
-                                    (states) => const BorderSide(width: 1.0, color: Constants.primary),
+                                      if (sPromoters.isNotEmpty) {
+                                        sPromoterId = sPromoters.first.id;
+                                      } else {
+                                        sPromoterId = '';
+                                      }
+                                      setState(() {
+                                        widget.partyGuest = widget.partyGuest
+                                            .copyWith(promoterId: sPromoterId);
+                                      });
+                                    },
+                                  ),
+                                ],
                               ),
-                              onChanged: (value) {
-                                widget.partyGuest = widget.partyGuest.copyWith(isChallengeClicked: value);
-                                PartyGuest freshPartyGuest = Fresh.freshPartyGuest(widget.partyGuest);
-                                FirestoreHelper.pushPartyGuest(freshPartyGuest);
+                              const SizedBox(height: 24),
+                              Row(
+                                children: [
+                                  const Text('supported: ',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16,
+                                        color: Constants.lightPrimary,
+                                      )),
+                                  Checkbox(
+                                    value: widget.partyGuest.isChallengeClicked,
+                                    side: MaterialStateBorderSide.resolveWith(
+                                      (states) => const BorderSide(
+                                          width: 1.0, color: Constants.primary),
+                                    ),
+                                    onChanged: (value) {
+                                      widget.partyGuest = widget.partyGuest
+                                          .copyWith(isChallengeClicked: value);
+                                      PartyGuest freshPartyGuest =
+                                          Fresh.freshPartyGuest(
+                                              widget.partyGuest);
+                                      FirestoreHelper.pushPartyGuest(
+                                          freshPartyGuest);
 
-                                Logx.i(_TAG, 'guest ${'${widget.partyGuest.name} '} : supported $value');
+                                      Logx.i(_TAG,
+                                          'guest ${'${widget.partyGuest.name} '} : supported $value');
 
-                                setState(() {});
-                              },
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 12),
-                        Row(
-                          children: [
-                            const Text('vip: ', style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                              color: Constants.lightPrimary,
-                            )),
-                            Checkbox(
-                              value: widget.partyGuest.isVip,
-                              side: MaterialStateBorderSide.resolveWith(
-                                    (states) => const BorderSide(width: 1.0, color: Constants.primary),
+                                      setState(() {});
+                                    },
+                                  ),
+                                ],
                               ),
-                              onChanged: (value) {
-                                widget.partyGuest = widget.partyGuest.copyWith(isVip: value);
-                                FirestoreHelper.pushPartyGuest(widget.partyGuest);
+                              const SizedBox(height: 12),
+                              Row(
+                                children: [
+                                  const Text('vip: ',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16,
+                                        color: Constants.lightPrimary,
+                                      )),
+                                  Checkbox(
+                                    value: widget.partyGuest.isVip,
+                                    side: MaterialStateBorderSide.resolveWith(
+                                      (states) => const BorderSide(
+                                          width: 1.0, color: Constants.primary),
+                                    ),
+                                    onChanged: (value) {
+                                      widget.partyGuest = widget.partyGuest
+                                          .copyWith(isVip: value);
+                                      FirestoreHelper.pushPartyGuest(
+                                          widget.partyGuest);
 
-                                Logx.ist(_TAG, 'guest vip status: $value');
-                                setState(() {
-                                });
-                              },
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 12),
-                        Row(
-                          children: [
-                            const Text('banned: ', style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                              color: Constants.lightPrimary,
-                            )),
-                            Checkbox(
-                              value: bloc_user.isBanned,
-                              side: MaterialStateBorderSide.resolveWith(
-                                    (states) => const BorderSide(width: 1.0, color: Constants.primary),
+                                      Logx.ist(
+                                          _TAG, 'guest vip status: $value');
+                                      setState(() {});
+                                    },
+                                  ),
+                                ],
                               ),
-                              onChanged: (value) {
-                                bloc_user = bloc_user.copyWith(isBanned: value);
-                                blocUser.User freshUser = Fresh.freshUser(bloc_user);
-                                FirestoreHelper.pushUser(freshUser);
+                              const SizedBox(height: 12),
+                              Row(
+                                children: [
+                                  const Text('banned: ',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16,
+                                        color: Constants.lightPrimary,
+                                      )),
+                                  Checkbox(
+                                    value: bloc_user.isBanned,
+                                    side: MaterialStateBorderSide.resolveWith(
+                                      (states) => const BorderSide(
+                                          width: 1.0, color: Constants.primary),
+                                    ),
+                                    onChanged: (value) {
+                                      bloc_user =
+                                          bloc_user.copyWith(isBanned: value);
+                                      blocUser.User freshUser =
+                                          Fresh.freshUser(bloc_user);
+                                      FirestoreHelper.pushUser(freshUser);
 
-                                Logx.i(_TAG, 'user ${'${bloc_user.name} ${bloc_user.surname}'} : banned $value');
-                                Toaster.longToast('user ${'${bloc_user.name} ${bloc_user.surname}'} : banned $value');
+                                      Logx.i(_TAG,
+                                          'user ${'${bloc_user.name} ${bloc_user.surname}'} : banned $value');
+                                      Toaster.longToast(
+                                          'user ${'${bloc_user.name} ${bloc_user.surname}'} : banned $value');
 
-                                setState(() {
-                                });
-                              },
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 12),
-                        Row(
-                          children: [
-                            const Text('app user: ', style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                              color: Constants.lightPrimary,
-                            )),
-                            Checkbox(
-                              value: bloc_user.isAppUser,
-                              side: MaterialStateBorderSide.resolveWith(
-                                    (states) => const BorderSide(width: 1.0, color: Constants.primary),
+                                      setState(() {});
+                                    },
+                                  ),
+                                ],
                               ),
-                              onChanged: (value) {
-                                Logx.ist(_TAG, 'app user status cannot be changed manually');
-                              },
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              )
+                              const SizedBox(height: 12),
+                              Row(
+                                children: [
+                                  const Text('app user: ',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16,
+                                        color: Constants.lightPrimary,
+                                      )),
+                                  Checkbox(
+                                    value: bloc_user.isAppUser,
+                                    side: MaterialStateBorderSide.resolveWith(
+                                      (states) => const BorderSide(
+                                          width: 1.0, color: Constants.primary),
+                                    ),
+                                    onChanged: (value) {
+                                      Logx.ist(_TAG,
+                                          'app user status cannot be changed manually');
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    )
                   : const SizedBox(),
               const SizedBox(height: 24),
               Row(
@@ -915,7 +937,7 @@ class _PartyGuestAddEditManageScreenState
                       child: Text(
                         "* required",
                         style: TextStyle(
-                          color: Theme.of(context).primaryColor,
+                          color: Constants.primary,
                         ),
                       ),
                     ),
@@ -924,124 +946,168 @@ class _PartyGuestAddEditManageScreenState
               ),
               widget.task == 'manage'
                   ? Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 32),
-                    child: ButtonWidget(
-                      text: !widget.partyGuest.isApproved? 'approve': 'unapprove',
-                      onClicked: () async {
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 32),
+                          child: ButtonWidget(
+                            text: !widget.partyGuest.isApproved
+                                ? 'approve'
+                                : 'unapprove',
+                            onClicked: () async {
+                              widget.partyGuest = widget.partyGuest.copyWith(
+                                  isApproved: !widget.partyGuest.isApproved);
+                              FirestoreHelper.pushPartyGuest(widget.partyGuest);
 
-                        widget.partyGuest = widget.partyGuest.copyWith(isApproved: !widget.partyGuest.isApproved);
-                        FirestoreHelper.pushPartyGuest(widget.partyGuest);
+                              // if(bloc_user.phoneNumber!=0){
+                              //   String message = "This is a test message!";
+                              //   List<String> recipents = [widget.partyGuest.phone.toString()];
+                              //
+                              //   String _result = await sendSMS(message: message, recipients: recipents, sendDirect: true)
+                              //       .catchError((onError) {
+                              //     print(onError);
+                              //   });
+                              //
+                              //   Logx.ist(_TAG, 'message has been sent');
+                              // } else {
+                              //   Logx.ist(_TAG, 'promoter guest and sms cannot be sent!');
+                              // }
 
-                        // if(bloc_user.phoneNumber!=0){
-                        //   String message = "This is a test message!";
-                        //   List<String> recipents = [widget.partyGuest.phone.toString()];
-                        //
-                        //   String _result = await sendSMS(message: message, recipients: recipents, sendDirect: true)
-                        //       .catchError((onError) {
-                        //     print(onError);
-                        //   });
-                        //
-                        //   Logx.ist(_TAG, 'message has been sent');
-                        // } else {
-                        //   Logx.ist(_TAG, 'promoter guest and sms cannot be sent!');
-                        // }
+                              if (widget.party.loungeId.isNotEmpty) {
+                                FirestoreHelper.pullUserLounge(
+                                        bloc_user.id, widget.party.loungeId)
+                                    .then((res) {
+                                  if (res.docs.isEmpty) {
+                                    UserLounge userLounge =
+                                        Dummy.getDummyUserLounge();
+                                    userLounge = userLounge.copyWith(
+                                        loungeId: widget.party.loungeId,
+                                        userId: bloc_user.id,
+                                        isAccepted: true);
+                                    FirestoreHelper.pushUserLounge(userLounge);
 
-                        if(widget.party.loungeId.isNotEmpty){
-                          FirestoreHelper.pullUserLounge(bloc_user.id, widget.party.loungeId).then((res) {
-                            if(res.docs.isEmpty){
-                              UserLounge userLounge = Dummy.getDummyUserLounge();
-                              userLounge = userLounge.copyWith(loungeId: widget.party.loungeId,
-                                userId: bloc_user.id, isAccepted: true);
-                              FirestoreHelper.pushUserLounge(userLounge);
+                                    if (bloc_user.isAppUser &&
+                                        bloc_user.fcmToken.isNotEmpty) {
+                                      String title = widget.party.name;
+                                      String message =
+                                          '🥳 yayyy! welcome to ${widget.party.name} family, your guest list for${widget.party.name} has been approved 🎉, see you and your gang soon! 😎🍾';
 
-                              if(bloc_user.isAppUser && bloc_user.fcmToken.isNotEmpty){
-                                String title = widget.party.name;
-                                String message = '🥳 yayyy! welcome to ${widget.party.name} family, your guest list for${widget.party.name} has been approved 🎉, see you and your gang soon! 😎🍾';
+                                      //send a notification
+                                      Apis.sendPushNotification(
+                                          bloc_user.fcmToken, title, message);
+                                      Logx.ist(_TAG,
+                                          'notification has been sent to ${bloc_user.name} ${bloc_user.surname}');
+                                    }
+                                  } else {
+                                    if (bloc_user.isAppUser &&
+                                        bloc_user.fcmToken.isNotEmpty) {
+                                      String title = widget.party.name;
+                                      String message =
+                                          '🥳 yayyy! your guest list for${widget.party.name} has been approved 🎉, see you and your gang soon! 😎🍾';
 
-                                //send a notification
-                                Apis.sendPushNotification(bloc_user.fcmToken, title, message);
-                                Logx.ist(_TAG, 'notification has been sent to ${bloc_user.name} ${bloc_user.surname}');
+                                      //send a notification
+                                      Apis.sendPushNotification(
+                                          bloc_user.fcmToken, title, message);
+                                    }
+                                  }
+                                });
+                              } else {
+                                if (bloc_user.isAppUser &&
+                                    bloc_user.fcmToken.isNotEmpty) {
+                                  String title = widget.party.name;
+                                  String message =
+                                      '🥳 yayyy! your guest list for${widget.party.name} has been approved 🎉, see you and your gang soon! 😎🍾';
+
+                                  //send a notification
+                                  Apis.sendPushNotification(
+                                      bloc_user.fcmToken, title, message);
+                                }
                               }
-                            } else {
-                              if(bloc_user.isAppUser && bloc_user.fcmToken.isNotEmpty){
-                                String title = widget.party.name;
-                                String message = '🥳 yayyy! your guest list for${widget.party.name} has been approved 🎉, see you and your gang soon! 😎🍾';
 
-                                //send a notification
-                                Apis.sendPushNotification(bloc_user.fcmToken, title, message);
-                              }
-                            }
-                          });
-                        } else {
-                          if(bloc_user.isAppUser && bloc_user.fcmToken.isNotEmpty){
-                            String title = widget.party.name;
-                            String message = '🥳 yayyy! your guest list for${widget.party.name} has been approved 🎉, see you and your gang soon! 😎🍾';
-
-                            //send a notification
-                            Apis.sendPushNotification(bloc_user.fcmToken, title, message);
-                          }
-                        }
-
-                        Logx.ist(_TAG, 'party guest ${widget.partyGuest.name} is approved');
-                        Navigator.of(context).pop();
-                      },
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 32),
-                    child: ButtonWidget(
-                      height: 50,
-                      text: 'update',
-                      onClicked: () {
-                        FirestoreHelper.pushPartyGuest(widget.partyGuest);
-                        Logx.ist(_TAG, 'guest list updated');
-                        Navigator.of(context).pop();
-                      },
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-                ],
-              )
+                              Logx.ist(_TAG,
+                                  'party guest ${widget.partyGuest.name} is approved');
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                        ),
+                        const SizedBox(height: 24),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 32),
+                          child: ButtonWidget(
+                            height: 50,
+                            text: 'update',
+                            onClicked: () {
+                              FirestoreHelper.pushPartyGuest(widget.partyGuest);
+                              Logx.ist(_TAG, 'guest list updated');
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                        ),
+                        const SizedBox(height: 24),
+                      ],
+                    )
                   : const SizedBox(),
-
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 32),
                 child: ButtonWidget(
                   height: 50,
-                  text: (widget.task == 'edit' || widget.task == 'manage') ? 'save changes' : 'join list',
+                  text: (widget.task == 'edit' || widget.task == 'manage')
+                      ? 'save changes'
+                      : 'join list',
                   onClicked: () {
-                    if(widget.task == 'manage'){
+                    if (widget.task == 'manage') {
                       FirestoreHelper.pushPartyGuest(widget.partyGuest);
                       Logx.ist(_TAG, 'guest list updated');
                       Navigator.of(context).pop();
-                    } else {
-                        if (isDataValid()) {
-                          if (isLoggedIn){
-                            FirestoreHelper.pushPartyGuest(widget.partyGuest);
+                    } else if(widget.task == 'edit') {
+                      if(isDataValid()){
+                        FirestoreHelper.pushPartyGuest(widget.partyGuest);
 
-                            if (hasUserChanged) {
-                              blocUser.User freshUser = Fresh.freshUser(bloc_user);
-                              if (freshUser.id == UserPreferences.myUser.id) {
-                                UserPreferences.setUser(freshUser);
-                              }
-                              FirestoreHelper.pushUser(freshUser);
+                        if (hasUserChanged) {
+                          blocUser.User freshUser =
+                          Fresh.freshUser(bloc_user);
+                          if (freshUser.id == UserPreferences.myUser.id) {
+                            UserPreferences.setUser(freshUser);
+                          }
+                          FirestoreHelper.pushUser(freshUser);
+                        }
+
+                        Logx.ist(_TAG, 'guest list has been updated');
+
+                        GoRouter.of(context)
+                            .pushNamed(RouteConstants.homeRouteName);
+                        GoRouter.of(context)
+                            .pushNamed(RouteConstants.boxOfficeRouteName);
+                      }
+                    } else {
+                      if (isDataValid()) {
+                        if (isLoggedIn) {
+                          if (hasUserChanged) {
+                            blocUser.User freshUser =
+                            Fresh.freshUser(bloc_user);
+                            if (freshUser.id == UserPreferences.myUser.id) {
+                              UserPreferences.setUser(freshUser);
                             }
-                            GoRouter.of(context)
-                                .pushNamed(RouteConstants.homeRouteName);
-                            GoRouter.of(context)
-                                .pushNamed(RouteConstants.boxOfficeRouteName);
+                            FirestoreHelper.pushUser(freshUser);
+                          }
+
+                          if(widget.partyGuest.guestsCount>=2){
+                            if(widget.partyGuest.guestsCount==2 && widget.partyGuest.guestStatus == 'couple'){
+                              _showRulesConfirmationDialog(context, false);
+                            } else {
+                              _showGuestsEntryDialog(context);
+                            }
                           } else {
-                            // need to register the user first
-                            _verifyPhone();
+                            _showRulesConfirmationDialog(context, false);
                           }
                         } else {
-                          Logx.em(
-                              _TAG, 'user cannot be entered as data is incomplete');
+                          // need to register the user first
+                          _verifyPhone();
                         }
+                      } else {
+                        Logx.em(_TAG,
+                            'user cannot be entered as data is incomplete');
+                      }
                     }
 
                     // if (isDataValid()) {
@@ -1081,7 +1147,6 @@ class _PartyGuestAddEditManageScreenState
                   },
                 ),
               ),
-
               widget.task == 'edit' || widget.task == 'manage'
                   ? Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -1093,7 +1158,8 @@ class _PartyGuestAddEditManageScreenState
                             height: 50,
                             text: 'delete',
                             onClicked: () {
-                              FirestoreHelper.deletePartyGuest(widget.partyGuest);
+                              FirestoreHelper.deletePartyGuest(
+                                  widget.partyGuest);
                               Logx.ist(_TAG, 'guest list request is deleted!');
                               Navigator.of(context).pop();
                             },
@@ -1133,70 +1199,87 @@ class _PartyGuestAddEditManageScreenState
     return true;
   }
 
-  showRulesConfirmationDialog(BuildContext context, bool isNewUser) {
-    return showDialog(
+  void _showGuestsEntryDialog(BuildContext context) {
+    int guestCount = widget.partyGuest.guestsCount - 1;
+
+    showDialog(
       context: context,
-      builder: (BuildContext ctx) {
+      builder: (BuildContext context) {
         return AlertDialog(
+          title: Text('👫 who\'s coming?',
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 22, color: Colors.black),),
+          backgroundColor: Constants.lightPrimary,
+          shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(20.0))),
           contentPadding: const EdgeInsets.all(16.0),
-          content: SizedBox(
-            height: 300,
-            child: Column(
+          content: Container(
+            width: double.maxFinite,
+            child: ListView.builder(
+              shrinkWrap: true,
+              itemCount: guestCount,
+              itemBuilder: (BuildContext context, int index) {
+                return PartyGuestEntryWidget(
+                    partyGuest: widget.partyGuest,
+                    index: index+1,
+                );
+              },
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                _showRulesConfirmationDialog(context, false);
+              },
+              child: Text('👍 done', style: TextStyle(color: Constants.background)),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  _showRulesConfirmationDialog(BuildContext context, bool isNewUser) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('entry and club rules 🤝',
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 22, color: Colors.black),),
+          backgroundColor: Constants.lightPrimary,
+          shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(20.0))),
+          contentPadding: const EdgeInsets.all(16.0),
+          content: Container(
+            width: double.maxFinite,
+            child: ListView(
+              shrinkWrap: true,
               children: [
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 20),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Text(
-                        '${widget.party.eventName} | ${widget.party.name}',
-                        style: const TextStyle(fontSize: 18,
-                            overflow: TextOverflow.ellipsis),
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(
-                  height: 250,
-                  width: 300,
-                  child: SingleChildScrollView(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        const Text('entry rules:\n'),
-                        Text(widget.party.guestListRules.toLowerCase()),
-                        const Text('\nclub rules:\n'),
-                        Text(widget.party.clubRules.toLowerCase()),
-                      ],
-                    ),
-                  ),
-                ),
+                const Text('entry rules:\n'),
+                Text(widget.party.guestListRules.toLowerCase()),
+                const Text('\nclub rules:\n'),
+                Text(widget.party.clubRules.toLowerCase()),
               ],
             ),
           ),
           actions: [
             TextButton(
-              child: const Text('close'),
-              onPressed: () {
-                Navigator.of(ctx).pop();
-              },
-            ),
-            TextButton(
-              child: const Text("confirm"),
               onPressed: () {
                 if (isNewUser) {
                   PartyGuest freshPartyGuest =
-                      Fresh.freshPartyGuest(widget.partyGuest);
-                  FirestoreHelper.pushPartyGuest(freshPartyGuest);
+                  Fresh.freshPartyGuest(widget.partyGuest);
+
+                  if(!testMode){
+                    FirestoreHelper.pushPartyGuest(freshPartyGuest);
+                  }
 
                   HistoryMusic historyMusic = Dummy.getDummyHistoryMusic();
                   historyMusic.userId = widget.partyGuest.guestId;
                   historyMusic.genre = widget.party.genre;
                   historyMusic.count = 1;
                   FirestoreHelper.pushHistoryMusic(historyMusic);
-
                 } else {
                   if (hasUserChanged) {
                     blocUser.User freshUser = Fresh.freshUser(bloc_user);
@@ -1210,341 +1293,77 @@ class _PartyGuestAddEditManageScreenState
                   widget.partyGuest.guestId = bloc_user.id;
 
                   FirestoreHelper.pullPartyGuestByUser(
-                          widget.partyGuest.guestId, widget.partyGuest.partyId)
+                      widget.partyGuest.guestId, widget.partyGuest.partyId)
                       .then((res) {
                     Logx.i(_TAG, 'pulled in party guest by user');
 
-                    if (res.docs.isEmpty ||
-                        widget.task == 'edit' ||
-                        widget.task == 'manage') {
+                    if (res.docs.isEmpty) {
                       // user has not requested for party guest list, approve
-                      PartyGuest freshPartyGuest =
-                          Fresh.freshPartyGuest(widget.partyGuest);
-                      FirestoreHelper.pushPartyGuest(freshPartyGuest);
+                      PartyGuest freshPartyGuest = Fresh.freshPartyGuest(widget.partyGuest);
+                      if(!testMode) {
+                        FirestoreHelper.pushPartyGuest(freshPartyGuest);
+                      }
 
                       Logx.i(_TAG, 'guest list request in box office');
                       Toaster.longToast('guest list request in box office');
 
-                      FirestoreHelper.pullHistoryMusic(widget.partyGuest.guestId, widget.party.genre)
+                      FirestoreHelper.pullHistoryMusic(
+                          widget.partyGuest.guestId, widget.party.genre)
                           .then((res) {
-                            if(res.docs.isEmpty){
-                              // no history, add new one
-                              HistoryMusic historyMusic = Dummy.getDummyHistoryMusic();
-                              historyMusic.userId = widget.partyGuest.guestId;
-                              historyMusic.genre = widget.party.genre;
-                              historyMusic.count = 1;
-                              FirestoreHelper.pushHistoryMusic(historyMusic);
-                            } else {
-                              for (int i = 0; i < res.docs.length; i++) {
-                                DocumentSnapshot document = res.docs[i];
-                                Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-                                final HistoryMusic historyMusic = Fresh.freshHistoryMusicMap(data, false);
-                                historyMusic.count++;
-                                FirestoreHelper.pushHistoryMusic(historyMusic);
-                              }
-                            }
+                        if (res.docs.isEmpty) {
+                          // no history, add new one
+                          HistoryMusic historyMusic =
+                          Dummy.getDummyHistoryMusic();
+                          historyMusic.userId = widget.partyGuest.guestId;
+                          historyMusic.genre = widget.party.genre;
+                          historyMusic.count = 1;
+                          FirestoreHelper.pushHistoryMusic(historyMusic);
+                        } else {
+                          for (int i = 0; i < res.docs.length; i++) {
+                            DocumentSnapshot document = res.docs[i];
+                            Map<String, dynamic> data =
+                            document.data()! as Map<String, dynamic>;
+                            final HistoryMusic historyMusic =
+                            Fresh.freshHistoryMusicMap(data, false);
+                            historyMusic.count++;
+                            FirestoreHelper.pushHistoryMusic(historyMusic);
+                          }
+                        }
                       });
+
+                      if (widget.party.isChallengeActive) {
+                        Navigator.of(context).pop();
+                        _showChallengeDialog(context);
+                      } else {
+                        Navigator.of(context).pop();
+
+                        GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
+                        GoRouter.of(context)
+                            .pushNamed(RouteConstants.boxOfficeRouteName);
+                      }
+
                     } else {
                       //already requested
                       Logx.ist(_TAG, 'guest list has already been requested!');
+
+                      GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
+                      GoRouter.of(context).pushNamed(RouteConstants.boxOfficeRouteName);
                     }
                   });
                 }
-
-                Navigator.of(ctx).pop();
-
-                if (widget.party.isChallengeActive) {
-                  showChallengeDialog(context);
-                } else {
-                  Navigator.of(context).pop();
-
-                  GoRouter.of(context)
-                      .pushNamed(RouteConstants.homeRouteName);
-                  GoRouter.of(context)
-                      .pushNamed(RouteConstants.boxOfficeRouteName);
-                }
-              },
+                },
+              child: Text('👍 accept', style: TextStyle(color: Constants.background)),
             ),
           ],
         );
       },
     );
   }
-
-  showChallengeDialog(BuildContext context) {
-    Challenge challenge = findChallenge();
-
-    String challengeText = challenge.description;
-
-    if (challengeText.isEmpty) {
-      // all challenges are completed
-      Navigator.of(context).pop();
-
-      GoRouter.of(context)
-          .pushNamed(RouteConstants.homeRouteName);
-      GoRouter.of(context)
-          .pushNamed(RouteConstants.boxOfficeRouteName);
-    } else {
-      return showDialog(
-        context: context,
-        builder: (BuildContext ctx) {
-          return AlertDialog(
-            contentPadding: const EdgeInsets.all(16.0),
-            content: SizedBox(
-              height: 300,
-              child: Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 20),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Expanded(
-                          child: Text(
-                            '#blocCommunity  | ${widget.party.name}',
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(fontSize: 18),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(
-                    height: 250,
-                    width: 300,
-                    child: SingleChildScrollView(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Text('${challenge.dialogTitle}:\n'),
-                          Text(challenge.description.toLowerCase()),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            actions: [
-              TextButton(
-                child: const Text('close'),
-                onPressed: () {
-                  Navigator.of(ctx).pop();
-
-                  showReserveTableDialog(context);
-                },
-              ),
-              challenge.dialogAccept2Text.isNotEmpty?
-              TextButton(
-                child: Text(challenge.dialogAccept2Text),
-                onPressed: () async {
-                  Logx.i(_TAG, 'user accepts challenge');
-                  Toaster.longToast('thank you for supporting us!');
-
-                  widget.partyGuest = widget.partyGuest.copyWith(isChallengeClicked: true);
-                  FirestoreHelper.pushPartyGuest(widget.partyGuest);
-
-                  switch (challenge.level) {
-                    case 3:{
-                      //android download
-                      final uri = Uri.parse(ChallengeUtils.urlBlocPlayStore);
-                      NetworkUtils.launchInBrowser(uri);
-                      break;
-                    }
-                    default:
-                      {
-                        final uri =
-                        Uri.parse(ChallengeUtils.urlBlocInsta);
-                        NetworkUtils.launchInBrowser(uri);
-                        break;
-                      }
-                  }
-                },
-              )
-                  : const SizedBox(),
-
-              TextButton(
-                child: Text(challenge.dialogAcceptText),
-                onPressed: () async {
-                  Logx.ist(_TAG, 'thank you for supporting us!');
-
-                  widget.partyGuest = widget.partyGuest.copyWith(isChallengeClicked: true);
-                  FirestoreHelper.pushPartyGuest(widget.partyGuest);
-
-                  switch (challenge.level) {
-                    case 1:
-                      {
-                        final uri =
-                            Uri.parse(ChallengeUtils.urlBlocInsta);
-                        NetworkUtils.launchInBrowser(uri);
-                        break;
-                      }
-                    case 2:
-                      {
-                        final uri = Uri.parse(ChallengeUtils.urlFreqInsta);
-                        NetworkUtils.launchInBrowser(uri);
-                        break;
-                      }
-                      case 3:{
-                        //ios download
-                        final uri = Uri.parse(
-                            ChallengeUtils.urlBlocAppStore);
-                        NetworkUtils.launchInBrowser(uri);
-                        break;
-                      }
-                    case 4:{
-                      //share or invite your friends
-                      final uri = Uri.parse(widget.party.instagramUrl);
-                      NetworkUtils.launchInBrowser(uri);
-                      break;
-                    }
-                    case 100:
-                      {
-                        final urlImage = widget.party.storyImageUrl.isNotEmpty
-                            ? widget.party.storyImageUrl
-                            : widget.party.imageUrl;
-                        final Uri url = Uri.parse(urlImage);
-                        final response = await http.get(url);
-                        final Uint8List bytes = response.bodyBytes;
-
-                        try {
-                          if (kIsWeb) {
-                            FileUtils.openFileNewTabForWeb(urlImage);
-
-                            // Image? fromPicker = await ImagePickerWeb.getImageAsWidget();
-                          } else {
-                            var temp = await getTemporaryDirectory();
-                            final path = '${temp.path}/${widget.party.id}.jpg';
-                            File(path).writeAsBytesSync(bytes);
-
-                            final files = <XFile>[];
-                            files.add(
-                                XFile(path, name: '${widget.party.id}.jpg'));
-
-                            await Share.shareXFiles(files,
-                                text: '#blocCommunity');
-                          }
-                        } on PlatformException catch (e, s) {
-                          Logx.e(_TAG, e, s);
-                        } on Exception catch (e, s) {
-                          Logx.e(_TAG, e, s);
-                        } catch (e) {
-                          logger.e(e);
-                        }
-                        break;
-                      }
-                    default:
-                      {
-                        final uri =
-                            Uri.parse('https://www.instagram.com/bloc.india/');
-                        NetworkUtils.launchInBrowser(uri);
-                        break;
-                      }
-                  }
-                },
-              ),
-            ],
-          );
-        },
-      );
-    }
-  }
-
-  showReserveTableDialog(BuildContext context) {
-    return showDialog(
-      context: context,
-      builder: (BuildContext ctx) {
-        return AlertDialog(
-          contentPadding: const EdgeInsets.all(16.0),
-          content: SizedBox(
-            height: 150,
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 20),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Text(
-                        'reserve table | ${widget.party.name}',
-                        style: const TextStyle(fontSize: 18),
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(
-                  height: 100,
-                  width: 300,
-                  child: SingleChildScrollView(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: const [
-                        Text('reserve your table at the trendiest club in town and let us take care of every detail, so you can focus on enjoying a wonderful evening with your loved ones.'),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          actions: [
-            TextButton(
-              child: const Text('close'),
-              onPressed: () {
-                Navigator.of(ctx).pop();
-
-                UserPreferences.setUser(bloc_user);
-                GoRouter.of(context)
-                    .pushNamed(RouteConstants.homeRouteName);
-                GoRouter.of(context)
-                    .pushNamed(RouteConstants.boxOfficeRouteName);
-              },
-            ),
-            TextButton(
-              child: const Text("reserve my table"),
-              onPressed: () {
-                Reservation reservation  = Dummy.getDummyReservation(Constants.blocServiceId);
-                reservation = reservation.copyWith(customerId: widget.partyGuest.guestId);
-                reservation = reservation.copyWith(name: '${widget.partyGuest.name} ${widget.partyGuest.surname}');
-                int? phoneNumber = int.tryParse(widget.partyGuest.phone);
-                reservation = reservation.copyWith(phone: phoneNumber);
-
-                reservation = reservation.copyWith(arrivalDate: widget.party.startTime);
-                reservation = reservation.copyWith(arrivalTime: DateTimeUtils.getFormattedTime2(widget.party.startTime));
-
-                reservation = reservation.copyWith(guestsCount: widget.partyGuest.guestsCount);
-
-                Navigator.of(ctx).pop();
-                Navigator.of(context).pop();
-
-                UserPreferences.setUser(bloc_user);
-                GoRouter.of(context)
-                    .pushNamed(RouteConstants.homeRouteName);
-
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                      builder: (ctx) =>
-                          ReservationAddEditScreen(
-                              reservation: reservation,
-                              task: 'add')),
-                );
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
-
 
   Challenge findChallenge() {
     Challenge returnChallenge = challenges.last;
 
-    if(widget.party.overrideChallengeNum>0){
+    if (widget.party.overrideChallengeNum > 0) {
       for (Challenge challenge in challenges) {
         if (challenge.level == widget.party.overrideChallengeNum) {
           return challenge;
@@ -1558,8 +1377,283 @@ class _PartyGuestAddEditManageScreenState
       }
     }
 
-
     return returnChallenge;
+  }
+
+  _showChallengeDialog(BuildContext context) {
+    Challenge challenge = findChallenge();
+    String challengeText = challenge.description;
+
+    if (challengeText.isEmpty) {
+      // all challenges are completed
+      Navigator.of(context).pop();
+
+      GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
+      GoRouter.of(context).pushNamed(RouteConstants.boxOfficeRouteName);
+    } else {
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text('#blocCommunity support & win 🎟️',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 22, color: Colors.black),),
+              backgroundColor: Constants.lightPrimary,
+              shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(20.0))),
+              contentPadding: const EdgeInsets.all(16.0),
+              content: Container(
+                width: double.maxFinite,
+                child: ListView(
+                  shrinkWrap: true,
+                  children: [
+                    Text('${challenge.dialogTitle}:\n' ,
+                      style: TextStyle(fontWeight: FontWeight.bold),),
+                    Text(challenge.description.toLowerCase()),
+                  ],
+                ),
+              ),
+              actions: [
+                TextButton(
+                  child: const Text('close', style: TextStyle(color: Constants.background)),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+
+                    GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
+                    GoRouter.of(context).pushNamed(RouteConstants.boxOfficeRouteName);
+                    // showReserveTableDialog(context);
+                  },
+                ),
+                challenge.dialogAccept2Text.isNotEmpty
+                    ? TextButton(
+                  child: Text(challenge.dialogAccept2Text, style: TextStyle(color: Constants.background)),
+                  onPressed: () async {
+                    Logx.ist(_TAG, 'thank you for supporting us!');
+
+                    widget.partyGuest = widget.partyGuest
+                        .copyWith(isChallengeClicked: true);
+                    if(!testMode) {
+                      FirestoreHelper.pushPartyGuest(widget.partyGuest);
+                    }
+
+                    switch (challenge.level) {
+                      case 2:
+                        {
+                          //android download
+                          final uri =
+                          Uri.parse(ChallengeUtils.urlBlocPlayStore);
+                          NetworkUtils.launchInBrowser(uri);
+                          break;
+                        }
+                      default:
+                        {
+                          final uri =
+                          Uri.parse(ChallengeUtils.urlBlocInsta);
+                          NetworkUtils.launchInBrowser(uri);
+                          break;
+                        }
+                    }
+
+                    GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
+                    GoRouter.of(context).pushNamed(RouteConstants.boxOfficeRouteName);
+                  },
+                )
+                    : const SizedBox(),
+                TextButton(
+                  child: Text(challenge.dialogAcceptText, style: TextStyle(color: Constants.background)),
+                  onPressed: () async {
+                    Logx.ist(_TAG, 'thank you for supporting us!');
+
+                    widget.partyGuest =
+                        widget.partyGuest.copyWith(isChallengeClicked: true);
+                    if(!testMode) {
+                      FirestoreHelper.pushPartyGuest(widget.partyGuest);
+                    }
+
+                    switch (challenge.level) {
+                      case 1:
+                        {
+                          final uri = Uri.parse(ChallengeUtils.urlBlocInsta);
+                          NetworkUtils.launchInBrowser(uri);
+                          break;
+                        }
+                      case 3:
+                        {
+                          final uri = Uri.parse(ChallengeUtils.urlFreqInsta);
+                          NetworkUtils.launchInBrowser(uri);
+                          break;
+                        }
+                      case 2:
+                        {
+                          //ios download
+                          final uri = Uri.parse(ChallengeUtils.urlBlocAppStore);
+                          NetworkUtils.launchInBrowser(uri);
+                          break;
+                        }
+                      case 4:
+                        {
+                          //share or invite your friends
+                          final uri = Uri.parse(widget.party.instagramUrl);
+                          NetworkUtils.launchInBrowser(uri);
+                          break;
+                        }
+                      case 100:
+                        {
+                          final urlImage = widget.party.storyImageUrl.isNotEmpty
+                              ? widget.party.storyImageUrl
+                              : widget.party.imageUrl;
+                          final Uri url = Uri.parse(urlImage);
+                          final response = await http.get(url);
+                          final Uint8List bytes = response.bodyBytes;
+
+                          try {
+                            if (kIsWeb) {
+                              FileUtils.openFileNewTabForWeb(urlImage);
+
+                              // Image? fromPicker = await ImagePickerWeb.getImageAsWidget();
+                            } else {
+                              var temp = await getTemporaryDirectory();
+                              final path = '${temp.path}/${widget.party.id}.jpg';
+                              File(path).writeAsBytesSync(bytes);
+
+                              final files = <XFile>[];
+                              files.add(
+                                  XFile(path, name: '${widget.party.id}.jpg'));
+
+                              await Share.shareXFiles(files,
+                                  text: '#blocCommunity');
+                            }
+                          } on PlatformException catch (e, s) {
+                            Logx.e(_TAG, e, s);
+                          } on Exception catch (e, s) {
+                            Logx.e(_TAG, e, s);
+                          } catch (e) {
+                            logger.e(e);
+                          }
+                          break;
+                        }
+                      default:
+                        {
+                          final uri =
+                          Uri.parse('https://www.instagram.com/bloc.india/');
+                          NetworkUtils.launchInBrowser(uri);
+                          break;
+                        }
+                    }
+
+                    GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
+                    GoRouter.of(context).pushNamed(RouteConstants.boxOfficeRouteName);
+                  },
+                ),
+              ],
+            );
+          });
+    }
+  }
+
+  // showReserveTableDialog(BuildContext context) {
+  //   return showDialog(
+  //     context: context,
+  //     builder: (BuildContext ctx) {
+  //       return AlertDialog(
+  //         backgroundColor: Constants.lightPrimary,
+  //         shape: const RoundedRectangleBorder(
+  //             borderRadius: BorderRadius.all(Radius.circular(20.0))),
+  //         contentPadding: const EdgeInsets.all(16.0),
+  //         content: SizedBox(
+  //           height: mq.height * 0.25,
+  //           width: double.maxFinite,
+  //           child: Column(
+  //             children: [
+  //               Padding(
+  //                 padding: const EdgeInsets.only(bottom: 20),
+  //                 child:
+  //                 Text(
+  //                   'reserve table | ${widget.party.name}',
+  //                   maxLines: 2,
+  //                   overflow: TextOverflow.ellipsis,
+  //                   textAlign: TextAlign.center,
+  //                   style: const TextStyle(fontSize: 18),
+  //                 ),
+  //               ),
+  //               SizedBox(
+  //                 height: mq.height * 0.2,
+  //                 width: mq.width * 0.7,
+  //                 child: const SingleChildScrollView(
+  //                   child: Column(
+  //                     mainAxisSize: MainAxisSize.min,
+  //                     crossAxisAlignment: CrossAxisAlignment.start,
+  //                     mainAxisAlignment: MainAxisAlignment.start,
+  //                     children: [
+  //                       Text(
+  //                           'reserve your table at the trendiest club in town and let us take care of every detail, so you can focus on enjoying a wonderful evening with your loved ones.'),
+  //                     ],
+  //                   ),
+  //                 ),
+  //               ),
+  //             ],
+  //           ),
+  //         ),
+  //         actions: [
+  //           TextButton(
+  //             child: const Text('close', style: TextStyle(color: Constants.background),),
+  //             onPressed: () {
+  //               Navigator.of(ctx).pop();
+  //
+  //               UserPreferences.setUser(bloc_user);
+  //               GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
+  //               GoRouter.of(context)
+  //                   .pushNamed(RouteConstants.boxOfficeRouteName);
+  //             },
+  //           ),
+  //           TextButton(
+  //             child: const Text("reserve my table", style: TextStyle(color: Constants.background)),
+  //             onPressed: () {
+  //               Reservation reservation =
+  //                   Dummy.getDummyReservation(Constants.blocServiceId);
+  //               reservation =
+  //                   reservation.copyWith(customerId: widget.partyGuest.guestId);
+  //               reservation = reservation.copyWith(
+  //                   name:
+  //                       '${widget.partyGuest.name} ${widget.partyGuest.surname}');
+  //               int? phoneNumber = int.tryParse(widget.partyGuest.phone);
+  //               reservation = reservation.copyWith(phone: phoneNumber);
+  //
+  //               reservation =
+  //                   reservation.copyWith(arrivalDate: widget.party.startTime);
+  //               reservation = reservation.copyWith(
+  //                   arrivalTime: DateTimeUtils.getFormattedTime2(
+  //                       widget.party.startTime));
+  //
+  //               reservation = reservation.copyWith(
+  //                   guestsCount: widget.partyGuest.guestsCount);
+  //
+  //               Navigator.of(ctx).pop();
+  //               Navigator.of(context).pop();
+  //
+  //               UserPreferences.setUser(bloc_user);
+  //               GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
+  //
+  //               Navigator.of(context).push(
+  //                 MaterialPageRoute(
+  //                     builder: (ctx) => ReservationAddEditScreen(
+  //                         reservation: reservation, task: 'add')),
+  //               );
+  //             },
+  //           ),
+  //         ],
+  //       );
+  //     },
+  //   );
+  // }
+
+  findChallengeUrl() {
+    String url = ChallengeUtils.challengeUrl(findChallenge());
+
+    if (url == ChallengeUtils.partyInsta) {
+      url = widget.party.instagramUrl;
+    }
+    return url;
   }
 
   /** phone registration **/
@@ -1570,8 +1664,7 @@ class _PartyGuestAddEditManageScreenState
       await FirebaseAuth.instance
           .signInWithPhoneNumber(completePhoneNumber, null)
           .then((firebaseUser) {
-        Logx.i(
-            _TAG,
+        Logx.i(_TAG,
             'signInWithPhoneNumber: user verification id ${firebaseUser.verificationId}');
 
         showOTPDialog(context);
@@ -1617,8 +1710,11 @@ class _PartyGuestAddEditManageScreenState
   showOTPDialog(BuildContext context) {
     return showDialog(
       context: context,
-      builder: (BuildContext ctx) {
+      builder: (BuildContext context) {
         return AlertDialog(
+          backgroundColor: Constants.lightPrimary,
+          shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(20.0))),
           contentPadding: const EdgeInsets.all(16.0),
           content: SizedBox(
             height: 250,
@@ -1627,14 +1723,10 @@ class _PartyGuestAddEditManageScreenState
               children: [
                 const Padding(
                   padding: EdgeInsets.only(bottom: 20),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Text(
-                        'phone number verification',
-                        style: TextStyle(fontSize: 18),
-                      ),
-                    ],
+                  child: Text(
+                    'phone number verification',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 22, color: Colors.black),
                   ),
                 ),
                 Padding(
@@ -1677,12 +1769,12 @@ class _PartyGuestAddEditManageScreenState
                           Toaster.longToast('refreshing');
                           _verifyPhone();
                         },
-                        child: DelayedDisplay(
-                          delay: const Duration(seconds: 10),
+                        child: const DelayedDisplay(
+                          delay: Duration(seconds: 10),
                           child: Text(
                             'resend?',
                             style: TextStyle(
-                              color: Theme.of(context).primaryColor,
+                              color: Constants.primary,
                               fontSize: 16,
                             ),
                           ),
@@ -1698,7 +1790,7 @@ class _PartyGuestAddEditManageScreenState
             TextButton(
               child: const Text('close'),
               onPressed: () {
-                Navigator.of(ctx).pop();
+                Navigator.of(context).pop();
               },
             ),
           ],
@@ -1754,7 +1846,7 @@ class _PartyGuestAddEditManageScreenState
               onCompleted: (pin) async {
                 debugPrint('onCompleted: $pin');
 
-                Toaster.shortToast('verifying ${completePhoneNumber}');
+                Toaster.shortToast('verifying $completePhoneNumber, please wait...');
                 try {
                   await FirebaseAuth.instance
                       .signInWithCredential(PhoneAuthProvider.credential(
@@ -1762,13 +1854,11 @@ class _PartyGuestAddEditManageScreenState
                       .then((value) async {
                     if (value.user != null) {
                       Logx.i(_TAG, 'user is in firebase auth');
-                      Logx.i(
-                          _TAG,
+                      Logx.i(_TAG,
                           'checking for bloc registration, id ${value.user!.uid}');
 
                       FirestoreHelper.pullUser(value.user!.uid).then((res) {
-                        Logx.i(
-                            _TAG,
+                        Logx.i(_TAG,
                             "successfully retrieved bloc user for id ${value.user!.uid}");
 
                         if (res.docs.isEmpty) {
@@ -1787,7 +1877,7 @@ class _PartyGuestAddEditManageScreenState
                           widget.partyGuest.phone =
                               bloc_user.phoneNumber.toString();
 
-                          showRulesConfirmationDialog(context, true);
+                          _showRulesConfirmationDialog(context, true);
                         } else {
                           Logx.i(_TAG,
                               'user is a bloc member. navigating to main...');
@@ -1799,10 +1889,10 @@ class _PartyGuestAddEditManageScreenState
                           blocUser.User user = Fresh.freshUserMap(data, true);
 
                           //update user details
-                          user = user.copyWith(name: bloc_user.name);
-                          user = user.copyWith(email: bloc_user.email);
                           int time = Timestamp.now().millisecondsSinceEpoch;
-                          user = user.copyWith(lastSeenAt: time);
+                          user = user.copyWith(name: bloc_user.name,
+                              email: bloc_user.email,
+                              lastSeenAt: time);
                           FirestoreHelper.pushUser(user);
 
                           UserPreferences.setUser(user);
@@ -1811,7 +1901,7 @@ class _PartyGuestAddEditManageScreenState
                           widget.partyGuest.guestId = bloc_user.id;
                           widget.partyGuest.phone =
                               bloc_user.phoneNumber.toString();
-                          showRulesConfirmationDialog(context, false);
+                          _showRulesConfirmationDialog(context, false);
                         }
                       });
                     }
@@ -1866,15 +1956,6 @@ class _PartyGuestAddEditManageScreenState
     );
   }
 
-  findChallengeUrl() {
-    String url = ChallengeUtils.challengeUrl(findChallenge());
-
-    if(url == ChallengeUtils.partyInsta){
-      url = widget.party.instagramUrl;
-    }
-    return url;
-  }
-
   _displayPartiesDropdown(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 0.0),
@@ -1884,16 +1965,15 @@ class _PartyGuestAddEditManageScreenState
             key: const ValueKey('parties_key'),
             decoration: InputDecoration(
                 fillColor: Colors.white,
-                errorStyle: TextStyle(
-                    color: Theme.of(context).errorColor, fontSize: 16.0),
+                errorStyle: const TextStyle(
+                    color: Constants.errorColor, fontSize: 16.0),
                 hintText: 'please select party',
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(5.0),
-                  borderSide: BorderSide(color: Constants.primary),
+                  borderSide: const BorderSide(color: Constants.primary),
                 ),
                 enabledBorder: const OutlineInputBorder(
-                  borderSide: BorderSide(
-                      color: Constants.primary, width: 0.0),
+                  borderSide: BorderSide(color: Constants.primary, width: 0.0),
                 )),
             isEmpty: sPartyName == '',
             child: DropdownButtonHideUnderline(
@@ -1914,7 +1994,8 @@ class _PartyGuestAddEditManageScreenState
                       }
                     }
 
-                    widget.partyGuest = widget.partyGuest.copyWith(partyId: sPartyId);
+                    widget.partyGuest =
+                        widget.partyGuest.copyWith(partyId: sPartyId);
                     FirestoreHelper.pushPartyGuest(widget.partyGuest);
                     Logx.ist(_TAG, 'guest list updated to party: $sPartyName');
 

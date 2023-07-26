@@ -95,6 +95,7 @@ class AccountScreen extends StatelessWidget {
                 context: context,
                 builder: (BuildContext context) {
                   return AlertDialog(
+                    contentPadding: const EdgeInsets.all(16.0),
                     title: const Text('delete account'),
                     content: const Text("deleting your account will delete your access and all your information on this site. are you sure you want to continue?"),
                     actions: [

@@ -391,9 +391,7 @@ class _PromoterGuestsScreenState extends State<PromoterGuestsScreen> {
               onClicked: () {
                 try {
                   List<String> splitLines = mLines.split("\n");
-
                   List<PartyGuest> partyGuests = [];
-
                   int exactCount = 0;
 
                   for (String line in splitLines) {

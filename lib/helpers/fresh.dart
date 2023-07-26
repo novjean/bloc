@@ -1497,7 +1497,6 @@ class Fresh {
     return fresh;
   }
 
-
   /** party **/
   static Party freshPartyMap(Map<String, dynamic> map, bool shouldUpdate) {
     Party party = Dummy.getDummyParty(UserPreferences.myUser.blocServiceId);
@@ -1694,7 +1693,7 @@ class Fresh {
           party.copyWith(isChallengeActive: map['isChallengeActive'] as bool);
     } catch (e) {
       Logx.em(
-          _TAG, 'party isChallengeActive not exist for party id: ' + party.id);
+          _TAG, 'party isChallengeActive not exist for id: ${party.id}');
       shouldPushParty = true;
     }
     try {
@@ -1977,7 +1976,15 @@ class Fresh {
       freshGuest = freshGuest.copyWith(email: partyGuest.email);
     } catch (e) {
       Logx.em(_TAG,
-          'party guest email not exist for party guest id: ' + partyGuest.id);
+          'party guest email not exist for id: ${partyGuest.id}');
+    }
+
+    try {
+      freshGuest = freshGuest.copyWith(guestNames: partyGuest.guestNames);
+    } catch (e) {
+      Logx.em(
+          _TAG,
+          'party guest guestNames not exist for id: ${partyGuest.id}');
     }
     try {
       freshGuest = freshGuest.copyWith(guestsCount: partyGuest.guestsCount);
@@ -2105,7 +2112,7 @@ class Fresh {
       partyGuest = partyGuest.copyWith(guestsCount: map['guestsCount'] as int);
     } catch (e) {
       Logx.em(
-          _TAG, 'partyGuest guestsCount not exist for id: ' + partyGuest.id);
+          _TAG, 'partyGuest guestsCount not exist for id: ${partyGuest.id}');
       isModelChanged = true;
     }
     try {
@@ -2116,6 +2123,13 @@ class Fresh {
           'partyGuest guestsRemaining not exist for id: ${partyGuest.id}');
       isModelChanged = true;
     }
+    try {
+      partyGuest = partyGuest.copyWith(guestNames: List<String>.from(map['guestNames']));
+    } catch (e) {
+      Logx.em(_TAG, 'partyGuest guestNames not exist for id: ${partyGuest.id}');
+      isModelChanged = true;
+    }
+
     try {
       partyGuest = partyGuest.copyWith(createdAt: map['createdAt'] as int);
     } catch (e) {

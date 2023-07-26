@@ -309,6 +309,7 @@ class Dummy {
         isVip: false,
         shouldBanUser: false,
         promoterId: '',
+        guestNames: [],
         gender: 'male' );
     return dummyGuest;
   }

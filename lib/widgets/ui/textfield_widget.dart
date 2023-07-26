@@ -34,7 +34,6 @@ class _TextFieldWidgetState extends State<TextFieldWidget> {
   @override
   void dispose() {
     controller.dispose();
-
     super.dispose();
   }
 

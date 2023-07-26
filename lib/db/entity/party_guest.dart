@@ -8,6 +8,7 @@ class PartyGuest {
   String email;
   String gender;
 
+  List<String> guestNames;
   int guestsCount;
   int guestsRemaining;
 
@@ -31,6 +32,7 @@ class PartyGuest {
     required this.phone,
     required this.email,
     required this.gender,
+    required this.guestNames,
     required this.guestsCount,
     required this.guestsRemaining,
     required this.createdAt,
@@ -55,6 +57,7 @@ class PartyGuest {
           phone == other.phone &&
           email == other.email &&
           gender == other.gender &&
+          guestNames == other.guestNames &&
           guestsCount == other.guestsCount &&
           guestsRemaining == other.guestsRemaining &&
           createdAt == other.createdAt &&
@@ -75,6 +78,7 @@ class PartyGuest {
       phone.hashCode ^
       email.hashCode ^
       gender.hashCode ^
+      guestNames.hashCode ^
       guestsCount.hashCode ^
       guestsRemaining.hashCode ^
       createdAt.hashCode ^
@@ -96,6 +100,7 @@ class PartyGuest {
         ' phone: $phone,' +
         ' email: $email,' +
         ' gender: $gender,' +
+        ' guestNames: $guestNames,' +
         ' guestsCount: $guestsCount,' +
         ' guestsRemaining: $guestsRemaining,' +
         ' createdAt: $createdAt,' +
@@ -117,6 +122,7 @@ class PartyGuest {
     String? phone,
     String? email,
     String? gender,
+    List<String>? guestNames,
     int? guestsCount,
     int? guestsRemaining,
     int? createdAt,
@@ -136,6 +142,7 @@ class PartyGuest {
       phone: phone ?? this.phone,
       email: email ?? this.email,
       gender: gender ?? this.gender,
+      guestNames: guestNames ?? this.guestNames,
       guestsCount: guestsCount ?? this.guestsCount,
       guestsRemaining: guestsRemaining ?? this.guestsRemaining,
       createdAt: createdAt ?? this.createdAt,
@@ -158,6 +165,7 @@ class PartyGuest {
       'phone': this.phone,
       'email': this.email,
       'gender': this.gender,
+      'guestNames': this.guestNames,
       'guestsCount': this.guestsCount,
       'guestsRemaining': this.guestsRemaining,
       'createdAt': this.createdAt,
@@ -180,6 +188,7 @@ class PartyGuest {
       phone: map['phone'] as String,
       email: map['email'] as String,
       gender: map['gender'] as String,
+      guestNames: map['guestNames'] as List<String>,
       guestsCount: map['guestsCount'] as int,
       guestsRemaining: map['guestsRemaining'] as int,
       createdAt: map['createdAt'] as int,
