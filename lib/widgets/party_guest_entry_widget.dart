@@ -1,3 +1,4 @@
+import 'package:bloc/db/shared_preferences/party_guest_preferences.dart';
 import 'package:bloc/utils/string_utils.dart';
 import 'package:bloc/widgets/ui/textfield_widget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -51,10 +52,11 @@ class _PartyGuestEntryWidgetState extends State<PartyGuestEntryWidget> {
           mainAxisSize: MainAxisSize.min,
           children: [
             TextFieldWidget(
-              label: 'guest name ${widget.index} *',
+              label: 'guest name ${widget.index}',
               text: user.name,
               onChanged: (text) {
                 user = user.copyWith(name: text);
+
               },
             ),
             IntlPhoneField(
@@ -71,6 +73,14 @@ class _PartyGuestEntryWidgetState extends State<PartyGuestEntryWidget> {
               // controller: _controller,
               initialCountryCode: 'IN',
               dropdownTextStyle: const TextStyle(fontSize: 20),
+              onTap: () {
+                Logx.d(_TAG, 'name is ' + user.name);
+
+                List<String> guestNames = PartyGuestPreferences.getListGuestNames();
+                int trueIndex = widget.index-1;
+                guestNames[trueIndex] = user.name;
+                PartyGuestPreferences.setListGuestNames(guestNames);
+              },
               onChanged: (phone) async {
                 Logx.i(_TAG, phone.completeNumber);
                 completePhoneNumber = phone.completeNumber;

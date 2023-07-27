@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:bloc/db/shared_preferences/party_guest_preferences.dart';
 import 'package:bloc/db/shared_preferences/table_preferences.dart';
 import 'package:bloc/routes/bloc_router.dart';
 
@@ -24,10 +25,6 @@ var logger = Logger(
   printer: PrettyPrinter(),
 );
 
-/// Define a top-level named handler which background/terminated messages will
-/// call.
-///
-/// To verify things are working, check out the native platform logs.
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   // If you're going to use other Firebase services in the background, such as Firestore,
   // make sure you call `initializeApp` before using other Firebase services.
@@ -115,10 +112,12 @@ Future<void> main() async {
 
   // Set the background messaging handler early on, as a named top-level function
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-  
+
+  // shared preferences initialization
   await UserPreferences.init();
   await UiPreferences.init();
   await TablePreferences.init();
+  await PartyGuestPreferences.init();
 
   // disabling landscape until all ui issues are resolved
   await SystemChrome.setPreferredOrientations([

@@ -29,6 +29,7 @@ import '../../db/entity/party_guest.dart';
 import '../../db/entity/party_interest.dart';
 import '../../db/entity/promoter.dart';
 import '../../db/entity/user.dart' as blocUser;
+import '../../db/shared_preferences/party_guest_preferences.dart';
 import '../../db/shared_preferences/user_preferences.dart';
 import '../../helpers/dummy.dart';
 import '../../helpers/firestore_helper.dart';
@@ -1202,6 +1203,12 @@ class _PartyGuestAddEditManageScreenState
   void _showGuestsEntryDialog(BuildContext context) {
     int guestCount = widget.partyGuest.guestsCount - 1;
 
+    List<String> guestNames = [];
+    for(int i = 0; i<guestCount; i++){
+      guestNames.add('');
+    }
+    PartyGuestPreferences.setListGuestNames(guestNames);
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -1230,9 +1237,19 @@ class _PartyGuestAddEditManageScreenState
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
+
+                List<String> guestNames = PartyGuestPreferences.getListGuestNames();
+                List<String> names = [];
+                for(String name in guestNames){
+                  if(name.trim().isNotEmpty){
+                    names.add(name);
+                  }
+                }
+                widget.partyGuest = widget.partyGuest.copyWith(guestNames: names);
+
                 _showRulesConfirmationDialog(context, false);
               },
-              child: Text('👍 done', style: TextStyle(color: Constants.background)),
+              child: const Text('👍 done', style: TextStyle(color: Constants.background)),
             ),
           ],
         );

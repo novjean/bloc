@@ -53,9 +53,20 @@ class _PromoterBoxOfficeItemState extends State<PromoterBoxOfficeItem> {
       title += ' +$friendsCount';
     }
 
-    if(widget.partyGuest.isVip){
-      title += widget.partyGuest.gender == 'male' ? '🫅': '👸';
-      // title += ' [vip]';
+    if (widget.partyGuest.isVip) {
+      title += ' [vip]';
+    }
+
+    bool showGuestRemaining = widget.partyGuest.guestsRemaining >= 2 ||
+            widget.partyGuest.guestsRemaining == 0
+        ? true
+        : false;
+
+    String guestNames = '';
+    if (widget.partyGuest.guestNames.isNotEmpty) {
+      for (String name in widget.partyGuest.guestNames) {
+        guestNames += '$name. ';
+      }
     }
 
     return GestureDetector(
@@ -63,18 +74,18 @@ class _PromoterBoxOfficeItemState extends State<PromoterBoxOfficeItem> {
         Navigator.of(context).push(
           MaterialPageRoute(
               builder: (ctx) => BoxOfficeGuestConfirmScreen(
-                partyGuestId: widget.partyGuest.id,
-              )),
+                    partyGuestId: widget.partyGuest.id,
+                  )),
         );
       },
       onDoubleTap: () {
-        if(UserPreferences.myUser.clearanceLevel>=Constants.MANAGER_LEVEL){
+        if (UserPreferences.myUser.clearanceLevel >= Constants.MANAGER_LEVEL) {
           Navigator.of(context).push(MaterialPageRoute(
               builder: (ctx) => PartyGuestAddEditManageScreen(
-                partyGuest: widget.partyGuest,
-                party: widget.party,
-                task: 'manage',
-              )));
+                    partyGuest: widget.partyGuest,
+                    party: widget.party,
+                    task: 'manage',
+                  )));
         }
       },
       child: Hero(
@@ -85,87 +96,46 @@ class _PromoterBoxOfficeItemState extends State<PromoterBoxOfficeItem> {
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
           child: SizedBox(
-            height: mq.height * 0.15,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Flexible(
-                  flex: 1,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding:
-                            const EdgeInsets.only(left: 5.0, right: 5, top: 1),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              title,
-                              style: const TextStyle(
-                                fontSize: 20.0,
-                                fontWeight: FontWeight.w800,
-                              ),
-                              overflow: TextOverflow.ellipsis,
-                              textAlign: TextAlign.left,
-                            ),
-                            showArrivedOrNotButton(context)
-                          ],
-                        ),
+              child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 1),
+            child: ListView(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      title,
+                      style: const TextStyle(
+                        fontSize: 20.0,
+                        fontWeight: FontWeight.w800,
                       ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(left: 5.0),
-                            child: Text(
-                              '+${widget.partyGuest.phone}',
-                              style: const TextStyle(fontSize: 16),
-                            ),
-                          ),
-                          widget.partyGuest.guestsRemaining != 0
-                              ? Padding(
-                            padding: const EdgeInsets.only(right: 5.0),
-                            child: Text(
-                              '${widget.partyGuest.guestsRemaining} guests remaining',
-                              style: const TextStyle(fontSize: 16),
-                            ),
-                          )
-                              : Padding(
-                            padding: const EdgeInsets.only(right: 5.0),
-                            child: Text(
-                              '${widget.partyGuest.guestsCount} guests entered',
-                              style: const TextStyle(fontSize: 16),
-                            ),
-                          ),
-                        ],
-                      ),
-
-
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 5.0, vertical: 1),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            !widget.partyGuest.isApproved
-                                ? showApproveButton(context)
-                                : showUnapproveButton(context),
-                            showEditOrTicketButton(context),
-                            const Spacer(),
-                            widget.partyGuest.shouldBanUser
-                                ? displayFreeUserButton(context)
-                                : displayBanUserButton(context),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
+                      overflow: TextOverflow.ellipsis,
+                      textAlign: TextAlign.left,
+                    ),
+                    showArrivedOrNotButton(context)
+                  ],
                 ),
+                Text(
+                  '+${widget.partyGuest.phone}',
+                  style: const TextStyle(fontSize: 16),
+                ),
+                showGuestRemaining
+                    ? widget.partyGuest.guestsRemaining != 0
+                        ? Text(
+                            '${widget.partyGuest.guestsRemaining} guests ',
+                            style: const TextStyle(fontSize: 16),
+                          )
+                        : Text(
+                            '${widget.partyGuest.guestsCount} guests entered',
+                            style: const TextStyle(fontSize: 16),
+                          )
+                    : const SizedBox(),
+                guestNames.isNotEmpty ? Text(guestNames) : const SizedBox()
               ],
             ),
-          ),
+          )),
         ),
       ),
     );
@@ -391,8 +361,8 @@ class _PromoterBoxOfficeItemState extends State<PromoterBoxOfficeItem> {
           Navigator.of(context).push(
             MaterialPageRoute(
                 builder: (ctx) => BoxOfficeGuestConfirmScreen(
-                  partyGuestId: widget.partyGuest.id,
-                )),
+                      partyGuestId: widget.partyGuest.id,
+                    )),
           );
 
           // if (widget.partyGuest.guestsRemaining != 0) {
