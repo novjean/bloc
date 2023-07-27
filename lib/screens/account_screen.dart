@@ -147,7 +147,7 @@ class AccountScreen extends StatelessWidget {
         const Divider(),
         const Spacer(),
         const Padding(
-          padding: EdgeInsets.only(bottom: 2.0),
+          padding: EdgeInsets.only(bottom: 10.0),
           child: Text('v ${Constants.appVersion}', textAlign: TextAlign.center, style: TextStyle(color: Constants.primary),),
         )
       ],
