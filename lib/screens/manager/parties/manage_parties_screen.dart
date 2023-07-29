@@ -12,6 +12,7 @@ import '../../../helpers/firestore_helper.dart';
 import '../../../helpers/fresh.dart';
 import '../../../main.dart';
 import '../../../utils/logx.dart';
+import '../../../widgets/manager/manage_party_item.dart';
 import '../../../widgets/ui/listview_block.dart';
 import '../../../widgets/ui/sized_listview_block.dart';
 import 'genre_add_edit_screen.dart';
@@ -34,6 +35,10 @@ class _ManagePartiesScreenState extends State<ManagePartiesScreen> {
 
   late List<String> mOptions;
   String sOption = '';
+
+  List<Party> mParties = [];
+  List<Party> searchList = [];
+  bool isSearching = false;
 
   @override
   void initState() {
@@ -114,7 +119,7 @@ class _ManagePartiesScreenState extends State<ManagePartiesScreen> {
             return const LoadingWidget();
           }
 
-          List<Party> _parties = [];
+          mParties = [];
 
           if (!snapshot.hasData) {
             return const Center(child: Text('no parties found!'));
@@ -124,34 +129,28 @@ class _ManagePartiesScreenState extends State<ManagePartiesScreen> {
             DocumentSnapshot document = snapshot.data!.docs[i];
             Map<String, dynamic> map = document.data()! as Map<String, dynamic>;
             final Party _party = Fresh.freshPartyMap(map, false);
-            _parties.add(_party);
+            mParties.add(_party);
 
             if (i == snapshot.data!.docs.length - 1) {
-              return _displayPartiesList(context, _parties);
+              return _displayPartiesList(context);
             }
           }
           return const LoadingWidget();
         });
   }
 
-  _displayPartiesList(BuildContext context, List<Party> _parties) {
+  _displayPartiesList(BuildContext context) {
     return Expanded(
       child: ListView.builder(
-          itemCount: _parties.length,
+          itemCount: mParties.length,
           scrollDirection: Axis.vertical,
           itemBuilder: (ctx, index) {
             return GestureDetector(
-                child: ListViewBlock(
-                  title: '${_parties[index].name} ${_parties[index].chapter}',
+                child: ManagePartyItem(
+                  party: mParties[index],
                 ),
-                // ManagePartyItem(
-                //   serviceId: widget.serviceId,
-                //   product: _parties[index],
-                // ),
                 onTap: () {
-                  Party _sParty = _parties[index];
-                  print('${_sParty.name} is selected');
-
+                  Party _sParty = mParties[index];
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (ctx) =>
                           PartyAddEditScreen(party: _sParty, task: 'edit')));

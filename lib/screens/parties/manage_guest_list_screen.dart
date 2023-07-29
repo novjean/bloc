@@ -287,7 +287,7 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              const Text('in-house list'),
+                              const Text('internal list'),
                               SizedBox.fromSize(
                                 size: const Size(50, 50),
                                 child: ClipOval(
@@ -301,10 +301,19 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
                                         String guestListText = '';
                                         for (PartyGuest partyGuest
                                             in mPartyGuests) {
+                                          String guests = '';
+                                          if (partyGuest
+                                              .guestNames.isNotEmpty) {
+                                            for (String name
+                                                in partyGuest.guestNames) {
+                                              guests += '$name\n';
+                                            }
+                                          }
+
                                           guestListText +=
                                               '${partyGuest.name},${partyGuest.surname},'
                                               '+${partyGuest.phone},${partyGuest.email},${partyGuest.guestsCount} pax,${partyGuest.gender},'
-                                              '${partyGuest.guestStatus},${partyGuest.isApproved ? 'approved' : 'not approved'}\n';
+                                              '${partyGuest.guestStatus},$guests,${partyGuest.isApproved ? 'approved' : 'not approved'}\n';
                                         }
 
                                         String rand =
@@ -331,7 +340,7 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              const Text('promoter list'),
+                              const Text('share list'),
                               SizedBox.fromSize(
                                 size: const Size(50, 50),
                                 child: ClipOval(
@@ -345,10 +354,19 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
                                         String guestListText = '';
                                         for (PartyGuest partyGuest
                                             in mPartyGuests) {
+                                          String guests = '';
+                                          if (partyGuest
+                                              .guestNames.isNotEmpty) {
+                                            for (String name
+                                                in partyGuest.guestNames) {
+                                              guests += '$name\n';
+                                            }
+                                          }
+
                                           guestListText +=
                                               '${partyGuest.name},${partyGuest.surname},'
                                               '+${partyGuest.phone},${partyGuest.guestsCount} pax,'
-                                              '${partyGuest.guestStatus},${partyGuest.isApproved ? 'approved' : 'not approved'}\n';
+                                              '${partyGuest.guestStatus},$guests,${partyGuest.isApproved ? 'approved' : 'not approved'}\n';
                                         }
 
                                         String rand =
@@ -358,10 +376,66 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
                                         FileUtils.shareCsvFile(fileName,
                                             guestListText, sPartyName);
                                       },
-                                      child: Column(
+                                      child: const Column(
                                         mainAxisAlignment:
                                             MainAxisAlignment.center,
-                                        children: const <Widget>[
+                                        children: <Widget>[
+                                          Icon(Icons.share_outlined),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
+                          const SizedBox(height: 10),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text('no promoter list'),
+                              SizedBox.fromSize(
+                                size: const Size(50, 50),
+                                child: ClipOval(
+                                  child: Material(
+                                    color: Constants.primary,
+                                    child: InkWell(
+                                      splashColor: Constants.darkPrimary,
+                                      onTap: () async {
+                                        Navigator.of(ctx).pop();
+
+                                        String guestListText = '';
+                                        for (PartyGuest partyGuest
+                                            in mPartyGuests) {
+                                          if (partyGuest.guestStatus !=
+                                              'promoter') {
+                                            String guests = '';
+                                            if (partyGuest
+                                                .guestNames.isNotEmpty) {
+                                              for (String name
+                                                  in partyGuest.guestNames) {
+                                                guests += '$name\n';
+                                              }
+                                            }
+
+                                            guestListText +=
+                                                '${partyGuest.name},${partyGuest.surname},'
+                                                '+${partyGuest.phone},${partyGuest.guestsCount} pax,'
+                                                '${partyGuest.guestStatus},$guests,${partyGuest.isApproved ? 'approved' : 'not approved'}\n';
+                                          }
+                                        }
+
+                                        String rand =
+                                            StringUtils.getRandomString(5);
+                                        String fileName =
+                                            '$sPartyName-$rand.csv';
+                                        FileUtils.shareCsvFile(fileName,
+                                            guestListText, sPartyName);
+                                      },
+                                      child: const Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: <Widget>[
                                           Icon(Icons.share_outlined),
                                         ],
                                       ),
@@ -385,51 +459,12 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
                                       splashColor: Constants.primary,
                                       onTap: () {
                                         Navigator.of(ctx).pop();
-
-                                        showDialog(
-                                            context: context,
-                                            builder: (BuildContext context) {
-                                              return AlertDialog(
-                                                title: Text(
-                                                  'delete all ${sPartyName == 'all' ? '' : sPartyName} guest lists',
-                                                  style: const TextStyle(
-                                                      color: Colors.redAccent),
-                                                ),
-                                                content: Text(
-                                                    'deleting ${mPartyGuests.length} guest list requests. are you sure you want to continue?'),
-                                                actions: [
-                                                  TextButton(
-                                                    child: const Text('yes'),
-                                                    onPressed: () async {
-                                                      for (PartyGuest partyGuest
-                                                          in mPartyGuests) {
-                                                        FirestoreHelper
-                                                            .deletePartyGuest(
-                                                                partyGuest);
-                                                      }
-                                                      Logx.i(_TAG,
-                                                          'deleted all ${sPartyName == 'all' ? '' : sPartyName} guest list requests!');
-                                                      Toaster.shortToast(
-                                                          'deleted all ${sPartyName == 'all' ? '' : sPartyName} guest list requests!');
-                                                      Navigator.of(context)
-                                                          .pop();
-                                                    },
-                                                  ),
-                                                  TextButton(
-                                                    child: const Text("no"),
-                                                    onPressed: () {
-                                                      Navigator.of(context)
-                                                          .pop();
-                                                    },
-                                                  )
-                                                ],
-                                              );
-                                            });
+                                        _showDeleteAllGuestList(context);
                                       },
-                                      child: Column(
+                                      child: const Column(
                                         mainAxisAlignment:
                                             MainAxisAlignment.center,
-                                        children: const <Widget>[
+                                        children: <Widget>[
                                           Icon(Icons.delete_forever),
                                         ],
                                       ),
@@ -458,5 +493,41 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
         );
       },
     );
+  }
+
+  _showDeleteAllGuestList(BuildContext context) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text(
+              'delete all ${sPartyName == 'all' ? '' : sPartyName} guest lists',
+              style: const TextStyle(color: Colors.redAccent),
+            ),
+            content: Text(
+                'deleting ${mPartyGuests.length} guest list requests. are you sure you want to continue?'),
+            actions: [
+              TextButton(
+                child: const Text('yes'),
+                onPressed: () async {
+                  for (PartyGuest partyGuest in mPartyGuests) {
+                    FirestoreHelper.deletePartyGuest(partyGuest);
+                  }
+                  Logx.i(_TAG,
+                      'deleted all ${sPartyName == 'all' ? '' : sPartyName} guest list requests!');
+                  Toaster.shortToast(
+                      'deleted all ${sPartyName == 'all' ? '' : sPartyName} guest list requests!');
+                  Navigator.of(context).pop();
+                },
+              ),
+              TextButton(
+                child: const Text("no"),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              )
+            ],
+          );
+        });
   }
 }
