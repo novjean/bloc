@@ -52,9 +52,10 @@ class _ManagePartiesScreenState extends State<ManagePartiesScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        titleSpacing: 0,
-        title: AppBarTitle(title: 'manage parties',)
-      ),
+          titleSpacing: 0,
+          title: AppBarTitle(
+            title: 'manage parties',
+          )),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           showAddOptionsDialog(context);
@@ -79,14 +80,16 @@ class _ManagePartiesScreenState extends State<ManagePartiesScreen> {
       children: [
         displayOptions(context),
         const Divider(),
-        sOption == 'event' || sOption == 'artist' ? _buildParties(context) : _buildGenres(context),
+        sOption == 'event' || sOption == 'artist'
+            ? _buildParties(context)
+            : _buildGenres(context),
         const SizedBox(height: 5.0),
       ],
     );
   }
 
   displayOptions(BuildContext context) {
-    double containerHeight = mq.height *0.2;
+    double containerHeight = mq.height * 0.2;
 
     return SizedBox(
       key: UniqueKey(),
@@ -105,7 +108,8 @@ class _ManagePartiesScreenState extends State<ManagePartiesScreen> {
                 ),
                 onTap: () {
                   setState(() {
-                    sOption = mOptions[index];});
+                    sOption = mOptions[index];
+                  });
                 });
           }),
     );
@@ -115,25 +119,31 @@ class _ManagePartiesScreenState extends State<ManagePartiesScreen> {
     return StreamBuilder<QuerySnapshot>(
         stream: FirestoreHelper.getPartyByType(widget.serviceId, sOption),
         builder: (ctx, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const LoadingWidget();
-          }
+          switch (snapshot.connectionState) {
+            case ConnectionState.waiting:
+            case ConnectionState.none:
+              return const LoadingWidget();
+            case ConnectionState.active:
+            case ConnectionState.done:
+              {
+                mParties = [];
 
-          mParties = [];
+                if (!snapshot.hasData) {
+                  return const Center(child: Text('no parties found!'));
+                }
 
-          if (!snapshot.hasData) {
-            return const Center(child: Text('no parties found!'));
-          }
+                for (int i = 0; i < snapshot.data!.docs.length; i++) {
+                  DocumentSnapshot document = snapshot.data!.docs[i];
+                  Map<String, dynamic> map =
+                      document.data()! as Map<String, dynamic>;
+                  final Party _party = Fresh.freshPartyMap(map, false);
+                  mParties.add(_party);
 
-          for (int i = 0; i < snapshot.data!.docs.length; i++) {
-            DocumentSnapshot document = snapshot.data!.docs[i];
-            Map<String, dynamic> map = document.data()! as Map<String, dynamic>;
-            final Party _party = Fresh.freshPartyMap(map, false);
-            mParties.add(_party);
-
-            if (i == snapshot.data!.docs.length - 1) {
-              return _displayPartiesList(context);
-            }
+                  if (i == snapshot.data!.docs.length - 1) {
+                    return _displayPartiesList(context);
+                  }
+                }
+              }
           }
           return const LoadingWidget();
         });
@@ -159,7 +169,7 @@ class _ManagePartiesScreenState extends State<ManagePartiesScreen> {
     );
   }
 
-  _buildGenres(BuildContext context){
+  _buildGenres(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
         stream: FirestoreHelper.getGenres(),
         builder: (ctx, snapshot) {
@@ -245,35 +255,40 @@ class _ManagePartiesScreenState extends State<ManagePartiesScreen> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               const Text('event | artist'),
-                              ButtonWidget(text: 'add', onClicked: () {
-                                Navigator.of(ctx).pop();
+                              ButtonWidget(
+                                  text: 'add',
+                                  onClicked: () {
+                                    Navigator.of(ctx).pop();
 
-                                Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                      builder: (ctx) => PartyAddEditScreen(
-                                        party: Dummy.getDummyParty(widget.serviceId),
-                                        task: 'add',
-                                      )),
-                                );
-                              }),
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                          builder: (ctx) => PartyAddEditScreen(
+                                                party: Dummy.getDummyParty(
+                                                    widget.serviceId),
+                                                task: 'add',
+                                              )),
+                                    );
+                                  }),
                             ],
                           ),
-                          const SizedBox(height:5),
+                          const SizedBox(height: 5),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               const Text('genre'),
-                              ButtonWidget(text: 'add', onClicked: () {
-                                Navigator.of(ctx).pop();
+                              ButtonWidget(
+                                  text: 'add',
+                                  onClicked: () {
+                                    Navigator.of(ctx).pop();
 
-                                Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                      builder: (ctx) => GenreAddEditScreen(
-                                        genre: Dummy.getDummyGenre(),
-                                        task: 'add',
-                                      )),
-                                );
-                              }),
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                          builder: (ctx) => GenreAddEditScreen(
+                                                genre: Dummy.getDummyGenre(),
+                                                task: 'add',
+                                              )),
+                                    );
+                                  }),
                             ],
                           ),
                         ],
@@ -297,5 +312,3 @@ class _ManagePartiesScreenState extends State<ManagePartiesScreen> {
     );
   }
 }
-
-

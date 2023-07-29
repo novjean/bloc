@@ -27,13 +27,15 @@ class PromoterBoxOfficeItem extends StatefulWidget {
   final Party party;
   final bool isClickable;
   final List<Challenge> challenges;
+  final String promoterName;
 
   PromoterBoxOfficeItem(
       {Key? key,
       required this.partyGuest,
       required this.isClickable,
       required this.party,
-      required this.challenges})
+      required this.challenges,
+        required this.promoterName})
       : super(key: key);
 
   @override
@@ -92,7 +94,7 @@ class _PromoterBoxOfficeItemState extends State<PromoterBoxOfficeItem> {
         tag: widget.partyGuest.id,
         child: Card(
           elevation: 1,
-          color: Theme.of(context).primaryColorLight,
+          color: Constants.lightPrimary,
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
           child: SizedBox(
@@ -114,21 +116,24 @@ class _PromoterBoxOfficeItemState extends State<PromoterBoxOfficeItem> {
                       overflow: TextOverflow.ellipsis,
                       textAlign: TextAlign.left,
                     ),
-                    showArrivedOrNotButton(context)
+                    Text(widget.promoterName)
+                    // showArrivedOrNotButton(context)
                   ],
                 ),
-                Text(
-                  '+${widget.partyGuest.phone}',
-                  style: const TextStyle(fontSize: 16),
-                ),
+                widget.partyGuest.phone != '0'
+                    ? Text(
+                        '+${widget.partyGuest.phone}',
+                        style: const TextStyle(fontSize: 16),
+                      )
+                    : const SizedBox(),
                 showGuestRemaining
                     ? widget.partyGuest.guestsRemaining != 0
                         ? Text(
-                            '${widget.partyGuest.guestsRemaining} guests ',
+                  '${widget.partyGuest.guestStatus} : ${widget.partyGuest.guestsRemaining} guests ',
                             style: const TextStyle(fontSize: 16),
                           )
                         : Text(
-                            '${widget.partyGuest.guestsCount} guests entered',
+                            '${widget.partyGuest.guestStatus} : ${widget.partyGuest.guestsCount} guests entered',
                             style: const TextStyle(fontSize: 16),
                           )
                     : const SizedBox(),

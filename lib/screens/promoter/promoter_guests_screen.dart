@@ -279,10 +279,20 @@ class _PromoterGuestsScreenState extends State<PromoterGuestsScreen> {
         itemCount: guests.length,
         scrollDirection: Axis.vertical,
         itemBuilder: (ctx, index) {
+
+          String promoterName = '';
+          try{
+            var searchResult = mPromoters.where((obj) => obj.id == guests[index].promoterId);
+            promoterName = searchResult.first.name;
+          } catch (e){
+            Logx.em(_TAG, e.toString());
+          }
+
           return PromoterBoxOfficeItem(
             partyGuest: guests[index],
             party: widget.party,
             isClickable: true,
+            promoterName: promoterName,
             challenges: [],
           );
         },
