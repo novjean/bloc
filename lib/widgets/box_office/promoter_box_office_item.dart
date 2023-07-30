@@ -117,7 +117,6 @@ class _PromoterBoxOfficeItemState extends State<PromoterBoxOfficeItem> {
                       textAlign: TextAlign.left,
                     ),
                     Text(widget.promoterName)
-                    // showArrivedOrNotButton(context)
                   ],
                 ),
                 widget.partyGuest.phone != '0'
@@ -339,75 +338,6 @@ class _PromoterBoxOfficeItemState extends State<PromoterBoxOfficeItem> {
           widget.partyGuest = widget.partyGuest.copyWith(shouldBanUser: false);
           FirestoreHelper.pushPartyGuest(widget.partyGuest);
           Toaster.longToast('request to free user has been sent');
-        },
-      ),
-    );
-  }
-
-  showArrivedOrNotButton(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.only(right: 5),
-      height: 40,
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Constants.primary,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-          padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
-        ),
-        child: Text(
-          widget.partyGuest.guestsRemaining != 0
-              ? '👍🏿 arrived'
-              : '👎🏿 not arrived',
-          style: const TextStyle(fontSize: 16),
-        ),
-        onPressed: () {
-          Navigator.of(context).push(
-            MaterialPageRoute(
-                builder: (ctx) => BoxOfficeGuestConfirmScreen(
-                      partyGuestId: widget.partyGuest.id,
-                    )),
-          );
-
-          // if (widget.partyGuest.guestsRemaining != 0) {
-          //   widget.partyGuest = widget.partyGuest
-          //       .copyWith(guestsRemaining: 0, isApproved: true);
-          //   FirestoreHelper.pushPartyGuest(widget.partyGuest);
-          //
-          //   if(widget.partyGuest.guestStatus == 'promoter'){
-          //     FirestoreHelper.pullPromoterGuest(widget.partyGuest.id).then((res) {
-          //       if(res.docs.isNotEmpty){
-          //         DocumentSnapshot document = res.docs[0];
-          //         Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-          //         PromoterGuest promoterGuest = Fresh.freshPromoterGuestMap(data, false);
-          //         promoterGuest = promoterGuest.copyWith(hasAttended: true);
-          //         FirestoreHelper.pushPromoterGuest(promoterGuest);
-          //
-          //         Logx.i(_TAG, 'promoter guest ${promoterGuest.name} has attended');
-          //       } else {
-          //         Logx.em(_TAG, 'promoter guest could not be found for the party guest id: ${widget.partyGuest.id}');
-          //       }
-          //     });
-          //   }
-          // } else {
-          //   widget.partyGuest.guestsRemaining = widget.partyGuest.guestsCount;
-          //   FirestoreHelper.pushPartyGuest(widget.partyGuest);
-          //
-          //   FirestoreHelper.pullPromoterGuest(widget.partyGuest.id).then((res) {
-          //     if(res.docs.isNotEmpty){
-          //       DocumentSnapshot document = res.docs[0];
-          //       Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-          //       PromoterGuest promoterGuest = Fresh.freshPromoterGuestMap(data, false);
-          //       promoterGuest = promoterGuest.copyWith(hasAttended: false);
-          //       FirestoreHelper.pushPromoterGuest(promoterGuest);
-          //
-          //       Logx.i(_TAG, 'promoter guest ${promoterGuest.name} has not attended');
-          //     } else {
-          //       Logx.em(_TAG, 'promoter guest could not be found for the party guest id: ${widget.partyGuest.id}');
-          //     }
-          //   });
-          // }
         },
       ),
     );

@@ -520,8 +520,7 @@ class _PromoterGuestsScreenState extends State<PromoterGuestsScreen> {
     );
   }
 
-  void showGuestsConfirmationDialog(
-      BuildContext context, List<PartyGuest> partyGuests) {
+  showGuestsConfirmationDialog(BuildContext context, List<PartyGuest> partyGuests) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
