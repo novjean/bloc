@@ -57,9 +57,11 @@ class _PartyBannerState extends State<PartyBanner> {
           Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
           final PartyInterest partyInterest =
               Fresh.freshPartyInterestMap(data, false);
-          setState(() {
-            mPartyInterest = partyInterest;
-          });
+          if(mounted){
+            setState(() {
+              mPartyInterest = partyInterest;
+            });
+          }
         } else {
           // party interest does not exist
         }

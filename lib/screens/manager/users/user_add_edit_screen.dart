@@ -11,6 +11,7 @@ import '../../../db/entity/user.dart';
 import '../../../db/entity/user_level.dart';
 import '../../../helpers/firestorage_helper.dart';
 import '../../../helpers/firestore_helper.dart';
+import '../../../utils/constants.dart';
 import '../../../utils/logx.dart';
 import '../../../utils/string_utils.dart';
 import '../../../widgets/profile_widget.dart';
@@ -212,7 +213,7 @@ class _UserAddEditScreenState extends State<UserAddEditScreen> {
                   decoration: InputDecoration(
                       fillColor: Colors.white,
                       errorStyle: TextStyle(
-                          color: Theme.of(context).errorColor,
+                          color: Constants.errorColor,
                           fontSize: 16.0),
                       hintText: 'please select gender',
                       border: OutlineInputBorder(
@@ -291,7 +292,7 @@ class _UserAddEditScreenState extends State<UserAddEditScreen> {
               key: const ValueKey('bloc_service_id'),
               decoration: InputDecoration(
                   errorStyle: TextStyle(
-                      color: Theme.of(context).errorColor,
+                      color: Constants.errorColor,
                       fontSize: 16.0),
                   hintText: 'please select bloc service',
                   border: OutlineInputBorder(
@@ -334,8 +335,8 @@ class _UserAddEditScreenState extends State<UserAddEditScreen> {
             return InputDecorator(
               key: const ValueKey('user_level'),
               decoration: InputDecoration(
-                  errorStyle: TextStyle(
-                      color: Theme.of(context).errorColor,
+                  errorStyle: const TextStyle(
+                      color: Constants.errorColor,
                       fontSize: 16.0),
                   hintText: 'please select user level',
                   border: OutlineInputBorder(
@@ -401,8 +402,8 @@ class _UserAddEditScreenState extends State<UserAddEditScreen> {
             showDialog(
               context: context,
               builder: (ctx) => AlertDialog(
-                title: Text('delete ' + widget.user.name),
-                content: Text(
+                title: Text('delete ${widget.user.name}'),
+                content: const Text(
                   'do you want to delete the user?',
                 ),
                 actions: [

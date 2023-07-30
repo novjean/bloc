@@ -93,14 +93,14 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: AppBarTitle(title: 'manage | users'),
+        title: AppBarTitle(title: 'manage users'),
         titleSpacing: 0,
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           _showActionsDialog(context);
         },
-        backgroundColor: Theme.of(context).primaryColor,
+        backgroundColor: Constants.primary,
         tooltip: 'actions',
         elevation: 5,
         splashColor: Colors.grey,
@@ -125,14 +125,14 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
             height: 300,
             child: Column(
               children: [
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 20),
+                const Padding(
+                  padding: EdgeInsets.only(bottom: 20),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Text(
                         'filter',
-                        style: const TextStyle(fontSize: 18),
+                        style: TextStyle(fontSize: 18),
                       ),
                     ],
                   ),
@@ -192,23 +192,23 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
             key: const ValueKey('modes_dropdown'),
             decoration: InputDecoration(
                 fillColor: Colors.white,
-                errorStyle: TextStyle(
-                    color: Theme.of(context).errorColor, fontSize: 16.0),
+                errorStyle: const TextStyle(
+                    color: Constants.errorColor, fontSize: 16.0),
                 hintText: 'please select user mode',
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(5.0),
-                  borderSide: BorderSide(color: Theme.of(context).primaryColor),
+                  borderSide: const BorderSide(color: Constants.primary),
                 ),
-                enabledBorder: OutlineInputBorder(
+                enabledBorder: const OutlineInputBorder(
                   // width: 0.0 produces a thin "hairline" border
                   borderSide: BorderSide(
-                      color: Theme.of(context).primaryColor, width: 0.0),
+                      color: Constants.primary, width: 0.0),
                 )),
             isEmpty: sMode == '',
             child: DropdownButtonHideUnderline(
               child: DropdownButton<String>(
-                style: TextStyle(color: Theme.of(context).primaryColorLight),
-                dropdownColor: Theme.of(context).backgroundColor,
+                style: const TextStyle(color: Constants.lightPrimary),
+                dropdownColor: Constants.background,
                 value: sMode,
                 isDense: true,
                 onChanged: (String? newValue) {
@@ -238,23 +238,23 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
             key: const ValueKey('gender_dropdown'),
             decoration: InputDecoration(
                 fillColor: Colors.white,
-                errorStyle: TextStyle(
-                    color: Theme.of(context).errorColor, fontSize: 16.0),
+                errorStyle: const TextStyle(
+                    color: Constants.errorColor, fontSize: 16.0),
                 hintText: 'please select gender',
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(5.0),
-                  borderSide: BorderSide(color: Theme.of(context).primaryColor),
+                  borderSide: const BorderSide(color: Constants.primary),
                 ),
-                enabledBorder: OutlineInputBorder(
+                enabledBorder: const OutlineInputBorder(
                   // width: 0.0 produces a thin "hairline" border
                   borderSide: BorderSide(
-                      color: Theme.of(context).primaryColor, width: 0.0),
+                      color: Constants.primary, width: 0.0),
                 )),
             isEmpty: sGender == '',
             child: DropdownButtonHideUnderline(
               child: DropdownButton<String>(
-                style: TextStyle(color: Theme.of(context).primaryColorLight),
-                dropdownColor: Theme.of(context).backgroundColor,
+                style: const TextStyle(color: Constants.lightPrimary),
+                dropdownColor: Constants.background,
                 value: sGender,
                 isDense: true,
                 onChanged: (String? newValue) {
@@ -284,23 +284,23 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
             key: const ValueKey('user_levels_key'),
             decoration: InputDecoration(
                 fillColor: Colors.white,
-                errorStyle: TextStyle(
-                    color: Theme.of(context).errorColor, fontSize: 16.0),
+                errorStyle: const TextStyle(
+                    color: Constants.errorColor, fontSize: 16.0),
                 hintText: 'please select user level',
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(5.0),
-                  borderSide: BorderSide(color: Theme.of(context).primaryColor),
+                  borderSide: const BorderSide(color: Constants.primary),
                 ),
-                enabledBorder: OutlineInputBorder(
+                enabledBorder: const OutlineInputBorder(
                   // width: 0.0 produces a thin "hairline" border
                   borderSide: BorderSide(
-                      color: Theme.of(context).primaryColor, width: 0.0),
+                      color: Constants.primary, width: 0.0),
                 )),
             isEmpty: sUserLevelName == '',
             child: DropdownButtonHideUnderline(
               child: DropdownButton<String>(
-                style: TextStyle(color: Theme.of(context).primaryColor),
-                dropdownColor: Theme.of(context).backgroundColor,
+                style: const TextStyle(color: Constants.primary),
+                dropdownColor: Constants.background,
                 value: sUserLevelName,
                 isDense: true,
                 onChanged: (String? newValue) {
@@ -464,7 +464,7 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
             child: SingleChildScrollView(
               child: Column(
                 children: [
-                  Padding(
+                  const Padding(
                     padding: EdgeInsets.only(bottom: 20),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,

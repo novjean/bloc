@@ -3348,7 +3348,7 @@ class Fresh {
   /** user **/
   static User freshUserMap(Map<String, dynamic> map, bool shouldUpdate) {
     User user = Dummy.getDummyUser();
-    bool shouldPushUser = true;
+    bool isModelChanged = false;
 
     try {
       user = user.copyWith(id: map['id'] as String);
@@ -3359,92 +3359,92 @@ class Fresh {
       user = user.copyWith(name: map['name'] as String);
     } catch (e) {
       Logx.em(_TAG, 'user name not exist for user id: ' + user.id);
-      shouldPushUser = true;
+      isModelChanged = true;
     }
     try {
       user = user.copyWith(surname: map['surname'] as String);
     } catch (e) {
       Logx.em(_TAG, 'user surname not exist for user id: ' + user.id);
-      shouldPushUser = true;
+      isModelChanged = true;
     }
     try {
       user = user.copyWith(phoneNumber: map['phoneNumber'] as int);
     } catch (e) {
       Logx.em(_TAG, 'user phoneNumber not exist for user id: ' + user.id);
-      shouldPushUser = true;
+      isModelChanged = true;
     }
     try {
       user = user.copyWith(email: map['email'] as String);
     } catch (e) {
       Logx.em(_TAG, 'user email not exist for user id: ' + user.id);
-      shouldPushUser = true;
+      isModelChanged = true;
     }
     try {
       user = user.copyWith(imageUrl: map['imageUrl'] as String);
     } catch (e) {
       Logx.em(_TAG, 'user imageUrl not exist for user id: ' + user.id);
-      shouldPushUser = true;
+      isModelChanged = true;
     }
     try {
       user = user.copyWith(gender: map['gender'] as String);
     } catch (e) {
       Logx.em(_TAG, 'user gender not exist for user id: ' + user.id);
-      shouldPushUser = true;
+      isModelChanged = true;
     }
 
     try {
       user = user.copyWith(clearanceLevel: map['clearanceLevel'] as int);
     } catch (e) {
       Logx.em(_TAG, 'user clearanceLevel not exist for user id: ' + user.id);
-      shouldPushUser = true;
+      isModelChanged = true;
     }
     try {
       user = user.copyWith(challengeLevel: map['challengeLevel'] as int);
     } catch (e) {
       Logx.em(_TAG, 'user challengeLevel not exist for user id: ' + user.id);
-      shouldPushUser = true;
+      isModelChanged = true;
     }
 
     try {
       user = user.copyWith(fcmToken: map['fcmToken'] as String);
     } catch (e) {
       Logx.em(_TAG, 'user fcmToken not exist for user id: ' + user.id);
-      shouldPushUser = true;
+      isModelChanged = true;
     }
     try {
       user = user.copyWith(blocServiceId: map['blocServiceId'] as String);
     } catch (e) {
       Logx.em(_TAG, 'user blocServiceId not exist for user id: ' + user.id);
-      shouldPushUser = true;
+      isModelChanged = true;
     }
 
     try {
       user = user.copyWith(createdAt: map['createdAt'] as int);
     } catch (e) {
       Logx.em(_TAG, 'user createdAt not exist for user id: ' + user.id);
-      shouldPushUser = true;
+      isModelChanged = true;
     }
     try {
       user = user.copyWith(lastSeenAt: map['lastSeenAt'] as int);
     } catch (e) {
       Logx.em(_TAG, 'user lastSeenAt not exist for user id: ' + user.id);
-      shouldPushUser = true;
+      isModelChanged = true;
     }
 
     try {
       user = user.copyWith(isBanned: map['isBanned'] as bool);
     } catch (e) {
       Logx.em(_TAG, 'user isBanned not exist for id: ${user.id}');
-      shouldPushUser = true;
+      isModelChanged = true;
     }
     try {
       user = user.copyWith(isAppUser: map['isAppUser'] as bool);
     } catch (e) {
       Logx.em(_TAG, 'user isAppUser not exist for id: ${user.id}');
-      shouldPushUser = true;
+      isModelChanged = true;
     }
 
-    if (shouldPushUser && shouldUpdate) {
+    if (isModelChanged && shouldUpdate) {
       Logx.i(_TAG, 'updating user ${user.id}');
       FirestoreHelper.pushUser(user);
     }

@@ -37,6 +37,13 @@ class DateTimeUtils {
     String date = DateFormat('MMMMd').format(dt);
     return date.toLowerCase();
   }
+
+  static String getFormattedDate4(int millis) {
+    var dt = DateTime.fromMillisecondsSinceEpoch(millis);
+    String date = DateFormat('yMd').format(dt);
+    return date.toLowerCase();
+  }
+
   //saturday, may 6
   static String getFormattedDate2(int millis) {
     var dt = DateTime.fromMillisecondsSinceEpoch(millis);
@@ -58,6 +65,7 @@ class DateTimeUtils {
     return date;
   }
 
+  //jul 30, 2023
   static String getFormattedDateYear(int millis) {
     var dt = DateTime.fromMillisecondsSinceEpoch(millis);
     String date = DateFormat('yMMMd').format(dt);

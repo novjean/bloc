@@ -11,6 +11,7 @@ import '../../../db/entity/party.dart';
 import '../../../helpers/firestore_helper.dart';
 import '../../../helpers/fresh.dart';
 import '../../../main.dart';
+import '../../../utils/constants.dart';
 import '../../../utils/logx.dart';
 import '../../../widgets/manager/manage_party_item.dart';
 import '../../../widgets/ui/listview_block.dart';
@@ -80,6 +81,36 @@ class _ManagePartiesScreenState extends State<ManagePartiesScreen> {
       children: [
         displayOptions(context),
         const Divider(),
+        sOption == 'event' || sOption == 'artist'? Container(
+          margin: const EdgeInsets.symmetric(horizontal: 5),
+          child: TextField(
+            decoration: const InputDecoration(
+                border: InputBorder.none,
+                hintText: 'search by name',
+                hintStyle: TextStyle(color: Constants.primary)
+            ),
+            autofocus: false,
+            style: const TextStyle(fontSize: 17, color: Constants.primary),
+            onChanged: (val) {
+              if(val.trim().isNotEmpty){
+                isSearching = true;
+              } else {
+                isSearching = false;
+              }
+
+              searchList.clear();
+
+              for(var i in mParties){
+                if(i.name.toLowerCase().contains(val.toLowerCase())){
+                  searchList.add(i);
+                }
+              }
+              setState(() {
+              });
+            } ,
+          ),
+        ):const SizedBox(),
+        const Divider(),
         sOption == 'event' || sOption == 'artist'
             ? _buildParties(context)
             : _buildGenres(context),
@@ -103,8 +134,9 @@ class _ManagePartiesScreenState extends State<ManagePartiesScreen> {
                 child: SizedListViewBlock(
                   title: mOptions[index],
                   height: containerHeight,
+
                   width: mq.width / 3,
-                  color: Theme.of(context).primaryColor,
+                  color: Constants.primary,
                 ),
                 onTap: () {
                   setState(() {
@@ -150,20 +182,22 @@ class _ManagePartiesScreenState extends State<ManagePartiesScreen> {
   }
 
   _displayPartiesList(BuildContext context) {
+    List<Party> parties = isSearching ? searchList : mParties;
+
     return Expanded(
       child: ListView.builder(
-          itemCount: mParties.length,
+          itemCount: parties.length,
           scrollDirection: Axis.vertical,
           itemBuilder: (ctx, index) {
             return GestureDetector(
                 child: ManagePartyItem(
-                  party: mParties[index],
+                  party: parties[index],
                 ),
                 onTap: () {
-                  Party _sParty = mParties[index];
+                  Party sParty = parties[index];
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (ctx) =>
-                          PartyAddEditScreen(party: _sParty, task: 'edit')));
+                          PartyAddEditScreen(party: sParty, task: 'edit')));
                 });
           }),
     );

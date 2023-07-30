@@ -61,7 +61,7 @@ class PartyItem extends StatelessWidget {
                 children: <Widget>[
                   Stack(
                     children: [
-                      Container(
+                      SizedBox(
                         height: imageHeight,
                         width: MediaQuery.of(context).size.width,
                         child: FadeInImage(
@@ -79,9 +79,11 @@ class PartyItem extends StatelessWidget {
                           child: RichText(
                             text: TextSpan(
                                 text: '${party.name.toLowerCase()} ',
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontFamily: Constants.fontDefault,
                                     color: Colors.white,
+                                    backgroundColor: Constants.lightPrimary
+                                        .withOpacity(0.7),
                                     overflow: TextOverflow.ellipsis,
                                     fontSize: 26,
                                     fontWeight: FontWeight.bold),
@@ -108,20 +110,45 @@ class PartyItem extends StatelessWidget {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        party.eventName.isNotEmpty
-                            ? Text(
-                                '${party.eventName.toLowerCase()} [${party.genre}]',
-                                style: const TextStyle(fontSize: 18),
-                              )
-                            : Text(
-                                '[${party.genre}]',
-                                style: const TextStyle(fontSize: 18),
-                              ),
-                        Text(
-                          party.isTBA
-                              ? 'tba'
-                              : DateTimeUtils.getFormattedDate(party.startTime),
-                          style: const TextStyle(fontSize: 18),
+                        Flexible(
+                          flex: 4,
+                          child: party.eventName.isNotEmpty
+                              ? RichText(
+                            maxLines: 2,
+                            text: TextSpan(
+                                text: '${party.eventName.toLowerCase()} ',
+                                style: const TextStyle(
+                                    color: Colors.black,
+                                    fontFamily: Constants.fontDefault,
+                                    overflow: TextOverflow.ellipsis,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold),
+                                children: <TextSpan>[
+                                  TextSpan(
+                                      text: party.genre.isNotEmpty
+                                          ? '[${party.genre}]'
+                                          : ' ',
+                                      style: const TextStyle(
+                                          color: Colors.black,
+                                          fontFamily: Constants.fontDefault,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.normal,
+                                          fontStyle: FontStyle.italic)),
+                                ]),
+                          )
+                              : party.genre.isNotEmpty? Text(
+                                  '[${party.genre}]',
+                                  style: const TextStyle(fontSize: 18),
+                                ) : const SizedBox(),
+                        ),
+                        Flexible(
+                          flex: 1,
+                          child: Text(
+                            party.isTBA
+                                ? 'tba'
+                                : DateTimeUtils.getFormattedDate(party.startTime),
+                            style: const TextStyle(fontSize: 18),
+                          ),
                         )
                       ],
                     ),
@@ -137,12 +164,12 @@ class PartyItem extends StatelessWidget {
                           flex: 3,
                           child: Align(
                             alignment: Alignment.centerLeft,
-                            child: Text(
-                              StringUtils.truncateWithEllipsis(
-                                  120, party.description.toLowerCase()),
-                              style: TextStyle(
+                            child: Text( party.description.toLowerCase(),
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 3,
+                              style: const TextStyle(
                                   fontSize: 15,
-                                  color: Theme.of(context).primaryColorDark),
+                                  color: Constants.darkPrimary),
                             ),
                           ),
                         ),
@@ -172,7 +199,7 @@ class PartyItem extends StatelessWidget {
       width: 75,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          backgroundColor: Theme.of(context).primaryColorDark,
+          backgroundColor: Constants.darkPrimary,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(5),
           ),
@@ -201,7 +228,7 @@ class PartyItem extends StatelessWidget {
       width: 75,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          backgroundColor: Theme.of(context).primaryColorDark,
+          backgroundColor: Constants.darkPrimary,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(5),
           ),

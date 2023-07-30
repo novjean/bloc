@@ -142,7 +142,8 @@ class _PromoterGuestsScreenState extends State<PromoterGuestsScreen> {
           displayBoxOfficeOptions(context),
           const Divider(),
 
-          sOption!='add'?Container(
+          sOption!='add'?
+          Container(
             margin: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 0),
             child: TextField(
               decoration: const InputDecoration(
@@ -173,7 +174,6 @@ class _PromoterGuestsScreenState extends State<PromoterGuestsScreen> {
               } ,
             ),
           ):const SizedBox(),
-          const Divider(),
           sOption == 'add' ? showAddListPage(context) : buildGuestsList(context)
         ],
       ),

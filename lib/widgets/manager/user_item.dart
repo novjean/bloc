@@ -18,35 +18,29 @@ class UserItem extends StatelessWidget {
           color: Theme.of(context).primaryColorLight,
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)),
-          child: SizedBox(
+          child: Container(
             width: MediaQuery.of(context).size.width,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
+            padding: EdgeInsets.symmetric(vertical: 1, horizontal: 5),
+            child: ListView(
+              shrinkWrap: true,
               children: [
-                Padding(
-                  padding: const EdgeInsets.all(5.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        ('${user.name} ${user.surname}').toLowerCase(),
-                        style: const TextStyle(fontSize: 18),
-                      ),
-                      user.lastSeenAt != 0
-                          ? Text(
-                              'last seen: ${DateTimeUtils.getFormattedDateYear(user.lastSeenAt)}')
-                          : const SizedBox(),
-                    ],
-                  ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      ('${user.name} ${user.surname}').toLowerCase(),
+                      style: const TextStyle(fontSize: 18),
+                    ),
+                    user.lastSeenAt != 0
+                        ? Text(
+                            '${DateTimeUtils.getFormattedTime2(user.lastSeenAt)}, ${DateTimeUtils.getFormattedDate4(user.lastSeenAt)}')
+                        : const SizedBox(),
+                  ],
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Padding(
-                      padding:
-                          const EdgeInsets.only(left: 5.0, right: 5.0, top: 5),
-                      child: Text('bloc day: ${DateTimeUtils.getFormattedDateYear(user.createdAt)}'),
-                    ),
+                    Text('bloc day: ${DateTimeUtils.getFormattedDateYear(user.createdAt)}'),
                   ],
                 ),
               ],
