@@ -81,35 +81,36 @@ class _ManagePartiesScreenState extends State<ManagePartiesScreen> {
       children: [
         displayOptions(context),
         const Divider(),
-        sOption == 'event' || sOption == 'artist'? Container(
-          margin: const EdgeInsets.symmetric(horizontal: 5),
-          child: TextField(
-            decoration: const InputDecoration(
-                border: InputBorder.none,
-                hintText: 'search by name',
-                hintStyle: TextStyle(color: Constants.primary)
-            ),
-            autofocus: false,
-            style: const TextStyle(fontSize: 17, color: Constants.primary),
-            onChanged: (val) {
-              if(val.trim().isNotEmpty){
-                isSearching = true;
-              } else {
-                isSearching = false;
-              }
+        sOption == 'event' || sOption == 'artist'
+            ? Container(
+                margin: const EdgeInsets.symmetric(horizontal: 5),
+                child: TextField(
+                  decoration: const InputDecoration(
+                      border: InputBorder.none,
+                      hintText: 'search by name',
+                      hintStyle: TextStyle(color: Constants.primary)),
+                  autofocus: false,
+                  style:
+                      const TextStyle(fontSize: 17, color: Constants.primary),
+                  onChanged: (val) {
+                    if (val.trim().isNotEmpty) {
+                      isSearching = true;
+                    } else {
+                      isSearching = false;
+                    }
 
-              searchList.clear();
+                    searchList.clear();
 
-              for(var i in mParties){
-                if(i.name.toLowerCase().contains(val.toLowerCase())){
-                  searchList.add(i);
-                }
-              }
-              setState(() {
-              });
-            } ,
-          ),
-        ):const SizedBox(),
+                    for (var i in mParties) {
+                      if (i.name.toLowerCase().contains(val.toLowerCase())) {
+                        searchList.add(i);
+                      }
+                    }
+                    setState(() {});
+                  },
+                ),
+              )
+            : const SizedBox(),
         const Divider(),
         sOption == 'event' || sOption == 'artist'
             ? _buildParties(context)
@@ -134,7 +135,6 @@ class _ManagePartiesScreenState extends State<ManagePartiesScreen> {
                 child: SizedListViewBlock(
                   title: mOptions[index],
                   height: containerHeight,
-
                   width: mq.width / 3,
                   color: Constants.primary,
                 ),

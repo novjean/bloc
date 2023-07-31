@@ -292,7 +292,6 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
                   borderSide: const BorderSide(color: Constants.primary),
                 ),
                 enabledBorder: const OutlineInputBorder(
-                  // width: 0.0 produces a thin "hairline" border
                   borderSide: BorderSide(
                       color: Constants.primary, width: 0.0),
                 )),

@@ -1,5 +1,6 @@
 import 'package:bloc/db/entity/promoter_guest.dart';
 import 'package:bloc/helpers/firestore_helper.dart';
+import 'package:bloc/screens/manager/promoters/manage_guests_created_screen.dart';
 import 'package:bloc/utils/scan_utils.dart';
 import 'package:bloc/widgets/ui/button_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -36,6 +37,8 @@ class PromoterGuestsScreen extends StatefulWidget {
 class _PromoterGuestsScreenState extends State<PromoterGuestsScreen> {
   static const String _TAG = 'PromoterGuestsScreen';
 
+  bool testMode = true;
+
   late List<String> mOptions;
   late String sOption;
 
@@ -50,13 +53,15 @@ class _PromoterGuestsScreenState extends State<PromoterGuestsScreen> {
   bool isSearching = false;
 
   String mLines = '';
-  TextEditingController controller = TextEditingController();
+  late TextEditingController controller;
 
   PartyInterest mPartyInterest = Dummy.getDummyPartyInterest();
   bool _isPartyInterestLoading = true;
 
   @override
   void initState() {
+    controller = TextEditingController();
+
     mOptions = ['arriving', 'completed', 'unapproved', 'add'];
     sOption = mOptions.first;
 
@@ -345,8 +350,8 @@ class _PromoterGuestsScreenState extends State<PromoterGuestsScreen> {
                         key: const ValueKey('promoter_dropdown'),
                         decoration: InputDecoration(
                             fillColor: Colors.white,
-                            errorStyle: TextStyle(
-                                color: Theme.of(context).errorColor,
+                            errorStyle: const TextStyle(
+                                color: Constants.errorColor,
                                 fontSize: 16.0),
                             hintText: 'please select a promoter',
                             border: OutlineInputBorder(
@@ -477,7 +482,6 @@ class _PromoterGuestsScreenState extends State<PromoterGuestsScreen> {
                       exactCount += 1;
                     }
                     partyGuests.add(partyGuest);
-                    FirestoreHelper.pushPartyGuest(partyGuest);
 
                     PromoterGuest promoterGuest = Dummy.getDummyPromoterGuest();
                     promoterGuest = promoterGuest.copyWith(
@@ -485,16 +489,24 @@ class _PromoterGuestsScreenState extends State<PromoterGuestsScreen> {
                         phone: partyGuest.phone,
                         partyGuestId: partyGuest.id,
                         promoterId: partyGuest.promoterId);
-                    FirestoreHelper.pushPromoterGuest(promoterGuest);
+
+                    if(!testMode){
+                      FirestoreHelper.pushPartyGuest(partyGuest);
+                      FirestoreHelper.pushPromoterGuest(promoterGuest);
+                    }
                   }
 
                   //update interest count
                   exactCount = mPartyInterest.initCount + exactCount;
                   mPartyInterest = mPartyInterest.copyWith(initCount: exactCount);
-                  FirestoreHelper.pushPartyInterest(mPartyInterest);
 
-                  showGuestsConfirmationDialog(context, partyGuests);
-                  Logx.d(_TAG, 'party guests created');
+                  if(!testMode){
+                    FirestoreHelper.pushPartyInterest(mPartyInterest);
+                  }
+
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (ctx) =>
+                          ManageGuestsCreatedScreen(partyGuests: partyGuests, promoters: mPromoters)));
                 } catch (e) {
                   Logx.em(_TAG, e.toString());
                 }
@@ -517,41 +529,6 @@ class _PromoterGuestsScreenState extends State<PromoterGuestsScreen> {
           ],
         ),
       ),
-    );
-  }
-
-  showGuestsConfirmationDialog(BuildContext context, List<PartyGuest> partyGuests) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          contentPadding: const EdgeInsets.all(16.0),
-          content: SizedBox(
-            height: mq.height * 0.8,
-            width: mq.width * 0.9,
-            child: Expanded(
-              child: ListView.builder(
-                  itemCount: partyGuests.length,
-                  scrollDirection: Axis.horizontal,
-                  itemBuilder: (ctx, index) {
-                    return PartyGuestWidget(
-                      partyGuest: partyGuests[index],
-                      promoters: mPromoters,
-                    );
-                  }),
-            ),
-          ),
-          actions: [
-            TextButton(
-              child: const Text("🛸 finish"),
-              onPressed: () {
-                controller.clear();
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
     );
   }
 }
