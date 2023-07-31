@@ -507,6 +507,7 @@ class _PromoterGuestsScreenState extends State<PromoterGuestsScreen> {
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (ctx) =>
                           ManageGuestsCreatedScreen(partyGuests: partyGuests, promoters: mPromoters)));
+                  controller.clear();
                 } catch (e) {
                   Logx.em(_TAG, e.toString());
                 }
