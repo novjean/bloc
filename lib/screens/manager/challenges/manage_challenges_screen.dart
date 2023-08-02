@@ -8,6 +8,7 @@ import '../../../../helpers/fresh.dart';
 import '../../../../utils/logx.dart';
 import '../../../../widgets/ui/listview_block.dart';
 import '../../../../widgets/ui/loading_widget.dart';
+import '../../../widgets/ui/app_bar_title.dart';
 import 'challenge_add_edit_screen.dart';
 
 class ManageChallengesScreen extends StatelessWidget {
@@ -19,7 +20,8 @@ class ManageChallengesScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('manage | challenges'),
+        title: AppBarTitle(title:'manage challenges'),
+        titleSpacing: 0,
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -32,7 +34,7 @@ class ManageChallengesScreen extends StatelessWidget {
           );
         },
         backgroundColor: Theme.of(context).primaryColor,
-        tooltip: 'add ad',
+        tooltip: 'add challenge',
         elevation: 5,
         splashColor: Colors.grey,
         child: const Icon(
@@ -47,14 +49,12 @@ class ManageChallengesScreen extends StatelessWidget {
   }
 
   Widget _buildBody(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          const SizedBox(height: 5.0),
-          _buildChallenges(context),
-          const SizedBox(height: 5.0),
-        ],
-      ),
+    return Column(
+      children: [
+        const SizedBox(height: 5.0),
+        _buildChallenges(context),
+        const SizedBox(height: 5.0),
+      ],
     );
   }
 
@@ -83,8 +83,7 @@ class ManageChallengesScreen extends StatelessWidget {
   }
 
   _displayChallenges(BuildContext context, List<Challenge> challenges) {
-    return Container(
-      height: MediaQuery.of(context).size.height,
+    return Expanded(
       child: ListView.builder(
           itemCount: challenges.length,
           scrollDirection: Axis.vertical,

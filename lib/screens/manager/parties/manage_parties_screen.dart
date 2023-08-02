@@ -168,8 +168,8 @@ class _ManagePartiesScreenState extends State<ManagePartiesScreen> {
                   DocumentSnapshot document = snapshot.data!.docs[i];
                   Map<String, dynamic> map =
                       document.data()! as Map<String, dynamic>;
-                  final Party _party = Fresh.freshPartyMap(map, false);
-                  mParties.add(_party);
+                  final Party party = Fresh.freshPartyMap(map, false);
+                  mParties.add(party);
 
                   if (i == snapshot.data!.docs.length - 1) {
                     return _displayPartiesList(context);

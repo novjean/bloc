@@ -17,7 +17,6 @@ import '../../utils/constants.dart';
 import '../../utils/logx.dart';
 import '../../utils/string_utils.dart';
 import '../../widgets/box_office/promoter_box_office_item.dart';
-import '../../widgets/parties/party_guest_widget.dart';
 import '../../widgets/ui/app_bar_title.dart';
 import '../../widgets/ui/dark_button_widget.dart';
 import '../../widgets/ui/loading_widget.dart';
@@ -37,7 +36,7 @@ class PromoterGuestsScreen extends StatefulWidget {
 class _PromoterGuestsScreenState extends State<PromoterGuestsScreen> {
   static const String _TAG = 'PromoterGuestsScreen';
 
-  bool testMode = true;
+  bool testMode = false;
 
   late List<String> mOptions;
   late String sOption;
