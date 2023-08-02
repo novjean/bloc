@@ -100,6 +100,7 @@ dependencies:
   syncfusion_flutter_charts: ^21.2.9
   flutter_slider_drawer: ^2.1.3
   permission_handler: ^10.4.2
+  payu_checkoutpro_flutter: ^1.0.4
 
 #  image_picker_web: ^3.0.0+1
 

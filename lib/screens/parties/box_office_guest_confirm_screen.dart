@@ -8,6 +8,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
+import 'package:payu_checkoutpro_flutter/payu_checkoutpro_flutter.dart';
 
 import '../../db/entity/party.dart';
 import '../../db/entity/promoter.dart';
@@ -32,7 +33,7 @@ class BoxOfficeGuestConfirmScreen extends StatefulWidget {
 }
 
 class _BoxOfficeGuestConfirmScreenState
-    extends State<BoxOfficeGuestConfirmScreen> {
+    extends State<BoxOfficeGuestConfirmScreen> implements PayUCheckoutProProtocol {
   static const String _TAG = 'BoxOfficeGuestConfirmScreen';
 
   late PartyGuest mPartyGuest;
@@ -57,26 +58,7 @@ class _BoxOfficeGuestConfirmScreenState
   var _isUserRegistered = false;
   var _isUserLoading = true;
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: AppBarTitle(title: 'confirm guest'),
-        titleSpacing: 0,
-      ),
-      body: _isPartyLoading && _isPartyGuestLoading && _isPromoterLoading && _isUserLoading
-          ? const LoadingWidget()
-          : _buildBody(context),
-    );
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    pinController.dispose();
-    focusNode.dispose();
-    super.dispose();
-  }
+  late PayUCheckoutProFlutter _checkoutPro;
 
   @override
   void initState() {
@@ -97,7 +79,7 @@ class _BoxOfficeGuestConfirmScreenState
             if (res.docs.isNotEmpty) {
               DocumentSnapshot document = res.docs[0];
               Map<String, dynamic> data =
-                  document.data()! as Map<String, dynamic>;
+              document.data()! as Map<String, dynamic>;
               mPromoter = Fresh.freshPromoterMap(data, false);
 
               setState(() {
@@ -111,7 +93,7 @@ class _BoxOfficeGuestConfirmScreenState
           });
 
           FirestoreHelper.pullUserByPhoneNumber(
-                  StringUtils.getInt(mPartyGuest.phone))
+              StringUtils.getInt(mPartyGuest.phone))
               .then((res) {
             if (res.docs.isNotEmpty) {
               setState(() {
@@ -140,7 +122,7 @@ class _BoxOfficeGuestConfirmScreenState
             for (int i = 0; i < res.docs.length; i++) {
               DocumentSnapshot document = res.docs[i];
               Map<String, dynamic> data =
-                  document.data()! as Map<String, dynamic>;
+              document.data()! as Map<String, dynamic>;
               final Party party = Fresh.freshPartyMap(data, false);
               mParty = party;
             }
@@ -168,6 +150,29 @@ class _BoxOfficeGuestConfirmScreenState
     });
 
     super.initState();
+
+    _checkoutPro = PayUCheckoutProFlutter(this);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: AppBarTitle(title: 'confirm guest'),
+        titleSpacing: 0,
+      ),
+      body: _isPartyLoading && _isPartyGuestLoading && _isPromoterLoading && _isUserLoading
+          ? const LoadingWidget()
+          : _buildBody(context),
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    pinController.dispose();
+    focusNode.dispose();
+    super.dispose();
   }
 
   _buildBody(BuildContext context) {
@@ -364,6 +369,20 @@ class _BoxOfficeGuestConfirmScreenState
                     Navigator.of(context).pop();
                   },
                 ),
+              ),
+              const SizedBox(height: 24),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 32),
+                child: ButtonWidget(
+                  text: 'start payment',
+                  onClicked: () {
+                    //todo: continue implementation when test account is estd
+                    // _checkoutPro.openCheckoutScreen(
+                      // payUPaymentParams: PayUParams.createPayUPaymentParams(),
+                      // payUCheckoutProConfig: PayUParams.createPayUConfigParams(),
+                    // );
+                  }
+                ),
               )
             ],
           );
@@ -444,5 +463,35 @@ class _BoxOfficeGuestConfirmScreenState
           }
         },
         timeout: const Duration(seconds: 60));
+  }
+
+  @override
+  generateHash(Map response) {
+    // TODO: implement generateHash
+    throw UnimplementedError();
+  }
+
+  @override
+  onError(Map? response) {
+    // TODO: implement onError
+    throw UnimplementedError();
+  }
+
+  @override
+  onPaymentCancel(Map? response) {
+    // TODO: implement onPaymentCancel
+    throw UnimplementedError();
+  }
+
+  @override
+  onPaymentFailure(response) {
+    // TODO: implement onPaymentFailure
+    throw UnimplementedError();
+  }
+
+  @override
+  onPaymentSuccess(response) {
+    // TODO: implement onPaymentSuccess
+    throw UnimplementedError();
   }
 }
