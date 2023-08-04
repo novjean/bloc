@@ -9,6 +9,7 @@ import 'package:bloc/db/entity/ticket.dart';
 import 'package:bloc/db/entity/ui_photo.dart';
 import 'package:bloc/db/entity/user_level.dart';
 import 'package:bloc/utils/constants.dart';
+import 'package:bloc/utils/date_time_utils.dart';
 import 'package:bloc/utils/string_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -25,6 +26,7 @@ import '../db/entity/lounge.dart';
 import '../db/entity/offer.dart';
 import '../db/entity/party.dart';
 import '../db/entity/party_interest.dart';
+import '../db/entity/party_photo.dart';
 import '../db/entity/product.dart';
 import '../db/entity/promoter.dart';
 import '../db/entity/promoter_guest.dart';
@@ -321,6 +323,23 @@ class Dummy {
         userIds: [],
         initCount: 0);
     return partyInterest;
+  }
+
+  static PartyPhoto getDummyPartyPhoto() {
+    int now = Timestamp.now().millisecondsSinceEpoch;
+    int endTime = now + DateTimeUtils.millisecondsWeek;
+
+    PartyPhoto partyPhoto = PartyPhoto(
+        id: StringUtils.getRandomString(28),
+        blocServiceId: Constants.blocServiceId,
+        partyName: '',
+        loungeId: '',
+        imageUrl: '',
+        createdAt: now,
+        partyDate: now,
+        endTime: endTime ,
+        likers: [], downloadCount: 0);
+    return partyPhoto;
   }
 
   static Product getDummyProduct(String blocServiceId, String userId) {

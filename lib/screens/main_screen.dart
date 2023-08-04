@@ -32,6 +32,7 @@ import '../routes/route_constants.dart';
 import '../utils/logx.dart';
 import 'account_screen.dart';
 import 'captain/captain_main_screen.dart';
+import 'photos/photos_screen.dart';
 import 'home_screen.dart';
 import 'manager/manager_main_screen.dart';
 import 'owner/owner_screen.dart';
@@ -61,6 +62,7 @@ class _MainScreenState extends State<MainScreen> {
 
   List icons = [
     Icons.home,
+    Icons.event,
     Icons.whatshot_sharp,
     Icons.notifications,
     Icons.person,
@@ -295,9 +297,9 @@ class _MainScreenState extends State<MainScreen> {
     mq = MediaQuery.of(context).size;
 
     List pages = [
-      HomeScreen(),
-      // OfferScreen(),
+      const HomeScreen(),
       const PartiesScreen(),
+      PhotosScreen(),
       LoungesScreen(),
       UserPreferences.isUserLoggedIn()
           ? const ProfileScreen()
@@ -342,7 +344,7 @@ class _MainScreenState extends State<MainScreen> {
               physics: const NeverScrollableScrollPhysics(),
               controller: _pageController,
               onPageChanged: onPageChanged,
-              children: List.generate(4, (index) => pages[index]),
+              children: List.generate(5, (index) => pages[index]),
             )),
         bottomNavigationBar: BottomAppBar(
           elevation: 1,
@@ -357,6 +359,7 @@ class _MainScreenState extends State<MainScreen> {
               buildTabIcon(1),
               buildTabIcon(2),
               buildTabIcon(3),
+              buildTabIcon(4),
               // SizedBox(width: 7),
             ],
           ),

@@ -37,6 +37,7 @@ import 'package:go_router/go_router.dart';
 
 import '../db/entity/ad.dart';
 import '../db/entity/lounge.dart';
+import '../db/entity/party_photo.dart';
 import '../db/entity/product.dart';
 import '../db/entity/service_table.dart';
 import '../db/entity/sos.dart';
@@ -75,6 +76,7 @@ class FirestoreHelper {
   static String PARTIES = 'parties';
   static String PARTY_GUESTS = 'party_guests';
   static String PARTY_INTERESTS = 'party_interests';
+  static String PARTY_PHOTOS = 'party_photos';
   static String PRODUCTS = 'products';
   static String PROMOTERS = 'promoters';
   static String PROMOTER_GUESTS = 'promoter_guests';
@@ -93,6 +95,7 @@ class FirestoreHelper {
 
   static int TABLE_PRIVATE_TYPE_ID = 1;
   static int TABLE_COMMUNITY_TYPE_ID = 2;
+
 
 
   /** ads **/
@@ -1079,6 +1082,35 @@ class FirestoreHelper {
         .collection(FirestoreHelper.PARTY_INTERESTS)
         .where('partyId', isEqualTo: partyId)
         .get();
+  }
+
+  /** party photo **/
+  static void pushPartyPhoto(PartyPhoto partyPhoto) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection(PARTY_PHOTOS)
+          .doc(partyPhoto.id)
+          .set(partyPhoto.toMap());
+    } on PlatformException catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } on Exception catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } catch (e) {
+      Logx.em(_TAG, e.toString());
+    }
+  }
+
+  static getPartyPhotos() {
+    return FirebaseFirestore.instance
+        .collection(PARTY_PHOTOS)
+        .snapshots();
+  }
+
+  static void deletePartyPhoto(String docId) {
+    FirebaseFirestore.instance
+        .collection(PARTY_PHOTOS)
+        .doc(docId)
+        .delete();
   }
 
 

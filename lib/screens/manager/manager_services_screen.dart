@@ -2,6 +2,7 @@ import 'package:bloc/db/entity/manager_service.dart';
 import 'package:bloc/screens/manager/ads/manage_ads_screen.dart';
 import 'package:bloc/screens/manager/orders/manage_orders_screen.dart';
 import 'package:bloc/screens/manager/parties/manage_parties_screen.dart';
+import 'package:bloc/screens/manager/photos/manage_party_photos_screen.dart';
 import 'package:bloc/screens/manager/promoters/manage_promoters_screen.dart';
 import 'package:bloc/screens/manager/reservations/manage_reservations_screen.dart';
 
@@ -180,11 +181,17 @@ class ManagerServicesScreen extends StatelessWidget {
                                 managerService: _managerService)));
                         break;
                       }
+                    case 'photos':
+                      {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (ctx) => ManagePartyPhotosScreen(
+                                blocServiceId: blocService.id,)));
+                        break;
+                      }
                     case 'promoters':
                       {
                         Navigator.of(context).push(MaterialPageRoute(
-                            builder: (ctx) => ManagePromotersScreen(
-                                serviceId: blocService.id)));
+                            builder: (ctx) => ManagePromotersScreen()));
                         break;
                       }
                     case 'reservations':

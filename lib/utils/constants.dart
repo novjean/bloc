@@ -16,6 +16,7 @@ class Constants {
   static const Color backgroundWhite = Color.fromRGBO(255, 255, 240, 1);
 
   static const Color errorColor = Color.fromRGBO(220, 20, 60, 1);
+  static const Color shadowColor = Color.fromRGBO(158, 158, 158, 1);
 
 
   static const Color hopp = Color.fromRGBO(248, 194, 32, 1);

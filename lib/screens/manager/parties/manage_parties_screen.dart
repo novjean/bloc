@@ -61,7 +61,7 @@ class _ManagePartiesScreenState extends State<ManagePartiesScreen> {
         onPressed: () {
           showAddOptionsDialog(context);
         },
-        backgroundColor: Theme.of(context).primaryColor,
+        backgroundColor: Constants.primary,
         tooltip: 'add party',
         elevation: 5,
         splashColor: Colors.grey,
@@ -172,7 +172,7 @@ class _ManagePartiesScreenState extends State<ManagePartiesScreen> {
                   mParties.add(party);
 
                   if (i == snapshot.data!.docs.length - 1) {
-                    return _displayPartiesList(context);
+                    return _showPartiesList(context);
                   }
                 }
               }
@@ -181,7 +181,7 @@ class _ManagePartiesScreenState extends State<ManagePartiesScreen> {
         });
   }
 
-  _displayPartiesList(BuildContext context) {
+  _showPartiesList(BuildContext context) {
     List<Party> parties = isSearching ? searchList : mParties;
 
     return Expanded(

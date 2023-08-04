@@ -15,6 +15,7 @@ import '../db/entity/genre.dart';
 import '../db/entity/lounge.dart';
 import '../db/entity/party.dart';
 import '../db/entity/party_interest.dart';
+import '../db/entity/party_photo.dart';
 import '../db/entity/product.dart';
 import '../db/entity/promoter.dart';
 import '../db/entity/promoter_guest.dart';
@@ -2264,6 +2265,146 @@ class Fresh {
     return partyInterest;
   }
 
+  /** party photo **/
+  static PartyPhoto freshPartyPhoto(PartyPhoto partyPhoto) {
+    PartyPhoto fresh = Dummy.getDummyPartyPhoto();
+
+    try {
+      fresh = fresh.copyWith(id: partyPhoto.id);
+    } catch (e) {
+      Logx.em(_TAG, 'party photo id not exist');
+    }
+    try {
+      fresh = fresh.copyWith(blocServiceId: partyPhoto.blocServiceId);
+    } catch (e) {
+      Logx.em(_TAG,
+          'party photo blocServiceId not exist for id: ${partyPhoto.id}');
+    }
+    try {
+      fresh = fresh.copyWith(loungeId: partyPhoto.loungeId);
+    } catch (e) {
+      Logx.em(_TAG,
+          'party photo loungeId not exist for id: ${partyPhoto.id}');
+    }
+    try {
+      fresh = fresh.copyWith(partyName: partyPhoto.partyName);
+    } catch (e) {
+      Logx.em(_TAG,
+          'party photo partyName not exist for id: ${partyPhoto.id}');
+    }
+    try {
+      fresh = fresh.copyWith(createdAt: partyPhoto.createdAt);
+    } catch (e) {
+      Logx.em(_TAG,
+          'party photo createdAt not exist for id: ${partyPhoto.id}');
+    }
+    try {
+      fresh = fresh.copyWith(partyDate: partyPhoto.partyDate);
+    } catch (e) {
+      Logx.em(_TAG,
+          'party photo partyDate not exist for id: ${partyPhoto.id}');
+    }
+    try {
+      fresh = fresh.copyWith(endTime: partyPhoto.endTime);
+    } catch (e) {
+      Logx.em(_TAG,
+          'party photo endTime not exist for id: ${partyPhoto.id}');
+    }
+    try {
+      fresh = fresh.copyWith(likers: partyPhoto.likers);
+    } catch (e) {
+      Logx.em(_TAG,
+          'party photo likers not exist for id: ${partyPhoto.id}');
+    }
+    try {
+      fresh = fresh.copyWith(downloadCount: partyPhoto.downloadCount);
+    } catch (e) {
+      Logx.em(_TAG,
+          'party photo downloadCount not exist for id: ${partyPhoto.id}');
+    }
+    try {
+      fresh = fresh.copyWith(imageUrl: partyPhoto.imageUrl);
+    } catch (e) {
+      Logx.em(_TAG,
+          'party photo imageUrl not exist for id: ${partyPhoto.id}');
+    }
+
+
+    return fresh;
+  }
+
+  static PartyPhoto freshPartyPhotoMap(
+      Map<String, dynamic> map, bool shouldUpdate) {
+    PartyPhoto partyPhoto = Dummy.getDummyPartyPhoto();
+    bool isModelChanged = false;
+
+    try {
+      partyPhoto = partyPhoto.copyWith(id: map['id'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'partyPhoto id not exist');
+    }
+    try {
+      partyPhoto = partyPhoto.copyWith(partyName: map['partyName'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'partyPhoto partyName not exist for id: ${partyPhoto.id}');
+      isModelChanged = true;
+    }
+    try {
+      partyPhoto = partyPhoto.copyWith(blocServiceId: map['blocServiceId'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'partyPhoto blocServiceId not exist for id: ${partyPhoto.id}');
+      isModelChanged = true;
+    }
+    try {
+      partyPhoto = partyPhoto.copyWith(loungeId: map['loungeId'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'partyPhoto loungeId not exist for id: ${partyPhoto.id}');
+      isModelChanged = true;
+    }
+    try {
+      partyPhoto = partyPhoto.copyWith(createdAt: map['createdAt'] as int);
+    } catch (e) {
+      Logx.em(_TAG, 'partyPhoto createdAt not exist for id: ${partyPhoto.id}');
+      isModelChanged = true;
+    }
+    try {
+      partyPhoto = partyPhoto.copyWith(partyDate: map['partyDate'] as int);
+    } catch (e) {
+      Logx.em(_TAG, 'partyPhoto partyDate not exist for id: ${partyPhoto.id}');
+      isModelChanged = true;
+    }
+    try {
+      partyPhoto = partyPhoto.copyWith(endTime: map['endTime'] as int);
+    } catch (e) {
+      Logx.em(_TAG, 'partyPhoto endTime not exist for id: ${partyPhoto.id}');
+      isModelChanged = true;
+    }
+    try {
+      partyPhoto = partyPhoto.copyWith(likers: List<String>.from(map['likers']));
+    } catch (e) {
+      Logx.em(_TAG, 'partyPhoto likers not exist for id: ${partyPhoto.id}');
+      isModelChanged = true;
+    }
+    try {
+      partyPhoto = partyPhoto.copyWith(downloadCount: map['downloadCount'] as int);
+    } catch (e) {
+      Logx.em(_TAG, 'partyPhoto downloadCount not exist for id: ${partyPhoto.id}');
+      isModelChanged = true;
+    }
+    try {
+      partyPhoto = partyPhoto.copyWith(imageUrl: map['imageUrl'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'partyPhoto imageUrl not exist for id: ${partyPhoto.id}');
+      isModelChanged = true;
+    }
+
+    if (isModelChanged && shouldUpdate) {
+      Logx.i(_TAG, 'updating party photo ${partyPhoto.id}');
+      FirestoreHelper.pushPartyPhoto(partyPhoto);
+    }
+    return partyPhoto;
+  }
+
   /** product **/
   static Product freshProductMap(Map<String, dynamic> map, bool shouldUpdate) {
     Product product = Dummy.getDummyProduct('', UserPreferences.myUser.id);
@@ -2854,7 +2995,7 @@ class Fresh {
       isModelChanged = true;
     }
 
-    // if (isModelChanged && shouldUpdate) {
+    // if (isModelChanged && shouldUpdate && UserPreferences.myUser.clearanceLevel>=Constants.ADMIN_LEVEL) {
     //   Logx.i(_TAG, 'updating quick table ${quickTable.id}');
     //   FirestoreHelper.pushQuickTable(quickTable);
     // }

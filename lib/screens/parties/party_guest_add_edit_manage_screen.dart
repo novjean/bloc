@@ -380,10 +380,10 @@ class _PartyGuestAddEditManageScreenState
                             ),
                           ),
                           IntlPhoneField(
-                            style: TextStyle(
+                            style: const TextStyle(
                                 color: Constants.primary,
                                 fontSize: 18),
-                            decoration: InputDecoration(
+                            decoration: const InputDecoration(
                                 labelText: '',
                                 labelStyle: TextStyle(
                                     color: Constants.primary),
@@ -415,7 +415,7 @@ class _PartyGuestAddEditManageScreenState
                             },
                             onCountryChanged: (country) {
                               Logx.i(
-                                  _TAG, 'country changed to: ' + country.name);
+                                  _TAG, 'country changed to: ${country.name}');
                             },
                           ),
                         ],
@@ -464,7 +464,7 @@ class _PartyGuestAddEditManageScreenState
                           key: const ValueKey('gender_dropdown'),
                           decoration: InputDecoration(
                               fillColor: Colors.white,
-                              errorStyle: TextStyle(
+                              errorStyle: const TextStyle(
                                   color: Constants.errorColor, fontSize: 16.0),
                               hintText: 'please select gender',
                               border: OutlineInputBorder(
@@ -1093,6 +1093,11 @@ class _PartyGuestAddEditManageScreenState
                           }
 
                           if(widget.partyGuest.guestsCount>=2){
+                            int partyInterestInitCount = mPartyInterest.initCount;
+                            partyInterestInitCount += widget.partyGuest.guestsCount;
+                            mPartyInterest = mPartyInterest.copyWith(initCount: partyInterestInitCount);
+                            FirestoreHelper.pushPartyInterest(mPartyInterest);
+
                             if(widget.partyGuest.guestsCount==2 && widget.partyGuest.guestStatus == 'couple'){
                               _showRulesConfirmationDialog(context, false);
                             } else {
@@ -1111,41 +1116,7 @@ class _PartyGuestAddEditManageScreenState
                       }
                     }
 
-                    // if (isDataValid()) {
-                    //   if (isLoggedIn) {
-                    //     if(widget.task == 'manage'){
-                    //       FirestoreHelper.pushPartyGuest(widget.partyGuest);
-                    //
-                    //       GoRouter.of(context)
-                    //           .pushNamed(RouteConstants.homeRouteName);
-                    //       GoRouter.of(context)
-                    //           .pushNamed(RouteConstants.boxOfficeRouteName);
-                    //     } else if(widget.task == 'edit') {
-                    //       FirestoreHelper.pushPartyGuest(widget.partyGuest);
-                    //
-                    //       if (hasUserChanged) {
-                    //         blocUser.User freshUser = Fresh.freshUser(bloc_user);
-                    //         if (freshUser.id == UserPreferences.myUser.id) {
-                    //           UserPreferences.setUser(freshUser);
-                    //         }
-                    //         FirestoreHelper.pushUser(freshUser);
-                    //       }
-                    //       GoRouter.of(context)
-                    //           .pushNamed(RouteConstants.homeRouteName);
-                    //       GoRouter.of(context)
-                    //           .pushNamed(RouteConstants.boxOfficeRouteName);
-                    //     } else {
-                    //       showRulesConfirmationDialog(context, false);
-                    //     }
-                    //   } else {
-                    //     // need to register the user first
-                    //     _verifyPhone();
-                    //   }
-                    // } else {
-                    //   Logx.em(
-                    //       _TAG, 'user cannot be entered as data is incomplete');
-                    // }
-                  },
+                    },
                 ),
               ),
               widget.task == 'edit' || widget.task == 'manage'

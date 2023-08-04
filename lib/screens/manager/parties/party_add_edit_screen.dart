@@ -22,6 +22,7 @@ import '../../../db/entity/party_interest.dart';
 import '../../../helpers/dummy.dart';
 import '../../../helpers/firestorage_helper.dart';
 import '../../../helpers/firestore_helper.dart';
+import '../../../utils/constants.dart';
 import '../../../utils/logx.dart';
 import '../../../utils/string_utils.dart';
 import '../../../widgets/profile_widget.dart';
@@ -359,7 +360,7 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
 
                         widget.party = widget.party.copyWith(storyImageUrl: tempImageUrl);
                         FirestoreHelper.pushParty(widget.party);
-                        Toaster.shortToast('updated party story image');
+                        Logx.ist(_TAG, 'updated party story image');
                       });
                     },
                   ),
@@ -396,7 +397,7 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
                         key: const ValueKey('party_type'),
                         decoration: InputDecoration(
                             errorStyle: TextStyle(
-                                color: Theme.of(context).errorColor,
+                                color: Constants.errorColor,
                                 fontSize: 16.0),
                             hintText: 'please select party type',
                             border: OutlineInputBorder(
@@ -531,7 +532,7 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
                         key: const ValueKey('party_genre'),
                         decoration: InputDecoration(
                             errorStyle: TextStyle(
-                                color: Theme.of(context).errorColor,
+                                color: Constants.errorColor,
                                 fontSize: 16.0),
                             hintText: 'please select party genre',
                             border: OutlineInputBorder(
@@ -655,7 +656,7 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
                         key: const ValueKey('bloc_service_id'),
                         decoration: InputDecoration(
                             errorStyle: TextStyle(
-                                color: Theme.of(context).errorColor,
+                                color: Constants.errorColor,
                                 fontSize: 16.0),
                             hintText: 'please select bloc service',
                             border: OutlineInputBorder(
@@ -877,7 +878,7 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
                         decoration: InputDecoration(
                             fillColor: Colors.white,
                             errorStyle: TextStyle(
-                                color: Theme.of(context).errorColor,
+                                color: Constants.errorColor,
                                 fontSize: 16.0),
                             hintText: 'please select guest count',
                             border: OutlineInputBorder(
@@ -983,7 +984,7 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
                     key: const ValueKey('override_challenge'),
                     decoration: InputDecoration(
                         errorStyle: TextStyle(
-                            color: Theme.of(context).errorColor,
+                            color: Constants.errorColor,
                             fontSize: 16.0),
                         hintText: 'please select override challenge',
                         border: OutlineInputBorder(

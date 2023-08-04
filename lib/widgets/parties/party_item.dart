@@ -1,4 +1,6 @@
 import 'package:bloc/utils/date_time_utils.dart';
+import 'package:bloc/utils/file_utils.dart';
+import 'package:bloc/widgets/ui/button_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -6,11 +8,11 @@ import 'package:go_router/go_router.dart';
 import '../../db/entity/party.dart';
 import '../../db/entity/party_guest.dart';
 import '../../helpers/dummy.dart';
+import '../../main.dart';
 import '../../routes/route_constants.dart';
 import '../../screens/parties/party_guest_add_edit_manage_screen.dart';
 import '../../utils/constants.dart';
 import '../../utils/network_utils.dart';
-import '../../utils/string_utils.dart';
 
 class PartyItem extends StatelessWidget {
   final Party party;
@@ -53,139 +55,138 @@ class PartyItem extends StatelessWidget {
           color: Theme.of(context).primaryColorLight,
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
-          child: SingleChildScrollView(
-            child: SizedBox(
-              width: MediaQuery.of(context).size.width,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: <Widget>[
-                  Stack(
-                    children: [
-                      SizedBox(
-                        height: imageHeight,
-                        width: MediaQuery.of(context).size.width,
-                        child: FadeInImage(
-                          placeholder: const AssetImage(
-                              'assets/icons/logo.png'),
-                          image: NetworkImage(party.imageUrl),
-                          fit: BoxFit.cover,),
+          child: SizedBox(
+            width: mq.width,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: <Widget>[
+                Stack(
+                  children: [
+                    SizedBox(
+                      height: imageHeight,
+                      width: mq.width,
+                      child: FadeInImage(
+                        placeholder: const AssetImage(
+                            'assets/icons/logo.png'),
+                        image: NetworkImage(party.imageUrl),
+                        fit: BoxFit.cover,),
+                    ),
+
+                    Positioned(
+                      bottom: 5.0,
+                      child: Container(
+                        width: mq.width,
+                        padding:
+                            const EdgeInsets.only(left: 15.0, right: 15.0),
+                        child: RichText(
+                          text: TextSpan(
+                              text: '${party.name.toLowerCase()} ',
+                              style: TextStyle(
+                                fontFamily: Constants.fontDefault,
+                                  color: Colors.white,
+                                  backgroundColor: Constants.lightPrimary
+                                      .withOpacity(0.7),
+                                  overflow: TextOverflow.ellipsis,
+                                  fontSize: 26,
+                                  fontWeight: FontWeight.bold),
+                              children: <TextSpan>[
+                                TextSpan(
+                                    text: party.chapter == 'I'
+                                        ? ''
+                                        : party.chapter,
+                                    style: const TextStyle(
+                                      fontFamily: Constants.fontDefault,
+                                        color: Colors.white,
+                                        fontSize: 24,
+                                        fontWeight: FontWeight.normal,
+                                        fontStyle: FontStyle.italic)),
+                              ]),
+                        ),
                       ),
-                      Positioned(
-                        bottom: 5.0,
-                        child: Container(
-                          width: MediaQuery.of(context).size.width,
-                          padding:
-                              const EdgeInsets.only(left: 15.0, right: 15.0),
-                          child: RichText(
-                            text: TextSpan(
-                                text: '${party.name.toLowerCase()} ',
-                                style: TextStyle(
+                    )
+                  ],
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 15, vertical: 5.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Flexible(
+                        flex: 4,
+                        child: party.eventName.isNotEmpty
+                            ? RichText(
+                          maxLines: 2,
+                          text: TextSpan(
+                              text: '${party.eventName.toLowerCase()} ',
+                              style: const TextStyle(
+                                  color: Colors.black,
                                   fontFamily: Constants.fontDefault,
-                                    color: Colors.white,
-                                    backgroundColor: Constants.lightPrimary
-                                        .withOpacity(0.7),
-                                    overflow: TextOverflow.ellipsis,
-                                    fontSize: 26,
-                                    fontWeight: FontWeight.bold),
-                                children: <TextSpan>[
-                                  TextSpan(
-                                      text: party.chapter == 'I'
-                                          ? ''
-                                          : party.chapter,
-                                      style: const TextStyle(
+                                  overflow: TextOverflow.ellipsis,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold),
+                              children: <TextSpan>[
+                                TextSpan(
+                                    text: party.genre.isNotEmpty
+                                        ? '[${party.genre}]'
+                                        : ' ',
+                                    style: const TextStyle(
+                                        color: Colors.black,
                                         fontFamily: Constants.fontDefault,
-                                          color: Colors.white,
-                                          fontSize: 24,
-                                          fontWeight: FontWeight.normal,
-                                          fontStyle: FontStyle.italic)),
-                                ]),
-                          ),
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.normal,
+                                        fontStyle: FontStyle.italic)),
+                              ]),
+                        )
+                            : party.genre.isNotEmpty? Text(
+                                '[${party.genre}]',
+                                style: const TextStyle(fontSize: 18),
+                              ) : const SizedBox(),
+                      ),
+                      Flexible(
+                        flex: 1,
+                        child: Text(
+                          party.isTBA
+                              ? 'tba'
+                              : DateTimeUtils.getFormattedDate(party.startTime),
+                          style: const TextStyle(fontSize: 18),
                         ),
                       )
                     ],
                   ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 15, vertical: 5.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Flexible(
-                          flex: 4,
-                          child: party.eventName.isNotEmpty
-                              ? RichText(
-                            maxLines: 2,
-                            text: TextSpan(
-                                text: '${party.eventName.toLowerCase()} ',
-                                style: const TextStyle(
-                                    color: Colors.black,
-                                    fontFamily: Constants.fontDefault,
-                                    overflow: TextOverflow.ellipsis,
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold),
-                                children: <TextSpan>[
-                                  TextSpan(
-                                      text: party.genre.isNotEmpty
-                                          ? '[${party.genre}]'
-                                          : ' ',
-                                      style: const TextStyle(
-                                          color: Colors.black,
-                                          fontFamily: Constants.fontDefault,
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.normal,
-                                          fontStyle: FontStyle.italic)),
-                                ]),
-                          )
-                              : party.genre.isNotEmpty? Text(
-                                  '[${party.genre}]',
-                                  style: const TextStyle(fontSize: 18),
-                                ) : const SizedBox(),
-                        ),
-                        Flexible(
-                          flex: 1,
-                          child: Text(
-                            party.isTBA
-                                ? 'tba'
-                                : DateTimeUtils.getFormattedDate(party.startTime),
-                            style: const TextStyle(fontSize: 18),
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 15, vertical: 5.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Flexible(
-                          flex: 3,
-                          child: Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text( party.description.toLowerCase(),
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 3,
-                              style: const TextStyle(
-                                  fontSize: 15,
-                                  color: Constants.darkPrimary),
-                            ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 15, vertical: 5.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Flexible(
+                        flex: 3,
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text( party.description.toLowerCase(),
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 3,
+                            style: const TextStyle(
+                                fontSize: 15,
+                                color: Constants.darkPrimary),
                           ),
                         ),
-                        party.ticketUrl.isNotEmpty
-                            ? Flexible(
-                                flex: 1, child: showBuyTicketNowButton(context))
-                            : (isGuestListActive & !isGuestListRequested)
-                                ? Flexible(
-                                    flex: 1,
-                                    child: showJoinGuestListButton(context))
-                                : const SizedBox(),
-                      ],
-                    ),
+                      ),
+                      party.ticketUrl.isNotEmpty
+                          ? Flexible(
+                              flex: 1, child: showBuyTicketNowButton(context))
+                          : (isGuestListActive & !isGuestListRequested)
+                              ? Flexible(
+                                  flex: 1,
+                                  child: showJoinGuestListButton(context))
+                              : const SizedBox(),
+                    ],
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ),

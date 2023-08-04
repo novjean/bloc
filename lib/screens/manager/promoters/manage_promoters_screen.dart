@@ -14,10 +14,7 @@ import '../../../widgets/ui/loading_widget.dart';
 class ManagePromotersScreen extends StatelessWidget {
   static const String _TAG = 'ManagePromotersScreen';
 
-  String serviceId;
-
   ManagePromotersScreen({Key? key,
-    required this.serviceId,
   }) : super(key: key);
 
   @override

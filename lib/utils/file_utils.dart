@@ -1,10 +1,15 @@
 import 'dart:io';
 
+import 'package:gallery_saver/gallery_saver.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:universal_html/html.dart' as html;
 import 'package:path_provider/path_provider.dart';
 
+import 'logx.dart';
+
 class FileUtils {
+  static const String _TAG = 'FileUtils';
+
   static write(String fileName, String text) async {
     final Directory directory = await getApplicationDocumentsDirectory();
     final File file = File('${directory.path}/${fileName}');
@@ -32,6 +37,12 @@ class FileUtils {
 
     await Share.shareXFiles(files,
         text: '#blocCommunity: $shareMessage');
+  }
+
+  static void saveNetworkImage(String imagePath) async {
+    GallerySaver.saveImage(imagePath).then((bool? success) {
+      Logx.ist(_TAG, 'photo is saved!');
+    });
   }
 
 }

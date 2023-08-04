@@ -4,6 +4,7 @@ import '../db/entity/bloc_service.dart';
 import '../screens/bloc/bloc_menu_screen.dart';
 import '../screens/manager/manager_services_screen.dart';
 import '../screens/owner/bloc_service_add_edit_screen.dart';
+import '../utils/constants.dart';
 
 class BlocServiceItem extends StatelessWidget {
   final Key key;
@@ -25,13 +26,13 @@ class BlocServiceItem extends StatelessWidget {
             textAlign: TextAlign.center,
           ),
             trailing: IconButton(
-              icon: Icon(Icons.edit),
+              icon: const Icon(Icons.edit),
               onPressed: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(builder: (ctx) => BlocServiceAddEditScreen(blocService: service,task: 'Edit',)),
                 );
               },
-              color: Theme.of(context).primaryColor,
+              color: Constants.primary,
             )
         ),
         child: GestureDetector(

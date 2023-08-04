@@ -12,7 +12,7 @@ import '../../../widgets/ui/loading_widget.dart';
 
 class ManageLoungesScreen extends StatefulWidget {
 
-  ManageLoungesScreen();
+  const ManageLoungesScreen({super.key});
 
   @override
   State<StatefulWidget> createState() => _ManageLoungesScreenState();
@@ -25,7 +25,7 @@ class _ManageLoungesScreenState extends State<ManageLoungesScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          title: const Text('manage | lounges')),
+          title: const Text('manage lounges')),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.of(context).push(
