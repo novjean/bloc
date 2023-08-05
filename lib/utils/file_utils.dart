@@ -41,7 +41,7 @@ class FileUtils {
 
   static void saveNetworkImage(String imagePath) async {
     GallerySaver.saveImage(imagePath).then((bool? success) {
-      Logx.ist(_TAG, 'photo is saved!');
+      Logx.ist(_TAG, 'photo saved in gallery');
     });
   }
 

@@ -1,21 +1,13 @@
-import 'dart:io';
-
 import 'package:bloc/db/entity/party_photo.dart';
+import 'package:bloc/widgets/ui/blurred_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:path/path.dart';
-import 'package:path_provider/path_provider.dart';
 
-import '../../db/shared_preferences/user_preferences.dart';
-import '../../helpers/dummy.dart';
-import '../../helpers/firestorage_helper.dart';
 import '../../helpers/firestore_helper.dart';
 import '../../helpers/fresh.dart';
 import '../../main.dart';
 import '../../utils/constants.dart';
 import '../../utils/logx.dart';
-import '../../utils/string_utils.dart';
 import '../../widgets/photo/party_photo_item.dart';
 import '../../widgets/ui/loading_widget.dart';
 
@@ -96,16 +88,25 @@ class _PhotosScreenState extends State<PhotosScreen> {
       itemBuilder: (context, index) {
         PartyPhoto photo = photos[index];
 
-        return GestureDetector(
-          child: SizedBox(
-            height: 200,
-            child: FadeInImage(
-              placeholder: const AssetImage('assets/icons/logo.png'),
-              image: NetworkImage(photo.imageUrl),
-              fit: BoxFit.cover,
+        if(kIsWeb){
+          return GestureDetector(
+            child: SizedBox(
+                height: 200,
+                child: BlurredImage(imageUrl: photo.imageUrl, blurLevel: 3,)
             ),
-          ),
-        );
+          );
+        } else {
+          return GestureDetector(
+            child: SizedBox(
+                height: 200,
+                child: FadeInImage(
+                placeholder: const AssetImage('assets/icons/logo.png'),
+                image: NetworkImage(photo.imageUrl),
+                fit: BoxFit.cover,
+              ),
+            ),
+          );
+        }
       },
     );
   }

@@ -4,13 +4,14 @@ import 'package:flutter/material.dart';
 
 class BlurredImage extends StatelessWidget {
   String imageUrl;
+  double blurLevel;
 
-  BlurredImage({super.key, required this.imageUrl});
+  BlurredImage({super.key, required this.imageUrl, required this.blurLevel});
 
   @override
   Widget build(BuildContext context) {
     return ImageFiltered(
-      imageFilter: ImageFilter.blur(sigmaX: 10, sigmaY: 10), // Adjust sigma values for more blur
+      imageFilter: ImageFilter.blur(sigmaX: blurLevel, sigmaY: blurLevel), // Adjust sigma values for more blur
       child: FadeInImage(
         placeholder: const AssetImage('assets/icons/logo.png'),
         image: NetworkImage(imageUrl),

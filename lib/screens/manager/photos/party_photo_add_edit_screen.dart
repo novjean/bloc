@@ -41,8 +41,7 @@ class _PartyPhotoAddEditScreenState extends State<PartyPhotoAddEditScreen> {
   static const String _TAG = 'PartyPhotoAddEditScreen';
 
   String imagePath = '';
-  late String oldImageUrl;
-  late String newImageUrl;
+  String oldImageUrl = '';
   bool isPhotoChanged = false;
 
   List<BlocService> mBlocServices = [];
@@ -108,7 +107,7 @@ class _PartyPhotoAddEditScreenState extends State<PartyPhotoAddEditScreen> {
         GestureDetector(
           onTap: () async {
             final image = await ImagePicker().pickImage(
-                source: ImageSource.gallery, imageQuality: 95, maxWidth: 768);
+                source: ImageSource.gallery, imageQuality: 99, maxHeight: 1024, maxWidth: 768);
             if (image == null) return;
 
             final directory = await getApplicationDocumentsDirectory();
@@ -246,7 +245,6 @@ class _PartyPhotoAddEditScreenState extends State<PartyPhotoAddEditScreen> {
               onClicked: () {
 
                 if (isPhotoChanged) {
-                  widget.partyPhoto = widget.partyPhoto.copyWith(imageUrl: newImageUrl);
                   if (oldImageUrl.isNotEmpty) {
                     FirestorageHelper.deleteFile(oldImageUrl);
                   }
@@ -263,6 +261,7 @@ class _PartyPhotoAddEditScreenState extends State<PartyPhotoAddEditScreen> {
                 height: 50,
                 text: 'delete',
                 onClicked: () {
+                  FirestorageHelper.deleteFile(widget.partyPhoto.imageUrl);
                   FirestoreHelper.deletePartyPhoto(widget.partyPhoto.id);
                   Navigator.of(context).pop();
                 }),

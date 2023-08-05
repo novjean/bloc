@@ -54,6 +54,7 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 0.0, vertical: 2),
             child: ListView(
+              physics: const NeverScrollableScrollPhysics(),
               shrinkWrap: true,
               children: <Widget>[
                 kIsWeb
@@ -62,6 +63,7 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
                       children: [
                         BlurredImage(
                           imageUrl: widget.partyPhoto.imageUrl,
+                          blurLevel: 5,
                         ),
                         Positioned(
                           child: Column(
@@ -139,7 +141,7 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
                                       widget.partyPhoto);
                                 } else {
                                   Logx.ist(
-                                      _TAG, 'love shared cannot be taken back');
+                                      _TAG, 'love once shared cannot be taken back 😘');
                                 }
                               }
                             },
@@ -154,7 +156,7 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
                             if(kIsWeb){
                               _showDownloadAppDialog(context);
                             } else {
-                              Logx.ist(_TAG, 'downloading photo ...');
+                              Logx.ist(_TAG, 'downloading');
                               FileUtils.saveNetworkImage(
                                   widget.partyPhoto.imageUrl);
 

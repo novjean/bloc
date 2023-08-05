@@ -57,7 +57,7 @@ class _ManagePartyPhotosScreenState extends State<ManagePartyPhotosScreen> {
         // const SizedBox(height: 2.0),
         // _displayOptions(context),
         // const Divider(),
-        const SizedBox(height: 5.0),
+        const SizedBox(height: 2.0),
         _loadPhotos(context),
         const SizedBox(height: 5.0),
       ],

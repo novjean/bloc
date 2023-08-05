@@ -338,7 +338,9 @@ class Dummy {
         createdAt: now,
         partyDate: now,
         endTime: endTime ,
-        likers: [], downloadCount: 0);
+        likers: [],
+        downloadCount: 0,
+        views: 0);
     return partyPhoto;
   }
 

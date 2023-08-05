@@ -1329,7 +1329,6 @@ class _PartyGuestAddEditManageScreenState
                         GoRouter.of(context)
                             .pushNamed(RouteConstants.boxOfficeRouteName);
                       }
-
                     } else {
                       //already requested
                       Logx.ist(_TAG, 'guest list has already been requested!');
