@@ -77,6 +77,8 @@ class _ManagePartyPhotosScreenState extends State<ManagePartyPhotosScreen> {
               {
                 mPartyPhotos = [];
 
+                int now = Timestamp.now().millisecondsSinceEpoch;
+
                 try {
                   for (int i = 0; i < snapshot.data!.docs.length; i++) {
                     DocumentSnapshot document = snapshot.data!.docs[i];
@@ -84,7 +86,12 @@ class _ManagePartyPhotosScreenState extends State<ManagePartyPhotosScreen> {
                         document.data()! as Map<String, dynamic>;
                     final PartyPhoto photo =
                         Fresh.freshPartyPhotoMap(map, false);
-                    mPartyPhotos.add(photo);
+
+                    if(now> photo.endTime){
+                      FirestoreHelper.deletePartyPhoto(photo.id);
+                    } else {
+                      mPartyPhotos.add(photo);
+                    }
                   }
 
                   return _showPhotos(context);

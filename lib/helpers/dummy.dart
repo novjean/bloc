@@ -327,7 +327,7 @@ class Dummy {
 
   static PartyPhoto getDummyPartyPhoto() {
     int now = Timestamp.now().millisecondsSinceEpoch;
-    int endTime = now + DateTimeUtils.millisecondsWeek;
+    int endTime = now + (DateTimeUtils.millisecondsWeek * 4);
 
     PartyPhoto partyPhoto = PartyPhoto(
         id: StringUtils.getRandomString(28),

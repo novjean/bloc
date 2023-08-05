@@ -8,7 +8,9 @@ import '../../helpers/fresh.dart';
 import '../../main.dart';
 import '../../utils/constants.dart';
 import '../../utils/logx.dart';
+import '../../widgets/footer.dart';
 import '../../widgets/photo/party_photo_item.dart';
+import '../../widgets/store_badge_item.dart';
 import '../../widgets/ui/loading_widget.dart';
 
 class PhotosScreen extends StatefulWidget {
@@ -25,7 +27,6 @@ class _PhotosScreenState extends State<PhotosScreen> {
 
   @override
   void initState() {
-
     super.initState();
   }
 
@@ -35,12 +36,12 @@ class _PhotosScreenState extends State<PhotosScreen> {
         backgroundColor: Constants.background,
         floatingActionButton: _showToggleViewButton(context),
         floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-
-        body: _buildBody(context)
+        resizeToAvoidBottomInset: false,
+        body: _buildPhotos(context),
     );
   }
 
-  _buildBody(BuildContext context) {
+  _buildPhotos(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
         stream: FirestoreHelper.getPartyPhotos(),
         builder: (ctx, snapshot) {
@@ -119,7 +120,19 @@ class _PhotosScreenState extends State<PhotosScreen> {
       scrollDirection: Axis.vertical,
       itemBuilder: (context, index) {
         PartyPhoto partyPhoto = photos[index];
-        return PartyPhotoItem(partyPhoto: partyPhoto);
+        if(index == photos.length-1){
+          return Column(
+            children: [
+              PartyPhotoItem(partyPhoto: partyPhoto),
+              const SizedBox(height: 15.0),
+              kIsWeb ? const StoreBadgeItem() : const SizedBox(),
+              const SizedBox(height: 10,),
+              Footer()
+            ],
+          );
+        } else {
+          return PartyPhotoItem(partyPhoto: partyPhoto);
+        }
       },
     );
   }

@@ -15,6 +15,7 @@ import 'package:path_provider/path_provider.dart';
 import '../../../db/entity/bloc_service.dart';
 
 import '../../../db/entity/party_photo.dart';
+import '../../../helpers/dummy.dart';
 import '../../../helpers/firestorage_helper.dart';
 import '../../../helpers/firestore_helper.dart';
 import '../../../helpers/fresh.dart';
@@ -30,15 +31,22 @@ class PartyPhotoAddEditScreen extends StatefulWidget {
   PartyPhoto partyPhoto;
   String task;
 
-  PartyPhotoAddEditScreen({Key? key, required this.partyPhoto, required this.task})
+  PartyPhotoAddEditScreen(
+      {Key? key, required this.partyPhoto, required this.task})
       : super(key: key);
 
   @override
-  State<PartyPhotoAddEditScreen> createState() => _PartyPhotoAddEditScreenState();
+  State<PartyPhotoAddEditScreen> createState() =>
+      _PartyPhotoAddEditScreenState();
 }
 
 class _PartyPhotoAddEditScreenState extends State<PartyPhotoAddEditScreen> {
   static const String _TAG = 'PartyPhotoAddEditScreen';
+
+  List<String> mImageUrls = [];
+  List<PartyPhoto> mPartyPhotos = [];
+  String mPartyName = '';
+  int mPartyDate = Timestamp.now().millisecondsSinceEpoch;
 
   String imagePath = '';
   String oldImageUrl = '';
@@ -51,11 +59,12 @@ class _PartyPhotoAddEditScreenState extends State<PartyPhotoAddEditScreen> {
 
   DateTime sDate = DateTime.now();
   TimeOfDay sTimeOfDay = TimeOfDay.now();
-
+  DateTime sStartDateTime = DateTime.now();
+  DateTime sEndDateTime = DateTime.now();
 
   @override
   void initState() {
-    if(widget.partyPhoto.blocServiceId.isNotEmpty){
+    if (widget.partyPhoto.blocServiceId.isNotEmpty) {
       sBlocIds = [widget.partyPhoto.blocServiceId];
     }
 
@@ -91,10 +100,12 @@ class _PartyPhotoAddEditScreenState extends State<PartyPhotoAddEditScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('${widget.task} party photo'),
-          titleSpacing: 0,
+      appBar: AppBar(
+        title: Text('${widget.task} party photo'),
+        titleSpacing: 0,
       ),
-      body: _isBlocServicesLoading ? const LoadingWidget() : _buildBody(context),
+      body:
+          _isBlocServicesLoading ? const LoadingWidget() : _buildBody(context),
     );
   }
 
@@ -107,7 +118,10 @@ class _PartyPhotoAddEditScreenState extends State<PartyPhotoAddEditScreen> {
         GestureDetector(
           onTap: () async {
             final image = await ImagePicker().pickImage(
-                source: ImageSource.gallery, imageQuality: 99, maxHeight: 1024, maxWidth: 768);
+                source: ImageSource.gallery,
+                imageQuality: 99,
+                maxHeight: 768,
+                maxWidth: 1024);
             if (image == null) return;
 
             final directory = await getApplicationDocumentsDirectory();
@@ -122,7 +136,8 @@ class _PartyPhotoAddEditScreenState extends State<PartyPhotoAddEditScreen> {
 
             Logx.ist(_TAG, 'photo uploaded: $photoImageUrl');
 
-            widget.partyPhoto = widget.partyPhoto.copyWith(imageUrl: photoImageUrl);
+            widget.partyPhoto =
+                widget.partyPhoto.copyWith(imageUrl: photoImageUrl);
             FirestoreHelper.pushPartyPhoto(widget.partyPhoto);
 
             setState(() {
@@ -134,20 +149,104 @@ class _PartyPhotoAddEditScreenState extends State<PartyPhotoAddEditScreen> {
             height: mq.height * 0.25,
             width: mq.width,
             child: FadeInImage(
-              placeholder: const AssetImage(
-                  'assets/icons/logo.png'),
+              placeholder: const AssetImage('assets/icons/logo.png'),
               image: NetworkImage(widget.partyPhoto.imageUrl),
-              fit: BoxFit.contain,),
+              fit: BoxFit.contain,
+            ),
           ),
+        ),
+        const SizedBox(height: 24),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text('${mImageUrls.length} photos: '),
+            const Spacer(),
+            ButtonWidget(
+              text: 'pick photos',
+              onClicked: () async {
+                List<XFile> images = await ImagePicker().pickMultiImage(
+                    maxHeight: 768, maxWidth: 1024, imageQuality: 99);
+
+                if (images.isNotEmpty) {
+                  final directory = await getApplicationDocumentsDirectory();
+
+                  for (int i=0;i<images.length; i++) {
+                    XFile image = images[i];
+                    final name = basename(image.path);
+                    final imageFile = File('${directory.path}/$name');
+                    final newImage =
+                        await File(image.path).copy(imageFile.path);
+
+                    String imageUrl = await FirestorageHelper.uploadFile(
+                        FirestorageHelper.PARTY_PHOTO_IMAGES,
+                        StringUtils.getRandomString(28),
+                        newImage);
+
+                    PartyPhoto partyPhoto = Dummy.getDummyPartyPhoto();
+                    partyPhoto = partyPhoto.copyWith(
+                      imageUrl: imageUrl,
+                      partyName: widget.partyPhoto.partyName,
+                      partyDate: widget.partyPhoto.partyDate,
+                      endTime: widget.partyPhoto.endTime,
+                      blocServiceId: widget.partyPhoto.blocServiceId,
+                    );
+                    FirestoreHelper.pushPartyPhoto(partyPhoto);
+
+                    mImageUrls.add(imageUrl);
+                    Logx.ist(_TAG, '${i+1}/${images.length} photo uploaded');
+                  }
+
+                  Logx.ist(_TAG, 'all photos successfully uploaded!');
+
+                  setState(() {
+                    mImageUrls;
+                  });
+                } else {
+                  return;
+                }
+              },
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 10.0),
+              child: SizedBox.fromSize(
+                size: const Size(56, 56),
+                child: ClipOval(
+                  child: Material(
+                    color: Colors.redAccent,
+                    child: InkWell(
+                      splashColor: Colors.red,
+                      onTap: () {
+                        showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: const Text('photos'),
+                                content: photosListDialog(),
+                              );
+                            });
+                      },
+                      child: const Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Icon(Icons.delete_forever),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            )
+          ],
         ),
         TextFieldWidget(
             label: 'name *',
             text: widget.partyPhoto.partyName,
             onChanged: (text) {
-              widget.partyPhoto = widget.partyPhoto.copyWith(partyName: text);
+              setState(() {
+                widget.partyPhoto = widget.partyPhoto.copyWith(partyName: text);
+              });
             }),
         const SizedBox(height: 24),
-
         Column(
           children: [
             const Row(
@@ -163,10 +262,8 @@ class _PartyPhotoAddEditScreenState extends State<PartyPhotoAddEditScreen> {
               ],
             ),
             MultiSelectDialogField(
-              items: mBlocServices
-                  .map((e) => MultiSelectItem(
-                  e, e.name))
-                  .toList(),
+              items:
+                  mBlocServices.map((e) => MultiSelectItem(e, e.name)).toList(),
               initialValue: sBlocs.map((e) => e).toList(),
               listType: MultiSelectListType.CHIP,
               buttonIcon: Icon(
@@ -181,43 +278,31 @@ class _PartyPhotoAddEditScreenState extends State<PartyPhotoAddEditScreen> {
               decoration: BoxDecoration(
                 borderRadius: const BorderRadius.all(Radius.circular(5)),
                 border: Border.all(
-                  // color: Constants.primary,
                   width: 0.0,
                 ),
               ),
               searchable: true,
               onConfirm: (values) {
                 sBlocs = values as List<BlocService>;
-                if(sBlocs.isNotEmpty){
-                  widget.partyPhoto = widget.partyPhoto.copyWith(blocServiceId : sBlocs.first.id);
+                if (sBlocs.isNotEmpty) {
+                  setState(() {
+                    widget.partyPhoto = widget.partyPhoto
+                        .copyWith(blocServiceId: sBlocs.first.id);
+                  });
                 } else {
-                  widget.partyPhoto = widget.partyPhoto.copyWith(blocServiceId: '');
+                  setState(() {
+                    widget.partyPhoto =
+                        widget.partyPhoto.copyWith(blocServiceId: '');
+                  });
                 }
               },
             ),
           ],
         ),
         const SizedBox(height: 24),
-        _dateTimeContainer(context),
-
-        // Row(
-        //   children: <Widget>[
-        //     const Text(
-        //       'active : ',
-        //       style: TextStyle(fontSize: 17.0),
-        //     ), //Text
-        //     const SizedBox(width: 10), //SizedBox
-        //     Checkbox(
-        //       value: widget.partyPhoto.isActive,
-        //       onChanged: (value) {
-        //         setState(() {
-        //           widget.partyPhoto = widget.partyPhoto.copyWith(isActive: value);
-        //         });
-        //       },
-        //     ), //Checkbox
-        //   ], //<Widget>[]
-        // ),
-
+        _dateTimeContainer(context, 'start'),
+        const SizedBox(height: 24),
+        _dateTimeContainer(context, 'end'),
         const SizedBox(height: 24),
         Row(
           mainAxisAlignment: MainAxisAlignment.end,
@@ -243,16 +328,17 @@ class _PartyPhotoAddEditScreenState extends State<PartyPhotoAddEditScreen> {
               height: 50,
               text: 'save',
               onClicked: () {
-
                 if (isPhotoChanged) {
                   if (oldImageUrl.isNotEmpty) {
                     FirestorageHelper.deleteFile(oldImageUrl);
                   }
                 }
 
-                PartyPhoto fresh = Fresh.freshPartyPhoto(widget.partyPhoto);
-                FirestoreHelper.pushPartyPhoto(fresh);
-                Logx.ist(_TAG, 'party photo saved');
+                if(widget.partyPhoto.imageUrl.isNotEmpty){
+                  PartyPhoto fresh = Fresh.freshPartyPhoto(widget.partyPhoto);
+                  FirestoreHelper.pushPartyPhoto(fresh);
+                  Logx.ist(_TAG, 'party photo saved');
+                }
                 Navigator.of(context).pop();
               },
             ),
@@ -272,23 +358,24 @@ class _PartyPhotoAddEditScreenState extends State<PartyPhotoAddEditScreen> {
     );
   }
 
-  Future<void> _selectDate(BuildContext context, DateTime initDate) async {
+  Future<void> _selectDate(
+      BuildContext context, DateTime initDate, String type) async {
     final DateTime? _sDate = await showDatePicker(
         context: context,
         initialDate: initDate,
         firstDate: DateTime(2023, 1),
         lastDate: DateTime(2101));
     if (_sDate != null) {
-      DateTime _sDateTemp = DateTime(_sDate.year, _sDate.month, _sDate.day);
+      // DateTime _sDateTemp
 
       setState(() {
-        sDate = _sDateTemp;
-        _selectTime(context);
+        sDate  = DateTime(_sDate.year, _sDate.month, _sDate.day);
+        _selectTime(context, type);
       });
     }
   }
 
-  Future<TimeOfDay> _selectTime(BuildContext context) async {
+  Future<TimeOfDay> _selectTime(BuildContext context, String type) async {
     TimeOfDay initialTime = TimeOfDay.now();
 
     TimeOfDay? pickedTime = await showTimePicker(
@@ -296,18 +383,40 @@ class _PartyPhotoAddEditScreenState extends State<PartyPhotoAddEditScreen> {
       initialTime: initialTime,
     );
 
-    setState((){
+    setState(() {
       sTimeOfDay = pickedTime!;
 
-      DateTime sDateTime = DateTime(sDate.year, sDate.month, sDate.day, sTimeOfDay.hour, sTimeOfDay.minute);
+      DateTime sDateTime = DateTime(sDate.year, sDate.month, sDate.day,
+          sTimeOfDay.hour, sTimeOfDay.minute);
 
-      widget.partyPhoto = widget.partyPhoto.copyWith(endTime: sDateTime.millisecondsSinceEpoch);
+      if (type == 'start') {
+        setState(() {
+          widget.partyPhoto = widget.partyPhoto
+              .copyWith(partyDate: sDateTime.millisecondsSinceEpoch);
+        });
+      } else {
+        setState(() {
+          widget.partyPhoto = widget.partyPhoto
+              .copyWith(endTime: sDateTime.millisecondsSinceEpoch);
+        });
+      }
     });
     return sTimeOfDay;
   }
 
-  Widget _dateTimeContainer(BuildContext context) {
-    DateTime dateTime = DateTimeUtils.getDate(widget.partyPhoto.endTime);
+  Widget _dateTimeContainer(BuildContext context, String type) {
+    sStartDateTime = DateTimeUtils.getDate(widget.partyPhoto.partyDate);
+    sEndDateTime = DateTimeUtils.getDate(widget.partyPhoto.endTime);
+
+    String title = '';
+    DateTime dateTime;
+    if (type == 'start') {
+      dateTime = sStartDateTime;
+      title = 'party date';
+    } else {
+      dateTime = sEndDateTime;
+      title = 'end date';
+    }
 
     return Container(
       decoration: BoxDecoration(
@@ -319,7 +428,9 @@ class _PartyPhotoAddEditScreenState extends State<PartyPhotoAddEditScreen> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(DateTimeUtils.getFormattedDateString(dateTime.millisecondsSinceEpoch),
+          Text(
+              DateTimeUtils.getFormattedDateString(
+                  dateTime.millisecondsSinceEpoch),
               style: const TextStyle(
                 fontSize: 18,
               )),
@@ -334,44 +445,70 @@ class _PartyPhotoAddEditScreenState extends State<PartyPhotoAddEditScreen> {
               elevation: 3,
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(32.0)),
-              minimumSize: const Size(50, 50), //////// HERE
+              minimumSize: const Size(50, 50),
             ),
             onPressed: () {
-              _selectDate(context, dateTime);
+              _selectDate(context, dateTime, type);
             },
-            child: const Text('end date & time'),
+            child: Text(title),
           ),
         ],
       ),
     );
   }
 
-  // showDeleteDialog(BuildContext context) {
-  //   return showDialog(
-  //     context: context,
-  //     builder: (BuildContext ctx) {
-  //       return AlertDialog(
-  //         title: Text('delete lounge ${widget.partyPhoto.name}'),
-  //         content: Text(
-  //             'deleting the lounge ${widget.partyPhoto.name}. are you sure you want to continue?'),
-  //         actions: [
-  //           TextButton(
-  //             child: const Text("yes"),
-  //             onPressed: () async {
-  //               FirestoreHelper.deleteLounge(widget.partyPhoto.id);
-  //               Toaster.shortToast('lounge deleted');
-  //               Navigator.of(context).pop();
-  //             },
-  //           ),
-  //           TextButton(
-  //             child: const Text("no"),
-  //             onPressed: () {
-  //               Navigator.of(context).pop();
-  //             },
-  //           )
-  //         ],
-  //       );
-  //     },
-  //   );
-  // }
+  Widget photosListDialog() {
+    return SingleChildScrollView(
+      child: SizedBox(
+        height: mq.height * 0.5, // Change as per your requirement
+        width: mq.width * 0.8, // Change as per your requirement
+        child: ListView.builder(
+          shrinkWrap: true,
+          itemCount: mImageUrls.length,
+          itemBuilder: (BuildContext context, int index) {
+            return Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 5.0, vertical: 1),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: Image.network(mImageUrls[index],
+                        width: 120, height: 80, fit: BoxFit.contain),
+                  ),
+                ),
+                SizedBox.fromSize(
+                  size: const Size(50, 50),
+                  child: ClipOval(
+                    child: Material(
+                      color: Colors.redAccent,
+                      child: InkWell(
+                        splashColor: Colors.red,
+                        onTap: () {
+                          FirestorageHelper.deleteFile(mImageUrls[index]);
+                          FirestoreHelper.deletePartyPhoto(
+                              mPartyPhotos[index].id);
+                          setState(() {
+                            mImageUrls.removeAt(index);
+                          });
+                          Navigator.of(context).pop();
+                        },
+                        child: const Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Icon(Icons.delete_forever),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            );
+          },
+        ),
+      ),
+    );
+  }
 }

@@ -1103,6 +1103,7 @@ class FirestoreHelper {
   static getPartyPhotos() {
     return FirebaseFirestore.instance
         .collection(PARTY_PHOTOS)
+        .orderBy('partyDate', descending: true)
         .snapshots();
   }
 
