@@ -64,7 +64,7 @@ class _MainScreenState extends State<MainScreen> {
     Icons.home,
     Icons.event,
     Icons.whatshot_sharp,
-    Icons.notifications,
+    Icons.theater_comedy_outlined,
     Icons.person,
   ];
 

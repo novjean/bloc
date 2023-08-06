@@ -145,7 +145,7 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
                   splashColor: Colors.grey,
                   child: Icon(
                     Icons.qr_code_scanner,
-                    color: Theme.of(context).primaryColorDark,
+                    color: Constants.darkPrimary,
                     size: 29,
                   ),
                 )

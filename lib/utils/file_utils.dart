@@ -40,7 +40,7 @@ class FileUtils {
   }
 
   static void saveNetworkImage(String imagePath) async {
-    GallerySaver.saveImage(imagePath).then((bool? success) {
+    GallerySaver.saveImage(imagePath, albumName: 'bloc').then((bool? success) {
       Logx.ist(_TAG, 'photo saved in gallery');
     });
   }

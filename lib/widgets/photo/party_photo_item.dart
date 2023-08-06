@@ -14,6 +14,7 @@ import '../../utils/constants.dart';
 import '../../utils/logx.dart';
 import '../../utils/network_utils.dart';
 import '../ui/blurred_image.dart';
+import '../ui/dark_button_widget.dart';
 
 class PartyPhotoItem extends StatefulWidget {
   PartyPhoto partyPhoto;
@@ -41,7 +42,7 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
     return Hero(
       tag: widget.partyPhoto.id,
       child: Card(
-        elevation: 10,
+        elevation: 5,
         color: Constants.lightPrimary,
         shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.only(
@@ -52,15 +53,13 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
         child: SizedBox(
           width: mq.width,
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 0.0, vertical: 2),
+            padding: const EdgeInsets.only(left: 0.0, right: 0, bottom: 2, top: 0),
             child: ListView(
               physics: const NeverScrollableScrollPhysics(),
               shrinkWrap: true,
               children: <Widget>[
                 kIsWeb
-                    ? Stack(
-                    alignment: Alignment.center,
-                      children: [
+                    ? Stack(alignment: Alignment.center, children: [
                         BlurredImage(
                           imageUrl: widget.partyPhoto.imageUrl,
                           blurLevel: 5,
@@ -72,37 +71,48 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
                               Align(
                                 alignment: Alignment.center,
                                 child: Text(
-                                  'your view, your way. download bloc to see and save.',
+                                  'your view, your way. download our app to see and save.',
                                   style: TextStyle(fontSize: 20),
                                 ),
-                              ), Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  ButtonWidget(text: '🍎 ios', onClicked: () {
-                                    final uri = Uri.parse(ChallengeUtils.urlBlocAppStore);
-                                    NetworkUtils.launchInBrowser(uri);
-                                  },),
-                                  Padding(
-                                    padding: const EdgeInsets.only(left: 15.0),
-                                    child: ButtonWidget(text: '🤖 android', onClicked: () {
-                                      //android download
-                                      final uri = Uri.parse(ChallengeUtils.urlBlocPlayStore);
-                                      NetworkUtils.launchInBrowser(uri);
-                                    },),
-                                  ),
-                                ],
+                              ),
+
+                              Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 10),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    DarkButtonWidget(
+                                      text: '🍎 ios',
+                                      onClicked: () {
+                                        final uri = Uri.parse(
+                                            ChallengeUtils.urlBlocAppStore);
+                                        NetworkUtils.launchInBrowser(uri);
+                                      },
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(left: 20.0),
+                                      child: DarkButtonWidget(
+                                        text: '🤖 android',
+                                        onClicked: () {
+                                          //android download
+                                          final uri = Uri.parse(
+                                              ChallengeUtils.urlBlocPlayStore);
+                                          NetworkUtils.launchInBrowser(uri);
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               )
                             ],
                           ),
                         ),
-                      ]
-                    )
-                    :
-                SizedBox(
+                      ])
+                    : SizedBox(
                         width: mq.width,
                         child: FadeInImage(
                           placeholder:
-                              const AssetImage('assets/icons/logo.png'),
+                              const AssetImage('assets/images/logo_3x2.png'),
                           image: NetworkImage(widget.partyPhoto.imageUrl),
                           fit: BoxFit.contain,
                         ),
@@ -140,8 +150,8 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
                                   FirestoreHelper.pushPartyPhoto(
                                       widget.partyPhoto);
                                 } else {
-                                  Logx.ist(
-                                      _TAG, 'love once shared cannot be taken back 😘');
+                                  Logx.ist(_TAG,
+                                      'love once shared cannot be taken back 😘');
                                 }
                               }
                             },
@@ -153,7 +163,7 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
                         padding: const EdgeInsets.only(left: 15),
                         child: InkWell(
                           onTap: () {
-                            if(kIsWeb){
+                            if (kIsWeb) {
                               _showDownloadAppDialog(context);
                             } else {
                               Logx.ist(_TAG, 'downloading');
@@ -196,31 +206,44 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text('bloc app',
+            title: Text(
+              'bloc app',
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 22, color: Colors.black),),
+              style: TextStyle(fontSize: 22, color: Colors.black),
+            ),
             backgroundColor: Constants.lightPrimary,
             shape: const RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(20.0))),
             contentPadding: const EdgeInsets.all(16.0),
-            content: const Text("download app in order to view and download the photos?"),
+            content: const Text(
+                "ready, set, download delight! bloc app in hand, memories at hand. download our app in order to save photos to your gallery."),
             actions: [
               TextButton(
-                child: const Text('close', style: TextStyle(color: Constants.background)),
+                child: const Text('close',
+                    style: TextStyle(color: Constants.background)),
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
               ),
               TextButton(
-                child: Text('android', style: TextStyle(color: Constants.background)),
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all<Color>(
+                      Constants.darkPrimary), // Set your desired background color
+                ),
+                child: Text('🤖 android',
+                    style: TextStyle(color: Constants.primary)),
                 onPressed: () async {
-                  final uri =
-                  Uri.parse(ChallengeUtils.urlBlocPlayStore);
+                  final uri = Uri.parse(ChallengeUtils.urlBlocPlayStore);
                   NetworkUtils.launchInBrowser(uri);
                 },
               ),
               TextButton(
-                child: Text('ios', style: TextStyle(color: Constants.background)),
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all<Color>(
+                      Constants.darkPrimary), // Set your desired background color
+                ),
+                child:
+                    Text('🍎 ios', style: TextStyle(color: Constants.primary)),
                 onPressed: () async {
                   final uri = Uri.parse(ChallengeUtils.urlBlocAppStore);
                   NetworkUtils.launchInBrowser(uri);

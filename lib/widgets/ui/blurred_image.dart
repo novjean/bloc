@@ -13,7 +13,7 @@ class BlurredImage extends StatelessWidget {
     return ImageFiltered(
       imageFilter: ImageFilter.blur(sigmaX: blurLevel, sigmaY: blurLevel), // Adjust sigma values for more blur
       child: FadeInImage(
-        placeholder: const AssetImage('assets/icons/logo.png'),
+        placeholder: const AssetImage('assets/images/logo_3x2.png'),
         image: NetworkImage(imageUrl),
       ),
     );
