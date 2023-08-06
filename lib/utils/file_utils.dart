@@ -40,8 +40,25 @@ class FileUtils {
   }
 
   static void saveNetworkImage(String imagePath) async {
-    GallerySaver.saveImage(imagePath, albumName: 'bloc').then((bool? success) {
-      Logx.ist(_TAG, 'photo saved in gallery');
+
+    await GallerySaver.saveImage(imagePath).then((bool? success) {
+      if(success!){
+        Logx.ist(_TAG, 'photo saved in gallery');
+      } else {
+        Logx.est(_TAG, 'photo save failed, please try again');
+      }
+    });
+  }
+
+  static void testSaveNetworkImage() async {
+    String path =
+        'https://image.shutterstock.com/image-photo/montreal-canada-july-11-2019-600w-1450023539.jpg';
+    await GallerySaver.saveImage(path).then((bool? success) {
+      if(success!){
+        Logx.ist(_TAG, 'photo saved in gallery');
+      } else {
+        Logx.est(_TAG, 'photo save failed, please try again');
+      }
     });
   }
 
