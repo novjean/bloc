@@ -300,10 +300,10 @@ class Dummy {
         name: isLoggedInUser ? UserPreferences.myUser.name : '',
         surname: isLoggedInUser ? UserPreferences.myUser.surname : '',
         phone:
-            isLoggedInUser ? UserPreferences.myUser.phoneNumber.toString() : '',
+            isLoggedInUser ? UserPreferences.myUser.phoneNumber.toString() : '0',
         email: isLoggedInUser ? UserPreferences.myUser.email : '',
-        guestsCount: 1,
-        guestsRemaining: 1,
+        guestsCount: 2,
+        guestsRemaining: 2,
         createdAt: Timestamp.now().millisecondsSinceEpoch,
         isApproved: false,
         guestStatus: isLoggedInUser ? 'couple' : 'promoter',

@@ -71,11 +71,8 @@ class _PartyGuestAddEditManageScreenState
   bool hasUserChanged = false;
   bool _isCustomerLoading = true;
 
-  late String sGuestCount;
-  List<String> guestCounts = [];
-
-  String sGuestStatus = 'couple';
-  List<String> guestStatuses = [
+  String _sGuestStatus = 'couple';
+  final List<String> _guestStatuses = [
     'couple',
     'ladies',
     'lgbtq+',
@@ -83,7 +80,14 @@ class _PartyGuestAddEditManageScreenState
     'promoter'
   ];
 
-  String sGender = 'male';
+  late String _sGuestCount;
+  List<String> _defaultGuestCounts = [];
+  List<String> _promoterGuestCounts = [];
+  List<String> _coupleGuestCounts = ['2', '3'];
+  List<String> _stagGuestCounts = ['1'];
+  List<String> _currentGuestCounts = [];
+
+  String _sGender = 'male';
   List<String> genders = [
     'male',
     'female',
@@ -116,8 +120,6 @@ class _PartyGuestAddEditManageScreenState
   List<Promoter> sPromoters = [];
   String sPromoterId = '';
 
-  int initGuestCount = 1;
-
   @override
   void initState() {
     if (!UserPreferences.isUserLoggedIn()) {
@@ -126,13 +128,20 @@ class _PartyGuestAddEditManageScreenState
       bloc_user = UserPreferences.myUser;
     }
 
-    if (widget.partyGuest.guestId.isEmpty) {
-      bloc_user = Dummy.getDummyUser();
+    if (widget.partyGuest.guestId.isEmpty && widget.task != 'add') {
+      // this is promoter guest ideology, and not having to make the call for no guest id
+      int phoneNumber = 0;
+      try {
+        phoneNumber = StringUtils.getInt(widget.partyGuest.phone);
+      } catch (e) {
+        Logx.em(_TAG, e.toString());
+      }
+
       bloc_user = bloc_user.copyWith(
           name: widget.partyGuest.name,
           gender: widget.partyGuest.gender,
-          phoneNumber: StringUtils.getInt(widget.partyGuest.phone),
-          surname: widget.partyGuest.surname);
+          surname: widget.partyGuest.surname,
+          phoneNumber: phoneNumber);
       setState(() {
         isLoggedIn = true;
         _isCustomerLoading = false;
@@ -247,20 +256,35 @@ class _PartyGuestAddEditManageScreenState
       }
     });
 
-    if (widget.partyGuest.guestStatus == 'promoter') {
-      for (int i = 1; i <= 30; i++) {
-        guestCounts.add(i.toString());
-      }
-    } else {
-      for (int i = 1; i <= widget.party.guestListCount; i++) {
-        guestCounts.add(i.toString());
-      }
+    for (int i = 1; i <= widget.party.guestListCount; i++) {
+      _defaultGuestCounts.add(i.toString());
+    }
+    for (int i = 1; i <= 25; i++) {
+      _promoterGuestCounts.add(i.toString());
     }
 
-    sGuestCount = widget.partyGuest.guestsCount.toString();
-    sGuestStatus = widget.partyGuest.guestStatus;
-    sGender = widget.partyGuest.gender;
+    _sGuestStatus = widget.partyGuest.guestStatus;
+    _sGuestCount = widget.partyGuest.guestsCount.toString();
+    _sGender = widget.partyGuest.gender;
+
     super.initState();
+
+    if (_sGuestStatus == 'couple') {
+      _currentGuestCounts = _coupleGuestCounts;
+    } else if (_sGuestStatus == 'stag') {
+      _currentGuestCounts = _stagGuestCounts;
+    } else if (_sGuestStatus == 'promoter') {
+      _currentGuestCounts = _promoterGuestCounts;
+    } else {
+      _currentGuestCounts = _defaultGuestCounts;
+    }
+
+    if (!_currentGuestCounts.contains(_sGuestCount)) {
+      _sGuestCount = _currentGuestCounts.last;
+      int count = int.parse(_sGuestCount);
+      widget.partyGuest = widget.partyGuest
+          .copyWith(guestsCount: count, guestsRemaining: count);
+    }
 
     if (UserPreferences.isUserLoggedIn()) {
       FirestoreHelper.pullPartyInterest(widget.party.id).then((res) {
@@ -290,10 +314,6 @@ class _PartyGuestAddEditManageScreenState
           }
         }
       });
-    }
-
-    if(widget.task == 'edit'){
-      initGuestCount = widget.partyGuest.guestsCount;
     }
   }
 
@@ -381,34 +401,27 @@ class _PartyGuestAddEditManageScreenState
                           ),
                           IntlPhoneField(
                             style: const TextStyle(
-                                color: Constants.primary,
-                                fontSize: 18),
+                                color: Constants.primary, fontSize: 18),
                             decoration: const InputDecoration(
                                 labelText: '',
-                                labelStyle: TextStyle(
-                                    color: Constants.primary),
-                                hintStyle: TextStyle(
-                                    color: Constants.primary),
-                                counterStyle: TextStyle(
-                                    color: Constants.primary),
+                                labelStyle: TextStyle(color: Constants.primary),
+                                hintStyle: TextStyle(color: Constants.primary),
+                                counterStyle:
+                                    TextStyle(color: Constants.primary),
                                 border: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                      color: Constants.primary),
+                                  borderSide:
+                                      BorderSide(color: Constants.primary),
                                 ),
                                 enabledBorder: OutlineInputBorder(
-                                  // width: 0.0 produces a thin "hairline" border
                                   borderSide: BorderSide(
-                                      color: Constants.primary,
-                                      width: 0.0),
+                                      color: Constants.primary, width: 0.0),
                                 )),
                             controller: _controller,
                             initialCountryCode: 'IN',
-                            dropdownTextStyle: TextStyle(
-                                color: Constants.primary,
-                                fontSize: 18),
+                            dropdownTextStyle: const TextStyle(
+                                color: Constants.primary, fontSize: 18),
                             pickerDialogStyle: PickerDialogStyle(
-                                backgroundColor:
-                                    Constants.primary),
+                                backgroundColor: Constants.primary),
                             onChanged: (phone) {
                               Logx.i(_TAG, phone.completeNumber);
                               completePhoneNumber = phone.completeNumber;
@@ -469,33 +482,31 @@ class _PartyGuestAddEditManageScreenState
                               hintText: 'please select gender',
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(5.0),
-                                borderSide: BorderSide(
-                                    color: Constants.primary),
+                                borderSide:
+                                    const BorderSide(color: Constants.primary),
                               ),
-                              enabledBorder: OutlineInputBorder(
-                                // width: 0.0 produces a thin "hairline" border
+                              enabledBorder: const OutlineInputBorder(
                                 borderSide: BorderSide(
-                                    color: Constants.primary,
-                                    width: 0.0),
+                                    color: Constants.primary, width: 0.0),
                               )),
-                          isEmpty: sGender == '',
+                          isEmpty: _sGender == '',
                           child: DropdownButtonHideUnderline(
                             child: DropdownButton<String>(
                               style: TextStyle(
                                   color: Theme.of(context).primaryColorLight),
                               dropdownColor: Constants.background,
-                              value: sGender,
+                              value: _sGender,
                               isDense: true,
                               onChanged: (String? newValue) {
                                 setState(() {
-                                  sGender = newValue!;
+                                  _sGender = newValue!;
 
                                   bloc_user =
-                                      bloc_user.copyWith(gender: sGender);
+                                      bloc_user.copyWith(gender: _sGender);
                                   hasUserChanged = true;
 
                                   widget.partyGuest = widget.partyGuest
-                                      .copyWith(gender: sGender);
+                                      .copyWith(gender: _sGender);
                                   state.didChange(newValue);
                                 });
                               },
@@ -514,82 +525,6 @@ class _PartyGuestAddEditManageScreenState
                 ),
               ),
               const SizedBox(height: 24),
-              guestCounts.length == 1
-                  ? const SizedBox()
-                  : Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 32),
-                      child: Column(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 8.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'number of guests',
-                                  style: TextStyle(
-                                      color:
-                                          Theme.of(context).primaryColorLight,
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                              ],
-                            ),
-                          ),
-                          FormField<String>(
-                            builder: (FormFieldState<String> state) {
-                              return InputDecorator(
-                                key: const ValueKey('guest_count'),
-                                decoration: InputDecoration(
-                                    fillColor: Colors.white,
-                                    errorStyle: const TextStyle(
-                                        color: Constants.errorColor,
-                                        fontSize: 16.0),
-                                    hintText: 'please select guest count',
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(5.0),
-                                      borderSide: const BorderSide(
-                                          color: Constants.primary),
-                                    ),
-                                    enabledBorder: const OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                          color: Constants.primary, width: 0.0),
-                                    )),
-                                isEmpty: sGuestCount == '',
-                                child: DropdownButtonHideUnderline(
-                                  child: DropdownButton<String>(
-                                    style: const TextStyle(
-                                        color: Constants.lightPrimary),
-                                    dropdownColor: Constants.background,
-                                    value: sGuestCount,
-                                    isDense: true,
-                                    onChanged: (String? newValue) {
-                                      setState(() {
-                                        sGuestCount = newValue!;
-                                        int count = int.parse(sGuestCount);
-
-                                        widget.partyGuest = widget.partyGuest
-                                            .copyWith(guestsCount: count);
-                                        widget.partyGuest = widget.partyGuest
-                                            .copyWith(guestsRemaining: count);
-                                        state.didChange(newValue);
-                                      });
-                                    },
-                                    items: guestCounts.map((String value) {
-                                      return DropdownMenuItem<String>(
-                                        value: value,
-                                        child: Text(value),
-                                      );
-                                    }).toList(),
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
-                          const SizedBox(height: 24),
-                        ],
-                      ),
-                    ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 32),
                 child: Column(
@@ -627,24 +562,16 @@ class _PartyGuestAddEditManageScreenState
                                 borderSide: BorderSide(
                                     color: Constants.lightPrimary, width: 0.0),
                               )),
-                          isEmpty: sGuestStatus == '',
+                          isEmpty: _sGuestStatus == '',
                           child: DropdownButtonHideUnderline(
                             child: DropdownButton<String>(
                               style: const TextStyle(
                                   color: Constants.lightPrimary),
                               dropdownColor: Constants.background,
-                              value: sGuestStatus,
+                              value: _sGuestStatus,
                               isDense: true,
-                              onChanged: (String? newValue) {
-                                setState(() {
-                                  sGuestStatus = newValue!;
-
-                                  widget.partyGuest = widget.partyGuest
-                                      .copyWith(guestStatus: sGuestStatus);
-                                  state.didChange(newValue);
-                                });
-                              },
-                              items: guestStatuses.map((String value) {
+                              onChanged: _onStatusChanged,
+                              items: _guestStatuses.map((String value) {
                                 return DropdownMenuItem<String>(
                                   value: value,
                                   child: Text(value),
@@ -659,6 +586,77 @@ class _PartyGuestAddEditManageScreenState
                 ),
               ),
               const SizedBox(height: 24),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 32),
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 8.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Text(
+                            'number of guests',
+                            style: TextStyle(
+                                color: Theme.of(context).primaryColorLight,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                    ),
+                    FormField<String>(
+                      builder: (FormFieldState<String> state) {
+                        return InputDecorator(
+                          key: const ValueKey('guest_count'),
+                          decoration: InputDecoration(
+                              fillColor: Colors.white,
+                              errorStyle: const TextStyle(
+                                  color: Constants.errorColor, fontSize: 16.0),
+                              hintText: 'please select guest count',
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(5.0),
+                                borderSide:
+                                    const BorderSide(color: Constants.primary),
+                              ),
+                              enabledBorder: const OutlineInputBorder(
+                                borderSide: BorderSide(
+                                    color: Constants.primary, width: 0.0),
+                              )),
+                          isEmpty: _sGuestCount == '',
+                          child: DropdownButtonHideUnderline(
+                            child: DropdownButton<String>(
+                              style: const TextStyle(
+                                  color: Constants.lightPrimary),
+                              dropdownColor: Constants.background,
+                              value: _sGuestCount,
+                              isDense: true,
+                              onChanged: (String? newValue) {
+                                setState(() {
+                                  _sGuestCount = newValue!;
+                                  int count = int.parse(_sGuestCount);
+
+                                  widget.partyGuest = widget.partyGuest
+                                      .copyWith(guestsCount: count);
+                                  widget.partyGuest = widget.partyGuest
+                                      .copyWith(guestsRemaining: count);
+                                });
+                              },
+                              items: _currentGuestCounts.map((String value) {
+                                return DropdownMenuItem<String>(
+                                  value: value,
+                                  child: Text(value),
+                                );
+                              }).toList(),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              ),
+
               /** admin section **/
               widget.task == 'manage'
                   ? Padding(
@@ -928,13 +926,13 @@ class _PartyGuestAddEditManageScreenState
                     )
                   : const SizedBox(),
               const SizedBox(height: 24),
-              Row(
+              const Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   Padding(
-                    padding: const EdgeInsets.only(right: 42, bottom: 5),
+                    padding: EdgeInsets.only(right: 42, bottom: 5),
                     child: DelayedDisplay(
-                      delay: const Duration(seconds: 1),
+                      delay: Duration(seconds: 1),
                       child: Text(
                         "* required",
                         style: TextStyle(
@@ -1060,13 +1058,12 @@ class _PartyGuestAddEditManageScreenState
                       FirestoreHelper.pushPartyGuest(widget.partyGuest);
                       Logx.ist(_TAG, 'guest list updated');
                       Navigator.of(context).pop();
-                    } else if(widget.task == 'edit') {
-                      if(isDataValid()){
+                    } else if (widget.task == 'edit') {
+                      if (isDataValid()) {
                         FirestoreHelper.pushPartyGuest(widget.partyGuest);
 
                         if (hasUserChanged) {
-                          blocUser.User freshUser =
-                          Fresh.freshUser(bloc_user);
+                          blocUser.User freshUser = Fresh.freshUser(bloc_user);
                           if (freshUser.id == UserPreferences.myUser.id) {
                             UserPreferences.setUser(freshUser);
                           }
@@ -1085,20 +1082,24 @@ class _PartyGuestAddEditManageScreenState
                         if (isLoggedIn) {
                           if (hasUserChanged) {
                             blocUser.User freshUser =
-                            Fresh.freshUser(bloc_user);
+                                Fresh.freshUser(bloc_user);
                             if (freshUser.id == UserPreferences.myUser.id) {
                               UserPreferences.setUser(freshUser);
                             }
                             FirestoreHelper.pushUser(freshUser);
                           }
 
-                          if(widget.partyGuest.guestsCount>=2){
-                            int partyInterestInitCount = mPartyInterest.initCount;
-                            partyInterestInitCount += widget.partyGuest.guestsCount;
-                            mPartyInterest = mPartyInterest.copyWith(initCount: partyInterestInitCount);
+                          if (widget.partyGuest.guestsCount >= 2) {
+                            int partyInterestInitCount =
+                                mPartyInterest.initCount;
+                            partyInterestInitCount +=
+                                widget.partyGuest.guestsCount;
+                            mPartyInterest = mPartyInterest.copyWith(
+                                initCount: partyInterestInitCount);
                             FirestoreHelper.pushPartyInterest(mPartyInterest);
 
-                            if(widget.partyGuest.guestsCount==2 && widget.partyGuest.guestStatus == 'couple'){
+                            if (widget.partyGuest.guestsCount == 2 &&
+                                widget.partyGuest.guestStatus == 'couple') {
                               _showRulesConfirmationDialog(context, false);
                             } else {
                               _showGuestsEntryDialog(context);
@@ -1115,8 +1116,7 @@ class _PartyGuestAddEditManageScreenState
                             'user cannot be entered as data is incomplete');
                       }
                     }
-
-                    },
+                  },
                 ),
               ),
               widget.task == 'edit' || widget.task == 'manage'
@@ -1171,11 +1171,37 @@ class _PartyGuestAddEditManageScreenState
     return true;
   }
 
+  void _onStatusChanged(String? value) {
+    setState(() {
+      _sGuestStatus = value!;
+      widget.partyGuest =
+          widget.partyGuest.copyWith(guestStatus: _sGuestStatus);
+
+      if (_sGuestStatus == 'couple') {
+        _currentGuestCounts = _coupleGuestCounts;
+        _sGuestCount = _currentGuestCounts.first;
+      } else if (_sGuestStatus == 'stag') {
+        _currentGuestCounts = _stagGuestCounts;
+        _sGuestCount = _currentGuestCounts.first;
+      } else if (_sGuestStatus == 'promoter') {
+        _currentGuestCounts = _promoterGuestCounts;
+        _sGuestCount = _currentGuestCounts.first;
+      } else {
+        _currentGuestCounts = _defaultGuestCounts;
+        _sGuestCount = _currentGuestCounts.first;
+      }
+
+      int count = int.parse(_sGuestCount);
+      widget.partyGuest = widget.partyGuest.copyWith(guestsCount: count);
+      widget.partyGuest = widget.partyGuest.copyWith(guestsRemaining: count);
+    });
+  }
+
   void _showGuestsEntryDialog(BuildContext context) {
     int guestCount = widget.partyGuest.guestsCount - 1;
 
     List<String> guestNames = [];
-    for(int i = 0; i<guestCount; i++){
+    for (int i = 0; i < guestCount; i++) {
       guestNames.add('');
     }
     PartyGuestPreferences.setListGuestNames(guestNames);
@@ -1184,22 +1210,25 @@ class _PartyGuestAddEditManageScreenState
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('👫 who\'s coming?',
+          title: Text(
+            '👫 Express Entry: Save Time at the Gate by Entering Guest Details!'
+                .toLowerCase(),
             textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 22, color: Colors.black),),
+            style: const TextStyle(fontSize: 22, color: Colors.black),
+          ),
           backgroundColor: Constants.lightPrimary,
           shape: const RoundedRectangleBorder(
               borderRadius: BorderRadius.all(Radius.circular(20.0))),
           contentPadding: const EdgeInsets.all(16.0),
-          content: Container(
+          content: SizedBox(
             width: double.maxFinite,
             child: ListView.builder(
               shrinkWrap: true,
               itemCount: guestCount,
               itemBuilder: (BuildContext context, int index) {
                 return PartyGuestEntryWidget(
-                    partyGuest: widget.partyGuest,
-                    index: index+1,
+                  partyGuest: widget.partyGuest,
+                  index: index + 1,
                 );
               },
             ),
@@ -1209,18 +1238,21 @@ class _PartyGuestAddEditManageScreenState
               onPressed: () {
                 Navigator.of(context).pop();
 
-                List<String> guestNames = PartyGuestPreferences.getListGuestNames();
+                List<String> guestNames =
+                    PartyGuestPreferences.getListGuestNames();
                 List<String> names = [];
-                for(String name in guestNames){
-                  if(name.trim().isNotEmpty){
+                for (String name in guestNames) {
+                  if (name.trim().isNotEmpty) {
                     names.add(name);
                   }
                 }
-                widget.partyGuest = widget.partyGuest.copyWith(guestNames: names);
+                widget.partyGuest =
+                    widget.partyGuest.copyWith(guestNames: names);
 
                 _showRulesConfirmationDialog(context, false);
               },
-              child: const Text('👍 done', style: TextStyle(color: Constants.background)),
+              child: const Text('👍 done',
+                  style: TextStyle(color: Constants.background)),
             ),
           ],
         );
@@ -1233,9 +1265,11 @@ class _PartyGuestAddEditManageScreenState
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('entry and club rules 🤝',
+          title: const Text(
+            '🤝 entry and club rules',
             textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 22, color: Colors.black),),
+            style: TextStyle(fontSize: 22, color: Colors.black),
+          ),
           backgroundColor: Constants.lightPrimary,
           shape: const RoundedRectangleBorder(
               borderRadius: BorderRadius.all(Radius.circular(20.0))),
@@ -1257,9 +1291,9 @@ class _PartyGuestAddEditManageScreenState
               onPressed: () {
                 if (isNewUser) {
                   PartyGuest freshPartyGuest =
-                  Fresh.freshPartyGuest(widget.partyGuest);
+                      Fresh.freshPartyGuest(widget.partyGuest);
 
-                  if(!testMode){
+                  if (!testMode) {
                     FirestoreHelper.pushPartyGuest(freshPartyGuest);
                   }
 
@@ -1281,14 +1315,15 @@ class _PartyGuestAddEditManageScreenState
                   widget.partyGuest.guestId = bloc_user.id;
 
                   FirestoreHelper.pullPartyGuestByUser(
-                      widget.partyGuest.guestId, widget.partyGuest.partyId)
+                          widget.partyGuest.guestId, widget.partyGuest.partyId)
                       .then((res) {
                     Logx.i(_TAG, 'pulled in party guest by user');
 
                     if (res.docs.isEmpty) {
                       // user has not requested for party guest list, approve
-                      PartyGuest freshPartyGuest = Fresh.freshPartyGuest(widget.partyGuest);
-                      if(!testMode) {
+                      PartyGuest freshPartyGuest =
+                          Fresh.freshPartyGuest(widget.partyGuest);
+                      if (!testMode) {
                         FirestoreHelper.pushPartyGuest(freshPartyGuest);
                       }
 
@@ -1296,12 +1331,12 @@ class _PartyGuestAddEditManageScreenState
                       Toaster.longToast('guest list request in box office');
 
                       FirestoreHelper.pullHistoryMusic(
-                          widget.partyGuest.guestId, widget.party.genre)
+                              widget.partyGuest.guestId, widget.party.genre)
                           .then((res) {
                         if (res.docs.isEmpty) {
                           // no history, add new one
                           HistoryMusic historyMusic =
-                          Dummy.getDummyHistoryMusic();
+                              Dummy.getDummyHistoryMusic();
                           historyMusic.userId = widget.partyGuest.guestId;
                           historyMusic.genre = widget.party.genre;
                           historyMusic.count = 1;
@@ -1310,9 +1345,9 @@ class _PartyGuestAddEditManageScreenState
                           for (int i = 0; i < res.docs.length; i++) {
                             DocumentSnapshot document = res.docs[i];
                             Map<String, dynamic> data =
-                            document.data()! as Map<String, dynamic>;
+                                document.data()! as Map<String, dynamic>;
                             final HistoryMusic historyMusic =
-                            Fresh.freshHistoryMusicMap(data, false);
+                                Fresh.freshHistoryMusicMap(data, false);
                             historyMusic.count++;
                             FirestoreHelper.pushHistoryMusic(historyMusic);
                           }
@@ -1325,7 +1360,8 @@ class _PartyGuestAddEditManageScreenState
                       } else {
                         Navigator.of(context).pop();
 
-                        GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
+                        GoRouter.of(context)
+                            .pushNamed(RouteConstants.homeRouteName);
                         GoRouter.of(context)
                             .pushNamed(RouteConstants.boxOfficeRouteName);
                       }
@@ -1333,13 +1369,16 @@ class _PartyGuestAddEditManageScreenState
                       //already requested
                       Logx.ist(_TAG, 'guest list has already been requested!');
 
-                      GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
-                      GoRouter.of(context).pushNamed(RouteConstants.boxOfficeRouteName);
+                      GoRouter.of(context)
+                          .pushNamed(RouteConstants.homeRouteName);
+                      GoRouter.of(context)
+                          .pushNamed(RouteConstants.boxOfficeRouteName);
                     }
                   });
                 }
-                },
-              child: Text('👍 accept', style: TextStyle(color: Constants.background)),
+              },
+              child: const Text('👍 accept',
+                  style: TextStyle(color: Constants.background)),
             ),
           ],
         );
@@ -1382,9 +1421,11 @@ class _PartyGuestAddEditManageScreenState
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
-              title: Text('#blocCommunity support & win 🎟️',
+              title: Text(
+                '#blocCommunity support & win 🎟️',
                 textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 22, color: Colors.black),),
+                style: TextStyle(fontSize: 22, color: Colors.black),
+              ),
               backgroundColor: Constants.lightPrimary,
               shape: const RoundedRectangleBorder(
                   borderRadius: BorderRadius.all(Radius.circular(20.0))),
@@ -1394,66 +1435,75 @@ class _PartyGuestAddEditManageScreenState
                 child: ListView(
                   shrinkWrap: true,
                   children: [
-                    Text('${challenge.dialogTitle}:\n' ,
-                      style: TextStyle(fontWeight: FontWeight.bold),),
+                    Text(
+                      '${challenge.dialogTitle}:\n',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
                     Text(challenge.description.toLowerCase()),
                   ],
                 ),
               ),
               actions: [
                 TextButton(
-                  child: const Text('close', style: TextStyle(color: Constants.background)),
+                  child: const Text('close',
+                      style: TextStyle(color: Constants.background)),
                   onPressed: () {
                     Navigator.of(context).pop();
 
-                    GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
-                    GoRouter.of(context).pushNamed(RouteConstants.boxOfficeRouteName);
+                    GoRouter.of(context)
+                        .pushNamed(RouteConstants.homeRouteName);
+                    GoRouter.of(context)
+                        .pushNamed(RouteConstants.boxOfficeRouteName);
                     // showReserveTableDialog(context);
                   },
                 ),
                 challenge.dialogAccept2Text.isNotEmpty
                     ? TextButton(
-                  child: Text(challenge.dialogAccept2Text, style: TextStyle(color: Constants.background)),
-                  onPressed: () async {
-                    Logx.ist(_TAG, 'thank you for supporting us!');
+                        child: Text(challenge.dialogAccept2Text,
+                            style: TextStyle(color: Constants.background)),
+                        onPressed: () async {
+                          Logx.ist(_TAG, 'thank you for supporting us!');
 
-                    widget.partyGuest = widget.partyGuest
-                        .copyWith(isChallengeClicked: true);
-                    if(!testMode) {
-                      FirestoreHelper.pushPartyGuest(widget.partyGuest);
-                    }
+                          widget.partyGuest = widget.partyGuest
+                              .copyWith(isChallengeClicked: true);
+                          if (!testMode) {
+                            FirestoreHelper.pushPartyGuest(widget.partyGuest);
+                          }
 
-                    switch (challenge.level) {
-                      case 2:
-                        {
-                          //android download
-                          final uri =
-                          Uri.parse(ChallengeUtils.urlBlocPlayStore);
-                          NetworkUtils.launchInBrowser(uri);
-                          break;
-                        }
-                      default:
-                        {
-                          final uri =
-                          Uri.parse(ChallengeUtils.urlBlocInsta);
-                          NetworkUtils.launchInBrowser(uri);
-                          break;
-                        }
-                    }
+                          switch (challenge.level) {
+                            case 2:
+                              {
+                                //android download
+                                final uri =
+                                    Uri.parse(ChallengeUtils.urlBlocPlayStore);
+                                NetworkUtils.launchInBrowser(uri);
+                                break;
+                              }
+                            default:
+                              {
+                                final uri =
+                                    Uri.parse(ChallengeUtils.urlBlocInsta);
+                                NetworkUtils.launchInBrowser(uri);
+                                break;
+                              }
+                          }
 
-                    GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
-                    GoRouter.of(context).pushNamed(RouteConstants.boxOfficeRouteName);
-                  },
-                )
+                          GoRouter.of(context)
+                              .pushNamed(RouteConstants.homeRouteName);
+                          GoRouter.of(context)
+                              .pushNamed(RouteConstants.boxOfficeRouteName);
+                        },
+                      )
                     : const SizedBox(),
                 TextButton(
-                  child: Text(challenge.dialogAcceptText, style: TextStyle(color: Constants.background)),
+                  child: Text(challenge.dialogAcceptText,
+                      style: TextStyle(color: Constants.background)),
                   onPressed: () async {
                     Logx.ist(_TAG, 'thank you for supporting us!');
 
                     widget.partyGuest =
                         widget.partyGuest.copyWith(isChallengeClicked: true);
-                    if(!testMode) {
+                    if (!testMode) {
                       FirestoreHelper.pushPartyGuest(widget.partyGuest);
                     }
 
@@ -1500,7 +1550,8 @@ class _PartyGuestAddEditManageScreenState
                               // Image? fromPicker = await ImagePickerWeb.getImageAsWidget();
                             } else {
                               var temp = await getTemporaryDirectory();
-                              final path = '${temp.path}/${widget.party.id}.jpg';
+                              final path =
+                                  '${temp.path}/${widget.party.id}.jpg';
                               File(path).writeAsBytesSync(bytes);
 
                               final files = <XFile>[];
@@ -1521,15 +1572,17 @@ class _PartyGuestAddEditManageScreenState
                         }
                       default:
                         {
-                          final uri =
-                          Uri.parse('https://www.instagram.com/bloc.india/');
+                          final uri = Uri.parse(
+                              'https://www.instagram.com/bloc.india/');
                           NetworkUtils.launchInBrowser(uri);
                           break;
                         }
                     }
 
-                    GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
-                    GoRouter.of(context).pushNamed(RouteConstants.boxOfficeRouteName);
+                    GoRouter.of(context)
+                        .pushNamed(RouteConstants.homeRouteName);
+                    GoRouter.of(context)
+                        .pushNamed(RouteConstants.boxOfficeRouteName);
                   },
                 ),
               ],
@@ -1821,19 +1874,12 @@ class _PartyGuestAddEditManageScreenState
               listenForMultipleSmsOnAndroid: true,
               defaultPinTheme: defaultPinTheme,
               closeKeyboardWhenCompleted: true,
-              // validator: (value) {
-              // print('code is ' + _verificationCode);
-              // return value == _verificationCode ? null : 'pin is incorrect';
-              // },
-              // onClipboardFound: (value) {
-              //   debugPrint('onClipboardFound: $value');
-              //   pinController.setText(value);
-              // },
               hapticFeedbackType: HapticFeedbackType.lightImpact,
               onCompleted: (pin) async {
                 debugPrint('onCompleted: $pin');
 
-                Toaster.shortToast('verifying $completePhoneNumber, please wait...');
+                Logx.ist(
+                    _TAG, 'verifying $completePhoneNumber, please wait...');
                 try {
                   await FirebaseAuth.instance
                       .signInWithCredential(PhoneAuthProvider.credential(
@@ -1877,7 +1923,8 @@ class _PartyGuestAddEditManageScreenState
 
                           //update user details
                           int time = Timestamp.now().millisecondsSinceEpoch;
-                          user = user.copyWith(name: bloc_user.name,
+                          user = user.copyWith(
+                              name: bloc_user.name,
                               email: bloc_user.email,
                               lastSeenAt: time);
                           FirestoreHelper.pushUser(user);
@@ -2003,4 +2050,55 @@ class _PartyGuestAddEditManageScreenState
     );
   }
 
+  _showPhoneNumberEntry() {
+    return Container(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 32.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 24),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 10),
+              child: Text(
+                'phone number \*',
+                style: TextStyle(
+                    color: Theme.of(context).primaryColorLight,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold),
+              ),
+            ),
+            IntlPhoneField(
+              style: const TextStyle(color: Constants.primary, fontSize: 18),
+              decoration: const InputDecoration(
+                  labelText: '',
+                  labelStyle: TextStyle(color: Constants.primary),
+                  hintStyle: TextStyle(color: Constants.primary),
+                  counterStyle: TextStyle(color: Constants.primary),
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide(color: Constants.primary),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide:
+                        BorderSide(color: Constants.primary, width: 0.0),
+                  )),
+              controller: _controller,
+              initialCountryCode: 'IN',
+              dropdownTextStyle:
+                  const TextStyle(color: Constants.primary, fontSize: 18),
+              pickerDialogStyle:
+                  PickerDialogStyle(backgroundColor: Constants.primary),
+              onChanged: (phone) {
+                Logx.i(_TAG, phone.completeNumber);
+                completePhoneNumber = phone.completeNumber;
+              },
+              onCountryChanged: (country) {
+                Logx.i(_TAG, 'country changed to: ${country.name}');
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }
