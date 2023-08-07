@@ -2,7 +2,6 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
-import 'package:gallery_saver/gallery_saver.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:universal_html/html.dart' as html;
@@ -59,13 +58,5 @@ class FileUtils {
     } else {
       Logx.est(_TAG, 'photo save failed, please try again');
     }
-
-    // await GallerySaver.saveImage(imagePath).then((bool? success) {
-    //   if(success!){
-    //     Logx.ist(_TAG, 'photo saved in gallery');
-    //   } else {
-    //     Logx.est(_TAG, 'photo save failed, please try again');
-    //   }
-    // });
   }
 }
