@@ -144,21 +144,25 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
                         padding: const EdgeInsets.only(left: 3.0),
                         child: InkWell(
                             onTap: () {
-                              if (widget.partyPhoto.likers.isEmpty) {
-                                widget.partyPhoto.likers
-                                    .add(UserPreferences.myUser.id);
-                                FirestoreHelper.pushPartyPhoto(
-                                    widget.partyPhoto);
-                              } else {
-                                if (!isLoved) {
+                              if(UserPreferences.isUserLoggedIn()) {
+                                if (widget.partyPhoto.likers.isEmpty) {
                                   widget.partyPhoto.likers
                                       .add(UserPreferences.myUser.id);
                                   FirestoreHelper.pushPartyPhoto(
                                       widget.partyPhoto);
                                 } else {
-                                  String text = _getRandomLoveQuote();
-                                  Logx.ist(_TAG, '$text 😘');
+                                  if (!isLoved) {
+                                    widget.partyPhoto.likers
+                                        .add(UserPreferences.myUser.id);
+                                    FirestoreHelper.pushPartyPhoto(
+                                        widget.partyPhoto);
+                                  } else {
+                                    String text = _getRandomLoveQuote();
+                                    Logx.ist(_TAG, '$text 😘');
+                                  }
                                 }
+                              } else {
+                                Logx.ist(_TAG, 'please login to like the photo');
                               }
                             },
                             child: isLoved
@@ -172,17 +176,21 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
                             if (kIsWeb) {
                               _showDownloadAppDialog(context);
                             } else {
-                              Logx.ist(_TAG, 'downloading');
-                              int fileNum = widget.index+1;
-                              String fileName = '${widget.partyPhoto.partyName} $fileNum';
+                              if(UserPreferences.isUserLoggedIn()){
+                                Logx.ist(_TAG, '🍄 downloading...');
+                                int fileNum = widget.index+1;
+                                String fileName = '${widget.partyPhoto.partyName} $fileNum';
 
-                              FileUtils.saveNetworkImage(
-                                  widget.partyPhoto.imageUrl, fileName);
+                                FileUtils.saveNetworkImage(
+                                    widget.partyPhoto.imageUrl, fileName);
 
-                              int count = widget.partyPhoto.downloadCount + 1;
-                              widget.partyPhoto = widget.partyPhoto
-                                  .copyWith(downloadCount: count);
-                              FirestoreHelper.pushPartyPhoto(widget.partyPhoto);
+                                int count = widget.partyPhoto.downloadCount + 1;
+                                widget.partyPhoto = widget.partyPhoto
+                                    .copyWith(downloadCount: count);
+                                FirestoreHelper.pushPartyPhoto(widget.partyPhoto);
+                              } else {
+                                Logx.ist(_TAG, 'please login to save the photo to your gallery');
+                              }
                             }
                           },
                           child: const Icon(Icons.save_alt, size: 24.0),
