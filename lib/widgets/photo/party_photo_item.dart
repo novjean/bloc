@@ -13,6 +13,7 @@ import '../../utils/challenge_utils.dart';
 import '../../utils/constants.dart';
 import '../../utils/logx.dart';
 import '../../utils/network_utils.dart';
+import '../../utils/number_utils.dart';
 import '../ui/blurred_image.dart';
 import '../ui/dark_button_widget.dart';
 
@@ -69,13 +70,16 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
                         Positioned(
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Align(
-                                alignment: Alignment.center,
+                              Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 15.0),
                                 child: Text(
-                                  'your view, your way. download our app to see and save.',
-                                  style: TextStyle(fontSize: 20),
-                                ),
+                                  _getRandomAppDownloadQuote(),
+                                  maxLines: 3,
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(fontSize: 20, backgroundColor: Constants.lightPrimary.withOpacity(0.2)),
+                                )
                               ),
 
                               Padding(
@@ -152,8 +156,8 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
                                   FirestoreHelper.pushPartyPhoto(
                                       widget.partyPhoto);
                                 } else {
-                                  Logx.ist(_TAG,
-                                      'love once shared cannot be taken back 😘');
+                                  String text = _getRandomLoveQuote();
+                                  Logx.ist(_TAG, '$text 😘');
                                 }
                               }
                             },
@@ -257,5 +261,42 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
             ],
           );
         });
+  }
+
+  String _getRandomLoveQuote(){
+    List<String> loveQuotes = [
+      'In the treasury of love, once given, there\'s no withdrawal.',
+      'Love\'s bond, once forged, time cannot erase or reclaim.',
+      'Once love\'s stars align, they forever shimmer in the night.',
+      'Love\'s touch, once felt, leaves an indelible mark on souls',
+      'Once love\'s seeds are sown, they bloom into a forever garden.',
+      'Love\'s like WiFi passwords – shared once, never forgotten!',
+      'Love\'s return policy: \'All sales final, all hearts happy!\'',
+      'Love\'s golden rule: once given, it\'s \'heart-y\' forever!',
+      'Love\'s like glitter – once sprinkled, it\'s everywhere, darling!',
+      'Love\'s sticky note: once stuck, it clings to hearts forever!'
+    ];
+
+    int randomNumber = NumberUtils.generateRandomNumber(0, loveQuotes.length-1);
+    return loveQuotes[randomNumber].toLowerCase();
+  }
+
+  String _getRandomAppDownloadQuote(){
+    List<String> quotes = [
+      'your view, your way. download our app to see and save.',
+      'View, save, and smile with our app - your digital vault!',
+      'Download the magic wand for your photos: our enchanting app!',
+      'Unveil the art of seeing: our app reveals, you treasure.',
+      'Embrace pixels, create memories: our app, your joyful ally.'
+      'App alert: Party pics hidden until you tap \'download\'!',
+      'Party pics: Exclusive backstage entry through our app doors!',
+      'No app, no snaps! It\'s the golden ticket to party pics.',
+      'Preserving moments of grace: Download our app, relive the night.',
+      'Captured with grace, cherished through our app.',
+      'A touch of grace, a world of memories. Download and cherish.'
+    ];
+
+    int randomNumber = NumberUtils.generateRandomNumber(0, quotes.length-1);
+    return quotes[randomNumber].toLowerCase();
   }
 }

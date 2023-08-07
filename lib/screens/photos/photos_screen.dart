@@ -200,7 +200,7 @@ class _PhotosScreenState extends State<PhotosScreen> {
                   padding:
                       const EdgeInsets.only(bottom: 20, left: 10, right: 10),
                   child: Text(
-                    '${DateTimeUtils.getFormattedDate2(partyPhoto.partyDate)}',
+                    DateTimeUtils.getFormattedDate2(partyPhoto.partyDate),
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(fontSize: 16),
                   ),
