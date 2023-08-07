@@ -37,7 +37,6 @@ class Fresh {
   /** ad **/
   static Ad freshAdMap(Map<String, dynamic> map, bool shouldUpdate) {
     Ad ad = Dummy.getDummyAd('');
-
     bool isModelChanged = false;
 
     try {
@@ -58,21 +57,9 @@ class Fresh {
       isModelChanged = true;
     }
     try {
-      ad = ad.copyWith(type: map['type'] as String);
-    } catch (e) {
-      Logx.em(_TAG, 'ad type not exist for ad id: ${ad.id}');
-      isModelChanged = true;
-    }
-    try {
       ad = ad.copyWith(blocId: map['blocId'] as String);
     } catch (e) {
       Logx.em(_TAG, 'ad blocId not exist for ad id: ${ad.id}');
-      isModelChanged = true;
-    }
-    try {
-      ad = ad.copyWith(partyId: map['partyId'] as String);
-    } catch (e) {
-      Logx.em(_TAG, 'ad partyId not exist for ad id: ${ad.id}');
       isModelChanged = true;
     }
     try {
@@ -123,19 +110,9 @@ class Fresh {
       Logx.em(_TAG, 'ad message not exist for ad id: ${ad.id}');
     }
     try {
-      freshAd = freshAd.copyWith(type: ad.type);
-    } catch (e) {
-      Logx.em(_TAG, 'ad type not exist for ad id: ${ad.id}');
-    }
-    try {
       freshAd = freshAd.copyWith(blocId: ad.blocId);
     } catch (e) {
       Logx.em(_TAG, 'ad blocId not exist for ad id: ${ad.id}');
-    }
-    try {
-      freshAd = freshAd.copyWith(partyId: ad.partyId);
-    } catch (e) {
-      Logx.em(_TAG, 'ad partyId not exist for ad id: ' + ad.id);
     }
     try {
       freshAd = freshAd.copyWith(hits: ad.hits);

@@ -122,6 +122,15 @@ class FirestoreHelper {
         .snapshots();
   }
 
+  static pullAds() {
+    return FirebaseFirestore.instance
+        .collection(ADS)
+        .where('isActive', isEqualTo: true)
+        .orderBy('createdAt', descending: true)
+        .limit(5)
+        .get();
+  }
+
   static void deleteAd(String docId) {
     FirebaseFirestore.instance.collection(ADS).doc(docId).delete();
   }

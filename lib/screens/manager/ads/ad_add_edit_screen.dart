@@ -57,23 +57,6 @@ class _AdAddEditScreenState extends State<AdAddEditScreen> {
               widget.ad = widget.ad.copyWith(message: message),
         ),
         const SizedBox(height: 24),
-        TextFieldWidget(
-          label: 'type',
-          text: widget.ad.type,
-          onChanged: (value) {
-            widget.ad = widget.ad.copyWith(type: value);
-          },
-        ),
-
-        TextFieldWidget(
-          label: 'party id',
-          text: widget.ad.partyId,
-          onChanged: (value) {
-            widget.ad = widget.ad.copyWith(partyId: value);
-          },
-        ),
-
-        const SizedBox(height: 24),
         Row(
           children: <Widget>[
             const Text(

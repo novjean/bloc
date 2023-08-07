@@ -10,6 +10,7 @@ import 'package:bloc/screens/lounge/lounges_screen.dart';
 import 'package:bloc/screens/profile/profile_login_screen.dart';
 import 'package:bloc/screens/promoter/promoter_main_screen.dart';
 import 'package:bloc/utils/constants.dart';
+import 'package:bloc/utils/date_time_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -314,7 +315,7 @@ class _MainScreenState extends State<MainScreen> {
       child: Scaffold(
         backgroundColor: Constants.background,
         body: SliderDrawer(
-            appBar: const SliderAppBar(
+            appBar: SliderAppBar(
                 appBarColor: Colors.black,
                 appBarHeight: kIsWeb ? 60 : 100,
                 appBarPadding: kIsWeb
@@ -323,6 +324,13 @@ class _MainScreenState extends State<MainScreen> {
                 drawerIconColor: Constants.primary,
                 drawerIconSize: 35,
                 isTitleCenter: false,
+                trailing: Padding(
+                  padding: const EdgeInsets.only(right: 10.0),
+                  child: IconButton(icon: Icon(Icons.brightness_low_outlined, color: Constants.primary,),
+                    onPressed: () {
+                      _showAdsDialog(context);
+                    },),
+                ),
                 title: Padding(
                   padding: kIsWeb
                       ? EdgeInsets.only(top: 10.0, left: 20)
@@ -332,6 +340,16 @@ class _MainScreenState extends State<MainScreen> {
                           color: Constants.primary,
                           fontSize: 24,
                           fontWeight: FontWeight.w500)),
+                  // Row(
+                  //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  //   children: [
+                  //
+                  //     // IconButton(icon: Icon(Icons.brightness_low_outlined, color: Constants.primary,),
+                  //     //   onPressed: () {
+                  //     //     Logx.ist(_TAG, 'mandala');
+                  //     //   },)
+                  //   ],
+                  // ),
                 )),
             key: _sliderDrawerKey,
             sliderOpenSize: 179,
@@ -554,6 +572,76 @@ class _MainScreenState extends State<MainScreen> {
         ),
       );
     }
+  }
+
+  void _showAdsDialog(BuildContext context) {
+    FirestoreHelper.pullAds().then((res) {
+      if(res.docs.isNotEmpty){
+        List<Ad> ads = [];
+        for (int i = 0; i < res.docs.length; i++) {
+          DocumentSnapshot document = res.docs[i];
+          Map<String, dynamic> data =
+          document.data()! as Map<String, dynamic>;
+          final Ad ad = Fresh.freshAdMap(data, false);
+          ads.add(ad);
+        }
+
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text(
+                'notifications'
+                    .toLowerCase(),
+                textAlign: TextAlign.center,
+                style: const TextStyle(fontSize: 22, color: Colors.black),
+              ),
+              backgroundColor: Constants.lightPrimary,
+              shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(20.0))),
+              contentPadding: const EdgeInsets.all(16.0),
+              content: SizedBox(
+                width: double.maxFinite,
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: ads.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    Ad ad = ads[index];
+                    return Column(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+
+                        Text(ad.message),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            Text(DateTimeUtils.getFormattedDate(ad.createdAt),
+                              style: TextStyle(fontSize: 14),),
+                          ],
+                        ),
+                        Divider(),
+                        const SizedBox(height: 5),
+                      ],
+                    );
+                  },
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('close',
+                      style: TextStyle(color: Constants.background)),
+                ),
+              ],
+            );
+          },
+        );
+      }
+    });
+
   }
 }
 

@@ -44,9 +44,7 @@ class Dummy {
         id: StringUtils.getRandomString(28),
         title: '',
         message: '',
-        type: '',
         blocId: blocServiceId,
-        partyId: '',
         createdAt: Timestamp.now().millisecondsSinceEpoch,
         isActive: false,
         hits: 0);
