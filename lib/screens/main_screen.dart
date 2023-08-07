@@ -279,7 +279,11 @@ class _MainScreenState extends State<MainScreen> {
       });
     }
 
-    // if (message.data['notification_type'] == 'party_guest') {
+    // if(message.data['type'] == 'ads'){
+    //
+    // }
+
+    // if (message.data['type'] == 'party_guest') {
     //   Navigator.of(context).push(
     //     MaterialPageRoute(builder: (ctx) => HomeScreen()
     //       // MainScreen(user: UserPreferences.myUser,)
@@ -617,10 +621,10 @@ class _MainScreenState extends State<MainScreen> {
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
                             Text(DateTimeUtils.getFormattedDate(ad.createdAt),
-                              style: TextStyle(fontSize: 14),),
+                              style: const TextStyle(fontSize: 14),),
                           ],
                         ),
-                        Divider(),
+                        const Divider(),
                         const SizedBox(height: 5),
                       ],
                     );

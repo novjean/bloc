@@ -211,8 +211,8 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text(
-              'bloc app',
+            title: const Text(
+              'bloc app ❤️‍🔥',
               textAlign: TextAlign.center,
               style: TextStyle(fontSize: 22, color: Colors.black),
             ),
