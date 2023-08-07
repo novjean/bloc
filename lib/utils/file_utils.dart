@@ -51,7 +51,14 @@ class FileUtils {
         Uint8List.fromList(response.data),
         quality: 100,
         name: finalName.trim());
-    print(result);
+
+    bool isSuccess = result['isSuccess'];
+
+    if(isSuccess){
+      Logx.ist(_TAG, 'photo saved to gallery as $fileName');
+    } else {
+      Logx.est(_TAG, 'photo save failed, please try again');
+    }
 
     // await GallerySaver.saveImage(imagePath).then((bool? success) {
     //   if(success!){
@@ -61,17 +68,4 @@ class FileUtils {
     //   }
     // });
   }
-
-  static void testSaveNetworkImage() async {
-    String path =
-        'https://image.shutterstock.com/image-photo/montreal-canada-july-11-2019-600w-1450023539.jpg';
-    await GallerySaver.saveImage(path).then((bool? success) {
-      if(success!){
-        Logx.ist(_TAG, 'photo saved in gallery');
-      } else {
-        Logx.est(_TAG, 'photo save failed, please try again');
-      }
-    });
-  }
-
 }
