@@ -18,10 +18,12 @@ import '../ui/dark_button_widget.dart';
 
 class PartyPhotoItem extends StatefulWidget {
   PartyPhoto partyPhoto;
+  int index;
 
   PartyPhotoItem({
     Key? key,
     required this.partyPhoto,
+    required this.index
   }) : super(key: key);
 
   @override
@@ -167,8 +169,11 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
                               _showDownloadAppDialog(context);
                             } else {
                               Logx.ist(_TAG, 'downloading');
+                              int fileNum = widget.index+1;
+                              String fileName = '${widget.partyPhoto.partyName} $fileNum';
+
                               FileUtils.saveNetworkImage(
-                                  widget.partyPhoto.imageUrl);
+                                  widget.partyPhoto.imageUrl, fileName);
 
                               int count = widget.partyPhoto.downloadCount + 1;
                               widget.partyPhoto = widget.partyPhoto

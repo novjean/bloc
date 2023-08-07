@@ -110,7 +110,7 @@ class _PhotosScreenState extends State<PhotosScreen> {
         } else {
           return GestureDetector(
             onTap: () {
-              _showPhotoDialog(context, photo);
+              _showPhotoDialog(context, photo, index);
             },
             child: SizedBox(
               height: 200,
@@ -136,7 +136,7 @@ class _PhotosScreenState extends State<PhotosScreen> {
         if (index == photos.length - 1) {
           return Column(
             children: [
-              PartyPhotoItem(partyPhoto: partyPhoto),
+              PartyPhotoItem(partyPhoto: partyPhoto, index: index,),
               const SizedBox(height: 15.0),
               kIsWeb ? const StoreBadgeItem() : const SizedBox(),
               const SizedBox(
@@ -146,7 +146,7 @@ class _PhotosScreenState extends State<PhotosScreen> {
             ],
           );
         } else {
-          return PartyPhotoItem(partyPhoto: partyPhoto);
+          return PartyPhotoItem(partyPhoto: partyPhoto, index: index,);
         }
       },
     );
@@ -171,7 +171,7 @@ class _PhotosScreenState extends State<PhotosScreen> {
     );
   }
 
-  _showPhotoDialog(BuildContext context, PartyPhoto partyPhoto) {
+  _showPhotoDialog(BuildContext context, PartyPhoto partyPhoto, int index) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -234,7 +234,9 @@ class _PhotosScreenState extends State<PhotosScreen> {
                 style: TextStyle(color: Constants.primary),
               ),
               onPressed: () {
-                FileUtils.saveNetworkImage(partyPhoto.imageUrl);
+                int fileNum = index+1;
+                String fileName = '${partyPhoto.partyName} $fileNum';
+                FileUtils.saveNetworkImage(partyPhoto.imageUrl, fileName);
 
                 int count = partyPhoto.downloadCount + 1;
                 partyPhoto = partyPhoto.copyWith(downloadCount: count);

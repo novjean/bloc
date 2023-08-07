@@ -1,6 +1,9 @@
 import 'dart:io';
+import 'dart:typed_data';
 
+import 'package:dio/dio.dart';
 import 'package:gallery_saver/gallery_saver.dart';
+import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:universal_html/html.dart' as html;
 import 'package:path_provider/path_provider.dart';
@@ -39,15 +42,24 @@ class FileUtils {
         text: '#blocCommunity: $shareMessage');
   }
 
-  static void saveNetworkImage(String imagePath) async {
+  static void saveNetworkImage(String imagePath, String fileName) async {
+    String finalName = 'bloc-$fileName'.replaceAll(' ', '');
+    var response = await Dio().get(
+      imagePath,
+        options: Options(responseType: ResponseType.bytes));
+    final result = await ImageGallerySaver.saveImage(
+        Uint8List.fromList(response.data),
+        quality: 100,
+        name: finalName.trim());
+    print(result);
 
-    await GallerySaver.saveImage(imagePath).then((bool? success) {
-      if(success!){
-        Logx.ist(_TAG, 'photo saved in gallery');
-      } else {
-        Logx.est(_TAG, 'photo save failed, please try again');
-      }
-    });
+    // await GallerySaver.saveImage(imagePath).then((bool? success) {
+    //   if(success!){
+    //     Logx.ist(_TAG, 'photo saved in gallery');
+    //   } else {
+    //     Logx.est(_TAG, 'photo save failed, please try again');
+    //   }
+    // });
   }
 
   static void testSaveNetworkImage() async {
