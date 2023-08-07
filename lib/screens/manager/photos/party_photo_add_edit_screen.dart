@@ -119,9 +119,9 @@ class _PartyPhotoAddEditScreenState extends State<PartyPhotoAddEditScreen> {
           onTap: () async {
             final image = await ImagePicker().pickImage(
                 source: ImageSource.gallery,
-                imageQuality: 99,
-                maxHeight: 768,
-                maxWidth: 1024);
+                imageQuality: 95,
+                maxHeight: 1024,
+                maxWidth: 1280);
             if (image == null) return;
 
             final directory = await getApplicationDocumentsDirectory();
@@ -165,12 +165,12 @@ class _PartyPhotoAddEditScreenState extends State<PartyPhotoAddEditScreen> {
               text: 'pick photos',
               onClicked: () async {
                 List<XFile> images = await ImagePicker().pickMultiImage(
-                    maxHeight: 768, maxWidth: 1024, imageQuality: 99);
+                    maxHeight: 1024, maxWidth: 1280, imageQuality: 95);
 
                 if (images.isNotEmpty) {
                   final directory = await getApplicationDocumentsDirectory();
 
-                  for (int i=0;i<images.length; i++) {
+                  for (int i = 0; i < images.length; i++) {
                     XFile image = images[i];
                     final name = basename(image.path);
                     final imageFile = File('${directory.path}/$name');
@@ -193,7 +193,7 @@ class _PartyPhotoAddEditScreenState extends State<PartyPhotoAddEditScreen> {
                     FirestoreHelper.pushPartyPhoto(partyPhoto);
 
                     mImageUrls.add(imageUrl);
-                    Logx.ist(_TAG, '${i+1}/${images.length} photo uploaded');
+                    Logx.ist(_TAG, '${i + 1}/${images.length} photo uploaded');
                   }
 
                   Logx.ist(_TAG, 'all photos successfully uploaded!');
@@ -334,7 +334,7 @@ class _PartyPhotoAddEditScreenState extends State<PartyPhotoAddEditScreen> {
                   }
                 }
 
-                if(widget.partyPhoto.imageUrl.isNotEmpty){
+                if (widget.partyPhoto.imageUrl.isNotEmpty) {
                   PartyPhoto fresh = Fresh.freshPartyPhoto(widget.partyPhoto);
                   FirestoreHelper.pushPartyPhoto(fresh);
                   Logx.ist(_TAG, 'party photo saved');
@@ -369,7 +369,7 @@ class _PartyPhotoAddEditScreenState extends State<PartyPhotoAddEditScreen> {
       // DateTime _sDateTemp
 
       setState(() {
-        sDate  = DateTime(_sDate.year, _sDate.month, _sDate.day);
+        sDate = DateTime(_sDate.year, _sDate.month, _sDate.day);
         _selectTime(context, type);
       });
     }

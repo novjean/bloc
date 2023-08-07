@@ -235,7 +235,7 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
                   backgroundColor: MaterialStateProperty.all<Color>(
                       Constants.darkPrimary), // Set your desired background color
                 ),
-                child: Text('🤖 android',
+                child: const Text('🤖 android',
                     style: TextStyle(color: Constants.primary)),
                 onPressed: () async {
                   final uri = Uri.parse(ChallengeUtils.urlBlocPlayStore);
@@ -248,7 +248,7 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
                       Constants.darkPrimary), // Set your desired background color
                 ),
                 child:
-                    Text('🍎 ios', style: TextStyle(color: Constants.primary)),
+                    const Text('🍎 ios', style: TextStyle(color: Constants.primary)),
                 onPressed: () async {
                   final uri = Uri.parse(ChallengeUtils.urlBlocAppStore);
                   NetworkUtils.launchInBrowser(uri);
