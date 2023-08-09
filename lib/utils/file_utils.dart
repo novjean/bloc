@@ -2,6 +2,8 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:universal_html/html.dart' as html;
@@ -59,4 +61,28 @@ class FileUtils {
       Logx.est(_TAG, 'photo save failed, please try again');
     }
   }
+
+  static Future<File> getAssetImageAsFile(String assetPath) async {
+    // Load the asset image data
+    final ByteData data = await rootBundle.load(assetPath);
+    final Uint8List bytes = data.buffer.asUint8List();
+
+    // Get a temporary directory to store the compressed image
+    var temp = await getTemporaryDirectory();
+    final path = '${temp.path}/temp_image.png';
+    final tempFile = File(path);
+
+    // Compress and write the image to the temporary file
+    final compressedImage = await FlutterImageCompress.compressWithList(
+      bytes,
+      minHeight: 250,
+      minWidth: 250,
+      quality: 95,
+    );
+
+    await tempFile.writeAsBytes(compressedImage);
+
+    return tempFile;
+  }
+
 }

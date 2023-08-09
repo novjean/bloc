@@ -103,6 +103,7 @@ dependencies:
   syncfusion_flutter_charts: ^21.2.9
   flutter_slider_drawer: ^2.1.3
   permission_handler: ^10.4.2
+  flutter_image_compress: ^2.0.4
 
 #  image_picker_web: ^3.0.0+1
 
@@ -148,6 +149,7 @@ flutter:
     - assets/images/
     - assets/icons/
     - assets/fonts/
+    - assets/profile_photos/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

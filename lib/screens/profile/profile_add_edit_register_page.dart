@@ -117,7 +117,7 @@ class _ProfileAddEditRegisterPageState
                   Text(
                     'gender *',
                     style: TextStyle(
-                        color: Theme.of(context).primaryColorLight,
+                        color: Constants.lightPrimary,
                         fontSize: 16,
                         fontWeight: FontWeight.bold),
                   ),
@@ -130,8 +130,8 @@ class _ProfileAddEditRegisterPageState
                   key: const ValueKey('gender_dropdown'),
                   decoration: InputDecoration(
                       fillColor: Colors.white,
-                      errorStyle: TextStyle(
-                          color: Theme.of(context).errorColor,
+                      errorStyle: const TextStyle(
+                          color: Constants.errorColor,
                           fontSize: 16.0),
                       hintText: 'please select gender',
                       border: OutlineInputBorder(
@@ -140,7 +140,6 @@ class _ProfileAddEditRegisterPageState
                             color: Theme.of(context).primaryColor),
                       ),
                       enabledBorder: OutlineInputBorder(
-                        // width: 0.0 produces a thin "hairline" border
                         borderSide: BorderSide(
                             color: Theme.of(context).primaryColor,
                             width: 0.0),
@@ -149,7 +148,7 @@ class _ProfileAddEditRegisterPageState
                   child: DropdownButtonHideUnderline(
                     child: DropdownButton<String>(
                       style: TextStyle(
-                          color: Theme.of(context).primaryColorLight),
+                          color: Constants.lightPrimary),
                       dropdownColor: Constants.background,
                       value: sGender,
                       isDense: true,
