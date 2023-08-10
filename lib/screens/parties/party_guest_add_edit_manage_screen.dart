@@ -67,7 +67,7 @@ class _PartyGuestAddEditManageScreenState
 
   bool testMode = false;
 
-  late blocUser.User bloc_user;
+  late blocUser.User mBlocUser;
   bool hasUserChanged = false;
   bool _isCustomerLoading = true;
 
@@ -123,9 +123,9 @@ class _PartyGuestAddEditManageScreenState
   @override
   void initState() {
     if (!UserPreferences.isUserLoggedIn()) {
-      bloc_user = Dummy.getDummyUser();
+      mBlocUser = Dummy.getDummyUser();
     } else {
-      bloc_user = UserPreferences.myUser;
+      mBlocUser = UserPreferences.myUser;
     }
 
     if (widget.partyGuest.guestId.isEmpty && widget.task != 'add') {
@@ -137,7 +137,7 @@ class _PartyGuestAddEditManageScreenState
         Logx.em(_TAG, e.toString());
       }
 
-      bloc_user = bloc_user.copyWith(
+      mBlocUser = mBlocUser.copyWith(
           name: widget.partyGuest.name,
           gender: widget.partyGuest.gender,
           surname: widget.partyGuest.surname,
@@ -160,7 +160,7 @@ class _PartyGuestAddEditManageScreenState
               //user will be the dummy
               isLoggedIn = false;
             } else {
-              bloc_user = _user;
+              mBlocUser = _user;
               isLoggedIn = true;
             }
             _isCustomerLoading = false;
@@ -358,9 +358,9 @@ class _PartyGuestAddEditManageScreenState
                 padding: const EdgeInsets.symmetric(horizontal: 32),
                 child: DarkTextFieldWidget(
                   label: 'name *',
-                  text: bloc_user.name,
+                  text: mBlocUser.name,
                   onChanged: (name) {
-                    bloc_user = bloc_user.copyWith(name: name);
+                    mBlocUser = mBlocUser.copyWith(name: name);
                     hasUserChanged = true;
 
                     widget.partyGuest = widget.partyGuest.copyWith(name: name);
@@ -372,9 +372,9 @@ class _PartyGuestAddEditManageScreenState
                 padding: const EdgeInsets.symmetric(horizontal: 32),
                 child: DarkTextFieldWidget(
                   label: 'surname *',
-                  text: bloc_user.surname,
+                  text: mBlocUser.surname,
                   onChanged: (surname) {
-                    bloc_user = bloc_user.copyWith(surname: surname);
+                    mBlocUser = mBlocUser.copyWith(surname: surname);
                     hasUserChanged = true;
 
                     widget.partyGuest =
@@ -442,9 +442,9 @@ class _PartyGuestAddEditManageScreenState
                 padding: const EdgeInsets.symmetric(horizontal: 32),
                 child: DarkTextFieldWidget(
                     label: 'email${widget.party.isEmailRequired ? ' *' : ''}',
-                    text: bloc_user.email,
+                    text: mBlocUser.email,
                     onChanged: (email) {
-                      bloc_user = bloc_user.copyWith(email: email);
+                      mBlocUser = mBlocUser.copyWith(email: email);
                       hasUserChanged = true;
 
                       widget.partyGuest =
@@ -501,8 +501,8 @@ class _PartyGuestAddEditManageScreenState
                                 setState(() {
                                   _sGender = newValue!;
 
-                                  bloc_user =
-                                      bloc_user.copyWith(gender: _sGender);
+                                  mBlocUser =
+                                      mBlocUser.copyWith(gender: _sGender);
                                   hasUserChanged = true;
 
                                   widget.partyGuest = widget.partyGuest
@@ -667,7 +667,7 @@ class _PartyGuestAddEditManageScreenState
                           const SizedBox(height: 24),
                           DarkTextFieldWidget(
                             label: 'phone number *',
-                            text: bloc_user.phoneNumber.toString(),
+                            text: mBlocUser.phoneNumber.toString(),
                             onChanged: (value) {},
                           ),
                           const SizedBox(height: 24),
@@ -716,28 +716,28 @@ class _PartyGuestAddEditManageScreenState
                                   ButtonWidget(
                                     text: '  down  ',
                                     onClicked: () {
-                                      int level = bloc_user.challengeLevel;
+                                      int level = mBlocUser.challengeLevel;
                                       level--;
                                       setState(() {
-                                        bloc_user = bloc_user.copyWith(
+                                        mBlocUser = mBlocUser.copyWith(
                                             challengeLevel: level);
-                                        FirestoreHelper.pushUser(bloc_user);
+                                        FirestoreHelper.pushUser(mBlocUser);
                                       });
                                     },
                                   ),
                                   DarkButtonWidget(
-                                    text: bloc_user.challengeLevel.toString(),
+                                    text: mBlocUser.challengeLevel.toString(),
                                     onClicked: () {},
                                   ),
                                   ButtonWidget(
                                     text: 'level up',
                                     onClicked: () {
-                                      int level = bloc_user.challengeLevel;
+                                      int level = mBlocUser.challengeLevel;
                                       level++;
                                       setState(() {
-                                        bloc_user = bloc_user.copyWith(
+                                        mBlocUser = mBlocUser.copyWith(
                                             challengeLevel: level);
-                                        FirestoreHelper.pushUser(bloc_user);
+                                        FirestoreHelper.pushUser(mBlocUser);
                                       });
                                     },
                                   ),
@@ -875,22 +875,22 @@ class _PartyGuestAddEditManageScreenState
                                         color: Constants.lightPrimary,
                                       )),
                                   Checkbox(
-                                    value: bloc_user.isBanned,
+                                    value: mBlocUser.isBanned,
                                     side: MaterialStateBorderSide.resolveWith(
                                       (states) => const BorderSide(
                                           width: 1.0, color: Constants.primary),
                                     ),
                                     onChanged: (value) {
-                                      bloc_user =
-                                          bloc_user.copyWith(isBanned: value);
+                                      mBlocUser =
+                                          mBlocUser.copyWith(isBanned: value);
                                       blocUser.User freshUser =
-                                          Fresh.freshUser(bloc_user);
+                                          Fresh.freshUser(mBlocUser);
                                       FirestoreHelper.pushUser(freshUser);
 
                                       Logx.i(_TAG,
-                                          'user ${'${bloc_user.name} ${bloc_user.surname}'} : banned $value');
+                                          'user ${'${mBlocUser.name} ${mBlocUser.surname}'} : banned $value');
                                       Toaster.longToast(
-                                          'user ${'${bloc_user.name} ${bloc_user.surname}'} : banned $value');
+                                          'user ${'${mBlocUser.name} ${mBlocUser.surname}'} : banned $value');
 
                                       setState(() {});
                                     },
@@ -907,7 +907,7 @@ class _PartyGuestAddEditManageScreenState
                                         color: Constants.lightPrimary,
                                       )),
                                   Checkbox(
-                                    value: bloc_user.isAppUser,
+                                    value: mBlocUser.isAppUser,
                                     side: MaterialStateBorderSide.resolveWith(
                                       (states) => const BorderSide(
                                           width: 1.0, color: Constants.primary),
@@ -926,7 +926,7 @@ class _PartyGuestAddEditManageScreenState
                     )
                   : const SizedBox(),
               const SizedBox(height: 24),
-              const Row(
+              Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   Padding(
@@ -934,7 +934,7 @@ class _PartyGuestAddEditManageScreenState
                     child: DelayedDisplay(
                       delay: Duration(seconds: 1),
                       child: Text(
-                        "* required",
+                        widget.task =='manage' ? mBlocUser.appVersion: "* required",
                         style: TextStyle(
                           color: Constants.primary,
                         ),
@@ -974,52 +974,52 @@ class _PartyGuestAddEditManageScreenState
 
                               if (widget.party.loungeId.isNotEmpty) {
                                 FirestoreHelper.pullUserLounge(
-                                        bloc_user.id, widget.party.loungeId)
+                                        mBlocUser.id, widget.party.loungeId)
                                     .then((res) {
                                   if (res.docs.isEmpty) {
                                     UserLounge userLounge =
                                         Dummy.getDummyUserLounge();
                                     userLounge = userLounge.copyWith(
                                         loungeId: widget.party.loungeId,
-                                        userId: bloc_user.id,
+                                        userId: mBlocUser.id,
                                         isAccepted: true);
                                     FirestoreHelper.pushUserLounge(userLounge);
 
-                                    if (bloc_user.isAppUser &&
-                                        bloc_user.fcmToken.isNotEmpty) {
+                                    if (mBlocUser.isAppUser &&
+                                        mBlocUser.fcmToken.isNotEmpty) {
                                       String title = widget.party.name;
                                       String message =
                                           '🥳 yayyy! welcome to ${widget.party.name} family, your guest list for${widget.party.name} has been approved 🎉, see you and your gang soon! 😎🍾';
 
                                       //send a notification
                                       Apis.sendPushNotification(
-                                          bloc_user.fcmToken, title, message);
+                                          mBlocUser.fcmToken, title, message);
                                       Logx.ist(_TAG,
-                                          'notification has been sent to ${bloc_user.name} ${bloc_user.surname}');
+                                          'notification has been sent to ${mBlocUser.name} ${mBlocUser.surname}');
                                     }
                                   } else {
-                                    if (bloc_user.isAppUser &&
-                                        bloc_user.fcmToken.isNotEmpty) {
+                                    if (mBlocUser.isAppUser &&
+                                        mBlocUser.fcmToken.isNotEmpty) {
                                       String title = widget.party.name;
                                       String message =
                                           '🥳 yayyy! your guest list for${widget.party.name} has been approved 🎉, see you and your gang soon! 😎🍾';
 
                                       //send a notification
                                       Apis.sendPushNotification(
-                                          bloc_user.fcmToken, title, message);
+                                          mBlocUser.fcmToken, title, message);
                                     }
                                   }
                                 });
                               } else {
-                                if (bloc_user.isAppUser &&
-                                    bloc_user.fcmToken.isNotEmpty) {
+                                if (mBlocUser.isAppUser &&
+                                    mBlocUser.fcmToken.isNotEmpty) {
                                   String title = widget.party.name;
                                   String message =
                                       '🥳 yayyy! your guest list for${widget.party.name} has been approved 🎉, see you and your gang soon! 😎🍾';
 
                                   //send a notification
                                   Apis.sendPushNotification(
-                                      bloc_user.fcmToken, title, message);
+                                      mBlocUser.fcmToken, title, message);
                                 }
                               }
 
@@ -1063,7 +1063,7 @@ class _PartyGuestAddEditManageScreenState
                         FirestoreHelper.pushPartyGuest(widget.partyGuest);
 
                         if (hasUserChanged) {
-                          blocUser.User freshUser = Fresh.freshUser(bloc_user);
+                          blocUser.User freshUser = Fresh.freshUser(mBlocUser);
                           if (freshUser.id == UserPreferences.myUser.id) {
                             UserPreferences.setUser(freshUser);
                           }
@@ -1082,7 +1082,7 @@ class _PartyGuestAddEditManageScreenState
                         if (isLoggedIn) {
                           if (hasUserChanged) {
                             blocUser.User freshUser =
-                                Fresh.freshUser(bloc_user);
+                                Fresh.freshUser(mBlocUser);
                             if (freshUser.id == UserPreferences.myUser.id) {
                               UserPreferences.setUser(freshUser);
                             }
@@ -1304,7 +1304,7 @@ class _PartyGuestAddEditManageScreenState
                   FirestoreHelper.pushHistoryMusic(historyMusic);
                 } else {
                   if (hasUserChanged) {
-                    blocUser.User freshUser = Fresh.freshUser(bloc_user);
+                    blocUser.User freshUser = Fresh.freshUser(mBlocUser);
                     if (freshUser.id == UserPreferences.myUser.id) {
                       UserPreferences.setUser(freshUser);
                     }
@@ -1312,7 +1312,7 @@ class _PartyGuestAddEditManageScreenState
                   }
 
                   // need to see if the user already has a guest request
-                  widget.partyGuest.guestId = bloc_user.id;
+                  widget.partyGuest.guestId = mBlocUser.id;
 
                   FirestoreHelper.pullPartyGuestByUser(
                           widget.partyGuest.guestId, widget.partyGuest.partyId)
@@ -1397,7 +1397,7 @@ class _PartyGuestAddEditManageScreenState
       }
     } else {
       for (Challenge challenge in challenges) {
-        if (challenge.level >= bloc_user.challengeLevel) {
+        if (challenge.level >= mBlocUser.challengeLevel) {
           return challenge;
         }
       }
@@ -1898,17 +1898,17 @@ class _PartyGuestAddEditManageScreenState
                           Logx.i(_TAG,
                               'user is not already registered in bloc, registering...');
 
-                          bloc_user.id = value.user!.uid;
-                          bloc_user.phoneNumber =
+                          mBlocUser.id = value.user!.uid;
+                          mBlocUser.phoneNumber =
                               StringUtils.getInt(value.user!.phoneNumber!);
 
-                          FirestoreHelper.pushUser(bloc_user);
-                          Logx.i(_TAG, 'registered user ${bloc_user.id}');
+                          FirestoreHelper.pushUser(mBlocUser);
+                          Logx.i(_TAG, 'registered user ${mBlocUser.id}');
 
-                          UserPreferences.setUser(bloc_user);
-                          widget.partyGuest.guestId = bloc_user.id;
+                          UserPreferences.setUser(mBlocUser);
+                          widget.partyGuest.guestId = mBlocUser.id;
                           widget.partyGuest.phone =
-                              bloc_user.phoneNumber.toString();
+                              mBlocUser.phoneNumber.toString();
 
                           _showRulesConfirmationDialog(context, true);
                         } else {
@@ -1924,17 +1924,17 @@ class _PartyGuestAddEditManageScreenState
                           //update user details
                           int time = Timestamp.now().millisecondsSinceEpoch;
                           user = user.copyWith(
-                              name: bloc_user.name,
-                              email: bloc_user.email,
+                              name: mBlocUser.name,
+                              email: mBlocUser.email,
                               lastSeenAt: time);
                           FirestoreHelper.pushUser(user);
 
                           UserPreferences.setUser(user);
-                          bloc_user = user;
+                          mBlocUser = user;
 
-                          widget.partyGuest.guestId = bloc_user.id;
+                          widget.partyGuest.guestId = mBlocUser.id;
                           widget.partyGuest.phone =
-                              bloc_user.phoneNumber.toString();
+                              mBlocUser.phoneNumber.toString();
                           _showRulesConfirmationDialog(context, false);
                         }
                       });
