@@ -503,6 +503,7 @@ class Dummy {
         phoneNumber: 0,
         isBanned: false,
         isAppUser: false,
+        appVersion: Constants.appVersion,
         createdAt: millis,
         lastSeenAt: millis);
     return dummyUser;

@@ -2,6 +2,8 @@ import 'package:bloc/utils/date_time_utils.dart';
 import 'package:flutter/material.dart';
 
 import '../../db/entity/user.dart';
+import '../../main.dart';
+import '../../utils/constants.dart';
 
 class UserItem extends StatelessWidget {
   final User user;
@@ -10,16 +12,18 @@ class UserItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String title = '${user.name} ${user.surname}'.toLowerCase();
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 5.0),
       child: Hero(
         tag: user.id,
         child: Card(
-          color: Theme.of(context).primaryColorLight,
+          color: Constants.lightPrimary,
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)),
           child: Container(
-            width: MediaQuery.of(context).size.width,
+            width: mq.width,
             padding: const EdgeInsets.symmetric(vertical: 1, horizontal: 5),
             child: ListView(
               shrinkWrap: true,
@@ -29,7 +33,7 @@ class UserItem extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      ('${user.name} ${user.surname}').toLowerCase(),
+                      title,
                       style: const TextStyle(fontSize: 18),
                     ),
                     user.lastSeenAt != 0
@@ -42,6 +46,7 @@ class UserItem extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text('bloc day: ${DateTimeUtils.getFormattedDateYear(user.createdAt)}'),
+                    user.isAppUser ? Text(user.appVersion) : const SizedBox(),
                   ],
                 ),
               ],

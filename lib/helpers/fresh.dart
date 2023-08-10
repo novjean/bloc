@@ -3488,25 +3488,25 @@ class Fresh {
     try {
       user = user.copyWith(name: map['name'] as String);
     } catch (e) {
-      Logx.em(_TAG, 'user name not exist for user id: ' + user.id);
+      Logx.em(_TAG, 'user name not exist for id: ${user.id}');
       isModelChanged = true;
     }
     try {
       user = user.copyWith(surname: map['surname'] as String);
     } catch (e) {
-      Logx.em(_TAG, 'user surname not exist for user id: ' + user.id);
+      Logx.em(_TAG, 'user surname not exist for id: ${user.id}');
       isModelChanged = true;
     }
     try {
       user = user.copyWith(phoneNumber: map['phoneNumber'] as int);
     } catch (e) {
-      Logx.em(_TAG, 'user phoneNumber not exist for user id: ' + user.id);
+      Logx.em(_TAG, 'user phoneNumber not exist for id: ${user.id}');
       isModelChanged = true;
     }
     try {
       user = user.copyWith(email: map['email'] as String);
     } catch (e) {
-      Logx.em(_TAG, 'user email not exist for user id: ' + user.id);
+      Logx.em(_TAG, 'user email not exist for id: ${user.id}');
       isModelChanged = true;
     }
     try {
@@ -3573,6 +3573,12 @@ class Fresh {
       Logx.em(_TAG, 'user isAppUser not exist for id: ${user.id}');
       isModelChanged = true;
     }
+    try {
+      user = user.copyWith(appVersion: map['appVersion'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'user appVersion not exist for id: ${user.id}');
+      isModelChanged = true;
+    }
 
     if (isModelChanged && shouldUpdate) {
       Logx.i(_TAG, 'updating user ${user.id}');
@@ -3593,12 +3599,12 @@ class Fresh {
     try {
       freshUser = freshUser.copyWith(name: user.name);
     } catch (e) {
-      Logx.em(_TAG, 'name not exist for user id: ' + user.id);
+      Logx.em(_TAG, 'name not exist for id: ${user.id}');
     }
     try {
       freshUser = freshUser.copyWith(surname: user.surname);
     } catch (e) {
-      Logx.em(_TAG, 'user surname not exist for user id: ' + user.id);
+      Logx.em(_TAG, 'user surname not exist for id: ${user.id}');
     }
     try {
       freshUser = freshUser.copyWith(gender: user.gender);
@@ -3658,7 +3664,12 @@ class Fresh {
     try {
       freshUser = freshUser.copyWith(isAppUser: user.isAppUser);
     } catch (e) {
-      Logx.em(_TAG, 'user isAppUser not exist for id: ' + user.id);
+      Logx.em(_TAG, 'user isAppUser not exist for id: ${user.id}');
+    }
+    try {
+      freshUser = freshUser.copyWith(appVersion: user.appVersion);
+    } catch (e) {
+      Logx.em(_TAG, 'user appVersion not exist for id: ' + user.id);
     }
 
     return freshUser;

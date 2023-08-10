@@ -18,6 +18,7 @@ class User {
 
   bool isBanned;
   bool isAppUser;
+  String appVersion;
 
 //<editor-fold desc="Data Methods">
   User({
@@ -36,6 +37,7 @@ class User {
     required this.lastSeenAt,
     required this.isBanned,
     required this.isAppUser,
+    required this.appVersion,
   });
 
   @override
@@ -57,7 +59,8 @@ class User {
           createdAt == other.createdAt &&
           lastSeenAt == other.lastSeenAt &&
           isBanned == other.isBanned &&
-          isAppUser == other.isAppUser);
+          isAppUser == other.isAppUser &&
+          appVersion == other.appVersion);
 
   @override
   int get hashCode =>
@@ -75,7 +78,8 @@ class User {
       createdAt.hashCode ^
       lastSeenAt.hashCode ^
       isBanned.hashCode ^
-      isAppUser.hashCode;
+      isAppUser.hashCode ^
+      appVersion.hashCode;
 
   @override
   String toString() {
@@ -95,6 +99,7 @@ class User {
         ' lastSeenAt: $lastSeenAt,' +
         ' isBanned: $isBanned,' +
         ' isAppUser: $isAppUser,' +
+        ' appVersion: $appVersion,' +
         '}';
   }
 
@@ -114,6 +119,7 @@ class User {
     int? lastSeenAt,
     bool? isBanned,
     bool? isAppUser,
+    String? appVersion,
   }) {
     return User(
       id: id ?? this.id,
@@ -131,6 +137,7 @@ class User {
       lastSeenAt: lastSeenAt ?? this.lastSeenAt,
       isBanned: isBanned ?? this.isBanned,
       isAppUser: isAppUser ?? this.isAppUser,
+      appVersion: appVersion ?? this.appVersion,
     );
   }
 
@@ -151,6 +158,7 @@ class User {
       'lastSeenAt': this.lastSeenAt,
       'isBanned': this.isBanned,
       'isAppUser': this.isAppUser,
+      'appVersion': this.appVersion,
     };
   }
 
@@ -171,6 +179,7 @@ class User {
       lastSeenAt: map['lastSeenAt'] as int,
       isBanned: map['isBanned'] as bool,
       isAppUser: map['isAppUser'] as bool,
+      appVersion: map['appVersion'] as String,
     );
   }
 

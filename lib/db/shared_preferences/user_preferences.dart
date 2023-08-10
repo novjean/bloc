@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../utils/constants.dart';
 import '../../utils/logx.dart';
 import '../entity/user.dart';
 
@@ -63,7 +64,8 @@ class UserPreferences {
       createdAt: 0,
       lastSeenAt: 0,
       isBanned: false,
-      isAppUser: false);
+      isAppUser: false,
+      appVersion: Constants.appVersion);
 
   static Future init() async =>
       _preferences = await SharedPreferences.getInstance();
@@ -96,7 +98,8 @@ class UserPreferences {
         createdAt: 0,
         lastSeenAt: 0,
         isBanned: false,
-        isAppUser: false));
+        isAppUser: false,
+        appVersion: Constants.appVersion));
 
     setListLounges([]);
   }
