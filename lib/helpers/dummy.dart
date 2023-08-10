@@ -224,6 +224,7 @@ class Dummy {
         type: 'community',
         admins: [],
         members: [],
+        exitedUserIds: [],
         imageUrl: '',
         creationTime: Timestamp.now().millisecondsSinceEpoch,
         lastChat: '',

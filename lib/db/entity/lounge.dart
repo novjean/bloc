@@ -8,6 +8,7 @@ class Lounge{
 
   List<String> admins;
   List<String> members;
+  List<String> exitedUserIds;
 
   String lastChat;
   int lastChatTime;
@@ -26,6 +27,7 @@ class Lounge{
     required this.imageUrl,
     required this.admins,
     required this.members,
+    required this.exitedUserIds,
     required this.lastChat,
     required this.lastChatTime,
     required this.creationTime,
@@ -46,6 +48,7 @@ class Lounge{
           imageUrl == other.imageUrl &&
           admins == other.admins &&
           members == other.members &&
+          exitedUserIds == other.exitedUserIds &&
           lastChat == other.lastChat &&
           lastChatTime == other.lastChatTime &&
           creationTime == other.creationTime &&
@@ -62,6 +65,7 @@ class Lounge{
       imageUrl.hashCode ^
       admins.hashCode ^
       members.hashCode ^
+      exitedUserIds.hashCode ^
       lastChat.hashCode ^
       lastChatTime.hashCode ^
       creationTime.hashCode ^
@@ -79,6 +83,7 @@ class Lounge{
         ' imageUrl: $imageUrl,' +
         ' admins: $admins,' +
         ' members: $members,' +
+        ' exitedUserIds: $exitedUserIds,' +
         ' lastChat: $lastChat,' +
         ' lastChatTime: $lastChatTime,' +
         ' creationTime: $creationTime,' +
@@ -96,6 +101,7 @@ class Lounge{
     String? imageUrl,
     List<String>? admins,
     List<String>? members,
+    List<String>? exitedUserIds,
     String? lastChat,
     int? lastChatTime,
     int? creationTime,
@@ -111,6 +117,7 @@ class Lounge{
       imageUrl: imageUrl ?? this.imageUrl,
       admins: admins ?? this.admins,
       members: members ?? this.members,
+      exitedUserIds: exitedUserIds ?? this.exitedUserIds,
       lastChat: lastChat ?? this.lastChat,
       lastChatTime: lastChatTime ?? this.lastChatTime,
       creationTime: creationTime ?? this.creationTime,
@@ -129,6 +136,7 @@ class Lounge{
       'imageUrl': this.imageUrl,
       'admins': this.admins,
       'members': this.members,
+      'exitedUserIds': this.exitedUserIds,
       'lastChat': this.lastChat,
       'lastChatTime': this.lastChatTime,
       'creationTime': this.creationTime,
@@ -147,6 +155,7 @@ class Lounge{
       imageUrl: map['imageUrl'] as String,
       admins: map['admins'] as List<String>,
       members: map['members'] as List<String>,
+      exitedUserIds: map['exitedUserIds'] as List<String>,
       lastChat: map['lastChat'] as String,
       lastChatTime: map['lastChatTime'] as int,
       creationTime: map['creationTime'] as int,

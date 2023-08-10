@@ -305,7 +305,7 @@ class _LoungeAddEditScreenState extends State<LoungeAddEditScreen> {
                       Navigator.of(context).push(
                         MaterialPageRoute(
                             builder: (ctx) =>
-                                ManageLoungeMembersScreen(loungeId: widget.lounge.id)),
+                                ManageLoungeMembersScreen(lounge: widget.lounge)),
                       );
                     },
                     child: const Text('show'),

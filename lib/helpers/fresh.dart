@@ -1357,6 +1357,12 @@ class Fresh {
       Logx.em(_TAG, 'lounge members not exist for id: ${lounge.id}');
       isModelChanged = true;
     }
+    try {
+      lounge = lounge.copyWith(exitedUserIds: List<String>.from(map['exitedUserIds']));
+    } catch (e) {
+      Logx.em(_TAG, 'lounge exitedUserIds not exist for id: ${lounge.id}');
+      isModelChanged = true;
+    }
 
     try {
       lounge = lounge.copyWith(creationTime: map['creationTime'] as int);
@@ -1444,6 +1450,12 @@ class Fresh {
     } catch (e) {
       Logx.em(_TAG, 'lounge members not exist for id: ${lounge.id}');
     }
+    try {
+      fresh = fresh.copyWith(exitedUserIds: lounge.exitedUserIds);
+    } catch (e) {
+      Logx.em(_TAG, 'lounge exitedUserIds not exist for id: ${lounge.id}');
+    }
+
     try {
       fresh = fresh.copyWith(creationTime: lounge.creationTime);
     } catch (e) {

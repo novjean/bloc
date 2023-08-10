@@ -16,9 +16,10 @@ class LoungeMemberItem extends StatefulWidget{
   String loungeId;
   bool isMember;
   bool isUserLoungePresent;
+  bool isExited;
 
   LoungeMemberItem({Key? key, required this.user, required this.loungeId,
-    required this.isMember, required this.isUserLoungePresent}) : super(key: key);
+    required this.isMember, required this.isUserLoungePresent, required this.isExited}) : super(key: key);
 
   @override
   State<LoungeMemberItem> createState() => _LoungeMemberItemState();
@@ -68,7 +69,8 @@ class _LoungeMemberItemState extends State<LoungeMemberItem> {
                     children:[
                       Text('${widget.user.gender} | '),
                       Text(widget.user.isAppUser?'app | ':'web | '),
-                      Text('level ${widget.user.challengeLevel} ')
+                      Text('level ${widget.user.challengeLevel} | '),
+                      widget.isExited?const Text('exited'): const SizedBox(),
                     ]
 
                   ),

@@ -473,6 +473,11 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
                       DarkButtonWidget(text: 'leave lounge', onClicked: () {
                         FirestoreHelper.deleteUserLounge(mUserLounge.id);
 
+                        List<String> exitedMembers = mLounge.exitedUserIds;
+                        exitedMembers.add(mUserLounge.userId);
+                        mLounge = mLounge.copyWith(exitedUserIds: exitedMembers);
+                        FirestoreHelper.pushLounge(mLounge);
+
                         Toaster.longToast('you have exited the lounge');
                         Logx.i(_TAG, 'user has exited the lounge');
                         GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
