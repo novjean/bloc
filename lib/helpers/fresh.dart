@@ -3579,6 +3579,12 @@ class Fresh {
       Logx.em(_TAG, 'user appVersion not exist for id: ${user.id}');
       isModelChanged = true;
     }
+    try {
+      user = user.copyWith(isIos: map['isIos'] as bool);
+    } catch (e) {
+      Logx.em(_TAG, 'user isIos not exist for id: ${user.id}');
+      isModelChanged = true;
+    }
 
     if (isModelChanged && shouldUpdate) {
       Logx.i(_TAG, 'updating user ${user.id}');
@@ -3669,7 +3675,12 @@ class Fresh {
     try {
       freshUser = freshUser.copyWith(appVersion: user.appVersion);
     } catch (e) {
-      Logx.em(_TAG, 'user appVersion not exist for id: ' + user.id);
+      Logx.em(_TAG, 'user appVersion not exist for id: ${user.id}');
+    }
+    try {
+      freshUser = freshUser.copyWith(isIos: user.isIos);
+    } catch (e) {
+      Logx.em(_TAG, 'user isIos not exist for id: ' + user.id);
     }
 
     return freshUser;

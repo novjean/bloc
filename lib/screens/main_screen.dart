@@ -78,12 +78,7 @@ class _MainScreenState extends State<MainScreen> {
     _page = UiPreferences.getHomePageIndex();
     _pageController = PageController(initialPage: _page);
 
-    // lets check if the user is already registered
-    FirebaseFirestore.instance
-        .collection(FirestoreHelper.USERS)
-        .where('phoneNumber', isEqualTo: user.phoneNumber)
-        .get()
-        .then((res) {
+    FirestoreHelper.pullUserByPhoneNumber(user.phoneNumber).then((res) {
       if (res.docs.isEmpty) {
         Logx.i(_TAG, 'user not found, registering ${user.phoneNumber}');
 
@@ -91,6 +86,7 @@ class _MainScreenState extends State<MainScreen> {
           user.isAppUser = false;
         } else {
           user.isAppUser = true;
+          user.isIos = Theme.of(context).platform == TargetPlatform.iOS;
         }
 
         FirestoreHelper.pushUser(user);
@@ -304,7 +300,7 @@ class _MainScreenState extends State<MainScreen> {
     List pages = [
       const HomeScreen(),
       const PartiesScreen(),
-      PhotosScreen(),
+      const PhotosScreen(),
       LoungesScreen(),
       UserPreferences.isUserLoggedIn()
           ? const ProfileScreen()
@@ -335,7 +331,7 @@ class _MainScreenState extends State<MainScreen> {
                       _showAdsDialog(context);
                     },),
                 ),
-                title: Padding(
+                title: const Padding(
                   padding: kIsWeb
                       ? EdgeInsets.only(top: 10.0, left: 20)
                       : EdgeInsets.only(left: 15, top: 5.0),
@@ -344,16 +340,6 @@ class _MainScreenState extends State<MainScreen> {
                           color: Constants.primary,
                           fontSize: 24,
                           fontWeight: FontWeight.w500)),
-                  // Row(
-                  //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  //   children: [
-                  //
-                  //     // IconButton(icon: Icon(Icons.brightness_low_outlined, color: Constants.primary,),
-                  //     //   onPressed: () {
-                  //     //     Logx.ist(_TAG, 'mandala');
-                  //     //   },)
-                  //   ],
-                  // ),
                 )),
             key: _sliderDrawerKey,
             sliderOpenSize: 179,

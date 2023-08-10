@@ -201,8 +201,7 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
                 ),
                 enabledBorder: const OutlineInputBorder(
                   // width: 0.0 produces a thin "hairline" border
-                  borderSide: BorderSide(
-                      color: Constants.primary, width: 0.0),
+                  borderSide: BorderSide(color: Constants.primary, width: 0.0),
                 )),
             isEmpty: sMode == '',
             child: DropdownButtonHideUnderline(
@@ -247,8 +246,7 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
                 ),
                 enabledBorder: const OutlineInputBorder(
                   // width: 0.0 produces a thin "hairline" border
-                  borderSide: BorderSide(
-                      color: Constants.primary, width: 0.0),
+                  borderSide: BorderSide(color: Constants.primary, width: 0.0),
                 )),
             isEmpty: sGender == '',
             child: DropdownButtonHideUnderline(
@@ -292,8 +290,7 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
                   borderSide: const BorderSide(color: Constants.primary),
                 ),
                 enabledBorder: const OutlineInputBorder(
-                  borderSide: BorderSide(
-                      color: Constants.primary, width: 0.0),
+                  borderSide: BorderSide(color: Constants.primary, width: 0.0),
                 )),
             isEmpty: sUserLevelName == '',
             child: DropdownButtonHideUnderline(
@@ -329,12 +326,16 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
 
   _buildUsers(BuildContext context) {
     Stream<QuerySnapshot<Object?>> stream;
+    int iosCount = 0;
+    int androidCount = 0;
+    bool shouldTypeCount = false;
 
     if (sGender == 'all' && sMode == 'all') {
       stream = FirestoreHelper.getUsersByLevel(sUserLevel.level);
     } else if (sGender == 'all' && sMode != 'all') {
       stream = FirestoreHelper.getUsersByLevelAndMode(
           sUserLevel.level, sMode == 'app' ? true : false);
+      shouldTypeCount = true;
     } else if (sGender != 'all' && sMode == 'all') {
       stream =
           FirestoreHelper.getUsersByLevelAndGender(sUserLevel.level, sGender);
@@ -346,23 +347,40 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
     return StreamBuilder<QuerySnapshot>(
         stream: stream,
         builder: (ctx, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const LoadingWidget();
+          switch (snapshot.connectionState) {
+            case ConnectionState.waiting:
+            case ConnectionState.none:
+              return const LoadingWidget();
+            case ConnectionState.active:
+            case ConnectionState.done:
+              {
+                mUsers = [];
+
+                for (int i = 0; i < snapshot.data!.docs.length; i++) {
+                  DocumentSnapshot document = snapshot.data!.docs[i];
+                  Map<String, dynamic> data =
+                      document.data()! as Map<String, dynamic>;
+                  final User _user = Fresh.freshUserMap(data, false);
+                  mUsers.add(_user);
+
+                  if (shouldTypeCount) {
+                    if (_user.isIos) {
+                      iosCount++;
+                    } else {
+                      androidCount++;
+                    }
+                  }
+
+                  // if (i == snapshot.data!.docs.length - 1) {
+                  // }
+                }
+                if(shouldTypeCount){
+                  Logx.ilt(_TAG, 'android : $androidCount | ios: $iosCount');
+                }
+                return _displayBody(context);
+              }
           }
 
-          mUsers = [];
-
-          for (int i = 0; i < snapshot.data!.docs.length; i++) {
-            DocumentSnapshot document = snapshot.data!.docs[i];
-            Map<String, dynamic> data =
-                document.data()! as Map<String, dynamic>;
-            final User _user = Fresh.freshUserMap(data, false);
-            mUsers.add(_user);
-
-            if (i == snapshot.data!.docs.length - 1) {
-              return _displayBody(context);
-            }
-          }
           return const LoadingWidget();
         });
   }

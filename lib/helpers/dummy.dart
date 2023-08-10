@@ -504,6 +504,7 @@ class Dummy {
         isBanned: false,
         isAppUser: false,
         appVersion: Constants.appVersion,
+        isIos: false,
         createdAt: millis,
         lastSeenAt: millis);
     return dummyUser;

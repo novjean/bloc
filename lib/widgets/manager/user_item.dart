@@ -14,6 +14,16 @@ class UserItem extends StatelessWidget {
   Widget build(BuildContext context) {
     String title = '${user.name} ${user.surname}'.toLowerCase();
 
+    String appDetails = '';
+
+    if(user.isAppUser){
+      if(user.isIos){
+        appDetails = '${user.appVersion} 🍏';
+      } else {
+        appDetails = '${user.appVersion} 🤖';
+      }
+    }
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 5.0),
       child: Hero(
@@ -46,7 +56,8 @@ class UserItem extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text('bloc day: ${DateTimeUtils.getFormattedDateYear(user.createdAt)}'),
-                    user.isAppUser ? Text(user.appVersion) : const SizedBox(),
+                    // user.isAppUser ? Text(user.appVersion) : const SizedBox(),
+                    Text(appDetails)
                   ],
                 ),
               ],
