@@ -1109,6 +1109,13 @@ class FirestoreHelper {
     }
   }
 
+  static pullPartyPhotos() {
+    return FirebaseFirestore.instance
+        .collection(PARTY_PHOTOS)
+        .orderBy('partyDate', descending: true)
+        .get();
+  }
+
   static getPartyPhotos() {
     return FirebaseFirestore.instance
         .collection(PARTY_PHOTOS)
@@ -1122,7 +1129,6 @@ class FirestoreHelper {
         .doc(docId)
         .delete();
   }
-
 
   /** products **/
   static void pushProduct(Product product) async {
@@ -2073,5 +2079,6 @@ class FirestoreHelper {
   static void deleteUserLounge(String docId) {
     FirebaseFirestore.instance.collection(USER_LOUNGES).doc(docId).delete();
   }
+
 
 }

@@ -4,7 +4,6 @@ import 'package:bloc/db/shared_preferences/user_preferences.dart';
 import 'package:bloc/helpers/firestore_helper.dart';
 import 'package:bloc/utils/date_time_utils.dart';
 import 'package:bloc/utils/file_utils.dart';
-import 'package:bloc/widgets/ui/button_widget.dart';
 import 'package:flutter/material.dart';
 
 import '../../db/entity/party_photo.dart';
@@ -207,6 +206,13 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
                     children: [
                       Text(DateTimeUtils.getFormattedDate(
                           widget.partyPhoto.partyDate)),
+                      const Spacer(),
+                      Text('${widget.partyPhoto.views} ', style: const TextStyle(fontSize: 14),),
+                      Image.asset(
+                        'assets/icons/ic_third_eye.png',
+                        width: 14,
+                        height: 14,
+                      )
                     ],
                   ),
                 )

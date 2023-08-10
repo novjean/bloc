@@ -304,6 +304,15 @@ class _PartyPhotoAddEditScreenState extends State<PartyPhotoAddEditScreen> {
         const SizedBox(height: 24),
         _dateTimeContainer(context, 'end'),
         const SizedBox(height: 24),
+        TextFieldWidget(
+            label: 'views',
+            text: widget.partyPhoto.views.toString(),
+            onChanged: (text) {
+              int view = int.parse(text);
+              setState(() {
+                widget.partyPhoto = widget.partyPhoto.copyWith(views: view);
+              });
+            }),
         Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [

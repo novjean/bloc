@@ -27,10 +27,26 @@ class PhotosScreen extends StatefulWidget {
 class _PhotosScreenState extends State<PhotosScreen> {
   static const String _TAG = 'PhotosScreen';
 
+  List<PartyPhoto> mPartyPhotos = [];
+  var _isPartyPhotosLoading = true;
   bool showList = true;
 
   @override
   void initState() {
+    FirestoreHelper.pullPartyPhotos().then((res) {
+      if(res.docs.isNotEmpty){
+        for (int i = 0; i < res.docs.length; i++) {
+          DocumentSnapshot document = res.docs[i];
+          Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+          final PartyPhoto partyPhoto = Fresh.freshPartyPhotoMap(data, false);
+          mPartyPhotos.add(partyPhoto);
+        }
+
+        setState(() {
+          _isPartyPhotosLoading = false;
+        });
+      }
+    });
     super.initState();
   }
 
@@ -41,7 +57,8 @@ class _PhotosScreenState extends State<PhotosScreen> {
       floatingActionButton: _showToggleViewButton(context),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       resizeToAvoidBottomInset: false,
-      body: _buildPhotos(context),
+      body: _isPartyPhotosLoading? const LoadingWidget()
+          : (showList ? _showPhotosListView(mPartyPhotos) : _showPhotosGridView(mPartyPhotos)),
     );
   }
 
@@ -63,8 +80,7 @@ class _PhotosScreenState extends State<PhotosScreen> {
                     DocumentSnapshot document = snapshot.data!.docs[i];
                     Map<String, dynamic> map =
                         document.data()! as Map<String, dynamic>;
-                    final PartyPhoto photo =
-                        Fresh.freshPartyPhotoMap(map, false);
+                    final PartyPhoto photo = Fresh.freshPartyPhotoMap(map, false);
                     photos.add(photo);
                   }
 
@@ -133,6 +149,13 @@ class _PhotosScreenState extends State<PhotosScreen> {
       scrollDirection: Axis.vertical,
       itemBuilder: (context, index) {
         PartyPhoto partyPhoto = photos[index];
+
+        if (!kIsWeb) {
+          int count = partyPhoto.views + 1;
+          partyPhoto = partyPhoto.copyWith(views: count);
+          FirestoreHelper.pushPartyPhoto(partyPhoto);
+        }
+
         if (index == photos.length - 1) {
           return Column(
             children: [
@@ -172,6 +195,10 @@ class _PhotosScreenState extends State<PhotosScreen> {
   }
 
   _showPhotoDialog(BuildContext context, PartyPhoto partyPhoto, int index) {
+    int count = partyPhoto.views + 1;
+    partyPhoto = partyPhoto.copyWith(views: count);
+    FirestoreHelper.pushPartyPhoto(partyPhoto);
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
