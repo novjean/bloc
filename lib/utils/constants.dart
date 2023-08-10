@@ -72,6 +72,7 @@ class Constants {
   // flagship store kept for ease of reference
   static String blocServiceId = 'UVU4XPqTYr3U0YhQzEhg';
   static String blocPromoterId = 'QQEck1k84xT49iLPtRaPWeKtOIhp';
+  static String blocCommunityLoungeId = 'HZfHfnB09xBcl5haYavd2nyvXiyF';
 
   static String blocInstaHandle = 'https://www.instagram.com/bloc.india/';
 

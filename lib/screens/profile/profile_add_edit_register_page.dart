@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:bloc/db/entity/user_lounge.dart';
 import 'package:bloc/widgets/ui/app_bar_title.dart';
 import 'package:bloc/widgets/ui/toaster.dart';
 import 'package:delayed_display/delayed_display.dart';
@@ -11,6 +12,7 @@ import 'package:path_provider/path_provider.dart';
 import '../../db/entity/user.dart' as blocUser;
 import '../../db/entity/user.dart';
 import '../../db/shared_preferences/user_preferences.dart';
+import '../../helpers/dummy.dart';
 import '../../helpers/firestorage_helper.dart';
 import '../../helpers/firestore_helper.dart';
 import '../../helpers/fresh.dart';
@@ -208,6 +210,14 @@ class _ProfileAddEditRegisterPageState
 
               UserPreferences.setUser(freshUser);
               FirestoreHelper.pushUser(freshUser);
+
+              if(widget.task == 'register'){
+                UserLounge userLounge = Dummy.getDummyUserLounge();
+                userLounge = userLounge.copyWith(userId: widget.user.id,
+                    loungeId: Constants.blocCommunityLoungeId);
+                FirestoreHelper.pushUserLounge(userLounge);
+              }
+
               Navigator.of(context).pop();
             } else {
               Logx.i(_TAG,'user cannot be entered as data is incomplete');
@@ -285,7 +295,7 @@ class _ProfileAddEditRegisterPageState
                             FirestoreHelper.pushUser(widget.user);
                             FirestorageHelper.deleteFile(oldImageUrl);
 
-                            Toaster.shortToast('profile photo updated');
+                            Logx.ist(_TAG,'profile photo updated');
 
                             setState(() {
                               imagePath = image.path;
