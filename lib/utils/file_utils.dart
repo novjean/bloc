@@ -8,6 +8,8 @@ import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:universal_html/html.dart' as html;
 import 'package:path_provider/path_provider.dart';
+import 'package:http/http.dart' as http;
+
 
 import 'logx.dart';
 
@@ -83,6 +85,27 @@ class FileUtils {
     await tempFile.writeAsBytes(compressedImage);
 
     return tempFile;
+  }
+
+  static void sharePhoto(String id, String urlImage, String fileName, String shareText) async {
+    final Uri url = Uri.parse(urlImage);
+    final response = await http.get(url);
+    final Uint8List bytes = response.bodyBytes;
+
+    try{
+      var temp = await getTemporaryDirectory();
+      final path = '${temp.path}/$fileName.png';
+      File(path).writeAsBytesSync(bytes);
+
+      final files = <XFile>[];
+      files.add(
+          XFile(path, name: '$fileName.jpg'));
+
+      await Share.shareXFiles(files,
+          text: shareText.isEmpty? '#blocCommunity': shareText);
+    } catch(e){
+      Logx.em(_TAG, e.toString());
+    }
   }
 
 }

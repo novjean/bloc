@@ -11,7 +11,6 @@ import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:http/http.dart' as http;
 
-
 import '../../db/entity/challenge.dart';
 import '../../db/entity/party.dart';
 import '../../main.dart';
@@ -474,8 +473,7 @@ class _BoxOfficeItemState extends State<BoxOfficeItem> {
                             files.add(
                                 XFile(path, name: '${widget.party.id}.jpg'));
 
-                            await Share.shareXFiles(files,
-                                text: '#blocCommunity');
+                            await Share.shareXFiles(files, text: '#blocCommunity');
                           }
                         } on PlatformException catch (e, s) {
                           Logx.e(_TAG, e, s);

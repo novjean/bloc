@@ -111,8 +111,8 @@ class _ProfileAddEditRegisterPageState
         const SizedBox(height: 24),
         Column(
           children: [
-            Padding(
-              padding: const EdgeInsets.only(bottom: 8.0),
+            const Padding(
+              padding: EdgeInsets.only(bottom: 8.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
@@ -149,7 +149,7 @@ class _ProfileAddEditRegisterPageState
                   isEmpty: sGender == '',
                   child: DropdownButtonHideUnderline(
                     child: DropdownButton<String>(
-                      style: TextStyle(
+                      style: const TextStyle(
                           color: Constants.lightPrimary),
                       dropdownColor: Constants.background,
                       value: sGender,
@@ -303,7 +303,7 @@ class _ProfileAddEditRegisterPageState
 
                           }
                         } else {
-                          Toaster.shortToast('download our app to upload your photo and more');
+                          Logx.ist(_TAG, 'download our app to upload your photo and more');
                           //todo: need to add dialog to download the app
                         }
 

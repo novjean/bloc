@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:ui';
 
 import 'package:bloc/db/shared_preferences/user_preferences.dart';
@@ -5,6 +6,10 @@ import 'package:bloc/helpers/firestore_helper.dart';
 import 'package:bloc/utils/date_time_utils.dart';
 import 'package:bloc/utils/file_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:http/http.dart' as http;
+import 'package:path_provider/path_provider.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../../db/entity/party_photo.dart';
 import '../../main.dart';
@@ -167,6 +172,23 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
                             child: isLoved
                                 ? Icon(Icons.favorite, size: 24.0)
                                 : Icon(Icons.favorite_border, size: 24.0)),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 15.0),
+                        child: InkWell(
+                            onTap: () async {
+                              if(UserPreferences.isUserLoggedIn()) {
+                                int fileNum = widget.index+1;
+                                String fileName = '${widget.partyPhoto.partyName} $fileNum';
+                                String shareText = 'hey. check out this photo and more of ${widget.partyPhoto.partyName} at the official bloc app. Step into the moment. 📸 \n\n🌏 https://bloc.bar/#/\n📱 https://bloc.bar/app_store.html\n\n#blocCommunity ❤️‍🔥';
+
+                                FileUtils.sharePhoto(widget.partyPhoto.id,
+                                    widget.partyPhoto.imageUrl, fileName, shareText);
+                              } else {
+                                Logx.ist(_TAG, 'please login to share the photo');
+                              }
+                            },
+                            child:Icon(Icons.share_outlined, size: 24.0))
                       ),
                       Padding(
                         padding: const EdgeInsets.only(left: 15),
