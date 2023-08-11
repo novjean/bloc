@@ -1,0 +1,11 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.novatech.bloc",
+      "sha256_cert_fingerprints":
+      ["0B:32:92:82:2B:F1:52:73:5D:9D:C9:0D:28:49:8A:5C:00:8B:79:62:FA:B7:64:CB:3F:FC:E1:45:D7:96:09:B3"]
+    }
+  }
+]
