@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:bloc/db/entity/celebration.dart';
 import 'package:bloc/db/entity/lounge_chat.dart';
 import 'package:bloc/db/entity/user.dart' as blocUser;
@@ -30,6 +31,7 @@ import '../helpers/firestore_helper.dart';
 import '../helpers/fresh.dart';
 import '../main.dart';
 import '../routes/route_constants.dart';
+import '../services/notification_service.dart';
 import '../utils/logx.dart';
 import 'account_screen.dart';
 import 'captain/captain_main_screen.dart';
@@ -183,7 +185,10 @@ class _MainScreenState extends State<MainScreen> {
           }
           case 'ads':{
             Ad ad = Fresh.freshAdMap(jsonDecode(data['document']), false);
-            showNotificationHighChannel(message);
+
+            _showAdNotification(ad);
+
+            // showNotificationHighChannel(message);
             break;
           }
           case 'party_guest':{
@@ -319,19 +324,19 @@ class _MainScreenState extends State<MainScreen> {
                 appBarColor: Colors.black,
                 appBarHeight: kIsWeb ? 60 : 100,
                 appBarPadding: kIsWeb
-                    ? (EdgeInsets.only(top: 10))
-                    : (EdgeInsets.only(top: 50)),
+                    ? (const EdgeInsets.only(top: 10))
+                    : (const EdgeInsets.only(top: 50)),
                 drawerIconColor: Constants.primary,
                 drawerIconSize: 35,
                 isTitleCenter: false,
                 trailing: Padding(
                   padding: const EdgeInsets.only(right: 10.0),
-                  child: IconButton(icon: Icon(Icons.brightness_low_outlined, color: Constants.primary,),
-                    onPressed: () {
+                  child: IconButton(icon: const Icon(Icons.brightness_low_outlined, color: Constants.primary,),
+                    onPressed: () async {
                       _showAdsDialog(context);
                     },),
                 ),
-                title: const Padding(
+                title: const Padding (
                   padding: kIsWeb
                       ? EdgeInsets.only(top: 10.0, left: 20)
                       : EdgeInsets.only(left: 15, top: 5.0),
@@ -520,48 +525,56 @@ class _MainScreenState extends State<MainScreen> {
     });
   }
 
-  void showNotificationChatChannel(RemoteNotification? notification) {
+  void showNotificationChatChannel(RemoteNotification? notification) async {
     Logx.d(_TAG, 'showNotificationChatChannel');
 
-    if(notification!=null){
-      flutterLocalNotificationsPlugin.show(
-        notification.hashCode,
-        notification.title,
-        notification.body,
-        NotificationDetails(
-          android: AndroidNotificationDetails(
-            chatChannel.id,
-            chatChannel.name,
-            // channel.description,
-            // TODO add a proper drawable resource to android, for now using
-            //      one that already exists in example app.
-            icon: '@drawable/ic_launcher',
-          ),
-        ),
-      );
-    }
+    await NotificationService.showNotification(
+        title: notification!.title!,
+        body: notification.body!);
+
+    // if(notification!=null){
+    //   flutterLocalNotificationsPlugin.show(
+    //     notification.hashCode,
+    //     notification.title,
+    //     notification.body,
+    //     NotificationDetails(
+    //       android: AndroidNotificationDetails(
+    //         chatChannel.id,
+    //         chatChannel.name,
+    //         // channel.description,
+    //         // TODO add a proper drawable resource to android, for now using
+    //         //      one that already exists in example app.
+    //         icon: '@drawable/ic_launcher',
+    //       ),
+    //     ),
+    //   );
+    // }
   }
 
-  void showNotificationHighChannel(RemoteMessage message) {
+  void showNotificationHighChannel(RemoteMessage message) async {
     Logx.d(_TAG, 'showNotificationHighChannel');
 
     RemoteNotification? notification = message.notification;
 
-    if(notification!=null){
-      flutterLocalNotificationsPlugin.show(
-        notification.hashCode,
-        notification.title,
-        notification.body,
-        NotificationDetails(
-          android: AndroidNotificationDetails(
-            channel.id,
-            channel.name,
-            // channel.description,
-            icon: '@drawable/ic_launcher',
-          ),
-        ),
-      );
-    }
+    await NotificationService.showNotification(
+        title: notification!.title!,
+        body: notification.body!);
+
+    // if(notification!=null){
+    //   flutterLocalNotificationsPlugin.show(
+    //     notification.hashCode,
+    //     notification.title,
+    //     notification.body,
+    //     NotificationDetails(
+    //       android: AndroidNotificationDetails(
+    //         channel.id,
+    //         channel.name,
+    //         // channel.description,
+    //         icon: '@drawable/ic_launcher',
+    //       ),
+    //     ),
+    //   );
+    // }
   }
 
   void _showAdsDialog(BuildContext context) {
@@ -632,6 +645,43 @@ class _MainScreenState extends State<MainScreen> {
       }
     });
 
+  }
+
+  void _showAdNotification(Ad ad) async {
+    if(ad.imageUrl.isEmpty){
+      await NotificationService.showNotification(
+          title: ad.title,
+          body: ad.message,
+          actionButtons: [
+            // NotificationActionButton(key: 'REDIRECT', label: 'Redirect'),
+            // NotificationActionButton(
+            //     key: 'REPLY',
+            //     label: 'Reply Message',
+            //     requireInputText: true,
+            //     actionType: ActionType.SilentAction
+            // ),
+            NotificationActionButton(
+                key: 'DISMISS',
+                label: 'dismiss',
+                actionType: ActionType.DismissAction,
+                isDangerousOption: true)
+          ]
+      );
+    } else {
+      await NotificationService.showNotification(
+          title: ad.title,
+          body: ad.message,
+          bigPicture: ad.imageUrl,
+          notificationLayout: NotificationLayout.BigPicture,
+          actionButtons: [
+            NotificationActionButton(
+                key: 'DISMISS',
+                label: 'dismiss',
+                actionType: ActionType.DismissAction,
+                isDangerousOption: true)
+          ]
+      );
+    }
   }
 }
 

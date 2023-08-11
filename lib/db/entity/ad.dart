@@ -5,6 +5,7 @@ class Ad {
   final String blocId;
   final int hits;
   final int createdAt;
+  final String imageUrl;
   final bool isActive;
 
 //<editor-fold desc="Data Methods">
@@ -15,6 +16,7 @@ class Ad {
     required this.blocId,
     required this.hits,
     required this.createdAt,
+    required this.imageUrl,
     required this.isActive,
   });
 
@@ -29,6 +31,7 @@ class Ad {
           blocId == other.blocId &&
           hits == other.hits &&
           createdAt == other.createdAt &&
+          imageUrl == other.imageUrl &&
           isActive == other.isActive);
 
   @override
@@ -39,6 +42,7 @@ class Ad {
       blocId.hashCode ^
       hits.hashCode ^
       createdAt.hashCode ^
+      imageUrl.hashCode ^
       isActive.hashCode;
 
   @override
@@ -50,6 +54,7 @@ class Ad {
         ' blocId: $blocId,' +
         ' hits: $hits,' +
         ' createdAt: $createdAt,' +
+        ' imageUrl: $imageUrl,' +
         ' isActive: $isActive,' +
         '}';
   }
@@ -61,6 +66,7 @@ class Ad {
     String? blocId,
     int? hits,
     int? createdAt,
+    String? imageUrl,
     bool? isActive,
   }) {
     return Ad(
@@ -70,6 +76,7 @@ class Ad {
       blocId: blocId ?? this.blocId,
       hits: hits ?? this.hits,
       createdAt: createdAt ?? this.createdAt,
+      imageUrl: imageUrl ?? this.imageUrl,
       isActive: isActive ?? this.isActive,
     );
   }
@@ -82,6 +89,7 @@ class Ad {
       'blocId': this.blocId,
       'hits': this.hits,
       'createdAt': this.createdAt,
+      'imageUrl': this.imageUrl,
       'isActive': this.isActive,
     };
   }
@@ -94,6 +102,7 @@ class Ad {
       blocId: map['blocId'] as String,
       hits: map['hits'] as int,
       createdAt: map['createdAt'] as int,
+      imageUrl: map['imageUrl'] as String,
       isActive: map['isActive'] as bool,
     );
   }

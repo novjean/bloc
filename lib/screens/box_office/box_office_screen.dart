@@ -30,6 +30,8 @@ import '../promoter/promoter_guests_screen.dart';
 import '../user/celebration_add_edit_screen.dart';
 
 class BoxOfficeScreen extends StatefulWidget {
+  const BoxOfficeScreen({super.key});
+
   @override
   State<BoxOfficeScreen> createState() => _BoxOfficeScreenState();
 }

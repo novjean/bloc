@@ -57,6 +57,12 @@ class Fresh {
       isModelChanged = true;
     }
     try {
+      ad = ad.copyWith(imageUrl: map['imageUrl'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'ad imageUrl not exist for ad id: ${ad.id}');
+      isModelChanged = true;
+    }
+    try {
       ad = ad.copyWith(blocId: map['blocId'] as String);
     } catch (e) {
       Logx.em(_TAG, 'ad blocId not exist for ad id: ${ad.id}');
@@ -110,6 +116,11 @@ class Fresh {
       Logx.em(_TAG, 'ad message not exist for ad id: ${ad.id}');
     }
     try {
+      freshAd = freshAd.copyWith(imageUrl: ad.imageUrl);
+    } catch (e) {
+      Logx.em(_TAG, 'ad imageUrl not exist for ad id: ${ad.id}');
+    }
+    try {
       freshAd = freshAd.copyWith(blocId: ad.blocId);
     } catch (e) {
       Logx.em(_TAG, 'ad blocId not exist for ad id: ${ad.id}');
@@ -117,7 +128,7 @@ class Fresh {
     try {
       freshAd = freshAd.copyWith(hits: ad.hits);
     } catch (e) {
-      Logx.em(_TAG, 'ad hits not exist for ad id: ' + ad.id);
+      Logx.em(_TAG, 'ad hits not exist for ad id: ${ad.id}');
     }
     try {
       freshAd = freshAd.copyWith(createdAt: ad.createdAt);
@@ -237,7 +248,7 @@ class Fresh {
     try {
       bloc = bloc.copyWith(name: map['name'] as String);
     } catch (e) {
-      Logx.em(_TAG, 'bloc name not exist for bloc id: ' + bloc.id);
+      Logx.em(_TAG, 'bloc name not exist for bloc id: ${bloc.id}');
       isModelChanged = true;
     }
     try {
@@ -249,7 +260,7 @@ class Fresh {
     try {
       bloc = bloc.copyWith(addressLine1: map['addressLine1'] as String);
     } catch (e) {
-      Logx.em(_TAG, 'bloc addressLine1 not exist for bloc id: ' + bloc.id);
+      Logx.em(_TAG, 'bloc addressLine1 not exist for bloc id: ${bloc.id}');
       isModelChanged = true;
     }
     try {

@@ -44,6 +44,7 @@ class Dummy {
         id: StringUtils.getRandomString(28),
         title: '',
         message: '',
+        imageUrl: '',
         blocId: blocServiceId,
         createdAt: Timestamp.now().millisecondsSinceEpoch,
         isActive: false,

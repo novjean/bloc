@@ -5,6 +5,7 @@ import 'package:bloc/db/shared_preferences/table_preferences.dart';
 import 'package:bloc/routes/bloc_router.dart';
 
 import 'package:bloc/db/shared_preferences/ui_preferences.dart';
+import 'package:bloc/services/notification_service.dart';
 import 'package:bloc/utils/logx.dart';
 import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -56,50 +57,14 @@ Future<void> main() async {
   const String _TAG = 'main';
 
   WidgetsFlutterBinding.ensureInitialized();
+  await NotificationService.initializeNotification();
 
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
   if (!kIsWeb) {
-    channel = const AndroidNotificationChannel(
-      'high_importance_channel', // id
-      'High Importance Notifications', // title
-      // 'This channel is used for important notifications.', // description
-      importance: Importance.high,
-    );
-
-    chatChannel = const AndroidNotificationChannel(
-      'CHAT_MESSAGES', // id
-      'Chats',
-      // description: 'Chat notifications',
-      importance: Importance.high,
-    );
-
-    flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-
-    /// Create an Android Notification Channel.
-    ///
-    /// We use this channel in the `AndroidManifest.xml` file to override the
-    /// default FCM channel to enable heads up notifications.
-    await flutterLocalNotificationsPlugin
-        .resolvePlatformSpecificImplementation<
-        AndroidFlutterLocalNotificationsPlugin>()
-        ?.createNotificationChannel(channel);
-
-    await flutterLocalNotificationsPlugin
-        .resolvePlatformSpecificImplementation<
-        AndroidFlutterLocalNotificationsPlugin>()
-        ?.createNotificationChannel(chatChannel);
-
-    /// Update the iOS foreground notification presentation options to allow
-    /// heads up notifications.
-    await FirebaseMessaging.instance
-        .setForegroundNotificationPresentationOptions(
-      alert: true,
-      badge: true,
-      sound: true,
-    );
+    // setupOldNotificationImplementation();
   }
 
   // Pass all uncaught "fatal" errors from the framework to Crashlytics
@@ -128,8 +93,51 @@ Future<void> main() async {
   });
 }
 
+void setupOldNotificationImplementation() async {
+  channel = const AndroidNotificationChannel(
+    'high_importance_channel', // id
+    'High Importance Notifications', // title
+    // 'This channel is used for important notifications.', // description
+    importance: Importance.high,
+  );
+
+  chatChannel = const AndroidNotificationChannel(
+    'CHAT_MESSAGES', // id
+    'Chats',
+    // description: 'Chat notifications',
+    importance: Importance.high,
+  );
+
+  flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+
+  /// Create an Android Notification Channel.
+  ///
+  /// We use this channel in the `AndroidManifest.xml` file to override the
+  /// default FCM channel to enable heads up notifications.
+  await flutterLocalNotificationsPlugin
+      .resolvePlatformSpecificImplementation<
+      AndroidFlutterLocalNotificationsPlugin>()
+      ?.createNotificationChannel(channel);
+
+  await flutterLocalNotificationsPlugin
+      .resolvePlatformSpecificImplementation<
+      AndroidFlutterLocalNotificationsPlugin>()
+      ?.createNotificationChannel(chatChannel);
+
+  /// Update the iOS foreground notification presentation options to allow
+  /// heads up notifications.
+  await FirebaseMessaging.instance
+      .setForegroundNotificationPresentationOptions(
+    alert: true,
+    badge: true,
+    sound: true,
+  );
+}
+
 class BlocApp extends StatefulWidget {
   const BlocApp({Key? key}) : super(key: key);
+
+  static final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
   @override
   State<BlocApp> createState() => _BlocAppState();
