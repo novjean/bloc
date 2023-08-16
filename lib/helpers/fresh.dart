@@ -248,37 +248,37 @@ class Fresh {
     try {
       bloc = bloc.copyWith(name: map['name'] as String);
     } catch (e) {
-      Logx.em(_TAG, 'bloc name not exist for bloc id: ${bloc.id}');
+      Logx.em(_TAG, 'bloc name not exist for id: ${bloc.id}');
       isModelChanged = true;
     }
     try {
       bloc = bloc.copyWith(cityId: map['cityId'] as String);
     } catch (e) {
-      Logx.em(_TAG, 'bloc cityId not exist for bloc id: ' + bloc.id);
+      Logx.em(_TAG, 'bloc cityId not exist for id: ${bloc.id}');
       isModelChanged = true;
     }
     try {
       bloc = bloc.copyWith(addressLine1: map['addressLine1'] as String);
     } catch (e) {
-      Logx.em(_TAG, 'bloc addressLine1 not exist for bloc id: ${bloc.id}');
+      Logx.em(_TAG, 'bloc addressLine1 not exist for id: ${bloc.id}');
       isModelChanged = true;
     }
     try {
       bloc = bloc.copyWith(addressLine2: map['addressLine2'] as String);
     } catch (e) {
-      Logx.em(_TAG, 'bloc addressLine2 not exist for bloc id: ' + bloc.id);
+      Logx.em(_TAG, 'bloc addressLine2 not exist for id: ${bloc.id}');
       isModelChanged = true;
     }
     try {
       bloc = bloc.copyWith(pinCode: map['pinCode'] as String);
     } catch (e) {
-      Logx.em(_TAG, 'bloc pinCode not exist for bloc id: ' + bloc.id);
+      Logx.em(_TAG, 'bloc pinCode not exist for id: ${bloc.id}');
       isModelChanged = true;
     }
     try {
       bloc = bloc.copyWith(ownerId: map['ownerId'] as String);
     } catch (e) {
-      Logx.em(_TAG, 'bloc ownerId not exist for bloc id: ' + bloc.id);
+      Logx.em(_TAG, 'bloc ownerId not exist for id: ${bloc.id}');
       isModelChanged = true;
     }
     try {

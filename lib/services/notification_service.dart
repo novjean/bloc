@@ -1,10 +1,16 @@
+import 'dart:convert';
+
 import 'package:awesome_notifications/awesome_notifications.dart';
-import 'package:bloc/screens/login_screen.dart';
+import 'package:bloc/db/entity/lounge_chat.dart';
 import 'package:flutter/material.dart';
 
-import '../main.dart';
+import '../db/entity/ad.dart';
+import '../helpers/fresh.dart';
+import '../utils/logx.dart';
 
 class NotificationService {
+  static const String _TAG = 'NotificationService';
+
   static Future<void> initializeNotification() async {
     await AwesomeNotifications().initialize(
       'resource://drawable/ic_launcher',
@@ -12,8 +18,21 @@ class NotificationService {
         NotificationChannel(
           channelGroupKey: 'high_importance_channel',
           channelKey: 'high_importance_channel',
-          channelName: 'Basic notifications',
-          channelDescription: 'Notification channel for basic tests',
+          channelName: 'high importance',
+          channelDescription: 'notification channel for high importance',
+          defaultColor: const Color(0xFF9D50DD),
+          ledColor: Colors.white,
+          importance: NotificationImportance.Max,
+          channelShowBadge: true,
+          onlyAlertOnce: true,
+          playSound: true,
+          criticalAlerts: true,
+        ),
+        NotificationChannel(
+          channelGroupKey: 'chat_channel',
+          channelKey: 'chat_channel',
+          channelName: 'chats',
+          channelDescription: 'notification channel for chats',
           defaultColor: const Color(0xFF9D50DD),
           ledColor: Colors.white,
           importance: NotificationImportance.Max,
@@ -25,15 +44,19 @@ class NotificationService {
       ],
       channelGroups: [
         NotificationChannelGroup(
-          channelGroupName: 'Group 1',
+          channelGroupName: 'high importance',
           channelGroupKey: 'high_importance_channel_group',
+        ),
+        NotificationChannelGroup(
+          channelGroupName: 'chats',
+          channelGroupKey: 'chat_channel_group',
         )
       ],
       debug: true,
     );
 
     await AwesomeNotifications().isNotificationAllowed().then(
-          (isAllowed) async {
+      (isAllowed) async {
         if (!isAllowed) {
           await AwesomeNotifications().requestPermissionToSendNotifications();
         }
@@ -71,13 +94,38 @@ class NotificationService {
       ReceivedAction receivedAction) async {
     debugPrint('onActionReceivedMethod');
     final payload = receivedAction.payload ?? {};
-    if (payload["navigate"] == "true") {
-      BlocApp.navigatorKey.currentState?.push(
-        MaterialPageRoute(
-          builder: (_) => const LoginScreen(shouldTriggerSkip: false),
-        ),
-      );
+
+    String payloadType = payload['type']!;
+    Logx.d(_TAG, 'notification click type is $payloadType');
+
+    if (payloadType.isNotEmpty) {
+      switch (payloadType) {
+        case 'ad':
+          try {
+            Ad ad = Fresh.freshAdMap(jsonDecode(payload['data']!), false);
+          } catch (e) {
+            Logx.em(_TAG, e.toString());
+          }
+          break;
+        case 'chat':
+          try {
+            LoungeChat chat =
+                Fresh.freshLoungeChatMap(jsonDecode(payload['data']!), false);
+            Logx.d(_TAG, 'successful');
+          } catch (e) {
+            Logx.em(_TAG, e.toString());
+          }
+          break;
+      }
     }
+
+    // if (payload["navigate"] == "true") {
+    //   BlocApp.navigatorKey.currentState?.push(
+    //     MaterialPageRoute(
+    //       builder: (_) => const LoginScreen(shouldTriggerSkip: false),
+    //     ),
+    //   );
+    // }
   }
 
   static Future<void> showNotification({
@@ -89,6 +137,7 @@ class NotificationService {
     final NotificationLayout notificationLayout = NotificationLayout.Default,
     final NotificationCategory? category,
     final String? bigPicture,
+    final String? largeIcon,
     final List<NotificationActionButton>? actionButtons,
     final bool scheduled = false,
     final int? interval,
@@ -97,26 +146,117 @@ class NotificationService {
 
     await AwesomeNotifications().createNotification(
       content: NotificationContent(
-        id: -1,
-        channelKey: 'high_importance_channel',
-        title: title,
-        body: body,
-        // actionType: actionType,
-        notificationLayout: notificationLayout,
-        summary: summary,
-        category: category,
-        payload: payload,
-        bigPicture: bigPicture,
-      ),
+          id: -1,
+          channelKey: 'high_importance_channel',
+          title: title,
+          body: body,
+          // actionType: actionType,
+          notificationLayout: notificationLayout,
+          summary: summary,
+          category: category,
+          payload: payload,
+          bigPicture: bigPicture,
+          largeIcon: largeIcon),
       actionButtons: actionButtons,
       schedule: scheduled
           ? NotificationInterval(
-        interval: interval!,
-        timeZone:
-        await AwesomeNotifications().getLocalTimeZoneIdentifier(),
-        preciseAlarm: true,
-      )
+              interval: interval!,
+              timeZone:
+                  await AwesomeNotifications().getLocalTimeZoneIdentifier(),
+              preciseAlarm: true,
+            )
           : null,
     );
+  }
+
+  /** notification **/
+  static void showAdNotification(Ad ad) async {
+    Map<String, dynamic> objectMap = ad.toMap();
+    String jsonString = jsonEncode(objectMap);
+
+    if (ad.imageUrl.isEmpty) {
+      await showNotification(title: ad.title, body: ad.message, actionButtons: [
+        NotificationActionButton(
+            key: 'DISMISS',
+            label: 'dismiss',
+            actionType: ActionType.DismissAction,
+            isDangerousOption: true)
+      ]);
+    } else {
+      await showNotification(
+          title: ad.title,
+          body: ad.message,
+          bigPicture: ad.imageUrl,
+          notificationLayout: NotificationLayout.BigPicture,
+          payload: {
+            "navigate": "true",
+            "type": "ad",
+            "data": jsonString,
+          },
+          actionButtons: [
+            // NotificationActionButton(
+            //     key: 'DISMISS',
+            //     label: 'dismiss',
+            //     actionType: ActionType.DismissAction,
+            //     isDangerousOption: true)
+          ]);
+    }
+  }
+
+  static void showChatNotification(LoungeChat chat) async {
+    Map<String, dynamic> objectMap = chat.toMap();
+    String jsonString = jsonEncode(objectMap);
+
+    String title = '🫶 ${chat.loungeName}';
+
+    if (chat.type == 'text') {
+      String body = chat.message;
+
+      await showNotification(
+        title: title,
+        body: body,
+        notificationLayout: NotificationLayout.Messaging,
+        payload: {
+          "navigate": "false",
+          "type": "chat",
+          "data": jsonString,
+        },
+      );
+    } else {
+      String body = 'tap to learn more';
+
+      await showNotification(
+        title: title,
+        body: body,
+        largeIcon: chat.message,
+        notificationLayout: NotificationLayout.Messaging,
+        payload: {
+          "navigate": "false",
+          "type": "chat",
+          "data": jsonString,
+        },
+        // actionButtons: [
+        //   NotificationActionButton(
+        //       key: 'DISMISS',
+        //       label: 'dismiss',
+        //       actionType: ActionType.DismissAction,
+        //       isDangerousOption: true)
+        // ]
+      );
+    }
+  }
+
+  static void showDefaultNotification(String title, String body) async {
+    await showNotification(
+        title: title,
+        body: body,
+        notificationLayout: NotificationLayout.Default,
+        actionButtons: [
+          NotificationActionButton(
+              key: 'DISMISS',
+              label: 'dismiss',
+              actionType: ActionType.DismissAction,
+              isDangerousOption: true)
+        ]);
   }
 }

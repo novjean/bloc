@@ -174,27 +174,29 @@ class _MainScreenState extends State<MainScreen> {
             if(UserPreferences.isUserLoggedIn() && chat.userId != UserPreferences.myUser.id){
               if(UserPreferences.getListLounges().contains(chat.loungeId)){
 
-                RemoteNotification notification = RemoteNotification(
-                  title: '🫶 ${chat.loungeName}',
-                  body: chat.type == 'text'? chat.message : '🖼️ photo' ,
-                );
-                showNotificationChatChannel(notification);
+                // RemoteNotification notification = RemoteNotification(
+                //   title: '🫶 ${chat.loungeName}',
+                //   body: chat.type == 'text'? chat.message : '🖼️ photo' ,
+                // );
+
+                NotificationService.showChatNotification(chat);
+                // showNotificationChatChannel(notification);
               }
             }
             break;
           }
           case 'ads':{
             Ad ad = Fresh.freshAdMap(jsonDecode(data['document']), false);
-
-            _showAdNotification(ad);
-
-            // showNotificationHighChannel(message);
+            NotificationService.showAdNotification(ad);
             break;
           }
           case 'party_guest':{
             PartyGuest partyGuest = Fresh.freshPartyGuestMap(jsonDecode(data['document']), false);
             if(!partyGuest.isApproved){
-              showNotificationHighChannel(message);
+              String title = '${partyGuest.name} ${partyGuest.surname}';
+              String body = '${partyGuest.guestStatus} : ${partyGuest.guestsCount}';
+
+              NotificationService.showDefaultNotification(title, body);
             } else {
               Logx.ist(_TAG, 'guest list: ${partyGuest.name} added');
             }
@@ -202,24 +204,33 @@ class _MainScreenState extends State<MainScreen> {
           }
           case 'reservations':{
             Reservation reservation = Fresh.freshReservationMap(jsonDecode(data['document']), false);
-            showNotificationHighChannel(message);
+            String title = 'request : table reservation';
+            String body = '${reservation.name} : ${reservation.guestsCount}';
+
+            NotificationService.showDefaultNotification(title, body);
             break;
           }
           case 'celebrations':{
             Celebration celebration = Fresh.freshCelebrationMap(jsonDecode(data['document']), false);
-            showNotificationHighChannel(message);
+            String title = 'request : celebration';
+            String body = '${celebration.name} : ${celebration.guestsCount}';
+
+            NotificationService.showDefaultNotification(title, body);
             break;
           }
           case 'offer':
           case 'order':
           case 'sos':
           default:{
-            showNotificationHighChannel(message);
+            String? title = message.notification!.title;
+            String? body = message.notification!.body;
+
+            NotificationService.showDefaultNotification(title!, body!);
           }
         }
       });
 
-      FirebaseMessaging.onMessageOpenedApp.listen(_handleMessage);
+      // FirebaseMessaging.onMessageOpenedApp.listen(_handleMessage);
 
       //clear out any previous subscriptions
       blocUser.User user = UserPreferences.getUser();
@@ -461,14 +472,14 @@ class _MainScreenState extends State<MainScreen> {
         {
           Navigator.of(context).push(
             MaterialPageRoute(
-                builder: (ctx) => PromoterMainScreen()),
+                builder: (ctx) => const PromoterMainScreen()),
           );
           break;
         }
       case 'manager':
         {
           Navigator.of(context).push(
-            MaterialPageRoute(builder: (ctx) => ManagerMainScreen()),
+            MaterialPageRoute(builder: (ctx) => const ManagerMainScreen()),
           );
           break;
         }
@@ -525,57 +536,31 @@ class _MainScreenState extends State<MainScreen> {
     });
   }
 
-  void showNotificationChatChannel(RemoteNotification? notification) async {
-    Logx.d(_TAG, 'showNotificationChatChannel');
-
-    await NotificationService.showNotification(
-        title: notification!.title!,
-        body: notification.body!);
-
-    // if(notification!=null){
-    //   flutterLocalNotificationsPlugin.show(
-    //     notification.hashCode,
-    //     notification.title,
-    //     notification.body,
-    //     NotificationDetails(
-    //       android: AndroidNotificationDetails(
-    //         chatChannel.id,
-    //         chatChannel.name,
-    //         // channel.description,
-    //         // TODO add a proper drawable resource to android, for now using
-    //         //      one that already exists in example app.
-    //         icon: '@drawable/ic_launcher',
-    //       ),
-    //     ),
-    //   );
-    // }
-  }
-
-  void showNotificationHighChannel(RemoteMessage message) async {
-    Logx.d(_TAG, 'showNotificationHighChannel');
-
-    RemoteNotification? notification = message.notification;
-
-    await NotificationService.showNotification(
-        title: notification!.title!,
-        body: notification.body!);
-
-    // if(notification!=null){
-    //   flutterLocalNotificationsPlugin.show(
-    //     notification.hashCode,
-    //     notification.title,
-    //     notification.body,
-    //     NotificationDetails(
-    //       android: AndroidNotificationDetails(
-    //         channel.id,
-    //         channel.name,
-    //         // channel.description,
-    //         icon: '@drawable/ic_launcher',
-    //       ),
-    //     ),
-    //   );
-    // }
-  }
+  // void showNotificationChatChannel(RemoteNotification? notification) async {
+  //   Logx.d(_TAG, 'showNotificationChatChannel');
+  //
+  //   await NotificationService.showNotification(
+  //       title: notification!.title!,
+  //       body: notification.body!);
+  //
+  //   // if(notification!=null){
+  //   //   flutterLocalNotificationsPlugin.show(
+  //   //     notification.hashCode,
+  //   //     notification.title,
+  //   //     notification.body,
+  //   //     NotificationDetails(
+  //   //       android: AndroidNotificationDetails(
+  //   //         chatChannel.id,
+  //   //         chatChannel.name,
+  //   //         // channel.description,
+  //   //         // TODO add a proper drawable resource to android, for now using
+  //   //         //      one that already exists in example app.
+  //   //         icon: '@drawable/ic_launcher',
+  //   //       ),
+  //   //     ),
+  //   //   );
+  //   // }
+  // }
 
   void _showAdsDialog(BuildContext context) {
     FirestoreHelper.pullAds().then((res) {
@@ -647,42 +632,43 @@ class _MainScreenState extends State<MainScreen> {
 
   }
 
-  void _showAdNotification(Ad ad) async {
-    if(ad.imageUrl.isEmpty){
-      await NotificationService.showNotification(
-          title: ad.title,
-          body: ad.message,
-          actionButtons: [
-            // NotificationActionButton(key: 'REDIRECT', label: 'Redirect'),
-            // NotificationActionButton(
-            //     key: 'REPLY',
-            //     label: 'Reply Message',
-            //     requireInputText: true,
-            //     actionType: ActionType.SilentAction
-            // ),
-            NotificationActionButton(
-                key: 'DISMISS',
-                label: 'dismiss',
-                actionType: ActionType.DismissAction,
-                isDangerousOption: true)
-          ]
-      );
-    } else {
-      await NotificationService.showNotification(
-          title: ad.title,
-          body: ad.message,
-          bigPicture: ad.imageUrl,
-          notificationLayout: NotificationLayout.BigPicture,
-          actionButtons: [
-            NotificationActionButton(
-                key: 'DISMISS',
-                label: 'dismiss',
-                actionType: ActionType.DismissAction,
-                isDangerousOption: true)
-          ]
-      );
-    }
-  }
+  // void _showAdNotification(Ad ad) async {
+  //   Map<String, dynamic> objectMap = ad.toMap();
+  //   String jsonString = jsonEncode(objectMap);
+  //
+  //   if(ad.imageUrl.isEmpty){
+  //     await NotificationService.showNotification(
+  //         title: ad.title,
+  //         body: ad.message,
+  //         actionButtons: [
+  //           NotificationActionButton(
+  //               key: 'DISMISS',
+  //               label: 'dismiss',
+  //               actionType: ActionType.DismissAction,
+  //               isDangerousOption: true)
+  //         ]
+  //     );
+  //   } else {
+  //     await NotificationService.showNotification(
+  //         title: ad.title,
+  //         body: ad.message,
+  //         bigPicture: ad.imageUrl,
+  //         notificationLayout: NotificationLayout.BigPicture,
+  //         payload: {
+  //           "navigate": "true",
+  //           "type": "ad",
+  //           "data": jsonString,
+  //         },
+  //         actionButtons: [
+  //           NotificationActionButton(
+  //               key: 'DISMISS',
+  //               label: 'dismiss',
+  //               actionType: ActionType.DismissAction,
+  //               isDangerousOption: true)
+  //         ]
+  //     );
+  //   }
+  // }
 }
 
 class _SliderView extends StatelessWidget {

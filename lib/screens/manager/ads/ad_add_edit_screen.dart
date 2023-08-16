@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:bloc/helpers/fresh.dart';
 import 'package:bloc/widgets/ui/app_bar_title.dart';
@@ -69,10 +71,12 @@ class _AdAddEditScreenState extends State<AdAddEditScreen> {
   @override
   Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(
-          title: AppBarTitle(title: '${widget.task} ad',),
+          title: AppBarTitle(
+            title: '${widget.task} ad',
+          ),
           titleSpacing: 0,
         ),
-        body: _isPartiesLoading ? const LoadingWidget(): _buildBody(context),
+        body: _isPartiesLoading ? const LoadingWidget() : _buildBody(context),
       );
 
   _buildBody(BuildContext context) {
@@ -103,8 +107,7 @@ class _AdAddEditScreenState extends State<AdAddEditScreen> {
             ),
             MultiSelectDialogField(
               items: mParties
-                  .map((e) => MultiSelectItem(
-                  e, '${e.name} ${e.chapter}'))
+                  .map((e) => MultiSelectItem(e, '${e.name} ${e.chapter}'))
                   .toList(),
               initialValue: sParties.map((e) => e).toList(),
               listType: MultiSelectListType.CHIP,
@@ -128,7 +131,8 @@ class _AdAddEditScreenState extends State<AdAddEditScreen> {
                 sParties = values as List<Party>;
 
                 setState(() {
-                  widget.ad = widget.ad.copyWith(imageUrl: sParties.first.imageUrl);
+                  widget.ad =
+                      widget.ad.copyWith(imageUrl: sParties.first.imageUrl);
                 });
               },
             ),
@@ -170,11 +174,11 @@ class _AdAddEditScreenState extends State<AdAddEditScreen> {
           onClicked: () async {
             Ad freshAd = Fresh.freshAd(widget.ad);
 
-            if(!testMode){
+            if (!testMode) {
               FirestoreHelper.pushAd(freshAd);
               Navigator.of(context).pop();
             } else {
-              if(widget.ad.imageUrl.isEmpty){
+              if (widget.ad.imageUrl.isEmpty) {
                 await NotificationService.showNotification(
                     title: widget.ad.title,
                     body: widget.ad.message,
@@ -191,25 +195,36 @@ class _AdAddEditScreenState extends State<AdAddEditScreen> {
                           label: 'Dismiss',
                           actionType: ActionType.DismissAction,
                           isDangerousOption: true)
-                    ]
-                );
+                    ]);
               } else {
+                Map<String, dynamic> objectMap = widget.ad.toMap();
+                String jsonString = jsonEncode(objectMap);
+
                 await NotificationService.showNotification(
                     title: widget.ad.title,
                     body: widget.ad.message,
                     bigPicture: widget.ad.imageUrl,
                     notificationLayout: NotificationLayout.BigPicture,
+                    payload: {
+                      "navigate": "true",
+                      "type": "ad",
+                      "data": jsonString,
+                    },
                     actionButtons: [
+                      NotificationActionButton(
+                        key: 'check',
+                        label: 'Check it out',
+                        actionType: ActionType.SilentAction,
+                        color: Colors.green,
+                      ),
                       NotificationActionButton(
                           key: 'DISMISS',
                           label: 'Dismiss',
                           actionType: ActionType.DismissAction,
                           isDangerousOption: true)
-                    ]
-                );
+                    ]);
               }
             }
-
           },
         ),
         const SizedBox(height: 24),

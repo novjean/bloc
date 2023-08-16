@@ -132,7 +132,6 @@ class _HomeScreenState extends State<HomeScreen> {
       Logx.i(_TAG, "successfully pulled in requested guest list");
 
       if (res.docs.isNotEmpty) {
-        // found party guests
         List<PartyGuest> partyGuestRequests = [];
         for (int i = 0; i < res.docs.length; i++) {
           DocumentSnapshot document = res.docs[i];
@@ -209,11 +208,13 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Scaffold(
         backgroundColor: Constants.background,
         resizeToAvoidBottomInset: false,
-        body: Column(
+        body: _isBlocsLoading && _isPartyGuestsLoading ? const LoadingWidget():
+        Column(
+          mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
-            _isBlocsLoading ? const LoadingWidget() : _showBlocs(context),
-            _isPartyGuestsLoading? const LoadingWidget(): _showPartiesAndFooter(context),
+            _showBlocs(context),
+           _showPartiesAndFooter(context),
           ],
         ),
       ),
@@ -238,7 +239,6 @@ class _HomeScreenState extends State<HomeScreen> {
           }),
     );
   }
-
 
   _showPartiesAndFooter(BuildContext context) {
     int timeNow = Timestamp.now().millisecondsSinceEpoch;
