@@ -65,8 +65,8 @@ class _MainScreenState extends State<MainScreen> {
 
   List icons = [
     Icons.home,
-    Icons.event,
-    Icons.whatshot_sharp,
+    Icons.music_note_outlined,
+    Icons.photo_outlined,
     Icons.theater_comedy_outlined,
     Icons.person,
   ];
