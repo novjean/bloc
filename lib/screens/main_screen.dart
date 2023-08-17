@@ -505,32 +505,6 @@ class _MainScreenState extends State<MainScreen> {
     });
   }
 
-  // void showNotificationChatChannel(RemoteNotification? notification) async {
-  //   Logx.d(_TAG, 'showNotificationChatChannel');
-  //
-  //   await NotificationService.showNotification(
-  //       title: notification!.title!,
-  //       body: notification.body!);
-  //
-  //   // if(notification!=null){
-  //   //   flutterLocalNotificationsPlugin.show(
-  //   //     notification.hashCode,
-  //   //     notification.title,
-  //   //     notification.body,
-  //   //     NotificationDetails(
-  //   //       android: AndroidNotificationDetails(
-  //   //         chatChannel.id,
-  //   //         chatChannel.name,
-  //   //         // channel.description,
-  //   //         // TODO add a proper drawable resource to android, for now using
-  //   //         //      one that already exists in example app.
-  //   //         icon: '@drawable/ic_launcher',
-  //   //       ),
-  //   //     ),
-  //   //   );
-  //   // }
-  // }
-
   void _showAdsDialog(BuildContext context) {
     FirestoreHelper.pullAds().then((res) {
       if(res.docs.isNotEmpty){
