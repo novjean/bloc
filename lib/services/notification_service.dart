@@ -3,9 +3,13 @@ import 'dart:convert';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:bloc/db/entity/lounge_chat.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../db/entity/ad.dart';
+import '../db/shared_preferences/user_preferences.dart';
 import '../helpers/fresh.dart';
+import '../main.dart';
+import '../routes/route_constants.dart';
 import '../utils/logx.dart';
 
 class NotificationService {
@@ -101,11 +105,25 @@ class NotificationService {
     if (payloadType.isNotEmpty) {
       switch (payloadType) {
         case 'ad':
-          try {
             Ad ad = Fresh.freshAdMap(jsonDecode(payload['data']!), false);
-          } catch (e) {
-            Logx.em(_TAG, e.toString());
-          }
+            BuildContext? appContext = BlocApp.navigatorKey.currentContext;
+
+            try {
+              GoRouter.of(appContext!).pushNamed(RouteConstants.eventRouteName,
+                  params: {
+                    'partyName': ad.partyName,
+                    'partyChapter': ad.partyChapter
+                  });
+            } catch(e) {
+              Logx.em(_TAG, e.toString());
+
+              if (UserPreferences.isUserLoggedIn()) {
+                GoRouter.of(appContext!).pushNamed(RouteConstants.homeRouteName);
+              } else {
+                GoRouter.of(appContext!)
+                    .pushNamed(RouteConstants.landingRouteName);
+              }
+            }
           break;
         case 'chat':
           try {

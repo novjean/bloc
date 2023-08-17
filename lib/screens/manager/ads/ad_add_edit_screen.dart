@@ -37,7 +37,7 @@ class _AdAddEditScreenState extends State<AdAddEditScreen> {
   List<Party> sParties = [];
   var _isPartiesLoading = true;
 
-  bool testMode = false;
+  bool testMode = true;
 
   @override
   void initState() {
@@ -99,7 +99,7 @@ class _AdAddEditScreenState extends State<AdAddEditScreen> {
                 Padding(
                   padding: EdgeInsets.only(bottom: 8.0),
                   child: Text(
-                    'party image',
+                    'party',
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                 ),
@@ -130,10 +130,21 @@ class _AdAddEditScreenState extends State<AdAddEditScreen> {
               onConfirm: (values) {
                 sParties = values as List<Party>;
 
-                setState(() {
-                  widget.ad =
-                      widget.ad.copyWith(imageUrl: sParties.first.imageUrl);
-                });
+                if (sParties.isNotEmpty) {
+                  Party party = sParties.first;
+
+                  setState(() {
+                    widget.ad = widget.ad.copyWith(
+                        imageUrl: party.imageUrl,
+                        partyName: party.name,
+                        partyChapter: party.chapter);
+                  });
+                } else {
+                  setState(() {
+                    widget.ad = widget.ad.copyWith(
+                        imageUrl: '', partyName: '', partyChapter: '');
+                  });
+                }
               },
             ),
           ],

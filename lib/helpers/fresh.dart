@@ -87,6 +87,19 @@ class Fresh {
       isModelChanged = true;
     }
 
+    try {
+      ad = ad.copyWith(partyName: map['partyName'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'ad partyName not exist for ad id: ${ad.id}');
+      isModelChanged = true;
+    }
+    try {
+      ad = ad.copyWith(partyChapter: map['partyChapter'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'ad partyChapter not exist for ad id: ${ad.id}');
+      isModelChanged = true;
+    }
+
     if (isModelChanged &&
         shouldUpdate &&
         UserPreferences.myUser.clearanceLevel >= Constants.MANAGER_LEVEL) {
@@ -133,12 +146,22 @@ class Fresh {
     try {
       freshAd = freshAd.copyWith(createdAt: ad.createdAt);
     } catch (e) {
-      Logx.em(_TAG, 'ad createdAt not exist for ad id: ' + ad.id);
+      Logx.em(_TAG, 'ad createdAt not exist for id: ${ad.id}');
     }
     try {
       freshAd = freshAd.copyWith(isActive: ad.isActive);
     } catch (e) {
-      Logx.em(_TAG, 'ad isActive not exist for ad id: ' + ad.id);
+      Logx.em(_TAG, 'ad isActive not exist for id: ${ad.id}');
+    }
+    try {
+      freshAd = freshAd.copyWith(partyName: ad.partyName);
+    } catch (e) {
+      Logx.em(_TAG, 'ad partyName not exist for id: ${ad.id}');
+    }
+    try {
+      freshAd = freshAd.copyWith(partyChapter: ad.partyChapter);
+    } catch (e) {
+      Logx.em(_TAG, 'ad partyChapter not exist for id: ${ad.id}');
     }
 
     return freshAd;

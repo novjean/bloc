@@ -45,6 +45,8 @@ class Dummy {
         title: '',
         message: '',
         imageUrl: '',
+        partyName: '',
+        partyChapter: '',
         blocId: blocServiceId,
         createdAt: Timestamp.now().millisecondsSinceEpoch,
         isActive: false,

@@ -8,6 +8,9 @@ class Ad {
   final String imageUrl;
   final bool isActive;
 
+  final String partyName;
+  final String partyChapter;
+
 //<editor-fold desc="Data Methods">
   const Ad({
     required this.id,
@@ -18,6 +21,8 @@ class Ad {
     required this.createdAt,
     required this.imageUrl,
     required this.isActive,
+    required this.partyName,
+    required this.partyChapter,
   });
 
   @override
@@ -32,7 +37,9 @@ class Ad {
           hits == other.hits &&
           createdAt == other.createdAt &&
           imageUrl == other.imageUrl &&
-          isActive == other.isActive);
+          isActive == other.isActive &&
+          partyName == other.partyName &&
+          partyChapter == other.partyChapter);
 
   @override
   int get hashCode =>
@@ -43,7 +50,9 @@ class Ad {
       hits.hashCode ^
       createdAt.hashCode ^
       imageUrl.hashCode ^
-      isActive.hashCode;
+      isActive.hashCode ^
+      partyName.hashCode ^
+      partyChapter.hashCode;
 
   @override
   String toString() {
@@ -56,6 +65,8 @@ class Ad {
         ' createdAt: $createdAt,' +
         ' imageUrl: $imageUrl,' +
         ' isActive: $isActive,' +
+        ' partyName: $partyName,' +
+        ' partyChapter: $partyChapter,' +
         '}';
   }
 
@@ -68,6 +79,8 @@ class Ad {
     int? createdAt,
     String? imageUrl,
     bool? isActive,
+    String? partyName,
+    String? partyChapter,
   }) {
     return Ad(
       id: id ?? this.id,
@@ -78,6 +91,8 @@ class Ad {
       createdAt: createdAt ?? this.createdAt,
       imageUrl: imageUrl ?? this.imageUrl,
       isActive: isActive ?? this.isActive,
+      partyName: partyName ?? this.partyName,
+      partyChapter: partyChapter ?? this.partyChapter,
     );
   }
 
@@ -91,6 +106,8 @@ class Ad {
       'createdAt': this.createdAt,
       'imageUrl': this.imageUrl,
       'isActive': this.isActive,
+      'partyName': this.partyName,
+      'partyChapter': this.partyChapter,
     };
   }
 
@@ -104,6 +121,8 @@ class Ad {
       createdAt: map['createdAt'] as int,
       imageUrl: map['imageUrl'] as String,
       isActive: map['isActive'] as bool,
+      partyName: map['partyName'] as String,
+      partyChapter: map['partyChapter'] as String,
     );
   }
 

@@ -27,6 +27,7 @@ class BlocRouter {
 
   static GoRouter returnRouter(bool isAuth) {
     GoRouter router = GoRouter(
+      navigatorKey: BlocApp.navigatorKey,
       routes: [
         GoRoute(
           name: RouteConstants.landingRouteName,
@@ -61,14 +62,14 @@ class BlocRouter {
                       if (snapshot.hasError) {
                         Logx.em(
                             _TAG, 'user snapshot has error: ${snapshot.error}');
-                        return LoginScreen(shouldTriggerSkip: false);
+                        return const LoginScreen(shouldTriggerSkip: false);
                       }
 
                       if (snapshot.hasData && !snapshot.data!.exists) {
                         Logx.i(_TAG,
                             'user snapshot has data but not registered in bloc ');
                         // user not registered in bloc, will be picked up in OTP screen
-                        return LoginScreen(shouldTriggerSkip: false);
+                        return const LoginScreen(shouldTriggerSkip: false);
                       }
 
                       if (snapshot.connectionState == ConnectionState.done) {
