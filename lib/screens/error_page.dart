@@ -5,13 +5,15 @@ import 'package:go_router/go_router.dart';
 
 import '../routes/route_constants.dart';
 import '../utils/constants.dart';
+import '../widgets/ui/app_bar_title.dart';
 
 class ErrorPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("bloc | error"),
+        title: AppBarTitle(title: "error"),
+        titleSpacing: 0,
       ),
       backgroundColor: Constants.background,
       body: Padding(
@@ -22,12 +24,12 @@ class ErrorPage extends StatelessWidget {
             children: [
               Text(
                 'Uh-oh! It appears that the URL you entered is dancing to its own beat and doesn\'t want to be found. 💀'.toLowerCase(),
-                style: TextStyle(fontSize: 22, color: Constants.primary),
+                style: const TextStyle(fontSize: 22, color: Constants.primary),
               ),
               const SizedBox(height: 16),
               Text(
                 'click to get back on track!'.toLowerCase(),
-                style: TextStyle(fontSize: 16, color: Constants.primary),
+                style: const TextStyle(fontSize: 16, color: Constants.primary),
               ),
               const SizedBox(height: 16),
               ButtonWidget(

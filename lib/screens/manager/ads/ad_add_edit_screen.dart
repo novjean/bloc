@@ -1,14 +1,19 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:bloc/helpers/firestorage_helper.dart';
 import 'package:bloc/helpers/fresh.dart';
 import 'package:bloc/widgets/ui/app_bar_title.dart';
 import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:multi_select_flutter/dialog/multi_select_dialog_field.dart';
 import 'package:multi_select_flutter/util/multi_select_item.dart';
 import 'package:multi_select_flutter/util/multi_select_list_type.dart';
+import 'package:path/path.dart';
+import 'package:path_provider/path_provider.dart';
 
 import '../../../db/entity/ad.dart';
 import '../../../db/entity/party.dart';
@@ -16,6 +21,8 @@ import '../../../helpers/firestore_helper.dart';
 import '../../../services/notification_service.dart';
 import '../../../utils/constants.dart';
 import '../../../utils/logx.dart';
+import '../../../utils/string_utils.dart';
+import '../../../widgets/profile_widget.dart';
 import '../../../widgets/ui/button_widget.dart';
 import '../../../widgets/ui/textfield_widget.dart';
 
@@ -32,12 +39,13 @@ class AdAddEditScreen extends StatefulWidget {
 
 class _AdAddEditScreenState extends State<AdAddEditScreen> {
   static const String _TAG = 'AdAddEditScreen';
+  bool testMode = false;
 
   List<Party> mParties = [];
   List<Party> sParties = [];
   var _isPartiesLoading = true;
 
-  bool testMode = true;
+  String imagePath = '';
 
   @override
   void initState() {
@@ -85,6 +93,40 @@ class _AdAddEditScreenState extends State<AdAddEditScreen> {
       physics: const BouncingScrollPhysics(),
       children: [
         const SizedBox(height: 15),
+        ProfileWidget(
+          imagePath: imagePath.isEmpty ? widget.ad.imageUrl : imagePath,
+          isEdit: true,
+          onClicked: () async {
+            final image = await ImagePicker().pickImage(
+                source: ImageSource.gallery,
+                imageQuality: 95,
+                maxWidth: 768);
+            if (image == null) return;
+
+            final directory = await getApplicationDocumentsDirectory();
+            final name = basename(image.path);
+            final imageFile = File('${directory.path}/$name');
+            final newImage = await File(image.path).copy(imageFile.path);
+
+            String oldImageUrl = widget.ad.imageUrl;
+
+            if(oldImageUrl.isNotEmpty){
+              FirestorageHelper.deleteFile(oldImageUrl);
+            }
+
+            String newImageUrl = await FirestorageHelper.uploadFile(
+                FirestorageHelper.AD_IMAGES,
+                StringUtils.getRandomString(28),
+                newImage);
+            widget.ad = widget.ad.copyWith(imageUrl: newImageUrl);
+
+            setState(() {
+              imagePath = imageFile.path;
+            });
+          },
+        ),
+
+        const SizedBox(height: 24,),
         TextFieldWidget(
           label: 'title *',
           text: widget.ad.title,
@@ -194,19 +236,13 @@ class _AdAddEditScreenState extends State<AdAddEditScreen> {
                     title: widget.ad.title,
                     body: widget.ad.message,
                     actionButtons: [
-                      // NotificationActionButton(key: 'REDIRECT', label: 'Redirect'),
-                      // NotificationActionButton(
-                      //     key: 'REPLY',
-                      //     label: 'Reply Message',
-                      //     requireInputText: true,
-                      //     actionType: ActionType.SilentAction
-                      // ),
                       NotificationActionButton(
                           key: 'DISMISS',
                           label: 'Dismiss',
                           actionType: ActionType.DismissAction,
                           isDangerousOption: true)
-                    ]);
+                    ]
+                );
               } else {
                 Map<String, dynamic> objectMap = widget.ad.toMap();
                 String jsonString = jsonEncode(objectMap);
@@ -215,25 +251,14 @@ class _AdAddEditScreenState extends State<AdAddEditScreen> {
                     title: widget.ad.title,
                     body: widget.ad.message,
                     bigPicture: widget.ad.imageUrl,
+                    largeIcon: widget.ad.imageUrl,
                     notificationLayout: NotificationLayout.BigPicture,
                     payload: {
                       "navigate": "true",
                       "type": "ad",
                       "data": jsonString,
                     },
-                    actionButtons: [
-                      NotificationActionButton(
-                        key: 'check',
-                        label: 'Check it out',
-                        actionType: ActionType.SilentAction,
-                        color: Colors.green,
-                      ),
-                      NotificationActionButton(
-                          key: 'DISMISS',
-                          label: 'Dismiss',
-                          actionType: ActionType.DismissAction,
-                          isDangerousOption: true)
-                    ]);
+                );
               }
             }
           },
@@ -242,8 +267,10 @@ class _AdAddEditScreenState extends State<AdAddEditScreen> {
         ButtonWidget(
           text: 'delete',
           onClicked: () {
+            if(widget.ad.imageUrl.isNotEmpty){
+              FirestorageHelper.deleteFile(widget.ad.imageUrl);
+            }
             FirestoreHelper.deleteAd(widget.ad.id);
-
             Navigator.of(context).pop();
           },
         ),

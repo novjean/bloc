@@ -79,13 +79,13 @@ class BlocRouter {
                             Fresh.freshUserMap(data, true);
                         UserPreferences.setUser(user);
 
-                        return MainScreen();
+                        return const MainScreen();
                       }
                       return const LoadingWidget();
                     },
                   );
                 } else {
-                  return LoginScreen(
+                  return const LoginScreen(
                     shouldTriggerSkip: true,
                   );
                 }

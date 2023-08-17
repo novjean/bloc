@@ -1,6 +1,4 @@
 import 'package:bloc/utils/date_time_utils.dart';
-import 'package:bloc/utils/file_utils.dart';
-import 'package:bloc/widgets/ui/button_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -92,7 +90,7 @@ class PartyItem extends StatelessWidget {
                               children: <TextSpan>[
                                 TextSpan(
                                     text: party.chapter == 'I'
-                                        ? ''
+                                        ? ' '
                                         : party.chapter,
                                     style: const TextStyle(
                                       fontFamily: Constants.fontDefault,

@@ -61,22 +61,18 @@ class _ArtistScreenState extends State<ArtistScreen> {
     return Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.black,
-          title: InkWell(
-              onTap: () {
-                if(UserPreferences.isUserLoggedIn()){
-                  GoRouter.of(context)
-                      .pushNamed(RouteConstants.homeRouteName);
-                } else {
-                  GoRouter.of(context)
-                      .pushNamed(RouteConstants.landingRouteName);
-                }
-              },
-              child: AppBarTitle (title: mParty.name.toLowerCase())),
+          title: AppBarTitle (title: mParty.name.toLowerCase()),
           titleSpacing: 0,
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
             onPressed: () {
-              Navigator.of(context).pop();
+              if(UserPreferences.isUserLoggedIn()){
+                GoRouter.of(context)
+                    .pushNamed(RouteConstants.homeRouteName);
+              } else {
+                GoRouter.of(context)
+                    .pushNamed(RouteConstants.landingRouteName);
+              }
             },
           ),
         ),
@@ -133,7 +129,7 @@ class _ArtistScreenState extends State<ArtistScreen> {
                         children: [
                           ButtonWidget(
                               text:
-                                  'listen' + findListenSource(mParty.listenUrl),
+                                  'listen${findListenSource(mParty.listenUrl)}',
                               onClicked: () {
                                 final uri = Uri.parse(mParty.listenUrl);
                                 NetworkUtils.launchInBrowser(uri);

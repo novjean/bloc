@@ -164,7 +164,7 @@ class _EventScreenState extends State<EventScreen> {
                               children: <TextSpan>[
                                 TextSpan(
                                     text: mParty.chapter == 'I'
-                                        ? ''
+                                        ? ' '
                                         : mParty.chapter,
                                     style: const TextStyle(
                                         fontFamily: Constants.fontDefault,
@@ -211,11 +211,11 @@ class _EventScreenState extends State<EventScreen> {
                     : const SizedBox(),
                 const SizedBox(height: 10),
                 mParty.instagramUrl.isNotEmpty?
-                Row(
+                const Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                      padding: EdgeInsets.symmetric(horizontal: 15.0),
                       child: Text('links',
                           style: TextStyle(
                               color: Constants.lightPrimary,
@@ -246,8 +246,6 @@ class _EventScreenState extends State<EventScreen> {
                     ),
                   ],
                 ):const SizedBox(),
-
-
                 const SizedBox(height: 15.0),
                 kIsWeb ? const StoreBadgeItem() : const SizedBox(),
                 const SizedBox(height: 10.0),

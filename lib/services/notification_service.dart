@@ -108,15 +108,13 @@ class NotificationService {
             Ad ad = Fresh.freshAdMap(jsonDecode(payload['data']!), false);
             BuildContext? appContext = BlocApp.navigatorKey.currentContext;
 
-            try {
+            if(ad.partyName.isNotEmpty && ad.partyChapter.isNotEmpty){
               GoRouter.of(appContext!).pushNamed(RouteConstants.eventRouteName,
                   params: {
                     'partyName': ad.partyName,
                     'partyChapter': ad.partyChapter
                   });
-            } catch(e) {
-              Logx.em(_TAG, e.toString());
-
+            } else {
               if (UserPreferences.isUserLoggedIn()) {
                 GoRouter.of(appContext!).pushNamed(RouteConstants.homeRouteName);
               } else {
@@ -136,14 +134,6 @@ class NotificationService {
           break;
       }
     }
-
-    // if (payload["navigate"] == "true") {
-    //   BlocApp.navigatorKey.currentState?.push(
-    //     MaterialPageRoute(
-    //       builder: (_) => const LoginScreen(shouldTriggerSkip: false),
-    //     ),
-    //   );
-    // }
   }
 
   static Future<void> showNotification({
@@ -205,19 +195,14 @@ class NotificationService {
           title: ad.title,
           body: ad.message,
           bigPicture: ad.imageUrl,
+          largeIcon: ad.imageUrl,
           notificationLayout: NotificationLayout.BigPicture,
           payload: {
             "navigate": "true",
             "type": "ad",
             "data": jsonString,
           },
-          actionButtons: [
-            // NotificationActionButton(
-            //     key: 'DISMISS',
-            //     label: 'dismiss',
-            //     actionType: ActionType.DismissAction,
-            //     isDangerousOption: true)
-          ]);
+      );
     }
   }
 

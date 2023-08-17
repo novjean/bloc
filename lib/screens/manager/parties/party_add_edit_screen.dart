@@ -324,6 +324,12 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
                           StringUtils.getRandomString(28),
                           newImage);
 
+                      if(oldImageUrl.isNotEmpty){
+                        FirestorageHelper.deleteFile(oldImageUrl);
+                      }
+
+                      widget.party = widget.party.copyWith(imageUrl: newImageUrl);
+
                       setState(() {
                         imagePath = imageFile.path;
                         isPhotoChanged = true;
