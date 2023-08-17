@@ -1,4 +1,5 @@
 import 'package:bloc/db/entity/party_photo.dart';
+import 'package:bloc/db/shared_preferences/user_preferences.dart';
 import 'package:bloc/utils/date_time_utils.dart';
 import 'package:bloc/widgets/ui/blurred_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -60,44 +61,6 @@ class _PhotosScreenState extends State<PhotosScreen> {
       body: _isPartyPhotosLoading? const LoadingWidget()
           : (showList ? _showPhotosListView(mPartyPhotos) : _showPhotosGridView(mPartyPhotos)),
     );
-  }
-
-  _buildPhotos(BuildContext context) {
-    return StreamBuilder<QuerySnapshot>(
-        stream: FirestoreHelper.getPartyPhotos(),
-        builder: (ctx, snapshot) {
-          switch (snapshot.connectionState) {
-            case ConnectionState.waiting:
-            case ConnectionState.none:
-              return const LoadingWidget();
-            case ConnectionState.active:
-            case ConnectionState.done:
-              {
-                List<PartyPhoto> photos = [];
-
-                try {
-                  for (int i = 0; i < snapshot.data!.docs.length; i++) {
-                    DocumentSnapshot document = snapshot.data!.docs[i];
-                    Map<String, dynamic> map =
-                        document.data()! as Map<String, dynamic>;
-                    final PartyPhoto photo = Fresh.freshPartyPhotoMap(map, false);
-                    photos.add(photo);
-                  }
-
-                  if (showList) {
-                    return _showPhotosListView(photos);
-                  } else {
-                    return _showPhotosGridView(photos);
-                  }
-                } on Exception catch (e, s) {
-                  Logx.e(_TAG, e, s);
-                } catch (e) {
-                  Logx.em(_TAG, 'error loading photos : $e');
-                }
-              }
-          }
-          return const LoadingWidget();
-        });
   }
 
   _showPhotosGridView(List<PartyPhoto> photos) {
@@ -217,7 +180,7 @@ class _PhotosScreenState extends State<PhotosScreen> {
                   padding:
                       const EdgeInsets.only(bottom: 10, left: 10, right: 10),
                   child: Text(
-                    '${partyPhoto.partyName}',
+                    partyPhoto.partyName,
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
                         fontSize: 20, fontWeight: FontWeight.bold),
@@ -245,6 +208,13 @@ class _PhotosScreenState extends State<PhotosScreen> {
             ),
           ),
           actions: [
+            UserPreferences.myUser.clearanceLevel>=Constants.ADMIN_LEVEL?
+            TextButton(
+              child: const Text("advertise"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ):const SizedBox(),
             TextButton(
               child: const Text("close"),
               onPressed: () {

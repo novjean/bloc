@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'dart:ui';
 
 import 'package:bloc/db/shared_preferences/user_preferences.dart';
@@ -7,9 +6,6 @@ import 'package:bloc/utils/date_time_utils.dart';
 import 'package:bloc/utils/file_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:http/http.dart' as http;
-import 'package:path_provider/path_provider.dart';
-import 'package:share_plus/share_plus.dart';
 
 import '../../db/entity/party_photo.dart';
 import '../../main.dart';
@@ -170,8 +166,8 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
                               }
                             },
                             child: isLoved
-                                ? Icon(Icons.favorite, size: 24.0)
-                                : Icon(Icons.favorite_border, size: 24.0)),
+                                ? const Icon(Icons.favorite, size: 24.0)
+                                : const Icon(Icons.favorite_border, size: 24.0)),
                       ),
                       Padding(
                         padding: const EdgeInsets.only(left: 15.0),
@@ -188,7 +184,7 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
                                 Logx.ist(_TAG, 'please login to share the photo');
                               }
                             },
-                            child:Icon(Icons.share_outlined, size: 24.0))
+                            child:const Icon(Icons.share_outlined, size: 24.0))
                       ),
                       Padding(
                         padding: const EdgeInsets.only(left: 15),

@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:bloc/db/entity/celebration.dart';
 import 'package:bloc/db/entity/lounge_chat.dart';
 import 'package:bloc/db/entity/user.dart' as blocUser;
@@ -17,7 +16,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_slider_drawer/flutter_slider_drawer.dart';
 import 'package:go_router/go_router.dart';
 import 'package:upgrader/upgrader.dart';
@@ -91,10 +89,9 @@ class _MainScreenState extends State<MainScreen> {
           user.isIos = Theme.of(context).platform == TargetPlatform.iOS;
         }
 
+        UserPreferences.setUser(user);
         FirestoreHelper.pushUser(user);
         Logx.i(_TAG, '${user.phoneNumber} is now registered with bloc!');
-
-        UserPreferences.setUser(user);
 
         // lets grab more user details
         Navigator.of(context).push(
@@ -279,34 +276,6 @@ class _MainScreenState extends State<MainScreen> {
       }
     }
     super.initState();
-  }
-
-  void _handleMessage(RemoteMessage message) {
-
-    if (UserPreferences.myUser.id.isNotEmpty) {
-      GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
-    } else {
-      GoRouter.of(context).pushNamed(RouteConstants.loginRouteName, params: {
-        'skip': 'true',
-      });
-    }
-
-    // if(message.data['type'] == 'ads'){
-    //
-    // }
-
-    // if (message.data['type'] == 'party_guest') {
-    //   Navigator.of(context).push(
-    //     MaterialPageRoute(builder: (ctx) => HomeScreen()
-    //       // MainScreen(user: UserPreferences.myUser,)
-    //     ),
-    //   );
-    // } else {
-    //   Navigator.of(context).push(
-    //     MaterialPageRoute(builder: (ctx) => LoginScreen(shouldTriggerSkip: false)
-    //     ),
-    //   );
-    // }
   }
 
   @override

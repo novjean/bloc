@@ -5,6 +5,7 @@ import 'package:bloc/widgets/ui/app_bar_title.dart';
 import 'package:bloc/widgets/ui/toaster.dart';
 import 'package:delayed_display/delayed_display.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
@@ -17,8 +18,11 @@ import '../../helpers/firestorage_helper.dart';
 import '../../helpers/firestore_helper.dart';
 import '../../helpers/fresh.dart';
 import '../../main.dart';
+import '../../routes/route_constants.dart';
 import '../../utils/constants.dart';
+import '../../utils/file_utils.dart';
 import '../../utils/logx.dart';
+import '../../utils/number_utils.dart';
 import '../../utils/string_utils.dart';
 import '../../widgets/profile_widget.dart';
 import '../../widgets/ui/button_widget.dart';
@@ -157,9 +161,7 @@ class _ProfileAddEditRegisterPageState
                       onChanged: (String? newValue) {
                         setState(() {
                           sGender = newValue!;
-
-                          widget.user =
-                              widget.user.copyWith(gender: sGender);
+                          widget.user = widget.user.copyWith(gender: sGender);
                           state.didChange(newValue);
                         });
                       },
@@ -202,8 +204,8 @@ class _ProfileAddEditRegisterPageState
           ],
         ),
         ButtonWidget(
-          text: 'save',
-          onClicked: () {
+          text: '💾 save',
+          onClicked: () async {
             // we should have some validation here
             if (isDataValid()) {
               User freshUser = Fresh.freshUser(widget.user);
@@ -216,9 +218,18 @@ class _ProfileAddEditRegisterPageState
                 userLounge = userLounge.copyWith(userId: widget.user.id,
                     loungeId: Constants.blocCommunityLoungeId);
                 FirestoreHelper.pushUserLounge(userLounge);
-              }
 
-              Navigator.of(context).pop();
+                UserPreferences.setNewUser(false);
+
+                if(freshUser.imageUrl.isEmpty){
+                  _uploadRandomPhoto(freshUser);
+                }
+
+                Logx.ist(_TAG, 'hey there, welcome to bloc! 🦖');
+                GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
+              } else {
+                Navigator.of(context).pop();
+              }
             } else {
               Logx.i(_TAG,'user cannot be entered as data is incomplete');
               Toaster.longToast('please enter your name');
@@ -227,6 +238,29 @@ class _ProfileAddEditRegisterPageState
         ),
       ],
     );
+  }
+
+  void _uploadRandomPhoto(blocUser.User user) async {
+    String assetFileName = '';
+
+    int photoNum = NumberUtils.generateRandomNumber(1,5);
+    if(user.gender == 'male'){
+    } else {
+      photoNum += 10;
+    }
+    assetFileName = 'assets/profile_photos/$photoNum.png';
+
+    File imageFile = await FileUtils.getAssetImageAsFile(assetFileName);
+    String imageUrl = await FirestorageHelper.uploadFile(
+        FirestorageHelper.USER_IMAGES,
+        StringUtils.getRandomString(28),
+        imageFile);
+
+    user = user.copyWith(imageUrl: imageUrl);
+    FirestoreHelper.pushUser(user);
+    UserPreferences.setUser(user);
+
+    Logx.i(_TAG, 'user default photo added.');
   }
 
   bool isDataValid() {

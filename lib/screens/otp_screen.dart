@@ -1,6 +1,7 @@
 import 'package:bloc/db/entity/user.dart' as blocUser;
 import 'package:bloc/db/shared_preferences/ui_preferences.dart';
 import 'package:bloc/helpers/dummy.dart';
+import 'package:bloc/screens/profile/profile_add_edit_register_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:delayed_display/delayed_display.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -54,7 +55,7 @@ class _OTPScreenState extends State<OTPScreen> {
   _verifyPhone() async {
     if (kIsWeb) {
       await FirebaseAuth.instance
-          .signInWithPhoneNumber('${widget.phone}', null)
+          .signInWithPhoneNumber(widget.phone, null)
           .then((user) {
         Logx.i(_TAG,
             'signInWithPhoneNumber: user verification id ${user.verificationId}');
@@ -66,7 +67,7 @@ class _OTPScreenState extends State<OTPScreen> {
       });
     } else {
       await FirebaseAuth.instance.verifyPhoneNumber(
-          phoneNumber: '${widget.phone}',
+          phoneNumber: widget.phone,
           verificationCompleted: (PhoneAuthCredential credential) async {
             Logx.i(_TAG,
                 'verifyPhoneNumber: ${widget.phone} is verified. attempting sign in with credentials...');
@@ -118,7 +119,6 @@ class _OTPScreenState extends State<OTPScreen> {
                     image: DecorationImage(
                         image: AssetImage("assets/icons/logo-adaptive.png"),
                         fit: BoxFit.fitHeight
-                        // AssetImage(food['image']),
                         ),
                   ),
                 ),
@@ -302,8 +302,8 @@ class _OTPScreenState extends State<OTPScreen> {
                                       for (int i = 0; i < res.docs.length; i++) {
                                         DocumentSnapshot document = res.docs[i];
                                         Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-                                        final PromoterGuest pg = Fresh.freshPromoterGuestMap(data, false);
-                                        pg.copyWith(blocUserId: value.user!.uid);
+                                        PromoterGuest pg = Fresh.freshPromoterGuestMap(data, false);
+                                        pg = pg.copyWith(blocUserId: value.user!.uid);
                                         FirestoreHelper.pushPromoterGuest(pg);
                                       }
                                     }
@@ -312,8 +312,16 @@ class _OTPScreenState extends State<OTPScreen> {
 
                               user = user.copyWith(id: value.user!.uid,
                                   fcmToken: fcmToken);
-                              FirestoreHelper.pushUser(user);
+                              user.lastSeenAt = Timestamp.now().millisecondsSinceEpoch;
+                              if (UserPreferences.isUserLoggedIn()) {
+                                if (kIsWeb) {
+                                  user.isAppUser = false;
+                                } else {
+                                  user.isAppUser = true;
+                                }
+                              }
 
+                              FirestoreHelper.pushUser(user);
                               UserPreferences.setUser(user);
                               UiPreferences.setHomePageIndex(0);
 
@@ -324,16 +332,26 @@ class _OTPScreenState extends State<OTPScreen> {
                               Logx.i(_TAG, 'user is not already registered in bloc, registering...');
 
                               blocUser.User registeredUser = Dummy.getDummyUser();
-                              registeredUser.copyWith(id: value.user!.uid,
+                              registeredUser = registeredUser.copyWith(id: value.user!.uid,
                                   phoneNumber: StringUtils.getInt(value.user!.phoneNumber!),
                                   fcmToken: fcmToken!);
 
+                              if (kIsWeb) {
+                                registeredUser.isAppUser = false;
+                              } else {
+                                registeredUser.isAppUser = true;
+                                registeredUser.isIos = Theme.of(context).platform == TargetPlatform.iOS;
+                              }
+
+                              FirestoreHelper.pushUser(registeredUser);
                               UserPreferences.setUser(registeredUser);
                               UiPreferences.setHomePageIndex(0);
 
-                              Logx.ist(_TAG, 'hey there, welcome to bloc! 🦖');
-
-                              GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        ProfileAddEditRegisterPage(user: registeredUser, task: 'register')),
+                              );
                             }
                           });
                         } else {
@@ -347,13 +365,19 @@ class _OTPScreenState extends State<OTPScreen> {
                           blocUser.User user;
                           if (kIsWeb) {
                             user = Fresh.freshUserMap(data, true);
+                            user.isAppUser = false;
                           } else {
+
                             user = Fresh.freshUserMap(data, false);
                             user.fcmToken = fcmToken!;
-                            FirestoreHelper.pushUser(user);
+                            user.isAppUser = true;
                           }
+
+                          user.lastSeenAt = Timestamp.now().millisecondsSinceEpoch;
+                          FirestoreHelper.pushUser(user);
                           UserPreferences.setUser(user);
                           UiPreferences.setHomePageIndex(0);
+
                           GoRouter.of(context)
                               .pushNamed(RouteConstants.homeRouteName);
 

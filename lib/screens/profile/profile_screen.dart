@@ -77,30 +77,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
-  void _uploadRandomPhoto(blocUser.User user) async {
-    String assetFileName = '';
-
-    int photoNum = NumberUtils.generateRandomNumber(1,5);
-    if(user.gender == 'male'){
-    } else {
-      photoNum += 10;
-    }
-    assetFileName = 'assets/profile_photos/$photoNum.png';
-
-    File imageFile = await FileUtils.getAssetImageAsFile(assetFileName);
-    String imageUrl = await FirestorageHelper.uploadFile(
-        FirestorageHelper.USER_IMAGES,
-        StringUtils.getRandomString(28),
-        imageFile);
-
-    user = user.copyWith(imageUrl: imageUrl);
-    FirestoreHelper.pushUser(user);
-    UserPreferences.setUser(user);
-
-    Logx.i(_TAG, 'user default photo added.');
-  }
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -225,7 +201,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               textStyle: TextStyle(color: Colors.white))),
                     ]),
               )
-            : const SizedBox()
+            : const Padding(
+          padding: EdgeInsets.only(left: 15.0, top: 5),
+          child: Text(
+            'Events slippin\' by, you watchin\' distant. register for events and see your chart grow',
+            textAlign: TextAlign.start,
+            style: TextStyle(color: Constants.primary, fontSize: 16),
+          ),
+        )
 
         // const SizedBox(height: 48),
         // buildAbout(user),
@@ -268,6 +251,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
           },
         ),
       );
+
+  void _uploadRandomPhoto(blocUser.User user) async {
+    String assetFileName = '';
+
+    int photoNum = NumberUtils.generateRandomNumber(1,5);
+    if(user.gender == 'male'){
+    } else {
+      photoNum += 10;
+    }
+    assetFileName = 'assets/profile_photos/$photoNum.png';
+
+    File imageFile = await FileUtils.getAssetImageAsFile(assetFileName);
+    String imageUrl = await FirestorageHelper.uploadFile(
+        FirestorageHelper.USER_IMAGES,
+        StringUtils.getRandomString(28),
+        imageFile);
+
+    user = user.copyWith(imageUrl: imageUrl);
+    FirestoreHelper.pushUser(user);
+    UserPreferences.setUser(user);
+
+    Logx.i(_TAG, 'user default photo added.');
+  }
 
   Widget buildAbout(blocUser.User user) => Container(
         padding: EdgeInsets.symmetric(horizontal: 48),

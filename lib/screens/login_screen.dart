@@ -259,9 +259,6 @@ class _LoginScreenState extends State<LoginScreen> {
         await FirebaseAuth.instance
             .signInWithPhoneNumber('${phone}', null)
             .then((user) {
-          debugPrint('signInWithPhoneNumber: user verification id ' +
-              user.verificationId);
-
           signInToSkipBloc(user.verificationId);
         }).catchError((e) {
           Logx.em(_TAG, e.toString());
