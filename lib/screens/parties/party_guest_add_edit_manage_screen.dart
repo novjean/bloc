@@ -1235,6 +1235,10 @@ class _PartyGuestAddEditManageScreenState
           ),
           actions: [
             TextButton(
+        style: ButtonStyle(
+        backgroundColor: MaterialStateProperty.all<Color>(Constants
+            .darkPrimary), // Set your desired background color
+        ),
               onPressed: () {
                 Navigator.of(context).pop();
 
@@ -1252,7 +1256,7 @@ class _PartyGuestAddEditManageScreenState
                 _showRulesConfirmationDialog(context, false);
               },
               child: const Text('👍 done',
-                  style: TextStyle(color: Constants.background)),
+                  style: TextStyle(color: Constants.primary)),
             ),
           ],
         );
@@ -1274,7 +1278,7 @@ class _PartyGuestAddEditManageScreenState
           shape: const RoundedRectangleBorder(
               borderRadius: BorderRadius.all(Radius.circular(20.0))),
           contentPadding: const EdgeInsets.all(16.0),
-          content: Container(
+          content: SizedBox(
             width: double.maxFinite,
             child: ListView(
               shrinkWrap: true,
@@ -1288,6 +1292,10 @@ class _PartyGuestAddEditManageScreenState
           ),
           actions: [
             TextButton(
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all<Color>(Constants
+                    .darkPrimary), // Set your desired background color
+              ),
               onPressed: () {
                 if (isNewUser) {
                   PartyGuest freshPartyGuest =
@@ -1378,7 +1386,7 @@ class _PartyGuestAddEditManageScreenState
                 }
               },
               child: const Text('👍 accept',
-                  style: TextStyle(color: Constants.background)),
+                  style: TextStyle(color: Constants.primary)),
             ),
           ],
         );
@@ -1421,7 +1429,7 @@ class _PartyGuestAddEditManageScreenState
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
-              title: Text(
+              title: const Text(
                 '#blocCommunity support & win 🎟️',
                 textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 22, color: Colors.black),
@@ -1430,7 +1438,7 @@ class _PartyGuestAddEditManageScreenState
               shape: const RoundedRectangleBorder(
                   borderRadius: BorderRadius.all(Radius.circular(20.0))),
               contentPadding: const EdgeInsets.all(16.0),
-              content: Container(
+              content: SizedBox(
                 width: double.maxFinite,
                 child: ListView(
                   shrinkWrap: true,
@@ -1459,8 +1467,12 @@ class _PartyGuestAddEditManageScreenState
                 ),
                 challenge.dialogAccept2Text.isNotEmpty
                     ? TextButton(
+                        style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all<Color>(Constants
+                            .darkPrimary), // Set your desired background color
+                        ),
                         child: Text(challenge.dialogAccept2Text,
-                            style: TextStyle(color: Constants.background)),
+                            style: TextStyle(color: Constants.primary)),
                         onPressed: () async {
                           Logx.ist(_TAG, 'thank you for supporting us!');
 
@@ -1496,8 +1508,12 @@ class _PartyGuestAddEditManageScreenState
                       )
                     : const SizedBox(),
                 TextButton(
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all<Color>(Constants
+                        .darkPrimary), // Set your desired background color
+                  ),
                   child: Text(challenge.dialogAcceptText,
-                      style: TextStyle(color: Constants.background)),
+                      style: TextStyle(color: Constants.primary)),
                   onPressed: () async {
                     Logx.ist(_TAG, 'thank you for supporting us!');
 
