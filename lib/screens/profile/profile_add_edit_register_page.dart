@@ -218,7 +218,7 @@ class _ProfileAddEditRegisterPageState
                 userLounge = userLounge.copyWith(userId: widget.user.id,
                     loungeId: Constants.blocCommunityLoungeId);
                 FirestoreHelper.pushUserLounge(userLounge);
-                
+
                 if(freshUser.imageUrl.isEmpty){
                   _uploadRandomPhoto(freshUser);
                 }
