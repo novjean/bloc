@@ -86,7 +86,11 @@ class _MainScreenState extends State<MainScreen> {
           user.isAppUser = false;
         } else {
           user.isAppUser = true;
-          user.isIos = Theme.of(context).platform == TargetPlatform.iOS;
+          user = user.copyWith(
+            isAppUser: true,
+            appVersion: Constants.appVersion,
+            isIos: Theme.of(context).platform == TargetPlatform.iOS,
+          );
         }
 
         UserPreferences.setUser(user);
