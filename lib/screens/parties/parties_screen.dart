@@ -128,9 +128,13 @@ class _PartiesScreenState extends State<PartiesScreen> {
       } else {
         Logx.i(_TAG, 'no party guest requests found!');
         const SizedBox();
-        setState(() {
-          _isPartyGuestsLoading = false;
-        });
+        if(mounted){
+          setState(() {
+            _isPartyGuestsLoading = false;
+          });
+        } else {
+          Logx.em(_TAG, 'not mounted');
+        }
       }
     });
 
