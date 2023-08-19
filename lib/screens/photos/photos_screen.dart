@@ -1,6 +1,4 @@
-import 'dart:convert';
 
-import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:bloc/db/entity/party_photo.dart';
 import 'package:bloc/db/shared_preferences/user_preferences.dart';
 import 'package:bloc/utils/date_time_utils.dart';
@@ -14,11 +12,9 @@ import '../../helpers/dummy.dart';
 import '../../helpers/firestore_helper.dart';
 import '../../helpers/fresh.dart';
 import '../../main.dart';
-import '../../services/notification_service.dart';
 import '../../utils/challenge_utils.dart';
 import '../../utils/constants.dart';
 import '../../utils/file_utils.dart';
-import '../../utils/logx.dart';
 import '../../utils/network_utils.dart';
 import '../../widgets/footer.dart';
 import '../../widgets/photo/party_photo_item.dart';
@@ -242,6 +238,22 @@ class _PhotosScreenState extends State<PhotosScreen> {
               onPressed: () {
                 Navigator.of(context).pop();
               },
+            ), 
+            Padding(
+              padding: const EdgeInsets.only(right: 5.0, left: 10),
+              child: TextButton(
+                child: const Text("🪂 share"),
+                onPressed: () {
+                  int fileNum = index + 1;
+                  String fileName = '${partyPhoto.partyName} $fileNum';
+                  String shareText = 'hey. check out this photo and more of ${partyPhoto.partyName} at the official bloc app. Step into the moment. 📸 \n\n🌏 https://bloc.bar/#/\n📱 https://bloc.bar/app_store.html\n\n#blocCommunity ❤️‍🔥';
+
+                  FileUtils.sharePhoto(partyPhoto.id,
+                      partyPhoto.imageUrl, fileName, shareText);
+
+                  Navigator.of(context).pop();
+                },
+              ),
             ),
             TextButton(
               style: ButtonStyle(
