@@ -63,7 +63,7 @@ class _CaptainOrdersScreenState extends State<CaptainOrdersScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('captain | orders'),
+        title: const Text('captain orders'),
       ),
       // drawer: AppDrawer(),
       body: isTablesLoading

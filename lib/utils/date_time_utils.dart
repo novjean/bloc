@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/src/material/time.dart';
 import 'package:intl/intl.dart';
 
-
 class DateTimeUtils {
   static const String _TAG = 'DateTimeUtils';
 

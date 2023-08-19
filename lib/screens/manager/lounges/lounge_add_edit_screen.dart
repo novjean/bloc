@@ -14,11 +14,13 @@ import 'package:path_provider/path_provider.dart';
 
 import '../../../db/entity/lounge.dart';
 
+import '../../../db/entity/lounge_chat.dart';
 import '../../../db/entity/user.dart';
 import '../../../helpers/firestorage_helper.dart';
 import '../../../helpers/firestore_helper.dart';
 import '../../../helpers/fresh.dart';
 import '../../../utils/constants.dart';
+import '../../../utils/date_time_utils.dart';
 import '../../../utils/logx.dart';
 import '../../../utils/string_utils.dart';
 import '../../../widgets/profile_widget.dart';
@@ -401,6 +403,13 @@ class _LoungeAddEditScreenState extends State<LoungeAddEditScreen> {
             const SizedBox(height: 36),
             DarkButtonWidget(
                 height: 50,
+                text: 'delete chat photos',
+                onClicked: () {
+                  _deleteOldPhotoChats(context);
+                }),
+            const SizedBox(height: 36),
+            DarkButtonWidget(
+                height: 50,
                 text: 'delete',
                 onClicked: () {
                   showDeleteDialog(context);
@@ -439,5 +448,24 @@ class _LoungeAddEditScreenState extends State<LoungeAddEditScreen> {
         );
       },
     );
+  }
+
+  void _deleteOldPhotoChats(BuildContext context) {
+    FirestoreHelper.pullLoungePhotoChats(widget.lounge.id).then((res) {
+      if(res.docs.isNotEmpty){
+        int now = Timestamp.now().millisecondsSinceEpoch;
+
+        for (int i = 0; i < res.docs.length; i++) {
+          DocumentSnapshot document = res.docs[i];
+          Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+          final LoungeChat chat = Fresh.freshLoungeChatMap(data, false);
+
+          if(now - chat.time > (DateTimeUtils.millisecondsWeek * 2)){
+            FirestorageHelper.deleteFile(chat.message);
+            FirestoreHelper.deleteLoungeChat(chat.id);
+          }
+        }
+      }
+    });
   }
 }

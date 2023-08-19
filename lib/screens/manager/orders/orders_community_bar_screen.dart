@@ -29,7 +29,7 @@ class _OrdersCommunityBarScreenState extends State<OrdersCommunityBarScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.titleHead + ' | Community'),
+        title: Text(widget.titleHead + ' | community'),
       ),
       body: _buildBody(context),
     );

@@ -52,19 +52,15 @@ class _AdAddEditScreenState extends State<AdAddEditScreen> {
     int timeNow = Timestamp.now().millisecondsSinceEpoch;
     FirestoreHelper.pullPartiesByEndTime(timeNow, true).then((res) {
       if (res.docs.isNotEmpty) {
-        List<Party> parties = [];
-
         for (int i = 0; i < res.docs.length; i++) {
           DocumentSnapshot document = res.docs[i];
           Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
           final Party party = Fresh.freshPartyMap(data, false);
           mParties.add(party);
-
-          setState(() {
-            mParties = parties;
-            _isPartiesLoading = false;
-          });
         }
+        setState(() {
+          _isPartiesLoading = false;
+        });
       } else {
         Logx.i(_TAG, 'no parties found!');
         setState(() {
