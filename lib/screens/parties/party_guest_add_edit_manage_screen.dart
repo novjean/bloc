@@ -1516,7 +1516,7 @@ class _PartyGuestAddEditManageScreenState
                         .darkPrimary), // Set your desired background color
                   ),
                   child: Text(challenge.dialogAcceptText,
-                      style: TextStyle(color: Constants.primary)),
+                      style: const TextStyle(color: Constants.primary)),
                   onPressed: () async {
                     Logx.ist(_TAG, 'thank you for supporting us!');
 

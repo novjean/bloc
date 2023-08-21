@@ -1,4 +1,5 @@
 import 'package:bloc/db/shared_preferences/user_preferences.dart';
+import 'package:bloc/screens/account_screen.dart';
 import 'package:bloc/screens/bloc/bloc_menu_screen.dart';
 import 'package:bloc/screens/box_office/box_office_screen.dart';
 import 'package:bloc/screens/main_screen.dart';
@@ -114,6 +115,13 @@ class BlocRouter {
           path: '/home',
           builder: (context, state) {
             return MainScreen();
+          },
+        ),
+        GoRoute(
+          name: RouteConstants.accountRouteName,
+          path: '/account',
+          builder: (context, state) {
+            return AccountScreen();
           },
         ),
         GoRoute(

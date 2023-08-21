@@ -470,9 +470,7 @@ class _MainScreenState extends State<MainScreen> {
         }
       case 'account':
         {
-          Navigator.of(context).push(
-            MaterialPageRoute(builder: (context) => AccountScreen()),
-          );
+          GoRouter.of(context).pushNamed(RouteConstants.accountRouteName);
           break;
         }
       case 'login':
