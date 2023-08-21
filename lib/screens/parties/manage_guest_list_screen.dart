@@ -11,8 +11,10 @@ import 'package:multi_select_flutter/util/multi_select_item.dart';
 import 'package:multi_select_flutter/util/multi_select_list_type.dart';
 
 import '../../db/entity/party.dart';
+import '../../db/entity/promoter_guest.dart';
 import '../../helpers/fresh.dart';
 import '../../utils/constants.dart';
+import '../../utils/date_time_utils.dart';
 import '../../utils/file_utils.dart';
 import '../../utils/logx.dart';
 import '../../widgets/parties/party_guest_item.dart';
@@ -482,6 +484,56 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
+                              const Text('clean promoter guests'),
+                              SizedBox.fromSize(
+                                size: const Size(50, 50),
+                                child: ClipOval(
+                                  child: Material(
+                                    color: Constants.darkPrimary,
+                                    child: InkWell(
+                                      splashColor: Constants.primary,
+                                      onTap: () {
+                                        Navigator.of(ctx).pop();
+
+                                        FirestoreHelper.pullAllPromoterGuests().then((res) {
+                                          if(res.docs.isNotEmpty){
+
+                                            int now = Timestamp.now().millisecondsSinceEpoch;
+                                            int count = 0;
+
+                                            for (int i = 0; i < res.docs.length; i++) {
+                                              DocumentSnapshot document = res.docs[i];
+                                              Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+                                              final PromoterGuest pg = Fresh.freshPromoterGuestMap(data, false);
+
+                                              if(now - pg.createdAt>2*DateTimeUtils.millisecondsWeek){
+                                                FirestoreHelper.deletePromoterGuest(pg.id);
+                                                count++;
+                                              }
+                                            }
+                                            Logx.ist(_TAG, 'cleaned $count promoter guests');
+                                          } else {
+                                            Logx.ist(_TAG, 'no promoter guests data found');
+                                          }
+                                        });
+                                      },
+                                      child: const Column(
+                                        mainAxisAlignment:
+                                        MainAxisAlignment.center,
+                                        children: <Widget>[
+                                          Icon(Icons.cleaning_services, color: Constants.errorColor),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
+                          const SizedBox(height: 10),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
                               const Text('delete list'),
                               SizedBox.fromSize(
                                 size: const Size(50, 50),
@@ -498,7 +550,7 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
                                         mainAxisAlignment:
                                             MainAxisAlignment.center,
                                         children: <Widget>[
-                                          Icon(Icons.delete_forever),
+                                          Icon(Icons.delete_forever, color: Constants.errorColor,),
                                         ],
                                       ),
                                     ),

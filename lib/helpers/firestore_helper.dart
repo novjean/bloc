@@ -1330,6 +1330,12 @@ class FirestoreHelper {
     }
   }
 
+  static pullAllPromoterGuests() {
+    return FirebaseFirestore.instance
+        .collection(PROMOTER_GUESTS)
+        .get();
+  }
+
   static pullPromoterGuests(String promoterId) {
     return FirebaseFirestore.instance
         .collection(PROMOTER_GUESTS)
@@ -1349,6 +1355,10 @@ class FirestoreHelper {
         .collection(PROMOTER_GUESTS)
         .where('partyGuestId', isEqualTo: partyGuestId)
         .get();
+  }
+
+  static void deletePromoterGuest(String docId) {
+    FirebaseFirestore.instance.collection(PROMOTER_GUESTS).doc(docId).delete();
   }
 
   /** quick order **/
@@ -2087,6 +2097,8 @@ class FirestoreHelper {
   static void deleteUserLounge(String docId) {
     FirebaseFirestore.instance.collection(USER_LOUNGES).doc(docId).delete();
   }
+
+
 
 
 }
