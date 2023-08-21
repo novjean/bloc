@@ -27,6 +27,7 @@ import '../../../utils/logx.dart';
 import '../../../utils/string_utils.dart';
 import '../../../widgets/profile_widget.dart';
 import '../../../widgets/ui/button_widget.dart';
+import '../../../widgets/ui/dark_button_widget.dart';
 import '../../../widgets/ui/textfield_widget.dart';
 import '../../../widgets/ui/toaster.dart';
 
@@ -402,7 +403,7 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
                       return InputDecorator(
                         key: const ValueKey('party_type'),
                         decoration: InputDecoration(
-                            errorStyle: TextStyle(
+                            errorStyle: const TextStyle(
                                 color: Constants.errorColor,
                                 fontSize: 16.0),
                             hintText: 'please select party type',
@@ -989,7 +990,7 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
                   return InputDecorator(
                     key: const ValueKey('override_challenge'),
                     decoration: InputDecoration(
-                        errorStyle: TextStyle(
+                        errorStyle: const TextStyle(
                             color: Constants.errorColor,
                             fontSize: 16.0),
                         hintText: 'please select override challenge',
@@ -1052,6 +1053,21 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
               ),
               const SizedBox(height: 24),
               ButtonWidget(
+                text: 'change week',
+                onClicked: () {
+                  int newStartTime = widget.party.startTime + DateTimeUtils.millisecondsWeek;
+                  int newEndTime = widget.party.endTime + DateTimeUtils.millisecondsWeek;
+                  int newGuestListEndTime = widget.party.guestListEndTime + DateTimeUtils.millisecondsWeek;
+
+                  Party freshParty = Fresh.freshParty(widget.party);
+                  freshParty = freshParty.copyWith(startTime: newStartTime, endTime: newEndTime, guestListEndTime: newGuestListEndTime);
+                  FirestoreHelper.pushParty(freshParty);
+
+                  Navigator.of(context).pop();
+                },
+              ),
+              const SizedBox(height: 36),
+              DarkButtonWidget(
                 text: 'delete',
                 onClicked: () {
                   if(widget.party.imageUrl.isNotEmpty){
@@ -1063,7 +1079,7 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
                   Navigator.of(context).pop();
                 },
               ),
-              const SizedBox(height: 5),
+              const SizedBox(height: 10),
             ],
           );
   }
