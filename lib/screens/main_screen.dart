@@ -301,64 +301,69 @@ class _MainScreenState extends State<MainScreen> {
           dialogStyle: Theme.of(context).platform == TargetPlatform.iOS
               ? UpgradeDialogStyle.cupertino
               : UpgradeDialogStyle.material),
-      child: Scaffold(
-        backgroundColor: Constants.background,
-        body: SliderDrawer(
-            appBar: SliderAppBar(
-                appBarColor: Colors.black,
-                appBarHeight: kIsWeb ? 60 : 100,
-                appBarPadding: kIsWeb
-                    ? (const EdgeInsets.only(top: 10))
-                    : (const EdgeInsets.only(top: 50)),
-                drawerIconColor: Constants.primary,
-                drawerIconSize: 35,
-                isTitleCenter: false,
-                trailing: Padding(
-                  padding: const EdgeInsets.only(right: 10.0),
-                  child: IconButton(icon: const Icon(Icons.brightness_low_outlined, color: Constants.primary,),
-                    onPressed: () async {
-                      _showAdsDialog(context);
-                    },),
-                ),
-                title: const Padding (
-                  padding: kIsWeb
-                      ? EdgeInsets.only(top: 10.0, left: 20)
-                      : EdgeInsets.only(left: 15, top: 5.0),
-                  child: Text('bloc.',
-                      style: TextStyle(
-                          color: Constants.primary,
-                          fontSize: 24,
-                          fontWeight: FontWeight.w500)),
-                )),
-            key: _sliderDrawerKey,
-            sliderOpenSize: 179,
-            slider: _SliderView(
-              onItemClick: (title) {
-                handleAppDrawerClick(context, title);
-              },
+      child: WillPopScope(
+        onWillPop: () async {
+          return false;
+        },
+        child: Scaffold(
+          backgroundColor: Constants.background,
+          body: SliderDrawer(
+              appBar: SliderAppBar(
+                  appBarColor: Colors.black,
+                  appBarHeight: kIsWeb ? 60 : 100,
+                  appBarPadding: kIsWeb
+                      ? (const EdgeInsets.only(top: 10))
+                      : (const EdgeInsets.only(top: 50)),
+                  drawerIconColor: Constants.primary,
+                  drawerIconSize: 35,
+                  isTitleCenter: false,
+                  trailing: Padding(
+                    padding: const EdgeInsets.only(right: 10.0),
+                    child: IconButton(icon: const Icon(Icons.brightness_low_outlined, color: Constants.primary,),
+                      onPressed: () async {
+                        _showAdsDialog(context);
+                      },),
+                  ),
+                  title: const Padding (
+                    padding: kIsWeb
+                        ? EdgeInsets.only(top: 10.0, left: 20)
+                        : EdgeInsets.only(left: 15, top: 5.0),
+                    child: Text('bloc.',
+                        style: TextStyle(
+                            color: Constants.primary,
+                            fontSize: 24,
+                            fontWeight: FontWeight.w500)),
+                  )),
+              key: _sliderDrawerKey,
+              sliderOpenSize: 179,
+              slider: _SliderView(
+                onItemClick: (title) {
+                  handleAppDrawerClick(context, title);
+                },
+              ),
+              child: PageView(
+                physics: const NeverScrollableScrollPhysics(),
+                controller: _pageController,
+                onPageChanged: onPageChanged,
+                children: List.generate(5, (index) => pages[index]),
+              )),
+          bottomNavigationBar: BottomAppBar(
+            elevation: 1,
+            color: Colors.black,
+            shape: const CircularNotchedRectangle(),
+            child: Row(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: <Widget>[
+                // SizedBox(width: 7),
+                buildTabIcon(0),
+                buildTabIcon(1),
+                buildTabIcon(2),
+                buildTabIcon(3),
+                buildTabIcon(4),
+                // SizedBox(width: 7),
+              ],
             ),
-            child: PageView(
-              physics: const NeverScrollableScrollPhysics(),
-              controller: _pageController,
-              onPageChanged: onPageChanged,
-              children: List.generate(5, (index) => pages[index]),
-            )),
-        bottomNavigationBar: BottomAppBar(
-          elevation: 1,
-          color: Colors.black,
-          shape: const CircularNotchedRectangle(),
-          child: Row(
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: <Widget>[
-              // SizedBox(width: 7),
-              buildTabIcon(0),
-              buildTabIcon(1),
-              buildTabIcon(2),
-              buildTabIcon(3),
-              buildTabIcon(4),
-              // SizedBox(width: 7),
-            ],
           ),
         ),
       ),
