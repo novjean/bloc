@@ -6,6 +6,9 @@ import 'package:bloc/utils/string_utils.dart';
 import 'package:bloc/widgets/ui/app_bar_title.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:multi_select_flutter/dialog/multi_select_dialog_field.dart';
+import 'package:multi_select_flutter/util/multi_select_item.dart';
+import 'package:multi_select_flutter/util/multi_select_list_type.dart';
 
 import '../../db/entity/party.dart';
 import '../../helpers/fresh.dart';
@@ -26,6 +29,7 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
 
   var _isPartiesLoading = true;
   List<Party> mParties = [];
+  List<Party> sParties = [];
 
   Party sParty = Dummy.getDummyParty('');
   String sPartyName = 'all';
@@ -121,21 +125,21 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
             key: const ValueKey('parties_key'),
             decoration: InputDecoration(
                 fillColor: Colors.white,
-                errorStyle: TextStyle(
-                    color: Theme.of(context).errorColor, fontSize: 16.0),
+                errorStyle: const TextStyle(
+                    color: Constants.errorColor, fontSize: 16.0),
                 hintText: 'please select party',
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(5.0),
-                  borderSide: BorderSide(color: Theme.of(context).primaryColor),
+                  borderSide: const BorderSide(color: Constants.primary),
                 ),
-                enabledBorder: OutlineInputBorder(
+                enabledBorder: const OutlineInputBorder(
                   borderSide: BorderSide(
-                      color: Theme.of(context).primaryColor, width: 0.0),
+                      color: Constants.primary, width: 0.0),
                 )),
             isEmpty: sPartyName == '',
             child: DropdownButtonHideUnderline(
               child: DropdownButton<String>(
-                style: TextStyle(color: Theme.of(context).primaryColor),
+                style: const TextStyle(color: Constants.primary),
                 dropdownColor: Constants.background,
                 value: sPartyName,
                 isDense: true,
@@ -144,7 +148,7 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
                     sPartyName = newValue!;
 
                     for (Party party in mParties) {
-                      if (party.name + ' ' + party.chapter == sPartyName) {
+                      if ('${party.name} ${party.chapter}' == sPartyName) {
                         sPartyId = party.id;
                         sParty = party;
                         break;
@@ -449,6 +453,35 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
+                              const Text('move list'),
+                              SizedBox.fromSize(
+                                size: const Size(50, 50),
+                                child: ClipOval(
+                                  child: Material(
+                                    color: Constants.primary,
+                                    child: InkWell(
+                                      splashColor: Constants.darkPrimary,
+                                      onTap: () async {
+                                        Navigator.of(ctx).pop();
+                                        _showMoveGuestList(context);
+                                      },
+                                      child: const Column(
+                                        mainAxisAlignment:
+                                        MainAxisAlignment.center,
+                                        children: <Widget>[
+                                          Icon(Icons.multiple_stop),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
+                          const SizedBox(height: 30),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
                               const Text('delete list'),
                               SizedBox.fromSize(
                                 size: const Size(50, 50),
@@ -529,5 +562,76 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
             ],
           );
         });
+  }
+
+  _showMoveGuestList(BuildContext context) {
+    return showDialog(
+      context: context,
+      builder: (BuildContext ctx) {
+        return AlertDialog(
+          contentPadding: const EdgeInsets.all(16.0),
+          content: SizedBox(
+            height: 100,
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Text('select move to party'),
+                  MultiSelectDialogField(
+                    items: mParties
+                        .map((e) => MultiSelectItem(e, '${e.name} ${e.chapter}'))
+                        .toList(),
+                    initialValue: sParties.map((e) => e).toList(),
+                    listType: MultiSelectListType.CHIP,
+                    buttonIcon: Icon(
+                      Icons.arrow_drop_down,
+                      color: Colors.grey.shade700,
+                    ),
+                    title: const Text('pick a party'),
+                    buttonText: const Text(
+                      'select',
+                      style: TextStyle(color: Constants.darkPrimary),
+                    ),
+                    decoration: BoxDecoration(
+                      borderRadius: const BorderRadius.all(Radius.circular(5)),
+                      border: Border.all(
+                        width: 0.0,
+                      ),
+                    ),
+                    searchable: true,
+                    onConfirm: (values) {
+                      sParties = values as List<Party>;
+
+                      if (sParties.isNotEmpty) {
+                        Party sParty = sParties.first;
+
+                        for(PartyGuest pg in mPartyGuests){
+                          pg = pg.copyWith(partyId: sParty.id);
+                          FirestoreHelper.pushPartyGuest(pg);
+                        }
+
+                        Logx.ist(_TAG, 'moved ${mPartyGuests.length} guests to ${sParty.name}');
+                        Navigator.of(ctx).pop();
+                      } else {
+                        Logx.ist(_TAG, 'move to party needs to be selected');
+                      }
+                    },
+                  ),
+
+                ],
+              ),
+            ),
+          ),
+          actions: [
+            TextButton(
+              child: const Text('cancel'),
+              onPressed: () {
+                Navigator.of(ctx).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 }
