@@ -38,6 +38,7 @@ import '../../main.dart';
 import '../../routes/route_constants.dart';
 import '../../utils/challenge_utils.dart';
 import '../../utils/constants.dart';
+import '../../utils/date_time_utils.dart';
 import '../../utils/file_utils.dart';
 import '../../utils/logx.dart';
 import '../../utils/network_utils.dart';
@@ -203,14 +204,14 @@ class _PartyGuestAddEditManageScreenState
       if (res.docs.isNotEmpty) {
         // found parties
         List<Party> parties = [];
-        List<String> _partyNames = ['all'];
+        List<String> partyNames = ['all'];
         for (int i = 0; i < res.docs.length; i++) {
           DocumentSnapshot document = res.docs[i];
           Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
           final Party party = Fresh.freshPartyMap(data, true);
           parties.add(party);
           String partyTitle = '${party.name} ${party.chapter}';
-          _partyNames.add(partyTitle);
+          partyNames.add(partyTitle);
 
           if (party.id == sPartyId) {
             sPartyName = partyTitle;
@@ -219,7 +220,7 @@ class _PartyGuestAddEditManageScreenState
         }
         setState(() {
           mParties = parties;
-          mPartyNames = _partyNames;
+          mPartyNames = partyNames;
           _isPartiesLoading = false;
         });
       } else {
@@ -1265,6 +1266,8 @@ class _PartyGuestAddEditManageScreenState
   }
 
   _showRulesConfirmationDialog(BuildContext context, bool isNewUser) {
+    String guestListRules = widget.party.guestListRules.replaceAll('{}', DateTimeUtils.getFormattedTime2(widget.party.guestListEndTime));
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -1284,7 +1287,7 @@ class _PartyGuestAddEditManageScreenState
               shrinkWrap: true,
               children: [
                 const Text('entry rules:\n'),
-                Text(widget.party.guestListRules.toLowerCase()),
+                Text(guestListRules.toLowerCase()),
                 const Text('\nclub rules:\n'),
                 Text(widget.party.clubRules.toLowerCase()),
               ],
