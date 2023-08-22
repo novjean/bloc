@@ -129,6 +129,10 @@ class _PartyGuestAddEditManageScreenState
       mBlocUser = UserPreferences.myUser;
     }
 
+    if(mBlocUser.clearanceLevel < Constants.PROMOTER_LEVEL){
+      _guestStatuses.removeLast();
+    }
+
     if (widget.partyGuest.guestId.isEmpty && widget.task != 'add') {
       // this is promoter guest ideology, and not having to make the call for no guest id
       int phoneNumber = 0;

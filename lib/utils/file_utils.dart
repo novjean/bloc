@@ -87,6 +87,29 @@ class FileUtils {
     return tempFile;
   }
 
+  static Future<File> getImageCompressed(String filePath, int minHeight, int maxHeight, int quality) async {
+    // Load the asset image data
+    File file = File(filePath);
+    final Uint8List bytes = await file.readAsBytes();
+
+    // Get a temporary directory to store the compressed image
+    var temp = await getTemporaryDirectory();
+    final path = '${temp.path}/temp_image.png';
+    final tempFile = File(path);
+
+    // Compress and write the image to the temporary file
+    final compressedImage = await FlutterImageCompress.compressWithList(
+      bytes,
+      minHeight: minHeight,
+      minWidth: maxHeight,
+      quality: quality,
+    );
+
+    await tempFile.writeAsBytes(compressedImage);
+
+    return tempFile;
+  }
+
   static void sharePhoto(String id, String urlImage, String fileName, String shareText) async {
     final Uri url = Uri.parse(urlImage);
     final response = await http.get(url);

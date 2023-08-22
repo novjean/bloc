@@ -187,7 +187,7 @@ class _PhotosScreenState extends State<PhotosScreen> {
               borderRadius: BorderRadius.all(Radius.circular(20.0))),
           contentPadding: const EdgeInsets.all(16.0),
           content: SizedBox(
-            height: mq.height * 0.5,
+            height: mq.height * 0.6,
             width: mq.width * 0.9,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
