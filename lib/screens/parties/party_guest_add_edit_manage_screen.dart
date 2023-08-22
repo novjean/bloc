@@ -28,6 +28,7 @@ import '../../db/entity/party.dart';
 import '../../db/entity/party_guest.dart';
 import '../../db/entity/party_interest.dart';
 import '../../db/entity/promoter.dart';
+import '../../db/entity/reservation.dart';
 import '../../db/entity/user.dart' as blocUser;
 import '../../db/shared_preferences/party_guest_preferences.dart';
 import '../../db/shared_preferences/user_preferences.dart';
@@ -399,7 +400,7 @@ class _PartyGuestAddEditManageScreenState
                             child: Text(
                               'phone number \*',
                               style: TextStyle(
-                                  color: Theme.of(context).primaryColorLight,
+                                  color: Constants.lightPrimary,
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold),
                             ),
@@ -469,7 +470,7 @@ class _PartyGuestAddEditManageScreenState
                           Text(
                             'gender *',
                             style: TextStyle(
-                                color: Theme.of(context).primaryColorLight,
+                                color: Constants.lightPrimary,
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold),
                           ),
@@ -498,7 +499,7 @@ class _PartyGuestAddEditManageScreenState
                           child: DropdownButtonHideUnderline(
                             child: DropdownButton<String>(
                               style: TextStyle(
-                                  color: Theme.of(context).primaryColorLight),
+                                  color: Constants.lightPrimary),
                               dropdownColor: Constants.background,
                               value: _sGender,
                               isDense: true,
@@ -603,7 +604,7 @@ class _PartyGuestAddEditManageScreenState
                           Text(
                             'number of guests',
                             style: TextStyle(
-                                color: Theme.of(context).primaryColorLight,
+                                color: Constants.lightPrimary,
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold),
                           ),
@@ -676,12 +677,12 @@ class _PartyGuestAddEditManageScreenState
                             onChanged: (value) {},
                           ),
                           const SizedBox(height: 24),
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 10),
+                          const Padding(
+                            padding: EdgeInsets.only(bottom: 10),
                             child: Text(
                               'party',
                               style: TextStyle(
-                                  color: Theme.of(context).primaryColorLight,
+                                  color: Constants.lightPrimary,
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold),
                             ),
@@ -703,13 +704,13 @@ class _PartyGuestAddEditManageScreenState
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Padding(
-                                padding: const EdgeInsets.only(bottom: 10),
+                              const Padding(
+                                padding: EdgeInsets.only(bottom: 10),
                                 child: Text(
                                   'challenge level *',
                                   style: TextStyle(
                                       color:
-                                          Theme.of(context).primaryColorLight,
+                                          Constants.lightPrimary,
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold),
                                 ),
@@ -937,7 +938,7 @@ class _PartyGuestAddEditManageScreenState
                   Padding(
                     padding: const EdgeInsets.only(right: 42, bottom: 5),
                     child: DelayedDisplay(
-                      delay: Duration(seconds: 1),
+                      delay: const Duration(seconds: 1),
                       child: Text(
                         widget.task == 'manage'
                             ? mBlocUser.appVersion
@@ -1204,7 +1205,7 @@ class _PartyGuestAddEditManageScreenState
     });
   }
 
-  void _showGuestsEntryDialog(BuildContext context) {
+  _showGuestsEntryDialog(BuildContext context) {
     int guestCount = widget.partyGuest.guestsCount - 1;
 
     List<String> guestNames = [];
@@ -1215,10 +1216,10 @@ class _PartyGuestAddEditManageScreenState
 
     showDialog(
       context: context,
-      builder: (BuildContext context) {
+      builder: (BuildContext ctx) {
         return AlertDialog(
           title: Text(
-            '👫 Express Entry: Save Time at the Gate by Entering Guest Details!'
+            '👫 Roll in smooth: add guests now'
                 .toLowerCase(),
             textAlign: TextAlign.center,
             style: const TextStyle(fontSize: 22, color: Colors.black),
@@ -1247,7 +1248,7 @@ class _PartyGuestAddEditManageScreenState
                     Constants.darkPrimary), // Set your desired background color
               ),
               onPressed: () {
-                Navigator.of(context).pop();
+                Navigator.of(ctx).pop();
 
                 List<String> guestNames =
                     PartyGuestPreferences.getListGuestNames();
@@ -1260,8 +1261,8 @@ class _PartyGuestAddEditManageScreenState
                 widget.partyGuest =
                     widget.partyGuest.copyWith(guestNames: names);
 
-                _showRulesConfirmationDialog(context, false);
-              },
+                _showReserveTableDialog(context);
+                },
               child: const Text('👍 done',
                   style: TextStyle(color: Constants.primary)),
             ),
@@ -1455,7 +1456,7 @@ class _PartyGuestAddEditManageScreenState
                   children: [
                     Text(
                       '${challenge.dialogTitle}:\n',
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                      style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
                     Text(challenge.description.toLowerCase()),
                   ],
@@ -1472,7 +1473,6 @@ class _PartyGuestAddEditManageScreenState
                         .pushNamed(RouteConstants.homeRouteName);
                     GoRouter.of(context)
                         .pushNamed(RouteConstants.boxOfficeRouteName);
-                    // showReserveTableDialog(context);
                   },
                 ),
                 challenge.dialogAccept2Text.isNotEmpty
@@ -1483,7 +1483,7 @@ class _PartyGuestAddEditManageScreenState
                                   .darkPrimary), // Set your desired background color
                         ),
                         child: Text(challenge.dialogAccept2Text,
-                            style: TextStyle(color: Constants.primary)),
+                            style: const TextStyle(color: Constants.primary)),
                         onPressed: () async {
                           Logx.ist(_TAG, 'thank you for supporting us!');
 
@@ -1618,101 +1618,83 @@ class _PartyGuestAddEditManageScreenState
     }
   }
 
-  // showReserveTableDialog(BuildContext context) {
-  //   return showDialog(
-  //     context: context,
-  //     builder: (BuildContext ctx) {
-  //       return AlertDialog(
-  //         backgroundColor: Constants.lightPrimary,
-  //         shape: const RoundedRectangleBorder(
-  //             borderRadius: BorderRadius.all(Radius.circular(20.0))),
-  //         contentPadding: const EdgeInsets.all(16.0),
-  //         content: SizedBox(
-  //           height: mq.height * 0.25,
-  //           width: double.maxFinite,
-  //           child: Column(
-  //             children: [
-  //               Padding(
-  //                 padding: const EdgeInsets.only(bottom: 20),
-  //                 child:
-  //                 Text(
-  //                   'reserve table | ${widget.party.name}',
-  //                   maxLines: 2,
-  //                   overflow: TextOverflow.ellipsis,
-  //                   textAlign: TextAlign.center,
-  //                   style: const TextStyle(fontSize: 18),
-  //                 ),
-  //               ),
-  //               SizedBox(
-  //                 height: mq.height * 0.2,
-  //                 width: mq.width * 0.7,
-  //                 child: const SingleChildScrollView(
-  //                   child: Column(
-  //                     mainAxisSize: MainAxisSize.min,
-  //                     crossAxisAlignment: CrossAxisAlignment.start,
-  //                     mainAxisAlignment: MainAxisAlignment.start,
-  //                     children: [
-  //                       Text(
-  //                           'reserve your table at the trendiest club in town and let us take care of every detail, so you can focus on enjoying a wonderful evening with your loved ones.'),
-  //                     ],
-  //                   ),
-  //                 ),
-  //               ),
-  //             ],
-  //           ),
-  //         ),
-  //         actions: [
-  //           TextButton(
-  //             child: const Text('close', style: TextStyle(color: Constants.background),),
-  //             onPressed: () {
-  //               Navigator.of(ctx).pop();
-  //
-  //               UserPreferences.setUser(bloc_user);
-  //               GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
-  //               GoRouter.of(context)
-  //                   .pushNamed(RouteConstants.boxOfficeRouteName);
-  //             },
-  //           ),
-  //           TextButton(
-  //             child: const Text("reserve my table", style: TextStyle(color: Constants.background)),
-  //             onPressed: () {
-  //               Reservation reservation =
-  //                   Dummy.getDummyReservation(Constants.blocServiceId);
-  //               reservation =
-  //                   reservation.copyWith(customerId: widget.partyGuest.guestId);
-  //               reservation = reservation.copyWith(
-  //                   name:
-  //                       '${widget.partyGuest.name} ${widget.partyGuest.surname}');
-  //               int? phoneNumber = int.tryParse(widget.partyGuest.phone);
-  //               reservation = reservation.copyWith(phone: phoneNumber);
-  //
-  //               reservation =
-  //                   reservation.copyWith(arrivalDate: widget.party.startTime);
-  //               reservation = reservation.copyWith(
-  //                   arrivalTime: DateTimeUtils.getFormattedTime2(
-  //                       widget.party.startTime));
-  //
-  //               reservation = reservation.copyWith(
-  //                   guestsCount: widget.partyGuest.guestsCount);
-  //
-  //               Navigator.of(ctx).pop();
-  //               Navigator.of(context).pop();
-  //
-  //               UserPreferences.setUser(bloc_user);
-  //               GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
-  //
-  //               Navigator.of(context).push(
-  //                 MaterialPageRoute(
-  //                     builder: (ctx) => ReservationAddEditScreen(
-  //                         reservation: reservation, task: 'add')),
-  //               );
-  //             },
-  //           ),
-  //         ],
-  //       );
-  //     },
-  //   );
-  // }
+  _showReserveTableDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext ctx) {
+        return AlertDialog(
+          backgroundColor: Constants.lightPrimary,
+          shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(20.0))),
+          contentPadding: const EdgeInsets.all(16.0),
+          content: SizedBox(
+            height: mq.height * 0.5,
+            width: double.maxFinite,
+            child: ListView(
+              children: const [
+                Padding(
+                  padding: EdgeInsets.only(bottom: 20),
+                  child:
+                  Text(
+                    'VIP table? Confirm your throne spot! 👑',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 22, color: Colors.black),
+                  ),
+                ),
+
+                Text(
+                    'you\'re makin\' moves at the event, and you\'ll need that table locked, loaded, and ready for the squad. Secure the vibes, reserve a table – it\'s gonna be one for the books! Reserve your table?'),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              child: const Text('cancel',
+                style: TextStyle(color: Constants.background),),
+              onPressed: () {
+                Navigator.of(ctx).pop();
+
+                _showRulesConfirmationDialog(context, false);
+              },
+            ),
+            TextButton(
+              style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.all<Color>(
+              Constants.darkPrimary), // Set your desired background color
+              ),
+              child: const Text("🛎️ reserve my table",
+                  style: TextStyle(color: Constants.primary)),
+              onPressed: () {
+                Navigator.of(ctx).pop();
+
+                int? phoneNumber = int.tryParse(widget.partyGuest.phone);
+
+                Reservation reservation = Dummy.getDummyReservation(Constants.blocServiceId);
+                reservation = reservation.copyWith(
+                    customerId: widget.partyGuest.guestId,
+                    name:
+                    '${widget.partyGuest.name} ${widget.partyGuest.surname}',
+                    phone: phoneNumber,
+                    arrivalDate: widget.party.startTime,
+                    arrivalTime: DateTimeUtils.getFormattedTime2(widget.party.startTime),
+                    guestsCount: widget.partyGuest.guestsCount,
+                  blocServiceId: widget.party.blocServiceId,
+                );
+
+                if(!testMode){
+                  FirestoreHelper.pushReservation(reservation);
+                }
+
+                Logx.ilt(_TAG, '👑 your table reservation confirmation is at the box office!');
+                _showRulesConfirmationDialog(context, false);
+
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   findChallengeUrl() {
     String url = ChallengeUtils.challengeUrl(findChallenge());
@@ -2113,58 +2095,6 @@ class _PartyGuestAddEditManageScreenState
             ),
           );
         },
-      ),
-    );
-  }
-
-  _showPhoneNumberEntry() {
-    return Container(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 32.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 24),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 10),
-              child: Text(
-                'phone number \*',
-                style: TextStyle(
-                    color: Theme.of(context).primaryColorLight,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold),
-              ),
-            ),
-            IntlPhoneField(
-              style: const TextStyle(color: Constants.primary, fontSize: 18),
-              decoration: const InputDecoration(
-                  labelText: '',
-                  labelStyle: TextStyle(color: Constants.primary),
-                  hintStyle: TextStyle(color: Constants.primary),
-                  counterStyle: TextStyle(color: Constants.primary),
-                  border: OutlineInputBorder(
-                    borderSide: BorderSide(color: Constants.primary),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide:
-                        BorderSide(color: Constants.primary, width: 0.0),
-                  )),
-              controller: _controller,
-              initialCountryCode: 'IN',
-              dropdownTextStyle:
-                  const TextStyle(color: Constants.primary, fontSize: 18),
-              pickerDialogStyle:
-                  PickerDialogStyle(backgroundColor: Constants.primary),
-              onChanged: (phone) {
-                Logx.i(_TAG, phone.completeNumber);
-                completePhoneNumber = phone.completeNumber;
-              },
-              onCountryChanged: (country) {
-                Logx.i(_TAG, 'country changed to: ${country.name}');
-              },
-            ),
-          ],
-        ),
       ),
     );
   }
