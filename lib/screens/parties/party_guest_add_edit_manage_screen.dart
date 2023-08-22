@@ -159,14 +159,14 @@ class _PartyGuestAddEditManageScreenState
         if (res.docs.isNotEmpty) {
           DocumentSnapshot document = res.docs[0];
           Map<String, dynamic> map = document.data()! as Map<String, dynamic>;
-          final blocUser.User _user = Fresh.freshUserMap(map, true);
+          final blocUser.User user = Fresh.freshUserMap(map, true);
 
           setState(() {
-            if (_user.phoneNumber == Constants.skipPhoneNumber) {
+            if (user.phoneNumber == Constants.skipPhoneNumber) {
               //user will be the dummy
               isLoggedIn = false;
             } else {
-              mBlocUser = _user;
+              mBlocUser = user;
               isLoggedIn = true;
             }
             _isCustomerLoading = false;

@@ -99,7 +99,7 @@ class _ArtistScreenState extends State<ArtistScreen> {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 10),
                 width: double.infinity,
-                child: Text(mParty.name.toLowerCase(),
+                child: Text('${mParty.name.toLowerCase()} ${mParty.chapter}',
                     textAlign: TextAlign.start,
                     softWrap: true,
                     style: TextStyle(
