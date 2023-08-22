@@ -129,7 +129,7 @@ class _PartyGuestAddEditManageScreenState
       mBlocUser = UserPreferences.myUser;
     }
 
-    if(mBlocUser.clearanceLevel < Constants.PROMOTER_LEVEL){
+    if (mBlocUser.clearanceLevel < Constants.PROMOTER_LEVEL) {
       _guestStatuses.removeLast();
     }
 
@@ -935,12 +935,14 @@ class _PartyGuestAddEditManageScreenState
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   Padding(
-                    padding: EdgeInsets.only(right: 42, bottom: 5),
+                    padding: const EdgeInsets.only(right: 42, bottom: 5),
                     child: DelayedDisplay(
                       delay: Duration(seconds: 1),
                       child: Text(
-                        widget.task =='manage' ? mBlocUser.appVersion: "* required",
-                        style: TextStyle(
+                        widget.task == 'manage'
+                            ? mBlocUser.appVersion
+                            : "* required",
+                        style: const TextStyle(
                           color: Constants.primary,
                         ),
                       ),
@@ -1240,10 +1242,10 @@ class _PartyGuestAddEditManageScreenState
           ),
           actions: [
             TextButton(
-        style: ButtonStyle(
-        backgroundColor: MaterialStateProperty.all<Color>(Constants
-            .darkPrimary), // Set your desired background color
-        ),
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all<Color>(
+                    Constants.darkPrimary), // Set your desired background color
+              ),
               onPressed: () {
                 Navigator.of(context).pop();
 
@@ -1270,7 +1272,8 @@ class _PartyGuestAddEditManageScreenState
   }
 
   _showRulesConfirmationDialog(BuildContext context, bool isNewUser) {
-    String guestListRules = widget.party.guestListRules.replaceAll('{}', DateTimeUtils.getFormattedTime2(widget.party.guestListEndTime));
+    String guestListRules = widget.party.guestListRules.replaceAll(
+        '{}', DateTimeUtils.getFormattedTime2(widget.party.guestListEndTime));
 
     showDialog(
       context: context,
@@ -1300,8 +1303,8 @@ class _PartyGuestAddEditManageScreenState
           actions: [
             TextButton(
               style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all<Color>(Constants
-                    .darkPrimary), // Set your desired background color
+                backgroundColor: MaterialStateProperty.all<Color>(
+                    Constants.darkPrimary), // Set your desired background color
               ),
               onPressed: () {
                 if (isNewUser) {
@@ -1475,8 +1478,9 @@ class _PartyGuestAddEditManageScreenState
                 challenge.dialogAccept2Text.isNotEmpty
                     ? TextButton(
                         style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all<Color>(Constants
-                            .darkPrimary), // Set your desired background color
+                          backgroundColor: MaterialStateProperty.all<Color>(
+                              Constants
+                                  .darkPrimary), // Set your desired background color
                         ),
                         child: Text(challenge.dialogAccept2Text,
                             style: TextStyle(color: Constants.primary)),
@@ -1914,24 +1918,44 @@ class _PartyGuestAddEditManageScreenState
                           'checking for bloc registration, id ${value.user!.uid}');
 
                       FirestoreHelper.pullUser(value.user!.uid).then((res) {
-                        Logx.i(_TAG,
-                            "successfully retrieved bloc user for id ${value.user!.uid}");
-
                         if (res.docs.isEmpty) {
                           Logx.i(_TAG,
                               'user is not already registered in bloc, registering...');
 
-                          mBlocUser.id = value.user!.uid;
-                          mBlocUser.phoneNumber =
-                              StringUtils.getInt(value.user!.phoneNumber!);
+                          mBlocUser = mBlocUser.copyWith(
+                            id: value.user!.uid,
+                            name: widget.partyGuest.name,
+                            surname: widget.partyGuest.surname,
+                            gender: widget.partyGuest.gender,
+                            phoneNumber:
+                                StringUtils.getInt(value.user!.phoneNumber!),
+                          );
+
+                          if (kIsWeb) {
+                            mBlocUser = mBlocUser.copyWith(isAppUser: false);
+                          } else {
+                            mBlocUser = mBlocUser.copyWith(
+                              isAppUser: true,
+                              appVersion: Constants.appVersion,
+                              isIos: Theme.of(context).platform ==
+                                  TargetPlatform.iOS,
+                            );
+                          }
 
                           FirestoreHelper.pushUser(mBlocUser);
                           Logx.i(_TAG, 'registered user ${mBlocUser.id}');
 
+                          UserLounge userLounge = Dummy.getDummyUserLounge();
+                          userLounge = userLounge.copyWith(
+                              userId: mBlocUser.id,
+                              loungeId: Constants.blocCommunityLoungeId);
+                          FirestoreHelper.pushUserLounge(userLounge);
+
                           UserPreferences.setUser(mBlocUser);
-                          widget.partyGuest.guestId = mBlocUser.id;
-                          widget.partyGuest.phone =
-                              mBlocUser.phoneNumber.toString();
+
+                          widget.partyGuest = widget.partyGuest.copyWith(
+                              guestId: mBlocUser.id,
+                              phone: mBlocUser.phoneNumber.toString());
 
                           _showRulesConfirmationDialog(context, true);
                         } else {
@@ -1946,18 +1970,38 @@ class _PartyGuestAddEditManageScreenState
 
                           //update user details
                           int time = Timestamp.now().millisecondsSinceEpoch;
-                          user = user.copyWith(
-                              name: mBlocUser.name,
-                              email: mBlocUser.email,
-                              lastSeenAt: time);
-                          FirestoreHelper.pushUser(user);
+                          user = user.copyWith(lastSeenAt: time);
 
+                          if (user.name.isEmpty) {
+                            user = user.copyWith(name: widget.partyGuest.name);
+                          }
+                          if (user.surname.isEmpty) {
+                            user = user.copyWith(
+                                surname: widget.partyGuest.surname);
+                          }
+                          if (user.email.isEmpty) {
+                            user =
+                                user.copyWith(email: widget.partyGuest.email);
+                          }
+
+                          if (kIsWeb) {
+                            user = user.copyWith(isAppUser: false);
+                          } else {
+                            user = user.copyWith(
+                              isAppUser: true,
+                              appVersion: Constants.appVersion,
+                              isIos: Theme.of(context).platform ==
+                                  TargetPlatform.iOS,
+                            );
+                          }
+
+                          FirestoreHelper.pushUser(user);
                           UserPreferences.setUser(user);
                           mBlocUser = user;
 
-                          widget.partyGuest.guestId = mBlocUser.id;
-                          widget.partyGuest.phone =
-                              mBlocUser.phoneNumber.toString();
+                          widget.partyGuest = widget.partyGuest.copyWith(
+                              guestId: mBlocUser.id,
+                              phone: mBlocUser.phoneNumber.toString());
                           _showRulesConfirmationDialog(context, false);
                         }
                       });
