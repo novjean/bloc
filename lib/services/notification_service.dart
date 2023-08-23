@@ -229,7 +229,7 @@ class NotificationService {
         body: body,
         notificationLayout: NotificationLayout.Messaging,
         payload: {
-          "navigate": "false",
+          "navigate": "true",
           "type": "chat",
           "data": jsonString,
         },
@@ -243,7 +243,7 @@ class NotificationService {
         largeIcon: chat.message,
         notificationLayout: NotificationLayout.Messaging,
         payload: {
-          "navigate": "false",
+          "navigate": "true",
           "type": "chat",
           "data": jsonString,
         },

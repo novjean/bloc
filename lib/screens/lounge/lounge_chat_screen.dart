@@ -535,7 +535,7 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
   Widget _chatInput(BuildContext context) {
     return Padding(
       padding: EdgeInsets.symmetric(
-          vertical: mq.height * .01, horizontal: mq.width * .025),
+          vertical: MediaQuery.of(context).size.height * .01, horizontal: MediaQuery.of(context).size.width * .025),
       child: Row(
         children: [
           //input field & buttons
@@ -547,7 +547,7 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
               child: Row(
                 children: [
                   //adding some space
-                  SizedBox(width: mq.width * .02),
+                  SizedBox(width: MediaQuery.of(context).size.width * .02),
                   Expanded(
                       child: TextField(
                     controller: _textController,
@@ -619,7 +619,7 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
                           color: Constants.primary, size: 26)),
 
                   //adding some space
-                  SizedBox(width: mq.width * .02),
+                  SizedBox(width: MediaQuery.of(context).size.width * .02),
                 ],
               ),
             ),
@@ -700,8 +700,8 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
               borderRadius: BorderRadius.all(Radius.circular(20.0))),
           contentPadding: const EdgeInsets.all(16.0),
           content: SizedBox(
-            height: mq.height * 0.5,
-            width: mq.width * 0.75,
+            height: MediaQuery.of(context).size.height * 0.5,
+            width: MediaQuery.of(context).size.width * 0.75,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
