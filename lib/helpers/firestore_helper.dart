@@ -120,6 +120,7 @@ class FirestoreHelper {
         .collection(ADS)
         .where('blocId', isEqualTo: blocId)
         .where('isActive', isEqualTo: true)
+        .orderBy('createdAt', descending: true)
         .snapshots();
   }
 
@@ -132,12 +133,20 @@ class FirestoreHelper {
         .get();
   }
 
-  static void updateAdHit(String id) async {
-    await FirebaseFirestore.instance
+  static void updateAdHit(String id) {
+    FirebaseFirestore.instance
         .collection(ADS)
         .doc(id)
         .update({"hits": FieldValue.increment(1)},);
   }
+
+  static void updateAdReach(String id) {
+    FirebaseFirestore.instance
+        .collection(ADS)
+        .doc(id)
+        .update({"reach": FieldValue.increment(1)},);
+  }
+
 
   static void deleteAd(String docId) {
     FirebaseFirestore.instance.collection(ADS).doc(docId).delete();
@@ -2105,9 +2114,6 @@ class FirestoreHelper {
   static void deleteUserLounge(String docId) {
     FirebaseFirestore.instance.collection(USER_LOUNGES).doc(docId).delete();
   }
-
-
-
 
 
 }

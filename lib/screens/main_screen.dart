@@ -188,6 +188,8 @@ class _MainScreenState extends State<MainScreen> {
           }
           case 'ads':{
             Ad ad = Fresh.freshAdMap(jsonDecode(data['document']), false);
+            FirestoreHelper.updateAdReach(ad.id);
+
             NotificationService.showAdNotification(ad);
             break;
           }

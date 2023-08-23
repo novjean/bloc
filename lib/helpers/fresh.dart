@@ -75,6 +75,12 @@ class Fresh {
       isModelChanged = true;
     }
     try {
+      ad = ad.copyWith(reach: map['reach'] as int);
+    } catch (e) {
+      Logx.em(_TAG, 'ad reach not exist for ad id: ${ad.id}');
+      isModelChanged = true;
+    }
+    try {
       ad = ad.copyWith(createdAt: map['createdAt'] as int);
     } catch (e) {
       Logx.em(_TAG, 'ad createdAt not exist for ad id: ${ad.id}');
@@ -142,6 +148,11 @@ class Fresh {
       freshAd = freshAd.copyWith(hits: ad.hits);
     } catch (e) {
       Logx.em(_TAG, 'ad hits not exist for ad id: ${ad.id}');
+    }
+    try {
+      freshAd = freshAd.copyWith(reach: ad.reach);
+    } catch (e) {
+      Logx.em(_TAG, 'ad reach not exist for ad id: ${ad.id}');
     }
     try {
       freshAd = freshAd.copyWith(createdAt: ad.createdAt);

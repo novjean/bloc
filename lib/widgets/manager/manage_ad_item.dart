@@ -14,6 +14,8 @@ class ManageAdItem extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
+    double conversion = ad.hits/ad.reach;
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 5.0),
       child: ClipRRect(
@@ -46,7 +48,15 @@ class ManageAdItem extends StatelessWidget{
                     ),
                   ),
 
-                  subtitle: Text('${ad.hits} hits'),
+                  subtitle: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text('${ad.reach} reach'),
+                      Text('${ad.hits} hits'),
+
+                      Text(conversion.toStringAsFixed(2), style: const TextStyle(fontWeight: FontWeight.bold),),
+                    ],
+                  ),
                   trailing: RichText(
                     text: TextSpan(
                       text:
