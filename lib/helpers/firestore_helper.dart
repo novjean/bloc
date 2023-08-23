@@ -592,6 +592,13 @@ class FirestoreHelper {
         .get();
   }
 
+  static pullLoungeChats(String loungeId) {
+    return FirebaseFirestore.instance
+        .collection(LOUNGE_CHATS)
+        .where('loungeId', isEqualTo: loungeId)
+        .get();
+  }
+
   static Stream<QuerySnapshot<Object?>> getLoungeChats(String loungeId) {
     return FirebaseFirestore.instance
         .collection(LOUNGE_CHATS)
