@@ -83,9 +83,11 @@ class _MainScreenState extends State<MainScreen> {
         Logx.i(_TAG, 'user not found, registering ${user.phoneNumber}');
 
         if (kIsWeb) {
-          user.isAppUser = false;
+          user = user.copyWith(
+            isAppUser: false,
+            appVersion: Constants.appVersion,
+          );
         } else {
-          user.isAppUser = true;
           user = user.copyWith(
             isAppUser: true,
             appVersion: Constants.appVersion,
@@ -110,16 +112,23 @@ class _MainScreenState extends State<MainScreen> {
         for (int i = 0; i < res.docs.length; i++) {
           DocumentSnapshot document = res.docs[i];
           Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-          final blocUser.User user = Fresh.freshUserMap(data, false);
+          blocUser.User user = Fresh.freshUserMap(data, false);
           users.add(user);
 
           if (i == res.docs.length - 1) {
             user.lastSeenAt = Timestamp.now().millisecondsSinceEpoch;
             if (UserPreferences.isUserLoggedIn()) {
               if (kIsWeb) {
-                user.isAppUser = false;
+                user = user.copyWith(
+                  isAppUser: false,
+                  appVersion: Constants.appVersion,
+                );
               } else {
-                user.isAppUser = true;
+                user = user.copyWith(
+                  isAppUser: true,
+                  appVersion: Constants.appVersion,
+                  isIos: Theme.of(context).platform == TargetPlatform.iOS,
+                );
               }
             }
             FirestoreHelper.pushUser(user);
@@ -263,21 +272,8 @@ class _MainScreenState extends State<MainScreen> {
       if (user.clearanceLevel >= Constants.MANAGER_LEVEL) {
         fbm.subscribeToTopic('offer');
       }
-
-      if (UserPreferences.isUserLoggedIn()) {
-        // update the user is in app mode
-        blocUser.User user = UserPreferences.myUser;
-        user.isAppUser = true;
-        FirestoreHelper.pushUser(user);
-      }
     } else {
       // in web mode
-      if (UserPreferences.isUserLoggedIn()) {
-        // update the user is in web mode
-        blocUser.User user = UserPreferences.myUser;
-        user.isAppUser = false;
-        FirestoreHelper.pushUser(user);
-      }
     }
     super.initState();
   }

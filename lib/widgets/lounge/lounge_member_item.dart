@@ -1,8 +1,12 @@
+
 import 'package:bloc/db/entity/user_lounge.dart';
 import 'package:bloc/helpers/firestore_helper.dart';
+import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
+import '../../db/entity/genre.dart';
+import '../../db/entity/history_music.dart';
 import '../../db/entity/user.dart';
 import '../../helpers/dummy.dart';
 import '../../helpers/fresh.dart';
@@ -18,17 +22,93 @@ class LoungeMemberItem extends StatefulWidget{
   bool isUserLoungePresent;
   bool isExited;
 
+  bool showHistory;
+  List<Genre> genres;
+
   LoungeMemberItem({Key? key, required this.user, required this.loungeId,
-    required this.isMember, required this.isUserLoungePresent, required this.isExited}) : super(key: key);
+    required this.isMember, required this.isUserLoungePresent,
+    required this.isExited, required this.showHistory, required this.genres
+  }) : super(key: key);
 
   @override
   State<LoungeMemberItem> createState() => _LoungeMemberItemState();
 }
 
 class _LoungeMemberItemState extends State<LoungeMemberItem> {
+  var _isHistoryLoading = true;
+
+  List<HistoryMusic> mHistoryMusics = [];
+  int mTotalEventsCount = 0;
+
+  String genrePercent = '';
+
+  @override
+  void initState() {
+    if(widget.showHistory){
+      FirestoreHelper.pullHistoryMusicByUser(widget.user.id).then((res) {
+        if(res.docs.isNotEmpty){
+          for (int i = 0; i < res.docs.length; i++) {
+            DocumentSnapshot document = res.docs[i];
+            Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+            final HistoryMusic historyMusic = Fresh.freshHistoryMusicMap(data, false);
+            mHistoryMusics.add(historyMusic);
+            mTotalEventsCount += historyMusic.count;
+          }
+
+          mHistoryMusics.sort((a, b) => a.genre.compareTo(b.genre));
+          mHistoryMusics.reversed;
+
+          List<HistoryMusic> finalList = [mHistoryMusics.first];
+
+          HistoryMusic prev = mHistoryMusics.first;
+
+          for(int i=1;i<mHistoryMusics.length;i++){
+            HistoryMusic curr = mHistoryMusics[i];
+
+            if(prev.genre == curr.genre){
+              int newCount = prev.count + curr.count;
+              prev = prev.copyWith(count: newCount);
+              finalList.last = prev;
+
+              FirestoreHelper.deleteHistoryMusic(curr.id);
+            } else {
+              prev = curr;
+              finalList.add(prev);
+            }
+          }
+
+          finalList.sort((a, b) => b.count.compareTo(a.count));
+
+          for(int i=0;i<finalList.length; i++){
+            HistoryMusic hm = finalList[i];
+            genrePercent += '${hm.count} ${hm.genre} | ';
+
+            FirestoreHelper.pushHistoryMusic(hm);
+          }
+
+          genrePercent += 'total: $mTotalEventsCount';
+
+          setState(() {
+            _isHistoryLoading = false;
+          });
+        } else {
+          setState(() {
+            _isHistoryLoading = false;
+          });
+        }
+      });
+    } else {
+      setState(() {
+        _isHistoryLoading = false;
+      });
+    }
+
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Padding(
+    return _isHistoryLoading? const LoadingWidget() : Padding(
       padding: const EdgeInsets.symmetric(horizontal: 5.0),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(15),
@@ -71,7 +151,9 @@ class _LoungeMemberItemState extends State<LoungeMemberItem> {
                     ],
                   ),
 
-                  subtitle: Row(
+                  subtitle: widget.showHistory ?
+                      Text(genrePercent)
+                      : Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children:[
                       Text(widget.user.gender),

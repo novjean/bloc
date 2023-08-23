@@ -1355,20 +1355,42 @@ class _PartyGuestAddEditManageScreenState
                           .then((res) {
                         if (res.docs.isEmpty) {
                           // no history, add new one
-                          HistoryMusic historyMusic =
-                              Dummy.getDummyHistoryMusic();
-                          historyMusic.userId = widget.partyGuest.guestId;
-                          historyMusic.genre = widget.party.genre;
-                          historyMusic.count = 1;
+                          HistoryMusic historyMusic = Dummy.getDummyHistoryMusic();
+
+                          historyMusic = historyMusic.copyWith(userId: widget.partyGuest.guestId,
+                            genre: widget.party.genre,
+                            count: 1
+                          );
                           FirestoreHelper.pushHistoryMusic(historyMusic);
                         } else {
-                          for (int i = 0; i < res.docs.length; i++) {
-                            DocumentSnapshot document = res.docs[i];
-                            Map<String, dynamic> data =
-                                document.data()! as Map<String, dynamic>;
-                            final HistoryMusic historyMusic =
-                                Fresh.freshHistoryMusicMap(data, false);
-                            historyMusic.count++;
+
+                          if(res.docs.length > 1){
+                            // that means there are multiple, so consolidate
+                            HistoryMusic hm = Dummy.getDummyHistoryMusic();
+                            int totalCount = 0;
+
+                            for (int i = 0; i < res.docs.length; i++) {
+                              DocumentSnapshot document = res.docs[i];
+                              Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+                              final HistoryMusic historyMusic = Fresh.freshHistoryMusicMap(data, false);
+
+                              totalCount+= historyMusic.count;
+                              if(i == 0){
+                                hm = historyMusic;
+                              }
+                              FirestoreHelper.deleteHistoryMusic(historyMusic.id);
+                            }
+
+                            totalCount = totalCount+1;
+                            hm = hm.copyWith(count: totalCount);
+                            FirestoreHelper.pushHistoryMusic(hm);
+                          } else {
+                            DocumentSnapshot document = res.docs[0];
+                            Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+
+                            HistoryMusic historyMusic = Fresh.freshHistoryMusicMap(data, false);
+                            int newCount = historyMusic.count+1;
+                            historyMusic = historyMusic.copyWith(count: newCount);
                             FirestoreHelper.pushHistoryMusic(historyMusic);
                           }
                         }

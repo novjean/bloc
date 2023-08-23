@@ -4,6 +4,7 @@ import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
+import '../../../db/entity/genre.dart';
 import '../../../db/entity/lounge.dart';
 import '../../../db/entity/user.dart';
 import '../../../db/entity/user_level.dart';
@@ -54,6 +55,11 @@ class _ManageLoungeMembersScreenState extends State<ManageLoungeMembersScreen> {
 
   List<UserLevel> mUserLevels = [];
   var _isUserLevelsLoading = true;
+
+  List<Genre> mGenres = [];
+  var _isGenresLoading = true;
+
+  bool _showUserMusicHistory = false;
 
   @override
   void initState() {
@@ -151,6 +157,32 @@ class _ManageLoungeMembersScreenState extends State<ManageLoungeMembersScreen> {
       }
     });
 
+    FirestoreHelper.pullGenres().then((res) {
+      Logx.i(_TAG, "successfully pulled in all genres ");
+
+      if (res.docs.isNotEmpty) {
+        for (int i = 0; i < res.docs.length; i++) {
+          DocumentSnapshot document = res.docs[i];
+          Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+          final Genre genre = Fresh.freshGenreMap(data, false);
+          mGenres.add(genre);
+        }
+
+        if(mounted){
+          setState(() {
+            _isGenresLoading = false;
+          });
+        }
+      } else {
+        Logx.i(_TAG, 'no genres found!');
+        if(mounted){
+          setState(() {
+            _isGenresLoading = false;
+          });
+        }
+      }
+    });
+
     super.initState();
   }
 
@@ -180,6 +212,7 @@ class _ManageLoungeMembersScreenState extends State<ManageLoungeMembersScreen> {
         floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
 
         body: _isUserLoungesLoading && _isMembersLoading && _isUserLevelsLoading
+          && _isGenresLoading
             ? const LoadingWidget()
             : _buildBody(context));
   }
@@ -227,6 +260,8 @@ class _ManageLoungeMembersScreenState extends State<ManageLoungeMembersScreen> {
                       isMember: isMember,
                       isUserLoungePresent:  isUserLoungePresent,
                       isExited: isExited,
+                      showHistory: _showUserMusicHistory,
+                      genres: mGenres,
                     ),
                     onTap: () {
                       User sUser = list[index];
@@ -319,6 +354,40 @@ class _ManageLoungeMembersScreenState extends State<ManageLoungeMembersScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text('user info / music history'),
+                        SizedBox.fromSize(
+                          size: const Size(50, 50),
+                          child: ClipOval(
+                            child: Material(
+                              color: Constants.primary,
+                              child: InkWell(
+                                splashColor: Constants.darkPrimary,
+                                onTap: () {
+                                  Navigator.of(ctx).pop();
+
+                                  setState(() {
+                                    _showUserMusicHistory = true;
+                                  });
+
+                                },
+                                child: const Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: <Widget>[
+                                    Icon(Icons.queue_music_outlined,color: Constants.darkPrimary,),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+
+                    const SizedBox(height: 30,),
+
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [

@@ -54,8 +54,8 @@ class _UserAddEditScreenState extends State<UserAddEditScreen> {
   bool _isBlocServicesLoading = true;
 
   List<String> userLevelNames = [];
-  late String _sUserLevelName;
-  late int _sUserLevel;
+  late String sUserLevelName;
+  late int sUserLevel;
 
   DateTime sStartDateTime = DateTime.now();
   DateTime sEndDateTime = DateTime.now();
@@ -72,13 +72,13 @@ class _UserAddEditScreenState extends State<UserAddEditScreen> {
   @override
   void initState() {
     sGender = widget.user.gender;
-
-    super.initState();
+    sUserLevel = Constants.CUSTOMER_LEVEL;
+    sUserLevelName = 'customer';
 
     for(UserLevel userLevel in widget.userLevels){
       userLevelNames.add(userLevel.name);
       if(widget.user.clearanceLevel == userLevel.level){
-        _sUserLevelName = userLevel.name;
+        sUserLevelName = userLevel.name;
       }
     }
 
@@ -115,6 +115,8 @@ class _UserAddEditScreenState extends State<UserAddEditScreen> {
         });
       }
     });
+
+    super.initState();
   }
 
   @override
@@ -343,23 +345,23 @@ class _UserAddEditScreenState extends State<UserAddEditScreen> {
                   hintText: 'please select user level',
                   border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(5.0))),
-              isEmpty: _sUserLevelName == '',
+              isEmpty: sUserLevelName == '',
               child: DropdownButtonHideUnderline(
                 child: DropdownButton<String>(
-                  value: _sUserLevelName,
+                  value: sUserLevelName,
                   isDense: true,
                   onChanged: (String? newValue) {
                     setState(() {
-                      _sUserLevelName = newValue!;
+                      sUserLevelName = newValue!;
 
                       for (UserLevel userLevel in widget.userLevels) {
-                        if (userLevel.name == _sUserLevelName) {
-                          _sUserLevel = userLevel.level;
+                        if (userLevel.name == sUserLevelName) {
+                          sUserLevel = userLevel.level;
                         }
                       }
 
                       widget.user = widget.user
-                          .copyWith(clearanceLevel: _sUserLevel);
+                          .copyWith(clearanceLevel: sUserLevel);
                       state.didChange(newValue);
                     });
                   },

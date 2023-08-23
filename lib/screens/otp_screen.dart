@@ -315,9 +315,16 @@ class _OTPScreenState extends State<OTPScreen> {
                               user.lastSeenAt = Timestamp.now().millisecondsSinceEpoch;
                               if (UserPreferences.isUserLoggedIn()) {
                                 if (kIsWeb) {
-                                  user.isAppUser = false;
+                                  user = user.copyWith(
+                                      isAppUser: false,
+                                      appVersion: Constants.appVersion
+                                  );
                                 } else {
-                                  user.isAppUser = true;
+                                  user = user.copyWith(
+                                    isAppUser: true,
+                                    appVersion: Constants.appVersion,
+                                    isIos: Theme.of(context).platform == TargetPlatform.iOS
+                                  );
                                 }
                               }
 
@@ -337,10 +344,16 @@ class _OTPScreenState extends State<OTPScreen> {
                                   fcmToken: fcmToken!);
 
                               if (kIsWeb) {
-                                registeredUser.isAppUser = false;
+                                registeredUser = registeredUser.copyWith(
+                                    isAppUser: false,
+                                    appVersion: Constants.appVersion
+                                );
                               } else {
-                                registeredUser.isAppUser = true;
-                                registeredUser.isIos = Theme.of(context).platform == TargetPlatform.iOS;
+                                registeredUser = registeredUser.copyWith(
+                                    isAppUser: true,
+                                    appVersion: Constants.appVersion,
+                                    isIos: Theme.of(context).platform == TargetPlatform.iOS
+                                );
                               }
 
                               FirestoreHelper.pushUser(registeredUser);
@@ -365,12 +378,18 @@ class _OTPScreenState extends State<OTPScreen> {
                           blocUser.User user;
                           if (kIsWeb) {
                             user = Fresh.freshUserMap(data, true);
-                            user.isAppUser = false;
+                            user = user.copyWith(
+                                isAppUser: false,
+                                appVersion: Constants.appVersion
+                            );
                           } else {
-
                             user = Fresh.freshUserMap(data, false);
-                            user.fcmToken = fcmToken!;
-                            user.isAppUser = true;
+                            user = user.copyWith(
+                                isAppUser: true,
+                                appVersion: Constants.appVersion,
+                                isIos: Theme.of(context).platform == TargetPlatform.iOS,
+                              fcmToken: fcmToken!
+                            );
                           }
 
                           user.lastSeenAt = Timestamp.now().millisecondsSinceEpoch;

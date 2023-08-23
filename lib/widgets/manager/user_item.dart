@@ -22,6 +22,8 @@ class UserItem extends StatelessWidget {
       } else {
         appDetails = '${user.appVersion} 🤖';
       }
+    } else {
+      appDetails = '${user.appVersion} 🌏';
     }
 
     return Padding(
@@ -60,6 +62,13 @@ class UserItem extends StatelessWidget {
                     Text(appDetails)
                   ],
                 ),
+                user.phoneNumber == 0 ? Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(user.phoneNumber.toString()),
+                    Text('level ${user.challengeLevel}')
+                  ],
+                ):const SizedBox()
               ],
             ),
           ),
