@@ -525,7 +525,7 @@ class _PromoterGuestsScreenState extends State<PromoterGuestsScreen> {
                 );
               },
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 24),
           ],
         ),
       ),

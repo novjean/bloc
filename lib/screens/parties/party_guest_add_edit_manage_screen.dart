@@ -1088,6 +1088,8 @@ class _PartyGuestAddEditManageScreenState
                     } else {
                       if (isDataValid()) {
                         if (isLoggedIn) {
+                          widget.partyGuest = widget.partyGuest.copyWith(shouldBanUser: mBlocUser.isBanned);
+
                           if (hasUserChanged) {
                             blocUser.User freshUser =
                                 Fresh.freshUser(mBlocUser);

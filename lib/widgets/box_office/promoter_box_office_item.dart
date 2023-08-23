@@ -59,6 +59,10 @@ class _PromoterBoxOfficeItemState extends State<PromoterBoxOfficeItem> {
       title += ' [vip]';
     }
 
+    if(widget.partyGuest.shouldBanUser){
+      title += ' [banned]';
+    }
+
     bool showGuestRemaining = widget.partyGuest.guestsRemaining >= 2 ||
             widget.partyGuest.guestsRemaining == 0
         ? true
