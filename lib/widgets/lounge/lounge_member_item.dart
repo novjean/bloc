@@ -52,27 +52,33 @@ class _LoungeMemberItemState extends State<LoungeMemberItem> {
                     radius: 20.0,
                     backgroundImage: AssetImage('assets/icons/logo.png'),
                   ),
-                  title: RichText(
-                    text: TextSpan(
-                      text: '${widget.user.name} ',
-                      style: const TextStyle(
-                          fontFamily: Constants.fontDefault,
-                          color: Colors.black,
-                          overflow: TextOverflow.ellipsis,
-                          fontSize: 18,
-                          letterSpacing: 1,
-                          fontWeight: FontWeight.bold),
-                    ),
+                  title: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      RichText(
+                        text: TextSpan(
+                          text: '${widget.user.name} ',
+                          style: const TextStyle(
+                              fontFamily: Constants.fontDefault,
+                              color: Colors.black,
+                              overflow: TextOverflow.ellipsis,
+                              fontSize: 16,
+                              letterSpacing: 1,
+                              fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      Text('+${widget.user.phoneNumber}', style: TextStyle(fontSize: 14),)
+                    ],
                   ),
 
                   subtitle: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children:[
-                      Text('${widget.user.gender} | '),
-                      Text(widget.user.isAppUser?'app | ':'web | '),
-                      Text('level ${widget.user.challengeLevel} | '),
-                      widget.isExited?const Text('exited'): const SizedBox(),
+                      Text(widget.user.gender),
+                      Text(widget.user.isAppUser?'app':'web'),
+                      Text('level ${widget.user.challengeLevel}'),
+                      Text(widget.isExited?'exit':'NaN')
                     ]
-
                   ),
                   trailing: Checkbox(
                     value: widget.isMember,

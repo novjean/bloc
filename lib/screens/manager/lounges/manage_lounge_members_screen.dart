@@ -6,7 +6,9 @@ import 'package:flutter/material.dart';
 
 import '../../../db/entity/lounge.dart';
 import '../../../db/entity/user.dart';
+import '../../../db/entity/user_level.dart';
 import '../../../db/entity/user_lounge.dart';
+import '../../../db/shared_preferences/user_preferences.dart';
 import '../../../helpers/dummy.dart';
 import '../../../helpers/fresh.dart';
 import '../../../main.dart';
@@ -14,6 +16,7 @@ import '../../../utils/constants.dart';
 import '../../../utils/logx.dart';
 import '../../../widgets/lounge/lounge_member_item.dart';
 import '../../../widgets/ui/sized_listview_block.dart';
+import '../users/user_add_edit_screen.dart';
 
 class ManageLoungeMembersScreen extends StatefulWidget {
   Lounge lounge;
@@ -30,10 +33,11 @@ class _ManageLoungeMembersScreenState extends State<ManageLoungeMembersScreen> {
   static const String _TAG = 'ManageLoungeMembersScreen';
 
   List<UserLounge> mUserLounges = [];
-  bool isUserLoungesLoading = true;
+  bool _isUserLoungesLoading = true;
 
   List<User> mMembers = [];
   List<User> mNonMembers = [];
+  List<User> mFemaleNonMembers = [];
   List<User> mPendingMembers = [];
   List<User> mBannedMembers = [];
   List<User> mExitedMembers = [];
@@ -43,10 +47,13 @@ class _ManageLoungeMembersScreenState extends State<ManageLoungeMembersScreen> {
   List<String> mBannedMemberIds = [];
 
   List<User> mUsers = [];
-  bool isMembersLoading = true;
+  bool _isMembersLoading = true;
 
   late List<String> mOptions;
   String sOption = '';
+
+  List<UserLevel> mUserLevels = [];
+  var _isUserLevelsLoading = true;
 
   @override
   void initState() {
@@ -77,7 +84,7 @@ class _ManageLoungeMembersScreenState extends State<ManageLoungeMembersScreen> {
         Logx.i(_TAG, 'nobody in the lounge yet');
       }
 
-      isUserLoungesLoading = false;
+      _isUserLoungesLoading = false;
 
       FirestoreHelper.pullUsersSortedName()
           .then((res) {
@@ -97,6 +104,10 @@ class _ManageLoungeMembersScreenState extends State<ManageLoungeMembersScreen> {
               mBannedMembers.add(user);
             } else {
               mNonMembers.add(user);
+
+              if(user.gender == 'female'){
+                mFemaleNonMembers.add(user);
+              }
             }
 
             if(widget.lounge.exitedUserIds.contains(user.id)){
@@ -104,15 +115,40 @@ class _ManageLoungeMembersScreenState extends State<ManageLoungeMembersScreen> {
             }
           }
           setState(() {
-            isMembersLoading = false;
+            _isMembersLoading = false;
           });
         } else {
           Logx.em(_TAG, 'no user found!');
           setState(() {
-            isMembersLoading = false;
+            _isMembersLoading = false;
           });
         }
       });
+    });
+
+    FirestoreHelper.pullUserLevels(UserPreferences.myUser.clearanceLevel)
+        .then((res) {
+      Logx.i(_TAG, 'successfully retrieved user levels');
+
+      if (res.docs.isNotEmpty) {
+        List<UserLevel> _userLevels = [];
+        for (int i = 0; i < res.docs.length; i++) {
+          DocumentSnapshot document = res.docs[i];
+          Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+          final UserLevel userLevel = UserLevel.fromMap(data);
+          _userLevels.add(userLevel);
+        }
+
+        setState(() {
+          mUserLevels = _userLevels;
+          _isUserLevelsLoading = false;
+        });
+      } else {
+        Logx.em(_TAG, 'no user levels found!');
+        setState(() {
+          _isUserLevelsLoading = false;
+        });
+      }
     });
 
     super.initState();
@@ -129,31 +165,21 @@ class _ManageLoungeMembersScreenState extends State<ManageLoungeMembersScreen> {
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            // need to add them all to the community
-            int count = 0;
-            for(User user in mNonMembers){
-              if(!(widget.lounge.exitedUserIds.contains(user.id))){
-                UserLounge userLounge = Dummy.getDummyUserLounge();
-                userLounge = userLounge.copyWith(loungeId : widget.lounge.id, userId: user.id);
-                FirestoreHelper.pushUserLounge(userLounge);
-                count++;
-              }
-            }
-            Logx.ist(_TAG, '${widget.lounge.name} has $count new members! 🥳');
+            _showActionsDialog(context);
           },
           backgroundColor: Theme.of(context).primaryColor,
-          tooltip: 'add all',
+          tooltip: 'actions',
           elevation: 5,
           splashColor: Colors.grey,
-          child: Icon(
-            Icons.add_reaction_rounded,
+          child: const Icon(
+            Icons.science,
             color: Constants.darkPrimary,
             size: 29,
           ),
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
 
-        body: isUserLoungesLoading && isMembersLoading
+        body: _isUserLoungesLoading && _isMembersLoading && _isUserLevelsLoading
             ? const LoadingWidget()
             : _buildBody(context));
   }
@@ -202,13 +228,16 @@ class _ManageLoungeMembersScreenState extends State<ManageLoungeMembersScreen> {
                       isUserLoungePresent:  isUserLoungePresent,
                       isExited: isExited,
                     ),
-                    onDoubleTap: () {
-                      User sUser = mMembers[index];
-                      Logx.i(_TAG, 'double tap user selected : ${sUser.name}');
-                    },
                     onTap: () {
-                      User sUser = mUsers[index];
+                      User sUser = list[index];
                       Logx.i(_TAG, 'user selected : ${sUser.name}');
+
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (ctx) => UserAddEditScreen(
+                            user: sUser,
+                            task: 'edit',
+                            userLevels: mUserLevels,
+                          )));
                     });
               }),
         ),
@@ -243,4 +272,179 @@ class _ManageLoungeMembersScreenState extends State<ManageLoungeMembersScreen> {
     );
   }
 
+  _showActionsDialog(BuildContext context) {
+    return showDialog(
+      context: context,
+      builder: (BuildContext ctx) {
+        return AlertDialog(
+          contentPadding: const EdgeInsets.all(16.0),
+          content: _actionsList(ctx),
+          actions: [
+            TextButton(
+              child: const Text('close'),
+              onPressed: () {
+                Navigator.of(ctx).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  _actionsList(BuildContext ctx) {
+    return SizedBox(
+      height: mq.height * 0.5,
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            const Padding(
+              padding: EdgeInsets.only(bottom: 20),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Text(
+                    'actions',
+                    style: TextStyle(fontSize: 18),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(
+              height: mq.height * 0.45,
+              width: 300,
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text('add all female'),
+                        SizedBox.fromSize(
+                          size: const Size(50, 50),
+                          child: ClipOval(
+                            child: Material(
+                              color: Constants.primary,
+                              child: InkWell(
+                                splashColor: Constants.darkPrimary,
+                                onTap: () {
+                                  Navigator.of(ctx).pop();
+
+                                  int count = 0;
+                                  for(User user in mFemaleNonMembers){
+                                    if(!(widget.lounge.exitedUserIds.contains(user.id))){
+                                      UserLounge userLounge = Dummy.getDummyUserLounge();
+                                      userLounge = userLounge.copyWith(loungeId : widget.lounge.id, userId: user.id);
+                                      FirestoreHelper.pushUserLounge(userLounge);
+                                      count++;
+                                    }
+                                  }
+                                  Logx.ist(_TAG, '${widget.lounge.name} has $count new female members! 🥳');
+
+                                },
+                                child: const Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: <Widget>[
+                                    Icon(Icons.female, color: Colors.pinkAccent,),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                    const SizedBox(height: 10,),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text('add all'),
+                        SizedBox.fromSize(
+                          size: const Size(50, 50),
+                          child: ClipOval(
+                            child: Material(
+                              color: Constants.primary,
+                              child: InkWell(
+                                splashColor: Constants.darkPrimary,
+                                onTap: () {
+                                  Navigator.of(ctx).pop();
+
+                                  int count = 0;
+                                  for(User user in mNonMembers){
+                                    if(!(widget.lounge.exitedUserIds.contains(user.id))){
+                                      UserLounge userLounge = Dummy.getDummyUserLounge();
+                                      userLounge = userLounge.copyWith(loungeId : widget.lounge.id, userId: user.id);
+                                      FirestoreHelper.pushUserLounge(userLounge);
+                                      count++;
+                                    }
+                                  }
+                                  Logx.ist(_TAG, '${widget.lounge.name} has $count new members! 🥳');
+
+                                },
+                                child: const Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: <Widget>[
+                                    Icon(Icons.add_reaction_sharp),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                    const SizedBox(height: 30),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text('remove all'),
+                        SizedBox.fromSize(
+                          size: const Size(50, 50),
+                          child: ClipOval(
+                            child: Material(
+                              color: Constants.primary,
+                              child: InkWell(
+                                splashColor: Constants.darkPrimary,
+                                onTap: () {
+                                  Navigator.of(ctx).pop();
+
+                                  FirestoreHelper.pullUserLoungeMembers(widget.lounge.id).then((res) {
+                                    if(res.docs.isNotEmpty){
+                                      for (int i = 0; i < res.docs.length; i++) {
+                                        DocumentSnapshot document = res.docs[i];
+                                        Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+                                        UserLounge userLounge = Fresh.freshUserLoungeMap(data, false);
+                                        FirestoreHelper.deleteUserLounge(userLounge.id);
+                                      }
+
+                                      Logx.ist(_TAG, 'removed ${res.docs.length} members of ${widget.lounge.name}');
+                                    }
+                                  });
+                                },
+                                child: const Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: <Widget>[
+                                    Icon(Icons.person_remove_alt_1_outlined,
+                                        color: Constants.errorColor),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }

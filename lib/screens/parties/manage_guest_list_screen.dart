@@ -87,7 +87,7 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          showActionsDialog(context);
+          _showActionsDialog(context);
         },
         backgroundColor: Theme.of(context).primaryColor,
         tooltip: 'actions',
@@ -267,7 +267,7 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
     );
   }
 
-  showActionsDialog(BuildContext context) {
+  _showActionsDialog(BuildContext context) {
     return showDialog(
       context: context,
       builder: (BuildContext ctx) {
@@ -642,7 +642,7 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
                 child: const Text('yes'),
                 onPressed: () async {
                   for (PartyGuest partyGuest in mPartyGuests) {
-                    FirestoreHelper.deletePartyGuest(partyGuest);
+                    FirestoreHelper.deletePartyGuest(partyGuest.id);
                   }
                   Logx.i(_TAG,
                       'deleted all ${sPartyName == 'all' ? '' : sPartyName} guest list requests!');

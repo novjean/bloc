@@ -1140,8 +1140,7 @@ class _PartyGuestAddEditManageScreenState
                             height: 50,
                             text: 'delete',
                             onClicked: () {
-                              FirestoreHelper.deletePartyGuest(
-                                  widget.partyGuest);
+                              FirestoreHelper.deletePartyGuest(widget.partyGuest.id);
                               Logx.ist(_TAG, 'guest list request is deleted!');
                               Navigator.of(context).pop();
                             },

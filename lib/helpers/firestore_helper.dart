@@ -752,6 +752,10 @@ class FirestoreHelper {
         .get();
   }
 
+  static void deleteHistoryMusic(String docId) {
+    FirebaseFirestore.instance.collection(HISTORY_MUSIC).doc(docId).delete();
+  }
+
   /** inventory options **/
   static Stream<QuerySnapshot<Object?>> getInventoryOptions() {
     return FirebaseFirestore.instance
@@ -1041,6 +1045,13 @@ class FirestoreHelper {
         .snapshots();
   }
 
+  static pullPartyGuestsByUser(String guestId) {
+    return FirebaseFirestore.instance
+        .collection(FirestoreHelper.PARTY_GUESTS)
+        .where('guestId', isEqualTo: guestId)
+        .get();
+  }
+
   static Future<QuerySnapshot<Map<String, dynamic>>> pullPartyGuestByUser(
       String guestId, String partyId) {
     return FirebaseFirestore.instance
@@ -1095,10 +1106,10 @@ class FirestoreHelper {
         .snapshots();
   }
 
-  static void deletePartyGuest(PartyGuest partyGuest) {
+  static void deletePartyGuest(String docId) {
     FirebaseFirestore.instance
         .collection(PARTY_GUESTS)
-        .doc(partyGuest.id)
+        .doc(docId)
         .delete();
   }
 
@@ -1487,6 +1498,13 @@ class FirestoreHelper {
   //       .orderBy('arrivalDate', descending: false)
   //       .get();
   // }
+
+  static pullReservationsByUser(String userId) {
+    return FirebaseFirestore.instance
+        .collection(FirestoreHelper.RESERVATIONS)
+        .where('customerId', isGreaterThan: userId)
+        .get();
+  }
 
   static Stream<QuerySnapshot<Object?>> getReservations() {
     return FirebaseFirestore.instance
@@ -2121,6 +2139,7 @@ class FirestoreHelper {
   static void deleteUserLounge(String docId) {
     FirebaseFirestore.instance.collection(USER_LOUNGES).doc(docId).delete();
   }
+
 
 
 }
