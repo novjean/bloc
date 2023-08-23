@@ -27,11 +27,6 @@ class ManagerServiceItem extends StatelessWidget{
             child: Padding(
                 padding: const EdgeInsets.only(top: 2.0, left: 5, right: 5),
                 child: ListTile(
-                  // leading: FadeInImage(
-                  //   placeholder: const AssetImage(
-                  //       'assets/icons/logo.png'),
-                  //   image: NetworkImage(managerService.imageUrl),
-                  //   fit: BoxFit.cover,),
                   title: RichText(
                     text: TextSpan(
                       text: '${managerService.name} ',
