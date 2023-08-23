@@ -13,6 +13,7 @@ import 'package:multi_select_flutter/util/multi_select_list_type.dart';
 import '../../db/entity/party.dart';
 import '../../db/entity/promoter_guest.dart';
 import '../../helpers/fresh.dart';
+import '../../main.dart';
 import '../../utils/constants.dart';
 import '../../utils/date_time_utils.dart';
 import '../../utils/file_utils.dart';
@@ -39,6 +40,8 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
   List<String> mPartyNames = [];
 
   List<PartyGuest> mPartyGuests = [];
+  List<PartyGuest> mUnapprovedPartyGuests = [];
+  bool _showAllGuestList = true;
 
   @override
   void initState() {
@@ -109,8 +112,6 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
             children: [
               const SizedBox(height: 5.0),
               _displayPartiesDropdown(context),
-              // _displayOptions(context),
-              // const Divider(),
               const SizedBox(height: 5.0),
               _buildPartyGuestList(context),
               const SizedBox(height: 70.0),
@@ -180,38 +181,46 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
             ? FirestoreHelper.getGuestLists()
             : FirestoreHelper.getPartyGuestList(sPartyId),
         builder: (ctx, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const LoadingWidget();
-          }
+          switch (snapshot.connectionState) {
+            case ConnectionState.waiting:
+            case ConnectionState.none:
+              return const LoadingWidget();
+            case ConnectionState.active:
+            case ConnectionState.done: {
 
-          List<PartyGuest> partyGuestList = [];
+            mPartyGuests = [];
+            mUnapprovedPartyGuests = [];
 
-          if (snapshot.data!.docs.isNotEmpty) {
-            try {
-              for (int i = 0; i < snapshot.data!.docs.length; i++) {
-                DocumentSnapshot document = snapshot.data!.docs[i];
-                Map<String, dynamic> map =
-                    document.data()! as Map<String, dynamic>;
-                final PartyGuest partyGuest =
-                    Fresh.freshPartyGuestMap(map, false);
-                partyGuestList.add(partyGuest);
+            if (snapshot.data!.docs.isNotEmpty) {
+              try {
+                for (int i = 0; i < snapshot.data!.docs.length; i++) {
+                  DocumentSnapshot document = snapshot.data!.docs[i];
+                  Map<String, dynamic> map =
+                  document.data()! as Map<String, dynamic>;
+                  final PartyGuest partyGuest =
+                  Fresh.freshPartyGuestMap(map, false);
+                  mPartyGuests.add(partyGuest);
 
-                if (i == snapshot.data!.docs.length - 1) {
-                  mPartyGuests = partyGuestList;
-                  return _displayGuestList(context, partyGuestList);
+                  if(!partyGuest.isApproved){
+                    mUnapprovedPartyGuests.add(partyGuest);
+                  }
                 }
+                return _showGuestList(context);
+              } on Exception catch (e, s) {
+                Logx.e(_TAG, e, s);
+              } catch (e) {
+                Logx.em(_TAG, 'error loading party guest$e');
               }
-            } on Exception catch (e, s) {
-              Logx.e(_TAG, e, s);
-            } catch (e) {
-              Logx.em(_TAG, 'error loading party guest$e');
+            }
             }
           }
           return const LoadingWidget();
         });
   }
 
-  _displayGuestList(BuildContext context, List<PartyGuest> partyGuestList) {
+  _showGuestList(BuildContext context) {
+    List<PartyGuest> partyGuestList = _showAllGuestList ? mPartyGuests:mUnapprovedPartyGuests;
+
     return Expanded(
       child: ListView.builder(
           itemCount: partyGuestList.length,
@@ -265,7 +274,7 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
         return AlertDialog(
           contentPadding: const EdgeInsets.all(16.0),
           content: SizedBox(
-            height: 250,
+            height: mq.height * 0.5,
             child: SingleChildScrollView(
               child: Column(
                 children: [
@@ -282,7 +291,7 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
                     ),
                   ),
                   SizedBox(
-                    height: 200,
+                    height: mq.height * 0.45,
                     width: 300,
                     child: SingleChildScrollView(
                       child: Column(
@@ -290,6 +299,39 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text('un-approved/all'),
+                              SizedBox.fromSize(
+                                size: const Size(50, 50),
+                                child: ClipOval(
+                                  child: Material(
+                                    color: Constants.primary,
+                                    child: InkWell(
+                                      splashColor: Constants.darkPrimary,
+                                      onTap: () {
+                                        Navigator.of(ctx).pop();
+
+                                        setState(() {
+                                          _showAllGuestList = !_showAllGuestList;
+                                        });
+                                      },
+                                      child: const Column(
+                                        mainAxisAlignment:
+                                        MainAxisAlignment.center,
+                                        children: <Widget>[
+                                          Icon(Icons.people_alt_outlined),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
+                          const SizedBox(height: 20),
+
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
@@ -312,7 +354,7 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
                                               .guestNames.isNotEmpty) {
                                             for (String name
                                                 in partyGuest.guestNames) {
-                                              guests += '$name\n';
+                                              guests += '$name | ';
                                             }
                                           }
 
@@ -333,7 +375,7 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
                                         mainAxisAlignment:
                                             MainAxisAlignment.center,
                                         children: <Widget>[
-                                          Icon(Icons.share_outlined),
+                                          Icon(Icons.share_outlined, color: Colors.lightBlue),
                                         ],
                                       ),
                                     ),
@@ -365,7 +407,7 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
                                               .guestNames.isNotEmpty) {
                                             for (String name
                                                 in partyGuest.guestNames) {
-                                              guests += '$name\n';
+                                              guests += '$name | ';
                                             }
                                           }
 
@@ -386,7 +428,7 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
                                         mainAxisAlignment:
                                             MainAxisAlignment.center,
                                         children: <Widget>[
-                                          Icon(Icons.share_outlined),
+                                          Icon(Icons.share_outlined, color: Colors.lightBlue),
                                         ],
                                       ),
                                     ),
@@ -416,11 +458,10 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
                                           if (partyGuest.guestStatus !=
                                               'promoter') {
                                             String guests = '';
-                                            if (partyGuest
-                                                .guestNames.isNotEmpty) {
+                                            if (partyGuest.guestNames.isNotEmpty) {
                                               for (String name
                                                   in partyGuest.guestNames) {
-                                                guests += '$name\n';
+                                                guests += '$name | ';
                                               }
                                             }
 
@@ -442,7 +483,7 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
                                         mainAxisAlignment:
                                             MainAxisAlignment.center,
                                         children: <Widget>[
-                                          Icon(Icons.share_outlined),
+                                          Icon(Icons.share_outlined, color: Colors.lightBlue,),
                                         ],
                                       ),
                                     ),
