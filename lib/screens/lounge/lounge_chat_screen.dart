@@ -646,9 +646,6 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
                 } else {
                   Toaster.shortToast('have the 🍕 slice and join us to chat');
                 }
-              // } else {
-              //   Toaster.shortToast('bloc app is required to be able to chat');
-              // }
             },
             minWidth: 0,
             padding:
@@ -698,8 +695,10 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
       barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
-          contentPadding: const EdgeInsets.all(16.0),
           backgroundColor: Constants.lightPrimary,
+          shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(20.0))),
+          contentPadding: const EdgeInsets.all(16.0),
           content: SizedBox(
             height: mq.height * 0.5,
             width: mq.width * 0.75,
@@ -710,8 +709,9 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
                   '${mLounge.name} ⚜️ vip lounge',
                   style: const TextStyle(fontSize: 22, color: Colors.black),
                 ),
+                const SizedBox(height: 20,),
                 Text(
-                  'Welcome to our exclusive community lounge! Access is reserved for VIPs only. Secure your spot by registering for our upcoming ${mLounge.name} party or impress the community leaders with a compelling request. Get ready for a lounge of fun, laughter, and connections!'.toLowerCase(),
+                  '🔥🌟 Welcome to the VIP vibes! You gotta score an invite, join the guest list or drop a request to join the wave, but hold tight – the admins gonna give it that golden touch before you\'re in the spotlight. It\'s all about that exclusive energy! 🚀👑'.toLowerCase(),
                   textAlign: TextAlign.center,
                     softWrap: true,
                   style: const TextStyle(fontSize: 18, color: Colors.black),
@@ -720,16 +720,20 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
             ),
           ),
           actions: [
-            mLounge.name.isNotEmpty? TextButton(
-              child: const Text("request access"),
+            mLounge.name.isNotEmpty?
+            TextButton(
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all<Color>(
+                    Constants.darkPrimary), // Set your desired background color
+              ),
+              child: const Text("🔑 request access", style: TextStyle(color: Constants.primary),),
               onPressed: () {
                 Navigator.of(context).pop();
                 UserLounge userLounge = Dummy.getDummyUserLounge();
                 userLounge = userLounge.copyWith(userId :UserPreferences.myUser.id,
                     loungeId: mLounge.id, isAccepted: false);
                 FirestoreHelper.pushUserLounge(userLounge);
-                Toaster.longToast('request to join the vip lounge has been sent');
-                Logx.i(_TAG, 'user requested to join the vip lounge');
+                Logx.ist (_TAG, 'request to join the vip lounge has been sent 🫰');
                 GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
               },
             ): const SizedBox(),
