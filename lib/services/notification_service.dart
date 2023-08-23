@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:bloc/db/entity/lounge_chat.dart';
+import 'package:bloc/helpers/firestore_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -107,6 +108,8 @@ class NotificationService {
         case 'ad':
             Ad ad = Fresh.freshAdMap(jsonDecode(payload['data']!), false);
             BuildContext? appContext = BlocApp.navigatorKey.currentContext;
+
+            FirestoreHelper.updateAdHit(ad.id);
 
             if(ad.partyName.isNotEmpty && ad.partyChapter.isNotEmpty){
               GoRouter.of(appContext!).pushNamed(RouteConstants.eventRouteName,

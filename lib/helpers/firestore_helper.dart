@@ -45,6 +45,7 @@ import '../db/shared_preferences/user_preferences.dart';
 import '../routes/route_constants.dart';
 import '../utils/logx.dart';
 import '../utils/string_utils.dart';
+import 'fresh.dart';
 
 /**
  * Tips:
@@ -129,6 +130,13 @@ class FirestoreHelper {
         .orderBy('createdAt', descending: true)
         .limit(5)
         .get();
+  }
+
+  static void updateAdHit(String id) async {
+    await FirebaseFirestore.instance
+        .collection(ADS)
+        .doc(id)
+        .update({"hits": FieldValue.increment(1)},);
   }
 
   static void deleteAd(String docId) {
@@ -2097,6 +2105,7 @@ class FirestoreHelper {
   static void deleteUserLounge(String docId) {
     FirebaseFirestore.instance.collection(USER_LOUNGES).doc(docId).delete();
   }
+
 
 
 

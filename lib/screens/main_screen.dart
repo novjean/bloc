@@ -231,8 +231,6 @@ class _MainScreenState extends State<MainScreen> {
         }
       });
 
-      // FirebaseMessaging.onMessageOpenedApp.listen(_handleMessage);
-
       //clear out any previous subscriptions
       blocUser.User user = UserPreferences.getUser();
       if (user.clearanceLevel >= Constants.CAPTAIN_LEVEL) {
