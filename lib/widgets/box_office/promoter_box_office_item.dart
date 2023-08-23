@@ -120,7 +120,8 @@ class _PromoterBoxOfficeItemState extends State<PromoterBoxOfficeItem> {
                       overflow: TextOverflow.ellipsis,
                       textAlign: TextAlign.left,
                     ),
-                    Text(widget.promoterName)
+                    widget.promoterName.isNotEmpty? Text(widget.promoterName)
+                        : !widget.partyGuest.isApproved? showApproveButton(context) : const SizedBox()
                   ],
                 ),
                 widget.partyGuest.phone != '0'
@@ -251,14 +252,14 @@ class _PromoterBoxOfficeItemState extends State<PromoterBoxOfficeItem> {
   showApproveButton(BuildContext context) {
     return Container(
       padding: const EdgeInsets.only(right: 5),
-      height: 40,
+      height: 30,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
           backgroundColor: Constants.primary,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
           ),
-          padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
+          padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
         ),
         child: const Text(
           '✅ approve',
