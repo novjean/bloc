@@ -813,7 +813,7 @@ class FirestoreHelper {
   static Stream<QuerySnapshot<Object?>> getLounges() {
     return FirebaseFirestore.instance
         .collection(LOUNGES)
-        .orderBy('name', descending: false)
+        .orderBy('lastChatTime', descending: true)
         .snapshots();
   }
 

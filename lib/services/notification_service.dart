@@ -128,8 +128,14 @@ class NotificationService {
           break;
         case 'chat':
           try {
-            LoungeChat chat =
-                Fresh.freshLoungeChatMap(jsonDecode(payload['data']!), false);
+            LoungeChat chat = Fresh.freshLoungeChatMap(jsonDecode(payload['data']!), false);
+
+            BuildContext? appContext = BlocApp.navigatorKey.currentContext;
+            GoRouter.of(appContext!).pushNamed(
+                RouteConstants.loungeRouteName,
+                params: {
+                  'id': chat.loungeId,
+                });
             Logx.d(_TAG, 'successful');
           } catch (e) {
             Logx.em(_TAG, e.toString());
@@ -213,7 +219,7 @@ class NotificationService {
     Map<String, dynamic> objectMap = chat.toMap();
     String jsonString = jsonEncode(objectMap);
 
-    String title = '🫶 ${chat.loungeName}';
+    String title = chat.loungeName;
 
     if (chat.type == 'text') {
       String body = chat.message;
