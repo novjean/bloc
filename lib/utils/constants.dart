@@ -73,6 +73,7 @@ class Constants {
   static String blocServiceId = 'UVU4XPqTYr3U0YhQzEhg';
   static String blocPromoterId = 'QQEck1k84xT49iLPtRaPWeKtOIhp';
   static String blocCommunityLoungeId = 'HZfHfnB09xBcl5haYavd2nyvXiyF';
+  static String ladiesLoungeId = 'uieGkTmtQQP4F8RKSEq57bpWezbl';
 
   static String blocInstaHandle = 'https://www.instagram.com/bloc.india/';
 
