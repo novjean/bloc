@@ -29,7 +29,7 @@ class ManagePartyPhotoItem extends StatelessWidget{
                   leading: FadeInImage(
                     placeholder: const AssetImage(
                         'assets/icons/logo.png'),
-                    image: NetworkImage(partyPhoto.imageUrl),
+                    image: NetworkImage(partyPhoto.imageThumbUrl.isNotEmpty? partyPhoto.imageThumbUrl: partyPhoto.imageUrl),
                     fit: BoxFit.cover,),
                   title: RichText(
                     text: TextSpan(

@@ -101,7 +101,7 @@ class _PhotosScreenState extends State<PhotosScreen> {
               height: 200,
               child: FadeInImage(
                 placeholder: const AssetImage('assets/icons/logo.png'),
-                image: NetworkImage(photo.imageUrl),
+                image: NetworkImage(photo.imageThumbUrl.isNotEmpty? photo.imageThumbUrl:photo.imageUrl),
                 fit: BoxFit.cover,
               ),
             ),

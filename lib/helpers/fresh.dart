@@ -2368,7 +2368,12 @@ class Fresh {
       Logx.em(_TAG,
           'party photo imageUrl not exist for id: ${partyPhoto.id}');
     }
-
+    try {
+      fresh = fresh.copyWith(imageThumbUrl: partyPhoto.imageThumbUrl);
+    } catch (e) {
+      Logx.em(_TAG,
+          'party photo imageThumbUrl not exist for id: ${partyPhoto.id}');
+    }
 
     return fresh;
   }
@@ -2441,6 +2446,12 @@ class Fresh {
       partyPhoto = partyPhoto.copyWith(imageUrl: map['imageUrl'] as String);
     } catch (e) {
       Logx.em(_TAG, 'partyPhoto imageUrl not exist for id: ${partyPhoto.id}');
+      isModelChanged = true;
+    }
+    try {
+      partyPhoto = partyPhoto.copyWith(imageThumbUrl: map['imageThumbUrl'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'partyPhoto imageThumbUrl not exist for id: ${partyPhoto.id}');
       isModelChanged = true;
     }
 

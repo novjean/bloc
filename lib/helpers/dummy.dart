@@ -337,6 +337,7 @@ class Dummy {
         partyName: '',
         loungeId: '',
         imageUrl: '',
+        imageThumbUrl: '',
         createdAt: now,
         partyDate: now,
         endTime: endTime,

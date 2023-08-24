@@ -64,8 +64,8 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
                 kIsWeb
                     ? Stack(alignment: Alignment.center, children: [
                         BlurredImage(
-                          imageUrl: widget.partyPhoto.imageUrl,
-                          blurLevel: 5,
+                          imageUrl: widget.partyPhoto.imageThumbUrl.isNotEmpty? widget.partyPhoto.imageThumbUrl: widget.partyPhoto.imageUrl,
+                          blurLevel: 3,
                         ),
                         Positioned(
                           child: Column(
@@ -145,20 +145,24 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
                         child: InkWell(
                             onTap: () {
                               if(UserPreferences.isUserLoggedIn()) {
-                                if (widget.partyPhoto.likers.isEmpty) {
-                                  widget.partyPhoto.likers
-                                      .add(UserPreferences.myUser.id);
-                                  FirestoreHelper.pushPartyPhoto(
-                                      widget.partyPhoto);
+                                if(kIsWeb){
+                                  _showDownloadAppDialog(context);
                                 } else {
-                                  if (!isLoved) {
+                                  if (widget.partyPhoto.likers.isEmpty) {
                                     widget.partyPhoto.likers
                                         .add(UserPreferences.myUser.id);
                                     FirestoreHelper.pushPartyPhoto(
                                         widget.partyPhoto);
                                   } else {
-                                    String text = _getRandomLoveQuote();
-                                    Logx.ist(_TAG, '$text 😘');
+                                    if (!isLoved) {
+                                      widget.partyPhoto.likers
+                                          .add(UserPreferences.myUser.id);
+                                      FirestoreHelper.pushPartyPhoto(
+                                          widget.partyPhoto);
+                                    } else {
+                                      String text = _getRandomLoveQuote();
+                                      Logx.ist(_TAG, '$text 😘');
+                                    }
                                   }
                                 }
                               } else {
@@ -174,12 +178,16 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
                         child: InkWell(
                             onTap: () async {
                               if(UserPreferences.isUserLoggedIn()) {
-                                int fileNum = widget.index+1;
-                                String fileName = '${widget.partyPhoto.partyName} $fileNum';
-                                String shareText = 'hey. check out this photo and more of ${widget.partyPhoto.partyName} at the official bloc app. Step into the moment. 📸 \n\n🌏 https://bloc.bar/#/\n📱 https://bloc.bar/app_store.html\n\n#blocCommunity ❤️‍🔥';
+                                if(kIsWeb){
+                                  _showDownloadAppDialog(context);
+                                } else {
+                                  int fileNum = widget.index+1;
+                                  String fileName = '${widget.partyPhoto.partyName} $fileNum';
+                                  String shareText = 'hey. check out this photo and more of ${widget.partyPhoto.partyName} at the official bloc app. Step into the moment. 📸 \n\n🌏 https://bloc.bar/#/\n📱 https://bloc.bar/app_store.html\n\n#blocCommunity ❤️‍🔥';
 
-                                FileUtils.sharePhoto(widget.partyPhoto.id,
-                                    widget.partyPhoto.imageUrl, fileName, shareText);
+                                  FileUtils.sharePhoto(widget.partyPhoto.id,
+                                      widget.partyPhoto.imageUrl, fileName, shareText);
+                                }
                               } else {
                                 Logx.ist(_TAG, 'please login to share the photo');
                               }
@@ -257,7 +265,7 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
                 borderRadius: BorderRadius.all(Radius.circular(20.0))),
             contentPadding: const EdgeInsets.all(16.0),
             content: const Text(
-                "ready, set, download delight! bloc app in hand, memories at hand. download our app in order to save photos to your gallery."),
+                "ready, set, download delight! bloc app in hand, memories at hand. download our app in order to save photos to your gallery and more."),
             actions: [
               TextButton(
                 child: const Text('close',

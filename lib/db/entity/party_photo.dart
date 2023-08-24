@@ -5,6 +5,7 @@ class PartyPhoto {
   final String partyName;
   final String loungeId;
   final String imageUrl;
+  final String imageThumbUrl;
   final int createdAt;
   final int partyDate;
   final int endTime;
@@ -19,6 +20,7 @@ class PartyPhoto {
     required this.partyName,
     required this.loungeId,
     required this.imageUrl,
+    required this.imageThumbUrl,
     required this.createdAt,
     required this.partyDate,
     required this.endTime,
@@ -37,6 +39,7 @@ class PartyPhoto {
           partyName == other.partyName &&
           loungeId == other.loungeId &&
           imageUrl == other.imageUrl &&
+          imageThumbUrl == other.imageThumbUrl &&
           createdAt == other.createdAt &&
           partyDate == other.partyDate &&
           endTime == other.endTime &&
@@ -51,6 +54,7 @@ class PartyPhoto {
       partyName.hashCode ^
       loungeId.hashCode ^
       imageUrl.hashCode ^
+      imageThumbUrl.hashCode ^
       createdAt.hashCode ^
       partyDate.hashCode ^
       endTime.hashCode ^
@@ -66,6 +70,7 @@ class PartyPhoto {
         ' partyName: $partyName,' +
         ' loungeId: $loungeId,' +
         ' imageUrl: $imageUrl,' +
+        ' imageThumbUrl: $imageThumbUrl,' +
         ' createdAt: $createdAt,' +
         ' partyDate: $partyDate,' +
         ' endTime: $endTime,' +
@@ -81,6 +86,7 @@ class PartyPhoto {
     String? partyName,
     String? loungeId,
     String? imageUrl,
+    String? imageThumbUrl,
     int? createdAt,
     int? partyDate,
     int? endTime,
@@ -94,6 +100,7 @@ class PartyPhoto {
       partyName: partyName ?? this.partyName,
       loungeId: loungeId ?? this.loungeId,
       imageUrl: imageUrl ?? this.imageUrl,
+      imageThumbUrl: imageThumbUrl ?? this.imageThumbUrl,
       createdAt: createdAt ?? this.createdAt,
       partyDate: partyDate ?? this.partyDate,
       endTime: endTime ?? this.endTime,
@@ -110,6 +117,7 @@ class PartyPhoto {
       'partyName': this.partyName,
       'loungeId': this.loungeId,
       'imageUrl': this.imageUrl,
+      'imageThumbUrl': this.imageThumbUrl,
       'createdAt': this.createdAt,
       'partyDate': this.partyDate,
       'endTime': this.endTime,
@@ -126,6 +134,7 @@ class PartyPhoto {
       partyName: map['partyName'] as String,
       loungeId: map['loungeId'] as String,
       imageUrl: map['imageUrl'] as String,
+      imageThumbUrl: map['imageThumbUrl'] as String,
       createdAt: map['createdAt'] as int,
       partyDate: map['partyDate'] as int,
       endTime: map['endTime'] as int,

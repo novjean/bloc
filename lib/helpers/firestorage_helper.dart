@@ -23,6 +23,7 @@ class FirestorageHelper {
   static String PARTY_IMAGES = 'party_image';
   static String PARTY_STORY_IMAGES = 'party_story_image';
   static String PARTY_PHOTO_IMAGES = 'party_photo_image';
+  static String PARTY_PHOTO_THUMB_IMAGES = 'party_photo_thumb_image';
   static String UI_PHOTO_IMAGES = 'ui_photo_image';
   static String USER_IMAGES = 'user_image';
 
