@@ -27,7 +27,9 @@ class AccountScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.black,
-        title: AppBarTitle(title: 'account',),
+        title: AppBarTitle(
+          title: 'account',
+        ),
         titleSpacing: 0,
       ),
       backgroundColor: Constants.background,
@@ -45,8 +47,8 @@ class AccountScreen extends StatelessWidget {
             child: SizedListViewBlock(
               title: 'privacy policy',
               height: 50,
-              width: MediaQuery.of(context).size.width,
-              color: Theme.of(context).primaryColor,
+              width: mq.width,
+              color: Constants.primary,
             ),
             onTap: () {
               Navigator.of(context).push(
@@ -59,8 +61,8 @@ class AccountScreen extends StatelessWidget {
             child: SizedListViewBlock(
               title: 'refund policy',
               height: 50,
-              width: MediaQuery.of(context).size.width,
-              color: Theme.of(context).primaryColor,
+              width: mq.width,
+              color: Constants.primary,
             ),
             onTap: () {
               Navigator.of(context).push(
@@ -78,7 +80,8 @@ class AccountScreen extends StatelessWidget {
             ),
             onTap: () {
               Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) => TermsAndConditionsScreen()),
+                MaterialPageRoute(
+                    builder: (context) => TermsAndConditionsScreen()),
               );
             }),
         const Divider(),
@@ -88,69 +91,137 @@ class AccountScreen extends StatelessWidget {
               title: 'delete account',
               height: 50,
               width: mq.width,
-              color: Theme.of(context).errorColor,
+              color: Constants.errorColor,
             ),
             onTap: () {
-              showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return AlertDialog(
-                    contentPadding: const EdgeInsets.all(16.0),
-                    title: const Text('delete account'),
-                    content: const Text("deleting your account will delete your access and all your information on this site. are you sure you want to continue?"),
-                    actions: [
-                      TextButton(
-                        child: const Text("yes"),
-                        onPressed: () async {
-                          blocUser.User sUser = UserPreferences.myUser;
-
-                          if(sUser.imageUrl.isNotEmpty) {
-                            await FirestorageHelper.deleteFile(sUser.imageUrl);
-                          }
-
-                          FirestoreHelper.deleteUser(sUser.id);
-                          UserPreferences.resetUser();
-                          TablePreferences.resetQuickTable();
-
-                          Logx.i(_TAG, 'user account is deleted');
-
-                          try {
-                            User? user = FirebaseAuth.instance.currentUser;
-                            user!.delete();
-                          } on PlatformException catch (e, s) {
-                            Logx.e(_TAG, e, s);
-                          } on Exception catch (e, s) {
-                            Logx.e(_TAG, e, s);
-                          } catch (e) {
-                            Logx.em(_TAG, 'account delete failed $e');
-                          }
-
-                          await FirebaseAuth.instance.signOut();
-
-                          GoRouter.of(context)
-                              .pushNamed(RouteConstants.loginRouteName, params: {
-                            'skip': 'false',
-                          });
-                        },
-                      ),
-                      TextButton(
-                        child: const Text("no"),
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                      )
-                    ],
-                  );
-                },
-              );
+              if (UserPreferences.isUserLoggedIn()) {
+                _showDeleteAccountDialog(context);
+              } else {
+                _showLoginDialog(context);
+              }
             }),
         const Divider(),
         const Spacer(),
         const Padding(
           padding: EdgeInsets.only(bottom: 10.0),
-          child: Text('v ${Constants.appVersion}', textAlign: TextAlign.center, style: TextStyle(color: Constants.primary),),
+          child: Text(
+            'v ${Constants.appVersion}',
+            textAlign: TextAlign.center,
+            style: TextStyle(color: Constants.primary),
+          ),
         )
       ],
+    );
+  }
+
+  _showDeleteAccountDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: Constants.lightPrimary,
+          shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(20.0))),
+          contentPadding: const EdgeInsets.all(16.0),
+          title: const Text(
+            '📛 delete account',
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 22, color: Colors.black),
+          ),
+          content: const Text(
+              "listen up: if you take that leap and say goodbye, all your data and music history vanish into the void – no coming back, no rewind. are you sure you want to delete?"),
+          actions: [
+            TextButton(
+              child: const Text("yes"),
+              onPressed: () async {
+                blocUser.User sUser = UserPreferences.myUser;
+
+                if (sUser.imageUrl.isNotEmpty) {
+                  await FirestorageHelper.deleteFile(sUser.imageUrl);
+                }
+
+                FirestoreHelper.deleteUser(sUser.id);
+                UserPreferences.resetUser();
+                TablePreferences.resetQuickTable();
+
+                Logx.i(_TAG, 'user account is deleted');
+
+                try {
+                  User? user = FirebaseAuth.instance.currentUser;
+                  user!.delete();
+                } on PlatformException catch (e, s) {
+                  Logx.e(_TAG, e, s);
+                } on Exception catch (e, s) {
+                  Logx.e(_TAG, e, s);
+                } catch (e) {
+                  Logx.em(_TAG, 'account delete failed $e');
+                }
+
+                await FirebaseAuth.instance.signOut();
+
+                GoRouter.of(context)
+                    .pushNamed(RouteConstants.loginRouteName, params: {
+                  'skip': 'false',
+                });
+              },
+            ),
+            TextButton(
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all<Color>(
+                    Constants.darkPrimary), // Set your desired background color
+              ),
+              child: const Text("no"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            )
+          ],
+        );
+      },
+    );
+  }
+
+  _showLoginDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          contentPadding: const EdgeInsets.all(16.0),
+          backgroundColor: Constants.lightPrimary,
+          shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(20.0))),
+          title: const Text(
+            '🪵 login required',
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 22, color: Colors.black),
+          ),
+          content: const Text(
+              "hold up, before you wave goodbye, let's link up – login's the move before we part ways with your account!. would you like to login?"),
+          actions: [
+            TextButton(
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all<Color>(
+                    Constants.darkPrimary), // Set your desired background color
+              ),
+              onPressed: () async {
+                await FirebaseAuth.instance.signOut();
+
+                GoRouter.of(context)
+                    .pushNamed(RouteConstants.loginRouteName, params: {
+                  'skip': 'false',
+                });
+              },
+              child: const Text("yes"),
+            ),
+            TextButton(
+              child: const Text("no"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            )
+          ],
+        );
+      },
     );
   }
 }

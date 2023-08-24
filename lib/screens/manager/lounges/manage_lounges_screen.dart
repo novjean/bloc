@@ -1,4 +1,5 @@
 import 'package:bloc/screens/manager/lounges/lounge_add_edit_screen.dart';
+import 'package:bloc/widgets/ui/app_bar_title.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -6,8 +7,10 @@ import '../../../db/entity/lounge.dart';
 import '../../../helpers/dummy.dart';
 import '../../../helpers/firestore_helper.dart';
 import '../../../helpers/fresh.dart';
+import '../../../main.dart';
+import '../../../utils/constants.dart';
 import '../../../utils/logx.dart';
-import '../../../widgets/ui/listview_block.dart';
+import '../../../widgets/manager/manage_lounge_item.dart';
 import '../../../widgets/ui/loading_widget.dart';
 
 class ManageLoungesScreen extends StatefulWidget {
@@ -25,7 +28,9 @@ class _ManageLoungesScreenState extends State<ManageLoungesScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          title: const Text('manage lounges')),
+          title: AppBarTitle(title:'manage lounges'),
+        titleSpacing: 0,
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.of(context).push(
@@ -34,9 +39,7 @@ class _ManageLoungesScreenState extends State<ManageLoungesScreen> {
                     LoungeAddEditScreen(lounge: Dummy.getDummyLounge(),task: 'add',)),
           );
         },
-        backgroundColor: Theme
-            .of(context)
-            .primaryColor,
+        backgroundColor: Constants.primary,
         tooltip: 'new lounge',
         elevation: 5,
         splashColor: Colors.grey,
@@ -47,57 +50,49 @@ class _ManageLoungesScreenState extends State<ManageLoungesScreen> {
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-      body: _buildBody(context),
+      body: _loadLounges(context),
+
     );
   }
 
-  _buildBody(BuildContext context) {
-    return Column(
-      children: [
-        // const SizedBox(height: 2.0),
-        // _displayOptions(context),
-        // const Divider(),
-        const SizedBox(height: 5.0),
-        loadLounges(context),
-        const SizedBox(height: 5.0),
-      ],
-    );
-  }
-
-  loadLounges(BuildContext context) {
+  _loadLounges(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
         stream: FirestoreHelper.getLounges(),
         builder: (ctx, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const LoadingWidget();
-          }
-          List<Lounge> lounges = [];
+          switch (snapshot.connectionState) {
+            case ConnectionState.waiting:
+            case ConnectionState.none:
+              return const LoadingWidget();
+            case ConnectionState.active:
+            case ConnectionState.done:
+              {
+                List<Lounge> lounges = [];
 
-          if (snapshot.data!.docs.isNotEmpty) {
-            try {
-              for (int i = 0; i < snapshot.data!.docs.length; i++) {
-                DocumentSnapshot document = snapshot.data!.docs[i];
-                Map<String, dynamic> map =
-                document.data()! as Map<String, dynamic>;
-                final Lounge lounge = Fresh.freshLoungeMap(map, false);
-                lounges.add(lounge);
-
-                if (i == snapshot.data!.docs.length - 1) {
-                  return showLounges(context, lounges);
+                if (snapshot.data!.docs.isNotEmpty) {
+                  try {
+                    for (int i = 0; i < snapshot.data!.docs.length; i++) {
+                      DocumentSnapshot document = snapshot.data!.docs[i];
+                      Map<String, dynamic> map =
+                      document.data()! as Map<String, dynamic>;
+                      final Lounge lounge = Fresh.freshLoungeMap(map, false);
+                      lounges.add(lounge);
+                    }
+                    return _showLounges(context, lounges);
+                  } on Exception catch (e, s) {
+                    Logx.e(_TAG, e, s);
+                  } catch (e) {
+                    Logx.em(_TAG, 'error loading lounges : $e');
+                  }
                 }
               }
-            } on Exception catch (e, s) {
-              Logx.e(_TAG, e, s);
-            } catch (e) {
-              Logx.em(_TAG, 'error loading lounges : $e');
-            }
           }
           return const LoadingWidget();
         });
   }
 
-  showLounges(BuildContext context, List<Lounge> lounges) {
-    return Expanded(
+  _showLounges(BuildContext context, List<Lounge> lounges) {
+    return SizedBox(
+      height: mq.height,
       child: ListView.builder(
           itemCount: lounges.length,
           scrollDirection: Axis.vertical,
@@ -105,8 +100,8 @@ class _ManageLoungesScreenState extends State<ManageLoungesScreen> {
             Lounge lounge = lounges[index];
 
             return GestureDetector(
-                child: ListViewBlock(
-                  title: lounge.name,
+                child: ManageLoungeItem(
+                  lounge: lounge,
                 ),
                 onTap: () {
                   Navigator.of(context).push(MaterialPageRoute(

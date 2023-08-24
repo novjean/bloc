@@ -108,7 +108,7 @@ class _BlocAddEditScreenState extends State<BlocAddEditScreen> {
                             builder: (BuildContext context) {
                               return AlertDialog(
                                 title: const Text('photos'),
-                                content: photosListDialog(),
+                                content: _photosListDialog(),
                               );
                             });
                       },
@@ -183,11 +183,11 @@ class _BlocAddEditScreenState extends State<BlocAddEditScreen> {
     );
   }
 
-  Widget photosListDialog() {
+  Widget _photosListDialog() {
     return SingleChildScrollView(
       child: SizedBox(
-        height: mq.height*0.5, // Change as per your requirement
-        width: mq.width*0.8, // Change as per your requirement
+        height: mq.height*0.6,
+        width: mq.width*0.8,
         child: ListView.builder(
           shrinkWrap: true,
           itemCount: mImageUrls.length,

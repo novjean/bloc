@@ -12,6 +12,7 @@ import '../../../widgets/profile_widget.dart';
 import '../../../widgets/ui/button_widget.dart';
 import '../../../widgets/ui/textfield_widget.dart';
 import '../../db/entity/bloc_service.dart';
+import '../../widgets/ui/app_bar_title.dart';
 
 class BlocServiceAddEditScreen extends StatefulWidget {
   BlocService blocService;
@@ -38,7 +39,8 @@ class _BlocServiceAddEditScreenState extends State<BlocServiceAddEditScreen> {
   @override
   Widget build(BuildContext context) => Scaffold(
     appBar: AppBar(
-      title: Text('bloc service | ' + widget.task),
+      title: AppBarTitle(title: '${widget.task} bloc service'),
+      titleSpacing: 0,
     ),
     body: _buildBody(context),
   );
@@ -48,7 +50,7 @@ class _BlocServiceAddEditScreenState extends State<BlocServiceAddEditScreen> {
       physics: const BouncingScrollPhysics(),
       children: [
         const SizedBox(height: 15),
-        Container(
+        SizedBox(
           height: 150,
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 5.0),
@@ -58,8 +60,8 @@ class _BlocServiceAddEditScreenState extends State<BlocServiceAddEditScreen> {
               onClicked: () async {
                 final image = await ImagePicker().pickImage(
                     source: ImageSource.gallery,
-                    imageQuality: 90,
-                    maxWidth: 500);
+                    imageQuality: 95,
+                    maxWidth: 1024);
                 if (image == null) return;
 
                 final directory = await getApplicationDocumentsDirectory();

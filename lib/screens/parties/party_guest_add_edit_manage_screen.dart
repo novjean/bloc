@@ -28,6 +28,7 @@ import '../../db/entity/party.dart';
 import '../../db/entity/party_guest.dart';
 import '../../db/entity/party_interest.dart';
 import '../../db/entity/promoter.dart';
+import '../../db/entity/reservation.dart';
 import '../../db/entity/user.dart' as blocUser;
 import '../../db/shared_preferences/party_guest_preferences.dart';
 import '../../db/shared_preferences/user_preferences.dart';
@@ -38,6 +39,7 @@ import '../../main.dart';
 import '../../routes/route_constants.dart';
 import '../../utils/challenge_utils.dart';
 import '../../utils/constants.dart';
+import '../../utils/date_time_utils.dart';
 import '../../utils/file_utils.dart';
 import '../../utils/logx.dart';
 import '../../utils/network_utils.dart';
@@ -128,6 +130,10 @@ class _PartyGuestAddEditManageScreenState
       mBlocUser = UserPreferences.myUser;
     }
 
+    if (mBlocUser.clearanceLevel < Constants.PROMOTER_LEVEL) {
+      _guestStatuses.removeLast();
+    }
+
     if (widget.partyGuest.guestId.isEmpty && widget.task != 'add') {
       // this is promoter guest ideology, and not having to make the call for no guest id
       int phoneNumber = 0;
@@ -153,14 +159,14 @@ class _PartyGuestAddEditManageScreenState
         if (res.docs.isNotEmpty) {
           DocumentSnapshot document = res.docs[0];
           Map<String, dynamic> map = document.data()! as Map<String, dynamic>;
-          final blocUser.User _user = Fresh.freshUserMap(map, true);
+          final blocUser.User user = Fresh.freshUserMap(map, true);
 
           setState(() {
-            if (_user.phoneNumber == Constants.skipPhoneNumber) {
+            if (user.phoneNumber == Constants.skipPhoneNumber) {
               //user will be the dummy
               isLoggedIn = false;
             } else {
-              mBlocUser = _user;
+              mBlocUser = user;
               isLoggedIn = true;
             }
             _isCustomerLoading = false;
@@ -203,14 +209,14 @@ class _PartyGuestAddEditManageScreenState
       if (res.docs.isNotEmpty) {
         // found parties
         List<Party> parties = [];
-        List<String> _partyNames = ['all'];
+        List<String> partyNames = ['all'];
         for (int i = 0; i < res.docs.length; i++) {
           DocumentSnapshot document = res.docs[i];
           Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
           final Party party = Fresh.freshPartyMap(data, true);
           parties.add(party);
           String partyTitle = '${party.name} ${party.chapter}';
-          _partyNames.add(partyTitle);
+          partyNames.add(partyTitle);
 
           if (party.id == sPartyId) {
             sPartyName = partyTitle;
@@ -219,7 +225,7 @@ class _PartyGuestAddEditManageScreenState
         }
         setState(() {
           mParties = parties;
-          mPartyNames = _partyNames;
+          mPartyNames = partyNames;
           _isPartiesLoading = false;
         });
       } else {
@@ -394,7 +400,7 @@ class _PartyGuestAddEditManageScreenState
                             child: Text(
                               'phone number \*',
                               style: TextStyle(
-                                  color: Theme.of(context).primaryColorLight,
+                                  color: Constants.lightPrimary,
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold),
                             ),
@@ -464,7 +470,7 @@ class _PartyGuestAddEditManageScreenState
                           Text(
                             'gender *',
                             style: TextStyle(
-                                color: Theme.of(context).primaryColorLight,
+                                color: Constants.lightPrimary,
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold),
                           ),
@@ -493,7 +499,7 @@ class _PartyGuestAddEditManageScreenState
                           child: DropdownButtonHideUnderline(
                             child: DropdownButton<String>(
                               style: TextStyle(
-                                  color: Theme.of(context).primaryColorLight),
+                                  color: Constants.lightPrimary),
                               dropdownColor: Constants.background,
                               value: _sGender,
                               isDense: true,
@@ -598,7 +604,7 @@ class _PartyGuestAddEditManageScreenState
                           Text(
                             'number of guests',
                             style: TextStyle(
-                                color: Theme.of(context).primaryColorLight,
+                                color: Constants.lightPrimary,
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold),
                           ),
@@ -671,12 +677,12 @@ class _PartyGuestAddEditManageScreenState
                             onChanged: (value) {},
                           ),
                           const SizedBox(height: 24),
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 10),
+                          const Padding(
+                            padding: EdgeInsets.only(bottom: 10),
                             child: Text(
                               'party',
                               style: TextStyle(
-                                  color: Theme.of(context).primaryColorLight,
+                                  color: Constants.lightPrimary,
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold),
                             ),
@@ -698,13 +704,13 @@ class _PartyGuestAddEditManageScreenState
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Padding(
-                                padding: const EdgeInsets.only(bottom: 10),
+                              const Padding(
+                                padding: EdgeInsets.only(bottom: 10),
                                 child: Text(
                                   'challenge level *',
                                   style: TextStyle(
                                       color:
-                                          Theme.of(context).primaryColorLight,
+                                          Constants.lightPrimary,
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold),
                                 ),
@@ -930,12 +936,14 @@ class _PartyGuestAddEditManageScreenState
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   Padding(
-                    padding: EdgeInsets.only(right: 42, bottom: 5),
+                    padding: const EdgeInsets.only(right: 42, bottom: 5),
                     child: DelayedDisplay(
-                      delay: Duration(seconds: 1),
+                      delay: const Duration(seconds: 1),
                       child: Text(
-                        widget.task =='manage' ? mBlocUser.appVersion: "* required",
-                        style: TextStyle(
+                        widget.task == 'manage'
+                            ? mBlocUser.appVersion
+                            : "* required",
+                        style: const TextStyle(
                           color: Constants.primary,
                         ),
                       ),
@@ -1080,6 +1088,8 @@ class _PartyGuestAddEditManageScreenState
                     } else {
                       if (isDataValid()) {
                         if (isLoggedIn) {
+                          widget.partyGuest = widget.partyGuest.copyWith(shouldBanUser: mBlocUser.isBanned);
+
                           if (hasUserChanged) {
                             blocUser.User freshUser =
                                 Fresh.freshUser(mBlocUser);
@@ -1130,8 +1140,7 @@ class _PartyGuestAddEditManageScreenState
                             height: 50,
                             text: 'delete',
                             onClicked: () {
-                              FirestoreHelper.deletePartyGuest(
-                                  widget.partyGuest);
+                              FirestoreHelper.deletePartyGuest(widget.partyGuest.id);
                               Logx.ist(_TAG, 'guest list request is deleted!');
                               Navigator.of(context).pop();
                             },
@@ -1197,7 +1206,7 @@ class _PartyGuestAddEditManageScreenState
     });
   }
 
-  void _showGuestsEntryDialog(BuildContext context) {
+  _showGuestsEntryDialog(BuildContext context) {
     int guestCount = widget.partyGuest.guestsCount - 1;
 
     List<String> guestNames = [];
@@ -1208,10 +1217,10 @@ class _PartyGuestAddEditManageScreenState
 
     showDialog(
       context: context,
-      builder: (BuildContext context) {
+      builder: (BuildContext ctx) {
         return AlertDialog(
           title: Text(
-            '👫 Express Entry: Save Time at the Gate by Entering Guest Details!'
+            '👫 Roll in smooth: add guests now'
                 .toLowerCase(),
             textAlign: TextAlign.center,
             style: const TextStyle(fontSize: 22, color: Colors.black),
@@ -1235,12 +1244,12 @@ class _PartyGuestAddEditManageScreenState
           ),
           actions: [
             TextButton(
-        style: ButtonStyle(
-        backgroundColor: MaterialStateProperty.all<Color>(Constants
-            .darkPrimary), // Set your desired background color
-        ),
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all<Color>(
+                    Constants.darkPrimary), // Set your desired background color
+              ),
               onPressed: () {
-                Navigator.of(context).pop();
+                Navigator.of(ctx).pop();
 
                 List<String> guestNames =
                     PartyGuestPreferences.getListGuestNames();
@@ -1253,8 +1262,8 @@ class _PartyGuestAddEditManageScreenState
                 widget.partyGuest =
                     widget.partyGuest.copyWith(guestNames: names);
 
-                _showRulesConfirmationDialog(context, false);
-              },
+                _showReserveTableDialog(context);
+                },
               child: const Text('👍 done',
                   style: TextStyle(color: Constants.primary)),
             ),
@@ -1265,6 +1274,9 @@ class _PartyGuestAddEditManageScreenState
   }
 
   _showRulesConfirmationDialog(BuildContext context, bool isNewUser) {
+    String guestListRules = widget.party.guestListRules.replaceAll(
+        '{}', DateTimeUtils.getFormattedTime2(widget.party.guestListEndTime));
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -1284,7 +1296,7 @@ class _PartyGuestAddEditManageScreenState
               shrinkWrap: true,
               children: [
                 const Text('entry rules:\n'),
-                Text(widget.party.guestListRules.toLowerCase()),
+                Text(guestListRules.toLowerCase()),
                 const Text('\nclub rules:\n'),
                 Text(widget.party.clubRules.toLowerCase()),
               ],
@@ -1293,8 +1305,8 @@ class _PartyGuestAddEditManageScreenState
           actions: [
             TextButton(
               style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all<Color>(Constants
-                    .darkPrimary), // Set your desired background color
+                backgroundColor: MaterialStateProperty.all<Color>(
+                    Constants.darkPrimary), // Set your desired background color
               ),
               onPressed: () {
                 if (isNewUser) {
@@ -1343,20 +1355,42 @@ class _PartyGuestAddEditManageScreenState
                           .then((res) {
                         if (res.docs.isEmpty) {
                           // no history, add new one
-                          HistoryMusic historyMusic =
-                              Dummy.getDummyHistoryMusic();
-                          historyMusic.userId = widget.partyGuest.guestId;
-                          historyMusic.genre = widget.party.genre;
-                          historyMusic.count = 1;
+                          HistoryMusic historyMusic = Dummy.getDummyHistoryMusic();
+
+                          historyMusic = historyMusic.copyWith(userId: widget.partyGuest.guestId,
+                            genre: widget.party.genre,
+                            count: 1
+                          );
                           FirestoreHelper.pushHistoryMusic(historyMusic);
                         } else {
-                          for (int i = 0; i < res.docs.length; i++) {
-                            DocumentSnapshot document = res.docs[i];
-                            Map<String, dynamic> data =
-                                document.data()! as Map<String, dynamic>;
-                            final HistoryMusic historyMusic =
-                                Fresh.freshHistoryMusicMap(data, false);
-                            historyMusic.count++;
+
+                          if(res.docs.length > 1){
+                            // that means there are multiple, so consolidate
+                            HistoryMusic hm = Dummy.getDummyHistoryMusic();
+                            int totalCount = 0;
+
+                            for (int i = 0; i < res.docs.length; i++) {
+                              DocumentSnapshot document = res.docs[i];
+                              Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+                              final HistoryMusic historyMusic = Fresh.freshHistoryMusicMap(data, false);
+
+                              totalCount+= historyMusic.count;
+                              if(i == 0){
+                                hm = historyMusic;
+                              }
+                              FirestoreHelper.deleteHistoryMusic(historyMusic.id);
+                            }
+
+                            totalCount = totalCount+1;
+                            hm = hm.copyWith(count: totalCount);
+                            FirestoreHelper.pushHistoryMusic(hm);
+                          } else {
+                            DocumentSnapshot document = res.docs[0];
+                            Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+
+                            HistoryMusic historyMusic = Fresh.freshHistoryMusicMap(data, false);
+                            int newCount = historyMusic.count+1;
+                            historyMusic = historyMusic.copyWith(count: newCount);
                             FirestoreHelper.pushHistoryMusic(historyMusic);
                           }
                         }
@@ -1445,7 +1479,7 @@ class _PartyGuestAddEditManageScreenState
                   children: [
                     Text(
                       '${challenge.dialogTitle}:\n',
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                      style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
                     Text(challenge.description.toLowerCase()),
                   ],
@@ -1462,17 +1496,17 @@ class _PartyGuestAddEditManageScreenState
                         .pushNamed(RouteConstants.homeRouteName);
                     GoRouter.of(context)
                         .pushNamed(RouteConstants.boxOfficeRouteName);
-                    // showReserveTableDialog(context);
                   },
                 ),
                 challenge.dialogAccept2Text.isNotEmpty
                     ? TextButton(
                         style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all<Color>(Constants
-                            .darkPrimary), // Set your desired background color
+                          backgroundColor: MaterialStateProperty.all<Color>(
+                              Constants
+                                  .darkPrimary), // Set your desired background color
                         ),
                         child: Text(challenge.dialogAccept2Text,
-                            style: TextStyle(color: Constants.primary)),
+                            style: const TextStyle(color: Constants.primary)),
                         onPressed: () async {
                           Logx.ist(_TAG, 'thank you for supporting us!');
 
@@ -1513,7 +1547,7 @@ class _PartyGuestAddEditManageScreenState
                         .darkPrimary), // Set your desired background color
                   ),
                   child: Text(challenge.dialogAcceptText,
-                      style: TextStyle(color: Constants.primary)),
+                      style: const TextStyle(color: Constants.primary)),
                   onPressed: () async {
                     Logx.ist(_TAG, 'thank you for supporting us!');
 
@@ -1607,101 +1641,83 @@ class _PartyGuestAddEditManageScreenState
     }
   }
 
-  // showReserveTableDialog(BuildContext context) {
-  //   return showDialog(
-  //     context: context,
-  //     builder: (BuildContext ctx) {
-  //       return AlertDialog(
-  //         backgroundColor: Constants.lightPrimary,
-  //         shape: const RoundedRectangleBorder(
-  //             borderRadius: BorderRadius.all(Radius.circular(20.0))),
-  //         contentPadding: const EdgeInsets.all(16.0),
-  //         content: SizedBox(
-  //           height: mq.height * 0.25,
-  //           width: double.maxFinite,
-  //           child: Column(
-  //             children: [
-  //               Padding(
-  //                 padding: const EdgeInsets.only(bottom: 20),
-  //                 child:
-  //                 Text(
-  //                   'reserve table | ${widget.party.name}',
-  //                   maxLines: 2,
-  //                   overflow: TextOverflow.ellipsis,
-  //                   textAlign: TextAlign.center,
-  //                   style: const TextStyle(fontSize: 18),
-  //                 ),
-  //               ),
-  //               SizedBox(
-  //                 height: mq.height * 0.2,
-  //                 width: mq.width * 0.7,
-  //                 child: const SingleChildScrollView(
-  //                   child: Column(
-  //                     mainAxisSize: MainAxisSize.min,
-  //                     crossAxisAlignment: CrossAxisAlignment.start,
-  //                     mainAxisAlignment: MainAxisAlignment.start,
-  //                     children: [
-  //                       Text(
-  //                           'reserve your table at the trendiest club in town and let us take care of every detail, so you can focus on enjoying a wonderful evening with your loved ones.'),
-  //                     ],
-  //                   ),
-  //                 ),
-  //               ),
-  //             ],
-  //           ),
-  //         ),
-  //         actions: [
-  //           TextButton(
-  //             child: const Text('close', style: TextStyle(color: Constants.background),),
-  //             onPressed: () {
-  //               Navigator.of(ctx).pop();
-  //
-  //               UserPreferences.setUser(bloc_user);
-  //               GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
-  //               GoRouter.of(context)
-  //                   .pushNamed(RouteConstants.boxOfficeRouteName);
-  //             },
-  //           ),
-  //           TextButton(
-  //             child: const Text("reserve my table", style: TextStyle(color: Constants.background)),
-  //             onPressed: () {
-  //               Reservation reservation =
-  //                   Dummy.getDummyReservation(Constants.blocServiceId);
-  //               reservation =
-  //                   reservation.copyWith(customerId: widget.partyGuest.guestId);
-  //               reservation = reservation.copyWith(
-  //                   name:
-  //                       '${widget.partyGuest.name} ${widget.partyGuest.surname}');
-  //               int? phoneNumber = int.tryParse(widget.partyGuest.phone);
-  //               reservation = reservation.copyWith(phone: phoneNumber);
-  //
-  //               reservation =
-  //                   reservation.copyWith(arrivalDate: widget.party.startTime);
-  //               reservation = reservation.copyWith(
-  //                   arrivalTime: DateTimeUtils.getFormattedTime2(
-  //                       widget.party.startTime));
-  //
-  //               reservation = reservation.copyWith(
-  //                   guestsCount: widget.partyGuest.guestsCount);
-  //
-  //               Navigator.of(ctx).pop();
-  //               Navigator.of(context).pop();
-  //
-  //               UserPreferences.setUser(bloc_user);
-  //               GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
-  //
-  //               Navigator.of(context).push(
-  //                 MaterialPageRoute(
-  //                     builder: (ctx) => ReservationAddEditScreen(
-  //                         reservation: reservation, task: 'add')),
-  //               );
-  //             },
-  //           ),
-  //         ],
-  //       );
-  //     },
-  //   );
-  // }
+  _showReserveTableDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext ctx) {
+        return AlertDialog(
+          backgroundColor: Constants.lightPrimary,
+          shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(20.0))),
+          contentPadding: const EdgeInsets.all(16.0),
+          content: SizedBox(
+            height: mq.height * 0.5,
+            width: double.maxFinite,
+            child: ListView(
+              children: const [
+                Padding(
+                  padding: EdgeInsets.only(bottom: 20),
+                  child:
+                  Text(
+                    'VIP table? Confirm your throne spot! 👑',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 22, color: Colors.black),
+                  ),
+                ),
+
+                Text(
+                    'you\'re makin\' moves at the event, and you\'ll need that table locked, loaded, and ready for the squad. Secure the vibes, reserve a table – it\'s gonna be one for the books! Reserve your table?'),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              child: const Text('cancel',
+                style: TextStyle(color: Constants.background),),
+              onPressed: () {
+                Navigator.of(ctx).pop();
+
+                _showRulesConfirmationDialog(context, false);
+              },
+            ),
+            TextButton(
+              style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.all<Color>(
+              Constants.darkPrimary), // Set your desired background color
+              ),
+              child: const Text("🛎️ reserve my table",
+                  style: TextStyle(color: Constants.primary)),
+              onPressed: () {
+                Navigator.of(ctx).pop();
+
+                int? phoneNumber = int.tryParse(widget.partyGuest.phone);
+
+                Reservation reservation = Dummy.getDummyReservation(Constants.blocServiceId);
+                reservation = reservation.copyWith(
+                    customerId: widget.partyGuest.guestId,
+                    name:
+                    '${widget.partyGuest.name} ${widget.partyGuest.surname}',
+                    phone: phoneNumber,
+                    arrivalDate: widget.party.startTime,
+                    arrivalTime: DateTimeUtils.getFormattedTime2(widget.party.startTime),
+                    guestsCount: widget.partyGuest.guestsCount,
+                  blocServiceId: widget.party.blocServiceId,
+                );
+
+                if(!testMode){
+                  FirestoreHelper.pushReservation(reservation);
+                }
+
+                Logx.ilt(_TAG, '👑 your table reservation confirmation is at the box office!');
+                _showRulesConfirmationDialog(context, false);
+
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   findChallengeUrl() {
     String url = ChallengeUtils.challengeUrl(findChallenge());
@@ -1907,24 +1923,44 @@ class _PartyGuestAddEditManageScreenState
                           'checking for bloc registration, id ${value.user!.uid}');
 
                       FirestoreHelper.pullUser(value.user!.uid).then((res) {
-                        Logx.i(_TAG,
-                            "successfully retrieved bloc user for id ${value.user!.uid}");
-
                         if (res.docs.isEmpty) {
                           Logx.i(_TAG,
                               'user is not already registered in bloc, registering...');
 
-                          mBlocUser.id = value.user!.uid;
-                          mBlocUser.phoneNumber =
-                              StringUtils.getInt(value.user!.phoneNumber!);
+                          mBlocUser = mBlocUser.copyWith(
+                            id: value.user!.uid,
+                            name: widget.partyGuest.name,
+                            surname: widget.partyGuest.surname,
+                            gender: widget.partyGuest.gender,
+                            phoneNumber:
+                                StringUtils.getInt(value.user!.phoneNumber!),
+                          );
+
+                          if (kIsWeb) {
+                            mBlocUser = mBlocUser.copyWith(isAppUser: false);
+                          } else {
+                            mBlocUser = mBlocUser.copyWith(
+                              isAppUser: true,
+                              appVersion: Constants.appVersion,
+                              isIos: Theme.of(context).platform ==
+                                  TargetPlatform.iOS,
+                            );
+                          }
 
                           FirestoreHelper.pushUser(mBlocUser);
                           Logx.i(_TAG, 'registered user ${mBlocUser.id}');
 
+                          UserLounge userLounge = Dummy.getDummyUserLounge();
+                          userLounge = userLounge.copyWith(
+                              userId: mBlocUser.id,
+                              loungeId: Constants.blocCommunityLoungeId);
+                          FirestoreHelper.pushUserLounge(userLounge);
+
                           UserPreferences.setUser(mBlocUser);
-                          widget.partyGuest.guestId = mBlocUser.id;
-                          widget.partyGuest.phone =
-                              mBlocUser.phoneNumber.toString();
+
+                          widget.partyGuest = widget.partyGuest.copyWith(
+                              guestId: mBlocUser.id,
+                              phone: mBlocUser.phoneNumber.toString());
 
                           _showRulesConfirmationDialog(context, true);
                         } else {
@@ -1939,18 +1975,38 @@ class _PartyGuestAddEditManageScreenState
 
                           //update user details
                           int time = Timestamp.now().millisecondsSinceEpoch;
-                          user = user.copyWith(
-                              name: mBlocUser.name,
-                              email: mBlocUser.email,
-                              lastSeenAt: time);
-                          FirestoreHelper.pushUser(user);
+                          user = user.copyWith(lastSeenAt: time);
 
+                          if (user.name.isEmpty) {
+                            user = user.copyWith(name: widget.partyGuest.name);
+                          }
+                          if (user.surname.isEmpty) {
+                            user = user.copyWith(
+                                surname: widget.partyGuest.surname);
+                          }
+                          if (user.email.isEmpty) {
+                            user =
+                                user.copyWith(email: widget.partyGuest.email);
+                          }
+
+                          if (kIsWeb) {
+                            user = user.copyWith(isAppUser: false);
+                          } else {
+                            user = user.copyWith(
+                              isAppUser: true,
+                              appVersion: Constants.appVersion,
+                              isIos: Theme.of(context).platform ==
+                                  TargetPlatform.iOS,
+                            );
+                          }
+
+                          FirestoreHelper.pushUser(user);
                           UserPreferences.setUser(user);
                           mBlocUser = user;
 
-                          widget.partyGuest.guestId = mBlocUser.id;
-                          widget.partyGuest.phone =
-                              mBlocUser.phoneNumber.toString();
+                          widget.partyGuest = widget.partyGuest.copyWith(
+                              guestId: mBlocUser.id,
+                              phone: mBlocUser.phoneNumber.toString());
                           _showRulesConfirmationDialog(context, false);
                         }
                       });
@@ -2062,58 +2118,6 @@ class _PartyGuestAddEditManageScreenState
             ),
           );
         },
-      ),
-    );
-  }
-
-  _showPhoneNumberEntry() {
-    return Container(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 32.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 24),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 10),
-              child: Text(
-                'phone number \*',
-                style: TextStyle(
-                    color: Theme.of(context).primaryColorLight,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold),
-              ),
-            ),
-            IntlPhoneField(
-              style: const TextStyle(color: Constants.primary, fontSize: 18),
-              decoration: const InputDecoration(
-                  labelText: '',
-                  labelStyle: TextStyle(color: Constants.primary),
-                  hintStyle: TextStyle(color: Constants.primary),
-                  counterStyle: TextStyle(color: Constants.primary),
-                  border: OutlineInputBorder(
-                    borderSide: BorderSide(color: Constants.primary),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide:
-                        BorderSide(color: Constants.primary, width: 0.0),
-                  )),
-              controller: _controller,
-              initialCountryCode: 'IN',
-              dropdownTextStyle:
-                  const TextStyle(color: Constants.primary, fontSize: 18),
-              pickerDialogStyle:
-                  PickerDialogStyle(backgroundColor: Constants.primary),
-              onChanged: (phone) {
-                Logx.i(_TAG, phone.completeNumber);
-                completePhoneNumber = phone.completeNumber;
-              },
-              onCountryChanged: (country) {
-                Logx.i(_TAG, 'country changed to: ${country.name}');
-              },
-            ),
-          ],
-        ),
       ),
     );
   }

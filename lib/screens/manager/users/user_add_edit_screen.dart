@@ -7,10 +7,15 @@ import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 
+import '../../../db/entity/history_music.dart';
+import '../../../db/entity/party_guest.dart';
+import '../../../db/entity/reservation.dart';
 import '../../../db/entity/user.dart';
 import '../../../db/entity/user_level.dart';
+import '../../../db/entity/user_lounge.dart';
 import '../../../helpers/firestorage_helper.dart';
 import '../../../helpers/firestore_helper.dart';
+import '../../../helpers/fresh.dart';
 import '../../../utils/constants.dart';
 import '../../../utils/logx.dart';
 import '../../../utils/string_utils.dart';
@@ -49,14 +54,11 @@ class _UserAddEditScreenState extends State<UserAddEditScreen> {
   bool _isBlocServicesLoading = true;
 
   List<String> userLevelNames = [];
-  late String _sUserLevelName;
-  late int _sUserLevel;
+  late String sUserLevelName;
+  late int sUserLevel;
 
   DateTime sStartDateTime = DateTime.now();
   DateTime sEndDateTime = DateTime.now();
-
-  TimeOfDay _sTimeOfDay = TimeOfDay.now();
-  bool _isStartDateBeingSet = true;
 
   String sGender = 'male';
   List<String> genders = [
@@ -70,13 +72,13 @@ class _UserAddEditScreenState extends State<UserAddEditScreen> {
   @override
   void initState() {
     sGender = widget.user.gender;
-
-    super.initState();
+    sUserLevel = Constants.CUSTOMER_LEVEL;
+    sUserLevelName = 'customer';
 
     for(UserLevel userLevel in widget.userLevels){
       userLevelNames.add(userLevel.name);
       if(widget.user.clearanceLevel == userLevel.level){
-        _sUserLevelName = userLevel.name;
+        sUserLevelName = userLevel.name;
       }
     }
 
@@ -113,6 +115,8 @@ class _UserAddEditScreenState extends State<UserAddEditScreen> {
         });
       }
     });
+
+    super.initState();
   }
 
   @override
@@ -212,7 +216,7 @@ class _UserAddEditScreenState extends State<UserAddEditScreen> {
                   key: const ValueKey('gender_dropdown'),
                   decoration: InputDecoration(
                       fillColor: Colors.white,
-                      errorStyle: TextStyle(
+                      errorStyle: const TextStyle(
                           color: Constants.errorColor,
                           fontSize: 16.0),
                       hintText: 'please select gender',
@@ -291,7 +295,7 @@ class _UserAddEditScreenState extends State<UserAddEditScreen> {
             return InputDecorator(
               key: const ValueKey('bloc_service_id'),
               decoration: InputDecoration(
-                  errorStyle: TextStyle(
+                  errorStyle: const TextStyle(
                       color: Constants.errorColor,
                       fontSize: 16.0),
                   hintText: 'please select bloc service',
@@ -341,23 +345,23 @@ class _UserAddEditScreenState extends State<UserAddEditScreen> {
                   hintText: 'please select user level',
                   border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(5.0))),
-              isEmpty: _sUserLevelName == '',
+              isEmpty: sUserLevelName == '',
               child: DropdownButtonHideUnderline(
                 child: DropdownButton<String>(
-                  value: _sUserLevelName,
+                  value: sUserLevelName,
                   isDense: true,
                   onChanged: (String? newValue) {
                     setState(() {
-                      _sUserLevelName = newValue!;
+                      sUserLevelName = newValue!;
 
                       for (UserLevel userLevel in widget.userLevels) {
-                        if (userLevel.name == _sUserLevelName) {
-                          _sUserLevel = userLevel.level;
+                        if (userLevel.name == sUserLevelName) {
+                          sUserLevel = userLevel.level;
                         }
                       }
 
                       widget.user = widget.user
-                          .copyWith(clearanceLevel: _sUserLevel);
+                          .copyWith(clearanceLevel: sUserLevel);
                       state.didChange(newValue);
                     });
                   },
@@ -394,17 +398,17 @@ class _UserAddEditScreenState extends State<UserAddEditScreen> {
             Navigator.of(context).pop();
           },
         ),
-        const SizedBox(height: 24),
-        ButtonWidget(
+        const SizedBox(height: 36),
+        DarkButtonWidget(
           text: 'delete',
           onClicked: () {
 
             showDialog(
               context: context,
               builder: (ctx) => AlertDialog(
-                title: Text('delete ${widget.user.name}'),
+                title: Text('delete ${widget.user.name} ${widget.user.surname}'),
                 content: const Text(
-                  'do you want to delete the user?',
+                  'entire history of the user shall be removed if proceeded, are you sure you want to delete the user?',
                 ),
                 actions: [
                   ElevatedButton(
@@ -415,13 +419,63 @@ class _UserAddEditScreenState extends State<UserAddEditScreen> {
                   ),
                   ElevatedButton(
                     child: const Text('yes'),
-                    onPressed: () {
+                    onPressed: () async {
+                      // delete all lounge user
+                      FirestoreHelper.pullUserLounges(widget.user.id).then((res) {
+                        if(res.docs.isNotEmpty){
+                          for (int i = 0; i < res.docs.length; i++) {
+                            DocumentSnapshot document = res.docs[i];
+                            Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+                            UserLounge userLounge = Fresh.freshUserLoungeMap(data, false);
+
+                            FirestoreHelper.deleteUserLounge(userLounge.id);
+                          }
+                          Logx.ist(_TAG, '${widget.user.name} ${widget.user.surname} is removed from ${res.docs.length} lounges');
+                        }
+                      });
+
+                      FirestoreHelper.pullHistoryMusicByUser(widget.user.id).then((res) {
+                        if(res.docs.isNotEmpty){
+                          for (int i = 0; i < res.docs.length; i++) {
+                            DocumentSnapshot document = res.docs[i];
+                            Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+                            final HistoryMusic historyMusic = Fresh.freshHistoryMusicMap(data, false);
+                            FirestoreHelper.deleteHistoryMusic(historyMusic.id);
+                          }
+                        }
+                        Logx.ist(_TAG, '${widget.user.name} ${widget.user.surname}\'s ${res.docs.length} music history deleted');
+                      });
+
+                      FirestoreHelper.pullPartyGuestsByUser(widget.user.id).then((res) {
+                        if(res.docs.isNotEmpty){
+                          for (int i = 0; i < res.docs.length; i++) {
+                            DocumentSnapshot document = res.docs[i];
+                            Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+                            final PartyGuest partyGuest = Fresh.freshPartyGuestMap(data, false);
+                            FirestoreHelper.deletePartyGuest(partyGuest.id);
+                          }
+                          Logx.ist(_TAG, '${widget.user.name} ${widget.user.surname}\'s ${res.docs.length} guest list requests deleted');
+                        }
+                      });
+
+                      FirestoreHelper.pullReservationsByUser(widget.user.id).then((res) {
+                        if(res.docs.isNotEmpty){
+                          for (int i = 0; i < res.docs.length; i++) {
+                            DocumentSnapshot document = res.docs[i];
+                            Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+                            final Reservation reservation = Fresh.freshReservationMap(data, false);
+                            FirestoreHelper.deleteReservation(reservation.id);
+                          }
+                          Logx.ist(_TAG, '${widget.user.name} ${widget.user.surname}\'s ${res.docs.length} reservations deleted');
+                        }
+                      });
+
                       if(widget.user.imageUrl.isNotEmpty){
                         FirestorageHelper.deleteFile(widget.user.imageUrl);
                       }
 
                       FirestoreHelper.deleteUser(widget.user.id);
-                      Toaster.shortToast('user deleted');
+                      Logx.ist(_TAG, 'user is successfully deleted');
 
                       Navigator.of(ctx).pop(true);
                       Navigator.of(context).pop();
@@ -432,6 +486,7 @@ class _UserAddEditScreenState extends State<UserAddEditScreen> {
             );
           },
         ),
+        const SizedBox(height: 12),
       ],
     );
   }

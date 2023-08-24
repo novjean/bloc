@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 
-import '../../../db/entity/party_photo.dart';
-import '../../../utils/constants.dart';
-import '../../../utils/date_time_utils.dart';
+import '../../db/entity/lounge.dart';
+import '../../db/entity/party.dart';
+import '../../utils/constants.dart';
+import '../../utils/date_time_utils.dart';
 
-class ManagePartyPhotoItem extends StatelessWidget{
-  static const String _TAG = 'ManagePartyPhotoItem';
+class ManageLoungeItem extends StatelessWidget{
+  static const String _TAG = 'ManagePartyItem';
 
-  PartyPhoto partyPhoto;
+  Lounge lounge;
 
-  ManagePartyPhotoItem({Key? key, required this.partyPhoto}) : super(key: key);
+  ManageLoungeItem({Key? key, required this.lounge}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +19,7 @@ class ManagePartyPhotoItem extends StatelessWidget{
       child: ClipRRect(
         borderRadius: BorderRadius.circular(15),
         child: Hero(
-          tag: partyPhoto.id,
+          tag: lounge.id,
           child: Card(
             elevation: 1,
             color: Constants.lightPrimary,
@@ -29,11 +30,11 @@ class ManagePartyPhotoItem extends StatelessWidget{
                   leading: FadeInImage(
                     placeholder: const AssetImage(
                         'assets/icons/logo.png'),
-                    image: NetworkImage(partyPhoto.imageUrl),
+                    image: NetworkImage(lounge.imageUrl),
                     fit: BoxFit.cover,),
                   title: RichText(
                     text: TextSpan(
-                      text: '${partyPhoto.partyName} ',
+                      text: lounge.name,
                       style: const TextStyle(
                           fontFamily: Constants.fontDefault,
                           color: Colors.black,
@@ -46,15 +47,15 @@ class ManagePartyPhotoItem extends StatelessWidget{
                   subtitle: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('${partyPhoto.views} 👁️'),
-                      Text('${partyPhoto.likers.length} 🖤'),
-                      Text('${partyPhoto.downloadCount} 💾'),
+                      Text(lounge.type),
+                      Text(lounge.isVip?'vip':'open'),
+                      Text(lounge.isActive?'active':'inactive'),
                     ],
                   ),
                   trailing: RichText(
                     text: TextSpan(
                       text:
-                      '${DateTimeUtils.getFormattedDate(partyPhoto.endTime)} ',
+                      '${DateTimeUtils.getFormattedDate(lounge.lastChatTime)} ',
                       style: const TextStyle(
                         fontFamily: Constants.fontDefault,
                         color: Colors.black,
@@ -69,5 +70,6 @@ class ManagePartyPhotoItem extends StatelessWidget{
       ),
     );
   }
+
 
 }

@@ -2,6 +2,7 @@ import 'package:bloc/db/shared_preferences/user_preferences.dart';
 import 'package:bloc/utils/constants.dart';
 import 'package:bloc/utils/date_time_utils.dart';
 import 'package:bloc/utils/network_utils.dart';
+import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:delayed_display/delayed_display.dart';
 import 'package:flutter/material.dart';
@@ -18,6 +19,7 @@ import '../../helpers/fresh.dart';
 import '../../routes/route_constants.dart';
 import '../../screens/parties/party_guest_add_edit_manage_screen.dart';
 import '../../utils/logx.dart';
+import 'mini_artist_item.dart';
 
 class PartyBanner extends StatefulWidget {
   static const String _TAG = 'PartyBanner';
@@ -44,6 +46,9 @@ class PartyBanner extends StatefulWidget {
 class _PartyBannerState extends State<PartyBanner> {
   static const String _TAG = 'PartyBanner';
 
+  List<Party> mArtists = [];
+  var _isArtistsLoading = true;
+
   PartyInterest mPartyInterest = Dummy.getDummyPartyInterest();
 
   @override
@@ -67,6 +72,37 @@ class _PartyBannerState extends State<PartyBanner> {
         }
       });
     }
+
+    if(widget.party.isBigAct){
+      if(widget.party.artistIds.isNotEmpty){
+        FirestoreHelper.pullPartyArtistsByIds(widget.party.artistIds).then((res) {
+          if(res.docs.isNotEmpty){
+            for (int i = 0; i < res.docs.length; i++) {
+              DocumentSnapshot document = res.docs[i];
+              Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+              final Party artist = Fresh.freshPartyMap(data, false);
+              if(artist.isBigAct){
+                mArtists.add(artist);
+              }
+            }
+            setState(() {
+              _isArtistsLoading = false;
+            });
+          } else {
+            Logx.em(_TAG, 'artists no longer exist!');
+            setState(() {
+              _isArtistsLoading = false;
+            });
+          }
+        });
+      }
+    } else {
+      Logx.em(_TAG, 'artists no longer exist!');
+      setState(() {
+        _isArtistsLoading = false;
+      });
+    }
+
     super.initState();
   }
 
@@ -78,7 +114,7 @@ class _PartyBannerState extends State<PartyBanner> {
 
     int interestCount = mPartyInterest.initCount + mPartyInterest.userIds.length;
 
-    return GestureDetector(
+    return _isArtistsLoading ? const LoadingWidget(): GestureDetector(
       onTap: () {
         if (widget.isClickable) {
           if (widget.party.type == 'event') {
@@ -106,7 +142,7 @@ class _PartyBannerState extends State<PartyBanner> {
             tag: widget.party.id,
             child: Card(
               elevation: 1,
-              color: Theme.of(context).primaryColorLight,
+              color: Constants.lightPrimary,
               child: SizedBox(
                 height: 200,
                 child: Row(
@@ -165,6 +201,34 @@ class _PartyBannerState extends State<PartyBanner> {
                             ),
                           ),
                           const Spacer(),
+                          // _isArtistsLoading ? const LoadingWidget():
+                          // ListView.builder(
+                          //   itemCount: mArtists.length,
+                          //   scrollDirection: Axis.horizontal,
+                          //   itemBuilder: (ctx, index) {
+                          //     return Text(mArtists[index].name);
+                          //   },
+                          // ),
+                          mArtists.isNotEmpty?
+                          Padding(
+                            padding: EdgeInsets.only(left: 5, right: 5, bottom: 1),
+                            child:
+                            Container(
+                              height: 25, // Adjust the height as needed
+                              child: ListView.builder(
+                                scrollDirection: Axis.horizontal,
+                                itemCount: mArtists.length,
+                                itemBuilder: (context, index) {
+                                  return MiniArtistItem(artist: mArtists[index]);
+                                },
+                              ),
+                            ),
+                            // Row(
+                            //   children: [
+                            //     Text(mArtists[0].name),
+                            //   ],
+                            // ),
+                          ): const SizedBox(),
                           widget.shouldShowInterestCount
                               ? Row(
                                   mainAxisAlignment: MainAxisAlignment.end,

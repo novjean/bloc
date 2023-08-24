@@ -3,13 +3,14 @@ import 'package:flutter/material.dart';
 import '../../../db/entity/party_photo.dart';
 import '../../../utils/constants.dart';
 import '../../../utils/date_time_utils.dart';
+import '../../db/entity/manager_service.dart';
 
-class ManagePartyPhotoItem extends StatelessWidget{
-  static const String _TAG = 'ManagePartyPhotoItem';
+class ManagerServiceItem extends StatelessWidget{
+  static const String _TAG = 'ManagerServiceItem';
 
-  PartyPhoto partyPhoto;
+  ManagerService managerService;
 
-  ManagePartyPhotoItem({Key? key, required this.partyPhoto}) : super(key: key);
+  ManagerServiceItem({Key? key, required this.managerService}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +19,7 @@ class ManagePartyPhotoItem extends StatelessWidget{
       child: ClipRRect(
         borderRadius: BorderRadius.circular(15),
         child: Hero(
-          tag: partyPhoto.id,
+          tag: managerService.id,
           child: Card(
             elevation: 1,
             color: Constants.lightPrimary,
@@ -26,14 +27,9 @@ class ManagePartyPhotoItem extends StatelessWidget{
             child: Padding(
                 padding: const EdgeInsets.only(top: 2.0, left: 5, right: 5),
                 child: ListTile(
-                  leading: FadeInImage(
-                    placeholder: const AssetImage(
-                        'assets/icons/logo.png'),
-                    image: NetworkImage(partyPhoto.imageUrl),
-                    fit: BoxFit.cover,),
                   title: RichText(
                     text: TextSpan(
-                      text: '${partyPhoto.partyName} ',
+                      text: '${managerService.name} ',
                       style: const TextStyle(
                           fontFamily: Constants.fontDefault,
                           color: Colors.black,
@@ -43,18 +39,11 @@ class ManagePartyPhotoItem extends StatelessWidget{
                     ),
                   ),
 
-                  subtitle: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text('${partyPhoto.views} 👁️'),
-                      Text('${partyPhoto.likers.length} 🖤'),
-                      Text('${partyPhoto.downloadCount} 💾'),
-                    ],
-                  ),
+                  // subtitle: Text('${managerService..length} likes'),
                   trailing: RichText(
                     text: TextSpan(
                       text:
-                      '${DateTimeUtils.getFormattedDate(partyPhoto.endTime)} ',
+                      '${managerService.sequence} ',
                       style: const TextStyle(
                         fontFamily: Constants.fontDefault,
                         color: Colors.black,

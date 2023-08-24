@@ -1,3 +1,4 @@
+import 'package:bloc/widgets/manager/manage_ad_item.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -5,9 +6,9 @@ import '../../../db/entity/ad.dart';
 import '../../../helpers/dummy.dart';
 import '../../../helpers/firestore_helper.dart';
 import '../../../helpers/fresh.dart';
+import '../../../main.dart';
 import '../../../utils/logx.dart';
 import '../../../widgets/ui/app_bar_title.dart';
-import '../../../widgets/ui/listview_block.dart';
 import '../../../widgets/ui/loading_widget.dart';
 import 'ad_add_edit_screen.dart';
 
@@ -48,19 +49,7 @@ class ManageAdsScreen extends StatelessWidget {
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-      body: _buildBody(context),
-    );
-  }
-
-  Widget _buildBody(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          const SizedBox(height: 5.0),
-          _buildAds(context),
-          const SizedBox(height: 5.0),
-        ],
-      ),
+      body: _buildAds(context),
     );
   }
 
@@ -89,19 +78,18 @@ class ManageAdsScreen extends StatelessWidget {
   }
 
   _displayAds(BuildContext context, List<Ad> ads) {
-    return Container(
-      height: MediaQuery.of(context).size.height,
+    return SizedBox(
+      height: mq.height,
       child: ListView.builder(
           itemCount: ads.length,
           scrollDirection: Axis.vertical,
           itemBuilder: (ctx, index) {
             return GestureDetector(
-                child: ListViewBlock(
-                  title: ads[index].title,
+                child: ManageAdItem(
+                  ad: ads[index],
                 ),
                 onTap: () {
                   Ad sAd = ads[index];
-                  Logx.i(_TAG, sAd.title + ' : ' + sAd.message);
 
                   Navigator.of(context).push(
                     MaterialPageRoute(

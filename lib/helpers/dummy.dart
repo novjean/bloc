@@ -50,7 +50,8 @@ class Dummy {
         blocId: blocServiceId,
         createdAt: Timestamp.now().millisecondsSinceEpoch,
         isActive: false,
-        hits: 0);
+        hits: 0,
+        reach: 0);
 
     return dummyAd;
   }
@@ -106,11 +107,10 @@ class Dummy {
     CaptainService dummy = CaptainService(
         id: StringUtils.getRandomString(28),
         name: '',
-        sequence:0,
+        sequence: 0,
         isActive: false);
     return dummy;
   }
-
 
   static Category getDummyCategory(String serviceId) {
     Category dummyCategory = Category(
@@ -169,11 +169,10 @@ class Dummy {
 
   static Config getDummyConfig(String blocServiceId) {
     Config dummyConfig = Config(
-      id: StringUtils.getRandomString(28),
-      name: '',
-      blocServiceId: blocServiceId,
-      value: true
-    );
+        id: StringUtils.getRandomString(28),
+        name: '',
+        blocServiceId: blocServiceId,
+        value: true);
     return dummyConfig;
   }
 
@@ -301,8 +300,9 @@ class Dummy {
         guestId: isLoggedInUser ? UserPreferences.myUser.id : '',
         name: isLoggedInUser ? UserPreferences.myUser.name : '',
         surname: isLoggedInUser ? UserPreferences.myUser.surname : '',
-        phone:
-            isLoggedInUser ? UserPreferences.myUser.phoneNumber.toString() : '0',
+        phone: isLoggedInUser
+            ? UserPreferences.myUser.phoneNumber.toString()
+            : '0',
         email: isLoggedInUser ? UserPreferences.myUser.email : '',
         guestsCount: 2,
         guestsRemaining: 2,
@@ -314,7 +314,7 @@ class Dummy {
         shouldBanUser: false,
         promoterId: '',
         guestNames: [],
-        gender: 'male' );
+        gender: 'male');
     return dummyGuest;
   }
 
@@ -339,7 +339,7 @@ class Dummy {
         imageUrl: '',
         createdAt: now,
         partyDate: now,
-        endTime: endTime ,
+        endTime: endTime,
         likers: [],
         downloadCount: 0,
         views: 0);
@@ -383,15 +383,14 @@ class Dummy {
 
   static PromoterGuest getDummyPromoterGuest() {
     PromoterGuest dummy = PromoterGuest(
-      id: StringUtils.getRandomString(28),
-      name: '',
-      phone: '',
-      promoterId: Constants.blocPromoterId,
-      blocUserId: '',
-      partyGuestId: '',
-      createdAt: Timestamp.now().millisecondsSinceEpoch,
-      hasAttended: false
-    );
+        id: StringUtils.getRandomString(28),
+        name: '',
+        phone: '',
+        promoterId: Constants.blocPromoterId,
+        blocUserId: '',
+        partyGuestId: '',
+        createdAt: Timestamp.now().millisecondsSinceEpoch,
+        hasAttended: false);
 
     return dummy;
   }
@@ -405,18 +404,17 @@ class Dummy {
         quantity: 1,
         table: '',
         createdAt: Timestamp.now().millisecondsSinceEpoch,
-        status: 'ordered'
-    );
+        status: 'ordered');
 
     return dummy;
   }
 
   static QuickTable getDummyQuickTable() {
     QuickTable dummy = QuickTable(
-        id: StringUtils.getRandomString(28),
-        phone: 0,
-        tableName: '',
-        createdAt: Timestamp.now().millisecondsSinceEpoch,
+      id: StringUtils.getRandomString(28),
+      phone: 0,
+      tableName: '',
+      createdAt: Timestamp.now().millisecondsSinceEpoch,
     );
 
     return dummy;

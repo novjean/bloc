@@ -16,6 +16,7 @@ import '../../../db/entity/lounge.dart';
 
 import '../../../db/entity/lounge_chat.dart';
 import '../../../db/entity/user.dart';
+import '../../../db/entity/user_lounge.dart';
 import '../../../helpers/firestorage_helper.dart';
 import '../../../helpers/firestore_helper.dart';
 import '../../../helpers/fresh.dart';
@@ -412,7 +413,7 @@ class _LoungeAddEditScreenState extends State<LoungeAddEditScreen> {
                 height: 50,
                 text: 'delete',
                 onClicked: () {
-                  showDeleteDialog(context);
+                  _showDeleteLoungeDialog(context);
                 }),
           ],
         ),
@@ -421,20 +422,26 @@ class _LoungeAddEditScreenState extends State<LoungeAddEditScreen> {
     );
   }
 
-  showDeleteDialog(BuildContext context) {
+  _showDeleteLoungeDialog(BuildContext context) {
     return showDialog(
       context: context,
       builder: (BuildContext ctx) {
         return AlertDialog(
           title: Text('delete lounge ${widget.lounge.name}'),
           content: Text(
-              'deleting the lounge ${widget.lounge.name}. are you sure you want to continue?'),
+              'deleting the lounge ${widget.lounge.name} is final and cannot be reverted. are you sure you want to continue?'),
           actions: [
             TextButton(
               child: const Text("yes"),
               onPressed: () async {
+                // need to delete all lounge chats
+                _deleteAllLoungeChats(context);
+
+                //delete all members of the lounge
+                _deleteAllLoungeUsers(context);
+
                 FirestoreHelper.deleteLounge(widget.lounge.id);
-                Toaster.shortToast('lounge deleted');
+                Logx.ist(_TAG, 'the lounge : ${widget.lounge.name} is successfully deleted');
                 Navigator.of(context).pop();
               },
             ),
@@ -450,6 +457,40 @@ class _LoungeAddEditScreenState extends State<LoungeAddEditScreen> {
     );
   }
 
+  void _deleteAllLoungeUsers(BuildContext context) {
+    FirestoreHelper.pullUserLoungeMembers(widget.lounge.id).then((res) {
+      if(res.docs.isNotEmpty){
+        for (int i = 0; i < res.docs.length; i++) {
+          DocumentSnapshot document = res.docs[i];
+          Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+          UserLounge userLounge = Fresh.freshUserLoungeMap(data, false);
+          FirestoreHelper.deleteUserLounge(userLounge.id);
+        }
+
+        Logx.ist(_TAG, 'deleted ${res.docs.length} members of ${widget.lounge.name}');
+      }
+    });
+  }
+
+  void _deleteAllLoungeChats(BuildContext context) {
+    FirestoreHelper.pullLoungeChats(widget.lounge.id).then((res) {
+      if(res.docs.isNotEmpty){
+        for (int i = 0; i < res.docs.length; i++) {
+          DocumentSnapshot document = res.docs[i];
+          Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+          final LoungeChat chat = Fresh.freshLoungeChatMap(data, false);
+
+          if(chat.type != 'text'){
+            FirestorageHelper.deleteFile(chat.message);
+          }
+          FirestoreHelper.deleteLoungeChat(chat.id);
+        }
+
+        Logx.ist(_TAG, 'deleted ${res.docs.length} chats of ${widget.lounge.name}');
+      }
+    });
+  }
+
   void _deleteOldPhotoChats(BuildContext context) {
     FirestoreHelper.pullLoungePhotoChats(widget.lounge.id).then((res) {
       if(res.docs.isNotEmpty){
@@ -460,11 +501,13 @@ class _LoungeAddEditScreenState extends State<LoungeAddEditScreen> {
           Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
           final LoungeChat chat = Fresh.freshLoungeChatMap(data, false);
 
-          if(now - chat.time > (DateTimeUtils.millisecondsWeek * 2)){
+          if(now - chat.time > (DateTimeUtils.millisecondsWeek * 4)){
             FirestorageHelper.deleteFile(chat.message);
             FirestoreHelper.deleteLoungeChat(chat.id);
           }
         }
+
+        Logx.ist(_TAG, 'deleted ${res.docs.length} old photos of ${widget.lounge.name}');
       }
     });
   }

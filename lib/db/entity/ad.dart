@@ -4,6 +4,8 @@ class Ad {
   final String message;
   final String blocId;
   final int hits;
+  final int reach;
+
   final int createdAt;
   final String imageUrl;
   final bool isActive;
@@ -18,6 +20,7 @@ class Ad {
     required this.message,
     required this.blocId,
     required this.hits,
+    required this.reach,
     required this.createdAt,
     required this.imageUrl,
     required this.isActive,
@@ -35,6 +38,7 @@ class Ad {
           message == other.message &&
           blocId == other.blocId &&
           hits == other.hits &&
+          reach == other.reach &&
           createdAt == other.createdAt &&
           imageUrl == other.imageUrl &&
           isActive == other.isActive &&
@@ -48,6 +52,7 @@ class Ad {
       message.hashCode ^
       blocId.hashCode ^
       hits.hashCode ^
+      reach.hashCode ^
       createdAt.hashCode ^
       imageUrl.hashCode ^
       isActive.hashCode ^
@@ -62,6 +67,7 @@ class Ad {
         ' message: $message,' +
         ' blocId: $blocId,' +
         ' hits: $hits,' +
+        ' reach: $reach,' +
         ' createdAt: $createdAt,' +
         ' imageUrl: $imageUrl,' +
         ' isActive: $isActive,' +
@@ -76,6 +82,7 @@ class Ad {
     String? message,
     String? blocId,
     int? hits,
+    int? reach,
     int? createdAt,
     String? imageUrl,
     bool? isActive,
@@ -88,6 +95,7 @@ class Ad {
       message: message ?? this.message,
       blocId: blocId ?? this.blocId,
       hits: hits ?? this.hits,
+      reach: reach ?? this.reach,
       createdAt: createdAt ?? this.createdAt,
       imageUrl: imageUrl ?? this.imageUrl,
       isActive: isActive ?? this.isActive,
@@ -103,6 +111,7 @@ class Ad {
       'message': this.message,
       'blocId': this.blocId,
       'hits': this.hits,
+      'reach': this.reach,
       'createdAt': this.createdAt,
       'imageUrl': this.imageUrl,
       'isActive': this.isActive,
@@ -118,6 +127,7 @@ class Ad {
       message: map['message'] as String,
       blocId: map['blocId'] as String,
       hits: map['hits'] as int,
+      reach: map['reach'] as int,
       createdAt: map['createdAt'] as int,
       imageUrl: map['imageUrl'] as String,
       isActive: map['isActive'] as bool,

@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:bloc/db/entity/lounge_chat.dart';
+import 'package:bloc/helpers/firestore_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -108,6 +109,8 @@ class NotificationService {
             Ad ad = Fresh.freshAdMap(jsonDecode(payload['data']!), false);
             BuildContext? appContext = BlocApp.navigatorKey.currentContext;
 
+            FirestoreHelper.updateAdHit(ad.id);
+
             if(ad.partyName.isNotEmpty && ad.partyChapter.isNotEmpty){
               GoRouter.of(appContext!).pushNamed(RouteConstants.eventRouteName,
                   params: {
@@ -125,8 +128,14 @@ class NotificationService {
           break;
         case 'chat':
           try {
-            LoungeChat chat =
-                Fresh.freshLoungeChatMap(jsonDecode(payload['data']!), false);
+            LoungeChat chat = Fresh.freshLoungeChatMap(jsonDecode(payload['data']!), false);
+
+            BuildContext? appContext = BlocApp.navigatorKey.currentContext;
+            GoRouter.of(appContext!).pushNamed(
+                RouteConstants.loungeRouteName,
+                params: {
+                  'id': chat.loungeId,
+                });
             Logx.d(_TAG, 'successful');
           } catch (e) {
             Logx.em(_TAG, e.toString());
@@ -210,7 +219,7 @@ class NotificationService {
     Map<String, dynamic> objectMap = chat.toMap();
     String jsonString = jsonEncode(objectMap);
 
-    String title = '🫶 ${chat.loungeName}';
+    String title = chat.loungeName;
 
     if (chat.type == 'text') {
       String body = chat.message;
@@ -220,7 +229,7 @@ class NotificationService {
         body: body,
         notificationLayout: NotificationLayout.Messaging,
         payload: {
-          "navigate": "false",
+          "navigate": "true",
           "type": "chat",
           "data": jsonString,
         },
@@ -234,7 +243,7 @@ class NotificationService {
         largeIcon: chat.message,
         notificationLayout: NotificationLayout.Messaging,
         payload: {
-          "navigate": "false",
+          "navigate": "true",
           "type": "chat",
           "data": jsonString,
         },

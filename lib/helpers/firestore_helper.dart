@@ -45,6 +45,7 @@ import '../db/shared_preferences/user_preferences.dart';
 import '../routes/route_constants.dart';
 import '../utils/logx.dart';
 import '../utils/string_utils.dart';
+import 'fresh.dart';
 
 /**
  * Tips:
@@ -119,6 +120,7 @@ class FirestoreHelper {
         .collection(ADS)
         .where('blocId', isEqualTo: blocId)
         .where('isActive', isEqualTo: true)
+        .orderBy('createdAt', descending: true)
         .snapshots();
   }
 
@@ -130,6 +132,21 @@ class FirestoreHelper {
         .limit(5)
         .get();
   }
+
+  static void updateAdHit(String id) {
+    FirebaseFirestore.instance
+        .collection(ADS)
+        .doc(id)
+        .update({"hits": FieldValue.increment(1)},);
+  }
+
+  static void updateAdReach(String id) {
+    FirebaseFirestore.instance
+        .collection(ADS)
+        .doc(id)
+        .update({"reach": FieldValue.increment(1)},);
+  }
+
 
   static void deleteAd(String docId) {
     FirebaseFirestore.instance.collection(ADS).doc(docId).delete();
@@ -575,6 +592,13 @@ class FirestoreHelper {
         .get();
   }
 
+  static pullLoungeChats(String loungeId) {
+    return FirebaseFirestore.instance
+        .collection(LOUNGE_CHATS)
+        .where('loungeId', isEqualTo: loungeId)
+        .get();
+  }
+
   static Stream<QuerySnapshot<Object?>> getLoungeChats(String loungeId) {
     return FirebaseFirestore.instance
         .collection(LOUNGE_CHATS)
@@ -728,6 +752,10 @@ class FirestoreHelper {
         .get();
   }
 
+  static void deleteHistoryMusic(String docId) {
+    FirebaseFirestore.instance.collection(HISTORY_MUSIC).doc(docId).delete();
+  }
+
   /** inventory options **/
   static Stream<QuerySnapshot<Object?>> getInventoryOptions() {
     return FirebaseFirestore.instance
@@ -785,7 +813,7 @@ class FirestoreHelper {
   static Stream<QuerySnapshot<Object?>> getLounges() {
     return FirebaseFirestore.instance
         .collection(LOUNGES)
-        .orderBy('name', descending: false)
+        .orderBy('lastChatTime', descending: true)
         .snapshots();
   }
 
@@ -1017,6 +1045,13 @@ class FirestoreHelper {
         .snapshots();
   }
 
+  static pullPartyGuestsByUser(String guestId) {
+    return FirebaseFirestore.instance
+        .collection(FirestoreHelper.PARTY_GUESTS)
+        .where('guestId', isEqualTo: guestId)
+        .get();
+  }
+
   static Future<QuerySnapshot<Map<String, dynamic>>> pullPartyGuestByUser(
       String guestId, String partyId) {
     return FirebaseFirestore.instance
@@ -1071,10 +1106,10 @@ class FirestoreHelper {
         .snapshots();
   }
 
-  static void deletePartyGuest(PartyGuest partyGuest) {
+  static void deletePartyGuest(String docId) {
     FirebaseFirestore.instance
         .collection(PARTY_GUESTS)
-        .doc(partyGuest.id)
+        .doc(docId)
         .delete();
   }
 
@@ -1330,6 +1365,12 @@ class FirestoreHelper {
     }
   }
 
+  static pullAllPromoterGuests() {
+    return FirebaseFirestore.instance
+        .collection(PROMOTER_GUESTS)
+        .get();
+  }
+
   static pullPromoterGuests(String promoterId) {
     return FirebaseFirestore.instance
         .collection(PROMOTER_GUESTS)
@@ -1349,6 +1390,10 @@ class FirestoreHelper {
         .collection(PROMOTER_GUESTS)
         .where('partyGuestId', isEqualTo: partyGuestId)
         .get();
+  }
+
+  static void deletePromoterGuest(String docId) {
+    FirebaseFirestore.instance.collection(PROMOTER_GUESTS).doc(docId).delete();
   }
 
   /** quick order **/
@@ -1453,6 +1498,13 @@ class FirestoreHelper {
   //       .orderBy('arrivalDate', descending: false)
   //       .get();
   // }
+
+  static pullReservationsByUser(String userId) {
+    return FirebaseFirestore.instance
+        .collection(FirestoreHelper.RESERVATIONS)
+        .where('customerId', isGreaterThan: userId)
+        .get();
+  }
 
   static Stream<QuerySnapshot<Object?>> getReservations() {
     return FirebaseFirestore.instance
@@ -2087,6 +2139,7 @@ class FirestoreHelper {
   static void deleteUserLounge(String docId) {
     FirebaseFirestore.instance.collection(USER_LOUNGES).doc(docId).delete();
   }
+
 
 
 }

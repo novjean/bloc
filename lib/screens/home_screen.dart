@@ -1,10 +1,11 @@
-import 'package:bloc/db/entity/user.dart';
 import 'package:bloc/main.dart';
 import 'package:bloc/utils/constants.dart';
 import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:go_router/go_router.dart';
 
 import '../db/entity/ad_campaign.dart';
 import '../db/entity/bloc.dart';
@@ -15,6 +16,7 @@ import '../db/shared_preferences/user_preferences.dart';
 import '../helpers/dummy.dart';
 import '../helpers/firestore_helper.dart';
 import '../helpers/fresh.dart';
+import '../routes/route_constants.dart';
 import '../utils/logx.dart';
 import '../widgets/ad_campaign_slide_item.dart';
 import '../widgets/footer.dart';
@@ -22,7 +24,6 @@ import '../widgets/home/bloc_slide_item.dart';
 import '../widgets/parties/party_banner.dart';
 import '../widgets/store_badge_item.dart';
 import '../widgets/ui/dark_button_widget.dart';
-import '../widgets/ui/toaster.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({key}) : super(key: key);
@@ -305,7 +306,6 @@ class _HomeScreenState extends State<HomeScreen> {
           }
 
           if (parties.length == 1) {
-            _displayLastParty(party, isGuestListRequested);
             return Column(
               children: [
                 PartyBanner(
@@ -336,7 +336,6 @@ class _HomeScreenState extends State<HomeScreen> {
             );
           } else {
             if (index == parties.length - 1) {
-              // _displayLastParty(party);
               return Column(
                 children: [
                   PartyBanner(
@@ -347,17 +346,14 @@ class _HomeScreenState extends State<HomeScreen> {
                     shouldShowInterestCount: true,
                   ),
                   const SizedBox(height: 10.0),
-                  Container(
+                  SizedBox(
                       width: mq.width * 0.95,
                       height: 300,
                       child: AdCampaignSlideItem(adCampaign: mAdCampaign)),
                   const SizedBox(height: 10.0),
-
-                  UserPreferences.isUserLoggedIn()
-                      ? _isGuestWifiDetailsLoading
-                          ? const LoadingWidget()
-                          : buildWifi(context)
-                      : const SizedBox(),
+                  _isGuestWifiDetailsLoading
+                      ? const LoadingWidget()
+                      : buildWifi(context),
                   const SizedBox(height: 10.0),
                   kIsWeb ? const StoreBadgeItem() : const SizedBox(),
                   const SizedBox(height: 10.0),
@@ -379,30 +375,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  _displayLastParty(Party party, bool isGuestListRequested) {
-    return Column(
-      children: [
-        PartyBanner(
-          party: party,
-          isClickable: true,
-          shouldShowButton: true,
-          isGuestListRequested: isGuestListRequested,
-          shouldShowInterestCount: true,
-        ),
-        const SizedBox(height: 10.0),
-        UserPreferences.isUserLoggedIn()
-            ? _isGuestWifiDetailsLoading
-                ? const LoadingWidget()
-                : buildWifi(context)
-            : const SizedBox(),
-        const SizedBox(height: 10.0),
-        kIsWeb ? const StoreBadgeItem() : const SizedBox(),
-        const SizedBox(height: 10.0),
-        Footer(),
-      ],
-    );
-  }
-
   buildWifi(BuildContext context) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 10),
@@ -418,7 +390,7 @@ class _HomeScreenState extends State<HomeScreen> {
           Container(
             padding: const EdgeInsets.only(top: 10, left: 10.0),
             child: Text(
-              "connect 🌀",
+              "🌀 free wifi  🛰️",
               style: TextStyle(
                 fontSize: 24.0,
                 color: Theme.of(context).primaryColorDark,
@@ -435,10 +407,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Padding(
                   padding: const EdgeInsets.only(left: 10.0),
                   child: Text(
-                    'wifi: ${mGuestWifi.name.toLowerCase()}',
-                    style: TextStyle(
-                      fontSize: 18,
-                      color: Theme.of(context).primaryColorDark,
+                    mGuestWifi.name.toLowerCase(),
+                    style: const TextStyle(
+                      fontSize: 20,
+                      color: Constants.darkPrimary,
                     ),
                   ),
                 ),
@@ -451,11 +423,15 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: DarkButtonWidget(
                     text: 'copy password',
                     onClicked: () {
-                      Clipboard.setData(
-                          ClipboardData(text: mGuestWifi.password))
-                          .then((value) {
-                        Toaster.shortToast('wifi password copied');
-                      });
+                      if(UserPreferences.isUserLoggedIn()){
+                        Clipboard.setData(
+                            ClipboardData(text: mGuestWifi.password))
+                            .then((value) {
+                          Logx.ist(_TAG, 'wifi password is copied 💫');
+                        });
+                      } else {
+                        _showLoginDialog(context);
+                      }
                     },
                   ),
                 ),
@@ -467,57 +443,101 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  /** optional **/
-  buildSuperstarsList(BuildContext context) {
-    return StreamBuilder<QuerySnapshot>(
-      stream: FirestoreHelper.getUsersLessThanLevel(Constants.MANAGER_LEVEL),
-      builder: (ctx, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          Logx.i(_TAG, 'loading users...');
-          return const LoadingWidget();
-        }
+  _showLoginDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          contentPadding: const EdgeInsets.all(16.0),
+          backgroundColor: Constants.lightPrimary,
+          shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(20.0))),
+          title: const Text(
+            '🪵 login for free wifi',
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 22, color: Colors.black),
+          ),
+          content: const Text(
+              "ain't no web without the key, so tap that login flow. once you're connected, the wifi's yours to move and groove. would you like to login?"),
+          actions: [
+            TextButton(
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all<Color>(
+                    Constants.darkPrimary), // Set your desired background color
+              ),
+              onPressed: () async {
+                await FirebaseAuth.instance.signOut();
 
-        List<User> _users = [];
-        for (int i = 0; i < snapshot.data!.docs.length; i++) {
-          DocumentSnapshot document = snapshot.data!.docs[i];
-          Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-          final User user = User.fromMap(data);
-          if (user.imageUrl.isNotEmpty) {
-            _users.add(user);
-          }
-
-          if (i == snapshot.data!.docs.length - 1) {
-            return _displaySuperstarsList(context, _users);
-          }
-        }
-        return const LoadingWidget();
+                GoRouter.of(context)
+                    .pushNamed(RouteConstants.loginRouteName, params: {
+                  'skip': 'false',
+                });
+              },
+              child: const Text("yes"),
+            ),
+            TextButton(
+              child: const Text("no"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            )
+          ],
+        );
       },
     );
   }
 
-  _displaySuperstarsList(BuildContext context, List<User> users) {
-    return Container(
-      padding: const EdgeInsets.only(left: 10, right: 10),
-      height: 50.0,
-      child: ListView.builder(
-        primary: false,
-        scrollDirection: Axis.horizontal,
-        shrinkWrap: true,
-        itemCount: users.length,
-        itemBuilder: (BuildContext context, int index) {
-          String img = users[index].imageUrl;
-
-          return Padding(
-            padding: const EdgeInsets.only(right: 5.0),
-            child: CircleAvatar(
-              backgroundImage: NetworkImage(
-                img,
-              ),
-              radius: 25.0,
-            ),
-          );
-        },
-      ),
-    );
-  }
+  /** optional **/
+  // buildSuperstarsList(BuildContext context) {
+  //   return StreamBuilder<QuerySnapshot>(
+  //     stream: FirestoreHelper.getUsersLessThanLevel(Constants.MANAGER_LEVEL),
+  //     builder: (ctx, snapshot) {
+  //       if (snapshot.connectionState == ConnectionState.waiting) {
+  //         Logx.i(_TAG, 'loading users...');
+  //         return const LoadingWidget();
+  //       }
+  //
+  //       List<User> _users = [];
+  //       for (int i = 0; i < snapshot.data!.docs.length; i++) {
+  //         DocumentSnapshot document = snapshot.data!.docs[i];
+  //         Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+  //         final User user = User.fromMap(data);
+  //         if (user.imageUrl.isNotEmpty) {
+  //           _users.add(user);
+  //         }
+  //
+  //         if (i == snapshot.data!.docs.length - 1) {
+  //           return _displaySuperstarsList(context, _users);
+  //         }
+  //       }
+  //       return const LoadingWidget();
+  //     },
+  //   );
+  // }
+  //
+  // _displaySuperstarsList(BuildContext context, List<User> users) {
+  //   return Container(
+  //     padding: const EdgeInsets.only(left: 10, right: 10),
+  //     height: 50.0,
+  //     child: ListView.builder(
+  //       primary: false,
+  //       scrollDirection: Axis.horizontal,
+  //       shrinkWrap: true,
+  //       itemCount: users.length,
+  //       itemBuilder: (BuildContext context, int index) {
+  //         String img = users[index].imageUrl;
+  //
+  //         return Padding(
+  //           padding: const EdgeInsets.only(right: 5.0),
+  //           child: CircleAvatar(
+  //             backgroundImage: NetworkImage(
+  //               img,
+  //             ),
+  //             radius: 25.0,
+  //           ),
+  //         );
+  //       },
+  //     ),
+  //   );
+  // }
 }

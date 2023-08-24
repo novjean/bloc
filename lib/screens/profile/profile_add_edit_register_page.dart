@@ -219,6 +219,14 @@ class _ProfileAddEditRegisterPageState
                     loungeId: Constants.blocCommunityLoungeId);
                 FirestoreHelper.pushUserLounge(userLounge);
 
+                if(widget.user.gender == 'female'){
+                  UserLounge userLounge = Dummy.getDummyUserLounge();
+                  userLounge = userLounge.copyWith(
+                      userId: widget.user.id,
+                      loungeId: Constants.ladiesLoungeId);
+                  FirestoreHelper.pushUserLounge(userLounge);
+                }
+
                 if(freshUser.imageUrl.isEmpty){
                   _uploadRandomPhoto(freshUser);
                 }

@@ -1,10 +1,14 @@
 import 'dart:io';
+import 'dart:typed_data';
 
+import 'package:bloc/utils/file_utils.dart';
 import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:bloc/widgets/ui/textfield_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:delayed_display/delayed_display.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart';
 import 'package:multi_select_flutter/dialog/multi_select_dialog_field.dart';
@@ -119,15 +123,21 @@ class _PartyPhotoAddEditScreenState extends State<PartyPhotoAddEditScreen> {
           onTap: () async {
             final image = await ImagePicker().pickImage(
                 source: ImageSource.gallery,
-                imageQuality: 95,
                 maxHeight: 1024,
-                maxWidth: 1280);
+                maxWidth: 1280,
+                imageQuality: 95);
             if (image == null) return;
+
+            int fileSize = await image.length();
+            Logx.ist(_TAG, 'file size : ${fileSize/1000} kb');
 
             final directory = await getApplicationDocumentsDirectory();
             final name = basename(image.path);
             final imageFile = File('${directory.path}/$name');
             final newImage = await File(image.path).copy(imageFile.path);
+
+            String oldImageUrl = widget.partyPhoto.imageUrl;
+            FirestorageHelper.deleteFile(oldImageUrl);
 
             String photoImageUrl = await FirestorageHelper.uploadFile(
                 FirestorageHelper.PARTY_PHOTO_IMAGES,
@@ -172,6 +182,7 @@ class _PartyPhotoAddEditScreenState extends State<PartyPhotoAddEditScreen> {
 
                   for (int i = 0; i < images.length; i++) {
                     XFile image = images[i];
+
                     final name = basename(image.path);
                     final imageFile = File('${directory.path}/$name');
                     final newImage =

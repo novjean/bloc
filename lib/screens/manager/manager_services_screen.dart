@@ -8,6 +8,7 @@ import 'package:bloc/screens/manager/reservations/manage_reservations_screen.dar
 
 import 'package:bloc/screens/manager/users/manage_users_screen.dart';
 import 'package:bloc/screens/parties/manage_guest_list_screen.dart';
+import 'package:bloc/widgets/manager/manager_service_item.dart';
 import 'package:bloc/widgets/ui/app_bar_title.dart';
 import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -15,7 +16,6 @@ import 'package:flutter/material.dart';
 
 import '../../db/entity/bloc_service.dart';
 import '../../helpers/firestore_helper.dart';
-import '../../widgets/ui/listview_block.dart';
 import 'ad_campaigns/manage_ad_campaigns_screen.dart';
 import 'celebrations/manage_celebrations_screen.dart';
 import 'challenges/manage_challenges_screen.dart';
@@ -80,22 +80,22 @@ class ManagerServicesScreen extends StatelessWidget {
   }
 
   _displayManagerServices(
-      BuildContext context, List<ManagerService> _managerServices) {
+      BuildContext context, List<ManagerService> managerServices) {
     String userTitle = 'Manager';
 
     return Expanded(
       child: ListView.builder(
-          itemCount: _managerServices.length,
+          itemCount: managerServices.length,
           scrollDirection: Axis.vertical,
           itemBuilder: (ctx, index) {
-            ManagerService _managerService = _managerServices[index];
+            ManagerService managerService = managerServices[index];
 
             return GestureDetector(
-                child: ListViewBlock(
-                  title: _managerServices[index].name,
+                child: ManagerServiceItem(
+                  managerService: managerService,
                 ),
                 onTap: () {
-                  switch (_managerServices[index].name) {
+                  switch (managerService.name) {
                     case 'ads':
                       {
                         Navigator.of(context).push(MaterialPageRoute(
@@ -122,7 +122,7 @@ class ManagerServicesScreen extends StatelessWidget {
                         Navigator.of(context).push(MaterialPageRoute(
                             builder: (ctx) => ManageCelebrationsScreen(
                               blocServiceId: blocService.id,
-                              serviceName: _managerService.name,
+                              serviceName: managerService.name,
                               userTitle: userTitle,
                             )));
                         break;
@@ -155,7 +155,7 @@ class ManagerServicesScreen extends StatelessWidget {
                         Navigator.of(context).push(MaterialPageRoute(
                             builder: (ctx) => ManageInventoryScreen(
                                 serviceId: blocService.id,
-                                managerService: _managerService)));
+                                managerService: managerService)));
                         break;
                       }
                     case 'lounges':
@@ -169,7 +169,7 @@ class ManagerServicesScreen extends StatelessWidget {
                         Navigator.of(context).push(MaterialPageRoute(
                             builder: (ctx) => ManageOrdersScreen(
                                 serviceId: blocService.id,
-                                serviceName: _managerService.name,
+                                serviceName: managerService.name,
                                 userTitle: userTitle)));
                         break;
                       }
@@ -178,7 +178,7 @@ class ManagerServicesScreen extends StatelessWidget {
                         Navigator.of(context).push(MaterialPageRoute(
                             builder: (ctx) => ManagePartiesScreen(
                                 serviceId: blocService.id,
-                                managerService: _managerService)));
+                                managerService: managerService)));
                         break;
                       }
                     case 'photos':
@@ -199,7 +199,7 @@ class ManagerServicesScreen extends StatelessWidget {
                         Navigator.of(context).push(MaterialPageRoute(
                             builder: (ctx) => ManageReservationsScreen(
                               blocServiceId: blocService.id,
-                              serviceName: _managerService.name,
+                              serviceName: managerService.name,
                               userTitle: userTitle,
                             )));
                         break;
@@ -209,7 +209,7 @@ class ManagerServicesScreen extends StatelessWidget {
                         Navigator.of(context).push(MaterialPageRoute(
                             builder: (ctx) => ManageTablesScreen(
                                   blocServiceId: blocService.id,
-                                  serviceName: _managerService.name,
+                                  serviceName: managerService.name,
                                   userTitle: userTitle,
                                 )));
                         break;

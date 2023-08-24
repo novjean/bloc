@@ -83,9 +83,11 @@ class _MainScreenState extends State<MainScreen> {
         Logx.i(_TAG, 'user not found, registering ${user.phoneNumber}');
 
         if (kIsWeb) {
-          user.isAppUser = false;
+          user = user.copyWith(
+            isAppUser: false,
+            appVersion: Constants.appVersion,
+          );
         } else {
-          user.isAppUser = true;
           user = user.copyWith(
             isAppUser: true,
             appVersion: Constants.appVersion,
@@ -110,16 +112,23 @@ class _MainScreenState extends State<MainScreen> {
         for (int i = 0; i < res.docs.length; i++) {
           DocumentSnapshot document = res.docs[i];
           Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-          final blocUser.User user = Fresh.freshUserMap(data, false);
+          blocUser.User user = Fresh.freshUserMap(data, false);
           users.add(user);
 
           if (i == res.docs.length - 1) {
             user.lastSeenAt = Timestamp.now().millisecondsSinceEpoch;
             if (UserPreferences.isUserLoggedIn()) {
               if (kIsWeb) {
-                user.isAppUser = false;
+                user = user.copyWith(
+                  isAppUser: false,
+                  appVersion: Constants.appVersion,
+                );
               } else {
-                user.isAppUser = true;
+                user = user.copyWith(
+                  isAppUser: true,
+                  appVersion: Constants.appVersion,
+                  isIos: Theme.of(context).platform == TargetPlatform.iOS,
+                );
               }
             }
             FirestoreHelper.pushUser(user);
@@ -188,6 +197,8 @@ class _MainScreenState extends State<MainScreen> {
           }
           case 'ads':{
             Ad ad = Fresh.freshAdMap(jsonDecode(data['document']), false);
+            FirestoreHelper.updateAdReach(ad.id);
+
             NotificationService.showAdNotification(ad);
             break;
           }
@@ -231,8 +242,6 @@ class _MainScreenState extends State<MainScreen> {
         }
       });
 
-      // FirebaseMessaging.onMessageOpenedApp.listen(_handleMessage);
-
       //clear out any previous subscriptions
       blocUser.User user = UserPreferences.getUser();
       if (user.clearanceLevel >= Constants.CAPTAIN_LEVEL) {
@@ -263,21 +272,8 @@ class _MainScreenState extends State<MainScreen> {
       if (user.clearanceLevel >= Constants.MANAGER_LEVEL) {
         fbm.subscribeToTopic('offer');
       }
-
-      if (UserPreferences.isUserLoggedIn()) {
-        // update the user is in app mode
-        blocUser.User user = UserPreferences.myUser;
-        user.isAppUser = true;
-        FirestoreHelper.pushUser(user);
-      }
     } else {
       // in web mode
-      if (UserPreferences.isUserLoggedIn()) {
-        // update the user is in web mode
-        blocUser.User user = UserPreferences.myUser;
-        user.isAppUser = false;
-        FirestoreHelper.pushUser(user);
-      }
     }
     super.initState();
   }
@@ -301,64 +297,69 @@ class _MainScreenState extends State<MainScreen> {
           dialogStyle: Theme.of(context).platform == TargetPlatform.iOS
               ? UpgradeDialogStyle.cupertino
               : UpgradeDialogStyle.material),
-      child: Scaffold(
-        backgroundColor: Constants.background,
-        body: SliderDrawer(
-            appBar: SliderAppBar(
-                appBarColor: Colors.black,
-                appBarHeight: kIsWeb ? 60 : 100,
-                appBarPadding: kIsWeb
-                    ? (const EdgeInsets.only(top: 10))
-                    : (const EdgeInsets.only(top: 50)),
-                drawerIconColor: Constants.primary,
-                drawerIconSize: 35,
-                isTitleCenter: false,
-                trailing: Padding(
-                  padding: const EdgeInsets.only(right: 10.0),
-                  child: IconButton(icon: const Icon(Icons.brightness_low_outlined, color: Constants.primary,),
-                    onPressed: () async {
-                      _showAdsDialog(context);
-                    },),
-                ),
-                title: const Padding (
-                  padding: kIsWeb
-                      ? EdgeInsets.only(top: 10.0, left: 20)
-                      : EdgeInsets.only(left: 15, top: 5.0),
-                  child: Text('bloc.',
-                      style: TextStyle(
-                          color: Constants.primary,
-                          fontSize: 24,
-                          fontWeight: FontWeight.w500)),
-                )),
-            key: _sliderDrawerKey,
-            sliderOpenSize: 179,
-            slider: _SliderView(
-              onItemClick: (title) {
-                handleAppDrawerClick(context, title);
-              },
+      child: WillPopScope(
+        onWillPop: () async {
+          return false;
+        },
+        child: Scaffold(
+          backgroundColor: Constants.background,
+          body: SliderDrawer(
+              appBar: SliderAppBar(
+                  appBarColor: Colors.black,
+                  appBarHeight: kIsWeb ? 60 : 100,
+                  appBarPadding: kIsWeb
+                      ? (const EdgeInsets.only(top: 10))
+                      : (const EdgeInsets.only(top: 50)),
+                  drawerIconColor: Constants.primary,
+                  drawerIconSize: 35,
+                  isTitleCenter: false,
+                  trailing: Padding(
+                    padding: const EdgeInsets.only(right: 10.0),
+                    child: IconButton(icon: const Icon(Icons.brightness_low_outlined, color: Constants.primary,),
+                      onPressed: () async {
+                        _showAdsDialog(context);
+                      },),
+                  ),
+                  title: const Padding (
+                    padding: kIsWeb
+                        ? EdgeInsets.only(top: 10.0, left: 20)
+                        : EdgeInsets.only(left: 15, top: 5.0),
+                    child: Text('bloc.',
+                        style: TextStyle(
+                            color: Constants.primary,
+                            fontSize: 24,
+                            fontWeight: FontWeight.w500)),
+                  )),
+              key: _sliderDrawerKey,
+              sliderOpenSize: 179,
+              slider: _SliderView(
+                onItemClick: (title) {
+                  handleAppDrawerClick(context, title);
+                },
+              ),
+              child: PageView(
+                physics: const NeverScrollableScrollPhysics(),
+                controller: _pageController,
+                onPageChanged: onPageChanged,
+                children: List.generate(5, (index) => pages[index]),
+              )),
+          bottomNavigationBar: BottomAppBar(
+            elevation: 1,
+            color: Colors.black,
+            shape: const CircularNotchedRectangle(),
+            child: Row(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: <Widget>[
+                // SizedBox(width: 7),
+                buildTabIcon(0),
+                buildTabIcon(1),
+                buildTabIcon(2),
+                buildTabIcon(3),
+                buildTabIcon(4),
+                // SizedBox(width: 7),
+              ],
             ),
-            child: PageView(
-              physics: const NeverScrollableScrollPhysics(),
-              controller: _pageController,
-              onPageChanged: onPageChanged,
-              children: List.generate(5, (index) => pages[index]),
-            )),
-        bottomNavigationBar: BottomAppBar(
-          elevation: 1,
-          color: Colors.black,
-          shape: const CircularNotchedRectangle(),
-          child: Row(
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: <Widget>[
-              // SizedBox(width: 7),
-              buildTabIcon(0),
-              buildTabIcon(1),
-              buildTabIcon(2),
-              buildTabIcon(3),
-              buildTabIcon(4),
-              // SizedBox(width: 7),
-            ],
           ),
         ),
       ),
@@ -465,9 +466,7 @@ class _MainScreenState extends State<MainScreen> {
         }
       case 'account':
         {
-          Navigator.of(context).push(
-            MaterialPageRoute(builder: (context) => AccountScreen()),
-          );
+          GoRouter.of(context).pushNamed(RouteConstants.accountRouteName);
           break;
         }
       case 'login':
