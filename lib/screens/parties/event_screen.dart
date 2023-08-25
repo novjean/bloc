@@ -1,4 +1,5 @@
 import 'package:bloc/widgets/ui/loading_widget.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -138,10 +139,29 @@ class _EventScreenState extends State<EventScreen> {
                   width: double.infinity,
                   child: Hero(
                     tag: mParty.id,
-                    child: Image.network(
+                    child: kIsWeb?
+                    Image.network(
                       mParty.imageUrl,
                       fit: BoxFit.cover,
-                    ),
+                    ):
+                    CachedNetworkImage(
+                      imageUrl: mParty.imageUrl,
+                      imageBuilder: (context, imageProvider) => Container(
+                        decoration: BoxDecoration(
+                          image: DecorationImage(
+                            image: imageProvider,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+                      placeholder: (context, url) =>
+                      const FadeInImage(
+                        placeholder: AssetImage('assets/images/logo.png'),
+                        image: AssetImage('assets/images/logo.png'),
+                        fit: BoxFit.cover,
+                      ),
+                      errorWidget: (context, url, error) => const Icon(Icons.error),
+                    )
                   ),
                 ),
                 const SizedBox(height: 10),

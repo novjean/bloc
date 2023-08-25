@@ -1,9 +1,9 @@
-
 import 'package:bloc/db/entity/party_photo.dart';
 import 'package:bloc/db/shared_preferences/user_preferences.dart';
 import 'package:bloc/utils/date_time_utils.dart';
 import 'package:bloc/widgets/ui/blurred_image.dart';
 import 'package:bloc/widgets/ui/textfield_widget.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -99,11 +99,29 @@ class _PhotosScreenState extends State<PhotosScreen> {
             },
             child: SizedBox(
               height: 200,
-              child: FadeInImage(
+              width: 200,
+              child: kIsWeb? FadeInImage(
                 placeholder: const AssetImage('assets/icons/logo.png'),
                 image: NetworkImage(photo.imageThumbUrl.isNotEmpty? photo.imageThumbUrl:photo.imageUrl),
                 fit: BoxFit.cover,
-              ),
+              ): CachedNetworkImage(
+                imageUrl: photo.imageThumbUrl.isNotEmpty? photo.imageThumbUrl:photo.imageUrl,
+                imageBuilder: (context, imageProvider) => Container(
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: imageProvider,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+                placeholder: (context, url) =>
+                const FadeInImage(
+                  placeholder: AssetImage('assets/images/logo.png'),
+                  image: AssetImage('assets/images/logo.png'),
+                  fit: BoxFit.cover,
+                ),
+                errorWidget: (context, url, error) => const Icon(Icons.error),
+              )
             ),
           );
         }
