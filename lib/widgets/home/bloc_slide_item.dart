@@ -114,7 +114,11 @@ class _BlocSlideItemState extends State<BlocSlideItem> {
                             ),
                           ),
                           placeholder: (context, url) =>
-                          const CircularProgressIndicator(),
+                              const FadeInImage(
+                                placeholder: AssetImage('assets/images/logo.png'),
+                                image: AssetImage('assets/images/logo.png'),
+                                fit: BoxFit.cover,
+                              ),
                           errorWidget: (context, url, error) => const Icon(Icons.error),
                         )
                         ).toList(),

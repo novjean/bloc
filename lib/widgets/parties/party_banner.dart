@@ -1,8 +1,10 @@
 import 'package:bloc/db/shared_preferences/user_preferences.dart';
+import 'package:bloc/main.dart';
 import 'package:bloc/utils/constants.dart';
 import 'package:bloc/utils/date_time_utils.dart';
 import 'package:bloc/utils/network_utils.dart';
 import 'package:bloc/widgets/ui/loading_widget.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:delayed_display/delayed_display.dart';
 import 'package:flutter/material.dart';
@@ -266,11 +268,29 @@ class _PartyBannerState extends State<PartyBanner> {
                       child: Stack(children: [
                         SizedBox(
                           height: 200,
-                          child: FadeInImage(
+                          child: kIsWeb ? FadeInImage(
                             placeholder:
                                 const AssetImage('assets/icons/logo.png'),
                             image: NetworkImage(widget.party.imageUrl),
                             fit: BoxFit.cover,
+                          ):
+                          CachedNetworkImage(
+                            imageUrl: widget.party.imageUrl,
+                            imageBuilder: (context, imageProvider) => Container(
+                              decoration: BoxDecoration(
+                                image: DecorationImage(
+                                  image: imageProvider,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            ),
+                            placeholder: (context, url) =>
+                                const FadeInImage(
+                                  placeholder: AssetImage('assets/images/logo.png'),
+                                  image: AssetImage('assets/images/logo.png'),
+                                  fit: BoxFit.cover,
+                                ),
+                            errorWidget: (context, url, error) => const Icon(Icons.error),
                           ),
                         ),
                         widget.party.genre.isNotEmpty
