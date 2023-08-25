@@ -63,7 +63,7 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
                           imageUrl: widget.partyPhoto.imageThumbUrl.isNotEmpty
                               ? widget.partyPhoto.imageThumbUrl
                               : widget.partyPhoto.imageUrl,
-                          blurLevel: 3,
+                          blurLevel: 5,
                         ),
                         Positioned(
                           child: Column(
@@ -184,7 +184,7 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
                                     size: 24.0)),
                       ),
                       Padding(
-                          padding: const EdgeInsets.only(left: 15.0),
+                          padding: const EdgeInsets.only(left: 20.0),
                           child: InkWell(
                               onTap: () async {
                                 if (UserPreferences.isUserLoggedIn()) {
@@ -211,7 +211,7 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
                               child: const Icon(Icons.share_outlined,
                                   size: 24.0))),
                       Padding(
-                        padding: const EdgeInsets.only(left: 15),
+                        padding: const EdgeInsets.only(left: 20),
                         child: InkWell(
                           onTap: () {
                             if (kIsWeb) {
