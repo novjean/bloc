@@ -1,6 +1,7 @@
 import 'package:bloc/db/entity/bloc_service.dart';
 import 'package:bloc/helpers/dummy.dart';
 import 'package:bloc/helpers/firestore_helper.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -99,10 +100,24 @@ class _BlocSlideItemState extends State<BlocSlideItem> {
                           // aspectRatio: 1.0,
                         ),
                         items: widget.bloc.imageUrls
-                            .map((item) => Image.network(item,
+                            .map((item) => kIsWeb? Image.network(item,
                                 fit: BoxFit.cover,
-                                width: mq.width))
-                            .toList(),
+                                width: mq.width) :
+                        CachedNetworkImage(
+                          imageUrl: item,
+                          imageBuilder: (context, imageProvider) => Container(
+                            decoration: BoxDecoration(
+                              image: DecorationImage(
+                                image: imageProvider,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
+                          placeholder: (context, url) =>
+                          const CircularProgressIndicator(),
+                          errorWidget: (context, url, error) => const Icon(Icons.error),
+                        )
+                        ).toList(),
                       ),
                       Positioned(
                           bottom: 0.0,
