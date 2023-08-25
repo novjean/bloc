@@ -10,6 +10,7 @@ class PartyPhoto {
   final int partyDate;
   final int endTime;
   List<String> likers;
+  int initLikes;
   int downloadCount;
   int views;
 
@@ -25,6 +26,7 @@ class PartyPhoto {
     required this.partyDate,
     required this.endTime,
     required this.likers,
+    required this.initLikes,
     required this.downloadCount,
     required this.views,
   });
@@ -44,6 +46,7 @@ class PartyPhoto {
           partyDate == other.partyDate &&
           endTime == other.endTime &&
           likers == other.likers &&
+          initLikes == other.initLikes &&
           downloadCount == other.downloadCount &&
           views == other.views);
 
@@ -59,6 +62,7 @@ class PartyPhoto {
       partyDate.hashCode ^
       endTime.hashCode ^
       likers.hashCode ^
+      initLikes.hashCode ^
       downloadCount.hashCode ^
       views.hashCode;
 
@@ -75,6 +79,7 @@ class PartyPhoto {
         ' partyDate: $partyDate,' +
         ' endTime: $endTime,' +
         ' likers: $likers,' +
+        ' initLikes: $initLikes,' +
         ' downloadCount: $downloadCount,' +
         ' views: $views,' +
         '}';
@@ -91,6 +96,7 @@ class PartyPhoto {
     int? partyDate,
     int? endTime,
     List<String>? likers,
+    int? initLikes,
     int? downloadCount,
     int? views,
   }) {
@@ -105,6 +111,7 @@ class PartyPhoto {
       partyDate: partyDate ?? this.partyDate,
       endTime: endTime ?? this.endTime,
       likers: likers ?? this.likers,
+      initLikes: initLikes ?? this.initLikes,
       downloadCount: downloadCount ?? this.downloadCount,
       views: views ?? this.views,
     );
@@ -122,6 +129,7 @@ class PartyPhoto {
       'partyDate': this.partyDate,
       'endTime': this.endTime,
       'likers': this.likers,
+      'initLikes': this.initLikes,
       'downloadCount': this.downloadCount,
       'views': this.views,
     };
@@ -139,6 +147,7 @@ class PartyPhoto {
       partyDate: map['partyDate'] as int,
       endTime: map['endTime'] as int,
       likers: map['likers'] as List<String>,
+      initLikes: map['initLikes'] as int,
       downloadCount: map['downloadCount'] as int,
       views: map['views'] as int,
     );

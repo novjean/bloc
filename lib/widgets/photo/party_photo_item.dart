@@ -1,4 +1,3 @@
-
 import 'package:bloc/db/shared_preferences/user_preferences.dart';
 import 'package:bloc/helpers/firestore_helper.dart';
 import 'package:bloc/utils/date_time_utils.dart';
@@ -20,11 +19,8 @@ class PartyPhotoItem extends StatefulWidget {
   PartyPhoto partyPhoto;
   int index;
 
-  PartyPhotoItem({
-    Key? key,
-    required this.partyPhoto,
-    required this.index
-  }) : super(key: key);
+  PartyPhotoItem({Key? key, required this.partyPhoto, required this.index})
+      : super(key: key);
 
   @override
   State<PartyPhotoItem> createState() => _PartyPhotoItemState();
@@ -55,7 +51,8 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
         child: SizedBox(
           width: mq.width,
           child: Padding(
-            padding: const EdgeInsets.only(left: 0.0, right: 0, bottom: 2, top: 0),
+            padding:
+                const EdgeInsets.only(left: 0.0, right: 0, bottom: 2, top: 0),
             child: ListView(
               physics: const NeverScrollableScrollPhysics(),
               shrinkWrap: true,
@@ -63,7 +60,9 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
                 kIsWeb
                     ? Stack(alignment: Alignment.center, children: [
                         BlurredImage(
-                          imageUrl: widget.partyPhoto.imageThumbUrl.isNotEmpty? widget.partyPhoto.imageThumbUrl: widget.partyPhoto.imageUrl,
+                          imageUrl: widget.partyPhoto.imageThumbUrl.isNotEmpty
+                              ? widget.partyPhoto.imageThumbUrl
+                              : widget.partyPhoto.imageUrl,
                           blurLevel: 3,
                         ),
                         Positioned(
@@ -72,17 +71,20 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                                child: Text(
-                                  _getRandomAppDownloadQuote(),
-                                  maxLines: 3,
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(fontSize: 20, backgroundColor: Constants.lightPrimary.withOpacity(0.2)),
-                                )
-                              ),
-
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 15.0),
+                                  child: Text(
+                                    _getRandomAppDownloadQuote(),
+                                    maxLines: 3,
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                        fontSize: 20,
+                                        backgroundColor: Constants.lightPrimary
+                                            .withOpacity(0.2)),
+                                  )),
                               Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 10),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 5.0, vertical: 10),
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
@@ -95,7 +97,8 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
                                       },
                                     ),
                                     Padding(
-                                      padding: const EdgeInsets.only(left: 20.0),
+                                      padding:
+                                          const EdgeInsets.only(left: 20.0),
                                       child: DarkButtonWidget(
                                         text: '🤖 android',
                                         onClicked: () {
@@ -134,30 +137,32 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
                             fontSize: 20, fontWeight: FontWeight.bold),
                       ),
                       const Spacer(),
-                      isLoved
-                          ? Text(
-                              widget.partyPhoto.likers.length.toString(),
-                            )
-                          : const SizedBox(),
+                      Text(
+                        '${widget.partyPhoto.likers.length + widget.partyPhoto.initLikes}',
+                      ),
                       Padding(
                         padding: const EdgeInsets.only(left: 3.0),
                         child: InkWell(
                             onTap: () {
-                              if(UserPreferences.isUserLoggedIn()) {
-                                if(kIsWeb){
+                              if (UserPreferences.isUserLoggedIn()) {
+                                if (kIsWeb) {
                                   _showDownloadAppDialog(context);
                                 } else {
                                   if (widget.partyPhoto.likers.isEmpty) {
-                                    widget.partyPhoto.likers
-                                        .add(UserPreferences.myUser.id);
-                                    FirestoreHelper.pushPartyPhoto(
-                                        widget.partyPhoto);
-                                  } else {
-                                    if (!isLoved) {
+                                    setState(() {
                                       widget.partyPhoto.likers
                                           .add(UserPreferences.myUser.id);
                                       FirestoreHelper.pushPartyPhoto(
                                           widget.partyPhoto);
+                                    });
+                                  } else {
+                                    if (!isLoved) {
+                                      setState(() {
+                                        widget.partyPhoto.likers
+                                            .add(UserPreferences.myUser.id);
+                                        FirestoreHelper.pushPartyPhoto(
+                                            widget.partyPhoto);
+                                      });
                                     } else {
                                       String text = _getRandomLoveQuote();
                                       Logx.ist(_TAG, '$text 😘');
@@ -165,34 +170,46 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
                                   }
                                 }
                               } else {
-                                Logx.ist(_TAG, 'please login to like the photo');
+                                Logx.ist(
+                                    _TAG, 'please login to like the photo');
                               }
                             },
                             child: isLoved
-                                ? const Icon(Icons.favorite, size: 24.0)
-                                : const Icon(Icons.favorite_border, size: 24.0)),
+                                ? const Icon(
+                                    Icons.favorite,
+                                    size: 24.0,
+                                    color: Constants.ferrari,
+                                  )
+                                : const Icon(Icons.favorite_border,
+                                    size: 24.0)),
                       ),
                       Padding(
-                        padding: const EdgeInsets.only(left: 15.0),
-                        child: InkWell(
-                            onTap: () async {
-                              if(UserPreferences.isUserLoggedIn()) {
-                                if(kIsWeb){
-                                  _showDownloadAppDialog(context);
-                                } else {
-                                  int fileNum = widget.index+1;
-                                  String fileName = '${widget.partyPhoto.partyName} $fileNum';
-                                  String shareText = 'hey. check out this photo and more of ${widget.partyPhoto.partyName} at the official bloc app. Step into the moment. 📸 \n\n🌏 https://bloc.bar/#/\n📱 https://bloc.bar/app_store.html\n\n#blocCommunity ❤️‍🔥';
+                          padding: const EdgeInsets.only(left: 15.0),
+                          child: InkWell(
+                              onTap: () async {
+                                if (UserPreferences.isUserLoggedIn()) {
+                                  if (kIsWeb) {
+                                    _showDownloadAppDialog(context);
+                                  } else {
+                                    int fileNum = widget.index + 1;
+                                    String fileName =
+                                        '${widget.partyPhoto.partyName} $fileNum';
+                                    String shareText =
+                                        'hey. check out this photo and more of ${widget.partyPhoto.partyName} at the official bloc app. Step into the moment. 📸 \n\n🌏 https://bloc.bar/#/\n📱 https://bloc.bar/app_store.html\n\n#blocCommunity ❤️‍🔥';
 
-                                  FileUtils.sharePhoto(widget.partyPhoto.id,
-                                      widget.partyPhoto.imageUrl, fileName, shareText);
+                                    FileUtils.sharePhoto(
+                                        widget.partyPhoto.id,
+                                        widget.partyPhoto.imageUrl,
+                                        fileName,
+                                        shareText);
+                                  }
+                                } else {
+                                  Logx.ist(
+                                      _TAG, 'please login to share the photo');
                                 }
-                              } else {
-                                Logx.ist(_TAG, 'please login to share the photo');
-                              }
-                            },
-                            child:const Icon(Icons.share_outlined, size: 24.0))
-                      ),
+                              },
+                              child: const Icon(Icons.share_outlined,
+                                  size: 24.0))),
                       Padding(
                         padding: const EdgeInsets.only(left: 15),
                         child: InkWell(
@@ -200,10 +217,11 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
                             if (kIsWeb) {
                               _showDownloadAppDialog(context);
                             } else {
-                              if(UserPreferences.isUserLoggedIn()){
+                              if (UserPreferences.isUserLoggedIn()) {
                                 Logx.ist(_TAG, '🍄 downloading...');
-                                int fileNum = widget.index+1;
-                                String fileName = '${widget.partyPhoto.partyName} $fileNum';
+                                int fileNum = widget.index + 1;
+                                String fileName =
+                                    '${widget.partyPhoto.partyName} $fileNum';
 
                                 FileUtils.saveNetworkImage(
                                     widget.partyPhoto.imageUrl, fileName);
@@ -211,9 +229,11 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
                                 int count = widget.partyPhoto.downloadCount + 1;
                                 widget.partyPhoto = widget.partyPhoto
                                     .copyWith(downloadCount: count);
-                                FirestoreHelper.pushPartyPhoto(widget.partyPhoto);
+                                FirestoreHelper.pushPartyPhoto(
+                                    widget.partyPhoto);
                               } else {
-                                Logx.ist(_TAG, 'please login to save the photo to your gallery');
+                                Logx.ist(_TAG,
+                                    'please login to save the photo to your gallery');
                               }
                             }
                           },
@@ -232,7 +252,10 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
                       Text(DateTimeUtils.getFormattedDate(
                           widget.partyPhoto.partyDate)),
                       const Spacer(),
-                      Text('${widget.partyPhoto.views} ', style: const TextStyle(fontSize: 14),),
+                      Text(
+                        '${widget.partyPhoto.views} ',
+                        style: const TextStyle(fontSize: 14),
+                      ),
                       Image.asset(
                         'assets/icons/ic_third_eye.png',
                         width: 14,
@@ -275,8 +298,8 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
               ),
               TextButton(
                 style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all<Color>(
-                      Constants.darkPrimary), // Set your desired background color
+                  backgroundColor: MaterialStateProperty.all<Color>(Constants
+                      .darkPrimary), // Set your desired background color
                 ),
                 child: const Text('🤖 android',
                     style: TextStyle(color: Constants.primary)),
@@ -287,11 +310,11 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
               ),
               TextButton(
                 style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all<Color>(
-                      Constants.darkPrimary), // Set your desired background color
+                  backgroundColor: MaterialStateProperty.all<Color>(Constants
+                      .darkPrimary), // Set your desired background color
                 ),
-                child:
-                    const Text('🍎 ios', style: TextStyle(color: Constants.primary)),
+                child: const Text('🍎 ios',
+                    style: TextStyle(color: Constants.primary)),
                 onPressed: () async {
                   final uri = Uri.parse(ChallengeUtils.urlBlocAppStore);
                   NetworkUtils.launchInBrowser(uri);
@@ -302,7 +325,7 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
         });
   }
 
-  String _getRandomLoveQuote(){
+  String _getRandomLoveQuote() {
     List<String> loveQuotes = [
       'In the treasury of love, once given, there\'s no withdrawal.',
       'Love\'s bond, once forged, time cannot erase or reclaim.',
@@ -316,18 +339,19 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
       'Love\'s sticky note: once stuck, it clings to hearts forever!'
     ];
 
-    int randomNumber = NumberUtils.generateRandomNumber(0, loveQuotes.length-1);
+    int randomNumber =
+        NumberUtils.generateRandomNumber(0, loveQuotes.length - 1);
     return loveQuotes[randomNumber].toLowerCase();
   }
 
-  String _getRandomAppDownloadQuote(){
+  String _getRandomAppDownloadQuote() {
     List<String> quotes = [
       'your view, your way. download our app to see and save.',
       'View, save, and smile with our app - your digital vault!',
       'Download the magic wand for your photos: our enchanting app!',
       'Unveil the art of seeing: our app reveals, you treasure.',
       'Embrace pixels, create memories: our app, your joyful ally.'
-      'App alert: Party pics hidden until you tap \'download\'!',
+          'App alert: Party pics hidden until you tap \'download\'!',
       'Party pics: Exclusive backstage entry through our app doors!',
       'No app, no snaps! It\'s the golden ticket to party pics.',
       'Preserving moments of grace: Download our app, relive the night.',
@@ -335,7 +359,7 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
       'A touch of grace, a world of memories. Download and cherish.'
     ];
 
-    int randomNumber = NumberUtils.generateRandomNumber(0, quotes.length-1);
+    int randomNumber = NumberUtils.generateRandomNumber(0, quotes.length - 1);
     return quotes[randomNumber].toLowerCase();
   }
 }

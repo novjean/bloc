@@ -2351,6 +2351,12 @@ class Fresh {
           'party photo likers not exist for id: ${partyPhoto.id}');
     }
     try {
+      fresh = fresh.copyWith(initLikes: partyPhoto.initLikes);
+    } catch (e) {
+      Logx.em(_TAG,
+          'party photo initLikes not exist for id: ${partyPhoto.id}');
+    }
+    try {
       fresh = fresh.copyWith(downloadCount: partyPhoto.downloadCount);
     } catch (e) {
       Logx.em(_TAG,
@@ -2428,6 +2434,12 @@ class Fresh {
       partyPhoto = partyPhoto.copyWith(likers: List<String>.from(map['likers']));
     } catch (e) {
       Logx.em(_TAG, 'partyPhoto likers not exist for id: ${partyPhoto.id}');
+      isModelChanged = true;
+    }
+    try {
+      partyPhoto = partyPhoto.copyWith(initLikes: map['initLikes'] as int);
+    } catch (e) {
+      Logx.em(_TAG, 'partyPhoto initLikes not exist for id: ${partyPhoto.id}');
       isModelChanged = true;
     }
     try {

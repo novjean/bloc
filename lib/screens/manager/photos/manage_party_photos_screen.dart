@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:bloc/utils/number_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
@@ -36,7 +37,8 @@ class _ManagePartyPhotosScreenState extends State<ManagePartyPhotosScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('manage photos'),
+      appBar: AppBar(
+        title: const Text('manage photos'),
         titleSpacing: 0,
       ),
       floatingActionButton: FloatingActionButton(
@@ -94,7 +96,7 @@ class _ManagePartyPhotosScreenState extends State<ManagePartyPhotosScreen> {
                     final PartyPhoto photo =
                         Fresh.freshPartyPhotoMap(map, false);
 
-                    if(now> photo.endTime){
+                    if (now > photo.endTime) {
                       FirestoreHelper.deletePartyPhoto(photo.id);
                     } else {
                       mPartyPhotos.add(photo);
@@ -126,8 +128,10 @@ class _ManagePartyPhotosScreenState extends State<ManagePartyPhotosScreen> {
                 onTap: () {
                   Navigator.of(context).push(
                     MaterialPageRoute(
-                        builder: (ctx) =>
-                            PartyPhotoAddEditScreen(partyPhoto: mPartyPhotos[index],task: 'edit',)),
+                        builder: (ctx) => PartyPhotoAddEditScreen(
+                              partyPhoto: mPartyPhotos[index],
+                              task: 'edit',
+                            )),
                   );
                 });
           }),
@@ -198,13 +202,20 @@ class _ManagePartyPhotosScreenState extends State<ManagePartyPhotosScreen> {
                                   Navigator.of(context).push(
                                     MaterialPageRoute(
                                         builder: (ctx) =>
-                                            PartyPhotoAddEditScreen(partyPhoto: Dummy.getDummyPartyPhoto(),task: 'add',)),
+                                            PartyPhotoAddEditScreen(
+                                              partyPhoto:
+                                                  Dummy.getDummyPartyPhoto(),
+                                              task: 'add',
+                                            )),
                                   );
                                 },
                                 child: const Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: <Widget>[
-                                    Icon(Icons.add_photo_alternate_rounded,color: Constants.darkPrimary,),
+                                    Icon(
+                                      Icons.add_photo_alternate_rounded,
+                                      color: Constants.darkPrimary,
+                                    ),
                                   ],
                                 ),
                               ),
@@ -213,9 +224,58 @@ class _ManagePartyPhotosScreenState extends State<ManagePartyPhotosScreen> {
                         )
                       ],
                     ),
+                    const SizedBox(
+                      height: 30,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text('random photo likes'),
+                        SizedBox.fromSize(
+                          size: const Size(50, 50),
+                          child: ClipOval(
+                            child: Material(
+                              color: Constants.primary,
+                              child: InkWell(
+                                splashColor: Constants.darkPrimary,
+                                onTap: () {
+                                  Navigator.of(ctx).pop();
 
-                    const SizedBox(height: 30,),
+                                  int count = 0;
+                                  for (PartyPhoto partyPhoto in mPartyPhotos) {
+                                    if (partyPhoto.initLikes == 0) {
+                                      int rand =
+                                          NumberUtils.generateRandomNumber(
+                                              1, 10);
+                                      partyPhoto =
+                                          partyPhoto.copyWith(initLikes: rand);
+                                      FirestoreHelper.pushPartyPhoto(
+                                          partyPhoto);
+                                      count++;
 
+                                      Logx.ist(_TAG,
+                                          'pushed $count photo with random init likes!');
+                                    }
+                                  }
+                                },
+                                child: const Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: <Widget>[
+                                    Icon(
+                                      Icons.balance_outlined,
+                                      color: Constants.darkPrimary,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 30,
+                    ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -231,34 +291,47 @@ class _ManagePartyPhotosScreenState extends State<ManagePartyPhotosScreen> {
                                   Navigator.of(ctx).pop();
 
                                   int count = 0;
-                                  for(PartyPhoto partyPhoto in mPartyPhotos){
-                                    if(partyPhoto.imageThumbUrl.isEmpty){
-                                      final Uri url = Uri.parse(partyPhoto.imageUrl);
+                                  for (PartyPhoto partyPhoto in mPartyPhotos) {
+                                    if (partyPhoto.imageThumbUrl.isEmpty) {
+                                      final Uri url =
+                                          Uri.parse(partyPhoto.imageUrl);
                                       final response = await http.get(url);
 
-                                      final tempDir = await getTemporaryDirectory();
-                                      final imageFile = File('${tempDir.path}/${partyPhoto.id}.png');
-                                      await imageFile.writeAsBytes(response.bodyBytes);
+                                      final tempDir =
+                                          await getTemporaryDirectory();
+                                      final imageFile = File(
+                                          '${tempDir.path}/${partyPhoto.id}.png');
+                                      await imageFile
+                                          .writeAsBytes(response.bodyBytes);
 
-                                      final newThumbImage = await FileUtils.getImageCompressed(imageFile.path, 280, 210, 95);
-                                      String imageThumbUrl = await FirestorageHelper.uploadFile(
-                                          FirestorageHelper.PARTY_PHOTO_THUMB_IMAGES,
-                                          StringUtils.getRandomString(28),
-                                          newThumbImage);
+                                      final newThumbImage =
+                                          await FileUtils.getImageCompressed(
+                                              imageFile.path, 280, 210, 95);
+                                      String imageThumbUrl =
+                                          await FirestorageHelper.uploadFile(
+                                              FirestorageHelper
+                                                  .PARTY_PHOTO_THUMB_IMAGES,
+                                              StringUtils.getRandomString(28),
+                                              newThumbImage);
 
                                       partyPhoto = partyPhoto.copyWith(
                                           imageThumbUrl: imageThumbUrl);
-                                      FirestoreHelper.pushPartyPhoto(partyPhoto);
+                                      FirestoreHelper.pushPartyPhoto(
+                                          partyPhoto);
                                       count++;
 
-                                      Logx.ist(_TAG, 'pushed $count new photo with thumbnails!');
+                                      Logx.ist(_TAG,
+                                          'pushed $count new photo with thumbnails!');
                                     }
                                   }
-                                  },
+                                },
                                 child: const Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: <Widget>[
-                                    Icon(Icons.photo_size_select_large_sharp, color: Colors.blue,),
+                                    Icon(
+                                      Icons.photo_size_select_large_sharp,
+                                      color: Colors.blue,
+                                    ),
                                   ],
                                 ),
                               ),

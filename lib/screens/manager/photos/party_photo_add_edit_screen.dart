@@ -128,7 +128,7 @@ class _PartyPhotoAddEditScreenState extends State<PartyPhotoAddEditScreen> {
             if (image == null) return;
 
             int fileSize = await image.length();
-            Logx.ist(_TAG, 'file size : ${fileSize/1000} kb');
+            Logx.ist(_TAG, 'file size : ${fileSize / 1000} kb');
 
             final directory = await getApplicationDocumentsDirectory();
             final name = basename(image.path);
@@ -146,18 +146,19 @@ class _PartyPhotoAddEditScreenState extends State<PartyPhotoAddEditScreen> {
             Logx.ist(_TAG, 'photo uploaded: $photoImageUrl');
 
             String oldImageThumbUrl = widget.partyPhoto.imageThumbUrl;
-            if(oldImageThumbUrl.isNotEmpty){
+            if (oldImageThumbUrl.isNotEmpty) {
               FirestorageHelper.deleteFile(oldImageThumbUrl);
             }
 
-            final newThumbImage = await FileUtils.getImageCompressed(imageFile.path, 280, 210, 95);
+            final newThumbImage = await FileUtils.getImageCompressed(
+                imageFile.path, 280, 210, 95);
             String imageThumbUrl = await FirestorageHelper.uploadFile(
                 FirestorageHelper.PARTY_PHOTO_THUMB_IMAGES,
                 StringUtils.getRandomString(28),
                 newThumbImage);
 
             widget.partyPhoto = widget.partyPhoto.copyWith(
-                    imageUrl: photoImageUrl, imageThumbUrl: imageThumbUrl);
+                imageUrl: photoImageUrl, imageThumbUrl: imageThumbUrl);
             FirestoreHelper.pushPartyPhoto(widget.partyPhoto);
 
             setState(() {
@@ -194,14 +195,16 @@ class _PartyPhotoAddEditScreenState extends State<PartyPhotoAddEditScreen> {
 
                     final name = basename(image.path);
                     final imageFile = File('${directory.path}/$name');
-                    final newImage = await File(image.path).copy(imageFile.path);
+                    final newImage =
+                        await File(image.path).copy(imageFile.path);
 
                     String imageUrl = await FirestorageHelper.uploadFile(
                         FirestorageHelper.PARTY_PHOTO_IMAGES,
                         StringUtils.getRandomString(28),
                         newImage);
 
-                    final newThumbImage = await FileUtils.getImageCompressed(imageFile.path, 280, 210, 95);
+                    final newThumbImage = await FileUtils.getImageCompressed(
+                        imageFile.path, 280, 210, 95);
                     String imageThumbUrl = await FirestorageHelper.uploadFile(
                         FirestorageHelper.PARTY_PHOTO_THUMB_IMAGES,
                         StringUtils.getRandomString(28),
@@ -339,6 +342,17 @@ class _PartyPhotoAddEditScreenState extends State<PartyPhotoAddEditScreen> {
                 widget.partyPhoto = widget.partyPhoto.copyWith(views: view);
               });
             }),
+        const SizedBox(height: 24),
+        TextFieldWidget(
+            label: 'init likes',
+            text: widget.partyPhoto.initLikes.toString(),
+            onChanged: (text) {
+              int initLikes = int.parse(text);
+              setState(() {
+                widget.partyPhoto =
+                    widget.partyPhoto.copyWith(initLikes: initLikes);
+              });
+            }),
         Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
@@ -376,7 +390,6 @@ class _PartyPhotoAddEditScreenState extends State<PartyPhotoAddEditScreen> {
                 height: 50,
                 text: 'update thumbnail',
                 onClicked: () async {
-
                   final Uri url = Uri.parse(widget.partyPhoto.imageUrl);
                   final response = await http.get(url);
 
@@ -385,22 +398,22 @@ class _PartyPhotoAddEditScreenState extends State<PartyPhotoAddEditScreen> {
                   await imageFile.writeAsBytes(response.bodyBytes);
 
                   String oldImageThumbUrl = widget.partyPhoto.imageThumbUrl;
-                  if(oldImageThumbUrl.isNotEmpty){
+                  if (oldImageThumbUrl.isNotEmpty) {
                     FirestorageHelper.deleteFile(oldImageThumbUrl);
                   }
 
-                  final newThumbImage = await FileUtils.getImageCompressed(imageFile.path, 280, 210, 95);
+                  final newThumbImage = await FileUtils.getImageCompressed(
+                      imageFile.path, 280, 210, 95);
                   String imageThumbUrl = await FirestorageHelper.uploadFile(
                       FirestorageHelper.PARTY_PHOTO_THUMB_IMAGES,
                       StringUtils.getRandomString(28),
                       newThumbImage);
 
-                  widget.partyPhoto = widget.partyPhoto.copyWith(
-                      imageThumbUrl: imageThumbUrl);
+                  widget.partyPhoto =
+                      widget.partyPhoto.copyWith(imageThumbUrl: imageThumbUrl);
                   FirestoreHelper.pushPartyPhoto(widget.partyPhoto);
 
                   Logx.ist(_TAG, 'photo thumbnail size updated ');
-
                 }),
             const SizedBox(height: 36),
             DarkButtonWidget(

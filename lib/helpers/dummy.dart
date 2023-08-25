@@ -342,6 +342,7 @@ class Dummy {
         partyDate: now,
         endTime: endTime,
         likers: [],
+        initLikes: 0,
         downloadCount: 0,
         views: 0);
     return partyPhoto;
