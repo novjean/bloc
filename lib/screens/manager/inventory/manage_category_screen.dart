@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import '../../../helpers/dummy.dart';
 import '../../../helpers/firestore_helper.dart';
 import '../../../helpers/fresh.dart';
+import '../../../widgets/manager/manage_category_item.dart';
 import '../../../widgets/ui/app_bar_title.dart';
 import 'category_add_edit_screen.dart';
 
@@ -21,7 +22,7 @@ class ManageCategoryScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: AppBarTitle(title:'manage inventory category'),
+        title: AppBarTitle(title:'manage category'),
         titleSpacing: 0,
       ),
       floatingActionButton: FloatingActionButton(
@@ -49,41 +50,41 @@ class ManageCategoryScreen extends StatelessWidget {
     return StreamBuilder<QuerySnapshot>(
         stream: FirestoreHelper.getCategories(serviceId),
         builder: (ctx, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const LoadingWidget();
-          }
-
-          List<Category> _categories = [];
-          for (int i = 0; i < snapshot.data!.docs.length; i++) {
-            DocumentSnapshot document = snapshot.data!.docs[i];
-            Map<String, dynamic> map = document.data()! as Map<String, dynamic>;
-            final Category _category = Fresh.freshCategoryMap(map, true);
-            _categories.add(_category);
-
-            if (i == snapshot.data!.docs.length - 1) {
-              return _displayCategories(context, _categories);
+          switch (snapshot.connectionState) {
+            case ConnectionState.waiting:
+            case ConnectionState.none:
+              return const LoadingWidget();
+            case ConnectionState.active:
+            case ConnectionState.done:{
+            List<Category> categories = [];
+            for (int i = 0; i < snapshot.data!.docs.length; i++) {
+              DocumentSnapshot document = snapshot.data!.docs[i];
+              Map<String, dynamic> map = document.data()! as Map<String, dynamic>;
+              final Category category = Fresh.freshCategoryMap(map, true);
+              categories.add(category);
             }
+            return _displayCategories(context, categories);
           }
-          return const LoadingWidget();
+          }
         });
   }
 
-  _displayCategories(BuildContext context, List<Category> _categories) {
+  _displayCategories(BuildContext context, List<Category> categories) {
     return SizedBox(
       height: MediaQuery.of(context).size.height,
       child: ListView.builder(
-          itemCount: _categories.length,
+          itemCount: categories.length,
           scrollDirection: Axis.vertical,
           itemBuilder: (ctx, index) {
             return GestureDetector(
-                child: ListViewBlock(
-                  title: '${_categories[index].sequence} : ${_categories[index].name}',
+                child: ManageCategoryItem(
+                  category: categories[index],
                 ),
                 onTap: () {
-                  Category _sCategory = _categories[index];
+                  Category sCategory = categories[index];
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (ctx) => CategoryAddEditScreen(
-                          category: _sCategory, task: 'edit')));
+                          category: sCategory, task: 'edit')));
                 });
           }),
     );

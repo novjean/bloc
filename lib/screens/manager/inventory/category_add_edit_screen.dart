@@ -20,6 +20,7 @@ import '../../../utils/constants.dart';
 import '../../../utils/logx.dart';
 import '../../../widgets/profile_widget.dart';
 import '../../../widgets/ui/button_widget.dart';
+import '../../../widgets/ui/dark_button_widget.dart';
 import '../../../widgets/ui/textfield_widget.dart';
 import '../../../widgets/ui/toaster.dart';
 
@@ -314,6 +315,17 @@ class _CategoryAddEditScreenState extends State<CategoryAddEditScreen> {
             Navigator.of(context).pop();
           },
         ),
+        const SizedBox(height: 36),
+        DarkButtonWidget(
+          text: 'delete',
+          onClicked: () {
+            FirestoreHelper.deleteCategory(widget.category.id);
+
+            Navigator.of(context).pop();
+          },
+        ),
+        const SizedBox(height: 12),
+
       ],
     );
   }

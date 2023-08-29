@@ -22,6 +22,7 @@ import '../../../utils/logx.dart';
 import '../../../utils/string_utils.dart';
 import '../../../widgets/profile_widget.dart';
 import '../../../widgets/ui/button_widget.dart';
+import '../../../widgets/ui/dark_button_widget.dart';
 import '../../../widgets/ui/textfield_widget.dart';
 import '../../../widgets/ui/toaster.dart';
 
@@ -500,7 +501,7 @@ class _ProductAddEditScreenState extends State<ProductAddEditScreen> {
             },
           ),
           const SizedBox(height: 24),
-          ButtonWidget(
+          DarkButtonWidget(
             text: 'delete photo',
             onClicked: () async {
               if (widget.product.imageUrl.isNotEmpty) {
@@ -522,8 +523,8 @@ class _ProductAddEditScreenState extends State<ProductAddEditScreen> {
               Navigator.of(context).pop();
             },
           ),
-          const SizedBox(height: 24),
-          ButtonWidget(
+          const SizedBox(height: 36),
+          DarkButtonWidget(
             text: 'delete',
             onClicked: () async {
               bool isPhotoDeleted = false;
@@ -531,8 +532,7 @@ class _ProductAddEditScreenState extends State<ProductAddEditScreen> {
                 isPhotoDeleted =
                     await FirestorageHelper.deleteFile(widget.product.imageUrl);
                 if (isPhotoDeleted) {
-                  Logx.i(_TAG, 'photo deleted successfully');
-                  Toaster.shortToast('photo deleted successfully');
+                  Logx.ist(_TAG, 'photo deleted successfully');
                 } else {
                   Logx.em(_TAG, 'photo deletion failed');
                   Toaster.shortToast('photo deletion failed');
@@ -551,6 +551,8 @@ class _ProductAddEditScreenState extends State<ProductAddEditScreen> {
               }
             },
           ),
+          const SizedBox(height: 12),
+
         ],
       );
     }

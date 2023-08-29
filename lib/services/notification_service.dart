@@ -227,7 +227,7 @@ class NotificationService {
       await showNotification(
         title: title,
         body: body,
-        notificationLayout: NotificationLayout.Messaging,
+        notificationLayout: NotificationLayout.Default,
         payload: {
           "navigate": "true",
           "type": "chat",
@@ -241,7 +241,7 @@ class NotificationService {
         title: title,
         body: body,
         largeIcon: chat.message,
-        notificationLayout: NotificationLayout.Messaging,
+        notificationLayout: NotificationLayout.Default,
         payload: {
           "navigate": "true",
           "type": "chat",

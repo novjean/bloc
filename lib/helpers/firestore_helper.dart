@@ -468,6 +468,10 @@ class FirestoreHelper {
         .snapshots();
   }
 
+  static void deleteCategory(String docId) {
+    FirebaseFirestore.instance.collection(CATEGORIES).doc(docId).delete();
+  }
+
   /** captain services **/
   static void pushCaptainService(CaptainService captainService) async {
     try {

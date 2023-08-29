@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import '../../../db/entity/manager_service.dart';
 import '../../../helpers/firestore_helper.dart';
 import '../../../utils/logx.dart';
+import '../../../widgets/manager/manage_inventory_option_item.dart';
 import '../../../widgets/ui/app_bar_title.dart';
 import 'manage_category_screen.dart';
 import 'manage_offers_screen.dart';
@@ -49,60 +50,59 @@ class ManageInventoryScreen extends StatelessWidget{
     return StreamBuilder<QuerySnapshot>(
         stream: FirestoreHelper.getInventoryOptions(),
         builder: (ctx, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const LoadingWidget();
+          switch (snapshot.connectionState) {
+            case ConnectionState.waiting:
+            case ConnectionState.none:
+              return const LoadingWidget();
+            case ConnectionState.active:
+            case ConnectionState.done:
+              {
+                List<InventoryOption> _invOptions = [];
+                for (int i = 0; i < snapshot.data!.docs.length; i++) {
+                  DocumentSnapshot document = snapshot.data!.docs[i];
+                  Map<String, dynamic> map =
+                  document.data()! as Map<String, dynamic>;
+                  final InventoryOption _invOption = InventoryOption.fromMap(map);
+                  _invOptions.add(_invOption);
+                }
+                return _displayInventoryOptions(context, _invOptions);
+              }
           }
-
-          List<InventoryOption> _invOptions = [];
-          for (int i = 0; i < snapshot.data!.docs.length; i++) {
-            DocumentSnapshot document = snapshot.data!.docs[i];
-            Map<String, dynamic> map =
-            document.data()! as Map<String, dynamic>;
-            final InventoryOption _invOption = InventoryOption.fromMap(map);
-            _invOptions.add(_invOption);
-
-            if (i == snapshot.data!.docs.length - 1) {
-              return _displayInventoryOptions(context, _invOptions);
-            }
-          }
-          Logx.i(_TAG, 'loading inventory options...');
-          return const LoadingWidget();
         });
   }
 
-  _displayInventoryOptions(BuildContext context, List<InventoryOption> _invOptions) {
+  _displayInventoryOptions(BuildContext context, List<InventoryOption> inventoryOptions) {
     return SizedBox(
       height: MediaQuery.of(context).size.height,
       child: ListView.builder(
-          itemCount: _invOptions.length,
+          itemCount: inventoryOptions.length,
           scrollDirection: Axis.vertical,
           itemBuilder: (ctx, index) {
             return GestureDetector(
-                child: ListViewBlock(
-                  title: _invOptions[index].title,
+                child: ManageInventoryOptionItem(
+                  inventoryOption: inventoryOptions[index],
                 ),
                 onTap: () {
-                  InventoryOption _sInvOption = _invOptions[index];
-
-                  if(_sInvOption.title.contains('Products')){
+                  InventoryOption sInvOption = inventoryOptions[index];
+                  if(sInvOption.title.contains('Products')){
                     Navigator.of(context).push(MaterialPageRoute(
                         builder: (ctx) => ManageProductsScreen(
                             serviceId: serviceId,
                             managerService: managerService)));
                     Logx.i(_TAG, 'manage inventory screen selected.');
-                  } else if(_sInvOption.title.contains('Categories')) {
+                  } else if(sInvOption.title.contains('Categories')) {
                     Navigator.of(context).push(MaterialPageRoute(
                         builder: (ctx) => ManageCategoryScreen(
                             serviceId: serviceId)));
                     Logx.i(_TAG, 'manage category screen selected.');
-                  } else if(_sInvOption.title.contains('Offers')) {
+                  } else if(sInvOption.title.contains('Offers')) {
                     Navigator.of(context).push(MaterialPageRoute(
                         builder: (ctx) => ManageOffersScreen(
                             serviceId: serviceId)));
                     Logx.i(_TAG, 'manage category screen selected.');
                   }
                   else {
-                    Logx.i(_TAG, 'Undefined inventory option!');
+                    Logx.i(_TAG, 'undefined inventory option!');
                   }
                 });
           }),

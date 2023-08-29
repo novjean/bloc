@@ -63,13 +63,15 @@ class _EventScreenState extends State<EventScreen> {
         });
 
         FirestoreHelper.pullPartyInterest(mParty.id).then((res) {
-          if(res.docs.isNotEmpty){
+          if (res.docs.isNotEmpty) {
             DocumentSnapshot document = res.docs[0];
-            Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-            PartyInterest partyInterest = Fresh.freshPartyInterestMap(data, false);
+            Map<String, dynamic> data =
+                document.data()! as Map<String, dynamic>;
+            PartyInterest partyInterest =
+                Fresh.freshPartyInterestMap(data, false);
 
-            if(UserPreferences.isUserLoggedIn()){
-              if(!partyInterest.userIds.contains(UserPreferences.myUser.id)){
+            if (UserPreferences.isUserLoggedIn()) {
+              if (!partyInterest.userIds.contains(UserPreferences.myUser.id)) {
                 partyInterest.userIds.add(UserPreferences.myUser.id);
                 FirestoreHelper.pushPartyInterest(partyInterest);
                 Logx.d(_TAG, 'user interest recorded for party');
@@ -83,7 +85,8 @@ class _EventScreenState extends State<EventScreen> {
             }
           } else {
             PartyInterest partyInterest = Dummy.getDummyPartyInterest();
-            partyInterest = partyInterest.copyWith(partyId: mParty.id, userIds: [UserPreferences.myUser.id]);
+            partyInterest = partyInterest.copyWith(
+                partyId: mParty.id, userIds: [UserPreferences.myUser.id]);
             FirestoreHelper.pushPartyInterest(partyInterest);
 
             Logx.d(_TAG, 'party interest created for party');
@@ -105,8 +108,9 @@ class _EventScreenState extends State<EventScreen> {
     return Scaffold(
         appBar: AppBar(
           backgroundColor: Constants.background,
-
-          title: AppBarTitle(title: mParty.name.toLowerCase(),),
+          title: AppBarTitle(
+            title: mParty.name.toLowerCase(),
+          ),
           titleSpacing: 0,
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
@@ -131,148 +135,133 @@ class _EventScreenState extends State<EventScreen> {
   _buildBody(BuildContext context) {
     return _isPartyLoading
         ? const LoadingWidget()
-        : SingleChildScrollView(
-            physics: const ScrollPhysics(),
-            child: Column(
-              children: [
-                SizedBox(
-                  width: double.infinity,
-                  child: Hero(
+        : ListView(
+            children: [
+              SizedBox(
+                width: double.infinity,
+                child: Hero(
                     tag: mParty.id,
-                    child: kIsWeb?
-                    Image.network(
+                    child: Image.network(
                       mParty.imageUrl,
                       fit: BoxFit.cover,
-                    ):
-                    CachedNetworkImage(
-                      imageUrl: mParty.imageUrl,
-                      imageBuilder: (context, imageProvider) => Container(
-                        decoration: BoxDecoration(
-                          image: DecorationImage(
-                            image: imageProvider,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
+                    )),
+              ),
+              const SizedBox(height: 10),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Flexible(
+                    flex: 2,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      child: RichText(
+                        text: TextSpan(
+                            text: '${mParty.name.toLowerCase()} ',
+                            style: const TextStyle(
+                                fontFamily: Constants.fontDefault,
+                                color: Constants.lightPrimary,
+                                overflow: TextOverflow.ellipsis,
+                                fontSize: 22,
+                                fontWeight: FontWeight.bold),
+                            children: <TextSpan>[
+                              TextSpan(
+                                  text: mParty.chapter == 'I'
+                                      ? ' '
+                                      : mParty.chapter,
+                                  style: const TextStyle(
+                                      fontFamily: Constants.fontDefault,
+                                      color: Constants.lightPrimary,
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.normal,
+                                      fontStyle: FontStyle.italic)),
+                            ]),
                       ),
-                      placeholder: (context, url) =>
-                      const FadeInImage(
-                        placeholder: AssetImage('assets/images/logo.png'),
-                        image: AssetImage('assets/images/logo.png'),
-                        fit: BoxFit.cover,
-                      ),
-                      errorWidget: (context, url, error) => const Icon(Icons.error),
-                    )
+                    ),
                   ),
-                ),
-                const SizedBox(height: 10),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Flexible(
-                      flex: 2,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10),
-                        child: RichText(
-                          text: TextSpan(
-                              text: '${mParty.name.toLowerCase()} ',
-                              style: const TextStyle(
-                                  fontFamily: Constants.fontDefault,
+                  Flexible(
+                    flex: 1,
+                    child: showGuestListOrTicketButton(context),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 10),
+              Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  width: double.infinity,
+                  child: Text(
+                    mParty.isTBA
+                        ? 'tba'
+                        : '${DateTimeUtils.getFormattedDate(mParty.startTime)}, ${DateTimeUtils.getFormattedTime(mParty.startTime)}',
+                    style: const TextStyle(
+                        fontSize: 18, color: Constants.lightPrimary),
+                  )),
+              const SizedBox(height: 10),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                width: double.infinity,
+                child: Text(mParty.description.toLowerCase(),
+                    textAlign: TextAlign.start,
+                    softWrap: true,
+                    style: TextStyle(
+                      color: Theme.of(context).primaryColorLight,
+                      fontSize: 18,
+                    )),
+              ),
+              const SizedBox(height: 10),
+              mParty.artistIds.isNotEmpty
+                  ? _loadArtists(context)
+                  : const SizedBox(),
+              const SizedBox(height: 10),
+              mParty.instagramUrl.isNotEmpty
+                  ? const Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 15.0),
+                          child: Text('links',
+                              style: TextStyle(
                                   color: Constants.lightPrimary,
                                   overflow: TextOverflow.ellipsis,
                                   fontSize: 22,
-                                  fontWeight: FontWeight.bold),
-                              children: <TextSpan>[
-                                TextSpan(
-                                    text: mParty.chapter == 'I'
-                                        ? ' '
-                                        : mParty.chapter,
-                                    style: const TextStyle(
-                                        fontFamily: Constants.fontDefault,
-                                        color: Constants.lightPrimary,
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.normal,
-                                        fontStyle: FontStyle.italic)),
-                              ]),
+                                  fontWeight: FontWeight.bold)),
                         ),
-                      ),
-                    ),
-                    Flexible(
-                      flex: 1,
-                      child: showGuestListOrTicketButton(context),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 10),
-                Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                    width: double.infinity,
-                    child: Text(
-                      mParty.isTBA
-                          ? 'tba'
-                          : '${DateTimeUtils.getFormattedDate(mParty.startTime)}, ${DateTimeUtils.getFormattedTime(mParty.startTime)}',
-                      style: const TextStyle(
-                          fontSize: 18, color: Constants.lightPrimary),
-                    )),
-                const SizedBox(height: 10),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  width: double.infinity,
-                  child: Text(mParty.description.toLowerCase(),
-                      textAlign: TextAlign.start,
-                      softWrap: true,
-                      style: TextStyle(
-                        color: Theme.of(context).primaryColorLight,
-                        fontSize: 18,
-                      )),
-                ),
-                const SizedBox(height: 10),
-                mParty.artistIds.isNotEmpty
-                    ? _loadArtists(context)
-                    : const SizedBox(),
-                const SizedBox(height: 10),
-                mParty.instagramUrl.isNotEmpty?
-                const Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 15.0),
-                      child: Text('links',
-                          style: TextStyle(
-                              color: Constants.lightPrimary,
-                              overflow: TextOverflow.ellipsis,
-                              fontSize: 22,
-                              fontWeight: FontWeight.bold)),
-                    ),
-                  ],
-                ):const SizedBox(),
-                mParty.instagramUrl.isNotEmpty? Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    InkWell(
-                      onTap: () {
-                        final uri = Uri.parse(mParty.instagramUrl);
-                        NetworkUtils.launchInBrowser(uri);
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 2),
-                        child: Text(
-                          'instagram post 🧡',
-                          style: TextStyle(
-                            fontSize: 18,
-                            color: Theme.of(context).primaryColor,
+                      ],
+                    )
+                  : const SizedBox(),
+              mParty.instagramUrl.isNotEmpty
+                  ? Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        InkWell(
+                          onTap: () {
+                            final uri = Uri.parse(mParty.instagramUrl);
+                            NetworkUtils.launchInBrowser(uri);
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 15, vertical: 2),
+                            child: Text(
+                              'instagram post 🧡',
+                              style: TextStyle(
+                                fontSize: 18,
+                                color: Theme.of(context).primaryColor,
+                              ),
+                            ),
                           ),
                         ),
-                      ),
-                    ),
-                  ],
-                ):const SizedBox(),
-                const SizedBox(height: 15.0),
-                kIsWeb ? const StoreBadgeItem() : const SizedBox(),
-                const SizedBox(height: 10.0),
-                Footer(),
-              ],
-            ),
+                      ],
+                    )
+                  : const SizedBox(),
+              const SizedBox(height: 15.0),
+              kIsWeb ? const StoreBadgeItem() : const SizedBox(),
+              const SizedBox(height: 10.0),
+              Footer(),
+            ],
           );
+    // SingleChildScrollView(
+    //         physics: const ScrollPhysics(),
+    //         child: ,
+    //       );
   }
 
   Widget _loadArtists(BuildContext context) {
@@ -391,31 +380,35 @@ class _EventScreenState extends State<EventScreen> {
                   historyMusic.count = 1;
                   FirestoreHelper.pushHistoryMusic(historyMusic);
                 } else {
-                  if(res.docs.length > 1){
+                  if (res.docs.length > 1) {
                     // that means there are multiple, so consolidate
                     HistoryMusic hm = Dummy.getDummyHistoryMusic();
                     int totalCount = 0;
 
                     for (int i = 0; i < res.docs.length; i++) {
                       DocumentSnapshot document = res.docs[i];
-                      Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-                      final HistoryMusic historyMusic = Fresh.freshHistoryMusicMap(data, false);
+                      Map<String, dynamic> data =
+                          document.data()! as Map<String, dynamic>;
+                      final HistoryMusic historyMusic =
+                          Fresh.freshHistoryMusicMap(data, false);
 
-                      totalCount+= historyMusic.count;
-                      if(i == 0){
+                      totalCount += historyMusic.count;
+                      if (i == 0) {
                         hm = historyMusic;
                       }
                       FirestoreHelper.deleteHistoryMusic(historyMusic.id);
                     }
 
-                    totalCount = totalCount+1;
+                    totalCount = totalCount + 1;
                     hm = hm.copyWith(count: totalCount);
                     FirestoreHelper.pushHistoryMusic(hm);
                   } else {
                     DocumentSnapshot document = res.docs[0];
-                    Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-                    HistoryMusic historyMusic = Fresh.freshHistoryMusicMap(data, false);
-                    int newCount = historyMusic.count+1;
+                    Map<String, dynamic> data =
+                        document.data()! as Map<String, dynamic>;
+                    HistoryMusic historyMusic =
+                        Fresh.freshHistoryMusicMap(data, false);
+                    int newCount = historyMusic.count + 1;
 
                     historyMusic = historyMusic.copyWith(count: newCount);
                     FirestoreHelper.pushHistoryMusic(historyMusic);

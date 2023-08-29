@@ -37,10 +37,6 @@ class OrderCard extends StatelessWidget {
           clipBehavior: Clip.antiAlias,
           child: Column(
             children: [
-              // GestureDetector(
-              //   onTap: () => controller.toggle(),
-              //   child: Image.network(urlImage),
-              // ),
               ScrollOnExpand(
                 child: ExpandablePanel(
                   // controller: controller,
