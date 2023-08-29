@@ -1,4 +1,5 @@
 import 'package:bloc/helpers/dummy.dart';
+import 'package:bloc/widgets/manager/manage_genre_item.dart';
 import 'package:bloc/widgets/ui/app_bar_title.dart';
 import 'package:bloc/widgets/ui/button_widget.dart';
 import 'package:bloc/widgets/ui/loading_widget.dart';
@@ -211,7 +212,7 @@ class _ManagePartiesScreenState extends State<ManagePartiesScreen> {
             return const LoadingWidget();
           }
 
-          List<Genre> _genres = [];
+          List<Genre> genres = [];
 
           if (!snapshot.hasData) {
             return const Center(child: Text('no genres found!'));
@@ -221,10 +222,10 @@ class _ManagePartiesScreenState extends State<ManagePartiesScreen> {
             DocumentSnapshot document = snapshot.data!.docs[i];
             Map<String, dynamic> map = document.data()! as Map<String, dynamic>;
             final Genre genre = Fresh.freshGenreMap(map, false);
-            _genres.add(genre);
+            genres.add(genre);
 
             if (i == snapshot.data!.docs.length - 1) {
-              return _displayGenres(context, _genres);
+              return _displayGenres(context, genres);
             }
           }
           return const LoadingWidget();
@@ -238,8 +239,8 @@ class _ManagePartiesScreenState extends State<ManagePartiesScreen> {
           scrollDirection: Axis.vertical,
           itemBuilder: (ctx, index) {
             return GestureDetector(
-                child: ListViewBlock(
-                  title: genres[index].name,
+                child: ManageGenreItem(
+                  genre: genres[index],
                 ),
                 onTap: () {
                   Genre genre = genres[index];

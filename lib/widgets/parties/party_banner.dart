@@ -97,6 +97,11 @@ class _PartyBannerState extends State<PartyBanner> {
             });
           }
         });
+      } else {
+        Logx.em(_TAG, 'big act but artists not mentioned!');
+        setState(() {
+          _isArtistsLoading = false;
+        });
       }
     } else {
       Logx.em(_TAG, 'artists no longer exist!');

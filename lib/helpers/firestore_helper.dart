@@ -119,7 +119,6 @@ class FirestoreHelper {
     return FirebaseFirestore.instance
         .collection(ADS)
         .where('blocId', isEqualTo: blocId)
-        .where('isActive', isEqualTo: true)
         .orderBy('createdAt', descending: true)
         .snapshots();
   }
