@@ -572,6 +572,7 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
               TextFieldWidget(
                 label: 'description',
                 text: widget.party.description,
+                maxLength: 5000,
                 maxLines: 8,
                 onChanged: (value) {
                   widget.party = widget.party.copyWith(description: value);
