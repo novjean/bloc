@@ -228,10 +228,10 @@ class _ProductItemState extends State<ProductItem> {
                         const SizedBox(height: 2),
                         Text(widget.product.description.toLowerCase(),
                             overflow: TextOverflow.ellipsis,
-                            maxLines: 2,
+                            maxLines: 3,
                             style: TextStyle(
                                 fontSize: 16,
-                                color: Theme.of(context).primaryColorDark)),
+                                color: Constants.darkPrimary)),
 
                         // widget.isCustomerSeated
                         //     ? showAddMinusButtons(cart)
@@ -243,9 +243,9 @@ class _ProductItemState extends State<ProductItem> {
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
                               Ink(
-                                decoration: ShapeDecoration(
-                                  color: Theme.of(context).primaryColorLight,
-                                  shape: const CircleBorder(
+                                decoration: const ShapeDecoration(
+                                  color: Constants.lightPrimary,
+                                  shape: CircleBorder(
                                   ),
                                 ),
                                 child: IconButton(
@@ -274,9 +274,9 @@ class _ProductItemState extends State<ProductItem> {
                               Padding(
                                 padding: const EdgeInsets.only(right: 20.0),
                                 child: Ink(
-                                  decoration: ShapeDecoration(
-                                    color: Theme.of(context).primaryColorLight,
-                                    shape: const CircleBorder(),
+                                  decoration: const ShapeDecoration(
+                                    color: Constants.lightPrimary,
+                                    shape: CircleBorder(),
                                   ),
                                   child: IconButton(
                                     icon: const Icon(Icons.add),

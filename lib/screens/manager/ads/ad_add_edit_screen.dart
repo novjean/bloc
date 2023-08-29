@@ -24,6 +24,7 @@ import '../../../utils/logx.dart';
 import '../../../utils/string_utils.dart';
 import '../../../widgets/profile_widget.dart';
 import '../../../widgets/ui/button_widget.dart';
+import '../../../widgets/ui/dark_button_widget.dart';
 import '../../../widgets/ui/textfield_widget.dart';
 
 class AdAddEditScreen extends StatefulWidget {
@@ -188,13 +189,10 @@ class _AdAddEditScreenState extends State<AdAddEditScreen> {
           ],
         ),
         const SizedBox(height: 24),
-        // ios default 140
-        // ios extended 260
-        // android default 80
         TextFieldWidget(
           label: 'message *',
           text: widget.ad.message,
-          maxLines: 6,
+          maxLines: 8,
           onChanged: (message) =>
               widget.ad = widget.ad.copyWith(message: message),
         ),
@@ -260,7 +258,7 @@ class _AdAddEditScreenState extends State<AdAddEditScreen> {
           },
         ),
         const SizedBox(height: 24),
-        ButtonWidget(
+        DarkButtonWidget(
           text: 'delete',
           onClicked: () {
             if(widget.ad.imageUrl.isNotEmpty){

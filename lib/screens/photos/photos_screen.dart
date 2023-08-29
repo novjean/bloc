@@ -243,7 +243,7 @@ class _PhotosScreenState extends State<PhotosScreen> {
                     child: const Text("advertise"),
                     onPressed: () {
                       Ad ad = Dummy.getDummyAd(partyPhoto.blocServiceId);
-                      ad = ad.copyWith(imageUrl: partyPhoto.imageUrl);
+                      ad = ad.copyWith(imageUrl: partyPhoto.imageUrl, isActive: true);
 
                       Navigator.of(context).pop();
                       _showAdDialog(context, ad);

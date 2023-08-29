@@ -49,7 +49,7 @@ class Dummy {
         partyChapter: '',
         blocId: blocServiceId,
         createdAt: Timestamp.now().millisecondsSinceEpoch,
-        isActive: false,
+        isActive: true,
         hits: 0,
         reach: 0);
 
