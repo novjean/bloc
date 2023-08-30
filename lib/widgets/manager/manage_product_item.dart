@@ -49,7 +49,7 @@ class ManageProductItem extends StatelessWidget {
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 10),
                     child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: <Widget>[
                         Row(
@@ -64,7 +64,7 @@ class ManageProductItem extends StatelessWidget {
                             ),
                             Flexible(
                               child: Text(
-                                  '\u20B9 ${product.price.toStringAsFixed(2)}',
+                                  '\u20B9 ${product.price.toStringAsFixed(0)}',
                                   style: TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.normal)),
@@ -72,22 +72,29 @@ class ManageProductItem extends StatelessWidget {
                             ),
                           ],
                         ),
-                        SizedBox(height: 5),
+                        SizedBox(height: 2),
                         Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             Text(
-                                '\u20B9 ${product.priceLowest.toStringAsFixed(2)}',
+                                '\u20B9 ${product.priceLowest.toStringAsFixed(0)}',
                                 style: TextStyle(
                                     fontSize: 14,
                                     fontWeight: FontWeight.bold,
                                     color: Colors.green)),
                             Text(' | '),
                             Text(
-                                '\u20B9 ${product.priceHighest.toStringAsFixed(2)}',
+                                '\u20B9 ${product.priceHighest.toStringAsFixed(0)}',
                                 style: TextStyle(
                                     fontSize: 14,
                                     fontWeight: FontWeight.bold,
                                     color: Colors.redAccent)),
+                            const Spacer(),
+                            Text(
+                                '\u20B9 ${product.priceBottle.toStringAsFixed(0)}',
+                                style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,)),
                           ],
                         ),
                         Row(
@@ -107,18 +114,18 @@ class ManageProductItem extends StatelessWidget {
                                 FirestoreHelper.pushProduct(freshProduct);
                               },
                             ),
-                            IconButton(
-                              icon: const Icon(Icons.percent),
-                              color: primaryColor,
-                              onPressed: () {
-                                print(product.name + ' is clicked for offer.');
-                                Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                      builder: (ctx) => AddProductOfferScreen(
-                                          product: product)),
-                                );
-                              },
-                            ),
+                            // IconButton(
+                            //   icon: const Icon(Icons.percent),
+                            //   color: primaryColor,
+                            //   onPressed: () {
+                            //     print(product.name + ' is clicked for offer.');
+                            //     Navigator.of(context).push(
+                            //       MaterialPageRoute(
+                            //           builder: (ctx) => AddProductOfferScreen(
+                            //               product: product)),
+                            //     );
+                            //   },
+                            // ),
                           ],
                         ),
                       ],
