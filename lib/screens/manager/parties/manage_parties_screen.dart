@@ -167,18 +167,13 @@ class _ManagePartiesScreenState extends State<ManagePartiesScreen> {
 
                 for (int i = 0; i < snapshot.data!.docs.length; i++) {
                   DocumentSnapshot document = snapshot.data!.docs[i];
-                  Map<String, dynamic> map =
-                      document.data()! as Map<String, dynamic>;
+                  Map<String, dynamic> map = document.data()! as Map<String, dynamic>;
                   final Party party = Fresh.freshPartyMap(map, false);
                   mParties.add(party);
-
-                  if (i == snapshot.data!.docs.length - 1) {
-                    return _showPartiesList(context);
-                  }
                 }
+                return _showPartiesList(context);
               }
           }
-          return const LoadingWidget();
         });
   }
 

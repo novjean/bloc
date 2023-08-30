@@ -258,6 +258,8 @@ class Dummy {
     Party dummyParty = Party(
         id: StringUtils.getRandomString(28),
         createdAt: Timestamp.now().millisecondsSinceEpoch,
+
+        imageUrls: [],
         imageUrl: '',
         storyImageUrl: '',
         name: '',

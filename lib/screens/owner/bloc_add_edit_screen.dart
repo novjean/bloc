@@ -186,8 +186,8 @@ class _BlocAddEditScreenState extends State<BlocAddEditScreen> {
   Widget _photosListDialog() {
     return SingleChildScrollView(
       child: SizedBox(
-        height: mq.height*0.6,
-        width: mq.width*0.8,
+        height: mq.height * 0.6,
+        width: mq.width * 0.8,
         child: ListView.builder(
           shrinkWrap: true,
           itemCount: mImageUrls.length,
@@ -196,20 +196,14 @@ class _BlocAddEditScreenState extends State<BlocAddEditScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 1),
-                  child:
-                  ClipRRect(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 5.0, vertical: 1),
+                  child: ClipRRect(
                     borderRadius: BorderRadius.circular(8),
-                    child: Image.network(
-                        mImageUrls[index],
-                        width: 110,
-                        height: 70,
-                        fit:BoxFit.fill
-
-                    ),
+                    child: Image.network(mImageUrls[index],
+                        width: 80, height: 80, fit: BoxFit.cover),
                   ),
                 ),
-
                 SizedBox.fromSize(
                   size: const Size(50, 50),
                   child: ClipOval(
@@ -219,16 +213,16 @@ class _BlocAddEditScreenState extends State<BlocAddEditScreen> {
                         splashColor: Colors.orange,
                         onTap: () {
                           int prevIndex = index--;
-                          if(prevIndex>=0){
+                          if (prevIndex >= 0) {
                             mImageUrls.swap(index, prevIndex);
-                            widget.bloc = widget.bloc.copyWith(imageUrls: mImageUrls);
+                            widget.bloc =
+                                widget.bloc.copyWith(imageUrls: mImageUrls);
                             FirestoreHelper.pushBloc(widget.bloc);
                           } else {
                             Logx.ist(_TAG, 'photo is already the first');
                           }
 
-                          setState(() {
-                          });
+                          setState(() {});
                         },
                         child: const Column(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -249,19 +243,20 @@ class _BlocAddEditScreenState extends State<BlocAddEditScreen> {
                         splashColor: Colors.orange,
                         onTap: () {
                           int nextIndex = index++;
-                          if(nextIndex<=mImageUrls.length-1){
+                          if (nextIndex <= mImageUrls.length - 1) {
                             mImageUrls.swap(index, nextIndex);
-                            widget.bloc = widget.bloc.copyWith(imageUrls: mImageUrls);
+                            widget.bloc =
+                                widget.bloc.copyWith(imageUrls: mImageUrls);
                             FirestoreHelper.pushBloc(widget.bloc);
                           } else {
                             Logx.ist(_TAG, 'photo is already the last');
                           }
 
-                          widget.bloc = widget.bloc.copyWith(imageUrls: mImageUrls);
+                          widget.bloc =
+                              widget.bloc.copyWith(imageUrls: mImageUrls);
                           FirestoreHelper.pushBloc(widget.bloc);
 
-                          setState(() {
-                          });
+                          setState(() {});
                         },
                         child: const Column(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -273,8 +268,6 @@ class _BlocAddEditScreenState extends State<BlocAddEditScreen> {
                     ),
                   ),
                 ),
-
-
                 SizedBox.fromSize(
                   size: const Size(50, 50),
                   child: ClipOval(
@@ -286,11 +279,11 @@ class _BlocAddEditScreenState extends State<BlocAddEditScreen> {
                           FirestorageHelper.deleteFile(mImageUrls[index]);
                           mImageUrls.removeAt(index);
 
-                          widget.bloc = widget.bloc.copyWith(imageUrls: mImageUrls);
+                          widget.bloc =
+                              widget.bloc.copyWith(imageUrls: mImageUrls);
                           FirestoreHelper.pushBloc(widget.bloc);
 
-                          setState(() {
-                          });
+                          setState(() {});
                           Navigator.of(context).pop();
                         },
                         child: const Column(

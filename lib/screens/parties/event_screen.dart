@@ -1,5 +1,6 @@
 import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -136,16 +137,60 @@ class _EventScreenState extends State<EventScreen> {
     return _isPartyLoading
         ? const LoadingWidget()
         : ListView(
+            shrinkWrap: true,
             children: [
-              SizedBox(
-                width: double.infinity,
-                child: Hero(
-                    tag: mParty.id,
-                    child: Image.network(
-                      mParty.imageUrl,
-                      fit: BoxFit.cover,
-                    )),
-              ),
+              mParty.imageUrls.length > 1
+                  ? CarouselSlider(
+                      options: CarouselOptions(
+                        initialPage: 0,
+                        enableInfiniteScroll: true,
+                        autoPlay: true,
+                        autoPlayInterval: const Duration(seconds: 4),
+                        autoPlayAnimationDuration:
+                            const Duration(milliseconds: 1500),
+                        // enlargeCenterPage: false,
+                        scrollDirection: Axis.horizontal,
+                        aspectRatio: 1.33,
+                      ),
+                      items: mParty.imageUrls
+                          .map((item) =>
+                                  // kIsWeb?
+                                  SizedBox(
+                                    width: double.infinity,
+                                    child: Image.network(item,
+                                        width: double.infinity,
+                                        fit: BoxFit.cover),
+                                  )
+                              // :
+                              // CachedNetworkImage(
+                              //   imageUrl: item,
+                              //   imageBuilder: (context, imageProvider) => Container(
+                              //     decoration: BoxDecoration(
+                              //       image: DecorationImage(
+                              //         image: imageProvider,
+                              //         fit: BoxFit.cover,
+                              //       ),
+                              //     ),
+                              //   ),
+                              //   placeholder: (context, url) =>
+                              //   const FadeInImage(
+                              //     placeholder: AssetImage('assets/images/logo.png'),
+                              //     image: AssetImage('assets/images/logo.png'),
+                              //     fit: BoxFit.cover,
+                              //   ),
+                              //   errorWidget: (context, url, error) => const Icon(Icons.error),
+                              // )
+                              )
+                          .toList(),
+                    )
+                  : SizedBox(
+                      width: double.infinity,
+                      child: FadeInImage(
+                        placeholder:
+                            const AssetImage('assets/images/logo_3x2.png'),
+                        image: NetworkImage(mParty.imageUrl),
+                        fit: BoxFit.contain,
+                      )),
               const SizedBox(height: 10),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,

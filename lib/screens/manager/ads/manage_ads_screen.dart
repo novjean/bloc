@@ -61,15 +61,15 @@ class ManageAdsScreen extends StatelessWidget {
             return const LoadingWidget();
           }
 
-          List<Ad> _ads = [];
+          List<Ad> ads = [];
           for (int i = 0; i < snapshot.data!.docs.length; i++) {
             DocumentSnapshot document = snapshot.data!.docs[i];
             Map<String, dynamic> map = document.data()! as Map<String, dynamic>;
             final Ad _ad = Fresh.freshAdMap(map, false);
-            _ads.add(_ad);
+            ads.add(_ad);
 
             if (i == snapshot.data!.docs.length - 1) {
-              return _displayAds(context, _ads);
+              return _displayAds(context, ads);
             }
           }
           Logx.i(_TAG, 'loading ads...');

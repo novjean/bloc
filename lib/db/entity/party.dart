@@ -7,6 +7,7 @@ class Party {
   final String type;
   final String chapter;
 
+  final List<String> imageUrls;
   final String imageUrl;
   final String storyImageUrl;
   final String instagramUrl;
@@ -50,6 +51,7 @@ class Party {
     required this.blocServiceId,
     required this.type,
     required this.chapter,
+    required this.imageUrls,
     required this.imageUrl,
     required this.storyImageUrl,
     required this.instagramUrl,
@@ -90,6 +92,7 @@ class Party {
           blocServiceId == other.blocServiceId &&
           type == other.type &&
           chapter == other.chapter &&
+          imageUrls == other.imageUrls &&
           imageUrl == other.imageUrl &&
           storyImageUrl == other.storyImageUrl &&
           instagramUrl == other.instagramUrl &&
@@ -126,6 +129,7 @@ class Party {
       blocServiceId.hashCode ^
       type.hashCode ^
       chapter.hashCode ^
+      imageUrls.hashCode ^
       imageUrl.hashCode ^
       storyImageUrl.hashCode ^
       instagramUrl.hashCode ^
@@ -163,6 +167,7 @@ class Party {
         ' blocServiceId: $blocServiceId,' +
         ' type: $type,' +
         ' chapter: $chapter,' +
+        ' imageUrls: $imageUrls,' +
         ' imageUrl: $imageUrl,' +
         ' storyImageUrl: $storyImageUrl,' +
         ' instagramUrl: $instagramUrl,' +
@@ -200,6 +205,7 @@ class Party {
     String? blocServiceId,
     String? type,
     String? chapter,
+    List<String>? imageUrls,
     String? imageUrl,
     String? storyImageUrl,
     String? instagramUrl,
@@ -235,6 +241,7 @@ class Party {
       blocServiceId: blocServiceId ?? this.blocServiceId,
       type: type ?? this.type,
       chapter: chapter ?? this.chapter,
+      imageUrls: imageUrls ?? this.imageUrls,
       imageUrl: imageUrl ?? this.imageUrl,
       storyImageUrl: storyImageUrl ?? this.storyImageUrl,
       instagramUrl: instagramUrl ?? this.instagramUrl,
@@ -273,6 +280,7 @@ class Party {
       'blocServiceId': this.blocServiceId,
       'type': this.type,
       'chapter': this.chapter,
+      'imageUrls': this.imageUrls,
       'imageUrl': this.imageUrl,
       'storyImageUrl': this.storyImageUrl,
       'instagramUrl': this.instagramUrl,
@@ -311,6 +319,7 @@ class Party {
       blocServiceId: map['blocServiceId'] as String,
       type: map['type'] as String,
       chapter: map['chapter'] as String,
+      imageUrls: map['imageUrls'] as List<String>,
       imageUrl: map['imageUrl'] as String,
       storyImageUrl: map['storyImageUrl'] as String,
       instagramUrl: map['instagramUrl'] as String,

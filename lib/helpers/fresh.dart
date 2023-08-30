@@ -1535,7 +1535,7 @@ class Fresh {
   /** party **/
   static Party freshPartyMap(Map<String, dynamic> map, bool shouldUpdate) {
     Party party = Dummy.getDummyParty(UserPreferences.myUser.blocServiceId);
-    bool shouldPushParty = true;
+    bool isModelChanged = false;
 
     try {
       party = party.copyWith(id: map['id'] as String);
@@ -1545,111 +1545,111 @@ class Fresh {
     try {
       party = party.copyWith(name: map['name'] as String);
     } catch (e) {
-      Logx.em(_TAG, 'party name not exist for party id: ' + party.id);
-      shouldPushParty = true;
+      Logx.em(_TAG, 'party name not exist for id: ${party.id}');
+      isModelChanged = true;
     }
     try {
       party = party.copyWith(eventName: map['eventName'] as String);
     } catch (e) {
-      Logx.em(_TAG, 'party eventName not exist for party id: ' + party.id);
-      shouldPushParty = true;
+      Logx.em(_TAG, 'party eventName not exist for id: ${party.id}');
+      isModelChanged = true;
     }
     try {
       party = party.copyWith(description: map['description'] as String);
     } catch (e) {
-      Logx.em(_TAG, 'party description not exist for party id: ' + party.id);
-      shouldPushParty = true;
+      Logx.em(_TAG, 'party description not exist for id: ${party.id}');
+      isModelChanged = true;
     }
     try {
       party = party.copyWith(blocServiceId: map['blocServiceId'] as String);
     } catch (e) {
-      Logx.em(_TAG, 'party blocServiceId not exist for party id: ' + party.id);
-      shouldPushParty = true;
+      Logx.em(_TAG, 'party blocServiceId not exist for id: ${party.id}');
+      isModelChanged = true;
     }
     try {
       party = party.copyWith(type: map['type'] as String);
     } catch (e) {
       Logx.em(_TAG, 'party type not exist for party id: ' + party.id);
-      shouldPushParty = true;
+      isModelChanged = true;
     }
     try {
       party = party.copyWith(chapter: map['chapter'] as String);
     } catch (e) {
       Logx.em(_TAG, 'party chapter not exist for party id: ' + party.id);
-      shouldPushParty = true;
+      isModelChanged = true;
     }
 
     try {
       party = party.copyWith(imageUrl: map['imageUrl'] as String);
     } catch (e) {
       Logx.em(_TAG, 'party imageUrl not exist for party id: ' + party.id);
-      shouldPushParty = true;
+      isModelChanged = true;
     }
     try {
       party = party.copyWith(storyImageUrl: map['storyImageUrl'] as String);
     } catch (e) {
-      Logx.em(_TAG, 'party storyImageUrl not exist for party id: ' + party.id);
-      shouldPushParty = true;
+      Logx.em(_TAG, 'party storyImageUrl not exist for id: ${party.id}');
+      isModelChanged = true;
     }
     try {
       party = party.copyWith(instagramUrl: map['instagramUrl'] as String);
     } catch (e) {
       Logx.em(_TAG, 'party instagramUrl not exist for party id: ' + party.id);
-      shouldPushParty = true;
+      isModelChanged = true;
     }
     try {
       party = party.copyWith(ticketUrl: map['ticketUrl'] as String);
     } catch (e) {
       Logx.em(_TAG, 'party ticketUrl not exist for party id: ' + party.id);
-      shouldPushParty = true;
+      isModelChanged = true;
     }
     try {
       party = party.copyWith(listenUrl: map['listenUrl'] as String);
     } catch (e) {
       Logx.em(_TAG, 'party listenUrl not exist for party id: ' + party.id);
-      shouldPushParty = true;
+      isModelChanged = true;
     }
     try {
       party = party.copyWith(createdAt: map['createdAt'] as int);
     } catch (e) {
       Logx.em(_TAG, 'party createdAt not exist for party id: ' + party.id);
-      shouldPushParty = true;
+      isModelChanged = true;
     }
     try {
       party = party.copyWith(startTime: map['startTime'] as int);
     } catch (e) {
       Logx.em(_TAG, 'party startTime not exist for party id: ' + party.id);
-      shouldPushParty = true;
+      isModelChanged = true;
     }
     try {
       party = party.copyWith(endTime: map['endTime'] as int);
     } catch (e) {
       Logx.em(_TAG, 'party endTime not exist for party id: ' + party.id);
-      shouldPushParty = true;
+      isModelChanged = true;
     }
     try {
       party = party.copyWith(ownerId: map['ownerId'] as String);
     } catch (e) {
       Logx.em(_TAG, 'party ownerId not exist for party id: ' + party.id);
-      shouldPushParty = true;
+      isModelChanged = true;
     }
     try {
       party = party.copyWith(isTBA: map['isTBA'] as bool);
     } catch (e) {
       Logx.em(_TAG, 'party isTBA not exist for party id: ' + party.id);
-      shouldPushParty = true;
+      isModelChanged = true;
     }
     try {
       party = party.copyWith(isActive: map['isActive'] as bool);
     } catch (e) {
       Logx.em(_TAG, 'party isActive not exist for party id: ' + party.id);
-      shouldPushParty = true;
+      isModelChanged = true;
     }
     try {
       party = party.copyWith(isBigAct: map['isBigAct'] as bool);
     } catch (e) {
       Logx.em(_TAG, 'party isBigAct not exist for party id: ' + party.id);
-      shouldPushParty = true;
+      isModelChanged = true;
     }
 
     try {
@@ -1658,69 +1658,69 @@ class Fresh {
     } catch (e) {
       Logx.em(
           _TAG, 'party isGuestListActive not exist for party id: ' + party.id);
-      shouldPushParty = true;
+      isModelChanged = true;
     }
     try {
       party = party.copyWith(guestListCount: map['guestListCount'] as int);
     } catch (e) {
       Logx.em(_TAG, 'party guestListCount not exist for party id: ' + party.id);
-      shouldPushParty = true;
+      isModelChanged = true;
     }
     try {
       party = party.copyWith(isEmailRequired: map['isEmailRequired'] as bool);
     } catch (e) {
       Logx.em(
           _TAG, 'party isEmailRequired not exist for party id: ' + party.id);
-      shouldPushParty = true;
+      isModelChanged = true;
     }
     try {
       party = party.copyWith(guestListEndTime: map['guestListEndTime'] as int);
     } catch (e) {
       Logx.em(
           _TAG, 'party guestListEndTime not exist for party id: ' + party.id);
-      shouldPushParty = true;
+      isModelChanged = true;
     }
     try {
       party = party.copyWith(guestListRules: map['guestListRules'] as String);
       if (party.guestListRules.isEmpty) {
         party = party.copyWith(guestListRules: Constants.guestListRules);
-        shouldPushParty = true;
+        isModelChanged = true;
       }
     } catch (e) {
       Logx.em(_TAG, 'party guestListRules not exist for party id: ' + party.id);
-      shouldPushParty = true;
+      isModelChanged = true;
     }
     try {
       party = party.copyWith(clubRules: map['clubRules'] as String);
       if (party.clubRules.isEmpty) {
         party = party.copyWith(clubRules: Constants.clubRules);
-        shouldPushParty = true;
+        isModelChanged = true;
       }
     } catch (e) {
       Logx.em(_TAG, 'party clubRules not exist for party id: ' + party.id);
-      shouldPushParty = true;
+      isModelChanged = true;
     }
 
     try {
       party = party.copyWith(isTicketed: map['isTicketed'] as bool);
     } catch (e) {
       Logx.em(_TAG, 'party isTicketed not exist for party id: ' + party.id);
-      shouldPushParty = true;
+      isModelChanged = true;
     }
     try {
       party = party.copyWith(ticketsSoldCount: map['ticketsSoldCount'] as int);
     } catch (e) {
       Logx.em(
-          _TAG, 'party ticketsSoldCount not exist for party id: ' + party.id);
-      shouldPushParty = true;
+          _TAG, 'party ticketsSoldCount not exist for id: ${party.id}');
+      isModelChanged = true;
     }
     try {
       party =
           party.copyWith(ticketsSalesTotal: map['ticketsSalesTotal'] as double);
     } catch (e) {
       Logx.em(
-          _TAG, 'party ticketsSalesTotal not exist for party id: ' + party.id);
-      shouldPushParty = true;
+          _TAG, 'party ticketsSalesTotal not exist for id: ${party.id}');
+      isModelChanged = true;
     }
 
     try {
@@ -1729,40 +1729,53 @@ class Fresh {
     } catch (e) {
       Logx.em(
           _TAG, 'party isChallengeActive not exist for id: ${party.id}');
-      shouldPushParty = true;
+      isModelChanged = true;
     }
     try {
       party = party.copyWith(
           overrideChallengeNum: map['overrideChallengeNum'] as int);
     } catch (e) {
       Logx.em(_TAG, 'party overrideChallengeNum not exist for id: ${party.id}');
-      shouldPushParty = true;
+      isModelChanged = true;
     }
     try {
       party = party.copyWith(genre: map['genre'] as String);
     } catch (e) {
       Logx.em(_TAG, 'party genre not exist for party id: ' + party.id);
-      shouldPushParty = true;
+      isModelChanged = true;
     }
 
     try {
       party = party.copyWith(artistIds: List<String>.from(map['artistIds']));
     } catch (e) {
       Logx.em(_TAG, 'party artistIds not exist for id: ${party.id}');
-      shouldPushParty = true;
+      isModelChanged = true;
     }
 
     try {
       party = party.copyWith(loungeId: map['loungeId'] as String);
     } catch (e) {
       Logx.em(_TAG, 'party loungeId not exist for id: ${party.id}');
-      shouldPushParty = true;
+      isModelChanged = true;
     }
 
-    if (shouldPushParty &&
+    try {
+      party = party.copyWith(imageUrls: List<String>.from(map['imageUrls']));
+    } catch (e) {
+      Logx.em(_TAG, 'party imageUrls not exist for id: ${party.id}');
+
+      List<String> temp = [];
+      if(party.imageUrl.isNotEmpty){
+        temp.add(party.imageUrl);
+      }
+      party = party.copyWith(imageUrls: temp);
+      isModelChanged = true;
+    }
+
+    if (isModelChanged &&
         shouldUpdate &&
         UserPreferences.myUser.clearanceLevel >= Constants.MANAGER_LEVEL) {
-      Logx.i(_TAG, 'updating party ' + party.id);
+      Logx.i(_TAG, 'updating party ${party.id}');
       FirestoreHelper.pushParty(party);
     }
 
@@ -1787,7 +1800,7 @@ class Fresh {
     try {
       freshParty = freshParty.copyWith(name: party.name);
     } catch (e) {
-      Logx.em(_TAG, 'party name not exist for party id: ' + party.id);
+      Logx.em(_TAG, 'party name not exist for id: ${party.id}');
     }
     try {
       freshParty = freshParty.copyWith(eventName: party.eventName);
@@ -1815,6 +1828,11 @@ class Fresh {
       Logx.em(_TAG, 'party chapter not exist for party id: ' + party.id);
     }
 
+    try {
+      freshParty = freshParty.copyWith(imageUrls: party.imageUrls);
+    } catch (e) {
+      Logx.em(_TAG, 'party imageUrls not exist for id: ${party.id}');
+    }
     try {
       freshParty = freshParty.copyWith(imageUrl: party.imageUrl);
     } catch (e) {
