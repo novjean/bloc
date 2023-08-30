@@ -922,6 +922,14 @@ class FirestoreHelper {
     }
   }
 
+  static pullParties(String serviceId) {
+    return FirebaseFirestore.instance
+        .collection(FirestoreHelper.PARTIES)
+        .where('blocServiceId', isEqualTo: serviceId)
+        .orderBy('name', descending: false)
+        .get();
+  }
+
   static Future<QuerySnapshot<Map<String, dynamic>>> pullParty(String partyId) {
     return FirebaseFirestore.instance
         .collection(FirestoreHelper.PARTIES)
@@ -995,14 +1003,14 @@ class FirestoreHelper {
         .get();
   }
 
-  static getPartyByType(String blocServiceId, String type) {
-    return FirebaseFirestore.instance
-        .collection(PARTIES)
-        .where('blocServiceId', isEqualTo: blocServiceId)
-        .where('type', isEqualTo: type)
-        .orderBy('name', descending: false)
-        .snapshots();
-  }
+  // static getPartyByType(String blocServiceId, String type) {
+  //   return FirebaseFirestore.instance
+  //       .collection(PARTIES)
+  //       .where('blocServiceId', isEqualTo: blocServiceId)
+  //       .where('type', isEqualTo: type)
+  //       .orderBy('name', descending: false)
+  //       .snapshots();
+  // }
 
   static getPartyArtists(List<String> artistIds) {
     return FirebaseFirestore.instance
@@ -2154,6 +2162,5 @@ class FirestoreHelper {
   static void deleteUserLounge(String docId) {
     FirebaseFirestore.instance.collection(USER_LOUNGES).doc(docId).delete();
   }
-
 
 }

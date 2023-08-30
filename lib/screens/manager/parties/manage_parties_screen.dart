@@ -15,7 +15,6 @@ import '../../../main.dart';
 import '../../../utils/constants.dart';
 import '../../../utils/logx.dart';
 import '../../../widgets/manager/manage_party_item.dart';
-import '../../../widgets/ui/listview_block.dart';
 import '../../../widgets/ui/sized_listview_block.dart';
 import 'genre_add_edit_screen.dart';
 import 'party_add_edit_screen.dart';
@@ -39,6 +38,10 @@ class _ManagePartiesScreenState extends State<ManagePartiesScreen> {
   String sOption = '';
 
   List<Party> mParties = [];
+  var _isPartiesLoading = true;
+  List<Party> mEvents = [];
+  List<Party> mArtists = [];
+
   List<Party> searchList = [];
   bool isSearching = false;
 
@@ -46,6 +49,27 @@ class _ManagePartiesScreenState extends State<ManagePartiesScreen> {
   void initState() {
     mOptions = ['event', 'artist', 'genre'];
     sOption = mOptions.first;
+
+    FirestoreHelper.pullParties(widget.serviceId).then((res) {
+      if(res.docs.isNotEmpty){
+        for (int i = 0; i < res.docs.length; i++) {
+          DocumentSnapshot document = res.docs[i];
+          Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+          final Party party = Fresh.freshPartyMap(data, false);
+          mParties.add(party);
+
+          if(party.type == 'event'){
+            mEvents.add(party);
+          } else {
+            mArtists.add(party);
+          }
+        }
+
+        setState(() {
+          _isPartiesLoading = false;
+        });
+      }
+    });
 
     super.initState();
   }
@@ -73,14 +97,14 @@ class _ManagePartiesScreenState extends State<ManagePartiesScreen> {
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-      body: _buildBody(context),
+      body: _isPartiesLoading? const LoadingWidget(): _buildBody(context),
     );
   }
 
   _buildBody(BuildContext context) {
     return Column(
       children: [
-        displayOptions(context),
+        _showOptions(context),
         const Divider(),
         sOption == 'event' || sOption == 'artist'
             ? Container(
@@ -114,14 +138,14 @@ class _ManagePartiesScreenState extends State<ManagePartiesScreen> {
             : const SizedBox(),
         const Divider(),
         sOption == 'event' || sOption == 'artist'
-            ? _buildParties(context)
+            ? _showPartiesList(context)
             : _buildGenres(context),
         const SizedBox(height: 5.0),
       ],
     );
   }
 
-  displayOptions(BuildContext context) {
+  _showOptions(BuildContext context) {
     double containerHeight = mq.height * 0.2;
 
     return SizedBox(
@@ -147,38 +171,9 @@ class _ManagePartiesScreenState extends State<ManagePartiesScreen> {
           }),
     );
   }
-
-  _buildParties(BuildContext context) {
-    return StreamBuilder<QuerySnapshot>(
-        stream: FirestoreHelper.getPartyByType(widget.serviceId, sOption),
-        builder: (ctx, snapshot) {
-          switch (snapshot.connectionState) {
-            case ConnectionState.waiting:
-            case ConnectionState.none:
-              return const LoadingWidget();
-            case ConnectionState.active:
-            case ConnectionState.done:
-              {
-                mParties = [];
-
-                if (!snapshot.hasData) {
-                  return const Center(child: Text('no parties found!'));
-                }
-
-                for (int i = 0; i < snapshot.data!.docs.length; i++) {
-                  DocumentSnapshot document = snapshot.data!.docs[i];
-                  Map<String, dynamic> map = document.data()! as Map<String, dynamic>;
-                  final Party party = Fresh.freshPartyMap(map, false);
-                  mParties.add(party);
-                }
-                return _showPartiesList(context);
-              }
-          }
-        });
-  }
-
+  
   _showPartiesList(BuildContext context) {
-    List<Party> parties = isSearching ? searchList : mParties;
+    List<Party> parties = isSearching ? searchList : (sOption == 'event'? mEvents: mArtists);
 
     return Expanded(
       child: ListView.builder(

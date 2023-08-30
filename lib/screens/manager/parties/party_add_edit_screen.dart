@@ -323,8 +323,8 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
                       final image = await ImagePicker().pickImage(
                           source: ImageSource.gallery,
                           imageQuality: 95,
-                          maxHeight: 1024,
-                          maxWidth: 1024);
+                          maxHeight: 800,
+                          maxWidth: 800);
                       if (image == null) return;
 
                       final directory =
@@ -412,8 +412,8 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
                       final image = await ImagePicker().pickImage(
                           source: ImageSource.gallery,
                           imageQuality: 95,
-                          maxHeight: 1024,
-                          maxWidth: 1024);
+                          maxHeight: 800,
+                          maxWidth: 800);
                       if (image == null) return;
 
                       final directory =
