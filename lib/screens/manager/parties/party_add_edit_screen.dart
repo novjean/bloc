@@ -622,7 +622,7 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
                       return InputDecorator(
                         key: const ValueKey('party_genre'),
                         decoration: InputDecoration(
-                            errorStyle: TextStyle(
+                            errorStyle: const TextStyle(
                                 color: Constants.errorColor, fontSize: 16.0),
                             hintText: 'please select party genre',
                             border: OutlineInputBorder(
@@ -741,7 +741,7 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
                       return InputDecorator(
                         key: const ValueKey('bloc_service_id'),
                         decoration: InputDecoration(
-                            errorStyle: TextStyle(
+                            errorStyle: const TextStyle(
                                 color: Constants.errorColor, fontSize: 16.0),
                             hintText: 'please select bloc service',
                             border: OutlineInputBorder(
@@ -853,8 +853,9 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
                         widget.party = widget.party.copyWith(isActive: value);
                       });
 
-                      if (widget.party.storyImageUrl.isNotEmpty) {
-                        showDeleteStoryPhotoDialog(context);
+                      if (widget.party.storyImageUrl.isNotEmpty ||
+                          widget.party.imageUrls.length > 1) {
+                        _showDeleteExtraPhotosDialog(context);
                       }
                     },
                   ), //Checkbox
@@ -955,7 +956,7 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
                         key: const ValueKey('guest_count'),
                         decoration: InputDecoration(
                             fillColor: Colors.white,
-                            errorStyle: TextStyle(
+                            errorStyle: const TextStyle(
                                 color: Constants.errorColor, fontSize: 16.0),
                             hintText: 'please select guest count',
                             border: OutlineInputBorder(
@@ -1133,12 +1134,20 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
               DarkButtonWidget(
                 text: 'delete',
                 onClicked: () {
-                  if (widget.party.imageUrl.isNotEmpty) {
+                  if (widget.party.imageUrls.length > 1) {
+                    for (String imgUrl in widget.party.imageUrls) {
+                      FirestorageHelper.deleteFile(imgUrl);
+                    }
+                  } else if (widget.party.imageUrl.isNotEmpty) {
                     FirestorageHelper.deleteFile(widget.party.imageUrl);
                   }
 
+                  if (widget.party.storyImageUrl.isNotEmpty) {
+                    FirestorageHelper.deleteFile(widget.party.storyImageUrl);
+                  }
+
                   FirestoreHelper.deleteParty(widget.party);
-                  Toaster.shortToast('deleted party : ${widget.party.name}');
+                  Logx.ist(_TAG, 'deleted party : ${widget.party.name}');
                   Navigator.of(context).pop();
                 },
               ),
@@ -1264,22 +1273,36 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
     );
   }
 
-  void showDeleteStoryPhotoDialog(BuildContext context) {
+  void _showDeleteExtraPhotosDialog(BuildContext context) {
     showDialog(
       context: context,
       builder: (BuildContext ctx) {
         return AlertDialog(
-          title: const Text("delete story photo"),
-          content: const Text("would your like to delete the story photo?"),
+          title: const Text("delete extra photos"),
+          content: const Text(
+              "would your like to delete extra post photos and story photo?"),
           actions: [
             TextButton(
               child: const Text("yes"),
               onPressed: () {
-                FirestorageHelper.deleteFile(widget.party.storyImageUrl);
+                if (widget.party.imageUrls.length > 1) {
+                  for (int i = 1; i < widget.party.imageUrls.length; i++) {
+                    String imgUrl = widget.party.imageUrls[i];
+                    FirestorageHelper.deleteFile(imgUrl);
+                  }
+                  Logx.ist(_TAG,
+                      'party ${widget.party.imageUrls.length - 1} extra photos is deleted');
+                }
 
-                widget.party = widget.party.copyWith(storyImageUrl: '');
+                if (widget.party.storyImageUrl.isNotEmpty) {
+                  FirestorageHelper.deleteFile(widget.party.storyImageUrl);
+                  Logx.ist(_TAG, 'party story photo is deleted');
+                }
 
-                Logx.i(_TAG, 'story photo is deleted');
+                List<String> temp = [widget.party.imageUrl];
+                widget.party =
+                    widget.party.copyWith(storyImageUrl: '', imageUrls: temp);
+
                 Navigator.of(ctx).pop();
               },
             ),
@@ -1391,8 +1414,15 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
                           FirestorageHelper.deleteFile(mImageUrls[index]);
                           mImageUrls.removeAt(index);
 
-                          widget.party =
-                              widget.party.copyWith(imageUrls: mImageUrls);
+                          if (index == 0) {
+                            String imgUrl = mImageUrls[0];
+                            widget.party = widget.party.copyWith(
+                                imageUrl: imgUrl, imageUrls: mImageUrls);
+                          } else {
+                            widget.party =
+                                widget.party.copyWith(imageUrls: mImageUrls);
+                          }
+
                           FirestoreHelper.pushParty(widget.party);
 
                           setState(() {});

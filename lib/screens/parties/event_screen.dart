@@ -145,9 +145,9 @@ class _EventScreenState extends State<EventScreen> {
                         initialPage: 0,
                         enableInfiniteScroll: true,
                         autoPlay: true,
-                        autoPlayInterval: const Duration(seconds: 4),
+                        autoPlayInterval: const Duration(seconds: 3),
                         autoPlayAnimationDuration:
-                            const Duration(milliseconds: 1500),
+                            const Duration(milliseconds: 1200),
                         // enlargeCenterPage: false,
                         scrollDirection: Axis.horizontal,
                         aspectRatio: 1.33,

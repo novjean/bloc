@@ -6,8 +6,8 @@ import '../../../../helpers/dummy.dart';
 import '../../../../helpers/firestore_helper.dart';
 import '../../../../helpers/fresh.dart';
 import '../../../../utils/logx.dart';
-import '../../../../widgets/ui/listview_block.dart';
 import '../../../../widgets/ui/loading_widget.dart';
+import '../../../widgets/manager/manage_challenge_item.dart';
 import '../../../widgets/ui/app_bar_title.dart';
 import 'challenge_add_edit_screen.dart';
 
@@ -62,23 +62,23 @@ class ManageChallengesScreen extends StatelessWidget {
     return StreamBuilder<QuerySnapshot>(
         stream: FirestoreHelper.getChallenges(),
         builder: (ctx, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const LoadingWidget();
+          switch (snapshot.connectionState) {
+            case ConnectionState.waiting:
+            case ConnectionState.none:
+              return const LoadingWidget();
+            case ConnectionState.active:
+            case ConnectionState.done:
+              {
+                List<Challenge> challenges = [];
+                for (int i = 0; i < snapshot.data!.docs.length; i++) {
+                  DocumentSnapshot document = snapshot.data!.docs[i];
+                  Map<String, dynamic> map = document.data()! as Map<String, dynamic>;
+                  final Challenge challenge = Fresh.freshChallengeMap(map, false);
+                  challenges.add(challenge);
+                }
+                return _displayChallenges(context, challenges);
+              }
           }
-
-          List<Challenge> challenges = [];
-          for (int i = 0; i < snapshot.data!.docs.length; i++) {
-            DocumentSnapshot document = snapshot.data!.docs[i];
-            Map<String, dynamic> map = document.data()! as Map<String, dynamic>;
-            final Challenge challenge = Fresh.freshChallengeMap(map, false);
-            challenges.add(challenge);
-
-            if (i == snapshot.data!.docs.length - 1) {
-              return _displayChallenges(context, challenges);
-            }
-          }
-          Logx.i(_TAG, 'loading challenges...');
-          return const LoadingWidget();
         });
   }
 
@@ -89,12 +89,12 @@ class ManageChallengesScreen extends StatelessWidget {
           scrollDirection: Axis.vertical,
           itemBuilder: (ctx, index) {
             return GestureDetector(
-                child: ListViewBlock(
-                  title: challenges[index].title,
+                child: ManageChallengeItem(
+                  challenge: challenges[index],
                 ),
                 onTap: () {
                   Challenge sChallenge = challenges[index];
-                  Logx.i(_TAG,'selected challenge ' + sChallenge.title);
+                  Logx.i(_TAG,'selected challenge ${sChallenge.title}');
 
                   Navigator.of(context).push(
                     MaterialPageRoute(

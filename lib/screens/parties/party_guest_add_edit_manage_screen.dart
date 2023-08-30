@@ -1514,6 +1514,7 @@ class _PartyGuestAddEditManageScreenState
                               .copyWith(isChallengeClicked: true);
                           if (!testMode) {
                             FirestoreHelper.pushPartyGuest(widget.partyGuest);
+                            FirestoreHelper.updateChallengeClickCount(challenge.id);
                           }
 
                           switch (challenge.level) {
@@ -1555,6 +1556,7 @@ class _PartyGuestAddEditManageScreenState
                         widget.partyGuest.copyWith(isChallengeClicked: true);
                     if (!testMode) {
                       FirestoreHelper.pushPartyGuest(widget.partyGuest);
+                      FirestoreHelper.updateChallengeClickCount(challenge.id);
                     }
 
                     switch (challenge.level) {

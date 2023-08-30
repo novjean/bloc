@@ -30,7 +30,6 @@ import 'package:bloc/db/entity/user.dart' as blocUser;
 import 'package:bloc/db/entity/user_lounge.dart';
 import 'package:bloc/helpers/firestorage_helper.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
@@ -96,8 +95,6 @@ class FirestoreHelper {
 
   static int TABLE_PRIVATE_TYPE_ID = 1;
   static int TABLE_COMMUNITY_TYPE_ID = 2;
-
-
 
   /** ads **/
   static void pushAd(Ad ad) async {
@@ -387,7 +384,7 @@ class FirestoreHelper {
           .update({
         'isCompleted': true,
       }).then((value) {
-        Logx.i(_TAG, "cart item " + cart.cartId + " marked as complete.");
+        Logx.i(_TAG, "cart item ${cart.cartId} marked as complete.");
       }).catchError((e, s) {
         Logx.ex(_TAG, 'failed to update cart item completed', e, s);
       });
@@ -409,7 +406,7 @@ class FirestoreHelper {
         'billId': billId,
         'isBilled': true,
       }).then((value) {
-        Logx.i(_TAG, "cart item " + cartId + " is part of bill id : " + billId);
+        Logx.i(_TAG, "cart item $cartId is part of bill id : $billId");
       }).catchError((e, s) {
         Logx.ex(_TAG, 'failed to update bill id for cart item', e, s);
       });
@@ -551,6 +548,13 @@ class FirestoreHelper {
     } catch (e) {
       Logx.em(_TAG, e.toString());
     }
+  }
+
+  static void updateChallengeClickCount(String docId) {
+    FirebaseFirestore.instance
+        .collection(CHALLENGES)
+        .doc(docId)
+        .update({"clickCount": FieldValue.increment(1)},);
   }
 
   static Future<QuerySnapshot<Map<String, dynamic>>> pullChallenges() {
@@ -2142,7 +2146,5 @@ class FirestoreHelper {
   static void deleteUserLounge(String docId) {
     FirebaseFirestore.instance.collection(USER_LOUNGES).doc(docId).delete();
   }
-
-
 
 }
