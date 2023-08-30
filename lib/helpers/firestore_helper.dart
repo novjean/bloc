@@ -1196,6 +1196,14 @@ class FirestoreHelper {
     }
   }
 
+  static Future<QuerySnapshot<Map<String, dynamic>>>  pullProductsByType(String serviceId) {
+    return FirebaseFirestore.instance
+        .collection(FirestoreHelper.PRODUCTS)
+        .where('serviceId', isEqualTo: serviceId)
+        .orderBy('name', descending: false)
+        .get();
+  }
+
   static Future<QuerySnapshot<Map<String, dynamic>>> pullProduct(
       String productId) {
     return FirebaseFirestore.instance
@@ -2146,5 +2154,6 @@ class FirestoreHelper {
   static void deleteUserLounge(String docId) {
     FirebaseFirestore.instance.collection(USER_LOUNGES).doc(docId).delete();
   }
+
 
 }

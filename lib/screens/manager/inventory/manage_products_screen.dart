@@ -13,6 +13,7 @@ import '../../../db/entity/manager_service.dart';
 import '../../../db/entity/product.dart';
 import '../../../helpers/firestore_helper.dart';
 import '../../../helpers/fresh.dart';
+import '../../../main.dart';
 import '../../../utils/constants.dart';
 import '../../../utils/file_utils.dart';
 import '../../../utils/logx.dart';
@@ -38,13 +39,17 @@ class _ManageProductsScreenState extends State<ManageProductsScreen> {
   String _sType = 'Alcohol';
 
   List<Category> mCategories = [];
-  var isCategoriesLoading = true;
+  var _isCategoriesLoading = true;
 
   List<String> sCategoryNames = [];
   List<Category> sCategories = [];
   List<String> sCategoryIds = [];
 
   List<Product> mProducts = [];
+  List<Product> mFoodProducts = [];
+  List<Product> mAlcoholProducts = [];
+  var _isProductsLoading = true;
+
   List<Product> searchList = [];
   bool isSearching = false;
 
@@ -60,11 +65,32 @@ class _ManageProductsScreenState extends State<ManageProductsScreen> {
         }
 
         setState(() {
-          isCategoriesLoading = false;
+          _isCategoriesLoading = false;
         });
       } else {
         setState(() {
-          isCategoriesLoading = false;
+          _isCategoriesLoading = false;
+        });
+      }
+    });
+
+    FirestoreHelper.pullProductsByType(widget.serviceId).then((res) {
+      if(res.docs.isNotEmpty){
+        for (int i = 0; i < res.docs.length; i++) {
+          DocumentSnapshot document = res.docs[i];
+          Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+          final Product product = Fresh.freshProductMap(data, false);
+          mProducts.add(product);
+
+          if(product.type == 'Food'){
+            mFoodProducts.add(product);
+          } else {
+            mAlcoholProducts.add(product);
+          }
+        }
+
+        setState(() {
+          _isProductsLoading = false;
         });
       }
     });
@@ -81,7 +107,7 @@ class _ManageProductsScreenState extends State<ManageProductsScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          showActionsDialog(context);
+          _showActionsDialog(context);
         },
         backgroundColor: Theme.of(context).primaryColor,
         tooltip: 'actions',
@@ -94,7 +120,7 @@ class _ManageProductsScreenState extends State<ManageProductsScreen> {
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-      body: isCategoriesLoading? const LoadingWidget(): _buildBody(context),
+      body: _isCategoriesLoading && _isProductsLoading? const LoadingWidget(): _buildBody(context),
     );
   }
 
@@ -108,7 +134,7 @@ class _ManageProductsScreenState extends State<ManageProductsScreen> {
           child: TextField(
             decoration: const InputDecoration(
                 border: InputBorder.none,
-                hintText: 'search by name ',
+                hintText: 'search by name or category',
                 hintStyle: TextStyle(color: Constants.primary)
             ),
             autofocus: true,
@@ -123,7 +149,8 @@ class _ManageProductsScreenState extends State<ManageProductsScreen> {
               searchList.clear();
 
               for(var i in mProducts){
-                if(i.name.toLowerCase().contains(val.toLowerCase())){
+                if(i.name.toLowerCase().contains(val.toLowerCase()) ||
+                    i.category.toLowerCase().contains(val.toLowerCase())){
                   searchList.add(i);
                 }
               }
@@ -133,34 +160,34 @@ class _ManageProductsScreenState extends State<ManageProductsScreen> {
           ),
         ),
         const Divider(),
-        buildProducts(context),
+        _showProducts(context),
         const SizedBox(height: 10.0),
       ],
     );
   }
 
   _displayOptions(BuildContext context) {
-    List<String> _options = ['Alcohol', 'Food'];
-    double containerHeight = MediaQuery.of(context).size.height / 20;
+    List<String> options = ['Alcohol', 'Food'];
+    double containerHeight = mq.height * 0.05;
 
     return SizedBox(
       key: UniqueKey(),
       // this height has to match with category item container height
       height: containerHeight,
       child: ListView.builder(
-          itemCount: _options.length,
+          itemCount: options.length,
           scrollDirection: Axis.horizontal,
           itemBuilder: (ctx, index) {
             return GestureDetector(
                 child: SizedListViewBlock(
-                  title: _options[index].toLowerCase(),
+                  title: options[index].toLowerCase(),
                   height: containerHeight,
-                  width: MediaQuery.of(context).size.width / 2,
-                  color: Theme.of(context).primaryColor,
+                  width: mq.width * 0.5,
+                  color: Constants.primary,
                 ),
                 onTap: () {
                   setState(() {
-                    _sType = _options[index];
+                    _sType = options[index];
                     Logx.i(_TAG, '$_sType products display option is selected');
                   });
                 });
@@ -168,45 +195,58 @@ class _ManageProductsScreenState extends State<ManageProductsScreen> {
     );
   }
 
-  buildProducts(BuildContext context) {
-    Stream<QuerySnapshot<Object?>> stream;
+  // buildProducts(BuildContext context) {
+  //   Stream<QuerySnapshot<Object?>> stream;
+  //
+  //   if(sCategoryIds.isEmpty){
+  //     stream = FirestoreHelper.getProductsByType(widget.serviceId, _sType);
+  //   } else {
+  //     stream = FirestoreHelper().getProductByCategories(widget.serviceId, sCategoryNames);
+  //   }
+  //
+  //   return StreamBuilder<QuerySnapshot>(
+  //       stream: stream,
+  //       builder: (ctx, snapshot) {
+  //         if (snapshot.connectionState == ConnectionState.waiting) {
+  //           return const LoadingWidget();
+  //         }
+  //
+  //         mProducts = [];
+  //
+  //         if(!snapshot.hasData){
+  //           return const Center(child: Text('no products found!'));
+  //         }
+  //
+  //         for (int i = 0; i < snapshot.data!.docs.length; i++) {
+  //           DocumentSnapshot document = snapshot.data!.docs[i];
+  //           Map<String, dynamic> map = document.data()! as Map<String, dynamic>;
+  //           final Product product = Fresh.freshProductMap(map, false);
+  //           mProducts.add(product);
+  //
+  //           if (i == snapshot.data!.docs.length - 1) {
+  //             mProducts.sort((a, b) => a.category.compareTo(b.category));
+  //             return _showProducts(context);
+  //           }
+  //         }
+  //         return const LoadingWidget();
+  //       });
+  // }
 
-    if(sCategoryIds.isEmpty){
-      stream = FirestoreHelper.getProductsByType(widget.serviceId, _sType);
-    } else {
-      stream = FirestoreHelper().getProductByCategories(widget.serviceId, sCategoryNames);
+  _showProducts(BuildContext context) {
+    List<Product> products = isSearching ? searchList
+        : (_sType == 'Food' ? mFoodProducts : mAlcoholProducts);
+
+    List<Product> catProducts = [];
+    if(sCategoryNames.isNotEmpty){
+      for (Product product in products){
+        if(sCategoryNames.contains(product.category)){
+          catProducts.add(product);
+        }
+      }
+      if(catProducts.isNotEmpty){
+        products = catProducts;
+      }
     }
-
-    return StreamBuilder<QuerySnapshot>(
-        stream: stream,
-        builder: (ctx, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const LoadingWidget();
-          }
-
-          mProducts = [];
-
-          if(!snapshot.hasData){
-            return const Center(child: Text('no products found!'));
-          }
-
-          for (int i = 0; i < snapshot.data!.docs.length; i++) {
-            DocumentSnapshot document = snapshot.data!.docs[i];
-            Map<String, dynamic> map = document.data()! as Map<String, dynamic>;
-            final Product product = Fresh.freshProductMap(map, false);
-            mProducts.add(product);
-
-            if (i == snapshot.data!.docs.length - 1) {
-              mProducts.sort((a, b) => a.category.compareTo(b.category));
-              return _displayProductsList(context);
-            }
-          }
-          return const LoadingWidget();
-        });
-  }
-
-  _displayProductsList(BuildContext context) {
-    List<Product> products = isSearching?searchList:mProducts;
 
     return Expanded(
       child: ListView.builder(
@@ -219,14 +259,14 @@ class _ManageProductsScreenState extends State<ManageProductsScreen> {
                   product: products[index],
                 ),
                 onTap: () {
-                  Product _sProduct = products[index];
-                  print('${_sProduct.name} is selected');
+                  Product product = products[index];
+                  Logx.d(_TAG, '${product.name} is selected');
                 });
           }),
     );
   }
 
-  showActionsDialog(BuildContext context) {
+  _showActionsDialog(BuildContext context) {
     return showDialog(
       context: context,
       builder: (BuildContext ctx) {
@@ -237,7 +277,7 @@ class _ManageProductsScreenState extends State<ManageProductsScreen> {
             child: SingleChildScrollView(
               child: Column(
                 children: [
-                  Padding(
+                  const Padding(
                     padding: EdgeInsets.only(bottom: 20),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
@@ -386,14 +426,14 @@ class _ManageProductsScreenState extends State<ManageProductsScreen> {
             height: 300,
             child: Column(
               children: [
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 20),
+                const Padding(
+                  padding: EdgeInsets.only(bottom: 20),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Text(
                         'filter',
-                        style: const TextStyle(fontSize: 18),
+                        style: TextStyle(fontSize: 18),
                       ),
                     ],
                   ),
@@ -409,10 +449,6 @@ class _ManageProductsScreenState extends State<ManageProductsScreen> {
                       children: [
                         const Text('categories:\n'),
                         _showCategoriesDropdown(context),
-                        // const Text('\ngender:\n'),
-                        // _displayGenderDropdown(context),
-                        // const Text('\nmode:\n'),
-                        // _displayModesDropdown(context)
                       ],
                     ),
                   ),
