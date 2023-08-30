@@ -5,8 +5,11 @@ import 'package:flutter/material.dart';
 import '../../db/entity/product.dart';
 import '../../helpers/fresh.dart';
 import '../../screens/manager/inventory/product_add_edit_screen.dart';
+import '../../utils/logx.dart';
 
 class ManageProductItem extends StatelessWidget {
+  static const String _TAG = 'ManageProductItem';
+
   final Product product;
   final String serviceId;
 
@@ -14,7 +17,6 @@ class ManageProductItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Color primaryColor = Theme.of(context).primaryColor;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 2.0),
@@ -56,43 +58,43 @@ class ManageProductItem extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
                             Flexible(
+                              flex: 3,
                               child: Text(product.name,
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.normal)),
-                              flex: 3,
                             ),
                             Flexible(
+                              flex: 1,
                               child: Text(
                                   '\u20B9 ${product.price.toStringAsFixed(0)}',
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.normal)),
-                              flex: 1,
                             ),
                           ],
                         ),
-                        SizedBox(height: 2),
+                        const SizedBox(height: 2),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             Text(
                                 '\u20B9 ${product.priceLowest.toStringAsFixed(0)}',
-                                style: TextStyle(
+                                style: const TextStyle(
                                     fontSize: 14,
                                     fontWeight: FontWeight.bold,
                                     color: Colors.green)),
-                            Text(' | '),
+                            const Text(' | '),
                             Text(
                                 '\u20B9 ${product.priceHighest.toStringAsFixed(0)}',
-                                style: TextStyle(
+                                style: const TextStyle(
                                     fontSize: 14,
                                     fontWeight: FontWeight.bold,
                                     color: Colors.redAccent)),
                             const Spacer(),
                             Text(
                                 '\u20B9 ${product.priceBottle.toStringAsFixed(0)}',
-                                style: TextStyle(
+                                style: const TextStyle(
                                     fontSize: 14,
                                     fontWeight: FontWeight.bold,)),
                           ],
@@ -106,10 +108,7 @@ class ManageProductItem extends StatelessWidget {
                               onChanged: (value) {
                                 Product updatedProduct =
                                     product.copyWith(isAvailable: value);
-                                print('product ' +
-                                    updatedProduct.name +
-                                    ' available ' +
-                                    value.toString());
+                                Logx.d(_TAG, 'product ${updatedProduct.name} available $value');
                                 Product freshProduct = Fresh.freshProduct(updatedProduct);
                                 FirestoreHelper.pushProduct(freshProduct);
                               },
