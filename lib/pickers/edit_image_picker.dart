@@ -55,13 +55,6 @@ class _EditImagePickerState extends State<EditImagePicker> {
           text: 'Change Image',
           onClicked: _pickImage,
         )
-
-        // FlatButton.icon(
-        //   textColor: Theme.of(context).primaryColor,
-        //   onPressed: _pickImage,
-        //   icon: Icon(Icons.image),
-        //   label: Text('Change Image'),
-        // ),
       ],
     );
   }

@@ -1,4 +1,3 @@
-import 'dart:io';
 
 import 'package:bloc/db/entity/history_music.dart';
 import 'package:bloc/db/entity/user_lounge.dart';
@@ -17,10 +16,7 @@ import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:multi_select_flutter/dialog/multi_select_dialog_field.dart';
 import 'package:multi_select_flutter/util/multi_select_item.dart';
 import 'package:multi_select_flutter/util/multi_select_list_type.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:pinput/pinput.dart';
-import 'package:http/http.dart' as http;
-import 'package:share_plus/share_plus.dart';
 
 import '../../api/apis.dart';
 import '../../db/entity/challenge.dart';
@@ -1597,34 +1593,11 @@ class _PartyGuestAddEditManageScreenState
                           final urlImage = widget.party.storyImageUrl.isNotEmpty
                               ? widget.party.storyImageUrl
                               : widget.party.imageUrl;
-                          final Uri url = Uri.parse(urlImage);
-                          final response = await http.get(url);
-                          final Uint8List bytes = response.bodyBytes;
-
-                          try {
-                            if (kIsWeb) {
-                              FileUtils.openFileNewTabForWeb(urlImage);
-
-                              // Image? fromPicker = await ImagePickerWeb.getImageAsWidget();
-                            } else {
-                              var temp = await getTemporaryDirectory();
-                              final path =
-                                  '${temp.path}/${widget.party.id}.jpg';
-                              File(path).writeAsBytesSync(bytes);
-
-                              final files = <XFile>[];
-                              files.add(
-                                  XFile(path, name: '${widget.party.id}.jpg'));
-
-                              await Share.shareXFiles(files,
-                                  text: '#blocCommunity');
-                            }
-                          } on PlatformException catch (e, s) {
-                            Logx.e(_TAG, e, s);
-                          } on Exception catch (e, s) {
-                            Logx.e(_TAG, e, s);
-                          } catch (e) {
-                            logger.e(e);
+                          if (kIsWeb) {
+                            FileUtils.openFileNewTabForWeb(urlImage);
+                          } else {
+                            FileUtils.sharePhoto(widget.party.id, urlImage, 'bloc-${widget.party.name}', ''
+                                '${StringUtils.firstFewWords(widget.party.description, 15)}... \n\nhey. check out this event at the official bloc app. \n\n🌏 https://bloc.bar/#/\n📱 https://bloc.bar/app_store.html\n\n#blocCommunity ❤️‍🔥');
                           }
                           break;
                         }

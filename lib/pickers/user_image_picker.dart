@@ -52,13 +52,6 @@ class _UserImagePickerState extends State<UserImagePicker> {
           text: 'Add Image',
           onClicked: _pickImage,
         )
-
-        // FlatButton.icon(
-        //   textColor: Theme.of(context).primaryColor,
-        //   onPressed: _pickImage,
-        //   icon: Icon(Icons.image),
-        //   label: Text('Add Image'),
-        // ),
       ],
     );
   }

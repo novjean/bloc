@@ -1,3 +1,6 @@
+
+import 'package:bloc/utils/file_utils.dart';
+import 'package:bloc/utils/string_utils.dart';
 import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
@@ -24,6 +27,7 @@ import '../../widgets/footer.dart';
 import '../../widgets/parties/artist_banner.dart';
 import '../../widgets/store_badge_item.dart';
 import '../../widgets/ui/app_bar_title.dart';
+import '../../widgets/ui/button_widget.dart';
 import 'party_guest_add_edit_manage_screen.dart';
 
 class EventScreen extends StatefulWidget {
@@ -246,8 +250,8 @@ class _EventScreenState extends State<EventScreen> {
                 child: Text(mParty.description.toLowerCase(),
                     textAlign: TextAlign.start,
                     softWrap: true,
-                    style: TextStyle(
-                      color: Theme.of(context).primaryColorLight,
+                    style: const TextStyle(
+                      color: Constants.lightPrimary,
                       fontSize: 18,
                     )),
               ),
@@ -255,6 +259,46 @@ class _EventScreenState extends State<EventScreen> {
               mParty.artistIds.isNotEmpty
                   ? _loadArtists(context)
                   : const SizedBox(),
+              const SizedBox(height: 10),
+              const Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 15.0),
+                    child: Text('share',
+                        style: TextStyle(
+                            color: Constants.lightPrimary,
+                            overflow: TextOverflow.ellipsis,
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold)),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 10),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    ButtonWidget(
+                      text: '📣 poster',
+                      onClicked: () async {
+                        final urlImage = mParty.storyImageUrl.isNotEmpty
+                            ? mParty.storyImageUrl
+                            : mParty.imageUrl;
+
+                        if (kIsWeb) {
+                          FileUtils.openFileNewTabForWeb(urlImage);
+                        } else {
+                          FileUtils.sharePhoto(mParty.id, urlImage, 'bloc-${mParty.name}', ''
+                              '${StringUtils.firstFewWords(mParty.description, 15)}... \n\nhey. check out this event at the official bloc app. \n\n🌏 https://bloc.bar/#/\n📱 https://bloc.bar/app_store.html\n\n#blocCommunity ❤️‍🔥');
+                        }
+                      },
+                    ),
+                  ],
+                ),
+              ),
+
               const SizedBox(height: 10),
               mParty.instagramUrl.isNotEmpty
                   ? const Row(
@@ -288,7 +332,7 @@ class _EventScreenState extends State<EventScreen> {
                               'instagram post 🧡',
                               style: TextStyle(
                                 fontSize: 18,
-                                color: Theme.of(context).primaryColor,
+                                color: Constants.primary,
                               ),
                             ),
                           ),
@@ -302,10 +346,6 @@ class _EventScreenState extends State<EventScreen> {
               Footer(),
             ],
           );
-    // SingleChildScrollView(
-    //         physics: const ScrollPhysics(),
-    //         child: ,
-    //       );
   }
 
   Widget _loadArtists(BuildContext context) {
