@@ -7,8 +7,8 @@ import '../../../helpers/dummy.dart';
 import '../../../helpers/firestore_helper.dart';
 import '../../../helpers/fresh.dart';
 import '../../../utils/logx.dart';
+import '../../../widgets/manager/manage_promoter_item.dart';
 import '../../../widgets/ui/app_bar_title.dart';
-import '../../../widgets/ui/listview_block.dart';
 import '../../../widgets/ui/loading_widget.dart';
 
 class ManagePromotersScreen extends StatelessWidget {
@@ -82,7 +82,6 @@ class ManagePromotersScreen extends StatelessWidget {
                 return _displayPromoters(context, _promoters);
               }
           }
-          return const LoadingWidget();
         });
   }
 
@@ -93,8 +92,8 @@ class ManagePromotersScreen extends StatelessWidget {
           scrollDirection: Axis.vertical,
           itemBuilder: (ctx, index) {
             return GestureDetector(
-                child: ListViewBlock(
-                  title: promoters[index].name,
+                child: ManagePromoterItem(
+                  promoter: promoters[index],
                 ),
                 onTap: () {
                   Promoter sPromoter = promoters[index];
