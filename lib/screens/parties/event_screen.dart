@@ -154,32 +154,31 @@ class _EventScreenState extends State<EventScreen> {
                       ),
                       items: mParty.imageUrls
                           .map((item) =>
-                                  // kIsWeb?
+                              kIsWeb?
                                   SizedBox(
                                     width: double.infinity,
                                     child: Image.network(item,
                                         width: double.infinity,
                                         fit: BoxFit.cover),
                                   )
-                              // :
-                              // CachedNetworkImage(
-                              //   imageUrl: item,
-                              //   imageBuilder: (context, imageProvider) => Container(
-                              //     decoration: BoxDecoration(
-                              //       image: DecorationImage(
-                              //         image: imageProvider,
-                              //         fit: BoxFit.cover,
-                              //       ),
-                              //     ),
-                              //   ),
-                              //   placeholder: (context, url) =>
-                              //   const FadeInImage(
-                              //     placeholder: AssetImage('assets/images/logo.png'),
-                              //     image: AssetImage('assets/images/logo.png'),
-                              //     fit: BoxFit.cover,
-                              //   ),
-                              //   errorWidget: (context, url, error) => const Icon(Icons.error),
-                              // )
+                              : CachedNetworkImage(
+                                imageUrl: item,
+                                imageBuilder: (context, imageProvider) => Container(
+                                  decoration: BoxDecoration(
+                                    image: DecorationImage(
+                                      image: imageProvider,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                ),
+                                placeholder: (context, url) =>
+                                const FadeInImage(
+                                  placeholder: AssetImage('assets/images/logo.png'),
+                                  image: AssetImage('assets/images/logo.png'),
+                                  fit: BoxFit.cover,
+                                ),
+                                errorWidget: (context, url, error) => const Icon(Icons.error),
+                              )
                               )
                           .toList(),
                     )
