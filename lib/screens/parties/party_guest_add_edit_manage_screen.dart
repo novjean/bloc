@@ -265,7 +265,13 @@ class _PartyGuestAddEditManageScreenState
     for (int i = 1; i <= widget.party.guestListCount; i++) {
       _defaultGuestCounts.add(i.toString());
     }
-    for (int i = 1; i <= 25; i++) {
+
+    if(!widget.party.isGuestsCountRestricted){
+      _coupleGuestCounts.add('4');
+      _stagGuestCounts.add('2');
+    }
+
+    for (int i = 1; i <= 20; i++) {
       _promoterGuestCounts.add(i.toString());
     }
 

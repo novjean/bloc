@@ -171,7 +171,7 @@ class _ManagePartiesScreenState extends State<ManagePartiesScreen> {
           }),
     );
   }
-  
+
   _showPartiesList(BuildContext context) {
     List<Party> parties = isSearching ? searchList : (sOption == 'event'? mEvents: mArtists);
 

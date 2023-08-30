@@ -276,11 +276,13 @@ class Dummy {
         eventName: '',
         isGuestListActive: false,
         guestListCount: 2,
+        isGuestsCountRestricted: true,
         guestListEndTime: Timestamp.now().millisecondsSinceEpoch,
         isEmailRequired: false,
         clubRules: Constants.clubRules,
         guestListRules: Constants.guestListRules,
-        type: 'artist',
+
+      type: 'artist',
         isTicketed: false,
         ticketsSoldCount: 0,
         ticketsSalesTotal: 0,
@@ -290,7 +292,9 @@ class Dummy {
         overrideChallengeNum: 0,
         chapter: '',
         artistIds: [],
-        loungeId: '');
+        loungeId: '',
+
+    );
 
     return dummyParty;
   }

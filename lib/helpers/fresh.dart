@@ -1661,6 +1661,13 @@ class Fresh {
       isModelChanged = true;
     }
     try {
+      party = party.copyWith(isGuestsCountRestricted: map['isGuestsCountRestricted'] as bool);
+    } catch (e) {
+      Logx.em(
+          _TAG, 'party isGuestsCountRestricted not exist for id: ${party.id}');
+      isModelChanged = true;
+    }
+    try {
       party = party.copyWith(guestListCount: map['guestListCount'] as int);
     } catch (e) {
       Logx.em(_TAG, 'party guestListCount not exist for party id: ' + party.id);
@@ -1741,7 +1748,7 @@ class Fresh {
     try {
       party = party.copyWith(genre: map['genre'] as String);
     } catch (e) {
-      Logx.em(_TAG, 'party genre not exist for party id: ' + party.id);
+      Logx.em(_TAG, 'party genre not exist for id: ${party.id}');
       isModelChanged = true;
     }
 
@@ -1901,12 +1908,19 @@ class Fresh {
           freshParty.copyWith(isGuestListActive: party.isGuestListActive);
     } catch (e) {
       Logx.em(
-          _TAG, 'party isGuestListActive not exist for party id: ' + party.id);
+          _TAG, 'party isGuestListActive not exist for id: ${party.id}');
+    }
+    try {
+      freshParty =
+          freshParty.copyWith(isGuestsCountRestricted: party.isGuestsCountRestricted);
+    } catch (e) {
+      Logx.em(
+          _TAG, 'party isGuestsCountRestricted not exist for id: ${party.id}');
     }
     try {
       freshParty = freshParty.copyWith(guestListCount: party.guestListCount);
     } catch (e) {
-      Logx.em(_TAG, 'party guestListCount not exist for party id: ' + party.id);
+      Logx.em(_TAG, 'party guestListCount not exist for id: ${party.id}');
     }
     try {
       freshParty =
