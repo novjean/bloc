@@ -44,7 +44,7 @@ class ManageChallengeItem extends StatelessWidget{
                     ),
                   ),
 
-                  subtitle: Text('active: ${challenge.clickCount}'),
+                  subtitle: Text('supported : ${challenge.clickCount}'),
                   trailing: RichText(
                     text: TextSpan(
                       text:
