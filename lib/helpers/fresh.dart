@@ -1704,14 +1704,20 @@ class Fresh {
         isModelChanged = true;
       }
     } catch (e) {
-      Logx.em(_TAG, 'party clubRules not exist for party id: ' + party.id);
+      Logx.em(_TAG, 'party clubRules not exist for id: ${party.id}');
       isModelChanged = true;
     }
 
     try {
       party = party.copyWith(isTicketed: map['isTicketed'] as bool);
     } catch (e) {
-      Logx.em(_TAG, 'party isTicketed not exist for party id: ' + party.id);
+      Logx.em(_TAG, 'party isTicketed not exist for id: ${party.id}');
+      isModelChanged = true;
+    }
+    try {
+      party = party.copyWith(isTicketsDisabled: map['isTicketsDisabled'] as bool);
+    } catch (e) {
+      Logx.em(_TAG, 'party isTicketsDisabled not exist for id: ${party.id}');
       isModelChanged = true;
     }
     try {
@@ -1943,20 +1949,25 @@ class Fresh {
     try {
       freshParty = freshParty.copyWith(clubRules: party.clubRules);
     } catch (e) {
-      Logx.em(_TAG, 'party clubRules not exist for party id: ' + party.id);
+      Logx.em(_TAG, 'party clubRules not exist for id: ${party.id}');
     }
 
     try {
       freshParty = freshParty.copyWith(isTicketed: party.isTicketed);
     } catch (e) {
-      Logx.em(_TAG, 'party isTicketed not exist for party id: ' + party.id);
+      Logx.em(_TAG, 'party isTicketed not exist for id: ${party.id}');
+    }
+    try {
+      freshParty = freshParty.copyWith(isTicketsDisabled: party.isTicketsDisabled);
+    } catch (e) {
+      Logx.em(_TAG, 'party isTicketsDisabled not exist for id: ${party.id}');
     }
     try {
       freshParty =
           freshParty.copyWith(ticketsSoldCount: party.ticketsSoldCount);
     } catch (e) {
       Logx.em(
-          _TAG, 'party ticketsSoldCount not exist for party id: ' + party.id);
+          _TAG, 'party ticketsSoldCount not exist for id: ${party.id}');
     }
     try {
       freshParty =

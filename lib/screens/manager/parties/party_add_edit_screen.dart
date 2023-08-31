@@ -797,6 +797,24 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
                   widget.party = widget.party.copyWith(ticketUrl: value);
                 },
               ),
+              const SizedBox(height: 12),
+              Row(
+                children: <Widget>[
+                  const Text(
+                    'disable ticket link : ',
+                    style: TextStyle(fontSize: 17.0),
+                  ), //Text
+                  const SizedBox(width: 10), //SizedBox
+                  Checkbox(
+                    value: widget.party.isTicketsDisabled,
+                    onChanged: (value) {
+                      setState(() {
+                        widget.party = widget.party.copyWith(isTicketsDisabled: value);
+                      });
+                    },
+                  ), //Checkbox
+                ], //<Widget>[]
+              ),
               const SizedBox(height: 24),
               TextFieldWidget(
                 label: 'listen url',
@@ -861,7 +879,7 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
                   ), //Checkbox
                 ], //<Widget>[]
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 12),
               Row(
                 children: <Widget>[
                   const Text(
@@ -879,7 +897,7 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
                   ), //Checkbox
                 ], //<Widget>[]
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 12),
               Row(
                 children: <Widget>[
                   const Text(
@@ -897,7 +915,7 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
                   ), //Checkbox
                 ], //<Widget>[]
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 12),
               Row(
                 children: <Widget>[
                   const Text(
@@ -915,7 +933,7 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
                   ), //Checkbox
                 ], //<Widget>[]
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 12),
               Row(
                 children: <Widget>[
                   const Text(
@@ -934,7 +952,7 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
                   ), //Checkbox
                 ], //<Widget>[]
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 12),
               Row(
                 children: <Widget>[
                   const Text(

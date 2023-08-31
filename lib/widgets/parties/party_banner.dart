@@ -263,8 +263,9 @@ class _PartyBannerState extends State<PartyBanner> {
                                       )
                                     : const SizedBox(),
                                 widget.shouldShowButton
-                                    ? !widget.party.isTBA &&
-                                            widget.party.ticketUrl.isNotEmpty
+                                    ? (!widget.party.isTBA
+                                    && !widget.party.isTicketsDisabled
+                                    && widget.party.ticketUrl.isNotEmpty)
                                         ? showBuyTixButton(context)
                                         : isGuestListActive
                                             ? !widget.isGuestListRequested

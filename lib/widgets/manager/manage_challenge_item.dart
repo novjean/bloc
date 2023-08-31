@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../db/entity/challenge.dart';
-import '../../db/entity/party.dart';
 import '../../utils/constants.dart';
-import '../../utils/date_time_utils.dart';
 
 class ManageChallengeItem extends StatelessWidget{
   static const String _TAG = 'ManageChallengeItem';

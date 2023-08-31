@@ -39,6 +39,7 @@ class Party {
   final bool isTicketed;
   int ticketsSoldCount;
   double ticketsSalesTotal;
+  final bool isTicketsDisabled;
 
   List<String> artistIds;
 
@@ -79,6 +80,7 @@ class Party {
     required this.isTicketed,
     required this.ticketsSoldCount,
     required this.ticketsSalesTotal,
+    required this.isTicketsDisabled,
     required this.artistIds,
     required this.loungeId,
   });
@@ -121,6 +123,7 @@ class Party {
           isTicketed == other.isTicketed &&
           ticketsSoldCount == other.ticketsSoldCount &&
           ticketsSalesTotal == other.ticketsSalesTotal &&
+          isTicketsDisabled == other.isTicketsDisabled &&
           artistIds == other.artistIds &&
           loungeId == other.loungeId);
 
@@ -159,6 +162,7 @@ class Party {
       isTicketed.hashCode ^
       ticketsSoldCount.hashCode ^
       ticketsSalesTotal.hashCode ^
+      isTicketsDisabled.hashCode ^
       artistIds.hashCode ^
       loungeId.hashCode;
 
@@ -198,6 +202,7 @@ class Party {
         ' isTicketed: $isTicketed,' +
         ' ticketsSoldCount: $ticketsSoldCount,' +
         ' ticketsSalesTotal: $ticketsSalesTotal,' +
+        ' isTicketsDisabled: $isTicketsDisabled,' +
         ' artistIds: $artistIds,' +
         ' loungeId: $loungeId,' +
         '}';
@@ -237,6 +242,7 @@ class Party {
     bool? isTicketed,
     int? ticketsSoldCount,
     double? ticketsSalesTotal,
+    bool? isTicketsDisabled,
     List<String>? artistIds,
     String? loungeId,
   }) {
@@ -275,6 +281,7 @@ class Party {
       isTicketed: isTicketed ?? this.isTicketed,
       ticketsSoldCount: ticketsSoldCount ?? this.ticketsSoldCount,
       ticketsSalesTotal: ticketsSalesTotal ?? this.ticketsSalesTotal,
+      isTicketsDisabled: isTicketsDisabled ?? this.isTicketsDisabled,
       artistIds: artistIds ?? this.artistIds,
       loungeId: loungeId ?? this.loungeId,
     );
@@ -315,6 +322,7 @@ class Party {
       'isTicketed': this.isTicketed,
       'ticketsSoldCount': this.ticketsSoldCount,
       'ticketsSalesTotal': this.ticketsSalesTotal,
+      'isTicketsDisabled': this.isTicketsDisabled,
       'artistIds': this.artistIds,
       'loungeId': this.loungeId,
     };
@@ -355,6 +363,7 @@ class Party {
       isTicketed: map['isTicketed'] as bool,
       ticketsSoldCount: map['ticketsSoldCount'] as int,
       ticketsSalesTotal: map['ticketsSalesTotal'] as double,
+      isTicketsDisabled: map['isTicketsDisabled'] as bool,
       artistIds: map['artistIds'] as List<String>,
       loungeId: map['loungeId'] as String,
     );

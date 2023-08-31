@@ -293,6 +293,7 @@ class Dummy {
         chapter: '',
         artistIds: [],
         loungeId: '',
+      isTicketsDisabled: false
 
     );
 

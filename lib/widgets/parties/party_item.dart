@@ -173,7 +173,7 @@ class PartyItem extends StatelessWidget {
                           ),
                         ),
                       ),
-                      party.ticketUrl.isNotEmpty
+                      (party.ticketUrl.isNotEmpty && !party.isTicketsDisabled)
                           ? Flexible(
                               flex: 1, child: showBuyTicketNowButton(context))
                           : (isGuestListActive & !isGuestListRequested)
