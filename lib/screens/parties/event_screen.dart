@@ -190,7 +190,7 @@ class _EventScreenState extends State<EventScreen> {
                       width: double.infinity,
                       child: FadeInImage(
                         placeholder:
-                            const AssetImage('assets/images/logo_3x2.png'),
+                            const AssetImage('assets/images/logo.png'),
                         image: NetworkImage(mParty.imageUrl),
                         fit: BoxFit.contain,
                       )),
