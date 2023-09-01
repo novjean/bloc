@@ -3,6 +3,7 @@ import 'package:bloc/db/shared_preferences/user_preferences.dart';
 import 'package:bloc/helpers/dummy.dart';
 import 'package:bloc/helpers/firestorage_helper.dart';
 import 'package:bloc/screens/manager/users/user_add_edit_screen.dart';
+import 'package:bloc/widgets/ui/button_widget.dart';
 import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -35,6 +36,9 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
   List<String> mUserLevelNames = [];
 
   var _isUserLevelsLoading = true;
+
+  List<User> searchList = [];
+  bool isSearching = false;
 
   String sGender = 'all';
   List<String> mGenders = [
@@ -360,19 +364,16 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
                   DocumentSnapshot document = snapshot.data!.docs[i];
                   Map<String, dynamic> data =
                       document.data()! as Map<String, dynamic>;
-                  final User _user = Fresh.freshUserMap(data, false);
-                  mUsers.add(_user);
+                  final User user = Fresh.freshUserMap(data, false);
+                  mUsers.add(user);
 
                   if (shouldTypeCount) {
-                    if (_user.isIos) {
+                    if (user.isIos) {
                       iosCount++;
                     } else {
                       androidCount++;
                     }
                   }
-
-                  // if (i == snapshot.data!.docs.length - 1) {
-                  // }
                 }
                 if(shouldTypeCount){
                   Logx.ilt(_TAG, 'android : $androidCount | ios: $iosCount');
@@ -380,25 +381,60 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
                 return _displayBody(context);
               }
           }
-
-          return const LoadingWidget();
         });
   }
 
+  String searchText = '';
   _displayBody(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            Container(
+              margin: const EdgeInsets.symmetric(horizontal: 10),
+              child: TextField(
+                decoration: const InputDecoration(
+                    border: InputBorder.none,
+                    hintText: 'search by name',
+                    hintStyle: TextStyle(color: Constants.primary)),
+                autofocus: false,
+                style:
+                const TextStyle(fontSize: 17, color: Constants.primary),
+                onChanged: (val) {
+                  if (val.trim().isNotEmpty) {
+                    isSearching = true;
+                    searchText = val;
+                  } else {
+                    isSearching = false;
+                    searchText = '';
+                  }
+                },
+              ),
+            ),
+            ButtonWidget(text: 'search', onClicked: () {
+              searchList.clear();
+
+              for (var i in mUsers) {
+                if (i.name.toLowerCase().contains(searchText.toLowerCase())) {
+                  searchList.add(i);
+                }
+              }
+              setState(() {});
+            },)
+          ],
+        ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 3),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Expanded(
-                child: Text('level: ${sUserLevelName}'),
+                child: Text('level: $sUserLevelName'),
               ),
               Expanded(
-                child: Text('gender: ${sGender}'),
+                child: Text('gender: $sGender'),
               ),
               Expanded(
                 child: Align(
@@ -408,64 +444,7 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
             ],
           ),
         ),
-        Expanded(
-          child: ListView.builder(
-              itemCount: mUsers.length,
-              scrollDirection: Axis.vertical,
-              itemBuilder: (ctx, index) {
-                return GestureDetector(
-                    child: UserItem(
-                      user: mUsers[index],
-                    ),
-                    onDoubleTap: () {
-                      User sUser = mUsers[index];
-                      Logx.i(_TAG, 'double tap user selected : ${sUser.name}');
-
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: Text("delete user : ${sUser.name}"),
-                            content: const Text(
-                                "would you like to delete the user?"),
-                            actions: [
-                              TextButton(
-                                child: const Text("yes"),
-                                onPressed: () {
-                                  if (sUser.imageUrl.isNotEmpty) {
-                                    FirestorageHelper.deleteFile(
-                                        sUser.imageUrl);
-                                  }
-                                  FirestoreHelper.deleteUser(sUser.id);
-                                  Logx.i(_TAG, 'user is deleted');
-
-                                  Navigator.of(context).pop();
-                                },
-                              ),
-                              TextButton(
-                                child: const Text("no"),
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                              )
-                            ],
-                          );
-                        },
-                      );
-                    },
-                    onTap: () {
-                      User sUser = mUsers[index];
-                      Logx.i(_TAG, 'user selected : ${sUser.name}');
-
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (ctx) => UserAddEditScreen(
-                                user: sUser,
-                                task: 'edit',
-                                userLevels: mUserLevels,
-                              )));
-                    });
-              }),
-        ),
+        _showUsers(context),
       ],
     );
   }
@@ -591,6 +570,69 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
           ],
         );
       },
+    );
+  }
+
+  _showUsers(BuildContext context) {
+    List<User> users = isSearching ? searchList : mUsers;
+
+    return Expanded(
+      child: ListView.builder(
+          itemCount: users.length,
+          scrollDirection: Axis.vertical,
+          itemBuilder: (ctx, index) {
+            return GestureDetector(
+                child: UserItem(
+                  user: users[index],
+                ),
+                onDoubleTap: () {
+                  User sUser = users[index];
+                  Logx.i(_TAG, 'double tap user selected : ${sUser.name}');
+
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: Text("delete user : ${sUser.name}"),
+                        content: const Text(
+                            "would you like to delete the user?"),
+                        actions: [
+                          TextButton(
+                            child: const Text("yes"),
+                            onPressed: () {
+                              if (sUser.imageUrl.isNotEmpty) {
+                                FirestorageHelper.deleteFile(
+                                    sUser.imageUrl);
+                              }
+                              FirestoreHelper.deleteUser(sUser.id);
+                              Logx.i(_TAG, 'user is deleted');
+
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                          TextButton(
+                            child: const Text("no"),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                          )
+                        ],
+                      );
+                    },
+                  );
+                },
+                onTap: () {
+                  User sUser = users[index];
+                  Logx.i(_TAG, 'user selected : ${sUser.name}');
+
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (ctx) => UserAddEditScreen(
+                        user: sUser,
+                        task: 'edit',
+                        userLevels: mUserLevels,
+                      )));
+                });
+          }),
     );
   }
 }
