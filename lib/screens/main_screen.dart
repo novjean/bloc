@@ -190,7 +190,6 @@ class _MainScreenState extends State<MainScreen> {
                 // );
 
                 NotificationService.showChatNotification(chat);
-                // showNotificationChatChannel(notification);
               }
             }
             break;

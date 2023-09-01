@@ -9,6 +9,7 @@ import '../db/entity/captain_service.dart';
 import '../db/entity/category.dart';
 import '../db/entity/celebration.dart';
 import '../db/entity/challenge.dart';
+import '../db/entity/challenge_action.dart';
 import '../db/entity/config.dart';
 import '../db/entity/lounge_chat.dart';
 import '../db/entity/genre.dart';
@@ -999,6 +1000,101 @@ class Fresh {
     }
 
     return freshChallenge;
+  }
+
+  /** challenge action **/
+  static ChallengeAction freshChallengeActionMap(
+      Map<String, dynamic> map, bool shouldUpdate) {
+    ChallengeAction ca = Dummy.getDummyChallengeAction('');
+
+    bool isModelChanged = false;
+
+    try {
+      ca = ca.copyWith(id: map['id'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'challenge action id not exist');
+    }
+    try {
+      ca = ca.copyWith(challengeId: map['challengeId'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'challenge action challengeId not exist for id: ${ca.id}');
+      isModelChanged = true;
+    }
+    try {
+      ca = ca.copyWith(buttonCount: map['buttonCount'] as int);
+    } catch (e) {
+      Logx.em(_TAG, 'challenge action buttonCount not exist for id: ${ca.id}');
+      isModelChanged = true;
+    }
+    try {
+      ca = ca.copyWith(buttonTitle: map['buttonTitle'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'challenge action buttonTitle not exist for id: ${ca.id}');
+      isModelChanged = true;
+    }
+    try {
+      ca = ca.copyWith(action: map['action'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'challenge action action not exist for id: ${ca.id}');
+      isModelChanged = true;
+    }
+    try {
+      ca = ca.copyWith(actionType: map['actionType'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'challenge action actionType not exist for id: ${ca.id}');
+      isModelChanged = true;
+    }
+
+    if (isModelChanged &&
+        shouldUpdate &&
+        UserPreferences.myUser.clearanceLevel >= Constants.MANAGER_LEVEL) {
+      Logx.i(_TAG, 'updating challenge action ${ca.id}');
+      FirestoreHelper.pushChallengeAction(ca);
+    }
+
+    return ca;
+  }
+
+  static ChallengeAction freshChallengeAction(ChallengeAction ca) {
+    ChallengeAction fresh = Dummy.getDummyChallengeAction('');
+
+    try {
+      fresh = fresh.copyWith(id: ca.id);
+    } catch (e) {
+      Logx.em(_TAG, 'challenge action id not exist');
+    }
+    try {
+      fresh = fresh.copyWith(challengeId: ca.challengeId);
+    } catch (e) {
+      Logx.em(
+          _TAG, 'challenge action challengeId not exist for id: ${ca.id}');
+    }
+    try {
+      fresh = fresh.copyWith(buttonCount: ca.buttonCount);
+    } catch (e) {
+      Logx.em(
+          _TAG, 'challenge action buttonCount exist for id: ${ca.id}');
+    }
+    try {
+      fresh = fresh.copyWith(buttonTitle: ca.buttonTitle);
+    } catch (e) {
+      Logx.em(
+          _TAG, 'challenge action buttonTitle exist for id: ${ca.id}');
+    }
+    try {
+      fresh = fresh.copyWith(action: ca.action);
+    } catch (e) {
+      Logx.em(
+          _TAG, 'challenge action action exist for id: ${ca.id}');
+    }
+    try {
+      fresh = fresh.copyWith(actionType: ca.actionType);
+    } catch (e) {
+      Logx.em(
+          _TAG, 'challenge action actionType exist for id: ${ca.id}');
+    }
+
+    return fresh;
   }
 
   /** lounge chat **/

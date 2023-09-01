@@ -106,7 +106,6 @@ class _PartyBannerState extends State<PartyBanner> {
         });
       }
     } else {
-      Logx.em(_TAG, 'artists no longer exist!');
       setState(() {
         _isArtistsLoading = false;
       });
