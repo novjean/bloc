@@ -39,6 +39,7 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
 
   List<User> searchList = [];
   bool isSearching = false;
+  String searchText = '';
 
   String sGender = 'all';
   List<String> mGenders = [
@@ -61,8 +62,6 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
 
   @override
   void initState() {
-    super.initState();
-
     sUserLevel = Dummy.getDummyUserLevel();
 
     // lets pull in user levels
@@ -91,6 +90,7 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
         });
       }
     });
+    super.initState();
   }
 
   @override
@@ -384,47 +384,57 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
         });
   }
 
-  String searchText = '';
   _displayBody(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            Container(
-              margin: const EdgeInsets.symmetric(horizontal: 10),
-              child: TextField(
-                decoration: const InputDecoration(
-                    border: InputBorder.none,
-                    hintText: 'search by name',
-                    hintStyle: TextStyle(color: Constants.primary)),
-                autofocus: false,
-                style:
-                const TextStyle(fontSize: 17, color: Constants.primary),
-                onChanged: (val) {
-                  if (val.trim().isNotEmpty) {
-                    isSearching = true;
-                    searchText = val;
-                  } else {
-                    isSearching = false;
-                    searchText = '';
-                  }
-                },
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Expanded(
+                child: Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 10),
+                  child: TextField(
+                    decoration: const InputDecoration(
+                        border: InputBorder.none,
+                        hintText: 'search by name',
+                        hintStyle: TextStyle(color: Constants.primary)),
+                    autofocus: false,
+                    style:
+                    const TextStyle(fontSize: 17, color: Constants.primary),
+                    onChanged: (val) {
+                      if (val.trim().isNotEmpty) {
+                        isSearching = true;
+                        searchText = val;
+                      } else {
+                        setState(() {
+                          searchText = '';
+                          isSearching = false;
+                        });
+                      }
+                    },
+                  ),
+                ),
               ),
-            ),
-            ButtonWidget(text: 'search', onClicked: () {
-              searchList.clear();
+              Expanded(
+                child: ButtonWidget(text: 'search', onClicked: () {
+                  searchList.clear();
 
-              for (var i in mUsers) {
-                if (i.name.toLowerCase().contains(searchText.toLowerCase())) {
-                  searchList.add(i);
-                }
-              }
-              setState(() {});
-            },)
-          ],
+                  for (var i in mUsers) {
+                    if (i.name.toLowerCase().contains(searchText.toLowerCase())
+                    || i.surname.toLowerCase().contains(searchText.toLowerCase())) {
+                      searchList.add(i);
+                    }
+                  }
+                  setState(() {});
+                },),
+              )
+            ],
+          ),
         ),
+        
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 3),
           child: Row(
