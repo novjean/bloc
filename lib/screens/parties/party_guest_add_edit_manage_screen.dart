@@ -20,6 +20,7 @@ import 'package:pinput/pinput.dart';
 
 import '../../api/apis.dart';
 import '../../db/entity/challenge.dart';
+import '../../db/entity/challenge_action.dart';
 import '../../db/entity/party.dart';
 import '../../db/entity/party_guest.dart';
 import '../../db/entity/party_interest.dart';
@@ -1281,7 +1282,7 @@ class _PartyGuestAddEditManageScreenState
 
     showDialog(
       context: context,
-      builder: (BuildContext context) {
+      builder: (BuildContext ctx) {
         return AlertDialog(
           title: const Text(
             '🤝 entry and club rules',
@@ -1399,10 +1400,10 @@ class _PartyGuestAddEditManageScreenState
                       });
 
                       if (widget.party.isChallengeActive) {
-                        Navigator.of(context).pop();
-                        _showChallengeDialog(context);
+                        Navigator.of(ctx).pop();
+                        _loadChallengeDialog(context);
                       } else {
-                        Navigator.of(context).pop();
+                        Navigator.of(ctx).pop();
 
                         GoRouter.of(context)
                             .pushNamed(RouteConstants.homeRouteName);
@@ -1450,7 +1451,7 @@ class _PartyGuestAddEditManageScreenState
     return returnChallenge;
   }
 
-  _showChallengeDialog(BuildContext context) {
+  _loadChallengeDialog(BuildContext context) {
     Challenge challenge = findChallenge();
     String challengeText = challenge.description;
 
@@ -1461,165 +1462,214 @@ class _PartyGuestAddEditManageScreenState
       GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
       GoRouter.of(context).pushNamed(RouteConstants.boxOfficeRouteName);
     } else {
-      showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: const Text(
-                '#blocCommunity support & win 🎟️',
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 22, color: Colors.black),
-              ),
-              backgroundColor: Constants.lightPrimary,
-              shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(20.0))),
-              contentPadding: const EdgeInsets.all(16.0),
-              content: SizedBox(
-                width: double.maxFinite,
-                child: ListView(
-                  shrinkWrap: true,
-                  children: [
-                    Text(
-                      '${challenge.dialogTitle}:\n',
-                      style: const TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    Text(challenge.description.toLowerCase()),
-                  ],
-                ),
-              ),
-              actions: [
-                TextButton(
-                  child: const Text('close',
-                      style: TextStyle(color: Constants.background)),
-                  onPressed: () {
-                    Navigator.of(context).pop();
+      FirestoreHelper.pullChallengeActions(challenge.id).then((res) {
+        if (res.docs.isNotEmpty) {
+          List<ChallengeAction> cas = [];
+          for (int i = 0; i < res.docs.length; i++) {
+            DocumentSnapshot document = res.docs[i];
+            Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+            ChallengeAction ca = Fresh.freshChallengeActionMap(data, false);
 
-                    GoRouter.of(context)
-                        .pushNamed(RouteConstants.homeRouteName);
-                    GoRouter.of(context)
-                        .pushNamed(RouteConstants.boxOfficeRouteName);
-                  },
-                ),
-                challenge.dialogAccept2Text.isNotEmpty
-                    ? TextButton(
-                        style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all<Color>(
-                              Constants
-                                  .darkPrimary), // Set your desired background color
-                        ),
-                        child: Text(challenge.dialogAccept2Text,
-                            style: const TextStyle(color: Constants.primary)),
-                        onPressed: () async {
-                          Logx.ist(_TAG, 'thank you for supporting us!');
+            if(ca.actionType == 'instagram_url'){
+              ca = ca.copyWith(action: widget.party.instagramUrl);
+            }
+            cas.add(ca);
+          }
 
-                          widget.partyGuest = widget.partyGuest
-                              .copyWith(isChallengeClicked: true);
-                          if (!testMode) {
-                            FirestoreHelper.pushPartyGuest(widget.partyGuest);
-                            FirestoreHelper.updateChallengeClickCount(challenge.id);
-                          }
-
-                          switch (challenge.level) {
-                            case 2:
-                              {
-                                //android download
-                                final uri =
-                                    Uri.parse(ChallengeUtils.urlBlocPlayStore);
-                                NetworkUtils.launchInBrowser(uri);
-                                break;
-                              }
-                            default:
-                              {
-                                final uri =
-                                    Uri.parse(ChallengeUtils.urlBlocInsta);
-                                NetworkUtils.launchInBrowser(uri);
-                                break;
-                              }
-                          }
-
-                          GoRouter.of(context)
-                              .pushNamed(RouteConstants.homeRouteName);
-                          GoRouter.of(context)
-                              .pushNamed(RouteConstants.boxOfficeRouteName);
-                        },
-                      )
-                    : const SizedBox(),
-                TextButton(
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all<Color>(Constants
-                        .darkPrimary), // Set your desired background color
-                  ),
-                  child: Text(challenge.dialogAcceptText,
-                      style: const TextStyle(color: Constants.primary)),
-                  onPressed: () async {
-                    Logx.ist(_TAG, 'thank you for supporting us!');
-
-                    widget.partyGuest =
-                        widget.partyGuest.copyWith(isChallengeClicked: true);
-                    if (!testMode) {
-                      FirestoreHelper.pushPartyGuest(widget.partyGuest);
-                      FirestoreHelper.updateChallengeClickCount(challenge.id);
-                    }
-
-                    switch (challenge.level) {
-                      case 1:
-                        {
-                          final uri = Uri.parse(ChallengeUtils.urlBlocInsta);
-                          NetworkUtils.launchInBrowser(uri);
-                          break;
-                        }
-                      case 3:
-                        {
-                          final uri = Uri.parse(ChallengeUtils.urlFreqInsta);
-                          NetworkUtils.launchInBrowser(uri);
-                          break;
-                        }
-                      case 2:
-                        {
-                          //ios download
-                          final uri = Uri.parse(ChallengeUtils.urlBlocAppStore);
-                          NetworkUtils.launchInBrowser(uri);
-                          break;
-                        }
-                      case 4:
-                        {
-                          //share or invite your friends
-                          final uri = Uri.parse(widget.party.instagramUrl);
-                          NetworkUtils.launchInBrowser(uri);
-                          break;
-                        }
-                      case 100:
-                        {
-                          final urlImage = widget.party.storyImageUrl.isNotEmpty
-                              ? widget.party.storyImageUrl
-                              : widget.party.imageUrl;
-                          if (kIsWeb) {
-                            FileUtils.openFileNewTabForWeb(urlImage);
-                          } else {
-                            FileUtils.sharePhoto(widget.party.id, urlImage, 'bloc-${widget.party.name}', ''
-                                '${StringUtils.firstFewWords(widget.party.description, 15)}... \n\nhey. check out this event at the official bloc app. \n\n🌏 https://bloc.bar/#/\n📱 https://bloc.bar/app_store.html\n\n#blocCommunity ❤️‍🔥');
-                          }
-                          break;
-                        }
-                      default:
-                        {
-                          final uri = Uri.parse(
-                              'https://www.instagram.com/bloc.india/');
-                          NetworkUtils.launchInBrowser(uri);
-                          break;
-                        }
-                    }
-
-                    GoRouter.of(context)
-                        .pushNamed(RouteConstants.homeRouteName);
-                    GoRouter.of(context)
-                        .pushNamed(RouteConstants.boxOfficeRouteName);
-                  },
-                ),
-              ],
-            );
-          });
+          _showChallengeDialog(context, challenge, cas);
+        } else {
+          _showChallengeDefaultsDialog(context, challenge);
+        }
+      });
     }
+  }
+
+  void _showChallengeDialog(BuildContext context, Challenge challenge, List<ChallengeAction> cas) {
+    showDialog(
+        context: context,
+        builder: (BuildContext ctx) {
+          return AlertDialog(
+            title: const Text(
+              '#blocCommunity support & win free 🎟️',
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 22, color: Colors.black),
+            ),
+            backgroundColor: Constants.lightPrimary,
+            shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(20.0))),
+            contentPadding: const EdgeInsets.all(16.0),
+            content: SizedBox(
+              width: double.maxFinite,
+              child: ListView(
+                shrinkWrap: true,
+                children: [
+                  Text(
+                    '${challenge.dialogTitle}:\n',
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  Text(challenge.description.toLowerCase()),
+                ],
+              ),
+            ),
+            actions: [
+              TextButton(
+                child: const Text('close',
+                    style: TextStyle(color: Constants.background)),
+                onPressed: () {
+                  Navigator.of(ctx).pop();
+
+                  GoRouter.of(context)
+                      .pushNamed(RouteConstants.homeRouteName);
+                  GoRouter.of(context)
+                      .pushNamed(RouteConstants.boxOfficeRouteName);
+                },
+              ),
+              cas.length>1
+                  ? TextButton(
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all<Color>(
+                            Constants
+                                .darkPrimary), // Set your desired background color
+                      ),
+                      child: Text(cas[1].buttonTitle,
+                          style: const TextStyle(color: Constants.primary)),
+                      onPressed: () async {
+                        Logx.ist(_TAG, 'thank you for supporting us!');
+
+                        widget.partyGuest = widget.partyGuest
+                            .copyWith(isChallengeClicked: true);
+                        if (!testMode) {
+                          FirestoreHelper.pushPartyGuest(widget.partyGuest);
+                          FirestoreHelper.updateChallengeClickCount(challenge.id);
+                        }
+
+                        final uri = Uri.parse(cas[1].action);
+                        NetworkUtils.launchInBrowser(uri);
+
+                        Navigator.of(ctx).pop();
+                        GoRouter.of(context)
+                            .pushNamed(RouteConstants.homeRouteName);
+                        GoRouter.of(context)
+                            .pushNamed(RouteConstants.boxOfficeRouteName);
+                      },
+                    )
+                  : const SizedBox(),
+              TextButton(
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all<Color>(Constants
+                      .darkPrimary), // Set your desired background color
+                ),
+                child: Text(cas[0].buttonTitle,
+                    style: const TextStyle(color: Constants.primary)),
+                onPressed: () async {
+                  Logx.ist(_TAG, 'thank you for supporting us!');
+
+                  widget.partyGuest =
+                      widget.partyGuest.copyWith(isChallengeClicked: true);
+                  if (!testMode) {
+                    FirestoreHelper.pushPartyGuest(widget.partyGuest);
+                    FirestoreHelper.updateChallengeClickCount(challenge.id);
+                  }
+
+                  final uri = Uri.parse(cas[0].action);
+                  NetworkUtils.launchInBrowser(uri);
+
+                  Navigator.of(ctx).pop();
+                  GoRouter.of(context)
+                      .pushNamed(RouteConstants.homeRouteName);
+                  GoRouter.of(context)
+                      .pushNamed(RouteConstants.boxOfficeRouteName);
+                },
+              ),
+            ],
+          );
+        });
+  }
+
+  void _showChallengeDefaultsDialog(BuildContext context, Challenge challenge) {
+    showDialog(
+        context: context,
+        builder: (BuildContext ctx) {
+          return AlertDialog(
+            title: const Text(
+              '#blocCommunity support & win free 🎟️',
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 22, color: Colors.black),
+            ),
+            backgroundColor: Constants.lightPrimary,
+            shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(20.0))),
+            contentPadding: const EdgeInsets.all(16.0),
+            content: SizedBox(
+              width: double.maxFinite,
+              child: ListView(
+                shrinkWrap: true,
+                children: [
+                  Text(
+                    '${challenge.dialogTitle}:\n',
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  Text(challenge.description.toLowerCase()),
+                ],
+              ),
+            ),
+            actions: [
+              TextButton(
+                child: const Text('close',
+                    style: TextStyle(color: Constants.background)),
+                onPressed: () {
+                  Navigator.of(ctx).pop();
+
+                  GoRouter.of(context)
+                      .pushNamed(RouteConstants.homeRouteName);
+                  GoRouter.of(context)
+                      .pushNamed(RouteConstants.boxOfficeRouteName);
+                },
+              ),
+              TextButton(
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all<Color>(Constants
+                      .darkPrimary), // Set your desired background color
+                ),
+                child: Text(challenge.dialogAcceptText,
+                    style: const TextStyle(color: Constants.primary)),
+                onPressed: () async {
+                  Logx.ist(_TAG, 'thank you for supporting us!');
+
+                  widget.partyGuest =
+                      widget.partyGuest.copyWith(isChallengeClicked: true);
+                  if (!testMode) {
+                    FirestoreHelper.pushPartyGuest(widget.partyGuest);
+                    FirestoreHelper.updateChallengeClickCount(challenge.id);
+                  }
+
+                  if(widget.party.storyImageUrl.isNotEmpty || widget.party.imageUrl.isNotEmpty){
+                    final urlImage = widget.party.storyImageUrl.isNotEmpty
+                        ? widget.party.storyImageUrl
+                        : widget.party.imageUrl;
+                    if (kIsWeb) {
+                      FileUtils.openFileNewTabForWeb(urlImage);
+                    } else {
+                      FileUtils.sharePhoto(widget.party.id, urlImage, 'bloc-${widget.party.name}', ''
+                          '${StringUtils.firstFewWords(widget.party.description, 15)}... '
+                          '\n\nhey. check out this event at the official bloc app. \n\n🌏 '
+                          'https://bloc.bar/#/\n📱 https://bloc.bar/app_store.html\n\n#blocCommunity ❤️‍🔥');
+                    }
+                  } else {
+                    final uri = Uri.parse('https://www.instagram.com/bloc.india/');
+                    NetworkUtils.launchInBrowser(uri);
+                  }
+
+                  Navigator.of(ctx).pop();
+                  GoRouter.of(context)
+                      .pushNamed(RouteConstants.homeRouteName);
+                  GoRouter.of(context)
+                      .pushNamed(RouteConstants.boxOfficeRouteName);
+                },
+              ),
+            ],
+          );
+        });
   }
 
   _showReserveTableDialog(BuildContext context) {
@@ -2102,4 +2152,5 @@ class _PartyGuestAddEditManageScreenState
       ),
     );
   }
+
 }

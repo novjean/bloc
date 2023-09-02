@@ -7,6 +7,8 @@ class Challenge {
   final int clickCount;
 
   final String dialogTitle;
+
+  //todo: deprecated since 2.3.6
   final String dialogAcceptText;
   final String dialogAccept2Text;
 

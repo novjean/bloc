@@ -19,6 +19,7 @@ import '../db/entity/bloc.dart';
 import '../db/entity/bloc_service.dart';
 import '../db/entity/captain_service.dart';
 import '../db/entity/celebration.dart';
+import '../db/entity/challenge_action.dart';
 import '../db/entity/config.dart';
 import '../db/entity/lounge_chat.dart';
 import '../db/entity/genre.dart';
@@ -165,6 +166,18 @@ class Dummy {
         dialogAcceptText: '',
         dialogAccept2Text: '');
     return dummyChallenge;
+  }
+
+  static ChallengeAction getDummyChallengeAction(String challengeId) {
+    ChallengeAction dummy = ChallengeAction(
+        id: StringUtils.getRandomString(28),
+        action: '',
+      actionType: 'url',
+      buttonCount: 1,
+      buttonTitle: '',
+      challengeId: challengeId
+    );
+    return dummy;
   }
 
   static Config getDummyConfig(String blocServiceId) {

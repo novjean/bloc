@@ -8,6 +8,7 @@ import 'package:bloc/db/entity/cart_item.dart';
 import 'package:bloc/db/entity/category.dart';
 import 'package:bloc/db/entity/celebration.dart';
 import 'package:bloc/db/entity/challenge.dart';
+import 'package:bloc/db/entity/challenge_action.dart';
 import 'package:bloc/db/entity/config.dart';
 import 'package:bloc/db/entity/lounge_chat.dart';
 import 'package:bloc/db/entity/genre.dart';
@@ -60,6 +61,7 @@ class FirestoreHelper {
   static String CATEGORIES = 'categories';
   static String CART_ITEMS = 'cart_items';
   static String CHALLENGES = 'challenges';
+  static String CHALLENGE_ACTIONS = 'challenge_actions';
   static String CELEBRATIONS = 'celebrations';
   static String CITIES = 'cities';
   static String CONFIGS = 'configs';
@@ -95,6 +97,7 @@ class FirestoreHelper {
 
   static int TABLE_PRIVATE_TYPE_ID = 1;
   static int TABLE_COMMUNITY_TYPE_ID = 2;
+
 
   /** ads **/
   static void pushAd(Ad ad) async {
@@ -573,6 +576,33 @@ class FirestoreHelper {
 
   static void deleteChallenge(String docId) {
     FirebaseFirestore.instance.collection(CHALLENGES).doc(docId).delete();
+  }
+
+  /** challenge actions **/
+  static void pushChallengeAction(ChallengeAction ca) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection(CHALLENGE_ACTIONS)
+          .doc(ca.id)
+          .set(ca.toMap());
+    } on PlatformException catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } on Exception catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } catch (e) {
+      Logx.em(_TAG, e.toString());
+    }
+  }
+
+  static pullChallengeActions(String challengeId) {
+    return FirebaseFirestore.instance
+        .collection(CHALLENGE_ACTIONS)
+        .where('challengeId', isEqualTo: challengeId)
+        .get();
+  }
+
+  static void deleteChallengeAction(String docId) {
+    FirebaseFirestore.instance.collection(CHALLENGE_ACTIONS).doc(docId).delete();
   }
 
   /** lounge chats **/
@@ -2162,5 +2192,6 @@ class FirestoreHelper {
   static void deleteUserLounge(String docId) {
     FirebaseFirestore.instance.collection(USER_LOUNGES).doc(docId).delete();
   }
+
 
 }
