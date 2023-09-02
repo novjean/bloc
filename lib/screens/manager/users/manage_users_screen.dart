@@ -15,7 +15,7 @@ import '../../../utils/constants.dart';
 import '../../../utils/file_utils.dart';
 import '../../../utils/logx.dart';
 import '../../../utils/string_utils.dart';
-import '../../../widgets/manager/user_item.dart';
+import '../../../widgets/manager/manage_user_item.dart';
 import '../../../widgets/ui/app_bar_title.dart';
 
 class ManageUsersScreen extends StatefulWidget {
@@ -393,13 +393,15 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              Expanded(
+              Flexible(
+                flex: 3,
                 child: Container(
                   margin: const EdgeInsets.symmetric(horizontal: 10),
-                  child: TextField(
+                  child: TextFormField(
+                    initialValue: searchText,
                     decoration: const InputDecoration(
                         border: InputBorder.none,
-                        hintText: 'search by name',
+                        hintText: 'search by name or phone number',
                         hintStyle: TextStyle(color: Constants.primary)),
                     autofocus: false,
                     style:
@@ -418,13 +420,16 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
                   ),
                 ),
               ),
-              Expanded(
+              Flexible(
+                flex: 1,
                 child: ButtonWidget(text: 'search', onClicked: () {
                   searchList.clear();
 
                   for (var i in mUsers) {
                     if (i.name.toLowerCase().contains(searchText.toLowerCase())
-                    || i.surname.toLowerCase().contains(searchText.toLowerCase())) {
+                    || i.surname.toLowerCase().contains(searchText.toLowerCase())
+                        || i.phoneNumber.toString().contains(searchText.toLowerCase())
+                    ) {
                       searchList.add(i);
                     }
                   }
@@ -592,7 +597,7 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
           scrollDirection: Axis.vertical,
           itemBuilder: (ctx, index) {
             return GestureDetector(
-                child: UserItem(
+                child: ManageUserItem(
                   user: users[index],
                 ),
                 onDoubleTap: () {

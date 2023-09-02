@@ -5,10 +5,10 @@ import '../../db/entity/user.dart';
 import '../../main.dart';
 import '../../utils/constants.dart';
 
-class UserItem extends StatelessWidget {
+class ManageUserItem extends StatelessWidget {
   final User user;
 
-  const UserItem({Key? key, required this.user}) : super(key: key);
+  const ManageUserItem({Key? key, required this.user}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +20,7 @@ class UserItem extends StatelessWidget {
       if(user.isIos){
         appDetails = '${user.appVersion} 🍏';
       } else {
-        appDetails = '${user.appVersion} 🤖';
+        appDetails = '${user.appVersion} 👾';
       }
     } else {
       appDetails = '${user.appVersion} 🌏';
