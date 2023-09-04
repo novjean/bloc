@@ -426,7 +426,10 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
                                             photoUrl = chat.message;
                                           }
 
-                                          FirestorageHelper.deleteFile(photoUrl);
+                                          //need to check here to avoid deleting the party photo by mistake
+                                          if(photoUrl.contains('chat_image')){
+                                            FirestorageHelper.deleteFile(photoUrl);
+                                          }
                                         }
                                         Navigator.of(ctx).pop();
                                       },
