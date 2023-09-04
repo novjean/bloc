@@ -47,7 +47,7 @@ class ManagePartyPhotoItem extends StatelessWidget{
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text('${partyPhoto.views} 👁️'),
-                      Text('${partyPhoto.likers.length} 🖤'),
+                      Text('${partyPhoto.likers.length + partyPhoto.initLikes} 🖤'),
                       Text('${partyPhoto.downloadCount} 💾'),
                     ],
                   ),
