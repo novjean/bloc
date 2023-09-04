@@ -22,7 +22,6 @@ class StringUtils {
   }
 
   static String firstFewWords(String bigSentence, int numOfWords){
-
     int startIndex = 0, indexOfSpace = 0;
 
     for(int i = 0; i < numOfWords; i++){

@@ -56,6 +56,8 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
   //isUploading -- for checking if image is uploading or not?
   bool _isUploading = false;
 
+  String photoChatMessage = '';
+
   @override
   void initState() {
     super.initState();
@@ -152,7 +154,7 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
                 padding: const EdgeInsets.only(left: 8.0, right: 10),
                 child: GestureDetector(
                   onTap: () {
-                    showLoungeDetails(context);
+                    _showLoungeDetails(context);
                   },
                   child: CircleAvatar(
                     backgroundImage: NetworkImage(
@@ -462,7 +464,7 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
     );
   }
 
-  void showLoungeDetails(BuildContext context) {
+  void _showLoungeDetails(BuildContext context) {
     showModalBottomSheet<void>(
       isScrollControlled: true,
       context: context,
@@ -589,7 +591,7 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
                                 imageQuality: 95,
                                 maxHeight: 768,
                                 maxWidth: 440);
-                            storePhotoChat(image);
+                            _storePhotoChat(image);
 
                             // // Picking multiple images
                             // final List<XFile> images =
@@ -624,7 +626,7 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
                                 imageQuality: 95,
                                 maxHeight: 768,
                                 maxWidth: 440);
-                            storePhotoChat(image);
+                            _storePhotoChat(image);
                           } else {
                             Toaster.longToast('have the 🍕 and join us to post photo');
                           }
@@ -645,7 +647,6 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
           //send message button
           MaterialButton(
             onPressed: () {
-              // if(!kIsWeb){
                 if(isMember) {
                   if (_textController.text.isNotEmpty) {
                     LoungeChat chat = Dummy.getDummyLoungeChat();
@@ -676,7 +677,7 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
     );
   }
 
-  void storePhotoChat(XFile? image) async {
+  void _storePhotoChat(XFile? image) async {
     if (image != null) {
       Logx.i(_TAG, 'image path: ${image.path}');
       setState(() => _isUploading = true);
@@ -700,6 +701,99 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
 
       _showPhotoChatDialog(context, chat);
     }
+  }
+
+  _showPhotoChatDialog(BuildContext context, LoungeChat chat) {
+    showDialog(
+      context: context,
+      builder: (BuildContext ctx) {
+        return AlertDialog(
+          backgroundColor: Constants.lightPrimary,
+          shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(20.0))),
+          contentPadding: const EdgeInsets.all(16.0),
+          content: SizedBox(
+            height: mq.height * 0.6,
+            width: mq.width * 0.9,
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Padding(
+                    padding:
+                    EdgeInsets.only(bottom: 10, left: 10, right: 10),
+                    child: Text(
+                      'photo chat',
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                          fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  // Padding(
+                  //   padding:
+                  //   const EdgeInsets.only(bottom: 20, left: 10, right: 10),
+                  //   child: Text(
+                  //     DateTimeUtils.getFormattedDate2(partyPhoto.partyDate),
+                  //     overflow: TextOverflow.ellipsis,
+                  //     style: const TextStyle(fontSize: 16),
+                  //   ),
+                  // ),
+                  Center(
+                      child: SizedBox(
+                        width: mq.width,
+                        child: FadeInImage(
+                          placeholder: const AssetImage('assets/images/logo_3x2.png'),
+                          image: NetworkImage(chat.message),
+                          fit: BoxFit.contain,
+                        ),
+                      )),
+                  TextFieldWidget(
+                    text: '',
+                    maxLines: 3,
+                    onChanged: (text) {
+                      photoChatMessage = text;
+                    },
+                    label: 'message',
+                  )
+                ],
+              ),
+            ),
+          ),
+          actions: [
+
+            TextButton(
+              child: const Text("cancel"),
+              onPressed: () {
+                FirestorageHelper.deleteFile(chat.message);
+
+                Navigator.of(ctx).pop();
+              },
+            ),
+            TextButton(
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all<Color>(
+                    Constants.darkPrimary), // Set your desired background color
+              ),
+              child: const Text(
+                "💌 send",
+                style: TextStyle(color: Constants.primary),
+              ),
+              onPressed: () {
+                String message = '${chat.message},$photoChatMessage';
+                chat = chat.copyWith(message: message);
+
+                FirestoreHelper.pushLoungeChat(chat);
+                FirestoreHelper.updateLoungeLastChat(mLounge.id, '📸 $photoChatMessage', chat.time);
+
+                setState(() => _isUploading = false);
+
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   showPrivateLoungeDialog(BuildContext context) {
@@ -790,98 +884,6 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
             }
         }
         return const LoadingWidget();
-      },
-    );
-  }
-
-  String photoChatMessage = '';
-  void _showPhotoChatDialog(BuildContext context, LoungeChat chat) {
-    showDialog(
-      context: context,
-      builder: (BuildContext ctx) {
-        return AlertDialog(
-          backgroundColor: Constants.lightPrimary,
-          shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(20.0))),
-          contentPadding: const EdgeInsets.all(16.0),
-          content: SizedBox(
-            height: mq.height * 0.6,
-            width: mq.width * 0.9,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Padding(
-                  padding:
-                  EdgeInsets.only(bottom: 10, left: 10, right: 10),
-                  child: Text(
-                    'photo chat',
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                        fontSize: 20, fontWeight: FontWeight.bold),
-                  ),
-                ),
-                // Padding(
-                //   padding:
-                //   const EdgeInsets.only(bottom: 20, left: 10, right: 10),
-                //   child: Text(
-                //     DateTimeUtils.getFormattedDate2(partyPhoto.partyDate),
-                //     overflow: TextOverflow.ellipsis,
-                //     style: const TextStyle(fontSize: 16),
-                //   ),
-                // ),
-                Center(
-                    child: SizedBox(
-                      width: mq.width,
-                      child: FadeInImage(
-                        placeholder: const AssetImage('assets/images/logo_3x2.png'),
-                        image: NetworkImage(chat.message),
-                        fit: BoxFit.contain,
-                      ),
-                    )),
-                TextFieldWidget(
-                  text: '',
-                  maxLines: 5,
-                  onChanged: (text) {
-                    photoChatMessage = text;
-                  },
-                  label: 'message',
-                )
-              ],
-            ),
-          ),
-          actions: [
-
-            TextButton(
-              child: const Text("cancel"),
-              onPressed: () {
-                FirestorageHelper.deleteFile(chat.message);
-
-                Navigator.of(context).pop();
-              },
-            ),
-            TextButton(
-              style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all<Color>(
-                    Constants.darkPrimary), // Set your desired background color
-              ),
-              child: const Text(
-                "💌 send",
-                style: TextStyle(color: Constants.primary),
-              ),
-              onPressed: () {
-                String message = '${chat.message},$photoChatMessage';
-                chat = chat.copyWith(message: message);
-
-                FirestoreHelper.pushLoungeChat(chat);
-                FirestoreHelper.updateLoungeLastChat(mLounge.id, '📸 $photoChatMessage', chat.time);
-
-                setState(() => _isUploading = false);
-
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
       },
     );
   }

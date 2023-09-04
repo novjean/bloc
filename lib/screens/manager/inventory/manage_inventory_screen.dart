@@ -1,5 +1,4 @@
 import 'package:bloc/db/entity/inventory_option.dart';
-import 'package:bloc/widgets/ui/listview_block.dart';
 import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -18,7 +17,7 @@ class ManageInventoryScreen extends StatelessWidget{
   String serviceId;
   ManagerService managerService;
 
-  ManageInventoryScreen({
+  ManageInventoryScreen({super.key,
     required this.serviceId,
     required this.managerService,
   });
