@@ -194,7 +194,7 @@ class _PhotosScreenState extends State<PhotosScreen> {
 
     showDialog(
       context: context,
-      builder: (BuildContext context) {
+      builder: (BuildContext ctx) {
         return AlertDialog(
           backgroundColor: Constants.lightPrimary,
           shape: const RoundedRectangleBorder(
@@ -245,7 +245,7 @@ class _PhotosScreenState extends State<PhotosScreen> {
                       Ad ad = Dummy.getDummyAd(partyPhoto.blocServiceId);
                       ad = ad.copyWith(imageUrl: partyPhoto.imageUrl, isActive: true);
 
-                      Navigator.of(context).pop();
+                      Navigator.of(ctx).pop();
                       _showAdDialog(context, ad);
 
                     },
@@ -254,7 +254,7 @@ class _PhotosScreenState extends State<PhotosScreen> {
             TextButton(
               child: const Text("close"),
               onPressed: () {
-                Navigator.of(context).pop();
+                Navigator.of(ctx).pop();
               },
             ), 
             Padding(
@@ -269,7 +269,7 @@ class _PhotosScreenState extends State<PhotosScreen> {
                   FileUtils.sharePhoto(partyPhoto.id,
                       partyPhoto.imageUrl, fileName, shareText);
 
-                  Navigator.of(context).pop();
+                  Navigator.of(ctx).pop();
                 },
               ),
             ),
@@ -291,7 +291,7 @@ class _PhotosScreenState extends State<PhotosScreen> {
                 partyPhoto = partyPhoto.copyWith(downloadCount: count);
                 FirestoreHelper.pushPartyPhoto(partyPhoto);
 
-                Navigator.of(context).pop();
+                Navigator.of(ctx).pop();
               },
             ),
           ],
@@ -303,7 +303,7 @@ class _PhotosScreenState extends State<PhotosScreen> {
   _showDownloadAppDialog(BuildContext context) {
     showDialog(
         context: context,
-        builder: (BuildContext context) {
+        builder: (BuildContext ctx) {
           return AlertDialog(
             title: const Text(
               'bloc app',
@@ -321,7 +321,7 @@ class _PhotosScreenState extends State<PhotosScreen> {
                 child: const Text('close',
                     style: TextStyle(color: Constants.background)),
                 onPressed: () {
-                  Navigator.of(context).pop();
+                  Navigator.of(ctx).pop();
                 },
               ),
               TextButton(

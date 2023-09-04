@@ -125,9 +125,9 @@ class _PromoterGuestsScreenState extends State<PromoterGuestsScreen> {
               tooltip: 'scan code',
               elevation: 5,
               splashColor: Colors.grey,
-              child: Icon(
+              child: const Icon(
                 Icons.qr_code_scanner,
-                color: Theme.of(context).primaryColorDark,
+                color: Constants.darkPrimary,
                 size: 29,
               ),
             )

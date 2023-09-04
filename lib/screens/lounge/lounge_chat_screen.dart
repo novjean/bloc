@@ -23,6 +23,7 @@ import '../../utils/logx.dart';
 import '../../utils/string_utils.dart';
 import '../../widgets/chat/chat_item.dart';
 import '../../widgets/ui/dark_button_widget.dart';
+import '../../widgets/ui/textfield_widget.dart';
 import '../../widgets/ui/toaster.dart';
 
 class LoungeChatScreen extends StatefulWidget {
@@ -680,11 +681,8 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
       chat.message = imageUrl;
       chat.type = 'image';
       chat.time = Timestamp.now().millisecondsSinceEpoch;
-      FirestoreHelper.pushLoungeChat(chat);
 
-      FirestoreHelper.updateLoungeLastChat(mLounge.id, chat.message, chat.time);
-
-      setState(() => _isUploading = false);
+      _showPhotoChatDialog(context, chat);
     }
   }
 
@@ -776,6 +774,96 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
             }
         }
         return const LoadingWidget();
+      },
+    );
+  }
+
+  String photoChatMessage = '';
+  void _showPhotoChatDialog(BuildContext context, LoungeChat chat) {
+    showDialog(
+      context: context,
+      builder: (BuildContext ctx) {
+        return AlertDialog(
+          backgroundColor: Constants.lightPrimary,
+          shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(20.0))),
+          contentPadding: const EdgeInsets.all(16.0),
+          content: SizedBox(
+            height: mq.height * 0.6,
+            width: mq.width * 0.9,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Padding(
+                  padding:
+                  const EdgeInsets.only(bottom: 10, left: 10, right: 10),
+                  child: Text(
+                    'photo chat',
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                        fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                ),
+                // Padding(
+                //   padding:
+                //   const EdgeInsets.only(bottom: 20, left: 10, right: 10),
+                //   child: Text(
+                //     DateTimeUtils.getFormattedDate2(partyPhoto.partyDate),
+                //     overflow: TextOverflow.ellipsis,
+                //     style: const TextStyle(fontSize: 16),
+                //   ),
+                // ),
+                Center(
+                    child: SizedBox(
+                      width: mq.width,
+                      child: FadeInImage(
+                        placeholder: const AssetImage('assets/images/logo_3x2.png'),
+                        image: NetworkImage(chat.message),
+                        fit: BoxFit.contain,
+                      ),
+                    )),
+                TextFieldWidget(
+                  text: '',
+                  maxLines: 5,
+                  onChanged: (text) {
+                    photoChatMessage = text;
+                  },
+                  label: 'message',
+                )
+              ],
+            ),
+          ),
+          actions: [
+
+            TextButton(
+              child: const Text("cancel"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all<Color>(
+                    Constants.darkPrimary), // Set your desired background color
+              ),
+              child: const Text(
+                "💌 send",
+                style: TextStyle(color: Constants.primary),
+              ),
+              onPressed: () {
+                String message = '${chat.message},$photoChatMessage';
+                chat = chat.copyWith(message: message);
+
+                FirestoreHelper.pushLoungeChat(chat);
+                FirestoreHelper.updateLoungeLastChat(mLounge.id, '📸 $photoChatMessage', chat.time);
+
+                setState(() => _isUploading = false);
+
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
       },
     );
   }

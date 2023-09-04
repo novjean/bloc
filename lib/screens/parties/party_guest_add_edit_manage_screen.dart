@@ -1,4 +1,3 @@
-
 import 'package:bloc/db/entity/history_music.dart';
 import 'package:bloc/db/entity/user_lounge.dart';
 import 'package:bloc/widgets/ui/app_bar_title.dart';
@@ -1314,7 +1313,7 @@ class _PartyGuestAddEditManageScreenState
               onPressed: () {
                 if (isNewUser) {
                   PartyGuest freshPartyGuest =
-                      Fresh.freshPartyGuest(widget.partyGuest);
+                  Fresh.freshPartyGuest(widget.partyGuest);
 
                   if (!testMode) {
                     FirestoreHelper.pushPartyGuest(freshPartyGuest);
@@ -1338,14 +1337,14 @@ class _PartyGuestAddEditManageScreenState
                   widget.partyGuest.guestId = mBlocUser.id;
 
                   FirestoreHelper.pullPartyGuestByUser(
-                          widget.partyGuest.guestId, widget.partyGuest.partyId)
+                      widget.partyGuest.guestId, widget.partyGuest.partyId)
                       .then((res) {
                     Logx.i(_TAG, 'pulled in party guest by user');
 
                     if (res.docs.isEmpty) {
                       // user has not requested for party guest list, approve
                       PartyGuest freshPartyGuest =
-                          Fresh.freshPartyGuest(widget.partyGuest);
+                      Fresh.freshPartyGuest(widget.partyGuest);
                       if (!testMode) {
                         FirestoreHelper.pushPartyGuest(freshPartyGuest);
                       }
@@ -1354,15 +1353,15 @@ class _PartyGuestAddEditManageScreenState
                       Toaster.longToast('guest list request in box office');
 
                       FirestoreHelper.pullHistoryMusic(
-                              widget.partyGuest.guestId, widget.party.genre)
+                          widget.partyGuest.guestId, widget.party.genre)
                           .then((res) {
                         if (res.docs.isEmpty) {
                           // no history, add new one
                           HistoryMusic historyMusic = Dummy.getDummyHistoryMusic();
 
                           historyMusic = historyMusic.copyWith(userId: widget.partyGuest.guestId,
-                            genre: widget.party.genre,
-                            count: 1
+                              genre: widget.party.genre,
+                              count: 1
                           );
                           FirestoreHelper.pushHistoryMusic(historyMusic);
                         } else {
