@@ -12,7 +12,6 @@ import '../../routes/route_constants.dart';
 import '../../utils/constants.dart';
 import '../../utils/logx.dart';
 import '../../widgets/lounge/lounge_item.dart';
-import '../../widgets/ui/toaster.dart';
 
 class LoungesScreen extends StatelessWidget {
 
@@ -27,7 +26,7 @@ class LoungesScreen extends StatelessWidget {
     return Scaffold(
         backgroundColor: Constants.background,
         body: StreamBuilder<QuerySnapshot>(
-            stream: FirestoreHelper.getLounges(),
+            stream: FirestoreHelper.getActiveLounges(),
             builder: (ctx, snapshot) {
               switch (snapshot.connectionState) {
                 case ConnectionState.waiting:
@@ -67,9 +66,9 @@ class LoungesScreen extends StatelessWidget {
                                         });
                                   } else {
                                     if(!kIsWeb){
-                                      Toaster.shortToast('please log in to access community');
+                                      Logx.ist(_TAG, 'please log in to access community');
                                     } else {
-                                      Toaster.shortToast('log in to the bloc app to access community');
+                                      Logx.ist(_TAG, 'log in to the bloc app to access community');
                                     }
                                   }
                                 });

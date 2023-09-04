@@ -2,11 +2,8 @@ import 'package:bloc/utils/date_time_utils.dart';
 import 'package:flutter/material.dart';
 
 import '../../db/entity/lounge_chat.dart';
-import '../../db/shared_preferences/user_preferences.dart';
-import '../../helpers/firestore_helper.dart';
 import '../../main.dart';
 import '../../utils/constants.dart';
-import '../ui/toaster.dart';
 
 class ChatItem extends StatefulWidget {
   final LoungeChat chat;
@@ -26,10 +23,17 @@ class _ChatItemState extends State<ChatItem> {
 
   @override
   Widget build(BuildContext context) {
-    if(widget.chat.type != 'text'){
-      List<String> data = widget.chat.message.split(",");
-      photoUrl = data[0];
-      photoChat = data[1];
+    if(widget.chat.type == 'image'){
+
+      int firstDelimiterIndex = widget.chat.message.indexOf(',');
+      if (firstDelimiterIndex != -1) {
+        // Use substring to split the string into two parts
+        photoUrl = widget.chat.message.substring(0, firstDelimiterIndex);
+        photoChat = widget.chat.message.substring(firstDelimiterIndex + 1);
+      } else {
+        // Handle the case where the delimiter is not found
+        photoUrl = widget.chat.message;
+      }
     }
 
     return Padding(
@@ -66,33 +70,45 @@ class _ChatItemState extends State<ChatItem> {
                   ],
                 ),
 
-                subtitle: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                subtitle: ListView(
+                  shrinkWrap: true,
+                  // crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     widget.chat.type == 'text'
                         ? Text(
                             widget.chat.message,
                             style: const TextStyle(fontSize: 17, color: Colors.black),
                           )
-                        : Container(
-                            width: mq.width * 0.75, // Set your desired width
-                            // height: 150, // Set your desired height
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10.0),
-                              // Set your desired border radius
-                              color: Colors
-                                  .white, // Set your desired background color
+                        : Column(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                                width: mq.width * 0.75, // Set your desired width
+                                // height: 150, // Set your desired height
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10.0),
+                                  // Set your desired border radius
+                                  color: Colors
+                                      .white, // Set your desired background color
+                                ),
+                                child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(10.0),
+                                    child: FadeInImage(
+                                      placeholder: const AssetImage(
+                                          'assets/images/logo.png'),
+                                      image: NetworkImage(photoUrl),
+                                      fit: BoxFit.cover,
+                                    )
+                                 ),
+                              ),
+                            Text(photoChat,
+                                textAlign: TextAlign.start,
+                                style: const TextStyle(fontSize: 17, color: Colors.black)
                             ),
-                            child: ClipRRect(
-                                borderRadius: BorderRadius.circular(10.0),
-                                child: FadeInImage(
-                                  placeholder: const AssetImage(
-                                      'assets/images/logo.png'),
-                                  image: NetworkImage(photoUrl),
-                                  fit: BoxFit.cover,
-                                )
-                             ),
-                          ),
+                          ],
+                        ),
                     // Row(
                     //   mainAxisAlignment: MainAxisAlignment.end,
                     //   children: [

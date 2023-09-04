@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:bloc/db/entity/user_lounge.dart';
+import 'package:bloc/helpers/dummy_data.dart';
 import 'package:bloc/helpers/firestore_helper.dart';
 import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -262,6 +263,10 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
             {
               try {
                 mChats = [];
+
+                //todo: remove this after testing
+                // mChats.add(DummyData.dummyPhotoChat());
+
                 for (int i = 0; i < snapshot.data!.docs.length; i++) {
                   DocumentSnapshot document = snapshot.data!.docs[i];
                   Map<String, dynamic> data =
@@ -408,7 +413,18 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
                                         FirestoreHelper.deleteLoungeChat(chat.id);
 
                                         if(chat.type == 'image'){
-                                          FirestorageHelper.deleteFile(chat.message);
+                                          String photoUrl = '';
+
+                                          int firstDelimiterIndex = chat.message.indexOf(',');
+                                          if (firstDelimiterIndex != -1) {
+                                            // Use substring to split the string into two parts
+                                            photoUrl = chat.message.substring(0, firstDelimiterIndex);
+                                          } else {
+                                            // Handle the case where the delimiter is not found
+                                            photoUrl = chat.message;
+                                          }
+
+                                          FirestorageHelper.deleteFile(photoUrl);
                                         }
                                         Navigator.of(ctx).pop();
                                       },
@@ -794,13 +810,13 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Padding(
+                const Padding(
                   padding:
-                  const EdgeInsets.only(bottom: 10, left: 10, right: 10),
+                  EdgeInsets.only(bottom: 10, left: 10, right: 10),
                   child: Text(
                     'photo chat',
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
+                    style: TextStyle(
                         fontSize: 20, fontWeight: FontWeight.bold),
                   ),
                 ),
@@ -838,6 +854,8 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
             TextButton(
               child: const Text("cancel"),
               onPressed: () {
+                FirestorageHelper.deleteFile(chat.message);
+
                 Navigator.of(context).pop();
               },
             ),

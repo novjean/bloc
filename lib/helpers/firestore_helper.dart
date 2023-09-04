@@ -854,6 +854,14 @@ class FirestoreHelper {
         .snapshots();
   }
 
+  static Stream<QuerySnapshot<Object?>> getActiveLounges() {
+    return FirebaseFirestore.instance
+        .collection(LOUNGES)
+        .orderBy('lastChatTime', descending: true)
+        .where('isActive', isEqualTo: true)
+        .snapshots();
+  }
+
   static void deleteLounge(String docId) {
     FirebaseFirestore.instance.collection(LOUNGES).doc(docId).delete();
   }
