@@ -150,8 +150,6 @@ class _PartyGuestAddEditManageScreenState
       });
     } else {
       FirestoreHelper.pullUser(widget.partyGuest.guestId).then((res) {
-        Logx.i(_TAG, 'successfully pulled in user');
-
         if (res.docs.isNotEmpty) {
           DocumentSnapshot document = res.docs[0];
           Map<String, dynamic> map = document.data()! as Map<String, dynamic>;
@@ -689,19 +687,19 @@ class _PartyGuestAddEditManageScreenState
                                   fontWeight: FontWeight.bold),
                             ),
                           ),
-                          _displayPartiesDropdown(context),
+                          _showPartiesDropdown(context),
                           const SizedBox(height: 24),
                           DarkTextFieldWidget(
                             label: 'challenge task',
                             text: findChallenge().title,
                             onChanged: (value) {},
                           ),
-                          const SizedBox(height: 24),
-                          DarkTextFieldWidget(
-                            label: 'challenge url',
-                            text: findChallengeUrl(),
-                            onChanged: (value) {},
-                          ),
+                          // const SizedBox(height: 24),
+                          // DarkTextFieldWidget(
+                          //   label: 'challenge url',
+                          //   text: findChallengeUrl(),
+                          //   onChanged: (value) {},
+                          // ),
                           const SizedBox(height: 24),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -1738,9 +1736,8 @@ class _PartyGuestAddEditManageScreenState
                   FirestoreHelper.pushReservation(reservation);
                 }
 
-                Logx.ilt(_TAG, '👑 your table reservation confirmation is at the box office!');
                 _showRulesConfirmationDialog(context, false);
-
+                Logx.ilt(_TAG, '👑 your table reservation confirmation is at the box office!');
               },
             ),
           ],
@@ -1749,13 +1746,64 @@ class _PartyGuestAddEditManageScreenState
     );
   }
 
-  findChallengeUrl() {
-    String url = ChallengeUtils.challengeUrl(findChallenge());
+  _showPartiesDropdown(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 0.0),
+      child: FormField<String>(
+        builder: (FormFieldState<String> state) {
+          return InputDecorator(
+            key: const ValueKey('parties_key'),
+            decoration: InputDecoration(
+                fillColor: Colors.white,
+                errorStyle: const TextStyle(
+                    color: Constants.errorColor, fontSize: 16.0),
+                hintText: 'please select party',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(5.0),
+                  borderSide: const BorderSide(color: Constants.primary),
+                ),
+                enabledBorder: const OutlineInputBorder(
+                  borderSide: BorderSide(color: Constants.primary, width: 0.0),
+                )),
+            isEmpty: sPartyName == '',
+            child: DropdownButtonHideUnderline(
+              child: DropdownButton<String>(
+                style: const TextStyle(color: Constants.lightPrimary),
+                dropdownColor: Constants.background,
+                value: sPartyName,
+                isDense: true,
+                onChanged: (String? newValue) {
+                  setState(() {
+                    sPartyName = newValue!;
 
-    if (url == ChallengeUtils.partyInsta) {
-      url = widget.party.instagramUrl;
-    }
-    return url;
+                    for (Party party in mParties) {
+                      if ('${party.name} ${party.chapter}' == sPartyName) {
+                        sPartyId = party.id;
+                        sParty = party;
+                        break;
+                      }
+                    }
+
+                    widget.partyGuest =
+                        widget.partyGuest.copyWith(partyId: sPartyId);
+                    FirestoreHelper.pushPartyGuest(widget.partyGuest);
+                    Logx.ist(_TAG, 'guest list updated to party: $sPartyName');
+
+                    state.didChange(newValue);
+                  });
+                },
+                items: mPartyNames.map((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+              ),
+            ),
+          );
+        },
+      ),
+    );
   }
 
   /** phone registration **/
@@ -2088,66 +2136,6 @@ class _PartyGuestAddEditManageScreenState
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  _displayPartiesDropdown(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 0.0),
-      child: FormField<String>(
-        builder: (FormFieldState<String> state) {
-          return InputDecorator(
-            key: const ValueKey('parties_key'),
-            decoration: InputDecoration(
-                fillColor: Colors.white,
-                errorStyle: const TextStyle(
-                    color: Constants.errorColor, fontSize: 16.0),
-                hintText: 'please select party',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(5.0),
-                  borderSide: const BorderSide(color: Constants.primary),
-                ),
-                enabledBorder: const OutlineInputBorder(
-                  borderSide: BorderSide(color: Constants.primary, width: 0.0),
-                )),
-            isEmpty: sPartyName == '',
-            child: DropdownButtonHideUnderline(
-              child: DropdownButton<String>(
-                style: const TextStyle(color: Constants.lightPrimary),
-                dropdownColor: Constants.background,
-                value: sPartyName,
-                isDense: true,
-                onChanged: (String? newValue) {
-                  setState(() {
-                    sPartyName = newValue!;
-
-                    for (Party party in mParties) {
-                      if ('${party.name} ${party.chapter}' == sPartyName) {
-                        sPartyId = party.id;
-                        sParty = party;
-                        break;
-                      }
-                    }
-
-                    widget.partyGuest =
-                        widget.partyGuest.copyWith(partyId: sPartyId);
-                    FirestoreHelper.pushPartyGuest(widget.partyGuest);
-                    Logx.ist(_TAG, 'guest list updated to party: $sPartyName');
-
-                    state.didChange(newValue);
-                  });
-                },
-                items: mPartyNames.map((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
-              ),
-            ),
-          );
-        },
       ),
     );
   }
