@@ -437,7 +437,7 @@ class _EventScreenState extends State<EventScreen> {
 
     if (!mParty.isTBA && mParty.ticketUrl.isNotEmpty) {
       return Container(
-        height: 50,
+        height: 55,
         width: 160,
         padding: const EdgeInsets.only(left: 5, right: 10, bottom: 1, top: 1),
         child: ElevatedButton.icon(
@@ -507,14 +507,14 @@ class _EventScreenState extends State<EventScreen> {
           ),
           icon: const Icon(
             Icons.star_half,
-            size: 24.0,
+            size: 22.0,
           ),
         ),
       );
     } else if (isGuestListActive) {
       return Container(
-        height: 50,
-        width: 150,
+        height: 55,
+        width: 160,
         padding: const EdgeInsets.only(left: 5, right: 10, bottom: 1, top: 1),
         child: ElevatedButton.icon(
           style: ElevatedButton.styleFrom(
@@ -536,7 +536,7 @@ class _EventScreenState extends State<EventScreen> {
           },
           icon: const Icon(
             Icons.app_registration,
-            size: 24.0,
+            size: 22.0,
           ),
           label: const Text(
             'guest list',

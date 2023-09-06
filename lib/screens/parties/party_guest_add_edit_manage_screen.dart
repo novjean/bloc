@@ -63,7 +63,7 @@ class _PartyGuestAddEditManageScreenState
     extends State<PartyGuestAddEditManageScreen> {
   static const String _TAG = 'PartyGuestAddEditManageScreen';
 
-  bool testMode = false;
+  bool testMode = true;
 
   late blocUser.User mBlocUser;
   bool hasUserChanged = false;
@@ -373,30 +373,38 @@ class _PartyGuestAddEditManageScreenState
                   },
                 ),
               ),
-              const SizedBox(height: 24),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 32),
-                child: DarkTextFieldWidget(
-                  label: 'surname *',
-                  text: mBlocUser.surname,
-                  onChanged: (surname) {
-                    mBlocUser = mBlocUser.copyWith(surname: surname);
-                    hasUserChanged = true;
+              widget.partyGuest.surname.isEmpty || UserPreferences.myUser.clearanceLevel >= Constants.MANAGER_LEVEL?
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 24),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 32),
+                    child: DarkTextFieldWidget(
+                      label: 'surname *',
+                      text: mBlocUser.surname,
+                      onChanged: (surname) {
+                        mBlocUser = mBlocUser.copyWith(surname: surname);
+                        hasUserChanged = true;
 
-                    widget.partyGuest =
-                        widget.partyGuest.copyWith(surname: surname);
-                  },
-                ),
-              ),
+                        widget.partyGuest =
+                            widget.partyGuest.copyWith(surname: surname);
+                      },
+                    ),
+                  ),
+                ],
+              ) : const SizedBox(),
               !isLoggedIn
                   ? Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 32.0),
                       child: Column(
+                        mainAxisSize: MainAxisSize.min,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           const SizedBox(height: 24),
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 10),
+                          const Padding(
+                            padding: EdgeInsets.only(bottom: 10),
                             child: Text(
                               'phone number \*',
                               style: TextStyle(
@@ -462,8 +470,8 @@ class _PartyGuestAddEditManageScreenState
                 padding: const EdgeInsets.symmetric(horizontal: 32),
                 child: Column(
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 8.0),
+                    const Padding(
+                      padding: EdgeInsets.only(bottom: 8.0),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
@@ -498,7 +506,7 @@ class _PartyGuestAddEditManageScreenState
                           isEmpty: _sGender == '',
                           child: DropdownButtonHideUnderline(
                             child: DropdownButton<String>(
-                              style: TextStyle(
+                              style: const TextStyle(
                                   color: Constants.lightPrimary),
                               dropdownColor: Constants.background,
                               value: _sGender,
@@ -596,8 +604,8 @@ class _PartyGuestAddEditManageScreenState
                 padding: const EdgeInsets.symmetric(horizontal: 32),
                 child: Column(
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 8.0),
+                    const Padding(
+                      padding: EdgeInsets.only(bottom: 8.0),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
@@ -707,7 +715,7 @@ class _PartyGuestAddEditManageScreenState
                               const Padding(
                                 padding: EdgeInsets.only(bottom: 10),
                                 child: Text(
-                                  'challenge level *',
+                                  'challenge level',
                                   style: TextStyle(
                                       color:
                                           Constants.lightPrimary,
@@ -1155,15 +1163,21 @@ class _PartyGuestAddEditManageScreenState
   }
 
   bool isDataValid() {
+
+
     if (widget.partyGuest.name.isEmpty) {
       Logx.em(_TAG, 'name not entered for guest');
       Toaster.longToast('please enter your name');
       return false;
     }
     if (widget.partyGuest.surname.isEmpty) {
-      Logx.em(_TAG, 'surname not entered for guest');
-      Toaster.longToast('please enter your surname / last name');
-      return false;
+      if(mBlocUser.surname.isNotEmpty){
+        widget.partyGuest = widget.partyGuest.copyWith(surname: mBlocUser.surname);
+      } else {
+        Logx.em(_TAG, 'surname not entered for guest');
+        Toaster.longToast('please enter your surname / last name');
+        return false;
+      }
     }
     if (widget.party.isEmailRequired && widget.partyGuest.email.isEmpty) {
       Logx.em(_TAG, 'email not entered for guest');

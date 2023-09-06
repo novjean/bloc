@@ -334,7 +334,7 @@ class Dummy {
         shouldBanUser: false,
         promoterId: '',
         guestNames: [],
-        gender: 'male');
+        gender: isLoggedInUser ? UserPreferences.myUser.gender : 'male');
     return dummyGuest;
   }
 
