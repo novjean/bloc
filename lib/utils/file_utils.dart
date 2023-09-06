@@ -87,7 +87,7 @@ class FileUtils {
     return tempFile;
   }
 
-  static Future<File> getImageCompressed(String filePath, int minHeight, int maxHeight, int quality) async {
+  static Future<File> getImageCompressed(String filePath, int minHeight, int minWidth, int quality) async {
     // Load the asset image data
     File file = File(filePath);
     final Uint8List bytes = await file.readAsBytes();
@@ -101,7 +101,7 @@ class FileUtils {
     final compressedImage = await FlutterImageCompress.compressWithList(
       bytes,
       minHeight: minHeight,
-      minWidth: maxHeight,
+      minWidth: minWidth,
       quality: quality,
     );
 

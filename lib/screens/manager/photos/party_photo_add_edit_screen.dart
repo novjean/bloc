@@ -54,6 +54,7 @@ class _PartyPhotoAddEditScreenState extends State<PartyPhotoAddEditScreen> {
   int mPartyDate = Timestamp.now().millisecondsSinceEpoch;
 
   String imagePath = '';
+  bool isPortrait = false;
 
   List<BlocService> mBlocServices = [];
   List<BlocService> sBlocs = [];
@@ -113,6 +114,9 @@ class _PartyPhotoAddEditScreenState extends State<PartyPhotoAddEditScreen> {
   }
 
   _buildBody(BuildContext context) {
+    double longSide = 1280;
+    double shortSide = 1024;
+
     return ListView(
       padding: const EdgeInsets.symmetric(horizontal: 32),
       physics: const BouncingScrollPhysics(),
@@ -122,8 +126,8 @@ class _PartyPhotoAddEditScreenState extends State<PartyPhotoAddEditScreen> {
           onTap: () async {
             final image = await ImagePicker().pickImage(
                 source: ImageSource.gallery,
-                maxHeight: 1024,
-                maxWidth: 1280,
+                maxHeight: isPortrait? longSide:shortSide,
+                maxWidth: isPortrait? shortSide:longSide,
                 imageQuality: 95);
             if (image == null) return;
 
@@ -151,7 +155,7 @@ class _PartyPhotoAddEditScreenState extends State<PartyPhotoAddEditScreen> {
             }
 
             final newThumbImage = await FileUtils.getImageCompressed(
-                imageFile.path, 280, 210, 95);
+                imageFile.path, isPortrait? 280:210, isPortrait? 210:280, 95);
             String imageThumbUrl = await FirestorageHelper.uploadFile(
                 FirestorageHelper.PARTY_PHOTO_THUMB_IMAGES,
                 StringUtils.getRandomString(28),
@@ -185,7 +189,9 @@ class _PartyPhotoAddEditScreenState extends State<PartyPhotoAddEditScreen> {
               text: 'pick photos',
               onClicked: () async {
                 List<XFile> images = await ImagePicker().pickMultiImage(
-                    maxHeight: 1024, maxWidth: 1280, imageQuality: 95);
+                    maxHeight: isPortrait? longSide:shortSide,
+                    maxWidth: isPortrait? shortSide:longSide,
+                    imageQuality: 95);
 
                 if (images.isNotEmpty) {
                   final directory = await getApplicationDocumentsDirectory();
@@ -204,7 +210,7 @@ class _PartyPhotoAddEditScreenState extends State<PartyPhotoAddEditScreen> {
                         newImage);
 
                     final newThumbImage = await FileUtils.getImageCompressed(
-                        imageFile.path, 280, 210, 95);
+                        imageFile.path, isPortrait? 280:210, isPortrait? 210:280, 95);
                     String imageThumbUrl = await FirestorageHelper.uploadFile(
                         FirestorageHelper.PARTY_PHOTO_THUMB_IMAGES,
                         StringUtils.getRandomString(28),
@@ -267,6 +273,30 @@ class _PartyPhotoAddEditScreenState extends State<PartyPhotoAddEditScreen> {
             )
           ],
         ),
+        const SizedBox(height: 12),
+        Row(
+          children: [
+            const Text('portrait: ',
+                style: TextStyle(
+                  fontSize: 16,
+                )),
+            Checkbox(
+              value: isPortrait,
+              side: MaterialStateBorderSide.resolveWith(
+                    (states) => const BorderSide(
+                    width: 1.0),
+              ),
+              onChanged: (value) {
+                setState(() {
+                  isPortrait = value!;
+                });
+              },
+            ),
+          ],
+        ),
+
+        const SizedBox(height: 24),
+
         TextFieldWidget(
             label: 'name *',
             text: widget.partyPhoto.partyName,
