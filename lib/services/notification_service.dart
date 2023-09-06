@@ -216,10 +216,25 @@ class NotificationService {
   }
 
   static void showChatNotification(LoungeChat chat) async {
+    String photoUrl = '';
+    String photoChat = '';
+
+    if(chat.type == 'image'){
+      int firstDelimiterIndex = chat.message.indexOf(',');
+      if (firstDelimiterIndex != -1) {
+        // Use substring to split the string into two parts
+        photoUrl = chat.message.substring(0, firstDelimiterIndex);
+        photoChat = chat.message.substring(firstDelimiterIndex + 1);
+      } else {
+        // Handle the case where the delimiter is not found
+        photoUrl = chat.message;
+      }
+    }
+
     Map<String, dynamic> objectMap = chat.toMap();
     String jsonString = jsonEncode(objectMap);
 
-    String title = chat.loungeName;
+    String title = '💌 ${chat.loungeName}';
 
     if (chat.type == 'text') {
       String body = chat.message;
@@ -235,12 +250,10 @@ class NotificationService {
         },
       );
     } else {
-      String body = 'tap to learn more';
-
       await showNotification(
         title: title,
-        body: body,
-        largeIcon: chat.message,
+        body: photoChat,
+        largeIcon: photoUrl,
         notificationLayout: NotificationLayout.Default,
         payload: {
           "navigate": "true",
