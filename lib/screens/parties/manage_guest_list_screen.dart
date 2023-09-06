@@ -10,8 +10,10 @@ import 'package:multi_select_flutter/dialog/multi_select_dialog_field.dart';
 import 'package:multi_select_flutter/util/multi_select_item.dart';
 import 'package:multi_select_flutter/util/multi_select_list_type.dart';
 
+import '../../api/apis.dart';
 import '../../db/entity/party.dart';
 import '../../db/entity/promoter_guest.dart';
+import '../../db/entity/user.dart';
 import '../../helpers/fresh.dart';
 import '../../main.dart';
 import '../../utils/constants.dart';
@@ -707,6 +709,25 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
                         for (PartyGuest pg in mPartyGuests) {
                           pg = pg.copyWith(partyId: sParty.id);
                           FirestoreHelper.pushPartyGuest(pg);
+
+                          FirestoreHelper.pullUser(pg.guestId).then((res) {
+                            if(res.docs.isNotEmpty){
+                              DocumentSnapshot document = res.docs[0];
+                              Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+                              final User user = Fresh.freshUserMap(data, false);
+
+                              if(user.isAppUser && user.fcmToken.isNotEmpty){
+                                String title = sParty.name;
+                                String message =
+                                    '🥳 yayyy! your guest list for ${sParty.name} has been approved 🎉, see you and your gang soon! 😎🍾';
+
+                                Apis.sendPushNotification(
+                                    user.fcmToken, title, message);
+                              }
+                            } else {
+                              Logx.em(_TAG, 'cant find user for id: ${pg.guestId}');
+                            }
+                          });
                         }
 
                         Logx.ist(_TAG,

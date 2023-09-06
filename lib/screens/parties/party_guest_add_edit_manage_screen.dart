@@ -1104,7 +1104,7 @@ class _PartyGuestAddEditManageScreenState
                                         mBlocUser.fcmToken.isNotEmpty) {
                                       String title = widget.party.name;
                                       String message =
-                                          '🥳 yayyy! welcome to ${widget.party.name} family, your guest list for${widget.party.name} has been approved 🎉, see you and your gang soon! 😎🍾';
+                                          '🥳 yayyy! welcome to ${widget.party.name} family, your guest list for ${widget.party.name} has been approved 🎉, see you and your gang soon! 😎🍾';
 
                                       //send a notification
                                       Apis.sendPushNotification(
@@ -1117,7 +1117,7 @@ class _PartyGuestAddEditManageScreenState
                                         mBlocUser.fcmToken.isNotEmpty) {
                                       String title = widget.party.name;
                                       String message =
-                                          '🥳 yayyy! your guest list for${widget.party.name} has been approved 🎉, see you and your gang soon! 😎🍾';
+                                          '🥳 yayyy! your guest list for ${widget.party.name} has been approved 🎉, see you and your gang soon! 😎🍾';
 
                                       //send a notification
                                       Apis.sendPushNotification(
