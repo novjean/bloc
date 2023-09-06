@@ -1356,7 +1356,7 @@ class _PartyGuestAddEditManageScreenState
             TextButton(
               style: ButtonStyle(
                 backgroundColor: MaterialStateProperty.all<Color>(
-                    Constants.darkPrimary), // Set your desired background color
+                    Constants.darkPrimary),
               ),
               onPressed: () {
                 Navigator.of(ctx).pop();
@@ -1416,7 +1416,7 @@ class _PartyGuestAddEditManageScreenState
             TextButton(
               style: ButtonStyle(
                 backgroundColor: MaterialStateProperty.all<Color>(
-                    Constants.darkPrimary), // Set your desired background color
+                    Constants.darkPrimary),
               ),
               onPressed: () {
                 if (isNewUser) {
@@ -1635,8 +1635,7 @@ class _PartyGuestAddEditManageScreenState
                   ? TextButton(
                       style: ButtonStyle(
                         backgroundColor: MaterialStateProperty.all<Color>(
-                            Constants
-                                .darkPrimary), // Set your desired background color
+                            Constants.darkPrimary),
                       ),
                       child: Text(cas[1].buttonTitle,
                           style: const TextStyle(color: Constants.primary)),
@@ -1663,8 +1662,7 @@ class _PartyGuestAddEditManageScreenState
                   : const SizedBox(),
               TextButton(
                 style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all<Color>(Constants
-                      .darkPrimary), // Set your desired background color
+                  backgroundColor: MaterialStateProperty.all<Color>(Constants.darkPrimary),
                 ),
                 child: Text(cas[0].buttonTitle,
                     style: const TextStyle(color: Constants.primary)),
@@ -1797,14 +1795,14 @@ class _PartyGuestAddEditManageScreenState
                   padding: EdgeInsets.only(bottom: 20),
                   child:
                   Text(
-                    'VIP table? Confirm your throne spot! 👑',
+                    'Take it to the next level, reserve! 👑',
                       textAlign: TextAlign.center,
                       style: TextStyle(fontSize: 22, color: Colors.black),
                   ),
                 ),
 
                 Text(
-                    'you\'re makin\' moves at the event, and you\'ll need that table locked, loaded, and ready for the squad. Secure the vibes, reserve a table – it\'s gonna be one for the books! Reserve your table?'),
+                    'Would you and your friends like to elevate your event experience during the event? Reserve a table and make the night unforgettable!'),
               ],
             ),
           ),

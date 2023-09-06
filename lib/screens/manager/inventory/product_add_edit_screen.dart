@@ -516,7 +516,7 @@ class _ProductAddEditScreenState extends State<ProductAddEditScreen> {
                   FirestoreHelper.pushProduct(freshProduct);
                 } else {
                   Logx.em(_TAG, 'photo deletion failed');
-                  Toaster.shortToast('photo deleted failed');
+                  Toaster.shortToast('photo deletion failed');
                 }
               }
 

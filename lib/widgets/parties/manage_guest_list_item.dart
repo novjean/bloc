@@ -6,15 +6,17 @@ import '../../db/entity/party_guest.dart';
 import '../../db/entity/user.dart';
 import '../../helpers/firestore_helper.dart';
 import '../../helpers/fresh.dart';
+import '../../main.dart';
+import '../../utils/constants.dart';
 import '../../utils/logx.dart';
 
-class PartyGuestItem extends StatelessWidget {
-  static const String _TAG = 'PartyGuestItem';
+class ManageGuestListItem extends StatelessWidget {
+  static const String _TAG = 'ManageGuestListItem';
 
   final PartyGuest partyGuest;
   final String partyName;
 
-  const PartyGuestItem(
+  const ManageGuestListItem(
       {Key? key, required this.partyGuest, required this.partyName})
       : super(key: key);
 
@@ -33,76 +35,45 @@ class PartyGuestItem extends StatelessWidget {
       child: Hero(
         tag: partyGuest.id,
         child: Card(
-          color: Theme.of(context).primaryColorLight,
+          color: Constants.lightPrimary,
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)),
-          child: SizedBox(
-            width: MediaQuery.of(context).size.width,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
+          child: Container(
+            padding: const EdgeInsets.symmetric(vertical: 1, horizontal: 5),
+            width: mq.width,
+            child: ListView(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
               children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 5.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        title,
-                        style: const TextStyle(fontSize: 18),
-                      ),
-                      partyGuest.shouldBanUser
-                          ? showBannedIcon(context)
-                          : const SizedBox(),
-                      Text(
-                          ' ${DateTimeUtils.getFormattedDateString(partyGuest.createdAt)}'),
-                    ],
-                  ),
-                ),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.only(left: 5),
-                      child: Text(
-                        partyName,
-                      ),
+                    Text(
+                      title,
+                      style: const TextStyle(fontSize: 18),
                     ),
-                  ],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(left: 5, top: 5),
-                      child: Text(
-                        'status : ${partyGuest.guestStatus}',
-                      ),
-                    ),
+                    partyGuest.shouldBanUser
+                        ? showBannedIcon(context)
+                        : const SizedBox(),
+                    Text(
+                        ' ${DateTimeUtils.getFormattedDateString(partyGuest.createdAt)}'),
                   ],
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.only(left: 5, bottom: 5),
-                      child: Row(
-                        children: [
-                          Text('supported : ${partyGuest.isChallengeClicked}'),
-                        ],
-                      ),
+                    Text(
+                      'status : ${partyGuest.guestStatus}',
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(right: 5, bottom: 5),
-                      child: Row(
-                        children: [
-                          const Text('approved: '),
-                          Checkbox(
-                            value: partyGuest.isApproved,
-                            onChanged: (value) {},
-                          ),
-                        ],
-                      ),
-                    ),
+                    Text(partyName, style: const TextStyle(fontWeight: FontWeight.bold),)
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text('supported : ${partyGuest.isChallengeClicked}'),
+                    const Spacer(),
+                    Text(partyGuest.isApproved?'✅': '⭕'),
                   ],
                 ),
               ],

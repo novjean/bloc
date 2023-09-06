@@ -198,7 +198,9 @@ class NotificationService {
             label: 'dismiss',
             actionType: ActionType.DismissAction,
             isDangerousOption: true)
-      ]);
+      ]).then((res) {
+        FirestoreHelper.updateAdReach(ad.id);
+      });
     } else {
       await showNotification(
           title: ad.title,
@@ -211,7 +213,9 @@ class NotificationService {
             "type": "ad",
             "data": jsonString,
           },
-      );
+      ).then((res) {
+        FirestoreHelper.updateAdReach(ad.id);
+      });
     }
   }
 

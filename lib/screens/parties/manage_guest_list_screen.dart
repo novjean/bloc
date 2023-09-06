@@ -20,7 +20,7 @@ import '../../utils/constants.dart';
 import '../../utils/date_time_utils.dart';
 import '../../utils/file_utils.dart';
 import '../../utils/logx.dart';
-import '../../widgets/parties/party_guest_item.dart';
+import '../../widgets/parties/manage_guest_list_item.dart';
 import '../../widgets/ui/loading_widget.dart';
 import '../../widgets/ui/toaster.dart';
 
@@ -243,7 +243,7 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
             }
 
             return GestureDetector(
-                child: PartyGuestItem(
+                child: ManageGuestListItem(
                   partyGuest: partyGuestList[index],
                   partyName: partyName,
                 ),

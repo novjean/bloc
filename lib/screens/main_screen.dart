@@ -183,12 +183,6 @@ class _MainScreenState extends State<MainScreen> {
             LoungeChat chat = Fresh.freshLoungeChatMap(jsonDecode(data['document']), false);
             if(UserPreferences.isUserLoggedIn() && chat.userId != UserPreferences.myUser.id){
               if(UserPreferences.getListLounges().contains(chat.loungeId)){
-
-                // RemoteNotification notification = RemoteNotification(
-                //   title: '🫶 ${chat.loungeName}',
-                //   body: chat.type == 'text'? chat.message : '🖼️ photo' ,
-                // );
-
                 NotificationService.showChatNotification(chat);
               }
             }
@@ -196,8 +190,6 @@ class _MainScreenState extends State<MainScreen> {
           }
           case 'ads':{
             Ad ad = Fresh.freshAdMap(jsonDecode(data['document']), false);
-            FirestoreHelper.updateAdReach(ad.id);
-
             NotificationService.showAdNotification(ad);
             break;
           }

@@ -2617,7 +2617,7 @@ class Fresh {
   static Product freshProductMap(Map<String, dynamic> map, bool shouldUpdate) {
     Product product = Dummy.getDummyProduct('', UserPreferences.myUser.id);
 
-    bool shouldPushProduct = false;
+    bool isModelChanged = false;
     int intPrice = 0;
 
     try {
@@ -2628,8 +2628,8 @@ class Fresh {
     try {
       product = product.copyWith(name: map['name'] as String);
     } catch (e) {
-      Logx.em(_TAG, 'product name not exist for product id: ' + product.id);
-      shouldPushProduct = true;
+      Logx.em(_TAG, 'product name not exist for id: ${product.id}');
+      isModelChanged = true;
     }
     try {
       product = product.copyWith(price: map['price'] as double);
@@ -2638,7 +2638,7 @@ class Fresh {
       product = product.copyWith(price: intPrice.toDouble());
       if (intPrice == 0) {
         Logx.i(_TAG, 'product price not exist for product id: ' + product.id);
-        shouldPushProduct = true;
+        isModelChanged = true;
       }
     }
     try {
@@ -2648,7 +2648,7 @@ class Fresh {
       product = product.copyWith(priceHighest: intPrice.toDouble());
       Logx.em(
           _TAG, 'product priceHighest not exist for product id: ' + product.id);
-      shouldPushProduct = true;
+      isModelChanged = true;
     }
     try {
       product = product.copyWith(priceLowest: map['priceLowest'] as double);
@@ -2657,7 +2657,7 @@ class Fresh {
       product = product.copyWith(priceLowest: intPrice.toDouble());
       Logx.em(
           _TAG, 'product priceLowest not exist for product id: ' + product.id);
-      shouldPushProduct = true;
+      isModelChanged = true;
     }
     try {
       product =
@@ -2667,59 +2667,59 @@ class Fresh {
       product = product.copyWith(priceCommunity: intPrice.toDouble());
       Logx.em(_TAG,
           'product priceCommunity not exist for product id: ' + product.id);
-      shouldPushProduct = true;
+      isModelChanged = true;
     }
     try {
       product = product.copyWith(type: map['type'] as String);
     } catch (e) {
       Logx.em(_TAG, 'product type not exist for product id: ' + product.id);
-      shouldPushProduct = true;
+      isModelChanged = true;
     }
     try {
       product = product.copyWith(category: map['category'] as String);
     } catch (e) {
       Logx.em(_TAG, 'product category not exist for product id: ' + product.id);
-      shouldPushProduct = true;
+      isModelChanged = true;
     }
     try {
       product = product.copyWith(description: map['description'] as String);
     } catch (e) {
       Logx.em(
           _TAG, 'product description not exist for product id: ' + product.id);
-      shouldPushProduct = true;
+      isModelChanged = true;
     }
     try {
       product = product.copyWith(serviceId: map['serviceId'] as String);
     } catch (e) {
       Logx.em(
           _TAG, 'product serviceId not exist for product id: ' + product.id);
-      shouldPushProduct = true;
+      isModelChanged = true;
     }
     try {
       product = product.copyWith(imageUrl: map['imageUrl'] as String);
     } catch (e) {
       Logx.em(_TAG, 'product imageUrl not exist for product id: ' + product.id);
-      shouldPushProduct = true;
+      isModelChanged = true;
     }
     try {
       product = product.copyWith(ownerId: map['ownerId'] as String);
     } catch (e) {
       Logx.em(_TAG, 'product ownerId not exist for product id: ' + product.id);
-      shouldPushProduct = true;
+      isModelChanged = true;
     }
     try {
       product = product.copyWith(createdAt: map['createdAt'] as int);
     } catch (e) {
       Logx.em(
           _TAG, 'product createdAt not exist for product id: ' + product.id);
-      shouldPushProduct = true;
+      isModelChanged = true;
     }
     try {
       product = product.copyWith(isAvailable: map['isAvailable'] as bool);
     } catch (e) {
       Logx.em(
           _TAG, 'product isAvailable not exist for product id: ' + product.id);
-      shouldPushProduct = true;
+      isModelChanged = true;
     }
     try {
       product =
@@ -2727,7 +2727,7 @@ class Fresh {
     } catch (e) {
       Logx.em(_TAG,
           'product priceHighestTime not exist for product id: ' + product.id);
-      shouldPushProduct = true;
+      isModelChanged = true;
     }
     try {
       product =
@@ -2735,20 +2735,20 @@ class Fresh {
     } catch (e) {
       Logx.em(_TAG,
           'product priceLowestTime not exist for product id: ' + product.id);
-      shouldPushProduct = true;
+      isModelChanged = true;
     }
     try {
       product = product.copyWith(isOfferRunning: map['isOfferRunning'] as bool);
     } catch (e) {
       Logx.em(_TAG,
           'product isOfferRunning not exist for product id: ' + product.id);
-      shouldPushProduct = true;
+      isModelChanged = true;
     }
     try {
       product = product.copyWith(isVeg: map['isVeg'] as bool);
     } catch (e) {
       Logx.em(_TAG, 'product isVeg not exist for product id: ' + product.id);
-      shouldPushProduct = true;
+      isModelChanged = true;
     }
     try {
       product = product.copyWith(blocIds: List<String>.from(map['blocIds']));
@@ -2756,20 +2756,20 @@ class Fresh {
       Logx.em(_TAG, 'product blocIds not exist for product id: ' + product.id);
       List<String> existingBlocIds = [product.serviceId];
       product = product.copyWith(blocIds: existingBlocIds);
-      shouldPushProduct = true;
+      isModelChanged = true;
     }
     try {
       product = product.copyWith(priceBottle: map['priceBottle'] as int);
     } catch (e) {
       Logx.em(
           _TAG, 'product priceBottle not exist for product id: ' + product.id);
-      shouldPushProduct = true;
+      isModelChanged = true;
     }
 
-    if (shouldPushProduct &&
+    if (isModelChanged &&
         shouldUpdate &&
         UserPreferences.myUser.clearanceLevel >= Constants.MANAGER_LEVEL) {
-      Logx.i(_TAG, 'updating product ' + product.id);
+      Logx.i(_TAG, 'updating product ${product.id}');
       FirestoreHelper.pushProduct(product);
     }
 

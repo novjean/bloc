@@ -47,6 +47,7 @@ class _AdAddEditScreenState extends State<AdAddEditScreen> {
   var _isPartiesLoading = true;
 
   String imagePath = '';
+  bool isPartyPhoto = false;
 
   @override
   void initState() {
@@ -105,10 +106,14 @@ class _AdAddEditScreenState extends State<AdAddEditScreen> {
             final imageFile = File('${directory.path}/$name');
             final newImage = await File(image.path).copy(imageFile.path);
 
-            String oldImageUrl = widget.ad.imageUrl;
+            if(!isPartyPhoto){
+              String oldImageUrl = widget.ad.imageUrl;
 
-            if(oldImageUrl.isNotEmpty){
-              FirestorageHelper.deleteFile(oldImageUrl);
+              if(oldImageUrl.isNotEmpty){
+                FirestorageHelper.deleteFile(oldImageUrl);
+              }
+            } else {
+              isPartyPhoto = false;
             }
 
             String newImageUrl = await FirestorageHelper.uploadFile(
@@ -173,6 +178,7 @@ class _AdAddEditScreenState extends State<AdAddEditScreen> {
                   Party party = sParties.first;
 
                   setState(() {
+                    isPartyPhoto = true;
                     widget.ad = widget.ad.copyWith(
                         imageUrl: party.imageUrl,
                         partyName: party.name,
@@ -180,6 +186,7 @@ class _AdAddEditScreenState extends State<AdAddEditScreen> {
                   });
                 } else {
                   setState(() {
+                    isPartyPhoto = false;
                     widget.ad = widget.ad.copyWith(
                         imageUrl: '', partyName: '', partyChapter: '');
                   });
@@ -217,7 +224,7 @@ class _AdAddEditScreenState extends State<AdAddEditScreen> {
 
         const SizedBox(height: 24),
         ButtonWidget(
-          text: 'save',
+          text: '💾 save',
           onClicked: () async {
             Ad freshAd = Fresh.freshAd(widget.ad);
 

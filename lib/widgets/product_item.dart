@@ -228,8 +228,8 @@ class _ProductItemState extends State<ProductItem> {
                         const SizedBox(height: 2),
                         Text(widget.product.description.toLowerCase(),
                             overflow: TextOverflow.ellipsis,
-                            maxLines: 3,
-                            style: TextStyle(
+                            maxLines: 5,
+                            style: const TextStyle(
                                 fontSize: 16,
                                 color: Constants.darkPrimary)),
 
