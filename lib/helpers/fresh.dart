@@ -3723,6 +3723,12 @@ class Fresh {
       isModelChanged = true;
     }
     try {
+      user = user.copyWith(birthYear: map['birthYear'] as int);
+    } catch (e) {
+      Logx.em(_TAG, 'user birthYear not exist for id: ${user.id}');
+      isModelChanged = true;
+    }
+    try {
       user = user.copyWith(email: map['email'] as String);
     } catch (e) {
       Logx.em(_TAG, 'user email not exist for id: ${user.id}');
@@ -3849,17 +3855,22 @@ class Fresh {
     try {
       freshUser = freshUser.copyWith(clearanceLevel: user.clearanceLevel);
     } catch (e) {
-      Logx.em(_TAG, 'user clearanceLevel not exist for user id: ' + user.id);
+      Logx.em(_TAG, 'user clearanceLevel not exist for id: ${user.id}');
     }
     try {
       freshUser = freshUser.copyWith(challengeLevel: user.challengeLevel);
     } catch (e) {
-      Logx.em(_TAG, 'user challengeLevel not exist for user id: ' + user.id);
+      Logx.em(_TAG, 'user challengeLevel not exist for id: ${user.id}');
     }
     try {
       freshUser = freshUser.copyWith(phoneNumber: user.phoneNumber);
     } catch (e) {
-      Logx.em(_TAG, 'user phoneNumber not exist for user id: ' + user.id);
+      Logx.em(_TAG, 'user phoneNumber not exist for id: ${user.id}');
+    }
+    try {
+      freshUser = freshUser.copyWith(birthYear: user.birthYear);
+    } catch (e) {
+      Logx.em(_TAG, 'user birthYear not exist for id: ${user.id}');
     }
     try {
       freshUser = freshUser.copyWith(fcmToken: user.fcmToken);

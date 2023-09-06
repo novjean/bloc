@@ -57,9 +57,17 @@ class _ProfileAddEditRegisterPageState
     'prefer not to respond'
   ];
 
+  final List<String> years = [];
+  late String _sYear;
+
   @override
   void initState() {
     sGender = widget.user.gender;
+
+    _sYear = widget.user.birthYear.toString();
+    for(int i = widget.user.birthYear; i > widget.user.birthYear-100; i--){
+      years.add(i.toString());
+    }
 
     super.initState();
   }
@@ -113,6 +121,73 @@ class _ProfileAddEditRegisterPageState
           onChanged: (text) => widget.user = widget.user.copyWith(surname: text),
         ),
         const SizedBox(height: 24),
+        Column(
+          children: [
+            const Padding(
+              padding: EdgeInsets.only(bottom: 8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Text(
+                    'year of birth',
+                    style: TextStyle(
+                        color: Constants.lightPrimary,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
+            ),
+            FormField<String>(
+              builder: (FormFieldState<String> state) {
+                return InputDecorator(
+                  key: const ValueKey('year_dropdown'),
+                  decoration: InputDecoration(
+                      fillColor: Colors.white,
+                      errorStyle: const TextStyle(
+                          color: Constants.errorColor, fontSize: 16.0),
+                      hintText: 'please select year of birth',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(5.0),
+                        borderSide:
+                        const BorderSide(color: Constants.primary),
+                      ),
+                      enabledBorder: const OutlineInputBorder(
+                        borderSide: BorderSide(
+                            color: Constants.primary, width: 0.0),
+                      )),
+                  isEmpty: _sYear == '',
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton<String>(
+                      style: const TextStyle(
+                          color: Constants.lightPrimary),
+                      dropdownColor: Constants.background,
+                      value: _sYear,
+                      isDense: true,
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          _sYear = newValue!;
+                          int year = int.parse(_sYear);
+
+                          widget.user =
+                              widget.user.copyWith(birthYear: year);
+                          state.didChange(newValue);
+                        });
+                      },
+                      items: years.map((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                );
+              },
+            ),
+            const SizedBox(height: 24),
+          ],
+        ),
         Column(
           children: [
             const Padding(
@@ -186,17 +261,17 @@ class _ProfileAddEditRegisterPageState
               widget.user = widget.user.copyWith(email: email),
         ),
         const SizedBox(height: 24),
-        Row(
+        const Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             Padding(
-              padding: const EdgeInsets.only(right: 10, bottom: 5),
+              padding: EdgeInsets.only(right: 10, bottom: 5),
               child: DelayedDisplay(
-                delay: const Duration(seconds: 1),
+                delay: Duration(seconds: 1),
                 child: Text(
                   "* required",
                   style: TextStyle(
-                    color: Theme.of(context).primaryColor,
+                    color: Constants.primary,
                   ),
                 ),
               ),
@@ -238,7 +313,6 @@ class _ProfileAddEditRegisterPageState
               }
             } else {
               Logx.i(_TAG,'user cannot be entered as data is incomplete');
-              Toaster.longToast('please enter your name');
             }
           },
         ),

@@ -524,6 +524,7 @@ class Dummy {
         name: '',
         surname: '',
         gender: 'male',
+        birthYear: 2023,
         phoneNumber: 0,
         isBanned: false,
         isAppUser: false,

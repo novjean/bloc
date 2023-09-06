@@ -160,7 +160,7 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
       children: [
         const SizedBox(height: 15),
         DarkTextFieldWidget(
-            label: 'name \*',
+            label: 'name *',
             text: widget.reservation.name,
             onChanged: (name) {
               bloc_user = bloc_user.copyWith(name: name);
@@ -175,7 +175,7 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
                   Padding(
                     padding: const EdgeInsets.only(bottom: 10),
                     child: Text(
-                      'phone number \*',
+                      'phone number *',
                       style: TextStyle(
                           color: Theme.of(context).primaryColorLight,
                           fontSize: 16,
@@ -231,7 +231,7 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
                 Padding(
                   padding: const EdgeInsets.only(bottom: 8),
                   child: Text(
-                    'date \*',
+                    'date *',
                     style: TextStyle(
                       color: Theme.of(context).primaryColorLight,
                       fontWeight: FontWeight.bold,
@@ -915,7 +915,7 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
     return Container(
       decoration: BoxDecoration(
           border: Border.all(
-            color: Theme.of(context).primaryColor,
+            color: Constants.primary,
           ),
           borderRadius: const BorderRadius.all(Radius.circular(5))),
       padding: const EdgeInsets.only(left: 10, top: 5, right: 5, bottom: 5),

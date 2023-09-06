@@ -6,6 +6,7 @@ class User {
   final String email;
   final String imageUrl;
   final String gender;
+  final int birthYear;
 
   final int clearanceLevel;
   final int challengeLevel;
@@ -31,6 +32,7 @@ class User {
     required this.email,
     required this.imageUrl,
     required this.gender,
+    required this.birthYear,
     required this.clearanceLevel,
     required this.challengeLevel,
     required this.blocServiceId,
@@ -55,6 +57,7 @@ class User {
           email == other.email &&
           imageUrl == other.imageUrl &&
           gender == other.gender &&
+          birthYear == other.birthYear &&
           clearanceLevel == other.clearanceLevel &&
           challengeLevel == other.challengeLevel &&
           blocServiceId == other.blocServiceId &&
@@ -75,6 +78,7 @@ class User {
       email.hashCode ^
       imageUrl.hashCode ^
       gender.hashCode ^
+      birthYear.hashCode ^
       clearanceLevel.hashCode ^
       challengeLevel.hashCode ^
       blocServiceId.hashCode ^
@@ -96,6 +100,7 @@ class User {
         ' email: $email,' +
         ' imageUrl: $imageUrl,' +
         ' gender: $gender,' +
+        ' birthYear: $birthYear,' +
         ' clearanceLevel: $clearanceLevel,' +
         ' challengeLevel: $challengeLevel,' +
         ' blocServiceId: $blocServiceId,' +
@@ -117,6 +122,7 @@ class User {
     String? email,
     String? imageUrl,
     String? gender,
+    int? birthYear,
     int? clearanceLevel,
     int? challengeLevel,
     String? blocServiceId,
@@ -136,6 +142,7 @@ class User {
       email: email ?? this.email,
       imageUrl: imageUrl ?? this.imageUrl,
       gender: gender ?? this.gender,
+      birthYear: birthYear ?? this.birthYear,
       clearanceLevel: clearanceLevel ?? this.clearanceLevel,
       challengeLevel: challengeLevel ?? this.challengeLevel,
       blocServiceId: blocServiceId ?? this.blocServiceId,
@@ -158,6 +165,7 @@ class User {
       'email': this.email,
       'imageUrl': this.imageUrl,
       'gender': this.gender,
+      'birthYear': this.birthYear,
       'clearanceLevel': this.clearanceLevel,
       'challengeLevel': this.challengeLevel,
       'blocServiceId': this.blocServiceId,
@@ -180,6 +188,7 @@ class User {
       email: map['email'] as String,
       imageUrl: map['imageUrl'] as String,
       gender: map['gender'] as String,
+      birthYear: map['birthYear'] as int,
       clearanceLevel: map['clearanceLevel'] as int,
       challengeLevel: map['challengeLevel'] as int,
       blocServiceId: map['blocServiceId'] as String,

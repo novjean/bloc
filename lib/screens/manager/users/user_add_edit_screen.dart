@@ -25,7 +25,6 @@ import '../../../widgets/ui/button_widget.dart';
 import '../../../widgets/ui/dark_button_widget.dart';
 import '../../../widgets/ui/loading_widget.dart';
 import '../../../widgets/ui/textfield_widget.dart';
-import '../../../widgets/ui/toaster.dart';
 
 class UserAddEditScreen extends StatefulWidget {
   User user;
@@ -194,6 +193,16 @@ class _UserAddEditScreenState extends State<UserAddEditScreen> {
           maxLines: 1,
           onChanged: (value) {
             widget.user = widget.user.copyWith(email: value);
+          },
+        ),
+        const SizedBox(height: 24),
+        TextFieldWidget(
+          label: 'year',
+          text: widget.user.birthYear.toString(),
+          maxLines: 1,
+          onChanged: (value) {
+            int num = int.parse(value);
+            widget.user = widget.user.copyWith(birthYear: num);
           },
         ),
         const SizedBox(height: 24),

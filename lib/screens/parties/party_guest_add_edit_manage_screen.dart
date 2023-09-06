@@ -69,6 +69,9 @@ class _PartyGuestAddEditManageScreenState
   bool hasUserChanged = false;
   bool _isCustomerLoading = true;
 
+  bool _showSurnameField = true;
+  bool _showYearField = true;
+
   String _sGuestStatus = 'couple';
   final List<String> _guestStatuses = [
     'couple',
@@ -118,12 +121,26 @@ class _PartyGuestAddEditManageScreenState
   List<Promoter> sPromoters = [];
   String sPromoterId = '';
 
+  final List<String> years = [];
+  late String _sYear;
+
   @override
   void initState() {
     if (!UserPreferences.isUserLoggedIn()) {
       mBlocUser = Dummy.getDummyUser();
     } else {
       mBlocUser = UserPreferences.myUser;
+    }
+
+    if(widget.partyGuest.surname.isEmpty || UserPreferences.myUser.clearanceLevel >= Constants.MANAGER_LEVEL){
+      _showSurnameField = true;
+    } else {
+      _showSurnameField = false;
+    }
+
+    _sYear = mBlocUser.birthYear.toString();
+    for(int i = mBlocUser.birthYear; i > mBlocUser.birthYear-100; i--){
+      years.add(i.toString());
     }
 
     if (mBlocUser.clearanceLevel < Constants.PROMOTER_LEVEL) {
@@ -161,6 +178,15 @@ class _PartyGuestAddEditManageScreenState
               isLoggedIn = false;
             } else {
               mBlocUser = user;
+
+              if(mBlocUser.birthYear == 2023 ||
+                  UserPreferences.myUser.clearanceLevel >= Constants.MANAGER_LEVEL){
+                _showYearField = true;
+              } else {
+                _showYearField = false;
+              }
+              _sYear = mBlocUser.birthYear.toString();
+
               isLoggedIn = true;
             }
             _isCustomerLoading = false;
@@ -373,7 +399,7 @@ class _PartyGuestAddEditManageScreenState
                   },
                 ),
               ),
-              widget.partyGuest.surname.isEmpty || UserPreferences.myUser.clearanceLevel >= Constants.MANAGER_LEVEL?
+              _showSurnameField?
               Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -466,6 +492,79 @@ class _PartyGuestAddEditManageScreenState
                     }),
               ),
               const SizedBox(height: 24),
+              _showYearField ?
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 32),
+                child: Column(
+                  children: [
+                    const Padding(
+                      padding: EdgeInsets.only(bottom: 8.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Text(
+                            'year of birth *',
+                            style: TextStyle(
+                                color: Constants.lightPrimary,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                    ),
+                    FormField<String>(
+                      builder: (FormFieldState<String> state) {
+                        return InputDecorator(
+                          key: const ValueKey('year_dropdown'),
+                          decoration: InputDecoration(
+                              fillColor: Colors.white,
+                              errorStyle: const TextStyle(
+                                  color: Constants.errorColor, fontSize: 16.0),
+                              hintText: 'please select year of birth',
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(5.0),
+                                borderSide:
+                                const BorderSide(color: Constants.primary),
+                              ),
+                              enabledBorder: const OutlineInputBorder(
+                                borderSide: BorderSide(
+                                    color: Constants.primary, width: 0.0),
+                              )),
+                          isEmpty: _sYear == '',
+                          child: DropdownButtonHideUnderline(
+                            child: DropdownButton<String>(
+                              style: const TextStyle(
+                                  color: Constants.lightPrimary),
+                              dropdownColor: Constants.background,
+                              value: _sYear,
+                              isDense: true,
+                              onChanged: (String? newValue) {
+                                setState(() {
+                                  _sYear = newValue!;
+                                  int year = int.parse(_sYear);
+
+                                  mBlocUser =
+                                      mBlocUser.copyWith(birthYear: year);
+                                  hasUserChanged = true;
+                                  state.didChange(newValue);
+                                });
+                              },
+                              items: years.map((String value) {
+                                return DropdownMenuItem<String>(
+                                  value: value,
+                                  child: Text(value),
+                                );
+                              }).toList(),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                    const SizedBox(height: 24),
+                  ],
+                ),
+              ): const SizedBox(),
+
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 32),
                 child: Column(
@@ -1163,8 +1262,6 @@ class _PartyGuestAddEditManageScreenState
   }
 
   bool isDataValid() {
-
-
     if (widget.partyGuest.name.isEmpty) {
       Logx.em(_TAG, 'name not entered for guest');
       Toaster.longToast('please enter your name');
@@ -1190,7 +1287,6 @@ class _PartyGuestAddEditManageScreenState
       Toaster.longToast('please enter your phone number');
       return false;
     }
-
     return true;
   }
 
