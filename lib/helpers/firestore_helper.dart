@@ -1219,6 +1219,13 @@ class FirestoreHelper {
         .snapshots();
   }
 
+  static void updatePartyPhotoDownloadCount(String docId) {
+    FirebaseFirestore.instance
+        .collection(PARTY_PHOTOS)
+        .doc(docId)
+        .update({"downloadCount": FieldValue.increment(1)},);
+  }
+
   static void deletePartyPhoto(String docId) {
     FirebaseFirestore.instance
         .collection(PARTY_PHOTOS)

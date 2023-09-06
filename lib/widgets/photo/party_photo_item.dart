@@ -139,14 +139,14 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
                       ),
                 Padding(
                   padding: const EdgeInsets.only(
-                      left: 10.0, right: 10, top: 5, bottom: 1),
+                      left: 10.0, right: 8, top: 1, bottom: 1),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
                         widget.partyPhoto.partyName,
                         style: const TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.bold),
+                            fontSize: 21, fontWeight: FontWeight.bold),
                       ),
                       const Spacer(),
                       Text(
@@ -214,8 +214,8 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
                                   size: 24.0))),
                       Padding(
                         padding: const EdgeInsets.only(left: 20),
-                        child: InkWell(
-                          onTap: () {
+                        child: ElevatedButton.icon(
+                          onPressed: () {
                             if (kIsWeb) {
                               _showDownloadAppDialog(context);
                             } else {
@@ -228,19 +228,17 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
                                 FileUtils.saveNetworkImage(
                                     widget.partyPhoto.imageUrl, fileName);
 
-                                int count = widget.partyPhoto.downloadCount + 1;
-                                widget.partyPhoto = widget.partyPhoto
-                                    .copyWith(downloadCount: count);
-                                FirestoreHelper.pushPartyPhoto(
-                                    widget.partyPhoto);
+                                FirestoreHelper.updatePartyPhotoDownloadCount(widget.partyPhoto.id);
                               } else {
                                 Logx.ist(_TAG,
                                     'please login to save the photo to your gallery');
                               }
                             }
                           },
-                          child: const Icon(Icons.save_alt, size: 24.0),
-                        ),
+                          icon: const Icon(Icons.save_alt, size: 24.0), // Icon to display
+                          label: const Text('save'),
+
+                        )
                       ),
                     ],
                   ),
