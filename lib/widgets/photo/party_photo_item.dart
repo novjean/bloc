@@ -6,12 +6,14 @@ import 'package:bloc/utils/file_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:in_app_review/in_app_review.dart';
 import 'package:multi_select_flutter/dialog/multi_select_dialog_field.dart';
 import 'package:multi_select_flutter/util/multi_select_item.dart';
 import 'package:multi_select_flutter/util/multi_select_list_type.dart';
 
 import '../../db/entity/lounge.dart';
 import '../../db/entity/party_photo.dart';
+import '../../db/entity/user.dart';
 import '../../helpers/dummy.dart';
 import '../../helpers/fresh.dart';
 import '../../main.dart';
@@ -220,24 +222,30 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
                               _showDownloadAppDialog(context);
                             } else {
                               if (UserPreferences.isUserLoggedIn()) {
-                                Logx.ist(_TAG, '🍄 downloading...');
+                                Logx.ist(_TAG, '🍄 saving to gallery...');
                                 int fileNum = widget.index + 1;
                                 String fileName =
                                     '${widget.partyPhoto.partyName} $fileNum';
 
-                                FileUtils.saveNetworkImage(
-                                    widget.partyPhoto.imageUrl, fileName);
-
+                                FileUtils.saveNetworkImage(widget.partyPhoto.imageUrl, fileName);
                                 FirestoreHelper.updatePartyPhotoDownloadCount(widget.partyPhoto.id);
+
+                                if(UserPreferences.myUser.lastReviewTime < Timestamp.now().millisecondsSinceEpoch - (2 * DateTimeUtils.millisecondsWeek)){
+                                  if(!UserPreferences.myUser.isAppReviewed){
+                                    _showReviewAppDialog(context);
+                                  } else {
+                                    //todo: might need to implement challenge logic here
+                                    Logx.i(_TAG, 'app is reviewed, so nothing to do for now');
+                                  }
+                                }
                               } else {
                                 Logx.ist(_TAG,
-                                    'please login to save the photo to your gallery');
+                                    '🧩 please login to save the photo to your gallery');
                               }
                             }
                           },
                           icon: const Icon(Icons.save_alt, size: 24.0), // Icon to display
                           label: const Text('save'),
-
                         )
                       ),
                     ],
@@ -546,7 +554,7 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
                 TextButton(
                   style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.all<Color>(Constants
-                        .darkPrimary), // Set your desired background color
+                        .darkPrimary),
                   ),
                   child: const Text(
                     "💌 send",
@@ -586,6 +594,80 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
         Logx.est(_TAG, '🫤 something went wrong, please try again!');
       }
     });
+  }
+
+  void _showReviewAppDialog(BuildContext context) {
+    showDialog(
+        context: context,
+        builder: (BuildContext ctx) {
+          return AlertDialog(
+            title: const Text(
+              '🍭 review our app',
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 22, color: Colors.black),
+            ),
+            backgroundColor: Constants.lightPrimary,
+            shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(20.0))),
+            contentPadding: const EdgeInsets.all(16.0),
+            content: Text(
+                'Behind bloc, there\'s a small but dedicated team pouring their hearts into it. Will you be our champion by leaving a review? Together, we\'ll build the best community app out there!'.toLowerCase()),
+            actions: [
+              TextButton(
+                child: const Text('close',
+                    style: TextStyle(color: Constants.background)),
+                onPressed: () {
+                  Navigator.of(ctx).pop();
+                },
+              ),
+              TextButton(
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all<Color>(Constants
+                      .lightPrimary),
+                ),
+                child: const Text('🧸 already reviewed',),
+                onPressed: () async {
+                  User user = UserPreferences.myUser;
+                  user = user.copyWith(
+                      isAppReviewed: true,
+                      lastReviewTime: Timestamp.now().millisecondsSinceEpoch);
+                  FirestoreHelper.pushUser(user);
+
+                  Logx.ist(_TAG, '🃏 thank you for already reviewing us');
+
+                  Navigator.of(ctx).pop();
+                },
+              ),
+              TextButton(
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all<Color>(Constants
+                      .darkPrimary),
+                ),
+                child: const Text('🌟 review us',
+                    style: TextStyle(color: Constants.primary)),
+                onPressed: () async {
+                  final InAppReview inAppReview = InAppReview.instance;
+                  bool isAvailable = await inAppReview.isAvailable();
+
+                  if(isAvailable){
+                    inAppReview.requestReview();
+                  } else {
+                    inAppReview.openStoreListing(appStoreId: Constants.blocAppStoreId);
+                  }
+
+                  User user = UserPreferences.myUser;
+                  user = user.copyWith(
+                      isAppReviewed: true,
+                      lastReviewTime: Timestamp.now().millisecondsSinceEpoch);
+                  UserPreferences.setUser(user);
+                  FirestoreHelper.pushUser(user);
+
+                  Navigator.of(ctx).pop();
+                },
+              ),
+            ],
+          );
+        });
   }
 
   String _getRandomLoveQuote() {

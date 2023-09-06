@@ -30,36 +30,14 @@ class Constants {
   static ThemeData lightTheme = ThemeData(
     backgroundColor: lightBG,
     primaryColor: lightPrimary,
-    // accentColor: lightAccent,
-    // cursorColor: lightAccent,
     scaffoldBackgroundColor: lightBG,
-    appBarTheme: AppBarTheme(
-      // textTheme: TextTheme(
-      //   headline6: TextStyle(
-      //     color: darkBG,
-      //     fontSize: 18.0,
-      //     fontWeight: FontWeight.w800,
-      //   ),
-      // ),
-    ),
   );
 
   static ThemeData darkTheme = ThemeData(
     brightness: Brightness.dark,
     backgroundColor: darkBG,
     primaryColor: darkPrimary,
-    // accentColor: darkAccent,
     scaffoldBackgroundColor: darkBG,
-    // cursorColor: darkAccent,
-    appBarTheme: AppBarTheme(
-      // textTheme: TextTheme(
-      //   headline6: TextStyle(
-      //     color: lightBG,
-      //     fontSize: 18.0,
-      //     fontWeight: FontWeight.w800,
-      //   ),
-      // ),
-    ),
   );
 
   static int CUSTOMER_LEVEL = 1;
@@ -76,6 +54,8 @@ class Constants {
   static String ladiesLoungeId = 'uieGkTmtQQP4F8RKSEq57bpWezbl';
 
   static String blocInstaHandle = 'https://www.instagram.com/bloc.india/';
+
+  static String blocAppStoreId = '1672736309';
 
   static int skipPhoneNumber = 911234567890;
 

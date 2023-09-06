@@ -857,68 +857,6 @@ class _PartyGuestAddEditManageScreenState
                                 ],
                               ),
                               const SizedBox(height: 24),
-                              Column(
-                                children: [
-                                  const Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
-                                      Padding(
-                                        padding: EdgeInsets.only(bottom: 8.0),
-                                        child: Text(
-                                          'promoter',
-                                          style: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.bold,
-                                              color: Constants.lightPrimary),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  MultiSelectDialogField(
-                                    items: mPromoters
-                                        .map((e) => MultiSelectItem(e,
-                                            '${e.name.toLowerCase()} | ${e.type.toLowerCase()}'))
-                                        .toList(),
-                                    initialValue:
-                                        sPromoters.map((e) => e).toList(),
-                                    listType: MultiSelectListType.CHIP,
-                                    buttonIcon: Icon(
-                                      Icons.arrow_drop_down,
-                                      color: Colors.grey.shade700,
-                                    ),
-                                    title: const Text('select a promoter'),
-                                    buttonText: const Text(
-                                      'select promoter',
-                                      style: TextStyle(
-                                          color: Constants.lightPrimary),
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: Constants.background,
-                                      borderRadius: const BorderRadius.all(
-                                          Radius.circular(5)),
-                                      border: Border.all(
-                                        color: Constants.primary,
-                                        width: 0.0,
-                                      ),
-                                    ),
-                                    searchable: true,
-                                    onConfirm: (values) {
-                                      sPromoters = values as List<Promoter>;
-
-                                      if (sPromoters.isNotEmpty) {
-                                        sPromoterId = sPromoters.first.id;
-                                      } else {
-                                        sPromoterId = '';
-                                      }
-                                      setState(() {
-                                        widget.partyGuest = widget.partyGuest
-                                            .copyWith(promoterId: sPromoterId);
-                                      });
-                                    },
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 24),
                               Row(
                                 children: [
                                   const Text('supported: ',
@@ -952,8 +890,9 @@ class _PartyGuestAddEditManageScreenState
                               ),
                               const SizedBox(height: 12),
                               Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
-                                  const Text('vip: ',
+                                  const Text('vip ',
                                       style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                         fontSize: 16,
@@ -976,28 +915,18 @@ class _PartyGuestAddEditManageScreenState
                                       setState(() {});
                                     },
                                   ),
-                                ],
-                              ),
-                              const SizedBox(height: 12),
-                              Row(
-                                children: [
-                                  const Text('banned: ',
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16,
-                                        color: Constants.lightPrimary,
-                                      )),
+                                  const Spacer(),
                                   Checkbox(
                                     value: mBlocUser.isBanned,
                                     side: MaterialStateBorderSide.resolveWith(
-                                      (states) => const BorderSide(
+                                          (states) => const BorderSide(
                                           width: 1.0, color: Constants.primary),
                                     ),
                                     onChanged: (value) {
                                       mBlocUser =
                                           mBlocUser.copyWith(isBanned: value);
                                       blocUser.User freshUser =
-                                          Fresh.freshUser(mBlocUser);
+                                      Fresh.freshUser(mBlocUser);
                                       FirestoreHelper.pushUser(freshUser);
 
                                       Logx.i(_TAG,
@@ -1008,12 +937,19 @@ class _PartyGuestAddEditManageScreenState
                                       setState(() {});
                                     },
                                   ),
+                                  const Text(' banned',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16,
+                                        color: Constants.lightPrimary,
+                                      )),
                                 ],
                               ),
                               const SizedBox(height: 12),
                               Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
-                                  const Text('app user: ',
+                                  const Text('app user ',
                                       style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                         fontSize: 16,
@@ -1027,7 +963,89 @@ class _PartyGuestAddEditManageScreenState
                                     ),
                                     onChanged: (value) {
                                       Logx.ist(_TAG,
-                                          'app user status cannot be changed manually');
+                                          'app user cannot be changed manually');
+                                    },
+                                  ),
+                                  Spacer(),
+                                  Checkbox(
+                                    value: mBlocUser.isAppReviewed,
+                                    side: MaterialStateBorderSide.resolveWith(
+                                          (states) => const BorderSide(
+                                          width: 1.0, color: Constants.primary),
+                                    ),
+                                    onChanged: (value) {
+                                      mBlocUser =
+                                          mBlocUser.copyWith(isAppReviewed: value);
+                                      blocUser.User freshUser = Fresh.freshUser(mBlocUser);
+                                      FirestoreHelper.pushUser(freshUser);
+                                    },
+                                  ),
+                                  const Text(' app reviewed',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16,
+                                        color: Constants.lightPrimary,
+                                      )),
+                                ],
+                              ),
+                              const SizedBox(height: 24),
+                              Column(
+                                children: [
+                                  const Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      Padding(
+                                        padding: EdgeInsets.only(bottom: 8.0),
+                                        child: Text(
+                                          'promoter',
+                                          style: TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold,
+                                              color: Constants.lightPrimary),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  MultiSelectDialogField(
+                                    items: mPromoters
+                                        .map((e) => MultiSelectItem(e,
+                                        '${e.name.toLowerCase()} | ${e.type.toLowerCase()}'))
+                                        .toList(),
+                                    initialValue:
+                                    sPromoters.map((e) => e).toList(),
+                                    listType: MultiSelectListType.CHIP,
+                                    buttonIcon: Icon(
+                                      Icons.arrow_drop_down,
+                                      color: Colors.grey.shade700,
+                                    ),
+                                    title: const Text('select a promoter'),
+                                    buttonText: const Text(
+                                      'select promoter',
+                                      style: TextStyle(
+                                          color: Constants.lightPrimary),
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: Constants.background,
+                                      borderRadius: const BorderRadius.all(
+                                          Radius.circular(5)),
+                                      border: Border.all(
+                                        color: Constants.primary,
+                                        width: 0.0,
+                                      ),
+                                    ),
+                                    searchable: true,
+                                    onConfirm: (values) {
+                                      sPromoters = values as List<Promoter>;
+
+                                      if (sPromoters.isNotEmpty) {
+                                        sPromoterId = sPromoters.first.id;
+                                      } else {
+                                        sPromoterId = '';
+                                      }
+                                      setState(() {
+                                        widget.partyGuest = widget.partyGuest
+                                            .copyWith(promoterId: sPromoterId);
+                                      });
                                     },
                                   ),
                                 ],

@@ -67,6 +67,8 @@ class UserPreferences {
       isBanned: false,
       isAppUser: false,
       isIos: false,
+      isAppReviewed: false,
+      lastReviewTime: 0,
       appVersion: Constants.appVersion);
 
   static Future init() async =>
@@ -103,6 +105,8 @@ class UserPreferences {
         isBanned: false,
         isAppUser: false,
         isIos: false,
+        isAppReviewed: false,
+        lastReviewTime: 0,
         appVersion: Constants.appVersion));
 
     setListLounges([]);

@@ -529,6 +529,8 @@ class Dummy {
         isBanned: false,
         isAppUser: false,
         appVersion: Constants.appVersion,
+        isAppReviewed: false,
+        lastReviewTime: 0,
         isIos: false,
         createdAt: millis,
         lastSeenAt: millis);

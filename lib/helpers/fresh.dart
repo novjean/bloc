@@ -3810,6 +3810,18 @@ class Fresh {
       Logx.em(_TAG, 'user isIos not exist for id: ${user.id}');
       isModelChanged = true;
     }
+    try {
+      user = user.copyWith(isAppReviewed: map['isAppReviewed'] as bool);
+    } catch (e) {
+      Logx.em(_TAG, 'user isAppReviewed not exist for id: ${user.id}');
+      isModelChanged = true;
+    }
+    try {
+      user = user.copyWith(lastReviewTime: map['lastReviewTime'] as int);
+    } catch (e) {
+      Logx.em(_TAG, 'user lastReviewTime not exist for id: ${user.id}');
+      isModelChanged = true;
+    }
 
     if (isModelChanged && shouldUpdate) {
       Logx.i(_TAG, 'updating user ${user.id}');
@@ -3910,7 +3922,17 @@ class Fresh {
     try {
       freshUser = freshUser.copyWith(isIos: user.isIos);
     } catch (e) {
-      Logx.em(_TAG, 'user isIos not exist for id: ' + user.id);
+      Logx.em(_TAG, 'user isIos not exist for id: ${user.id}');
+    }
+    try {
+      freshUser = freshUser.copyWith(isAppReviewed: user.isAppReviewed);
+    } catch (e) {
+      Logx.em(_TAG, 'user isAppReviewed not exist for id: ${user.id}');
+    }
+    try {
+      freshUser = freshUser.copyWith(lastReviewTime: user.lastReviewTime);
+    } catch (e) {
+      Logx.em(_TAG, 'user lastReviewTime not exist for id: ${user.id}');
     }
 
     return freshUser;

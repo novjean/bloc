@@ -19,9 +19,11 @@ class User {
 
   bool isBanned;
 
-  bool isAppUser;
-  String appVersion;
-  bool isIos;
+  final bool isAppUser;
+  final String appVersion;
+  final bool isIos;
+  final bool isAppReviewed;
+  final int lastReviewTime;
 
 //<editor-fold desc="Data Methods">
   User({
@@ -43,6 +45,8 @@ class User {
     required this.isAppUser,
     required this.appVersion,
     required this.isIos,
+    required this.isAppReviewed,
+    required this.lastReviewTime,
   });
 
   @override
@@ -67,7 +71,9 @@ class User {
           isBanned == other.isBanned &&
           isAppUser == other.isAppUser &&
           appVersion == other.appVersion &&
-          isIos == other.isIos);
+          isIos == other.isIos &&
+          isAppReviewed == other.isAppReviewed &&
+          lastReviewTime == other.lastReviewTime);
 
   @override
   int get hashCode =>
@@ -88,7 +94,9 @@ class User {
       isBanned.hashCode ^
       isAppUser.hashCode ^
       appVersion.hashCode ^
-      isIos.hashCode;
+      isIos.hashCode ^
+      isAppReviewed.hashCode ^
+      lastReviewTime.hashCode;
 
   @override
   String toString() {
@@ -111,6 +119,8 @@ class User {
         ' isAppUser: $isAppUser,' +
         ' appVersion: $appVersion,' +
         ' isIos: $isIos,' +
+        ' isAppReviewed: $isAppReviewed,' +
+        ' lastReviewTime: $lastReviewTime,' +
         '}';
   }
 
@@ -133,6 +143,8 @@ class User {
     bool? isAppUser,
     String? appVersion,
     bool? isIos,
+    bool? isAppReviewed,
+    int? lastReviewTime,
   }) {
     return User(
       id: id ?? this.id,
@@ -153,6 +165,8 @@ class User {
       isAppUser: isAppUser ?? this.isAppUser,
       appVersion: appVersion ?? this.appVersion,
       isIos: isIos ?? this.isIos,
+      isAppReviewed: isAppReviewed ?? this.isAppReviewed,
+      lastReviewTime: lastReviewTime ?? this.lastReviewTime,
     );
   }
 
@@ -176,6 +190,8 @@ class User {
       'isAppUser': this.isAppUser,
       'appVersion': this.appVersion,
       'isIos': this.isIos,
+      'isAppReviewed': this.isAppReviewed,
+      'lastReviewTime': this.lastReviewTime,
     };
   }
 
@@ -199,6 +215,8 @@ class User {
       isAppUser: map['isAppUser'] as bool,
       appVersion: map['appVersion'] as String,
       isIos: map['isIos'] as bool,
+      isAppReviewed: map['isAppReviewed'] as bool,
+      lastReviewTime: map['lastReviewTime'] as int,
     );
   }
 

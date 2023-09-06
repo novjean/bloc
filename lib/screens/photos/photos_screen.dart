@@ -6,8 +6,10 @@ import 'package:bloc/widgets/ui/textfield_widget.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:in_app_review/in_app_review.dart';
 
 import '../../db/entity/ad.dart';
+import '../../db/entity/user.dart';
 import '../../helpers/dummy.dart';
 import '../../helpers/firestore_helper.dart';
 import '../../helpers/fresh.dart';
@@ -15,6 +17,7 @@ import '../../main.dart';
 import '../../utils/challenge_utils.dart';
 import '../../utils/constants.dart';
 import '../../utils/file_utils.dart';
+import '../../utils/logx.dart';
 import '../../utils/network_utils.dart';
 import '../../widgets/footer.dart';
 import '../../widgets/photo/party_photo_item.dart';
@@ -279,11 +282,21 @@ class _PhotosScreenState extends State<PhotosScreen> {
                 style: TextStyle(color: Constants.primary),
               ),
               onPressed: () {
+                Logx.ist(_TAG, '🍄 saving to gallery...');
                 int fileNum = index + 1;
                 String fileName = '${partyPhoto.partyName} $fileNum';
                 FileUtils.saveNetworkImage(partyPhoto.imageUrl, fileName);
 
                 FirestoreHelper.updatePartyPhotoDownloadCount(partyPhoto.id);
+
+                if(UserPreferences.myUser.lastReviewTime < Timestamp.now().millisecondsSinceEpoch - (2 * DateTimeUtils.millisecondsWeek)){
+                  if(!UserPreferences.myUser.isAppReviewed){
+                    _showReviewAppDialog(context);
+                  } else {
+                    //todo: might need to implement challenge logic here
+                    Logx.i(_TAG, 'app is reviewed, so nothing to do for now');
+                  }
+                }
 
                 Navigator.of(ctx).pop();
               },
@@ -292,6 +305,80 @@ class _PhotosScreenState extends State<PhotosScreen> {
         );
       },
     );
+  }
+
+  void _showReviewAppDialog(BuildContext context) {
+    showDialog(
+        context: context,
+        builder: (BuildContext ctx) {
+          return AlertDialog(
+            title: const Text(
+              '🍭 review our app',
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 22, color: Colors.black),
+            ),
+            backgroundColor: Constants.lightPrimary,
+            shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(20.0))),
+            contentPadding: const EdgeInsets.all(16.0),
+            content: Text(
+                'Behind bloc, there\'s a small but dedicated team pouring their hearts into it. Will you be our champion by leaving a review? Together, we\'ll build the best community app out there!'.toLowerCase()),
+            actions: [
+              TextButton(
+                child: const Text('close',
+                    style: TextStyle(color: Constants.background)),
+                onPressed: () {
+                  Navigator.of(ctx).pop();
+                },
+              ),
+              TextButton(
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all<Color>(Constants
+                      .lightPrimary),
+                ),
+                child: const Text('🧸 already reviewed',),
+                onPressed: () async {
+                  User user = UserPreferences.myUser;
+                  user = user.copyWith(
+                      isAppReviewed: true,
+                      lastReviewTime: Timestamp.now().millisecondsSinceEpoch);
+                  FirestoreHelper.pushUser(user);
+
+                  Logx.ist(_TAG, '🃏 thank you for already reviewing us');
+
+                  Navigator.of(ctx).pop();
+                },
+              ),
+              TextButton(
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all<Color>(Constants
+                      .darkPrimary),
+                ),
+                child: const Text('🌟 review us',
+                    style: TextStyle(color: Constants.primary)),
+                onPressed: () async {
+                  final InAppReview inAppReview = InAppReview.instance;
+                  bool isAvailable = await inAppReview.isAvailable();
+
+                  if(isAvailable){
+                    inAppReview.requestReview();
+                  } else {
+                    inAppReview.openStoreListing(appStoreId: Constants.blocAppStoreId);
+                  }
+
+                  User user = UserPreferences.myUser;
+                  user = user.copyWith(
+                      isAppReviewed: true,
+                      lastReviewTime: Timestamp.now().millisecondsSinceEpoch);
+                  UserPreferences.setUser(user);
+                  FirestoreHelper.pushUser(user);
+
+                  Navigator.of(ctx).pop();
+                },
+              ),
+            ],
+          );
+        });
   }
 
   _showDownloadAppDialog(BuildContext context) {
