@@ -138,9 +138,7 @@ class _PhotosScreenState extends State<PhotosScreen> {
         PartyPhoto partyPhoto = photos[index];
 
         if (!kIsWeb) {
-          int count = partyPhoto.views + 1;
-          partyPhoto = partyPhoto.copyWith(views: count);
-          FirestoreHelper.pushPartyPhoto(partyPhoto);
+          FirestoreHelper.updatePartyPhotoViewCount(partyPhoto.id);
         }
 
         if (index == photos.length - 1) {
@@ -188,9 +186,7 @@ class _PhotosScreenState extends State<PhotosScreen> {
   }
 
   _showPhotoDialog(BuildContext context, PartyPhoto partyPhoto, int index) {
-    int count = partyPhoto.views + 1;
-    partyPhoto = partyPhoto.copyWith(views: count);
-    FirestoreHelper.pushPartyPhoto(partyPhoto);
+    FirestoreHelper.updatePartyPhotoViewCount(partyPhoto.id);
 
     showDialog(
       context: context,
@@ -287,9 +283,7 @@ class _PhotosScreenState extends State<PhotosScreen> {
                 String fileName = '${partyPhoto.partyName} $fileNum';
                 FileUtils.saveNetworkImage(partyPhoto.imageUrl, fileName);
 
-                int count = partyPhoto.downloadCount + 1;
-                partyPhoto = partyPhoto.copyWith(downloadCount: count);
-                FirestoreHelper.pushPartyPhoto(partyPhoto);
+                FirestoreHelper.updatePartyPhotoDownloadCount(partyPhoto.id);
 
                 Navigator.of(ctx).pop();
               },
