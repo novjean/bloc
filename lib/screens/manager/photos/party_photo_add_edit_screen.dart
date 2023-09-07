@@ -451,6 +451,7 @@ class _PartyPhotoAddEditScreenState extends State<PartyPhotoAddEditScreen> {
                 text: 'delete',
                 onClicked: () {
                   FirestorageHelper.deleteFile(widget.partyPhoto.imageUrl);
+                  FirestorageHelper.deleteFile(widget.partyPhoto.imageThumbUrl);
                   FirestoreHelper.deletePartyPhoto(widget.partyPhoto.id);
                   Navigator.of(context).pop();
                 }),
