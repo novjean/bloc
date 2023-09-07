@@ -7,6 +7,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../../db/entity/history_music.dart';
 import '../../db/entity/party.dart';
@@ -281,7 +282,7 @@ class _EventScreenState extends State<EventScreen> {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     ButtonWidget(
-                      text: '📣 poster',
+                      text: '🎨 poster',
                       onClicked: () async {
                         final urlImage = mParty.storyImageUrl.isNotEmpty
                             ? mParty.storyImageUrl
@@ -294,6 +295,16 @@ class _EventScreenState extends State<EventScreen> {
                               '${StringUtils.firstFewWords(mParty.description, 15)}... \n\nhey. check out this event at the official bloc app. \n\n🌏 https://bloc.bar/#/\n📱 https://bloc.bar/app_store.html\n\n#blocCommunity ❤️‍🔥');
                         }
                       },
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 10.0),
+                      child: ButtonWidget(
+                        text: '🪭 page',
+                        onClicked: () async {
+                          final url = 'http://bloc.bar/#/event/${widget.partyName.replaceAll(' ', '%20')}/${widget.partyChapter}';
+                          Share.share('Check out ${widget.partyName} on #blocCommunity $url');
+                        },
+                      ),
                     ),
                   ],
                 ),
@@ -325,11 +336,11 @@ class _EventScreenState extends State<EventScreen> {
                             final uri = Uri.parse(mParty.instagramUrl);
                             NetworkUtils.launchInBrowser(uri);
                           },
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
+                          child: const Padding(
+                            padding: EdgeInsets.symmetric(
                                 horizontal: 15, vertical: 2),
                             child: Text(
-                              'instagram post 🧡',
+                              'instagram 🧡',
                               style: TextStyle(
                                 fontSize: 18,
                                 color: Constants.primary,
