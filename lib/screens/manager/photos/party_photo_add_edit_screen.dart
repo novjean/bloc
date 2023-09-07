@@ -224,6 +224,7 @@ class _PartyPhotoAddEditScreenState extends State<PartyPhotoAddEditScreen> {
                       partyDate: widget.partyPhoto.partyDate,
                       endTime: widget.partyPhoto.endTime,
                       blocServiceId: widget.partyPhoto.blocServiceId,
+                      initLikes: widget.partyPhoto.initLikes
                     );
                     FirestoreHelper.pushPartyPhoto(partyPhoto);
 
@@ -433,7 +434,7 @@ class _PartyPhotoAddEditScreenState extends State<PartyPhotoAddEditScreen> {
                   }
 
                   final newThumbImage = await FileUtils.getImageCompressed(
-                      imageFile.path, 280, 210, 95);
+                      imageFile.path, isPortrait? 280:210, isPortrait?210:280, 95);
                   String imageThumbUrl = await FirestorageHelper.uploadFile(
                       FirestorageHelper.PARTY_PHOTO_THUMB_IMAGES,
                       StringUtils.getRandomString(28),

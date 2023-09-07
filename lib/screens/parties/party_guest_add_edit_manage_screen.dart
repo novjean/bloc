@@ -966,7 +966,7 @@ class _PartyGuestAddEditManageScreenState
                                           'app user cannot be changed manually');
                                     },
                                   ),
-                                  Spacer(),
+                                  const Spacer(),
                                   Checkbox(
                                     value: mBlocUser.isAppReviewed,
                                     side: MaterialStateBorderSide.resolveWith(

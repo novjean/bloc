@@ -230,7 +230,7 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
                                 FileUtils.saveNetworkImage(widget.partyPhoto.imageUrl, fileName);
                                 FirestoreHelper.updatePartyPhotoDownloadCount(widget.partyPhoto.id);
 
-                                if(UserPreferences.myUser.lastReviewTime < Timestamp.now().millisecondsSinceEpoch - (2 * DateTimeUtils.millisecondsWeek)){
+                                if((UserPreferences.myUser.lastReviewTime < Timestamp.now().millisecondsSinceEpoch - (2 * DateTimeUtils.millisecondsWeek))){
                                   if(!UserPreferences.myUser.isAppReviewed){
                                     _showReviewAppDialog(context);
                                   } else {
