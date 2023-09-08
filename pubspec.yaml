@@ -29,13 +29,13 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  cloud_firestore: ^4.8.0
+  cloud_firestore: ^4.4.5
 
   # for integrating firebase
-  firebase_core: ^2.13.1
+  firebase_core: ^2.8.0
 
-  firebase_auth: ^4.6.2
-  firebase_auth_web: ^5.5.2
+  firebase_auth: ^4.3.0
+  firebase_auth_web: ^5.2.10
   firebase_storage: ^11.0.16
   firebase_messaging: ^14.3.0
   firebase_crashlytics: ^3.0.17
@@ -71,6 +71,7 @@ dependencies:
 
   # notifications
   awesome_notifications: ^0.7.4+1
+#  awesome_notifications_fcm: ^0.7.4+1
 
   #utility
   upgrader: ^6.4.0

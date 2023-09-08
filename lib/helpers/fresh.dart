@@ -3887,12 +3887,12 @@ class Fresh {
     try {
       freshUser = freshUser.copyWith(fcmToken: user.fcmToken);
     } catch (e) {
-      Logx.em(_TAG, 'user fcmToken not exist for user id: ' + user.id);
+      Logx.em(_TAG, 'user fcmToken not exist for id: ${user.id}');
     }
     try {
       freshUser = freshUser.copyWith(blocServiceId: user.blocServiceId);
     } catch (e) {
-      Logx.em(_TAG, 'user blocServiceId not exist for user id: ' + user.id);
+      Logx.em(_TAG, 'user blocServiceId not exist for id: ${user.id}');
     }
     try {
       freshUser = freshUser.copyWith(createdAt: user.createdAt);

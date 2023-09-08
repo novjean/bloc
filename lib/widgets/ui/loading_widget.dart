@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
+import '../../utils/constants.dart';
+
 class LoadingWidget extends StatelessWidget{
   const LoadingWidget({Key? key}) : super(key: key);
 
@@ -9,9 +11,9 @@ class LoadingWidget extends StatelessWidget{
     return Center(
       child: SpinKitWave(
         itemBuilder: (BuildContext context, int index) {
-          return DecoratedBox(
+          return const DecoratedBox(
             decoration: BoxDecoration(
-              color: Theme.of(context).primaryColor,
+              color: Constants.primary,
             ),
           );
         },

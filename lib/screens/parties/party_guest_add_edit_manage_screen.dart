@@ -33,7 +33,6 @@ import '../../helpers/firestore_helper.dart';
 import '../../helpers/fresh.dart';
 import '../../main.dart';
 import '../../routes/route_constants.dart';
-import '../../utils/challenge_utils.dart';
 import '../../utils/constants.dart';
 import '../../utils/date_time_utils.dart';
 import '../../utils/file_utils.dart';
@@ -1087,78 +1086,65 @@ class _PartyGuestAddEditManageScreenState
                                 ? 'approve'
                                 : 'unapprove',
                             onClicked: () async {
+                              bool isApproved = !widget.partyGuest.isApproved;
+
                               widget.partyGuest = widget.partyGuest.copyWith(
-                                  isApproved: !widget.partyGuest.isApproved);
+                                  isApproved: isApproved);
                               FirestoreHelper.pushPartyGuest(widget.partyGuest);
 
-                              // if(bloc_user.phoneNumber!=0){
-                              //   String message = "This is a test message!";
-                              //   List<String> recipents = [widget.partyGuest.phone.toString()];
-                              //
-                              //   String _result = await sendSMS(message: message, recipients: recipents, sendDirect: true)
-                              //       .catchError((onError) {
-                              //     print(onError);
-                              //   });
-                              //
-                              //   Logx.ist(_TAG, 'message has been sent');
-                              // } else {
-                              //   Logx.ist(_TAG, 'promoter guest and sms cannot be sent!');
-                              // }
+                             if(isApproved){
+                                if (widget.party.loungeId.isNotEmpty) {
+                                  FirestoreHelper.pullUserLounge(mBlocUser.id, widget.party.loungeId)
+                                      .then((res) {
+                                    if (res.docs.isEmpty) {
+                                      UserLounge userLounge = Dummy.getDummyUserLounge();
+                                      userLounge = userLounge.copyWith(
+                                          loungeId: widget.party.loungeId,
+                                          userId: mBlocUser.id,
+                                          isAccepted: true);
+                                      FirestoreHelper.pushUserLounge(userLounge);
 
-                              if (widget.party.loungeId.isNotEmpty) {
-                                FirestoreHelper.pullUserLounge(
-                                        mBlocUser.id, widget.party.loungeId)
-                                    .then((res) {
-                                  if (res.docs.isEmpty) {
-                                    UserLounge userLounge =
-                                        Dummy.getDummyUserLounge();
-                                    userLounge = userLounge.copyWith(
-                                        loungeId: widget.party.loungeId,
-                                        userId: mBlocUser.id,
-                                        isAccepted: true);
-                                    FirestoreHelper.pushUserLounge(userLounge);
+                                      if (mBlocUser.isAppUser && mBlocUser.fcmToken.isNotEmpty) {
+                                        String title = widget.party.name;
+                                        String message =
+                                            '🥳 yayyy! welcome to ${widget.party.name} family, your guest list for ${widget.party.name} has been approved 🎉, see you and your gang soon! 😎🍾';
 
-                                    if (mBlocUser.isAppUser &&
-                                        mBlocUser.fcmToken.isNotEmpty) {
-                                      String title = widget.party.name;
-                                      String message =
-                                          '🥳 yayyy! welcome to ${widget.party.name} family, your guest list for ${widget.party.name} has been approved 🎉, see you and your gang soon! 😎🍾';
+                                        //send a notification
+                                        Apis.sendPushNotification(
+                                            mBlocUser.fcmToken, title, message);
+                                        Logx.ist(_TAG, 'notification has been sent to ${mBlocUser.name} ${mBlocUser.surname}');
+                                      }
+                                    } else {
+                                      if (mBlocUser.isAppUser &&
+                                          mBlocUser.fcmToken.isNotEmpty) {
+                                        String title = widget.party.name;
+                                        String message =
+                                            '🥳 yayyy! your guest list for ${widget.party.name} has been approved 🎉, see you and your gang soon! 😎🍾';
 
-                                      //send a notification
-                                      Apis.sendPushNotification(
-                                          mBlocUser.fcmToken, title, message);
-                                      Logx.ist(_TAG,
-                                          'notification has been sent to ${mBlocUser.name} ${mBlocUser.surname}');
+                                        //send a notification
+                                        Apis.sendPushNotification(
+                                            mBlocUser.fcmToken, title, message);
+                                        Logx.ist(_TAG, 'notification has been sent to ${mBlocUser.name} ${mBlocUser.surname}');
+                                      }
                                     }
-                                  } else {
-                                    if (mBlocUser.isAppUser &&
-                                        mBlocUser.fcmToken.isNotEmpty) {
-                                      String title = widget.party.name;
-                                      String message =
-                                          '🥳 yayyy! your guest list for ${widget.party.name} has been approved 🎉, see you and your gang soon! 😎🍾';
+                                  });
+                                } else {
+                                  if (mBlocUser.isAppUser &&
+                                      mBlocUser.fcmToken.isNotEmpty) {
+                                    String title = widget.party.name;
+                                    String message = '🥳 yayyy! your guest list for ${widget.party.name} has been approved 🎉, see you and your gang soon! 😎🍾';
 
-                                      //send a notification
-                                      Apis.sendPushNotification(
-                                          mBlocUser.fcmToken, title, message);
-                                    }
+                                    //send a notification
+                                    Apis.sendPushNotification(mBlocUser.fcmToken, title, message);
+                                    Logx.ist(_TAG, 'notification has been sent to ${mBlocUser.name} ${mBlocUser.surname}');
                                   }
-                                });
-                              } else {
-                                if (mBlocUser.isAppUser &&
-                                    mBlocUser.fcmToken.isNotEmpty) {
-                                  String title = widget.party.name;
-                                  String message =
-                                      '🥳 yayyy! your guest list for${widget.party.name} has been approved 🎉, see you and your gang soon! 😎🍾';
-
-                                  //send a notification
-                                  Apis.sendPushNotification(
-                                      mBlocUser.fcmToken, title, message);
                                 }
-                              }
+                                Logx.ist(_TAG, 'party guest ${widget.partyGuest.name} is approved');
+                             } else {
+                               Logx.ist(_TAG, 'party guest ${widget.partyGuest.name} is unapproved');
+                             }
 
-                              Logx.ist(_TAG,
-                                  'party guest ${widget.partyGuest.name} is approved');
-                              Navigator.of(context).pop();
+                             Navigator.of(context).pop();
                             },
                           ),
                         ),

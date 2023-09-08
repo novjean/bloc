@@ -20,6 +20,7 @@ import 'package:flutter_slider_drawer/flutter_slider_drawer.dart';
 import 'package:go_router/go_router.dart';
 import 'package:upgrader/upgrader.dart';
 
+import '../api/apis.dart';
 import '../db/entity/ad.dart';
 import '../db/entity/party_guest.dart';
 import '../db/entity/reservation.dart';
@@ -221,6 +222,15 @@ class _MainScreenState extends State<MainScreen> {
             NotificationService.showDefaultNotification(title, body);
             break;
           }
+          case Apis.GoogleReviewBloc: {
+            String? title = message.notification!.title;
+            String? body = message.notification!.body;
+            String url = Constants.blocGoogleReview;
+
+            NotificationService.showUrlLinkNotification(title!, body!, url);
+            break;
+          }
+
           case 'offer':
           case 'order':
           case 'sos':

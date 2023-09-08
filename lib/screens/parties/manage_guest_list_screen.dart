@@ -2,6 +2,7 @@ import 'package:bloc/db/entity/party_guest.dart';
 import 'package:bloc/helpers/dummy.dart';
 import 'package:bloc/helpers/firestore_helper.dart';
 import 'package:bloc/screens/parties/party_guest_add_edit_manage_screen.dart';
+import 'package:bloc/services/notification_service.dart';
 import 'package:bloc/utils/string_utils.dart';
 import 'package:bloc/widgets/ui/app_bar_title.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -601,7 +602,7 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
                                 splashColor: Constants.primary,
                                 onTap: () {
                                   Navigator.of(ctx).pop();
-                                  _showDeleteAllGuestList(context);
+                                  _showGoogleReviewBlocDialog(context);
                                 },
                                 child: const Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
@@ -628,10 +629,66 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
     );
   }
 
+  _showGoogleReviewBlocDialog(BuildContext context) {
+    showDialog(
+        context: context,
+        builder: (BuildContext ctx) {
+          return AlertDialog(
+            title: Text(
+              'request google review from all ${sPartyName == 'all' ? '' : sPartyName} guest lists',
+              style: const TextStyle(color: Colors.redAccent),
+            ),
+            content: Text(
+                'request for google review of bloc from ${mPartyGuests.length} guests. are you sure you want to ask from those who were approved?'),
+            actions: [
+              TextButton(
+                child: const Text('yes'),
+                onPressed: () async {
+                  for (PartyGuest partyGuest in mPartyGuests) {
+                    if(partyGuest.guestId.isNotEmpty && partyGuest.isApproved){
+                      FirestoreHelper.pullUser(partyGuest.guestId).then((res) {
+                        if (res.docs.isNotEmpty) {
+                          DocumentSnapshot document = res.docs[0];
+                          Map<String, dynamic> map = document.data()! as Map<String, dynamic>;
+                          final User user = Fresh.freshUserMap(map, true);
+
+                          if(user.isAppUser && user.fcmToken.isNotEmpty){
+                            String title = '';
+                            String message =
+                                'Dear ${user.name}, your happiness is our melody! Please consider sharing your thoughts in a Google review; it\'ll help us fine-tune our tunes and ensure every night at our bar is an unforgettable symphony. 🎶🌟'.toLowerCase();
+
+                            //send a notification
+                            Apis.sendUrlPushNotification(user.fcmToken, title, message, Apis.GoogleReviewBloc);
+                            Logx.ist(_TAG,
+                                '${user.name} ${user.surname} has been notified for a bloc google review 🤞');
+                          }
+                        } else {
+                          Logx.est(_TAG, 'user in guest list not found in db : ${partyGuest.guestId}');
+                        }
+                      });
+                    }
+                  }
+
+                  Navigator.of(ctx).pop();
+                  _showDeleteAllGuestList(context);
+                },
+              ),
+              TextButton(
+                child: const Text("no"),
+                onPressed: () {
+                  Navigator.of(ctx).pop();
+                  _showDeleteAllGuestList(context);
+                },
+              )
+            ],
+          );
+        });
+  }
+
   _showDeleteAllGuestList(BuildContext context) {
     showDialog(
         context: context,
-        builder: (BuildContext context) {
+        builder: (BuildContext ctx) {
           return AlertDialog(
             title: Text(
               'delete all ${sPartyName == 'all' ? '' : sPartyName} guest lists',
@@ -646,17 +703,15 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
                   for (PartyGuest partyGuest in mPartyGuests) {
                     FirestoreHelper.deletePartyGuest(partyGuest.id);
                   }
-                  Logx.i(_TAG,
+                  Logx.ist(_TAG,
                       'deleted all ${sPartyName == 'all' ? '' : sPartyName} guest list requests!');
-                  Toaster.shortToast(
-                      'deleted all ${sPartyName == 'all' ? '' : sPartyName} guest list requests!');
-                  Navigator.of(context).pop();
+                  Navigator.of(ctx).pop();
                 },
               ),
               TextButton(
                 child: const Text("no"),
                 onPressed: () {
-                  Navigator.of(context).pop();
+                  Navigator.of(ctx).pop();
                 },
               )
             ],

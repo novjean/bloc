@@ -12,6 +12,7 @@ import '../helpers/fresh.dart';
 import '../main.dart';
 import '../routes/route_constants.dart';
 import '../utils/logx.dart';
+import '../utils/network_utils.dart';
 
 class NotificationService {
   static const String _TAG = 'NotificationService';
@@ -140,6 +141,12 @@ class NotificationService {
           } catch (e) {
             Logx.em(_TAG, e.toString());
           }
+          break;
+        case 'url':
+          String url = payload['link']!;
+
+          final uri = Uri.parse(url);
+          NetworkUtils.launchInBrowser(uri);
           break;
       }
     }
@@ -287,5 +294,30 @@ class NotificationService {
               actionType: ActionType.DismissAction,
               isDangerousOption: true)
         ]);
+  }
+
+  static void showUrlLinkNotification(String title, String body, String url ) async {
+    await showNotification(
+    title: title,
+    body: body,
+    notificationLayout: NotificationLayout.Default,
+      payload: {
+        "navigate": "true",
+        "type": "url",
+        "link": url
+      },
+    actionButtons: [
+      NotificationActionButton(
+          key: 'DISMISS',
+          label: 'dismiss',
+          actionType: ActionType.DismissAction,
+          isDangerousOption: true),
+      NotificationActionButton(
+        key: 'OPEN_URL_ACTION',
+        label: '💖 review bloc',
+        actionType: ActionType.Default,
+      ),
+
+    ]);
   }
 }
