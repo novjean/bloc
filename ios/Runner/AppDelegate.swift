@@ -1,6 +1,8 @@
 import UIKit
 import Flutter
 import Firebase
+import awesome_notifications
+import shared_preferences_ios
 
 @UIApplicationMain
 @objc class AppDelegate: FlutterAppDelegate, MessagingDelegate  {
@@ -11,6 +13,23 @@ import Firebase
     FirebaseApp.configure()
     Messaging.messaging().delegate = self
     GeneratedPluginRegistrant.register(with: self)
+
+    // This function register the desired plugins to be used within a notification background action
+    SwiftAwesomeNotificationsPlugin.setPluginRegistrantCallback { registry in
+      SwiftAwesomeNotificationsPlugin.register(
+        with: registry.registrar(forPlugin: "io.flutter.plugins.awesomenotifications.AwesomeNotificationsPlugin")!)
+      FLTSharedPreferencesPlugin.register(
+        with: registry.registrar(forPlugin: "io.flutter.plugins.sharedpreferences.SharedPreferencesPlugin")!)
+    }
+
+    // This function register the desired plugins to be used within silent push notifications
+    SwiftAwesomeNotificationsFcmPlugin.setPluginRegistrantCallback { registry in
+      SwiftAwesomeNotificationsPlugin.register(
+        with: registry.registrar(forPlugin: "io.flutter.plugins.awesomenotifications.AwesomeNotificationsPlugin")!)
+      FLTSharedPreferencesPlugin.register(
+        with: registry.registrar(forPlugin: "io.flutter.plugins.sharedpreferences.SharedPreferencesPlugin")!)
+    }
+
     if #available(iOS 10.0, *) {
         // For iOS 10 display notification (sent via APNS)
         UNUserNotificationCenter.current().delegate = self
@@ -24,6 +43,7 @@ import Firebase
         application.registerUserNotificationSettings(settings)
     }
     application.registerForRemoteNotifications()
+
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
 }
