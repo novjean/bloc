@@ -5,7 +5,7 @@ import 'package:bloc/screens/profile/profile_add_edit_register_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:delayed_display/delayed_display.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
+// import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pinput/pinput.dart';
@@ -276,7 +276,7 @@ class _OTPScreenState extends State<OTPScreen> {
                       String? fcmToken = '';
 
                       if (!kIsWeb) {
-                        fcmToken = await FirebaseMessaging.instance.getToken();
+                        // fcmToken = await FirebaseMessaging.instance.getToken();
                       }
 
                       Logx.i(_TAG, 'checking for bloc registration by id ${value.user!.uid}');

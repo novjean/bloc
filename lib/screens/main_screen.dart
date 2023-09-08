@@ -13,7 +13,7 @@ import 'package:bloc/utils/constants.dart';
 import 'package:bloc/utils/date_time_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
+// import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_slider_drawer/flutter_slider_drawer.dart';
@@ -160,119 +160,119 @@ class _MainScreenState extends State<MainScreen> {
 
     if (!kIsWeb) {
       //the following lines are essential for notification to work in iOS
-      final fbm = FirebaseMessaging.instance;
-      fbm.requestPermission();
+      // final fbm = FirebaseMessaging.instance;
+      // fbm.requestPermission();
+      //
+      // fbm.getToken().then((t) {
+      //   if(t!=null){
+      //     UserPreferences.myUser.fcmToken = t;
+      //
+      //     FirestoreHelper.updateUserFcmToken(UserPreferences.myUser.id, t);
+      //     Logx.d(_TAG, 'user token: $t');
+      //   }else {
+      //     Logx.em(_TAG, 'fcm token came in null');
+      //   }
+      // });
 
-      fbm.getToken().then((t) {
-        if(t!=null){
-          UserPreferences.myUser.fcmToken = t;
-
-          FirestoreHelper.updateUserFcmToken(UserPreferences.myUser.id, t);
-          Logx.d(_TAG, 'user token: $t');
-        }else {
-          Logx.em(_TAG, 'fcm token came in null');
-        }
-      });
-
-      FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-        Map<String, dynamic> data = message.data;
-        String type = data['type'];
-
-        switch(type){
-          case 'lounge_chats':{
-            UiPreferences.setHomePageIndex(2);
-            LoungeChat chat = Fresh.freshLoungeChatMap(jsonDecode(data['document']), false);
-            if(UserPreferences.isUserLoggedIn() && chat.userId != UserPreferences.myUser.id){
-              if(UserPreferences.getListLounges().contains(chat.loungeId)){
-                NotificationService.showChatNotification(chat);
-              }
-            }
-            break;
-          }
-          case 'ads':{
-            Ad ad = Fresh.freshAdMap(jsonDecode(data['document']), false);
-            NotificationService.showAdNotification(ad);
-            break;
-          }
-          case 'party_guest':{
-            PartyGuest partyGuest = Fresh.freshPartyGuestMap(jsonDecode(data['document']), false);
-            if(!partyGuest.isApproved){
-              String title = '${partyGuest.name} ${partyGuest.surname}';
-              String body = '${partyGuest.guestStatus} : ${partyGuest.guestsCount}';
-
-              NotificationService.showDefaultNotification(title, body);
-            } else {
-              Logx.ist(_TAG, 'guest list: ${partyGuest.name} added');
-            }
-            break;
-          }
-          case 'reservations':{
-            Reservation reservation = Fresh.freshReservationMap(jsonDecode(data['document']), false);
-            String title = 'request : table reservation';
-            String body = '${reservation.name} : ${reservation.guestsCount}';
-
-            NotificationService.showDefaultNotification(title, body);
-            break;
-          }
-          case 'celebrations':{
-            Celebration celebration = Fresh.freshCelebrationMap(jsonDecode(data['document']), false);
-            String title = 'request : celebration';
-            String body = '${celebration.name} : ${celebration.guestsCount}';
-
-            NotificationService.showDefaultNotification(title, body);
-            break;
-          }
-          case Apis.GoogleReviewBloc: {
-            String? title = message.notification!.title;
-            String? body = message.notification!.body;
-            String url = Constants.blocGoogleReview;
-
-            NotificationService.showUrlLinkNotification(title!, body!, url);
-            break;
-          }
-
-          case 'offer':
-          case 'order':
-          case 'sos':
-          default:{
-            String? title = message.notification!.title;
-            String? body = message.notification!.body;
-
-            NotificationService.showDefaultNotification(title!, body!);
-          }
-        }
-      });
+      // FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      //   Map<String, dynamic> data = message.data;
+      //   String type = data['type'];
+      //
+      //   switch(type){
+      //     case 'lounge_chats':{
+      //       UiPreferences.setHomePageIndex(2);
+      //       LoungeChat chat = Fresh.freshLoungeChatMap(jsonDecode(data['document']), false);
+      //       if(UserPreferences.isUserLoggedIn() && chat.userId != UserPreferences.myUser.id){
+      //         if(UserPreferences.getListLounges().contains(chat.loungeId)){
+      //           NotificationService.showChatNotification(chat);
+      //         }
+      //       }
+      //       break;
+      //     }
+      //     case 'ads':{
+      //       Ad ad = Fresh.freshAdMap(jsonDecode(data['document']), false);
+      //       NotificationService.showAdNotification(ad);
+      //       break;
+      //     }
+      //     case 'party_guest':{
+      //       PartyGuest partyGuest = Fresh.freshPartyGuestMap(jsonDecode(data['document']), false);
+      //       if(!partyGuest.isApproved){
+      //         String title = '${partyGuest.name} ${partyGuest.surname}';
+      //         String body = '${partyGuest.guestStatus} : ${partyGuest.guestsCount}';
+      //
+      //         NotificationService.showDefaultNotification(title, body);
+      //       } else {
+      //         Logx.ist(_TAG, 'guest list: ${partyGuest.name} added');
+      //       }
+      //       break;
+      //     }
+      //     case 'reservations':{
+      //       Reservation reservation = Fresh.freshReservationMap(jsonDecode(data['document']), false);
+      //       String title = 'request : table reservation';
+      //       String body = '${reservation.name} : ${reservation.guestsCount}';
+      //
+      //       NotificationService.showDefaultNotification(title, body);
+      //       break;
+      //     }
+      //     case 'celebrations':{
+      //       Celebration celebration = Fresh.freshCelebrationMap(jsonDecode(data['document']), false);
+      //       String title = 'request : celebration';
+      //       String body = '${celebration.name} : ${celebration.guestsCount}';
+      //
+      //       NotificationService.showDefaultNotification(title, body);
+      //       break;
+      //     }
+      //     case Apis.GoogleReviewBloc: {
+      //       String? title = message.notification!.title;
+      //       String? body = message.notification!.body;
+      //       String url = Constants.blocGoogleReview;
+      //
+      //       NotificationService.showUrlLinkNotification(title!, body!, url);
+      //       break;
+      //     }
+      //
+      //     case 'offer':
+      //     case 'order':
+      //     case 'sos':
+      //     default:{
+      //       String? title = message.notification!.title;
+      //       String? body = message.notification!.body;
+      //
+      //       NotificationService.showDefaultNotification(title!, body!);
+      //     }
+      //   }
+      // });
 
       //clear out any previous subscriptions
       blocUser.User user = UserPreferences.getUser();
-      if (user.clearanceLevel >= Constants.CAPTAIN_LEVEL) {
-        fbm.unsubscribeFromTopic('sos');
-        fbm.unsubscribeFromTopic('order');
-      }
-      if (user.clearanceLevel >= Constants.PROMOTER_LEVEL) {
-        fbm.unsubscribeFromTopic('party_guest');
-        fbm.unsubscribeFromTopic('reservations');
-      }
-      if (user.clearanceLevel >= Constants.MANAGER_LEVEL) {
-        fbm.unsubscribeFromTopic('celebrations');
-        fbm.unsubscribeFromTopic('offer');
-      }
-
-      // subscribe to topics
-      fbm.subscribeToTopic('ads');
-      fbm.subscribeToTopic('lounge_chats');
-      if (user.clearanceLevel >= Constants.CAPTAIN_LEVEL) {
-        fbm.subscribeToTopic('sos');
-        fbm.subscribeToTopic('order');
-      }
-      if (user.clearanceLevel >= Constants.PROMOTER_LEVEL) {
-        fbm.subscribeToTopic('party_guest');
-        fbm.subscribeToTopic('reservations');
-        fbm.subscribeToTopic('celebrations');
-      }
-      if (user.clearanceLevel >= Constants.MANAGER_LEVEL) {
-        fbm.subscribeToTopic('offer');
-      }
+      // if (user.clearanceLevel >= Constants.CAPTAIN_LEVEL) {
+      //   fbm.unsubscribeFromTopic('sos');
+      //   fbm.unsubscribeFromTopic('order');
+      // }
+      // if (user.clearanceLevel >= Constants.PROMOTER_LEVEL) {
+      //   fbm.unsubscribeFromTopic('party_guest');
+      //   fbm.unsubscribeFromTopic('reservations');
+      // }
+      // if (user.clearanceLevel >= Constants.MANAGER_LEVEL) {
+      //   fbm.unsubscribeFromTopic('celebrations');
+      //   fbm.unsubscribeFromTopic('offer');
+      // }
+      //
+      // // subscribe to topics
+      // fbm.subscribeToTopic('ads');
+      // fbm.subscribeToTopic('lounge_chats');
+      // if (user.clearanceLevel >= Constants.CAPTAIN_LEVEL) {
+      //   fbm.subscribeToTopic('sos');
+      //   fbm.subscribeToTopic('order');
+      // }
+      // if (user.clearanceLevel >= Constants.PROMOTER_LEVEL) {
+      //   fbm.subscribeToTopic('party_guest');
+      //   fbm.subscribeToTopic('reservations');
+      //   fbm.subscribeToTopic('celebrations');
+      // }
+      // if (user.clearanceLevel >= Constants.MANAGER_LEVEL) {
+      //   fbm.subscribeToTopic('offer');
+      // }
     } else {
       // in web mode
     }
@@ -372,26 +372,26 @@ class _MainScreenState extends State<MainScreen> {
     super.dispose();
     _pageController.dispose();
 
-    if (!kIsWeb) {
-      final fbm = FirebaseMessaging.instance;
-
-      blocUser.User user = UserPreferences.getUser();
-
-      if (user.clearanceLevel >= Constants.CAPTAIN_LEVEL) {
-        fbm.unsubscribeFromTopic('sos');
-        fbm.unsubscribeFromTopic('order');
-      }
-
-      if (user.clearanceLevel >= Constants.PROMOTER_LEVEL) {
-        fbm.unsubscribeFromTopic('party_guest');
-        fbm.unsubscribeFromTopic('reservations');
-      }
-
-      if (user.clearanceLevel >= Constants.MANAGER_LEVEL) {
-        fbm.unsubscribeFromTopic('celebrations');
-        fbm.unsubscribeFromTopic('offer');
-      }
-    }
+    // if (!kIsWeb) {
+    //   final fbm = FirebaseMessaging.instance;
+    //
+    //   blocUser.User user = UserPreferences.getUser();
+    //
+    //   if (user.clearanceLevel >= Constants.CAPTAIN_LEVEL) {
+    //     fbm.unsubscribeFromTopic('sos');
+    //     fbm.unsubscribeFromTopic('order');
+    //   }
+    //
+    //   if (user.clearanceLevel >= Constants.PROMOTER_LEVEL) {
+    //     fbm.unsubscribeFromTopic('party_guest');
+    //     fbm.unsubscribeFromTopic('reservations');
+    //   }
+    //
+    //   if (user.clearanceLevel >= Constants.MANAGER_LEVEL) {
+    //     fbm.unsubscribeFromTopic('celebrations');
+    //     fbm.unsubscribeFromTopic('offer');
+    //   }
+    // }
   }
 
   void onPageChanged(int page) {

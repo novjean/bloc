@@ -1,7 +1,7 @@
 import 'package:bloc/utils/string_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
+// import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:intl_phone_field/country_picker_dialog.dart';
@@ -344,9 +344,9 @@ class LoginUtils {
 
                       String? fcmToken = '';
 
-                      if (!kIsWeb) {
-                        fcmToken = await FirebaseMessaging.instance.getToken();
-                      }
+                      // if (!kIsWeb) {
+                      //   fcmToken = await FirebaseMessaging.instance.getToken();
+                      // }
 
                       Logx.i(_TAG,
                           'checking for bloc registration by id ${value.user!.uid}');
