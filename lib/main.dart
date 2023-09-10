@@ -15,6 +15,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
+import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:awesome_notifications_fcm/awesome_notifications_fcm.dart';
 
 import 'db/shared_preferences/user_preferences.dart';
 import 'firebase_options.dart';
@@ -54,6 +56,11 @@ Future<void> main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
+  await NotificationController.initializeLocalNotifications(debug: true);
+  await NotificationController.initializeRemoteNotifications(debug: true);
+  await NotificationController.initializeIsolateReceivePort();
+  await NotificationController.getInitialNotificationAction();
+
   // Pass all uncaught "fatal" errors from the framework to Crashlytics
   FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
   // Pass all uncaught asynchronous errors that aren't handled by the Flutter framework to Crashlytics
@@ -91,6 +98,7 @@ class BlocApp extends StatefulWidget {
 
 class _BlocAppState extends State<BlocApp> {
   static const String _TAG = 'BlocApp';
+  
 
   @override
   Widget build(BuildContext context) {
