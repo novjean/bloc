@@ -5,19 +5,15 @@ import 'package:bloc/db/shared_preferences/table_preferences.dart';
 import 'package:bloc/routes/bloc_router.dart';
 
 import 'package:bloc/db/shared_preferences/ui_preferences.dart';
-import 'package:bloc/services/notification_service.dart';
-import 'package:bloc/utils/logx.dart';
 import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
-// import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
-import 'package:awesome_notifications/awesome_notifications.dart';
-import 'package:awesome_notifications_fcm/awesome_notifications_fcm.dart';
 
+import 'controller/notification_controller.dart';
 import 'db/shared_preferences/user_preferences.dart';
 import 'firebase_options.dart';
 import 'providers/cart.dart';
@@ -50,15 +46,13 @@ Future<void> main() async {
   const String _TAG = 'main';
 
   WidgetsFlutterBinding.ensureInitialized();
-  await NotificationService.initializeNotification();
-
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
   await NotificationController.initializeLocalNotifications(debug: true);
   await NotificationController.initializeRemoteNotifications(debug: true);
-  await NotificationController.initializeIsolateReceivePort();
+  // await NotificationController.initializeIsolateReceivePort();
   await NotificationController.getInitialNotificationAction();
 
   // Pass all uncaught "fatal" errors from the framework to Crashlytics
@@ -98,7 +92,6 @@ class BlocApp extends StatefulWidget {
 
 class _BlocAppState extends State<BlocApp> {
   static const String _TAG = 'BlocApp';
-  
 
   @override
   Widget build(BuildContext context) {

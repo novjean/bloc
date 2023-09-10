@@ -1,4 +1,31 @@
+import 'dart:convert';
+import 'dart:isolate';
+import 'dart:ui';
+
+import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:awesome_notifications_fcm/awesome_notifications_fcm.dart';
+import 'package:bloc/main.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:go_router/go_router.dart';
+import 'package:http/http.dart' as http;
+
+import '../db/entity/ad.dart';
+import '../db/entity/lounge_chat.dart';
+import '../db/entity/user.dart';
+import '../db/shared_preferences/user_preferences.dart';
+import '../helpers/firestore_helper.dart';
+import '../helpers/fresh.dart';
+import '../routes/route_constants.dart';
+import '../utils/logx.dart';
+import '../utils/network_utils.dart';
+
+
 class NotificationController extends ChangeNotifier {
+  static const String _TAG = 'NotificationController';
+
   static final NotificationController _instance =
   NotificationController._internal();
 
@@ -24,28 +51,68 @@ class NotificationController extends ChangeNotifier {
   ///   INITIALIZATION METHODS
   /// *********************************************
 
-  static Future<void> initializeLocalNotifications(
-      {required bool debug}) async {
+  static Future<void> initializeLocalNotifications({required bool debug}) async {
     await AwesomeNotifications().initialize(
-      null, //'resource://drawable/res_app_icon',//
+      'resource://drawable/ic_launcher',
       [
         NotificationChannel(
-            channelKey: 'alerts',
-            channelName: 'Alerts',
-            channelDescription: 'Notification tests as alerts',
-            playSound: true,
-            importance: NotificationImportance.High,
-            defaultPrivacy: NotificationPrivacy.Private,
-            defaultColor: Colors.deepPurple,
-            ledColor: Colors.deepPurple)
+          channelGroupKey: 'high_importance_channel',
+          channelKey: 'high_importance_channel',
+          channelName: 'high importance',
+          channelDescription: 'notification channel for high importance',
+          defaultColor: const Color(0xFF9D50DD),
+          ledColor: Colors.white,
+          importance: NotificationImportance.Max,
+          channelShowBadge: true,
+          onlyAlertOnce: true,
+          playSound: true,
+          criticalAlerts: true,
+        ),
+        NotificationChannel(
+          channelGroupKey: 'chat_channel',
+          channelKey: 'chat_channel',
+          channelName: 'chats',
+          channelDescription: 'notification channel for chats',
+          defaultColor: const Color(0xFF9D50DD),
+          ledColor: Colors.white,
+          importance: NotificationImportance.Max,
+          channelShowBadge: true,
+          onlyAlertOnce: true,
+          playSound: true,
+          criticalAlerts: true,
+        )
       ],
-      debug: debug,
-      languageCode: 'ko',
+      channelGroups: [
+        NotificationChannelGroup(
+          channelGroupName: 'high importance',
+          channelGroupKey: 'high_importance_channel_group',
+        ),
+        NotificationChannelGroup(
+          channelGroupName: 'chats',
+          channelGroupKey: 'chat_channel_group',
+        )
+      ],
+      debug: true,
+    );
+
+    await AwesomeNotifications().isNotificationAllowed().then(
+          (isAllowed) async {
+        if (!isAllowed) {
+          await AwesomeNotifications().requestPermissionToSendNotifications();
+        }
+      },
     );
 
     // Get initial notification action is optional
     _instance.initialAction = await AwesomeNotifications()
         .getInitialNotificationAction(removeFromActionEvents: false);
+
+    await AwesomeNotifications().setListeners(
+      onActionReceivedMethod: onActionReceivedMethod,
+      onNotificationCreatedMethod: onNotificationCreatedMethod,
+      onNotificationDisplayedMethod: onNotificationDisplayedMethod,
+      onDismissActionReceivedMethod: onDismissActionReceivedMethod,
+    );
   }
 
   static Future<void> initializeRemoteNotifications(
@@ -103,9 +170,10 @@ class NotificationController extends ChangeNotifier {
     //     msg: 'Notification action launched app: $receivedAction',
     //   backgroundColor: Colors.deepPurple
     // );
-    print('App launched by a notification action: $receivedAction');
+    Logx.d(_TAG, 'App launched by a notification action: $receivedAction');
   }
 
+  /// Use this method to detect when the user taps on a notification or action button
   @pragma('vm:entry-point')
   static Future<void> onActionReceivedMethod(
       ReceivedAction receivedAction) async {
@@ -120,18 +188,55 @@ class NotificationController extends ChangeNotifier {
       return;
     }
     else {
-      if (receivePort == null){
-        // onActionReceivedMethod was called inside a parallel dart isolate.
-        SendPort? sendPort = IsolateNameServer.lookupPortByName(
-            'notification_action_port'
-        );
+      final payload = receivedAction.payload ?? {};
 
-        if (sendPort != null){
-          // Redirecting the execution to main isolate process (this process is
-          // only necessary when you need to redirect the user to a new page or
-          // use a valid context)
-          sendPort.send(receivedAction);
-          return;
+      String payloadType = payload['type']!;
+      Logx.d(_TAG, 'notification click type is $payloadType');
+
+      if (payloadType.isNotEmpty) {
+        switch (payloadType) {
+          case 'ad':
+            Ad ad = Fresh.freshAdMap(jsonDecode(payload['data']!), false);
+            BuildContext? appContext = BlocApp.navigatorKey.currentContext;
+
+            FirestoreHelper.updateAdHit(ad.id);
+
+            if(ad.partyName.isNotEmpty && ad.partyChapter.isNotEmpty){
+              GoRouter.of(appContext!).pushNamed(RouteConstants.eventRouteName,
+                  params: {
+                    'partyName': ad.partyName,
+                    'partyChapter': ad.partyChapter
+                  });
+            } else {
+              if (UserPreferences.isUserLoggedIn()) {
+                GoRouter.of(appContext!).pushNamed(RouteConstants.homeRouteName);
+              } else {
+                GoRouter.of(appContext!)
+                    .pushNamed(RouteConstants.landingRouteName);
+              }
+            }
+            break;
+          case 'chat':
+            try {
+              LoungeChat chat = Fresh.freshLoungeChatMap(jsonDecode(payload['data']!), false);
+
+              BuildContext? appContext = BlocApp.navigatorKey.currentContext;
+              GoRouter.of(appContext!).pushNamed(
+                  RouteConstants.loungeRouteName,
+                  params: {
+                    'id': chat.loungeId,
+                  });
+              Logx.d(_TAG, 'successful');
+            } catch (e) {
+              Logx.em(_TAG, e.toString());
+            }
+            break;
+          case 'url':
+            String url = payload['link']!;
+
+            final uri = Uri.parse(url);
+            NetworkUtils.launchInBrowser(uri);
+            break;
         }
       }
     }
@@ -139,10 +244,28 @@ class NotificationController extends ChangeNotifier {
     return onActionReceivedImplementationMethod(receivedAction);
   }
 
+  /// Use this method to detect when a new notification or a schedule is created
+  static Future<void> onNotificationCreatedMethod(
+      ReceivedNotification receivedNotification) async {
+    debugPrint('onNotificationCreatedMethod');
+  }
+
+  /// Use this method to detect every time that a new notification is displayed
+  static Future<void> onNotificationDisplayedMethod(
+      ReceivedNotification receivedNotification) async {
+    debugPrint('onNotificationDisplayedMethod');
+  }
+
+  /// Use this method to detect if the user dismissed a notification
+  static Future<void> onDismissActionReceivedMethod(
+      ReceivedAction receivedAction) async {
+    debugPrint('onDismissActionReceivedMethod');
+  }
+
   static Future<void> onActionReceivedImplementationMethod(
       ReceivedAction receivedAction
       ) async {
-    MyApp.navigatorKey.currentState?.pushNamedAndRemoveUntil(
+    BlocApp.navigatorKey.currentState?.pushNamedAndRemoveUntil(
         '/notification-page',
             (route) =>
         (route.settings.name != '/notification-page') || route.isFirst,
@@ -180,13 +303,13 @@ class NotificationController extends ChangeNotifier {
   static Future<void> myFcmTokenHandle(String token) async {
 
     if (token.isNotEmpty){
-      Fluttertoast.showToast(
-          msg: 'Fcm token received',
-          backgroundColor: Colors.blueAccent,
-          textColor: Colors.white,
-          fontSize: 16);
+      if(UserPreferences.isUserLoggedIn()){
+        User user = UserPreferences.getUser();
+        UserPreferences.setUserFcmToken(token!);
+        FirestoreHelper.pushUser(user);
+      }
 
-      debugPrint('Firebase Token:"$token"');
+      Logx.d(_TAG, 'firebase token:"$token"');
     }
     else {
       Fluttertoast.showToast(
@@ -235,7 +358,7 @@ class NotificationController extends ChangeNotifier {
 
   static Future<bool> displayNotificationRationale() async {
     bool userAuthorized = false;
-    BuildContext context = MyApp.navigatorKey.currentContext!;
+    BuildContext context = BlocApp.navigatorKey.currentContext!;
     await showDialog(
         context: context,
         builder: (BuildContext ctx) {
@@ -296,7 +419,22 @@ class NotificationController extends ChangeNotifier {
   ///     LOCAL NOTIFICATION CREATION METHODS
   ///  *********************************************
 
-  static Future<void> createNewNotification() async {
+  static Future<void> showNotification(
+      {
+        required final String title,
+        required final String body,
+        final String? summary,
+        final Map<String, String>? payload,
+        final ActionType actionType = ActionType.Default,
+        final NotificationLayout notificationLayout = NotificationLayout.Default,
+        final NotificationCategory? category,
+        final String? bigPicture,
+        final String? largeIcon,
+        final List<NotificationActionButton>? actionButtons,
+        final bool scheduled = false,
+        final int? interval,
+      }
+      ) async {
     bool isAllowed = await AwesomeNotifications().isNotificationAllowed();
 
     if (!isAllowed) {
@@ -305,30 +443,183 @@ class NotificationController extends ChangeNotifier {
 
     if (!isAllowed) return;
 
+    assert(!scheduled || (scheduled && interval != null));
+
     await AwesomeNotifications().createNotification(
-        content: NotificationContent(
-            id: -1, // -1 is replaced by a random number
-            channelKey: 'alerts',
-            title: 'Huston! The eagle has landed!',
-            body:
-            "A small step for a man, but a giant leap to Flutter's community!",
-            bigPicture: 'https://storage.googleapis.com/cms-storage-bucket/d406c736e7c4c57f5f61.png',
-            largeIcon: 'https://storage.googleapis.com/cms-storage-bucket/0dbfcc7a59cd1cf16282.png',
-            notificationLayout: NotificationLayout.BigPicture,
-            payload: {'notificationId': '1234567890'}),
+      content: NotificationContent(
+          id: -1,
+          channelKey: 'high_importance_channel',
+          title: title,
+          body: body,
+          // actionType: actionType,
+          notificationLayout: notificationLayout,
+          summary: summary,
+          category: category,
+          payload: payload,
+          bigPicture: bigPicture,
+          largeIcon: largeIcon),
+      actionButtons: actionButtons,
+      schedule: scheduled
+          ? NotificationInterval(
+        interval: interval!,
+        timeZone:
+        await AwesomeNotifications().getLocalTimeZoneIdentifier(),
+        preciseAlarm: true,
+      )
+          : null,
+    );
+
+    // await AwesomeNotifications().createNotification(
+    //     content: NotificationContent(
+    //         id: -1, // -1 is replaced by a random number
+    //         channelKey: 'alerts',
+    //         title: 'Huston! The eagle has landed!',
+    //         body:
+    //         "A small step for a man, but a giant leap to Flutter's community!",
+    //         bigPicture: 'https://storage.googleapis.com/cms-storage-bucket/d406c736e7c4c57f5f61.png',
+    //         largeIcon: 'https://storage.googleapis.com/cms-storage-bucket/0dbfcc7a59cd1cf16282.png',
+    //         notificationLayout: NotificationLayout.BigPicture,
+    //         payload: {'notificationId': '1234567890'}),
+    //     actionButtons: [
+    //       NotificationActionButton(key: 'REDIRECT', label: 'Redirect'),
+    //       NotificationActionButton(
+    //           key: 'REPLY',
+    //           label: 'Reply Message',
+    //           requireInputText: true,
+    //           actionType: ActionType.SilentAction
+    //       ),
+    //       NotificationActionButton(
+    //           key: 'DISMISS',
+    //           label: 'Dismiss',
+    //           actionType: ActionType.DismissAction,
+    //           isDangerousOption: true)
+    //     ]);
+  }
+
+  static void showAdNotification(Ad ad) async {
+    Map<String, dynamic> objectMap = ad.toMap();
+    String jsonString = jsonEncode(objectMap);
+
+    if (ad.imageUrl.isEmpty) {
+      await showNotification(title: ad.title, body: ad.message, actionButtons: [
+        NotificationActionButton(
+            key: 'DISMISS',
+            label: 'dismiss',
+            actionType: ActionType.DismissAction,
+            isDangerousOption: true)
+      ]).then((res) {
+        FirestoreHelper.updateAdReach(ad.id);
+      });
+    } else {
+      await showNotification(
+        title: ad.title,
+        body: ad.message,
+        bigPicture: ad.imageUrl,
+        largeIcon: ad.imageUrl,
+        notificationLayout: NotificationLayout.BigPicture,
+        payload: {
+          "navigate": "true",
+          "type": "ad",
+          "data": jsonString,
+        },
+      ).then((res) {
+        FirestoreHelper.updateAdReach(ad.id);
+      });
+    }
+  }
+
+  static void showChatNotification(LoungeChat chat) async {
+    String photoUrl = '';
+    String photoChat = '';
+
+    if(chat.type == 'image'){
+      int firstDelimiterIndex = chat.message.indexOf(',');
+      if (firstDelimiterIndex != -1) {
+        // Use substring to split the string into two parts
+        photoUrl = chat.message.substring(0, firstDelimiterIndex);
+        photoChat = chat.message.substring(firstDelimiterIndex + 1);
+      } else {
+        // Handle the case where the delimiter is not found
+        photoUrl = chat.message;
+      }
+    }
+
+    Map<String, dynamic> objectMap = chat.toMap();
+    String jsonString = jsonEncode(objectMap);
+
+    String title = '💌 ${chat.loungeName}';
+
+    if (chat.type == 'text') {
+      String body = chat.message;
+
+      await showNotification(
+        title: title,
+        body: body,
+        notificationLayout: NotificationLayout.Default,
+        payload: {
+          "navigate": "true",
+          "type": "chat",
+          "data": jsonString,
+        },
+      );
+    } else {
+      await showNotification(
+        title: title,
+        body: photoChat,
+        largeIcon: photoUrl,
+        notificationLayout: NotificationLayout.Default,
+        payload: {
+          "navigate": "true",
+          "type": "chat",
+          "data": jsonString,
+        },
+        // actionButtons: [
+        //   NotificationActionButton(
+        //       key: 'DISMISS',
+        //       label: 'dismiss',
+        //       actionType: ActionType.DismissAction,
+        //       isDangerousOption: true)
+        // ]
+      );
+    }
+  }
+
+  static void showDefaultNotification(String title, String body) async {
+    await showNotification(
+        title: title,
+        body: body,
+        notificationLayout: NotificationLayout.Default,
         actionButtons: [
-          NotificationActionButton(key: 'REDIRECT', label: 'Redirect'),
-          NotificationActionButton(
-              key: 'REPLY',
-              label: 'Reply Message',
-              requireInputText: true,
-              actionType: ActionType.SilentAction
-          ),
           NotificationActionButton(
               key: 'DISMISS',
-              label: 'Dismiss',
+              label: 'dismiss',
               actionType: ActionType.DismissAction,
               isDangerousOption: true)
+        ]);
+  }
+
+  static void showUrlLinkNotification(String title, String body, String url ) async {
+    await showNotification(
+        title: title,
+        body: body,
+        notificationLayout: NotificationLayout.Default,
+        payload: {
+          "navigate": "true",
+          "type": "url",
+          "link": url
+        },
+        actionButtons: [
+          NotificationActionButton(
+              key: 'DISMISS',
+              label: 'dismiss',
+              actionType: ActionType.DismissAction,
+              isDangerousOption: true),
+          NotificationActionButton(
+            key: 'OPEN_URL_ACTION',
+            label: '💖 review bloc',
+            actionType: ActionType.Default,
+          ),
+
         ]);
   }
 

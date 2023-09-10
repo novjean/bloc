@@ -2,7 +2,6 @@ import 'package:bloc/db/entity/party_guest.dart';
 import 'package:bloc/helpers/dummy.dart';
 import 'package:bloc/helpers/firestore_helper.dart';
 import 'package:bloc/screens/parties/party_guest_add_edit_manage_screen.dart';
-import 'package:bloc/services/notification_service.dart';
 import 'package:bloc/utils/string_utils.dart';
 import 'package:bloc/widgets/ui/app_bar_title.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -23,7 +22,6 @@ import '../../utils/file_utils.dart';
 import '../../utils/logx.dart';
 import '../../widgets/parties/manage_guest_list_item.dart';
 import '../../widgets/ui/loading_widget.dart';
-import '../../widgets/ui/toaster.dart';
 
 class ManageGuestListScreen extends StatefulWidget {
   @override

@@ -43,6 +43,7 @@ class _TokenMonitor extends State<TokenMonitor> {
   @override
   void initState() {
     super.initState();
+
     // FirebaseMessaging.instance
     //     .getToken()
     // // if vapidKey is needed, then : https://stackoverflow.com/questions/54996206/firebase-cloud-messaging-where-to-find-public-vapid-key

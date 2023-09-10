@@ -1,7 +1,4 @@
-import 'dart:convert';
 
-import 'package:bloc/db/entity/celebration.dart';
-import 'package:bloc/db/entity/lounge_chat.dart';
 import 'package:bloc/db/entity/user.dart' as blocUser;
 import 'package:bloc/db/shared_preferences/table_preferences.dart';
 import 'package:bloc/db/shared_preferences/ui_preferences.dart';
@@ -20,19 +17,14 @@ import 'package:flutter_slider_drawer/flutter_slider_drawer.dart';
 import 'package:go_router/go_router.dart';
 import 'package:upgrader/upgrader.dart';
 
-import '../api/apis.dart';
 import '../db/entity/ad.dart';
-import '../db/entity/party_guest.dart';
-import '../db/entity/reservation.dart';
 import '../db/entity/user_lounge.dart';
 import '../db/shared_preferences/user_preferences.dart';
 import '../helpers/firestore_helper.dart';
 import '../helpers/fresh.dart';
 import '../main.dart';
 import '../routes/route_constants.dart';
-import '../services/notification_service.dart';
 import '../utils/logx.dart';
-import 'account_screen.dart';
 import 'captain/captain_main_screen.dart';
 import 'photos/photos_screen.dart';
 import 'home_screen.dart';

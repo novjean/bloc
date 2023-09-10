@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:bloc/controller/notification_controller.dart';
 import 'package:bloc/helpers/firestorage_helper.dart';
 import 'package:bloc/helpers/fresh.dart';
 import 'package:bloc/widgets/ui/app_bar_title.dart';
@@ -18,7 +19,6 @@ import 'package:path_provider/path_provider.dart';
 import '../../../db/entity/ad.dart';
 import '../../../db/entity/party.dart';
 import '../../../helpers/firestore_helper.dart';
-import '../../../services/notification_service.dart';
 import '../../../utils/constants.dart';
 import '../../../utils/logx.dart';
 import '../../../utils/string_utils.dart';
@@ -233,7 +233,7 @@ class _AdAddEditScreenState extends State<AdAddEditScreen> {
               Navigator.of(context).pop();
             } else {
               if (widget.ad.imageUrl.isEmpty) {
-                await NotificationService.showNotification(
+                await NotificationController.showNotification(
                     title: widget.ad.title,
                     body: widget.ad.message,
                     actionButtons: [
@@ -248,7 +248,7 @@ class _AdAddEditScreenState extends State<AdAddEditScreen> {
                 Map<String, dynamic> objectMap = widget.ad.toMap();
                 String jsonString = jsonEncode(objectMap);
 
-                await NotificationService.showNotification(
+                await NotificationController.showNotification(
                     title: widget.ad.title,
                     body: widget.ad.message,
                     bigPicture: widget.ad.imageUrl,
