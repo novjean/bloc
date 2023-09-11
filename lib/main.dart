@@ -1,17 +1,21 @@
 import 'dart:ui';
 
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:bloc/db/shared_preferences/party_guest_preferences.dart';
 import 'package:bloc/db/shared_preferences/table_preferences.dart';
 import 'package:bloc/routes/bloc_router.dart';
 
 import 'package:bloc/db/shared_preferences/ui_preferences.dart';
+import 'package:bloc/utils/logx.dart';
 import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
+import 'package:awesome_notifications_fcm/awesome_notifications_fcm.dart';
 
 import 'controller/notification_controller.dart';
 import 'db/shared_preferences/user_preferences.dart';
@@ -23,13 +27,16 @@ var logger = Logger(
   printer: PrettyPrinter(),
 );
 
-// Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-//   // If you're going to use other Firebase services in the background, such as Firestore,
-//   // make sure you call `initializeApp` before using other Firebase services.
-//   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-//
-//   Logx.i('main', 'handling a background message ${message.messageId}');
-// }
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  // If you're going to use other Firebase services in the background, such as Firestore,
+  // make sure you call `initializeApp` before using other Firebase services.
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
+  Logx.i('main', 'handling a background message ${message.messageId}');
+
+  // Handle the incoming FCM message and convert it into an awesome notification
+  // AwesomeNotifications().createNotificationFromJsonData(message.data);
+}
 
 /// A constant that is true if the application was compiled to run on the web.
 ///
@@ -50,6 +57,9 @@ Future<void> main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
+  // Set the background messaging handler early on, as a named top-level function
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
   if(!kIsWeb) {
     await NotificationController.initializeLocalNotifications(debug: true);
     await NotificationController.initializeRemoteNotifications(debug: true);
@@ -64,9 +74,6 @@ Future<void> main() async {
     FirebaseCrashlytics.instance.recordError(error, stack, fatal: false);
     return true;
   };
-
-  // Set the background messaging handler early on, as a named top-level function
-  // FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
   // shared preferences initialization
   await UserPreferences.init();

@@ -1,6 +1,6 @@
-
 import 'dart:convert';
 
+import 'package:awesome_notifications_fcm/awesome_notifications_fcm.dart';
 import 'package:bloc/db/entity/user.dart' as blocUser;
 import 'package:bloc/db/shared_preferences/table_preferences.dart';
 import 'package:bloc/db/shared_preferences/ui_preferences.dart';
@@ -159,7 +159,7 @@ class _MainScreenState extends State<MainScreen> {
     }
 
     if (!kIsWeb) {
-      NotificationController.startListeningNotificationEvents();
+      // NotificationController.startListeningNotificationEvents();
       // AwesomeNotifications().requestPermissionToSendNotifications()
 
       NotificationController.requestFirebaseToken().then((token) {
@@ -169,79 +169,80 @@ class _MainScreenState extends State<MainScreen> {
         Logx.d(_TAG, 'user token: $token');
       });
 
+
       // //the following lines are essential for notification to work in iOS
       final fbm = FirebaseMessaging.instance;
-      // // fbm.requestPermission();
+      fbm.requestPermission();
 
-      // FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      //   Map<String, dynamic> data = message.data;
-      //   String type = data['type'];
-      //
-      //   switch(type){
-      //     case 'lounge_chats':{
-      //       UiPreferences.setHomePageIndex(2);
-      //       LoungeChat chat = Fresh.freshLoungeChatMap(jsonDecode(data['document']), false);
-      //       if(UserPreferences.isUserLoggedIn() && chat.userId != UserPreferences.myUser.id){
-      //         if(UserPreferences.getListLounges().contains(chat.loungeId)){
-      //           NotificationController.showChatNotification(chat);
-      //         }
-      //       }
-      //       break;
-      //     }
-      //     case 'ads':{
-      //       Ad ad = Fresh.freshAdMap(jsonDecode(data['document']), false);
-      //       NotificationController.showAdNotification(ad);
-      //       break;
-      //     }
-      //     case 'party_guest':{
-      //       PartyGuest partyGuest = Fresh.freshPartyGuestMap(jsonDecode(data['document']), false);
-      //       if(!partyGuest.isApproved){
-      //         String title = '${partyGuest.name} ${partyGuest.surname}';
-      //         String body = '${partyGuest.guestStatus} : ${partyGuest.guestsCount}';
-      //
-      //         NotificationController.showDefaultNotification(title, body);
-      //       } else {
-      //         Logx.ist(_TAG, 'guest list: ${partyGuest.name} added');
-      //       }
-      //       break;
-      //     }
-      //     case 'reservations':{
-      //       Reservation reservation = Fresh.freshReservationMap(jsonDecode(data['document']), false);
-      //       String title = 'request : table reservation';
-      //       String body = '${reservation.name} : ${reservation.guestsCount}';
-      //
-      //       NotificationController.showDefaultNotification(title, body);
-      //       break;
-      //     }
-      //     case 'celebrations':{
-      //       Celebration celebration = Fresh.freshCelebrationMap(jsonDecode(data['document']), false);
-      //       String title = 'request : celebration';
-      //       String body = '${celebration.name} : ${celebration.guestsCount}';
-      //
-      //       NotificationController.showDefaultNotification(title, body);
-      //       break;
-      //     }
-      //     case Apis.GoogleReviewBloc: {
-      //       String? title = message.notification!.title;
-      //       String? body = message.notification!.body;
-      //       String url = Constants.blocGoogleReview;
-      //
-      //       NotificationController.showUrlLinkNotification(title!, body!, url);
-      //       break;
-      //     }
-      //
-      //     case 'offer':
-      //     case 'order':
-      //     case 'sos':
-      //     case 'notification_tests':
-      //     default:{
-      //       String? title = '${message.notification!.title}!';
-      //       String? body = message.notification!.body;
-      //
-      //       NotificationController.showDefaultNotification(title!, body!);
-      //     }
-      //   }
-      // });
+      FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+        Map<String, dynamic> data = message.data;
+        String type = data['type'];
+
+        switch(type){
+          case 'lounge_chats':{
+            UiPreferences.setHomePageIndex(2);
+            LoungeChat chat = Fresh.freshLoungeChatMap(jsonDecode(data['document']), false);
+            if(UserPreferences.isUserLoggedIn() && chat.userId != UserPreferences.myUser.id){
+              if(UserPreferences.getListLounges().contains(chat.loungeId)){
+                NotificationController.showChatNotification(chat);
+              }
+            }
+            break;
+          }
+          case 'ads':{
+            Ad ad = Fresh.freshAdMap(jsonDecode(data['document']), false);
+            NotificationController.showAdNotification(ad);
+            break;
+          }
+          case 'party_guest':{
+            PartyGuest partyGuest = Fresh.freshPartyGuestMap(jsonDecode(data['document']), false);
+            if(!partyGuest.isApproved){
+              String title = '${partyGuest.name} ${partyGuest.surname}';
+              String body = '${partyGuest.guestStatus} : ${partyGuest.guestsCount}';
+
+              NotificationController.showDefaultNotification(title, body);
+            } else {
+              Logx.ist(_TAG, 'guest list: ${partyGuest.name} added');
+            }
+            break;
+          }
+          case 'reservations':{
+            Reservation reservation = Fresh.freshReservationMap(jsonDecode(data['document']), false);
+            String title = 'request : table reservation';
+            String body = '${reservation.name} : ${reservation.guestsCount}';
+
+            NotificationController.showDefaultNotification(title, body);
+            break;
+          }
+          case 'celebrations':{
+            Celebration celebration = Fresh.freshCelebrationMap(jsonDecode(data['document']), false);
+            String title = 'request : celebration';
+            String body = '${celebration.name} : ${celebration.guestsCount}';
+
+            NotificationController.showDefaultNotification(title, body);
+            break;
+          }
+          case Apis.GoogleReviewBloc: {
+            String? title = message.notification!.title;
+            String? body = message.notification!.body;
+            String url = Constants.blocGoogleReview;
+
+            NotificationController.showUrlLinkNotification(title!, body!, url);
+            break;
+          }
+
+          case 'offer':
+          case 'order':
+          case 'sos':
+          case 'notification_tests':
+          default:{
+            String? title = '${message.notification!.title}!';
+            String? body = message.notification!.body;
+
+            NotificationController.showDefaultNotification(title!, body!);
+          }
+        }
+      });
 
       //clear out any previous subscriptions
       blocUser.User user = UserPreferences.getUser();
