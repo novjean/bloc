@@ -171,7 +171,7 @@ class _MainScreenState extends State<MainScreen> {
       });
 
       // //the following lines are essential for notification to work in iOS
-      // final fbm = FirebaseMessaging.instance;
+      final fbm = FirebaseMessaging.instance;
       // // fbm.requestPermission();
       //
       // FirebaseMessaging.onMessage.listen((RemoteMessage message) {
@@ -242,37 +242,38 @@ class _MainScreenState extends State<MainScreen> {
       //     }
       //   }
       // });
-      //
-      // //clear out any previous subscriptions
-      // blocUser.User user = UserPreferences.getUser();
-      // if (user.clearanceLevel >= Constants.CAPTAIN_LEVEL) {
-      //   fbm.unsubscribeFromTopic('sos');
-      //   fbm.unsubscribeFromTopic('order');
-      // }
-      // if (user.clearanceLevel >= Constants.PROMOTER_LEVEL) {
-      //   fbm.unsubscribeFromTopic('party_guest');
-      //   fbm.unsubscribeFromTopic('reservations');
-      // }
-      // if (user.clearanceLevel >= Constants.MANAGER_LEVEL) {
-      //   fbm.unsubscribeFromTopic('celebrations');
-      //   fbm.unsubscribeFromTopic('offer');
-      // }
-      //
-      // // subscribe to topics
-      // fbm.subscribeToTopic('ads');
-      // fbm.subscribeToTopic('lounge_chats');
-      // if (user.clearanceLevel >= Constants.CAPTAIN_LEVEL) {
-      //   fbm.subscribeToTopic('sos');
-      //   fbm.subscribeToTopic('order');
-      // }
-      // if (user.clearanceLevel >= Constants.PROMOTER_LEVEL) {
-      //   fbm.subscribeToTopic('party_guest');
-      //   fbm.subscribeToTopic('reservations');
-      //   fbm.subscribeToTopic('celebrations');
-      // }
-      // if (user.clearanceLevel >= Constants.MANAGER_LEVEL) {
-      //   fbm.subscribeToTopic('offer');
-      // }
+
+      //clear out any previous subscriptions
+      blocUser.User user = UserPreferences.getUser();
+      if (user.clearanceLevel >= Constants.CAPTAIN_LEVEL) {
+        fbm.unsubscribeFromTopic('sos');
+        fbm.unsubscribeFromTopic('order');
+      }
+      if (user.clearanceLevel >= Constants.PROMOTER_LEVEL) {
+        fbm.unsubscribeFromTopic('party_guest');
+        fbm.unsubscribeFromTopic('reservations');
+      }
+      if (user.clearanceLevel >= Constants.MANAGER_LEVEL) {
+        fbm.unsubscribeFromTopic('celebrations');
+        fbm.unsubscribeFromTopic('offer');
+      }
+
+      // subscribe to topics
+      fbm.subscribeToTopic('ads');
+      fbm.subscribeToTopic('lounge_chats');
+      if (user.clearanceLevel >= Constants.CAPTAIN_LEVEL) {
+        fbm.subscribeToTopic('sos');
+        fbm.subscribeToTopic('order');
+      }
+      if (user.clearanceLevel >= Constants.PROMOTER_LEVEL) {
+        fbm.subscribeToTopic('party_guest');
+        fbm.subscribeToTopic('reservations');
+        fbm.subscribeToTopic('celebrations');
+      }
+      if (user.clearanceLevel >= Constants.MANAGER_LEVEL) {
+        fbm.subscribeToTopic('offer');
+        fbm.subscribeToTopic('notification_tests');
+      }
     } else {
       // in web mode
     }

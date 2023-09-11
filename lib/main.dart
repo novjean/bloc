@@ -50,10 +50,12 @@ Future<void> main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  await NotificationController.initializeLocalNotifications(debug: true);
-  await NotificationController.initializeRemoteNotifications(debug: true);
-  await NotificationController.initializeIsolateReceivePort();
-  await NotificationController.getInitialNotificationAction();
+  if(!kIsWeb) {
+    await NotificationController.initializeLocalNotifications(debug: true);
+    await NotificationController.initializeRemoteNotifications(debug: true);
+    await NotificationController.initializeIsolateReceivePort();
+    await NotificationController.getInitialNotificationAction();
+  }
 
   // Pass all uncaught "fatal" errors from the framework to Crashlytics
   FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
