@@ -12,9 +12,15 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
 import 'package:http/http.dart' as http;
 
+import '../api/apis.dart';
 import '../db/entity/ad.dart';
+import '../db/entity/celebration.dart';
 import '../db/entity/lounge_chat.dart';
+import '../db/entity/notification_test.dart';
+import '../db/entity/party_guest.dart';
+import '../db/entity/reservation.dart';
 import '../db/entity/user.dart';
+import '../db/shared_preferences/ui_preferences.dart';
 import '../db/shared_preferences/user_preferences.dart';
 import '../helpers/firestore_helper.dart';
 import '../helpers/fresh.dart';
@@ -185,7 +191,8 @@ class NotificationController extends ChangeNotifier {
     ){
       // For background actions, you must hold the execution until the end
       print('Message sent via notification input: "${receivedAction.buttonKeyInput}"');
-      await executeLongTaskInBackground();
+
+      // await executeLongTaskInBackground();
       return;
     }
     else {
@@ -248,8 +255,6 @@ class NotificationController extends ChangeNotifier {
   /// Use this method to detect when a new notification or a schedule is created
   static Future<void> onNotificationCreatedMethod(
       ReceivedNotification receivedNotification) async {
-
-
     debugPrint('onNotificationCreatedMethod');
   }
 
@@ -262,12 +267,14 @@ class NotificationController extends ChangeNotifier {
   /// Use this method to detect if the user dismissed a notification
   static Future<void> onDismissActionReceivedMethod(
       ReceivedAction receivedAction) async {
-    debugPrint('onDismissActionReceivedMethod');
+    Logx.d(_TAG, 'onDismissActionReceivedMethod');
   }
 
   static Future<void> onActionReceivedImplementationMethod(
       ReceivedAction receivedAction
       ) async {
+    Logx.d(_TAG, 'onActionReceivedImplementationMethod');
+
     BlocApp.navigatorKey.currentState?.pushNamedAndRemoveUntil(
         '/notification-page',
             (route) =>
@@ -289,13 +296,15 @@ class NotificationController extends ChangeNotifier {
         textColor: Colors.white,
         fontSize: 16);
 
-    print('"SilentData": ${silentData.toString()}');
+    Logx.d(_TAG, 'SilentData: ${silentData.toString()}');
 
     if (silentData.createdLifeCycle != NotificationLifeCycle.Foreground) {
       print("bg");
     } else {
       print("FOREGROUND");
     }
+
+    // Map<String, dynamic> data = silentData.data!;
 
     print('mySilentDataHandle received a FcmSilentData execution');
     await executeLongTaskInBackground();
@@ -347,7 +356,6 @@ class NotificationController extends ChangeNotifier {
   ///  *********************************************
 
   static Future<void> executeLongTaskInBackground() async {
-    print("starting long task");
     await Future.delayed(const Duration(seconds: 4));
     final url = Uri.parse("http://google.com");
     final re = await http.get(url);
@@ -360,7 +368,6 @@ class NotificationController extends ChangeNotifier {
   ///  *********************************************
 
   static Future<bool> displayNotificationRationale() async {
-
     bool userAuthorized = false;
     BuildContext context = BlocApp.navigatorKey.currentContext!;
     await showDialog(
@@ -423,8 +430,7 @@ class NotificationController extends ChangeNotifier {
   ///     LOCAL NOTIFICATION CREATION METHODS
   ///  *********************************************
 
-  static Future<void> showNotification(
-      {
+  static Future<void> showNotification({
         required final String title,
         required final String body,
         final String? summary,
@@ -437,8 +443,7 @@ class NotificationController extends ChangeNotifier {
         final List<NotificationActionButton>? actionButtons,
         final bool scheduled = false,
         final int? interval,
-      }
-      ) async {
+      }) async {
     bool isAllowed = await AwesomeNotifications().isNotificationAllowed();
 
     if (!isAllowed) {

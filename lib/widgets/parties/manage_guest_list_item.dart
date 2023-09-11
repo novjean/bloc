@@ -65,7 +65,7 @@ class ManageGuestListItem extends StatelessWidget {
                     Text(
                       'status : ${partyGuest.guestStatus}',
                     ),
-                    Text(partyName, style: const TextStyle(fontWeight: FontWeight.bold),)
+                    Text('$partyName', style: const TextStyle(fontWeight: FontWeight.bold),)
                   ],
                 ),
                 Row(
