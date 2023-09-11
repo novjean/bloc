@@ -1,4 +1,6 @@
 
+import 'dart:convert';
+
 import 'package:bloc/db/entity/user.dart' as blocUser;
 import 'package:bloc/db/shared_preferences/table_preferences.dart';
 import 'package:bloc/db/shared_preferences/ui_preferences.dart';
@@ -10,6 +12,7 @@ import 'package:bloc/utils/constants.dart';
 import 'package:bloc/utils/date_time_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 // import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -17,7 +20,13 @@ import 'package:flutter_slider_drawer/flutter_slider_drawer.dart';
 import 'package:go_router/go_router.dart';
 import 'package:upgrader/upgrader.dart';
 
+import '../api/apis.dart';
+import '../controller/notification_controller.dart';
 import '../db/entity/ad.dart';
+import '../db/entity/celebration.dart';
+import '../db/entity/lounge_chat.dart';
+import '../db/entity/party_guest.dart';
+import '../db/entity/reservation.dart';
 import '../db/entity/user_lounge.dart';
 import '../db/shared_preferences/user_preferences.dart';
 import '../helpers/firestore_helper.dart';
@@ -151,21 +160,20 @@ class _MainScreenState extends State<MainScreen> {
     }
 
     if (!kIsWeb) {
-      //the following lines are essential for notification to work in iOS
-      // final fbm = FirebaseMessaging.instance;
-      // fbm.requestPermission();
-      //
-      // fbm.getToken().then((t) {
-      //   if(t!=null){
-      //     UserPreferences.myUser.fcmToken = t;
-      //
-      //     FirestoreHelper.updateUserFcmToken(UserPreferences.myUser.id, t);
-      //     Logx.d(_TAG, 'user token: $t');
-      //   }else {
-      //     Logx.em(_TAG, 'fcm token came in null');
-      //   }
-      // });
+      NotificationController.startListeningNotificationEvents();
+      // AwesomeNotifications().requestPermissionToSendNotifications()
 
+      NotificationController.requestFirebaseToken().then((token) {
+        UserPreferences.myUser.fcmToken = token;
+
+        FirestoreHelper.updateUserFcmToken(UserPreferences.myUser.id, token);
+        Logx.d(_TAG, 'user token: $token');
+      });
+
+      // //the following lines are essential for notification to work in iOS
+      // final fbm = FirebaseMessaging.instance;
+      // // fbm.requestPermission();
+      //
       // FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       //   Map<String, dynamic> data = message.data;
       //   String type = data['type'];
@@ -176,14 +184,14 @@ class _MainScreenState extends State<MainScreen> {
       //       LoungeChat chat = Fresh.freshLoungeChatMap(jsonDecode(data['document']), false);
       //       if(UserPreferences.isUserLoggedIn() && chat.userId != UserPreferences.myUser.id){
       //         if(UserPreferences.getListLounges().contains(chat.loungeId)){
-      //           NotificationService.showChatNotification(chat);
+      //           NotificationController.showChatNotification(chat);
       //         }
       //       }
       //       break;
       //     }
       //     case 'ads':{
       //       Ad ad = Fresh.freshAdMap(jsonDecode(data['document']), false);
-      //       NotificationService.showAdNotification(ad);
+      //       NotificationController.showAdNotification(ad);
       //       break;
       //     }
       //     case 'party_guest':{
@@ -192,7 +200,7 @@ class _MainScreenState extends State<MainScreen> {
       //         String title = '${partyGuest.name} ${partyGuest.surname}';
       //         String body = '${partyGuest.guestStatus} : ${partyGuest.guestsCount}';
       //
-      //         NotificationService.showDefaultNotification(title, body);
+      //         NotificationController.showDefaultNotification(title, body);
       //       } else {
       //         Logx.ist(_TAG, 'guest list: ${partyGuest.name} added');
       //       }
@@ -203,7 +211,7 @@ class _MainScreenState extends State<MainScreen> {
       //       String title = 'request : table reservation';
       //       String body = '${reservation.name} : ${reservation.guestsCount}';
       //
-      //       NotificationService.showDefaultNotification(title, body);
+      //       NotificationController.showDefaultNotification(title, body);
       //       break;
       //     }
       //     case 'celebrations':{
@@ -211,7 +219,7 @@ class _MainScreenState extends State<MainScreen> {
       //       String title = 'request : celebration';
       //       String body = '${celebration.name} : ${celebration.guestsCount}';
       //
-      //       NotificationService.showDefaultNotification(title, body);
+      //       NotificationController.showDefaultNotification(title, body);
       //       break;
       //     }
       //     case Apis.GoogleReviewBloc: {
@@ -219,7 +227,7 @@ class _MainScreenState extends State<MainScreen> {
       //       String? body = message.notification!.body;
       //       String url = Constants.blocGoogleReview;
       //
-      //       NotificationService.showUrlLinkNotification(title!, body!, url);
+      //       NotificationController.showUrlLinkNotification(title!, body!, url);
       //       break;
       //     }
       //
@@ -230,13 +238,13 @@ class _MainScreenState extends State<MainScreen> {
       //       String? title = message.notification!.title;
       //       String? body = message.notification!.body;
       //
-      //       NotificationService.showDefaultNotification(title!, body!);
+      //       NotificationController.showDefaultNotification(title!, body!);
       //     }
       //   }
       // });
-
-      //clear out any previous subscriptions
-      blocUser.User user = UserPreferences.getUser();
+      //
+      // //clear out any previous subscriptions
+      // blocUser.User user = UserPreferences.getUser();
       // if (user.clearanceLevel >= Constants.CAPTAIN_LEVEL) {
       //   fbm.unsubscribeFromTopic('sos');
       //   fbm.unsubscribeFromTopic('order');

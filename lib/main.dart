@@ -52,7 +52,7 @@ Future<void> main() async {
 
   await NotificationController.initializeLocalNotifications(debug: true);
   await NotificationController.initializeRemoteNotifications(debug: true);
-  // await NotificationController.initializeIsolateReceivePort();
+  await NotificationController.initializeIsolateReceivePort();
   await NotificationController.getInitialNotificationAction();
 
   // Pass all uncaught "fatal" errors from the framework to Crashlytics

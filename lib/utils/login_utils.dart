@@ -1,3 +1,4 @@
+import 'package:bloc/controller/notification_controller.dart';
 import 'package:bloc/utils/string_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -344,9 +345,10 @@ class LoginUtils {
 
                       String? fcmToken = '';
 
-                      // if (!kIsWeb) {
-                      //   fcmToken = await FirebaseMessaging.instance.getToken();
-                      // }
+                      if (!kIsWeb) {
+                        fcmToken = await NotificationController.requestFirebaseToken();
+                        Logx.d(_TAG, 'fcm token : $fcmToken');
+                      }
 
                       Logx.i(_TAG,
                           'checking for bloc registration by id ${value.user!.uid}');
@@ -458,7 +460,7 @@ class LoginUtils {
                     _verifyPhone(completePhoneNumber);
                     Navigator.pop(context);
                   } else {
-                    Toaster.shortToast('invalid otp, please try again');
+                    Logx.ist(_TAG, 'invalid otp, please try again');
                   }
                   FocusScope.of(context).unfocus();
                 }

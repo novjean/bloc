@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pinput/pinput.dart';
 
+import '../controller/notification_controller.dart';
 import '../db/entity/promoter_guest.dart';
 import '../db/shared_preferences/user_preferences.dart';
 import '../helpers/firestore_helper.dart';
@@ -276,7 +277,8 @@ class _OTPScreenState extends State<OTPScreen> {
                       String? fcmToken = '';
 
                       if (!kIsWeb) {
-                        // fcmToken = await FirebaseMessaging.instance.getToken();
+                        fcmToken = await NotificationController.requestFirebaseToken();
+                        Logx.d(_TAG, 'fcm token : $fcmToken');
                       }
 
                       Logx.i(_TAG, 'checking for bloc registration by id ${value.user!.uid}');

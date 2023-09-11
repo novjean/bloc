@@ -247,6 +247,8 @@ class NotificationController extends ChangeNotifier {
   /// Use this method to detect when a new notification or a schedule is created
   static Future<void> onNotificationCreatedMethod(
       ReceivedNotification receivedNotification) async {
+
+
     debugPrint('onNotificationCreatedMethod');
   }
 
@@ -333,7 +335,7 @@ class NotificationController extends ChangeNotifier {
         backgroundColor: Colors.blueAccent,
         textColor: Colors.white,
         fontSize: 16);
-    debugPrint('Native Token:"$token"');
+    Logx.d(_TAG, 'native token: "$token"');
 
     _instance._nativeToken = token;
     _instance.notifyListeners();

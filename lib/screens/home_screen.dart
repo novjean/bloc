@@ -380,7 +380,7 @@ class _HomeScreenState extends State<HomeScreen> {
       margin: const EdgeInsets.symmetric(horizontal: 10),
       decoration: BoxDecoration(
         border: Border.all(),
-        color: Theme.of(context).primaryColor,
+        color: Constants.primary,
         borderRadius: const BorderRadius.all(Radius.circular(15)),
       ),
       child: Column(
@@ -389,11 +389,11 @@ class _HomeScreenState extends State<HomeScreen> {
         children: [
           Container(
             padding: const EdgeInsets.only(top: 10, left: 10.0),
-            child: Text(
+            child: const Text(
               "🌀 free wifi  🛰️",
               style: TextStyle(
                 fontSize: 24.0,
-                color: Theme.of(context).primaryColorDark,
+                color: Constants.darkPrimary,
                 fontWeight: FontWeight.w800,
               ),
               textAlign: TextAlign.left,
@@ -486,58 +486,4 @@ class _HomeScreenState extends State<HomeScreen> {
       },
     );
   }
-
-  /** optional **/
-  // buildSuperstarsList(BuildContext context) {
-  //   return StreamBuilder<QuerySnapshot>(
-  //     stream: FirestoreHelper.getUsersLessThanLevel(Constants.MANAGER_LEVEL),
-  //     builder: (ctx, snapshot) {
-  //       if (snapshot.connectionState == ConnectionState.waiting) {
-  //         Logx.i(_TAG, 'loading users...');
-  //         return const LoadingWidget();
-  //       }
-  //
-  //       List<User> _users = [];
-  //       for (int i = 0; i < snapshot.data!.docs.length; i++) {
-  //         DocumentSnapshot document = snapshot.data!.docs[i];
-  //         Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-  //         final User user = User.fromMap(data);
-  //         if (user.imageUrl.isNotEmpty) {
-  //           _users.add(user);
-  //         }
-  //
-  //         if (i == snapshot.data!.docs.length - 1) {
-  //           return _displaySuperstarsList(context, _users);
-  //         }
-  //       }
-  //       return const LoadingWidget();
-  //     },
-  //   );
-  // }
-  //
-  // _displaySuperstarsList(BuildContext context, List<User> users) {
-  //   return Container(
-  //     padding: const EdgeInsets.only(left: 10, right: 10),
-  //     height: 50.0,
-  //     child: ListView.builder(
-  //       primary: false,
-  //       scrollDirection: Axis.horizontal,
-  //       shrinkWrap: true,
-  //       itemCount: users.length,
-  //       itemBuilder: (BuildContext context, int index) {
-  //         String img = users[index].imageUrl;
-  //
-  //         return Padding(
-  //           padding: const EdgeInsets.only(right: 5.0),
-  //           child: CircleAvatar(
-  //             backgroundImage: NetworkImage(
-  //               img,
-  //             ),
-  //             radius: 25.0,
-  //           ),
-  //         );
-  //       },
-  //     ),
-  //   );
-  // }
 }
