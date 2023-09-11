@@ -39,7 +39,6 @@ class Apis{
     } catch(e) {
       Logx.em(_TAG, e.toString());
     }
-
   }
 
   static Future<void> sendUrlPushNotification(String fcmToken, String title, String msg, String type) async {
@@ -70,7 +69,6 @@ class Apis{
     } catch(e) {
       Logx.em(_TAG, e.toString());
     }
-
   }
 
 }

@@ -235,12 +235,12 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
             if (sPartyName == 'all') {
               for (Party party in mParties) {
                 if (partyGuest.partyId == party.id) {
-                  partyName = party.name;
+                  partyName = '${party.name} ${party.chapter}';
                   break;
                 }
               }
             } else {
-              partyName = sParty.name;
+              partyName = '${sParty.name} ${sParty.chapter}';
             }
 
             return GestureDetector(

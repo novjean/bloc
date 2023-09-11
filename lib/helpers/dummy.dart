@@ -24,6 +24,7 @@ import '../db/entity/config.dart';
 import '../db/entity/lounge_chat.dart';
 import '../db/entity/genre.dart';
 import '../db/entity/lounge.dart';
+import '../db/entity/notification_test.dart';
 import '../db/entity/offer.dart';
 import '../db/entity/party.dart';
 import '../db/entity/party_interest.dart';
@@ -172,10 +173,10 @@ class Dummy {
     ChallengeAction dummy = ChallengeAction(
         id: StringUtils.getRandomString(28),
         action: '',
-      actionType: 'url',
-      buttonCount: 1,
-      buttonTitle: '',
-      challengeId: challengeId
+        actionType: 'url',
+        buttonCount: 1,
+        buttonTitle: '',
+        challengeId: challengeId
     );
     return dummy;
   }
@@ -249,6 +250,14 @@ class Dummy {
     return dummy;
   }
 
+  static NotificationTest getDummyNotificationTest() {
+    NotificationTest dummy = NotificationTest(
+        id: StringUtils.getRandomString(28),
+        text: ''
+    );
+    return dummy;
+  }
+
   static Offer getDummyOffer() {
     Offer productOffer = Offer(
         blocServiceId: '',
@@ -295,7 +304,7 @@ class Dummy {
         clubRules: Constants.clubRules,
         guestListRules: Constants.guestListRules,
 
-      type: 'artist',
+        type: 'artist',
         isTicketed: false,
         ticketsSoldCount: 0,
         ticketsSalesTotal: 0,
@@ -306,7 +315,7 @@ class Dummy {
         chapter: '',
         artistIds: [],
         loungeId: '',
-      isTicketsDisabled: false
+        isTicketsDisabled: false
 
     );
 
@@ -398,7 +407,7 @@ class Dummy {
 
   static Promoter getDummyPromoter() {
     Promoter dummy =
-        Promoter(id: StringUtils.getRandomString(28), name: '', type: 'brand');
+    Promoter(id: StringUtils.getRandomString(28), name: '', type: 'brand');
 
     return dummy;
   }
@@ -448,7 +457,7 @@ class Dummy {
         blocServiceId: blocServiceId,
         customerId: UserPreferences.myUser.id,
         name:
-            UserPreferences.isUserLoggedIn() ? UserPreferences.myUser.name : '',
+        UserPreferences.isUserLoggedIn() ? UserPreferences.myUser.name : '',
         phone: UserPreferences.isUserLoggedIn()
             ? UserPreferences.myUser.phoneNumber
             : 0,
@@ -506,7 +515,8 @@ class Dummy {
 
   static UiPhoto getDummyUiPhoto() {
     UiPhoto uiPhoto =
-        UiPhoto(id: StringUtils.getRandomString(28), name: '', imageUrls: []);
+    UiPhoto(id: StringUtils.getRandomString(28),
+        name: '', imageUrls: []);
     return uiPhoto;
   }
 
@@ -539,7 +549,7 @@ class Dummy {
 
   static UserLevel getDummyUserLevel() {
     UserLevel dummyUserLevel =
-        const UserLevel(id: '84ub8bC0m3NQH9KfWCkD', name: 'customer', level: 1);
+    const UserLevel(id: '84ub8bC0m3NQH9KfWCkD', name: 'customer', level: 1);
 
     return dummyUserLevel;
   }

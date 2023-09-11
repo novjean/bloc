@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:bloc/db/entity/lounge_chat.dart';
 import 'package:bloc/helpers/firestore_helper.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -16,6 +17,8 @@ import '../utils/network_utils.dart';
 
 class NotificationService {
   static const String _TAG = 'NotificationService';
+
+  static int lastNotificationTime = 0;
 
   static Future<void> initializeNotification() async {
     await AwesomeNotifications().initialize(
@@ -151,6 +154,10 @@ class NotificationService {
       }
     }
   }
+
+  // static void handleMessage(RemoteMessage message ){
+  //
+  // }
 
   static Future<void> showNotification({
     required final String title,

@@ -14,6 +14,7 @@ import '../db/entity/config.dart';
 import '../db/entity/lounge_chat.dart';
 import '../db/entity/genre.dart';
 import '../db/entity/lounge.dart';
+import '../db/entity/notification_test.dart';
 import '../db/entity/party.dart';
 import '../db/entity/party_interest.dart';
 import '../db/entity/party_photo.dart';
@@ -630,7 +631,7 @@ class Fresh {
   static Celebration freshCelebrationMap(
       Map<String, dynamic> map, bool shouldUpdate) {
     Celebration celebration =
-        Dummy.getDummyCelebration(Constants.blocServiceId);
+    Dummy.getDummyCelebration(Constants.blocServiceId);
     bool isModelChanged = false;
 
     try {
@@ -1623,6 +1624,51 @@ class Fresh {
       fresh = fresh.copyWith(isVip: lounge.isVip);
     } catch (e) {
       Logx.em(_TAG, 'lounge isVip not exist for id: ${lounge.id}');
+    }
+
+    return fresh;
+  }
+
+  /** notification test **/
+  static NotificationTest freshNotificationTestMap(
+      Map<String, dynamic> map, bool shouldUpdate) {
+    NotificationTest notificationTest = Dummy.getDummyNotificationTest();
+
+    bool isModelChanged = false;
+
+    try {
+      notificationTest = notificationTest.copyWith(id: map['id'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'notification test id not exist');
+    }
+    try {
+      notificationTest = notificationTest.copyWith(text: map['text'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'notification test text not exist for id: ${notificationTest.id}');
+      isModelChanged = true;
+    }
+
+    if (isModelChanged && shouldUpdate &&
+        UserPreferences.myUser.clearanceLevel >= Constants.MANAGER_LEVEL) {
+      Logx.i(_TAG, 'updating notification test ${notificationTest.id}');
+      FirestoreHelper.pushNotificationTest(notificationTest);
+    }
+
+    return notificationTest;
+  }
+
+  static NotificationTest freshNotificationTest(NotificationTest notificationTest) {
+    NotificationTest fresh = Dummy.getDummyNotificationTest();
+
+    try {
+      fresh = fresh.copyWith(id: notificationTest.id);
+    } catch (e) {
+      Logx.em(_TAG, 'notification test id not exist');
+    }
+    try {
+      fresh = fresh.copyWith(text: notificationTest.text);
+    } catch (e) {
+      Logx.em(_TAG, 'notification test text not exist for id: ${notificationTest.id}');
     }
 
     return fresh;
@@ -2778,7 +2824,7 @@ class Fresh {
 
   static Product freshProduct(Product product) {
     Product freshProduct =
-        Dummy.getDummyProduct(product.serviceId, product.ownerId);
+    Dummy.getDummyProduct(product.serviceId, product.ownerId);
 
     try {
       freshProduct = freshProduct.copyWith(id: product.id);
@@ -2898,8 +2944,6 @@ class Fresh {
 
     return freshProduct;
   }
-
-
 
   /** promoter **/
   static Promoter freshPromoterMap(Map<String, dynamic> map, bool shouldUpdate) {
@@ -3242,7 +3286,7 @@ class Fresh {
   static Reservation freshReservationMap(
       Map<String, dynamic> map, bool shouldUpdate) {
     Reservation reservation =
-        Dummy.getDummyReservation(Constants.blocServiceId);
+    Dummy.getDummyReservation(Constants.blocServiceId);
     bool isModelChanged = false;
 
     try {
@@ -3374,7 +3418,7 @@ class Fresh {
 
   static Reservation freshReservation(Reservation reservation) {
     Reservation freshReservation =
-        Dummy.getDummyReservation(Constants.blocServiceId);
+    Dummy.getDummyReservation(Constants.blocServiceId);
 
     try {
       freshReservation = freshReservation.copyWith(id: reservation.id);

@@ -142,3 +142,22 @@ exports.celebrationFunction = functions
         },
       });
     });
+
+exports.notificationTestFunction = functions
+    .region('asia-south1')
+    .firestore
+    .document('notification_tests/{document}')
+    .onCreate((snapshot, context) => {
+      console.log(snapshot.data());
+      return admin.messaging().sendToTopic('notification_tests', {
+        notification: {
+          title: 'notification test',
+          body: snapshot.data().text,
+          clickAction: 'FLUTTER_NOTIFICATION_CLICK',
+        },
+        data: {
+          type: 'notification_tests',
+          document: JSON.stringify(snapshot.data()),
+        },
+      });
+    });

@@ -13,6 +13,7 @@ import 'package:bloc/utils/constants.dart';
 import 'package:bloc/utils/date_time_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -26,6 +27,7 @@ import '../db/entity/party_guest.dart';
 import '../db/entity/reservation.dart';
 import '../db/entity/user_lounge.dart';
 import '../db/shared_preferences/user_preferences.dart';
+import '../firebase_options.dart';
 import '../helpers/firestore_helper.dart';
 import '../helpers/fresh.dart';
 import '../main.dart';
@@ -41,6 +43,83 @@ import 'owner/owner_screen.dart';
 import 'parties/parties_screen.dart';
 import 'profile/profile_add_edit_register_page.dart';
 import 'profile/profile_screen.dart';
+
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  // If you're going to use other Firebase services in the background, such as Firestore,
+  // make sure you call `initializeApp` before using other Firebase services.
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
+  Logx.i('main', 'handling a background message ${message.messageId}');
+
+  Map<String, dynamic> data = message.data;
+  String type = data['type'];
+
+  switch(type){
+    case 'lounge_chats':{
+      UiPreferences.setHomePageIndex(2);
+      LoungeChat chat = Fresh.freshLoungeChatMap(jsonDecode(data['document']), false);
+      if(UserPreferences.isUserLoggedIn() && chat.userId != UserPreferences.myUser.id){
+        if(UserPreferences.getListLounges().contains(chat.loungeId)){
+          NotificationService.showChatNotification(chat);
+        }
+      }
+      break;
+    }
+    case 'ads':{
+      Ad ad = Fresh.freshAdMap(jsonDecode(data['document']), false);
+      NotificationService.showAdNotification(ad);
+      break;
+    }
+    case 'party_guest':{
+      PartyGuest partyGuest = Fresh.freshPartyGuestMap(jsonDecode(data['document']), false);
+      if(!partyGuest.isApproved){
+        String title = '${partyGuest.name} ${partyGuest.surname}';
+        String body = '${partyGuest.guestStatus} : ${partyGuest.guestsCount}';
+
+        NotificationService.showDefaultNotification(title, body);
+      } else {
+        // Logx.ist(_TAG, 'guest list: ${partyGuest.name} added');
+      }
+      break;
+    }
+    case 'reservations':{
+      Reservation reservation = Fresh.freshReservationMap(jsonDecode(data['document']), false);
+      String title = 'request : table reservation';
+      String body = '${reservation.name} : ${reservation.guestsCount}';
+
+      NotificationService.showDefaultNotification(title, body);
+      break;
+    }
+    case 'celebrations':{
+      Celebration celebration = Fresh.freshCelebrationMap(jsonDecode(data['document']), false);
+      String title = 'request : celebration';
+      String body = '${celebration.name} : ${celebration.guestsCount}';
+
+      NotificationService.showDefaultNotification(title, body);
+      break;
+    }
+    case Apis.GoogleReviewBloc: {
+      String? title = message.notification!.title;
+      String? body = message.notification!.body;
+      String url = Constants.blocGoogleReview;
+
+      NotificationService.showUrlLinkNotification(title!, body!, url);
+      break;
+    }
+
+    case 'notification_tests':
+    case 'offer':
+    case 'order':
+    case 'sos':
+    default:{
+      String? title = message.notification!.title;
+      String? body = message.notification!.body;
+
+      NotificationService.showDefaultNotification(title!, body!);
+    }
+  }
+
+}
 
 class MainScreen extends StatefulWidget {
   const MainScreen({Key? key}) : super(key: key);
@@ -159,9 +238,13 @@ class _MainScreenState extends State<MainScreen> {
     }
 
     if (!kIsWeb) {
+      // Set the background messaging handler early on, as a named top-level function
+      FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
       //the following lines are essential for notification to work in iOS
       final fbm = FirebaseMessaging.instance;
       fbm.requestPermission();
+
 
       fbm.getToken().then((t) {
         if(t!=null){
@@ -231,6 +314,7 @@ class _MainScreenState extends State<MainScreen> {
             break;
           }
 
+          case 'notification_tests':
           case 'offer':
           case 'order':
           case 'sos':
@@ -252,10 +336,11 @@ class _MainScreenState extends State<MainScreen> {
       if (user.clearanceLevel >= Constants.PROMOTER_LEVEL) {
         fbm.unsubscribeFromTopic('party_guest');
         fbm.unsubscribeFromTopic('reservations');
+        fbm.unsubscribeFromTopic('celebrations');
       }
       if (user.clearanceLevel >= Constants.MANAGER_LEVEL) {
-        fbm.unsubscribeFromTopic('celebrations');
         fbm.unsubscribeFromTopic('offer');
+        fbm.unsubscribeFromTopic('notification_tests');
       }
 
       // subscribe to topics
@@ -272,6 +357,7 @@ class _MainScreenState extends State<MainScreen> {
       }
       if (user.clearanceLevel >= Constants.MANAGER_LEVEL) {
         fbm.subscribeToTopic('offer');
+        fbm.subscribeToTopic('notification_tests');
       }
     } else {
       // in web mode

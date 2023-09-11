@@ -14,6 +14,7 @@ import 'package:bloc/db/entity/lounge_chat.dart';
 import 'package:bloc/db/entity/genre.dart';
 import 'package:bloc/db/entity/guest_wifi.dart';
 import 'package:bloc/db/entity/history_music.dart';
+import 'package:bloc/db/entity/notification_test.dart';
 import 'package:bloc/db/entity/offer.dart';
 import 'package:bloc/db/entity/order_bloc.dart';
 import 'package:bloc/db/entity/party.dart';
@@ -45,7 +46,6 @@ import '../db/shared_preferences/user_preferences.dart';
 import '../routes/route_constants.dart';
 import '../utils/logx.dart';
 import '../utils/string_utils.dart';
-import 'fresh.dart';
 
 /**
  * Tips:
@@ -73,6 +73,7 @@ class FirestoreHelper {
   static String LOUNGE_CHATS = 'lounge_chats';
   static String MANAGER_SERVICES = 'manager_services';
   static String MANAGER_SERVICE_OPTIONS = 'manager_service_options';
+  static String NOTIFICATION_TESTS = 'notification_tests';
   static String OFFERS = 'offers';
   static String ORDERS = 'orders';
   static String PARTIES = 'parties';
@@ -97,7 +98,6 @@ class FirestoreHelper {
 
   static int TABLE_PRIVATE_TYPE_ID = 1;
   static int TABLE_COMMUNITY_TYPE_ID = 2;
-
 
   /** ads **/
   static void pushAd(Ad ad) async {
@@ -329,25 +329,25 @@ class FirestoreHelper {
   }
 
   static Future<QuerySnapshot<Object?>> pullBilledCartItemsByBloc(
-    String serviceId,
-    bool isCompleted,
-    bool isBilled,
-  ) {
+      String serviceId,
+      bool isCompleted,
+      bool isBilled,
+      ) {
     return FirebaseFirestore.instance
         .collection(CART_ITEMS)
         .where('serviceId', isEqualTo: serviceId)
         .where('isCompleted', isEqualTo: isCompleted)
         .where('isBilled', isEqualTo: isBilled)
         .orderBy('createdAt',
-            descending: true) // createdAt could be used i guess
+        descending: true) // createdAt could be used i guess
         .get();
   }
 
   static Future<QuerySnapshot<Object?>> pullBilledCartItemsByUser(
-    String userId,
-    bool isCompleted,
-    bool isBilled,
-  ) {
+      String userId,
+      bool isCompleted,
+      bool isBilled,
+      ) {
     return FirebaseFirestore.instance
         .collection(CART_ITEMS)
         .where('userId', isEqualTo: userId)
@@ -358,9 +358,9 @@ class FirestoreHelper {
   }
 
   static Future<QuerySnapshot<Object?>> pullCompletedCartItemsByUser(
-    String userId,
-    bool isCompleted,
-  ) {
+      String userId,
+      bool isCompleted,
+      ) {
     return FirebaseFirestore.instance
         .collection(CART_ITEMS)
         .where('userId', isEqualTo: userId)
@@ -884,6 +884,26 @@ class FirestoreHelper {
         .snapshots();
   }
 
+  /** notification test **/
+  static void pushNotificationTest(NotificationTest notificationTest) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection(NOTIFICATION_TESTS)
+          .doc(notificationTest.id)
+          .set(notificationTest.toMap());
+    } on PlatformException catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } on Exception catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } catch (e) {
+      Logx.em(_TAG, e.toString());
+    }
+  }
+
+  static void deleteNotificationTest(String docId) {
+    FirebaseFirestore.instance.collection(NOTIFICATION_TESTS).doc(docId).delete();
+  }
+
   /** offers **/
   static void pushOffer(Offer offer) async {
     try {
@@ -1037,7 +1057,7 @@ class FirestoreHelper {
     return FirebaseFirestore.instance
         .collection(PARTIES)
         .where('id', whereIn: artistIds)
-        // .orderBy('endTime', descending: false)
+    // .orderBy('endTime', descending: false)
         .get();
   }
 
@@ -1478,7 +1498,7 @@ class FirestoreHelper {
           .collection(QUICK_ORDERS)
           .doc(quickOrder.id)
           .set(quickOrder.toMap()).then((res){
-            Logx.ist(_TAG, 'your order has been placed, thank you!');
+        Logx.ist(_TAG, 'your order has been placed, thank you!');
       });
     } on PlatformException catch (e, s) {
       Logx.e(_TAG, e, s);
@@ -2214,6 +2234,5 @@ class FirestoreHelper {
   static void deleteUserLounge(String docId) {
     FirebaseFirestore.instance.collection(USER_LOUNGES).doc(docId).delete();
   }
-
 
 }
