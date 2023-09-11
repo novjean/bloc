@@ -19,6 +19,7 @@ import '../db/shared_preferences/user_preferences.dart';
 import '../helpers/firestore_helper.dart';
 import '../helpers/fresh.dart';
 import '../routes/route_constants.dart';
+import '../utils/constants.dart';
 import '../utils/logx.dart';
 import '../utils/network_utils.dart';
 
@@ -60,7 +61,7 @@ class NotificationController extends ChangeNotifier {
           channelKey: 'high_importance_channel',
           channelName: 'high importance',
           channelDescription: 'notification channel for high importance',
-          defaultColor: const Color(0xFF9D50DD),
+          defaultColor: Constants.lightPrimary,
           ledColor: Colors.white,
           importance: NotificationImportance.Max,
           channelShowBadge: true,
@@ -73,7 +74,7 @@ class NotificationController extends ChangeNotifier {
           channelKey: 'chat_channel',
           channelName: 'chats',
           channelDescription: 'notification channel for chats',
-          defaultColor: const Color(0xFF9D50DD),
+          defaultColor: Constants.lightPrimary,
           ledColor: Colors.white,
           importance: NotificationImportance.Max,
           channelShowBadge: true,
@@ -359,6 +360,7 @@ class NotificationController extends ChangeNotifier {
   ///  *********************************************
 
   static Future<bool> displayNotificationRationale() async {
+
     bool userAuthorized = false;
     BuildContext context = BlocApp.navigatorKey.currentContext!;
     await showDialog(
