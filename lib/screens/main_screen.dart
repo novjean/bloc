@@ -54,48 +54,23 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   Map<String, dynamic> data = message.data;
   String type = data['type'];
 
+  Logx.d('_firebaseMessagingBackgroundHandler', 'message type: $type');
+
   switch(type){
-    case 'lounge_chats':{
-      UiPreferences.setHomePageIndex(2);
-      LoungeChat chat = Fresh.freshLoungeChatMap(jsonDecode(data['document']), false);
-      if(UserPreferences.isUserLoggedIn() && chat.userId != UserPreferences.myUser.id){
-        if(UserPreferences.getListLounges().contains(chat.loungeId)){
-          NotificationService.showChatNotification(chat);
-        }
-      }
-      break;
-    }
+    // case 'lounge_chats':{
+    //   UiPreferences.setHomePageIndex(2);
+    //   LoungeChat chat = Fresh.freshLoungeChatMap(jsonDecode(data['document']), false);
+    //   if(UserPreferences.isUserLoggedIn() && chat.userId != UserPreferences.myUser.id){
+    //     if(UserPreferences.getListLounges().contains(chat.loungeId)){
+    //       NotificationService.showChatNotification(chat);
+    //     }
+    //   }
+    //   break;
+    // }
     case 'ads':{
       Ad ad = Fresh.freshAdMap(jsonDecode(data['document']), false);
+      FirestoreHelper.updateAdReach(ad.id);
       NotificationService.showAdNotification(ad);
-      break;
-    }
-    case 'party_guest':{
-      PartyGuest partyGuest = Fresh.freshPartyGuestMap(jsonDecode(data['document']), false);
-      if(!partyGuest.isApproved){
-        String title = '${partyGuest.name} ${partyGuest.surname}';
-        String body = '${partyGuest.guestStatus} : ${partyGuest.guestsCount}';
-
-        NotificationService.showDefaultNotification(title, body);
-      } else {
-        // Logx.ist(_TAG, 'guest list: ${partyGuest.name} added');
-      }
-      break;
-    }
-    case 'reservations':{
-      Reservation reservation = Fresh.freshReservationMap(jsonDecode(data['document']), false);
-      String title = 'request : table reservation';
-      String body = '${reservation.name} : ${reservation.guestsCount}';
-
-      NotificationService.showDefaultNotification(title, body);
-      break;
-    }
-    case 'celebrations':{
-      Celebration celebration = Fresh.freshCelebrationMap(jsonDecode(data['document']), false);
-      String title = 'request : celebration';
-      String body = '${celebration.name} : ${celebration.guestsCount}';
-
-      NotificationService.showDefaultNotification(title, body);
       break;
     }
     case Apis.GoogleReviewBloc: {
@@ -107,18 +82,21 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
       break;
     }
 
-    case 'notification_tests':
-    case 'offer':
-    case 'order':
-    case 'sos':
-    default:{
-      String? title = message.notification!.title;
-      String? body = message.notification!.body;
+    case 'notification_tests': {
+        String? title = message.notification!.title;
+        String? body = message.notification!.body;
 
-      NotificationService.showDefaultNotification(title!, body!);
+        NotificationService.showDefaultNotification(title!, body!);
     }
+    // case 'order':
+    // case 'sos':
+    // default:{
+    //   String? title = message.notification!.title;
+    //   String? body = message.notification!.body;
+    //
+    //   NotificationService.showDefaultNotification(title!, body!);
+    // }
   }
-
 }
 
 class MainScreen extends StatefulWidget {
