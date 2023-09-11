@@ -153,16 +153,16 @@ exports.notificationTestFunction = functions
       const message = {
         data: {
           type: 'notification_tests',
-          document: JSON.stringify(snapshot.data())
+          document: JSON.stringify(snapshot.data()),
         },
         topic: 'notification_tests',
       };
 
       return admin.messaging().send(message)
-        .then((response) => {
-            console.log('notification test message sent successfully:', response);
-        })
-        .catch((error) => {
+          .then((response) => {
+            console.log('message sent successfully:', response);
+          })
+          .catch((error) => {
             console.error('error sending message:', error);
-        });
+          });
     });
