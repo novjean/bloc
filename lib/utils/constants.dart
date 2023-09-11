@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 const String kAppTitle = 'bloc';
 
 class Constants {
-  static const String appVersion = '2.4.4';
+  static const String appVersion = '2.4.6';
 
   static const String fontDefault = 'Oswald';
 

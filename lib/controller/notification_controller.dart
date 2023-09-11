@@ -59,6 +59,8 @@ class NotificationController extends ChangeNotifier {
   /// *********************************************
 
   static Future<void> initializeLocalNotifications({required bool debug}) async {
+    Logx.d(_TAG, 'initializeLocalNotifications');
+
     await AwesomeNotifications().initialize(
       'resource://drawable/ic_launcher',
       [
@@ -124,6 +126,8 @@ class NotificationController extends ChangeNotifier {
 
   static Future<void> initializeRemoteNotifications(
       {required bool debug}) async {
+    Logx.d(_TAG, 'initializeRemoteNotifications');
+
     await Firebase.initializeApp();
     await AwesomeNotificationsFcm().initialize(
         onFcmTokenHandle: NotificationController.myFcmTokenHandle,
@@ -147,12 +151,16 @@ class NotificationController extends ChangeNotifier {
   }
 
   static Future<void> startListeningNotificationEvents() async {
+    Logx.d(_TAG, 'startListeningNotificationEvents');
+
     AwesomeNotifications()
         .setListeners(onActionReceivedMethod: onActionReceivedMethod);
   }
 
   static ReceivePort? receivePort;
   static Future<void> initializeIsolateReceivePort() async {
+    Logx.d(_TAG, 'initializeIsolateReceivePort');
+
     receivePort = ReceivePort('Notification action port in main isolate')
       ..listen(
               (silentData) => onActionReceivedImplementationMethod(silentData)
@@ -169,6 +177,8 @@ class NotificationController extends ChangeNotifier {
   ///  *********************************************
 
   static Future<void> getInitialNotificationAction() async {
+    Logx.d(_TAG, 'getInitialNotificationAction');
+
     ReceivedAction? receivedAction = await AwesomeNotifications()
         .getInitialNotificationAction(removeFromActionEvents: true);
     if (receivedAction == null) return;
@@ -184,6 +194,7 @@ class NotificationController extends ChangeNotifier {
   @pragma('vm:entry-point')
   static Future<void> onActionReceivedMethod(
       ReceivedAction receivedAction) async {
+    Logx.d(_TAG, 'onActionReceivedMethod');
 
     if(
     receivedAction.actionType == ActionType.SilentAction ||
@@ -255,13 +266,13 @@ class NotificationController extends ChangeNotifier {
   /// Use this method to detect when a new notification or a schedule is created
   static Future<void> onNotificationCreatedMethod(
       ReceivedNotification receivedNotification) async {
-    debugPrint('onNotificationCreatedMethod');
+    Logx.d(_TAG, 'onNotificationCreatedMethod');
   }
 
   /// Use this method to detect every time that a new notification is displayed
   static Future<void> onNotificationDisplayedMethod(
       ReceivedNotification receivedNotification) async {
-    debugPrint('onNotificationDisplayedMethod');
+    Logx.d(_TAG, 'onNotificationDisplayedMethod');
   }
 
   /// Use this method to detect if the user dismissed a notification
@@ -340,11 +351,11 @@ class NotificationController extends ChangeNotifier {
   /// Use this method to detect when a new native token is received
   @pragma("vm:entry-point")
   static Future<void> myNativeTokenHandle(String token) async {
-    Fluttertoast.showToast(
-        msg: 'Native token received',
-        backgroundColor: Colors.blueAccent,
-        textColor: Colors.white,
-        fontSize: 16);
+    // Fluttertoast.showToast(
+    //     msg: 'Native token received',
+    //     backgroundColor: Colors.blueAccent,
+    //     textColor: Colors.white,
+    //     fontSize: 16);
     Logx.d(_TAG, 'native token: "$token"');
 
     _instance._nativeToken = token;
