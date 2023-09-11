@@ -14,6 +14,7 @@ import 'package:bloc/db/entity/lounge_chat.dart';
 import 'package:bloc/db/entity/genre.dart';
 import 'package:bloc/db/entity/guest_wifi.dart';
 import 'package:bloc/db/entity/history_music.dart';
+import 'package:bloc/db/entity/notification_test.dart';
 import 'package:bloc/db/entity/offer.dart';
 import 'package:bloc/db/entity/order_bloc.dart';
 import 'package:bloc/db/entity/party.dart';
@@ -73,6 +74,7 @@ class FirestoreHelper {
   static String LOUNGE_CHATS = 'lounge_chats';
   static String MANAGER_SERVICES = 'manager_services';
   static String MANAGER_SERVICE_OPTIONS = 'manager_service_options';
+  static String NOTIFICATION_TESTS = 'notification_tests';
   static String OFFERS = 'offers';
   static String ORDERS = 'orders';
   static String PARTIES = 'parties';
@@ -97,7 +99,6 @@ class FirestoreHelper {
 
   static int TABLE_PRIVATE_TYPE_ID = 1;
   static int TABLE_COMMUNITY_TYPE_ID = 2;
-
 
   /** ads **/
   static void pushAd(Ad ad) async {
@@ -882,6 +883,26 @@ class FirestoreHelper {
         .where('service', isEqualTo: service)
         .orderBy('sequence', descending: false)
         .snapshots();
+  }
+
+  /** notification test **/
+  static void pushNotificationTest(NotificationTest notificationTest) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection(NOTIFICATION_TESTS)
+          .doc(notificationTest.id)
+          .set(notificationTest.toMap());
+    } on PlatformException catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } on Exception catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } catch (e) {
+      Logx.em(_TAG, e.toString());
+    }
+  }
+
+  static void deleteNotificationTest(String docId) {
+    FirebaseFirestore.instance.collection(NOTIFICATION_TESTS).doc(docId).delete();
   }
 
   /** offers **/
@@ -2214,6 +2235,7 @@ class FirestoreHelper {
   static void deleteUserLounge(String docId) {
     FirebaseFirestore.instance.collection(USER_LOUNGES).doc(docId).delete();
   }
+
 
 
 }

@@ -14,6 +14,7 @@ import '../db/entity/config.dart';
 import '../db/entity/lounge_chat.dart';
 import '../db/entity/genre.dart';
 import '../db/entity/lounge.dart';
+import '../db/entity/notification_test.dart';
 import '../db/entity/party.dart';
 import '../db/entity/party_interest.dart';
 import '../db/entity/party_photo.dart';
@@ -1628,6 +1629,51 @@ class Fresh {
     return fresh;
   }
 
+  /** notification test **/
+  static NotificationTest freshNotificationTestMap(
+      Map<String, dynamic> map, bool shouldUpdate) {
+    NotificationTest notificationTest = Dummy.getDummyNotificationTest();
+
+    bool isModelChanged = false;
+
+    try {
+      notificationTest = notificationTest.copyWith(id: map['id'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'notification test id not exist');
+    }
+    try {
+      notificationTest = notificationTest.copyWith(text: map['text'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'notification test text not exist for id: ${notificationTest.id}');
+      isModelChanged = true;
+    }
+
+    if (isModelChanged && shouldUpdate &&
+        UserPreferences.myUser.clearanceLevel >= Constants.MANAGER_LEVEL) {
+      Logx.i(_TAG, 'updating notification test ${notificationTest.id}');
+      FirestoreHelper.pushNotificationTest(notificationTest);
+    }
+
+    return notificationTest;
+  }
+
+  static NotificationTest freshNotificationTest(NotificationTest notificationTest) {
+    NotificationTest fresh = Dummy.getDummyNotificationTest();
+
+    try {
+      fresh = fresh.copyWith(id: notificationTest.id);
+    } catch (e) {
+      Logx.em(_TAG, 'notification test id not exist');
+    }
+    try {
+      fresh = fresh.copyWith(text: notificationTest.text);
+    } catch (e) {
+      Logx.em(_TAG, 'notification test text not exist for id: ${notificationTest.id}');
+    }
+
+    return fresh;
+  }
+
   /** party **/
   static Party freshPartyMap(Map<String, dynamic> map, bool shouldUpdate) {
     Party party = Dummy.getDummyParty(UserPreferences.myUser.blocServiceId);
@@ -2898,8 +2944,6 @@ class Fresh {
 
     return freshProduct;
   }
-
-
 
   /** promoter **/
   static Promoter freshPromoterMap(Map<String, dynamic> map, bool shouldUpdate) {

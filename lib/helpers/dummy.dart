@@ -24,6 +24,7 @@ import '../db/entity/config.dart';
 import '../db/entity/lounge_chat.dart';
 import '../db/entity/genre.dart';
 import '../db/entity/lounge.dart';
+import '../db/entity/notification_test.dart';
 import '../db/entity/offer.dart';
 import '../db/entity/party.dart';
 import '../db/entity/party_interest.dart';
@@ -246,6 +247,14 @@ class Dummy {
         lastChatTime: Timestamp.now().millisecondsSinceEpoch,
         isActive: true,
         isVip: false);
+    return dummy;
+  }
+
+  static NotificationTest getDummyNotificationTest() {
+    NotificationTest dummy = NotificationTest(
+      id: StringUtils.getRandomString(28),
+      text: ''
+    );
     return dummy;
   }
 
@@ -506,7 +515,8 @@ class Dummy {
 
   static UiPhoto getDummyUiPhoto() {
     UiPhoto uiPhoto =
-        UiPhoto(id: StringUtils.getRandomString(28), name: '', imageUrls: []);
+        UiPhoto(id: StringUtils.getRandomString(28),
+            name: '', imageUrls: []);
     return uiPhoto;
   }
 
