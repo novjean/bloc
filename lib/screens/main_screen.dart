@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:bloc/db/entity/celebration.dart';
 import 'package:bloc/db/entity/lounge_chat.dart';
+import 'package:bloc/db/entity/notification_test.dart';
 import 'package:bloc/db/entity/user.dart' as blocUser;
 import 'package:bloc/db/shared_preferences/table_preferences.dart';
 import 'package:bloc/db/shared_preferences/ui_preferences.dart';
@@ -57,6 +58,9 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   Logx.d('_firebaseMessagingBackgroundHandler', 'message type: $type');
 
   switch(type){
+
+    //todo:need to try out silent with data and see if we make it here
+
     // case 'lounge_chats':{
     //   UiPreferences.setHomePageIndex(2);
     //   LoungeChat chat = Fresh.freshLoungeChatMap(jsonDecode(data['document']), false);
@@ -83,11 +87,25 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
     }
 
     case 'notification_tests': {
-        String? title = message.notification!.title;
-        String? body = message.notification!.body;
+      NotificationTest notificationTest = Fresh.freshNotificationTestMap(jsonDecode(data['document']), false);
+
+        // String? title = message.notification!.title;
+        // String? body = message.notification!.body;
+
+        String? title ='noti test';
+        String? body = notificationTest.text;
 
         NotificationService.showDefaultNotification(title!, body!);
     }
+
+    //        notification: {
+    //          title: 'notification test',
+    //          body: snapshot.data().text,
+    //          clickAction: 'FLUTTER_NOTIFICATION_CLICK',
+    //        },
+
+
+
     // case 'order':
     // case 'sos':
     // default:{
