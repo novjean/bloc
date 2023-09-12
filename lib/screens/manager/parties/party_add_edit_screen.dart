@@ -404,10 +404,28 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('${mImageUrls.length} photos: '),
+                  const Text(
+                    'use story : ',
+                    style: TextStyle(fontSize: 15.0),
+                  ), //Text
+                  Padding(
+                    padding: const EdgeInsets.only(left: 5.0),
+                    child: Checkbox(
+                      value: widget.party.showStoryImageUrl,
+                      onChanged: (value) {
+                        setState(() {
+                          widget.party = widget.party.copyWith(showStoryImageUrl: value);
+                        });
+                      },
+                    ),
+                  ),
                   const Spacer(),
+                  Padding(
+                    padding: const EdgeInsets.only(right:5.0),
+                    child: Text('${mImageUrls.length} photos', style: TextStyle(fontSize: 15.0),),
+                  ),
                   ButtonWidget(
-                    text: 'pick file',
+                    text: 'pick',
                     onClicked: () async {
                       final image = await ImagePicker().pickImage(
                           source: ImageSource.gallery,

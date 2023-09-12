@@ -181,22 +181,10 @@ class NotificationService {
           }
         }
         break;
-        //          notification: {
-        //           title: snapshot.data().userName,
-        //           body: snapshot.data().message,
-        //           clickAction: 'FLUTTER_NOTIFICATION_CLICK',
-        //         },
       }
       case 'ads':{
         Ad ad = Fresh.freshAdMap(jsonDecode(data['document']), false);
         FirestoreHelper.updateAdReach(ad.id);
-
-        //notification: {
-        //           title: snapshot.data().title,
-        //           body: snapshot.data().message,
-        //           clickAction: 'FLUTTER_NOTIFICATION_CLICK',
-        //         },
-
         NotificationService.showAdNotification(ad);
         break;
       }
@@ -210,24 +198,12 @@ class NotificationService {
         } else {
           Logx.ist(_TAG, 'guest list: ${partyGuest.name} added');
         }
-        //notification: {
-        //           title: 'request : guest list',
-        //           body: snapshot.data().name + ' ' + snapshot.data().surname,
-        //           clickAction: 'FLUTTER_NOTIFICATION_CLICK',
-        //         },
         break;
       }
       case 'reservations':{
         Reservation reservation = Fresh.freshReservationMap(jsonDecode(data['document']), false);
         String title = 'request : table reservation';
         String body = '${reservation.name} : ${reservation.guestsCount}';
-
-        //notification: {
-        //           title: 'request : table reservation',
-        //           body: snapshot.data().name + ' - ' + snapshot.data().guestsCount,
-        //           clickAction: 'FLUTTER_NOTIFICATION_CLICK',
-        //         },
-
         NotificationService.showDefaultNotification(title, body);
         break;
       }
@@ -235,13 +211,6 @@ class NotificationService {
         Celebration celebration = Fresh.freshCelebrationMap(jsonDecode(data['document']), false);
         String title = 'request : celebration';
         String body = '${celebration.name} : ${celebration.guestsCount}';
-
-        //notification: {
-        //           title: 'request : celebration',
-        //           body: snapshot.data().name + ' - ' + snapshot.data().guestsCount,
-        //           clickAction: 'FLUTTER_NOTIFICATION_CLICK',
-        //         },
-
         NotificationService.showDefaultNotification(title, body);
         break;
       }

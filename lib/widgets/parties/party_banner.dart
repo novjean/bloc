@@ -55,6 +55,8 @@ class _PartyBannerState extends State<PartyBanner> {
 
   @override
   void initState() {
+    super.initState();
+
     if (widget.shouldShowInterestCount) {
       mPartyInterest.partyId = widget.party.id;
 
@@ -63,7 +65,7 @@ class _PartyBannerState extends State<PartyBanner> {
           DocumentSnapshot document = res.docs[0];
           Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
           final PartyInterest partyInterest =
-              Fresh.freshPartyInterestMap(data, false);
+          Fresh.freshPartyInterestMap(data, false);
           if (mounted) {
             setState(() {
               mPartyInterest = partyInterest;
@@ -83,7 +85,7 @@ class _PartyBannerState extends State<PartyBanner> {
             for (int i = 0; i < res.docs.length; i++) {
               DocumentSnapshot document = res.docs[i];
               Map<String, dynamic> data =
-                  document.data()! as Map<String, dynamic>;
+              document.data()! as Map<String, dynamic>;
               final Party artist = Fresh.freshPartyMap(data, false);
               if (artist.isBigAct) {
                 mArtists.add(artist);
@@ -110,8 +112,6 @@ class _PartyBannerState extends State<PartyBanner> {
         _isArtistsLoading = false;
       });
     }
-
-    super.initState();
   }
 
   @override
@@ -123,9 +123,7 @@ class _PartyBannerState extends State<PartyBanner> {
     int interestCount =
         mPartyInterest.initCount + mPartyInterest.userIds.length;
 
-    return _isArtistsLoading
-        ? const LoadingWidget()
-        : GestureDetector(
+    return GestureDetector(
             onTap: () {
               if (widget.isClickable) {
                 if (widget.party.type == 'event') {

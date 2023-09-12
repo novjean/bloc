@@ -284,6 +284,7 @@ class Dummy {
         imageUrls: [],
         imageUrl: '',
         storyImageUrl: '',
+        showStoryImageUrl: false,
         name: '',
         ownerId: UserPreferences.myUser.id,
         isActive: false,

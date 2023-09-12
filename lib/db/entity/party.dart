@@ -10,6 +10,7 @@ class Party {
   final List<String> imageUrls;
   final String imageUrl;
   final String storyImageUrl;
+  final bool showStoryImageUrl;
   final String instagramUrl;
   final String ticketUrl;
   final String listenUrl;
@@ -57,6 +58,7 @@ class Party {
     required this.imageUrls,
     required this.imageUrl,
     required this.storyImageUrl,
+    required this.showStoryImageUrl,
     required this.instagramUrl,
     required this.ticketUrl,
     required this.listenUrl,
@@ -100,6 +102,7 @@ class Party {
           imageUrls == other.imageUrls &&
           imageUrl == other.imageUrl &&
           storyImageUrl == other.storyImageUrl &&
+          showStoryImageUrl == other.showStoryImageUrl &&
           instagramUrl == other.instagramUrl &&
           ticketUrl == other.ticketUrl &&
           listenUrl == other.listenUrl &&
@@ -139,6 +142,7 @@ class Party {
       imageUrls.hashCode ^
       imageUrl.hashCode ^
       storyImageUrl.hashCode ^
+      showStoryImageUrl.hashCode ^
       instagramUrl.hashCode ^
       ticketUrl.hashCode ^
       listenUrl.hashCode ^
@@ -179,6 +183,7 @@ class Party {
         ' imageUrls: $imageUrls,' +
         ' imageUrl: $imageUrl,' +
         ' storyImageUrl: $storyImageUrl,' +
+        ' showStoryImageUrl: $showStoryImageUrl,' +
         ' instagramUrl: $instagramUrl,' +
         ' ticketUrl: $ticketUrl,' +
         ' listenUrl: $listenUrl,' +
@@ -219,6 +224,7 @@ class Party {
     List<String>? imageUrls,
     String? imageUrl,
     String? storyImageUrl,
+    bool? showStoryImageUrl,
     String? instagramUrl,
     String? ticketUrl,
     String? listenUrl,
@@ -257,6 +263,7 @@ class Party {
       imageUrls: imageUrls ?? this.imageUrls,
       imageUrl: imageUrl ?? this.imageUrl,
       storyImageUrl: storyImageUrl ?? this.storyImageUrl,
+      showStoryImageUrl: showStoryImageUrl ?? this.showStoryImageUrl,
       instagramUrl: instagramUrl ?? this.instagramUrl,
       ticketUrl: ticketUrl ?? this.ticketUrl,
       listenUrl: listenUrl ?? this.listenUrl,
@@ -299,6 +306,7 @@ class Party {
       'imageUrls': this.imageUrls,
       'imageUrl': this.imageUrl,
       'storyImageUrl': this.storyImageUrl,
+      'showStoryImageUrl': this.showStoryImageUrl,
       'instagramUrl': this.instagramUrl,
       'ticketUrl': this.ticketUrl,
       'listenUrl': this.listenUrl,
@@ -340,6 +348,7 @@ class Party {
       imageUrls: map['imageUrls'] as List<String>,
       imageUrl: map['imageUrl'] as String,
       storyImageUrl: map['storyImageUrl'] as String,
+      showStoryImageUrl: map['showStoryImageUrl'] as bool,
       instagramUrl: map['instagramUrl'] as String,
       ticketUrl: map['ticketUrl'] as String,
       listenUrl: map['listenUrl'] as String,

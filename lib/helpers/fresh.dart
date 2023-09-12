@@ -1711,20 +1711,20 @@ class Fresh {
     try {
       party = party.copyWith(type: map['type'] as String);
     } catch (e) {
-      Logx.em(_TAG, 'party type not exist for party id: ' + party.id);
+      Logx.em(_TAG, 'party type not exist for id: ' + party.id);
       isModelChanged = true;
     }
     try {
       party = party.copyWith(chapter: map['chapter'] as String);
     } catch (e) {
-      Logx.em(_TAG, 'party chapter not exist for party id: ' + party.id);
+      Logx.em(_TAG, 'party chapter not exist for id: ' + party.id);
       isModelChanged = true;
     }
 
     try {
       party = party.copyWith(imageUrl: map['imageUrl'] as String);
     } catch (e) {
-      Logx.em(_TAG, 'party imageUrl not exist for party id: ' + party.id);
+      Logx.em(_TAG, 'party imageUrl not exist for id: ' + party.id);
       isModelChanged = true;
     }
     try {
@@ -1734,21 +1734,27 @@ class Fresh {
       isModelChanged = true;
     }
     try {
+      party = party.copyWith(showStoryImageUrl: map['showStoryImageUrl'] as bool);
+    } catch (e) {
+      Logx.em(_TAG, 'party showStoryImageUrl not exist for id: ${party.id}');
+      isModelChanged = true;
+    }
+    try {
       party = party.copyWith(instagramUrl: map['instagramUrl'] as String);
     } catch (e) {
-      Logx.em(_TAG, 'party instagramUrl not exist for party id: ' + party.id);
+      Logx.em(_TAG, 'party instagramUrl not exist for id: ' + party.id);
       isModelChanged = true;
     }
     try {
       party = party.copyWith(ticketUrl: map['ticketUrl'] as String);
     } catch (e) {
-      Logx.em(_TAG, 'party ticketUrl not exist for party id: ' + party.id);
+      Logx.em(_TAG, 'party ticketUrl not exist for id: ' + party.id);
       isModelChanged = true;
     }
     try {
       party = party.copyWith(listenUrl: map['listenUrl'] as String);
     } catch (e) {
-      Logx.em(_TAG, 'party listenUrl not exist for party id: ' + party.id);
+      Logx.em(_TAG, 'party listenUrl not exist for id: ' + party.id);
       isModelChanged = true;
     }
     try {
@@ -1991,17 +1997,22 @@ class Fresh {
     try {
       freshParty = freshParty.copyWith(imageUrl: party.imageUrl);
     } catch (e) {
-      Logx.em(_TAG, 'party imageUrl not exist for party id: ' + party.id);
+      Logx.em(_TAG, 'party imageUrl not exist for id: ${party.id}');
     }
     try {
       freshParty = freshParty.copyWith(storyImageUrl: party.storyImageUrl);
     } catch (e) {
-      Logx.em(_TAG, 'party storyImageUrl not exist for party id: ' + party.id);
+      Logx.em(_TAG, 'party storyImageUrl not exist for id: ${party.id}');
+    }
+    try {
+      freshParty = freshParty.copyWith(showStoryImageUrl: party.showStoryImageUrl);
+    } catch (e) {
+      Logx.em(_TAG, 'party showStoryImageUrl not exist for id: ${party.id}');
     }
     try {
       freshParty = freshParty.copyWith(instagramUrl: party.instagramUrl);
     } catch (e) {
-      Logx.em(_TAG, 'party instagramUrl not exist for party id: ' + party.id);
+      Logx.em(_TAG, 'party instagramUrl not exist for id: ${party.id}');
     }
     try {
       freshParty = freshParty.copyWith(ticketUrl: party.ticketUrl);
