@@ -414,6 +414,10 @@ class _BoxOfficeGuestListItemState extends State<BoxOfficeGuestListItem> {
   }
 
   _showPendingButton(BuildContext context) {
+    String text = widget.party.ticketUrl.isNotEmpty &&
+            !widget.party.isTicketsDisabled
+        ? "your guest list is pending, which means it's waiting for approval. limited spots are only available for this event – secure yours by purchasing your ticket in advance."
+        : "your guest list is pending, which means it's waiting for approval. like a kid waiting for santa, you're excited but also a little bit anxious. but don't worry, our team will deliver on your request.";
     return Expanded(
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 5),
@@ -453,8 +457,7 @@ class _BoxOfficeGuestListItemState extends State<BoxOfficeGuestListItem> {
                   shape: const RoundedRectangleBorder(
                       borderRadius: BorderRadius.all(Radius.circular(20.0))),
                   contentPadding: const EdgeInsets.all(16.0),
-                  content: const Text(
-                      "your guest list is pending, which means it's waiting for approval. like a kid waiting for santa, you're excited but also a little bit anxious. but don't worry, our team will deliver on your request."),
+                  content: Text(text),
                   actions: [
                     TextButton(
                       child: const Text("👍 okay"),
