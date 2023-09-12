@@ -155,7 +155,6 @@ class _MainScreenState extends State<MainScreen> {
       final fbm = FirebaseMessaging.instance;
       fbm.requestPermission();
 
-
       fbm.getToken().then((t) {
         if(t!=null){
           UserPreferences.myUser.fcmToken = t;
@@ -242,7 +241,7 @@ class _MainScreenState extends State<MainScreen> {
                       ? (const EdgeInsets.only(top: 10))
                       : (const EdgeInsets.only(top: 50)),
                   drawerIconColor: Constants.primary,
-                  drawerIconSize: 35,
+                  drawerIconSize: 30,
                   isTitleCenter: false,
                   trailing: Padding(
                     padding: const EdgeInsets.only(right: 10.0),
