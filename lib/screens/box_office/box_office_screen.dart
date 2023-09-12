@@ -20,7 +20,7 @@ import '../../helpers/fresh.dart';
 import '../../routes/route_constants.dart';
 import '../../utils/constants.dart';
 import '../../utils/logx.dart';
-import '../../widgets/box_office/box_office_item.dart';
+import '../../widgets/box_office/box_office_guest_list_item.dart';
 import '../../widgets/celebrations/celebration_banner.dart';
 import '../../widgets/parties/party_guest_list_banner.dart';
 import '../../widgets/reservations/reservation_banner.dart';
@@ -145,7 +145,7 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
                   tooltip: 'scan code',
                   elevation: 5,
                   splashColor: Colors.grey,
-                  child: Icon(
+                  child: const Icon(
                     Icons.qr_code_scanner,
                     color: Constants.darkPrimary,
                     size: 29,
@@ -373,38 +373,37 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
       stream:
           FirestoreHelper.getPartyGuestListByUser(UserPreferences.getUser().id),
       builder: (ctx, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const LoadingWidget();
-        }
-
-        if (snapshot.hasData) {
-          List<PartyGuest> partyGuestRequests = [];
-          if (snapshot.data!.docs.isEmpty) {
-            return showPartiesButton();
-          } else {
-            for (int i = 0; i < snapshot.data!.docs.length; i++) {
-              DocumentSnapshot document = snapshot.data!.docs[i];
-              Map<String, dynamic> map =
-                  document.data()! as Map<String, dynamic>;
-              final PartyGuest partyGuest =
-                  Fresh.freshPartyGuestMap(map, false);
-              partyGuestRequests.add(partyGuest);
-
-              if (i == snapshot.data!.docs.length - 1) {
-                return _displayPartyGuestListRequests(
-                    context, partyGuestRequests);
+        switch (snapshot.connectionState) {
+          case ConnectionState.waiting:
+          case ConnectionState.none:
+            return const LoadingWidget();
+          case ConnectionState.active:
+          case ConnectionState.done:{
+          if (snapshot.hasData) {
+            List<PartyGuest> partyGuestRequests = [];
+            if (snapshot.data!.docs.isEmpty) {
+              return showPartiesButton();
+            } else {
+              for (int i = 0; i < snapshot.data!.docs.length; i++) {
+                DocumentSnapshot document = snapshot.data!.docs[i];
+                Map<String, dynamic> map = document.data()! as Map<String, dynamic>;
+                final PartyGuest partyGuest = Fresh.freshPartyGuestMap(map, false);
+                partyGuestRequests.add(partyGuest);
               }
+              return _showGuestListRequests(context, partyGuestRequests);
             }
+          } else {
+            return showPartiesButton();
           }
-        } else {
-          return showPartiesButton();
+          }
         }
+
         return const LoadingWidget();
       },
     );
   }
 
-  _displayPartyGuestListRequests(
+  _showGuestListRequests(
       BuildContext context, List<PartyGuest> requests) {
     return Expanded(
       child: ListView.builder(
@@ -427,7 +426,7 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
             // the party is ended, house cleaning logic will be needed
             return const SizedBox();
           } else {
-            return BoxOfficeItem(
+            return BoxOfficeGuestListItem(
               partyGuest: sPartyGuest,
               party: sParty,
               isClickable: true,

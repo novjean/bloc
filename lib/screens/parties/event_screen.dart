@@ -1,4 +1,3 @@
-
 import 'package:bloc/utils/file_utils.dart';
 import 'package:bloc/utils/string_utils.dart';
 import 'package:bloc/widgets/ui/loading_widget.dart';
@@ -139,6 +138,19 @@ class _EventScreenState extends State<EventScreen> {
   }
 
   _buildBody(BuildContext context) {
+    int timeNow = Timestamp.now().millisecondsSinceEpoch;
+    bool isGuestListActive =
+        mParty.isGuestListActive & (timeNow < mParty.guestListEndTime);
+
+    bool showGuestListBuyTix = false;
+    if (!mParty.isTBA &&
+        !mParty.isTicketsDisabled &&
+        mParty.ticketUrl.isNotEmpty) {
+      if (isGuestListActive) {
+        showGuestListBuyTix = true;
+      }
+    }
+
     return _isPartyLoading
         ? const LoadingWidget()
         : ListView(
@@ -158,41 +170,43 @@ class _EventScreenState extends State<EventScreen> {
                         aspectRatio: 1.33,
                       ),
                       items: mParty.imageUrls
-                          .map((item) =>
-                              kIsWeb?
-                                  SizedBox(
-                                    width: double.infinity,
-                                    child: Image.network(item,
-                                        width: double.infinity,
-                                        fit: BoxFit.cover),
-                                  )
+                          .map((item) => kIsWeb
+                              ? SizedBox(
+                                  width: double.infinity,
+                                  child: Image.network(item,
+                                      width: double.infinity,
+                                      fit: BoxFit.cover),
+                                )
                               : CachedNetworkImage(
-                                imageUrl: item,
-                                imageBuilder: (context, imageProvider) => Container(
-                                  decoration: BoxDecoration(
-                                    image: DecorationImage(
-                                      image: imageProvider,
-                                      fit: BoxFit.cover,
+                                  imageUrl: item,
+                                  imageBuilder: (context, imageProvider) =>
+                                      Container(
+                                    decoration: BoxDecoration(
+                                      image: DecorationImage(
+                                        image: imageProvider,
+                                        fit: BoxFit.cover,
+                                      ),
                                     ),
                                   ),
-                                ),
-                                placeholder: (context, url) =>
-                                const FadeInImage(
-                                  placeholder: AssetImage('assets/images/logo.png'),
-                                  image: AssetImage('assets/images/logo.png'),
-                                  fit: BoxFit.cover,
-                                ),
-                                errorWidget: (context, url, error) => const Icon(Icons.error),
-                              )
-                              )
+                                  placeholder: (context, url) =>
+                                      const FadeInImage(
+                                    placeholder:
+                                        AssetImage('assets/images/logo.png'),
+                                    image: AssetImage('assets/images/logo.png'),
+                                    fit: BoxFit.cover,
+                                  ),
+                                  errorWidget: (context, url, error) =>
+                                      const Icon(Icons.error),
+                                ))
                           .toList(),
                     )
                   : SizedBox(
                       width: double.infinity,
                       child: FadeInImage(
-                        placeholder:
-                            const AssetImage('assets/images/logo.png'),
-                        image: NetworkImage(mParty.showStoryImageUrl? mParty.storyImageUrl: mParty.imageUrl),
+                        placeholder: const AssetImage('assets/images/logo.png'),
+                        image: NetworkImage(mParty.showStoryImageUrl
+                            ? mParty.storyImageUrl
+                            : mParty.imageUrl),
                         fit: BoxFit.contain,
                       )),
               const SizedBox(height: 10),
@@ -234,16 +248,24 @@ class _EventScreenState extends State<EventScreen> {
                 ],
               ),
               const SizedBox(height: 10),
-              Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  width: double.infinity,
-                  child: Text(
-                    mParty.isTBA
-                        ? 'tba'
-                        : '${DateTimeUtils.getFormattedDate(mParty.startTime)}, ${DateTimeUtils.getFormattedTime(mParty.startTime)}',
-                    style: const TextStyle(
-                        fontSize: 18, color: Constants.lightPrimary),
-                  )),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      mParty.isTBA
+                          ? 'tba'
+                          : '${DateTimeUtils.getFormattedDate(mParty.startTime)}, ${DateTimeUtils.getFormattedTime(mParty.startTime)}',
+                      style: const TextStyle(
+                          fontSize: 18, color: Constants.lightPrimary),
+                    ),
+                    showGuestListBuyTix
+                        ? _showGuestListMiniButton(context)
+                        : const SizedBox(),
+                  ],
+                ),
+              ),
               const SizedBox(height: 10),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -291,25 +313,30 @@ class _EventScreenState extends State<EventScreen> {
                         if (kIsWeb) {
                           FileUtils.openFileNewTabForWeb(urlImage);
                         } else {
-                          FileUtils.sharePhoto(mParty.id, urlImage, 'bloc-${mParty.name}', ''
-                              '${StringUtils.firstFewWords(mParty.description, 15)}... \n\nhey. check out this event at the official bloc app. \n\n🌏 https://bloc.bar/#/\n📱 https://bloc.bar/app_store.html\n\n#blocCommunity ❤️‍🔥');
+                          FileUtils.sharePhoto(
+                              mParty.id,
+                              urlImage,
+                              'bloc-${mParty.name}',
+                              ''
+                                  '${StringUtils.firstFewWords(mParty.description, 15)}... \n\nhey. check out this event at the official bloc app. \n\n🌏 https://bloc.bar/#/\n📱 https://bloc.bar/app_store.html\n\n#blocCommunity ❤️‍🔥');
                         }
                       },
                     ),
                     Padding(
                       padding: const EdgeInsets.only(left: 10.0),
                       child: ButtonWidget(
-                        text: '🪭 page',
+                        text: '🎯 page',
                         onClicked: () async {
-                          final url = 'http://bloc.bar/#/event/${widget.partyName.replaceAll(' ', '%20')}/${widget.partyChapter}';
-                          Share.share('Check out ${widget.partyName} on #blocCommunity $url');
+                          final url =
+                              'http://bloc.bar/#/event/${widget.partyName.replaceAll(' ', '%20')}/${widget.partyChapter}';
+                          Share.share(
+                              'Check out ${widget.partyName} on #blocCommunity $url');
                         },
                       ),
                     ),
                   ],
                 ),
               ),
-
               const SizedBox(height: 10),
               mParty.instagramUrl.isNotEmpty
                   ? const Row(
@@ -448,7 +475,7 @@ class _EventScreenState extends State<EventScreen> {
 
     if (!mParty.isTBA && mParty.ticketUrl.isNotEmpty) {
       return Container(
-        height: 55,
+        height: 50,
         width: 160,
         padding: const EdgeInsets.only(left: 5, right: 10, bottom: 1, top: 1),
         child: ElevatedButton.icon(
@@ -514,7 +541,10 @@ class _EventScreenState extends State<EventScreen> {
           },
           label: const Text(
             'ticket',
-            style: TextStyle(fontSize: 18, color: Constants.darkPrimary),
+            style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Constants.darkPrimary),
           ),
           icon: const Icon(
             Icons.star_half,
@@ -524,7 +554,7 @@ class _EventScreenState extends State<EventScreen> {
       );
     } else if (isGuestListActive) {
       return Container(
-        height: 55,
+        height: 50,
         width: 160,
         padding: const EdgeInsets.only(left: 5, right: 10, bottom: 1, top: 1),
         child: ElevatedButton.icon(
@@ -551,12 +581,46 @@ class _EventScreenState extends State<EventScreen> {
           ),
           label: const Text(
             'guest list',
-            style: TextStyle(fontSize: 18, color: Constants.darkPrimary),
+            style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Constants.darkPrimary),
           ),
         ),
       );
     } else {
       return const SizedBox();
     }
+  }
+
+  _showGuestListMiniButton(BuildContext context) {
+    return Container(
+      height: 40,
+      width: 100,
+      padding: const EdgeInsets.only(left: 5),
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Constants.primary,
+          foregroundColor: Constants.background,
+          shadowColor: Colors.white30,
+          elevation: 1,
+          // minimumSize: const Size.fromHeight(60),
+        ),
+        onPressed: () {
+          PartyGuest partyGuest = Dummy.getDummyPartyGuest(true);
+          partyGuest.partyId = mParty.id;
+
+          Navigator.of(context).push(
+            MaterialPageRoute(
+                builder: (context) => PartyGuestAddEditManageScreen(
+                    partyGuest: partyGuest, party: mParty, task: 'add')),
+          );
+        },
+        child: const Text(
+          'guest list',
+          style: TextStyle(fontSize: 17, color: Constants.darkPrimary),
+        ),
+      ),
+    );
   }
 }

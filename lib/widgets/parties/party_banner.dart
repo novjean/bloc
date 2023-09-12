@@ -3,7 +3,6 @@ import 'package:bloc/main.dart';
 import 'package:bloc/utils/constants.dart';
 import 'package:bloc/utils/date_time_utils.dart';
 import 'package:bloc/utils/network_utils.dart';
-import 'package:bloc/widgets/ui/button_widget.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:delayed_display/delayed_display.dart';
@@ -21,7 +20,6 @@ import '../../helpers/fresh.dart';
 import '../../routes/route_constants.dart';
 import '../../screens/parties/party_guest_add_edit_manage_screen.dart';
 import '../../utils/logx.dart';
-import '../ui/dark_button_widget.dart';
 import 'mini_artist_item.dart';
 
 class PartyBanner extends StatefulWidget {
@@ -291,7 +289,7 @@ class _PartyBannerState extends State<PartyBanner> {
                                           ),
                                           elevation: 3,
                                         ),
-                                        child: Text('guest list', style: TextStyle(fontSize: 18),),
+                                        child: const Text('guest list', style: TextStyle(fontSize: 18),),
                                         onPressed: () {
                                           _handleGuestListPressed();
                                         },
