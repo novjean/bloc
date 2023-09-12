@@ -1,8 +1,3 @@
-import 'dart:convert';
-
-import 'package:bloc/db/entity/celebration.dart';
-import 'package:bloc/db/entity/lounge_chat.dart';
-import 'package:bloc/db/entity/notification_test.dart';
 import 'package:bloc/db/entity/user.dart' as blocUser;
 import 'package:bloc/db/shared_preferences/table_preferences.dart';
 import 'package:bloc/db/shared_preferences/ui_preferences.dart';
@@ -14,7 +9,6 @@ import 'package:bloc/utils/constants.dart';
 import 'package:bloc/utils/date_time_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -22,20 +16,15 @@ import 'package:flutter_slider_drawer/flutter_slider_drawer.dart';
 import 'package:go_router/go_router.dart';
 import 'package:upgrader/upgrader.dart';
 
-import '../api/apis.dart';
 import '../db/entity/ad.dart';
-import '../db/entity/party_guest.dart';
-import '../db/entity/reservation.dart';
 import '../db/entity/user_lounge.dart';
 import '../db/shared_preferences/user_preferences.dart';
-import '../firebase_options.dart';
 import '../helpers/firestore_helper.dart';
 import '../helpers/fresh.dart';
 import '../main.dart';
 import '../routes/route_constants.dart';
 import '../services/notification_service.dart';
 import '../utils/logx.dart';
-import 'account_screen.dart';
 import 'captain/captain_main_screen.dart';
 import 'photos/photos_screen.dart';
 import 'home_screen.dart';
@@ -44,16 +33,6 @@ import 'owner/owner_screen.dart';
 import 'parties/parties_screen.dart';
 import 'profile/profile_add_edit_register_page.dart';
 import 'profile/profile_screen.dart';
-
-Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  // If you're going to use other Firebase services in the background, such as Firestore,
-  // make sure you call `initializeApp` before using other Firebase services.
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-
-  Logx.i('main', 'handling a background message ${message.messageId}');
-
-  NotificationService.handleMessage(message);
-}
 
 class MainScreen extends StatefulWidget {
   const MainScreen({Key? key}) : super(key: key);
@@ -172,9 +151,6 @@ class _MainScreenState extends State<MainScreen> {
     }
 
     if (!kIsWeb) {
-      // Set the background messaging handler early on, as a named top-level function
-      FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-
       //the following lines are essential for notification to work in iOS
       final fbm = FirebaseMessaging.instance;
       fbm.requestPermission();

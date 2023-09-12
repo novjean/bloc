@@ -2939,7 +2939,7 @@ class Fresh {
       freshProduct = freshProduct.copyWith(priceBottle: product.priceBottle);
     } catch (e) {
       Logx.em(
-          _TAG, 'product priceBottle not exist for product id: ' + product.id);
+          _TAG, 'product priceBottle not exist for id: ${product.id}');
     }
 
     return freshProduct;
@@ -3517,8 +3517,7 @@ class Fresh {
     } catch (e) {
       Logx.em(
           _TAG,
-          'reservation occasion not exist for reservation id: ' +
-              reservation.id);
+          'reservation occasion not exist for id: ${reservation.id}');
     }
 
     try {
@@ -3527,8 +3526,7 @@ class Fresh {
     } catch (e) {
       Logx.em(
           _TAG,
-          'reservation isApproved not exist for reservation id: ' +
-              reservation.id);
+          'reservation isApproved not exist for id: ${reservation.id}');
     }
 
     return freshReservation;
@@ -3547,14 +3545,14 @@ class Fresh {
     try {
       ticket = ticket.copyWith(name: map['name'] as String);
     } catch (e) {
-      Logx.em(_TAG, 'ticket name not exist for ticket id: ' + ticket.id);
+      Logx.em(_TAG, 'ticket name not exist for id: ${ticket.id}');
       isModelChanged = true;
     }
 
     try {
       ticket = ticket.copyWith(partyId: map['partyId'] as String);
     } catch (e) {
-      Logx.em(_TAG, 'ticket partyId not exist for ticket id: ' + ticket.id);
+      Logx.em(_TAG, 'ticket partyId not exist for id: ${ticket.id}');
       isModelChanged = true;
     }
     try {

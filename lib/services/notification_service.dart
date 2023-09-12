@@ -36,7 +36,7 @@ class NotificationService {
           channelKey: 'high_importance_channel',
           channelName: 'high importance',
           channelDescription: 'notification channel for high importance',
-          defaultColor: const Color(0xFF9D50DD),
+          defaultColor: Constants.primary,
           ledColor: Colors.white,
           importance: NotificationImportance.Max,
           channelShowBadge: true,
@@ -49,7 +49,7 @@ class NotificationService {
           channelKey: 'chat_channel',
           channelName: 'chats',
           channelDescription: 'notification channel for chats',
-          defaultColor: const Color(0xFF9D50DD),
+          defaultColor: Constants.primary,
           ledColor: Colors.white,
           importance: NotificationImportance.Max,
           channelShowBadge: true,
@@ -164,7 +164,12 @@ class NotificationService {
 
   static void handleMessage(RemoteMessage message ){
     Map<String, dynamic> data = message.data;
-    String type = data['type'];
+    String type = '';
+    try{
+      type = data['type'];
+    } catch(e) {
+      Logx.em(_TAG, e.toString());
+    }
 
     switch(type){
       case 'lounge_chats':{
@@ -241,11 +246,11 @@ class NotificationService {
         break;
       }
       case Apis.GoogleReviewBloc: {
-        String? title = message.notification!.title;
-        String? body = message.notification!.body;
-        String url = Constants.blocGoogleReview;
+        String title = 'Fun night at HQ 🤩! Review us?';
+        String message = 'Hope you had a wonderful time tonight at as a guest in our community! A Google review will help us improve and ensure every night at our bar is an unforgettable experience. Reach home safe and see you soon 🤗🤍'.toLowerCase();
+        String url = data['link'];
 
-        NotificationService.showUrlLinkNotification(title!, body!, url);
+        NotificationService.showUrlLinkNotification(title, message, url);
         break;
       }
       case 'notification_tests': {
@@ -420,7 +425,6 @@ class NotificationService {
     body: body,
     notificationLayout: NotificationLayout.Default,
       payload: {
-        "navigate": "true",
         "type": "url",
         "link": url
       },

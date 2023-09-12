@@ -653,12 +653,8 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
                           final User user = Fresh.freshUserMap(map, true);
 
                           if(user.isAppUser && user.fcmToken.isNotEmpty){
-                            String title = '';
-                            String message =
-                                'Dear ${user.name}, your happiness is our melody! Please consider sharing your thoughts in a Google review; it\'ll help us fine-tune our tunes and ensure every night at our bar is an unforgettable symphony. 🎶🌟'.toLowerCase();
-
                             //send a notification
-                            Apis.sendUrlPushNotification(user.fcmToken, title, message, Apis.GoogleReviewBloc);
+                            Apis.sendUrlData(user.fcmToken, Apis.GoogleReviewBloc, Constants.blocGoogleReview);
                             Logx.ist(_TAG,
                                 '${user.name} ${user.surname} has been notified for a bloc google review 🤞');
                           }
