@@ -30,7 +30,7 @@ class Apis{
             'key=AAAATF6Gr-0:APA91bGmS4id_lc7RP9cU2V_kj5VFEgff2bwWG7bwXwTHwFu-OCaPUd77IZgprcuYBD4h68hz7wRpKvTjSAB1sKn3Ak994bbva4lmErUqfuFUIU_UBabtUtkVNYiA9E7dTeK9Qvl_PMR'
           },
           body: jsonEncode(body));
-      Logx.ist(_TAG, 'Response status: ${res.statusCode == 200? 'success':'failure'}');
+      Logx.i(_TAG, 'Response status: ${res.statusCode == 200? 'success':'failure'}');
       Logx.i(_TAG, 'Response body: ${res.body}');
     } catch(e) {
       Logx.em(_TAG, e.toString());
@@ -60,7 +60,7 @@ class Apis{
             'key=AAAATF6Gr-0:APA91bGmS4id_lc7RP9cU2V_kj5VFEgff2bwWG7bwXwTHwFu-OCaPUd77IZgprcuYBD4h68hz7wRpKvTjSAB1sKn3Ak994bbva4lmErUqfuFUIU_UBabtUtkVNYiA9E7dTeK9Qvl_PMR'
           },
           body: jsonEncode(body));
-      Logx.ist(_TAG, 'Response status: ${res.statusCode == 200? 'success':'failure'}');
+      Logx.i(_TAG, 'Response status: ${res.statusCode == 200? 'success':'failure'}');
       Logx.i(_TAG, 'Response body: ${res.body}');
 
       Logx.i(_TAG, await read(Uri.https('example.com', 'foobar.txt')));
@@ -88,7 +88,7 @@ class Apis{
             'key=AAAATF6Gr-0:APA91bGmS4id_lc7RP9cU2V_kj5VFEgff2bwWG7bwXwTHwFu-OCaPUd77IZgprcuYBD4h68hz7wRpKvTjSAB1sKn3Ak994bbva4lmErUqfuFUIU_UBabtUtkVNYiA9E7dTeK9Qvl_PMR'
           },
           body: jsonEncode(body));
-      Logx.ist(_TAG, 'Response status: ${res.statusCode == 200? 'success':'failure'}');
+      Logx.i(_TAG, 'Response status: ${res.statusCode == 200? 'success':'failure'}');
       Logx.i(_TAG, 'Response body: ${res.body}');
 
       Logx.i(_TAG, await read(Uri.https('example.com', 'foobar.txt')));

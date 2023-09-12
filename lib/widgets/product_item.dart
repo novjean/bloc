@@ -52,27 +52,10 @@ class ProductItem extends StatefulWidget {
 class _ProductItemState extends State<ProductItem> {
   static const String _TAG = 'ProductItem';
 
-  // final TextEditingController _controller = TextEditingController();
-  String completePhoneNumber = '';
-  int maxPhoneNumberLength = 10;
-
-  final formKey = GlobalKey<FormState>();
-  final pinController = TextEditingController();
-  final focusNode = FocusNode();
-
   int quantity = 1;
 
   @override
-  void dispose() {
-    // _controller.dispose();
-    // pinController.dispose();
-    // focusNode.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    // final cart = Provider.of<Cart>(context, listen: false);
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 5),

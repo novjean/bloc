@@ -3,7 +3,7 @@ import 'package:bloc/main.dart';
 import 'package:bloc/utils/constants.dart';
 import 'package:bloc/utils/date_time_utils.dart';
 import 'package:bloc/utils/network_utils.dart';
-import 'package:bloc/widgets/ui/loading_widget.dart';
+import 'package:bloc/widgets/ui/button_widget.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:delayed_display/delayed_display.dart';
@@ -21,6 +21,7 @@ import '../../helpers/fresh.dart';
 import '../../routes/route_constants.dart';
 import '../../screens/parties/party_guest_add_edit_manage_screen.dart';
 import '../../utils/logx.dart';
+import '../ui/dark_button_widget.dart';
 import 'mini_artist_item.dart';
 
 class PartyBanner extends StatefulWidget {
@@ -120,8 +121,19 @@ class _PartyBannerState extends State<PartyBanner> {
     bool isGuestListActive = widget.party.isGuestListActive &
         (timeNow < widget.party.guestListEndTime);
 
+    bool showGuestListBuyTix= false;
+    if(widget.shouldShowButton){
+      if(!widget.party.isTBA && !widget.party.isTicketsDisabled && widget.party.ticketUrl.isNotEmpty){
+        if(isGuestListActive){
+          if(!widget.isGuestListRequested){
+            showGuestListBuyTix = true;
+          }
+        }
+      }
+    }
+
     int interestCount =
-        mPartyInterest.initCount + mPartyInterest.userIds.length;
+      mPartyInterest.initCount + mPartyInterest.userIds.length;
 
     return GestureDetector(
             onTap: () {
@@ -162,7 +174,7 @@ class _PartyBannerState extends State<PartyBanner> {
                             flex: 2,
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: [
                                 Padding(
                                   padding: const EdgeInsets.only(left: 5.0),
@@ -259,16 +271,65 @@ class _PartyBannerState extends State<PartyBanner> {
                                         ],
                                       )
                                     : const SizedBox(),
+                                showGuestListBuyTix?
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                  Expanded(
+                                    child: Container(
+                                      padding: EdgeInsets.symmetric(horizontal: 5),
+                                      height: 60,
+                                      child: ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: Constants.background,
+                                          foregroundColor: Constants.primary,
+                                          shadowColor: Colors.white30,
+                                          minimumSize: const Size.fromHeight(60),
+                                          shape: const RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.only(
+                                                topLeft: Radius.circular(10), topRight: Radius.circular(10)),
+                                          ),
+                                          elevation: 3,
+                                        ),
+                                        child: Text('guest list', style: TextStyle(fontSize: 18),),
+                                        onPressed: () {
+                                          _handleGuestListPressed();
+                                        },
+                                      ),
+                                    )
+                                  ),
+                                  Expanded(
+                                        child: Container(
+                                          padding: EdgeInsets.symmetric(horizontal: 5),
+                                          height: 60,
+                                          child: ElevatedButton.icon(
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor: Constants.background,
+                                              foregroundColor: Constants.primary,
+                                              shadowColor: Colors.white30,
+                                              minimumSize: const Size.fromHeight(60),
+                                              shape: const RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.only(
+                                                    topLeft: Radius.circular(10), topRight: Radius.circular(10)),
+                                              ),
+                                              elevation: 3,
+                                            ),
+                                            label: const Text('ticket', style: TextStyle(fontSize: 18),),
+                                              icon: const Icon(
+                                                Icons.star_half,
+                                                size: 24.0,
+                                              ),
+                                            onPressed: () {
+                                              _handleBuyTixPressed();
+                                            },
+                                          ),
+                                        )
+                                    ),
+
+                                  ],):
+                                
                                 widget.shouldShowButton
-                                    ? (!widget.party.isTBA
-                                    && !widget.party.isTicketsDisabled
-                                    && widget.party.ticketUrl.isNotEmpty)
-                                        ? showBuyTixButton(context)
-                                        : isGuestListActive
-                                            ? !widget.isGuestListRequested
-                                                ? showGuestListButton(context)
-                                                : showBoxOfficeButton(context)
-                                            : showListenOrInstaDialog(context)
+                                    ? _showBottomButton(context, isGuestListActive)
                                     : const SizedBox()
                               ],
                             ),
@@ -399,15 +460,7 @@ class _PartyBannerState extends State<PartyBanner> {
           ),
         ),
         onPressed: () {
-          PartyGuest partyGuest = Dummy.getDummyPartyGuest(true);
-          partyGuest.partyId = widget.party.id;
-
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (context) => PartyGuestAddEditManageScreen(
-                  partyGuest: partyGuest, party: widget.party, task: 'add'),
-            ),
-          );
+          _handleGuestListPressed();
         },
         icon: const Icon(
           Icons.app_registration,
@@ -421,7 +474,7 @@ class _PartyBannerState extends State<PartyBanner> {
     );
   }
 
-  showBuyTixButton(BuildContext context) {
+  _showBuyTixButton(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 5.0),
       child: ElevatedButton.icon(
@@ -437,47 +490,7 @@ class _PartyBannerState extends State<PartyBanner> {
           ),
         ),
         onPressed: () {
-          final uri = Uri.parse(widget.party.ticketUrl);
-          NetworkUtils.launchInBrowser(uri);
-
-          if (UserPreferences.isUserLoggedIn()) {
-            User user = UserPreferences.myUser;
-
-            FirestoreHelper.pullHistoryMusic(user.id, widget.party.genre)
-                .then((res) {
-              if (res.docs.isEmpty) {
-                // no history, add new one
-                HistoryMusic historyMusic = Dummy.getDummyHistoryMusic();
-                historyMusic.userId = user.id;
-                historyMusic.genre = widget.party.genre;
-                historyMusic.count = 1;
-                FirestoreHelper.pushHistoryMusic(historyMusic);
-              } else {
-                for (int i = 0; i < res.docs.length; i++) {
-                  DocumentSnapshot document = res.docs[i];
-                  Map<String, dynamic> data =
-                      document.data()! as Map<String, dynamic>;
-                  final HistoryMusic historyMusic =
-                      Fresh.freshHistoryMusicMap(data, false);
-                  historyMusic.count++;
-                  FirestoreHelper.pushHistoryMusic(historyMusic);
-                }
-              }
-            });
-
-            if (UserPreferences.isUserLoggedIn()) {
-              if (!mPartyInterest.userIds.contains(UserPreferences.myUser.id)) {
-                mPartyInterest.userIds.add(UserPreferences.myUser.id);
-                FirestoreHelper.pushPartyInterest(mPartyInterest);
-
-                Logx.d(_TAG, 'user added to party interest');
-              }
-            } else {
-              int initCount = mPartyInterest.initCount + 1;
-              mPartyInterest = mPartyInterest.copyWith(initCount: initCount);
-              FirestoreHelper.pushPartyInterest(mPartyInterest);
-            }
-          }
+          _handleBuyTixPressed();
         },
         label: const Text(
           'buy ticket',
@@ -510,6 +523,76 @@ class _PartyBannerState extends State<PartyBanner> {
       icon: const Icon(
         Icons.keyboard_command_key_sharp,
         size: 24.0,
+      ),
+    );
+  }
+
+  _showBottomButton(BuildContext context, bool isGuestListActive) {
+    if(!widget.party.isTBA && !widget.party.isTicketsDisabled && widget.party.ticketUrl.isNotEmpty){
+      return _showBuyTixButton(context);
+    } else if(isGuestListActive ){
+      if(!widget.isGuestListRequested){
+        return showGuestListButton(context);
+      } else {
+        return showBoxOfficeButton(context);
+      }
+    } else{
+      return showListenOrInstaDialog(context);
+    }
+  }
+
+  void _handleBuyTixPressed() {
+    final uri = Uri.parse(widget.party.ticketUrl);
+    NetworkUtils.launchInBrowser(uri);
+
+    if (UserPreferences.isUserLoggedIn()) {
+      User user = UserPreferences.myUser;
+
+      FirestoreHelper.pullHistoryMusic(user.id, widget.party.genre)
+          .then((res) {
+        if (res.docs.isEmpty) {
+          // no history, add new one
+          HistoryMusic historyMusic = Dummy.getDummyHistoryMusic();
+          historyMusic.userId = user.id;
+          historyMusic.genre = widget.party.genre;
+          historyMusic.count = 1;
+          FirestoreHelper.pushHistoryMusic(historyMusic);
+        } else {
+          for (int i = 0; i < res.docs.length; i++) {
+            DocumentSnapshot document = res.docs[i];
+            Map<String, dynamic> data =
+            document.data()! as Map<String, dynamic>;
+            final HistoryMusic historyMusic =
+            Fresh.freshHistoryMusicMap(data, false);
+            historyMusic.count++;
+            FirestoreHelper.pushHistoryMusic(historyMusic);
+          }
+        }
+      });
+
+      if (UserPreferences.isUserLoggedIn()) {
+        if (!mPartyInterest.userIds.contains(UserPreferences.myUser.id)) {
+          mPartyInterest.userIds.add(UserPreferences.myUser.id);
+          FirestoreHelper.pushPartyInterest(mPartyInterest);
+
+          Logx.d(_TAG, 'user added to party interest');
+        }
+      } else {
+        int initCount = mPartyInterest.initCount + 1;
+        mPartyInterest = mPartyInterest.copyWith(initCount: initCount);
+        FirestoreHelper.pushPartyInterest(mPartyInterest);
+      }
+    }
+  }
+
+  void _handleGuestListPressed() {
+    PartyGuest partyGuest = Dummy.getDummyPartyGuest(true);
+    partyGuest.partyId = widget.party.id;
+
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => PartyGuestAddEditManageScreen(
+            partyGuest: partyGuest, party: widget.party, task: 'add'),
       ),
     );
   }
