@@ -3,15 +3,22 @@ import 'dart:convert';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:bloc/db/entity/lounge_chat.dart';
 import 'package:bloc/helpers/firestore_helper.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../api/apis.dart';
 import '../db/entity/ad.dart';
+import '../db/entity/celebration.dart';
+import '../db/entity/notification_test.dart';
+import '../db/entity/party_guest.dart';
+import '../db/entity/reservation.dart';
+import '../db/shared_preferences/ui_preferences.dart';
 import '../db/shared_preferences/user_preferences.dart';
 import '../helpers/fresh.dart';
 import '../main.dart';
 import '../routes/route_constants.dart';
+import '../utils/constants.dart';
 import '../utils/logx.dart';
 import '../utils/network_utils.dart';
 
@@ -155,9 +162,115 @@ class NotificationService {
     }
   }
 
-  // static void handleMessage(RemoteMessage message ){
-  //
-  // }
+  static void handleMessage(RemoteMessage message ){
+    Map<String, dynamic> data = message.data;
+    String type = data['type'];
+
+    switch(type){
+      case 'lounge_chats':{
+        UiPreferences.setHomePageIndex(2);
+        LoungeChat chat = Fresh.freshLoungeChatMap(jsonDecode(data['document']), false);
+        if(UserPreferences.isUserLoggedIn() && chat.userId != UserPreferences.myUser.id){
+          if(UserPreferences.getListLounges().contains(chat.loungeId)){
+            NotificationService.showChatNotification(chat);
+          }
+        }
+        break;
+        //          notification: {
+        //           title: snapshot.data().userName,
+        //           body: snapshot.data().message,
+        //           clickAction: 'FLUTTER_NOTIFICATION_CLICK',
+        //         },
+      }
+      case 'ads':{
+        Ad ad = Fresh.freshAdMap(jsonDecode(data['document']), false);
+        FirestoreHelper.updateAdReach(ad.id);
+
+        //notification: {
+        //           title: snapshot.data().title,
+        //           body: snapshot.data().message,
+        //           clickAction: 'FLUTTER_NOTIFICATION_CLICK',
+        //         },
+
+        NotificationService.showAdNotification(ad);
+        break;
+      }
+      case 'party_guest':{
+        PartyGuest partyGuest = Fresh.freshPartyGuestMap(jsonDecode(data['document']), false);
+        if(!partyGuest.isApproved){
+          String title = '${partyGuest.name} ${partyGuest.surname}';
+          String body = '${partyGuest.guestStatus} : ${partyGuest.guestsCount}';
+
+          NotificationService.showDefaultNotification(title, body);
+        } else {
+          Logx.ist(_TAG, 'guest list: ${partyGuest.name} added');
+        }
+        //notification: {
+        //           title: 'request : guest list',
+        //           body: snapshot.data().name + ' ' + snapshot.data().surname,
+        //           clickAction: 'FLUTTER_NOTIFICATION_CLICK',
+        //         },
+        break;
+      }
+      case 'reservations':{
+        Reservation reservation = Fresh.freshReservationMap(jsonDecode(data['document']), false);
+        String title = 'request : table reservation';
+        String body = '${reservation.name} : ${reservation.guestsCount}';
+
+        //notification: {
+        //           title: 'request : table reservation',
+        //           body: snapshot.data().name + ' - ' + snapshot.data().guestsCount,
+        //           clickAction: 'FLUTTER_NOTIFICATION_CLICK',
+        //         },
+
+        NotificationService.showDefaultNotification(title, body);
+        break;
+      }
+      case 'celebrations':{
+        Celebration celebration = Fresh.freshCelebrationMap(jsonDecode(data['document']), false);
+        String title = 'request : celebration';
+        String body = '${celebration.name} : ${celebration.guestsCount}';
+
+        //notification: {
+        //           title: 'request : celebration',
+        //           body: snapshot.data().name + ' - ' + snapshot.data().guestsCount,
+        //           clickAction: 'FLUTTER_NOTIFICATION_CLICK',
+        //         },
+
+        NotificationService.showDefaultNotification(title, body);
+        break;
+      }
+      case Apis.GoogleReviewBloc: {
+        String? title = message.notification!.title;
+        String? body = message.notification!.body;
+        String url = Constants.blocGoogleReview;
+
+        NotificationService.showUrlLinkNotification(title!, body!, url);
+        break;
+      }
+      case 'notification_tests': {
+        NotificationTest notificationTest = Fresh.freshNotificationTestMap(jsonDecode(data['document']), false);
+
+        String? title ='notification test!';
+        String? body = notificationTest.text;
+
+        NotificationService.showDefaultNotification(title!, body!);
+        break;
+      }
+      case 'sos':
+      case 'offer':
+      case 'order': {
+        Logx.i(_TAG, 'notification handled by firebase');
+        break;
+      }
+      default:{
+        String? title = message.notification!.title;
+        String? body = message.notification!.body;
+
+        NotificationService.showDefaultNotification(title!, body!);
+      }
+    }
+  }
 
   static Future<void> showNotification({
     required final String title,
@@ -319,7 +432,7 @@ class NotificationService {
           isDangerousOption: true),
       NotificationActionButton(
         key: 'OPEN_URL_ACTION',
-        label: '💖 review bloc',
+        label: '💯 review bloc',
         actionType: ActionType.Default,
       ),
 

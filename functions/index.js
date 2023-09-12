@@ -10,11 +10,6 @@ exports.loungeChatFunction = functions
     .onCreate((snapshot, context) => {
       console.log(snapshot.data());
       return admin.messaging().sendToTopic('lounge_chats', {
-        notification: {
-          title: snapshot.data().userName,
-          body: snapshot.data().message,
-          clickAction: 'FLUTTER_NOTIFICATION_CLICK',
-        },
         data: {
           type: 'lounge_chats',
           document: JSON.stringify(snapshot.data()),
@@ -74,11 +69,6 @@ exports.adFunction = functions
     .onCreate((snapshot, context) => {
       console.log(snapshot.data());
       return admin.messaging().sendToTopic('ads', {
-        notification: {
-          title: snapshot.data().title,
-          body: snapshot.data().message,
-          clickAction: 'FLUTTER_NOTIFICATION_CLICK',
-        },
         data: {
           type: 'ads',
           document: JSON.stringify(snapshot.data()),
@@ -93,11 +83,6 @@ exports.partyGuestFunction = functions
     .onCreate((snapshot, context) => {
       console.log(snapshot.data());
       return admin.messaging().sendToTopic('party_guest', {
-        notification: {
-          title: 'request : guest list',
-          body: snapshot.data().name + ' ' + snapshot.data().surname,
-          clickAction: 'FLUTTER_NOTIFICATION_CLICK',
-        },
         data: {
           type: 'party_guest',
           document: JSON.stringify(snapshot.data()),
@@ -112,11 +97,6 @@ exports.reservationFunction = functions
     .onCreate((snapshot, context) => {
       console.log(snapshot.data());
       return admin.messaging().sendToTopic('reservations', {
-        notification: {
-          title: 'request : table reservation',
-          body: snapshot.data().name + ' - ' + snapshot.data().guestsCount,
-          clickAction: 'FLUTTER_NOTIFICATION_CLICK',
-        },
         data: {
           type: 'reservations',
           document: JSON.stringify(snapshot.data()),
@@ -131,11 +111,6 @@ exports.celebrationFunction = functions
     .onCreate((snapshot, context) => {
       console.log(snapshot.data());
       return admin.messaging().sendToTopic('celebrations', {
-        notification: {
-          title: 'request : celebration',
-          body: snapshot.data().name + ' - ' + snapshot.data().guestsCount,
-          clickAction: 'FLUTTER_NOTIFICATION_CLICK',
-        },
         data: {
           type: 'celebrations',
           document: JSON.stringify(snapshot.data()),
