@@ -32,7 +32,7 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 
   Logx.i('main', 'handling a background message ${message.messageId}');
 
-  NotificationService.handleMessage(message);
+  NotificationService.handleMessage(message, true);
 }
 
 const bool kIsWeb = identical(0, 0.0);

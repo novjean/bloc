@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:bloc/db/entity/lounge_chat.dart';
 import 'package:bloc/helpers/firestore_helper.dart';
+import 'package:bloc/utils/string_utils.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -162,7 +163,7 @@ class NotificationService {
     }
   }
 
-  static void handleMessage(RemoteMessage message ){
+  static void handleMessage(RemoteMessage message, bool isBackground){
     Map<String, dynamic> data = message.data;
     String type = '';
     try{
@@ -174,12 +175,27 @@ class NotificationService {
     switch(type){
       case 'lounge_chats':{
         UiPreferences.setHomePageIndex(2);
-        LoungeChat chat = Fresh.freshLoungeChatMap(jsonDecode(data['document']), false);
-        if(UserPreferences.isUserLoggedIn() && chat.userId != UserPreferences.myUser.id){
-          if(UserPreferences.getListLounges().contains(chat.loungeId)){
-            NotificationService.showChatNotification(chat);
+
+        if(isBackground){
+          LoungeChat chat = Fresh.freshLoungeChatMap(jsonDecode(data['document']), false);
+          String title = chat.loungeName;
+
+          String message = '';
+          if(chat.type == 'image'){
+            message = '[photo attached]';
+          } else {
+            message = StringUtils.firstFewWords('${chat.message} ...', 50);
+          }
+          NotificationService.showDefaultNotification(title, message);
+        } else {
+          LoungeChat chat = Fresh.freshLoungeChatMap(jsonDecode(data['document']), false);
+          if(UserPreferences.isUserLoggedIn() && chat.userId != UserPreferences.myUser.id){
+            if(UserPreferences.getListLounges().contains(chat.loungeId)){
+              NotificationService.showChatNotification(chat);
+            }
           }
         }
+
         break;
       }
       case 'ads':{

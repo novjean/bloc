@@ -167,7 +167,7 @@ class _MainScreenState extends State<MainScreen> {
       });
 
       FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-        NotificationService.handleMessage(message);
+        NotificationService.handleMessage(message, false);
       });
 
       //clear out any previous subscriptions
