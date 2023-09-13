@@ -28,6 +28,9 @@ class NotificationService {
 
   static int lastNotificationTime = 0;
 
+  // Keep track of the notification IDs
+  static String notificationId = '';
+
   static Future<void> initializeNotification() async {
     await AwesomeNotifications().initialize(
       'resource://drawable/ic_launcher',
@@ -164,6 +167,7 @@ class NotificationService {
   }
 
   static void handleMessage(RemoteMessage message, bool isBackground){
+    Logx.d(_TAG, 'prev notification id: $notificationId');
     Map<String, dynamic> data = message.data;
     String type = '';
     try{
@@ -174,24 +178,36 @@ class NotificationService {
 
     switch(type){
       case 'lounge_chats':{
-        UiPreferences.setHomePageIndex(2);
-
-        if(isBackground){
-          LoungeChat chat = Fresh.freshLoungeChatMap(jsonDecode(data['document']), false);
-          String title = chat.loungeName;
-
-          String message = '';
-          if(chat.type == 'image'){
-            message = '[photo attached]';
-          } else {
-            message = StringUtils.firstFewWords('${chat.message} ...', 50);
-          }
-          NotificationService.showDefaultNotification(title, message);
+        LoungeChat chat = Fresh.freshLoungeChatMap(jsonDecode(data['document']), false);
+        if(notificationId == chat.id){
+          return;
         } else {
-          LoungeChat chat = Fresh.freshLoungeChatMap(jsonDecode(data['document']), false);
-          if(UserPreferences.isUserLoggedIn() && chat.userId != UserPreferences.myUser.id){
-            if(UserPreferences.getListLounges().contains(chat.loungeId)){
-              NotificationService.showChatNotification(chat);
+          notificationId = chat.id;
+
+          UiPreferences.setHomePageIndex(2);
+
+          if(isBackground){
+            String title = chat.loungeName;
+
+            String message = '';
+            if(chat.type == 'image'){
+              message = '🖼️ [photo attached]';
+            } else {
+              message = StringUtils.firstFewWords('${chat.message} ...', 50);
+            }
+            NotificationService.showDefaultNotification(title, message);
+          } else {
+            LoungeChat chat = Fresh.freshLoungeChatMap(jsonDecode(data['document']), false);
+
+            if(notificationId == chat.id){
+              Logx.d(_TAG, 'same notification, not showing');
+              return;
+            } else {
+              if(UserPreferences.isUserLoggedIn() && chat.userId != UserPreferences.myUser.id){
+                if(UserPreferences.getListLounges().contains(chat.loungeId)){
+                  NotificationService.showChatNotification(chat);
+                }
+              }
             }
           }
         }
@@ -200,34 +216,59 @@ class NotificationService {
       }
       case 'ads':{
         Ad ad = Fresh.freshAdMap(jsonDecode(data['document']), false);
-        FirestoreHelper.updateAdReach(ad.id);
-        NotificationService.showAdNotification(ad);
+        if(notificationId == ad.id){
+          return;
+        } else {
+          notificationId = ad.id;
+
+          FirestoreHelper.updateAdReach(ad.id);
+          NotificationService.showAdNotification(ad);
+        }
         break;
       }
       case 'party_guest':{
         PartyGuest partyGuest = Fresh.freshPartyGuestMap(jsonDecode(data['document']), false);
-        if(!partyGuest.isApproved){
-          String title = '${partyGuest.name} ${partyGuest.surname}';
-          String body = '${partyGuest.guestStatus} : ${partyGuest.guestsCount}';
-
-          NotificationService.showDefaultNotification(title, body);
+        if(notificationId == partyGuest.id){
+          return;
         } else {
-          Logx.ist(_TAG, 'guest list: ${partyGuest.name} added');
+          notificationId = partyGuest.id;
+
+          if(!partyGuest.isApproved){
+            String title = '${partyGuest.name} ${partyGuest.surname}';
+            String body = '${partyGuest.guestStatus} : ${partyGuest.guestsCount}';
+
+            NotificationService.showDefaultNotification(title, body);
+          } else {
+            Logx.ist(_TAG, 'guest list: ${partyGuest.name} added');
+          }
         }
         break;
       }
       case 'reservations':{
         Reservation reservation = Fresh.freshReservationMap(jsonDecode(data['document']), false);
-        String title = 'request : table reservation';
-        String body = '${reservation.name} : ${reservation.guestsCount}';
-        NotificationService.showDefaultNotification(title, body);
+        if(notificationId == reservation.id){
+          return;
+        } else {
+          notificationId = reservation.id;
+
+          String title = 'request : table reservation';
+          String body = '${reservation.name} : ${reservation.guestsCount}';
+          NotificationService.showDefaultNotification(title, body);
+        }
         break;
       }
       case 'celebrations':{
         Celebration celebration = Fresh.freshCelebrationMap(jsonDecode(data['document']), false);
-        String title = 'request : celebration';
-        String body = '${celebration.name} : ${celebration.guestsCount}';
-        NotificationService.showDefaultNotification(title, body);
+
+        if(notificationId == celebration.id){
+          return;
+        } else {
+          notificationId = celebration.id;
+
+          String title = 'request : celebration';
+          String body = '${celebration.name} : ${celebration.guestsCount}';
+          NotificationService.showDefaultNotification(title, body);
+        }
         break;
       }
       case Apis.GoogleReviewBloc: {
@@ -235,7 +276,13 @@ class NotificationService {
         String message = 'Hope you had a wonderful time tonight at as a guest in our community! A Google review will help us improve and ensure every night at our bar is an unforgettable experience. Reach home safe and see you soon 🤗🤍'.toLowerCase();
         String url = data['link'];
 
-        NotificationService.showUrlLinkNotification(title, message, url);
+        if(notificationId == url){
+          return;
+        } else {
+          notificationId = url;
+
+          NotificationService.showUrlLinkNotification(title, message, url);
+        }
         break;
       }
       case 'notification_tests': {
@@ -244,7 +291,13 @@ class NotificationService {
         String? title ='notification test!';
         String? body = notificationTest.text;
 
-        NotificationService.showDefaultNotification(title!, body!);
+        if(notificationId == notificationTest.id){
+          return;
+        } else {
+          notificationId = notificationTest.id;
+
+          NotificationService.showDefaultNotification(title!, body!);
+        }
         break;
       }
       case 'sos':
@@ -257,7 +310,13 @@ class NotificationService {
         String? title = message.notification!.title;
         String? body = message.notification!.body;
 
-        NotificationService.showDefaultNotification(title!, body!);
+        if(notificationId == title){
+          return;
+        } else {
+          notificationId = title!;
+
+          NotificationService.showDefaultNotification(title, body!);
+        }
       }
     }
   }
@@ -391,6 +450,7 @@ class NotificationService {
   }
 
   static void showDefaultNotification(String title, String body) async {
+
     await showNotification(
         title: title,
         body: body,
