@@ -46,6 +46,8 @@ class _ArtistScreenState extends State<ArtistScreen> {
         setState(() {
           isPartyLoading = false;
         });
+
+        FirestoreHelper.updatePartyViewCount(mParty.id);
       } else {
         setState(() {
           isPartyLoading = false;
