@@ -46,6 +46,9 @@ class Party {
 
   String loungeId;
 
+  int views;
+  int shareCount;
+
 //<editor-fold desc="Data Methods">
   Party({
     required this.id,
@@ -85,6 +88,8 @@ class Party {
     required this.isTicketsDisabled,
     required this.artistIds,
     required this.loungeId,
+    required this.views,
+    required this.shareCount,
   });
 
   @override
@@ -128,7 +133,9 @@ class Party {
           ticketsSalesTotal == other.ticketsSalesTotal &&
           isTicketsDisabled == other.isTicketsDisabled &&
           artistIds == other.artistIds &&
-          loungeId == other.loungeId);
+          loungeId == other.loungeId &&
+          views == other.views &&
+          shareCount == other.shareCount);
 
   @override
   int get hashCode =>
@@ -168,7 +175,9 @@ class Party {
       ticketsSalesTotal.hashCode ^
       isTicketsDisabled.hashCode ^
       artistIds.hashCode ^
-      loungeId.hashCode;
+      loungeId.hashCode ^
+      views.hashCode ^
+      shareCount.hashCode;
 
   @override
   String toString() {
@@ -210,6 +219,8 @@ class Party {
         ' isTicketsDisabled: $isTicketsDisabled,' +
         ' artistIds: $artistIds,' +
         ' loungeId: $loungeId,' +
+        ' views: $views,' +
+        ' shareCount: $shareCount,' +
         '}';
   }
 
@@ -251,6 +262,8 @@ class Party {
     bool? isTicketsDisabled,
     List<String>? artistIds,
     String? loungeId,
+    int? views,
+    int? shareCount,
   }) {
     return Party(
       id: id ?? this.id,
@@ -291,6 +304,8 @@ class Party {
       isTicketsDisabled: isTicketsDisabled ?? this.isTicketsDisabled,
       artistIds: artistIds ?? this.artistIds,
       loungeId: loungeId ?? this.loungeId,
+      views: views ?? this.views,
+      shareCount: shareCount ?? this.shareCount,
     );
   }
 
@@ -333,6 +348,8 @@ class Party {
       'isTicketsDisabled': this.isTicketsDisabled,
       'artistIds': this.artistIds,
       'loungeId': this.loungeId,
+      'views': this.views,
+      'shareCount': this.shareCount,
     };
   }
 
@@ -375,6 +392,8 @@ class Party {
       isTicketsDisabled: map['isTicketsDisabled'] as bool,
       artistIds: map['artistIds'] as List<String>,
       loungeId: map['loungeId'] as String,
+      views: map['views'] as int,
+      shareCount: map['shareCount'] as int,
     );
   }
 

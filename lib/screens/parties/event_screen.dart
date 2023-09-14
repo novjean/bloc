@@ -97,6 +97,7 @@ class _EventScreenState extends State<EventScreen> {
             Logx.d(_TAG, 'party interest created for party');
           }
         });
+        FirestoreHelper.updatePartyViewCount(mParty.id);
       } else {
         Logx.em(_TAG, 'no party found!');
         setState(() {
@@ -106,6 +107,7 @@ class _EventScreenState extends State<EventScreen> {
     });
 
     super.initState();
+
   }
 
   @override
@@ -306,6 +308,8 @@ class _EventScreenState extends State<EventScreen> {
                     ButtonWidget(
                       text: '🎨 poster',
                       onClicked: () async {
+                        FirestoreHelper.updatePartyShareCount(mParty.id);
+
                         final urlImage = mParty.storyImageUrl.isNotEmpty
                             ? mParty.storyImageUrl
                             : mParty.imageUrl;
@@ -327,6 +331,8 @@ class _EventScreenState extends State<EventScreen> {
                       child: ButtonWidget(
                         text: '🎯 page',
                         onClicked: () async {
+                          FirestoreHelper.updatePartyShareCount(mParty.id);
+
                           final url =
                               'http://bloc.bar/#/event/${widget.partyName.replaceAll(' ', '%20')}/${widget.partyChapter}';
                           Share.share(

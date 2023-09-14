@@ -43,7 +43,14 @@ class ManagePartyItem extends StatelessWidget{
                     ),
                   ),
 
-                  subtitle: Text('active: ${party.isActive}'),
+                  subtitle: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text('👁️ ${party.views}'),
+                      Text('🔗 ${party.shareCount} shares'),
+                      Text('${party.isActive}'),
+                    ],
+                  ),
                   trailing: RichText(
                     text: TextSpan(
                       text:

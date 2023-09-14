@@ -128,7 +128,7 @@ class _PartyPhotoAddEditScreenState extends State<PartyPhotoAddEditScreen> {
                 source: ImageSource.gallery,
                 maxHeight: isPortrait? longSide:shortSide,
                 maxWidth: isPortrait? shortSide:longSide,
-                imageQuality: 95);
+                imageQuality: 99);
             if (image == null) return;
 
             int fileSize = await image.length();
@@ -191,7 +191,7 @@ class _PartyPhotoAddEditScreenState extends State<PartyPhotoAddEditScreen> {
                 List<XFile> images = await ImagePicker().pickMultiImage(
                     maxHeight: isPortrait? longSide:shortSide,
                     maxWidth: isPortrait? shortSide:longSide,
-                    imageQuality: 95);
+                    imageQuality: 99);
 
                 if (images.isNotEmpty) {
                   final directory = await getApplicationDocumentsDirectory();
@@ -210,7 +210,7 @@ class _PartyPhotoAddEditScreenState extends State<PartyPhotoAddEditScreen> {
                         newImage);
 
                     final newThumbImage = await FileUtils.getImageCompressed(
-                        imageFile.path, isPortrait? 280:210, isPortrait? 210:280, 95);
+                        imageFile.path, isPortrait? 280:210, isPortrait? 210:280, 99);
                     String imageThumbUrl = await FirestorageHelper.uploadFile(
                         FirestorageHelper.PARTY_PHOTO_THUMB_IMAGES,
                         StringUtils.getRandomString(28),

@@ -980,6 +980,20 @@ class FirestoreHelper {
     }
   }
 
+  static void updatePartyViewCount(String docId) {
+    FirebaseFirestore.instance
+        .collection(PARTIES)
+        .doc(docId)
+        .update({"views": FieldValue.increment(1)},);
+  }
+
+  static void updatePartyShareCount(String docId) {
+    FirebaseFirestore.instance
+        .collection(PARTIES)
+        .doc(docId)
+        .update({"shareCount": FieldValue.increment(1)},);
+  }
+
   static pullParties(String serviceId) {
     return FirebaseFirestore.instance
         .collection(FirestoreHelper.PARTIES)
@@ -2234,5 +2248,6 @@ class FirestoreHelper {
   static void deleteUserLounge(String docId) {
     FirebaseFirestore.instance.collection(USER_LOUNGES).doc(docId).delete();
   }
+
 
 }

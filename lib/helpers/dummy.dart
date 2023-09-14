@@ -316,8 +316,9 @@ class Dummy {
         chapter: '',
         artistIds: [],
         loungeId: '',
-        isTicketsDisabled: false
-
+        isTicketsDisabled: false,
+        views: 0,
+        shareCount: 0
     );
 
     return dummyParty;

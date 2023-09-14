@@ -1933,6 +1933,19 @@ class Fresh {
       isModelChanged = true;
     }
 
+    try {
+      party = party.copyWith(views: map['views'] as int);
+    } catch (e) {
+      Logx.em(_TAG, 'party views not exist for id: ${party.id}');
+      isModelChanged = true;
+    }
+    try {
+      party = party.copyWith(shareCount: map['shareCount'] as int);
+    } catch (e) {
+      Logx.em(_TAG, 'party shareCount not exist for id: ${party.id}');
+      isModelChanged = true;
+    }
+
     if (isModelChanged &&
         shouldUpdate &&
         UserPreferences.myUser.clearanceLevel >= Constants.MANAGER_LEVEL) {
@@ -2159,6 +2172,17 @@ class Fresh {
       freshParty = freshParty.copyWith(loungeId: party.loungeId);
     } catch (e) {
       Logx.em(_TAG, 'party loungeId not exist for id: ${party.id}');
+    }
+
+    try {
+      freshParty = freshParty.copyWith(views: party.views);
+    } catch (e) {
+      Logx.em(_TAG, 'party views not exist for id: ${party.id}');
+    }
+    try {
+      freshParty = freshParty.copyWith(shareCount: party.shareCount);
+    } catch (e) {
+      Logx.em(_TAG, 'party shareCount not exist for id: ${party.id}');
     }
 
     return freshParty;
