@@ -1,5 +1,6 @@
 import 'package:bloc/utils/date_time_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 
 import '../../db/entity/lounge_chat.dart';
 import '../../main.dart';
@@ -72,6 +73,7 @@ class _ChatItemState extends State<ChatItem> {
 
                 subtitle: ListView(
                   shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
                   // crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     widget.chat.type == 'text'
