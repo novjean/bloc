@@ -94,8 +94,8 @@ exports.partyGuestFunction = functions
       console.log(snapshot.data());
       return admin.messaging().sendToTopic('party_guest', {
         notification: {
-          title: '📝 guest list : ' + snapshot.data().name + ' ' + snapshot.data().surname,
-          body: snapshot.data().guestStatus + ' - ' + snapshot.data().guestsCount,
+          title: '📝 guest : '+snapshot.data().name+' '+snapshot.data().surname,
+          body: snapshot.data().guestStatus+' - '+snapshot.data().guestsCount,
           clickAction: 'FLUTTER_NOTIFICATION_CLICK',
         },
         data: {
@@ -114,7 +114,7 @@ exports.reservationFunction = functions
       return admin.messaging().sendToTopic('reservations', {
         notification: {
           title: '🛎️ reservation : ' + snapshot.data().name,
-          body: 'occasion: ' + snapshot.data().occasion + ' for ' + snapshot.data().guestsCount,
+          body: snapshot.data().occasion + ' - ' + snapshot.data().guestsCount,
           clickAction: 'FLUTTER_NOTIFICATION_CLICK',
         },
         data: {
@@ -132,8 +132,8 @@ exports.celebrationFunction = functions
       console.log(snapshot.data());
       return admin.messaging().sendToTopic('celebrations', {
         notification: {
-          title: '🎊 celebration : ' + snapshot.data().name + ' ' + snapshot.data().surname,
-          body: 'occasion: ' + snapshot.data().occasion + ' for ' + snapshot.data().guestsCount,
+          title: '🎊 celebration : ' + snapshot.data().name,
+          body: snapshot.data().occasion+' - '+snapshot.data().guestsCount,
           clickAction: 'FLUTTER_NOTIFICATION_CLICK',
         },
         data: {
