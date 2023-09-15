@@ -151,13 +151,13 @@ class _MainScreenState extends State<MainScreen> {
     }
 
     if (!kIsWeb) {
-      //the following lines are essential for notification to work in iOS
       final fbm = FirebaseMessaging.instance;
-      fbm.requestPermission();
 
       fbm.getToken().then((t) {
         if(t!=null){
-          UserPreferences.myUser.fcmToken = t;
+          blocUser.User user = UserPreferences.myUser;
+          user = user.copyWith(fcmToken: t);
+          UserPreferences.setUser(user);
 
           FirestoreHelper.updateUserFcmToken(UserPreferences.myUser.id, t);
           Logx.d(_TAG, 'user token: $t');

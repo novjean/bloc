@@ -191,7 +191,7 @@ class _PartyBannerState extends State<PartyBanner> {
                                           TextSpan(
                                               text: widget.party.chapter == 'I'
                                                   ? ' '
-                                                  : widget.party.chapter,
+                                                  : '${widget.party.chapter} ',
                                               style: const TextStyle(
                                                   color: Colors.black,
                                                   fontFamily:
