@@ -74,7 +74,6 @@ class _ChatItemState extends State<ChatItem> {
                 subtitle: ListView(
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
-                  // crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     widget.chat.type == 'text'
                         ? Text(

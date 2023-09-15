@@ -2,6 +2,8 @@ import 'package:bloc/db/shared_preferences/user_preferences.dart';
 import 'package:bloc/helpers/firestore_helper.dart';
 import 'package:bloc/widgets/ui/app_bar_title.dart';
 import 'package:bloc/widgets/ui/loading_widget.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -10,10 +12,12 @@ import '../../db/entity/party.dart';
 import '../../helpers/dummy.dart';
 import '../../helpers/fresh.dart';
 
+import '../../main.dart';
 import '../../routes/route_constants.dart';
 import '../../utils/constants.dart';
 import '../../utils/network_utils.dart';
-import '../../widgets/ui/button_widget.dart';
+import '../../widgets/footer.dart';
+import '../../widgets/store_badge_item.dart';
 
 class ArtistScreen extends StatefulWidget {
   final String name;
@@ -87,27 +91,95 @@ class _ArtistScreenState extends State<ArtistScreen> {
         ? const LoadingWidget()
         : ListView(
             children: [
-              SizedBox(
-                width: double.infinity,
-                child: Hero(
-                  tag: mParty.id,
-                  child: Image.network(
-                    mParty.imageUrl,
+              mParty.imageUrls.length > 1
+                  ? CarouselSlider(
+                options: CarouselOptions(
+                  initialPage: 0,
+                  enableInfiniteScroll: true,
+                  autoPlay: true,
+                  autoPlayInterval: const Duration(seconds: 3),
+                  autoPlayAnimationDuration:
+                  const Duration(milliseconds: 1200),
+                  scrollDirection: Axis.horizontal,
+                  aspectRatio: 1.33,
+                ),
+                items: mParty.imageUrls
+                    .map((item) => kIsWeb
+                    ? SizedBox(
+                  width: double.infinity,
+                  child: Image.network(item,
+                      width: double.infinity,
+                      fit: BoxFit.cover),
+                )
+                    : CachedNetworkImage(
+                  imageUrl: item,
+                  imageBuilder: (context, imageProvider) =>
+                      Container(
+                        decoration: BoxDecoration(
+                          image: DecorationImage(
+                            image: imageProvider,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+                  placeholder: (context, url) =>
+                  const FadeInImage(
+                    placeholder:
+                    AssetImage('assets/images/logo.png'),
+                    image: AssetImage('assets/images/logo.png'),
                     fit: BoxFit.cover,
                   ),
-                ),
-              ),
+                  errorWidget: (context, url, error) =>
+                  const Icon(Icons.error),
+                ))
+                    .toList(),
+              )
+                  : SizedBox(
+                  width: double.infinity,
+                  child: FadeInImage(
+                    placeholder: const AssetImage('assets/images/logo.png'),
+                    image: NetworkImage(mParty.showStoryImageUrl
+                        ? mParty.storyImageUrl
+                        : mParty.imageUrl),
+                    fit: BoxFit.contain,
+                  )),
               const SizedBox(height: 10),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                width: double.infinity,
-                child: Text('${mParty.name.toLowerCase()} ${mParty.chapter}',
-                    textAlign: TextAlign.start,
-                    softWrap: true,
-                    style: TextStyle(
-                      color: Theme.of(context).primaryColor,
-                      fontSize: 26,
-                    )),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Flexible(
+                    flex: 2,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      child: RichText(
+                        text: TextSpan(
+                            text: '${mParty.name.toLowerCase()} ',
+                            style: const TextStyle(
+                                fontFamily: Constants.fontDefault,
+                                color: Constants.lightPrimary,
+                                overflow: TextOverflow.ellipsis,
+                                fontSize: 22,
+                                fontWeight: FontWeight.bold),
+                            children: <TextSpan>[
+                              TextSpan(
+                                  text: mParty.chapter == 'I'
+                                      ? ' '
+                                      : mParty.chapter,
+                                  style: const TextStyle(
+                                      fontFamily: Constants.fontDefault,
+                                      color: Constants.lightPrimary,
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.normal,
+                                      fontStyle: FontStyle.italic)),
+                            ]),
+                      ),
+                    ),
+                  ),
+                  // Flexible(
+                  //   flex: 1,
+                  //   child: _showFollowButton(context),
+                  // ),
+                ],
               ),
               const SizedBox(height: 10),
               Container(
@@ -123,56 +195,132 @@ class _ArtistScreenState extends State<ArtistScreen> {
               ),
               const SizedBox(height: 10),
               mParty.listenUrl.isNotEmpty
-                  ? Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          ButtonWidget(
-                              text:
-                                  'listen${findListenSource(mParty.listenUrl)}',
-                              onClicked: () {
-                                final uri = Uri.parse(mParty.listenUrl);
-                                NetworkUtils.launchInBrowser(uri);
-                              }),
-                          const SizedBox(height: 10),
-                        ],
-                      ),
-                    )
+                  ? const Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 15.0),
+                    child: Text('listen',
+                        style: TextStyle(
+                            color: Constants.lightPrimary,
+                            overflow: TextOverflow.ellipsis,
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold)),
+                  ),
+                ],
+              )
                   : const SizedBox(),
-              mParty.instagramUrl.isNotEmpty
-                  ? Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          ButtonWidget(
-                              text: 'instagram',
-                              onClicked: () {
-                                final uri = Uri.parse(mParty.instagramUrl);
-                                NetworkUtils.launchInBrowser(uri);
-                              }),
-                          const SizedBox(height: 10),
-                        ],
+              mParty.listenUrl.isNotEmpty
+                  ? Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  InkWell(
+                    onTap: () {
+                      final uri = Uri.parse(mParty.listenUrl);
+                      NetworkUtils.launchInBrowser(uri);
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 15, vertical: 2),
+                      child: Text('${findListenSource(mParty.listenUrl)} 🎧 ',
+                        style: const TextStyle(
+                          fontSize: 18,
+                          color: Constants.primary,
+                        ),
                       ),
-                    )
+                    ),
+                  ),
+                ],
+              )
                   : const SizedBox(),
               const SizedBox(height: 10),
-            ],
+              mParty.instagramUrl.isNotEmpty
+                  ? const Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 15.0),
+                    child: Text('links',
+                        style: TextStyle(
+                            color: Constants.lightPrimary,
+                            overflow: TextOverflow.ellipsis,
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold)),
+                  ),
+                ],
+              )
+                  : const SizedBox(),
+              mParty.instagramUrl.isNotEmpty
+                  ? Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  InkWell(
+                    onTap: () {
+                      final uri = Uri.parse(mParty.instagramUrl);
+                      NetworkUtils.launchInBrowser(uri);
+                    },
+                    child: const Padding(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: 15, vertical: 2),
+                      child: Text(
+                        'instagram 🧡',
+                        style: TextStyle(
+                          fontSize: 18,
+                          color: Constants.primary,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              )
+                  : const SizedBox(),
+              const SizedBox(height: 15.0),
+              kIsWeb ? const StoreBadgeItem() : const SizedBox(),
+              const SizedBox(height: 10.0),
+              Footer(),            ],
           );
   }
 
   String findListenSource(String listenUrl) {
     if (listenUrl.contains('spotify')) {
-      return ' on spotify';
+      return 'spotify';
     } else if (listenUrl.contains('soundcloud')) {
-      return ' on soundcloud';
+      return 'soundcloud';
     } else if (listenUrl.contains('youtube')) {
-      return ' on youtube';
+      return 'youtube';
     } else {
-      return '';
+      return 'other';
     }
+  }
+
+  _showFollowButton(BuildContext context) {
+    return Container(
+      height: 50,
+      width: 160,
+      padding: const EdgeInsets.only(left: 5, right: 10, bottom: 1, top: 1),
+      child: ElevatedButton.icon(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Constants.primary,
+          foregroundColor: Constants.background,
+          shadowColor: Colors.white30,
+          elevation: 3,
+          // minimumSize: const Size.fromHeight(60),
+        ),
+        onPressed: () {
+
+        },
+        icon: const Icon(
+          Icons.square_outlined,
+          size: 22.0,
+        ),
+        label: const Text(
+          'follow',
+          style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Constants.darkPrimary),
+        ),
+      ),
+    );
   }
 }

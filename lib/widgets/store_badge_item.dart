@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../utils/constants.dart';
 import '../utils/network_utils.dart';
 
 class StoreBadgeItem extends StatelessWidget {
@@ -10,12 +11,12 @@ class StoreBadgeItem extends StatelessWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Padding(
-          padding: const EdgeInsets.only(top: 25, left: 15.0, right: 15),
+        const Padding(
+          padding: EdgeInsets.only(top: 25, left: 15.0, right: 15),
           child: Text(
-            'download the app to receive push notifications, guest list and ticket status updates, and be a part of the ever expanding #blocCommunity',
+            'download the app to register for limited guest list, photo saving to gallery, push notifications for updates, and be a part of the ever expanding #blocCommunity',
             textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 16, color: Theme.of(context).shadowColor),
+            style: TextStyle(fontSize: 16, color: Constants.shadowColor),
           ),
         ),
 

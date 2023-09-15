@@ -5,12 +5,11 @@ import '../../db/entity/lounge_chat.dart';
 import '../../db/entity/lounge.dart';
 import '../../helpers/firestore_helper.dart';
 import '../../helpers/fresh.dart';
-import '../../main.dart';
 import '../../utils/constants.dart';
 import '../../utils/date_time_utils.dart';
 import '../../utils/logx.dart';
 
-class LoungeItem extends StatelessWidget{
+class LoungeItem extends StatelessWidget {
   static const String _TAG = 'LoungeItem';
 
   Lounge lounge;
@@ -28,15 +27,16 @@ class LoungeItem extends StatelessWidget{
           child: Card(
             elevation: 1,
             color: Constants.lightPrimary,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
             child: Padding(
                 padding: const EdgeInsets.only(top: 2.0, left: 5, right: 5),
                 child: ListTile(
                   leading: FadeInImage(
-                    placeholder: const AssetImage(
-                        'assets/icons/logo.png'),
+                    placeholder: const AssetImage('assets/icons/logo.png'),
                     image: NetworkImage(lounge.imageUrl),
-                    fit: BoxFit.cover,),
+                    fit: BoxFit.cover,
+                  ),
                   title: RichText(
                     text: TextSpan(
                       text: '${lounge.name} ',
@@ -53,7 +53,7 @@ class LoungeItem extends StatelessWidget{
                   trailing: RichText(
                     text: TextSpan(
                       text:
-                      '${DateTimeUtils.getChatDate(lounge.lastChatTime)} ',
+                          '${DateTimeUtils.getChatDate(lounge.lastChatTime)} ',
                       style: const TextStyle(
                         fontFamily: Constants.fontDefault,
                         color: Colors.black,
@@ -62,7 +62,6 @@ class LoungeItem extends StatelessWidget{
                       ),
                     ),
                   ),
-
 
                   // leadingAndTrailingTextStyle: TextStyle(
                   //     color: Colors.black, fontFamily: 'BalsamiqSans_Regular'),
@@ -83,68 +82,60 @@ class LoungeItem extends StatelessWidget{
           case ConnectionState.none:
             return const Text('...');
           case ConnectionState.active:
-          case ConnectionState.done: {
-            try{
-              DocumentSnapshot document = snapshot.data!.docs[0];
-              Map<String, dynamic> data =
-              document.data()! as Map<String, dynamic>;
-              final LoungeChat chat = Fresh.freshLoungeChatMap(data, false);
+          case ConnectionState.done:
+            {
+              try {
+                DocumentSnapshot document = snapshot.data!.docs[0];
+                Map<String, dynamic> data =
+                    document.data()! as Map<String, dynamic>;
+                final LoungeChat chat = Fresh.freshLoungeChatMap(data, false);
 
-              return Padding(
-                padding: const EdgeInsets.all(5),
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.vertical,
-                  child:
-                  chat.type == 'text'?
-                  Text(
-                    '${chat.userName} : ${chat.message}',
-                    style: const TextStyle(
-                      color: Colors.black,
-                      overflow: TextOverflow.ellipsis,
-                      fontSize: 14,),
-                  ) :
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        '${chat.userName} : ',
-                        style: const TextStyle(
-                          color: Colors.black,
-                          overflow: TextOverflow.ellipsis,
-                          fontSize: 14,),
-                      ),
-                      Container(
-                        height: mq.width * 0.05,
-                        decoration: const BoxDecoration(
-                          color: Constants.background,
-                        ),
-                        child: ClipRRect(
-                            borderRadius: BorderRadius.circular(10.0),
-                            child: FadeInImage(
-                              placeholder: const AssetImage(
-                                  'assets/images/logo.png'),
-                              image: NetworkImage(chat.message),
-                              fit: BoxFit.cover,
-                            )
-                        ),
-                      ),
-                    ],
-                  )
-                  ,
-                ),
-              );
+                String photoUrl = '';
+                String photoChat = '';
 
-            } catch(e) {
-              Logx.em(_TAG, e.toString());
+                if (chat.type == 'image') {
+                  int firstDelimiterIndex = chat.message.indexOf(',');
+                  if (firstDelimiterIndex != -1) {
+                    // Use substring to split the string into two parts
+                    photoUrl = chat.message.substring(0, firstDelimiterIndex);
+                    photoChat = chat.message.substring(firstDelimiterIndex + 1);
+                  } else {
+                    // Handle the case where the delimiter is not found
+                    photoUrl = chat.message;
+                  }
+                }
+
+                return Padding(
+                  padding: const EdgeInsets.all(5),
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.vertical,
+                    child: chat.type == 'text'
+                        ? Text(
+                            '${chat.userName} : ${chat.message}',
+                            style: const TextStyle(
+                              color: Colors.black,
+                              overflow: TextOverflow.ellipsis,
+                              fontSize: 14,
+                            ),
+                          )
+                        : Text(
+                            '${chat.userName} : 📸 $photoChat',
+                            style: const TextStyle(
+                              color: Colors.black,
+                              overflow: TextOverflow.ellipsis,
+                              fontSize: 14,
+                            ),
+                          ),
+                  ),
+                );
+              } catch (e) {
+                Logx.em(_TAG, e.toString());
+              }
             }
-          }
 
-          return Text('...');
+            return Text('...');
         }
-
       },
     );
   }
-
 }
