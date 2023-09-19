@@ -10,6 +10,7 @@ import 'package:in_app_review/in_app_review.dart';
 import 'package:multi_select_flutter/dialog/multi_select_dialog_field.dart';
 import 'package:multi_select_flutter/util/multi_select_item.dart';
 import 'package:multi_select_flutter/util/multi_select_list_type.dart';
+import 'package:flutter_card_swiper/flutter_card_swiper.dart';
 
 import '../../db/entity/ad.dart';
 import '../../db/entity/lounge.dart';
@@ -45,6 +46,15 @@ class _PhotosScreenState extends State<PhotosScreen> {
 
   List<Lounge> sLounges = [];
   String photoChatMessage = '';
+
+  final CardSwiperController controller = CardSwiperController();
+  int sIndex = 0;
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
 
   @override
   void initState() {
@@ -106,7 +116,7 @@ class _PhotosScreenState extends State<PhotosScreen> {
         } else {
           return GestureDetector(
             onTap: () {
-              _showPhotoDialog(context, photo, index);
+              _showPhotosDialog(context, index);
             },
             child: SizedBox(
               height: 200,
@@ -196,26 +206,23 @@ class _PhotosScreenState extends State<PhotosScreen> {
     );
   }
 
-  _showPhotoDialog(BuildContext context, PartyPhoto partyPhoto, int index) {
-    FirestoreHelper.updatePartyPhotoViewCount(partyPhoto.id);
+  _showPhotosDialog(BuildContext context, int index){
+    sIndex = index;
 
-    showDialog(
-      context: context,
-      builder: (BuildContext ctx) {
-        return AlertDialog(
-          backgroundColor: Constants.lightPrimary,
-          shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(20.0))),
-          contentPadding: const EdgeInsets.all(16.0),
-          content: SizedBox(
-            height: mq.height * 0.6,
-            width: mq.width * 0.9,
-            child: Column(
+    List<Container> cards = [];
+
+    for(int i = index; i< mPartyPhotos.length; i++){
+      PartyPhoto partyPhoto = mPartyPhotos[i];
+      cards.add(
+        Container(
+          width: mq.width,
+          height: mq.height,
+          child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Padding(
                   padding:
-                      const EdgeInsets.only(bottom: 10, left: 10, right: 10),
+                  const EdgeInsets.only(bottom: 10, left: 10, right: 10),
                   child: Text(
                     partyPhoto.partyName,
                     overflow: TextOverflow.ellipsis,
@@ -225,52 +232,73 @@ class _PhotosScreenState extends State<PhotosScreen> {
                 ),
                 Padding(
                   padding:
-                      const EdgeInsets.only(bottom: 20, left: 10, right: 10),
+                  const EdgeInsets.only(bottom: 20, left: 10, right: 10),
                   child: Text(
                     DateTimeUtils.getFormattedDate2(partyPhoto.partyDate),
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(fontSize: 16),
                   ),
                 ),
-                Center(
-                    child: SizedBox(
-                  width: mq.width,
-                  child: FadeInImage(
-                    placeholder: const AssetImage('assets/images/logo_3x2.png'),
-                    image: NetworkImage(partyPhoto.imageUrl),
-                    fit: BoxFit.contain,
-                  ),
-                )),
-              ],
+                FadeInImage(
+                  placeholder: const AssetImage('assets/images/logo_3x2.png'),
+                  image: NetworkImage(partyPhoto.imageUrl),
+                  fit: BoxFit.contain,
+                ),
+              ]),
+        ));
+    }
+
+    showDialog(
+      context: context,
+      builder: (BuildContext ctx) {
+        return AlertDialog(
+          backgroundColor: Constants.lightPrimary,
+          shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(20.0))),
+          contentPadding: const EdgeInsets.all(0.0),
+          content: SizedBox(
+            height: mq.height,
+            width: mq.width,
+            child: Center(
+              child: CardSwiper(
+              controller: controller,
+              cardsCount: cards.length,
+              onSwipe: _onSwipe,
+              numberOfCardsDisplayed: 1,
+              duration: const Duration(milliseconds: 9),
+              padding: EdgeInsets.symmetric(horizontal: 0, vertical: 10),
+              cardBuilder: (context, index, percentThresholdX, percentThresholdY) => cards[index],
+                ),
             ),
+
           ),
           actions: [
             UserPreferences.myUser.clearanceLevel >= Constants.ADMIN_LEVEL
                 ? TextButton(
-                    child: const Text("advertise"),
-                    onPressed: () {
-                      Ad ad = Dummy.getDummyAd(partyPhoto.blocServiceId);
-                      ad = ad.copyWith(imageUrl: partyPhoto.imageUrl, isActive: true);
+              child: const Text("advertise"),
+              onPressed: () {
+                Ad ad = Dummy.getDummyAd(mPartyPhotos[sIndex].blocServiceId);
+                ad = ad.copyWith(imageUrl: mPartyPhotos[sIndex].imageUrl, isActive: true);
 
-                      Navigator.of(ctx).pop();
-                      _showAdDialog(context, ad);
+                Navigator.of(ctx).pop();
+                _showAdDialog(context, ad);
 
-                    },
-                  )
-                : const SizedBox(),
+              },
+            )
+                : const Text('swipe for next >>', style: TextStyle(fontSize: 14),),
             TextButton(
               child: const Text("close"),
               onPressed: () {
                 Navigator.of(ctx).pop();
               },
-            ), 
+            ),
             Padding(
               padding: const EdgeInsets.only(right: 5.0, left: 10),
               child: TextButton(
                 child: const Text("🪂 share"),
                 onPressed: () {
                   Navigator.of(ctx).pop();
-                  _showShareOptionsDialog(context, partyPhoto, index);
+                  _showShareOptionsDialog(context, mPartyPhotos[sIndex], sIndex);
 
                 },
               ),
@@ -286,11 +314,16 @@ class _PhotosScreenState extends State<PhotosScreen> {
               ),
               onPressed: () {
                 Logx.ist(_TAG, '🍄 saving to gallery...');
+
+                PartyPhoto partyPhoto = mPartyPhotos[sIndex];
+
                 int fileNum = index + 1;
                 String fileName = '${partyPhoto.partyName} $fileNum';
                 FileUtils.saveNetworkImage(partyPhoto.imageUrl, fileName);
 
                 FirestoreHelper.updatePartyPhotoDownloadCount(partyPhoto.id);
+
+                Navigator.of(ctx).pop();
 
                 if(UserPreferences.myUser.lastReviewTime < Timestamp.now().millisecondsSinceEpoch - (2 * DateTimeUtils.millisecondsWeek)){
                   if(!UserPreferences.myUser.isAppReviewed){
@@ -301,16 +334,34 @@ class _PhotosScreenState extends State<PhotosScreen> {
                   }
                 }
 
-                Navigator.of(ctx).pop();
               },
             ),
           ],
         );
       },
     );
+
   }
 
-  void _showReviewAppDialog(BuildContext context) {
+  bool _onSwipe(
+      int previousIndex,
+      int? currentIndex,
+      CardSwiperDirection direction,
+      ) {
+
+    Logx.d(_TAG,
+      'The card $previousIndex was swiped to the ${direction.name}. Now the card $currentIndex is on top',
+    );
+
+    sIndex = sIndex + 1!;
+
+    PartyPhoto partyPhoto = mPartyPhotos[sIndex];
+    FirestoreHelper.updatePartyPhotoViewCount(partyPhoto.id);
+
+    return true;
+  }
+
+  _showReviewAppDialog(BuildContext context) {
     showDialog(
         context: context,
         builder: (BuildContext ctx) {
