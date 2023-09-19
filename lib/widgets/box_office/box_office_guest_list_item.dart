@@ -471,7 +471,7 @@ class _BoxOfficeGuestListItemState extends State<BoxOfficeGuestListItem> {
                               backgroundColor: MaterialStateProperty.all<Color>(
                                   Constants.darkPrimary),
                             ),
-                            child: const Text("🎟 win free entry"),
+                            child: const Text("🎟 win free entry", style: TextStyle(color: Constants.primary),),
                             onPressed: () {
                               Navigator.of(context).pop();
                               _loadChallengeDialog(context);

@@ -286,7 +286,8 @@ class NotificationService {
         }
         break;
       }
-      case Apis.GoogleReviewBloc: {
+      case Apis.GoogleReviewBloc:
+      case Apis.GoogleReviewFreq:{
         String title = 'Fun night at HQ 🤩! Review us?';
         String message = 'Hope you had a wonderful time tonight at as a guest in our community! A Google review will help us improve and ensure every night at our bar is an unforgettable experience. Reach home safe and see you soon 🤗🤍'.toLowerCase();
         String url = data['link'];
@@ -296,7 +297,7 @@ class NotificationService {
         } else {
           notificationId = url;
 
-          NotificationService.showUrlLinkNotification(title, message, url);
+          NotificationService.showGoogleReviewUrlNotification(title, message, url);
         }
         break;
       }
@@ -479,7 +480,7 @@ class NotificationService {
         ]);
   }
 
-  static void showUrlLinkNotification(String title, String body, String url ) async {
+  static void showGoogleReviewUrlNotification(String title, String body, String url ) async {
     await showNotification(
     title: title,
     body: body,
@@ -496,7 +497,7 @@ class NotificationService {
           isDangerousOption: true),
       NotificationActionButton(
         key: 'OPEN_URL_ACTION',
-        label: '💯 review bloc',
+        label: '💯 review',
         actionType: ActionType.Default,
       ),
 

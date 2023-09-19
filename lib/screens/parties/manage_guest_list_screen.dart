@@ -639,10 +639,10 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
               style: const TextStyle(color: Colors.redAccent),
             ),
             content: Text(
-                'request for google review of bloc from ${mPartyGuests.length} guests. are you sure you want to ask from those who were approved?'),
+                'request for google review from ${mPartyGuests.length} guests. are you sure you want to ask from those who were approved?'),
             actions: [
               TextButton(
-                child: const Text('yes'),
+                child: const Text('review bloc'),
                 onPressed: () async {
                   for (PartyGuest partyGuest in mPartyGuests) {
                     if(partyGuest.guestId.isNotEmpty && partyGuest.isApproved){
@@ -669,6 +669,34 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
                   _showDeleteAllGuestList(context);
                 },
               ),
+              TextButton(
+                child: const Text('review freq'),
+                onPressed: () async {
+                  for (PartyGuest partyGuest in mPartyGuests) {
+                    if(partyGuest.guestId.isNotEmpty && partyGuest.isApproved){
+                      FirestoreHelper.pullUser(partyGuest.guestId).then((res) {
+                        if (res.docs.isNotEmpty) {
+                          DocumentSnapshot document = res.docs[0];
+                          Map<String, dynamic> map = document.data()! as Map<String, dynamic>;
+                          final User user = Fresh.freshUserMap(map, true);
+
+                          if(user.isAppUser && user.fcmToken.isNotEmpty){
+                            Apis.sendUrlData(user.fcmToken, Apis.GoogleReviewFreq, Constants.freqGoogleReview);
+                            Logx.ist(_TAG,
+                                '${user.name} ${user.surname} has been notified for a freq google review 🤞');
+                          }
+                        } else {
+                          Logx.est(_TAG, 'user in guest list not found in db : ${partyGuest.guestId}');
+                        }
+                      });
+                    }
+                  }
+
+                  Navigator.of(ctx).pop();
+                  _showDeleteAllGuestList(context);
+                },
+              ),
+
               TextButton(
                 child: const Text("no"),
                 onPressed: () {

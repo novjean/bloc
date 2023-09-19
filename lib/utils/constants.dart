@@ -55,8 +55,9 @@ class Constants {
 
   static String blocInstaHandle = 'https://www.instagram.com/bloc.india/';
   static String blocGoogleReview = 'https://g.page/r/CUPsfopXRRX8EBM/review';
-
   static String blocAppStoreId = '1672736309';
+
+  static String freqGoogleReview = 'https://g.page/r/CVIkJ_SP99KOEAI/review';
 
   static int skipPhoneNumber = 911234567890;
 
