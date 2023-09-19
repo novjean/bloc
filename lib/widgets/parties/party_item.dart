@@ -147,7 +147,7 @@ class PartyItem extends StatelessWidget {
                           party.isTBA
                               ? 'tba'
                               : DateTimeUtils.getFormattedDate(party.startTime),
-                          style: const TextStyle(fontSize: 18),
+                          style: const TextStyle(fontSize: 16),
                         ),
                       )
                     ],

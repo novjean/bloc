@@ -243,10 +243,10 @@ class _ManagePartyPhotosScreenState extends State<ManagePartyPhotosScreen> {
 
                                   int count = 0;
                                   for (PartyPhoto partyPhoto in mPartyPhotos) {
-                                    if (partyPhoto.initLikes == 0) {
+                                    if (partyPhoto.initLikes == 0 && partyPhoto.views>0) {
                                       int rand =
                                           NumberUtils.generateRandomNumber(
-                                              1, 10);
+                                              1, partyPhoto.views<10?partyPhoto.views:10);
                                       partyPhoto =
                                           partyPhoto.copyWith(initLikes: rand);
                                       FirestoreHelper.pushPartyPhoto(
