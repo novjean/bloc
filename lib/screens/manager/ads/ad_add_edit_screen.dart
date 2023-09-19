@@ -268,7 +268,7 @@ class _AdAddEditScreenState extends State<AdAddEditScreen> {
         DarkButtonWidget(
           text: 'delete',
           onClicked: () {
-            if(widget.ad.imageUrl.isNotEmpty){
+            if(widget.ad.imageUrl.isNotEmpty && widget.ad.imageUrl.contains('ad_image')){
               FirestorageHelper.deleteFile(widget.ad.imageUrl);
             }
             FirestoreHelper.deleteAd(widget.ad.id);
