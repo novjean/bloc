@@ -871,6 +871,34 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
                 ],
               ),
               const SizedBox(height: 24),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text('share count: ${widget.party.shareCount}'),
+                  ButtonWidget(
+                    text: 'reset',
+                    onClicked: () {
+                      widget.party = widget.party.copyWith(shareCount: 0);
+                      setState(() {});
+                    },
+                  )
+                ],
+              ),
+              const SizedBox(height: 24),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text('view count: ${widget.party.views}'),
+                  ButtonWidget(
+                    text: 'reset',
+                    onClicked: () {
+                      widget.party = widget.party.copyWith(views: 0);
+                      setState(() {});
+                    },
+                  )
+                ],
+              ),
+              const SizedBox(height: 24),
               dateTimeContainer(context, 'start'),
               const SizedBox(height: 24),
               dateTimeContainer(context, 'end'),
@@ -955,7 +983,7 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
               Row(
                 children: <Widget>[
                   const Text(
-                    'guestlist active : ',
+                    'guest list active : ',
                     style: TextStyle(fontSize: 17.0),
                   ), //Text
                   const SizedBox(width: 10), //SizedBox
@@ -1179,7 +1207,10 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
                   freshParty = freshParty.copyWith(
                       startTime: newStartTime,
                       endTime: newEndTime,
-                      guestListEndTime: newGuestListEndTime);
+                      guestListEndTime: newGuestListEndTime,
+                    shareCount: 0,
+                    views: 0,
+                  );
                   FirestoreHelper.pushParty(freshParty);
 
                   Navigator.of(context).pop();
