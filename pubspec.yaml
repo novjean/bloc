@@ -74,7 +74,6 @@ dependencies:
 
   #utility
   upgrader: ^8.1.0
-  permission_handler: ^10.4.2
   flutter_image_compress: ^2.0.4
   url_launcher: ^6.1.11
   universal_html: ^2.2.3
@@ -84,7 +83,7 @@ dependencies:
   pinput: ^3.0.1
 
   # ui
-  fluttertoast: ^8.1.2
+  fluttertoast: ^8.2.2
   toggle_switch: ^2.0.1
   flutter_spinkit: ^5.2.0
   delayed_display: ^2.0.0

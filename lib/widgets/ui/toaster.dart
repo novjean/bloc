@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
+import '../../utils/constants.dart';
+
 class Toaster {
   static void shortToast(String message) {
     Fluttertoast.showToast(
@@ -8,7 +10,7 @@ class Toaster {
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.BOTTOM,
         timeInSecForIosWeb: 1,
-        backgroundColor: Colors.grey,
+        backgroundColor: Constants.darkPrimary,
         textColor: Colors.white,
         fontSize: 16.0
     );
@@ -20,7 +22,7 @@ class Toaster {
         toastLength: Toast.LENGTH_LONG,
         gravity: ToastGravity.BOTTOM,
         timeInSecForIosWeb: 1,
-        backgroundColor: Colors.grey,
+        backgroundColor: Constants.darkPrimary,
         textColor: Colors.white,
         fontSize: 16.0
     );

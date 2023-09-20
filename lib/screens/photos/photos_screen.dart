@@ -266,7 +266,7 @@ class _PhotosScreenState extends State<PhotosScreen> {
               onSwipe: _onSwipe,
               numberOfCardsDisplayed: 1,
               duration: const Duration(milliseconds: 9),
-              padding: EdgeInsets.symmetric(horizontal: 0, vertical: 10),
+              padding: const EdgeInsets.symmetric(vertical: 10),
               cardBuilder: (context, index, percentThresholdX, percentThresholdY) => cards[index],
                 ),
             ),

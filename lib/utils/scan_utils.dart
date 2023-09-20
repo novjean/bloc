@@ -1,8 +1,6 @@
-import 'package:bloc/utils/permission_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 import '../main.dart';
 import '../screens/parties/box_office_guest_confirm_screen.dart';

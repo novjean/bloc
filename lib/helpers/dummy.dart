@@ -354,7 +354,7 @@ class Dummy {
         id: StringUtils.getRandomString(28),
         partyId: '',
         userIds: [],
-        initCount: 0);
+        initCount: 1);
     return partyInterest;
   }
 
