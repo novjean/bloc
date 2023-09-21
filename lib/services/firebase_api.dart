@@ -6,6 +6,7 @@ import '../firebase_options.dart';
 import '../utils/logx.dart';
 import 'notification_service.dart';
 
+@pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   Logx.i('main', 'handling a background message ${message.messageId}');
 
