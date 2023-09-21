@@ -9,6 +9,7 @@ class Party {
 
   final List<String> imageUrls;
   final String imageUrl;
+  final bool isSquare;
   final String storyImageUrl;
   final bool showStoryImageUrl;
   final String instagramUrl;
@@ -60,6 +61,7 @@ class Party {
     required this.chapter,
     required this.imageUrls,
     required this.imageUrl,
+    required this.isSquare,
     required this.storyImageUrl,
     required this.showStoryImageUrl,
     required this.instagramUrl,
@@ -106,6 +108,7 @@ class Party {
           chapter == other.chapter &&
           imageUrls == other.imageUrls &&
           imageUrl == other.imageUrl &&
+          isSquare == other.isSquare &&
           storyImageUrl == other.storyImageUrl &&
           showStoryImageUrl == other.showStoryImageUrl &&
           instagramUrl == other.instagramUrl &&
@@ -148,6 +151,7 @@ class Party {
       chapter.hashCode ^
       imageUrls.hashCode ^
       imageUrl.hashCode ^
+      isSquare.hashCode ^
       storyImageUrl.hashCode ^
       showStoryImageUrl.hashCode ^
       instagramUrl.hashCode ^
@@ -191,6 +195,7 @@ class Party {
         ' chapter: $chapter,' +
         ' imageUrls: $imageUrls,' +
         ' imageUrl: $imageUrl,' +
+        ' isSquare: $isSquare,' +
         ' storyImageUrl: $storyImageUrl,' +
         ' showStoryImageUrl: $showStoryImageUrl,' +
         ' instagramUrl: $instagramUrl,' +
@@ -234,6 +239,7 @@ class Party {
     String? chapter,
     List<String>? imageUrls,
     String? imageUrl,
+    bool? isSquare,
     String? storyImageUrl,
     bool? showStoryImageUrl,
     String? instagramUrl,
@@ -275,6 +281,7 @@ class Party {
       chapter: chapter ?? this.chapter,
       imageUrls: imageUrls ?? this.imageUrls,
       imageUrl: imageUrl ?? this.imageUrl,
+      isSquare: isSquare ?? this.isSquare,
       storyImageUrl: storyImageUrl ?? this.storyImageUrl,
       showStoryImageUrl: showStoryImageUrl ?? this.showStoryImageUrl,
       instagramUrl: instagramUrl ?? this.instagramUrl,
@@ -320,6 +327,7 @@ class Party {
       'chapter': this.chapter,
       'imageUrls': this.imageUrls,
       'imageUrl': this.imageUrl,
+      'isSquare': this.isSquare,
       'storyImageUrl': this.storyImageUrl,
       'showStoryImageUrl': this.showStoryImageUrl,
       'instagramUrl': this.instagramUrl,
@@ -364,6 +372,7 @@ class Party {
       chapter: map['chapter'] as String,
       imageUrls: map['imageUrls'] as List<String>,
       imageUrl: map['imageUrl'] as String,
+      isSquare: map['isSquare'] as bool,
       storyImageUrl: map['storyImageUrl'] as String,
       showStoryImageUrl: map['showStoryImageUrl'] as bool,
       instagramUrl: map['instagramUrl'] as String,

@@ -169,7 +169,7 @@ class _EventScreenState extends State<EventScreen> {
                             const Duration(milliseconds: 1200),
                         // enlargeCenterPage: false,
                         scrollDirection: Axis.horizontal,
-                        aspectRatio: 1.33,
+                        aspectRatio: mParty.isSquare ? 1.33: 1.0,
                       ),
                       items: mParty.imageUrls
                           .map((item) => kIsWeb
@@ -183,7 +183,7 @@ class _EventScreenState extends State<EventScreen> {
                                   imageUrl: item,
                                   imageBuilder: (context, imageProvider) =>
                                       Container(
-                                    decoration: BoxDecoration(
+                                        decoration: BoxDecoration(
                                       image: DecorationImage(
                                         image: imageProvider,
                                         fit: BoxFit.cover,

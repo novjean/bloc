@@ -322,7 +322,7 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
                     onClicked: () async {
                       final image = await ImagePicker().pickImage(
                           source: ImageSource.gallery,
-                          imageQuality: 95,
+                          imageQuality: 96,
                           maxHeight: 800,
                           maxWidth: 800);
                       if (image == null) return;
@@ -400,7 +400,7 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
                   ),
                 ],
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 12),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -409,7 +409,7 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
                     style: TextStyle(fontSize: 15.0),
                   ), //Text
                   Padding(
-                    padding: const EdgeInsets.only(left: 5.0),
+                    padding: const EdgeInsets.only(left: 0, right: 0),
                     child: Checkbox(
                       value: widget.party.showStoryImageUrl,
                       onChanged: (value) {
@@ -419,73 +419,88 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
                       },
                     ),
                   ),
-                  const Spacer(),
+                  const Text(
+                    'square : ',
+                    style: TextStyle(fontSize: 15.0),
+                  ), //Text
                   Padding(
-                    padding: const EdgeInsets.only(right:5.0),
-                    child: Text('${mImageUrls.length} photos', style: TextStyle(fontSize: 15.0),),
+                    padding: const EdgeInsets.only(left: 0, right: 0),
+                    child: Checkbox(
+                      value: widget.party.isSquare,
+                      onChanged: (value) {
+                        setState(() {
+                          widget.party = widget.party.copyWith(isSquare: value);
+                        });
+                      },
+                    ),
                   ),
-                  ButtonWidget(
-                    text: 'pick',
-                    onClicked: () async {
-                      final image = await ImagePicker().pickImage(
-                          source: ImageSource.gallery,
-                          imageQuality: 95,
-                          maxHeight: 800,
-                          maxWidth: 800);
-                      if (image == null) return;
+                ],
+              ),
+              const SizedBox(height: 12),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                ButtonWidget(
+                  text: mImageUrls.isEmpty? 'pick photos' :'${mImageUrls.length} photos',
+                  onClicked: () async {
+                    final image = await ImagePicker().pickImage(
+                        source: ImageSource.gallery,
+                        imageQuality: 96,
+                        maxHeight: 800,
+                        maxWidth: 800);
+                    if (image == null) return;
 
-                      final directory =
-                          await getApplicationDocumentsDirectory();
-                      final name = basename(image.path);
-                      final imageFile = File('${directory.path}/$name');
-                      final newImage =
-                          await File(image.path).copy(imageFile.path);
+                    final directory =
+                    await getApplicationDocumentsDirectory();
+                    final name = basename(image.path);
+                    final imageFile = File('${directory.path}/$name');
+                    final newImage =
+                    await File(image.path).copy(imageFile.path);
 
-                      newImageUrl = await FirestorageHelper.uploadFile(
-                          FirestorageHelper.PARTY_IMAGES,
-                          StringUtils.getRandomString(28),
-                          newImage);
+                    newImageUrl = await FirestorageHelper.uploadFile(
+                        FirestorageHelper.PARTY_IMAGES,
+                        StringUtils.getRandomString(28),
+                        newImage);
 
-                      mImageUrls.add(newImageUrl);
+                    mImageUrls.add(newImageUrl);
 
-                      setState(() {
-                        widget.party =
-                            widget.party.copyWith(imageUrls: mImageUrls);
-                      });
-                    },
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 10.0),
-                    child: SizedBox.fromSize(
-                      size: const Size(56, 56),
-                      child: ClipOval(
-                        child: Material(
-                          color: Colors.redAccent,
-                          child: InkWell(
-                            splashColor: Colors.red,
-                            onTap: () {
-                              showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return AlertDialog(
-                                      title: const Text('photos'),
-                                      content: _photosListDialog(),
-                                    );
-                                  });
-                            },
-                            child: const Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: <Widget>[
-                                Icon(Icons.delete_forever),
-                              ],
-                            ),
+                    setState(() {
+                      widget.party =
+                          widget.party.copyWith(imageUrls: mImageUrls);
+                    });
+                  },
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 10.0),
+                  child: SizedBox.fromSize(
+                    size: const Size(56, 56),
+                    child: ClipOval(
+                      child: Material(
+                        color: Colors.redAccent,
+                        child: InkWell(
+                          splashColor: Colors.red,
+                          onTap: () {
+                            showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: const Text('photos'),
+                                    content: _photosListDialog(),
+                                  );
+                                });
+                          },
+                          child: const Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Icon(Icons.delete_forever),
+                            ],
                           ),
                         ),
                       ),
                     ),
-                  )
-                ],
-              ),
+                  ),
+                )
+              ],),
               const SizedBox(height: 24),
               TextFieldWidget(
                 label: 'name *',

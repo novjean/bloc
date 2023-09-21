@@ -283,6 +283,7 @@ class Dummy {
 
         imageUrls: [],
         imageUrl: '',
+        isSquare: true,
         storyImageUrl: '',
         showStoryImageUrl: false,
         name: '',

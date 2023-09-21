@@ -1717,16 +1717,23 @@ class Fresh {
     try {
       party = party.copyWith(chapter: map['chapter'] as String);
     } catch (e) {
-      Logx.em(_TAG, 'party chapter not exist for id: ' + party.id);
+      Logx.em(_TAG, 'party chapter not exist for id: ${party.id}');
       isModelChanged = true;
     }
 
     try {
       party = party.copyWith(imageUrl: map['imageUrl'] as String);
     } catch (e) {
-      Logx.em(_TAG, 'party imageUrl not exist for id: ' + party.id);
+      Logx.em(_TAG, 'party imageUrl not exist for id: ${party.id}');
       isModelChanged = true;
     }
+    try {
+      party = party.copyWith(isSquare: map['isSquare'] as bool);
+    } catch (e) {
+      Logx.em(_TAG, 'party isSquare not exist for id: ${party.id}');
+      isModelChanged = true;
+    }
+
     try {
       party = party.copyWith(storyImageUrl: map['storyImageUrl'] as String);
     } catch (e) {
@@ -1999,7 +2006,7 @@ class Fresh {
     try {
       freshParty = freshParty.copyWith(chapter: party.chapter);
     } catch (e) {
-      Logx.em(_TAG, 'party chapter not exist for party id: ' + party.id);
+      Logx.em(_TAG, 'party chapter not exist for id: ${party.id}');
     }
 
     try {
@@ -2011,6 +2018,11 @@ class Fresh {
       freshParty = freshParty.copyWith(imageUrl: party.imageUrl);
     } catch (e) {
       Logx.em(_TAG, 'party imageUrl not exist for id: ${party.id}');
+    }
+    try {
+      freshParty = freshParty.copyWith(isSquare: party.isSquare);
+    } catch (e) {
+      Logx.em(_TAG, 'party isSquare not exist for id: ${party.id}');
     }
     try {
       freshParty = freshParty.copyWith(storyImageUrl: party.storyImageUrl);
