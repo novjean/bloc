@@ -1109,6 +1109,7 @@ class _PartyGuestAddEditManageScreenState
                                       userLounge = userLounge.copyWith(
                                           loungeId: widget.party.loungeId,
                                           userId: mBlocUser.id,
+                                          userFcmToken: mBlocUser.fcmToken,
                                           isAccepted: true);
                                       FirestoreHelper.pushUserLounge(
                                           userLounge);
@@ -2251,6 +2252,7 @@ class _PartyGuestAddEditManageScreenState
                           UserLounge userLounge = Dummy.getDummyUserLounge();
                           userLounge = userLounge.copyWith(
                               userId: mBlocUser.id,
+                              userFcmToken: mBlocUser.fcmToken,
                               loungeId: Constants.blocCommunityLoungeId);
                           FirestoreHelper.pushUserLounge(userLounge);
 

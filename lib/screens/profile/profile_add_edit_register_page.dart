@@ -291,6 +291,7 @@ class _ProfileAddEditRegisterPageState
               if(widget.task == 'register'){
                 UserLounge userLounge = Dummy.getDummyUserLounge();
                 userLounge = userLounge.copyWith(userId: widget.user.id,
+                    userFcmToken: widget.user.fcmToken,
                     loungeId: Constants.blocCommunityLoungeId);
                 FirestoreHelper.pushUserLounge(userLounge);
 
@@ -298,6 +299,7 @@ class _ProfileAddEditRegisterPageState
                   UserLounge userLounge = Dummy.getDummyUserLounge();
                   userLounge = userLounge.copyWith(
                       userId: widget.user.id,
+                      userFcmToken: widget.user.fcmToken,
                       loungeId: Constants.ladiesLoungeId);
                   FirestoreHelper.pushUserLounge(userLounge);
                 }

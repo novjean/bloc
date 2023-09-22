@@ -144,6 +144,12 @@ class _MainScreenState extends State<MainScreen> {
             UserLounge userLounge = Fresh.freshUserLoungeMap(data, false);
 
             userLounges.add(userLounge.loungeId);
+
+            if(userLounge.userFcmToken.isEmpty && UserPreferences.myUser.fcmToken.isNotEmpty){
+              userLounge = userLounge.copyWith(userFcmToken: UserPreferences.myUser.fcmToken);
+              FirestoreHelper.pushUserLounge(userLounge);
+            }
+
           }
           UserPreferences.setListLounges(userLounges);
         }

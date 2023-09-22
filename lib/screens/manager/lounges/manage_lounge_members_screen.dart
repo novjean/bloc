@@ -385,7 +385,53 @@ class _ManageLoungeMembersScreenState extends State<ManageLoungeMembersScreen> {
                         )
                       ],
                     ),
+                    const SizedBox(height: 30,),
 
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text('update fcm user lounge'),
+                        SizedBox.fromSize(
+                          size: const Size(50, 50),
+                          child: ClipOval(
+                            child: Material(
+                              color: Constants.primary,
+                              child: InkWell(
+                                splashColor: Constants.darkPrimary,
+                                onTap: () {
+                                  mUserLounges.sort((a, b) => a.userId.compareTo(b.userId));
+                                  mMembers.sort((a, b) => a.id.compareTo(b.id));
+
+                                  int count = 0;
+                                  for(UserLounge userLounge in mUserLounges){
+                                    if(userLounge.userFcmToken.isEmpty){
+                                      for(int i = 0; i<mMembers.length; i++){
+                                        User user = mMembers[i];
+
+                                        if(user.id == userLounge.userId && user.fcmToken.isNotEmpty){
+                                          userLounge = userLounge.copyWith(userFcmToken: user.fcmToken);
+                                          FirestoreHelper.pushUserLounge(userLounge);
+                                          count++;
+                                        }
+                                      }
+                                    }
+                                  }
+
+                                  Logx.ist(_TAG, 'successfully completed updating lounge fcm token for $count members');
+                                  Navigator.of(ctx).pop();
+                                },
+                                child: const Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: <Widget>[
+                                    Icon(Icons.token_sharp,color: Constants.darkPrimary,),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
                     const SizedBox(height: 30,),
 
                     Row(
@@ -406,7 +452,11 @@ class _ManageLoungeMembersScreenState extends State<ManageLoungeMembersScreen> {
                                   for(User user in mFemaleNonMembers){
                                     if(!(widget.lounge.exitedUserIds.contains(user.id))){
                                       UserLounge userLounge = Dummy.getDummyUserLounge();
-                                      userLounge = userLounge.copyWith(loungeId : widget.lounge.id, userId: user.id);
+                                      userLounge = userLounge.copyWith(
+                                          loungeId : widget.lounge.id,
+                                          userId: user.id,
+                                        userFcmToken: user.fcmToken
+                                      );
                                       FirestoreHelper.pushUserLounge(userLounge);
                                       count++;
                                     }
@@ -445,7 +495,8 @@ class _ManageLoungeMembersScreenState extends State<ManageLoungeMembersScreen> {
                                   for(User user in mNonMembers){
                                     if(!(widget.lounge.exitedUserIds.contains(user.id))){
                                       UserLounge userLounge = Dummy.getDummyUserLounge();
-                                      userLounge = userLounge.copyWith(loungeId : widget.lounge.id, userId: user.id);
+                                      userLounge = userLounge.copyWith(loungeId : widget.lounge.id,
+                                          userId: user.id, userFcmToken: user.fcmToken);
                                       FirestoreHelper.pushUserLounge(userLounge);
                                       count++;
                                     }

@@ -561,6 +561,7 @@ class Dummy {
     UserLounge dummyUserLounge = UserLounge(
         id: StringUtils.getRandomString(28),
         userId: '',
+        userFcmToken: '',
         loungeId: '',
         lastAccessedTime: Timestamp.now().millisecondsSinceEpoch,
         isAccepted: true,

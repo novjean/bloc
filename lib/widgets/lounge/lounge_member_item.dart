@@ -172,8 +172,7 @@ class _LoungeMemberItemState extends State<LoungeMemberItem> {
                               DocumentSnapshot document = res.docs[0];
                               Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
                               UserLounge userLounge = Fresh.freshUserLoungeMap(data, false);
-
-                              userLounge = userLounge.copyWith(isAccepted: true);
+                              userLounge = userLounge.copyWith(isAccepted: true, userFcmToken: widget.user.fcmToken);
                               FirestoreHelper.pushUserLounge(userLounge);
                               Logx.ist(LoungeMemberItem._TAG, '${widget.user.name} ${widget.user.surname} is a new member');
                             }
@@ -184,7 +183,8 @@ class _LoungeMemberItemState extends State<LoungeMemberItem> {
                       } else {
                         if(value!){
                           UserLounge userLounge = Dummy.getDummyUserLounge();
-                          userLounge = userLounge.copyWith(loungeId : widget.loungeId, userId: widget.user.id);
+                          userLounge = userLounge.copyWith(loungeId : widget.loungeId,
+                              userId: widget.user.id, userFcmToken: widget.user.fcmToken);
                           FirestoreHelper.pushUserLounge(userLounge);
 
                           Logx.ist(LoungeMemberItem._TAG, '${widget.user.name} ${widget.user.surname} is a new member');

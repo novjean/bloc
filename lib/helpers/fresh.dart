@@ -4044,6 +4044,12 @@ class Fresh {
       isModelChanged = true;
     }
     try {
+      userLounge = userLounge.copyWith(userFcmToken: map['userFcmToken'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'userLounge userFcmToken not exist for id: ${userLounge.id}');
+      isModelChanged = true;
+    }
+    try {
       userLounge = userLounge.copyWith(loungeId: map['loungeId'] as String);
     } catch (e) {
       Logx.em(_TAG, 'userLounge loungeId not exist for id: ${userLounge.id}');
@@ -4088,6 +4094,11 @@ class Fresh {
       freshUserLounge = freshUserLounge.copyWith(userId: userLounge.userId);
     } catch (e) {
       Logx.em(_TAG, 'userLounge userId exist for id: ${userLounge.id}');
+    }
+    try {
+      freshUserLounge = freshUserLounge.copyWith(userFcmToken: userLounge.userFcmToken);
+    } catch (e) {
+      Logx.em(_TAG, 'userLounge userFcmToken exist for id: ${userLounge.id}');
     }
     try {
       freshUserLounge = freshUserLounge.copyWith(loungeId: userLounge.loungeId);

@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:bloc/db/entity/user_lounge.dart';
-import 'package:bloc/helpers/dummy_data.dart';
 import 'package:bloc/helpers/firestore_helper.dart';
 import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -48,6 +47,10 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
 
   List<LoungeChat> mChats = [];
 
+  var _isMembersLoading = true;
+  List<UserLounge> mMembers = [];
+  List<UserLounge> mFcmMembers = [];
+
   //for handling message text changes
   final _textController = TextEditingController();
 
@@ -60,8 +63,6 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
 
   @override
   void initState() {
-    super.initState();
-
     FirestoreHelper.pullLounge(widget.loungeId).then((res) {
       if (res.docs.isNotEmpty) {
         for (int i = 0; i < res.docs.length; i++) {
@@ -84,6 +85,18 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
               GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
             } else {
               isMember = true;
+            }
+
+            if(mUserLounge.userFcmToken.isEmpty){
+              if(UserPreferences.myUser.fcmToken.isNotEmpty){
+                mUserLounge = mUserLounge.copyWith(userFcmToken: UserPreferences.myUser.fcmToken);
+                FirestoreHelper.pushUserLounge(mUserLounge);
+              }
+            } else {
+              if(UserPreferences.myUser.fcmToken.isNotEmpty && mUserLounge.userFcmToken != UserPreferences.myUser.fcmToken){
+                mUserLounge = mUserLounge.copyWith(userFcmToken: UserPreferences.myUser.fcmToken);
+                FirestoreHelper.pushUserLounge(mUserLounge);
+              }
             }
 
             setState(() {
@@ -113,6 +126,34 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
           isLoungeLoading = false;
         });
       }
+    });
+
+    super.initState();
+
+    FirestoreHelper.pullUserLoungeMembers(widget.loungeId).then((res) {
+      if (res.docs.isNotEmpty) {
+        for (int i = 0; i < res.docs.length; i++) {
+          DocumentSnapshot document = res.docs[i];
+          Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+          UserLounge userLounge = Fresh.freshUserLoungeMap(data, false);
+
+          if(userLounge.isAccepted && !userLounge.isBanned){
+            mMembers.add(userLounge);
+
+            if(userLounge.userFcmToken.isNotEmpty){
+              mFcmMembers.add(userLounge);
+            }
+          }
+        }
+        Logx.i(_TAG, 'members in the lounge: ${mMembers.length}');
+      } else {
+        //nobody in lounge
+        Logx.i(_TAG, 'nobody in the lounge yet');
+      }
+
+      setState(() {
+        _isMembersLoading = false;
+      });
     });
   }
 
@@ -187,8 +228,11 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
           child: FloatingActionButton(
             onPressed: () async {
               UserLounge userLounge = Dummy.getDummyUserLounge();
-              userLounge = userLounge.copyWith(userId: UserPreferences.myUser.id);
-              userLounge = userLounge.copyWith(loungeId: widget.loungeId);
+              userLounge = userLounge.copyWith(
+                userId: UserPreferences.myUser.id,
+                userFcmToken: UserPreferences.myUser.fcmToken,
+                  loungeId: widget.loungeId
+              );
               FirestoreHelper.pushUserLounge(userLounge);
 
               setState(() {
@@ -663,6 +707,11 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
                     FirestoreHelper.updateLoungeLastChat(
                         mLounge.id, chat.message, chat.time);
                     _textController.text = '';
+
+                    for(UserLounge fcmMember in mFcmMembers){
+                      //send notification one by one
+
+                    }
                   }
                 } else {
                   Toaster.shortToast('have the 🍕 slice and join us to chat');
@@ -842,6 +891,7 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
                 Navigator.of(context).pop();
                 UserLounge userLounge = Dummy.getDummyUserLounge();
                 userLounge = userLounge.copyWith(userId :UserPreferences.myUser.id,
+                    userFcmToken: UserPreferences.myUser.fcmToken,
                     loungeId: mLounge.id, isAccepted: false);
                 FirestoreHelper.pushUserLounge(userLounge);
                 Logx.ist (_TAG, 'request to join the vip lounge has been sent 🫰');
@@ -890,34 +940,4 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
       },
     );
   }
-
-  // showMoodDialog(){
-    // showDialog(
-    //   context: context,
-    //   builder: (_) => AlertDialog(
-    //     title: Center(child: Text('how are you feeling today?')),
-    //     content: Row(
-    //       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-    //       children: [
-    //         Icon(Icons.star),
-    //         Icon(Icons.favorite),
-    //         Icon(Icons.add),
-    //         Icon(Icons.thumb_up),
-    //         Icon(Icons.thumb_down),
-    //       ],),
-    //     shape: RoundedRectangleBorder(
-    //       borderRadius: BorderRadius.circular(10.0),
-    //     ),
-    //     actions: [
-    //       // TextButton(
-    //       //   onPressed: () {
-    //       //     Navigator.pop(context);
-    //       //   },
-    //       //   child: Text('OK'),
-    //       // ),
-    //     ],
-    //   ),
-    // );
-  // }
-
 }
