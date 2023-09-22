@@ -3,25 +3,6 @@ const admin = require('firebase-admin');
 
 admin.initializeApp();
 
-exports.loungeChatFunction = functions
-    .region('asia-south1')
-    .firestore
-    .document('lounge_chats/{message}')
-    .onCreate((snapshot, context) => {
-      console.log(snapshot.data());
-      return admin.messaging().sendToTopic('lounge_chats', {
-        notification: {
-          title: '💬 ' + snapshot.data().userName,
-          body: snapshot.data().message,
-          clickAction: 'FLUTTER_NOTIFICATION_CLICK',
-        },
-        data: {
-          type: 'lounge_chats',
-          document: JSON.stringify(snapshot.data()),
-        },
-      });
-    });
-
 exports.sosFunction = functions
     .region('asia-south1')
     .firestore

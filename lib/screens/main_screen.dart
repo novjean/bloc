@@ -178,19 +178,13 @@ class _MainScreenState extends State<MainScreen> {
 
       //clear out any previous subscriptions
       blocUser.User user = UserPreferences.getUser();
-      if (user.clearanceLevel >= Constants.CAPTAIN_LEVEL) {
-        fbm.unsubscribeFromTopic('sos');
-        fbm.unsubscribeFromTopic('order');
-      }
-      if (user.clearanceLevel >= Constants.PROMOTER_LEVEL) {
-        fbm.unsubscribeFromTopic('party_guest');
-        fbm.unsubscribeFromTopic('reservations');
-        fbm.unsubscribeFromTopic('celebrations');
-      }
-      if (user.clearanceLevel >= Constants.MANAGER_LEVEL) {
-        fbm.unsubscribeFromTopic('offer');
-        fbm.unsubscribeFromTopic('notification_tests');
-      }
+      fbm.unsubscribeFromTopic('sos');
+      fbm.unsubscribeFromTopic('order');
+      fbm.unsubscribeFromTopic('party_guest');
+      fbm.unsubscribeFromTopic('reservations');
+      fbm.unsubscribeFromTopic('celebrations');
+      fbm.unsubscribeFromTopic('offer');
+      fbm.unsubscribeFromTopic('notification_tests');
 
       // subscribe to topics
       fbm.subscribeToTopic('ads');
@@ -206,6 +200,8 @@ class _MainScreenState extends State<MainScreen> {
       }
       if (user.clearanceLevel >= Constants.MANAGER_LEVEL) {
         fbm.subscribeToTopic('offer');
+      }
+      if (user.clearanceLevel >= Constants.ADMIN_LEVEL) {
         fbm.subscribeToTopic('notification_tests');
       }
     } else {

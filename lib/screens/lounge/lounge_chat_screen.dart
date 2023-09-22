@@ -10,6 +10,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart' as Path;
 import 'package:path_provider/path_provider.dart';
 
+import '../../api/apis.dart';
 import '../../db/entity/lounge_chat.dart';
 import '../../db/entity/lounge.dart';
 import '../../db/shared_preferences/user_preferences.dart';
@@ -702,16 +703,24 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
                     chat.message = _textController.text;
                     chat.type = 'text';
                     chat.time = Timestamp.now().millisecondsSinceEpoch;
+
                     FirestoreHelper.pushLoungeChat(chat);
 
                     FirestoreHelper.updateLoungeLastChat(
                         mLounge.id, chat.message, chat.time);
-                    _textController.text = '';
 
                     for(UserLounge fcmMember in mFcmMembers){
-                      //send notification one by one
+                      String title = '🗨️chat: ${chat.loungeName}';
+                      String msg = '${UserPreferences.myUser.name}: ${chat.message}';
 
+                      Apis.sendPushNotification(fcmMember.userFcmToken, title, msg);
                     }
+
+                    if(UserPreferences.myUser.clearanceLevel>=Constants.ADMIN_LEVEL){
+                      Logx.ist(_TAG, 'chat notification sent to ${mFcmMembers.length} members');
+                    }
+
+                    _textController.text = '';
                   }
                 } else {
                   Toaster.shortToast('have the 🍕 slice and join us to chat');
@@ -831,11 +840,22 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
                 style: TextStyle(color: Constants.primary),
               ),
               onPressed: () {
-                String message = '${chat.message},$photoChatMessage';
+                String message = '$photoChatMessage|${chat.message}';
                 chat = chat.copyWith(message: message);
 
                 FirestoreHelper.pushLoungeChat(chat);
                 FirestoreHelper.updateLoungeLastChat(mLounge.id, '📸 $photoChatMessage', chat.time);
+
+                for(UserLounge fcmMember in mFcmMembers){
+                  String title = '📸 photo: ${chat.loungeName}';
+                  String msg = '${UserPreferences.myUser.name}: $photoChatMessage}';
+
+                  Apis.sendPushNotification(fcmMember.userFcmToken, title, msg);
+                }
+
+                if(UserPreferences.myUser.clearanceLevel>=Constants.ADMIN_LEVEL){
+                  Logx.ist(_TAG, 'chat notification sent to ${mFcmMembers.length} members');
+                }
 
                 setState(() => _isUploading = false);
 

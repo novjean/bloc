@@ -50,7 +50,7 @@ class Apis{
           "type": type,
           "link": url
         },
-        "priority": "high"
+        "priority": "normal"
       };
 
       var res = await post(Uri.parse('https://fcm.googleapis.com/fcm/send'),

@@ -41,7 +41,7 @@ class NotificationService {
           channelName: 'high importance',
           channelDescription: 'notification channel for high importance',
           defaultColor: Constants.primary,
-          ledColor: Colors.white,
+          ledColor: Colors.red,
           importance: NotificationImportance.Max,
           channelShowBadge: true,
           onlyAlertOnce: true,
@@ -54,7 +54,7 @@ class NotificationService {
           channelName: 'chats',
           channelDescription: 'notification channel for chats',
           defaultColor: Constants.primary,
-          ledColor: Colors.white,
+          ledColor: Colors.orange,
           importance: NotificationImportance.Max,
           channelShowBadge: true,
           onlyAlertOnce: true,
@@ -195,11 +195,11 @@ class NotificationService {
               String photoChat = '';
 
               if (chat.type == 'image') {
-                int firstDelimiterIndex = chat.message.indexOf(',');
+                int firstDelimiterIndex = chat.message.indexOf('|');
                 if (firstDelimiterIndex != -1) {
                   // Use substring to split the string into two parts
-                  photoUrl = chat.message.substring(0, firstDelimiterIndex);
-                  photoChat = chat.message.substring(firstDelimiterIndex + 1);
+                  photoChat = chat.message.substring(0, firstDelimiterIndex);
+                  photoUrl = chat.message.substring(firstDelimiterIndex + 1);
                 } else {
                   // Handle the case where the delimiter is not found
                   photoUrl = chat.message;

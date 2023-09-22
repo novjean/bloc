@@ -12,10 +12,12 @@ import 'package:multi_select_flutter/util/multi_select_item.dart';
 import 'package:multi_select_flutter/util/multi_select_list_type.dart';
 import 'package:flutter_card_swiper/flutter_card_swiper.dart';
 
+import '../../api/apis.dart';
 import '../../db/entity/ad.dart';
 import '../../db/entity/lounge.dart';
 import '../../db/entity/lounge_chat.dart';
 import '../../db/entity/user.dart';
+import '../../db/entity/user_lounge.dart';
 import '../../helpers/dummy.dart';
 import '../../helpers/firestore_helper.dart';
 import '../../helpers/fresh.dart';
@@ -660,10 +662,10 @@ class _PhotosScreenState extends State<PhotosScreen> {
                   onPressed: () {
                     if (sLounges.isNotEmpty) {
                       String message =
-                          '${partyPhoto.imageUrl},$photoChatMessage';
+                          '$photoChatMessage|${partyPhoto.imageUrl}';
 
+                      LoungeChat chat = Dummy.getDummyLoungeChat();
                       for (Lounge lounge in sLounges) {
-                        LoungeChat chat = Dummy.getDummyLoungeChat();
                         chat = chat.copyWith(
                           message: message,
                           type: 'image',
@@ -675,7 +677,33 @@ class _PhotosScreenState extends State<PhotosScreen> {
                         FirestoreHelper.updateLoungeLastChat(lounge.id, '📸 $photoChatMessage', chat.time);
                       }
 
-                      Logx.ist(_TAG, 'photo has been shared 💝');
+                      FirestoreHelper.pullUserLoungeMembers(chat.loungeId).then((res) {
+                        if(res.docs.isNotEmpty){
+                          int count = 0;
+
+                          for (int i = 0; i < res.docs.length; i++) {
+                            DocumentSnapshot document = res.docs[i];
+                            Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+                            UserLounge userLounge = Fresh.freshUserLoungeMap(data, false);
+
+                            if(userLounge.isAccepted && !userLounge.isBanned){
+                              if(userLounge.userFcmToken.isNotEmpty){
+                                String title = '📸 photo: ${chat.loungeName}';
+                                String msg = '${UserPreferences.myUser.name}: $photoChatMessage}';
+
+                                Apis.sendPushNotification(userLounge.userFcmToken, title, msg);
+                                count++;
+                              }
+                            }
+                          }
+
+                          if(UserPreferences.myUser.clearanceLevel>=Constants.ADMIN_LEVEL){
+                            Logx.ist(_TAG, 'chat notification sent to $count members');
+                          }
+                        }
+                      });
+
+                      Logx.ist(_TAG, 'photo has been successfully shared 💝');
                       Navigator.of(ctx).pop();
                     } else {
                       Logx.ist(_TAG,
