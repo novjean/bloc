@@ -1174,7 +1174,7 @@ class _PartyGuestAddEditManageScreenState
                             text: 'update',
                             onClicked: () {
                               FirestoreHelper.pushPartyGuest(widget.partyGuest);
-                              Logx.ist(_TAG, 'guest list updated');
+                              Logx.ist(_TAG, 'guest list is successfully updated');
                               Navigator.of(context).pop();
                             },
                           ),
@@ -1193,7 +1193,7 @@ class _PartyGuestAddEditManageScreenState
                   onClicked: () {
                     if (widget.task == 'manage') {
                       FirestoreHelper.pushPartyGuest(widget.partyGuest);
-                      Logx.ist(_TAG, 'guest list updated');
+                      Logx.ist(_TAG, 'guest list is successfully updated');
                       Navigator.of(context).pop();
                     } else if (widget.task == 'edit') {
                       if (isDataValid()) {
@@ -1460,6 +1460,24 @@ class _PartyGuestAddEditManageScreenState
 
                   if (!testMode) {
                     FirestoreHelper.pushPartyGuest(freshPartyGuest);
+
+                    FirestoreHelper.pullUsersGreaterThanLevel(Constants.MANAGER_LEVEL)
+                        .then((res) {
+                      if(res.docs.isNotEmpty){
+                        for (int i = 0; i < res.docs.length; i++) {
+                          DocumentSnapshot document = res.docs[i];
+                          Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+                          final blocUser.User user = Fresh.freshUserMap(data, false);
+
+                          if(user.fcmToken.isNotEmpty){
+                            String title = '📝 guest: ${freshPartyGuest.name} ${freshPartyGuest.surname}';
+                            String msg = '${freshPartyGuest.guestStatus} -  ${freshPartyGuest.guestsCount}';
+
+                            Apis.sendPushNotification(user.fcmToken, title, msg);
+                          }
+                        }
+                      }
+                    });
                   }
 
                   HistoryMusic historyMusic = Dummy.getDummyHistoryMusic();
@@ -1490,10 +1508,27 @@ class _PartyGuestAddEditManageScreenState
                           Fresh.freshPartyGuest(widget.partyGuest);
                       if (!testMode) {
                         FirestoreHelper.pushPartyGuest(freshPartyGuest);
+
+                        FirestoreHelper.pullUsersGreaterThanLevel(Constants.MANAGER_LEVEL)
+                          .then((res) {
+                            if(res.docs.isNotEmpty){
+                              for (int i = 0; i < res.docs.length; i++) {
+                                DocumentSnapshot document = res.docs[i];
+                                Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+                                final blocUser.User user = Fresh.freshUserMap(data, false);
+
+                                if(user.fcmToken.isNotEmpty){
+                                  String title = '📝 guest: ${freshPartyGuest.name} ${freshPartyGuest.surname}';
+                                  String msg = '${freshPartyGuest.guestStatus} -  ${freshPartyGuest.guestsCount}';
+
+                                  Apis.sendPushNotification(user.fcmToken, title, msg);
+                                }
+                              }
+                            }
+                        });
                       }
 
-                      Logx.i(_TAG, 'guest list request in box office');
-                      Toaster.longToast('guest list request in box office');
+                      Logx.ilt(_TAG, 'guest list request in box office');
 
                       FirestoreHelper.pullHistoryMusic(
                               widget.partyGuest.guestId, widget.party.genre)
@@ -1776,7 +1811,7 @@ class _PartyGuestAddEditManageScreenState
               TextButton(
                 style: ButtonStyle(
                   backgroundColor: MaterialStateProperty.all<Color>(Constants
-                      .darkPrimary), // Set your desired background color
+                      .darkPrimary),
                 ),
                 child: Text(challenge.dialogAcceptText,
                     style: const TextStyle(color: Constants.primary)),
@@ -2317,10 +2352,10 @@ class _PartyGuestAddEditManageScreenState
 
                   String exception = e.toString();
                   if (exception.contains('session-expired')) {
-                    Toaster.shortToast('session got expired, trying again');
+                    Logx.ist(_TAG, 'session got expired, trying again');
                     _verifyPhone();
                   } else {
-                    Toaster.shortToast('invalid otp, please try again');
+                    Logx.ist(_TAG, 'invalid otp, please try again');
                   }
                   FocusScope.of(context).unfocus();
                 }

@@ -590,7 +590,7 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
                             UserLounge userLounge = Fresh.freshUserLoungeMap(data, false);
 
                             if(userLounge.isAccepted && !userLounge.isBanned){
-                              if(userLounge.userFcmToken.isNotEmpty){
+                              if(userLounge.userFcmToken.isNotEmpty && userLounge.userId != UserPreferences.myUser.id){
                                 String title = '📸 photo: ${chat.loungeName}';
                                 String msg = '${UserPreferences.myUser.name}: $photoChatMessage}';
 
@@ -600,7 +600,7 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
                             }
                           }
 
-                          if(UserPreferences.myUser.clearanceLevel>=Constants.ADMIN_LEVEL){
+                          if(UserPreferences.myUser.clearanceLevel>=Constants.ADMIN_LEVEL || UserPreferences.myUser.id == Constants.blocUuid){
                             Logx.ist(_TAG, 'chat notification sent to $count members');
                           }
                         }

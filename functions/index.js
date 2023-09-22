@@ -67,25 +67,6 @@ exports.adFunction = functions
       });
     });
 
-exports.partyGuestFunction = functions
-    .region('asia-south1')
-    .firestore
-    .document('party_guests/{document}')
-    .onCreate((snapshot, context) => {
-      console.log(snapshot.data());
-      return admin.messaging().sendToTopic('party_guest', {
-        notification: {
-          title: '📝 guest : '+snapshot.data().name+' '+snapshot.data().surname,
-          body: snapshot.data().guestStatus+' - '+snapshot.data().guestsCount,
-          clickAction: 'FLUTTER_NOTIFICATION_CLICK',
-        },
-        data: {
-          type: 'party_guest',
-          document: JSON.stringify(snapshot.data()),
-        },
-      });
-    });
-
 exports.reservationFunction = functions
     .region('asia-south1')
     .firestore

@@ -316,7 +316,7 @@ class _PromoterBoxOfficeItemState extends State<PromoterBoxOfficeItem> {
         onPressed: () {
           widget.partyGuest = widget.partyGuest.copyWith(shouldBanUser: true);
           FirestoreHelper.pushPartyGuest(widget.partyGuest);
-          Toaster.longToast('request to ban has been sent');
+          Logx.ilt(_TAG, 'request to ban has been sent');
         },
       ),
     );
@@ -342,7 +342,7 @@ class _PromoterBoxOfficeItemState extends State<PromoterBoxOfficeItem> {
         onPressed: () {
           widget.partyGuest = widget.partyGuest.copyWith(shouldBanUser: false);
           FirestoreHelper.pushPartyGuest(widget.partyGuest);
-          Toaster.longToast('request to free user has been sent');
+          Logx.ilt(_TAG, 'request to free user has been sent');
         },
       ),
     );

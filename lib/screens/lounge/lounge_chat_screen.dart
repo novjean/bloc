@@ -142,7 +142,9 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
             mMembers.add(userLounge);
 
             if(userLounge.userFcmToken.isNotEmpty){
-              mFcmMembers.add(userLounge);
+              if(userLounge.userId != UserPreferences.myUser.id){
+                mFcmMembers.add(userLounge);
+              }
             }
           }
         }
@@ -853,7 +855,7 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
                   Apis.sendPushNotification(fcmMember.userFcmToken, title, msg);
                 }
 
-                if(UserPreferences.myUser.clearanceLevel>=Constants.ADMIN_LEVEL){
+                if(UserPreferences.myUser.clearanceLevel>=Constants.ADMIN_LEVEL || UserPreferences.myUser.id == Constants.blocUuid){
                   Logx.ist(_TAG, 'chat notification sent to ${mFcmMembers.length} members');
                 }
 
