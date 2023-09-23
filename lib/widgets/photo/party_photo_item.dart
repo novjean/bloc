@@ -239,6 +239,8 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
                                     //todo: might need to implement challenge logic here
                                     Logx.i(_TAG, 'app is reviewed, so nothing to do for now');
                                   }
+                                } else {
+                                  Logx.i(_TAG, 'last review time is less than two weeks, so nothing to do for now');
                                 }
                               } else {
                                 Logx.ist(_TAG,
@@ -282,13 +284,15 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
     );
   }
 
-  void _showDownloadAppDialog(BuildContext context) {
+  _showDownloadAppDialog(BuildContext context) {
+    String message = '📸 Click, Share, and Party On! Download our app to access all the photos, share them on your favorite apps, and get notified with instant guest list approvals and more! 🎉📲';
+
     showDialog(
         context: context,
         builder: (BuildContext ctx) {
           return AlertDialog(
             title: const Text(
-              'bloc app ❤️‍🔥',
+              '🎁 save your photos to gallery',
               textAlign: TextAlign.center,
               style: TextStyle(fontSize: 22, color: Colors.black),
             ),
@@ -296,8 +300,7 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
             shape: const RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(20.0))),
             contentPadding: const EdgeInsets.all(16.0),
-            content: const Text(
-                "ready, set, download delight! bloc app in hand, memories at hand. download our app in order to save photos to your gallery and more."),
+            content: Text(message.toLowerCase()),
             actions: [
               TextButton(
                 child: const Text('close',
@@ -314,6 +317,8 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
                 child: const Text('🤖 android',
                     style: TextStyle(color: Constants.primary)),
                 onPressed: () async {
+                  Navigator.of(ctx).pop();
+
                   final uri = Uri.parse(ChallengeUtils.urlBlocPlayStore);
                   NetworkUtils.launchInBrowser(uri);
                 },
@@ -326,6 +331,8 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
                 child: const Text('🍎 ios',
                     style: TextStyle(color: Constants.primary)),
                 onPressed: () async {
+                  Navigator.of(ctx).pop();
+
                   final uri = Uri.parse(ChallengeUtils.urlBlocAppStore);
                   NetworkUtils.launchInBrowser(uri);
                 },
@@ -626,6 +633,8 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
   }
 
   void _showReviewAppDialog(BuildContext context) {
+    String message = '🌟 Love our app? Help us make it even better! Leave a review today and get notified with instant guest list approvals, community photos, and more! 📸🎉';
+
     showDialog(
         context: context,
         builder: (BuildContext ctx) {
@@ -640,7 +649,7 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
                 borderRadius: BorderRadius.all(Radius.circular(20.0))),
             contentPadding: const EdgeInsets.all(16.0),
             content: Text(
-                'Behind bloc, there\'s a small but dedicated team pouring their hearts into it. Will you be our champion by leaving a review? Together, we\'ll build the best community app out there!'.toLowerCase()),
+                message.toLowerCase()),
             actions: [
               TextButton(
                 child: const Text('close',
@@ -658,12 +667,11 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
                 onPressed: () async {
                   User user = UserPreferences.myUser;
                   user = user.copyWith(
-                      isAppReviewed: true,
-                      lastReviewTime: Timestamp.now().millisecondsSinceEpoch);
+                      isAppReviewed: true);
+                  UserPreferences.setUser(user);
                   FirestoreHelper.pushUser(user);
 
                   Logx.ist(_TAG, '🃏 thank you for already reviewing us');
-
                   Navigator.of(ctx).pop();
                 },
               ),

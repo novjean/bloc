@@ -10,6 +10,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
+import 'package:in_app_review/in_app_review.dart';
 import 'package:intl_phone_field/country_picker_dialog.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:multi_select_flutter/dialog/multi_select_dialog_field.dart';
@@ -33,6 +34,7 @@ import '../../helpers/firestore_helper.dart';
 import '../../helpers/fresh.dart';
 import '../../main.dart';
 import '../../routes/route_constants.dart';
+import '../../utils/challenge_utils.dart';
 import '../../utils/constants.dart';
 import '../../utils/date_time_utils.dart';
 import '../../utils/file_utils.dart';
@@ -1209,10 +1211,24 @@ class _PartyGuestAddEditManageScreenState
 
                         Logx.ist(_TAG, 'guest list has been updated');
 
-                        GoRouter.of(context)
-                            .pushNamed(RouteConstants.homeRouteName);
-                        GoRouter.of(context)
-                            .pushNamed(RouteConstants.boxOfficeRouteName);
+                        if((UserPreferences.myUser.lastReviewTime < Timestamp.now().millisecondsSinceEpoch - (1 * DateTimeUtils.millisecondsWeek))){
+                          if(!UserPreferences.myUser.isAppReviewed){
+                            _showReviewAppDialog(context);
+                          } else {
+                            //todo: might need to implement challenge logic here
+                            Logx.i(_TAG, 'app is reviewed, so nothing to do for now');
+
+                            GoRouter.of(context)
+                                .pushNamed(RouteConstants.homeRouteName);
+                            GoRouter.of(context)
+                                .pushNamed(RouteConstants.boxOfficeRouteName);
+                          }
+                        } else {
+                          GoRouter.of(context)
+                              .pushNamed(RouteConstants.homeRouteName);
+                          GoRouter.of(context)
+                              .pushNamed(RouteConstants.boxOfficeRouteName);
+                        }
                       }
                     } else {
                       if (isDataValid()) {
@@ -1642,8 +1658,12 @@ class _PartyGuestAddEditManageScreenState
       // all challenges are completed
       Navigator.of(context).pop();
 
-      GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
-      GoRouter.of(context).pushNamed(RouteConstants.boxOfficeRouteName);
+      if(kIsWeb){
+        _showDownloadAppDialog(context);
+      } else {
+        GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
+        GoRouter.of(context).pushNamed(RouteConstants.boxOfficeRouteName);
+      }
     } else {
       FirestoreHelper.pullChallengeActions(challenge.id).then((res) {
         if (res.docs.isNotEmpty) {
@@ -1703,9 +1723,12 @@ class _PartyGuestAddEditManageScreenState
                 onPressed: () {
                   Navigator.of(ctx).pop();
 
-                  GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
-                  GoRouter.of(context)
-                      .pushNamed(RouteConstants.boxOfficeRouteName);
+                  if(kIsWeb){
+                    _showDownloadAppDialog(context);
+                  } else {
+                    GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
+                    GoRouter.of(context).pushNamed(RouteConstants.boxOfficeRouteName);
+                  }
                 },
               ),
               cas.length > 1
@@ -1731,10 +1754,13 @@ class _PartyGuestAddEditManageScreenState
                         NetworkUtils.launchInBrowser(uri);
 
                         Navigator.of(ctx).pop();
-                        GoRouter.of(context)
-                            .pushNamed(RouteConstants.homeRouteName);
-                        GoRouter.of(context)
-                            .pushNamed(RouteConstants.boxOfficeRouteName);
+
+                        if(kIsWeb){
+                          _showDownloadAppDialog(context);
+                        } else {
+                          GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
+                          GoRouter.of(context).pushNamed(RouteConstants.boxOfficeRouteName);
+                        }
                       },
                     )
                   : const SizedBox(),
@@ -1759,9 +1785,13 @@ class _PartyGuestAddEditManageScreenState
                   NetworkUtils.launchInBrowser(uri);
 
                   Navigator.of(ctx).pop();
-                  GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
-                  GoRouter.of(context)
-                      .pushNamed(RouteConstants.boxOfficeRouteName);
+
+                  if(kIsWeb){
+                    _showDownloadAppDialog(context);
+                  } else {
+                    GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
+                    GoRouter.of(context).pushNamed(RouteConstants.boxOfficeRouteName);
+                  }
                 },
               ),
             ],
@@ -2395,5 +2425,162 @@ class _PartyGuestAddEditManageScreenState
         ],
       ),
     );
+  }
+
+  _showDownloadAppDialog(BuildContext context) {
+    String message = '📲 Download our app now and be the first to know when your guest list request is approved! Plus, unlock access to all the amazing community photos and much more! 🎉📸';
+
+    showDialog(
+        context: context,
+        builder: (BuildContext ctx) {
+          return AlertDialog(
+            title: const Text(
+              '🎁 get notified when GL approved',
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 22, color: Colors.black),
+            ),
+            backgroundColor: Constants.lightPrimary,
+            shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(20.0))),
+            contentPadding: const EdgeInsets.all(16.0),
+            content: Text(message.toLowerCase()),
+            actions: [
+              TextButton(
+                child: const Text('close',
+                    style: TextStyle(color: Constants.background)),
+                onPressed: () {
+                  Navigator.of(ctx).pop();
+
+                  GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
+                  GoRouter.of(context).pushNamed(RouteConstants.boxOfficeRouteName);
+                },
+              ),
+              TextButton(
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all<Color>(Constants
+                      .darkPrimary), // Set your desired background color
+                ),
+                child: const Text('🤖 android',
+                    style: TextStyle(color: Constants.primary)),
+                onPressed: () async {
+                  Navigator.of(ctx).pop();
+
+                  final uri = Uri.parse(ChallengeUtils.urlBlocPlayStore);
+                  NetworkUtils.launchInBrowser(uri);
+
+                  GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
+                  GoRouter.of(context).pushNamed(RouteConstants.boxOfficeRouteName);
+                },
+              ),
+              TextButton(
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all<Color>(Constants
+                      .darkPrimary), // Set your desired background color
+                ),
+                child: const Text('🍎 ios',
+                    style: TextStyle(color: Constants.primary)),
+                onPressed: () async {
+                  Navigator.of(ctx).pop();
+
+                  final uri = Uri.parse(ChallengeUtils.urlBlocAppStore);
+                  NetworkUtils.launchInBrowser(uri);
+
+                  GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
+                  GoRouter.of(context).pushNamed(RouteConstants.boxOfficeRouteName);
+                },
+              ),
+            ],
+          );
+        });
+  }
+
+  void _showReviewAppDialog(BuildContext context) {
+    String message = '🌟 Love our app? Help us make it even better! Leave a review today and get notified with instant guest list approvals, community photos, and more! 📸🎉';
+
+    showDialog(
+        context: context,
+        builder: (BuildContext ctx) {
+          return AlertDialog(
+            title: const Text(
+              '🍭 review our app',
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 22, color: Colors.black),
+            ),
+            backgroundColor: Constants.lightPrimary,
+            shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(20.0))),
+            contentPadding: const EdgeInsets.all(16.0),
+            content: Text(
+                message.toLowerCase()),
+            actions: [
+              TextButton(
+                child: const Text('close',
+                    style: TextStyle(color: Constants.background)),
+                onPressed: () {
+                  Navigator.of(ctx).pop();
+
+                  GoRouter.of(context)
+                      .pushNamed(RouteConstants.homeRouteName);
+                  GoRouter.of(context)
+                      .pushNamed(RouteConstants.boxOfficeRouteName);
+                },
+              ),
+              TextButton(
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all<Color>(Constants
+                      .lightPrimary),
+                ),
+                child: const Text('🧸 already reviewed',),
+                onPressed: () async {
+                  blocUser.User user = UserPreferences.myUser;
+                  user = user.copyWith(
+                      isAppReviewed: true);
+                  UserPreferences.setUser(user);
+                  FirestoreHelper.pushUser(user);
+
+                  Logx.ist(_TAG, '🃏 thank you for already reviewing us');
+                  Navigator.of(ctx).pop();
+
+                  GoRouter.of(context)
+                      .pushNamed(RouteConstants.homeRouteName);
+                  GoRouter.of(context)
+                      .pushNamed(RouteConstants.boxOfficeRouteName);
+                },
+              ),
+              TextButton(
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all<Color>(Constants
+                      .darkPrimary),
+                ),
+                child: const Text('🌟 review us',
+                    style: TextStyle(color: Constants.primary)),
+                onPressed: () async {
+                  final InAppReview inAppReview = InAppReview.instance;
+                  bool isAvailable = await inAppReview.isAvailable();
+
+                  if(isAvailable){
+                    inAppReview.requestReview();
+                  } else {
+                    inAppReview.openStoreListing(appStoreId: Constants.blocAppStoreId);
+                  }
+
+                  blocUser.User user = UserPreferences.myUser;
+                  user = user.copyWith(
+                      isAppReviewed: true,
+                      lastReviewTime: Timestamp.now().millisecondsSinceEpoch);
+                  UserPreferences.setUser(user);
+                  FirestoreHelper.pushUser(user);
+
+                  Navigator.of(ctx).pop();
+
+                  GoRouter.of(context)
+                      .pushNamed(RouteConstants.homeRouteName);
+                  GoRouter.of(context)
+                      .pushNamed(RouteConstants.boxOfficeRouteName);
+                },
+              ),
+            ],
+          );
+        });
   }
 }

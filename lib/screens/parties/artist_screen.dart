@@ -101,7 +101,7 @@ class _ArtistScreenState extends State<ArtistScreen> {
                   autoPlayAnimationDuration:
                   const Duration(milliseconds: 1200),
                   scrollDirection: Axis.horizontal,
-                  aspectRatio: 1.33,
+                  aspectRatio: mParty.isSquare ? 1.33: 1.0,
                 ),
                 items: mParty.imageUrls
                     .map((item) => kIsWeb

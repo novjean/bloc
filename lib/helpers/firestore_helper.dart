@@ -2143,8 +2143,7 @@ class FirestoreHelper {
       await FirebaseFirestore.instance.collection(USERS).doc(userId).update({
         'blocServiceId': blocServiceId,
       }).then((value) {
-        Logx.i(
-            _TAG, "$userId user bloc service id updated to : $blocServiceId");
+        Logx.i(_TAG, '$userId user bloc service id updated to : $blocServiceId');
       }).catchError((e, s) {
         Logx.ex(_TAG, 'failed to update user bloc service id', e, s);
       });
@@ -2156,6 +2155,27 @@ class FirestoreHelper {
       Logx.em(_TAG, e.toString());
     }
   }
+
+  static void updateUserLastReviewTime() async {
+    int timeNow = Timestamp.now().millisecondsSinceEpoch;
+
+    try {
+      await FirebaseFirestore.instance.collection(USERS).doc(UserPreferences.myUser.id).update({
+        'lastReviewTime': timeNow,
+      }).then((value) {
+        Logx.i(_TAG, "user last review time updated}");
+      }).catchError((e, s) {
+        Logx.ex(_TAG, 'failed to update last review time', e, s);
+      });
+    } on PlatformException catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } on Exception catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } catch (e) {
+      Logx.em(_TAG, e.toString());
+    }
+  }
+
 
   static void deleteUser(String docId) {
     FirebaseFirestore.instance.collection(USERS).doc(docId).delete();
@@ -2248,6 +2268,7 @@ class FirestoreHelper {
   static void deleteUserLounge(String docId) {
     FirebaseFirestore.instance.collection(USER_LOUNGES).doc(docId).delete();
   }
+
 
 
 }
