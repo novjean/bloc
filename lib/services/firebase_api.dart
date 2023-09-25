@@ -36,21 +36,7 @@ class FirebaseApi {
         sound: true,
       );
 
-      // if(Platform.isIOS){
-      //    NotificationSettings settings = await _firebaseMessaging.requestPermission(
-      //     alert: true,
-      //     announcement: false,
-      //     badge: true,
-      //     carPlay: false,
-      //     criticalAlert: false,
-      //     provisional: false,
-      //     sound: true,
-      //   );
-      // } else {
-      //
-      // }
-
-      Logx.d(_TAG, 'notificatoin permission auth status ' + settings.authorizationStatus.name);
+      Logx.d(_TAG, 'notification permission auth status ${settings.authorizationStatus.name}');
 
       final fcmToken = await _firebaseMessaging.getToken();
       Logx.d(_TAG, 'fcm token: ${fcmToken!}');

@@ -209,7 +209,8 @@ class _MainScreenState extends State<MainScreen> {
     }
     super.initState();
 
-     NotificationService.initializeNotification();
+    // awesome notification init
+    NotificationService.initializeNotification();
   }
 
   @override
