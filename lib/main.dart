@@ -6,12 +6,9 @@ import 'package:bloc/routes/bloc_router.dart';
 
 import 'package:bloc/db/shared_preferences/ui_preferences.dart';
 import 'package:bloc/services/firebase_api.dart';
-import 'package:bloc/services/notification_service.dart';
-import 'package:bloc/utils/logx.dart';
 import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:logger/logger.dart';
@@ -38,7 +35,6 @@ Future<void> main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   await FirebaseApi().initNotifications();
-  await NotificationService.initializeNotification();
 
   // Pass all uncaught "fatal" errors from the framework to Crashlytics
   FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
@@ -77,7 +73,7 @@ class _BlocAppState extends State<BlocApp> {
 
   @override
   Widget build(BuildContext context) {
-    final Future<FirebaseApp> _initialization = Firebase.initializeApp();
+    final Future<FirebaseApp> initFirebase = Firebase.initializeApp();
 
     return MultiProvider(
       providers: [
@@ -87,7 +83,7 @@ class _BlocAppState extends State<BlocApp> {
       ],
       child: FutureBuilder(
         // Initialize FlutterFire:
-          future: _initialization,
+          future: initFirebase,
           builder: (ctx, appSnapshot) {
 
             if(appSnapshot.connectionState == ConnectionState.done){
@@ -96,7 +92,6 @@ class _BlocAppState extends State<BlocApp> {
                 title: kAppTitle,
                 theme: ThemeData(
                   primaryColor: Constants.primary,
-                  // 222,193,170
                   primaryColorLight: Constants.lightPrimary,
                   primaryColorDark: Constants.darkPrimary,
 

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:bloc/main.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -23,7 +25,33 @@ class FirebaseApi {
 
   Future<void> initNotifications() async {
     if(!kIsWeb){
-      await _firebaseMessaging.requestPermission();
+
+      NotificationSettings settings = await _firebaseMessaging.requestPermission(
+        alert: true,
+        announcement: false,
+        badge: true,
+        carPlay: false,
+        criticalAlert: false,
+        provisional: false,
+        sound: true,
+      );
+
+      // if(Platform.isIOS){
+      //    NotificationSettings settings = await _firebaseMessaging.requestPermission(
+      //     alert: true,
+      //     announcement: false,
+      //     badge: true,
+      //     carPlay: false,
+      //     criticalAlert: false,
+      //     provisional: false,
+      //     sound: true,
+      //   );
+      // } else {
+      //
+      // }
+
+      Logx.d(_TAG, 'notificatoin permission auth status ' + settings.authorizationStatus.name);
+
       final fcmToken = await _firebaseMessaging.getToken();
       Logx.d(_TAG, 'fcm token: ${fcmToken!}');
 

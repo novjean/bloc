@@ -208,6 +208,8 @@ class _MainScreenState extends State<MainScreen> {
       // in web mode
     }
     super.initState();
+
+     NotificationService.initializeNotification();
   }
 
   @override
