@@ -25,7 +25,6 @@ class FirebaseApi {
 
   Future<void> initNotifications() async {
     if(!kIsWeb){
-
       NotificationSettings settings = await _firebaseMessaging.requestPermission(
         alert: true,
         announcement: false,

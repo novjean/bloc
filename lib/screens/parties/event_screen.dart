@@ -48,6 +48,8 @@ class _EventScreenState extends State<EventScreen> {
   Party mParty = Dummy.getDummyParty('');
   var _isPartyLoading = true;
 
+  int mInterestCount = 0;
+
   @override
   void initState() {
     FirestoreHelper.pullPartyByNameChapter(
@@ -88,6 +90,10 @@ class _EventScreenState extends State<EventScreen> {
               partyInterest = partyInterest.copyWith(initCount: initCount);
               FirestoreHelper.pushPartyInterest(partyInterest);
             }
+
+            setState(() {
+              mInterestCount = partyInterest.initCount + partyInterest.userIds.length;
+            });
           } else {
             PartyInterest partyInterest = Dummy.getDummyPartyInterest();
             partyInterest = partyInterest.copyWith(
@@ -218,7 +224,7 @@ class _EventScreenState extends State<EventScreen> {
                   Flexible(
                     flex: 2,
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      padding: const EdgeInsets.only(left: 10, right: 5),
                       child: RichText(
                         text: TextSpan(
                             text: '${mParty.name.toLowerCase()} ',
@@ -245,7 +251,10 @@ class _EventScreenState extends State<EventScreen> {
                   ),
                   Flexible(
                     flex: 1,
-                    child: showGuestListOrTicketButton(context),
+                    child: Padding(
+                      padding: const EdgeInsets.only(right: 10.0, left: 5),
+                      child: showGuestListOrTicketButton(context),
+                    )
                   ),
                 ],
               ),
@@ -269,6 +278,7 @@ class _EventScreenState extends State<EventScreen> {
                 ),
               ),
               const SizedBox(height: 10),
+              const Divider(),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 10),
                 width: double.infinity,
@@ -281,16 +291,44 @@ class _EventScreenState extends State<EventScreen> {
                     )),
               ),
               const SizedBox(height: 10),
+
+              const Divider(),
+
+              mInterestCount>0?
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text('${mParty.views} members are attending this event.',
+                      style: TextStyle(color: Constants.primary, fontSize: 16),
+                      textAlign: TextAlign.start,
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 3,
+                    ),
+                    // ButtonWidget(
+                    //   text: '?',
+                    //   onClicked: () {
+                    //   // we might need to keep track of whom all liked and such
+                    //
+                    // },),
+                    // showGuestListOrTicketButton(context),
+                  ],
+                ),
+              ) : const SizedBox(),
+
+              const SizedBox(height: 10),
               mParty.artistIds.isNotEmpty
                   ? _loadArtists(context)
                   : const SizedBox(),
+
               const SizedBox(height: 10),
               const Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 15.0),
-                    child: Text('share',
+                    child: Text('share with friends',
                         style: TextStyle(
                             color: Constants.lightPrimary,
                             overflow: TextOverflow.ellipsis,
@@ -483,7 +521,7 @@ class _EventScreenState extends State<EventScreen> {
       return Container(
         height: 50,
         width: 160,
-        padding: const EdgeInsets.only(left: 5, right: 10, bottom: 1, top: 1),
+        padding: const EdgeInsets.only(bottom: 1, top: 1),
         child: ElevatedButton.icon(
           style: ElevatedButton.styleFrom(
             backgroundColor: Constants.primary,
@@ -562,7 +600,7 @@ class _EventScreenState extends State<EventScreen> {
       return Container(
         height: 50,
         width: 160,
-        padding: const EdgeInsets.only(left: 5, right: 10, bottom: 1, top: 1),
+        padding: const EdgeInsets.only(bottom: 1, top: 1),
         child: ElevatedButton.icon(
           style: ElevatedButton.styleFrom(
             backgroundColor: Constants.primary,
@@ -588,7 +626,7 @@ class _EventScreenState extends State<EventScreen> {
           label: const Text(
             'guest list',
             style: TextStyle(
-                fontSize: 18,
+                fontSize: 16,
                 fontWeight: FontWeight.bold,
                 color: Constants.darkPrimary),
           ),
