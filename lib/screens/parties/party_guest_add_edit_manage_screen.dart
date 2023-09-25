@@ -1477,7 +1477,7 @@ class _PartyGuestAddEditManageScreenState
                   if (!testMode) {
                     FirestoreHelper.pushPartyGuest(freshPartyGuest);
 
-                    FirestoreHelper.pullUsersGreaterThanLevel(Constants.MANAGER_LEVEL)
+                    FirestoreHelper.pullUsersGreaterThanLevel(Constants.ADMIN_LEVEL)
                         .then((res) {
                       if(res.docs.isNotEmpty){
                         for (int i = 0; i < res.docs.length; i++) {
@@ -1523,9 +1523,11 @@ class _PartyGuestAddEditManageScreenState
                       PartyGuest freshPartyGuest =
                           Fresh.freshPartyGuest(widget.partyGuest);
                       if (!testMode) {
-                        FirestoreHelper.pushPartyGuest(freshPartyGuest);
+                          FirestoreHelper.pushPartyGuest(freshPartyGuest);
+                        }
 
-                        FirestoreHelper.pullUsersGreaterThanLevel(Constants.MANAGER_LEVEL)
+                      if (!testMode) {
+                        FirestoreHelper.pullUsersGreaterThanLevel(Constants.ADMIN_LEVEL)
                           .then((res) {
                             if(res.docs.isNotEmpty){
                               for (int i = 0; i < res.docs.length; i++) {
