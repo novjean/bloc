@@ -29,8 +29,8 @@ class _ChatItemState extends State<ChatItem> {
       int firstDelimiterIndex = widget.chat.message.indexOf(',');
       if (firstDelimiterIndex != -1) {
         // Use substring to split the string into two parts
-        photoUrl = widget.chat.message.substring(0, firstDelimiterIndex);
-        photoChat = widget.chat.message.substring(firstDelimiterIndex + 1);
+        photoChat = widget.chat.message.substring(0, firstDelimiterIndex);
+        photoUrl = widget.chat.message.substring(firstDelimiterIndex + 1);
       } else {
         // Handle the case where the delimiter is not found
         photoUrl = widget.chat.message;
