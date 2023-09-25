@@ -461,13 +461,15 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
                                       onTap: () async {
                                         FirestoreHelper.deleteLoungeChat(chat.id);
 
-                                        if(chat.type == 'image'){
-                                          String photoUrl = '';
+                                        String photoUrl = '';
+                                        String photoChat = '';
 
-                                          int firstDelimiterIndex = chat.message.indexOf(',');
+                                        if (chat.type == 'image') {
+                                          int firstDelimiterIndex = chat.message.indexOf('|');
                                           if (firstDelimiterIndex != -1) {
                                             // Use substring to split the string into two parts
-                                            photoUrl = chat.message.substring(0, firstDelimiterIndex);
+                                            photoChat = chat.message.substring(0, firstDelimiterIndex);
+                                            photoUrl = chat.message.substring(firstDelimiterIndex + 1);
                                           } else {
                                             // Handle the case where the delimiter is not found
                                             photoUrl = chat.message;

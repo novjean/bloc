@@ -413,12 +413,12 @@ class NotificationService {
     String photoUrl = '';
     String photoChat = '';
 
-    if(chat.type == 'image'){
-      int firstDelimiterIndex = chat.message.indexOf(',');
+    if (chat.type == 'image') {
+      int firstDelimiterIndex = chat.message.indexOf('|');
       if (firstDelimiterIndex != -1) {
         // Use substring to split the string into two parts
-        photoUrl = chat.message.substring(0, firstDelimiterIndex);
-        photoChat = chat.message.substring(firstDelimiterIndex + 1);
+        photoChat = chat.message.substring(0, firstDelimiterIndex);
+        photoUrl = chat.message.substring(firstDelimiterIndex + 1);
       } else {
         // Handle the case where the delimiter is not found
         photoUrl = chat.message;

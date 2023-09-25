@@ -24,9 +24,11 @@ class _ChatItemState extends State<ChatItem> {
 
   @override
   Widget build(BuildContext context) {
-    if(widget.chat.type == 'image'){
+    String photoUrl = '';
+    String photoChat = '';
 
-      int firstDelimiterIndex = widget.chat.message.indexOf(',');
+    if (widget.chat.type == 'image') {
+      int firstDelimiterIndex = widget.chat.message.indexOf('|');
       if (firstDelimiterIndex != -1) {
         // Use substring to split the string into two parts
         photoChat = widget.chat.message.substring(0, firstDelimiterIndex);
