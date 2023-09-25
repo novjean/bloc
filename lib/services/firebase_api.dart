@@ -18,6 +18,7 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 
   NotificationService.handleMessage(message, true);
 }
+
 class FirebaseApi {
   static const String _TAG = 'FirebaseApi';
 
@@ -39,6 +40,8 @@ class FirebaseApi {
 
       final fcmToken = await _firebaseMessaging.getToken();
       Logx.d(_TAG, 'fcm token: ${fcmToken!}');
+
+      RemoteMessage? initialMessage = await FirebaseMessaging.instance.getInitialMessage();
 
       // Set the background messaging handler early on, as a named top-level function
       FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);

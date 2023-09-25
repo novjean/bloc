@@ -93,7 +93,6 @@ class DateTimeUtils {
     return dateFormat.format(dt);
   }
 
-  //
   static String getChatDate(int time) {
     int now = Timestamp.now().millisecondsSinceEpoch;
 
