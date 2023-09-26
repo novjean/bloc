@@ -75,53 +75,48 @@ class _BlocAppState extends State<BlocApp> {
   Widget build(BuildContext context) {
     final Future<FirebaseApp> initFirebase = Firebase.initializeApp();
 
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(
-          create: (ctx) => Cart(),
-        ),
-      ],
-      child: FutureBuilder(
+    return FutureBuilder(
         // Initialize FlutterFire:
-          future: initFirebase,
-          builder: (ctx, appSnapshot) {
-
-            if(appSnapshot.connectionState == ConnectionState.done){
+        future: initFirebase,
+        builder: (ctx, appSnapshot) {
+          switch (appSnapshot.connectionState) {
+            case ConnectionState.waiting:
+            case ConnectionState.none:
+              return const LoadingWidget();
+            case ConnectionState.active:
+            case ConnectionState.done:{
               return MaterialApp.router(
-                debugShowCheckedModeBanner: false,
-                title: kAppTitle,
-                theme: ThemeData(
-                  primaryColor: Constants.primary,
-                  primaryColorLight: Constants.lightPrimary,
-                  primaryColorDark: Constants.darkPrimary,
+              debugShowCheckedModeBanner: false,
+              title: kAppTitle,
+              theme: ThemeData(
+                primaryColor: Constants.primary,
+                primaryColorLight: Constants.lightPrimary,
+                primaryColorDark: Constants.darkPrimary,
 
-                  backgroundColor: Constants.background,
-                  // focusColor: const Color.fromRGBO(31, 31, 33, 1.0),
-                  shadowColor: const Color.fromRGBO(158, 158, 158, 1.0),
+                backgroundColor: Constants.background,
+                shadowColor: const Color.fromRGBO(158, 158, 158, 1.0),
 
-                  highlightColor: const Color.fromRGBO(255, 255, 255, 1.0),
-                  bottomAppBarColor: const Color.fromRGBO(255, 255, 255, 1.0),
+                highlightColor: const Color.fromRGBO(255, 255, 255, 1.0),
+                bottomAppBarColor: const Color.fromRGBO(255, 255, 255, 1.0),
 
-                  // app bar and buttons by default
-                  primarySwatch: Colors.brown,
-                  fontFamily: Constants.fontDefault,
+                // app bar and buttons by default
+                primarySwatch: Colors.brown,
+                fontFamily: Constants.fontDefault,
 
-                  buttonTheme: ButtonTheme.of(context).copyWith(
-                    buttonColor: Colors.red,
-                    textTheme: ButtonTextTheme.primary,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
-                    ),
+                buttonTheme: ButtonTheme.of(context).copyWith(
+                  buttonColor: Colors.red,
+                  textTheme: ButtonTextTheme.primary,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
                   ),
                 ),
-                routeInformationParser: BlocRouter.returnRouter(true).routeInformationParser,
-                routerDelegate: BlocRouter.returnRouter(true).routerDelegate,
-              );
-            } else {
-              return const LoadingWidget();
+              ),
+              routeInformationParser: BlocRouter.returnRouter(true).routeInformationParser,
+              routerDelegate: BlocRouter.returnRouter(true).routerDelegate,
+            );
             }
-          }),
-    );
+          }
+        });
   }
 }
 

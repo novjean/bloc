@@ -141,7 +141,7 @@ class _PartyGuestAddEditManageScreenState
     }
 
     _sYear = mBlocUser.birthYear.toString();
-    
+
     for (int i = DateTime.now().year; i>DateTime.now().year - 100; i--) {
       years.add(i.toString());
     }

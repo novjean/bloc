@@ -23,6 +23,7 @@ import '../helpers/firestore_helper.dart';
 import '../helpers/fresh.dart';
 import '../main.dart';
 import '../routes/route_constants.dart';
+import '../services/firebase_api.dart';
 import '../services/notification_service.dart';
 import '../utils/logx.dart';
 import 'captain/captain_main_screen.dart';
@@ -64,8 +65,9 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   void initState() {
-    title = "bloc";
+    Logx.d(_TAG, 'MainScreen');
 
+    title = "bloc";
     user = UserPreferences.myUser;
 
     _page = UiPreferences.getHomePageIndex();
@@ -134,42 +136,46 @@ class _MainScreenState extends State<MainScreen> {
           _TAG, "error retrieving users for phone : ${user.phoneNumber}", e, s);
     });
 
-    if(UserPreferences.isUserLoggedIn()){
+    if (UserPreferences.isUserLoggedIn()) {
       FirestoreHelper.pullUserLounges(UserPreferences.myUser.id).then((res) {
-        if(res.docs.isNotEmpty){
+        if (res.docs.isNotEmpty) {
           List<String> userLounges = [];
           for (int i = 0; i < res.docs.length; i++) {
             DocumentSnapshot document = res.docs[i];
-            Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+            Map<String, dynamic> data =
+                document.data()! as Map<String, dynamic>;
             UserLounge userLounge = Fresh.freshUserLoungeMap(data, false);
 
             userLounges.add(userLounge.loungeId);
 
-            if(userLounge.userFcmToken.isEmpty && UserPreferences.myUser.fcmToken.isNotEmpty){
-              userLounge = userLounge.copyWith(userFcmToken: UserPreferences.myUser.fcmToken);
+            if (userLounge.userFcmToken.isEmpty &&
+                UserPreferences.myUser.fcmToken.isNotEmpty) {
+              userLounge = userLounge.copyWith(
+                  userFcmToken: UserPreferences.myUser.fcmToken);
               FirestoreHelper.pushUserLounge(userLounge);
             }
-
           }
           UserPreferences.setListLounges(userLounges);
         }
       });
     }
 
+    super.initState();
+
     if (!kIsWeb) {
       final fbm = FirebaseMessaging.instance;
 
-      fbm.getToken().then((t) {
-        if(t!=null){
-          blocUser.User user = UserPreferences.myUser;
-          user = user.copyWith(fcmToken: t);
-          UserPreferences.setUser(user);
+      fbm.onTokenRefresh.listen((token) {
+        // Note: This callback is fired at each app startup and whenever a new
+        // token is generated.
 
-          FirestoreHelper.updateUserFcmToken(UserPreferences.myUser.id, t);
-          Logx.d(_TAG, 'user token: $t');
-        }else {
-          Logx.em(_TAG, 'fcm token came in null');
-        }
+        blocUser.User user = UserPreferences.myUser;
+        user = user.copyWith(fcmToken: token);
+        UserPreferences.setUser(user);
+
+        FirestoreHelper.updateUserFcmToken(UserPreferences.myUser.id, token);
+      }).onError((err) {
+        Logx.em(_TAG, err.toString());
       });
 
       FirebaseMessaging.onMessage.listen((RemoteMessage message) {
@@ -207,7 +213,6 @@ class _MainScreenState extends State<MainScreen> {
     } else {
       // in web mode
     }
-    super.initState();
 
     // awesome notification init
     NotificationService.initializeNotification();
@@ -250,12 +255,17 @@ class _MainScreenState extends State<MainScreen> {
                   isTitleCenter: false,
                   trailing: Padding(
                     padding: const EdgeInsets.only(right: 10.0),
-                    child: IconButton(icon: const Icon(Icons.brightness_low_outlined, color: Constants.primary,),
+                    child: IconButton(
+                      icon: const Icon(
+                        Icons.brightness_low_outlined,
+                        color: Constants.primary,
+                      ),
                       onPressed: () async {
                         _showAdsDialog(context);
-                      },),
+                      },
+                    ),
                   ),
-                  title: const Padding (
+                  title: const Padding(
                     padding: kIsWeb
                         ? EdgeInsets.only(top: 10.0, left: 20)
                         : EdgeInsets.only(left: 15, top: 5.0),
@@ -380,8 +390,7 @@ class _MainScreenState extends State<MainScreen> {
       case 'promoter':
         {
           Navigator.of(context).push(
-            MaterialPageRoute(
-                builder: (ctx) => const PromoterMainScreen()),
+            MaterialPageRoute(builder: (ctx) => const PromoterMainScreen()),
           );
           break;
         }
@@ -445,12 +454,11 @@ class _MainScreenState extends State<MainScreen> {
 
   void _showAdsDialog(BuildContext context) {
     FirestoreHelper.pullAds().then((res) {
-      if(res.docs.isNotEmpty){
+      if (res.docs.isNotEmpty) {
         List<Ad> ads = [];
         for (int i = 0; i < res.docs.length; i++) {
           DocumentSnapshot document = res.docs[i];
-          Map<String, dynamic> data =
-          document.data()! as Map<String, dynamic>;
+          Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
           final Ad ad = Fresh.freshAdMap(data, false);
           ads.add(ad);
         }
@@ -460,8 +468,7 @@ class _MainScreenState extends State<MainScreen> {
           builder: (BuildContext context) {
             return AlertDialog(
               title: Text(
-                'notifications'
-                    .toLowerCase(),
+                'notifications'.toLowerCase(),
                 textAlign: TextAlign.center,
                 style: const TextStyle(fontSize: 22, color: Colors.black),
               ),
@@ -480,13 +487,14 @@ class _MainScreenState extends State<MainScreen> {
                       mainAxisSize: MainAxisSize.min,
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-
                         Text(ad.message),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
-                            Text(DateTimeUtils.getFormattedDate(ad.createdAt),
-                              style: const TextStyle(fontSize: 14),),
+                            Text(
+                              DateTimeUtils.getFormattedDate(ad.createdAt),
+                              style: const TextStyle(fontSize: 14),
+                            ),
                           ],
                         ),
                         const Divider(),
@@ -510,46 +518,7 @@ class _MainScreenState extends State<MainScreen> {
         );
       }
     });
-
   }
-
-  // void _showAdNotification(Ad ad) async {
-  //   Map<String, dynamic> objectMap = ad.toMap();
-  //   String jsonString = jsonEncode(objectMap);
-  //
-  //   if(ad.imageUrl.isEmpty){
-  //     await NotificationService.showNotification(
-  //         title: ad.title,
-  //         body: ad.message,
-  //         actionButtons: [
-  //           NotificationActionButton(
-  //               key: 'DISMISS',
-  //               label: 'dismiss',
-  //               actionType: ActionType.DismissAction,
-  //               isDangerousOption: true)
-  //         ]
-  //     );
-  //   } else {
-  //     await NotificationService.showNotification(
-  //         title: ad.title,
-  //         body: ad.message,
-  //         bigPicture: ad.imageUrl,
-  //         notificationLayout: NotificationLayout.BigPicture,
-  //         payload: {
-  //           "navigate": "true",
-  //           "type": "ad",
-  //           "data": jsonString,
-  //         },
-  //         actionButtons: [
-  //           NotificationActionButton(
-  //               key: 'DISMISS',
-  //               label: 'dismiss',
-  //               actionType: ActionType.DismissAction,
-  //               isDangerousOption: true)
-  //         ]
-  //     );
-  //   }
-  // }
 }
 
 class _SliderView extends StatelessWidget {

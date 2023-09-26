@@ -57,6 +57,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void initState() {
+    Logx.d(_TAG, 'HomeScreen');
+
     UserPreferences.myUser.clearanceLevel >= Constants.PROMOTER_LEVEL
         ? FirestoreHelper.pullBlocsPromoter().then((res) {
             Logx.i(_TAG, "successfully pulled in blocs for promoter");
@@ -128,6 +130,7 @@ class _HomeScreenState extends State<HomeScreen> {
             }
           });
 
+
     FirestoreHelper.pullGuestListRequested(UserPreferences.myUser.id)
         .then((res) {
       Logx.i(_TAG, "successfully pulled in requested guest list");
@@ -149,9 +152,11 @@ class _HomeScreenState extends State<HomeScreen> {
       } else {
         Logx.i(_TAG, 'no party guest requests found!');
         const SizedBox();
-        setState(() {
-          _isPartyGuestsLoading = false;
-        });
+        if(mounted){
+          setState(() {
+            _isPartyGuestsLoading = false;
+          });
+        }
       }
     });
 
@@ -189,37 +194,57 @@ class _HomeScreenState extends State<HomeScreen> {
       if(res.docs.isNotEmpty){
         DocumentSnapshot document = res.docs[0];
         Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-        mAdCampaign = Fresh.freshAdCampaignMap(data, false);
-        setState(() {
-        });
+        if(mounted){
+          setState(() {
+            mAdCampaign = Fresh.freshAdCampaignMap(data, false);
+          });
+        } else {
+          Logx.d(_TAG, 'not mounted');
+        }
       }
     });
+
     super.initState();
+
   }
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        FocusScopeNode currentFocus = FocusScope.of(context);
-        if (!currentFocus.hasPrimaryFocus) {
-          currentFocus.unfocus();
-        }
-      } ,
-      child: Scaffold(
-        backgroundColor: Constants.background,
-        resizeToAvoidBottomInset: false,
-        body: _isBlocsLoading && _isPartyGuestsLoading ? const LoadingWidget():
-        Column(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: <Widget>[
-            _showBlocs(context),
-           _showPartiesAndFooter(context),
-          ],
-        ),
+    return Scaffold(
+      backgroundColor: Constants.background,
+      resizeToAvoidBottomInset: false,
+      body: _isBlocsLoading && _isPartyGuestsLoading ? const LoadingWidget():
+      Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: <Widget>[
+          _showBlocs(context),
+          _showPartiesAndFooter(context),
+        ],
       ),
     );
+
+    //   GestureDetector(
+    //   onTap: () {
+    //     FocusScopeNode currentFocus = FocusScope.of(context);
+    //     if (!currentFocus.hasPrimaryFocus) {
+    //       currentFocus.unfocus();
+    //     }
+    //   } ,
+    //   child: Scaffold(
+    //     backgroundColor: Constants.background,
+    //     resizeToAvoidBottomInset: false,
+    //     body: _isBlocsLoading && _isPartyGuestsLoading ? const LoadingWidget():
+    //     Column(
+    //       mainAxisSize: MainAxisSize.min,
+    //       mainAxisAlignment: MainAxisAlignment.start,
+    //       children: <Widget>[
+    //         _showBlocs(context),
+    //        _showPartiesAndFooter(context),
+    //       ],
+    //     ),
+    //   ),
+    // );
   }
 
   _showBlocs(context) {

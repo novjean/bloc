@@ -43,10 +43,27 @@ class FirebaseApi {
 
       RemoteMessage? initialMessage = await FirebaseMessaging.instance.getInitialMessage();
 
+      if (initialMessage != null) {
+        _handleMessage(initialMessage);
+      }
+
       // Set the background messaging handler early on, as a named top-level function
       FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
     } else {
       Logx.d(_TAG, 'fcm not supported on web');
+    }
+  }
+
+  void _handleMessage(RemoteMessage message) {
+    String type = message.data['type'];
+
+    if (type == 'notification_tests') {
+
+      Logx.ist(_TAG, 'notification test is received');
+
+      // Navigator.pushNamed(context, '/chat',
+      //   arguments: ChatArguments(message),
+      // );
     }
   }
 }

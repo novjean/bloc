@@ -39,56 +39,63 @@ class BlocRouter {
               builder: (ctx, userSnapshot) {
                 Logx.i(_TAG, 'checking for auth state changes...');
 
-                if (userSnapshot.connectionState == ConnectionState.waiting) {
-                  if (!kIsWeb) {
-                    return SplashScreen();
-                  } else {
-                    return const LoadingWidget();
-                  }
-                }
-
-                if (userSnapshot.hasData) {
-                  final user = FirebaseAuth.instance.currentUser;
-                  CollectionReference users =
-                      FirestoreHelper.getUsersCollection();
-
-                  return FutureBuilder<DocumentSnapshot>(
-                    future: users.doc(user!.uid).get(),
-                    builder: (BuildContext ctx,
-                        AsyncSnapshot<DocumentSnapshot> snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
+                switch (userSnapshot.connectionState) {
+                  case ConnectionState.waiting:
+                  case ConnectionState.none:
+                    {
+                      if (!kIsWeb) {
+                        return SplashScreen();
+                      } else {
                         return const LoadingWidget();
                       }
+                    }
+                  case ConnectionState.active:
+                  case ConnectionState.done:{
+                    {
+                      if (userSnapshot.hasData) {
+                        final user = FirebaseAuth.instance.currentUser;
+                        CollectionReference users = FirestoreHelper.getUsersCollection();
 
-                      if (snapshot.hasError) {
-                        Logx.em(
-                            _TAG, 'user snapshot has error: ${snapshot.error}');
-                        return const LoginScreen(shouldTriggerSkip: false);
+                        return FutureBuilder<DocumentSnapshot>(
+                          future: users.doc(user!.uid).get(),
+                          builder: (BuildContext ctx, AsyncSnapshot<DocumentSnapshot> snapshot) {
+                            switch (snapshot.connectionState) {
+                              case ConnectionState.waiting:
+                              case ConnectionState.none:
+                                return const LoadingWidget();
+                              case ConnectionState.active:
+                              case ConnectionState.done:
+                                {
+                                  if (snapshot.hasError) {
+                                    Logx.em(
+                                        _TAG, 'user snapshot has error: ${snapshot.error}');
+                                    return const LoginScreen(shouldTriggerSkip: false);
+                                  } else if (snapshot.hasData && !snapshot.data!.exists) {
+                                    Logx.i(_TAG,
+                                        'user snapshot has data but not registered in bloc ');
+                                    // user not registered in bloc, will be picked up in OTP screen
+                                    return const LoginScreen(shouldTriggerSkip: false);
+                                  } else {
+                                    Map<String, dynamic> data =
+                                    snapshot.data!.data() as Map<String, dynamic>;
+                                    final blocUser.User user =
+                                    Fresh.freshUserMap(data, true);
+                                    UserPreferences.setUser(user);
+
+                                    return const MainScreen();
+                                  }
+
+                                }
+                            }
+                          },
+                        );
+                      } else {
+                        return const LoginScreen(
+                          shouldTriggerSkip: true,
+                        );
                       }
-
-                      if (snapshot.hasData && !snapshot.data!.exists) {
-                        Logx.i(_TAG,
-                            'user snapshot has data but not registered in bloc ');
-                        // user not registered in bloc, will be picked up in OTP screen
-                        return const LoginScreen(shouldTriggerSkip: false);
-                      }
-
-                      if (snapshot.connectionState == ConnectionState.done) {
-                        Map<String, dynamic> data =
-                            snapshot.data!.data() as Map<String, dynamic>;
-                        final blocUser.User user =
-                            Fresh.freshUserMap(data, true);
-                        UserPreferences.setUser(user);
-
-                        return const MainScreen();
-                      }
-                      return const LoadingWidget();
-                    },
-                  );
-                } else {
-                  return const LoginScreen(
-                    shouldTriggerSkip: true,
-                  );
+                    }
+                }
                 }
               },
             );
@@ -99,6 +106,8 @@ class BlocRouter {
           path: '/login/:skip',
           pageBuilder: (context, state) {
             String skipString = state.params['skip']!;
+
+            Logx.d(_TAG, '/login/:skip ${skipString}');
 
             bool val = false;
             if (skipString == 'true') {
@@ -114,13 +123,17 @@ class BlocRouter {
           name: RouteConstants.homeRouteName,
           path: '/home',
           builder: (context, state) {
-            return MainScreen();
+            Logx.d(_TAG, '/home');
+
+            return const MainScreen();
           },
         ),
         GoRoute(
           name: RouteConstants.accountRouteName,
           path: '/account',
           builder: (context, state) {
+            Logx.d(_TAG, '/account');
+
             return AccountScreen();
           },
         ),
@@ -128,10 +141,15 @@ class BlocRouter {
           name: RouteConstants.eventRouteName,
           path: '/event/:partyName/:partyChapter',
           pageBuilder: (context, state) {
+            String partyName = state.params['partyName']!;
+            String partyChapter = state.params['partyChapter']!;
+
+            Logx.d(_TAG, '/event/:$partyName/:$partyChapter');
+
             return MaterialPage(
                 child: EventScreen(
-              partyName: state.params['partyName']!,
-              partyChapter: state.params['partyChapter']!,
+              partyName: partyName,
+              partyChapter: partyChapter,
             ));
           },
         ),
@@ -139,10 +157,15 @@ class BlocRouter {
           name: RouteConstants.artistRouteName,
           path: '/artist/:genre/:name',
           pageBuilder: (context, state) {
+            String genre = state.params['name']!;
+            String name = state.params['genre']!;
+
+            Logx.d(_TAG, '/artist/$genre/$name');
+
             return MaterialPage(
                 child: ArtistScreen(
-              name: state.params['name']!,
-              genre: state.params['genre']!,
+              name: name,
+              genre: genre,
             ));
           },
         ),
@@ -150,9 +173,13 @@ class BlocRouter {
           name: RouteConstants.loungeRouteName,
           path: '/lounge/:id',
           pageBuilder: (context, state) {
+            String id = state.params['id']!;
+
+            Logx.d(_TAG, '/lounge/$id');
+
             return MaterialPage(
                 child: LoungeChatScreen(
-              loungeId: state.params['id']!,
+              loungeId: id,
             ));
           },
         ),

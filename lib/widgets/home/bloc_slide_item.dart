@@ -14,6 +14,7 @@ import '../../screens/user/reservation_add_edit_screen.dart';
 import '../../utils/constants.dart';
 import '../../utils/logx.dart';
 import '../ui/icon_button_widget.dart';
+import '../ui/loading_widget.dart';
 
 class BlocSlideItem extends StatefulWidget {
   final Bloc bloc;
@@ -36,9 +37,6 @@ class _BlocSlideItemState extends State<BlocSlideItem> {
   void initState() {
     FirestoreHelper.pullBlocService(widget.bloc.id).then((res) {
       if (res.docs.isNotEmpty) {
-        Logx.i(_TAG,
-            "successfully pulled in bloc service for id ${widget.bloc.id}");
-
         List<BlocService> blocServices = [];
         for (int i = 0; i < res.docs.length; i++) {
           DocumentSnapshot document = res.docs[i];
