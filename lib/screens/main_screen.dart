@@ -318,26 +318,13 @@ class _MainScreenState extends State<MainScreen> {
 
     if (!kIsWeb) {
       final fbm = FirebaseMessaging.instance;
-
-      blocUser.User user = UserPreferences.getUser();
-
-      if (user.clearanceLevel >= Constants.CAPTAIN_LEVEL) {
-        fbm.unsubscribeFromTopic('sos');
-        fbm.unsubscribeFromTopic('order');
-      }
-
-      if (user.clearanceLevel >= Constants.PROMOTER_LEVEL) {
-        fbm.unsubscribeFromTopic('party_guest');
-        fbm.unsubscribeFromTopic('reservations');
-      }
-
-      if (user.clearanceLevel >= Constants.MANAGER_LEVEL) {
-        fbm.unsubscribeFromTopic('celebrations');
-        fbm.unsubscribeFromTopic('offer');
-      }
-      if (user.clearanceLevel >= Constants.ADMIN_LEVEL) {
-        fbm.unsubscribeFromTopic('notification_tests');
-      }
+      fbm.unsubscribeFromTopic('sos');
+      fbm.unsubscribeFromTopic('order');
+      fbm.unsubscribeFromTopic('party_guest');
+      fbm.unsubscribeFromTopic('reservations');
+      fbm.unsubscribeFromTopic('celebrations');
+      fbm.unsubscribeFromTopic('offer');
+      fbm.unsubscribeFromTopic('notification_tests');
     }
   }
 

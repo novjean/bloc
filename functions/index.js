@@ -115,27 +115,27 @@ exports.partyGuestFunction = functions
       if (snapshot.data().guestStatus !== 'promoter') {
         console.log('party guest status is ' + snapshot.data().guestStatus);
 
-        return admin.messaging().sendToTopic('party_guests', {
-            notification: {
-              title: '📝 guest : ' + snapshot.data().name + ' '
-                + snapshot.data().surname,
-              body: snapshot.data().guestStatus + ' - '
-                + snapshot.data().guestsCount,
-              clickAction: 'FLUTTER_NOTIFICATION_CLICK',
-            },
-            data: {
-              type: 'party_guests',
-              document: JSON.stringify(snapshot.data()),
-            },
-          });
+        return admin.messaging().sendToTopic('party_guest', {
+          notification: {
+            title: '📝 guest : ' + snapshot.data().name + ' ' +
+              snapshot.data().surname,
+            body: snapshot.data().guestStatus + ' - ' +
+               snapshot.data().guestsCount,
+            clickAction: 'FLUTTER_NOTIFICATION_CLICK',
+          },
+          data: {
+            type: 'party_guest',
+            document: JSON.stringify(snapshot.data()),
+          },
+        });
       } else {
         console.log('party guest no show as ' + snapshot.data().guestStatus);
 
-        return admin.messaging().sendToTopic('party_guests', {
-            data: {
-              type: 'party_guests',
-              document: JSON.stringify(snapshot.data()),
-            },
+        return admin.messaging().sendToTopic('party_guest', {
+          data: {
+            type: 'party_guest',
+            document: JSON.stringify(snapshot.data()),
+          },
         });
       }
     });
