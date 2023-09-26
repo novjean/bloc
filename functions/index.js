@@ -105,6 +105,41 @@ exports.celebrationFunction = functions
       });
     });
 
+exports.partyGuestFunction = functions
+    .region('asia-south1')
+    .firestore
+    .document('party_guests/{document}')
+    .onCreate((snapshot, context) => {
+      console.log(snapshot.data());
+
+      if (snapshot.data().guestStatus !== 'promoter') {
+        console.log('party guest status is ' + snapshot.data().guestStatus);
+
+        return admin.messaging().sendToTopic('party_guests', {
+            notification: {
+              title: '📝 guest : ' + snapshot.data().name + ' '
+                + snapshot.data().surname,
+              body: snapshot.data().guestStatus + ' - '
+                + snapshot.data().guestsCount,
+              clickAction: 'FLUTTER_NOTIFICATION_CLICK',
+            },
+            data: {
+              type: 'party_guests',
+              document: JSON.stringify(snapshot.data()),
+            },
+          });
+      } else {
+        console.log('party guest no show as ' + snapshot.data().guestStatus);
+
+        return admin.messaging().sendToTopic('party_guests', {
+            data: {
+              type: 'party_guests',
+              document: JSON.stringify(snapshot.data()),
+            },
+        });
+      }
+    });
+
 exports.notificationTestFunction = functions
     .region('asia-south1')
     .firestore

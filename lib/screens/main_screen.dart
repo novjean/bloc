@@ -23,7 +23,6 @@ import '../helpers/firestore_helper.dart';
 import '../helpers/fresh.dart';
 import '../main.dart';
 import '../routes/route_constants.dart';
-import '../services/firebase_api.dart';
 import '../services/notification_service.dart';
 import '../utils/logx.dart';
 import 'captain/captain_main_screen.dart';
@@ -136,29 +135,6 @@ class _MainScreenState extends State<MainScreen> {
           _TAG, "error retrieving users for phone : ${user.phoneNumber}", e, s);
     });
 
-    if (UserPreferences.isUserLoggedIn()) {
-      FirestoreHelper.pullUserLounges(UserPreferences.myUser.id).then((res) {
-        if (res.docs.isNotEmpty) {
-          List<String> userLounges = [];
-          for (int i = 0; i < res.docs.length; i++) {
-            DocumentSnapshot document = res.docs[i];
-            Map<String, dynamic> data =
-                document.data()! as Map<String, dynamic>;
-            UserLounge userLounge = Fresh.freshUserLoungeMap(data, false);
-
-            userLounges.add(userLounge.loungeId);
-
-            if (userLounge.userFcmToken.isEmpty &&
-                UserPreferences.myUser.fcmToken.isNotEmpty) {
-              userLounge = userLounge.copyWith(
-                  userFcmToken: UserPreferences.myUser.fcmToken);
-              FirestoreHelper.pushUserLounge(userLounge);
-            }
-          }
-          UserPreferences.setListLounges(userLounges);
-        }
-      });
-    }
 
     super.initState();
 
@@ -212,6 +188,30 @@ class _MainScreenState extends State<MainScreen> {
       }
     } else {
       // in web mode
+    }
+
+    if (UserPreferences.isUserLoggedIn()) {
+      FirestoreHelper.pullUserLounges(UserPreferences.myUser.id).then((res) {
+        if (res.docs.isNotEmpty) {
+          List<String> userLounges = [];
+          for (int i = 0; i < res.docs.length; i++) {
+            DocumentSnapshot document = res.docs[i];
+            Map<String, dynamic> data =
+            document.data()! as Map<String, dynamic>;
+            UserLounge userLounge = Fresh.freshUserLoungeMap(data, false);
+
+            userLounges.add(userLounge.loungeId);
+
+            if (userLounge.userFcmToken.isEmpty &&
+                UserPreferences.myUser.fcmToken.isNotEmpty) {
+              userLounge = userLounge.copyWith(
+                  userFcmToken: UserPreferences.myUser.fcmToken);
+              FirestoreHelper.pushUserLounge(userLounge);
+            }
+          }
+          UserPreferences.setListLounges(userLounges);
+        }
+      });
     }
 
     // awesome notification init
@@ -334,6 +334,9 @@ class _MainScreenState extends State<MainScreen> {
       if (user.clearanceLevel >= Constants.MANAGER_LEVEL) {
         fbm.unsubscribeFromTopic('celebrations');
         fbm.unsubscribeFromTopic('offer');
+      }
+      if (user.clearanceLevel >= Constants.ADMIN_LEVEL) {
+        fbm.unsubscribeFromTopic('notification_tests');
       }
     }
   }

@@ -1477,24 +1477,6 @@ class _PartyGuestAddEditManageScreenState
 
                   if (!testMode) {
                     FirestoreHelper.pushPartyGuest(freshPartyGuest);
-
-                    FirestoreHelper.pullUsersGreaterThanLevel(Constants.ADMIN_LEVEL)
-                        .then((res) {
-                      if(res.docs.isNotEmpty){
-                        for (int i = 0; i < res.docs.length; i++) {
-                          DocumentSnapshot document = res.docs[i];
-                          Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-                          final blocUser.User user = Fresh.freshUserMap(data, false);
-
-                          if(user.fcmToken.isNotEmpty){
-                            String title = '📝 guest: ${freshPartyGuest.name} ${freshPartyGuest.surname}';
-                            String msg = '${freshPartyGuest.guestStatus} -  ${freshPartyGuest.guestsCount}';
-
-                            Apis.sendPushNotification(user.fcmToken, title, msg);
-                          }
-                        }
-                      }
-                    });
                   }
 
                   HistoryMusic historyMusic = Dummy.getDummyHistoryMusic();
@@ -1526,26 +1508,6 @@ class _PartyGuestAddEditManageScreenState
                       if (!testMode) {
                           FirestoreHelper.pushPartyGuest(freshPartyGuest);
                         }
-
-                      if (!testMode) {
-                        FirestoreHelper.pullUsersGreaterThanLevel(Constants.ADMIN_LEVEL)
-                          .then((res) {
-                            if(res.docs.isNotEmpty){
-                              for (int i = 0; i < res.docs.length; i++) {
-                                DocumentSnapshot document = res.docs[i];
-                                Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-                                final blocUser.User user = Fresh.freshUserMap(data, false);
-
-                                if(user.fcmToken.isNotEmpty){
-                                  String title = '📝 guest: ${freshPartyGuest.name} ${freshPartyGuest.surname}';
-                                  String msg = '${freshPartyGuest.guestStatus} -  ${freshPartyGuest.guestsCount}';
-
-                                  Apis.sendPushNotification(user.fcmToken, title, msg);
-                                }
-                              }
-                            }
-                        });
-                      }
 
                       Logx.ilt(_TAG, 'guest list request in box office');
 
