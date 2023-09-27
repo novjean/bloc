@@ -272,40 +272,43 @@ class _HomeScreenState extends State<HomeScreen> {
     return StreamBuilder<QuerySnapshot>(
       stream: FirestoreHelper.getUpcomingParties(timeNow),
       builder: (ctx, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const LoadingWidget();
-        }
-
-        if (snapshot.hasData) {
-          List<Party> parties = [];
-          for (int i = 0; i < snapshot.data!.docs.length; i++) {
-            DocumentSnapshot document = snapshot.data!.docs[i];
-            Map<String, dynamic> data =
-                document.data()! as Map<String, dynamic>;
-            final Party bloc = Fresh.freshPartyMap(data, false);
-            parties.add(bloc);
-
-            if (i == snapshot.data!.docs.length - 1) {
-              return _displayPartiesList(context, parties);
+        switch (snapshot.connectionState) {
+          case ConnectionState.waiting:
+          case ConnectionState.none:
+            return const LoadingWidget();
+          case ConnectionState.active:
+          case ConnectionState.done:{
+          if (snapshot.hasData) {
+            List<Party> parties = [];
+            for (int i = 0; i < snapshot.data!.docs.length; i++) {
+              DocumentSnapshot document = snapshot.data!.docs[i];
+              Map<String, dynamic> data =
+              document.data()! as Map<String, dynamic>;
+              final Party bloc = Fresh.freshPartyMap(data, false);
+              parties.add(bloc);
             }
-          }
-        }
+            return _displayPartiesList(context, parties);
 
-        return Expanded(
-          child: Column(
-            children: [
-              UserPreferences.isUserLoggedIn()
-                  ? _isGuestWifiDetailsLoading
-                      ? const LoadingWidget()
-                      : buildWifi(context)
-                  : const SizedBox(),
-              const SizedBox(height: 15.0),
-              kIsWeb ? const StoreBadgeItem() : const SizedBox(),
-              const SizedBox(height: 10.0),
-              Footer(),
-            ],
-          ),
-        );
+          }
+          return Expanded(
+            child: Column(
+              children: [
+                UserPreferences.isUserLoggedIn()
+                    ? _isGuestWifiDetailsLoading
+                    ? const LoadingWidget()
+                    : buildWifi(context)
+                    : const SizedBox(),
+                const SizedBox(height: 15.0),
+                kIsWeb ? const StoreBadgeItem() : const SizedBox(),
+                const SizedBox(height: 10.0),
+                Footer(),
+              ],
+            ),
+          );
+
+
+        }
+        }
       },
     );
   }
@@ -511,58 +514,4 @@ class _HomeScreenState extends State<HomeScreen> {
       },
     );
   }
-
-  /** optional **/
-  // buildSuperstarsList(BuildContext context) {
-  //   return StreamBuilder<QuerySnapshot>(
-  //     stream: FirestoreHelper.getUsersLessThanLevel(Constants.MANAGER_LEVEL),
-  //     builder: (ctx, snapshot) {
-  //       if (snapshot.connectionState == ConnectionState.waiting) {
-  //         Logx.i(_TAG, 'loading users...');
-  //         return const LoadingWidget();
-  //       }
-  //
-  //       List<User> _users = [];
-  //       for (int i = 0; i < snapshot.data!.docs.length; i++) {
-  //         DocumentSnapshot document = snapshot.data!.docs[i];
-  //         Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-  //         final User user = User.fromMap(data);
-  //         if (user.imageUrl.isNotEmpty) {
-  //           _users.add(user);
-  //         }
-  //
-  //         if (i == snapshot.data!.docs.length - 1) {
-  //           return _displaySuperstarsList(context, _users);
-  //         }
-  //       }
-  //       return const LoadingWidget();
-  //     },
-  //   );
-  // }
-  //
-  // _displaySuperstarsList(BuildContext context, List<User> users) {
-  //   return Container(
-  //     padding: const EdgeInsets.only(left: 10, right: 10),
-  //     height: 50.0,
-  //     child: ListView.builder(
-  //       primary: false,
-  //       scrollDirection: Axis.horizontal,
-  //       shrinkWrap: true,
-  //       itemCount: users.length,
-  //       itemBuilder: (BuildContext context, int index) {
-  //         String img = users[index].imageUrl;
-  //
-  //         return Padding(
-  //           padding: const EdgeInsets.only(right: 5.0),
-  //           child: CircleAvatar(
-  //             backgroundImage: NetworkImage(
-  //               img,
-  //             ),
-  //             radius: 25.0,
-  //           ),
-  //         );
-  //       },
-  //     ),
-  //   );
-  // }
 }
