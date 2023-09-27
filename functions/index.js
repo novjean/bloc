@@ -146,13 +146,11 @@ exports.chatFunction = functions
     .document('lounge_chats/{document}')
     .onCreate((snapshot, context) => {
       console.log('chat received in ' + snapshot.data().loungeName);
+      console.log('chat fcm notify topic is ' + snapshot.data().loungeId);
 
-      String topicName = snapshot.data().loungeId;
-      console.log('chat fcm notification topic is ' + topicName);
-
-      return admin.messaging().sendToTopic(topicName, {
+      return admin.messaging().sendToTopic(snapshot.data().loungeId, {
         notification: {
-          title: '🗨️chat: ' + snapshot.data().loungeName,
+          title: '🗨️ chat: ' + snapshot.data().loungeName,
           body: snapshot.data().userName + ': '+snapshot.data().message,
           clickAction: 'FLUTTER_NOTIFICATION_CLICK',
         },
@@ -161,9 +159,9 @@ exports.chatFunction = functions
           document: JSON.stringify(snapshot.data()),
         },
       }).then((response) => {
-        console.log("Successfully sent message:", response);
+        console.log('Successfully sent message:', response);
       }).catch((error) => {
-        console.log("Error sending message:", error);
+        console.log('Error sending message:', error);
       });
     });
 

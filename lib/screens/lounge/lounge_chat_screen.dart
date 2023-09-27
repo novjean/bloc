@@ -239,6 +239,8 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
               );
               FirestoreHelper.pushUserLounge(userLounge);
 
+              FirebaseMessaging.instance.subscribeToTopic(widget.loungeId);
+
               setState(() {
                 isMember = true;
               });

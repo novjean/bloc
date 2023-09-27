@@ -198,40 +198,8 @@ class NotificationService {
           } else {
             if(UserPreferences.isUserLoggedIn() && chat.userId != UserPreferences.myUser.id){
               NotificationService.showChatNotification(chat);
-
-              // if(UserPreferences.getListLounges().contains(chat.loungeId)){
-              // }
             }
           }
-
-          // if(isBackground){
-          //   String title = chat.loungeName;
-          //
-          //   String message = '';
-          //   if(chat.type == 'image'){
-          //     String photoUrl = '';
-          //     String photoChat = '';
-          //
-          //     if (chat.type == 'image') {
-          //       int firstDelimiterIndex = chat.message.indexOf('|');
-          //       if (firstDelimiterIndex != -1) {
-          //         // Use substring to split the string into two parts
-          //         photoChat = chat.message.substring(0, firstDelimiterIndex);
-          //         photoUrl = chat.message.substring(firstDelimiterIndex + 1);
-          //       } else {
-          //         // Handle the case where the delimiter is not found
-          //         photoUrl = chat.message;
-          //       }
-          //     }
-          //
-          //     message = '📷 ${StringUtils.firstFewWords(photoChat, 15)} ...';
-          //   } else {
-          //     message = '${StringUtils.firstFewWords(chat.message, 15)} ...';
-          //   }
-          //   NotificationService.showDefaultNotification(title, message);
-          // } else {
-          //
-          // }
         }
 
         break;
