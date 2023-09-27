@@ -140,6 +140,26 @@ exports.partyGuestFunction = functions
       }
     });
 
+exports.chatFunction = functions
+    .region('asia-south1')
+    .firestore
+    .document('lounge_chats/{document}')
+    .onCreate((snapshot, context) => {
+      console.log(snapshot.data());
+
+      return admin.messaging().sendToTopic(snapshot.data().loungeId, {
+        notification: {
+          title: '🗨️chat: ' + snapshot.data().loungeName,
+          body: snapshot.data().userName+': '+snapshot.data().message,
+          clickAction: 'FLUTTER_NOTIFICATION_CLICK',
+        },
+        data: {
+          type: 'lounge_chats',
+          document: JSON.stringify(snapshot.data()),
+        },
+      });
+    });
+
 exports.notificationTestFunction = functions
     .region('asia-south1')
     .firestore

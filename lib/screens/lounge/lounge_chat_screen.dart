@@ -4,6 +4,7 @@ import 'package:bloc/db/entity/user_lounge.dart';
 import 'package:bloc/helpers/firestore_helper.dart';
 import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
@@ -48,9 +49,9 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
 
   List<LoungeChat> mChats = [];
 
-  var _isMembersLoading = true;
-  List<UserLounge> mMembers = [];
-  List<UserLounge> mFcmMembers = [];
+  // var _isMembersLoading = true;
+  // List<UserLounge> mMembers = [];
+  // List<UserLounge> mFcmMembers = [];
 
   //for handling message text changes
   final _textController = TextEditingController();
@@ -131,33 +132,33 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
 
     super.initState();
 
-    FirestoreHelper.pullUserLoungeMembers(widget.loungeId).then((res) {
-      if (res.docs.isNotEmpty) {
-        for (int i = 0; i < res.docs.length; i++) {
-          DocumentSnapshot document = res.docs[i];
-          Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-          UserLounge userLounge = Fresh.freshUserLoungeMap(data, false);
-
-          if(userLounge.isAccepted && !userLounge.isBanned){
-            mMembers.add(userLounge);
-
-            if(userLounge.userFcmToken.isNotEmpty){
-              if(userLounge.userId != UserPreferences.myUser.id){
-                mFcmMembers.add(userLounge);
-              }
-            }
-          }
-        }
-        Logx.i(_TAG, 'members in the lounge: ${mMembers.length}');
-      } else {
-        //nobody in lounge
-        Logx.i(_TAG, 'nobody in the lounge yet');
-      }
-
-      setState(() {
-        _isMembersLoading = false;
-      });
-    });
+    // FirestoreHelper.pullUserLoungeMembers(widget.loungeId).then((res) {
+    //   if (res.docs.isNotEmpty) {
+    //     for (int i = 0; i < res.docs.length; i++) {
+    //       DocumentSnapshot document = res.docs[i];
+    //       Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+    //       UserLounge userLounge = Fresh.freshUserLoungeMap(data, false);
+    //
+    //       if(userLounge.isAccepted && !userLounge.isBanned){
+    //         mMembers.add(userLounge);
+    //
+    //         if(userLounge.userFcmToken.isNotEmpty){
+    //           if(userLounge.userId != UserPreferences.myUser.id){
+    //             mFcmMembers.add(userLounge);
+    //           }
+    //         }
+    //       }
+    //     }
+    //     Logx.i(_TAG, 'members in the lounge: ${mMembers.length}');
+    //   } else {
+    //     //nobody in lounge
+    //     Logx.i(_TAG, 'nobody in the lounge yet');
+    //   }
+    //
+    //   setState(() {
+    //     _isMembersLoading = false;
+    //   });
+    // });
   }
 
   @override
@@ -550,6 +551,8 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
                         mLounge = mLounge.copyWith(exitedUserIds: exitedMembers);
                         FirestoreHelper.pushLounge(mLounge);
 
+                        FirebaseMessaging.instance.unsubscribeFromTopic(mLounge.id);
+
                         Toaster.longToast('you have exited the lounge');
                         Logx.i(_TAG, 'user has exited the lounge');
                         GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
@@ -713,16 +716,16 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
                     FirestoreHelper.updateLoungeLastChat(
                         mLounge.id, chat.message, chat.time);
 
-                    for(UserLounge fcmMember in mFcmMembers){
-                      String title = '🗨️chat: ${chat.loungeName}';
-                      String msg = '${UserPreferences.myUser.name}: ${chat.message}';
+                    // for(UserLounge fcmMember in mFcmMembers){
+                    //   String title = '🗨️chat: ${chat.loungeName}';
+                    //   String msg = '${UserPreferences.myUser.name}: ${chat.message}';
+                    //
+                    //   Apis.sendChatNotification(fcmMember.userFcmToken, title, msg);
+                    // }
 
-                      Apis.sendPushNotification(fcmMember.userFcmToken, title, msg);
-                    }
-
-                    if(UserPreferences.myUser.clearanceLevel>=Constants.ADMIN_LEVEL){
-                      Logx.ist(_TAG, 'chat notification sent to ${mFcmMembers.length} members');
-                    }
+                    // if(UserPreferences.myUser.clearanceLevel>=Constants.ADMIN_LEVEL){
+                    //   Logx.ist(_TAG, 'chat notification sent to ${mFcmMembers.length} members');
+                    // }
 
                     _textController.text = '';
                   }
@@ -850,16 +853,16 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
                 FirestoreHelper.pushLoungeChat(chat);
                 FirestoreHelper.updateLoungeLastChat(mLounge.id, '📸 $photoChatMessage', chat.time);
 
-                for(UserLounge fcmMember in mFcmMembers){
-                  String title = '📸 photo: ${chat.loungeName}';
-                  String msg = '${UserPreferences.myUser.name}: $photoChatMessage}';
+                // for(UserLounge fcmMember in mFcmMembers){
+                //   String title = '📸 photo: ${chat.loungeName}';
+                //   String msg = '${UserPreferences.myUser.name}: $photoChatMessage}';
+                //
+                //   Apis.sendPushNotification(fcmMember.userFcmToken, title, msg);
+                // }
 
-                  Apis.sendPushNotification(fcmMember.userFcmToken, title, msg);
-                }
-
-                if(UserPreferences.myUser.clearanceLevel>=Constants.ADMIN_LEVEL || UserPreferences.myUser.id == Constants.blocUuid){
-                  Logx.ist(_TAG, 'chat notification sent to ${mFcmMembers.length} members');
-                }
+                // if(UserPreferences.myUser.clearanceLevel>=Constants.ADMIN_LEVEL || UserPreferences.myUser.id == Constants.blocUuid){
+                //   Logx.ist(_TAG, 'chat notification sent to ${mFcmMembers.length} members');
+                // }
 
                 setState(() => _isUploading = false);
 

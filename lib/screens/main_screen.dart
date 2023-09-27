@@ -199,8 +199,9 @@ class _MainScreenState extends State<MainScreen> {
             Map<String, dynamic> data =
             document.data()! as Map<String, dynamic>;
             UserLounge userLounge = Fresh.freshUserLoungeMap(data, false);
-
             userLounges.add(userLounge.loungeId);
+
+            FirebaseMessaging.instance.subscribeToTopic(userLounge.loungeId);
 
             if (userLounge.userFcmToken.isEmpty &&
                 UserPreferences.myUser.fcmToken.isNotEmpty) {
@@ -325,6 +326,24 @@ class _MainScreenState extends State<MainScreen> {
       fbm.unsubscribeFromTopic('celebrations');
       fbm.unsubscribeFromTopic('offer');
       fbm.unsubscribeFromTopic('notification_tests');
+
+      fbm.unsubscribeFromTopic('lounge_chats');
+      if (UserPreferences.isUserLoggedIn()) {
+        FirestoreHelper.pullUserLounges(UserPreferences.myUser.id).then((res) {
+          if (res.docs.isNotEmpty) {
+            List<String> userLounges = [];
+            for (int i = 0; i < res.docs.length; i++) {
+              DocumentSnapshot document = res.docs[i];
+              Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+              UserLounge userLounge = Fresh.freshUserLoungeMap(data, false);
+              userLounges.add(userLounge.loungeId);
+
+              FirebaseMessaging.instance.unsubscribeFromTopic(userLounge.loungeId);
+            }
+            UserPreferences.setListLounges(userLounges);
+          }
+        });
+      }
     }
   }
 
