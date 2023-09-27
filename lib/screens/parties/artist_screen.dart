@@ -15,6 +15,7 @@ import '../../helpers/fresh.dart';
 import '../../main.dart';
 import '../../routes/route_constants.dart';
 import '../../utils/constants.dart';
+import '../../utils/logx.dart';
 import '../../utils/network_utils.dart';
 import '../../widgets/footer.dart';
 import '../../widgets/store_badge_item.dart';
@@ -53,6 +54,8 @@ class _ArtistScreenState extends State<ArtistScreen> {
 
         FirestoreHelper.updatePartyViewCount(mParty.id);
       } else {
+        Logx.est(_TAG, 'sorry, the artist could not be found');
+
         setState(() {
           isPartyLoading = false;
         });

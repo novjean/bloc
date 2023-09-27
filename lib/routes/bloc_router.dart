@@ -157,10 +157,10 @@ class BlocRouter {
           name: RouteConstants.artistRouteName,
           path: '/artist/:genre/:name',
           pageBuilder: (context, state) {
-            String genre = state.params['name']!;
-            String name = state.params['genre']!;
+            String name = state.params['name']!;
+            String genre = state.params['genre']!;
 
-            Logx.d(_TAG, '/artist/$genre/$name');
+            Logx.d(_TAG, '/artist/:$genre/:$name');
 
             return MaterialPage(
                 child: ArtistScreen(
