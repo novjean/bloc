@@ -571,6 +571,9 @@ class _BoxOfficeGuestListItemState extends State<BoxOfficeGuestListItem> {
 
             if (ca.actionType == 'instagram_url') {
               ca = ca.copyWith(action: widget.party.instagramUrl);
+            } else if (ca.actionType == 'bloc_url') {
+                final url = 'http://bloc.bar/#/event/${Uri.encodeComponent(widget.party.name)}/${widget.party.chapter}';
+                ca = ca.copyWith(action: url);
             }
             cas.add(ca);
           }

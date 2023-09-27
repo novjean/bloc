@@ -17,6 +17,7 @@ import 'package:multi_select_flutter/dialog/multi_select_dialog_field.dart';
 import 'package:multi_select_flutter/util/multi_select_item.dart';
 import 'package:multi_select_flutter/util/multi_select_list_type.dart';
 import 'package:pinput/pinput.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../../api/apis.dart';
 import '../../db/entity/challenge.dart';
@@ -1641,6 +1642,9 @@ class _PartyGuestAddEditManageScreenState
 
             if (ca.actionType == 'instagram_url') {
               ca = ca.copyWith(action: widget.party.instagramUrl);
+            } else if (ca.actionType == 'bloc_url') {
+              final url = 'http://bloc.bar/#/event/${Uri.encodeComponent(widget.party.name)}/${widget.party.chapter}';
+              ca = ca.copyWith(action: url);
             }
             cas.add(ca);
           }
@@ -1716,7 +1720,13 @@ class _PartyGuestAddEditManageScreenState
                         }
 
                         final uri = Uri.parse(cas[1].action);
-                        NetworkUtils.launchInBrowser(uri);
+
+                        if(cas[1].actionType == 'bloc_url'){
+                          Share.share(
+                              'Check out ${widget.party.name} on #blocCommunity $uri');
+                        } else {
+                          NetworkUtils.launchInBrowser(uri);
+                        }
 
                         Navigator.of(ctx).pop();
 
@@ -1747,7 +1757,13 @@ class _PartyGuestAddEditManageScreenState
                   }
 
                   final uri = Uri.parse(cas[0].action);
-                  NetworkUtils.launchInBrowser(uri);
+
+                  if(cas[0].actionType == 'bloc_url'){
+                    Share.share(
+                        'Check out ${widget.party.name} on #blocCommunity $uri');
+                  } else {
+                    NetworkUtils.launchInBrowser(uri);
+                  }
 
                   Navigator.of(ctx).pop();
 

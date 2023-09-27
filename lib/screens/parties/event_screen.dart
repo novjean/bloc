@@ -370,11 +370,8 @@ class _EventScreenState extends State<EventScreen> {
                         text: '🎯 page',
                         onClicked: () async {
                           FirestoreHelper.updatePartyShareCount(mParty.id);
-
-                          final url =
-                              'http://bloc.bar/#/event/${widget.partyName.replaceAll(' ', '%20')}/${widget.partyChapter}';
-                          Share.share(
-                              'Check out ${widget.partyName} on #blocCommunity $url');
+                          final url = 'http://bloc.bar/#/event/${Uri.encodeComponent(widget.partyName)}/${widget.partyChapter}';
+                          Share.share('Check out ${widget.partyName} on #blocCommunity $url');
                         },
                       ),
                     ),
