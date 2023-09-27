@@ -90,9 +90,13 @@ class _PartyBannerState extends State<PartyBanner> {
                 mArtists.add(artist);
               }
             }
-            setState(() {
-              _isArtistsLoading = false;
-            });
+            if(mounted){
+              setState(() {
+                _isArtistsLoading = false;
+              });
+            } else {
+              Logx.d(_TAG, 'not mounted');
+            }
           } else {
             Logx.em(_TAG, 'artists no longer exist!');
             setState(() {

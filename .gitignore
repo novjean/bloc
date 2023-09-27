@@ -97,3 +97,4 @@ app.*.map.json
 .firebase
 .firebase/hosting.*.cache
 ios/Podfile.lock
+.firebase/hosting.YnVpbGQvd2Vi.cache

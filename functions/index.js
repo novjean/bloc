@@ -145,18 +145,25 @@ exports.chatFunction = functions
     .firestore
     .document('lounge_chats/{document}')
     .onCreate((snapshot, context) => {
-      console.log(snapshot.data());
+      console.log('chat received in ' + snapshot.data().loungeName);
 
-      return admin.messaging().sendToTopic(snapshot.data().loungeId, {
+      String topicName = snapshot.data().loungeId;
+      console.log('chat fcm notification topic is ' + topicName);
+
+      return admin.messaging().sendToTopic(topicName, {
         notification: {
           title: '🗨️chat: ' + snapshot.data().loungeName,
-          body: snapshot.data().userName+': '+snapshot.data().message,
+          body: snapshot.data().userName + ': '+snapshot.data().message,
           clickAction: 'FLUTTER_NOTIFICATION_CLICK',
         },
         data: {
           type: 'lounge_chats',
           document: JSON.stringify(snapshot.data()),
         },
+      }).then((response) => {
+        console.log("Successfully sent message:", response);
+      }).catch((error) => {
+        console.log("Error sending message:", error);
       });
     });
 

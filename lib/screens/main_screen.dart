@@ -202,6 +202,7 @@ class _MainScreenState extends State<MainScreen> {
             userLounges.add(userLounge.loungeId);
 
             FirebaseMessaging.instance.subscribeToTopic(userLounge.loungeId);
+            Logx.d(_TAG, 'subscribed to lounge topic: ${userLounge.loungeId}');
 
             if (userLounge.userFcmToken.isEmpty &&
                 UserPreferences.myUser.fcmToken.isNotEmpty) {

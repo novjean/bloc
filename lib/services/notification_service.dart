@@ -100,28 +100,24 @@ class NotificationService {
   }
 
   /// Use this method to detect when a new notification or a schedule is created
-  @pragma("vm:entry-point")
   static Future<void> onNotificationCreatedMethod(
       ReceivedNotification receivedNotification) async {
     debugPrint('onNotificationCreatedMethod');
   }
 
   /// Use this method to detect every time that a new notification is displayed
-  @pragma("vm:entry-point")
   static Future<void> onNotificationDisplayedMethod(
       ReceivedNotification receivedNotification) async {
     debugPrint('onNotificationDisplayedMethod');
   }
 
   /// Use this method to detect if the user dismissed a notification
-  @pragma("vm:entry-point")
   static Future<void> onDismissActionReceivedMethod(
       ReceivedAction receivedAction) async {
     debugPrint('onDismissActionReceivedMethod');
   }
 
   /// Use this method to detect when the user taps on a notification or action button
-  @pragma("vm:entry-point")
   static Future<void> onActionReceivedMethod(ReceivedAction receivedAction) async {
     debugPrint('onActionReceivedMethod');
     final payload = receivedAction.payload ?? {};
@@ -189,53 +185,53 @@ class NotificationService {
 
     switch(type){
       case 'lounge_chats':{
+
         LoungeChat chat = Fresh.freshLoungeChatMap(jsonDecode(data['document']), false);
         if(notificationId == chat.id){
           return;
         } else {
-          notificationId = chat.id;
-
           UiPreferences.setHomePageIndex(2);
 
-          if(isBackground){
-            String title = chat.loungeName;
-
-            String message = '';
-            if(chat.type == 'image'){
-              String photoUrl = '';
-              String photoChat = '';
-
-              if (chat.type == 'image') {
-                int firstDelimiterIndex = chat.message.indexOf('|');
-                if (firstDelimiterIndex != -1) {
-                  // Use substring to split the string into two parts
-                  photoChat = chat.message.substring(0, firstDelimiterIndex);
-                  photoUrl = chat.message.substring(firstDelimiterIndex + 1);
-                } else {
-                  // Handle the case where the delimiter is not found
-                  photoUrl = chat.message;
-                }
-              }
-
-              message = '📷 ${StringUtils.firstFewWords(photoChat, 15)} ...';
-            } else {
-              message = '${StringUtils.firstFewWords(chat.message, 15)} ...';
-            }
-            NotificationService.showDefaultNotification(title, message);
+          if(notificationId == chat.id){
+            Logx.d(_TAG, 'same notification, not showing');
+            return;
           } else {
-            LoungeChat chat = Fresh.freshLoungeChatMap(jsonDecode(data['document']), false);
+            if(UserPreferences.isUserLoggedIn() && chat.userId != UserPreferences.myUser.id){
+              NotificationService.showChatNotification(chat);
 
-            if(notificationId == chat.id){
-              Logx.d(_TAG, 'same notification, not showing');
-              return;
-            } else {
-              if(UserPreferences.isUserLoggedIn() && chat.userId != UserPreferences.myUser.id){
-                if(UserPreferences.getListLounges().contains(chat.loungeId)){
-                  NotificationService.showChatNotification(chat);
-                }
-              }
+              // if(UserPreferences.getListLounges().contains(chat.loungeId)){
+              // }
             }
           }
+
+          // if(isBackground){
+          //   String title = chat.loungeName;
+          //
+          //   String message = '';
+          //   if(chat.type == 'image'){
+          //     String photoUrl = '';
+          //     String photoChat = '';
+          //
+          //     if (chat.type == 'image') {
+          //       int firstDelimiterIndex = chat.message.indexOf('|');
+          //       if (firstDelimiterIndex != -1) {
+          //         // Use substring to split the string into two parts
+          //         photoChat = chat.message.substring(0, firstDelimiterIndex);
+          //         photoUrl = chat.message.substring(firstDelimiterIndex + 1);
+          //       } else {
+          //         // Handle the case where the delimiter is not found
+          //         photoUrl = chat.message;
+          //       }
+          //     }
+          //
+          //     message = '📷 ${StringUtils.firstFewWords(photoChat, 15)} ...';
+          //   } else {
+          //     message = '${StringUtils.firstFewWords(chat.message, 15)} ...';
+          //   }
+          //   NotificationService.showDefaultNotification(title, message);
+          // } else {
+          //
+          // }
         }
 
         break;
