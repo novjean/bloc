@@ -276,7 +276,7 @@ class _PartyBannerState extends State<PartyBanner> {
                                   children: [
                                   Expanded(
                                     child: Container(
-                                      padding: EdgeInsets.symmetric(horizontal: 5),
+                                      padding: const EdgeInsets.symmetric(horizontal: 5),
                                       height: 60,
                                       child: ElevatedButton(
                                         style: ElevatedButton.styleFrom(

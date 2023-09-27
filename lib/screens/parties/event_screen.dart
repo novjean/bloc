@@ -300,11 +300,11 @@ class _EventScreenState extends State<EventScreen> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('${mParty.views} members are attending this event.',
-                      style: TextStyle(color: Constants.primary, fontSize: 16),
+                    Text('$mInterestCount members are attending this event.',
+                      style: TextStyle(color: Constants.primary, fontSize: 17),
                       textAlign: TextAlign.start,
                       overflow: TextOverflow.ellipsis,
-                      maxLines: 3,
+                      maxLines: 2,
                     ),
                     // ButtonWidget(
                     //   text: '?',
