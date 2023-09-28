@@ -54,17 +54,27 @@ exports.adFunction = functions
     .document('ads/{document}')
     .onCreate((snapshot, context) => {
       console.log(snapshot.data());
-      return admin.messaging().sendToTopic('ads', {
+      const message = {
         notification: {
           title: snapshot.data().title,
           body: snapshot.data().message,
+          image: snapshot.data().imageUrl,
           clickAction: 'FLUTTER_NOTIFICATION_CLICK',
         },
         data: {
           type: 'ads',
           document: JSON.stringify(snapshot.data()),
         },
-      });
+        topic: 'ads',
+      };
+
+      return admin.messaging().send(message)
+          .then((response) => {
+            console.log('Successfully sent ad message:', response);
+          })
+          .catch((error) => {
+            console.log('Error sending ad message:', error);
+          });
     });
 
 exports.reservationFunction = functions
@@ -187,9 +197,9 @@ exports.notificationTestFunction = functions
       return admin.messaging().send(message)
           .then((response) => {
           // Response is a message ID string.
-            console.log('Successfully sent message:', response);
+            console.log('Successfully sent test notification message:', response);
           })
           .catch((error) => {
-            console.log('Error sending message:', error);
+            console.log('Error sending test notification message:', error);
           });
     });
