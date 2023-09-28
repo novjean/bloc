@@ -209,6 +209,8 @@ exports.notificationTestFunction = functions
         apns: {
           payload: {
             aps: {
+              badge: 1,
+              sound: 'default',
               'mutable-content': 1,
             },
           },
