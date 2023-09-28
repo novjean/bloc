@@ -59,7 +59,22 @@ exports.adFunction = functions
           title: snapshot.data().title,
           body: snapshot.data().message,
           image: snapshot.data().imageUrl,
-          clickAction: 'FLUTTER_NOTIFICATION_CLICK',
+        },
+        android: {
+          notification: {
+            sound: 'default',
+            click_action: 'FLUTTER_NOTIFICATION_CLICK',
+          },
+        },
+        apns: {
+          payload: {
+            aps: {
+              'mutable-content': 1,
+            },
+          },
+          fcm_options: {
+            image: snapshot.data().imageUrl,
+          },
         },
         data: {
           type: 'ads',
