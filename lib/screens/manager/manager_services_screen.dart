@@ -15,13 +15,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import '../../db/entity/bloc_service.dart';
-import '../../db/entity/notification_test.dart';
-import '../../helpers/dummy.dart';
 import '../../helpers/firestore_helper.dart';
-import '../../main.dart';
-import '../../utils/constants.dart';
-import '../../utils/logx.dart';
-import '../../widgets/ui/textfield_widget.dart';
 import 'ad_campaigns/manage_ad_campaigns_screen.dart';
 import 'celebrations/manage_celebrations_screen.dart';
 import 'challenges/manage_challenges_screen.dart';
@@ -29,6 +23,7 @@ import 'configs/manage_configs_screen.dart';
 import 'guest_wifi_edit_screen.dart';
 import 'inventory/manage_inventory_screen.dart';
 import 'lounges/manage_lounges_screen.dart';
+import 'notification_tests/manage_notification_tests_screen.dart';
 import 'tables/manage_tables_screen.dart';
 
 class ManagerServicesScreen extends StatelessWidget {
@@ -167,76 +162,13 @@ class ManagerServicesScreen extends StatelessWidget {
                     case 'lounges':
                       {
                         Navigator.of(context).push(MaterialPageRoute(
-                            builder: (ctx) => ManageLoungesScreen()));
+                            builder: (ctx) => const ManageLoungesScreen()));
                         break;
                       }
                     case 'test notification':
                       {
-                        NotificationTest notificationTest = Dummy.getDummyNotificationTest();
-
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext ctx) {
-                            return AlertDialog(
-                              backgroundColor: Constants.lightPrimary,
-                              shape: const RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.all(Radius.circular(20.0))),
-                              contentPadding: const EdgeInsets.all(16.0),
-                              content: SizedBox(
-                                height: mq.height * 0.5,
-                                width: mq.width * 0.75,
-                                child: SingleChildScrollView(
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      const Padding(
-                                        padding: EdgeInsets.only(bottom: 10, left: 10, right: 10),
-                                        child: Text(
-                                          'notification test',
-                                          overflow: TextOverflow.ellipsis,
-                                          style: TextStyle(
-                                              fontSize: 20, fontWeight: FontWeight.bold),
-                                        ),
-                                      ),
-                                      const SizedBox(height:12),
-                                      TextFieldWidget(
-                                        text: '',
-                                        maxLines: 3,
-                                        onChanged: (text) {
-                                          notificationTest= notificationTest.copyWith(text: text);
-                                        },
-                                        label: 'text',
-                                      )
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              actions: [
-                                TextButton(
-                                  child: const Text("cancel"),
-                                  onPressed: () {
-                                    Navigator.of(ctx).pop();
-                                  },
-                                ),
-                                TextButton(
-                                  style: ButtonStyle(
-                                    backgroundColor: MaterialStateProperty.all<Color>(Constants
-                                        .darkPrimary),
-                                  ),
-                                  child: const Text(
-                                    "save",
-                                    style: TextStyle(color: Constants.primary),
-                                  ),
-                                  onPressed: () {
-                                    FirestoreHelper.pushNotificationTest(notificationTest);
-                                    Logx.ist(_TAG, 'test notification has been sent!');
-                                    Navigator.of(ctx).pop();
-                                  },
-                                ),
-                              ],
-                            );
-                          },
-                        );
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (ctx) => const ManageNotificationTestsScreen()));
                         break;
                       }
                     case 'orders':

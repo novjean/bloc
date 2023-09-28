@@ -301,18 +301,11 @@ class _EventScreenState extends State<EventScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text('$mInterestCount members are attending this event.',
-                      style: TextStyle(color: Constants.primary, fontSize: 17),
+                      style: const TextStyle(color: Constants.primary, fontSize: 17),
                       textAlign: TextAlign.start,
                       overflow: TextOverflow.ellipsis,
                       maxLines: 2,
                     ),
-                    // ButtonWidget(
-                    //   text: '?',
-                    //   onClicked: () {
-                    //   // we might need to keep track of whom all liked and such
-                    //
-                    // },),
-                    // showGuestListOrTicketButton(context),
                   ],
                 ),
               ) : const SizedBox(),

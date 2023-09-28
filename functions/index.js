@@ -171,9 +171,29 @@ exports.notificationTestFunction = functions
     .document('notification_tests/{document}')
     .onCreate((snapshot, context) => {
       console.log(snapshot.data());
-      return admin.messaging().sendToTopic('notification_tests', {
+      return admin.messaging().sendToTopic('notification_tests_2', {
+        notification: {
+          title: '️🗿 test title: ' + snapshot.data().title,
+          body:  '️🗿 test body: ' + snapshot.data().body,
+          clickAction: 'FLUTTER_NOTIFICATION_CLICK',
+        },
+        android: {
+          notification: {
+            imageUrl: 'https://foo.bar.pizza-monster.png'
+          }
+        },
+        apns: {
+          payload: {
+            aps: {
+              'mutable-content': 1
+            }
+          },
+          fcm_options: {
+            image: 'https://foo.bar.pizza-monster.png'
+          }
+        },
         data: {
-          type: 'notification_tests',
+          type: 'notification_tests_2',
           document: JSON.stringify(snapshot.data()),
         },
       });

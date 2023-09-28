@@ -167,6 +167,7 @@ class _MainScreenState extends State<MainScreen> {
       fbm.unsubscribeFromTopic('celebrations');
       fbm.unsubscribeFromTopic('offer');
       fbm.unsubscribeFromTopic('notification_tests');
+      fbm.unsubscribeFromTopic('notification_tests_2');
 
       // subscribe to topics
       fbm.subscribeToTopic('ads');
@@ -185,6 +186,7 @@ class _MainScreenState extends State<MainScreen> {
       }
       if (user.clearanceLevel >= Constants.ADMIN_LEVEL) {
         fbm.subscribeToTopic('notification_tests');
+        fbm.subscribeToTopic('notification_tests_2');
       }
     } else {
       // in web mode
@@ -327,6 +329,7 @@ class _MainScreenState extends State<MainScreen> {
       fbm.unsubscribeFromTopic('celebrations');
       fbm.unsubscribeFromTopic('offer');
       fbm.unsubscribeFromTopic('notification_tests');
+      fbm.unsubscribeFromTopic('notification_tests_2');
 
       fbm.unsubscribeFromTopic('lounge_chats');
       if (UserPreferences.isUserLoggedIn()) {

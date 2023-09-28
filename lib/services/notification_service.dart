@@ -276,11 +276,11 @@ class NotificationService {
         }
         break;
       }
-      case 'notification_tests': {
+      case 'notification_tests_2': {
         NotificationTest notificationTest = Fresh.freshNotificationTestMap(jsonDecode(data['document']), false);
 
         String? title ='notification test!';
-        String? body = notificationTest.text;
+        String? body = notificationTest.title;
 
         if(notificationId == notificationTest.id){
           return;

@@ -2,7 +2,6 @@ import 'package:bloc/db/entity/party_guest.dart';
 import 'package:bloc/helpers/dummy.dart';
 import 'package:bloc/helpers/firestore_helper.dart';
 import 'package:bloc/screens/parties/party_guest_add_edit_manage_screen.dart';
-import 'package:bloc/services/notification_service.dart';
 import 'package:bloc/utils/string_utils.dart';
 import 'package:bloc/widgets/ui/app_bar_title.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -23,9 +22,10 @@ import '../../utils/file_utils.dart';
 import '../../utils/logx.dart';
 import '../../widgets/parties/manage_guest_list_item.dart';
 import '../../widgets/ui/loading_widget.dart';
-import '../../widgets/ui/toaster.dart';
 
 class ManageGuestListScreen extends StatefulWidget {
+  const ManageGuestListScreen({super.key});
+
   @override
   State<ManageGuestListScreen> createState() => _ManageGuestListScreenState();
 }
@@ -56,17 +56,17 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
       if (res.docs.isNotEmpty) {
         // found parties
         List<Party> parties = [];
-        List<String> _partyNames = ['all'];
+        List<String> partyNames = ['all'];
         for (int i = 0; i < res.docs.length; i++) {
           DocumentSnapshot document = res.docs[i];
           Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
           final Party party = Fresh.freshPartyMap(data, true);
           parties.add(party);
-          _partyNames.add('${party.name} ${party.chapter}');
+          partyNames.add('${party.name} ${party.chapter}');
         }
         setState(() {
           mParties = parties;
-          mPartyNames = _partyNames;
+          mPartyNames = partyNames;
           _isPartiesLoading = false;
         });
       } else {
@@ -79,6 +79,8 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
         });
       }
     });
+
+    super.initState();
   }
 
   @override
@@ -755,7 +757,7 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  Text('select move to party'),
+                  const Text('select move to party'),
                   MultiSelectDialogField(
                     items: mParties
                         .map(
@@ -780,7 +782,7 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
                     ),
                     searchable: true,
                     onConfirm: (values) {
-                      sParties = values as List<Party>;
+                      sParties = values;
 
                       if (sParties.isNotEmpty) {
                         Party sParty = sParties.first;

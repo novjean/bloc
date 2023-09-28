@@ -834,7 +834,9 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
             TextButton(
               child: const Text("cancel"),
               onPressed: () {
-                FirestorageHelper.deleteFile(chat.message);
+                if(chat.message.contains('chat_image')){
+                  FirestorageHelper.deleteFile(chat.message);
+                }
 
                 Navigator.of(ctx).pop();
               },

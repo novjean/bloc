@@ -19,6 +19,7 @@ class FirestorageHelper {
   static String CATEGORY_IMAGES = 'service_category_image';
   static String CHAT_IMAGES = 'chat_image';
   static String LOUNGE_IMAGES = 'lounge_image';
+  static String NOTIFICATION_TEST_IMAGES = 'notification_test_image';
   static String PRODUCT_IMAGES = 'product_image';
   static String PARTY_IMAGES = 'party_image';
   static String PARTY_STORY_IMAGES = 'party_story_image';
@@ -26,6 +27,7 @@ class FirestorageHelper {
   static String PARTY_PHOTO_THUMB_IMAGES = 'party_photo_thumb_image';
   static String UI_PHOTO_IMAGES = 'ui_photo_image';
   static String USER_IMAGES = 'user_image';
+
 
   static Future<bool> deleteFile(String fileUrl) async {
     final firebaseStorage = FirebaseStorage.instance;

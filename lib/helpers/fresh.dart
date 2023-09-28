@@ -1642,9 +1642,21 @@ class Fresh {
       Logx.em(_TAG, 'notification test id not exist');
     }
     try {
-      notificationTest = notificationTest.copyWith(text: map['text'] as String);
+      notificationTest = notificationTest.copyWith(title: map['title'] as String);
     } catch (e) {
-      Logx.em(_TAG, 'notification test text not exist for id: ${notificationTest.id}');
+      Logx.em(_TAG, 'notification test title not exist for id: ${notificationTest.id}');
+      isModelChanged = true;
+    }
+    try {
+      notificationTest = notificationTest.copyWith(body: map['body'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'notification test body not exist for id: ${notificationTest.id}');
+      isModelChanged = true;
+    }
+    try {
+      notificationTest = notificationTest.copyWith(imageUrl: map['imageUrl'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'notification test imageUrl not exist for id: ${notificationTest.id}');
       isModelChanged = true;
     }
 
@@ -1666,9 +1678,19 @@ class Fresh {
       Logx.em(_TAG, 'notification test id not exist');
     }
     try {
-      fresh = fresh.copyWith(text: notificationTest.text);
+      fresh = fresh.copyWith(title: notificationTest.title);
     } catch (e) {
-      Logx.em(_TAG, 'notification test text not exist for id: ${notificationTest.id}');
+      Logx.em(_TAG, 'notification test title not exist for id: ${notificationTest.id}');
+    }
+    try {
+      fresh = fresh.copyWith(body: notificationTest.body);
+    } catch (e) {
+      Logx.em(_TAG, 'notification test body not exist for id: ${notificationTest.id}');
+    }
+    try {
+      fresh = fresh.copyWith(imageUrl: notificationTest.imageUrl);
+    } catch (e) {
+      Logx.em(_TAG, 'notification test imageUrl not exist for id: ${notificationTest.id}');
     }
 
     return fresh;

@@ -176,8 +176,7 @@ class Dummy {
         actionType: 'url',
         buttonCount: 1,
         buttonTitle: '',
-        challengeId: challengeId
-    );
+        challengeId: challengeId);
     return dummy;
   }
 
@@ -252,9 +251,7 @@ class Dummy {
 
   static NotificationTest getDummyNotificationTest() {
     NotificationTest dummy = NotificationTest(
-        id: StringUtils.getRandomString(28),
-        text: ''
-    );
+        id: StringUtils.getRandomString(28), title: '', body: '', imageUrl: '');
     return dummy;
   }
 
@@ -280,7 +277,6 @@ class Dummy {
     Party dummyParty = Party(
         id: StringUtils.getRandomString(28),
         createdAt: Timestamp.now().millisecondsSinceEpoch,
-
         imageUrls: [],
         imageUrl: '',
         isSquare: true,
@@ -305,7 +301,6 @@ class Dummy {
         isEmailRequired: false,
         clubRules: Constants.clubRules,
         guestListRules: Constants.guestListRules,
-
         type: 'artist',
         isTicketed: false,
         ticketsSoldCount: 0,
@@ -319,8 +314,7 @@ class Dummy {
         loungeId: '',
         isTicketsDisabled: false,
         views: 0,
-        shareCount: 0
-    );
+        shareCount: 0);
 
     return dummyParty;
   }
@@ -410,7 +404,7 @@ class Dummy {
 
   static Promoter getDummyPromoter() {
     Promoter dummy =
-    Promoter(id: StringUtils.getRandomString(28), name: '', type: 'brand');
+        Promoter(id: StringUtils.getRandomString(28), name: '', type: 'brand');
 
     return dummy;
   }
@@ -460,7 +454,7 @@ class Dummy {
         blocServiceId: blocServiceId,
         customerId: UserPreferences.myUser.id,
         name:
-        UserPreferences.isUserLoggedIn() ? UserPreferences.myUser.name : '',
+            UserPreferences.isUserLoggedIn() ? UserPreferences.myUser.name : '',
         phone: UserPreferences.isUserLoggedIn()
             ? UserPreferences.myUser.phoneNumber
             : 0,
@@ -518,8 +512,7 @@ class Dummy {
 
   static UiPhoto getDummyUiPhoto() {
     UiPhoto uiPhoto =
-    UiPhoto(id: StringUtils.getRandomString(28),
-        name: '', imageUrls: []);
+        UiPhoto(id: StringUtils.getRandomString(28), name: '', imageUrls: []);
     return uiPhoto;
   }
 
@@ -552,7 +545,7 @@ class Dummy {
 
   static UserLevel getDummyUserLevel() {
     UserLevel dummyUserLevel =
-    const UserLevel(id: '84ub8bC0m3NQH9KfWCkD', name: 'customer', level: 1);
+        const UserLevel(id: '84ub8bC0m3NQH9KfWCkD', name: 'customer', level: 1);
 
     return dummyUserLevel;
   }

@@ -900,6 +900,12 @@ class FirestoreHelper {
     }
   }
 
+  static getNotificationTests() {
+    return FirebaseFirestore.instance
+        .collection(NOTIFICATION_TESTS)
+        .snapshots();
+  }
+
   static void deleteNotificationTest(String docId) {
     FirebaseFirestore.instance.collection(NOTIFICATION_TESTS).doc(docId).delete();
   }
@@ -2267,7 +2273,6 @@ class FirestoreHelper {
   static void deleteUserLounge(String docId) {
     FirebaseFirestore.instance.collection(USER_LOUNGES).doc(docId).delete();
   }
-
 
 
 }

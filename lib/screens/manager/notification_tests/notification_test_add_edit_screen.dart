@@ -16,6 +16,7 @@ import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 
 import '../../../db/entity/ad.dart';
+import '../../../db/entity/notification_test.dart';
 import '../../../db/entity/party.dart';
 import '../../../helpers/firestore_helper.dart';
 import '../../../services/notification_service.dart';
@@ -27,19 +28,21 @@ import '../../../widgets/ui/button_widget.dart';
 import '../../../widgets/ui/dark_button_widget.dart';
 import '../../../widgets/ui/textfield_widget.dart';
 
-class AdAddEditScreen extends StatefulWidget {
-  Ad ad;
+class NotificationTestAddEditScreen extends StatefulWidget {
+  NotificationTest test;
   String task;
 
-  AdAddEditScreen({key, required this.ad, required this.task})
+  NotificationTestAddEditScreen({key, required this.test, required this.task})
       : super(key: key);
 
   @override
-  _AdAddEditScreenState createState() => _AdAddEditScreenState();
+  _NotificationTestAddEditScreenState createState() =>
+      _NotificationTestAddEditScreenState();
 }
 
-class _AdAddEditScreenState extends State<AdAddEditScreen> {
-  static const String _TAG = 'AdAddEditScreen';
+class _NotificationTestAddEditScreenState
+    extends State<NotificationTestAddEditScreen> {
+  static const String _TAG = 'NotificationTestAddEditScreen';
   bool testMode = false;
 
   List<Party> mParties = [];
@@ -78,7 +81,7 @@ class _AdAddEditScreenState extends State<AdAddEditScreen> {
   Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(
           title: AppBarTitle(
-            title: '${widget.task} ad',
+            title: '${widget.task} test notification',
           ),
           titleSpacing: 0,
         ),
@@ -92,13 +95,11 @@ class _AdAddEditScreenState extends State<AdAddEditScreen> {
       children: [
         const SizedBox(height: 15),
         ProfileWidget(
-          imagePath: imagePath.isEmpty ? widget.ad.imageUrl : imagePath,
+          imagePath: imagePath.isEmpty ? widget.test.imageUrl : imagePath,
           isEdit: true,
           onClicked: () async {
             final image = await ImagePicker().pickImage(
-                source: ImageSource.gallery,
-                imageQuality: 95,
-                maxWidth: 768);
+                source: ImageSource.gallery, imageQuality: 95, maxWidth: 768);
             if (image == null) return;
 
             final directory = await getApplicationDocumentsDirectory();
@@ -106,10 +107,11 @@ class _AdAddEditScreenState extends State<AdAddEditScreen> {
             final imageFile = File('${directory.path}/$name');
             final newImage = await File(image.path).copy(imageFile.path);
 
-            if(!isPartyPhoto){
-              String oldImageUrl = widget.ad.imageUrl;
+            if (!isPartyPhoto) {
+              String oldImageUrl = widget.test.imageUrl;
 
-              if(oldImageUrl.isNotEmpty && oldImageUrl.contains('ad_image')){
+              if (oldImageUrl.isNotEmpty &&
+                  oldImageUrl.contains('notification_test_image')) {
                 FirestorageHelper.deleteFile(oldImageUrl);
               }
             } else {
@@ -117,22 +119,23 @@ class _AdAddEditScreenState extends State<AdAddEditScreen> {
             }
 
             String newImageUrl = await FirestorageHelper.uploadFile(
-                FirestorageHelper.AD_IMAGES,
+                FirestorageHelper.NOTIFICATION_TEST_IMAGES,
                 StringUtils.getRandomString(28),
                 newImage);
-            widget.ad = widget.ad.copyWith(imageUrl: newImageUrl);
+            widget.test = widget.test.copyWith(imageUrl: newImageUrl);
 
             setState(() {
               imagePath = imageFile.path;
             });
           },
         ),
-
-        const SizedBox(height: 24,),
+        const SizedBox(
+          height: 24,
+        ),
         TextFieldWidget(
           label: 'title *',
-          text: widget.ad.title,
-          onChanged: (title) => widget.ad = widget.ad.copyWith(title: title),
+          text: widget.test.title,
+          onChanged: (text) => widget.test = widget.test.copyWith(title: text),
         ),
         const SizedBox(height: 24),
         Column(
@@ -179,16 +182,17 @@ class _AdAddEditScreenState extends State<AdAddEditScreen> {
 
                   setState(() {
                     isPartyPhoto = true;
-                    widget.ad = widget.ad.copyWith(
-                        imageUrl: party.imageUrl,
-                        partyName: party.name,
-                        partyChapter: party.chapter);
+                    widget.test = widget.test.copyWith(
+                      title: party.name,
+                      body: party.description,
+                      imageUrl: party.imageUrl,
+                    );
                   });
                 } else {
                   setState(() {
                     isPartyPhoto = false;
-                    widget.ad = widget.ad.copyWith(
-                        imageUrl: '', partyName: '', partyChapter: '');
+                    widget.test =
+                        widget.test.copyWith(title: '', body: '', imageUrl: '');
                   });
                 }
               },
@@ -197,68 +201,47 @@ class _AdAddEditScreenState extends State<AdAddEditScreen> {
         ),
         const SizedBox(height: 24),
         TextFieldWidget(
-          label: 'message *',
-          text: widget.ad.message,
+          label: 'body *',
+          text: widget.test.body,
           maxLines: 8,
-          onChanged: (message) =>
-              widget.ad = widget.ad.copyWith(message: message),
+          onChanged: (text) => widget.test = widget.test.copyWith(body: text),
         ),
-        const SizedBox(height: 24),
-        Row(
-          children: <Widget>[
-            const Text(
-              'active : ',
-              style: TextStyle(fontSize: 17.0),
-            ), //Text
-            const SizedBox(width: 10), //SizedBox
-            Checkbox(
-              value: widget.ad.isActive,
-              onChanged: (value) {
-                setState(() {
-                  widget.ad = widget.ad.copyWith(isActive: value);
-                });
-              },
-            ), //Checkbox
-          ], //<Widget>[]
-        ),
-
         const SizedBox(height: 24),
         ButtonWidget(
           text: '💾 save',
           onClicked: () async {
-            Ad freshAd = Fresh.freshAd(widget.ad);
+            NotificationTest test = Fresh.freshNotificationTest(widget.test);
 
             if (!testMode) {
-              FirestoreHelper.pushAd(freshAd);
+              FirestoreHelper.pushNotificationTest(test);
               Navigator.of(context).pop();
             } else {
-              if (widget.ad.imageUrl.isEmpty) {
+              if (widget.test.imageUrl.isEmpty) {
                 await NotificationService.showNotification(
-                    title: widget.ad.title,
-                    body: widget.ad.message,
+                    title: widget.test.title,
+                    body: widget.test.body,
                     actionButtons: [
                       NotificationActionButton(
                           key: 'DISMISS',
                           label: 'Dismiss',
                           actionType: ActionType.DismissAction,
                           isDangerousOption: true)
-                    ]
-                );
+                    ]);
               } else {
-                Map<String, dynamic> objectMap = widget.ad.toMap();
+                Map<String, dynamic> objectMap = widget.test.toMap();
                 String jsonString = jsonEncode(objectMap);
 
                 await NotificationService.showNotification(
-                    title: widget.ad.title,
-                    body: widget.ad.message,
-                    bigPicture: widget.ad.imageUrl,
-                    largeIcon: widget.ad.imageUrl,
-                    notificationLayout: NotificationLayout.BigPicture,
-                    payload: {
-                      "navigate": "true",
-                      "type": "ad",
-                      "data": jsonString,
-                    },
+                  title: widget.test.title,
+                  body: widget.test.body,
+                  bigPicture: widget.test.imageUrl,
+                  largeIcon: widget.test.imageUrl,
+                  notificationLayout: NotificationLayout.BigPicture,
+                  payload: {
+                    "navigate": "true",
+                    "type": "notification_test",
+                    "data": jsonString,
+                  },
                 );
               }
             }
@@ -268,10 +251,12 @@ class _AdAddEditScreenState extends State<AdAddEditScreen> {
         DarkButtonWidget(
           text: 'delete',
           onClicked: () {
-            if(widget.ad.imageUrl.isNotEmpty && widget.ad.imageUrl.contains('ad_image')){
-              FirestorageHelper.deleteFile(widget.ad.imageUrl);
+            if (widget.test.imageUrl.isNotEmpty &&
+                widget.test.imageUrl.contains('notification_test_image')) {
+              FirestorageHelper.deleteFile(widget.test.imageUrl);
             }
-            FirestoreHelper.deleteAd(widget.ad.id);
+
+            FirestoreHelper.deleteNotificationTest(widget.test.id);
             Navigator.of(context).pop();
           },
         ),
