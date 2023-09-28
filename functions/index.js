@@ -171,30 +171,25 @@ exports.notificationTestFunction = functions
     .document('notification_tests/{document}')
     .onCreate((snapshot, context) => {
       console.log(snapshot.data());
-      return admin.messaging().sendToTopic('notification_tests_2', {
+      const message = {
         notification: {
           title: '️🗿 test title: ' + snapshot.data().title,
-          body:  '️🗿 test body: ' + snapshot.data().body,
-          clickAction: 'FLUTTER_NOTIFICATION_CLICK',
-        },
-        android: {
-          notification: {
-            imageUrl: 'https://foo.bar.pizza-monster.png'
-          }
-        },
-        apns: {
-          payload: {
-            aps: {
-              'mutable-content': 1
-            }
-          },
-          fcm_options: {
-            image: 'https://foo.bar.pizza-monster.png'
-          }
+          body: 'test body: ' + snapshot.data().body,
+          image: snapshot.data().imageUrl,
         },
         data: {
           type: 'notification_tests_2',
           document: JSON.stringify(snapshot.data()),
         },
-      });
+        topic: 'notification_tests_2',
+      };
+
+      return admin.messaging().send(message)
+          .then((response) => {
+          // Response is a message ID string.
+            console.log('Successfully sent message:', response);
+          })
+          .catch((error) => {
+            console.log('Error sending message:', error);
+          });
     });

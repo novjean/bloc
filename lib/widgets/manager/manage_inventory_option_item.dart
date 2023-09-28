@@ -1,9 +1,7 @@
 import 'package:bloc/db/entity/inventory_option.dart';
 import 'package:flutter/material.dart';
 
-import '../../../db/entity/party_photo.dart';
 import '../../../utils/constants.dart';
-import '../../../utils/date_time_utils.dart';
 
 class ManageInventoryOptionItem extends StatelessWidget{
   static const String _TAG = 'ManageInventoryOptionItem';
