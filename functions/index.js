@@ -191,15 +191,25 @@ exports.notificationTestFunction = functions
           type: 'notification_tests_2',
           document: JSON.stringify(snapshot.data()),
         },
+        apns: {
+          payload: {
+            aps: {
+              'mutable-content': 1,
+            },
+          },
+          fcm_options: {
+            image: snapshot.data().imageUrl,
+          },
+        },
         topic: 'notification_tests_2',
       };
 
       return admin.messaging().send(message)
           .then((response) => {
           // Response is a message ID string.
-            console.log('Successfully sent test notification message:', response);
+            console.log('Successfully sent test notify message:', response);
           })
           .catch((error) => {
-            console.log('Error sending test notification message:', error);
+            console.log('Error sending test notify message:', error);
           });
     });
