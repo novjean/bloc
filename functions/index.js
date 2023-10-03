@@ -92,6 +92,50 @@ exports.adFunction = functions
           });
     });
 
+exports.chatFunction = functions
+    .region('asia-south1')
+    .firestore
+    .document('lounge_chats/{document}')
+    .onCreate((snapshot, context) => {
+      console.log(snapshot.data());
+      const message = {
+        notification: {
+          title: '🗨️ ' + snapshot.data().loungeName,
+          body: snapshot.data().userName + ': '+snapshot.data().message,
+          image: snapshot.data().imageUrl,
+        },
+        android: {
+          notification: {
+            sound: 'default',
+            click_action: 'FLUTTER_NOTIFICATION_CLICK',
+          },
+        },
+        apns: {
+          payload: {
+            aps: {
+              'mutable-content': 1,
+            },
+          },
+          fcm_options: {
+            image: snapshot.data().imageUrl,
+          },
+        },
+        data: {
+          type: 'lounge_chats',
+          document: JSON.stringify(snapshot.data()),
+        },
+        topic: snapshot.data().loungeId,
+      };
+
+      return admin.messaging().send(message)
+          .then((response) => {
+            console.log('Successfully sent chat:', response);
+          })
+          .catch((error) => {
+            console.log('Error sending chat:', error);
+          });
+    });
+
 exports.reservationFunction = functions
     .region('asia-south1')
     .firestore
@@ -163,31 +207,6 @@ exports.partyGuestFunction = functions
           },
         });
       }
-    });
-
-exports.chatFunction = functions
-    .region('asia-south1')
-    .firestore
-    .document('lounge_chats/{document}')
-    .onCreate((snapshot, context) => {
-      console.log('chat received in ' + snapshot.data().loungeName);
-      console.log('chat fcm notify topic is ' + snapshot.data().loungeId);
-
-      return admin.messaging().sendToTopic(snapshot.data().loungeId, {
-        notification: {
-          title: '🗨️ chat: ' + snapshot.data().loungeName,
-          body: snapshot.data().userName + ': '+snapshot.data().message,
-          clickAction: 'FLUTTER_NOTIFICATION_CLICK',
-        },
-        data: {
-          type: 'lounge_chats',
-          document: JSON.stringify(snapshot.data()),
-        },
-      }).then((response) => {
-        console.log('Successfully sent message:', response);
-      }).catch((error) => {
-        console.log('Error sending message:', error);
-      });
     });
 
 exports.notificationTestFunction = functions
