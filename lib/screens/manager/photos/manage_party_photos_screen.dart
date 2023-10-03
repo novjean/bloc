@@ -85,7 +85,7 @@ class _ManagePartyPhotosScreenState extends State<ManagePartyPhotosScreen> {
             case ConnectionState.done:
               {
                 mPartyPhotos = [];
-                
+
                 try {
                   for (int i = 0; i < snapshot.data!.docs.length; i++) {
                     DocumentSnapshot document = snapshot.data!.docs[i];

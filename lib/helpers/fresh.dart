@@ -1783,7 +1783,7 @@ class Fresh {
     try {
       party = party.copyWith(listenUrl: map['listenUrl'] as String);
     } catch (e) {
-      Logx.em(_TAG, 'party listenUrl not exist for id: ' + party.id);
+      Logx.em(_TAG, 'party listenUrl not exist for id: ${party.id}');
       isModelChanged = true;
     }
     try {
@@ -1819,13 +1819,13 @@ class Fresh {
     try {
       party = party.copyWith(isActive: map['isActive'] as bool);
     } catch (e) {
-      Logx.em(_TAG, 'party isActive not exist for party id: ' + party.id);
+      Logx.em(_TAG, 'party isActive not exist for id: ${party.id}');
       isModelChanged = true;
     }
     try {
       party = party.copyWith(isBigAct: map['isBigAct'] as bool);
     } catch (e) {
-      Logx.em(_TAG, 'party isBigAct not exist for party id: ' + party.id);
+      Logx.em(_TAG, 'party isBigAct not exist for id: ${party.id}');
       isModelChanged = true;
     }
 
@@ -1834,7 +1834,15 @@ class Fresh {
           party.copyWith(isGuestListActive: map['isGuestListActive'] as bool);
     } catch (e) {
       Logx.em(
-          _TAG, 'party isGuestListActive not exist for party id: ' + party.id);
+          _TAG, 'party isGuestListActive not exist for id: ${party.id}');
+      isModelChanged = true;
+    }
+    try {
+      party =
+          party.copyWith(isGuestListFull: map['isGuestListFull'] as bool);
+    } catch (e) {
+      Logx.em(
+          _TAG, 'party isGuestListFull not exist for id: ${party.id}');
       isModelChanged = true;
     }
     try {
@@ -2106,7 +2114,7 @@ class Fresh {
     try {
       freshParty = freshParty.copyWith(isBigAct: party.isBigAct);
     } catch (e) {
-      Logx.em(_TAG, 'party isBigAct not exist for party id: ' + party.id);
+      Logx.em(_TAG, 'party isBigAct not exist for id: ${party.id}');
     }
 
     try {
@@ -2115,6 +2123,13 @@ class Fresh {
     } catch (e) {
       Logx.em(
           _TAG, 'party isGuestListActive not exist for id: ${party.id}');
+    }
+    try {
+      freshParty =
+          freshParty.copyWith(isGuestListFull: party.isGuestListFull);
+    } catch (e) {
+      Logx.em(
+          _TAG, 'party isGuestListFull not exist for id: ${party.id}');
     }
     try {
       freshParty =

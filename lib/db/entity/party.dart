@@ -26,6 +26,7 @@ class Party {
   final bool isBigAct;
 
   final bool isGuestListActive;
+  final bool isGuestListFull;
   final int guestListCount;
   final bool isGuestsCountRestricted;
 
@@ -75,6 +76,7 @@ class Party {
     required this.isActive,
     required this.isBigAct,
     required this.isGuestListActive,
+    required this.isGuestListFull,
     required this.guestListCount,
     required this.isGuestsCountRestricted,
     required this.isEmailRequired,
@@ -122,6 +124,7 @@ class Party {
           isActive == other.isActive &&
           isBigAct == other.isBigAct &&
           isGuestListActive == other.isGuestListActive &&
+          isGuestListFull == other.isGuestListFull &&
           guestListCount == other.guestListCount &&
           isGuestsCountRestricted == other.isGuestsCountRestricted &&
           isEmailRequired == other.isEmailRequired &&
@@ -165,6 +168,7 @@ class Party {
       isActive.hashCode ^
       isBigAct.hashCode ^
       isGuestListActive.hashCode ^
+      isGuestListFull.hashCode ^
       guestListCount.hashCode ^
       isGuestsCountRestricted.hashCode ^
       isEmailRequired.hashCode ^
@@ -209,6 +213,7 @@ class Party {
         ' isActive: $isActive,' +
         ' isBigAct: $isBigAct,' +
         ' isGuestListActive: $isGuestListActive,' +
+        ' isGuestListFull: $isGuestListFull,' +
         ' guestListCount: $guestListCount,' +
         ' isGuestsCountRestricted: $isGuestsCountRestricted,' +
         ' isEmailRequired: $isEmailRequired,' +
@@ -253,6 +258,7 @@ class Party {
     bool? isActive,
     bool? isBigAct,
     bool? isGuestListActive,
+    bool? isGuestListFull,
     int? guestListCount,
     bool? isGuestsCountRestricted,
     bool? isEmailRequired,
@@ -295,6 +301,7 @@ class Party {
       isActive: isActive ?? this.isActive,
       isBigAct: isBigAct ?? this.isBigAct,
       isGuestListActive: isGuestListActive ?? this.isGuestListActive,
+      isGuestListFull: isGuestListFull ?? this.isGuestListFull,
       guestListCount: guestListCount ?? this.guestListCount,
       isGuestsCountRestricted:
           isGuestsCountRestricted ?? this.isGuestsCountRestricted,
@@ -341,6 +348,7 @@ class Party {
       'isActive': this.isActive,
       'isBigAct': this.isBigAct,
       'isGuestListActive': this.isGuestListActive,
+      'isGuestListFull': this.isGuestListFull,
       'guestListCount': this.guestListCount,
       'isGuestsCountRestricted': this.isGuestsCountRestricted,
       'isEmailRequired': this.isEmailRequired,
@@ -386,6 +394,7 @@ class Party {
       isActive: map['isActive'] as bool,
       isBigAct: map['isBigAct'] as bool,
       isGuestListActive: map['isGuestListActive'] as bool,
+      isGuestListFull: map['isGuestListFull'] as bool,
       guestListCount: map['guestListCount'] as int,
       isGuestsCountRestricted: map['isGuestsCountRestricted'] as bool,
       isEmailRequired: map['isEmailRequired'] as bool,

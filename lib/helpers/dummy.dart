@@ -295,6 +295,7 @@ class Dummy {
         listenUrl: '',
         eventName: '',
         isGuestListActive: false,
+        isGuestListFull: false,
         guestListCount: 2,
         isGuestsCountRestricted: true,
         guestListEndTime: Timestamp.now().millisecondsSinceEpoch,

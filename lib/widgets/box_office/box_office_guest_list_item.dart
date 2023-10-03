@@ -162,10 +162,14 @@ class _BoxOfficeGuestListItemState extends State<BoxOfficeGuestListItem> {
                       : _showDisabledBuyTicketButton(context),
                   widget.partyGuest.isApproved
                       ? _showApprovedButton(context)
-                      : _showPendingButton(context),
+                      : widget.party.isGuestListFull
+                          ? _showGuestListFullButton(context)
+                          : _showPendingButton(context),
                   widget.partyGuest.isApproved
                       ? _showGuestListEntryButton(context)
-                      : _showEditGuestListButton(context)
+                      : widget.party.isGuestListFull
+                          ? const SizedBox()
+                          : _showEditGuestListButton(context)
                 ],
               ),
             ],
@@ -276,6 +280,97 @@ class _BoxOfficeGuestListItemState extends State<BoxOfficeGuestListItem> {
         },
       ),
     ));
+  }
+
+  _showGuestListFullButton(BuildContext context) {
+    return Expanded(
+        child: Container(
+      padding: const EdgeInsets.symmetric(horizontal: 5),
+      height: 60,
+      child: ElevatedButton.icon(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Constants.lightPrimary,
+          foregroundColor: Constants.primary,
+          shadowColor: Colors.white30,
+          minimumSize: const Size.fromHeight(60),
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(10), topRight: Radius.circular(10)),
+          ),
+          elevation: 3,
+        ),
+        label: const Text(
+          'guest list is full',
+          style: TextStyle(fontSize: 14, color: Constants.darkPrimary),
+        ),
+        icon: const Icon(
+          Icons.people_alt_rounded,
+          size: 24.0,
+          color: Constants.darkPrimary,
+        ),
+        onPressed: () {
+          _showGuestListFullDialog(context);
+        },
+      ),
+    ));
+  }
+
+  void _showGuestListFullDialog(BuildContext context) {
+    showDialog(
+        context: context,
+        builder: (BuildContext ctx) {
+          return AlertDialog(
+            title: const Text(
+              'limited guest list is full',
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 22, color: Colors.black),
+            ),
+            backgroundColor: Constants.lightPrimary,
+            shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(20.0))),
+            contentPadding: const EdgeInsets.all(16.0),
+            content: SizedBox(
+              width: double.maxFinite,
+              child: ListView(
+                shrinkWrap: true,
+                children: [
+                  widget.party.ticketUrl.isNotEmpty &&
+                          !widget.party.isTicketsDisabled
+                      ? Text(
+                          'due to an incredible turnout, our event guest list is completely booked. to be part of this exciting event, we kindly suggest purchasing a ticket as your only option. thank you for your interest!'
+                              .toLowerCase())
+                      : Text(
+                          'due to an incredible turnout, our event guest list is completely booked. to be part of this exciting event, we kindly suggest purchasing a ticket at the gate as your only option. thank you for understanding!'
+                              .toLowerCase()),
+                ],
+              ),
+            ),
+            actions: [
+              TextButton(
+                child: const Text('close',
+                    style: TextStyle(color: Constants.background)),
+                onPressed: () {
+                  Navigator.of(ctx).pop();
+                },
+              ),
+              widget.party.ticketUrl.isNotEmpty &&
+                      !widget.party.isTicketsDisabled
+                  ? TextButton(
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all<Color>(
+                            Constants.darkPrimary),
+                      ),
+                      child: const Text('🎟️ buy ticket',
+                          style: TextStyle(color: Constants.primary)),
+                      onPressed: () {
+                        Navigator.of(ctx).pop();
+                        _handleBuyTixPressed();
+                      },
+                    )
+                  : const SizedBox(),
+            ],
+          );
+        });
   }
 
   _showBuyTicketButton(BuildContext context) {
@@ -471,7 +566,10 @@ class _BoxOfficeGuestListItemState extends State<BoxOfficeGuestListItem> {
                               backgroundColor: MaterialStateProperty.all<Color>(
                                   Constants.darkPrimary),
                             ),
-                            child: const Text("🎟 win free entry", style: TextStyle(color: Constants.primary),),
+                            child: const Text(
+                              "🎟 win free entry",
+                              style: TextStyle(color: Constants.primary),
+                            ),
                             onPressed: () {
                               Navigator.of(context).pop();
                               _loadChallengeDialog(context);
@@ -572,8 +670,9 @@ class _BoxOfficeGuestListItemState extends State<BoxOfficeGuestListItem> {
             if (ca.actionType == 'instagram_url') {
               ca = ca.copyWith(action: widget.party.instagramUrl);
             } else if (ca.actionType == 'bloc_url') {
-                final url = 'http://bloc.bar/#/event/${Uri.encodeComponent(widget.party.name)}/${widget.party.chapter}';
-                ca = ca.copyWith(action: url);
+              final url =
+                  'http://bloc.bar/#/event/${Uri.encodeComponent(widget.party.name)}/${widget.party.chapter}';
+              ca = ca.copyWith(action: url);
             }
             cas.add(ca);
           }

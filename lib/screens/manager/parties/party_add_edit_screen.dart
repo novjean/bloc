@@ -1017,6 +1017,25 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
               Row(
                 children: <Widget>[
                   const Text(
+                    'guest list full : ',
+                    style: TextStyle(fontSize: 17.0),
+                  ), //Text
+                  const SizedBox(width: 10), //SizedBox
+                  Checkbox(
+                    value: widget.party.isGuestListFull,
+                    onChanged: (value) {
+                      setState(() {
+                        widget.party =
+                            widget.party.copyWith(isGuestListFull: value);
+                      });
+                    },
+                  ), //Checkbox
+                ], //<Widget>[]
+              ),
+              const SizedBox(height: 12),
+              Row(
+                children: <Widget>[
+                  const Text(
                     'guests count restricted : ',
                     style: TextStyle(fontSize: 17.0),
                   ), //Text
