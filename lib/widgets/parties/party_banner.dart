@@ -274,7 +274,7 @@ class _PartyBannerState extends State<PartyBanner> {
                                         ],
                                       )
                                     : const SizedBox(),
-                                showGuestListBuyTix?
+                                showGuestListBuyTix && !widget.party.isGuestListFull?
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                   children: [

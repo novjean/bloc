@@ -271,7 +271,7 @@ class _EventScreenState extends State<EventScreen> {
                       style: const TextStyle(
                           fontSize: 18, color: Constants.lightPrimary),
                     ),
-                    showGuestListBuyTix
+                    showGuestListBuyTix && !mParty.isGuestListFull
                         ? _showGuestListMiniButton(context)
                         : const SizedBox(),
                   ],
@@ -301,7 +301,7 @@ class _EventScreenState extends State<EventScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text('$mInterestCount members are attending this event.',
-                      style: const TextStyle(color: Constants.primary, fontSize: 17),
+                      style: const TextStyle(color: Constants.primary, fontSize: 18),
                       textAlign: TextAlign.start,
                       overflow: TextOverflow.ellipsis,
                       maxLines: 2,

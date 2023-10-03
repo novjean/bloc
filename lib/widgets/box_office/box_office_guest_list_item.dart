@@ -88,7 +88,7 @@ class _BoxOfficeGuestListItemState extends State<BoxOfficeGuestListItem> {
       tag: widget.partyGuest.id,
       child: Card(
         elevation: 1,
-        color: Theme.of(context).primaryColorLight,
+        color: Constants.lightPrimary,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)),
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 5),
@@ -300,11 +300,11 @@ class _BoxOfficeGuestListItemState extends State<BoxOfficeGuestListItem> {
           elevation: 3,
         ),
         label: const Text(
-          'guest list is full',
+          '🚧 guest list is full',
           style: TextStyle(fontSize: 14, color: Constants.darkPrimary),
         ),
         icon: const Icon(
-          Icons.people_alt_rounded,
+          Icons.stop_circle,
           size: 24.0,
           color: Constants.darkPrimary,
         ),
