@@ -50,6 +50,8 @@ class _EventScreenState extends State<EventScreen> {
 
   int mInterestCount = 0;
 
+  bool isGuestListRequested = false;
+
   @override
   void initState() {
     FirestoreHelper.pullPartyByNameChapter(
@@ -65,9 +67,21 @@ class _EventScreenState extends State<EventScreen> {
           mParty = party;
         }
 
-        setState(() {
-          _isPartyLoading = false;
-        });
+        if(UserPreferences.isUserLoggedIn()){
+          FirestoreHelper.pullPartyGuestByUser(UserPreferences.myUser.id, mParty.id)
+              .then((res) {
+                if(res.docs.isNotEmpty){
+                  setState(() {
+                    _isPartyLoading = false;
+                    isGuestListRequested = true;
+                  });
+                } else {
+                  setState(() {
+                    _isPartyLoading = false;
+                  });
+                }
+          });
+        }
 
         FirestoreHelper.pullPartyInterest(mParty.id).then((res) {
           if (res.docs.isNotEmpty) {
@@ -587,41 +601,73 @@ class _EventScreenState extends State<EventScreen> {
         ),
       );
     } else if (isGuestListActive) {
-      return Container(
-        height: 50,
-        width: 160,
-        padding: const EdgeInsets.only(bottom: 1, top: 1),
-        child: ElevatedButton.icon(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Constants.primary,
-            foregroundColor: Constants.background,
-            shadowColor: Colors.white30,
-            elevation: 3,
-            // minimumSize: const Size.fromHeight(60),
-          ),
-          onPressed: () {
-            PartyGuest partyGuest = Dummy.getDummyPartyGuest(true);
-            partyGuest.partyId = mParty.id;
 
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                  builder: (context) => PartyGuestAddEditManageScreen(
-                      partyGuest: partyGuest, party: mParty, task: 'add')),
-            );
-          },
-          icon: const Icon(
-            Icons.app_registration,
-            size: 22.0,
+      if(isGuestListRequested){
+        return Container(
+          height: 50,
+          width: 160,
+          padding: const EdgeInsets.only(bottom: 1, top: 1),
+          child: ElevatedButton.icon(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Constants.primary,
+              foregroundColor: Constants.background,
+              shadowColor: Colors.white30,
+              elevation: 3,
+              // minimumSize: const Size.fromHeight(60),
+            ),
+            onPressed: () {
+              GoRouter.of(context).pushNamed(RouteConstants.boxOfficeRouteName);
+            },
+            icon: const Icon(
+              Icons.keyboard_command_key_sharp,
+              size: 22.0,
+            ),
+            label: const Text(
+              'box office',
+              style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Constants.darkPrimary),
+            ),
           ),
-          label: const Text(
-            'guest list',
-            style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: Constants.darkPrimary),
+        );
+      } else{
+        return Container(
+          height: 50,
+          width: 160,
+          padding: const EdgeInsets.only(bottom: 1, top: 1),
+          child: ElevatedButton.icon(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Constants.primary,
+              foregroundColor: Constants.background,
+              shadowColor: Colors.white30,
+              elevation: 3,
+              // minimumSize: const Size.fromHeight(60),
+            ),
+            onPressed: () {
+              PartyGuest partyGuest = Dummy.getDummyPartyGuest(true);
+              partyGuest.partyId = mParty.id;
+
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                    builder: (context) => PartyGuestAddEditManageScreen(
+                        partyGuest: partyGuest, party: mParty, task: 'add')),
+              );
+            },
+            icon: const Icon(
+              Icons.app_registration,
+              size: 22.0,
+            ),
+            label: const Text(
+              'guest list',
+              style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Constants.darkPrimary),
+            ),
           ),
-        ),
-      );
+        );
+      }
     } else {
       return const SizedBox();
     }

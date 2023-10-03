@@ -125,7 +125,8 @@ class _PartyBannerState extends State<PartyBanner> {
 
     bool showGuestListBuyTix= false;
     if(widget.shouldShowButton){
-      if(!widget.party.isTBA && !widget.party.isTicketsDisabled && widget.party.ticketUrl.isNotEmpty){
+      if(!widget.party.isTBA && !widget.party.isTicketsDisabled
+          && widget.party.ticketUrl.isNotEmpty){
         if(isGuestListActive){
           if(!widget.isGuestListRequested){
             showGuestListBuyTix = true;
@@ -533,9 +534,13 @@ class _PartyBannerState extends State<PartyBanner> {
   _showBottomButton(BuildContext context, bool isGuestListActive) {
     if(!widget.party.isTBA && !widget.party.isTicketsDisabled && widget.party.ticketUrl.isNotEmpty){
       return _showBuyTixButton(context);
-    } else if(isGuestListActive ){
+    } else if(isGuestListActive){
       if(!widget.isGuestListRequested){
-        return showGuestListButton(context);
+        if(widget.party.isGuestListFull){
+          return showListenOrInstaDialog(context);
+        } else {
+          return showGuestListButton(context);
+        }
       } else {
         return showBoxOfficeButton(context);
       }
