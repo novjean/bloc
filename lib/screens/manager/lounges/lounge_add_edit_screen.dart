@@ -480,8 +480,10 @@ class _LoungeAddEditScreenState extends State<LoungeAddEditScreen> {
           Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
           final LoungeChat chat = Fresh.freshLoungeChatMap(data, false);
 
-          if(chat.type != 'text'){
-            FirestorageHelper.deleteFile(chat.message);
+          if(chat.type == FirestoreHelper.CHAT_TYPE_IMAGE){
+            if(chat.imageUrl.contains(FirestorageHelper.CHAT_IMAGES)){
+              FirestorageHelper.deleteFile(chat.imageUrl);
+            }
           }
           FirestoreHelper.deleteLoungeChat(chat.id);
         }

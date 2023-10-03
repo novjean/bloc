@@ -718,14 +718,12 @@ class _PhotosScreenState extends State<PhotosScreen> {
                   ),
                   onPressed: () {
                     if (sLounges.isNotEmpty) {
-                      String message =
-                          '$photoChatMessage|${partyPhoto.imageUrl}';
-
                       LoungeChat chat = Dummy.getDummyLoungeChat();
                       for (Lounge lounge in sLounges) {
                         chat = chat.copyWith(
-                          message: message,
-                          type: 'image',
+                          imageUrl: partyPhoto.imageUrl,
+                          message: photoChatMessage,
+                          type: FirestoreHelper.CHAT_TYPE_IMAGE,
                           loungeId: lounge.id,
                           loungeName: lounge.name,
                         );
@@ -733,32 +731,6 @@ class _PhotosScreenState extends State<PhotosScreen> {
                         FirestoreHelper.pushLoungeChat(chat);
                         FirestoreHelper.updateLoungeLastChat(lounge.id, '📸 $photoChatMessage', chat.time);
                       }
-
-                      FirestoreHelper.pullUserLoungeMembers(chat.loungeId).then((res) {
-                        if(res.docs.isNotEmpty){
-                          int count = 0;
-
-                          for (int i = 0; i < res.docs.length; i++) {
-                            DocumentSnapshot document = res.docs[i];
-                            Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-                            UserLounge userLounge = Fresh.freshUserLoungeMap(data, false);
-
-                            if(userLounge.isAccepted && !userLounge.isBanned){
-                              if(userLounge.userFcmToken.isNotEmpty){
-                                String title = '📸 photo: ${chat.loungeName}';
-                                String msg = '${UserPreferences.myUser.name}: $photoChatMessage}';
-
-                                Apis.sendPushNotification(userLounge.userFcmToken, title, msg);
-                                count++;
-                              }
-                            }
-                          }
-
-                          if(UserPreferences.myUser.clearanceLevel>=Constants.ADMIN_LEVEL){
-                            Logx.ist(_TAG, 'chat notification sent to $count members');
-                          }
-                        }
-                      });
 
                       Logx.ist(_TAG, 'photo has been successfully shared 💝');
                       Navigator.of(ctx).pop();

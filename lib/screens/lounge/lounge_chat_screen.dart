@@ -113,7 +113,7 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
             } else {
               WidgetsBinding.instance.addPostFrameCallback((_) {
                 if(mLounge.isVip){
-                  showPrivateLoungeDialog(context);
+                  _showPrivateLoungeDialog(context);
                 }
               });
               setState(() {
@@ -316,9 +316,6 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
               try {
                 mChats = [];
 
-                //todo: remove this after testing
-                // mChats.add(DummyData.dummyPhotoChat());
-
                 for (int i = 0; i < snapshot.data!.docs.length; i++) {
                   DocumentSnapshot document = snapshot.data!.docs[i];
                   Map<String, dynamic> data =
@@ -479,7 +476,7 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
                                           }
 
                                           //need to check here to avoid deleting the party photo by mistake
-                                          if(photoUrl.contains('chat_image')){
+                                          if(photoUrl.contains(FirestorageHelper.CHAT_IMAGES)){
                                             FirestorageHelper.deleteFile(photoUrl);
                                           }
                                         }
@@ -611,7 +608,8 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
   Widget _chatInput(BuildContext context) {
     return Padding(
       padding: EdgeInsets.symmetric(
-          vertical: MediaQuery.of(context).size.height * .01, horizontal: MediaQuery.of(context).size.width * .025),
+          vertical: MediaQuery.of(context).size.height * .01,
+          horizontal: MediaQuery.of(context).size.width * .025),
       child: Row(
         children: [
           //input field & buttons
@@ -707,27 +705,18 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
                 if(isMember) {
                   if (_textController.text.isNotEmpty) {
                     LoungeChat chat = Dummy.getDummyLoungeChat();
-                    chat.loungeId = mLounge.id;
-                    chat.loungeName = mLounge.name;
-                    chat.message = _textController.text;
-                    chat.type = 'text';
-                    chat.time = Timestamp.now().millisecondsSinceEpoch;
+                    chat = chat.copyWith(
+                      loungeId: mLounge.id,
+                      loungeName: mLounge.name,
+                      type: FirestoreHelper.CHAT_TYPE_TEXT,
+                      message: _textController.text,
+                      time: Timestamp.now().millisecondsSinceEpoch,
+                    );
 
                     FirestoreHelper.pushLoungeChat(chat);
 
                     FirestoreHelper.updateLoungeLastChat(
                         mLounge.id, chat.message, chat.time);
-
-                    // for(UserLounge fcmMember in mFcmMembers){
-                    //   String title = '🗨️chat: ${chat.loungeName}';
-                    //   String msg = '${UserPreferences.myUser.name}: ${chat.message}';
-                    //
-                    //   Apis.sendChatNotification(fcmMember.userFcmToken, title, msg);
-                    // }
-
-                    // if(UserPreferences.myUser.clearanceLevel>=Constants.ADMIN_LEVEL){
-                    //   Logx.ist(_TAG, 'chat notification sent to ${mFcmMembers.length} members');
-                    // }
 
                     _textController.text = '';
                   }
@@ -763,11 +752,13 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
           newImage);
 
       LoungeChat chat = Dummy.getDummyLoungeChat();
-      chat.loungeId = mLounge.id;
-      chat.loungeName = mLounge.name;
-      chat.message = imageUrl;
-      chat.type = 'image';
-      chat.time = Timestamp.now().millisecondsSinceEpoch;
+      chat = chat.copyWith(
+        loungeId: mLounge.id,
+        loungeName: mLounge.name,
+        imageUrl: imageUrl,
+        message: '',
+        type: FirestoreHelper.CHAT_TYPE_IMAGE,
+      );
 
       _showPhotoChatDialog(context, chat);
     }
@@ -834,7 +825,7 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
             TextButton(
               child: const Text("cancel"),
               onPressed: () {
-                if(chat.message.contains('chat_image')){
+                if(chat.message.contains(FirestorageHelper.CHAT_IMAGES)){
                   FirestorageHelper.deleteFile(chat.message);
                 }
 
@@ -844,29 +835,17 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
             TextButton(
               style: ButtonStyle(
                 backgroundColor: MaterialStateProperty.all<Color>(
-                    Constants.darkPrimary), // Set your desired background color
+                    Constants.darkPrimary),
               ),
               child: const Text(
                 "💌 send",
                 style: TextStyle(color: Constants.primary),
               ),
               onPressed: () {
-                String message = '$photoChatMessage|${chat.message}';
-                chat = chat.copyWith(message: message);
+                chat = chat.copyWith(message: photoChatMessage);
 
                 FirestoreHelper.pushLoungeChat(chat);
                 FirestoreHelper.updateLoungeLastChat(mLounge.id, '📸 $photoChatMessage', chat.time);
-
-                // for(UserLounge fcmMember in mFcmMembers){
-                //   String title = '📸 photo: ${chat.loungeName}';
-                //   String msg = '${UserPreferences.myUser.name}: $photoChatMessage}';
-                //
-                //   Apis.sendPushNotification(fcmMember.userFcmToken, title, msg);
-                // }
-
-                // if(UserPreferences.myUser.clearanceLevel>=Constants.ADMIN_LEVEL || UserPreferences.myUser.id == Constants.blocUuid){
-                //   Logx.ist(_TAG, 'chat notification sent to ${mFcmMembers.length} members');
-                // }
 
                 setState(() => _isUploading = false);
 
@@ -879,7 +858,7 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
     );
   }
 
-  showPrivateLoungeDialog(BuildContext context) {
+  _showPrivateLoungeDialog(BuildContext context) {
     showDialog(
       context: context,
       barrierColor: Constants.background,

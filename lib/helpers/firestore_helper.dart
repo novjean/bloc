@@ -96,6 +96,9 @@ class FirestoreHelper {
   static String USER_LEVELS = 'user_levels';
   static String USER_LOUNGES = 'user_lounges';
 
+  static String CHAT_TYPE_TEXT = 'text';
+  static String CHAT_TYPE_IMAGE = 'image';
+
   static int TABLE_PRIVATE_TYPE_ID = 1;
   static int TABLE_COMMUNITY_TYPE_ID = 2;
 

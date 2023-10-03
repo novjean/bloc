@@ -1,3 +1,4 @@
+import 'package:bloc/helpers/firestore_helper.dart';
 import 'package:bloc/utils/date_time_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -11,7 +12,11 @@ class ChatItem extends StatefulWidget {
   final bool isMe;
   final bool isMember;
 
-  const ChatItem({Key? key, required this.chat, required this.isMe, required this.isMember})
+  const ChatItem(
+      {Key? key,
+      required this.chat,
+      required this.isMe,
+      required this.isMember})
       : super(key: key);
 
   @override
@@ -19,26 +24,8 @@ class ChatItem extends StatefulWidget {
 }
 
 class _ChatItemState extends State<ChatItem> {
-  String photoUrl = '';
-  String photoChat = '';
-
   @override
   Widget build(BuildContext context) {
-    String photoUrl = '';
-    String photoChat = '';
-
-    if (widget.chat.type == 'image') {
-      int firstDelimiterIndex = widget.chat.message.indexOf('|');
-      if (firstDelimiterIndex != -1) {
-        // Use substring to split the string into two parts
-        photoChat = widget.chat.message.substring(0, firstDelimiterIndex);
-        photoUrl = widget.chat.message.substring(firstDelimiterIndex + 1);
-      } else {
-        // Handle the case where the delimiter is not found
-        photoUrl = widget.chat.message;
-      }
-    }
-
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 5.0),
       child: Hero(
@@ -72,46 +59,42 @@ class _ChatItemState extends State<ChatItem> {
                     )
                   ],
                 ),
-
                 subtitle: ListView(
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
                   children: [
-                    widget.chat.type == 'text'
+                    widget.chat.type == FirestoreHelper.CHAT_TYPE_TEXT
                         ? Text(
                             widget.chat.message,
-                            style: const TextStyle(fontSize: 17, color: Colors.black),
+                            style: const TextStyle(
+                                fontSize: 17, color: Colors.black),
                           )
                         : Column(
-                          mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Container(
-                                width: mq.width * 0.75, // Set your desired width
-                                // height: 150, // Set your desired height
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                width: mq.width * 0.75,
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(10.0),
-                                  // Set your desired border radius
-                                  color: Colors
-                                      .white, // Set your desired background color
+                                  color: Colors.white,
                                 ),
                                 child: ClipRRect(
                                     borderRadius: BorderRadius.circular(10.0),
                                     child: FadeInImage(
                                       placeholder: const AssetImage(
                                           'assets/images/logo.png'),
-                                      image: NetworkImage(photoUrl),
+                                      image: NetworkImage(widget.chat.imageUrl),
                                       fit: BoxFit.cover,
-                                    )
-                                 ),
+                                    )),
                               ),
-                            Text(photoChat,
-                                textAlign: TextAlign.start,
-                                style: const TextStyle(fontSize: 17, color: Colors.black)
-                            ),
-                          ],
-                        ),
+                              Text(widget.chat.message,
+                                  textAlign: TextAlign.start,
+                                  style: const TextStyle(
+                                      fontSize: 17, color: Colors.black)),
+                            ],
+                          ),
                     // Row(
                     //   mainAxisAlignment: MainAxisAlignment.end,
                     //   children: [
@@ -144,8 +127,6 @@ class _ChatItemState extends State<ChatItem> {
                     //             } else {
                     //               Toaster.shortToast('have a 🍕 slice and join us to vote');
                     //             }
-                    //
-                    //
                     //           },
                     //           iconSize: 18.0),
                     //     ),
@@ -190,9 +171,6 @@ class _ChatItemState extends State<ChatItem> {
                     // )
                   ],
                 ),
-                // leadingAndTrailingTextStyle: TextStyle(
-                //     color: Colors.black, fontFamily: 'BalsamiqSans_Regular'),
-                // trailing: Text(time, style: TextStyle(fontSize: 10),),
               )),
         ),
       ),
