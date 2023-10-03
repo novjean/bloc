@@ -198,6 +198,7 @@ class Dummy {
         userName: UserPreferences.myUser.name,
         userImage: UserPreferences.myUser.imageUrl,
         message: '',
+        imageUrl: '',
         type: 'text',
         time: Timestamp.now().millisecondsSinceEpoch,
         vote: 0,

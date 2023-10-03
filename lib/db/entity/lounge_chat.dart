@@ -7,6 +7,7 @@ class LoungeChat{
   String userImage;
 
   String message;
+  String imageUrl;
   String type;
   int time;
 
@@ -23,6 +24,7 @@ class LoungeChat{
     required this.userName,
     required this.userImage,
     required this.message,
+    required this.imageUrl,
     required this.type,
     required this.time,
     required this.vote,
@@ -42,6 +44,7 @@ class LoungeChat{
           userName == other.userName &&
           userImage == other.userImage &&
           message == other.message &&
+          imageUrl == other.imageUrl &&
           type == other.type &&
           time == other.time &&
           vote == other.vote &&
@@ -57,6 +60,7 @@ class LoungeChat{
       userName.hashCode ^
       userImage.hashCode ^
       message.hashCode ^
+      imageUrl.hashCode ^
       type.hashCode ^
       time.hashCode ^
       vote.hashCode ^
@@ -73,6 +77,7 @@ class LoungeChat{
         ' userName: $userName,' +
         ' userImage: $userImage,' +
         ' message: $message,' +
+        ' imageUrl: $imageUrl,' +
         ' type: $type,' +
         ' time: $time,' +
         ' vote: $vote,' +
@@ -89,6 +94,7 @@ class LoungeChat{
     String? userName,
     String? userImage,
     String? message,
+    String? imageUrl,
     String? type,
     int? time,
     int? vote,
@@ -103,6 +109,7 @@ class LoungeChat{
       userName: userName ?? this.userName,
       userImage: userImage ?? this.userImage,
       message: message ?? this.message,
+      imageUrl: imageUrl ?? this.imageUrl,
       type: type ?? this.type,
       time: time ?? this.time,
       vote: vote ?? this.vote,
@@ -120,6 +127,7 @@ class LoungeChat{
       'userName': this.userName,
       'userImage': this.userImage,
       'message': this.message,
+      'imageUrl': this.imageUrl,
       'type': this.type,
       'time': this.time,
       'vote': this.vote,
@@ -137,6 +145,7 @@ class LoungeChat{
       userName: map['userName'] as String,
       userImage: map['userImage'] as String,
       message: map['message'] as String,
+      imageUrl: map['imageUrl'] as String,
       type: map['type'] as String,
       time: map['time'] as int,
       vote: map['vote'] as int,

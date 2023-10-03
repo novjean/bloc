@@ -1147,6 +1147,12 @@ class Fresh {
       isModelChanged = true;
     }
     try {
+      chat = chat.copyWith(imageUrl: map['imageUrl'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'chat imageUrl not exist for id: ${chat.id}');
+      isModelChanged = true;
+    }
+    try {
       chat = chat.copyWith(type: map['type'] as String);
     } catch (e) {
       Logx.em(_TAG, 'chat type not exist for id: ${chat.id}');
@@ -1230,6 +1236,12 @@ class Fresh {
     } catch (e) {
       Logx.em(
           _TAG, 'chat message not exist for id: ${chat.id}');
+    }
+    try {
+      freshChat = freshChat.copyWith(imageUrl: chat.imageUrl);
+    } catch (e) {
+      Logx.em(
+          _TAG, 'chat imageUrl not exist for id: ${chat.id}');
     }
     try {
       freshChat = freshChat.copyWith(type: chat.type);
