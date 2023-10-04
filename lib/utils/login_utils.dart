@@ -332,8 +332,8 @@ class LoginUtils {
                 debugPrint('onCompleted: $pin');
 
                 String verificationCode = UserPreferences.getVerificationId();
-
                 Logx.ist(_TAG, 'verifying $phone, please wait.');
+
                 try {
                   await FirebaseAuth.instance
                       .signInWithCredential(PhoneAuthProvider.credential(
@@ -342,14 +342,9 @@ class LoginUtils {
                     if (value.user != null) {
                       Logx.i(_TAG, 'user is in firebase auth');
 
-                      String? fcmToken = '';
+                      String? fcmToken = await FirebaseMessaging.instance.getToken();
 
-                      if (!kIsWeb) {
-                        fcmToken = await FirebaseMessaging.instance.getToken();
-                      }
-
-                      Logx.i(_TAG,
-                          'checking for bloc registration by id ${value.user!.uid}');
+                      Logx.i(_TAG, 'checking for bloc registration by id ${value.user!.uid}');
 
                       FirestoreHelper.pullUser(value.user!.uid).then((res) {
                         if (res.docs.isEmpty) {
@@ -458,7 +453,7 @@ class LoginUtils {
                     _verifyPhone(completePhoneNumber);
                     Navigator.pop(context);
                   } else {
-                    Toaster.shortToast('invalid otp, please try again');
+                    Logx.ist(_TAG, 'invalid otp, please try again');
                   }
                   FocusScope.of(context).unfocus();
                 }

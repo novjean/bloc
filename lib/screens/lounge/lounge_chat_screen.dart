@@ -131,34 +131,6 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
     });
 
     super.initState();
-
-    // FirestoreHelper.pullUserLoungeMembers(widget.loungeId).then((res) {
-    //   if (res.docs.isNotEmpty) {
-    //     for (int i = 0; i < res.docs.length; i++) {
-    //       DocumentSnapshot document = res.docs[i];
-    //       Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-    //       UserLounge userLounge = Fresh.freshUserLoungeMap(data, false);
-    //
-    //       if(userLounge.isAccepted && !userLounge.isBanned){
-    //         mMembers.add(userLounge);
-    //
-    //         if(userLounge.userFcmToken.isNotEmpty){
-    //           if(userLounge.userId != UserPreferences.myUser.id){
-    //             mFcmMembers.add(userLounge);
-    //           }
-    //         }
-    //       }
-    //     }
-    //     Logx.i(_TAG, 'members in the lounge: ${mMembers.length}');
-    //   } else {
-    //     //nobody in lounge
-    //     Logx.i(_TAG, 'nobody in the lounge yet');
-    //   }
-    //
-    //   setState(() {
-    //     _isMembersLoading = false;
-    //   });
-    // });
   }
 
   @override

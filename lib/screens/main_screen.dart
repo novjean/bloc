@@ -135,21 +135,19 @@ class _MainScreenState extends State<MainScreen> {
           _TAG, "error retrieving users for phone : ${user.phoneNumber}", e, s);
     });
 
-
-    super.initState();
-
     if (!kIsWeb) {
       final fbm = FirebaseMessaging.instance;
 
       fbm.onTokenRefresh.listen((token) {
         // Note: This callback is fired at each app startup and whenever a new
         // token is generated.
+        if(UserPreferences.isUserLoggedIn()){
+          blocUser.User user = UserPreferences.myUser;
+          user = user.copyWith(fcmToken: token);
+          UserPreferences.setUser(user);
 
-        blocUser.User user = UserPreferences.myUser;
-        user = user.copyWith(fcmToken: token);
-        UserPreferences.setUser(user);
-
-        FirestoreHelper.updateUserFcmToken(UserPreferences.myUser.id, token);
+          FirestoreHelper.updateUserFcmToken(UserPreferences.myUser.id, token);
+        }
       }).onError((err) {
         Logx.em(_TAG, err.toString());
       });
@@ -189,7 +187,13 @@ class _MainScreenState extends State<MainScreen> {
         fbm.subscribeToTopic('notification_tests_2');
       }
     } else {
-      // in web mode
+      Logx.d(_TAG, 'fcm in web mode');
+
+      getToken();
+
+      FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+        NotificationService.handleMessage(message, false);
+      });
     }
 
     if (UserPreferences.isUserLoggedIn()) {
@@ -220,6 +224,23 @@ class _MainScreenState extends State<MainScreen> {
 
     // awesome notification init
     NotificationService.initializeNotification();
+
+    super.initState();
+  }
+
+  getToken() async {
+    String? deviceToken = await FirebaseMessaging.instance.getToken();
+    Logx.d(_TAG, 'fcm token: ${deviceToken!}');
+
+    if(UserPreferences.isUserLoggedIn()){
+      blocUser.User user = UserPreferences.myUser;
+      user = user.copyWith(fcmToken: deviceToken);
+      UserPreferences.setUser(user);
+
+      if(user.fcmToken != deviceToken){
+        FirestoreHelper.updateUserFcmToken(UserPreferences.myUser.id, deviceToken);
+      }
+    }
   }
 
   @override

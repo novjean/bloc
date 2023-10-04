@@ -317,12 +317,8 @@ class _LoginScreenState extends State<LoginScreen> {
               'user is in firebase auth. checking for bloc registration...');
 
           FirestoreHelper.pullUser(value.user!.uid).then((res) {
-            Logx.i(_TAG,
-                "successfully retrieved bloc user for id " + value.user!.uid);
-
             if (res.docs.isEmpty) {
-              Logx.i(_TAG,
-                  'user is not already registered in bloc, registering...');
+              Logx.i(_TAG, 'user is not already registered in bloc, registering');
 
               blocUser.User registeredUser = Dummy.getDummyUser();
               registeredUser.id = value.user!.uid;
@@ -334,7 +330,7 @@ class _LoginScreenState extends State<LoginScreen> {
               GoRouter.of(context)
                   .pushNamed(RouteConstants.homeRouteName);
             } else {
-              Logx.i(_TAG, 'user is a bloc member. navigating to main...');
+              Logx.i(_TAG, 'user is a bloc member, navigating to main');
               try {
                 DocumentSnapshot document = res.docs[0];
                 Map<String, dynamic> data =

@@ -58,7 +58,6 @@ class ManageUserItem extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text('bloc day: ${DateTimeUtils.getFormattedDateYear(user.createdAt)}'),
-                    // user.isAppUser ? Text(user.appVersion) : const SizedBox(),
                     Text(appDetails)
                   ],
                 ),

@@ -1,16 +1,10 @@
-import 'dart:io';
-
 import 'package:barcode_widget/barcode_widget.dart';
 import 'package:bloc/db/entity/party_guest.dart';
 import 'package:bloc/db/shared_preferences/user_preferences.dart';
 import 'package:bloc/helpers/firestore_helper.dart';
-import 'package:bloc/widgets/ui/dark_button_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:share_plus/share_plus.dart';
-import 'package:http/http.dart' as http;
 
 import '../../db/entity/challenge.dart';
 import '../../db/entity/challenge_action.dart';
@@ -28,8 +22,6 @@ import '../../utils/file_utils.dart';
 import '../../utils/logx.dart';
 import '../../utils/network_utils.dart';
 import '../../utils/string_utils.dart';
-import '../ui/button_widget.dart';
-import '../ui/toaster.dart';
 
 class BoxOfficeGuestListItem extends StatefulWidget {
   PartyGuest partyGuest;
@@ -200,7 +192,7 @@ class _BoxOfficeGuestListItemState extends State<BoxOfficeGuestListItem> {
                 ),
                 Center(
                     child: BarcodeWidget(
-                  color: Theme.of(context).primaryColorDark,
+                  color: Constants.darkPrimary,
                   barcode: Barcode.qrCode(),
                   // Barcode type and settings
                   data: widget.partyGuest.id,

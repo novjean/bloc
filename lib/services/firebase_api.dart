@@ -48,7 +48,18 @@ class FirebaseApi {
       // Set the background messaging handler early on, as a named top-level function
       FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
     } else {
-      Logx.d(_TAG, 'fcm not supported on web');
+      Logx.i(_TAG, 'fcm in web mode');
+      NotificationSettings settings = await _firebaseMessaging.requestPermission(
+        alert: true,
+        announcement: false,
+        badge: true,
+        carPlay: false,
+        criticalAlert: false,
+        provisional: false,
+        sound: true,
+      );
+
+      Logx.d(_TAG, 'notification permission auth status ${settings.authorizationStatus.name}');
     }
   }
 

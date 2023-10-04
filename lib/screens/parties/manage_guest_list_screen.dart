@@ -654,7 +654,7 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
                           Map<String, dynamic> map = document.data()! as Map<String, dynamic>;
                           final User user = Fresh.freshUserMap(map, true);
 
-                          if(user.isAppUser && user.fcmToken.isNotEmpty){
+                          if(user.fcmToken.isNotEmpty){
                             //send a notification
                             Apis.sendUrlData(user.fcmToken, Apis.GoogleReviewBloc, Constants.blocGoogleReview);
                             Logx.ist(_TAG,
@@ -682,7 +682,7 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
                           Map<String, dynamic> map = document.data()! as Map<String, dynamic>;
                           final User user = Fresh.freshUserMap(map, true);
 
-                          if(user.isAppUser && user.fcmToken.isNotEmpty){
+                          if(user.fcmToken.isNotEmpty){
                             Apis.sendUrlData(user.fcmToken, Apis.GoogleReviewFreq, Constants.freqGoogleReview);
                             Logx.ist(_TAG,
                                 '${user.name} ${user.surname} has been notified for a freq google review 🤞');
@@ -797,7 +797,7 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
                               Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
                               final User user = Fresh.freshUserMap(data, false);
 
-                              if(user.isAppUser && user.fcmToken.isNotEmpty){
+                              if(user.fcmToken.isNotEmpty){
                                 String title = sParty.name;
                                 String message =
                                     '🥳 yayyy! your guest list for ${sParty.name} has been approved 🎉, see you and your gang soon! 😎🍾';

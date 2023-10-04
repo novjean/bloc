@@ -143,7 +143,7 @@ class _PartyGuestAddEditManageScreenState
 
     _sYear = mBlocUser.birthYear.toString();
 
-    for (int i = DateTime.now().year; i>DateTime.now().year - 100; i--) {
+    for (int i = DateTime.now().year; i > DateTime.now().year - 100; i--) {
       years.add(i.toString());
     }
 
@@ -1089,87 +1089,7 @@ class _PartyGuestAddEditManageScreenState
                   ? Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 32),
-                          child: ButtonWidget(
-                            text: !widget.partyGuest.isApproved
-                                ? 'approve'
-                                : 'unapprove',
-                            onClicked: () async {
-                              bool isApproved = !widget.partyGuest.isApproved;
-
-                              widget.partyGuest = widget.partyGuest
-                                  .copyWith(isApproved: isApproved);
-                              FirestoreHelper.pushPartyGuest(widget.partyGuest);
-
-                              if (isApproved) {
-                                if (widget.party.loungeId.isNotEmpty) {
-                                  FirestoreHelper.pullUserLounge(
-                                          mBlocUser.id, widget.party.loungeId)
-                                      .then((res) {
-                                    if (res.docs.isEmpty) {
-                                      UserLounge userLounge =
-                                          Dummy.getDummyUserLounge();
-                                      userLounge = userLounge.copyWith(
-                                          loungeId: widget.party.loungeId,
-                                          userId: mBlocUser.id,
-                                          userFcmToken: mBlocUser.fcmToken,
-                                          isAccepted: true);
-                                      FirestoreHelper.pushUserLounge(
-                                          userLounge);
-
-                                      if (mBlocUser.isAppUser &&
-                                          mBlocUser.fcmToken.isNotEmpty) {
-                                        String title = widget.party.name;
-                                        String message =
-                                            '🥳 yayyy! welcome to ${widget.party.name} family, your guest list for ${widget.party.name} has been approved 🎉, see you and your gang soon! 😎🍾';
-
-                                        //send a notification
-                                        Apis.sendPushNotification(
-                                            mBlocUser.fcmToken, title, message);
-                                        Logx.ist(_TAG,
-                                            'notification has been sent to ${mBlocUser.name} ${mBlocUser.surname}');
-                                      }
-                                    } else {
-                                      if (mBlocUser.isAppUser &&
-                                          mBlocUser.fcmToken.isNotEmpty) {
-                                        String title = widget.party.name;
-                                        String message =
-                                            '🥳 yayyy! your guest list for ${widget.party.name} has been approved 🎉, see you and your gang soon! 😎🍾';
-
-                                        //send a notification
-                                        Apis.sendPushNotification(
-                                            mBlocUser.fcmToken, title, message);
-                                        Logx.ist(_TAG,
-                                            'notification has been sent to ${mBlocUser.name} ${mBlocUser.surname}');
-                                      }
-                                    }
-                                  });
-                                } else {
-                                  if (mBlocUser.isAppUser &&
-                                      mBlocUser.fcmToken.isNotEmpty) {
-                                    String title = widget.party.name;
-                                    String message =
-                                        '🥳 yayyy! your guest list for ${widget.party.name} has been approved 🎉, see you and your gang soon! 😎🍾';
-
-                                    //send a notification
-                                    Apis.sendPushNotification(
-                                        mBlocUser.fcmToken, title, message);
-                                    Logx.ist(_TAG,
-                                        'notification has been sent to ${mBlocUser.name} ${mBlocUser.surname}');
-                                  }
-                                }
-                                Logx.ist(_TAG,
-                                    'party guest ${widget.partyGuest.name} is approved');
-                              } else {
-                                Logx.ist(_TAG,
-                                    'party guest ${widget.partyGuest.name} is unapproved');
-                              }
-
-                              Navigator.of(context).pop();
-                            },
-                          ),
-                        ),
+                        _showApproveOrNotButton(context),
                         const SizedBox(height: 24),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 32),
@@ -1178,7 +1098,8 @@ class _PartyGuestAddEditManageScreenState
                             text: 'update',
                             onClicked: () {
                               FirestoreHelper.pushPartyGuest(widget.partyGuest);
-                              Logx.ist(_TAG, 'guest list is successfully updated');
+                              Logx.ist(
+                                  _TAG, 'guest list is successfully updated');
                               Navigator.of(context).pop();
                             },
                           ),
@@ -1200,7 +1121,7 @@ class _PartyGuestAddEditManageScreenState
                       Logx.ist(_TAG, 'guest list is successfully updated');
                       Navigator.of(context).pop();
                     } else if (widget.task == 'edit') {
-                      if (isDataValid()) {
+                      if (_isDataValid()) {
                         FirestoreHelper.pushPartyGuest(widget.partyGuest);
 
                         if (hasUserChanged) {
@@ -1213,12 +1134,15 @@ class _PartyGuestAddEditManageScreenState
 
                         Logx.ist(_TAG, 'guest list has been updated');
 
-                        if((UserPreferences.myUser.lastReviewTime < Timestamp.now().millisecondsSinceEpoch - (1 * DateTimeUtils.millisecondsWeek))){
-                          if(!UserPreferences.myUser.isAppReviewed){
+                        if ((UserPreferences.myUser.lastReviewTime <
+                            Timestamp.now().millisecondsSinceEpoch -
+                                (1 * DateTimeUtils.millisecondsWeek))) {
+                          if (!UserPreferences.myUser.isAppReviewed) {
                             _showReviewAppDialog(context);
                           } else {
                             //todo: might need to implement challenge logic here
-                            Logx.i(_TAG, 'app is reviewed, so nothing to do for now');
+                            Logx.i(_TAG,
+                                'app is reviewed, so nothing to do for now');
 
                             GoRouter.of(context)
                                 .pushNamed(RouteConstants.homeRouteName);
@@ -1233,7 +1157,7 @@ class _PartyGuestAddEditManageScreenState
                         }
                       }
                     } else {
-                      if (isDataValid()) {
+                      if (_isDataValid()) {
                         if (isLoggedIn) {
                           widget.partyGuest = widget.partyGuest
                               .copyWith(shouldBanUser: mBlocUser.isBanned);
@@ -1303,7 +1227,88 @@ class _PartyGuestAddEditManageScreenState
           );
   }
 
-  bool isDataValid() {
+  _showApproveOrNotButton(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 32),
+      child: ButtonWidget(
+        text: !widget.partyGuest.isApproved ? 'approve' : 'un-approve',
+        onClicked: () async {
+          bool isApproved = !widget.partyGuest.isApproved;
+
+          widget.partyGuest =
+              widget.partyGuest.copyWith(isApproved: isApproved);
+          FirestoreHelper.pushPartyGuest(widget.partyGuest);
+
+          if (isApproved) {
+            if (widget.party.loungeId.isNotEmpty) {
+              FirestoreHelper.pullUserLounge(
+                  mBlocUser.id, widget.party.loungeId)
+                  .then((res) {
+                if (res.docs.isEmpty) {
+                  UserLounge userLounge = Dummy.getDummyUserLounge();
+                  userLounge = userLounge.copyWith(
+                      loungeId: widget.party.loungeId,
+                      userId: mBlocUser.id,
+                      userFcmToken: mBlocUser.fcmToken,
+                      isAccepted: true);
+                  FirestoreHelper.pushUserLounge(userLounge);
+
+                  if (mBlocUser.fcmToken.isNotEmpty) {
+                    String title = widget.party.name;
+                    String message =
+                        '🥳 yayyy! welcome to ${widget.party.name} family, your guest list for ${widget.party.name} has been approved 🎉, see you and your gang soon! 😎🍾';
+
+                    //send a notification
+                    Apis.sendPushNotification(
+                        mBlocUser.fcmToken, title, message);
+                    Logx.ist(_TAG,
+                        'notification has been sent to ${mBlocUser.name} ${mBlocUser.surname}');
+                  } else {
+                    Logx.d(_TAG,
+                        'app user but no fcm token to alert guest approval');
+                  }
+                } else {
+                  if (mBlocUser.fcmToken.isNotEmpty) {
+                    String title = widget.party.name;
+                    String message =
+                        '🥳 yayyy! your guest list for ${widget.party.name} has been approved 🎉, see you and your gang soon! 😎🍾';
+
+                    //send a notification
+                    Apis.sendPushNotification(
+                        mBlocUser.fcmToken, title, message);
+                    Logx.ist(_TAG,
+                        'notification has been sent to ${mBlocUser.name} ${mBlocUser.surname}');
+                  } else {
+                    Logx.d(_TAG,
+                        'app user but no fcm token to alert guest approval');
+                  }
+                }
+              });
+            } else {
+              if (mBlocUser.fcmToken.isNotEmpty) {
+                String title = widget.party.name;
+                String message =
+                    '🥳 yayyy! your guest list for ${widget.party.name} has been approved 🎉, see you and your gang soon! 😎🍾';
+
+                //send a notification
+                Apis.sendPushNotification(mBlocUser.fcmToken, title, message);
+                Logx.ist(_TAG,
+                    'notification has been sent to ${mBlocUser.name} ${mBlocUser.surname}');
+              }
+            }
+            Logx.ist(_TAG, 'party guest ${widget.partyGuest.name} is approved');
+          } else {
+            Logx.ist(
+                _TAG, 'party guest ${widget.partyGuest.name} is unapproved');
+          }
+
+          Navigator.of(context).pop();
+        },
+      ),
+    );
+  }
+
+  bool _isDataValid() {
     if (widget.partyGuest.name.isEmpty) {
       Logx.em(_TAG, 'name not entered for guest');
       Toaster.longToast('please enter your name');
@@ -1507,8 +1512,8 @@ class _PartyGuestAddEditManageScreenState
                       PartyGuest freshPartyGuest =
                           Fresh.freshPartyGuest(widget.partyGuest);
                       if (!testMode) {
-                          FirestoreHelper.pushPartyGuest(freshPartyGuest);
-                        }
+                        FirestoreHelper.pushPartyGuest(freshPartyGuest);
+                      }
 
                       Logx.ilt(_TAG, 'guest list request in box office');
 
@@ -1624,7 +1629,7 @@ class _PartyGuestAddEditManageScreenState
       // all challenges are completed
       Navigator.of(context).pop();
 
-      if(kIsWeb){
+      if (kIsWeb) {
         _showDownloadAppDialog(context);
       } else {
         GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
@@ -1643,7 +1648,8 @@ class _PartyGuestAddEditManageScreenState
             if (ca.actionType == 'instagram_url') {
               ca = ca.copyWith(action: widget.party.instagramUrl);
             } else if (ca.actionType == 'bloc_url') {
-              final url = 'http://bloc.bar/#/event/${Uri.encodeComponent(widget.party.name)}/${widget.party.chapter}';
+              final url =
+                  'http://bloc.bar/#/event/${Uri.encodeComponent(widget.party.name)}/${widget.party.chapter}';
               ca = ca.copyWith(action: url);
             }
             cas.add(ca);
@@ -1692,11 +1698,13 @@ class _PartyGuestAddEditManageScreenState
                 onPressed: () {
                   Navigator.of(ctx).pop();
 
-                  if(kIsWeb){
+                  if (kIsWeb) {
                     _showDownloadAppDialog(context);
                   } else {
-                    GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
-                    GoRouter.of(context).pushNamed(RouteConstants.boxOfficeRouteName);
+                    GoRouter.of(context)
+                        .pushNamed(RouteConstants.homeRouteName);
+                    GoRouter.of(context)
+                        .pushNamed(RouteConstants.boxOfficeRouteName);
                   }
                 },
               ),
@@ -1721,7 +1729,7 @@ class _PartyGuestAddEditManageScreenState
 
                         final uri = Uri.parse(cas[1].action);
 
-                        if(cas[1].actionType == 'bloc_url'){
+                        if (cas[1].actionType == 'bloc_url') {
                           Share.share(
                               'Check out ${widget.party.name} on #blocCommunity $uri');
                         } else {
@@ -1730,11 +1738,13 @@ class _PartyGuestAddEditManageScreenState
 
                         Navigator.of(ctx).pop();
 
-                        if(kIsWeb){
+                        if (kIsWeb) {
                           _showDownloadAppDialog(context);
                         } else {
-                          GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
-                          GoRouter.of(context).pushNamed(RouteConstants.boxOfficeRouteName);
+                          GoRouter.of(context)
+                              .pushNamed(RouteConstants.homeRouteName);
+                          GoRouter.of(context)
+                              .pushNamed(RouteConstants.boxOfficeRouteName);
                         }
                       },
                     )
@@ -1758,7 +1768,7 @@ class _PartyGuestAddEditManageScreenState
 
                   final uri = Uri.parse(cas[0].action);
 
-                  if(cas[0].actionType == 'bloc_url'){
+                  if (cas[0].actionType == 'bloc_url') {
                     Share.share(
                         'Check out ${widget.party.name} on #blocCommunity $uri');
                   } else {
@@ -1767,11 +1777,13 @@ class _PartyGuestAddEditManageScreenState
 
                   Navigator.of(ctx).pop();
 
-                  if(kIsWeb){
+                  if (kIsWeb) {
                     _showDownloadAppDialog(context);
                   } else {
-                    GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
-                    GoRouter.of(context).pushNamed(RouteConstants.boxOfficeRouteName);
+                    GoRouter.of(context)
+                        .pushNamed(RouteConstants.homeRouteName);
+                    GoRouter.of(context)
+                        .pushNamed(RouteConstants.boxOfficeRouteName);
                   }
                 },
               ),
@@ -1821,8 +1833,8 @@ class _PartyGuestAddEditManageScreenState
               ),
               TextButton(
                 style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all<Color>(Constants
-                      .darkPrimary),
+                  backgroundColor:
+                      MaterialStateProperty.all<Color>(Constants.darkPrimary),
                 ),
                 child: Text(challenge.dialogAcceptText,
                     style: const TextStyle(color: Constants.primary)),
@@ -2409,7 +2421,8 @@ class _PartyGuestAddEditManageScreenState
   }
 
   _showDownloadAppDialog(BuildContext context) {
-    String message = '📲 Download our app now and be the first to know when your guest list request is approved! Plus, unlock access to all the amazing community photos and much more! 🎉📸';
+    String message =
+        '📲 Download our app now and be the first to know when your guest list request is approved! Plus, unlock access to all the amazing community photos and much more! 🎉📸';
 
     showDialog(
         context: context,
@@ -2433,7 +2446,8 @@ class _PartyGuestAddEditManageScreenState
                   Navigator.of(ctx).pop();
 
                   GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
-                  GoRouter.of(context).pushNamed(RouteConstants.boxOfficeRouteName);
+                  GoRouter.of(context)
+                      .pushNamed(RouteConstants.boxOfficeRouteName);
                 },
               ),
               TextButton(
@@ -2450,7 +2464,8 @@ class _PartyGuestAddEditManageScreenState
                   NetworkUtils.launchInBrowser(uri);
 
                   GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
-                  GoRouter.of(context).pushNamed(RouteConstants.boxOfficeRouteName);
+                  GoRouter.of(context)
+                      .pushNamed(RouteConstants.boxOfficeRouteName);
                 },
               ),
               TextButton(
@@ -2467,7 +2482,8 @@ class _PartyGuestAddEditManageScreenState
                   NetworkUtils.launchInBrowser(uri);
 
                   GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
-                  GoRouter.of(context).pushNamed(RouteConstants.boxOfficeRouteName);
+                  GoRouter.of(context)
+                      .pushNamed(RouteConstants.boxOfficeRouteName);
                 },
               ),
             ],
@@ -2476,7 +2492,8 @@ class _PartyGuestAddEditManageScreenState
   }
 
   void _showReviewAppDialog(BuildContext context) {
-    String message = '🌟 Love our app? Help us make it even better! Leave a review today and get notified with instant guest list approvals, community photos, and more! 📸🎉';
+    String message =
+        '🌟 Love our app? Help us make it even better! Leave a review today and get notified with instant guest list approvals, community photos, and more! 📸🎉';
 
     showDialog(
         context: context,
@@ -2491,8 +2508,7 @@ class _PartyGuestAddEditManageScreenState
             shape: const RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(20.0))),
             contentPadding: const EdgeInsets.all(16.0),
-            content: Text(
-                message.toLowerCase()),
+            content: Text(message.toLowerCase()),
             actions: [
               TextButton(
                 child: const Text('close',
@@ -2500,38 +2516,37 @@ class _PartyGuestAddEditManageScreenState
                 onPressed: () {
                   Navigator.of(ctx).pop();
 
-                  GoRouter.of(context)
-                      .pushNamed(RouteConstants.homeRouteName);
+                  GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
                   GoRouter.of(context)
                       .pushNamed(RouteConstants.boxOfficeRouteName);
                 },
               ),
               TextButton(
                 style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all<Color>(Constants
-                      .lightPrimary),
+                  backgroundColor:
+                      MaterialStateProperty.all<Color>(Constants.lightPrimary),
                 ),
-                child: const Text('🧸 already reviewed',),
+                child: const Text(
+                  '🧸 already reviewed',
+                ),
                 onPressed: () async {
                   blocUser.User user = UserPreferences.myUser;
-                  user = user.copyWith(
-                      isAppReviewed: true);
+                  user = user.copyWith(isAppReviewed: true);
                   UserPreferences.setUser(user);
                   FirestoreHelper.pushUser(user);
 
                   Logx.ist(_TAG, '🃏 thank you for already reviewing us');
                   Navigator.of(ctx).pop();
 
-                  GoRouter.of(context)
-                      .pushNamed(RouteConstants.homeRouteName);
+                  GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
                   GoRouter.of(context)
                       .pushNamed(RouteConstants.boxOfficeRouteName);
                 },
               ),
               TextButton(
                 style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all<Color>(Constants
-                      .darkPrimary),
+                  backgroundColor:
+                      MaterialStateProperty.all<Color>(Constants.darkPrimary),
                 ),
                 child: const Text('🌟 review us',
                     style: TextStyle(color: Constants.primary)),
@@ -2539,10 +2554,11 @@ class _PartyGuestAddEditManageScreenState
                   final InAppReview inAppReview = InAppReview.instance;
                   bool isAvailable = await inAppReview.isAvailable();
 
-                  if(isAvailable){
+                  if (isAvailable) {
                     inAppReview.requestReview();
                   } else {
-                    inAppReview.openStoreListing(appStoreId: Constants.blocAppStoreId);
+                    inAppReview.openStoreListing(
+                        appStoreId: Constants.blocAppStoreId);
                   }
 
                   blocUser.User user = UserPreferences.myUser;
@@ -2554,8 +2570,7 @@ class _PartyGuestAddEditManageScreenState
 
                   Navigator.of(ctx).pop();
 
-                  GoRouter.of(context)
-                      .pushNamed(RouteConstants.homeRouteName);
+                  GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
                   GoRouter.of(context)
                       .pushNamed(RouteConstants.boxOfficeRouteName);
                 },
@@ -2564,4 +2579,5 @@ class _PartyGuestAddEditManageScreenState
           );
         });
   }
+
 }
