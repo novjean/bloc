@@ -804,7 +804,7 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
                         width: mq.width,
                         child: FadeInImage(
                           placeholder: const AssetImage('assets/images/logo_3x2.png'),
-                          image: NetworkImage(chat.message),
+                          image: NetworkImage(chat.imageUrl),
                           fit: BoxFit.contain,
                         ),
                       )),

@@ -62,10 +62,6 @@ class LoungeItem extends StatelessWidget {
                       ),
                     ),
                   ),
-
-                  // leadingAndTrailingTextStyle: TextStyle(
-                  //     color: Colors.black, fontFamily: 'BalsamiqSans_Regular'),
-                  // trailing: Text(time, style: TextStyle(fontSize: 10),),
                 )),
           ),
         ),
