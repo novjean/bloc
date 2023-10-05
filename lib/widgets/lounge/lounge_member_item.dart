@@ -88,9 +88,13 @@ class _LoungeMemberItemState extends State<LoungeMemberItem> {
 
           genrePercent += 'total: $mTotalEventsCount';
 
-          setState(() {
-            _isHistoryLoading = false;
-          });
+          if(mounted){
+            setState(() {
+              _isHistoryLoading = false;
+            });
+          } else {
+            Logx.em(LoungeMemberItem._TAG, 'not mounted');
+          }
         } else {
           setState(() {
             _isHistoryLoading = false;
