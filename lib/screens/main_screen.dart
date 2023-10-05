@@ -189,11 +189,11 @@ class _MainScreenState extends State<MainScreen> {
     } else {
       Logx.d(_TAG, 'fcm in web mode');
 
-      getToken();
-
-      FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-        NotificationService.handleMessage(message, false);
-      });
+      // getToken();
+      //
+      // FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      //   NotificationService.handleMessage(message, false);
+      // });
     }
 
     if (UserPreferences.isUserLoggedIn()) {

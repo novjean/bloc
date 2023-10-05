@@ -49,17 +49,17 @@ class FirebaseApi {
       FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
     } else {
       Logx.i(_TAG, 'fcm in web mode');
-      NotificationSettings settings = await _firebaseMessaging.requestPermission(
-        alert: true,
-        announcement: false,
-        badge: true,
-        carPlay: false,
-        criticalAlert: false,
-        provisional: false,
-        sound: true,
-      );
-
-      Logx.d(_TAG, 'notification permission auth status ${settings.authorizationStatus.name}');
+      // NotificationSettings settings = await _firebaseMessaging.requestPermission(
+      //   alert: true,
+      //   announcement: false,
+      //   badge: true,
+      //   carPlay: false,
+      //   criticalAlert: false,
+      //   provisional: false,
+      //   sound: true,
+      // );
+      //
+      // Logx.d(_TAG, 'notification permission auth status ${settings.authorizationStatus.name}');
     }
   }
 

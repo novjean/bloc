@@ -342,8 +342,11 @@ class LoginUtils {
                     if (value.user != null) {
                       Logx.i(_TAG, 'user is in firebase auth');
 
-                      String? fcmToken = await FirebaseMessaging.instance.getToken();
+                      String? fcmToken = '';
 
+                      if (!kIsWeb) {
+                        fcmToken = await FirebaseMessaging.instance.getToken();
+                      }
                       Logx.i(_TAG, 'checking for bloc registration by id ${value.user!.uid}');
 
                       FirestoreHelper.pullUser(value.user!.uid).then((res) {
