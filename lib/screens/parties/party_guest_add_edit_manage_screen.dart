@@ -1089,87 +1089,7 @@ class _PartyGuestAddEditManageScreenState
                   ? Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 32),
-                          child: ButtonWidget(
-                            text: !widget.partyGuest.isApproved
-                                ? 'approve'
-                                : 'unapprove',
-                            onClicked: () async {
-                              bool isApproved = !widget.partyGuest.isApproved;
-
-                              widget.partyGuest = widget.partyGuest
-                                  .copyWith(isApproved: isApproved);
-                              FirestoreHelper.pushPartyGuest(widget.partyGuest);
-
-                              if (isApproved) {
-                                if (widget.party.loungeId.isNotEmpty) {
-                                  FirestoreHelper.pullUserLounge(
-                                          mBlocUser.id, widget.party.loungeId)
-                                      .then((res) {
-                                    if (res.docs.isEmpty) {
-                                      UserLounge userLounge =
-                                          Dummy.getDummyUserLounge();
-                                      userLounge = userLounge.copyWith(
-                                          loungeId: widget.party.loungeId,
-                                          userId: mBlocUser.id,
-                                          userFcmToken: mBlocUser.fcmToken,
-                                          isAccepted: true);
-                                      FirestoreHelper.pushUserLounge(
-                                          userLounge);
-
-                                      if (mBlocUser.isAppUser &&
-                                          mBlocUser.fcmToken.isNotEmpty) {
-                                        String title = widget.party.name;
-                                        String message =
-                                            '🥳 yayyy! welcome to ${widget.party.name} family, your guest list for ${widget.party.name} has been approved 🎉, see you and your gang soon! 😎🍾';
-
-                                        //send a notification
-                                        Apis.sendPushNotification(
-                                            mBlocUser.fcmToken, title, message);
-                                        Logx.ist(_TAG,
-                                            'notification has been sent to ${mBlocUser.name} ${mBlocUser.surname}');
-                                      }
-                                    } else {
-                                      if (mBlocUser.isAppUser &&
-                                          mBlocUser.fcmToken.isNotEmpty) {
-                                        String title = widget.party.name;
-                                        String message =
-                                            '🥳 yayyy! your guest list for ${widget.party.name} has been approved 🎉, see you and your gang soon! 😎🍾';
-
-                                        //send a notification
-                                        Apis.sendPushNotification(
-                                            mBlocUser.fcmToken, title, message);
-                                        Logx.ist(_TAG,
-                                            'notification has been sent to ${mBlocUser.name} ${mBlocUser.surname}');
-                                      }
-                                    }
-                                  });
-                                } else {
-                                  if (mBlocUser.isAppUser &&
-                                      mBlocUser.fcmToken.isNotEmpty) {
-                                    String title = widget.party.name;
-                                    String message =
-                                        '🥳 yayyy! your guest list for ${widget.party.name} has been approved 🎉, see you and your gang soon! 😎🍾';
-
-                                    //send a notification
-                                    Apis.sendPushNotification(
-                                        mBlocUser.fcmToken, title, message);
-                                    Logx.ist(_TAG,
-                                        'notification has been sent to ${mBlocUser.name} ${mBlocUser.surname}');
-                                  }
-                                }
-                                Logx.ist(_TAG,
-                                    'party guest ${widget.partyGuest.name} is approved');
-                              } else {
-                                Logx.ist(_TAG,
-                                    'party guest ${widget.partyGuest.name} is unapproved');
-                              }
-
-                              Navigator.of(context).pop();
-                            },
-                          ),
-                        ),
+                        _showApproveOrNotButton(context),
                         const SizedBox(height: 24),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 32),
@@ -1301,6 +1221,87 @@ class _PartyGuestAddEditManageScreenState
               const SizedBox(height: 48),
             ],
           );
+  }
+
+  _showApproveOrNotButton(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 32),
+      child: ButtonWidget(
+        text: !widget.partyGuest.isApproved ? 'approve' : 'un-approve',
+        onClicked: () async {
+          bool isApproved = !widget.partyGuest.isApproved;
+
+          widget.partyGuest =
+              widget.partyGuest.copyWith(isApproved: isApproved);
+          FirestoreHelper.pushPartyGuest(widget.partyGuest);
+
+          if (isApproved) {
+            if (widget.party.loungeId.isNotEmpty) {
+              FirestoreHelper.pullUserLounge(
+                  mBlocUser.id, widget.party.loungeId)
+                  .then((res) {
+                if (res.docs.isEmpty) {
+                  UserLounge userLounge = Dummy.getDummyUserLounge();
+                  userLounge = userLounge.copyWith(
+                      loungeId: widget.party.loungeId,
+                      userId: mBlocUser.id,
+                      userFcmToken: mBlocUser.fcmToken,
+                      isAccepted: true);
+                  FirestoreHelper.pushUserLounge(userLounge);
+
+                  if (mBlocUser.fcmToken.isNotEmpty) {
+                    String title = widget.party.name;
+                    String message =
+                        '🥳 yayyy! welcome to ${widget.party.name} family, your guest list for ${widget.party.name} has been approved 🎉, see you and your gang soon! 😎🍾';
+
+                    //send a notification
+                    Apis.sendPushNotification(
+                        mBlocUser.fcmToken, title, message);
+                    Logx.ist(_TAG,
+                        'notification has been sent to ${mBlocUser.name} ${mBlocUser.surname}');
+                  } else {
+                    Logx.d(_TAG,
+                        'app user but no fcm token to alert guest approval');
+                  }
+                } else {
+                  if (mBlocUser.fcmToken.isNotEmpty) {
+                    String title = widget.party.name;
+                    String message =
+                        '🥳 yayyy! your guest list for ${widget.party.name} has been approved 🎉, see you and your gang soon! 😎🍾';
+
+                    //send a notification
+                    Apis.sendPushNotification(
+                        mBlocUser.fcmToken, title, message);
+                    Logx.ist(_TAG,
+                        'notification has been sent to ${mBlocUser.name} ${mBlocUser.surname}');
+                  } else {
+                    Logx.d(_TAG,
+                        'app user but no fcm token to alert guest approval');
+                  }
+                }
+              });
+            } else {
+              if (mBlocUser.fcmToken.isNotEmpty) {
+                String title = widget.party.name;
+                String message =
+                    '🥳 yayyy! your guest list for ${widget.party.name} has been approved 🎉, see you and your gang soon! 😎🍾';
+
+                //send a notification
+                Apis.sendPushNotification(mBlocUser.fcmToken, title, message);
+                Logx.ist(_TAG,
+                    'notification has been sent to ${mBlocUser.name} ${mBlocUser.surname}');
+              }
+            }
+            Logx.ist(_TAG, 'party guest ${widget.partyGuest.name} is approved');
+          } else {
+            Logx.ist(
+                _TAG, 'party guest ${widget.partyGuest.name} is unapproved');
+          }
+
+          Navigator.of(context).pop();
+        },
+      ),
+    );
   }
 
   bool isDataValid() {
