@@ -98,3 +98,4 @@ app.*.map.json
 .firebase/hosting.*.cache
 .firebase/hosting.YnVpbGQvd2Vi.cache
 ios/Podfile.lock
+ios/Podfile.lock
