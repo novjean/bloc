@@ -81,6 +81,10 @@ class _EventScreenState extends State<EventScreen> {
                   });
                 }
           });
+        } else {
+          setState(() {
+            _isPartyLoading = false;
+          });
         }
 
         FirestoreHelper.pullPartyInterest(mParty.id).then((res) {
