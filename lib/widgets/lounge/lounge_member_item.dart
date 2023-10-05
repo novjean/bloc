@@ -14,8 +14,6 @@ import '../../utils/constants.dart';
 import '../../utils/logx.dart';
 
 class LoungeMemberItem extends StatefulWidget{
-  static const String _TAG = 'LoungeMemberItem';
-
   User user;
   String loungeId;
   bool isMember;
@@ -35,6 +33,8 @@ class LoungeMemberItem extends StatefulWidget{
 }
 
 class _LoungeMemberItemState extends State<LoungeMemberItem> {
+  static const String _TAG = 'LoungeMemberItem';
+
   var _isHistoryLoading = true;
 
   List<HistoryMusic> mHistoryMusics = [];
@@ -88,9 +88,14 @@ class _LoungeMemberItemState extends State<LoungeMemberItem> {
 
           genrePercent += 'total: $mTotalEventsCount';
 
-          setState(() {
-            _isHistoryLoading = false;
-          });
+          if(mounted){
+            setState(() {
+              _isHistoryLoading = false;
+            });
+          } else {
+            Logx.em(_TAG, 'not mounted');
+          }
+
         } else {
           setState(() {
             _isHistoryLoading = false;
@@ -174,7 +179,7 @@ class _LoungeMemberItemState extends State<LoungeMemberItem> {
                               UserLounge userLounge = Fresh.freshUserLoungeMap(data, false);
                               userLounge = userLounge.copyWith(isAccepted: true, userFcmToken: widget.user.fcmToken);
                               FirestoreHelper.pushUserLounge(userLounge);
-                              Logx.ist(LoungeMemberItem._TAG, '${widget.user.name} ${widget.user.surname} is a new member');
+                              Logx.ist(_TAG, '${widget.user.name} ${widget.user.surname} is a new member');
                             }
                           });
                         } else {
@@ -187,7 +192,7 @@ class _LoungeMemberItemState extends State<LoungeMemberItem> {
                               userId: widget.user.id, userFcmToken: widget.user.fcmToken);
                           FirestoreHelper.pushUserLounge(userLounge);
 
-                          Logx.ist(LoungeMemberItem._TAG, '${widget.user.name} ${widget.user.surname} is a new member');
+                          Logx.ist(_TAG, '${widget.user.name} ${widget.user.surname} is a new member');
                         } else {
                           deleteUserLounge();
                         }
@@ -216,9 +221,9 @@ class _LoungeMemberItemState extends State<LoungeMemberItem> {
         UserLounge userLounge = Fresh.freshUserLoungeMap(data, false);
 
         FirestoreHelper.deleteUserLounge(userLounge.id);
-        Logx.ist(LoungeMemberItem._TAG, '${widget.user.name} ${widget.user.surname} is removed from the lounge');
+        Logx.ist(_TAG, '${widget.user.name} ${widget.user.surname} is removed from the lounge');
       } else {
-        Logx.i(LoungeMemberItem._TAG, 'user lounge not found. so nothing to delete');
+        Logx.i(_TAG, 'user lounge not found. so nothing to delete');
       }
     });
   }
