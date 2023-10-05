@@ -95,7 +95,6 @@ class _LoungeMemberItemState extends State<LoungeMemberItem> {
           } else {
             Logx.em(_TAG, 'not mounted');
           }
-
         } else {
           setState(() {
             _isHistoryLoading = false;
