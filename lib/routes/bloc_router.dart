@@ -14,6 +14,7 @@ import 'package:bloc/db/entity/user.dart' as blocUser;
 import '../helpers/firestore_helper.dart';
 import '../helpers/fresh.dart';
 import '../main.dart';
+import '../screens/contact_us_screen.dart';
 import '../screens/error_page.dart';
 import '../screens/login_screen.dart';
 import '../screens/lounge/lounge_chat_screen.dart';
@@ -135,6 +136,15 @@ class BlocRouter {
             Logx.d(_TAG, '/account');
 
             return AccountScreen();
+          },
+        ),
+        GoRoute(
+          name: RouteConstants.contactRouteName,
+          path: '/contact',
+          builder: (context, state) {
+            Logx.d(_TAG, '/contact');
+
+            return ContactUsScreen();
           },
         ),
         GoRoute(

@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
+import '../routes/route_constants.dart';
 import '../screens/contact_us_screen.dart';
 import '../screens/privacy_policy_screen.dart';
 import '../screens/refund_policy_screen.dart';
 import '../screens/terms_and_conditions_screen.dart';
+import '../utils/constants.dart';
 import '../utils/network_utils.dart';
 
 class Footer extends StatelessWidget {
@@ -44,21 +47,18 @@ class Footer extends StatelessWidget {
                       'instagram',
                       style: TextStyle(
                           fontSize: 14,
-                          color: Theme.of(context).primaryColorLight),
+                          color: Constants.lightPrimary),
                     ),
                   ),
                   InkWell(
                     onTap: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                            builder: (context) => ContactUsScreen()),
-                      );
+                      GoRouter.of(context).pushNamed(RouteConstants.contactRouteName);
                     },
-                    child: Text(
+                    child: const Text(
                       'contact us',
                       style: TextStyle(
                           fontSize: 14,
-                          color: Theme.of(context).primaryColorLight),
+                          color: Constants.lightPrimary),
                     ),
                   )
                 ],

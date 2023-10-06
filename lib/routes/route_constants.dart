@@ -12,6 +12,7 @@ class RouteConstants {
   static const String menuRouteName = 'menu';
 
   static const String accountRouteName = 'account';
+  static const String contactRouteName = 'contact';
 
   static const String profileRouteName = 'profile';
 }
