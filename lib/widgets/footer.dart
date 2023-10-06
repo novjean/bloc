@@ -79,10 +79,7 @@ class Footer extends StatelessWidget {
                   ),
                   InkWell(
                     onTap: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                            builder: (context) => RefundPolicyScreen()),
-                      );
+                      GoRouter.of(context).pushNamed(RouteConstants.refundRouteName);
                     },
                     child: const Text(
                       'refund policy',

@@ -15,6 +15,7 @@ class RouteConstants {
   static const String contactRouteName = 'contact';
   static const String termsAndConditionsRouteName = 't&c';
   static const String privacyRouteName = 'privacy';
+  static const String refundRouteName = 'refund_and_cancellation';
 
 
   static const String profileRouteName = 'profile';

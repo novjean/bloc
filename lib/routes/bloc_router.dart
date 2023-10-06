@@ -4,6 +4,7 @@ import 'package:bloc/screens/bloc/bloc_menu_screen.dart';
 import 'package:bloc/screens/box_office/box_office_screen.dart';
 import 'package:bloc/screens/main_screen.dart';
 import 'package:bloc/screens/parties/event_screen.dart';
+import 'package:bloc/screens/refund_policy_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -165,6 +166,15 @@ class BlocRouter {
             Logx.d(_TAG, '/privacy');
 
             return PrivacyPolicyScreen();
+          },
+        ),
+        GoRoute(
+          name: RouteConstants.refundRouteName,
+          path: '/refund_and_cancellation',
+          builder: (context, state) {
+            Logx.d(_TAG, '/refund_and_cancellation');
+
+            return RefundPolicyScreen();
           },
         ),
         GoRoute(
