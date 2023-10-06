@@ -2,10 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../routes/route_constants.dart';
-import '../screens/contact_us_screen.dart';
 import '../screens/privacy_policy_screen.dart';
 import '../screens/refund_policy_screen.dart';
-import '../screens/terms_and_conditions_screen.dart';
 import '../utils/constants.dart';
 import '../utils/network_utils.dart';
 
@@ -70,16 +68,13 @@ class Footer extends StatelessWidget {
                 children: [
                   InkWell(
                     onTap: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                            builder: (context) => PrivacyPolicyScreen()),
-                      );
+                      GoRouter.of(context).pushNamed(RouteConstants.privacyRouteName);
                     },
-                    child: Text(
+                    child: const Text(
                       'privacy policy',
                       style: TextStyle(
                           fontSize: 14,
-                          color: Theme.of(context).primaryColorLight),
+                          color: Constants.lightPrimary),
                     ),
                   ),
                   InkWell(
@@ -89,7 +84,7 @@ class Footer extends StatelessWidget {
                             builder: (context) => RefundPolicyScreen()),
                       );
                     },
-                    child: Text(
+                    child: const Text(
                       'refund policy',
                       style: TextStyle(
                           fontSize: 14,
