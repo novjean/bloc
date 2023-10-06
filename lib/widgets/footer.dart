@@ -93,21 +93,18 @@ class Footer extends StatelessWidget {
                       'refund policy',
                       style: TextStyle(
                           fontSize: 14,
-                          color: Theme.of(context).primaryColorLight),
+                          color: Constants.lightPrimary),
                     ),
                   ),
                   InkWell(
                     onTap: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                            builder: (context) => TermsAndConditionsScreen()),
-                      );
+                      GoRouter.of(context).pushNamed(RouteConstants.termsAndConditionsRouteName);
                     },
-                    child: Text(
+                    child: const Text(
                       'terms and conditions',
                       style: TextStyle(
                           fontSize: 14,
-                          color: Theme.of(context).primaryColorLight),
+                          color: Constants.lightPrimary),
                     ),
                   ),
                 ],

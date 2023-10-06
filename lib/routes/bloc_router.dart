@@ -19,6 +19,7 @@ import '../screens/error_page.dart';
 import '../screens/login_screen.dart';
 import '../screens/lounge/lounge_chat_screen.dart';
 import '../screens/parties/artist_screen.dart';
+import '../screens/terms_and_conditions_screen.dart';
 import '../screens/ui/splash_screen.dart';
 import '../utils/logx.dart';
 import '../widgets/ui/loading_widget.dart';
@@ -145,6 +146,15 @@ class BlocRouter {
             Logx.d(_TAG, '/contact');
 
             return ContactUsScreen();
+          },
+        ),
+        GoRoute(
+          name: RouteConstants.termsAndConditionsRouteName,
+          path: '/t&c',
+          builder: (context, state) {
+            Logx.d(_TAG, '/t&c');
+
+            return TermsAndConditionsScreen();
           },
         ),
         GoRoute(

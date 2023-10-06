@@ -13,6 +13,7 @@ class RouteConstants {
 
   static const String accountRouteName = 'account';
   static const String contactRouteName = 'contact';
+  static const String termsAndConditionsRouteName = 't&c';
 
   static const String profileRouteName = 'profile';
 }
