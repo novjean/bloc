@@ -18,6 +18,7 @@ import '../db/entity/notification_test.dart';
 import '../db/entity/party.dart';
 import '../db/entity/party_interest.dart';
 import '../db/entity/party_photo.dart';
+import '../db/entity/party_tix.dart';
 import '../db/entity/product.dart';
 import '../db/entity/promoter.dart';
 import '../db/entity/promoter_guest.dart';
@@ -1906,9 +1907,9 @@ class Fresh {
     }
 
     try {
-      party = party.copyWith(isTicketed: map['isTicketed'] as bool);
+      party = party.copyWith(isTix: map['isTix'] as bool);
     } catch (e) {
-      Logx.em(_TAG, 'party isTicketed not exist for id: ${party.id}');
+      Logx.em(_TAG, 'party isTix not exist for id: ${party.id}');
       isModelChanged = true;
     }
     try {
@@ -1918,18 +1919,18 @@ class Fresh {
       isModelChanged = true;
     }
     try {
-      party = party.copyWith(ticketsSoldCount: map['ticketsSoldCount'] as int);
+      party = party.copyWith(tixSoldCount: map['tixSoldCount'] as int);
     } catch (e) {
       Logx.em(
-          _TAG, 'party ticketsSoldCount not exist for id: ${party.id}');
+          _TAG, 'party tixSoldCount not exist for id: ${party.id}');
       isModelChanged = true;
     }
     try {
       party =
-          party.copyWith(ticketsSalesTotal: map['ticketsSalesTotal'] as double);
+          party.copyWith(tixSalesTotal: map['tixSalesTotal'] as double);
     } catch (e) {
       Logx.em(
-          _TAG, 'party ticketsSalesTotal not exist for id: ${party.id}');
+          _TAG, 'party tixSalesTotal not exist for id: ${party.id}');
       isModelChanged = true;
     }
 
@@ -2160,18 +2161,18 @@ class Fresh {
           freshParty.copyWith(guestListEndTime: party.guestListEndTime);
     } catch (e) {
       Logx.em(
-          _TAG, 'party guestListEndTime not exist for party id: ' + party.id);
+          _TAG, 'party guestListEndTime not exist for id: ${party.id}');
     }
     try {
       freshParty = freshParty.copyWith(isEmailRequired: party.isEmailRequired);
     } catch (e) {
       Logx.em(
-          _TAG, 'party isEmailRequired not exist for party id: ' + party.id);
+          _TAG, 'party isEmailRequired not exist for id: ${party.id}');
     }
     try {
       freshParty = freshParty.copyWith(guestListRules: party.guestListRules);
     } catch (e) {
-      Logx.em(_TAG, 'party guestListRules not exist for party id: ' + party.id);
+      Logx.em(_TAG, 'party guestListRules not exist for id: ${party.id}');
     }
     try {
       freshParty = freshParty.copyWith(clubRules: party.clubRules);
@@ -2180,9 +2181,9 @@ class Fresh {
     }
 
     try {
-      freshParty = freshParty.copyWith(isTicketed: party.isTicketed);
+      freshParty = freshParty.copyWith(isTix: party.isTix);
     } catch (e) {
-      Logx.em(_TAG, 'party isTicketed not exist for id: ${party.id}');
+      Logx.em(_TAG, 'party isTix not exist for id: ${party.id}');
     }
     try {
       freshParty = freshParty.copyWith(isTicketsDisabled: party.isTicketsDisabled);
@@ -2191,17 +2192,17 @@ class Fresh {
     }
     try {
       freshParty =
-          freshParty.copyWith(ticketsSoldCount: party.ticketsSoldCount);
+          freshParty.copyWith(tixSoldCount: party.tixSoldCount);
     } catch (e) {
       Logx.em(
-          _TAG, 'party ticketsSoldCount not exist for id: ${party.id}');
+          _TAG, 'party tixSoldCount not exist for id: ${party.id}');
     }
     try {
       freshParty =
-          freshParty.copyWith(ticketsSalesTotal: party.ticketsSalesTotal);
+          freshParty.copyWith(tixSalesTotal: party.tixSalesTotal);
     } catch (e) {
       Logx.em(
-          _TAG, 'party ticketsSalesTotal not exist for party id: ' + party.id);
+          _TAG, 'party tixSalesTotal not exist for id: ${party.id}');
     }
 
     try {
@@ -2209,7 +2210,7 @@ class Fresh {
           freshParty.copyWith(isChallengeActive: party.isChallengeActive);
     } catch (e) {
       Logx.em(
-          _TAG, 'party isChallengeActive not exist for party id: ' + party.id);
+          _TAG, 'party isChallengeActive not exist for id: ${party.id}');
     }
     try {
       freshParty =
@@ -2220,7 +2221,7 @@ class Fresh {
     try {
       freshParty = freshParty.copyWith(genre: party.genre);
     } catch (e) {
-      Logx.em(_TAG, 'party genre not exist for party id: ${party.id}');
+      Logx.em(_TAG, 'party genre not exist for id: ${party.id}');
     }
 
     try {
@@ -2513,7 +2514,7 @@ class Fresh {
     return partyGuest;
   }
 
-  /** Party Interest **/
+  /** party interest **/
   static PartyInterest freshPartyInterest(PartyInterest partyInterest) {
     PartyInterest fresh = Dummy.getDummyPartyInterest();
 
@@ -2753,6 +2754,126 @@ class Fresh {
       FirestoreHelper.pushPartyPhoto(partyPhoto);
     }
     return partyPhoto;
+  }
+
+  /** party tix tier **/
+  static PartyTixTier freshPartyTixTier(PartyTixTier partyTixTier) {
+    PartyTixTier fresh = Dummy.getDummyPartyTixTier();
+
+    try {
+      fresh = fresh.copyWith(id: partyTixTier.id);
+    } catch (e) {
+      Logx.em(_TAG, 'tix tier id not exist');
+    }
+    try {
+      fresh = fresh.copyWith(partyId: partyTixTier.partyId);
+    } catch (e) {
+      Logx.em(_TAG,
+          'tix tier partyId not exist for id: ${partyTixTier.id}');
+    }
+
+    try {
+      fresh = fresh.copyWith(tierLevel: partyTixTier.tierLevel);
+    } catch (e) {
+      Logx.em(_TAG,
+          'tix tier tierLevel not exist for id: ${partyTixTier.id}');
+    }
+    try {
+      fresh = fresh.copyWith(tierName: partyTixTier.tierName);
+    } catch (e) {
+      Logx.em(_TAG,
+          'tix tier tierName not exist for id: ${partyTixTier.id}');
+    }
+    try {
+      fresh = fresh.copyWith(tierPrice: partyTixTier.tierPrice);
+    } catch (e) {
+      Logx.em(_TAG,
+          'tix tier tierPrice not exist for id: ${partyTixTier.id}');
+    }
+
+    try {
+      fresh = fresh.copyWith(soldCount: partyTixTier.soldCount);
+    } catch (e) {
+      Logx.em(_TAG,
+          'tix tier soldCount not exist for id: ${partyTixTier.id}');
+    }
+    try {
+      fresh = fresh.copyWith(totalTix: partyTixTier.totalTix);
+    } catch (e) {
+      Logx.em(_TAG,
+          'tix tier totalTix not exist for id: ${partyTixTier.id}');
+    }
+    try {
+      fresh = fresh.copyWith(isSoldOut: partyTixTier.isSoldOut);
+    } catch (e) {
+      Logx.em(_TAG,
+          'tix tier isSoldOut not exist for id: ${partyTixTier.id}');
+    }
+
+    return fresh;
+  }
+
+  static PartyTixTier freshPartyTixTierMap(
+      Map<String, dynamic> map, bool shouldUpdate) {
+    PartyTixTier partyTixTier = Dummy.getDummyPartyTixTier();
+    bool isModelChanged = false;
+
+    try {
+      partyTixTier = partyTixTier.copyWith(id: map['id'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'partyTixTier id not exist');
+    }
+    try {
+      partyTixTier = partyTixTier.copyWith(partyId: map['partyId'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'partyTixTier partyId not exist for id: ${partyTixTier.id}');
+      isModelChanged = true;
+    }
+
+    try {
+      partyTixTier = partyTixTier.copyWith(tierLevel: map['tierLevel'] as int);
+    } catch (e) {
+      Logx.em(_TAG, 'partyTixTier tierLevel not exist for id: ${partyTixTier.id}');
+      isModelChanged = true;
+    }
+    try {
+      partyTixTier = partyTixTier.copyWith(tierName: map['tierName'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'partyTixTier tierName not exist for id: ${partyTixTier.id}');
+      isModelChanged = true;
+    }
+    try {
+      partyTixTier = partyTixTier.copyWith(tierPrice: map['tierPrice'] as double);
+    } catch (e) {
+      Logx.em(_TAG, 'partyTixTier tierPrice not exist for id: ${partyTixTier.id}');
+      isModelChanged = true;
+    }
+
+    try {
+      partyTixTier = partyTixTier.copyWith(soldCount: map['soldCount'] as int);
+    } catch (e) {
+      Logx.em(_TAG, 'partyTixTier soldCount not exist for id: ${partyTixTier.id}');
+      isModelChanged = true;
+    }
+    try {
+      partyTixTier = partyTixTier.copyWith(totalTix: map['totalTix'] as int);
+    } catch (e) {
+      Logx.em(_TAG, 'partyTixTier totalTix not exist for id: ${partyTixTier.id}');
+      isModelChanged = true;
+    }
+
+    try {
+      partyTixTier = partyTixTier.copyWith(isSoldOut: map['isSoldOut'] as bool);
+    } catch (e) {
+      Logx.em(_TAG, 'partyTixTier isSoldOut not exist for id: ${partyTixTier.id}');
+      isModelChanged = true;
+    }
+
+    if (isModelChanged && shouldUpdate) {
+      Logx.i(_TAG, 'updating party tix tier ${partyTixTier.id}');
+      FirestoreHelper.pushPartyTixTier(partyTixTier);
+    }
+    return partyTixTier;
   }
 
   /** product **/

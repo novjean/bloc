@@ -39,9 +39,10 @@ class Party {
   final int overrideChallengeNum;
   final String genre;
 
-  final bool isTicketed;
-  int ticketsSoldCount;
-  double ticketsSalesTotal;
+  final bool isTix;
+  int tixSoldCount;
+  double tixSalesTotal;
+
   final bool isTicketsDisabled;
 
   List<String> artistIds;
@@ -86,9 +87,9 @@ class Party {
     required this.isChallengeActive,
     required this.overrideChallengeNum,
     required this.genre,
-    required this.isTicketed,
-    required this.ticketsSoldCount,
-    required this.ticketsSalesTotal,
+    required this.isTix,
+    required this.tixSoldCount,
+    required this.tixSalesTotal,
     required this.isTicketsDisabled,
     required this.artistIds,
     required this.loungeId,
@@ -134,9 +135,9 @@ class Party {
           isChallengeActive == other.isChallengeActive &&
           overrideChallengeNum == other.overrideChallengeNum &&
           genre == other.genre &&
-          isTicketed == other.isTicketed &&
-          ticketsSoldCount == other.ticketsSoldCount &&
-          ticketsSalesTotal == other.ticketsSalesTotal &&
+          isTix == other.isTix &&
+          tixSoldCount == other.tixSoldCount &&
+          tixSalesTotal == other.tixSalesTotal &&
           isTicketsDisabled == other.isTicketsDisabled &&
           artistIds == other.artistIds &&
           loungeId == other.loungeId &&
@@ -178,9 +179,9 @@ class Party {
       isChallengeActive.hashCode ^
       overrideChallengeNum.hashCode ^
       genre.hashCode ^
-      isTicketed.hashCode ^
-      ticketsSoldCount.hashCode ^
-      ticketsSalesTotal.hashCode ^
+      isTix.hashCode ^
+      tixSoldCount.hashCode ^
+      tixSalesTotal.hashCode ^
       isTicketsDisabled.hashCode ^
       artistIds.hashCode ^
       loungeId.hashCode ^
@@ -223,9 +224,9 @@ class Party {
         ' isChallengeActive: $isChallengeActive,' +
         ' overrideChallengeNum: $overrideChallengeNum,' +
         ' genre: $genre,' +
-        ' isTicketed: $isTicketed,' +
-        ' ticketsSoldCount: $ticketsSoldCount,' +
-        ' ticketsSalesTotal: $ticketsSalesTotal,' +
+        ' isTix: $isTix,' +
+        ' tixSoldCount: $tixSoldCount,' +
+        ' tixSalesTotal: $tixSalesTotal,' +
         ' isTicketsDisabled: $isTicketsDisabled,' +
         ' artistIds: $artistIds,' +
         ' loungeId: $loungeId,' +
@@ -268,9 +269,9 @@ class Party {
     bool? isChallengeActive,
     int? overrideChallengeNum,
     String? genre,
-    bool? isTicketed,
-    int? ticketsSoldCount,
-    double? ticketsSalesTotal,
+    bool? isTix,
+    int? tixSoldCount,
+    double? tixSalesTotal,
     bool? isTicketsDisabled,
     List<String>? artistIds,
     String? loungeId,
@@ -312,9 +313,9 @@ class Party {
       isChallengeActive: isChallengeActive ?? this.isChallengeActive,
       overrideChallengeNum: overrideChallengeNum ?? this.overrideChallengeNum,
       genre: genre ?? this.genre,
-      isTicketed: isTicketed ?? this.isTicketed,
-      ticketsSoldCount: ticketsSoldCount ?? this.ticketsSoldCount,
-      ticketsSalesTotal: ticketsSalesTotal ?? this.ticketsSalesTotal,
+      isTix: isTix ?? this.isTix,
+      tixSoldCount: tixSoldCount ?? this.tixSoldCount,
+      tixSalesTotal: tixSalesTotal ?? this.tixSalesTotal,
       isTicketsDisabled: isTicketsDisabled ?? this.isTicketsDisabled,
       artistIds: artistIds ?? this.artistIds,
       loungeId: loungeId ?? this.loungeId,
@@ -358,9 +359,9 @@ class Party {
       'isChallengeActive': this.isChallengeActive,
       'overrideChallengeNum': this.overrideChallengeNum,
       'genre': this.genre,
-      'isTicketed': this.isTicketed,
-      'ticketsSoldCount': this.ticketsSoldCount,
-      'ticketsSalesTotal': this.ticketsSalesTotal,
+      'isTix': this.isTix,
+      'tixSoldCount': this.tixSoldCount,
+      'tixSalesTotal': this.tixSalesTotal,
       'isTicketsDisabled': this.isTicketsDisabled,
       'artistIds': this.artistIds,
       'loungeId': this.loungeId,
@@ -404,9 +405,9 @@ class Party {
       isChallengeActive: map['isChallengeActive'] as bool,
       overrideChallengeNum: map['overrideChallengeNum'] as int,
       genre: map['genre'] as String,
-      isTicketed: map['isTicketed'] as bool,
-      ticketsSoldCount: map['ticketsSoldCount'] as int,
-      ticketsSalesTotal: map['ticketsSalesTotal'] as double,
+      isTix: map['isTix'] as bool,
+      tixSoldCount: map['tixSoldCount'] as int,
+      tixSalesTotal: map['tixSalesTotal'] as double,
       isTicketsDisabled: map['isTicketsDisabled'] as bool,
       artistIds: map['artistIds'] as List<String>,
       loungeId: map['loungeId'] as String,

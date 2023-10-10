@@ -29,6 +29,7 @@ import '../db/entity/offer.dart';
 import '../db/entity/party.dart';
 import '../db/entity/party_interest.dart';
 import '../db/entity/party_photo.dart';
+import '../db/entity/party_tix.dart';
 import '../db/entity/product.dart';
 import '../db/entity/promoter.dart';
 import '../db/entity/promoter_guest.dart';
@@ -304,9 +305,9 @@ class Dummy {
         clubRules: Constants.clubRules,
         guestListRules: Constants.guestListRules,
         type: 'artist',
-        isTicketed: false,
-        ticketsSoldCount: 0,
-        ticketsSalesTotal: 0,
+        isTix: false,
+        tixSoldCount: 0,
+        tixSalesTotal: 0,
         isBigAct: true,
         genre: '',
         isChallengeActive: false,
@@ -374,6 +375,19 @@ class Dummy {
         downloadCount: 0,
         views: 0);
     return partyPhoto;
+  }
+
+  static PartyTixTier getDummyPartyTixTier() {
+    PartyTixTier partyTixTier = PartyTixTier(
+        id: StringUtils.getRandomString(28),
+        partyId: '',
+      tierLevel: 1,
+      tierName: '',
+      tierPrice: 0,
+      soldCount: 0,
+      totalTix: 0,
+      isSoldOut: false);
+    return partyTixTier;
   }
 
   static Product getDummyProduct(String blocServiceId, String userId) {

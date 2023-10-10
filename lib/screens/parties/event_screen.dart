@@ -67,19 +67,20 @@ class _EventScreenState extends State<EventScreen> {
           mParty = party;
         }
 
-        if(UserPreferences.isUserLoggedIn()){
-          FirestoreHelper.pullPartyGuestByUser(UserPreferences.myUser.id, mParty.id)
+        if (UserPreferences.isUserLoggedIn()) {
+          FirestoreHelper.pullPartyGuestByUser(
+                  UserPreferences.myUser.id, mParty.id)
               .then((res) {
-                if(res.docs.isNotEmpty){
-                  setState(() {
-                    _isPartyLoading = false;
-                    isGuestListRequested = true;
-                  });
-                } else {
-                  setState(() {
-                    _isPartyLoading = false;
-                  });
-                }
+            if (res.docs.isNotEmpty) {
+              setState(() {
+                _isPartyLoading = false;
+                isGuestListRequested = true;
+              });
+            } else {
+              setState(() {
+                _isPartyLoading = false;
+              });
+            }
           });
         } else {
           setState(() {
@@ -110,7 +111,8 @@ class _EventScreenState extends State<EventScreen> {
             }
 
             setState(() {
-              mInterestCount = partyInterest.initCount + partyInterest.userIds.length;
+              mInterestCount =
+                  partyInterest.initCount + partyInterest.userIds.length;
             });
           } else {
             PartyInterest partyInterest = Dummy.getDummyPartyInterest();
@@ -131,7 +133,6 @@ class _EventScreenState extends State<EventScreen> {
     });
 
     super.initState();
-
   }
 
   @override
@@ -193,7 +194,7 @@ class _EventScreenState extends State<EventScreen> {
                             const Duration(milliseconds: 1200),
                         // enlargeCenterPage: false,
                         scrollDirection: Axis.horizontal,
-                        aspectRatio: mParty.isSquare ? 1.33: 1.0,
+                        aspectRatio: mParty.isSquare ? 1.33 : 1.0,
                       ),
                       items: mParty.imageUrls
                           .map((item) => kIsWeb
@@ -207,7 +208,7 @@ class _EventScreenState extends State<EventScreen> {
                                   imageUrl: item,
                                   imageBuilder: (context, imageProvider) =>
                                       Container(
-                                        decoration: BoxDecoration(
+                                    decoration: BoxDecoration(
                                       image: DecorationImage(
                                         image: imageProvider,
                                         fit: BoxFit.cover,
@@ -268,12 +269,11 @@ class _EventScreenState extends State<EventScreen> {
                     ),
                   ),
                   Flexible(
-                    flex: 1,
-                    child: Padding(
-                      padding: const EdgeInsets.only(right: 10.0, left: 5),
-                      child: showGuestListOrTicketButton(context),
-                    )
-                  ),
+                      flex: 1,
+                      child: Padding(
+                        padding: const EdgeInsets.only(right: 10.0, left: 5),
+                        child: showGuestListOrTicketButton(context),
+                      )),
                 ],
               ),
               const SizedBox(height: 10),
@@ -309,30 +309,29 @@ class _EventScreenState extends State<EventScreen> {
                     )),
               ),
               const SizedBox(height: 10),
-
               const Divider(),
-
-              mInterestCount>0?
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text('$mInterestCount members are attending this event.',
-                      style: const TextStyle(color: Constants.primary, fontSize: 18),
-                      textAlign: TextAlign.start,
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 2,
-                    ),
-                  ],
-                ),
-              ) : const SizedBox(),
-
+              mInterestCount > 0
+                  ? Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            '$mInterestCount members are attending this event.',
+                            style: const TextStyle(
+                                color: Constants.primary, fontSize: 18),
+                            textAlign: TextAlign.start,
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 2,
+                          ),
+                        ],
+                      ),
+                    )
+                  : const SizedBox(),
               const SizedBox(height: 10),
               mParty.artistIds.isNotEmpty
                   ? _loadArtists(context)
                   : const SizedBox(),
-
               const SizedBox(height: 10),
               const Row(
                 mainAxisAlignment: MainAxisAlignment.end,
@@ -381,8 +380,10 @@ class _EventScreenState extends State<EventScreen> {
                         text: '🎯 page',
                         onClicked: () async {
                           FirestoreHelper.updatePartyShareCount(mParty.id);
-                          final url = 'http://bloc.bar/#/event/${Uri.encodeComponent(widget.partyName)}/${widget.partyChapter}';
-                          Share.share('Check out ${widget.partyName} on #blocCommunity $url');
+                          final url =
+                              'http://bloc.bar/#/event/${Uri.encodeComponent(widget.partyName)}/${widget.partyChapter}';
+                          Share.share(
+                              'Check out ${widget.partyName} on #blocCommunity $url');
                         },
                       ),
                     ),
@@ -427,6 +428,25 @@ class _EventScreenState extends State<EventScreen> {
                             ),
                           ),
                         ),
+                        mParty.isTix
+                            ? InkWell(
+                                onTap: () {
+                                  //navigate to purchase tix screen
+
+                                },
+                                child: const Padding(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 15, vertical: 2),
+                                  child: Text(
+                                    'buy tix',
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      color: Constants.primary,
+                                    ),
+                                  ),
+                                ),
+                              )
+                            : const SizedBox()
                       ],
                     )
                   : const SizedBox(),
@@ -605,8 +625,7 @@ class _EventScreenState extends State<EventScreen> {
         ),
       );
     } else if (isGuestListActive) {
-
-      if(isGuestListRequested){
+      if (isGuestListRequested) {
         return Container(
           height: 50,
           width: 160,
@@ -635,7 +654,7 @@ class _EventScreenState extends State<EventScreen> {
             ),
           ),
         );
-      } else{
+      } else {
         return Container(
           height: 50,
           width: 160,

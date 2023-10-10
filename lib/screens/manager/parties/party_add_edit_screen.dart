@@ -985,10 +985,10 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
                   ), //Text
                   const SizedBox(width: 10), //SizedBox
                   Checkbox(
-                    value: widget.party.isTicketed,
+                    value: widget.party.isTix,
                     onChanged: (value) {
                       setState(() {
-                        widget.party = widget.party.copyWith(isTicketed: value);
+                        widget.party = widget.party.copyWith(isTix: value);
                       });
                     },
                   ), //Checkbox

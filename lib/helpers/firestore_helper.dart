@@ -20,6 +20,7 @@ import 'package:bloc/db/entity/order_bloc.dart';
 import 'package:bloc/db/entity/party.dart';
 import 'package:bloc/db/entity/party_guest.dart';
 import 'package:bloc/db/entity/party_interest.dart';
+import 'package:bloc/db/entity/party_tix.dart';
 import 'package:bloc/db/entity/promoter.dart';
 import 'package:bloc/db/entity/promoter_guest.dart';
 import 'package:bloc/db/entity/quick_order.dart';
@@ -80,6 +81,7 @@ class FirestoreHelper {
   static String PARTY_GUESTS = 'party_guests';
   static String PARTY_INTERESTS = 'party_interests';
   static String PARTY_PHOTOS = 'party_photos';
+  static String PARTY_TIX_TIERS = 'party_tix_tiers';
   static String PRODUCTS = 'products';
   static String PROMOTERS = 'promoters';
   static String PROMOTER_GUESTS = 'promoter_guests';
@@ -101,6 +103,7 @@ class FirestoreHelper {
 
   static int TABLE_PRIVATE_TYPE_ID = 1;
   static int TABLE_COMMUNITY_TYPE_ID = 2;
+
 
   /** ads **/
   static void pushAd(Ad ad) async {
@@ -148,7 +151,6 @@ class FirestoreHelper {
         .doc(id)
         .update({"reach": FieldValue.increment(1)},);
   }
-
 
   static void deleteAd(String docId) {
     FirebaseFirestore.instance.collection(ADS).doc(docId).delete();
@@ -1282,6 +1284,29 @@ class FirestoreHelper {
         .delete();
   }
 
+  /** party tix tier **/
+  static void pushPartyTixTier(PartyTixTier partyTixTier) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection(PARTY_TIX_TIERS)
+          .doc(partyTixTier.id)
+          .set(partyTixTier.toMap());
+    } on PlatformException catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } on Exception catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } catch (e) {
+      Logx.em(_TAG, e.toString());
+    }
+  }
+
+  static void deletePartyTixTier(String docId) {
+    FirebaseFirestore.instance
+        .collection(PARTY_TIX_TIERS)
+        .doc(docId)
+        .delete();
+  }
+
   /** products **/
   static void pushProduct(Product product) async {
     try {
@@ -2183,7 +2208,6 @@ class FirestoreHelper {
       Logx.em(_TAG, e.toString());
     }
   }
-
 
   static void deleteUser(String docId) {
     FirebaseFirestore.instance.collection(USERS).doc(docId).delete();
