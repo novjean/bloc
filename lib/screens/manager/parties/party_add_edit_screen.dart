@@ -1250,6 +1250,18 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
                   Navigator.of(context).pop();
                 },
               ),
+              const SizedBox(height: 24),
+              ButtonWidget(
+                text: 'tix tier',
+                onClicked: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                        builder: (ctx) =>
+                            ManageTixTiersScreen(partyId: partyId)),
+                  );
+                },
+              ),
+
               const SizedBox(height: 36),
               DarkButtonWidget(
                 text: 'delete',
