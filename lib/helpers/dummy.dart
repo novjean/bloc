@@ -377,10 +377,10 @@ class Dummy {
     return partyPhoto;
   }
 
-  static PartyTixTier getDummyPartyTixTier() {
+  static PartyTixTier getDummyPartyTixTier(String partyId) {
     PartyTixTier partyTixTier = PartyTixTier(
         id: StringUtils.getRandomString(28),
-        partyId: '',
+        partyId: partyId,
       tierLevel: 1,
       tierName: '',
       tierPrice: 0,

@@ -1300,6 +1300,14 @@ class FirestoreHelper {
     }
   }
 
+  static getPartyTixTiers(String partyId) {
+    return FirebaseFirestore.instance
+        .collection(PARTY_TIX_TIERS)
+        .where('partyId', isEqualTo: partyId)
+        .orderBy('tierLevel', descending: true)
+        .snapshots();
+  }
+
   static void deletePartyTixTier(String docId) {
     FirebaseFirestore.instance
         .collection(PARTY_TIX_TIERS)

@@ -32,6 +32,7 @@ import '../../../widgets/ui/button_widget.dart';
 import '../../../widgets/ui/dark_button_widget.dart';
 import '../../../widgets/ui/textfield_widget.dart';
 import '../../../widgets/ui/toaster.dart';
+import 'manage_tix_tiers_screen.dart';
 
 class PartyAddEditScreen extends StatefulWidget {
   Party party;
@@ -1257,7 +1258,7 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
                   Navigator.of(context).push(
                     MaterialPageRoute(
                         builder: (ctx) =>
-                            ManageTixTiersScreen(partyId: partyId)),
+                            ManageTixTiersScreen(partyId: widget.party.id)),
                   );
                 },
               ),

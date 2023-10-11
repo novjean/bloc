@@ -1,14 +1,14 @@
+import 'package:bloc/db/entity/party_tix.dart';
 import 'package:flutter/material.dart';
 
 import '../../../utils/constants.dart';
-import '../../db/entity/category.dart';
 
-class ManageCategoryItem extends StatelessWidget{
-  static const String _TAG = 'ManageCategoryItem';
+class ManageTixTierItem extends StatelessWidget{
+  static const String _TAG = 'ManageTixTierItem';
 
-  Category category;
+  PartyTixTier partyTixTier;
 
-  ManageCategoryItem({Key? key, required this.category}) : super(key: key);
+  ManageTixTierItem({Key? key, required this.partyTixTier}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +17,7 @@ class ManageCategoryItem extends StatelessWidget{
       child: ClipRRect(
         borderRadius: BorderRadius.circular(15),
         child: Hero(
-          tag: category.id,
+          tag: partyTixTier.id,
           child: Card(
             elevation: 1,
             color: Constants.lightPrimary,
@@ -27,7 +27,7 @@ class ManageCategoryItem extends StatelessWidget{
                 child: ListTile(
                   title: RichText(
                     text: TextSpan(
-                      text: '${category.name} ',
+                      text: '${partyTixTier.tierName} ',
                       style: const TextStyle(
                           fontFamily: Constants.fontDefault,
                           color: Colors.black,
@@ -37,11 +37,11 @@ class ManageCategoryItem extends StatelessWidget{
                     ),
                   ),
 
-                  subtitle: Text(category.type),
+                  subtitle: Text(partyTixTier.tierPrice.toString()),
                   trailing: RichText(
                     text: TextSpan(
                       text:
-                      '${category.sequence} ',
+                      '${partyTixTier.tierLevel} ',
                       style: const TextStyle(
                         fontFamily: Constants.fontDefault,
                         color: Colors.black,

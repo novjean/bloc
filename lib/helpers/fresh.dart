@@ -2758,7 +2758,7 @@ class Fresh {
 
   /** party tix tier **/
   static PartyTixTier freshPartyTixTier(PartyTixTier partyTixTier) {
-    PartyTixTier fresh = Dummy.getDummyPartyTixTier();
+    PartyTixTier fresh = Dummy.getDummyPartyTixTier(partyTixTier.partyId);
 
     try {
       fresh = fresh.copyWith(id: partyTixTier.id);
@@ -2815,7 +2815,7 @@ class Fresh {
 
   static PartyTixTier freshPartyTixTierMap(
       Map<String, dynamic> map, bool shouldUpdate) {
-    PartyTixTier partyTixTier = Dummy.getDummyPartyTixTier();
+    PartyTixTier partyTixTier = Dummy.getDummyPartyTixTier('');
     bool isModelChanged = false;
 
     try {
