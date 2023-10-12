@@ -18,6 +18,7 @@ import '../db/entity/notification_test.dart';
 import '../db/entity/party.dart';
 import '../db/entity/party_interest.dart';
 import '../db/entity/party_photo.dart';
+import '../db/entity/tix.dart';
 import '../db/entity/party_tix_tier.dart';
 import '../db/entity/product.dart';
 import '../db/entity/promoter.dart';
@@ -26,6 +27,7 @@ import '../db/entity/quick_order.dart';
 import '../db/entity/quick_table.dart';
 import '../db/entity/reservation.dart';
 import '../db/entity/ticket.dart';
+import '../db/entity/tix_tier_item.dart';
 import '../db/entity/user.dart';
 import '../db/entity/user_lounge.dart';
 import '../db/shared_preferences/user_preferences.dart';
@@ -3536,8 +3538,7 @@ class Fresh {
     } catch (e) {
       Logx.em(
           _TAG,
-          'reservation blocServiceId not exist for reservation id: ' +
-              reservation.id);
+          'reservation blocServiceId not exist for id: ${reservation.id}');
       isModelChanged = true;
     }
     try {
@@ -3546,8 +3547,7 @@ class Fresh {
     } catch (e) {
       Logx.em(
           _TAG,
-          'reservation customerId not exist for reservation id: ' +
-              reservation.id);
+          'reservation customerId not exist for id: ${reservation.id}');
       isModelChanged = true;
     }
     try {
@@ -3761,153 +3761,7 @@ class Fresh {
     return freshReservation;
   }
 
-  /** ticket **/
-  static Ticket freshTicketMap(Map<String, dynamic> map, bool shouldUpdate) {
-    Ticket ticket = Dummy.getDummyTicket();
-    bool isModelChanged = false;
 
-    try {
-      ticket = ticket.copyWith(id: map['id'] as String);
-    } catch (e) {
-      Logx.em(_TAG, 'ticket id not exist');
-    }
-    try {
-      ticket = ticket.copyWith(name: map['name'] as String);
-    } catch (e) {
-      Logx.em(_TAG, 'ticket name not exist for id: ${ticket.id}');
-      isModelChanged = true;
-    }
-
-    try {
-      ticket = ticket.copyWith(partyId: map['partyId'] as String);
-    } catch (e) {
-      Logx.em(_TAG, 'ticket partyId not exist for id: ${ticket.id}');
-      isModelChanged = true;
-    }
-    try {
-      ticket = ticket.copyWith(customerId: map['customerId'] as String);
-    } catch (e) {
-      Logx.em(_TAG, 'ticket customerId not exist for ticket id: ' + ticket.id);
-      isModelChanged = true;
-    }
-    try {
-      ticket = ticket.copyWith(transactionId: map['transactionId'] as String);
-    } catch (e) {
-      Logx.em(
-          _TAG, 'ticket transactionId not exist for ticket id: ' + ticket.id);
-      isModelChanged = true;
-    }
-    try {
-      ticket = ticket.copyWith(phone: map['phone'] as String);
-    } catch (e) {
-      Logx.em(_TAG, 'ticket phone not exist for ticket id: ' + ticket.id);
-      isModelChanged = true;
-    }
-    try {
-      ticket = ticket.copyWith(email: map['email'] as String);
-    } catch (e) {
-      Logx.em(_TAG, 'ticket email not exist for ticket id: ' + ticket.id);
-      isModelChanged = true;
-    }
-    try {
-      ticket = ticket.copyWith(entryCount: map['entryCount'] as int);
-    } catch (e) {
-      Logx.em(_TAG, 'ticket entryCount not exist for ticket id: ' + ticket.id);
-      isModelChanged = true;
-    }
-    try {
-      ticket =
-          ticket.copyWith(entriesRemaining: map['entriesRemaining'] as int);
-    } catch (e) {
-      Logx.em(_TAG,
-          'ticket entriesRemaining not exist for ticket id: ' + ticket.id);
-      isModelChanged = true;
-    }
-    try {
-      ticket = ticket.copyWith(createdAt: map['createdAt'] as int);
-    } catch (e) {
-      Logx.em(_TAG, 'ticket createdAt not exist for ticket id: ' + ticket.id);
-      isModelChanged = true;
-    }
-    try {
-      ticket = ticket.copyWith(isPaid: map['isPaid'] as bool);
-    } catch (e) {
-      Logx.em(_TAG, 'ticket isPaid not exist for ticket id: ' + ticket.id);
-      isModelChanged = true;
-    }
-
-    if (isModelChanged && shouldUpdate) {
-      Logx.i(_TAG, 'updating ticket ' + ticket.id);
-      FirestoreHelper.pushTicket(ticket);
-    }
-
-    return ticket;
-  }
-
-  static Ticket freshTicket(Ticket ticket) {
-    Ticket freshTicket = Dummy.getDummyTicket();
-
-    try {
-      freshTicket = freshTicket.copyWith(id: ticket.id);
-    } catch (e) {
-      Logx.em(_TAG, 'ticket id not exist');
-    }
-    try {
-      freshTicket = freshTicket.copyWith(name: ticket.name);
-    } catch (e) {
-      Logx.em(_TAG, 'ticket name not exist for ticket id: ' + ticket.id);
-    }
-    try {
-      freshTicket = freshTicket.copyWith(partyId: ticket.partyId);
-    } catch (e) {
-      Logx.em(_TAG, 'ticket partyId not exist for ticket id: ' + ticket.id);
-    }
-    try {
-      freshTicket = freshTicket.copyWith(customerId: ticket.customerId);
-    } catch (e) {
-      Logx.em(_TAG, 'ticket customerId not exist for ticket id: ' + ticket.id);
-    }
-    try {
-      freshTicket = freshTicket.copyWith(transactionId: ticket.transactionId);
-    } catch (e) {
-      Logx.em(
-          _TAG, 'ticket transactionId not exist for ticket id: ' + ticket.id);
-    }
-    try {
-      freshTicket = freshTicket.copyWith(phone: ticket.phone);
-    } catch (e) {
-      Logx.em(_TAG, 'ticket phone not exist for ticket id: ' + ticket.id);
-    }
-    try {
-      freshTicket = freshTicket.copyWith(email: ticket.email);
-    } catch (e) {
-      Logx.em(_TAG, 'ticket email not exist for ticket id: ' + ticket.id);
-    }
-    try {
-      freshTicket = freshTicket.copyWith(entryCount: ticket.entryCount);
-    } catch (e) {
-      Logx.em(_TAG, 'ticket entryCount not exist for ticket id: ' + ticket.id);
-    }
-    try {
-      freshTicket =
-          freshTicket.copyWith(entriesRemaining: ticket.entriesRemaining);
-    } catch (e) {
-      Logx.em(_TAG,
-          'ticket entriesRemaining not exist for ticket id: ' + ticket.id);
-    }
-    try {
-      freshTicket = freshTicket.copyWith(createdAt: ticket.createdAt);
-    } catch (e) {
-      Logx.em(_TAG, 'ticket createdAt not exist for ticket id: ' + ticket.id);
-    }
-    try {
-      freshTicket = freshTicket.copyWith(isPaid: ticket.isPaid);
-    } catch (e) {
-      Logx.em(_TAG, 'ticket isPaid not exist for ticket id: ' + ticket.id);
-    }
-
-    return freshTicket;
-  }
 
   /** ui photo **/
   static UiPhoto freshUiPhotoMap(Map<String, dynamic> map, bool shouldUpdate) {
@@ -3964,6 +3818,272 @@ class Fresh {
 
     return freshUiPhoto;
   }
+
+  /** tix **/
+  static Tix freshTix(Tix tix) {
+    Tix fresh = Dummy.getDummyTix();
+
+    try {
+      fresh = fresh.copyWith(id: tix.id);
+    } catch (e) {
+      Logx.em(_TAG, 'tix id not exist');
+    }
+    try {
+      fresh = fresh.copyWith(partyId: tix.partyId);
+    } catch (e) {
+      Logx.em(_TAG,
+          'tix partyId not exist for id: ${tix.id}');
+    }
+    try {
+      fresh = fresh.copyWith(userId: tix.userId);
+    } catch (e) {
+      Logx.em(_TAG,
+          'tix userId not exist for id: ${tix.id}');
+    }
+
+    try {
+      fresh = fresh.copyWith(userName: tix.userName);
+    } catch (e) {
+      Logx.em(_TAG,
+          'tix userName not exist for id: ${tix.id}');
+    }
+    try {
+      fresh = fresh.copyWith(userPhone: tix.userPhone);
+    } catch (e) {
+      Logx.em(_TAG,
+          'tix userPhone not exist for id: ${tix.id}');
+    }
+    try {
+      fresh = fresh.copyWith(userEmail: tix.userEmail);
+    } catch (e) {
+      Logx.em(_TAG,
+          'tix userEmail not exist for id: ${tix.id}');
+    }
+
+    try {
+      fresh = fresh.copyWith(total: tix.total);
+    } catch (e) {
+      Logx.em(_TAG,
+          'tix total not exist for id: ${tix.id}');
+    }
+    try {
+      fresh = fresh.copyWith(transactionId: tix.transactionId);
+    } catch (e) {
+      Logx.em(_TAG,
+          'tix transactionId not exist for id: ${tix.id}');
+    }
+    try {
+      fresh = fresh.copyWith(dateTime: tix.dateTime);
+    } catch (e) {
+      Logx.em(_TAG,
+          'tix dateTime not exist for id: ${tix.id}');
+    }
+    try {
+      fresh = fresh.copyWith(isSuccess: tix.isSuccess);
+    } catch (e) {
+      Logx.em(_TAG,
+          'tix isSuccess not exist for id: ${tix.id}');
+    }
+    try {
+      fresh = fresh.copyWith(isCompleted: tix.isCompleted);
+    } catch (e) {
+      Logx.em(_TAG,
+          'tix isCompleted not exist for id: ${tix.id}');
+    }
+
+    try {
+      fresh = fresh.copyWith(tixTierItemIds: tix.tixTierItemIds);
+    } catch (e) {
+      Logx.em(_TAG,
+          'tix tixTierItemIds not exist for id: ${tix.id}');
+    }
+
+    return fresh;
+  }
+
+  static Tix freshTixMap(
+      Map<String, dynamic> map, bool shouldUpdate) {
+    Tix tix = Dummy.getDummyTix();
+    bool isModelChanged = false;
+
+    try {
+      tix = tix.copyWith(id: map['id'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'tix id not exist');
+    }
+    try {
+      tix = tix.copyWith(partyId: map['partyId'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'tix partyId not exist for id: ${tix.id}');
+      isModelChanged = true;
+    }
+    try {
+      tix = tix.copyWith(userId: map['userId'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'tix userId not exist for id: ${tix.id}');
+      isModelChanged = true;
+    }
+
+    try {
+      tix = tix.copyWith(userName: map['userName'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'tix userName not exist for id: ${tix.id}');
+      isModelChanged = true;
+    }
+    try {
+      tix = tix.copyWith(userPhone: map['userPhone'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'tix userPhone not exist for id: ${tix.id}');
+      isModelChanged = true;
+    }
+    try {
+      tix = tix.copyWith(userEmail: map['userEmail'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'tix userEmail not exist for id: ${tix.id}');
+      isModelChanged = true;
+    }
+
+    try {
+      tix = tix.copyWith(total: map['total'] as double);
+    } catch (e) {
+      Logx.em(_TAG, 'tix total not exist for id: ${tix.id}');
+      isModelChanged = true;
+    }
+    try {
+      tix = tix.copyWith(transactionId: map['transactionId'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'tix transactionId not exist for id: ${tix.id}');
+      isModelChanged = true;
+    }
+
+    try {
+      tix = tix.copyWith(dateTime: map['dateTime'] as int);
+    } catch (e) {
+      Logx.em(_TAG, 'tix dateTime not exist for id: ${tix.id}');
+      isModelChanged = true;
+    }
+    try {
+      tix = tix.copyWith(isSuccess: map['isSuccess'] as bool);
+    } catch (e) {
+      Logx.em(_TAG, 'tix isSuccess not exist for id: ${tix.id}');
+      isModelChanged = true;
+    }
+    try {
+      tix = tix.copyWith(isCompleted: map['isCompleted'] as bool);
+    } catch (e) {
+      Logx.em(_TAG, 'tix isCompleted not exist for id: ${tix.id}');
+      isModelChanged = true;
+    }
+
+    try {
+      tix =
+          tix.copyWith(tixTierItemIds: List<String>.from(map['tixTierItemIds']));
+    } catch (e) {
+      Logx.em(_TAG, 'tix tixTierItemIds not exist for id: ${tix.id}');
+      List<String> temp = [];
+      tix = tix.copyWith(tixTierItemIds: temp);
+      isModelChanged = true;
+    }
+
+    if (isModelChanged && shouldUpdate) {
+      Logx.i(_TAG, 'updating tix ${tix.id}');
+      FirestoreHelper.pushTix(tix);
+    }
+    return tix;
+  }
+
+  /** tix tier **/
+  static TixTier freshTixTier(TixTier tixTier) {
+    TixTier fresh = Dummy.getDummyTixTier();
+
+    try {
+      fresh = fresh.copyWith(id: tixTier.id);
+    } catch (e) {
+      Logx.em(_TAG, 'tixTier id not exist');
+    }
+    try {
+      fresh = fresh.copyWith(tixId: tixTier.tixId);
+    } catch (e) {
+      Logx.em(_TAG,
+          'tixTier tixId not exist for id: ${tixTier.id}');
+    }
+    try {
+      fresh = fresh.copyWith(tixTierName: tixTier.tixTierName);
+    } catch (e) {
+      Logx.em(_TAG,
+          'tixTier tixTierName not exist for id: ${tixTier.id}');
+    }
+    try {
+      fresh = fresh.copyWith(tixTierPrice: tixTier.tixTierPrice);
+    } catch (e) {
+      Logx.em(_TAG,
+          'tixTier tixTierPrice not exist for id: ${tixTier.id}');
+    }
+    try {
+      fresh = fresh.copyWith(tixTierCount: tixTier.tixTierCount);
+    } catch (e) {
+      Logx.em(_TAG,
+          'tixTier tixTierCount not exist for id: ${tixTier.id}');
+    }
+    try {
+      fresh = fresh.copyWith(tixTierTotal: tixTier.tixTierTotal);
+    } catch (e) {
+      Logx.em(_TAG,
+          'tixTier tixTierTotal not exist for id: ${tixTier.id}');
+    }
+
+    return fresh;
+  }
+
+  static TixTier freshTixTierMap(
+      Map<String, dynamic> map, bool shouldUpdate) {
+    TixTier tixTier = Dummy.getDummyTixTier();
+    bool isModelChanged = false;
+
+    try {
+      tixTier = tixTier.copyWith(id: map['id'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'tixTier id not exist');
+    }
+    try {
+      tixTier = tixTier.copyWith(tixId: map['tixId'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'tixTier tixId not exist for id: ${tixTier.id}');
+      isModelChanged = true;
+    }
+    try {
+      tixTier = tixTier.copyWith(tixTierName: map['tixTierName'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'tixTier tixTierName not exist for id: ${tixTier.id}');
+      isModelChanged = true;
+    }
+    try {
+      tixTier = tixTier.copyWith(tixTierPrice: map['tixTierPrice'] as double);
+    } catch (e) {
+      Logx.em(_TAG, 'tixTier tixTierPrice not exist for id: ${tixTier.id}');
+      isModelChanged = true;
+    }
+    try {
+      tixTier = tixTier.copyWith(tixTierCount: map['tixTierCount'] as int);
+    } catch (e) {
+      Logx.em(_TAG, 'tixTier tixTierCount not exist for id: ${tixTier.id}');
+      isModelChanged = true;
+    }
+    try {
+      tixTier = tixTier.copyWith(tixTierTotal: map['tixTierTotal'] as double);
+    } catch (e) {
+      Logx.em(_TAG, 'tixTier tixTierTotal not exist for id: ${tixTier.id}');
+      isModelChanged = true;
+    }
+
+
+    if (isModelChanged && shouldUpdate) {
+      Logx.i(_TAG, 'updating tix tier ${tixTier.id}');
+      FirestoreHelper.pushTixTier(tixTier);
+    }
+    return tixTier;
+  }
+
 
   /** user **/
   static User freshUserMap(Map<String, dynamic> map, bool shouldUpdate) {

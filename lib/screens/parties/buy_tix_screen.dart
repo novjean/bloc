@@ -10,7 +10,7 @@ import '../../helpers/fresh.dart';
 import '../../utils/constants.dart';
 import '../../utils/logx.dart';
 import '../../widgets/parties/party_banner.dart';
-import '../../widgets/tix/tix_tier_item.dart';
+import '../../widgets/tix/party_tix_tier_item.dart';
 import '../../widgets/ui/app_bar_title.dart';
 
 class BuyTixScreen extends StatefulWidget{
@@ -26,6 +26,7 @@ class BuyTixScreen extends StatefulWidget{
 
 class _BuyTixScreenState extends State<BuyTixScreen> {
   static const String _TAG = 'BuyTixScreen';
+
 
   Party mParty = Dummy.getDummyParty(Constants.blocServiceId);
   var _isPartyLoading = true;
@@ -113,8 +114,6 @@ class _BuyTixScreenState extends State<BuyTixScreen> {
 
   _showTixTiers(BuildContext context) {
     return SizedBox(
-      // height: mq.height * 0.35,
-      // width: mq.width * 0.99,
       child: ListView.builder(
           padding: EdgeInsets.zero,
           shrinkWrap: true,
@@ -123,7 +122,7 @@ class _BuyTixScreenState extends State<BuyTixScreen> {
           itemBuilder: (ctx, index) {
             PartyTixTier tixTier = mTixTiers[index];
 
-            return TixTierItem(
+            return PartyTixTierItem(
               tixTier: tixTier,
             );
           }),

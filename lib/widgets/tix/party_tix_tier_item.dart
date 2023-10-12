@@ -3,18 +3,18 @@ import 'package:flutter/material.dart';
 import '../../db/entity/party_tix_tier.dart';
 import '../../utils/constants.dart';
 
-class TixTierItem extends StatefulWidget{
+class PartyTixTierItem extends StatefulWidget{
   static const String _TAG = 'TixTierItem';
 
   PartyTixTier tixTier;
 
-  TixTierItem({Key? key, required this.tixTier}) : super(key: key);
+  PartyTixTierItem({Key? key, required this.tixTier}) : super(key: key);
 
   @override
-  State<TixTierItem> createState() => _TixTierItemState();
+  State<PartyTixTierItem> createState() => _PartyTixTierItemState();
 }
 
-class _TixTierItemState extends State<TixTierItem> {
+class _PartyTixTierItemState extends State<PartyTixTierItem> {
   int quantity = 0;
 
   @override

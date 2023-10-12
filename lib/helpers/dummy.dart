@@ -29,6 +29,7 @@ import '../db/entity/offer.dart';
 import '../db/entity/party.dart';
 import '../db/entity/party_interest.dart';
 import '../db/entity/party_photo.dart';
+import '../db/entity/tix.dart';
 import '../db/entity/party_tix_tier.dart';
 import '../db/entity/product.dart';
 import '../db/entity/promoter.dart';
@@ -36,6 +37,7 @@ import '../db/entity/promoter_guest.dart';
 import '../db/entity/quick_order.dart';
 import '../db/entity/quick_table.dart';
 import '../db/entity/seat.dart';
+import '../db/entity/tix_tier_item.dart';
 import '../db/entity/user.dart';
 import '../db/entity/user_lounge.dart';
 import '../db/shared_preferences/user_preferences.dart';
@@ -381,13 +383,13 @@ class Dummy {
     PartyTixTier partyTixTier = PartyTixTier(
         id: StringUtils.getRandomString(28),
         partyId: partyId,
-      tierLevel: 1,
-      tierName: '',
-      tierDescription: '',
-      tierPrice: 0,
-      soldCount: 0,
-      totalTix: 0,
-      isSoldOut: false);
+        tierLevel: 1,
+        tierName: '',
+        tierDescription: '',
+        tierPrice: 0,
+        soldCount: 0,
+        totalTix: 0,
+        isSoldOut: false);
     return partyTixTier;
   }
 
@@ -510,21 +512,33 @@ class Dummy {
     return dummyTable;
   }
 
-  static Ticket getDummyTicket() {
-    Ticket ticket = Ticket(
-      id: StringUtils.getRandomString(28),
-      partyId: '',
-      customerId: UserPreferences.myUser.id,
-      transactionId: '',
-      name: UserPreferences.myUser.name,
-      phone: UserPreferences.myUser.phoneNumber.toString(),
-      email: UserPreferences.myUser.email,
-      entryCount: 1,
-      entriesRemaining: 1,
-      createdAt: Timestamp.now().millisecondsSinceEpoch,
-      isPaid: false,
+  static Tix getDummyTix() {
+    Tix tix = Tix(
+        id: StringUtils.getRandomString(28),
+        partyId: '',
+        userId: '',
+        userName: '',
+        userEmail: '',
+        userPhone: '',
+        total: 0,
+        transactionId: '',
+        dateTime: 0,
+        isSuccess: false,
+        isCompleted: false,
+        tixTierItemIds: []);
+    return tix;
+  }
+
+  static TixTier getDummyTixTier() {
+    TixTier tixTierItem = TixTier(
+        id: StringUtils.getRandomString(28),
+        tixId: '',
+        tixTierName: '',
+        tixTierPrice: 0,
+        tixTierCount: 0,
+        tixTierTotal: 0,
     );
-    return ticket;
+    return tixTierItem;
   }
 
   static UiPhoto getDummyUiPhoto() {

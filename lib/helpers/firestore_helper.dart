@@ -28,6 +28,7 @@ import 'package:bloc/db/entity/quick_table.dart';
 import 'package:bloc/db/entity/reservation.dart';
 import 'package:bloc/db/entity/seat.dart';
 import 'package:bloc/db/entity/ticket.dart';
+import 'package:bloc/db/entity/tix_tier_item.dart';
 import 'package:bloc/db/entity/ui_photo.dart';
 import 'package:bloc/db/entity/user.dart' as blocUser;
 import 'package:bloc/db/entity/user_lounge.dart';
@@ -40,6 +41,7 @@ import 'package:go_router/go_router.dart';
 import '../db/entity/ad.dart';
 import '../db/entity/lounge.dart';
 import '../db/entity/party_photo.dart';
+import '../db/entity/tix.dart';
 import '../db/entity/product.dart';
 import '../db/entity/service_table.dart';
 import '../db/entity/sos.dart';
@@ -92,7 +94,8 @@ class FirestoreHelper {
   static String SEATS = 'seats';
   static String SOS = 'sos';
   static String TABLES = 'tables';
-  static String TICKETS = 'tickets';
+  static String TIXS = 'tixs';
+  static String TIX_TIER_ITEMS = 'tix_tier_items';
   static String UI_PHOTOS = 'ui_photos';
   static String USERS = 'users';
   static String USER_LEVELS = 'user_levels';
@@ -1284,6 +1287,8 @@ class FirestoreHelper {
         .delete();
   }
 
+
+
   /** party tix tier **/
   static void pushPartyTixTier(PartyTixTier partyTixTier) async {
     try {
@@ -1982,22 +1987,6 @@ class FirestoreHelper {
     }
   }
 
-  /** ticket **/
-  static void pushTicket(Ticket ticket) async {
-    try {
-      await FirebaseFirestore.instance
-          .collection(TICKETS)
-          .doc(ticket.id)
-          .set(ticket.toMap());
-    } on PlatformException catch (e, s) {
-      Logx.e(_TAG, e, s);
-    } on Exception catch (e, s) {
-      Logx.e(_TAG, e, s);
-    } catch (e) {
-      Logx.em(_TAG, e.toString());
-    }
-  }
-
   /** ui photo **/
   static void pushUiPhoto(UiPhoto uiPhoto) async {
     try {
@@ -2019,6 +2008,38 @@ class FirestoreHelper {
         .collection(UI_PHOTOS)
         .where('name', isEqualTo: name)
         .get();
+  }
+
+  /** tix **/
+  static void pushTix(Tix tix) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection(TIXS)
+          .doc(tix.id)
+          .set(tix.toMap());
+    } on PlatformException catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } on Exception catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } catch (e) {
+      Logx.em(_TAG, e.toString());
+    }
+  }
+
+  /** tix tier item **/
+  static void pushTixTier(TixTier tixTierItem) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection(TIX_TIER_ITEMS)
+          .doc(tixTierItem.id)
+          .set(tixTierItem.toMap());
+    } on PlatformException catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } on Exception catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } catch (e) {
+      Logx.em(_TAG, e.toString());
+    }
   }
 
   /** user **/
@@ -2316,6 +2337,7 @@ class FirestoreHelper {
   static void deleteUserLounge(String docId) {
     FirebaseFirestore.instance.collection(USER_LOUNGES).doc(docId).delete();
   }
+
 
 
 
