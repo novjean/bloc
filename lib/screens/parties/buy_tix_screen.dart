@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 
 import '../../db/entity/party.dart';
 import '../../db/entity/party_tix_tier.dart';
+import '../../db/entity/tix.dart';
 import '../../helpers/dummy.dart';
 import '../../helpers/fresh.dart';
 import '../../utils/constants.dart';
@@ -13,12 +14,10 @@ import '../../widgets/parties/party_banner.dart';
 import '../../widgets/tix/party_tix_tier_item.dart';
 import '../../widgets/ui/app_bar_title.dart';
 
-class BuyTixScreen extends StatefulWidget{
+class BuyTixScreen extends StatefulWidget {
   String partyId;
 
-  BuyTixScreen(
-      {key, required this.partyId})
-      : super(key: key);
+  BuyTixScreen({key, required this.partyId}) : super(key: key);
 
   @override
   State<BuyTixScreen> createState() => _BuyTixScreenState();
@@ -27,50 +26,54 @@ class BuyTixScreen extends StatefulWidget{
 class _BuyTixScreenState extends State<BuyTixScreen> {
   static const String _TAG = 'BuyTixScreen';
 
+  Tix mTix = Dummy.getDummyTix();
 
   Party mParty = Dummy.getDummyParty(Constants.blocServiceId);
   var _isPartyLoading = true;
 
-  List<PartyTixTier> mTixTiers = [];
-  var _isTixTiersLoading = true;
+  List<PartyTixTier> mPartyTixTiers = [];
+  var _isPartyTixTiersLoading = true;
 
   @override
   void initState() {
+    mTix = mTix.copyWith(
+      partyId: widget.partyId,
+    );
+
+    FirestoreHelper.pushTix(mTix);
+
     FirestoreHelper.pullParty(widget.partyId).then((res) {
-      if(res.docs.isNotEmpty){
+      if (res.docs.isNotEmpty) {
         DocumentSnapshot document = res.docs[0];
-        Map<String, dynamic> data =
-        document.data()! as Map<String, dynamic>;
+        Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
         final Party party = Fresh.freshPartyMap(data, false);
         mParty = party;
 
         setState(() {
           _isPartyLoading = false;
         });
-
       } else {
         //party not found.
         Logx.ist(_TAG, 'party could not be found');
         Navigator.of(context).pop();
       }
-
     });
 
     FirestoreHelper.pullPartyTixTiers(widget.partyId).then((res) {
-      if(res.docs.isNotEmpty){
+      if (res.docs.isNotEmpty) {
         for (int i = 0; i < res.docs.length; i++) {
           DocumentSnapshot document = res.docs[i];
           Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-          final PartyTixTier tixTier = Fresh.freshPartyTixTierMap(data, false);
-          mTixTiers.add(tixTier);
+          final PartyTixTier partyTixTier = Fresh.freshPartyTixTierMap(data, false);
+          mPartyTixTiers.add(partyTixTier);
         }
         setState(() {
-          _isTixTiersLoading = false;
+          _isPartyTixTiersLoading = false;
         });
       } else {
         //tix tiers are not defined
         setState(() {
-          _isTixTiersLoading = false;
+          _isPartyTixTiersLoading = false;
         });
       }
     });
@@ -92,24 +95,21 @@ class _BuyTixScreenState extends State<BuyTixScreen> {
   }
 
   _buildBody(BuildContext context) {
-    return _isPartyLoading
-        && _isTixTiersLoading
-        ?
-    const LoadingWidget()
+    return _isPartyLoading && _isPartyTixTiersLoading
+        ? const LoadingWidget()
         : ListView(
-      physics: const BouncingScrollPhysics(),
-      children: [
-        PartyBanner(
-          party: mParty,
-          isClickable: false,
-          shouldShowButton: false,
-          isGuestListRequested: false,
-          shouldShowInterestCount: false,
-        ),
-        _showTixTiers(context),
-
-      ],
-    );
+            physics: const BouncingScrollPhysics(),
+            children: [
+              PartyBanner(
+                party: mParty,
+                isClickable: false,
+                shouldShowButton: false,
+                isGuestListRequested: false,
+                shouldShowInterestCount: false,
+              ),
+              _showTixTiers(context),
+            ],
+          );
   }
 
   _showTixTiers(BuildContext context) {
@@ -117,13 +117,14 @@ class _BuyTixScreenState extends State<BuyTixScreen> {
       child: ListView.builder(
           padding: EdgeInsets.zero,
           shrinkWrap: true,
-          itemCount: mTixTiers.length,
+          itemCount: mPartyTixTiers.length,
           scrollDirection: Axis.vertical,
           itemBuilder: (ctx, index) {
-            PartyTixTier tixTier = mTixTiers[index];
+            PartyTixTier partyTixTier = mPartyTixTiers[index];
 
             return PartyTixTierItem(
-              tixTier: tixTier,
+              partyTixTier: partyTixTier,
+              tixId: mTix.id,
             );
           }),
     );

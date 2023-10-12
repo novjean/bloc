@@ -13,7 +13,7 @@ class Tix {
   bool isSuccess;
   bool isCompleted;
 
-  List<String> tixTierItemIds;
+  List<String> tixTierIds;
 
 //<editor-fold desc="Data Methods">
   Tix({
@@ -28,7 +28,7 @@ class Tix {
     required this.dateTime,
     required this.isSuccess,
     required this.isCompleted,
-    required this.tixTierItemIds,
+    required this.tixTierIds,
   });
 
   @override
@@ -47,7 +47,7 @@ class Tix {
           dateTime == other.dateTime &&
           isSuccess == other.isSuccess &&
           isCompleted == other.isCompleted &&
-          tixTierItemIds == other.tixTierItemIds);
+          tixTierIds == other.tixTierIds);
 
   @override
   int get hashCode =>
@@ -62,11 +62,11 @@ class Tix {
       dateTime.hashCode ^
       isSuccess.hashCode ^
       isCompleted.hashCode ^
-      tixTierItemIds.hashCode;
+      tixTierIds.hashCode;
 
   @override
   String toString() {
-    return 'PartyTix{' +
+    return 'Tix{' +
         ' id: $id,' +
         ' partyId: $partyId,' +
         ' userId: $userId,' +
@@ -78,7 +78,7 @@ class Tix {
         ' dateTime: $dateTime,' +
         ' isSuccess: $isSuccess,' +
         ' isCompleted: $isCompleted,' +
-        ' tixTierItemIds: $tixTierItemIds,' +
+        ' tixTierIds: $tixTierIds,' +
         '}';
   }
 
@@ -94,7 +94,7 @@ class Tix {
     int? dateTime,
     bool? isSuccess,
     bool? isCompleted,
-    List<String>? tixTierItemIds,
+    List<String>? tixTierIds,
   }) {
     return Tix(
       id: id ?? this.id,
@@ -108,7 +108,7 @@ class Tix {
       dateTime: dateTime ?? this.dateTime,
       isSuccess: isSuccess ?? this.isSuccess,
       isCompleted: isCompleted ?? this.isCompleted,
-      tixTierItemIds: tixTierItemIds ?? this.tixTierItemIds,
+      tixTierIds: tixTierIds ?? this.tixTierIds,
     );
   }
 
@@ -125,7 +125,7 @@ class Tix {
       'dateTime': this.dateTime,
       'isSuccess': this.isSuccess,
       'isCompleted': this.isCompleted,
-      'tixTierItemIds': this.tixTierItemIds,
+      'tixTierIds': this.tixTierIds,
     };
   }
 
@@ -142,7 +142,7 @@ class Tix {
       dateTime: map['dateTime'] as int,
       isSuccess: map['isSuccess'] as bool,
       isCompleted: map['isCompleted'] as bool,
-      tixTierItemIds: map['tixTierItemIds'] as List<String>,
+      tixTierIds: map['tixTierIds'] as List<String>,
     );
   }
 

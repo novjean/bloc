@@ -26,7 +26,6 @@ import '../db/entity/promoter_guest.dart';
 import '../db/entity/quick_order.dart';
 import '../db/entity/quick_table.dart';
 import '../db/entity/reservation.dart';
-import '../db/entity/ticket.dart';
 import '../db/entity/tix_tier_item.dart';
 import '../db/entity/user.dart';
 import '../db/entity/user_lounge.dart';
@@ -3892,7 +3891,7 @@ class Fresh {
     }
 
     try {
-      fresh = fresh.copyWith(tixTierItemIds: tix.tixTierItemIds);
+      fresh = fresh.copyWith(tixTierIds: tix.tixTierIds);
     } catch (e) {
       Logx.em(_TAG,
           'tix tixTierItemIds not exist for id: ${tix.id}');
@@ -3977,11 +3976,11 @@ class Fresh {
 
     try {
       tix =
-          tix.copyWith(tixTierItemIds: List<String>.from(map['tixTierItemIds']));
+          tix.copyWith(tixTierIds: List<String>.from(map['tixTierIds']));
     } catch (e) {
-      Logx.em(_TAG, 'tix tixTierItemIds not exist for id: ${tix.id}');
+      Logx.em(_TAG, 'tix tixTierIds not exist for id: ${tix.id}');
       List<String> temp = [];
-      tix = tix.copyWith(tixTierItemIds: temp);
+      tix = tix.copyWith(tixTierIds: temp);
       isModelChanged = true;
     }
 

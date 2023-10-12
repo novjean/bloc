@@ -516,16 +516,16 @@ class Dummy {
     Tix tix = Tix(
         id: StringUtils.getRandomString(28),
         partyId: '',
-        userId: '',
-        userName: '',
-        userEmail: '',
-        userPhone: '',
+        userId: UserPreferences.myUser.id,
+        userName: UserPreferences.myUser.name + UserPreferences.myUser.surname,
+        userEmail: UserPreferences.myUser.email,
+        userPhone: UserPreferences.myUser.phoneNumber.toString(),
         total: 0,
         transactionId: '',
-        dateTime: 0,
+        dateTime: Timestamp.now().millisecondsSinceEpoch,
         isSuccess: false,
         isCompleted: false,
-        tixTierItemIds: []);
+        tixTierIds: []);
     return tix;
   }
 

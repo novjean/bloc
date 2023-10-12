@@ -95,7 +95,7 @@ class FirestoreHelper {
   static String SOS = 'sos';
   static String TABLES = 'tables';
   static String TIXS = 'tixs';
-  static String TIX_TIER_ITEMS = 'tix_tier_items';
+  static String TIX_TIERS = 'tix_tiers';
   static String UI_PHOTOS = 'ui_photos';
   static String USERS = 'users';
   static String USER_LEVELS = 'user_levels';
@@ -2026,13 +2026,20 @@ class FirestoreHelper {
     }
   }
 
+  static pullTix(String tixId) {
+    return FirebaseFirestore.instance
+        .collection(TIXS)
+        .where('tixId', isEqualTo: tixId)
+        .get();
+  }
+
   /** tix tier item **/
-  static void pushTixTier(TixTier tixTierItem) async {
+  static void pushTixTier(TixTier tixTier) async {
     try {
       await FirebaseFirestore.instance
-          .collection(TIX_TIER_ITEMS)
-          .doc(tixTierItem.id)
-          .set(tixTierItem.toMap());
+          .collection(TIX_TIERS)
+          .doc(tixTier.id)
+          .set(tixTier.toMap());
     } on PlatformException catch (e, s) {
       Logx.e(_TAG, e, s);
     } on Exception catch (e, s) {
@@ -2041,6 +2048,11 @@ class FirestoreHelper {
       Logx.em(_TAG, e.toString());
     }
   }
+
+  static void deleteTixTier(String docId) {
+    FirebaseFirestore.instance.collection(TIX_TIERS).doc(docId).delete();
+  }
+
 
   /** user **/
   static void pushUser(blocUser.User user) async {
@@ -2337,8 +2349,5 @@ class FirestoreHelper {
   static void deleteUserLounge(String docId) {
     FirebaseFirestore.instance.collection(USER_LOUNGES).doc(docId).delete();
   }
-
-
-
 
 }
