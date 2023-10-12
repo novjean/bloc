@@ -29,7 +29,7 @@ import '../db/entity/offer.dart';
 import '../db/entity/party.dart';
 import '../db/entity/party_interest.dart';
 import '../db/entity/party_photo.dart';
-import '../db/entity/party_tix.dart';
+import '../db/entity/party_tix_tier.dart';
 import '../db/entity/product.dart';
 import '../db/entity/promoter.dart';
 import '../db/entity/promoter_guest.dart';
@@ -383,6 +383,7 @@ class Dummy {
         partyId: partyId,
       tierLevel: 1,
       tierName: '',
+      tierDescription: '',
       tierPrice: 0,
       soldCount: 0,
       totalTix: 0,

@@ -1,4 +1,4 @@
-import 'package:bloc/db/entity/party_tix.dart';
+import 'package:bloc/db/entity/party_tix_tier.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 

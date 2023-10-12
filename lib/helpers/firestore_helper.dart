@@ -20,7 +20,7 @@ import 'package:bloc/db/entity/order_bloc.dart';
 import 'package:bloc/db/entity/party.dart';
 import 'package:bloc/db/entity/party_guest.dart';
 import 'package:bloc/db/entity/party_interest.dart';
-import 'package:bloc/db/entity/party_tix.dart';
+import 'package:bloc/db/entity/party_tix_tier.dart';
 import 'package:bloc/db/entity/promoter.dart';
 import 'package:bloc/db/entity/promoter_guest.dart';
 import 'package:bloc/db/entity/quick_order.dart';
@@ -1300,6 +1300,14 @@ class FirestoreHelper {
     }
   }
 
+  static pullPartyTixTiers(String partyId) {
+    return FirebaseFirestore.instance
+        .collection(FirestoreHelper.PARTY_TIX_TIERS)
+        .where('partyId', isEqualTo: partyId)
+        .orderBy('tierLevel', descending: true)
+        .get();
+  }
+
   static getPartyTixTiers(String partyId) {
     return FirebaseFirestore.instance
         .collection(PARTY_TIX_TIERS)
@@ -2308,6 +2316,7 @@ class FirestoreHelper {
   static void deleteUserLounge(String docId) {
     FirebaseFirestore.instance.collection(USER_LOUNGES).doc(docId).delete();
   }
+
 
 
 }

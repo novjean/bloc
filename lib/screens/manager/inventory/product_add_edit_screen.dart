@@ -243,7 +243,7 @@ class _ProductAddEditScreenState extends State<ProductAddEditScreen> {
                 ),
                 searchable: true,
                 onConfirm: (values) {
-                  sBlocs = values as List<BlocService>;
+                  sBlocs = values;
 
                   List<String> sBlocIds = [];
                   for (BlocService bs in sBlocs) {
@@ -270,8 +270,8 @@ class _ProductAddEditScreenState extends State<ProductAddEditScreen> {
               return InputDecorator(
                 key: const ValueKey('product_type'),
                 decoration: InputDecoration(
-                    errorStyle: TextStyle(
-                        color: Theme.of(context).errorColor, fontSize: 16.0),
+                    errorStyle: const TextStyle(
+                        color: Constants.errorColor, fontSize: 16.0),
                     hintText: 'please select product type',
                     border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(5.0))),

@@ -1,4 +1,4 @@
-import 'package:bloc/db/entity/party_tix.dart';
+import 'package:bloc/db/entity/party_tix_tier.dart';
 import 'package:bloc/helpers/fresh.dart';
 import 'package:bloc/widgets/ui/app_bar_title.dart';
 import 'package:flutter/material.dart';
@@ -60,6 +60,13 @@ class _PartyTixTierAddEditScreenState extends State<PartyTixTierAddEditScreen> {
           label: 'name *',
           text: widget.tixTier.tierName,
           onChanged: (text) => widget.tixTier = widget.tixTier.copyWith(tierName: text),
+        ),
+        const SizedBox(height: 24),
+        TextFieldWidget(
+          label: 'description *',
+          text: widget.tixTier.tierDescription,
+          maxLines: 5,
+          onChanged: (text) => widget.tixTier = widget.tixTier.copyWith(tierDescription: text),
         ),
         const SizedBox(height: 24),
         TextFieldWidget(

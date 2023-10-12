@@ -428,26 +428,29 @@ class _EventScreenState extends State<EventScreen> {
                             ),
                           ),
                         ),
-                        mParty.isTix
-                            ? InkWell(
-                                onTap: () {
-                                  //navigate to purchase tix screen
-
-                                },
-                                child: const Padding(
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: 15, vertical: 2),
-                                  child: Text(
-                                    'buy tix',
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                      color: Constants.primary,
-                                    ),
-                                  ),
-                                ),
-                              )
-                            : const SizedBox()
                       ],
+                    )
+                  : const SizedBox(),
+              mParty.isTix
+                  ? InkWell(
+                      onTap: () {
+                        //navigate to purchase tix screen
+                        GoRouter.of(context).pushNamed(RouteConstants.buyTixRouteName,
+                            params: {
+                              'partyId': mParty.id,
+                            });
+                      },
+                      child: const Padding(
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 15, vertical: 2),
+                        child: Text(
+                          'buy tix',
+                          style: TextStyle(
+                            fontSize: 18,
+                            color: Constants.primary,
+                          ),
+                        ),
+                      ),
                     )
                   : const SizedBox(),
               const SizedBox(height: 15.0),
@@ -462,26 +465,25 @@ class _EventScreenState extends State<EventScreen> {
     return StreamBuilder<QuerySnapshot>(
       stream: FirestoreHelper.getPartyArtists(mParty.artistIds),
       builder: (ctx, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const LoadingWidget();
-        }
-
-        if (snapshot.hasData) {
-          List<Party> artists = [];
-          for (int i = 0; i < snapshot.data!.docs.length; i++) {
-            DocumentSnapshot document = snapshot.data!.docs[i];
-            Map<String, dynamic> data =
-                document.data()! as Map<String, dynamic>;
-            final Party bloc = Fresh.freshPartyMap(data, false);
-            artists.add(bloc);
-
-            if (i == snapshot.data!.docs.length - 1) {
+        switch (snapshot.connectionState) {
+          case ConnectionState.waiting:
+          case ConnectionState.none:
+            return const LoadingWidget();
+          case ConnectionState.active:
+          case ConnectionState.done:
+            {
+              List<Party> artists = [];
+              for (int i = 0; i < snapshot.data!.docs.length; i++) {
+                DocumentSnapshot document = snapshot.data!.docs[i];
+                Map<String, dynamic> data =
+                    document.data()! as Map<String, dynamic>;
+                final Party bloc = Fresh.freshPartyMap(data, false);
+                artists.add(bloc);
+              }
               artists.sort((a, b) => a.name.compareTo(b.name));
               return _showArtists(context, artists);
             }
-          }
         }
-        return const LoadingWidget();
       },
     );
   }

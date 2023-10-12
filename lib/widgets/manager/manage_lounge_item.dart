@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../../db/entity/lounge.dart';
-import '../../db/entity/party.dart';
 import '../../utils/constants.dart';
 import '../../utils/date_time_utils.dart';
 

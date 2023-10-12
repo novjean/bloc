@@ -4,6 +4,7 @@ class PartyTixTier {
 
   int tierLevel;
   String tierName;
+  String tierDescription;
   double tierPrice;
 
   int soldCount;
@@ -17,6 +18,7 @@ class PartyTixTier {
     required this.partyId,
     required this.tierLevel,
     required this.tierName,
+    required this.tierDescription,
     required this.tierPrice,
     required this.soldCount,
     required this.totalTix,
@@ -32,6 +34,7 @@ class PartyTixTier {
           partyId == other.partyId &&
           tierLevel == other.tierLevel &&
           tierName == other.tierName &&
+          tierDescription == other.tierDescription &&
           tierPrice == other.tierPrice &&
           soldCount == other.soldCount &&
           totalTix == other.totalTix &&
@@ -43,6 +46,7 @@ class PartyTixTier {
       partyId.hashCode ^
       tierLevel.hashCode ^
       tierName.hashCode ^
+      tierDescription.hashCode ^
       tierPrice.hashCode ^
       soldCount.hashCode ^
       totalTix.hashCode ^
@@ -55,6 +59,7 @@ class PartyTixTier {
         ' partyId: $partyId,' +
         ' tierLevel: $tierLevel,' +
         ' tierName: $tierName,' +
+        ' tierDescription: $tierDescription,' +
         ' tierPrice: $tierPrice,' +
         ' soldCount: $soldCount,' +
         ' totalTix: $totalTix,' +
@@ -67,6 +72,7 @@ class PartyTixTier {
     String? partyId,
     int? tierLevel,
     String? tierName,
+    String? tierDescription,
     double? tierPrice,
     int? soldCount,
     int? totalTix,
@@ -77,6 +83,7 @@ class PartyTixTier {
       partyId: partyId ?? this.partyId,
       tierLevel: tierLevel ?? this.tierLevel,
       tierName: tierName ?? this.tierName,
+      tierDescription: tierDescription ?? this.tierDescription,
       tierPrice: tierPrice ?? this.tierPrice,
       soldCount: soldCount ?? this.soldCount,
       totalTix: totalTix ?? this.totalTix,
@@ -90,6 +97,7 @@ class PartyTixTier {
       'partyId': this.partyId,
       'tierLevel': this.tierLevel,
       'tierName': this.tierName,
+      'tierDescription': this.tierDescription,
       'tierPrice': this.tierPrice,
       'soldCount': this.soldCount,
       'totalTix': this.totalTix,
@@ -103,6 +111,7 @@ class PartyTixTier {
       partyId: map['partyId'] as String,
       tierLevel: map['tierLevel'] as int,
       tierName: map['tierName'] as String,
+      tierDescription: map['tierDescription'] as String,
       tierPrice: map['tierPrice'] as double,
       soldCount: map['soldCount'] as int,
       totalTix: map['totalTix'] as int,

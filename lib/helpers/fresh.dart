@@ -18,7 +18,7 @@ import '../db/entity/notification_test.dart';
 import '../db/entity/party.dart';
 import '../db/entity/party_interest.dart';
 import '../db/entity/party_photo.dart';
-import '../db/entity/party_tix.dart';
+import '../db/entity/party_tix_tier.dart';
 import '../db/entity/product.dart';
 import '../db/entity/promoter.dart';
 import '../db/entity/promoter_guest.dart';
@@ -2785,6 +2785,12 @@ class Fresh {
           'tix tier tierName not exist for id: ${partyTixTier.id}');
     }
     try {
+      fresh = fresh.copyWith(tierDescription: partyTixTier.tierDescription);
+    } catch (e) {
+      Logx.em(_TAG,
+          'tix tier tierDescription not exist for id: ${partyTixTier.id}');
+    }
+    try {
       fresh = fresh.copyWith(tierPrice: partyTixTier.tierPrice);
     } catch (e) {
       Logx.em(_TAG,
@@ -2840,6 +2846,12 @@ class Fresh {
       partyTixTier = partyTixTier.copyWith(tierName: map['tierName'] as String);
     } catch (e) {
       Logx.em(_TAG, 'partyTixTier tierName not exist for id: ${partyTixTier.id}');
+      isModelChanged = true;
+    }
+    try {
+      partyTixTier = partyTixTier.copyWith(tierDescription: map['tierDescription'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'partyTixTier tierDescription not exist for id: ${partyTixTier.id}');
       isModelChanged = true;
     }
     try {
