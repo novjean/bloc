@@ -2,12 +2,16 @@ import 'package:bloc/helpers/firestore_helper.dart';
 import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../db/entity/party.dart';
 import '../../db/entity/party_tix_tier.dart';
 import '../../db/entity/tix.dart';
+import '../../db/entity/tix_tier_item.dart';
 import '../../helpers/dummy.dart';
 import '../../helpers/fresh.dart';
+import '../../main.dart';
+import '../../routes/route_constants.dart';
 import '../../utils/constants.dart';
 import '../../utils/logx.dart';
 import '../../widgets/parties/party_banner.dart';
@@ -89,6 +93,26 @@ class _BuyTixScreenState extends State<BuyTixScreen> {
         title: AppBarTitle(title: 'buy tix'),
         titleSpacing: 0,
         backgroundColor: Constants.background,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_rounded),
+          onPressed: () {
+            for(String tixTierId in mTix.tixTierIds){
+              FirestoreHelper.deleteTixTier(tixTierId);
+            }
+            FirestoreHelper.deleteTix(mTix.id);
+            Logx.d(_TAG, 'tix deleted from firebase');
+
+            if (kIsWeb) {
+              GoRouter.of(context).pushNamed(RouteConstants.eventRouteName,
+                  params: {
+                    'partyName': mParty.name,
+                    'partyChapter': mParty.chapter
+                  });
+            } else {
+              Navigator.of(context).pop();
+            }
+          },
+        ),
       ),
       body: _buildBody(context),
     );

@@ -145,7 +145,7 @@ class _EventScreenState extends State<EventScreen> {
           ),
           titleSpacing: 0,
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back),
+            icon: const Icon(Icons.arrow_back_ios_rounded),
             onPressed: () {
               if (kIsWeb) {
                 GoRouter.of(context).pushNamed(RouteConstants.landingRouteName);

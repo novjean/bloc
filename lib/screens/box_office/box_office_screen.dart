@@ -120,7 +120,7 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
           title: 'box office',
         ),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back_ios_rounded),
           onPressed: () {
             if (kIsWeb) {
               GoRouter.of(context).pushNamed(RouteConstants.landingRouteName);
