@@ -75,13 +75,7 @@ class _ArtistScreenState extends State<ArtistScreen> {
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
             onPressed: () {
-              if(UserPreferences.isUserLoggedIn()){
-                GoRouter.of(context)
-                    .pushNamed(RouteConstants.homeRouteName);
-              } else {
-                GoRouter.of(context)
-                    .pushNamed(RouteConstants.landingRouteName);
-              }
+              GoRouter.of(context).pushNamed(RouteConstants.landingRouteName);
             },
           ),
         ),

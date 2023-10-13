@@ -148,12 +148,7 @@ class _EventScreenState extends State<EventScreen> {
             icon: const Icon(Icons.arrow_back),
             onPressed: () {
               if (kIsWeb) {
-                if (UserPreferences.isUserLoggedIn()) {
-                  GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
-                } else {
-                  GoRouter.of(context)
-                      .pushNamed(RouteConstants.landingRouteName);
-                }
+                GoRouter.of(context).pushNamed(RouteConstants.landingRouteName);
               } else {
                 Navigator.of(context).pop();
               }
