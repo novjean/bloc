@@ -171,6 +171,12 @@ class ManagerServicesScreen extends StatelessWidget {
                             builder: (ctx) => const ManageNotificationTestsScreen()));
                         break;
                       }
+                    case 'tickets':
+                      {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (ctx) => const ManageTicketsScreen()));
+                        break;
+                      }
                     case 'orders':
                       {
                         Navigator.of(context).push(MaterialPageRoute(

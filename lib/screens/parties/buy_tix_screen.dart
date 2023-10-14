@@ -7,7 +7,6 @@ import 'package:go_router/go_router.dart';
 import '../../db/entity/party.dart';
 import '../../db/entity/party_tix_tier.dart';
 import '../../db/entity/tix.dart';
-import '../../db/entity/tix_tier_item.dart';
 import '../../helpers/dummy.dart';
 import '../../helpers/fresh.dart';
 import '../../main.dart';
