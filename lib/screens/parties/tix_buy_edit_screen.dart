@@ -190,4 +190,38 @@ class _TixBuyEditScreenState extends State<TixBuyEditScreen> {
       return Text('nothing to show');
     }
   }
+
+  void _showBottomSheet(BuildContext context) {
+    showModalBottomSheet(
+        backgroundColor: Constants.lightPrimary,
+        context: context,
+        shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(20), topRight: Radius.circular(20))),
+        builder: (_) {
+          return ListView(
+            shrinkWrap: true,
+            padding:
+            EdgeInsets.only(top: mq.height * .03, bottom: mq.height * .05),
+            children: [
+              //pick profile picture label
+              const Text('pick or click 🤳 your best photo 🤩',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 20, color: Colors.black, fontWeight: FontWeight.w500)),
+
+              //for adding some space
+              SizedBox(height: mq.height * .02),
+
+              //buttons
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  //pick from gallery button
+                ],
+              )
+            ],
+          );
+        });
+  }
+
 }

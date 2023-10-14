@@ -318,6 +318,7 @@ class _ProfileAddEditRegisterPageState
             }
           },
         ),
+        const SizedBox(height: 24),
       ],
     );
   }
