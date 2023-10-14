@@ -600,7 +600,7 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
               Navigator.of(context).push(
                 MaterialPageRoute(
                     builder: (ctx) => CelebrationAddEditScreen(
-                        celebration: Dummy.getDummyCelebration(''),
+                        celebration: Dummy.getDummyCelebration(Constants.blocServiceId),
                         task: 'add')),
               );
             },

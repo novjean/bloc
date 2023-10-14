@@ -3,7 +3,7 @@ import 'package:bloc/screens/account_screen.dart';
 import 'package:bloc/screens/bloc/bloc_menu_screen.dart';
 import 'package:bloc/screens/box_office/box_office_screen.dart';
 import 'package:bloc/screens/main_screen.dart';
-import 'package:bloc/screens/parties/buy_tix_screen.dart';
+import 'package:bloc/screens/parties/tix_buy_edit_screen.dart';
 import 'package:bloc/screens/parties/event_screen.dart';
 import 'package:bloc/screens/refund_policy_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -195,20 +195,21 @@ class BlocRouter {
           },
         ),
 
-        GoRoute(
-          name: RouteConstants.buyTixRouteName,
-          path: '/tix/:partyId',
-          pageBuilder: (context, state) {
-            String partyId = state.params['partyId']!;
-
-            Logx.d(_TAG, '/tix/:$partyId');
-
-            return MaterialPage(
-                child: BuyTixScreen(
-                  partyId: partyId,
-                ));
-          },
-        ),
+        // GoRoute(
+        //   name: RouteConstants.buyTixRouteName,
+        //   path: '/tix/:partyId',
+        //   pageBuilder: (context, state) {
+        //     String partyId = state.params['partyId']!;
+        //
+        //     Logx.d(_TAG, '/tix/:$partyId');
+        //
+        //     return MaterialPage(
+        //         child: TixBuyEditScreen(
+        //           partyId: partyId,
+        //           task: 'buy',
+        //         ));
+        //   },
+        // ),
 
         GoRoute(
           name: RouteConstants.artistRouteName,

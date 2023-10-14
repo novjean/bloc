@@ -1,17 +1,15 @@
-import 'package:bloc/screens/manager/lounges/lounge_add_edit_screen.dart';
 import 'package:bloc/widgets/ui/app_bar_title.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-import '../../../db/entity/lounge.dart';
-import '../../../helpers/dummy.dart';
+import '../../../db/entity/tix.dart';
 import '../../../helpers/firestore_helper.dart';
 import '../../../helpers/fresh.dart';
 import '../../../main.dart';
-import '../../../utils/constants.dart';
 import '../../../utils/logx.dart';
-import '../../../widgets/manager/manage_lounge_item.dart';
+import '../../../widgets/manager/manage_tix_item.dart';
 import '../../../widgets/ui/loading_widget.dart';
+import '../../parties/tix_buy_edit_screen.dart';
 
 class ManageTicketsScreen extends StatefulWidget {
 
@@ -50,12 +48,12 @@ class _ManageTicketsScreenState extends State<ManageTicketsScreen> {
       //   ),
       // ),
       // floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-      body: _loadLounges(context),
+      body: _loadTickets(context),
 
     );
   }
 
-  _loadLounges(BuildContext context) {
+  _loadTickets(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
         stream: FirestoreHelper.getTixs(),
         builder: (ctx, snapshot) {
@@ -66,7 +64,7 @@ class _ManageTicketsScreenState extends State<ManageTicketsScreen> {
             case ConnectionState.active:
             case ConnectionState.done:
               {
-                List<Lounge> lounges = [];
+                List<Tix> tixs = [];
 
                 if (snapshot.data!.docs.isNotEmpty) {
                   try {
@@ -74,10 +72,10 @@ class _ManageTicketsScreenState extends State<ManageTicketsScreen> {
                       DocumentSnapshot document = snapshot.data!.docs[i];
                       Map<String, dynamic> map =
                       document.data()! as Map<String, dynamic>;
-                      final Lounge lounge = Fresh.freshLoungeMap(map, false);
-                      lounges.add(lounge);
+                      final Tix tix = Fresh.freshTixMap(map, false);
+                      tixs.add(tix);
                     }
-                    return _showLounges(context, lounges);
+                    return _showTickets(context, tixs);
                   } on Exception catch (e, s) {
                     Logx.e(_TAG, e, s);
                   } catch (e) {
@@ -90,23 +88,23 @@ class _ManageTicketsScreenState extends State<ManageTicketsScreen> {
         });
   }
 
-  _showLounges(BuildContext context, List<Lounge> lounges) {
+  _showTickets(BuildContext context, List<Tix> tixs) {
     return SizedBox(
       height: mq.height,
       child: ListView.builder(
-          itemCount: lounges.length,
+          itemCount: tixs.length,
           scrollDirection: Axis.vertical,
           itemBuilder: (ctx, index) {
-            Lounge lounge = lounges[index];
+            Tix tix = tixs[index];
 
             return GestureDetector(
-                child: ManageLoungeItem(
-                  lounge: lounge,
+                child: ManageTixItem(
+                  tix: tix,
                 ),
                 onTap: () {
                   Navigator.of(context).push(MaterialPageRoute(
-                      builder: (ctx) => LoungeAddEditScreen(
-                        lounge: lounge,
+                      builder: (ctx) => TixBuyEditScreen(
+                        tix: tix,
                         task: 'edit',
                       )));
                 });

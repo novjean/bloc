@@ -1,3 +1,4 @@
+import 'package:bloc/db/entity/tix_tier_item.dart';
 import 'package:bloc/helpers/firestore_helper.dart';
 import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -15,21 +16,21 @@ import '../../utils/constants.dart';
 import '../../utils/logx.dart';
 import '../../widgets/parties/party_banner.dart';
 import '../../widgets/tix/party_tix_tier_item.dart';
+import '../../widgets/tix/tix_tier_item.dart';
 import '../../widgets/ui/app_bar_title.dart';
 
-class BuyTixScreen extends StatefulWidget {
-  String partyId;
+class TixBuyEditScreen extends StatefulWidget {
+  Tix tix;
+  String task;
 
-  BuyTixScreen({key, required this.partyId}) : super(key: key);
+  TixBuyEditScreen({key, required this.tix, required this.task}) : super(key: key);
 
   @override
-  State<BuyTixScreen> createState() => _BuyTixScreenState();
+  State<TixBuyEditScreen> createState() => _TixBuyEditScreenState();
 }
 
-class _BuyTixScreenState extends State<BuyTixScreen> {
+class _TixBuyEditScreenState extends State<TixBuyEditScreen> {
   static const String _TAG = 'BuyTixScreen';
-
-  Tix mTix = Dummy.getDummyTix();
 
   Party mParty = Dummy.getDummyParty(Constants.blocServiceId);
   var _isPartyLoading = true;
@@ -39,13 +40,7 @@ class _BuyTixScreenState extends State<BuyTixScreen> {
 
   @override
   void initState() {
-    mTix = mTix.copyWith(
-      partyId: widget.partyId,
-    );
-
-    FirestoreHelper.pushTix(mTix);
-
-    FirestoreHelper.pullParty(widget.partyId).then((res) {
+    FirestoreHelper.pullParty(widget.tix.partyId).then((res) {
       if (res.docs.isNotEmpty) {
         DocumentSnapshot document = res.docs[0];
         Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
@@ -62,7 +57,7 @@ class _BuyTixScreenState extends State<BuyTixScreen> {
       }
     });
 
-    FirestoreHelper.pullPartyTixTiers(widget.partyId).then((res) {
+    FirestoreHelper.pullPartyTixTiers(widget.tix.partyId).then((res) {
       if (res.docs.isNotEmpty) {
         for (int i = 0; i < res.docs.length; i++) {
           DocumentSnapshot document = res.docs[i];
@@ -82,6 +77,8 @@ class _BuyTixScreenState extends State<BuyTixScreen> {
     });
 
     super.initState();
+
+    FirestoreHelper.pushTix(widget.tix);
   }
 
   @override
@@ -95,11 +92,13 @@ class _BuyTixScreenState extends State<BuyTixScreen> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_rounded),
           onPressed: () {
-            for(String tixTierId in mTix.tixTierIds){
-              FirestoreHelper.deleteTixTier(tixTierId);
+            if(widget.task == 'buy'){
+              for(String tixTierId in widget.tix.tixTierIds){
+                FirestoreHelper.deleteTixTier(tixTierId);
+              }
+              FirestoreHelper.deleteTix(widget.tix.id);
+              Logx.d(_TAG, 'tix deleted from firebase');
             }
-            FirestoreHelper.deleteTix(mTix.id);
-            Logx.d(_TAG, 'tix deleted from firebase');
 
             if (kIsWeb) {
               GoRouter.of(context).pushNamed(RouteConstants.eventRouteName,
@@ -130,12 +129,12 @@ class _BuyTixScreenState extends State<BuyTixScreen> {
                 isGuestListRequested: false,
                 shouldShowInterestCount: false,
               ),
-              _showTixTiers(context),
+              widget.task=='buy'?_showBuyTixTiers(context):_showTixTiers(context)
             ],
           );
   }
 
-  _showTixTiers(BuildContext context) {
+  _showBuyTixTiers(BuildContext context) {
     return SizedBox(
       child: ListView.builder(
           padding: EdgeInsets.zero,
@@ -147,9 +146,48 @@ class _BuyTixScreenState extends State<BuyTixScreen> {
 
             return PartyTixTierItem(
               partyTixTier: partyTixTier,
-              tixId: mTix.id,
+              tixId: widget.tix.id,
             );
           }),
     );
+  }
+
+  _showTixTiers(BuildContext context) {
+    if(widget.tix.tixTierIds.isNotEmpty){
+      FirestoreHelper.pullTixTiers(widget.tix.partyId).then((res){
+        if(res.docs.isNotEmpty) {
+          List<TixTier> tixTiers = [];
+          for (int i = 0; i < res.docs.length; i++) {
+            DocumentSnapshot document = res.docs[i];
+            Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+            final TixTier tixTier = Fresh.freshTixTierMap(data, false);
+
+            if(widget.tix.tixTierIds.contains(tixTier.id)){
+              tixTiers.add(tixTier);
+            }
+          }
+
+          return SizedBox(
+            child: ListView.builder(
+                padding: EdgeInsets.zero,
+                shrinkWrap: true,
+                itemCount: tixTiers.length,
+                scrollDirection: Axis.vertical,
+                itemBuilder: (ctx, index) {
+                  TixTier tixTier = tixTiers[index];
+
+                  return TixTierItem(
+                    tixTier: tixTier,
+                  );
+                }),
+          );
+
+        } else {
+          Logx.em(_TAG,'no tix tiers found for ${widget.tix.partyId}');
+        }
+      });
+    } else {
+      return Text('nothing to show');
+    }
   }
 }

@@ -2033,12 +2033,19 @@ class FirestoreHelper {
         .get();
   }
 
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getTixs() {
+    return FirebaseFirestore.instance
+        .collection(TIXS)
+        .orderBy('dateTime', descending: true)
+        .snapshots();
+  }
+  
   static void deleteTix(String docId) {
     FirebaseFirestore.instance.collection(TIXS).doc(docId).delete();
   }
 
 
-  /** tix tier item **/
+  /** tix tier **/
   static void pushTixTier(TixTier tixTier) async {
     try {
       await FirebaseFirestore.instance
@@ -2052,6 +2059,13 @@ class FirestoreHelper {
     } catch (e) {
       Logx.em(_TAG, e.toString());
     }
+  }
+
+  static pullTixTiers(String partyId) {
+    return FirebaseFirestore.instance
+        .collection(TIX_TIERS)
+        .where('partyId', isEqualTo: partyId)
+        .get();
   }
 
   static void deleteTixTier(String docId) {
@@ -2354,5 +2368,6 @@ class FirestoreHelper {
   static void deleteUserLounge(String docId) {
     FirebaseFirestore.instance.collection(USER_LOUNGES).doc(docId).delete();
   }
+
 
 }

@@ -1,3 +1,4 @@
+import 'package:bloc/screens/parties/tix_buy_edit_screen.dart';
 import 'package:bloc/utils/file_utils.dart';
 import 'package:bloc/utils/string_utils.dart';
 import 'package:bloc/widgets/ui/loading_widget.dart';
@@ -12,6 +13,7 @@ import '../../db/entity/history_music.dart';
 import '../../db/entity/party.dart';
 import '../../db/entity/party_guest.dart';
 import '../../db/entity/party_interest.dart';
+import '../../db/entity/tix.dart';
 import '../../db/entity/user.dart';
 import '../../db/shared_preferences/user_preferences.dart';
 import '../../helpers/dummy.dart';
@@ -430,6 +432,16 @@ class _EventScreenState extends State<EventScreen> {
                   ? InkWell(
                       onTap: () {
                         //navigate to purchase tix screen
+                        Tix tix = Dummy.getDummyTix();
+                        tix = tix.copyWith(partyId: mParty.id);
+
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                              builder: (context) => TixBuyEditScreen(
+                                  tix: tix, task: 'buy')),
+                        );
+
+
                         GoRouter.of(context).pushNamed(RouteConstants.buyTixRouteName,
                             params: {
                               'partyId': mParty.id,
