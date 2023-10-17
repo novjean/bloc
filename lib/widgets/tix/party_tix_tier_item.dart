@@ -56,21 +56,31 @@ class _PartyTixTierItemState extends State<PartyTixTierItem> {
                     //       'assets/icons/logo.png'),
                     //   image: NetworkImage(tixTier.imageUrl),
                     //   fit: BoxFit.cover,),
-                    title: RichText(
-                      text: TextSpan(
-                        text: widget.partyTixTier.tierName,
-                        style: const TextStyle(
-                            fontFamily: Constants.fontDefault,
-                            color: Colors.black,
-                            overflow: TextOverflow.ellipsis,
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold),
-                      ),
+                    title: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        RichText(
+                          text: TextSpan(
+                            text: '${widget.partyTixTier.tierName}   ',
+                            style: const TextStyle(
+                                fontFamily: Constants.fontDefault,
+                                color: Colors.black,
+                                overflow: TextOverflow.ellipsis,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                          child: Text('\u20B9 ${widget.partyTixTier.tierPrice.toStringAsFixed(0)}',
+                              style: const TextStyle(fontSize: 14)),
+                        )
+                      ],
                     ),
                     subtitle: Text(widget.partyTixTier.tierDescription),
                     trailing: !widget.partyTixTier.isSoldOut
                         ? DropdownButton<int>(
-                            value: mTixTier.tixTierCount,
+                            value: quantity,
                             items: List<DropdownMenuItem<int>>.generate(10,
                                 (int index) {
                               return DropdownMenuItem<int>(
@@ -106,8 +116,8 @@ class _PartyTixTierItemState extends State<PartyTixTierItem> {
                                       } else {
                                         List<String> tixTierIds = tix.tixTierIds;
                                         tixTierIds.add(mTixTier.id);
-
                                         tix = tix.copyWith(tixTierIds: tixTierIds);
+
                                         FirestoreHelper.pushTix(tix);
                                       }
 
@@ -124,7 +134,10 @@ class _PartyTixTierItemState extends State<PartyTixTierItem> {
                               });
                             },
                           )
-                        : Text('sold'))),
+                        : const Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 5.0),
+                          child: Text('sold\nout'),
+                        ))),
           ),
         ),
       ),

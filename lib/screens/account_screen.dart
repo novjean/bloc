@@ -18,6 +18,7 @@ import '../routes/route_constants.dart';
 import '../utils/constants.dart';
 import '../utils/logx.dart';
 import '../widgets/ui/sized_listview_block.dart';
+import 'delivery_policy_screen.dart';
 
 class AccountScreen extends StatelessWidget {
   static const String _TAG = 'AccountScreen';
@@ -53,6 +54,20 @@ class AccountScreen extends StatelessWidget {
             onTap: () {
               Navigator.of(context).push(
                 MaterialPageRoute(builder: (context) => PrivacyPolicyScreen()),
+              );
+            }),
+        const Divider(),
+        const SizedBox(height: 5.0),
+        GestureDetector(
+            child: SizedListViewBlock(
+              title: 'delivery policy',
+              height: 50,
+              width: mq.width,
+              color: Constants.primary,
+            ),
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) => DeliveryPolicyScreen()),
               );
             }),
         const Divider(),

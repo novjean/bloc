@@ -18,12 +18,14 @@ import '../../widgets/parties/party_banner.dart';
 import '../../widgets/tix/party_tix_tier_item.dart';
 import '../../widgets/tix/tix_tier_item.dart';
 import '../../widgets/ui/app_bar_title.dart';
+import '../../widgets/ui/dark_button_widget.dart';
 
 class TixBuyEditScreen extends StatefulWidget {
   Tix tix;
   String task;
 
-  TixBuyEditScreen({key, required this.tix, required this.task}) : super(key: key);
+  TixBuyEditScreen({key, required this.tix, required this.task})
+      : super(key: key);
 
   @override
   State<TixBuyEditScreen> createState() => _TixBuyEditScreenState();
@@ -40,6 +42,8 @@ class _TixBuyEditScreenState extends State<TixBuyEditScreen> {
 
   @override
   void initState() {
+    FirestoreHelper.pushTix(widget.tix);
+
     FirestoreHelper.pullParty(widget.tix.partyId).then((res) {
       if (res.docs.isNotEmpty) {
         DocumentSnapshot document = res.docs[0];
@@ -62,7 +66,8 @@ class _TixBuyEditScreenState extends State<TixBuyEditScreen> {
         for (int i = 0; i < res.docs.length; i++) {
           DocumentSnapshot document = res.docs[i];
           Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-          final PartyTixTier partyTixTier = Fresh.freshPartyTixTierMap(data, false);
+          final PartyTixTier partyTixTier =
+              Fresh.freshPartyTixTierMap(data, false);
           mPartyTixTiers.add(partyTixTier);
         }
         setState(() {
@@ -77,8 +82,6 @@ class _TixBuyEditScreenState extends State<TixBuyEditScreen> {
     });
 
     super.initState();
-
-    FirestoreHelper.pushTix(widget.tix);
   }
 
   @override
@@ -92,8 +95,8 @@ class _TixBuyEditScreenState extends State<TixBuyEditScreen> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_rounded),
           onPressed: () {
-            if(widget.task == 'buy'){
-              for(String tixTierId in widget.tix.tixTierIds){
+            if (widget.task == 'buy') {
+              for (String tixTierId in widget.tix.tixTierIds) {
                 FirestoreHelper.deleteTixTier(tixTierId);
               }
               FirestoreHelper.deleteTix(widget.tix.id);
@@ -119,17 +122,31 @@ class _TixBuyEditScreenState extends State<TixBuyEditScreen> {
   _buildBody(BuildContext context) {
     return _isPartyLoading && _isPartyTixTiersLoading
         ? const LoadingWidget()
-        : ListView(
-            physics: const BouncingScrollPhysics(),
+        : Stack(
             children: [
-              PartyBanner(
-                party: mParty,
-                isClickable: false,
-                shouldShowButton: false,
-                isGuestListRequested: false,
-                shouldShowInterestCount: false,
+              ListView(
+                physics: const BouncingScrollPhysics(),
+                children: [
+                  PartyBanner(
+                    party: mParty,
+                    isClickable: false,
+                    shouldShowButton: false,
+                    isGuestListRequested: false,
+                    shouldShowInterestCount: false,
+                  ),
+                  widget.task == 'buy'
+                      ? _showBuyTixTiers(context)
+                      : _showTixTiers(context),
+                  const SizedBox(height: 70,),
+                ],
               ),
-              widget.task=='buy'?_showBuyTixTiers(context):_showTixTiers(context)
+              // Floating Container at the bottom
+              Positioned(
+                left: 0,
+                right: 0,
+                bottom: 0,
+                child: _loadTixTiers(context)
+              ),
             ],
           );
   }
@@ -153,16 +170,17 @@ class _TixBuyEditScreenState extends State<TixBuyEditScreen> {
   }
 
   _showTixTiers(BuildContext context) {
-    if(widget.tix.tixTierIds.isNotEmpty){
-      FirestoreHelper.pullTixTiers(widget.tix.partyId).then((res){
-        if(res.docs.isNotEmpty) {
+    if (widget.tix.tixTierIds.isNotEmpty) {
+      FirestoreHelper.pullTixTiers(widget.tix.partyId).then((res) {
+        if (res.docs.isNotEmpty) {
           List<TixTier> tixTiers = [];
           for (int i = 0; i < res.docs.length; i++) {
             DocumentSnapshot document = res.docs[i];
-            Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+            Map<String, dynamic> data =
+                document.data()! as Map<String, dynamic>;
             final TixTier tixTier = Fresh.freshTixTierMap(data, false);
 
-            if(widget.tix.tixTierIds.contains(tixTier.id)){
+            if (widget.tix.tixTierIds.contains(tixTier.id)) {
               tixTiers.add(tixTier);
             }
           }
@@ -181,9 +199,8 @@ class _TixBuyEditScreenState extends State<TixBuyEditScreen> {
                   );
                 }),
           );
-
         } else {
-          Logx.em(_TAG,'no tix tiers found for ${widget.tix.partyId}');
+          Logx.em(_TAG, 'no tix tiers found for ${widget.tix.partyId}');
         }
       });
     } else {
@@ -191,37 +208,65 @@ class _TixBuyEditScreenState extends State<TixBuyEditScreen> {
     }
   }
 
-  void _showBottomSheet(BuildContext context) {
-    showModalBottomSheet(
-        backgroundColor: Constants.lightPrimary,
-        context: context,
-        shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(20), topRight: Radius.circular(20))),
-        builder: (_) {
-          return ListView(
-            shrinkWrap: true,
-            padding:
-            EdgeInsets.only(top: mq.height * .03, bottom: mq.height * .05),
-            children: [
-              //pick profile picture label
-              const Text('pick or click 🤳 your best photo 🤩',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 20, color: Colors.black, fontWeight: FontWeight.w500)),
+  _showTixPriceProceed(BuildContext context, double price) {
+    return Container(
+      color: Constants.primary,
+      padding: EdgeInsets.all(16.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          Text(
+            'total  \u20B9 ${price.toStringAsFixed(0)}',
+          ),
+          DarkButtonWidget(
+            text: 'proceed',
+            onClicked: () {
+              Logx.ist(_TAG, 'clicked proceed');
+            },)
+        ],
+      ),
+    );
+  }
 
-              //for adding some space
-              SizedBox(height: mq.height * .02),
+  _loadTixTiers(BuildContext context){
+    return StreamBuilder<QuerySnapshot>(
+        stream: FirestoreHelper.getTixTiers(widget.tix.id),
+        builder: (ctx, snapshot) {
+          switch (snapshot.connectionState) {
+            case ConnectionState.waiting:
+            case ConnectionState.none:
+              return const LoadingWidget();
+            case ConnectionState.active:
+            case ConnectionState.done:
+              {
+                if (snapshot.data!.docs.isNotEmpty) {
+                  List<TixTier> tixTiers = [];
+                  double price = 0;
 
-              //buttons
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  //pick from gallery button
-                ],
-              )
-            ],
-          );
+                  try {
+                    for (int i = 0; i < snapshot.data!.docs.length; i++) {
+                      DocumentSnapshot document = snapshot.data!.docs[i];
+                      Map<String, dynamic> map =
+                      document.data()! as Map<String, dynamic>;
+                      final TixTier tixTier = Fresh.freshTixTierMap(map, false);
+                      tixTiers.add(tixTier);
+
+                      price += tixTier.tixTierCount * tixTier.tixTierPrice;
+                    }
+                    return _showTixPriceProceed(context, price);
+                  } on Exception catch (e, s) {
+                    Logx.e(_TAG, e, s);
+                  } catch (e) {
+                    Logx.em(_TAG, 'error loading tixs : $e');
+                  }
+                } else {
+                  return _showTixPriceProceed(context, 0);
+                }
+              }
+          }
+          return const LoadingWidget();
         });
   }
+
 
 }
