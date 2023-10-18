@@ -441,7 +441,6 @@ class _EventScreenState extends State<EventScreen> {
                                   tix: tix, task: 'buy')),
                         );
 
-
                         GoRouter.of(context).pushNamed(RouteConstants.buyTixRouteName,
                             params: {
                               'partyId': mParty.id,

@@ -514,7 +514,7 @@ class Dummy {
 
   static Tix getDummyTix() {
     Tix tix = Tix(
-        id: StringUtils.getRandomString(28),
+        id: StringUtils.getRandomString(9),
         partyId: '',
         userId: UserPreferences.myUser.id,
         userName: UserPreferences.myUser.name + UserPreferences.myUser.surname,

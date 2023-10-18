@@ -3,15 +3,12 @@ import 'package:bloc/helpers/firestore_helper.dart';
 import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 
 import '../../db/entity/party.dart';
 import '../../db/entity/party_tix_tier.dart';
 import '../../db/entity/tix.dart';
 import '../../helpers/dummy.dart';
 import '../../helpers/fresh.dart';
-import '../../main.dart';
-import '../../routes/route_constants.dart';
 import '../../utils/constants.dart';
 import '../../utils/logx.dart';
 import '../../widgets/parties/party_banner.dart';
@@ -19,21 +16,20 @@ import '../../widgets/tix/party_tix_tier_item.dart';
 import '../../widgets/tix/tix_tier_item.dart';
 import '../../widgets/ui/app_bar_title.dart';
 import '../../widgets/ui/dark_button_widget.dart';
-import 'tix_checkout_screen.dart';
 
-class TixBuyEditScreen extends StatefulWidget {
+class TixCheckoutScreen extends StatefulWidget {
   Tix tix;
-  String task;
+  List<TixTier> tixTiers;
 
-  TixBuyEditScreen({key, required this.tix, required this.task})
+  TixCheckoutScreen({key, required this.tix, required this.tixTiers})
       : super(key: key);
 
   @override
-  State<TixBuyEditScreen> createState() => _TixBuyEditScreenState();
+  State<TixCheckoutScreen> createState() => _TixCheckoutScreenState();
 }
 
-class _TixBuyEditScreenState extends State<TixBuyEditScreen> {
-  static const String _TAG = 'TixBuyEditScreen';
+class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
+  static const String _TAG = 'TixCheckoutScreen';
 
   Party mParty = Dummy.getDummyParty(Constants.blocServiceId);
   var _isPartyLoading = true;
@@ -41,11 +37,9 @@ class _TixBuyEditScreenState extends State<TixBuyEditScreen> {
   List<PartyTixTier> mPartyTixTiers = [];
   var _isPartyTixTiersLoading = true;
 
-  List<TixTier> mTixTiers = [];
-
   @override
   void initState() {
-    FirestoreHelper.pushTix(widget.tix);
+    // FirestoreHelper.pushTix(widget.tix);
 
     FirestoreHelper.pullParty(widget.tix.partyId).then((res) {
       if (res.docs.isNotEmpty) {
@@ -70,7 +64,7 @@ class _TixBuyEditScreenState extends State<TixBuyEditScreen> {
           DocumentSnapshot document = res.docs[i];
           Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
           final PartyTixTier partyTixTier =
-              Fresh.freshPartyTixTierMap(data, false);
+          Fresh.freshPartyTixTierMap(data, false);
           mPartyTixTiers.add(partyTixTier);
         }
         setState(() {
@@ -92,29 +86,29 @@ class _TixBuyEditScreenState extends State<TixBuyEditScreen> {
     return Scaffold(
       backgroundColor: Constants.background,
       appBar: AppBar(
-        title: AppBarTitle(title: 'buy tix'),
+        title: AppBarTitle(title: 'checkout'),
         titleSpacing: 0,
         backgroundColor: Constants.background,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_rounded),
           onPressed: () {
-            if (widget.task == 'buy') {
-              for (String tixTierId in widget.tix.tixTierIds) {
-                FirestoreHelper.deleteTixTier(tixTierId);
-              }
-              FirestoreHelper.deleteTix(widget.tix.id);
-              Logx.d(_TAG, 'tix deleted from firebase');
-            }
+            // if (widget.task == 'buy') {
+            //   for (String tixTierId in widget.tix.tixTierIds) {
+            //     FirestoreHelper.deleteTixTier(tixTierId);
+            //   }
+            //   FirestoreHelper.deleteTix(widget.tix.id);
+            //   Logx.d(_TAG, 'tix deleted from firebase');
+            // }
 
-            if (kIsWeb) {
-              GoRouter.of(context).pushNamed(RouteConstants.eventRouteName,
-                  params: {
-                    'partyName': mParty.name,
-                    'partyChapter': mParty.chapter
-                  });
-            } else {
+            // if (kIsWeb) {
+            //   GoRouter.of(context).pushNamed(RouteConstants.eventRouteName,
+            //       params: {
+            //         'partyName': mParty.name,
+            //         'partyChapter': mParty.chapter
+            //       });
+            // } else {
               Navigator.of(context).pop();
-            }
+            // }
           },
         ),
       ),
@@ -126,30 +120,56 @@ class _TixBuyEditScreenState extends State<TixBuyEditScreen> {
     return _isPartyLoading && _isPartyTixTiersLoading
         ? const LoadingWidget()
         : Stack(
-            children: [
-              ListView(
-                physics: const BouncingScrollPhysics(),
-                children: [
-                  PartyBanner(
-                    party: mParty,
-                    isClickable: false,
-                    shouldShowButton: false,
-                    isGuestListRequested: false,
-                    shouldShowInterestCount: false,
-                  ),
-                  widget.task == 'buy'
-                      ? _showBuyTixTiers(context)
-                      : _showTixTiers(context),
-                  const SizedBox(
-                    height: 70,
-                  ),
-                ],
-              ),
-              // Floating Container at the bottom
-              Positioned(
-                  left: 0, right: 0, bottom: 0, child: _loadTixTiers(context)),
-            ],
-          );
+      children: [
+        ListView(
+          physics: const BouncingScrollPhysics(),
+          children: [
+            PartyBanner(
+              party: mParty,
+              isClickable: false,
+              shouldShowButton: false,
+              isGuestListRequested: false,
+              shouldShowInterestCount: false,
+            ),
+            _showTixTiers(context),
+
+            // widget.task == 'buy'
+            //     ? _showBuyTixTiers(context)
+            //     : _showTixTiers(context),
+            const SizedBox(height: 70,),
+          ],
+        ),
+        // Floating Container at the bottom
+        Positioned(
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: _showTixPriceProceed(context, 0)
+
+            // _loadTixTiers(context)
+        ),
+      ],
+    );
+  }
+
+  _showTixPriceProceed(BuildContext context, double price) {
+    return Container(
+      color: Constants.primary,
+      padding: EdgeInsets.all(16.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          Text(
+            'total  \u20B9 ${price.toStringAsFixed(0)}',
+          ),
+          DarkButtonWidget(
+            text: 'proceed',
+            onClicked: () {
+              Logx.ist(_TAG, 'clicked proceed');
+            },)
+        ],
+      ),
+    );
   }
 
   _showBuyTixTiers(BuildContext context) {
@@ -171,49 +191,65 @@ class _TixBuyEditScreenState extends State<TixBuyEditScreen> {
   }
 
   _showTixTiers(BuildContext context) {
-    if (widget.tix.tixTierIds.isNotEmpty) {
-      FirestoreHelper.pullTixTiers(widget.tix.partyId).then((res) {
-        if (res.docs.isNotEmpty) {
-          List<TixTier> tixTiers = [];
-          for (int i = 0; i < res.docs.length; i++) {
-            DocumentSnapshot document = res.docs[i];
-            Map<String, dynamic> data =
-                document.data()! as Map<String, dynamic>;
-            final TixTier tixTier = Fresh.freshTixTierMap(data, false);
+    if (widget.tixTiers.isNotEmpty) {
+      return SizedBox(
+        child: ListView.builder(
+            padding: EdgeInsets.zero,
+            shrinkWrap: true,
+            itemCount: widget.tixTiers.length,
+            scrollDirection: Axis.vertical,
+            itemBuilder: (ctx, index) {
+              TixTier tixTier = widget.tixTiers[index];
 
-            if (widget.tix.tixTierIds.contains(tixTier.id)) {
-              tixTiers.add(tixTier);
-            }
-          }
+              return TixTierItem(
+                tixTier: tixTier,
+              );
+            }),
+      );
 
-          return SizedBox(
-            child: ListView.builder(
-                padding: EdgeInsets.zero,
-                shrinkWrap: true,
-                itemCount: tixTiers.length,
-                scrollDirection: Axis.vertical,
-                itemBuilder: (ctx, index) {
-                  TixTier tixTier = tixTiers[index];
 
-                  return TixTierItem(
-                    tixTier: tixTier,
-                  );
-                }),
-          );
-        } else {
-          Logx.em(_TAG, 'no tix tiers found for ${widget.tix.partyId}');
-        }
-      });
+      // FirestoreHelper.pullTixTiers(widget.tix.partyId).then((res) {
+      //   if (res.docs.isNotEmpty) {
+      //     List<TixTier> tixTiers = [];
+      //     for (int i = 0; i < res.docs.length; i++) {
+      //       DocumentSnapshot document = res.docs[i];
+      //       Map<String, dynamic> data =
+      //       document.data()! as Map<String, dynamic>;
+      //       final TixTier tixTier = Fresh.freshTixTierMap(data, false);
+      //
+      //       if (widget.tix.tixTierIds.contains(tixTier.id)) {
+      //         tixTiers.add(tixTier);
+      //       }
+      //     }
+      //
+      //     return SizedBox(
+      //       child: ListView.builder(
+      //           padding: EdgeInsets.zero,
+      //           shrinkWrap: true,
+      //           itemCount: tixTiers.length,
+      //           scrollDirection: Axis.vertical,
+      //           itemBuilder: (ctx, index) {
+      //             TixTier tixTier = tixTiers[index];
+      //
+      //             return TixTierItem(
+      //               tixTier: tixTier,
+      //             );
+      //           }),
+      //     );
+      //   } else {
+      //     Logx.em(_TAG, 'no tix tiers found for ${widget.tix.partyId}');
+      //   }
+      // });
     } else {
       return const Center(
           child: Text(
-        'pricing tier is not revealed yet!',
-        style: TextStyle(color: Constants.primary),
-      ));
+            'no tickets selected!',
+            style: TextStyle(color: Constants.primary),
+          ));
     }
   }
 
-  _loadTixTiers(BuildContext context) {
+  _loadTixTiers(BuildContext context){
     return StreamBuilder<QuerySnapshot>(
         stream: FirestoreHelper.getTixTiers(widget.tix.id),
         builder: (ctx, snapshot) {
@@ -225,15 +261,16 @@ class _TixBuyEditScreenState extends State<TixBuyEditScreen> {
             case ConnectionState.done:
               {
                 if (snapshot.data!.docs.isNotEmpty) {
+                  List<TixTier> tixTiers = [];
                   double price = 0;
 
                   try {
                     for (int i = 0; i < snapshot.data!.docs.length; i++) {
                       DocumentSnapshot document = snapshot.data!.docs[i];
                       Map<String, dynamic> map =
-                          document.data()! as Map<String, dynamic>;
+                      document.data()! as Map<String, dynamic>;
                       final TixTier tixTier = Fresh.freshTixTierMap(map, false);
-                      mTixTiers.add(tixTier);
+                      tixTiers.add(tixTier);
 
                       price += tixTier.tixTierCount * tixTier.tixTierPrice;
                     }
@@ -241,7 +278,7 @@ class _TixBuyEditScreenState extends State<TixBuyEditScreen> {
                   } on Exception catch (e, s) {
                     Logx.e(_TAG, e, s);
                   } catch (e) {
-                    Logx.em(_TAG, 'error loading tix tiers : $e');
+                    Logx.em(_TAG, 'error loading tixs : $e');
                   }
                 } else {
                   return _showTixPriceProceed(context, 0);
@@ -252,30 +289,4 @@ class _TixBuyEditScreenState extends State<TixBuyEditScreen> {
         });
   }
 
-  _showTixPriceProceed(BuildContext context, double price) {
-    return Container(
-      color: Constants.primary,
-      padding: const EdgeInsets.all(16.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          Text(
-            'total  \u20B9 ${price.toStringAsFixed(0)}',
-          ),
-          DarkButtonWidget(
-            text: 'proceed',
-            onClicked: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                    builder: (context) => TixCheckoutScreen(
-                          tix: widget.tix,
-                          tixTiers: mTixTiers,
-                        )),
-              );
-            },
-          )
-        ],
-      ),
-    );
-  }
 }

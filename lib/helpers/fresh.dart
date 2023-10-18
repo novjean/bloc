@@ -1747,7 +1747,7 @@ class Fresh {
     try {
       party = party.copyWith(type: map['type'] as String);
     } catch (e) {
-      Logx.em(_TAG, 'party type not exist for id: ' + party.id);
+      Logx.em(_TAG, 'party type not exist for id: ${party.id}');
       isModelChanged = true;
     }
     try {
@@ -1785,7 +1785,7 @@ class Fresh {
     try {
       party = party.copyWith(instagramUrl: map['instagramUrl'] as String);
     } catch (e) {
-      Logx.em(_TAG, 'party instagramUrl not exist for id: ' + party.id);
+      Logx.em(_TAG, 'party instagramUrl not exist for id: ${party.id}');
       isModelChanged = true;
     }
     try {

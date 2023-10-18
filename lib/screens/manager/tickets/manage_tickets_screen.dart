@@ -1,3 +1,4 @@
+import 'package:bloc/db/shared_preferences/user_preferences.dart';
 import 'package:bloc/widgets/ui/app_bar_title.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -6,6 +7,7 @@ import '../../../db/entity/tix.dart';
 import '../../../helpers/firestore_helper.dart';
 import '../../../helpers/fresh.dart';
 import '../../../main.dart';
+import '../../../utils/constants.dart';
 import '../../../utils/logx.dart';
 import '../../../widgets/manager/manage_tix_item.dart';
 import '../../../widgets/ui/loading_widget.dart';
@@ -101,6 +103,9 @@ class _ManageTicketsScreenState extends State<ManageTicketsScreen> {
                 child: ManageTixItem(
                   tix: tix,
                 ),
+                onDoubleTap: () {
+                  _showDeleteTicketDialog(context, tix);
+                },
                 onTap: () {
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (ctx) => TixBuyEditScreen(
@@ -108,8 +113,56 @@ class _ManageTicketsScreenState extends State<ManageTicketsScreen> {
                         task: 'edit',
                       )));
                 });
+
           }),
     );
   }
+
+  _showDeleteTicketDialog(BuildContext context, Tix tix) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: Constants.lightPrimary,
+          shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(20.0))),
+          contentPadding: const EdgeInsets.all(16.0),
+          title: const Text(
+            '📛 delete ticket',
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 22, color: Colors.black),
+          ),
+          content: const Text(
+              "ticket cannot be retrieved once deleted. are you sure you want to delete?"),
+          actions: [
+            TextButton(
+              child: const Text("yes"),
+              onPressed: () {
+
+                for(String tixTierId in tix.tixTierIds){
+                  FirestoreHelper.deleteTixTier(tixTierId);
+                }
+                FirestoreHelper.deleteTix(tix.id);
+                Logx.ist(_TAG, 'ticket is deleted');
+
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all<Color>(
+                    Constants.darkPrimary), // Set your desired background color
+              ),
+              child: const Text("no"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            )
+          ],
+        );
+      },
+    );
+  }
+
 
 }

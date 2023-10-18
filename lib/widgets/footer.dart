@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../routes/route_constants.dart';
-import '../screens/privacy_policy_screen.dart';
-import '../screens/refund_policy_screen.dart';
 import '../utils/constants.dart';
 import '../utils/network_utils.dart';
 

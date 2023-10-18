@@ -1,7 +1,4 @@
 import 'package:bloc/db/shared_preferences/user_preferences.dart';
-import 'package:bloc/screens/privacy_policy_screen.dart';
-import 'package:bloc/screens/refund_policy_screen.dart';
-import 'package:bloc/screens/terms_and_conditions_screen.dart';
 import 'package:bloc/widgets/ui/app_bar_title.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -18,7 +15,6 @@ import '../routes/route_constants.dart';
 import '../utils/constants.dart';
 import '../utils/logx.dart';
 import '../widgets/ui/sized_listview_block.dart';
-import 'delivery_policy_screen.dart';
 
 class AccountScreen extends StatelessWidget {
   static const String _TAG = 'AccountScreen';
@@ -52,9 +48,7 @@ class AccountScreen extends StatelessWidget {
               color: Constants.primary,
             ),
             onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) => PrivacyPolicyScreen()),
-              );
+              GoRouter.of(context).pushNamed(RouteConstants.privacyRouteName);
             }),
         const Divider(),
         const SizedBox(height: 5.0),
@@ -66,9 +60,7 @@ class AccountScreen extends StatelessWidget {
               color: Constants.primary,
             ),
             onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) => DeliveryPolicyScreen()),
-              );
+              GoRouter.of(context).pushNamed(RouteConstants.deliveryRouteName);
             }),
         const Divider(),
         const SizedBox(height: 5.0),
@@ -80,9 +72,7 @@ class AccountScreen extends StatelessWidget {
               color: Constants.primary,
             ),
             onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) => RefundPolicyScreen()),
-              );
+              GoRouter.of(context).pushNamed(RouteConstants.refundRouteName);
             }),
         const Divider(),
         const SizedBox(height: 5.0),
@@ -91,13 +81,10 @@ class AccountScreen extends StatelessWidget {
               title: 'terms and conditions',
               height: 50,
               width: mq.width,
-              color: Theme.of(context).primaryColor,
+              color: Constants.primary,
             ),
             onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                    builder: (context) => TermsAndConditionsScreen()),
-              );
+              GoRouter.of(context).pushNamed(RouteConstants.termsAndConditionsRouteName);
             }),
         const Divider(),
         const SizedBox(height: 5.0),

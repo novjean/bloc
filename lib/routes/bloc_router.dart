@@ -17,6 +17,7 @@ import '../helpers/firestore_helper.dart';
 import '../helpers/fresh.dart';
 import '../main.dart';
 import '../screens/contact_us_screen.dart';
+import '../screens/delivery_policy_screen.dart';
 import '../screens/error_page.dart';
 import '../screens/login_screen.dart';
 import '../screens/lounge/lounge_chat_screen.dart';
@@ -167,6 +168,15 @@ class BlocRouter {
             Logx.d(_TAG, '/privacy');
 
             return PrivacyPolicyScreen();
+          },
+        ),
+        GoRoute(
+          name: RouteConstants.deliveryRouteName,
+          path: '/delivery',
+          builder: (context, state) {
+            Logx.d(_TAG, '/delivery');
+
+            return DeliveryPolicyScreen();
           },
         ),
         GoRoute(
