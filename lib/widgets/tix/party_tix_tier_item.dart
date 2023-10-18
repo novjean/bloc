@@ -92,15 +92,78 @@ class _PartyTixTierItemState extends State<PartyTixTierItem> {
                               setState(() {
                                 quantity = newValue!;
                                 if (quantity > 0) {
-                                  mTixTier = mTixTier.copyWith(
-                                      tixTierName: widget.partyTixTier.tierName,
-                                      tixTierPrice:
-                                          widget.partyTixTier.tierPrice,
-                                      tixTierCount: quantity,
-                                      tixTierTotal:
-                                          widget.partyTixTier.tierPrice *
-                                              quantity);
-                                  FirestoreHelper.pushTixTier(mTixTier);
+                                  FirestoreHelper.pullTix(widget.tixId)
+                                      .then((res) {
+                                    if (res.docs.isNotEmpty) {
+                                      DocumentSnapshot document = res.docs[0];
+                                      Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+
+                                      Tix tix = Fresh.freshTixMap(data, false);
+                                      if(tix.tixTierIds.contains(mTixTier.id)){
+                                        // ticket count increased, nothing to do
+                                        // TixTier info will have count
+
+                                        // need to update tix tier
+                                        FirestoreHelper.pullTixTier(mTixTier.id).then(
+                                            (res) {
+                                              if(res.docs.isNotEmpty){
+                                                DocumentSnapshot document = res.docs[0];
+                                                Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+                                                TixTier tixTier = Fresh.freshTixTierMap(data, false);
+
+                                                // update the quantity on this
+                                                tixTier = tixTier.copyWith(
+                                                    tixTierPrice:
+                                                    widget.partyTixTier.tierPrice,
+                                                    tixTierCount: quantity,
+                                                    tixTierTotal:
+                                                    widget.partyTixTier.tierPrice * quantity
+                                                );
+                                                FirestoreHelper.pushTixTier(tixTier);
+                                              } else {
+                                                // bad data, could not find tix tier
+                                                // add new tix tier to db
+                                                mTixTier = mTixTier.copyWith(
+                                                    partyTixTierId: widget.partyTixTier.id,
+                                                    tixTierName: widget.partyTixTier.tierName,
+                                                    tixTierPrice:
+                                                    widget.partyTixTier.tierPrice,
+                                                    tixTierCount: quantity,
+                                                    tixTierTotal:
+                                                    widget.partyTixTier.tierPrice *
+                                                        quantity);
+                                                FirestoreHelper.pushTixTier(mTixTier);
+
+                                                // no need to add it to the tix since it is already present
+                                              }
+                                            }
+                                        );
+                                      } else {
+                                        mTixTier = mTixTier.copyWith(
+                                            partyTixTierId: widget.partyTixTier.id,
+                                            tixTierName: widget.partyTixTier.tierName,
+                                            tixTierPrice:
+                                            widget.partyTixTier.tierPrice,
+                                            tixTierCount: quantity,
+                                            tixTierTotal:
+                                            widget.partyTixTier.tierPrice *
+                                                quantity);
+                                        FirestoreHelper.pushTixTier(mTixTier);
+
+                                        List<String> tixTierIds = tix.tixTierIds;
+                                        tixTierIds.add(mTixTier.id);
+                                        tix = tix.copyWith(tixTierIds: tixTierIds);
+
+                                        FirestoreHelper.pushTix(tix);
+                                      }
+
+                                      Logx.em(_TAG, 'tix tier data saved in firebase');
+
+                                    } else {
+                                      Logx.em(_TAG, 'tix ${widget.tixId} not found in firebase');
+                                    }
+                                  });
+
 
                                   //update tix
                                   FirestoreHelper.pullTix(widget.tixId)

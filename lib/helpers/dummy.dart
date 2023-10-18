@@ -533,6 +533,7 @@ class Dummy {
     TixTier tixTierItem = TixTier(
         id: StringUtils.getRandomString(28),
         tixId: '',
+        partyTixTierId: '',
         tixTierName: '',
         tixTierPrice: 0,
         tixTierCount: 0,

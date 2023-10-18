@@ -2075,6 +2075,14 @@ class FirestoreHelper {
         .get();
   }
 
+  static pullTixTier(String id) {
+    return FirebaseFirestore.instance
+        .collection(TIX_TIERS)
+        .where('id', isEqualTo: id)
+        .get();
+  }
+
+
   static getTixTiers(String tixId) {
     return FirebaseFirestore.instance
         .collection(TIX_TIERS)
