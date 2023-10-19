@@ -3,17 +3,17 @@ import 'package:flutter/material.dart';
 
 import '../../utils/constants.dart';
 
-class TixTierItem extends StatefulWidget {
+class BuyTixTierItem extends StatefulWidget {
   TixTier tixTier;
 
-  TixTierItem({Key? key, required this.tixTier}) : super(key: key);
+  BuyTixTierItem({Key? key, required this.tixTier}) : super(key: key);
 
   @override
-  State<TixTierItem> createState() => _TixTierItemState();
+  State<BuyTixTierItem> createState() => _BuyTixTierItemState();
 }
 
-class _TixTierItemState extends State<TixTierItem> {
-  static const String _TAG = 'TixTierItem';
+class _BuyTixTierItemState extends State<BuyTixTierItem> {
+  static const String _TAG = 'BuyTixTierItem';
 
   int quantity = 0;
 

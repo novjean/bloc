@@ -2029,7 +2029,7 @@ class FirestoreHelper {
   static pullTix(String tixId) {
     return FirebaseFirestore.instance
         .collection(TIXS)
-        .where('tixId', isEqualTo: tixId)
+        .where('id', isEqualTo: tixId)
         .get();
   }
 

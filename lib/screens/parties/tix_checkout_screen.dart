@@ -12,16 +12,17 @@ import '../../helpers/fresh.dart';
 import '../../utils/constants.dart';
 import '../../utils/logx.dart';
 import '../../widgets/parties/party_banner.dart';
+import '../../widgets/tix/checkout_tix_tier_item.dart';
 import '../../widgets/tix/party_tix_tier_item.dart';
-import '../../widgets/tix/tix_tier_item.dart';
+import '../../widgets/tix/buy_tix_tier_item.dart';
 import '../../widgets/ui/app_bar_title.dart';
 import '../../widgets/ui/dark_button_widget.dart';
 
 class TixCheckoutScreen extends StatefulWidget {
   Tix tix;
-  List<TixTier> tixTiers;
+  // List<TixTier> tixTiers;
 
-  TixCheckoutScreen({key, required this.tix, required this.tixTiers})
+  TixCheckoutScreen({key, required this.tix})
       : super(key: key);
 
   @override
@@ -36,6 +37,9 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
 
   List<PartyTixTier> mPartyTixTiers = [];
   var _isPartyTixTiersLoading = true;
+
+  // List<TixTier> mTixTiers = [];
+  // var _isTixTiersLoading = true;
 
   @override
   void initState() {
@@ -131,7 +135,7 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
               isGuestListRequested: false,
               shouldShowInterestCount: false,
             ),
-            _showTixTiers(context),
+            _loadTixTiers(context),
 
             // widget.task == 'buy'
             //     ? _showBuyTixTiers(context)
@@ -190,64 +194,64 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
     );
   }
 
-  _showTixTiers(BuildContext context) {
-    if (widget.tixTiers.isNotEmpty) {
-      return SizedBox(
-        child: ListView.builder(
-            padding: EdgeInsets.zero,
-            shrinkWrap: true,
-            itemCount: widget.tixTiers.length,
-            scrollDirection: Axis.vertical,
-            itemBuilder: (ctx, index) {
-              TixTier tixTier = widget.tixTiers[index];
-
-              return TixTierItem(
-                tixTier: tixTier,
-              );
-            }),
-      );
-
-
-      // FirestoreHelper.pullTixTiers(widget.tix.partyId).then((res) {
-      //   if (res.docs.isNotEmpty) {
-      //     List<TixTier> tixTiers = [];
-      //     for (int i = 0; i < res.docs.length; i++) {
-      //       DocumentSnapshot document = res.docs[i];
-      //       Map<String, dynamic> data =
-      //       document.data()! as Map<String, dynamic>;
-      //       final TixTier tixTier = Fresh.freshTixTierMap(data, false);
-      //
-      //       if (widget.tix.tixTierIds.contains(tixTier.id)) {
-      //         tixTiers.add(tixTier);
-      //       }
-      //     }
-      //
-      //     return SizedBox(
-      //       child: ListView.builder(
-      //           padding: EdgeInsets.zero,
-      //           shrinkWrap: true,
-      //           itemCount: tixTiers.length,
-      //           scrollDirection: Axis.vertical,
-      //           itemBuilder: (ctx, index) {
-      //             TixTier tixTier = tixTiers[index];
-      //
-      //             return TixTierItem(
-      //               tixTier: tixTier,
-      //             );
-      //           }),
-      //     );
-      //   } else {
-      //     Logx.em(_TAG, 'no tix tiers found for ${widget.tix.partyId}');
-      //   }
-      // });
-    } else {
-      return const Center(
-          child: Text(
-            'no tickets selected!',
-            style: TextStyle(color: Constants.primary),
-          ));
-    }
-  }
+  // _showTixTiers(BuildContext context) {
+  //   if (widget.tixTiers.isNotEmpty) {
+  //     return SizedBox(
+  //       child: ListView.builder(
+  //           padding: EdgeInsets.zero,
+  //           shrinkWrap: true,
+  //           itemCount: widget.tixTiers.length,
+  //           scrollDirection: Axis.vertical,
+  //           itemBuilder: (ctx, index) {
+  //             TixTier tixTier = widget.tixTiers[index];
+  //
+  //             return TixTierItem(
+  //               tixTier: tixTier,
+  //             );
+  //           }),
+  //     );
+  //
+  //
+  //     // FirestoreHelper.pullTixTiers(widget.tix.partyId).then((res) {
+  //     //   if (res.docs.isNotEmpty) {
+  //     //     List<TixTier> tixTiers = [];
+  //     //     for (int i = 0; i < res.docs.length; i++) {
+  //     //       DocumentSnapshot document = res.docs[i];
+  //     //       Map<String, dynamic> data =
+  //     //       document.data()! as Map<String, dynamic>;
+  //     //       final TixTier tixTier = Fresh.freshTixTierMap(data, false);
+  //     //
+  //     //       if (widget.tix.tixTierIds.contains(tixTier.id)) {
+  //     //         tixTiers.add(tixTier);
+  //     //       }
+  //     //     }
+  //     //
+  //     //     return SizedBox(
+  //     //       child: ListView.builder(
+  //     //           padding: EdgeInsets.zero,
+  //     //           shrinkWrap: true,
+  //     //           itemCount: tixTiers.length,
+  //     //           scrollDirection: Axis.vertical,
+  //     //           itemBuilder: (ctx, index) {
+  //     //             TixTier tixTier = tixTiers[index];
+  //     //
+  //     //             return TixTierItem(
+  //     //               tixTier: tixTier,
+  //     //             );
+  //     //           }),
+  //     //     );
+  //     //   } else {
+  //     //     Logx.em(_TAG, 'no tix tiers found for ${widget.tix.partyId}');
+  //     //   }
+  //     // });
+  //   } else {
+  //     return const Center(
+  //         child: Text(
+  //           'no tickets selected!',
+  //           style: TextStyle(color: Constants.primary),
+  //         ));
+  //   }
+  // }
 
   _loadTixTiers(BuildContext context){
     return StreamBuilder<QuerySnapshot>(
@@ -274,14 +278,16 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
 
                       price += tixTier.tixTierCount * tixTier.tixTierPrice;
                     }
-                    return _showTixPriceProceed(context, price);
+                    return _showTixTiers(context, tixTiers);
+
+                    // return _showTixPriceProceed(context, price);
                   } on Exception catch (e, s) {
                     Logx.e(_TAG, e, s);
                   } catch (e) {
                     Logx.em(_TAG, 'error loading tixs : $e');
                   }
                 } else {
-                  return _showTixPriceProceed(context, 0);
+                  return _showTixTiers(context, []);
                 }
               }
           }
@@ -289,4 +295,20 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
         });
   }
 
+  _showTixTiers(BuildContext context, List<TixTier> tixTiers) {
+    return SizedBox(
+      child: ListView.builder(
+          padding: EdgeInsets.zero,
+          shrinkWrap: true,
+          itemCount: tixTiers.length,
+          scrollDirection: Axis.vertical,
+          itemBuilder: (ctx, index) {
+            TixTier tixTier = tixTiers[index];
+
+            return CheckoutTixTierItem(
+              tixTier: tixTier,
+            );
+          }),
+    );
+  }
 }

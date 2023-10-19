@@ -16,7 +16,7 @@ import '../../utils/constants.dart';
 import '../../utils/logx.dart';
 import '../../widgets/parties/party_banner.dart';
 import '../../widgets/tix/party_tix_tier_item.dart';
-import '../../widgets/tix/tix_tier_item.dart';
+import '../../widgets/tix/buy_tix_tier_item.dart';
 import '../../widgets/ui/app_bar_title.dart';
 import '../../widgets/ui/dark_button_widget.dart';
 import 'tix_checkout_screen.dart';
@@ -195,7 +195,7 @@ class _TixBuyEditScreenState extends State<TixBuyEditScreen> {
                 itemBuilder: (ctx, index) {
                   TixTier tixTier = tixTiers[index];
 
-                  return TixTierItem(
+                  return BuyTixTierItem(
                     tixTier: tixTier,
                   );
                 }),
@@ -269,7 +269,7 @@ class _TixBuyEditScreenState extends State<TixBuyEditScreen> {
                 MaterialPageRoute(
                     builder: (context) => TixCheckoutScreen(
                           tix: widget.tix,
-                          tixTiers: mTixTiers,
+                          // tixTiers: mTixTiers,
                         )),
               );
             },

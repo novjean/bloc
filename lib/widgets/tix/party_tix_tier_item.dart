@@ -163,9 +163,8 @@ class _PartyTixTierItemState extends State<PartyTixTierItem> {
                                       Logx.em(_TAG, 'tix ${widget.tixId} not found in firebase');
                                     }
                                   });
-
-
-                                  //update tix
+                                } else {
+                                  // item tier removed
                                   FirestoreHelper.pullTix(widget.tixId)
                                       .then((res) {
                                     if (res.docs.isNotEmpty) {
@@ -173,26 +172,13 @@ class _PartyTixTierItemState extends State<PartyTixTierItem> {
                                       Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
 
                                       Tix tix = Fresh.freshTixMap(data, false);
-                                      if(tix.tixTierIds.contains(mTixTier.id)){
-                                        // ticket count increased, nothing to do
-                                        // TixTier info will have count
-                                      } else {
-                                        List<String> tixTierIds = tix.tixTierIds;
-                                        tixTierIds.add(mTixTier.id);
-                                        tix = tix.copyWith(tixTierIds: tixTierIds);
+                                      List<String> tixTierIds = tix.tixTierIds;
+                                      tixTierIds.remove(mTixTier.id);
+                                      tix = tix.copyWith(tixTierIds: tixTierIds);
 
-                                        FirestoreHelper.pushTix(tix);
-                                      }
-
-                                      Logx.em(_TAG, 'tix tier data saved in firebase');
-
-                                    } else {
-                                      Logx.em(_TAG, 'tix ${widget.tixId} not found in firebase');
-                                    }
-                                  });
-                                } else {
-                                  // delete from db
-                                  FirestoreHelper.deleteTixTier(mTixTier.id);
+                                      FirestoreHelper.deleteTixTier(mTixTier.id);
+                                      FirestoreHelper.pushTix(tix);
+                                    }});
                                 }
                               });
                             },
