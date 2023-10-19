@@ -64,7 +64,7 @@ class _CheckoutTixTierItemState extends State<CheckoutTixTierItem> {
                           color: Colors.black,
                           fontFamily: Constants.fontDefault,
                           overflow: TextOverflow.ellipsis,
-                          fontSize: 16,
+                          fontSize: 14,
                           fontWeight: FontWeight.normal),
                       children: <TextSpan>[
                         TextSpan(text:widget.tixTier.tixTierCount.toString(),
@@ -72,9 +72,8 @@ class _CheckoutTixTierItemState extends State<CheckoutTixTierItem> {
                                 color: Colors.black,
                                 fontFamily:
                                 Constants.fontDefault,
-                                fontSize: 17,
-                                fontWeight: FontWeight.normal,
-                                fontStyle: FontStyle.italic)),
+                                fontSize: 14,
+                                fontWeight: FontWeight.normal)),
                       ]),
                 ),
                 trailing: Text('${StringUtils.rs} ${widget.tixTier.tixTierTotal.toStringAsFixed(2)}',),

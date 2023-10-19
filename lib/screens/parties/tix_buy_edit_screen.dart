@@ -269,7 +269,6 @@ class _TixBuyEditScreenState extends State<TixBuyEditScreen> {
                 MaterialPageRoute(
                     builder: (context) => TixCheckoutScreen(
                           tix: widget.tix,
-                          // tixTiers: mTixTiers,
                         )),
               );
             },
