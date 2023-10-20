@@ -34,7 +34,9 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
   List<TixTier> mTixTiers = [];
   var _isTixTiersLoading = true;
 
-  double totalPrice = 0;
+  double igst = 0;
+  double subTotal = 0;
+  double grandTotal = 0;
 
   @override
   void initState() {
@@ -65,8 +67,12 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
               final TixTier tixTier = Fresh.freshTixTierMap(data, false);
               mTixTiers.add(tixTier);
 
-              totalPrice += tixTier.tixTierCount * tixTier.tixTierPrice;
+              subTotal += tixTier.tixTierCount * tixTier.tixTierPrice;
             }
+
+            igst = subTotal * Constants.igstPercent;
+            subTotal += igst;
+            grandTotal = subTotal;
 
             setState(() {
               _isTixTiersLoading = false;
@@ -136,22 +142,72 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
   }
 
   _showTixPricePurchase(BuildContext context) {
-    return Container(
-      color: Constants.primary,
-      padding: const EdgeInsets.all(16.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          Text(
-            'total  \u20B9 ${totalPrice.toStringAsFixed(0)}',
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Divider(),
+        Container(
+          color: Constants.primary,
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Text(
+                'IGST',
+              ),
+              Text('\u20B9 ${igst.toStringAsFixed(0)}')
+            ],
           ),
-          DarkButtonWidget(
-            text: 'purchase',
-            onClicked: () {
-              Logx.ist(_TAG, 'clicked proceed');
-            },)
-        ],
-      ),
+        ),
+        // const Divider(),
+        Container(
+          color: Constants.primary,
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Text(
+                'sub-total',
+              ),
+              Text('\u20B9 ${subTotal.toStringAsFixed(0)}')
+            ],
+          ),
+        ),
+        Container(
+          color: Constants.primary,
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Text(
+                'grand total', style: TextStyle(fontSize: 18,
+                  fontWeight: FontWeight.bold),
+              ),
+              Text('\u20B9 ${grandTotal.toStringAsFixed(0)}',
+                style: TextStyle(
+                fontSize: 18,
+                  fontWeight: FontWeight.bold),)
+            ],
+          ),
+        ),
+
+        const Divider(),
+        Container(
+          color: Constants.primary,
+          padding: const EdgeInsets.all(16.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Spacer(),
+              DarkButtonWidget(
+                text: 'purchase',
+                onClicked: () {
+                  Logx.ist(_TAG, 'purchase tickets');
+                },)
+            ],
+          ),
+        ),
+      ],
     );
   }
 
