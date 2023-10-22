@@ -528,6 +528,34 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
                         )
                       ],
                     ),
+                    const SizedBox(height: 10),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text('all guests review'),
+                        SizedBox.fromSize(
+                          size: const Size(50, 50),
+                          child: ClipOval(
+                            child: Material(
+                              color: Constants.primary,
+                              child: InkWell(
+                                splashColor: Constants.darkPrimary,
+                                onTap: () async {
+                                  Navigator.of(ctx).pop();
+                                  _showRequestReviewFromGuests(context);
+                                },
+                                child: const Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: <Widget>[
+                                    Icon(Icons.multiple_stop),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
                     const SizedBox(height: 30),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -835,4 +863,83 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
       },
     );
   }
+
+  void _showRequestReviewFromGuests(BuildContext context) {
+    showDialog(
+        context: context,
+        builder: (BuildContext ctx) {
+          return AlertDialog(
+            title: Text(
+              'request google review from all ${sPartyName == 'all' ? '' : sPartyName} guest lists',
+              style: const TextStyle(color: Colors.redAccent),
+            ),
+            content: Text(
+                'request for google review from ${mPartyGuests.length} guests. are you sure you want to ask from those who were approved?'),
+            actions: [
+              TextButton(
+                child: const Text('review bloc'),
+                onPressed: () async {
+                  for (PartyGuest partyGuest in mPartyGuests) {
+                    if(partyGuest.guestId.isNotEmpty && partyGuest.isApproved){
+                      FirestoreHelper.pullUser(partyGuest.guestId).then((res) {
+                        if (res.docs.isNotEmpty) {
+                          DocumentSnapshot document = res.docs[0];
+                          Map<String, dynamic> map = document.data()! as Map<String, dynamic>;
+                          final User user = Fresh.freshUserMap(map, true);
+
+                          if(user.fcmToken.isNotEmpty){
+                            //send a notification
+                            Apis.sendUrlData(user.fcmToken, Apis.GoogleReviewBloc, Constants.blocGoogleReview);
+                            Logx.ist(_TAG,
+                                '${user.name} ${user.surname} has been notified for a bloc google review 🤞');
+                          }
+                        } else {
+                          Logx.est(_TAG, 'user in guest list not found in db : ${partyGuest.guestId}');
+                        }
+                      });
+                    }
+                  }
+
+                  Navigator.of(ctx).pop();
+                },
+              ),
+              TextButton(
+                child: const Text('review freq'),
+                onPressed: () async {
+                  for (PartyGuest partyGuest in mPartyGuests) {
+                    if(partyGuest.guestId.isNotEmpty && partyGuest.isApproved){
+                      FirestoreHelper.pullUser(partyGuest.guestId).then((res) {
+                        if (res.docs.isNotEmpty) {
+                          DocumentSnapshot document = res.docs[0];
+                          Map<String, dynamic> map = document.data()! as Map<String, dynamic>;
+                          final User user = Fresh.freshUserMap(map, true);
+
+                          if(user.fcmToken.isNotEmpty){
+                            Apis.sendUrlData(user.fcmToken, Apis.GoogleReviewFreq, Constants.freqGoogleReview);
+                            Logx.ist(_TAG,
+                                '${user.name} ${user.surname} has been notified for a freq google review 🤞');
+                          }
+                        } else {
+                          Logx.est(_TAG, 'user in guest list not found in db : ${partyGuest.guestId}');
+                        }
+                      });
+                    }
+                  }
+
+                  Navigator.of(ctx).pop();
+                },
+              ),
+
+              TextButton(
+                child: const Text("cancel"),
+                onPressed: () {
+                  Navigator.of(ctx).pop();
+                },
+              )
+            ],
+          );
+        });
+  }
+
+
 }

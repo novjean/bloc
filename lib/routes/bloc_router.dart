@@ -13,9 +13,11 @@ import 'package:go_router/go_router.dart';
 
 import 'package:bloc/db/entity/user.dart' as blocUser;
 
+import '../helpers/dummy.dart';
 import '../helpers/firestore_helper.dart';
 import '../helpers/fresh.dart';
 import '../main.dart';
+import '../screens/checkout_screen.dart';
 import '../screens/contact_us_screen.dart';
 import '../screens/delivery_policy_screen.dart';
 import '../screens/error_page.dart';
@@ -186,6 +188,15 @@ class BlocRouter {
             Logx.d(_TAG, '/refund_and_cancellation');
 
             return RefundPolicyScreen();
+          },
+        ),
+        GoRoute(
+          name: RouteConstants.checkoutRouteName,
+          path: '/checkout',
+          builder: (context, state) {
+            Logx.d(_TAG, '/checkout');
+
+            return CheckoutScreen(tix: Dummy.getDummyTix(),);
           },
         ),
         GoRoute(

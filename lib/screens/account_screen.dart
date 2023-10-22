@@ -87,6 +87,18 @@ class AccountScreen extends StatelessWidget {
               GoRouter.of(context).pushNamed(RouteConstants.termsAndConditionsRouteName);
             }),
         const Divider(),
+        UserPreferences.myUser.clearanceLevel>=Constants.PROMOTER_LEVEL?
+        GestureDetector(
+            child: SizedListViewBlock(
+              title: 'checkout page',
+              height: 50,
+              width: mq.width,
+              color: Constants.primary,
+            ),
+            onTap: () {
+              GoRouter.of(context).pushNamed(RouteConstants.checkoutRouteName);
+            }) : const SizedBox(),
+        const Divider(),
         const SizedBox(height: 5.0),
         GestureDetector(
             child: SizedListViewBlock(

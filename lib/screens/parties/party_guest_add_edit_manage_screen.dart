@@ -131,7 +131,13 @@ class _PartyGuestAddEditManageScreenState
     if (!UserPreferences.isUserLoggedIn()) {
       mBlocUser = Dummy.getDummyUser();
     } else {
-      mBlocUser = UserPreferences.myUser;
+      // mBlocUser = UserPreferences.myUser;
+
+      if(widget.task == 'manage'){
+        mBlocUser = Dummy.getDummyUser();
+      } else {
+        mBlocUser = UserPreferences.myUser;
+      }
     }
 
     if (widget.partyGuest.surname.isEmpty ||
@@ -147,7 +153,7 @@ class _PartyGuestAddEditManageScreenState
       years.add(i.toString());
     }
 
-    if (mBlocUser.clearanceLevel < Constants.PROMOTER_LEVEL) {
+    if (mBlocUser.clearanceLevel < Constants.PROMOTER_LEVEL && widget.task!='manage') {
       _guestStatuses.removeLast();
     }
 
@@ -1212,10 +1218,14 @@ class _PartyGuestAddEditManageScreenState
                             height: 50,
                             text: 'delete',
                             onClicked: () {
-                              FirestoreHelper.deletePartyGuest(
-                                  widget.partyGuest.id);
-                              Logx.ist(_TAG, 'guest list request is deleted!');
-                              Navigator.of(context).pop();
+                              if(mBlocUser.fcmToken.isNotEmpty){
+                                _showGuestReviewDialog(context);
+                              } else {
+                                Navigator.of(context).pop();
+                                FirestoreHelper.deletePartyGuest(
+                                    widget.partyGuest.id);
+                                Logx.ist(_TAG, 'guest list request is deleted!');
+                              }
                             },
                           ),
                         ),
@@ -2579,5 +2589,68 @@ class _PartyGuestAddEditManageScreenState
           );
         });
   }
+
+  _showGuestReviewDialog(BuildContext context) {
+    showDialog(
+        context: context,
+        builder: (BuildContext ctx) {
+          return AlertDialog(
+            title: Text(
+              'request google review',
+              style: const TextStyle(color: Colors.redAccent),
+            ),
+            content: Text(
+                'request for google review from ${mBlocUser.name} ${mBlocUser.surname}. are you sure you want to ask?'),
+            actions: [
+              TextButton(
+                child: const Text('review bloc'),
+                onPressed: () async {
+                  if(mBlocUser.fcmToken.isNotEmpty){
+                    //send a notification
+                    Apis.sendUrlData(mBlocUser.fcmToken, Apis.GoogleReviewBloc, Constants.blocGoogleReview);
+                    Logx.ist(_TAG,
+                        '${mBlocUser.name} ${mBlocUser.surname} has been notified for a bloc google review 🤞');
+                  }
+
+                  Navigator.of(ctx).pop();
+                  FirestoreHelper.deletePartyGuest(
+                      widget.partyGuest.id);
+                  Logx.ist(_TAG, 'guest list request is deleted!');
+                  Navigator.of(context).pop();
+                },
+              ),
+              TextButton(
+                child: const Text('review freq'),
+                onPressed: () async {
+                  if(mBlocUser.fcmToken.isNotEmpty){
+                    //send a notification
+                    Apis.sendUrlData(mBlocUser.fcmToken, Apis.GoogleReviewFreq, Constants.freqGoogleReview);
+                    Logx.ist(_TAG,
+                        '${mBlocUser.name} ${mBlocUser.surname} has been notified for a freq google review 🤞');
+                  }
+
+                  Navigator.of(ctx).pop();
+                  FirestoreHelper.deletePartyGuest(
+                      widget.partyGuest.id);
+                  Logx.ist(_TAG, 'guest list request is deleted!');
+                  Navigator.of(context).pop();
+                },
+              ),
+
+              TextButton(
+                child: const Text("cancel"),
+                onPressed: () {
+                  Navigator.of(ctx).pop();
+                  FirestoreHelper.deletePartyGuest(
+                      widget.partyGuest.id);
+                  Logx.ist(_TAG, 'guest list request is deleted!');
+                  Navigator.of(context).pop();
+                },
+              )
+            ],
+          );
+        });
+  }
+
 
 }
