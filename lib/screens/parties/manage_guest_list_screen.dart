@@ -532,6 +532,34 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
+                        const Text('unapprove all'),
+                        SizedBox.fromSize(
+                          size: const Size(50, 50),
+                          child: ClipOval(
+                            child: Material(
+                              color: Constants.primary,
+                              child: InkWell(
+                                splashColor: Constants.darkPrimary,
+                                onTap: () async {
+                                  Navigator.of(ctx).pop();
+                                  _showUnapproveAllGuestList(context);
+                                },
+                                child: const Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: <Widget>[
+                                    Icon(Icons.multiple_stop),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
                         const Text('all guests review'),
                         SizedBox.fromSize(
                           size: const Size(50, 50),
@@ -930,6 +958,41 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
                 },
               ),
 
+              TextButton(
+                child: const Text("cancel"),
+                onPressed: () {
+                  Navigator.of(ctx).pop();
+                },
+              )
+            ],
+          );
+        });
+  }
+
+  void _showUnapproveAllGuestList(BuildContext context) {
+    showDialog(
+        context: context,
+        builder: (BuildContext ctx) {
+          return AlertDialog(
+            title: Text(
+              'unapprove all ${sPartyName == 'all' ? '' : sPartyName} guest lists',
+              style: const TextStyle(color: Colors.redAccent),
+            ),
+            content: Text(
+                'unapprove ${mPartyGuests.length} guests for the party. are you sure you want to continue?'),
+            actions: [
+              TextButton(
+                child: const Text('confirm'),
+                onPressed: () async {
+                  for (PartyGuest partyGuest in mPartyGuests) {
+                    partyGuest = partyGuest.copyWith(isApproved: false);
+                    FirestoreHelper.pushPartyGuest(partyGuest);
+                  }
+                  Logx.ist(_TAG, 'unapproved all guests');
+
+                  Navigator.of(ctx).pop();
+                },
+              ),
               TextButton(
                 child: const Text("cancel"),
                 onPressed: () {

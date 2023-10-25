@@ -2026,6 +2026,12 @@ class FirestoreHelper {
     }
   }
 
+  static pullAllTix() {
+    return FirebaseFirestore.instance
+        .collection(TIXS)
+        .get();
+  }
+
   static pullTix(String tixId) {
     return FirebaseFirestore.instance
         .collection(TIXS)

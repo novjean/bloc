@@ -3,11 +3,13 @@ import 'package:bloc/helpers/firestore_helper.dart';
 import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../db/entity/party.dart';
 import '../../db/entity/tix.dart';
 import '../../helpers/dummy.dart';
 import '../../helpers/fresh.dart';
+import '../../routes/route_constants.dart';
 import '../../utils/constants.dart';
 import '../../utils/logx.dart';
 import '../../widgets/parties/party_banner.dart';
@@ -145,7 +147,7 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Divider(),
+        const Divider(),
         Container(
           color: Constants.primary,
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
@@ -153,7 +155,7 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               Text(
-                'IGST',
+                'IST',
               ),
               Text('\u20B9 ${igst.toStringAsFixed(0)}')
             ],
@@ -166,7 +168,7 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              Text(
+              const Text(
                 'sub-total',
               ),
               Text('\u20B9 ${subTotal.toStringAsFixed(0)}')
@@ -198,11 +200,12 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              Spacer(),
+              const Spacer(),
               DarkButtonWidget(
                 text: 'purchase',
                 onClicked: () {
-                  Logx.ist(_TAG, 'purchase tickets');
+                  Logx.ist(_TAG, 'tickets purchased, navigating to home.');
+                  GoRouter.of(context).goNamed(RouteConstants.landingRouteName);
                 },)
             ],
           ),

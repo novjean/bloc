@@ -46,6 +46,13 @@ class Logx {
     Toaster.shortToast(message);
   }
 
+  static void elt(String tag, String message) {
+    String text = '$tag:$message';
+    logger.e(text);
+    FirebaseCrashlytics.instance.log(text);
+    Toaster.longToast(message);
+  }
+
   static void d(String tag, String message) {
     String text = '$tag:$message';
     logger.d(text);

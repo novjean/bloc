@@ -403,7 +403,7 @@ class _MainScreenState extends State<MainScreen> {
     switch (title) {
       case 'home':
         {
-          GoRouter.of(context).goNamed(RouteConstants.homeRouteName);
+          GoRouter.of(context).goNamed(RouteConstants.landingRouteName);
           break;
         }
       case 'box office':

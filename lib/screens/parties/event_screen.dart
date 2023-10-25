@@ -428,7 +428,7 @@ class _EventScreenState extends State<EventScreen> {
                       ],
                     )
                   : const SizedBox(),
-              mParty.isTix
+              mParty.isTix && UserPreferences.myUser.clearanceLevel>=Constants.ADMIN_LEVEL
                   ? InkWell(
                       onTap: () {
                         //navigate to purchase tix screen

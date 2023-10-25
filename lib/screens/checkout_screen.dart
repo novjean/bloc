@@ -16,10 +16,8 @@ import '../../widgets/ui/app_bar_title.dart';
 import '../../widgets/ui/dark_button_widget.dart';
 
 class CheckoutScreen extends StatefulWidget {
-  Tix tix;
 
-  CheckoutScreen({key, required this.tix})
-      : super(key: key);
+  CheckoutScreen({key}) : super(key: key);
 
   @override
   State<CheckoutScreen> createState() => _CheckoutScreenState();
@@ -27,6 +25,9 @@ class CheckoutScreen extends StatefulWidget {
 
 class _CheckoutScreenState extends State<CheckoutScreen> {
   static const String _TAG = 'CheckoutScreen';
+
+  Tix mTix = Dummy.getDummyTix();
+  var _isTixLoading = true;
 
   Party mParty = Dummy.getDummyParty(Constants.blocServiceId);
   var _isPartyLoading = true;
@@ -40,48 +41,58 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
   @override
   void initState() {
-    FirestoreHelper.pullParty(widget.tix.partyId).then((res) {
-      if (res.docs.isNotEmpty) {
+    FirestoreHelper.pullAllTix().then((res) {
+      if(res.docs.isNotEmpty){
         DocumentSnapshot document = res.docs[0];
         Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-        final Party party = Fresh.freshPartyMap(data, false);
-        mParty = party;
+        final Tix tix = Fresh.freshTixMap(data, false);
+        mTix = tix;
 
         setState(() {
-          _isPartyLoading = false;
+          _isTixLoading = false;
         });
+
+        FirestoreHelper.pullParty(mTix.partyId).then((res) {
+          if(res.docs.isNotEmpty){
+            DocumentSnapshot document = res.docs[0];
+            Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+            final Party party = Fresh.freshPartyMap(data, false);
+            mParty = party;
+
+            setState(() {
+              _isPartyLoading = false;
+            });
+          }
+        });
+
+        FirestoreHelper.pullTixTiersByTixId(mTix.id).then(
+                (res) {
+              if (res.docs.isNotEmpty) {
+                for (int i = 0; i < res.docs.length; i++) {
+                  DocumentSnapshot document = res.docs[i];
+                  Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+                  final TixTier tixTier = Fresh.freshTixTierMap(data, false);
+                  mTixTiers.add(tixTier);
+
+                  subTotal += tixTier.tixTierCount * tixTier.tixTierPrice;
+                }
+
+                igst = subTotal * Constants.igstPercent;
+                subTotal += igst;
+                grandTotal = subTotal;
+
+                setState(() {
+                  _isTixTiersLoading = false;
+                });
+              } else {
+                Logx.em(_TAG, 'no tix tiers found for ${mTix.partyId}');
+              }
+            });
       } else {
-        //party not found.
-        Logx.ist(_TAG, 'party could not be found');
+        Logx.elt(_TAG, 'sorry, no tickets found in db. please let dev know to resolve this.');
         Navigator.of(context).pop();
       }
     });
-
-    FirestoreHelper.pullTixTiersByTixId(widget.tix.id).then(
-            (res) {
-          if (res.docs.isNotEmpty) {
-            List<TixTier> tixTiers = [];
-            for (int i = 0; i < res.docs.length; i++) {
-              DocumentSnapshot document = res.docs[i];
-              Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-              final TixTier tixTier = Fresh.freshTixTierMap(data, false);
-              mTixTiers.add(tixTier);
-
-              subTotal += tixTier.tixTierCount * tixTier.tixTierPrice;
-            }
-
-            igst = subTotal * Constants.igstPercent;
-            subTotal += igst;
-            grandTotal = subTotal;
-
-            setState(() {
-              _isTixTiersLoading = false;
-            });
-          } else {
-            Logx.em(_TAG, 'no tix tiers found for ${widget.tix.partyId}');
-          }
-        }
-    );
 
     super.initState();
   }
@@ -106,7 +117,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   }
 
   _buildBody(BuildContext context) {
-    return _isPartyLoading && _isTixTiersLoading
+    return _isTixLoading && _isPartyLoading && _isTixTiersLoading
         ? const LoadingWidget()
         : Stack(
       children: [

@@ -90,7 +90,7 @@ class AccountScreen extends StatelessWidget {
         UserPreferences.myUser.clearanceLevel>=Constants.PROMOTER_LEVEL?
         GestureDetector(
             child: SizedListViewBlock(
-              title: 'checkout page',
+              title: 'checkout screen',
               height: 50,
               width: mq.width,
               color: Constants.primary,

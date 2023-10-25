@@ -196,7 +196,7 @@ class BlocRouter {
           builder: (context, state) {
             Logx.d(_TAG, '/checkout');
 
-            return CheckoutScreen(tix: Dummy.getDummyTix(),);
+            return CheckoutScreen();
           },
         ),
         GoRoute(
