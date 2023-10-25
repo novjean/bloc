@@ -8,6 +8,7 @@ class DeliveryPolicyScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.black,
         title: AppBarTitle(title:'delivery policy'),
         titleSpacing: 0,
       ),

@@ -9,7 +9,6 @@ import '../../db/entity/user.dart' as blocUser;
 import '../db/shared_preferences/table_preferences.dart';
 import '../helpers/firestorage_helper.dart';
 import '../helpers/firestore_helper.dart';
-import '../main.dart';
 import '../routes/route_constants.dart';
 
 import '../utils/constants.dart';
@@ -44,7 +43,7 @@ class AccountScreen extends StatelessWidget {
             child: SizedListViewBlock(
               title: 'privacy policy',
               height: 50,
-              width: mq.width,
+              width: MediaQuery.of(context).size.width,
               color: Constants.primary,
             ),
             onTap: () {
@@ -56,7 +55,7 @@ class AccountScreen extends StatelessWidget {
             child: SizedListViewBlock(
               title: 'delivery policy',
               height: 50,
-              width: mq.width,
+              width: MediaQuery.of(context).size.width,
               color: Constants.primary,
             ),
             onTap: () {
@@ -68,7 +67,7 @@ class AccountScreen extends StatelessWidget {
             child: SizedListViewBlock(
               title: 'refund policy',
               height: 50,
-              width: mq.width,
+              width: MediaQuery.of(context).size.width,
               color: Constants.primary,
             ),
             onTap: () {
@@ -80,7 +79,7 @@ class AccountScreen extends StatelessWidget {
             child: SizedListViewBlock(
               title: 'terms and conditions',
               height: 50,
-              width: mq.width,
+              width: MediaQuery.of(context).size.width,
               color: Constants.primary,
             ),
             onTap: () {
@@ -92,7 +91,7 @@ class AccountScreen extends StatelessWidget {
             child: SizedListViewBlock(
               title: 'checkout screen',
               height: 50,
-              width: mq.width,
+              width: MediaQuery.of(context).size.width,
               color: Constants.primary,
             ),
             onTap: () {
@@ -104,7 +103,7 @@ class AccountScreen extends StatelessWidget {
             child: SizedListViewBlock(
               title: 'delete account',
               height: 50,
-              width: mq.width,
+              width: MediaQuery.of(context).size.width,
               color: Constants.errorColor,
             ),
             onTap: () {
