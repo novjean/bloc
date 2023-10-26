@@ -3,6 +3,7 @@ import 'package:bloc/helpers/firestore_helper.dart';
 import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../db/entity/party.dart';
 import '../../db/entity/tix.dart';
@@ -14,6 +15,7 @@ import '../../widgets/parties/party_banner.dart';
 import '../../widgets/tix/checkout_tix_tier_item.dart';
 import '../../widgets/ui/app_bar_title.dart';
 import '../../widgets/ui/dark_button_widget.dart';
+import '../routes/route_constants.dart';
 
 class CheckoutScreen extends StatefulWidget {
 
@@ -214,6 +216,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                 text: 'purchase',
                 onClicked: () {
                   Logx.ist(_TAG, 'purchase tickets');
+                  GoRouter.of(context).pushNamed(RouteConstants.landingRouteName);
                 },)
             ],
           ),
