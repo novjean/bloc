@@ -192,7 +192,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              Text(
+              const Text(
                 'grand total', style: TextStyle(fontSize: 18,
                   fontWeight: FontWeight.bold),
               ),
@@ -211,7 +211,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              Spacer(),
+              const Spacer(),
               DarkButtonWidget(
                 text: 'purchase',
                 onClicked: () {
