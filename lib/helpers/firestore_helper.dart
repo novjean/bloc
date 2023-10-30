@@ -2106,7 +2106,6 @@ class FirestoreHelper {
     FirebaseFirestore.instance.collection(TIX_TIERS).doc(docId).delete();
   }
 
-
   /** user **/
   static void pushUser(blocUser.User user) async {
     try {

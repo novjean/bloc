@@ -599,6 +599,12 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
                                 onTap: () {
                                   Navigator.of(ctx).pop();
 
+                                  for(PartyGuest guest in mPartyGuests){
+                                    if(guest.guestStatus == 'promoter'){
+                                      FirestoreHelper.deletePartyGuest(guest.id);
+                                    }
+                                  }
+
                                   FirestoreHelper.pullAllPromoterGuests()
                                       .then((res) {
                                     if (res.docs.isNotEmpty) {
@@ -616,12 +622,10 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
                                             Fresh.freshPromoterGuestMap(
                                                 data, false);
 
+                                        FirestoreHelper.deletePromoterGuest(pg.id);
+
                                         if (now - pg.createdAt >
-                                            2 *
-                                                DateTimeUtils
-                                                    .millisecondsWeek) {
-                                          FirestoreHelper.deletePromoterGuest(
-                                              pg.id);
+                                            2 * DateTimeUtils.millisecondsWeek) {
                                           count++;
                                         }
                                       }
