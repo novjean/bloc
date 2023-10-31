@@ -547,7 +547,7 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
                                 child: const Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: <Widget>[
-                                    Icon(Icons.multiple_stop),
+                                    Icon(Icons.cancel_outlined),
                                   ],
                                 ),
                               ),
@@ -575,7 +575,7 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
                                 child: const Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: <Widget>[
-                                    Icon(Icons.multiple_stop),
+                                    Icon(Icons.reviews),
                                   ],
                                 ),
                               ),
@@ -641,6 +641,36 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: <Widget>[
                                     Icon(Icons.cleaning_services,
+                                        color: Constants.errorColor),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                    const SizedBox(height: 30),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text('clean non app user guests'),
+                        SizedBox.fromSize(
+                          size: const Size(50, 50),
+                          child: ClipOval(
+                            child: Material(
+                              color: Constants.darkPrimary,
+                              child: InkWell(
+                                splashColor: Constants.primary,
+                                onTap: () {
+                                  Navigator.of(ctx).pop();
+
+                                  _cleanNonAppUserGuests(context);
+                                },
+                                child: const Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: <Widget>[
+                                    Icon(Icons.person_add_disabled_sharp,
                                         color: Constants.errorColor),
                                   ],
                                 ),
@@ -1033,5 +1063,27 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
         });
   }
 
+  void _cleanNonAppUserGuests(BuildContext context) {
+    for(PartyGuest guest in mPartyGuests){
+      if(guest.guestStatus != 'promoter'){
+        FirestoreHelper.pullUser(guest.guestId).then((res) {
+          if(res.docs.isNotEmpty){
+            DocumentSnapshot document = res.docs[0];
+            Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
 
+            final User user = Fresh.freshUserMap(data, false);
+
+            if(!user.isAppUser){
+              FirestoreHelper.deletePartyGuest(guest.id);
+              Logx.ist(_TAG, '${guest.name} ${guest.surname} guest list is deleted');
+            } else {
+              Logx.ist(_TAG, '${guest.name} ${guest.surname} is an app user');
+            }
+          } else {
+            Logx.est(_TAG, '${guest.name} ${guest.surname} account not found. id: ${guest.guestId}');
+          }
+        });
+      }
+    }
+  }
 }
