@@ -2595,9 +2595,9 @@ class _PartyGuestAddEditManageScreenState
         context: context,
         builder: (BuildContext ctx) {
           return AlertDialog(
-            title: Text(
+            title: const Text(
               'request google review',
-              style: const TextStyle(color: Colors.redAccent),
+              style: TextStyle(color: Colors.redAccent),
             ),
             content: Text(
                 'request for google review from ${mBlocUser.name} ${mBlocUser.surname}. are you sure you want to ask?'),
