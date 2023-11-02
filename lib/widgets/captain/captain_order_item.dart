@@ -12,6 +12,7 @@ import '../../helpers/fresh.dart';
 import '../../screens/manager/bill_screen.dart';
 import '../../utils/cart_item_utils.dart';
 import '../../utils/date_time_utils.dart';
+import '../../utils/logx.dart';
 
 class CaptainOrderItem extends StatefulWidget {
   final BlocOrder order;
@@ -30,22 +31,22 @@ class CaptainOrderItem extends StatefulWidget {
 }
 
 class _CaptainOrderItemState extends State<CaptainOrderItem> {
+  static final String _TAG = 'CaptainOrderItem';
+
   bool isCustomerLoading = true;
-  User user = Dummy.getDummyUser();
+  User mUser = Dummy.getDummyUser();
 
   @override
   void initState() {
     FirestoreHelper.pullUser(widget.order.customerId).then((res) {
-      print('successfully pulled in user for id ' + widget.order.customerId);
-
       if (res.docs.isNotEmpty) {
         DocumentSnapshot document = res.docs[0];
         Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
 
-        final User _user = Fresh.freshUserMap(data, false);
+        final User user = Fresh.freshUserMap(data, false);
 
         setState(() {
-          user = _user;
+          mUser = user;
           isCustomerLoading = false;
         });
       } else {
@@ -58,7 +59,7 @@ class _CaptainOrderItemState extends State<CaptainOrderItem> {
 
   @override
   Widget build(BuildContext context) {
-    String title = 'order #' + widget.order.createdAt.toString();
+    String title = 'order #${widget.order.createdAt}';
     String collapsed = '';
 
     for (int i = 0; i < widget.order.cartItems.length; i++) {
@@ -82,10 +83,7 @@ class _CaptainOrderItemState extends State<CaptainOrderItem> {
             child: GestureDetector(
               onTap: () {
                 BlocOrder order = widget.order;
-                print('order selected for cust id : ' +
-                    order.customerId +
-                    ", table num: " +
-                    order.tableNumber.toString());
+                Logx.d(_TAG, 'order selected for cust id : ${order.customerId}, table num: ${order.tableNumber}');
 
                 Bill bill = CartItemUtils.extractBill(order.cartItems);
                 Navigator.of(context).push(
@@ -127,7 +125,7 @@ class _CaptainOrderItemState extends State<CaptainOrderItem> {
                                   children: <Widget>[
                                     Flexible(
                                       child: Text(
-                                        user.name.toLowerCase(),
+                                        mUser.name.toLowerCase(),
                                         style: const TextStyle(
                                           fontSize: 18,
                                           fontWeight: FontWeight.bold,

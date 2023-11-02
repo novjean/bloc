@@ -1,24 +1,16 @@
-import 'dart:io';
 
 import 'package:bloc/db/entity/user_photo.dart';
-import 'package:bloc/utils/number_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:http/http.dart' as http;
 
-import '../../../db/entity/party_photo.dart';
 import '../../../helpers/dummy.dart';
-import '../../../helpers/firestorage_helper.dart';
 import '../../../helpers/firestore_helper.dart';
 import '../../../helpers/fresh.dart';
 import '../../../main.dart';
 import '../../../utils/constants.dart';
-import '../../../utils/file_utils.dart';
 import '../../../utils/logx.dart';
-import '../../../utils/string_utils.dart';
+import '../../../widgets/manager/manage_user_photo_item.dart';
 import '../../../widgets/ui/loading_widget.dart';
-import 'manage_party_photo_item.dart';
 import 'party_photo_add_edit_screen.dart';
 
 class ManageUserPhotosScreen extends StatefulWidget {
@@ -62,9 +54,6 @@ class _ManageUserPhotosScreenState extends State<ManageUserPhotosScreen> {
   _buildBody(BuildContext context) {
     return Column(
       children: [
-        // const SizedBox(height: 2.0),
-        // _displayOptions(context),
-        // const Divider(),
         const SizedBox(height: 2.0),
         _loadUserPhotos(context),
         const SizedBox(height: 5.0),

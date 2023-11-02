@@ -11,11 +11,10 @@ import 'package:multi_select_flutter/dialog/multi_select_dialog_field.dart';
 import 'package:multi_select_flutter/util/multi_select_item.dart';
 import 'package:multi_select_flutter/util/multi_select_list_type.dart';
 
-import '../../api/apis.dart';
 import '../../db/entity/lounge.dart';
 import '../../db/entity/party_photo.dart';
 import '../../db/entity/user.dart';
-import '../../db/entity/user_lounge.dart';
+import '../../db/entity/user_photo.dart';
 import '../../helpers/dummy.dart';
 import '../../helpers/fresh.dart';
 import '../../main.dart';
@@ -68,11 +67,28 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
         child: SizedBox(
           width: mq.width,
           child: Padding(
-            padding: const EdgeInsets.only(bottom: 2),
+            padding: const EdgeInsets.only(bottom: 0),
             child: ListView(
               physics: const NeverScrollableScrollPhysics(),
               shrinkWrap: true,
               children: <Widget>[
+                // Padding(
+                //   padding: const EdgeInsets.only(
+                //       left: 10.0, right: 8, top: 3, bottom: 3),
+                //   child: Row(
+                //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //     children: [
+                //       Text(
+                //         widget.partyPhoto.partyName,
+                //         style: const TextStyle(
+                //             fontSize: 21, fontWeight: FontWeight.bold),
+                //       ),
+                //       const Spacer(),
+                //       Text(DateTimeUtils.getFormattedDate(
+                //           widget.partyPhoto.partyDate)),
+                //     ],
+                //   ),
+                // ),
                 kIsWeb
                     ? Stack(alignment: Alignment.center, children: [
                         BlurredImage(
@@ -132,18 +148,55 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
                           ),
                         ),
                       ])
-                    : SizedBox(
-                        width: mq.width,
-                        child: FadeInImage(
-                          placeholder:
-                              const AssetImage('assets/images/logo_3x2.png'),
-                          image: NetworkImage(widget.partyPhoto.imageUrl),
-                          fit: BoxFit.contain,
-                        ),
+                    : Stack(
+                        children: [
+                          SizedBox(
+                            width: mq.width,
+                            child: FadeInImage(
+                              placeholder: const AssetImage(
+                                  'assets/images/logo_3x2.png'),
+                              image: NetworkImage(widget.partyPhoto.imageUrl),
+                              fit: BoxFit.contain,
+                            ),
+                          ),
+                          Positioned(
+                            child: Container(
+                              color: Constants.lightPrimary.withOpacity(0.7),
+                              padding: EdgeInsets.symmetric(horizontal: 4),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  Text(
+                                    '${widget.partyPhoto.views} ',
+                                    style: const TextStyle(fontSize: 14),
+                                  ),
+                                  Image.asset(
+                                    'assets/icons/ic_third_eye.png',
+                                    width: 14,
+                                    height: 14,
+                                  )
+                                ],
+                              ),
+                            ),
+                            bottom: 0,
+                            right: 0,
+                          ),
+                          Positioned(
+                            child: Container(
+                              color: Constants.lightPrimary.withOpacity(0.7),
+                              padding: EdgeInsets.symmetric(horizontal: 4),
+                              child: Text(DateTimeUtils.getFormattedDate(
+                                  widget.partyPhoto.partyDate)),
+                            ),
+                            top: 0,
+                            left: 0,
+                          ),
+                        ],
                       ),
                 Padding(
                   padding: const EdgeInsets.only(
-                      left: 10.0, right: 8, top: 1, bottom: 1),
+                      left: 10.0, right: 8, top: 1, bottom: 0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -217,65 +270,120 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
                               child: const Icon(Icons.share_outlined,
                                   size: 24.0))),
                       Padding(
-                        padding: const EdgeInsets.only(left: 20),
-                        child: ElevatedButton.icon(
-                          onPressed: () {
-                            if (kIsWeb) {
-                              _showDownloadAppDialog(context);
-                            } else {
-                              if (UserPreferences.isUserLoggedIn()) {
-                                Logx.ist(_TAG, '🍄 saving to gallery...');
-                                int fileNum = widget.index + 1;
-                                String fileName =
-                                    '${widget.partyPhoto.partyName} $fileNum';
+                          padding: const EdgeInsets.only(left: 20),
+                          child: ElevatedButton.icon(
+                            onPressed: () {
+                              if (kIsWeb) {
+                                _showDownloadAppDialog(context);
+                              } else {
+                                if (UserPreferences.isUserLoggedIn()) {
+                                  Logx.ist(_TAG, '🍄 saving to gallery...');
+                                  int fileNum = widget.index + 1;
+                                  String fileName =
+                                      '${widget.partyPhoto.partyName} $fileNum';
 
-                                FileUtils.saveNetworkImage(widget.partyPhoto.imageUrl, fileName);
-                                FirestoreHelper.updatePartyPhotoDownloadCount(widget.partyPhoto.id);
+                                  FileUtils.saveNetworkImage(
+                                      widget.partyPhoto.imageUrl, fileName);
+                                  FirestoreHelper.updatePartyPhotoDownloadCount(
+                                      widget.partyPhoto.id);
 
-                                if((UserPreferences.myUser.lastReviewTime < Timestamp.now().millisecondsSinceEpoch - (2 * DateTimeUtils.millisecondsWeek))){
-                                  if(!UserPreferences.myUser.isAppReviewed){
-                                    _showReviewAppDialog(context);
+                                  if ((UserPreferences.myUser.lastReviewTime <
+                                      Timestamp.now().millisecondsSinceEpoch -
+                                          (2 *
+                                              DateTimeUtils
+                                                  .millisecondsWeek))) {
+                                    if (!UserPreferences.myUser.isAppReviewed) {
+                                      _showReviewAppDialog(context);
+                                    } else {
+                                      //todo: might need to implement challenge logic here
+                                      Logx.i(_TAG,
+                                          'app is reviewed, so nothing to do for now');
+                                    }
                                   } else {
-                                    //todo: might need to implement challenge logic here
-                                    Logx.i(_TAG, 'app is reviewed, so nothing to do for now');
+                                    Logx.i(_TAG,
+                                        'last review time is less than two weeks, so nothing to do for now');
                                   }
                                 } else {
-                                  Logx.i(_TAG, 'last review time is less than two weeks, so nothing to do for now');
+                                  Logx.ist(_TAG,
+                                      '🧩 please login to save the photo to your gallery');
                                 }
-                              } else {
-                                Logx.ist(_TAG,
-                                    '🧩 please login to save the photo to your gallery');
                               }
-                            }
-                          },
-                          icon: const Icon(Icons.save_alt, size: 24.0), // Icon to display
-                          label: const Text('save'),
-                        )
-                      ),
+                            },
+                            icon: const Icon(Icons.save_alt, size: 24.0),
+                            // Icon to display
+                            label: const Text('save'),
+                          )),
                     ],
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(
-                      left: 10.0, right: 10, top: 1, bottom: 3),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(DateTimeUtils.getFormattedDate(
-                          widget.partyPhoto.partyDate)),
-                      const Spacer(),
-                      Text(
-                        '${widget.partyPhoto.views} ',
-                        style: const TextStyle(fontSize: 14),
-                      ),
-                      Image.asset(
-                        'assets/icons/ic_third_eye.png',
-                        width: 14,
-                        height: 14,
+
+                !widget.partyPhoto.tags.contains(UserPreferences.myUser.id)
+                    ? Padding(
+                        padding: const EdgeInsets.only(left: 10, right: 10),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            const Text(
+                                'See yourself, add photo to your profile?'),
+                            Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 5),
+                                child: ElevatedButton.icon(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Constants.darkPrimary,
+                                    foregroundColor: Constants.primary,
+                                    shadowColor: Colors.white30,
+                                    shape: const RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(10))
+                                        // only(
+                                        //   topLeft: Radius.circular(10), topRight: Radius.circular(10)),
+                                        ),
+                                    elevation: 3,
+                                  ),
+                                  onPressed: () {
+                                    if (kIsWeb) {
+                                      _showDownloadAppDialog(context);
+                                    } else {
+                                      if (UserPreferences.isUserLoggedIn()) {
+                                        Logx.ist(_TAG, 'tagging you...');
+
+                                        FirestoreHelper.pullUserPhoto(
+                                                UserPreferences.myUser.id,
+                                                widget.partyPhoto.id)
+                                            .then((res) {
+                                          if (res.docs.isEmpty) {
+                                            UserPhoto userPhoto =
+                                                Dummy.getDummyUserPhoto();
+                                            userPhoto = userPhoto.copyWith(
+                                                userId:
+                                                    UserPreferences.myUser.id,
+                                                partyPhotoId:
+                                                    widget.partyPhoto.id);
+                                            FirestoreHelper.pushUserPhoto(
+                                                userPhoto);
+
+                                            Logx.ist(_TAG,
+                                                'your tag request is received, and it shall be approved by the admins soon');
+                                          } else {
+                                            Logx.ist(_TAG,
+                                                'your tag is present in db');
+                                          }
+                                        });
+                                      } else {
+                                        Logx.ist(_TAG,
+                                            '🧩 please login to tag yourself to the photo');
+                                      }
+                                    }
+                                  },
+                                  icon: const Icon(Icons.bolt, size: 22.0),
+                                  // Icon to display
+                                  label: const Text('tag me'),
+                                )),
+                          ],
+                        ),
                       )
-                    ],
-                  ),
-                )
+                    : const SizedBox()
               ],
             ),
           ),
@@ -285,7 +393,8 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
   }
 
   _showDownloadAppDialog(BuildContext context) {
-    String message = '📸 Click, Share, and Party On! Download our app to access all the photos, share them on your favorite apps, and get notified with instant guest list approvals and more! 🎉📲';
+    String message =
+        '📸 Click, Share, and Party On! Download our app to access all the photos, share them on your favorite apps, and get notified with instant guest list approvals and more! 🎉📲';
 
     showDialog(
         context: context,
@@ -492,7 +601,8 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       const Padding(
-                        padding: EdgeInsets.only(bottom: 10, left: 10, right: 10),
+                        padding:
+                            EdgeInsets.only(bottom: 10, left: 10, right: 10),
                         child: Text(
                           'share photo to lounge',
                           overflow: TextOverflow.ellipsis,
@@ -500,7 +610,7 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
                               fontSize: 20, fontWeight: FontWeight.bold),
                         ),
                       ),
-                      const SizedBox(height:12),
+                      const SizedBox(height: 12),
                       MultiSelectDialogField(
                         items: lounges
                             .map((e) => MultiSelectItem(e, e.name))
@@ -527,7 +637,7 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
                           sLounges = values as List<Lounge>;
                         },
                       ),
-                      const SizedBox(height:12),
+                      const SizedBox(height: 12),
                       Center(
                           child: SizedBox(
                         width: mq.width,
@@ -562,8 +672,8 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
                 ),
                 TextButton(
                   style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all<Color>(Constants
-                        .darkPrimary),
+                    backgroundColor:
+                        MaterialStateProperty.all<Color>(Constants.darkPrimary),
                   ),
                   child: const Text(
                     "💌 send",
@@ -582,7 +692,8 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
                         );
 
                         FirestoreHelper.pushLoungeChat(chat);
-                        FirestoreHelper.updateLoungeLastChat(lounge.id, '📸 $photoChatMessage', chat.time);
+                        FirestoreHelper.updateLoungeLastChat(
+                            lounge.id, '📸 $photoChatMessage', chat.time);
                       }
 
                       Logx.ist(_TAG, 'photo has been shared 💝');
@@ -604,7 +715,8 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
   }
 
   void _showReviewAppDialog(BuildContext context) {
-    String message = '🌟 Love our app? Help us make it even better! Leave a review today and get notified with instant guest list approvals, community photos, and more! 📸🎉';
+    String message =
+        '🌟 Love our app? Help us make it even better! Leave a review today and get notified with instant guest list approvals, community photos, and more! 📸🎉';
 
     showDialog(
         context: context,
@@ -619,8 +731,7 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
             shape: const RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(20.0))),
             contentPadding: const EdgeInsets.all(16.0),
-            content: Text(
-                message.toLowerCase()),
+            content: Text(message.toLowerCase()),
             actions: [
               TextButton(
                 child: const Text('close',
@@ -631,14 +742,15 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
               ),
               TextButton(
                 style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all<Color>(Constants
-                      .lightPrimary),
+                  backgroundColor:
+                      MaterialStateProperty.all<Color>(Constants.lightPrimary),
                 ),
-                child: const Text('🧸 already reviewed',),
+                child: const Text(
+                  '🧸 already reviewed',
+                ),
                 onPressed: () async {
                   User user = UserPreferences.myUser;
-                  user = user.copyWith(
-                      isAppReviewed: true);
+                  user = user.copyWith(isAppReviewed: true);
                   UserPreferences.setUser(user);
                   FirestoreHelper.pushUser(user);
 
@@ -648,8 +760,8 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
               ),
               TextButton(
                 style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all<Color>(Constants
-                      .darkPrimary),
+                  backgroundColor:
+                      MaterialStateProperty.all<Color>(Constants.darkPrimary),
                 ),
                 child: const Text('🌟 review us',
                     style: TextStyle(color: Constants.primary)),
@@ -657,10 +769,11 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
                   final InAppReview inAppReview = InAppReview.instance;
                   bool isAvailable = await inAppReview.isAvailable();
 
-                  if(isAvailable){
+                  if (isAvailable) {
                     inAppReview.requestReview();
                   } else {
-                    inAppReview.openStoreListing(appStoreId: Constants.blocAppStoreId);
+                    inAppReview.openStoreListing(
+                        appStoreId: Constants.blocAppStoreId);
                   }
 
                   User user = UserPreferences.myUser;

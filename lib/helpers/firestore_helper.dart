@@ -2428,6 +2428,14 @@ class FirestoreHelper {
     }
   }
 
+  static pullUserPhoto(String userId, String partyPhotoId) {
+    return FirebaseFirestore.instance
+        .collection(USER_PHOTOS)
+        .where('userId', isEqualTo: userId)
+        .where('partyPhotoId', isEqualTo: partyPhotoId)
+        .get();
+  }
+
   static getUserPhotos() {
     return FirebaseFirestore.instance
         .collection(USER_PHOTOS)

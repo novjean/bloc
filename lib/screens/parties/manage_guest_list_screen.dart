@@ -972,13 +972,22 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
                         if (res.docs.isNotEmpty) {
                           DocumentSnapshot document = res.docs[0];
                           Map<String, dynamic> map = document.data()! as Map<String, dynamic>;
-                          final User user = Fresh.freshUserMap(map, true);
+                          User user = Fresh.freshUserMap(map, true);
 
-                          if(user.fcmToken.isNotEmpty){
-                            //send a notification
-                            Apis.sendUrlData(user.fcmToken, Apis.GoogleReviewBloc, Constants.blocGoogleReview);
-                            Logx.ist(_TAG,
-                                '${user.name} ${user.surname} has been notified for a bloc google review 🤞');
+                          if(user.fcmToken.isNotEmpty ){
+                            if(!user.isAppReviewed &&
+                                user.lastReviewTime < Timestamp.now().millisecondsSinceEpoch - (2 * DateTimeUtils.millisecondsWeek)){
+                              //send a notification
+                              Apis.sendUrlData(user.fcmToken, Apis.GoogleReviewBloc, Constants.blocGoogleReview);
+                              Logx.ist(_TAG,
+                                  '${user.name} ${user.surname} has been notified for a bloc google review 🤞');
+
+                              user = user.copyWith(
+                                  lastReviewTime: Timestamp.now().millisecondsSinceEpoch);
+                              FirestoreHelper.pushUser(user);
+                            } else {
+                              Logx.ist(_TAG, '${user.name} ${user.surname} has already google reviewed 🤞');
+                            }
                           }
                         } else {
                           Logx.est(_TAG, 'user in guest list not found in db : ${partyGuest.guestId}');
@@ -999,12 +1008,22 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
                         if (res.docs.isNotEmpty) {
                           DocumentSnapshot document = res.docs[0];
                           Map<String, dynamic> map = document.data()! as Map<String, dynamic>;
-                          final User user = Fresh.freshUserMap(map, true);
+                          User user = Fresh.freshUserMap(map, true);
 
                           if(user.fcmToken.isNotEmpty){
-                            Apis.sendUrlData(user.fcmToken, Apis.GoogleReviewFreq, Constants.freqGoogleReview);
-                            Logx.ist(_TAG,
-                                '${user.name} ${user.surname} has been notified for a freq google review 🤞');
+                            if(!user.isAppReviewed &&
+                                user.lastReviewTime < Timestamp.now().millisecondsSinceEpoch - (2 * DateTimeUtils.millisecondsWeek)){
+                              //send a notification
+                              Apis.sendUrlData(user.fcmToken, Apis.GoogleReviewFreq, Constants.freqGoogleReview);
+                              Logx.ist(_TAG,
+                                  '${user.name} ${user.surname} has been notified for a freq google review 🤞');
+
+                              user = user.copyWith(
+                                  lastReviewTime: Timestamp.now().millisecondsSinceEpoch);
+                              FirestoreHelper.pushUser(user);
+                            } else {
+                              Logx.ist(_TAG, '${user.name} ${user.surname} has already google reviewed 🤞');
+                            }
                           }
                         } else {
                           Logx.est(_TAG, 'user in guest list not found in db : ${partyGuest.guestId}');

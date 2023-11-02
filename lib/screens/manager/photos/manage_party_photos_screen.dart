@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:bloc/screens/manager/photos/manage_user_photos_screen.dart';
 import 'package:bloc/utils/number_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -236,14 +237,18 @@ class _ManagePartyPhotosScreenState extends State<ManagePartyPhotosScreen> {
                                 onTap: () {
                                   Navigator.of(ctx).pop();
 
-                                  // navigate to confirm_tags screen
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                        builder: (ctx) =>
+                                            ManageUserPhotosScreen()),
+                                  );
 
                                 },
                                 child: const Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: <Widget>[
                                     Icon(
-                                      Icons.balance_outlined,
+                                      Icons.supervised_user_circle_outlined,
                                       color: Constants.darkPrimary,
                                     ),
                                   ],

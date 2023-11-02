@@ -8,7 +8,9 @@ import '../../../utils/constants.dart';
 import '../../../utils/date_time_utils.dart';
 import '../../db/entity/user.dart';
 import '../../db/entity/user_photo.dart';
+import '../../helpers/dummy.dart';
 import '../../helpers/fresh.dart';
+import '../../utils/logx.dart';
 
 class ManageUserPhotoItem extends StatefulWidget{
   UserPhoto userPhoto;
@@ -22,8 +24,8 @@ class ManageUserPhotoItem extends StatefulWidget{
 class _ManageUserPhotoItemState extends State<ManageUserPhotoItem> {
   static const String _TAG = 'ManageUserPhotoItem';
 
-  PartyPhoto photo;
-  User user;
+  late PartyPhoto mPhoto;
+  late User mUser;
 
   var _isPhotoLoading = true;
   var _isUserLoading = true;
@@ -34,16 +36,36 @@ class _ManageUserPhotoItemState extends State<ManageUserPhotoItem> {
       if(res.docs.isNotEmpty){
         DocumentSnapshot document = res.docs[0];
         Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-        photo = Fresh.freshPartyPhotoMap(data, false);
+        mPhoto = Fresh.freshPartyPhotoMap(data, false);
 
         setState(() {
           _isPhotoLoading = false;
         });
       } else {
-
+        Logx.est(_TAG, 'photo could not be found');
+        setState(() {
+          mPhoto = Dummy.getDummyPartyPhoto();
+          _isPhotoLoading = false;
+        });
       }
     });
 
+    FirestoreHelper.pullUser(widget.userPhoto.userId).then((res){
+      if(res.docs.isNotEmpty){
+        DocumentSnapshot document = res.docs[0];
+        Map<String, dynamic> map = document.data()! as Map<String, dynamic>;
+        mUser = Fresh.freshUserMap(map, true);
+
+        setState(() {
+          _isUserLoading = false;
+        });
+      } else {
+        setState(() {
+          mUser = Dummy.getDummyUser();
+          _isUserLoading = false;
+        });
+      }
+    });
 
     super.initState();
   }
@@ -66,11 +88,11 @@ class _ManageUserPhotoItemState extends State<ManageUserPhotoItem> {
                   leading: FadeInImage(
                     placeholder: const AssetImage(
                         'assets/icons/logo.png'),
-                    image: NetworkImage(photo.imageThumbUrl.isNotEmpty? photo.imageThumbUrl: photo.imageUrl),
+                    image: NetworkImage(mPhoto.imageThumbUrl.isNotEmpty? mPhoto.imageThumbUrl: mPhoto.imageUrl),
                     fit: BoxFit.cover,),
                   title: RichText(
                     text: TextSpan(
-                      text: '${photo.partyName} ',
+                      text: '${mPhoto.partyName} ',
                       style: const TextStyle(
                           fontFamily: Constants.fontDefault,
                           color: Colors.black,
@@ -83,22 +105,40 @@ class _ManageUserPhotoItemState extends State<ManageUserPhotoItem> {
                   subtitle: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('${widget.userPhoto.views} 👁️'),
-                      Text('${widget.userPhoto.likers.length + widget.userPhoto.initLikes} 🖤'),
-                      Text('${widget.userPhoto.downloadCount} 💾'),
+                      Text('${mUser.name } ${mUser.surname}'),
+                      Text('${mUser.email}'),
                     ],
                   ),
-                  trailing: RichText(
-                    text: TextSpan(
-                      text:
-                      '${DateTimeUtils.getFormattedDate(widget.userPhoto.endTime)} ',
-                      style: const TextStyle(
-                        fontFamily: Constants.fontDefault,
-                        color: Colors.black,
-                        fontStyle: FontStyle.italic,
-                        fontSize: 13,
-                      ),
-                    ),
+                  trailing: Checkbox(
+                    value: widget.userPhoto.isConfirmed,
+                    onChanged: (value) {
+                      widget.userPhoto = widget.userPhoto.copyWith(isConfirmed: value);
+                      FirestoreHelper.pushUserPhoto(widget.userPhoto);
+
+                      if(value!){
+                        // add tag to photo
+                        if(!mPhoto.tags.contains(widget.userPhoto.userId)){
+                          List<String> tags = mPhoto.tags;
+                          tags.add(widget.userPhoto.userId);
+                          mPhoto = mPhoto.copyWith(tags: tags);
+
+                          FirestoreHelper.pushPartyPhoto(mPhoto);
+                          Logx.ist(_TAG, '${mUser.name} tagged to the photo');
+                        } else {
+                          Logx.ist(_TAG, '${mUser.name} is already tagged to the photo');
+                        }
+                      } else {
+                        List<String> tags = mPhoto.tags;
+                        tags.remove(widget.userPhoto.userId);
+
+                        FirestoreHelper.pushPartyPhoto(mPhoto);
+                        Logx.ist(_TAG, '${mUser.name} is not tagged to the photo');
+                      }
+
+                      setState(() {
+                        widget.userPhoto;
+                      });
+                    },
                   ),
                 )),
           ),
