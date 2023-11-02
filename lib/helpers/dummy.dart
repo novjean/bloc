@@ -377,8 +377,7 @@ class Dummy {
         initLikes: 0,
         downloadCount: 0,
         views: 0,
-      tags: []
-    );
+        tags: []);
     return partyPhoto;
   }
 
@@ -534,13 +533,13 @@ class Dummy {
 
   static TixTier getDummyTixTier() {
     TixTier tixTierItem = TixTier(
-        id: StringUtils.getRandomString(28),
-        tixId: '',
-        partyTixTierId: '',
-        tixTierName: '',
-        tixTierPrice: 0,
-        tixTierCount: 0,
-        tixTierTotal: 0,
+      id: StringUtils.getRandomString(28),
+      tixId: '',
+      partyTixTierId: '',
+      tixTierName: '',
+      tixTierPrice: 0,
+      tixTierCount: 0,
+      tixTierTotal: 0,
     );
     return tixTierItem;
   }
@@ -597,15 +596,15 @@ class Dummy {
     return dummyUserLounge;
   }
 
-  static UserPhoto getDummyUserPhoto(){
+  static UserPhoto getDummyUserPhoto() {
     UserPhoto dummy = UserPhoto(
-        id: StringUtils.getRandomString(28),
-    userId: '',
-    partyPhotoId:'',
-    isConfirmed: false
+      id: StringUtils.getRandomString(28),
+      userId: '',
+      partyPhotoId: '',
+      isConfirmed: false,
+      tagTime: Timestamp.now().millisecondsSinceEpoch,
     );
 
     return dummy;
   }
-
 }

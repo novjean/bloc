@@ -4482,6 +4482,12 @@ class Fresh {
       Logx.em(_TAG, 'userLounge isConfirmed not exist for id: ${userPhoto.id}');
       isModelChanged = true;
     }
+    try {
+      userPhoto = userPhoto.copyWith(tagTime: map['tagTime'] as int);
+    } catch (e) {
+      Logx.em(_TAG, 'userLounge tagTime not exist for id: ${userPhoto.id}');
+      isModelChanged = true;
+    }
 
     if (isModelChanged && shouldUpdate) {
       Logx.i(_TAG, 'updating userPhoto ${userPhoto.id}');
@@ -4513,6 +4519,11 @@ class Fresh {
       fresh = fresh.copyWith(isConfirmed: userPhoto.isConfirmed);
     } catch (e) {
       Logx.em(_TAG, 'userPhoto isConfirmed not exist for id: ${userPhoto.id}');
+    }
+    try {
+      fresh = fresh.copyWith(tagTime: userPhoto.tagTime);
+    } catch (e) {
+      Logx.em(_TAG, 'userPhoto tagTime not exist for id: ${userPhoto.id}');
     }
 
     return fresh;

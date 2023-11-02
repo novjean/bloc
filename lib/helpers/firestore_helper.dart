@@ -1262,6 +1262,13 @@ class FirestoreHelper {
         .get();
   }
 
+  static pullPartyPhoto(String partyPhotoId) {
+    return FirebaseFirestore.instance
+        .collection(PARTY_PHOTOS)
+        .where('id', isEqualTo: partyPhotoId)
+        .get();
+  }
+
   static getPartyPhotos() {
     return FirebaseFirestore.instance
         .collection(PARTY_PHOTOS)
@@ -2424,7 +2431,7 @@ class FirestoreHelper {
   static getUserPhotos() {
     return FirebaseFirestore.instance
         .collection(USER_PHOTOS)
-        .orderBy('partyDate', descending: true)
+        .orderBy('tagTime', descending: true)
         .snapshots();
   }
 

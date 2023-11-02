@@ -11,6 +11,7 @@ class UserPhoto {
     required this.userId,
     required this.partyPhotoId,
     required this.isConfirmed,
+    required this.tagTime,
   });
 
   @override
@@ -21,14 +22,16 @@ class UserPhoto {
           id == other.id &&
           userId == other.userId &&
           partyPhotoId == other.partyPhotoId &&
-          isConfirmed == other.isConfirmed);
+          isConfirmed == other.isConfirmed &&
+          tagTime == other.tagTime);
 
   @override
   int get hashCode =>
       id.hashCode ^
       userId.hashCode ^
       partyPhotoId.hashCode ^
-      isConfirmed.hashCode;
+      isConfirmed.hashCode ^
+      tagTime.hashCode;
 
   @override
   String toString() {
@@ -37,6 +40,7 @@ class UserPhoto {
         ' userId: $userId,' +
         ' partyPhotoId: $partyPhotoId,' +
         ' isConfirmed: $isConfirmed,' +
+        ' tagTime: $tagTime,' +
         '}';
   }
 
@@ -45,12 +49,14 @@ class UserPhoto {
     String? userId,
     String? partyPhotoId,
     bool? isConfirmed,
+    int? tagTime,
   }) {
     return UserPhoto(
       id: id ?? this.id,
       userId: userId ?? this.userId,
       partyPhotoId: partyPhotoId ?? this.partyPhotoId,
       isConfirmed: isConfirmed ?? this.isConfirmed,
+      tagTime: tagTime ?? this.tagTime,
     );
   }
 
@@ -60,6 +66,7 @@ class UserPhoto {
       'userId': this.userId,
       'partyPhotoId': this.partyPhotoId,
       'isConfirmed': this.isConfirmed,
+      'tagTime': this.tagTime,
     };
   }
 
@@ -69,6 +76,7 @@ class UserPhoto {
       userId: map['userId'] as String,
       partyPhotoId: map['partyPhotoId'] as String,
       isConfirmed: map['isConfirmed'] as bool,
+      tagTime: map['tagTime'] as int,
     );
   }
 
