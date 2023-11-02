@@ -29,6 +29,7 @@ import '../db/entity/reservation.dart';
 import '../db/entity/tix_tier_item.dart';
 import '../db/entity/user.dart';
 import '../db/entity/user_lounge.dart';
+import '../db/entity/user_photo.dart';
 import '../db/shared_preferences/user_preferences.dart';
 import '../utils/constants.dart';
 import '../utils/logx.dart';
@@ -2634,6 +2635,13 @@ class Fresh {
           'party photo likers not exist for id: ${partyPhoto.id}');
     }
     try {
+      fresh = fresh.copyWith(tags: partyPhoto.tags);
+    } catch (e) {
+      Logx.em(_TAG,
+          'party photo tags not exist for id: ${partyPhoto.id}');
+    }
+
+    try {
       fresh = fresh.copyWith(initLikes: partyPhoto.initLikes);
     } catch (e) {
       Logx.em(_TAG,
@@ -2719,6 +2727,13 @@ class Fresh {
       Logx.em(_TAG, 'partyPhoto likers not exist for id: ${partyPhoto.id}');
       isModelChanged = true;
     }
+    try {
+      partyPhoto = partyPhoto.copyWith(tags: List<String>.from(map['tags']));
+    } catch (e) {
+      Logx.em(_TAG, 'partyPhoto tags not exist for id: ${partyPhoto.id}');
+      isModelChanged = true;
+    }
+
     try {
       partyPhoto = partyPhoto.copyWith(initLikes: map['initLikes'] as int);
     } catch (e) {
@@ -4437,5 +4452,69 @@ class Fresh {
     }
 
     return freshUserLounge;
+  }
+
+  /** user photo **/
+  static UserPhoto freshUserPhotoMap(Map<String, dynamic> map, bool shouldUpdate) {
+    UserPhoto userPhoto = Dummy.getDummyUserPhoto();
+    bool isModelChanged = false;
+
+    try {
+      userPhoto = userPhoto.copyWith(id: map['id'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'userPhoto id not exist');
+    }
+    try {
+      userPhoto = userPhoto.copyWith(userId: map['userId'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'userLounge userId not exist for id: ${userPhoto.id}');
+      isModelChanged = true;
+    }
+    try {
+      userPhoto = userPhoto.copyWith(partyPhotoId: map['partyPhotoId'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'userLounge partyPhotoId not exist for id: ${userPhoto.id}');
+      isModelChanged = true;
+    }
+    try {
+      userPhoto = userPhoto.copyWith(isConfirmed: map['isConfirmed'] as bool);
+    } catch (e) {
+      Logx.em(_TAG, 'userLounge isConfirmed not exist for id: ${userPhoto.id}');
+      isModelChanged = true;
+    }
+
+    if (isModelChanged && shouldUpdate) {
+      Logx.i(_TAG, 'updating userPhoto ${userPhoto.id}');
+      FirestoreHelper.pushUserPhoto(userPhoto);
+    }
+
+    return userPhoto;
+  }
+
+  static UserPhoto freshUserPhoto(UserPhoto userPhoto) {
+    UserPhoto fresh = Dummy.getDummyUserPhoto();
+
+    try {
+      fresh = fresh.copyWith(id: userPhoto.id);
+    } catch (e) {
+      Logx.em(_TAG, 'userPhoto id not exist');
+    }
+    try {
+      fresh = fresh.copyWith(userId: userPhoto.userId);
+    } catch (e) {
+      Logx.em(_TAG, 'userPhoto userId exist for id: ${userPhoto.id}');
+    }
+    try {
+      fresh = fresh.copyWith(partyPhotoId: userPhoto.partyPhotoId);
+    } catch (e) {
+      Logx.em(_TAG, 'userLounge partyPhotoId exist for id: ${userPhoto.id}');
+    }
+    try {
+      fresh = fresh.copyWith(isConfirmed: userPhoto.isConfirmed);
+    } catch (e) {
+      Logx.em(_TAG, 'userPhoto isConfirmed not exist for id: ${userPhoto.id}');
+    }
+
+    return fresh;
   }
 }

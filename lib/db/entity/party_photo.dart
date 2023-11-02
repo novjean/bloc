@@ -14,6 +14,8 @@ class PartyPhoto {
   int downloadCount;
   int views;
 
+  List<String> tags;
+
 //<editor-fold desc="Data Methods">
   PartyPhoto({
     required this.id,
@@ -29,6 +31,7 @@ class PartyPhoto {
     required this.initLikes,
     required this.downloadCount,
     required this.views,
+    required this.tags,
   });
 
   @override
@@ -48,7 +51,8 @@ class PartyPhoto {
           likers == other.likers &&
           initLikes == other.initLikes &&
           downloadCount == other.downloadCount &&
-          views == other.views);
+          views == other.views &&
+          tags == other.tags);
 
   @override
   int get hashCode =>
@@ -64,7 +68,8 @@ class PartyPhoto {
       likers.hashCode ^
       initLikes.hashCode ^
       downloadCount.hashCode ^
-      views.hashCode;
+      views.hashCode ^
+      tags.hashCode;
 
   @override
   String toString() {
@@ -82,6 +87,7 @@ class PartyPhoto {
         ' initLikes: $initLikes,' +
         ' downloadCount: $downloadCount,' +
         ' views: $views,' +
+        ' tags: $tags,' +
         '}';
   }
 
@@ -99,6 +105,7 @@ class PartyPhoto {
     int? initLikes,
     int? downloadCount,
     int? views,
+    List<String>? tags,
   }) {
     return PartyPhoto(
       id: id ?? this.id,
@@ -114,6 +121,7 @@ class PartyPhoto {
       initLikes: initLikes ?? this.initLikes,
       downloadCount: downloadCount ?? this.downloadCount,
       views: views ?? this.views,
+      tags: tags ?? this.tags,
     );
   }
 
@@ -132,6 +140,7 @@ class PartyPhoto {
       'initLikes': this.initLikes,
       'downloadCount': this.downloadCount,
       'views': this.views,
+      'tags': this.tags,
     };
   }
 
@@ -150,6 +159,7 @@ class PartyPhoto {
       initLikes: map['initLikes'] as int,
       downloadCount: map['downloadCount'] as int,
       views: map['views'] as int,
+      tags: map['tags'] as List<String>,
     );
   }
 

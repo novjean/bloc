@@ -45,6 +45,7 @@ import '../db/entity/tix.dart';
 import '../db/entity/product.dart';
 import '../db/entity/service_table.dart';
 import '../db/entity/sos.dart';
+import '../db/entity/user_photo.dart';
 import '../db/shared_preferences/user_preferences.dart';
 import '../routes/route_constants.dart';
 import '../utils/logx.dart';
@@ -100,12 +101,14 @@ class FirestoreHelper {
   static String USERS = 'users';
   static String USER_LEVELS = 'user_levels';
   static String USER_LOUNGES = 'user_lounges';
+  static String USER_PHOTOS = 'user_photos';
 
   static String CHAT_TYPE_TEXT = 'text';
   static String CHAT_TYPE_IMAGE = 'image';
 
   static int TABLE_PRIVATE_TYPE_ID = 1;
   static int TABLE_COMMUNITY_TYPE_ID = 2;
+
 
 
   /** ads **/
@@ -2402,6 +2405,31 @@ class FirestoreHelper {
     FirebaseFirestore.instance.collection(USER_LOUNGES).doc(docId).delete();
   }
 
+  /** user photo **/
+  static pushUserPhoto(UserPhoto userPhoto) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection(USER_PHOTOS)
+          .doc(userPhoto.id)
+          .set(userPhoto.toMap());
+    } on PlatformException catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } on Exception catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } catch (e) {
+      Logx.em(_TAG, e.toString());
+    }
+  }
 
+  static getUserPhotos() {
+    return FirebaseFirestore.instance
+        .collection(USER_PHOTOS)
+        .orderBy('partyDate', descending: true)
+        .snapshots();
+  }
+
+    static void deleteUserPhoto(String docId) {
+    FirebaseFirestore.instance.collection(USER_PHOTOS).doc(docId).delete();
+  }
 
 }

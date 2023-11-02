@@ -40,6 +40,7 @@ import '../db/entity/seat.dart';
 import '../db/entity/tix_tier_item.dart';
 import '../db/entity/user.dart';
 import '../db/entity/user_lounge.dart';
+import '../db/entity/user_photo.dart';
 import '../db/shared_preferences/user_preferences.dart';
 import 'firestore_helper.dart';
 
@@ -375,7 +376,9 @@ class Dummy {
         likers: [],
         initLikes: 0,
         downloadCount: 0,
-        views: 0);
+        views: 0,
+      tags: []
+    );
     return partyPhoto;
   }
 
@@ -593,4 +596,16 @@ class Dummy {
         isBanned: false);
     return dummyUserLounge;
   }
+
+  static UserPhoto getDummyUserPhoto(){
+    UserPhoto dummy = UserPhoto(
+        id: StringUtils.getRandomString(28),
+    userId: '',
+    partyPhotoId:'',
+    isConfirmed: false
+    );
+
+    return dummy;
+  }
+
 }

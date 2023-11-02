@@ -12,12 +12,10 @@ import 'package:multi_select_flutter/util/multi_select_item.dart';
 import 'package:multi_select_flutter/util/multi_select_list_type.dart';
 import 'package:flutter_card_swiper/flutter_card_swiper.dart';
 
-import '../../api/apis.dart';
 import '../../db/entity/ad.dart';
 import '../../db/entity/lounge.dart';
 import '../../db/entity/lounge_chat.dart';
 import '../../db/entity/user.dart';
-import '../../db/entity/user_lounge.dart';
 import '../../helpers/dummy.dart';
 import '../../helpers/firestore_helper.dart';
 import '../../helpers/fresh.dart';

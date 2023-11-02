@@ -20,17 +20,15 @@ import '../../../widgets/ui/loading_widget.dart';
 import 'manage_party_photo_item.dart';
 import 'party_photo_add_edit_screen.dart';
 
-class ManagePartyPhotosScreen extends StatefulWidget {
-  String blocServiceId;
-
-  ManagePartyPhotosScreen({super.key, required this.blocServiceId});
+class ManageUserPhotosScreen extends StatefulWidget {
+  ManageUserPhotosScreen({super.key});
 
   @override
-  State<StatefulWidget> createState() => _ManagePartyPhotosScreenState();
+  State<StatefulWidget> createState() => _ManageUserPhotosScreenState();
 }
 
-class _ManagePartyPhotosScreenState extends State<ManagePartyPhotosScreen> {
-  static const String _TAG = 'ManagePartyPhotosScreen';
+class _ManageUserPhotosScreenState extends State<ManageUserPhotosScreen> {
+  static const String _TAG = 'ManageUserPhotosScreen';
 
   List<PartyPhoto> mPartyPhotos = [];
 
@@ -38,14 +36,14 @@ class _ManagePartyPhotosScreenState extends State<ManagePartyPhotosScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('manage photos'),
+        title: const Text('manage photos tags'),
         titleSpacing: 0,
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           _showActionsDialog(context);
         },
-        backgroundColor: Theme.of(context).primaryColor,
+        backgroundColor: Constants.primary,
         tooltip: 'actions',
         elevation: 5,
         splashColor: Colors.grey,
@@ -67,15 +65,15 @@ class _ManagePartyPhotosScreenState extends State<ManagePartyPhotosScreen> {
         // _displayOptions(context),
         // const Divider(),
         const SizedBox(height: 2.0),
-        _loadPhotos(context),
+        _loadUserPhotos(context),
         const SizedBox(height: 5.0),
       ],
     );
   }
 
-  _loadPhotos(BuildContext context) {
+  _loadUserPhotos(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
-        stream: FirestoreHelper.getPartyPhotos(),
+        stream: FirestoreHelper.getUserPhotos(),
         builder: (ctx, snapshot) {
           switch (snapshot.connectionState) {
             case ConnectionState.waiting:
@@ -90,9 +88,9 @@ class _ManagePartyPhotosScreenState extends State<ManagePartyPhotosScreen> {
                   for (int i = 0; i < snapshot.data!.docs.length; i++) {
                     DocumentSnapshot document = snapshot.data!.docs[i];
                     Map<String, dynamic> map =
-                        document.data()! as Map<String, dynamic>;
+                    document.data()! as Map<String, dynamic>;
                     final PartyPhoto photo =
-                        Fresh.freshPartyPhotoMap(map, false);
+                    Fresh.freshPartyPhotoMap(map, false);
 
                     mPartyPhotos.add(photo);
                   }
@@ -123,9 +121,9 @@ class _ManagePartyPhotosScreenState extends State<ManagePartyPhotosScreen> {
                   Navigator.of(context).push(
                     MaterialPageRoute(
                         builder: (ctx) => PartyPhotoAddEditScreen(
-                              partyPhoto: mPartyPhotos[index],
-                              task: 'edit',
-                            )),
+                          partyPhoto: mPartyPhotos[index],
+                          task: 'edit',
+                        )),
                   );
                 });
           }),
@@ -198,7 +196,7 @@ class _ManagePartyPhotosScreenState extends State<ManagePartyPhotosScreen> {
                                         builder: (ctx) =>
                                             PartyPhotoAddEditScreen(
                                               partyPhoto:
-                                                  Dummy.getDummyPartyPhoto(),
+                                              Dummy.getDummyPartyPhoto(),
                                               task: 'add',
                                             )),
                                   );
@@ -256,7 +254,7 @@ class _ManagePartyPhotosScreenState extends State<ManagePartyPhotosScreen> {
                     ),
 
                     const SizedBox(
-                      height: 30),
+                        height: 30),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -275,8 +273,8 @@ class _ManagePartyPhotosScreenState extends State<ManagePartyPhotosScreen> {
                                   for (PartyPhoto partyPhoto in mPartyPhotos) {
                                     if (partyPhoto.initLikes == 0 && partyPhoto.views>0) {
                                       int rand =
-                                          NumberUtils.generateRandomNumber(
-                                              1, partyPhoto.views<10?partyPhoto.views:10);
+                                      NumberUtils.generateRandomNumber(
+                                          1, partyPhoto.views<10?partyPhoto.views:10);
                                       partyPhoto =
                                           partyPhoto.copyWith(initLikes: rand);
                                       FirestoreHelper.pushPartyPhoto(
@@ -324,25 +322,25 @@ class _ManagePartyPhotosScreenState extends State<ManagePartyPhotosScreen> {
                                   for (PartyPhoto partyPhoto in mPartyPhotos) {
                                     if (partyPhoto.imageThumbUrl.isEmpty) {
                                       final Uri url =
-                                          Uri.parse(partyPhoto.imageUrl);
+                                      Uri.parse(partyPhoto.imageUrl);
                                       final response = await http.get(url);
 
                                       final tempDir =
-                                          await getTemporaryDirectory();
+                                      await getTemporaryDirectory();
                                       final imageFile = File(
                                           '${tempDir.path}/${partyPhoto.id}.png');
                                       await imageFile
                                           .writeAsBytes(response.bodyBytes);
 
                                       final newThumbImage =
-                                          await FileUtils.getImageCompressed(
-                                              imageFile.path, 280, 210, 95);
+                                      await FileUtils.getImageCompressed(
+                                          imageFile.path, 280, 210, 95);
                                       String imageThumbUrl =
-                                          await FirestorageHelper.uploadFile(
-                                              FirestorageHelper
-                                                  .PARTY_PHOTO_THUMB_IMAGES,
-                                              StringUtils.getRandomString(28),
-                                              newThumbImage);
+                                      await FirestorageHelper.uploadFile(
+                                          FirestorageHelper
+                                              .PARTY_PHOTO_THUMB_IMAGES,
+                                          StringUtils.getRandomString(28),
+                                          newThumbImage);
 
                                       partyPhoto = partyPhoto.copyWith(
                                           imageThumbUrl: imageThumbUrl);
