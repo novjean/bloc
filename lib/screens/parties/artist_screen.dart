@@ -69,7 +69,7 @@ class _ArtistScreenState extends State<ArtistScreen> {
     return Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.black,
-          title: AppBarTitle (title: mParty.name.toLowerCase()),
+          title: AppBarTitle(title: mParty.name.toLowerCase()),
           titleSpacing: 0,
           leading: IconButton(
             icon: const Icon(Icons.arrow_back_ios_rounded),
@@ -89,56 +89,56 @@ class _ArtistScreenState extends State<ArtistScreen> {
             children: [
               mParty.imageUrls.length > 1
                   ? CarouselSlider(
-                options: CarouselOptions(
-                  initialPage: 0,
-                  enableInfiniteScroll: true,
-                  autoPlay: true,
-                  autoPlayInterval: const Duration(seconds: 3),
-                  autoPlayAnimationDuration:
-                  const Duration(milliseconds: 1200),
-                  scrollDirection: Axis.horizontal,
-                  aspectRatio: mParty.isSquare ? 1.33: 1.0,
-                ),
-                items: mParty.imageUrls
-                    .map((item) => kIsWeb
-                    ? SizedBox(
-                  width: double.infinity,
-                  child: Image.network(item,
-                      width: double.infinity,
-                      fit: BoxFit.cover),
-                )
-                    : CachedNetworkImage(
-                  imageUrl: item,
-                  imageBuilder: (context, imageProvider) =>
-                      Container(
-                        decoration: BoxDecoration(
-                          image: DecorationImage(
-                            image: imageProvider,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
+                      options: CarouselOptions(
+                        initialPage: 0,
+                        enableInfiniteScroll: true,
+                        autoPlay: true,
+                        autoPlayInterval: const Duration(seconds: 3),
+                        autoPlayAnimationDuration:
+                            const Duration(milliseconds: 1200),
+                        scrollDirection: Axis.horizontal,
+                        aspectRatio: mParty.isSquare ? 1.33 : 1.0,
                       ),
-                  placeholder: (context, url) =>
-                  const FadeInImage(
-                    placeholder:
-                    AssetImage('assets/images/logo.png'),
-                    image: AssetImage('assets/images/logo.png'),
-                    fit: BoxFit.cover,
-                  ),
-                  errorWidget: (context, url, error) =>
-                  const Icon(Icons.error),
-                ))
-                    .toList(),
-              )
+                      items: mParty.imageUrls
+                          .map((item) => kIsWeb
+                              ? SizedBox(
+                                  width: double.infinity,
+                                  child: Image.network(item,
+                                      width: double.infinity,
+                                      fit: BoxFit.cover),
+                                )
+                              : CachedNetworkImage(
+                                  imageUrl: item,
+                                  imageBuilder: (context, imageProvider) =>
+                                      Container(
+                                    decoration: BoxDecoration(
+                                      image: DecorationImage(
+                                        image: imageProvider,
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                                  ),
+                                  placeholder: (context, url) =>
+                                      const FadeInImage(
+                                    placeholder:
+                                        AssetImage('assets/images/logo.png'),
+                                    image: AssetImage('assets/images/logo.png'),
+                                    fit: BoxFit.cover,
+                                  ),
+                                  errorWidget: (context, url, error) =>
+                                      const Icon(Icons.error),
+                                ))
+                          .toList(),
+                    )
                   : SizedBox(
-                  width: double.infinity,
-                  child: FadeInImage(
-                    placeholder: const AssetImage('assets/images/logo.png'),
-                    image: NetworkImage(mParty.showStoryImageUrl
-                        ? mParty.storyImageUrl
-                        : mParty.imageUrl),
-                    fit: BoxFit.contain,
-                  )),
+                      width: double.infinity,
+                      child: FadeInImage(
+                        placeholder: const AssetImage('assets/images/logo.png'),
+                        image: NetworkImage(mParty.showStoryImageUrl
+                            ? mParty.storyImageUrl
+                            : mParty.imageUrl),
+                        fit: BoxFit.contain,
+                      )),
               const SizedBox(height: 10),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -192,88 +192,90 @@ class _ArtistScreenState extends State<ArtistScreen> {
               const SizedBox(height: 10),
               mParty.listenUrl.isNotEmpty
                   ? const Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 15.0),
-                    child: Text('listen',
-                        style: TextStyle(
-                            color: Constants.lightPrimary,
-                            overflow: TextOverflow.ellipsis,
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold)),
-                  ),
-                ],
-              )
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 15.0),
+                          child: Text('listen',
+                              style: TextStyle(
+                                  color: Constants.lightPrimary,
+                                  overflow: TextOverflow.ellipsis,
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.bold)),
+                        ),
+                      ],
+                    )
                   : const SizedBox(),
               mParty.listenUrl.isNotEmpty
                   ? Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  InkWell(
-                    onTap: () {
-                      final uri = Uri.parse(mParty.listenUrl);
-                      NetworkUtils.launchInBrowser(uri);
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 15, vertical: 2),
-                      child: Text('${findListenSource(mParty.listenUrl)} 🎧 ',
-                        style: const TextStyle(
-                          fontSize: 18,
-                          color: Constants.primary,
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        InkWell(
+                          onTap: () {
+                            final uri = Uri.parse(mParty.listenUrl);
+                            NetworkUtils.launchInBrowser(uri);
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 15, vertical: 2),
+                            child: Text(
+                              '${findListenSource(mParty.listenUrl)} 🎧 ',
+                              style: const TextStyle(
+                                fontSize: 18,
+                                color: Constants.primary,
+                              ),
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
-                  ),
-                ],
-              )
+                      ],
+                    )
                   : const SizedBox(),
               const SizedBox(height: 10),
               mParty.instagramUrl.isNotEmpty
                   ? const Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 15.0),
-                    child: Text('links',
-                        style: TextStyle(
-                            color: Constants.lightPrimary,
-                            overflow: TextOverflow.ellipsis,
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold)),
-                  ),
-                ],
-              )
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 15.0),
+                          child: Text('links',
+                              style: TextStyle(
+                                  color: Constants.lightPrimary,
+                                  overflow: TextOverflow.ellipsis,
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.bold)),
+                        ),
+                      ],
+                    )
                   : const SizedBox(),
               mParty.instagramUrl.isNotEmpty
                   ? Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  InkWell(
-                    onTap: () {
-                      final uri = Uri.parse(mParty.instagramUrl);
-                      NetworkUtils.launchInBrowser(uri);
-                    },
-                    child: const Padding(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: 15, vertical: 2),
-                      child: Text(
-                        'instagram 🧡',
-                        style: TextStyle(
-                          fontSize: 18,
-                          color: Constants.primary,
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        InkWell(
+                          onTap: () {
+                            final uri = Uri.parse(mParty.instagramUrl);
+                            NetworkUtils.launchInBrowser(uri);
+                          },
+                          child: const Padding(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 15, vertical: 2),
+                            child: Text(
+                              'instagram 🧡',
+                              style: TextStyle(
+                                fontSize: 18,
+                                color: Constants.primary,
+                              ),
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
-                  ),
-                ],
-              )
+                      ],
+                    )
                   : const SizedBox(),
               const SizedBox(height: 15.0),
               kIsWeb ? const StoreBadgeItem() : const SizedBox(),
               const SizedBox(height: 10.0),
-              Footer(),            ],
+              Footer(),
+            ],
           );
   }
 
@@ -302,9 +304,7 @@ class _ArtistScreenState extends State<ArtistScreen> {
           elevation: 3,
           // minimumSize: const Size.fromHeight(60),
         ),
-        onPressed: () {
-
-        },
+        onPressed: () {},
         icon: const Icon(
           Icons.square_outlined,
           size: 22.0,
