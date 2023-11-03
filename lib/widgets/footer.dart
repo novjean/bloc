@@ -106,7 +106,7 @@ class Footer extends StatelessWidget {
               ),
             ),
               Padding(
-                padding: const EdgeInsets.only(top:15.0, bottom: 5, left: 10, right: 10),
+                padding: const EdgeInsets.only(bottom: 5, left: 10, right: 10),
                 child: Text('Copyright Novatech Corp (India) Pvt Ltd 2023. All rights reserved.',
                   textAlign: TextAlign.center,
                   style: TextStyle(color: Constants.primary, fontSize: 12),),
