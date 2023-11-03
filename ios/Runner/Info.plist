@@ -2,8 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-    <key>FirebaseAppDelegateProxyEnabled</key>
-    <false/>
+	<key>FirebaseAppDelegateProxyEnabled</key>
+	<false/>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>This app requires access to the photo library to save photos and to upload your profile photo</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
@@ -35,6 +35,8 @@
 			<array>
 				<string>app-1-328003399661-ios-17bbcd5fe7c373f94781e4</string>
 			</array>
+			<key>CFBundleURLName</key>
+			<string>com.novatech.bloc-iOS-Intent-SDK-Integration</string>
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
@@ -69,5 +71,13 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>ppemerchantsdkv1</string>
+		<string>ppemerchantsdkv2</string>
+		<string>ppemerchantsdkv3</string>
+		<string>paytmmp</string>
+		<string>gpay</string>
+	</array>
 </dict>
 </plist>

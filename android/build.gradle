@@ -4,6 +4,9 @@ buildscript {
         google()
         mavenCentral()
         jcenter()
+        maven {
+            url  "https://phonepe.mycloudrepo.io/public/repositories/phonepe-intentsdk-android"
+        }
     }
 
     dependencies {
