@@ -324,7 +324,7 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             const Text(
-                                'See yourself, add photo to your profile?'),
+                                'see yourself, add photo to your profile?'),
                             Padding(
                                 padding:
                                     const EdgeInsets.symmetric(horizontal: 5),
