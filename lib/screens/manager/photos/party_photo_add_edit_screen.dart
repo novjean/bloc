@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:bloc/utils/file_utils.dart';
+import 'package:bloc/widgets/ui/app_bar_title.dart';
 import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:bloc/widgets/ui/textfield_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -19,6 +20,7 @@ import 'package:http/http.dart' as http;
 import '../../../db/entity/bloc_service.dart';
 
 import '../../../db/entity/party_photo.dart';
+import '../../../db/entity/user.dart';
 import '../../../helpers/dummy.dart';
 import '../../../helpers/firestorage_helper.dart';
 import '../../../helpers/firestore_helper.dart';
@@ -66,11 +68,44 @@ class _PartyPhotoAddEditScreenState extends State<PartyPhotoAddEditScreen> {
   DateTime sStartDateTime = DateTime.now();
   DateTime sEndDateTime = DateTime.now();
 
+  List<User> mUsers = [];
+  bool isUsersLoading = true;
+  List<String> sUserNames = [];
+  List<User> sUsers = [];
+  List<String> sUserIds = [];
+
   @override
   void initState() {
     if (widget.partyPhoto.blocServiceId.isNotEmpty) {
       sBlocIds = [widget.partyPhoto.blocServiceId];
     }
+
+    sUserIds = widget.partyPhoto.tags;
+    FirestoreHelper.pullUsersApp().then((res) {
+      if(res.docs.isNotEmpty){
+        for (int i = 0; i < res.docs.length; i++) {
+          DocumentSnapshot document = res.docs[i];
+          Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+          final User user = Fresh.freshUserMap(data, false);
+          mUsers.add(user);
+
+          if (sUserIds.contains(user.id)) {
+            sUsers.add(user);
+            sUserNames.add('${user.name} ${user.surname}');
+          }
+        }
+
+        setState(() {
+          isUsersLoading = false;
+        });
+      } else {
+        Logx.est(_TAG, 'no app users, time to close up shop!');
+        setState(() {
+          isUsersLoading = false;
+        });
+      }
+    });
+
 
     FirestoreHelper.pullAllBlocServices().then((res) {
       Logx.i(_TAG, "successfully pulled in all bloc services ");
@@ -105,7 +140,7 @@ class _PartyPhotoAddEditScreenState extends State<PartyPhotoAddEditScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('${widget.task} party photo'),
+        title: AppBarTitle(title: '${widget.task} party photo'),
         titleSpacing: 0,
       ),
       body:
@@ -404,6 +439,64 @@ class _PartyPhotoAddEditScreenState extends State<PartyPhotoAddEditScreen> {
         Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            const SizedBox(height: 12),
+
+            const Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(bottom: 8.0),
+                  child: Text(
+                    'tags',
+                    style: TextStyle(
+                        fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ],
+            ),
+            MultiSelectDialogField(
+              items: mUsers
+                  .map((e) => MultiSelectItem(e,
+                  '${e.name.toLowerCase()} ${e.surname.toLowerCase()}'))
+                  .toList(),
+              initialValue: sUsers.map((e) => e).toList(),
+              listType: MultiSelectListType.CHIP,
+              buttonIcon: Icon(
+                Icons.arrow_drop_down,
+                color: Colors.grey.shade700,
+              ),
+              title: const Text('app members'),
+              buttonText: const Text(
+                'select',
+              ),
+              decoration: BoxDecoration(
+                borderRadius: const BorderRadius.all(Radius.circular(5)),
+                border: Border.all(
+                  width: 0.0,
+                ),
+              ),
+              searchable: true,
+              onConfirm: (values) {
+                sUsers = values as List<User>;
+                sUserIds = [];
+                sUserNames = [];
+
+                for (User user in sUsers) {
+                  sUserIds.add(user.id);
+                  sUserNames.add(user.name);
+                }
+
+                if (sUserIds.isEmpty) {
+                  Logx.i(_TAG, 'no users selected');
+                  widget.partyPhoto = widget.partyPhoto.copyWith(tags: []);
+                } else {
+                  widget.partyPhoto =
+                      widget.partyPhoto.copyWith(tags: sUserIds);
+                }
+              },
+            ),
+            const SizedBox(height: 24),
+
             ButtonWidget(
               height: 50,
               text: '💾 save',

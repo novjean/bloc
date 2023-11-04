@@ -2179,6 +2179,14 @@ class FirestoreHelper {
         .get();
   }
 
+  static pullUsersApp() {
+    return FirebaseFirestore.instance
+        .collection(USERS)
+        .where('isAppUser', isEqualTo: true)
+        .orderBy('name', descending: false)
+        .get();
+  }
+  
   static Future<QuerySnapshot<Object?>> pullUsersSortedName() {
     return FirebaseFirestore.instance
         .collection(USERS)
@@ -2461,6 +2469,7 @@ class FirestoreHelper {
     static void deleteUserPhoto(String docId) {
     FirebaseFirestore.instance.collection(USER_PHOTOS).doc(docId).delete();
   }
+
 
 
 }

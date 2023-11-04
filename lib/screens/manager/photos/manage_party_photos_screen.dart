@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:bloc/screens/manager/photos/manage_user_photos_screen.dart';
 import 'package:bloc/utils/number_utils.dart';
+import 'package:bloc/widgets/ui/app_bar_title.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
@@ -39,7 +40,7 @@ class _ManagePartyPhotosScreenState extends State<ManagePartyPhotosScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('manage photos'),
+        title: AppBarTitle(title: 'manage photos'),
         titleSpacing: 0,
       ),
       floatingActionButton: FloatingActionButton(
