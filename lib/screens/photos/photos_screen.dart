@@ -1,6 +1,7 @@
 import 'package:bloc/db/entity/party_photo.dart';
 import 'package:bloc/db/shared_preferences/user_preferences.dart';
 import 'package:bloc/utils/date_time_utils.dart';
+import 'package:bloc/utils/dialog_utils.dart';
 import 'package:bloc/widgets/ui/blurred_image.dart';
 import 'package:bloc/widgets/ui/textfield_widget.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -104,7 +105,7 @@ class _PhotosScreenState extends State<PhotosScreen> {
         if (kIsWeb) {
           return GestureDetector(
             onTap: () {
-              _showDownloadAppDialog(context);
+              DialogUtils.showDownloadAppDialog(context);
             },
             child: SizedBox(
                 height: 200,

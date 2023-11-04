@@ -1262,6 +1262,14 @@ class FirestoreHelper {
         .get();
   }
 
+  static pullPartyPhotosByUserId(String userId) {
+    return FirebaseFirestore.instance
+        .collection(PARTY_PHOTOS)
+        .where('tags', arrayContains: userId)
+        .orderBy('partyDate', descending: true)
+        .get();
+  }
+
   static pullPartyPhoto(String partyPhotoId) {
     return FirebaseFirestore.instance
         .collection(PARTY_PHOTOS)
@@ -2436,6 +2444,13 @@ class FirestoreHelper {
         .get();
   }
 
+  static pullUserPhotos(String userId) {
+    return FirebaseFirestore.instance
+        .collection(USER_PHOTOS)
+        .where('userId', isEqualTo: userId)
+        .get();
+  }
+
   static getUserPhotos() {
     return FirebaseFirestore.instance
         .collection(USER_PHOTOS)
@@ -2446,5 +2461,6 @@ class FirestoreHelper {
     static void deleteUserPhoto(String docId) {
     FirebaseFirestore.instance.collection(USER_PHOTOS).doc(docId).delete();
   }
+
 
 }
