@@ -4,6 +4,7 @@ import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:phonepe_payment_sdk/phonepe_payment_sdk.dart';
 
 import '../../db/entity/party.dart';
 import '../../db/entity/tix.dart';
@@ -205,7 +206,10 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
                 text: 'purchase',
                 onClicked: () {
                   Logx.ist(_TAG, 'tickets purchased, navigating to home.');
-                  GoRouter.of(context).goNamed(RouteConstants.landingRouteName);
+
+                  _initPhonePe();
+
+                  // GoRouter.of(context).goNamed(RouteConstants.landingRouteName);
                 },)
             ],
           ),
@@ -229,5 +233,26 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
             );
           }),
     );
+  }
+
+  void _initPhonePe() {
+    String environmentValue = '';
+    String appId='';
+    String merchantId = 'PGTESTPAYUAT';
+    bool enableLogging = false;
+
+    String result = '';
+
+    PhonePePaymentSdk.init(environmentValue, appId, merchantId, enableLogging)
+        .then((val) => {
+      setState(() {
+        result = 'PhonePe SDK Initialized - $val';
+      })
+    })
+        .catchError((error) {
+      handleError(error);
+      return <dynamic>{};
+    });
+
   }
 }
