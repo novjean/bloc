@@ -120,31 +120,36 @@ class _PhotosScreenState extends State<PhotosScreen> {
               _showPhotosDialog(context, index);
             },
             child: SizedBox(
-              height: 200,
-              width: 200,
-              child: kIsWeb? FadeInImage(
-                placeholder: const AssetImage('assets/icons/logo.png'),
-                image: NetworkImage(photo.imageThumbUrl.isNotEmpty? photo.imageThumbUrl:photo.imageUrl),
-                fit: BoxFit.cover,
-              ): CachedNetworkImage(
-                imageUrl: photo.imageThumbUrl.isNotEmpty? photo.imageThumbUrl:photo.imageUrl,
-                imageBuilder: (context, imageProvider) => Container(
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: imageProvider,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                ),
-                placeholder: (context, url) =>
-                const FadeInImage(
-                  placeholder: AssetImage('assets/images/logo.png'),
-                  image: AssetImage('assets/images/logo.png'),
-                  fit: BoxFit.cover,
-                ),
-                errorWidget: (context, url, error) => const Icon(Icons.error),
-              )
-            ),
+                height: 200,
+                width: 200,
+                child: kIsWeb
+                    ? FadeInImage(
+                        placeholder: const AssetImage('assets/icons/logo.png'),
+                        image: NetworkImage(photo.imageThumbUrl.isNotEmpty
+                            ? photo.imageThumbUrl
+                            : photo.imageUrl),
+                        fit: BoxFit.cover,
+                      )
+                    : CachedNetworkImage(
+                        imageUrl: photo.imageThumbUrl.isNotEmpty
+                            ? photo.imageThumbUrl
+                            : photo.imageUrl,
+                        imageBuilder: (context, imageProvider) => Container(
+                          decoration: BoxDecoration(
+                            image: DecorationImage(
+                              image: imageProvider,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                        placeholder: (context, url) => const FadeInImage(
+                          placeholder: AssetImage('assets/images/logo.png'),
+                          image: AssetImage('assets/images/logo.png'),
+                          fit: BoxFit.cover,
+                        ),
+                        errorWidget: (context, url, error) =>
+                            const Icon(Icons.error),
+                      )),
           );
         }
       },
@@ -207,46 +212,40 @@ class _PhotosScreenState extends State<PhotosScreen> {
     );
   }
 
-  _showPhotosDialog(BuildContext context, int index){
+  _showPhotosDialog(BuildContext context, int index) {
     sIndex = index;
 
     List<Container> cards = [];
 
-    for(int i = index; i< mPartyPhotos.length; i++){
+    for (int i = index; i < mPartyPhotos.length; i++) {
       PartyPhoto partyPhoto = mPartyPhotos[i];
-      cards.add(
-        Container(
-          width: mq.width,
-          height: mq.height,
-          child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Padding(
-                  padding:
-                  const EdgeInsets.only(bottom: 10, left: 10, right: 10),
-                  child: Text(
-                    partyPhoto.partyName,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                        fontSize: 20, fontWeight: FontWeight.bold),
-                  ),
-                ),
-                Padding(
-                  padding:
-                  const EdgeInsets.only(bottom: 20, left: 10, right: 10),
-                  child: Text(
-                    DateTimeUtils.getFormattedDate2(partyPhoto.partyDate),
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(fontSize: 16),
-                  ),
-                ),
-                FadeInImage(
-                  placeholder: const AssetImage('assets/images/logo_3x2.png'),
-                  image: NetworkImage(partyPhoto.imageUrl),
-                  fit: BoxFit.contain,
-                ),
-              ]),
-        ));
+      cards.add(Container(
+        width: mq.width,
+        height: mq.height,
+        child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+          Padding(
+            padding: const EdgeInsets.only(bottom: 10, left: 10, right: 10),
+            child: Text(
+              partyPhoto.partyName,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(bottom: 20, left: 10, right: 10),
+            child: Text(
+              DateTimeUtils.getFormattedDate2(partyPhoto.partyDate),
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(fontSize: 16),
+            ),
+          ),
+          FadeInImage(
+            placeholder: const AssetImage('assets/images/logo_3x2.png'),
+            image: NetworkImage(partyPhoto.imageUrl),
+            fit: BoxFit.contain,
+          ),
+        ]),
+      ));
     }
 
     showDialog(
@@ -262,31 +261,34 @@ class _PhotosScreenState extends State<PhotosScreen> {
             width: mq.width,
             child: Center(
               child: CardSwiper(
-              controller: controller,
-              cardsCount: cards.length,
-              onSwipe: _onSwipe,
-              numberOfCardsDisplayed: 1,
-              duration: const Duration(milliseconds: 9),
-              padding: const EdgeInsets.symmetric(vertical: 10),
-              cardBuilder: (context, index, percentThresholdX, percentThresholdY) => cards[index],
-                ),
+                controller: controller,
+                cardsCount: cards.length,
+                onSwipe: _onSwipe,
+                numberOfCardsDisplayed: 1,
+                duration: const Duration(milliseconds: 9),
+                padding: const EdgeInsets.symmetric(vertical: 10),
+                cardBuilder:
+                    (context, index, percentThresholdX, percentThresholdY) =>
+                        cards[index],
+              ),
             ),
-
           ),
           actions: [
             UserPreferences.myUser.clearanceLevel >= Constants.ADMIN_LEVEL
                 ? TextButton(
-              child: const Text("advertise"),
-              onPressed: () {
-                Ad ad = Dummy.getDummyAd(mPartyPhotos[sIndex].blocServiceId);
-                ad = ad.copyWith(imageUrl: mPartyPhotos[sIndex].imageUrl, isActive: true);
+                    child: const Text("advertise"),
+                    onPressed: () {
+                      Ad ad =
+                          Dummy.getDummyAd(mPartyPhotos[sIndex].blocServiceId);
+                      ad = ad.copyWith(
+                          imageUrl: mPartyPhotos[sIndex].imageUrl,
+                          isActive: true);
 
-                Navigator.of(ctx).pop();
-                _showAdDialog(context, ad);
-
-              },
-            )
-                : const Text('swipe for next >>', style: TextStyle(fontSize: 14),),
+                      Navigator.of(ctx).pop();
+                      _showAdDialog(context, ad);
+                    },
+                  )
+                : const SizedBox(),
             TextButton(
               child: const Text("close"),
               onPressed: () {
@@ -299,8 +301,8 @@ class _PhotosScreenState extends State<PhotosScreen> {
                 child: const Text("🪂 share"),
                 onPressed: () {
                   Navigator.of(ctx).pop();
-                  _showShareOptionsDialog(context, mPartyPhotos[sIndex], sIndex);
-
+                  _showShareOptionsDialog(
+                      context, mPartyPhotos[sIndex], sIndex);
                 },
               ),
             ),
@@ -326,15 +328,16 @@ class _PhotosScreenState extends State<PhotosScreen> {
 
                 Navigator.of(ctx).pop();
 
-                if(UserPreferences.myUser.lastReviewTime < Timestamp.now().millisecondsSinceEpoch - (1 * DateTimeUtils.millisecondsWeek)){
-                  if(!UserPreferences.myUser.isAppReviewed){
+                if (UserPreferences.myUser.lastReviewTime <
+                    Timestamp.now().millisecondsSinceEpoch -
+                        (1 * DateTimeUtils.millisecondsWeek)) {
+                  if (!UserPreferences.myUser.isAppReviewed) {
                     _showReviewAppDialog(context);
                   } else {
                     //todo: might need to implement challenge logic here
                     Logx.i(_TAG, 'app is reviewed, so nothing to do for now');
                   }
                 }
-
               },
             ),
           ],
@@ -343,71 +346,13 @@ class _PhotosScreenState extends State<PhotosScreen> {
     );
   }
 
-  _showDownloadAppDialog(BuildContext context) {
-      String message = '📸 Click, Share, and Party On! Download our app to access all the photos, share them on your favorite apps, and get notified with instant guest list approvals and more! 🎉📲';
-
-      showDialog(
-        context: context,
-        builder: (BuildContext ctx) {
-          return AlertDialog(
-            title: const Text(
-              '🎁 save your photos to gallery',
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 22, color: Colors.black),
-            ),
-            backgroundColor: Constants.lightPrimary,
-            shape: const RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(20.0))),
-            contentPadding: const EdgeInsets.all(16.0),
-            content: Text(message.toLowerCase()),
-            actions: [
-              TextButton(
-                child: const Text('close',
-                    style: TextStyle(color: Constants.background)),
-                onPressed: () {
-                  Navigator.of(ctx).pop();
-                },
-              ),
-              TextButton(
-                style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all<Color>(Constants
-                      .darkPrimary), // Set your desired background color
-                ),
-                child: const Text('🤖 android',
-                    style: TextStyle(color: Constants.primary)),
-                onPressed: () async {
-                  Navigator.of(ctx).pop();
-
-                  final uri = Uri.parse(ChallengeUtils.urlBlocPlayStore);
-                  NetworkUtils.launchInBrowser(uri);
-                },
-              ),
-              TextButton(
-                style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all<Color>(Constants
-                      .darkPrimary), // Set your desired background color
-                ),
-                child: const Text('🍎 ios',
-                    style: TextStyle(color: Constants.primary)),
-                onPressed: () async {
-                  Navigator.of(ctx).pop();
-
-                  final uri = Uri.parse(ChallengeUtils.urlBlocAppStore);
-                  NetworkUtils.launchInBrowser(uri);
-                },
-              ),
-            ],
-          );
-        });
-  }
-
   bool _onSwipe(
-      int previousIndex,
-      int? currentIndex,
-      CardSwiperDirection direction,
-      ) {
-
-    Logx.d(_TAG,
+    int previousIndex,
+    int? currentIndex,
+    CardSwiperDirection direction,
+  ) {
+    Logx.d(
+      _TAG,
       'The card $previousIndex was swiped to the ${direction.name}. Now the card $currentIndex is on top',
     );
 
@@ -434,7 +379,8 @@ class _PhotosScreenState extends State<PhotosScreen> {
                 borderRadius: BorderRadius.all(Radius.circular(20.0))),
             contentPadding: const EdgeInsets.all(16.0),
             content: Text(
-                'Behind bloc, there\'s a small but dedicated team pouring their hearts into it. Will you be our champion by leaving a review? Together, we\'ll build the best community app out there!'.toLowerCase()),
+                'Behind bloc, there\'s a small but dedicated team pouring their hearts into it. Will you be our champion by leaving a review? Together, we\'ll build the best community app out there!'
+                    .toLowerCase()),
             actions: [
               TextButton(
                 child: const Text('close',
@@ -445,10 +391,12 @@ class _PhotosScreenState extends State<PhotosScreen> {
               ),
               TextButton(
                 style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all<Color>(Constants
-                      .lightPrimary),
+                  backgroundColor:
+                      MaterialStateProperty.all<Color>(Constants.lightPrimary),
                 ),
-                child: const Text('🧸 already reviewed',),
+                child: const Text(
+                  '🧸 already reviewed',
+                ),
                 onPressed: () async {
                   User user = UserPreferences.myUser;
                   user = user.copyWith(
@@ -463,8 +411,8 @@ class _PhotosScreenState extends State<PhotosScreen> {
               ),
               TextButton(
                 style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all<Color>(Constants
-                      .darkPrimary),
+                  backgroundColor:
+                      MaterialStateProperty.all<Color>(Constants.darkPrimary),
                 ),
                 child: const Text('🌟 review us',
                     style: TextStyle(color: Constants.primary)),
@@ -472,10 +420,11 @@ class _PhotosScreenState extends State<PhotosScreen> {
                   final InAppReview inAppReview = InAppReview.instance;
                   bool isAvailable = await inAppReview.isAvailable();
 
-                  if(isAvailable){
+                  if (isAvailable) {
                     inAppReview.requestReview();
                   } else {
-                    inAppReview.openStoreListing(appStoreId: Constants.blocAppStoreId);
+                    inAppReview.openStoreListing(
+                        appStoreId: Constants.blocAppStoreId);
                   }
 
                   User user = UserPreferences.myUser;
@@ -493,7 +442,8 @@ class _PhotosScreenState extends State<PhotosScreen> {
         });
   }
 
-  _showShareOptionsDialog(BuildContext context, PartyPhoto partyPhoto, int index) {
+  _showShareOptionsDialog(
+      BuildContext context, PartyPhoto partyPhoto, int index) {
     showDialog(
       context: context,
       builder: (BuildContext ctx) {
@@ -535,11 +485,12 @@ class _PhotosScreenState extends State<PhotosScreen> {
                                       splashColor: Constants.darkPrimary,
                                       onTap: () {
                                         Navigator.of(ctx).pop();
-                                        _showLoungeChatDialog(context, partyPhoto);
+                                        _showLoungeChatDialog(
+                                            context, partyPhoto);
                                       },
                                       child: const Column(
                                         mainAxisAlignment:
-                                        MainAxisAlignment.center,
+                                            MainAxisAlignment.center,
                                         children: <Widget>[
                                           Icon(Icons.share_rounded),
                                         ],
@@ -566,15 +517,20 @@ class _PhotosScreenState extends State<PhotosScreen> {
                                         Navigator.of(ctx).pop();
 
                                         int fileNum = index + 1;
-                                        String fileName = '${partyPhoto.partyName} $fileNum';
-                                        String shareText = 'hey. check out this photo and more of ${partyPhoto.partyName} at the official bloc app. Step into the moment. 📸 \n\n🌏 https://bloc.bar/#/\n📱 https://bloc.bar/app_store.html\n\n#blocCommunity ❤️‍🔥';
+                                        String fileName =
+                                            '${partyPhoto.partyName} $fileNum';
+                                        String shareText =
+                                            'hey. check out this photo and more of ${partyPhoto.partyName} at the official bloc app. Step into the moment. 📸 \n\n🌏 https://bloc.bar/#/\n📱 https://bloc.bar/app_store.html\n\n#blocCommunity ❤️‍🔥';
 
-                                        FileUtils.sharePhoto(partyPhoto.id,
-                                            partyPhoto.imageUrl, fileName, shareText);
+                                        FileUtils.sharePhoto(
+                                            partyPhoto.id,
+                                            partyPhoto.imageUrl,
+                                            fileName,
+                                            shareText);
                                       },
                                       child: const Column(
                                         mainAxisAlignment:
-                                        MainAxisAlignment.center,
+                                            MainAxisAlignment.center,
                                         children: <Widget>[
                                           Icon(Icons.share_outlined),
                                         ],
@@ -638,7 +594,8 @@ class _PhotosScreenState extends State<PhotosScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       const Padding(
-                        padding: EdgeInsets.only(bottom: 10, left: 10, right: 10),
+                        padding:
+                            EdgeInsets.only(bottom: 10, left: 10, right: 10),
                         child: Text(
                           'share photo to lounge',
                           overflow: TextOverflow.ellipsis,
@@ -646,7 +603,7 @@ class _PhotosScreenState extends State<PhotosScreen> {
                               fontSize: 20, fontWeight: FontWeight.bold),
                         ),
                       ),
-                      const SizedBox(height:12),
+                      const SizedBox(height: 12),
                       MultiSelectDialogField(
                         items: lounges
                             .map((e) => MultiSelectItem(e, e.name))
@@ -663,7 +620,7 @@ class _PhotosScreenState extends State<PhotosScreen> {
                         ),
                         decoration: BoxDecoration(
                           borderRadius:
-                          const BorderRadius.all(Radius.circular(5)),
+                              const BorderRadius.all(Radius.circular(5)),
                           border: Border.all(
                             width: 0.0,
                           ),
@@ -673,20 +630,20 @@ class _PhotosScreenState extends State<PhotosScreen> {
                           sLounges = values as List<Lounge>;
                         },
                       ),
-                      const SizedBox(height:12),
+                      const SizedBox(height: 12),
                       Center(
                           child: SizedBox(
-                            width: mq.width,
-                            child: FadeInImage(
-                              placeholder:
+                        width: mq.width,
+                        child: FadeInImage(
+                          placeholder:
                               const AssetImage('assets/images/logo_3x2.png'),
-                              image: NetworkImage(
-                                  partyPhoto.imageThumbUrl.isNotEmpty
-                                      ? partyPhoto.imageThumbUrl
-                                      : partyPhoto.imageUrl),
-                              fit: BoxFit.contain,
-                            ),
-                          )),
+                          image: NetworkImage(
+                              partyPhoto.imageThumbUrl.isNotEmpty
+                                  ? partyPhoto.imageThumbUrl
+                                  : partyPhoto.imageUrl),
+                          fit: BoxFit.contain,
+                        ),
+                      )),
                       TextFieldWidget(
                         text: '',
                         maxLines: 3,
@@ -708,8 +665,8 @@ class _PhotosScreenState extends State<PhotosScreen> {
                 ),
                 TextButton(
                   style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all<Color>(Constants
-                        .darkPrimary),
+                    backgroundColor:
+                        MaterialStateProperty.all<Color>(Constants.darkPrimary),
                   ),
                   child: const Text(
                     "💌 send",
@@ -728,7 +685,8 @@ class _PhotosScreenState extends State<PhotosScreen> {
                         );
 
                         FirestoreHelper.pushLoungeChat(chat);
-                        FirestoreHelper.updateLoungeLastChat(lounge.id, '📸 $photoChatMessage', chat.time);
+                        FirestoreHelper.updateLoungeLastChat(
+                            lounge.id, '📸 $photoChatMessage', chat.time);
                       }
 
                       Logx.ist(_TAG, 'photo has been successfully shared 💝');
@@ -749,7 +707,7 @@ class _PhotosScreenState extends State<PhotosScreen> {
     });
   }
 
-  _showAdDialog(BuildContext context,  Ad ad) {
+  _showAdDialog(BuildContext context, Ad ad) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -766,13 +724,13 @@ class _PhotosScreenState extends State<PhotosScreen> {
               children: [
                 Center(
                     child: SizedBox(
-                      width: mq.width*0.4,
-                      child: FadeInImage(
-                        placeholder: const AssetImage('assets/images/logo_3x2.png'),
-                        image: NetworkImage(ad.imageUrl),
-                        fit: BoxFit.contain,
-                      ),
-                    )),
+                  width: mq.width * 0.4,
+                  child: FadeInImage(
+                    placeholder: const AssetImage('assets/images/logo_3x2.png'),
+                    image: NetworkImage(ad.imageUrl),
+                    fit: BoxFit.contain,
+                  ),
+                )),
                 TextFieldWidget(
                   text: ad.title,
                   onChanged: (text) {
@@ -800,8 +758,8 @@ class _PhotosScreenState extends State<PhotosScreen> {
             ),
             TextButton(
               style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all<Color>(Constants
-                    .darkPrimary), // Set your desired background color
+                backgroundColor: MaterialStateProperty.all<Color>(
+                    Constants.darkPrimary), // Set your desired background color
               ),
               child: const Text('💎 post ad',
                   style: TextStyle(color: Constants.primary)),
@@ -810,7 +768,6 @@ class _PhotosScreenState extends State<PhotosScreen> {
                 Navigator.of(context).pop();
               },
             ),
-
           ],
         );
       },
