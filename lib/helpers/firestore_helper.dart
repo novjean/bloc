@@ -2186,7 +2186,7 @@ class FirestoreHelper {
         .orderBy('name', descending: false)
         .get();
   }
-  
+
   static Future<QuerySnapshot<Object?>> pullUsersSortedName() {
     return FirebaseFirestore.instance
         .collection(USERS)
@@ -2459,6 +2459,13 @@ class FirestoreHelper {
         .get();
   }
 
+  static pullUserPhotosByPartyPhotoId(String partyPhotoId) {
+    return FirebaseFirestore.instance
+        .collection(USER_PHOTOS)
+        .where('partyPhotoId', isEqualTo: partyPhotoId)
+        .get();
+  }
+
   static getUserPhotos() {
     return FirebaseFirestore.instance
         .collection(USER_PHOTOS)
@@ -2466,10 +2473,8 @@ class FirestoreHelper {
         .snapshots();
   }
 
-    static void deleteUserPhoto(String docId) {
+  static void deleteUserPhoto(String docId) {
     FirebaseFirestore.instance.collection(USER_PHOTOS).doc(docId).delete();
   }
-
-
 
 }

@@ -21,6 +21,7 @@ import '../../../db/entity/bloc_service.dart';
 
 import '../../../db/entity/party_photo.dart';
 import '../../../db/entity/user.dart';
+import '../../../db/entity/user_photo.dart';
 import '../../../helpers/dummy.dart';
 import '../../../helpers/firestorage_helper.dart';
 import '../../../helpers/firestore_helper.dart';
@@ -544,10 +545,14 @@ class _PartyPhotoAddEditScreenState extends State<PartyPhotoAddEditScreen> {
                 height: 50,
                 text: 'delete',
                 onClicked: () {
-                  FirestorageHelper.deleteFile(widget.partyPhoto.imageUrl);
-                  FirestorageHelper.deleteFile(widget.partyPhoto.imageThumbUrl);
-                  FirestoreHelper.deletePartyPhoto(widget.partyPhoto.id);
-                  Navigator.of(context).pop();
+                  if(widget.partyPhoto.tags.isNotEmpty){
+                    _showPhotoTagsDeleteConfirm(context);
+                  } else {
+                    FirestorageHelper.deleteFile(widget.partyPhoto.imageUrl);
+                    FirestorageHelper.deleteFile(widget.partyPhoto.imageThumbUrl);
+                    FirestoreHelper.deletePartyPhoto(widget.partyPhoto.id);
+                    Navigator.of(context).pop();
+                  }
                 }),
           ],
         ),
@@ -709,4 +714,59 @@ class _PartyPhotoAddEditScreenState extends State<PartyPhotoAddEditScreen> {
       ),
     );
   }
+
+  _showPhotoTagsDeleteConfirm(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: Constants.lightPrimary,
+          shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(20.0))),
+          contentPadding: const EdgeInsets.all(16.0),
+          title: const Text(
+            '📛 delete tagged photo',
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 22, color: Colors.black),
+          ),
+          content: const Text(
+              "this is a tagged photo, are you sure you want to delete?"),
+          actions: [
+            TextButton(
+              child: const Text("yes"),
+              onPressed: () {
+                FirestoreHelper.pullUserPhotosByPartyPhotoId(widget.partyPhoto.id).then((res) {
+                  if(res.docs.isNotEmpty){
+                    for (int i = 0; i < res.docs.length; i++) {
+                      DocumentSnapshot document = res.docs[i];
+                      Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+                      UserPhoto userPhoto = Fresh.freshUserPhotoMap(data, false);
+                      FirestoreHelper.deleteUserPhoto(userPhoto.id);
+                    }
+                    Logx.ist(_TAG, '${res.docs.length} user photo docs has been deleted');
+                  }
+                });
+
+                FirestorageHelper.deleteFile(widget.partyPhoto.imageUrl);
+                FirestorageHelper.deleteFile(widget.partyPhoto.imageThumbUrl);
+                FirestoreHelper.deletePartyPhoto(widget.partyPhoto.id);
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all<Color>(
+                    Constants.darkPrimary), // Set your desired background color
+              ),
+              child: const Text("no"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            )
+          ],
+        );
+      },
+    );
+  }
+
 }
