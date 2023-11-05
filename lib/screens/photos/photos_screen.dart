@@ -5,13 +5,13 @@ import 'package:bloc/utils/dialog_utils.dart';
 import 'package:bloc/widgets/ui/blurred_image.dart';
 import 'package:bloc/widgets/ui/textfield_widget.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:in_app_review/in_app_review.dart';
 import 'package:multi_select_flutter/dialog/multi_select_dialog_field.dart';
 import 'package:multi_select_flutter/util/multi_select_item.dart';
 import 'package:multi_select_flutter/util/multi_select_list_type.dart';
-import 'package:flutter_card_swiper/flutter_card_swiper.dart';
 
 import '../../db/entity/ad.dart';
 import '../../db/entity/lounge.dart';
@@ -21,11 +21,9 @@ import '../../helpers/dummy.dart';
 import '../../helpers/firestore_helper.dart';
 import '../../helpers/fresh.dart';
 import '../../main.dart';
-import '../../utils/challenge_utils.dart';
 import '../../utils/constants.dart';
 import '../../utils/file_utils.dart';
 import '../../utils/logx.dart';
-import '../../utils/network_utils.dart';
 import '../../widgets/footer.dart';
 import '../../widgets/photo/party_photo_item.dart';
 import '../../widgets/store_badge_item.dart';
@@ -48,12 +46,8 @@ class _PhotosScreenState extends State<PhotosScreen> {
   List<Lounge> sLounges = [];
   String photoChatMessage = '';
 
-  final CardSwiperController controller = CardSwiperController();
-  int sIndex = 0;
-
   @override
   void dispose() {
-    controller.dispose();
     super.dispose();
   }
 
@@ -117,7 +111,7 @@ class _PhotosScreenState extends State<PhotosScreen> {
         } else {
           return GestureDetector(
             onTap: () {
-              _showPhotosDialog(context, index);
+              _showPhotosDialog(index);
             },
             child: SizedBox(
                 height: 200,
@@ -212,40 +206,14 @@ class _PhotosScreenState extends State<PhotosScreen> {
     );
   }
 
-  _showPhotosDialog(BuildContext context, int index) {
-    sIndex = index;
+  int _currentIndex = 0;
+  _showPhotosDialog(int index){
+    List<String> partyPhotoUrls = [];
 
-    List<Container> cards = [];
+    _currentIndex = index;
 
-    for (int i = index; i < mPartyPhotos.length; i++) {
-      PartyPhoto partyPhoto = mPartyPhotos[i];
-      cards.add(Container(
-        width: mq.width,
-        height: mq.height,
-        child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-          Padding(
-            padding: const EdgeInsets.only(bottom: 10, left: 10, right: 10),
-            child: Text(
-              partyPhoto.partyName,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(bottom: 20, left: 10, right: 10),
-            child: Text(
-              DateTimeUtils.getFormattedDate2(partyPhoto.partyDate),
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(fontSize: 16),
-            ),
-          ),
-          FadeInImage(
-            placeholder: const AssetImage('assets/images/logo_3x2.png'),
-            image: NetworkImage(partyPhoto.imageUrl),
-            fit: BoxFit.contain,
-          ),
-        ]),
-      ));
+    for(PartyPhoto partyPhoto in mPartyPhotos){
+      partyPhotoUrls.add(partyPhoto.imageUrl);
     }
 
     showDialog(
@@ -257,37 +225,76 @@ class _PhotosScreenState extends State<PhotosScreen> {
               borderRadius: BorderRadius.all(Radius.circular(20.0))),
           contentPadding: const EdgeInsets.all(0.0),
           content: SizedBox(
-            height: mq.height,
+            height: mq.width,
             width: mq.width,
             child: Center(
-              child: CardSwiper(
-                controller: controller,
-                cardsCount: cards.length,
-                onSwipe: _onSwipe,
-                numberOfCardsDisplayed: 1,
-                duration: const Duration(milliseconds: 9),
-                padding: const EdgeInsets.symmetric(vertical: 10),
-                cardBuilder:
-                    (context, index, percentThresholdX, percentThresholdY) =>
-                        cards[index],
+              child: CarouselSlider(
+                options: CarouselOptions(
+                    initialPage: index,
+                    enableInfiniteScroll: true,
+                    autoPlay: true,
+                    autoPlayInterval: const Duration(seconds: 4),
+                    autoPlayAnimationDuration:
+                    const Duration(milliseconds: 750),
+                    enlargeCenterPage: true,
+                    scrollDirection: Axis.horizontal,
+                    onPageChanged: (index, reason) {
+                      _currentIndex = index;
+                      Logx.d(_TAG, 'index is $_currentIndex');
+
+                      PartyPhoto partyPhoto = mPartyPhotos[_currentIndex];
+                      FirestoreHelper.updatePartyPhotoViewCount(partyPhoto.id);
+
+                      setState(() {
+                      });
+                    }
+                  // aspectRatio: 1.0,
+                ),
+
+                items: partyPhotoUrls
+                    .map((item) {
+                  return kIsWeb? Image.network(item,
+                      fit: BoxFit.cover,
+                      width: mq.width) :
+                  CachedNetworkImage(
+                    imageUrl: item,
+                    imageBuilder: (context, imageProvider) => Container(
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                          image: imageProvider,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                    placeholder: (context, url) =>
+                    const FadeInImage(
+                      placeholder: AssetImage('assets/images/logo.png'),
+                      image: AssetImage('assets/images/logo.png'),
+                      fit: BoxFit.cover,
+                    ),
+                    errorWidget: (context, url, error) => const Icon(Icons.error),
+                  );
+                }
+                ).toList(),
               ),
             ),
+
           ),
           actions: [
             UserPreferences.myUser.clearanceLevel >= Constants.ADMIN_LEVEL
                 ? TextButton(
-                    child: const Text("advertise"),
-                    onPressed: () {
-                      Ad ad =
-                          Dummy.getDummyAd(mPartyPhotos[sIndex].blocServiceId);
-                      ad = ad.copyWith(
-                          imageUrl: mPartyPhotos[sIndex].imageUrl,
-                          isActive: true);
+              child: const Text("advertise"),
+              onPressed: () {
+                Ad ad =
+                Dummy.getDummyAd(mPartyPhotos[_currentIndex].blocServiceId);
+                ad = ad.copyWith(
+                    imageUrl: mPartyPhotos[_currentIndex].imageUrl,
+                    isActive: true);
 
-                      Navigator.of(ctx).pop();
-                      _showAdDialog(context, ad);
-                    },
-                  )
+                Navigator.of(ctx).pop();
+                _showAdDialog(context, ad);
+              },
+            )
                 : const SizedBox(),
             TextButton(
               child: const Text("close"),
@@ -302,7 +309,7 @@ class _PhotosScreenState extends State<PhotosScreen> {
                 onPressed: () {
                   Navigator.of(ctx).pop();
                   _showShareOptionsDialog(
-                      context, mPartyPhotos[sIndex], sIndex);
+                      context, mPartyPhotos[_currentIndex], _currentIndex);
                 },
               ),
             ),
@@ -318,7 +325,7 @@ class _PhotosScreenState extends State<PhotosScreen> {
               onPressed: () {
                 Logx.ist(_TAG, '🍄 saving to gallery...');
 
-                PartyPhoto partyPhoto = mPartyPhotos[sIndex];
+                PartyPhoto partyPhoto = mPartyPhotos[_currentIndex];
 
                 int fileNum = index + 1;
                 String fileName = '${partyPhoto.partyName} $fileNum';
@@ -344,24 +351,6 @@ class _PhotosScreenState extends State<PhotosScreen> {
         );
       },
     );
-  }
-
-  bool _onSwipe(
-    int previousIndex,
-    int? currentIndex,
-    CardSwiperDirection direction,
-  ) {
-    Logx.d(
-      _TAG,
-      'The card $previousIndex was swiped to the ${direction.name}. Now the card $currentIndex is on top',
-    );
-
-    sIndex = sIndex + 1!;
-
-    PartyPhoto partyPhoto = mPartyPhotos[sIndex];
-    FirestoreHelper.updatePartyPhotoViewCount(partyPhoto.id);
-
-    return true;
   }
 
   _showReviewAppDialog(BuildContext context) {

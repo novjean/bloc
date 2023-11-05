@@ -7,13 +7,11 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_card_swiper/flutter_card_swiper.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 import '../../db/entity/party_photo.dart';
 import '../../db/entity/user.dart' as blocUser;
 import '../../db/entity/user.dart';
-import '../../db/entity/user_photo.dart';
 import '../../db/shared_preferences/user_preferences.dart';
 import '../../helpers/firestorage_helper.dart';
 import '../../helpers/fresh.dart';
@@ -336,8 +334,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
     );
   }
+
+  int _currentIndex = 0;
   _showPhotosDialog(int index){
     List<String> partyPhotoUrls = [];
+
+    _currentIndex = index;
 
     for(PartyPhoto partyPhoto in mPartyPhotos){
       partyPhotoUrls.add(partyPhoto.imageUrl);
@@ -352,7 +354,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               borderRadius: BorderRadius.all(Radius.circular(20.0))),
           contentPadding: const EdgeInsets.all(0.0),
           content: SizedBox(
-            height: mq.height,
+            height: mq.width,
             width: mq.width,
             child: Center(
               child: CarouselSlider(
@@ -360,17 +362,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   initialPage: index,
                   enableInfiniteScroll: true,
                   autoPlay: true,
-                  autoPlayInterval: const Duration(seconds: 5),
+                  autoPlayInterval: const Duration(seconds: 4),
                   autoPlayAnimationDuration:
                   const Duration(milliseconds: 750),
                   enlargeCenterPage: true,
                   scrollDirection: Axis.horizontal,
+                  onPageChanged: (index, reason) {
+                    _currentIndex = index;
+                    Logx.d(_TAG, 'index is $_currentIndex');
+
+                    PartyPhoto partyPhoto = mPartyPhotos[_currentIndex];
+                    FirestoreHelper.updatePartyPhotoViewCount(partyPhoto.id);
+
+                    setState(() {
+                    });
+                  }
                   // aspectRatio: 1.0,
                 ),
 
                 items: partyPhotoUrls
                     .map((item) {
-
                       return kIsWeb? Image.network(item,
                           fit: BoxFit.cover,
                           width: mq.width) :
@@ -403,6 +414,64 @@ class _ProfileScreenState extends State<ProfileScreen> {
               child: const Text("close"),
               onPressed: () {
                 Navigator.of(ctx).pop();
+              },
+            ),
+            Padding(
+              padding: const EdgeInsets.only(right: 5.0, left: 10),
+              child: TextButton(
+                child: const Text("🪂 share"),
+                onPressed: () {
+                  Navigator.of(ctx).pop();
+
+                  PartyPhoto partyPhoto = mPartyPhotos[_currentIndex];
+
+                  int fileNum = index + 1;
+                  String fileName =
+                      '${partyPhoto.partyName} $fileNum';
+                  String shareText =
+                      'hey. check out this photo and more of ${partyPhoto.partyName} at the official bloc app. Step into the moment. 📸 \n\n🌏 https://bloc.bar/#/\n📱 https://bloc.bar/app_store.html\n\n#blocCommunity ❤️‍🔥';
+
+                  FileUtils.sharePhoto(
+                      partyPhoto.id,
+                      partyPhoto.imageUrl,
+                      fileName,
+                      shareText);
+                },
+              ),
+            ),
+
+            TextButton(
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all<Color>(
+                    Constants.darkPrimary), // Set your desired background color
+              ),
+              child: const Text(
+                "💕 save to gallery",
+                style: TextStyle(color: Constants.primary),
+              ),
+              onPressed: () {
+                Logx.ist(_TAG, '🍄 saving to gallery...');
+
+                PartyPhoto partyPhoto = mPartyPhotos[_currentIndex];
+
+                int fileNum = index + 1;
+                String fileName = '${partyPhoto.partyName} $fileNum';
+                FileUtils.saveNetworkImage(partyPhoto.imageUrl, fileName);
+
+                FirestoreHelper.updatePartyPhotoDownloadCount(partyPhoto.id);
+
+                Navigator.of(ctx).pop();
+
+                if (UserPreferences.myUser.lastReviewTime <
+                    Timestamp.now().millisecondsSinceEpoch -
+                        (1 * DateTimeUtils.millisecondsWeek)) {
+                  if (!UserPreferences.myUser.isAppReviewed) {
+                    DialogUtils.showReviewAppDialog(context);
+                  } else {
+                    //todo: might need to implement challenge logic here
+                    Logx.i(_TAG, 'app is reviewed, so nothing to do for now');
+                  }
+                }
               },
             ),
           ],
