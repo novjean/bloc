@@ -2179,6 +2179,13 @@ class FirestoreHelper {
         .get();
   }
 
+  static pullUsersByTags(List<String> userIds) {
+    return FirebaseFirestore.instance
+        .collection(USERS)
+        .where('id', whereIn: userIds)
+        .get();
+  }
+
   static pullUsersApp() {
     return FirebaseFirestore.instance
         .collection(USERS)
@@ -2476,5 +2483,6 @@ class FirestoreHelper {
   static void deleteUserPhoto(String docId) {
     FirebaseFirestore.instance.collection(USER_PHOTOS).doc(docId).delete();
   }
+
 
 }

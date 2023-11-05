@@ -45,6 +45,33 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
 
   List<Lounge> sLounges = [];
 
+  List<User> mUsers = [];
+  var _isUsersLoading = true;
+
+  @override
+  void initState() {
+    if(widget.partyPhoto.tags.isNotEmpty){
+      FirestoreHelper.pullUsersByTags(widget.partyPhoto.tags).then((res) {
+        for (int i = 0; i < res.docs.length; i++) {
+          DocumentSnapshot document = res.docs[i];
+          Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+          final User user = Fresh.freshUserMap(data, false);
+          mUsers.add(user);
+        }
+
+        setState(() {
+          _isUsersLoading = false;
+        });
+      });
+    } else {
+      setState(() {
+        _isUsersLoading = false;
+      });
+    }
+
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     bool isLoved = false;
@@ -52,6 +79,9 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
     if (widget.partyPhoto.likers.contains(UserPreferences.myUser.id)) {
       isLoved = true;
     }
+
+    final List<String> buttonLabels = ['Button 1', 'Button 2', 'Button 3'];
+
 
     return Hero(
       tag: widget.partyPhoto.id,
@@ -317,73 +347,115 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
                   ),
                 ),
 
-                !widget.partyPhoto.tags.contains(UserPreferences.myUser.id)
-                    ? Padding(
-                        padding: const EdgeInsets.only(left: 10, right: 10),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            const Text(
-                                'see yourself, add photo to your profile?'),
-                            Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 5),
-                                child: ElevatedButton.icon(
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Constants.darkPrimary,
-                                    foregroundColor: Constants.primary,
-                                    shadowColor: Colors.white30,
-                                    shape: const RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(10))
-                                        // only(
-                                        //   topLeft: Radius.circular(10), topRight: Radius.circular(10)),
-                                        ),
-                                    elevation: 3,
-                                  ),
-                                  onPressed: () {
-                                    if (kIsWeb) {
-                                      _showDownloadAppDialog(context);
-                                    } else {
-                                      if (UserPreferences.isUserLoggedIn()) {
-                                        Logx.ist(_TAG, 'tagging you...');
-
-                                        FirestoreHelper.pullUserPhoto(
-                                                UserPreferences.myUser.id,
-                                                widget.partyPhoto.id)
-                                            .then((res) {
-                                          if (res.docs.isEmpty) {
-                                            UserPhoto userPhoto =
-                                                Dummy.getDummyUserPhoto();
-                                            userPhoto = userPhoto.copyWith(
-                                                userId:
-                                                    UserPreferences.myUser.id,
-                                                partyPhotoId:
-                                                    widget.partyPhoto.id);
-                                            FirestoreHelper.pushUserPhoto(
-                                                userPhoto);
-
-                                            Logx.ist(_TAG,
-                                                'your tag request is received, and it shall be approved by the admins soon');
-                                          } else {
-                                            Logx.ist(_TAG,
-                                                'your tag is present in db');
-                                          }
-                                        });
-                                      } else {
-                                        Logx.ist(_TAG,
-                                            '🧩 please login to tag yourself to the photo');
-                                      }
-                                    }
-                                  },
-                                  icon: const Icon(Icons.bolt, size: 22.0),
-                                  // Icon to display
-                                  label: const Text('tag me'),
-                                )),
-                          ],
+                Row(
+                  children: mUsers.map((user) {
+                    return Container(
+                      padding: EdgeInsets.all(8.0),
+                      child: GestureDetector(
+                        onTap: () {
+                          Logx.ist(_TAG, 'tag user clicked!');
+                        },
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(10),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 2, horizontal: 2),
+                            child: Text(
+                              '${user.name} ${user.surname}',
+                              style: TextStyle(
+                                fontSize: 14,
+                                backgroundColor: Constants
+                                    .primary
+                                    .withOpacity(0.7),
+                              ),
+                            ),
+                          ),
                         ),
-                      )
-                    : const SizedBox()
+                      ),
+                    );
+                  }).toList(),
+                ),
+
+                Padding(
+                  padding: const EdgeInsets.only(left: 10, right: 10),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      // _showTaggedUsers(context),
+
+                      // Expanded(
+                      //   child: ListView.builder(
+                      //     scrollDirection: Axis.horizontal,
+                      //     itemCount: mUsers.length,
+                      //     itemBuilder: (BuildContext context, int index) {
+                      //       return Container(
+                      //         padding: EdgeInsets.all(8.0),
+                      //         child: Text(mUsers[index].name),
+                      //       );
+                      //     },
+                      //   ),
+                      // ),
+
+                      const Text('see yourself'),
+                      Padding(
+                          padding:
+                          const EdgeInsets.symmetric(horizontal: 5),
+                          child: ElevatedButton.icon(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Constants.darkPrimary,
+                              foregroundColor: Constants.primary,
+                              shadowColor: Colors.white30,
+                              shape: const RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.all(
+                                      Radius.circular(10))
+                                // only(
+                                //   topLeft: Radius.circular(10), topRight: Radius.circular(10)),
+                              ),
+                              elevation: 3,
+                            ),
+                            onPressed: () {
+                              if (kIsWeb) {
+                                _showDownloadAppDialog(context);
+                              } else {
+                                if (UserPreferences.isUserLoggedIn()) {
+                                  Logx.ist(_TAG, 'tagging you...');
+
+                                  FirestoreHelper.pullUserPhoto(
+                                      UserPreferences.myUser.id,
+                                      widget.partyPhoto.id)
+                                      .then((res) {
+                                    if (res.docs.isEmpty) {
+                                      UserPhoto userPhoto =
+                                      Dummy.getDummyUserPhoto();
+                                      userPhoto = userPhoto.copyWith(
+                                          userId:
+                                          UserPreferences.myUser.id,
+                                          partyPhotoId:
+                                          widget.partyPhoto.id);
+                                      FirestoreHelper.pushUserPhoto(
+                                          userPhoto);
+
+                                      Logx.ist(_TAG,
+                                          'your tag request is received, and it shall be approved by the admins soon');
+                                    } else {
+                                      Logx.ist(_TAG,
+                                          'your tag is present in db');
+                                    }
+                                  });
+                                } else {
+                                  Logx.ist(_TAG,
+                                      '🧩 please login to tag yourself to the photo');
+                                }
+                              }
+                            },
+                            icon: const Icon(Icons.bolt, size: 22.0),
+                            // Icon to display
+                            label: const Text('tag me'),
+                          )),
+                      const Text('get tagged?'),
+                    ],
+                  ),
+                )
               ],
             ),
           ),

@@ -25,6 +25,9 @@ class User {
   final bool isAppReviewed;
   final int lastReviewTime;
 
+  String username;
+  String instagramHandle;
+
 //<editor-fold desc="Data Methods">
   User({
     required this.id,
@@ -47,6 +50,8 @@ class User {
     required this.isIos,
     required this.isAppReviewed,
     required this.lastReviewTime,
+    required this.username,
+    required this.instagramHandle,
   });
 
   @override
@@ -73,7 +78,9 @@ class User {
           appVersion == other.appVersion &&
           isIos == other.isIos &&
           isAppReviewed == other.isAppReviewed &&
-          lastReviewTime == other.lastReviewTime);
+          lastReviewTime == other.lastReviewTime &&
+          username == other.username &&
+          instagramHandle == other.instagramHandle);
 
   @override
   int get hashCode =>
@@ -96,7 +103,9 @@ class User {
       appVersion.hashCode ^
       isIos.hashCode ^
       isAppReviewed.hashCode ^
-      lastReviewTime.hashCode;
+      lastReviewTime.hashCode ^
+      username.hashCode ^
+      instagramHandle.hashCode;
 
   @override
   String toString() {
@@ -121,6 +130,8 @@ class User {
         ' isIos: $isIos,' +
         ' isAppReviewed: $isAppReviewed,' +
         ' lastReviewTime: $lastReviewTime,' +
+        ' username: $username,' +
+        ' instagramHandle: $instagramHandle,' +
         '}';
   }
 
@@ -145,6 +156,8 @@ class User {
     bool? isIos,
     bool? isAppReviewed,
     int? lastReviewTime,
+    String? username,
+    String? instagramHandle,
   }) {
     return User(
       id: id ?? this.id,
@@ -167,6 +180,8 @@ class User {
       isIos: isIos ?? this.isIos,
       isAppReviewed: isAppReviewed ?? this.isAppReviewed,
       lastReviewTime: lastReviewTime ?? this.lastReviewTime,
+      username: username ?? this.username,
+      instagramHandle: instagramHandle ?? this.instagramHandle,
     );
   }
 
@@ -192,6 +207,8 @@ class User {
       'isIos': this.isIos,
       'isAppReviewed': this.isAppReviewed,
       'lastReviewTime': this.lastReviewTime,
+      'username': this.username,
+      'instagramHandle': this.instagramHandle,
     };
   }
 
@@ -217,6 +234,8 @@ class User {
       isIos: map['isIos'] as bool,
       isAppReviewed: map['isAppReviewed'] as bool,
       lastReviewTime: map['lastReviewTime'] as int,
+      username: map['username'] as String,
+      instagramHandle: map['instagramHandle'] as String,
     );
   }
 

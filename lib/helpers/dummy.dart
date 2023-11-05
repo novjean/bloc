@@ -563,6 +563,8 @@ class Dummy {
         imageUrl: '',
         name: '',
         surname: '',
+        username: '',
+        instagramHandle: '',
         gender: 'male',
         birthYear: 2023,
         phoneNumber: 0,

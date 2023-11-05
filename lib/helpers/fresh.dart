@@ -4136,6 +4136,18 @@ class Fresh {
       isModelChanged = true;
     }
     try {
+      user = user.copyWith(username: map['username'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'user username not exist for id: ${user.id}');
+      isModelChanged = true;
+    }
+    try {
+      user = user.copyWith(instagramHandle: map['instagramHandle'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'user instagramHandle not exist for id: ${user.id}');
+      isModelChanged = true;
+    }
+    try {
       user = user.copyWith(phoneNumber: map['phoneNumber'] as int);
     } catch (e) {
       Logx.em(_TAG, 'user phoneNumber not exist for id: ${user.id}');
@@ -4269,19 +4281,29 @@ class Fresh {
       Logx.em(_TAG, 'user surname not exist for id: ${user.id}');
     }
     try {
+      freshUser = freshUser.copyWith(username: user.username);
+    } catch (e) {
+      Logx.em(_TAG, 'user username not exist for id: ${user.id}');
+    }
+    try {
+      freshUser = freshUser.copyWith(instagramHandle: user.instagramHandle);
+    } catch (e) {
+      Logx.em(_TAG, 'user instagramHandle not exist for id: ${user.id}');
+    }
+    try {
       freshUser = freshUser.copyWith(gender: user.gender);
     } catch (e) {
-      Logx.em(_TAG, 'user gender not exist for user id: ' + user.id);
+      Logx.em(_TAG, 'user gender not exist for id: ${user.id}');
     }
     try {
       freshUser = freshUser.copyWith(email: user.email);
     } catch (e) {
-      Logx.em(_TAG, 'user email not exist for user id: ' + user.id);
+      Logx.em(_TAG, 'user email not exist for id: ${user.id}');
     }
     try {
       freshUser = freshUser.copyWith(imageUrl: user.imageUrl);
     } catch (e) {
-      Logx.em(_TAG, 'user imageUrl not exist for user id: ' + user.id);
+      Logx.em(_TAG, 'user imageUrl not exist for id: ${user.id}');
     }
     try {
       freshUser = freshUser.copyWith(clearanceLevel: user.clearanceLevel);
