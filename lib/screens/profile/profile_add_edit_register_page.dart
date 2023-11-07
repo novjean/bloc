@@ -321,7 +321,12 @@ class _ProfileAddEditRegisterPageState
                 }
 
                 if(freshUser.username.isEmpty){
-                  String username = '${freshUser.name.toLowerCase()}_${freshUser.surname.toLowerCase().trim()}';
+                  String username = '';
+                  if(freshUser.surname.trim().isNotEmpty){
+                    username = '${freshUser.name.toLowerCase()}_${freshUser.surname.toLowerCase().trim()}';
+                  } else {
+                    username = freshUser.name.toLowerCase().trim();
+                  }
 
                   //check if username is present in db
                   FirestoreHelper.pullUserByUsername(username).then((res) {

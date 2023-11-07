@@ -30,6 +30,7 @@ import '../../../main.dart';
 import '../../../utils/constants.dart';
 import '../../../utils/date_time_utils.dart';
 import '../../../utils/logx.dart';
+import '../../../utils/number_utils.dart';
 import '../../../utils/string_utils.dart';
 import '../../../widgets/ui/button_widget.dart';
 import '../../../widgets/ui/dark_button_widget.dart';
@@ -491,8 +492,44 @@ class _PartyPhotoAddEditScreenState extends State<PartyPhotoAddEditScreen> {
                   Logx.i(_TAG, 'no users selected');
                   widget.partyPhoto = widget.partyPhoto.copyWith(tags: []);
                 } else {
-                  widget.partyPhoto =
-                      widget.partyPhoto.copyWith(tags: sUserIds);
+                  // check if all tagged members have usernames
+                  FirestoreHelper.pullUsersByTags(sUserIds).then((res) {
+                    if(res.docs.isNotEmpty){
+                      for (int i = 0; i < res.docs.length; i++) {
+                        DocumentSnapshot document = res.docs[i];
+                        Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+                        User user = Fresh.freshUserMap(data, false);
+                        if(user.username.isEmpty){
+                          String username = '';
+                          if(user.surname.trim().isNotEmpty){
+                            username = '${user.name.toLowerCase()}_${user.surname.toLowerCase().trim()}';
+                          } else {
+                            username = user.name.toLowerCase().trim();
+                          }
+
+                          FirestoreHelper.pullUserByUsername(username).then((res) {
+                            if(res.docs.isNotEmpty){
+                              // username is already taken
+                              username = username + NumberUtils.generateRandomNumber(1,999).toString();
+                              user = user.copyWith(username: username);
+                              FirestoreHelper.pushUser(user);
+                              Logx.ist(_TAG, '${user.name} ${user.surname} has new username : ${user.username}');
+                            } else {
+                              user = user.copyWith(username: username);
+                              FirestoreHelper.pushUser(user);
+                              Logx.ist(_TAG, '${user.name} ${user.surname} has new username : ${user.username}');
+                            }
+                          });
+                        }
+                      }
+                      widget.partyPhoto =
+                          widget.partyPhoto.copyWith(tags: sUserIds);
+                    } else {
+                      Logx.est(_TAG, 'tagged members could not be found, tags cleared!');
+                      widget.partyPhoto = widget.partyPhoto.copyWith(tags: []);
+                    }
+
+                  });
                 }
               },
             ),

@@ -331,7 +331,12 @@ class _OTPScreenState extends State<OTPScreen> {
 
                               // check if there is username
                               if(user.username.isEmpty){
-                                String username = '${user.name.toLowerCase()}_${user.surname.toLowerCase().trim()}';
+                                String username = '';
+                                if(user.surname.trim().isNotEmpty){
+                                  username = '${user.name.toLowerCase()}_${user.surname.toLowerCase().trim()}';
+                                } else {
+                                  username = user.name.toLowerCase().trim();
+                                }
 
                                 //check if username is present in db
                                 FirestoreHelper.pullUserByUsername(username).then((res) {
@@ -426,7 +431,12 @@ class _OTPScreenState extends State<OTPScreen> {
                           user.lastSeenAt = Timestamp.now().millisecondsSinceEpoch;
 
                           if(user.username.isEmpty){
-                            String username = '${user.name.toLowerCase()}_${user.surname.toLowerCase().trim()}';
+                            String username = '';
+                            if(user.surname.trim().isNotEmpty){
+                              username = '${user.name.toLowerCase()}_${user.surname.toLowerCase().trim()}';
+                            } else {
+                              username = user.name.toLowerCase().trim();
+                            }
 
                             //check if username is present in db
                             FirestoreHelper.pullUserByUsername(username).then((res) {

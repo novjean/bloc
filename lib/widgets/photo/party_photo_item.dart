@@ -54,16 +54,22 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
   void initState() {
     if(widget.partyPhoto.tags.isNotEmpty){
       FirestoreHelper.pullUsersByTags(widget.partyPhoto.tags).then((res) {
-        for (int i = 0; i < res.docs.length; i++) {
-          DocumentSnapshot document = res.docs[i];
-          Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-          final User user = Fresh.freshUserMap(data, false);
-          mUsers.add(user);
-        }
+        if(res.docs.isNotEmpty){
+          for (int i = 0; i < res.docs.length; i++) {
+            DocumentSnapshot document = res.docs[i];
+            Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+            final User user = Fresh.freshUserMap(data, false);
+            mUsers.add(user);
+          }
 
-        setState(() {
-          _isUsersLoading = false;
-        });
+          setState(() {
+            _isUsersLoading = false;
+          });
+        } else {
+          setState(() {
+            _isUsersLoading = false;
+          });
+        }
       });
     } else {
       setState(() {
@@ -81,9 +87,6 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
     if (widget.partyPhoto.likers.contains(UserPreferences.myUser.id)) {
       isLoved = true;
     }
-
-    final List<String> buttonLabels = ['Button 1', 'Button 2', 'Button 3'];
-
 
     return Hero(
       tag: widget.partyPhoto.id,

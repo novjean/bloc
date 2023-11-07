@@ -124,7 +124,12 @@ class _MainScreenState extends State<MainScreen> {
         }
 
         if(user1.username.isEmpty){
-          String username = '${user1.name.toLowerCase()}_${user1.surname.toLowerCase().trim()}';
+          String username = '';
+          if(user1.surname.trim().isNotEmpty){
+            username = '${user1.name.toLowerCase()}_${user1.surname.toLowerCase().trim()}';
+          } else {
+            username = user1.name.toLowerCase().trim();
+          }
 
           //check if username is present in db
           FirestoreHelper.pullUserByUsername(username).then((res) {
