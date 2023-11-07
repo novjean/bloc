@@ -17,6 +17,7 @@ import 'package:multi_select_flutter/util/multi_select_list_type.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:http/http.dart' as http;
 
+import '../../../api/apis.dart';
 import '../../../db/entity/bloc_service.dart';
 
 import '../../../db/entity/party_photo.dart';
@@ -495,10 +496,17 @@ class _PartyPhotoAddEditScreenState extends State<PartyPhotoAddEditScreen> {
                   // check if all tagged members have usernames
                   FirestoreHelper.pullUsersByTags(sUserIds).then((res) {
                     if(res.docs.isNotEmpty){
+                      List<User> fcmUsers = [];
+
                       for (int i = 0; i < res.docs.length; i++) {
                         DocumentSnapshot document = res.docs[i];
                         Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
                         User user = Fresh.freshUserMap(data, false);
+
+                        if(user.fcmToken.isNotEmpty){
+                          fcmUsers.add(user);
+                        }
+
                         if(user.username.isEmpty){
                           String username = '';
                           if(user.surname.trim().isNotEmpty){
@@ -524,6 +532,8 @@ class _PartyPhotoAddEditScreenState extends State<PartyPhotoAddEditScreen> {
                       }
                       widget.partyPhoto =
                           widget.partyPhoto.copyWith(tags: sUserIds);
+
+                      _showTaggedUsersDialog(context, fcmUsers);
                     } else {
                       Logx.est(_TAG, 'tagged members could not be found, tags cleared!');
                       widget.partyPhoto = widget.partyPhoto.copyWith(tags: []);
@@ -606,8 +616,6 @@ class _PartyPhotoAddEditScreenState extends State<PartyPhotoAddEditScreen> {
         firstDate: DateTime(2023, 1),
         lastDate: DateTime(2101));
     if (_sDate != null) {
-      // DateTime _sDateTemp
-
       setState(() {
         sDate = DateTime(_sDate.year, _sDate.month, _sDate.day);
         _selectTime(context, type);
@@ -788,6 +796,57 @@ class _PartyPhotoAddEditScreenState extends State<PartyPhotoAddEditScreen> {
                 FirestorageHelper.deleteFile(widget.partyPhoto.imageThumbUrl);
                 FirestoreHelper.deletePartyPhoto(widget.partyPhoto.id);
                 Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all<Color>(
+                    Constants.darkPrimary), // Set your desired background color
+              ),
+              child: const Text("no"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            )
+          ],
+        );
+      },
+    );
+  }
+
+  _showTaggedUsersDialog(BuildContext context, List<User> fcmUsers) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: Constants.lightPrimary,
+          shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(20.0))),
+          contentPadding: const EdgeInsets.all(16.0),
+          title: const Text(
+            'notify tagged members',
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 22, color: Colors.black),
+          ),
+          content: const Text(
+              "are you sure you want to notify them?"),
+          actions: [
+            TextButton(
+              child: const Text("yes"),
+              onPressed: () async {
+                Navigator.of(context).pop();
+
+                for(User user in fcmUsers){
+                  String title = 'you\'ve been tagged in $mPartyName! 🔥';
+                  String message =
+                      'congratulations ${user.name}, your photo\'s been featured! time to check out the vibes. 📸';
+
+                  //send a notification
+                  Apis.sendPushNotification(
+                      user.fcmToken, title, message);
+                  Logx.ist(_TAG,
+                      'notification has been sent to ${user.name} ${user.surname}');
+                }
               },
             ),
             TextButton(
