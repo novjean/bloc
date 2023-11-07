@@ -25,6 +25,7 @@ import '../main.dart';
 import '../routes/route_constants.dart';
 import '../services/notification_service.dart';
 import '../utils/logx.dart';
+import '../utils/number_utils.dart';
 import 'captain/captain_main_screen.dart';
 import 'photos/photos_screen.dart';
 import 'home_screen.dart';
@@ -101,33 +102,47 @@ class _MainScreenState extends State<MainScreen> {
         );
       } else {
         Logx.i(_TAG, 'user found for ${user.phoneNumber}');
-        List<blocUser.User> users = [];
 
-        for (int i = 0; i < res.docs.length; i++) {
-          DocumentSnapshot document = res.docs[i];
-          Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-          blocUser.User user = Fresh.freshUserMap(data, false);
-          users.add(user);
+        DocumentSnapshot document = res.docs[0];
+        Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+        blocUser.User user1 = Fresh.freshUserMap(data, false);
+        user1.lastSeenAt = Timestamp.now().millisecondsSinceEpoch;
 
-          if (i == res.docs.length - 1) {
-            user.lastSeenAt = Timestamp.now().millisecondsSinceEpoch;
-            if (UserPreferences.isUserLoggedIn()) {
-              if (kIsWeb) {
-                user = user.copyWith(
-                  isAppUser: false,
-                  appVersion: Constants.appVersion,
-                );
-              } else {
-                user = user.copyWith(
-                  isAppUser: true,
-                  appVersion: Constants.appVersion,
-                  isIos: Theme.of(context).platform == TargetPlatform.iOS,
-                );
-              }
-            }
-            FirestoreHelper.pushUser(user);
-            UserPreferences.setUser(user);
+        if (UserPreferences.isUserLoggedIn()) {
+          if (kIsWeb) {
+            user1 = user1.copyWith(
+              isAppUser: false,
+              appVersion: Constants.appVersion,
+            );
+          } else {
+            user1 = user1.copyWith(
+              isAppUser: true,
+              appVersion: Constants.appVersion,
+              isIos: Theme.of(context).platform == TargetPlatform.iOS,
+            );
           }
+        }
+
+        if(user1.username.isEmpty){
+          String username = '${user1.name.toLowerCase()}_${user1.surname.toLowerCase().trim()}';
+
+          //check if username is present in db
+          FirestoreHelper.pullUserByUsername(username).then((res) {
+            if(res.docs.isNotEmpty){
+              // username is already taken
+              username = username + NumberUtils.generateRandomNumber(1,999).toString();
+              user1 = user1.copyWith(username: username);
+              FirestoreHelper.pushUser(user1);
+              UserPreferences.setUser(user1);
+            } else {
+              user1 = user1.copyWith(username: username);
+              FirestoreHelper.pushUser(user1);
+              UserPreferences.setUser(user1);
+            }
+          });
+        } else {
+          FirestoreHelper.pushUser(user);
+          UserPreferences.setUser(user);
         }
       }
     }, onError: (e, s) {

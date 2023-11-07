@@ -2,6 +2,7 @@ import 'package:bloc/db/entity/user.dart' as blocUser;
 import 'package:bloc/db/shared_preferences/ui_preferences.dart';
 import 'package:bloc/helpers/dummy.dart';
 import 'package:bloc/screens/profile/profile_add_edit_register_page.dart';
+import 'package:bloc/utils/number_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:delayed_display/delayed_display.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -264,7 +265,7 @@ class _OTPScreenState extends State<OTPScreen> {
               onCompleted: (pin) async {
                 debugPrint('onCompleted: $pin');
 
-                Toaster.shortToast('verifying ${widget.phone}');
+                Logx.ist(_TAG,'verifying ${widget.phone}');
                 try {
                   await FirebaseAuth.instance
                       .signInWithCredential(PhoneAuthProvider.credential(
@@ -328,13 +329,43 @@ class _OTPScreenState extends State<OTPScreen> {
                                 }
                               }
 
-                              FirestoreHelper.pushUser(user);
-                              UserPreferences.setUser(user);
-                              UiPreferences.setHomePageIndex(0);
+                              // check if there is username
+                              if(user.username.isEmpty){
+                                String username = '${user.name.toLowerCase()}_${user.surname.toLowerCase().trim()}';
 
-                              Logx.ist(_TAG, 'hey there, welcome to bloc! 🦖');
+                                //check if username is present in db
+                                FirestoreHelper.pullUserByUsername(username).then((res) {
+                                  if(res.docs.isNotEmpty){
+                                    // username is already taken
+                                    username = username + NumberUtils.generateRandomNumber(1,999).toString();
+                                    user = user.copyWith(username: username);
+                                    FirestoreHelper.pushUser(user);
+                                    UserPreferences.setUser(user);
+                                    UiPreferences.setHomePageIndex(0);
 
-                              GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
+                                    Logx.ist(_TAG, 'hey there, welcome to bloc! 🦖');
+
+                                    GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
+                                  } else {
+                                    user = user.copyWith(username: username);
+                                    FirestoreHelper.pushUser(user);
+                                    UserPreferences.setUser(user);
+                                    UiPreferences.setHomePageIndex(0);
+
+                                    Logx.ist(_TAG, 'hey there, welcome to bloc! 🦖');
+
+                                    GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
+                                  }
+                                });
+                              } else {
+                                FirestoreHelper.pushUser(user);
+                                UserPreferences.setUser(user);
+                                UiPreferences.setHomePageIndex(0);
+
+                                Logx.ist(_TAG, 'hey there, welcome to bloc! 🦖');
+
+                                GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
+                              }
                             } else {
                               Logx.i(_TAG, 'user is not already registered in bloc, registering...');
 
@@ -393,14 +424,44 @@ class _OTPScreenState extends State<OTPScreen> {
                           }
 
                           user.lastSeenAt = Timestamp.now().millisecondsSinceEpoch;
-                          FirestoreHelper.pushUser(user);
-                          UserPreferences.setUser(user);
-                          UiPreferences.setHomePageIndex(0);
 
-                          GoRouter.of(context)
-                              .pushNamed(RouteConstants.homeRouteName);
+                          if(user.username.isEmpty){
+                            String username = '${user.name.toLowerCase()}_${user.surname.toLowerCase().trim()}';
 
-                          Toaster.shortToast('hey ${user.name.toLowerCase()}, welcome back! 🦖');
+                            //check if username is present in db
+                            FirestoreHelper.pullUserByUsername(username).then((res) {
+                              if(res.docs.isNotEmpty){
+                                // username is already taken
+                                username = username + NumberUtils.generateRandomNumber(1,999).toString();
+                                user = user.copyWith(username: username);
+                                FirestoreHelper.pushUser(user);
+                                UserPreferences.setUser(user);
+                                UiPreferences.setHomePageIndex(0);
+
+                                Toaster.shortToast('hey ${user.name.toLowerCase()}, welcome back! 🦖');
+
+                                GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
+                              } else {
+                                user = user.copyWith(username: username);
+                                FirestoreHelper.pushUser(user);
+                                UserPreferences.setUser(user);
+                                UiPreferences.setHomePageIndex(0);
+
+                                Toaster.shortToast('hey ${user.name.toLowerCase()}, welcome back! 🦖');
+
+                                GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
+                              }
+                            });
+                          } else {
+                            FirestoreHelper.pushUser(user);
+                            UserPreferences.setUser(user);
+                            UiPreferences.setHomePageIndex(0);
+
+                            GoRouter.of(context)
+                                .pushNamed(RouteConstants.homeRouteName);
+
+                            Toaster.shortToast('hey ${user.name.toLowerCase()}, welcome back! 🦖');
+                          }
                         }
                       });
                     }

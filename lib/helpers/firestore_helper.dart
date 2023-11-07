@@ -2154,6 +2154,14 @@ class FirestoreHelper {
         .get();
   }
 
+  static pullUserByUsername(String username) {
+    return FirebaseFirestore.instance
+        .collection(USERS)
+        .where('username', isEqualTo: username)
+        .get();
+  }
+
+
   static Future<QuerySnapshot<Map<String, dynamic>>> pullUsersByLevel(
       int level) {
     return FirebaseFirestore.instance
@@ -2483,6 +2491,7 @@ class FirestoreHelper {
   static void deleteUserPhoto(String docId) {
     FirebaseFirestore.instance.collection(USER_PHOTOS).doc(docId).delete();
   }
+
 
 
 }

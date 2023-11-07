@@ -60,6 +60,8 @@ class _ProfileAddEditRegisterPageState
   final List<String> years = [];
   late String _sYear;
 
+  var _isUsernameChanged = false;
+
   @override
   void initState() {
     sGender = widget.user.gender;
@@ -116,9 +118,19 @@ class _ProfileAddEditRegisterPageState
         ),
         const SizedBox(height: 24),
         DarkTextFieldWidget(
-          label: 'surname',
+          label: 'surname *',
           text: widget.user.surname,
           onChanged: (text) => widget.user = widget.user.copyWith(surname: text),
+        ),
+        widget.task == 'register' ? const SizedBox() : const SizedBox(height: 24),
+        widget.task == 'register' ? const SizedBox() : DarkTextFieldWidget(
+          label: 'username',
+          text: widget.user.username,
+          onChanged: (text) {
+            Logx.ist(_TAG, 'changing username is not yet supported.');
+            // widget.user = widget.user.copyWith(username: text);
+            // _isUsernameChanged = true;
+            },
         ),
         const SizedBox(height: 24),
         Column(
@@ -308,9 +320,33 @@ class _ProfileAddEditRegisterPageState
                   _uploadRandomPhoto(freshUser);
                 }
 
-                Logx.ist(_TAG, 'hey there, welcome to bloc! 🦖');
-                GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
+                if(freshUser.username.isEmpty){
+                  String username = '${freshUser.name.toLowerCase()}_${freshUser.surname.toLowerCase().trim()}';
+
+                  //check if username is present in db
+                  FirestoreHelper.pullUserByUsername(username).then((res) {
+                    if(res.docs.isNotEmpty){
+                      // username is already taken
+                      username = username + NumberUtils.generateRandomNumber(1,999).toString();
+                      freshUser = freshUser.copyWith(username: username);
+                      FirestoreHelper.pushUser(freshUser);
+                      UserPreferences.setUser(freshUser);
+
+                      GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
+                    } else {
+                      freshUser = freshUser.copyWith(username: username);
+                      FirestoreHelper.pushUser(freshUser);
+                      UserPreferences.setUser(freshUser);
+
+                      GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
+                    }
+                  });
+                } else {
+                  Logx.ist(_TAG, 'hey there, welcome to bloc! 🦖');
+                  GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
+                }
               } else {
+
                 Navigator.of(context).pop();
               }
             } else {
@@ -349,6 +385,10 @@ class _ProfileAddEditRegisterPageState
   bool isDataValid() {
     if (widget.user.name.isEmpty) {
       Toaster.longToast('please enter your name');
+      return false;
+    }
+    if (widget.user.surname.isEmpty) {
+      Toaster.longToast('please enter your surname');
       return false;
     }
 

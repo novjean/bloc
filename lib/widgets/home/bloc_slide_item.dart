@@ -14,7 +14,6 @@ import '../../screens/user/reservation_add_edit_screen.dart';
 import '../../utils/constants.dart';
 import '../../utils/logx.dart';
 import '../ui/icon_button_widget.dart';
-import '../ui/loading_widget.dart';
 
 class BlocSlideItem extends StatefulWidget {
   final Bloc bloc;

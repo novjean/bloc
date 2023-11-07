@@ -1,4 +1,3 @@
-import 'dart:io';
 
 import 'package:bloc/db/entity/history_music.dart';
 import 'package:bloc/helpers/firestore_helper.dart';
@@ -7,31 +6,30 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 import '../../db/entity/party_photo.dart';
 import '../../db/entity/user.dart' as blocUser;
-import '../../db/entity/user.dart';
 import '../../db/shared_preferences/user_preferences.dart';
-import '../../helpers/firestorage_helper.dart';
 import '../../helpers/fresh.dart';
 import '../../main.dart';
+import '../../routes/route_constants.dart';
 import '../../utils/constants.dart';
 import '../../utils/date_time_utils.dart';
 import '../../utils/dialog_utils.dart';
 import '../../utils/file_utils.dart';
 import '../../utils/logx.dart';
-import '../../utils/number_utils.dart';
-import '../../utils/string_utils.dart';
 import '../../widgets/profile_widget.dart';
+import '../../widgets/ui/app_bar_title.dart';
 import '../../widgets/ui/blurred_image.dart';
 import '../../widgets/ui/button_widget.dart';
-import 'profile_add_edit_register_page.dart';
 
-import 'package:barcode_widget/barcode_widget.dart';
 
 class UserProfileScreen extends StatefulWidget {
-  const UserProfileScreen({key}) : super(key: key);
+  String username;
+
+  UserProfileScreen({key, required this.username}) : super(key: key);
 
   @override
   State<UserProfileScreen> createState() => _UserProfileScreenState();
@@ -49,6 +47,9 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
   List<PartyPhoto> mPartyPhotos = [];
   var _isPartyPhotosLoading = true;
 
+  late blocUser.User mUser;
+  var _isUserLoading = true;
+
   @override
   void dispose() {
     super.dispose();
@@ -56,56 +57,66 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
 
   @override
   void initState() {
-    User user = UserPreferences.myUser;
-    if (UserPreferences.isUserLoggedIn()) {
-      FirestoreHelper.pullHistoryMusicByUser(user.id)
-          .then((res) {
-        if (res.docs.isEmpty) {
-          setState(() {
-            showMusicHistory = false;
-            isMusicHistoryLoading = false;
-          });
-        } else {
-          for (int i = 0; i < res.docs.length; i++) {
-            DocumentSnapshot document = res.docs[i];
-            Map<String, dynamic> data =
-            document.data()! as Map<String, dynamic>;
-            final HistoryMusic historyMusic =
-            Fresh.freshHistoryMusicMap(data, false);
-            mHistoryMusics.add(historyMusic);
+    FirestoreHelper.pullUserByUsername(widget.username).then((res) {
+      if(res.docs.isNotEmpty){
+        DocumentSnapshot document = res.docs[0];
+        Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+        mUser = Fresh.freshUserMap(data, false);
+
+        setState(() {
+          _isUserLoading = false;
+        });
+
+        FirestoreHelper.pullHistoryMusicByUser(mUser.id)
+            .then((res) {
+          if (res.docs.isEmpty) {
+            setState(() {
+              showMusicHistory = false;
+              isMusicHistoryLoading = false;
+            });
+          } else {
+            for (int i = 0; i < res.docs.length; i++) {
+              DocumentSnapshot document = res.docs[i];
+              Map<String, dynamic> data =
+              document.data()! as Map<String, dynamic>;
+              final HistoryMusic historyMusic =
+              Fresh.freshHistoryMusicMap(data, false);
+              mHistoryMusics.add(historyMusic);
+            }
+
+            setState(() {
+              showMusicHistory = true;
+              isMusicHistoryLoading = false;
+            });
           }
+        });
 
-          setState(() {
-            showMusicHistory = true;
-            isMusicHistoryLoading = false;
-          });
-        }
-      });
+        FirestoreHelper.pullPartyPhotosByUserId(mUser.id).then((res) {
+          if(res.docs.isNotEmpty){
+            for (int i = 0; i < res.docs.length; i++) {
+              DocumentSnapshot document = res.docs[i];
+              Map<String, dynamic> data = document.data()! as Map<String,
+                  dynamic>;
+              PartyPhoto partyPhoto = Fresh.freshPartyPhotoMap(data, false);
+              mPartyPhotos.add(partyPhoto);
+            }
 
-      FirestoreHelper.pullPartyPhotosByUserId(UserPreferences.myUser.id).then((res) {
-        if(res.docs.isNotEmpty){
-          for (int i = 0; i < res.docs.length; i++) {
-            DocumentSnapshot document = res.docs[i];
-            Map<String, dynamic> data = document.data()! as Map<String,
-                dynamic>;
-            PartyPhoto partyPhoto = Fresh.freshPartyPhotoMap(data, false);
-            mPartyPhotos.add(partyPhoto);
+            setState(() {
+              _isPartyPhotosLoading = false;
+            });
+          } else {
+            setState(() {
+              _isPartyPhotosLoading = false;
+            });
           }
-
-          setState(() {
-            _isPartyPhotosLoading = false;
-          });
-        } else {
-          setState(() {
-            _isPartyPhotosLoading = false;
-          });
-        }
-      });
-    } else {
-      setState(() {
-        _isPartyPhotosLoading = false;
-      });
-    }
+        });
+      } else {
+        // profile not found, navigate to home
+        Logx.ist(_TAG, 'unfortunately, the profile could not be found');
+        GoRouter.of(context)
+            .pushNamed(RouteConstants.landingRouteName);
+      }
+    });
 
     super.initState();
   }
@@ -113,15 +124,24 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.black,
+        title: AppBarTitle(title: ''),
+        titleSpacing: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_rounded),
+          onPressed: () {
+            GoRouter.of(context).pushNamed(RouteConstants.landingRouteName);
+          },
+        ),
+      ),
       backgroundColor: Constants.background,
-      body: _isPartyPhotosLoading ? const LoadingWidget():
+      body: _isUserLoading && _isPartyPhotosLoading ? const LoadingWidget():
       _buildBody(context),
     );
   }
 
   _buildBody(BuildContext context) {
-    final user = UserPreferences.getUser();
-
     List<_PieData> pieData2 = [];
 
     if (showMusicHistory) {
@@ -146,27 +166,20 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    buildName(user),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 15.0),
-                      child: buildFollowButton(),
-                    ),
+                    buildName(mUser),
+                    // Padding(
+                    //   padding: const EdgeInsets.only(top: 15.0),
+                    //   child: buildFollowButton(),
+                    // ),
                   ],
                 ),
               ),
-              user.imageUrl.isNotEmpty
+              mUser.imageUrl.isNotEmpty
                   ? ProfileWidget(
-                imagePath: user.imageUrl,
-                onClicked: () async {
-                  await Navigator.of(context).push(
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            ProfileAddEditRegisterPage(
-                              user: user,
-                              task: 'edit',
-                            )),
-                  );
-                  setState(() {});
+                isEdit: false,
+                imagePath: mUser.imageUrl,
+                showEditIcon: false,
+                onClicked: () {
                 },
               )
                   : ClipOval(
@@ -176,7 +189,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                   color: Colors.blue,
                   // Optional background color for the circle
                   child: Image.asset(
-                    user.gender == 'female'
+                    mUser.gender == 'female'
                         ? 'assets/profile_photos/12.png'
                         : 'assets/profile_photos/1.png',
                     // Replace with your asset image path
@@ -455,11 +468,11 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
     );
   }
 
-  Widget buildName(blocUser.User user) => Column(
+  Widget buildName(blocUser.User mUser) => Column(
     children: [
       Text(
-        user.name.isNotEmpty
-            ? '${user.name.toLowerCase()} ${user.surname.toLowerCase()}'
+        mUser.name.isNotEmpty
+            ? '${mUser.name.toLowerCase()} ${mUser.surname.toLowerCase()}'
             : 'bloc star',
         style: TextStyle(
             fontWeight: FontWeight.bold,

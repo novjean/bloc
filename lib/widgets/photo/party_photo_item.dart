@@ -6,6 +6,7 @@ import 'package:bloc/utils/file_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:go_router/go_router.dart';
 import 'package:in_app_review/in_app_review.dart';
 import 'package:multi_select_flutter/dialog/multi_select_dialog_field.dart';
 import 'package:multi_select_flutter/util/multi_select_item.dart';
@@ -18,6 +19,7 @@ import '../../db/entity/user_photo.dart';
 import '../../helpers/dummy.dart';
 import '../../helpers/fresh.dart';
 import '../../main.dart';
+import '../../routes/route_constants.dart';
 import '../../utils/challenge_utils.dart';
 import '../../utils/constants.dart';
 import '../../utils/logx.dart';
@@ -354,12 +356,15 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
                       child: GestureDetector(
                         onTap: () {
                           Logx.ist(_TAG, 'tag user clicked!');
+                          GoRouter.of(context).pushNamed(RouteConstants.profileRouteName, params: {
+                            'username': user.username,
+                          });
                         },
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(10),
                           child: Padding(
                             padding: const EdgeInsets.symmetric(
-                                vertical: 2, horizontal: 2),
+                                vertical: 2, horizontal: 4),
                             child: Text(
                               '${user.name} ${user.surname}',
                               style: TextStyle(

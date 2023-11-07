@@ -25,6 +25,7 @@ import '../screens/login_screen.dart';
 import '../screens/lounge/lounge_chat_screen.dart';
 import '../screens/parties/artist_screen.dart';
 import '../screens/privacy_policy_screen.dart';
+import '../screens/profile/user_profile_screen.dart';
 import '../screens/terms_and_conditions_screen.dart';
 import '../screens/ui/splash_screen.dart';
 import '../utils/logx.dart';
@@ -272,6 +273,18 @@ class BlocRouter {
             ));
           },
         ),
+
+        GoRoute(
+          name: RouteConstants.profileRouteName,
+          path: '/profile/:username',
+          pageBuilder: (context, state) {
+            return MaterialPage(
+                child: UserProfileScreen(
+                  username: state.params['username']!,
+                ));
+          },
+        ),
+
         GoRoute(
           name: RouteConstants.boxOfficeRouteName,
           path: '/box_office',

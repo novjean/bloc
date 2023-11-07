@@ -6,11 +6,13 @@ class ProfileWidget extends StatelessWidget {
   final String imagePath;
   final bool isEdit;
   final VoidCallback onClicked;
+  final bool showEditIcon;
 
   const ProfileWidget({
     Key? key,
     required this.imagePath,
     this.isEdit = false,
+    this.showEditIcon = true,
     required this.onClicked,
   }) : super(key: key);
 
@@ -22,11 +24,11 @@ class ProfileWidget extends StatelessWidget {
       child: Stack(
         children: [
           imagePath.isNotEmpty? buildImage(context) : displayDefaultImage(context),
-          Positioned(
+          showEditIcon? Positioned(
             bottom: 0,
             right: 4,
             child: buildEditIcon(color),
-          ),
+          ) : const SizedBox(),
         ],
       ),
     );
