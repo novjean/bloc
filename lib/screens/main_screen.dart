@@ -184,6 +184,7 @@ class _MainScreenState extends State<MainScreen> {
       fbm.unsubscribeFromTopic('reservations');
       fbm.unsubscribeFromTopic('celebrations');
       fbm.unsubscribeFromTopic('offer');
+      fbm.unsubscribeFromTopic('user_photos');
       fbm.unsubscribeFromTopic('notification_tests');
       fbm.unsubscribeFromTopic('notification_tests_2');
 
@@ -203,6 +204,7 @@ class _MainScreenState extends State<MainScreen> {
         fbm.subscribeToTopic('offer');
       }
       if (user.clearanceLevel >= Constants.ADMIN_LEVEL) {
+        fbm.subscribeToTopic('user_photos');
         fbm.subscribeToTopic('notification_tests');
         fbm.subscribeToTopic('notification_tests_2');
       }
@@ -369,6 +371,7 @@ class _MainScreenState extends State<MainScreen> {
       fbm.unsubscribeFromTopic('reservations');
       fbm.unsubscribeFromTopic('celebrations');
       fbm.unsubscribeFromTopic('offer');
+      fbm.unsubscribeFromTopic('user_photos');
       fbm.unsubscribeFromTopic('notification_tests');
       fbm.unsubscribeFromTopic('notification_tests_2');
 

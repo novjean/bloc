@@ -14,6 +14,7 @@ import '../db/entity/celebration.dart';
 import '../db/entity/notification_test.dart';
 import '../db/entity/party_guest.dart';
 import '../db/entity/reservation.dart';
+import '../db/entity/user_photo.dart';
 import '../db/shared_preferences/ui_preferences.dart';
 import '../db/shared_preferences/user_preferences.dart';
 import '../helpers/fresh.dart';
@@ -257,6 +258,20 @@ class NotificationService {
 
           String title = 'request : celebration';
           String body = '${celebration.name} : ${celebration.guestsCount}';
+          NotificationService.showDefaultNotification(title, body);
+        }
+        break;
+      }
+      case 'user_photos':{
+        UserPhoto userPhoto = Fresh.freshUserPhotoMap(jsonDecode(data['document']), false);
+
+        if(notificationId == userPhoto.id){
+          return;
+        } else {
+          notificationId = userPhoto.id;
+
+          String title = '📷 request : photo tag';
+          String body = 'a request has been received.';
           NotificationService.showDefaultNotification(title, body);
         }
         break;
