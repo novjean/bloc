@@ -195,6 +195,8 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
                             ),
                           ),
                           Positioned(
+                            bottom: 0,
+                            right: 0,
                             child: Container(
                               color: Constants.lightPrimary.withOpacity(0.7),
                               padding: EdgeInsets.symmetric(horizontal: 4),
@@ -214,18 +216,16 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
                                 ],
                               ),
                             ),
-                            bottom: 0,
-                            right: 0,
                           ),
                           Positioned(
+                            top: 0,
+                            left: 0,
                             child: Container(
                               color: Constants.lightPrimary.withOpacity(0.7),
                               padding: EdgeInsets.symmetric(horizontal: 4),
                               child: Text(DateTimeUtils.getFormattedDate(
                                   widget.partyPhoto.partyDate)),
                             ),
-                            top: 0,
-                            left: 0,
                           ),
                         ],
                       ),
@@ -355,7 +355,7 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
                 Row(
                   children: mUsers.map((user) {
                     return Container(
-                      padding: EdgeInsets.all(8.0),
+                      padding: EdgeInsets.only(left: 5.0),
                       child: GestureDetector(
                         onTap: () {
                           Logx.ist(_TAG, 'tag user clicked!');
@@ -367,9 +367,9 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
                           borderRadius: BorderRadius.circular(10),
                           child: Padding(
                             padding: const EdgeInsets.symmetric(
-                                vertical: 2, horizontal: 4),
+                                vertical: 2, horizontal: 2),
                             child: Text(
-                              '${user.name} ${user.surname}',
+                              '@${user.name.toLowerCase()}',
                               style: TextStyle(
                                 fontSize: 14,
                                 backgroundColor: Constants
