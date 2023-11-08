@@ -55,7 +55,6 @@ class _PartyPhotoAddEditScreenState extends State<PartyPhotoAddEditScreen> {
   List<String> mImageUrls = [];
   List<String> mImageThumbUrls = [];
   List<PartyPhoto> mPartyPhotos = [];
-  String mPartyName = '';
   int mPartyDate = Timestamp.now().millisecondsSinceEpoch;
 
   String imagePath = '';
@@ -492,7 +491,38 @@ class _PartyPhotoAddEditScreenState extends State<PartyPhotoAddEditScreen> {
                 if (sUserIds.isEmpty) {
                   Logx.i(_TAG, 'no users selected');
                   widget.partyPhoto = widget.partyPhoto.copyWith(tags: []);
+
+                  FirestoreHelper.pullUserPhotosByPartyPhotoId(widget.partyPhoto.id).then((res) {
+                    if(res.docs.isNotEmpty){
+                      for (int i = 0; i < res.docs.length; i++) {
+                        DocumentSnapshot document = res.docs[i];
+                        Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+                        UserPhoto userPhoto = Fresh.freshUserPhotoMap(data, false);
+                        FirestoreHelper.deleteUserPhoto(userPhoto.id);
+                      }
+                      Logx.ist(_TAG, '${res.docs.length} user photo docs has been deleted');
+                    } else {
+                      Logx.ist(_TAG, 'no user photo docs has been found!');
+                    }
+                  });
                 } else {
+
+                  // clear of all user photos
+                  FirestoreHelper.pullUserPhotosByPartyPhotoId(widget.partyPhoto.id).then((res) {
+                    if(res.docs.isNotEmpty){
+                      for (int i = 0; i < res.docs.length; i++) {
+                        DocumentSnapshot document = res.docs[i];
+                        Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+                        UserPhoto userPhoto = Fresh.freshUserPhotoMap(data, false);
+                        FirestoreHelper.deleteUserPhoto(userPhoto.id);
+                      }
+                      Logx.ist(_TAG, '${res.docs.length} user photo docs has been deleted');
+                    } else {
+                      Logx.ist(_TAG, 'no user photo docs has been found!');
+                    }
+                  });
+
+
                   // check if all tagged members have usernames
                   FirestoreHelper.pullUsersByTags(sUserIds).then((res) {
                     if(res.docs.isNotEmpty){
@@ -532,6 +562,12 @@ class _PartyPhotoAddEditScreenState extends State<PartyPhotoAddEditScreen> {
                       }
                       widget.partyPhoto =
                           widget.partyPhoto.copyWith(tags: sUserIds);
+
+                      for(String userId in sUserIds){
+                        UserPhoto uPhoto = Dummy.getDummyUserPhoto();
+                        uPhoto = uPhoto.copyWith(userId: userId, partyPhotoId: widget.partyPhoto.id, isConfirmed: true);
+                        FirestoreHelper.pushUserPhoto(uPhoto);
+                      }
 
                       _showTaggedUsersDialog(context, fcmUsers);
                     } else {
@@ -837,7 +873,7 @@ class _PartyPhotoAddEditScreenState extends State<PartyPhotoAddEditScreen> {
                 Navigator.of(context).pop();
 
                 for(User user in fcmUsers){
-                  String title = 'you\'ve been tagged in $mPartyName! 🔥';
+                  String title = 'you\'ve been tagged in ${widget.partyPhoto.partyName}! 🔥';
                   String message =
                       'congratulations ${user.name}, your photo\'s been featured! time to check out the vibes. 📸';
 

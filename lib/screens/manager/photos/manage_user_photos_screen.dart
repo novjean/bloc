@@ -10,6 +10,7 @@ import '../../../main.dart';
 import '../../../utils/constants.dart';
 import '../../../utils/logx.dart';
 import '../../../widgets/manager/manage_user_photo_item.dart';
+import '../../../widgets/ui/app_bar_title.dart';
 import '../../../widgets/ui/loading_widget.dart';
 import 'party_photo_add_edit_screen.dart';
 
@@ -29,7 +30,7 @@ class _ManageUserPhotosScreenState extends State<ManageUserPhotosScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('manage user photos'),
+        title: AppBarTitle(title: 'manage user photos'),
         titleSpacing: 0,
       ),
       floatingActionButton: FloatingActionButton(
@@ -107,6 +108,12 @@ class _ManageUserPhotosScreenState extends State<ManageUserPhotosScreen> {
                 child: ManageUserPhotoItem(
                   userPhoto: mUserPhotos[index],
                 ),
+                onDoubleTap: () {
+                  UserPhoto userPhoto = mUserPhotos[index];
+                  FirestoreHelper.deleteUserPhoto(userPhoto.id);
+
+                  Logx.ist(_TAG, 'user photo tag is deleted');
+                },
                 onTap: () {
                   // Navigator.of(context).push(
                   //   MaterialPageRoute(

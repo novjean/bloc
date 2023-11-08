@@ -106,7 +106,7 @@ class _ManageUserPhotoItemState extends State<ManageUserPhotoItem> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text('${mUser.name } ${mUser.surname}'),
-                      Text('${mUser.email}'),
+                      Text(''),
                     ],
                   ),
                   trailing: Checkbox(

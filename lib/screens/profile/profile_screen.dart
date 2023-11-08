@@ -7,11 +7,13 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 import '../../db/entity/party_photo.dart';
 import '../../db/entity/user.dart' as blocUser;
 import '../../db/entity/user.dart';
+import '../../db/entity/user_photo.dart';
 import '../../db/shared_preferences/user_preferences.dart';
 import '../../helpers/firestorage_helper.dart';
 import '../../helpers/fresh.dart';
@@ -59,8 +61,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   void initState() {
     User user = UserPreferences.myUser;
     if (UserPreferences.isUserLoggedIn()) {
-      FirestoreHelper.pullHistoryMusicByUser(user.id)
-          .then((res) {
+      FirestoreHelper.pullHistoryMusicByUser(user.id).then((res) {
         if (res.docs.isEmpty) {
           setState(() {
             showMusicHistory = false;
@@ -83,12 +84,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
         }
       });
 
-      FirestoreHelper.pullPartyPhotosByUserId(UserPreferences.myUser.id).then((res) {
-        if(res.docs.isNotEmpty){
+      FirestoreHelper.pullPartyPhotosByUserId(UserPreferences.myUser.id)
+          .then((res) {
+        if (res.docs.isNotEmpty) {
           for (int i = 0; i < res.docs.length; i++) {
             DocumentSnapshot document = res.docs[i];
-            Map<String, dynamic> data = document.data()! as Map<String,
-                dynamic>;
+            Map<String, dynamic> data =
+                document.data()! as Map<String, dynamic>;
             PartyPhoto partyPhoto = Fresh.freshPartyPhotoMap(data, false);
             mPartyPhotos.add(partyPhoto);
           }
@@ -110,8 +112,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     super.initState();
 
-    if(UserPreferences.isUserLoggedIn() && !kIsWeb){
-      if(user.imageUrl.isEmpty){
+    if (UserPreferences.isUserLoggedIn() && !kIsWeb) {
+      if (user.imageUrl.isEmpty) {
         _uploadRandomPhoto(user);
       }
     }
@@ -121,8 +123,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Constants.background,
-      body: _isPartyPhotosLoading ? const LoadingWidget():
-      _buildBody(context),
+      body: _isPartyPhotosLoading ? const LoadingWidget() : _buildBody(context),
     );
   }
 
@@ -216,7 +217,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
         ),
 
-        mPartyPhotos.isNotEmpty ? _showPhotosGridView(mPartyPhotos): const SizedBox(),
+        mPartyPhotos.isNotEmpty
+            ? _showPhotosGridView(mPartyPhotos)
+            : const SizedBox(),
 
         // NumbersWidget(),
 
@@ -234,11 +237,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 child: SfCircularChart(
                     title: ChartTitle(
                         text: '',
-                        textStyle: TextStyle(
+                        textStyle: const TextStyle(
                             color: Constants.primary,
                             fontSize: 18,
                             fontWeight: FontWeight.bold)),
-                    legend: Legend(
+                    legend: const Legend(
                         isVisible: true,
                         textStyle: TextStyle(color: Constants.lightPrimary)),
                     series: <PieSeries<_PieData, String>>[
@@ -249,19 +252,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           xValueMapper: (_PieData data, _) => data.xData,
                           yValueMapper: (_PieData data, _) => data.yData,
                           dataLabelMapper: (_PieData data, _) => data.text,
-                          dataLabelSettings: DataLabelSettings(
+                          dataLabelSettings: const DataLabelSettings(
                               isVisible: true,
                               textStyle: TextStyle(color: Colors.white))),
                     ]),
               )
             : const Padding(
-          padding: EdgeInsets.only(left: 15.0, top: 5),
-          child: Text(
-            'Events slippin\' by, you watchin\' distant. register for events and see your chart grow',
-            textAlign: TextAlign.start,
-            style: TextStyle(color: Constants.primary, fontSize: 16),
-          ),
-        )
+                padding: EdgeInsets.only(left: 15.0, top: 5),
+                child: Text(
+                  'Events slippin\' by, you watchin\' distant. register for events and see your chart grow',
+                  textAlign: TextAlign.start,
+                  style: TextStyle(color: Constants.primary, fontSize: 16),
+                ),
+              )
 
         // const SizedBox(height: 48),
         // buildAbout(user),
@@ -305,29 +308,35 @@ class _ProfileScreenState extends State<ProfileScreen> {
               child: SizedBox(
                   height: 200,
                   width: 200,
-                  child: kIsWeb? FadeInImage(
-                    placeholder: const AssetImage('assets/icons/logo.png'),
-                    image: NetworkImage(photo.imageThumbUrl.isNotEmpty? photo.imageThumbUrl:photo.imageUrl),
-                    fit: BoxFit.cover,
-                  ): CachedNetworkImage(
-                    imageUrl: photo.imageThumbUrl.isNotEmpty? photo.imageThumbUrl:photo.imageUrl,
-                    imageBuilder: (context, imageProvider) => Container(
-                      decoration: BoxDecoration(
-                        image: DecorationImage(
-                          image: imageProvider,
+                  child: kIsWeb
+                      ? FadeInImage(
+                          placeholder:
+                              const AssetImage('assets/icons/logo.png'),
+                          image: NetworkImage(photo.imageThumbUrl.isNotEmpty
+                              ? photo.imageThumbUrl
+                              : photo.imageUrl),
                           fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
-                    placeholder: (context, url) =>
-                    const FadeInImage(
-                      placeholder: AssetImage('assets/images/logo.png'),
-                      image: AssetImage('assets/images/logo.png'),
-                      fit: BoxFit.cover,
-                    ),
-                    errorWidget: (context, url, error) => const Icon(Icons.error),
-                  )
-              ),
+                        )
+                      : CachedNetworkImage(
+                          imageUrl: photo.imageThumbUrl.isNotEmpty
+                              ? photo.imageThumbUrl
+                              : photo.imageUrl,
+                          imageBuilder: (context, imageProvider) => Container(
+                            decoration: BoxDecoration(
+                              image: DecorationImage(
+                                image: imageProvider,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
+                          placeholder: (context, url) => const FadeInImage(
+                            placeholder: AssetImage('assets/images/logo.png'),
+                            image: AssetImage('assets/images/logo.png'),
+                            fit: BoxFit.cover,
+                          ),
+                          errorWidget: (context, url, error) =>
+                              const Icon(Icons.error),
+                        )),
             );
           }
         },
@@ -336,12 +345,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   int _currentIndex = 0;
-  _showPhotosDialog(int index){
+
+  _showPhotosDialog(int index) {
     List<String> partyPhotoUrls = [];
 
     _currentIndex = index;
 
-    for(PartyPhoto partyPhoto in mPartyPhotos){
+    for (PartyPhoto partyPhoto in mPartyPhotos) {
       partyPhotoUrls.add(partyPhoto.imageUrl);
     }
 
@@ -359,55 +369,47 @@ class _ProfileScreenState extends State<ProfileScreen> {
             child: Center(
               child: CarouselSlider(
                 options: CarouselOptions(
-                  initialPage: index,
-                  enableInfiniteScroll: true,
-                  autoPlay: true,
-                  autoPlayInterval: const Duration(seconds: 4),
-                  autoPlayAnimationDuration:
-                  const Duration(milliseconds: 750),
-                  enlargeCenterPage: true,
-                  scrollDirection: Axis.horizontal,
-                  onPageChanged: (index, reason) {
-                    _currentIndex = index;
-                    Logx.d(_TAG, 'index is $_currentIndex');
+                    initialPage: index,
+                    enableInfiniteScroll: true,
+                    autoPlay: true,
+                    autoPlayInterval: const Duration(seconds: 4),
+                    autoPlayAnimationDuration:
+                        const Duration(milliseconds: 750),
+                    enlargeCenterPage: true,
+                    scrollDirection: Axis.horizontal,
+                    onPageChanged: (index, reason) {
+                      _currentIndex = index;
+                      Logx.d(_TAG, 'index is $_currentIndex');
 
-                    PartyPhoto partyPhoto = mPartyPhotos[_currentIndex];
-                    FirestoreHelper.updatePartyPhotoViewCount(partyPhoto.id);
+                      PartyPhoto partyPhoto = mPartyPhotos[_currentIndex];
+                      FirestoreHelper.updatePartyPhotoViewCount(partyPhoto.id);
 
-                    setState(() {
-                    });
-                  }
-                  // aspectRatio: 1.0,
-                ),
-
-                items: partyPhotoUrls
-                    .map((item) {
-                      return kIsWeb? Image.network(item,
-                          fit: BoxFit.cover,
-                          width: mq.width) :
-                      CachedNetworkImage(
-                        imageUrl: item,
-                        imageBuilder: (context, imageProvider) => Container(
-                          decoration: BoxDecoration(
-                            image: DecorationImage(
-                              image: imageProvider,
-                              fit: BoxFit.cover,
+                      setState(() {});
+                    }),
+                items: partyPhotoUrls.map((item) {
+                  return kIsWeb
+                      ? Image.network(item, fit: BoxFit.cover, width: mq.width)
+                      : CachedNetworkImage(
+                          imageUrl: item,
+                          imageBuilder: (context, imageProvider) => Container(
+                            decoration: BoxDecoration(
+                              image: DecorationImage(
+                                image: imageProvider,
+                                fit: BoxFit.cover,
+                              ),
                             ),
                           ),
-                        ),
-                        placeholder: (context, url) =>
-                        const FadeInImage(
-                          placeholder: AssetImage('assets/images/logo.png'),
-                          image: AssetImage('assets/images/logo.png'),
-                          fit: BoxFit.cover,
-                        ),
-                        errorWidget: (context, url, error) => const Icon(Icons.error),
-                      );
-                }
-                ).toList(),
+                          placeholder: (context, url) => const FadeInImage(
+                            placeholder: AssetImage('assets/images/logo.png'),
+                            image: AssetImage('assets/images/logo.png'),
+                            fit: BoxFit.cover,
+                          ),
+                          errorWidget: (context, url, error) =>
+                              const Icon(Icons.error),
+                        );
+                }).toList(),
               ),
             ),
-
           ),
           actions: [
             TextButton(
@@ -416,37 +418,59 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 Navigator.of(ctx).pop();
               },
             ),
-            Padding(
-              padding: const EdgeInsets.only(right: 5.0, left: 10),
-              child: TextButton(
-                child: const Text("🪂 share"),
-                onPressed: () {
-                  Navigator.of(ctx).pop();
+            TextButton(
+              child: const Text("✖️ remove"),
+              onPressed: () {
+                // delete the user photo data
+                PartyPhoto partyPhoto = mPartyPhotos[_currentIndex];
 
-                  PartyPhoto partyPhoto = mPartyPhotos[_currentIndex];
+                List<String> tags = partyPhoto.tags;
+                tags.remove(UserPreferences.myUser.id);
+                partyPhoto = partyPhoto.copyWith(tags: tags);
+                FirestoreHelper.pushPartyPhoto(partyPhoto);
 
-                  int fileNum = index + 1;
-                  String fileName =
-                      '${partyPhoto.partyName} $fileNum';
-                  String shareText =
-                      'hey. check out this photo and more of ${partyPhoto.partyName} at the official bloc app. Step into the moment. 📸 \n\n🌏 https://bloc.bar/#/\n📱 https://bloc.bar/app_store.html\n\n#blocCommunity ❤️‍🔥';
+                FirestoreHelper.pullUserPhoto(
+                        UserPreferences.myUser.id, partyPhoto.id)
+                    .then((res) {
+                  if (res.docs.isNotEmpty) {
+                    DocumentSnapshot document = res.docs[0];
+                    Map<String, dynamic> data =
+                        document.data()! as Map<String, dynamic>;
+                    UserPhoto userPhoto = Fresh.freshUserPhotoMap(data, false);
+                    FirestoreHelper.deleteUserPhoto(userPhoto.id);
 
-                  FileUtils.sharePhoto(
-                      partyPhoto.id,
-                      partyPhoto.imageUrl,
-                      fileName,
-                      shareText);
-                },
-              ),
+                    Logx.ist(_TAG, 'your tag has been successfully removed!');
+                    setState(() {});
+                  } else {
+                    Logx.em(_TAG, 'your tag for the photo could not be found');
+                  }
+                });
+                Navigator.of(ctx).pop();
+              },
             ),
+            TextButton(
+              child: const Text("🪂 share"),
+              onPressed: () {
+                Navigator.of(ctx).pop();
 
+                PartyPhoto partyPhoto = mPartyPhotos[_currentIndex];
+
+                int fileNum = index + 1;
+                String fileName = '${partyPhoto.partyName} $fileNum';
+                String shareText =
+                    'hey. check out this photo and more of ${partyPhoto.partyName} at the official bloc app. Step into the moment. 📸 \n\n🌏 https://bloc.bar/#/\n📱 https://bloc.bar/app_store.html\n\n#blocCommunity ❤️‍🔥';
+
+                FileUtils.sharePhoto(
+                    partyPhoto.id, partyPhoto.imageUrl, fileName, shareText);
+              },
+            ),
             TextButton(
               style: ButtonStyle(
                 backgroundColor: MaterialStateProperty.all<Color>(
                     Constants.darkPrimary), // Set your desired background color
               ),
               child: const Text(
-                "💕 save to gallery",
+                "💕 save",
                 style: TextStyle(color: Constants.primary),
               ),
               onPressed: () {
@@ -518,8 +542,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
   void _uploadRandomPhoto(blocUser.User user) async {
     String assetFileName = '';
 
-    int photoNum = NumberUtils.generateRandomNumber(1,5);
-    if(user.gender == 'male'){
+    int photoNum = NumberUtils.generateRandomNumber(1, 5);
+    if (user.gender == 'male') {
     } else {
       photoNum += 10;
     }
@@ -555,7 +579,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ],
         ),
       );
-
 }
 
 class _PieData {
