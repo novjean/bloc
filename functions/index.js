@@ -216,18 +216,18 @@ exports.userPhotoFunction = functions
     .onCreate((snapshot, context) => {
       console.log(snapshot.data());
 
-      if (snapshot.data().isConfirmed == false) {
+      if (!snapshot.data().isConfirmed) {
         return admin.messaging().sendToTopic('user_photos', {
-            notification: {
-              title: '📷 request : photo tag',
-              body: 'a request has been received.',
-              clickAction: 'FLUTTER_NOTIFICATION_CLICK',
-            },
-            data: {
-              type: 'user_photos',
-              document: JSON.stringify(snapshot.data()),
-            },
-          });
+          notification: {
+            title: '📷 request : photo tag',
+            body: 'a request has been received.',
+            clickAction: 'FLUTTER_NOTIFICATION_CLICK',
+          },
+          data: {
+            type: 'user_photos',
+            document: JSON.stringify(snapshot.data()),
+          },
+       });
       }
     });
 
