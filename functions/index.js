@@ -227,7 +227,7 @@ exports.userPhotoFunction = functions
             type: 'user_photos',
             document: JSON.stringify(snapshot.data()),
           },
-       });
+        });
       }
     });
 
