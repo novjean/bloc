@@ -39,6 +39,7 @@ import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 
 import '../db/entity/ad.dart';
+import '../db/entity/friend.dart';
 import '../db/entity/lounge.dart';
 import '../db/entity/party_photo.dart';
 import '../db/entity/tix.dart';
@@ -69,6 +70,7 @@ class FirestoreHelper {
   static String CELEBRATIONS = 'celebrations';
   static String CITIES = 'cities';
   static String CONFIGS = 'configs';
+  static String FRIENDS = 'friends';
   static String GENRES = 'genres';
   static String GUEST_WIFIS = 'guest_wifis';
   static String HISTORY_MUSIC = 'history_music';
@@ -108,7 +110,6 @@ class FirestoreHelper {
 
   static int TABLE_PRIVATE_TYPE_ID = 1;
   static int TABLE_COMMUNITY_TYPE_ID = 2;
-
 
 
   /** ads **/
@@ -707,6 +708,23 @@ class FirestoreHelper {
   static void deleteConfig(String docId) {
     FirebaseFirestore.instance.collection(CONFIGS).doc(docId).delete();
   }
+
+  /** friend **/
+  static void pushFriend(Friend friend) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection(FRIENDS)
+          .doc(friend.id)
+          .set(friend.toMap());
+    } on PlatformException catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } on Exception catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } catch (e) {
+      Logx.em(_TAG, e.toString());
+    }
+  }
+
 
   /** genre **/
   static void pushGenre(Genre genre) async {

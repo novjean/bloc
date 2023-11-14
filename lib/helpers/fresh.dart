@@ -11,6 +11,7 @@ import '../db/entity/celebration.dart';
 import '../db/entity/challenge.dart';
 import '../db/entity/challenge_action.dart';
 import '../db/entity/config.dart';
+import '../db/entity/friend.dart';
 import '../db/entity/lounge_chat.dart';
 import '../db/entity/genre.dart';
 import '../db/entity/lounge.dart';
@@ -1348,6 +1349,84 @@ class Fresh {
     return freshConfig;
   }
 
+  /** friend **/
+  static Friend freshFriendMap(Map<String, dynamic> map, bool shouldUpdate) {
+    Friend friend = Dummy.getDummyFriend();
+
+    bool isModelChanged = false;
+
+    try {
+      friend = friend.copyWith(id: map['id'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'friend id not exist');
+    }
+    try {
+      friend = friend.copyWith(userId: map['userId'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'friend userId not exist for id: ${friend.id}');
+      isModelChanged = true;
+    }
+    try {
+      friend = friend.copyWith(friendUserId: map['friendUserId'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'friend friendUserId not exist for id: ${friend.id}');
+      isModelChanged = true;
+    }
+    try {
+      friend = friend.copyWith(isFollowing: map['isFollowing'] as bool);
+    } catch (e) {
+      Logx.em(_TAG, 'friend isFollowing not exist for id: ${friend.id}');
+      isModelChanged = true;
+    }
+    try {
+      friend = friend.copyWith(friendshipDate: map['friendshipDate'] as int);
+    } catch (e) {
+      Logx.em(_TAG, 'friend friendshipDate not exist for id: ${friend.id}');
+      isModelChanged = true;
+    }
+
+    if (isModelChanged &&
+        shouldUpdate &&
+        UserPreferences.myUser.clearanceLevel >= Constants.MANAGER_LEVEL) {
+      Logx.i(_TAG, 'updating friend ${friend.id}');
+      FirestoreHelper.pushFriend(friend);
+    }
+
+    return friend;
+  }
+
+  static Friend freshFriend(Friend friend) {
+    Friend freshFriend = Dummy.getDummyFriend();
+
+    try {
+      freshFriend = freshFriend.copyWith(id: friend.id);
+    } catch (e) {
+      Logx.em(_TAG, 'friend id not exist');
+    }
+    try {
+      freshFriend = freshFriend.copyWith(userId: friend.userId);
+    } catch (e) {
+      Logx.em(_TAG, 'friend userId not exist for id: ${friend.id}');
+    }
+    try {
+      freshFriend = freshFriend.copyWith(friendUserId: friend.friendUserId);
+    } catch (e) {
+      Logx.em(_TAG, 'friend friendUserId not exist for id: ${friend.id}');
+    }
+    try {
+      freshFriend = freshFriend.copyWith(isFollowing: friend.isFollowing);
+    } catch (e) {
+      Logx.em(_TAG, 'friend isFollowing not exist for id: ${friend.id}');
+    }
+    try {
+      freshFriend = freshFriend.copyWith(friendshipDate: friend.friendshipDate);
+    } catch (e) {
+      Logx.em(_TAG, 'friend friendshipDate not exist for id: ${friend.id}');
+    }
+
+    return freshFriend;
+  }
+
   /** genre **/
   static Genre freshGenreMap(Map<String, dynamic> map, bool shouldUpdate) {
     Genre genre = Dummy.getDummyGenre();
@@ -2031,22 +2110,22 @@ class Fresh {
     try {
       freshParty = freshParty.copyWith(eventName: party.eventName);
     } catch (e) {
-      Logx.em(_TAG, 'party eventName not exist for party id: ' + party.id);
+      Logx.em(_TAG, 'party eventName not exist for id: ${party.id}');
     }
     try {
       freshParty = freshParty.copyWith(description: party.description);
     } catch (e) {
-      Logx.em(_TAG, 'party description not exist for party id: ' + party.id);
+      Logx.em(_TAG, 'party description not exist for id: ${party.id}');
     }
     try {
       freshParty = freshParty.copyWith(blocServiceId: party.blocServiceId);
     } catch (e) {
-      Logx.em(_TAG, 'party blocServiceId not exist for party id: ' + party.id);
+      Logx.em(_TAG, 'party blocServiceId not exist for id: ${party.id}');
     }
     try {
       freshParty = freshParty.copyWith(type: party.type);
     } catch (e) {
-      Logx.em(_TAG, 'party type not exist for party id: ' + party.id);
+      Logx.em(_TAG, 'party type not exist for id: ${party.id}');
     }
     try {
       freshParty = freshParty.copyWith(chapter: party.chapter);

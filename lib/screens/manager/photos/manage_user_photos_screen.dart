@@ -3,6 +3,7 @@ import 'package:bloc/db/entity/user_photo.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
+import '../../../db/entity/party_photo.dart';
 import '../../../helpers/dummy.dart';
 import '../../../helpers/firestore_helper.dart';
 import '../../../helpers/fresh.dart';
@@ -177,7 +178,7 @@ class _ManageUserPhotosScreenState extends State<ManageUserPhotosScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text('add photos'),
+                        const Text('check connection'),
                         SizedBox.fromSize(
                           size: const Size(50, 50),
                           child: ClipOval(
@@ -188,15 +189,21 @@ class _ManageUserPhotosScreenState extends State<ManageUserPhotosScreen> {
                                 onTap: () {
                                   Navigator.of(ctx).pop();
 
-                                  Navigator.of(context).push(
-                                    MaterialPageRoute(
-                                        builder: (ctx) =>
-                                            PartyPhotoAddEditScreen(
-                                              partyPhoto:
-                                              Dummy.getDummyPartyPhoto(),
-                                              task: 'add',
-                                            )),
-                                  );
+                                  for(UserPhoto userPhoto in mUserPhotos){
+                                    FirestoreHelper.pullPartyPhoto(userPhoto.partyPhotoId).then((res) {
+                                      if(res.docs.isNotEmpty){
+                                        DocumentSnapshot document = res.docs[0];
+                                        Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+                                        PartyPhoto partyPhoto = Fresh.freshPartyPhotoMap(data, false);
+
+                                        if(partyPhoto.tags.contains(userPhoto.userId)){
+                                          Logx.ist(_TAG, '');
+                                        } else {
+                                          Logx.ist(_TAG, 'tag missing on ${partyPhoto.partyName} : ${partyPhoto.views}');
+                                        }
+                                      }
+                                    });
+                                  }
                                 },
                                 child: const Column(
                                   mainAxisAlignment: MainAxisAlignment.center,

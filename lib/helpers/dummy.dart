@@ -21,6 +21,7 @@ import '../db/entity/captain_service.dart';
 import '../db/entity/celebration.dart';
 import '../db/entity/challenge_action.dart';
 import '../db/entity/config.dart';
+import '../db/entity/friend.dart';
 import '../db/entity/lounge_chat.dart';
 import '../db/entity/genre.dart';
 import '../db/entity/lounge.dart';
@@ -209,6 +210,17 @@ class Dummy {
         upVoters: [],
         downVoters: []);
     return dummyChat;
+  }
+
+  static Friend getDummyFriend() {
+    Friend dummyFriend = Friend(
+      id: StringUtils.getRandomString(28),
+      userId: '',
+      friendUserId: '',
+      isFollowing: true,
+      friendshipDate: Timestamp.now().millisecondsSinceEpoch
+    );
+    return dummyFriend;
   }
 
   static Genre getDummyGenre() {

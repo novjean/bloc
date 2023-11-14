@@ -421,23 +421,6 @@ class _PartyPhotoAddEditScreenState extends State<PartyPhotoAddEditScreen> {
                     widget.partyPhoto.copyWith(initLikes: initLikes);
               });
             }),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(right: 10, bottom: 5),
-              child: DelayedDisplay(
-                delay: const Duration(seconds: 1),
-                child: Text(
-                  "* required",
-                  style: TextStyle(
-                    color: Theme.of(context).primaryColor,
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
         Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -506,7 +489,6 @@ class _PartyPhotoAddEditScreenState extends State<PartyPhotoAddEditScreen> {
                     }
                   });
                 } else {
-
                   // clear of all user photos
                   FirestoreHelper.pullUserPhotosByPartyPhotoId(widget.partyPhoto.id).then((res) {
                     if(res.docs.isNotEmpty){
@@ -521,7 +503,6 @@ class _PartyPhotoAddEditScreenState extends State<PartyPhotoAddEditScreen> {
                       Logx.ist(_TAG, 'no user photo docs has been found!');
                     }
                   });
-
 
                   // check if all tagged members have usernames
                   FirestoreHelper.pullUsersByTags(sUserIds).then((res) {
@@ -572,12 +553,30 @@ class _PartyPhotoAddEditScreenState extends State<PartyPhotoAddEditScreen> {
                       _showTaggedUsersDialog(context, fcmUsers);
                     } else {
                       Logx.est(_TAG, 'tagged members could not be found, tags cleared!');
-                      widget.partyPhoto = widget.partyPhoto.copyWith(tags: []);
+                      // widget.partyPhoto = widget.partyPhoto.copyWith(tags: []);
                     }
 
                   });
                 }
               },
+            ),
+            const SizedBox(height: 12),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(right: 10, bottom: 5),
+                  child: DelayedDisplay(
+                    delay: const Duration(seconds: 1),
+                    child: Text(
+                      "* required",
+                      style: TextStyle(
+                        color: Theme.of(context).primaryColor,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
             const SizedBox(height: 24),
 

@@ -7,7 +7,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 import '../../db/entity/party_photo.dart';
@@ -430,14 +429,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 FirestoreHelper.pushPartyPhoto(partyPhoto);
 
                 FirestoreHelper.pullUserPhoto(
-                        UserPreferences.myUser.id, partyPhoto.id)
+                      UserPreferences.myUser.id, partyPhoto.id)
                     .then((res) {
                   if (res.docs.isNotEmpty) {
                     DocumentSnapshot document = res.docs[0];
                     Map<String, dynamic> data =
                         document.data()! as Map<String, dynamic>;
                     UserPhoto userPhoto = Fresh.freshUserPhotoMap(data, false);
-                    FirestoreHelper.deleteUserPhoto(userPhoto.id);
+                    userPhoto = userPhoto.copyWith(isConfirmed: false);
+                    FirestoreHelper.pushUserPhoto(userPhoto);
 
                     Logx.ist(_TAG, 'your tag has been successfully removed!');
                     setState(() {});
