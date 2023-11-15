@@ -50,6 +50,8 @@ class _ManageUserPhotoItemState extends State<ManageUserPhotoItem> {
       }
     });
 
+    super.initState();
+
     FirestoreHelper.pullUser(widget.userPhoto.userId).then((res){
       if(res.docs.isNotEmpty){
         DocumentSnapshot document = res.docs[0];
@@ -66,8 +68,6 @@ class _ManageUserPhotoItemState extends State<ManageUserPhotoItem> {
         });
       }
     });
-
-    super.initState();
   }
 
   @override

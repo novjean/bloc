@@ -186,20 +186,24 @@ class _ManageUserPhotosScreenState extends State<ManageUserPhotosScreen> {
                               color: Constants.primary,
                               child: InkWell(
                                 splashColor: Constants.darkPrimary,
-                                onTap: () {
+                                onTap: () async {
                                   Navigator.of(ctx).pop();
 
                                   for(UserPhoto userPhoto in mUserPhotos){
-                                    FirestoreHelper.pullPartyPhoto(userPhoto.partyPhotoId).then((res) {
+                                    await FirestoreHelper.pullPartyPhoto(userPhoto.partyPhotoId).then((res) {
                                       if(res.docs.isNotEmpty){
                                         DocumentSnapshot document = res.docs[0];
                                         Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
                                         PartyPhoto partyPhoto = Fresh.freshPartyPhotoMap(data, false);
 
                                         if(partyPhoto.tags.contains(userPhoto.userId)){
-                                          Logx.ist(_TAG, '');
+                                          Logx.d(_TAG, 'name ${partyPhoto.partyName} : views ${partyPhoto.views} : tags ${partyPhoto.tags.length} ');
                                         } else {
-                                          Logx.ist(_TAG, 'tag missing on ${partyPhoto.partyName} : ${partyPhoto.views}');
+                                          if(userPhoto.isConfirmed){
+                                            partyPhoto.tags.add(userPhoto.userId);
+                                            FirestoreHelper.pushPartyPhoto(partyPhoto);
+                                            Logx.ist(_TAG, 'tag fixed on ${partyPhoto.partyName} : ${partyPhoto.views}');
+                                          }
                                         }
                                       }
                                     });
