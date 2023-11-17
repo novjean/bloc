@@ -725,6 +725,25 @@ class FirestoreHelper {
     }
   }
 
+  static pullFriends(String userId) {
+    return FirebaseFirestore.instance
+        .collection(FRIENDS)
+        .where('userId', isEqualTo: userId)
+        .orderBy('friendshipDate', descending: true)
+        .get();
+  }
+
+  static pullFriend(String userId, String friendUserId) {
+    return FirebaseFirestore.instance
+        .collection(FRIENDS)
+        .where('userId', isEqualTo: userId)
+        .where('friendUserId', isEqualTo: friendUserId)
+        .get();
+  }
+
+  static void deleteFriend(String docId) {
+    FirebaseFirestore.instance.collection(FRIENDS).doc(docId).delete();
+  }
 
   /** genre **/
   static void pushGenre(Genre genre) async {

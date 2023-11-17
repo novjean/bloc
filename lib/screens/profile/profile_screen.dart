@@ -9,6 +9,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
+import '../../db/entity/friend.dart';
 import '../../db/entity/party_photo.dart';
 import '../../db/entity/user.dart' as blocUser;
 import '../../db/entity/user.dart';
@@ -50,6 +51,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   List<PartyPhoto> mPartyPhotos = [];
   var _isPartyPhotosLoading = true;
+
+  List<Friend> mFriends = [];
+  var _isFriendsLoading = true;
 
   @override
   void dispose() {
@@ -103,6 +107,27 @@ class _ProfileScreenState extends State<ProfileScreen> {
           });
         }
       });
+
+      FirestoreHelper.pullFriends(UserPreferences.myUser.id).then((res) {
+        if(res.docs.isNotEmpty){
+          for (int i = 0; i < res.docs.length; i++) {
+            DocumentSnapshot document = res.docs[i];
+            Map<String, dynamic> data =
+            document.data()! as Map<String, dynamic>;
+            Friend friend = Fresh.freshFriendMap(data, false);
+            mFriends.add(friend);
+          }
+
+          setState(() {
+            _isFriendsLoading = false;
+          });
+        } else {
+          setState(() {
+            _isFriendsLoading = false;
+          });
+        }
+      });
+
     } else {
       setState(() {
         _isPartyPhotosLoading = false;
@@ -147,13 +172,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
           padding: const EdgeInsets.symmetric(horizontal: 10.0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Padding(
+            children: [Padding(
                 padding: const EdgeInsets.only(right: 15.0),
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     buildName(user),
+
                     Padding(
                       padding: const EdgeInsets.only(top: 15.0),
                       child: buildPhotoQrToggleButton(),
@@ -218,7 +243,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
         mPartyPhotos.isNotEmpty
             ? _showPhotosGridView(mPartyPhotos)
-            : const SizedBox(),
+            : const Padding(
+          padding: EdgeInsets.only(left: 15.0, top: 5),
+          child: Text(
+            'no photos to reminisce, just emptiness over here for a while.',
+            textAlign: TextAlign.start,
+            style: TextStyle(color: Constants.primary, fontSize: 16),
+          ),
+        ),
 
         // NumbersWidget(),
 
@@ -458,7 +490,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 int fileNum = index + 1;
                 String fileName = '${partyPhoto.partyName} $fileNum';
                 String shareText =
-                    'hey. check out this photo and more of ${partyPhoto.partyName} at the official bloc app. Step into the moment. 📸 \n\n🌏 https://bloc.bar/#/\n📱 https://bloc.bar/app_store.html\n\n#blocCommunity ❤️‍🔥';
+                    'hey. check out my photo at ${partyPhoto.partyName} and more at the official bloc app. Step into the moment. 📸 \n\n🌏 https://bloc.bar/#/\n📱 https://bloc.bar/app_store.html\n\n#blocCommunity ❤️‍🔥';
 
                 FileUtils.sharePhoto(
                     partyPhoto.id, partyPhoto.imageUrl, fileName, shareText);

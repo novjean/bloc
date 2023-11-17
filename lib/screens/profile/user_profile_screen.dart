@@ -9,9 +9,11 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
+import '../../db/entity/friend.dart';
 import '../../db/entity/party_photo.dart';
 import '../../db/entity/user.dart' as blocUser;
 import '../../db/shared_preferences/user_preferences.dart';
+import '../../helpers/dummy.dart';
 import '../../helpers/fresh.dart';
 import '../../main.dart';
 import '../../routes/route_constants.dart';
@@ -38,7 +40,7 @@ class UserProfileScreen extends StatefulWidget {
 class _UserProfileScreenState extends State<UserProfileScreen> {
   static const String _TAG = 'UserProfileScreen';
 
-  String _buttonText = 'follow';
+  String _buttonText = 'friend';
 
   List<HistoryMusic> mHistoryMusics = [];
   bool showMusicHistory = false;
@@ -49,6 +51,11 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
 
   late blocUser.User mUser;
   var _isUserLoading = true;
+
+  Friend mFriend = Dummy.getDummyFriend();
+  var _isFriendLoading = true;
+  bool isFriend = false;
+  bool isFollowing = true;
 
   @override
   void dispose() {
@@ -110,6 +117,28 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
             });
           }
         });
+
+        if(UserPreferences.isUserLoggedIn()){
+          FirestoreHelper.pullFriend(UserPreferences.myUser.id, mUser.id).then((res) {
+            if(res.docs.isNotEmpty){
+              DocumentSnapshot document = res.docs[0];
+              Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+              mFriend = Fresh.freshFriendMap(data, false);
+
+              setState(() {
+                isFriend = true;
+                _buttonText = '☠️ unfriend';
+                isFollowing = mFriend.isFollowing;
+              });
+            } else{
+              setState(() {
+                isFriend = false;
+                _buttonText = '🤍 friend';
+                isFollowing = false;
+              });
+            }
+          });
+        }
       } else {
         // profile not found, navigate to home
         Logx.ist(_TAG, 'unfortunately, the profile could not be found');
@@ -152,109 +181,212 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
       }
     }
 
-    return ListView(
-      physics: const BouncingScrollPhysics(),
-      children: [
-        const SizedBox(height: 15),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 10.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(right: 15.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    buildName(mUser),
-                    // Padding(
-                    //   padding: const EdgeInsets.only(top: 15.0),
-                    //   child: buildFollowButton(),
-                    // ),
-                  ],
-                ),
-              ),
-              mUser.imageUrl.isNotEmpty
-                  ? ProfileWidget(
-                isEdit: false,
-                imagePath: mUser.imageUrl,
-                showEditIcon: false,
-                onClicked: () {
-                },
-              )
-                  : ClipOval(
-                child: Container(
-                  width: 128.0,
-                  height: 128.0,
-                  color: Colors.blue,
-                  // Optional background color for the circle
-                  child: Image.asset(
-                    mUser.gender == 'female'
-                        ? 'assets/profile_photos/12.png'
-                        : 'assets/profile_photos/1.png',
-                    // Replace with your asset image path
-                    fit: BoxFit.cover,
+    return Stack(
+      children: [ ListView(
+        shrinkWrap: true,
+        physics: const BouncingScrollPhysics(),
+        children: [
+          const SizedBox(height: 15),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              mainAxisSize: MainAxisSize.min,
+
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(right: 15.0),
+                  child: Expanded(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        buildName(mUser),
+
+                        UserPreferences.isUserLoggedIn()?
+                        Padding(
+                        padding: const EdgeInsets.only(top: 15.0),
+                        child: buildFriendUnfriendToggleButton(),
+                        ) : const SizedBox(),
+                      ],
+                    ),
                   ),
                 ),
+                mUser.imageUrl.isNotEmpty
+                    ? ProfileWidget(
+                  isEdit: false,
+                  imagePath: mUser.imageUrl,
+                  showEditIcon: false,
+                  onClicked: () {
+                  },
+                )
+                    : ClipOval(
+                  child: Container(
+                    width: 128.0,
+                    height: 128.0,
+                    color: Constants.primary,
+                    // Optional background color for the circle
+                    child: Image.asset(
+                      mUser.gender == 'female'
+                          ? 'assets/profile_photos/12.png'
+                          : 'assets/profile_photos/1.png',
+                      // Replace with your asset image path
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 24),
+          const Padding(
+            padding: EdgeInsets.only(left: 15.0, right: 15, bottom: 10),
+            child: Text(
+              'photos',
+              textAlign: TextAlign.start,
+              style: TextStyle(color: Constants.primary, fontSize: 20),
+            ),
+          ),
+
+          mPartyPhotos.isNotEmpty ? _showPhotosGridView(mPartyPhotos): const SizedBox(),
+          const Divider(),
+          const Padding(
+            padding: EdgeInsets.only(left: 15.0),
+            child: Text(
+              'history',
+              textAlign: TextAlign.start,
+              style: TextStyle(color: Constants.primary, fontSize: 20),
+            ),
+          ),
+          showMusicHistory
+              ? Center(
+            child: SfCircularChart(
+                title: ChartTitle(
+                    text: '',
+                    textStyle: const TextStyle(
+                        color: Constants.primary,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold)),
+                legend: const Legend(
+                    isVisible: true,
+                    textStyle: TextStyle(color: Constants.lightPrimary)),
+                series: <PieSeries<_PieData, String>>[
+                  PieSeries<_PieData, String>(
+                      explode: true,
+                      explodeIndex: 0,
+                      dataSource: pieData2,
+                      xValueMapper: (_PieData data, _) => data.xData,
+                      yValueMapper: (_PieData data, _) => data.yData,
+                      dataLabelMapper: (_PieData data, _) => data.text,
+                      dataLabelSettings: const DataLabelSettings(
+                          isVisible: true,
+                          textStyle: TextStyle(color: Colors.white))),
+                ]),
+          )
+              : Padding(
+            padding: const EdgeInsets.only(left: 15.0, top: 5),
+            child: Text(
+              '${mUser.name.toLowerCase()} hasn\'t pulled up to any events yet!',
+              textAlign: TextAlign.start,
+              style: const TextStyle(color: Constants.primary, fontSize: 16),
+            ),
+          )
+        ],
+      ),
+        Positioned(
+          top: 5,
+          left: 5,
+          child: isFriend ? Container(
+            height: 50,
+            width: 50,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: Colors.grey, // Set the border color
+                width: 2.0, // Set the border width
               ),
-            ],
-          ),
-        ),
+              color: Colors.black
+            ),
+            child: isFollowing? IconButton(
+              icon: Icon(
+                Icons.notifications_off,
+                color:  Constants.errorColor,),
+              onPressed: () {
+                Logx.i(_TAG,'notification turned off!');
 
-        const SizedBox(height: 24),
-        const Padding(
-          padding: EdgeInsets.only(left: 15.0, right: 15, bottom: 10),
-          child: Text(
-            'photos',
-            textAlign: TextAlign.start,
-            style: TextStyle(color: Constants.primary, fontSize: 20),
-          ),
-        ),
+                mFriend = mFriend.copyWith(isFollowing: false);
+                FirestoreHelper.pushFriend(mFriend);
 
-        mPartyPhotos.isNotEmpty ? _showPhotosGridView(mPartyPhotos): const SizedBox(),
-        const Divider(),
-        const Padding(
-          padding: EdgeInsets.only(left: 15.0),
-          child: Text(
-            'history',
-            textAlign: TextAlign.start,
-            style: TextStyle(color: Constants.primary, fontSize: 20),
+                setState(() {
+                  isFollowing = false;
+                  mFriend;
+                });
+              },
+            ) : IconButton(
+              icon: Icon(
+                Icons.notifications,
+                color:  Constants.primary,),
+              onPressed: () {
+                Logx.i(_TAG,'notification turned on!');
+
+                mFriend = mFriend.copyWith(isFollowing: true);
+                FirestoreHelper.pushFriend(mFriend);
+
+                setState(() {
+                  isFollowing = true;
+                  mFriend;
+                });
+              },
+            ),
+          ) : const SizedBox(),
+        )
+    ]
+    );
+  }
+
+  Widget buildFriendUnfriendToggleButton() {
+    return Center(
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Theme.of(context).primaryColor,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(5),
           ),
+          foregroundColor: Colors.white,
+          padding: const EdgeInsets.symmetric(horizontal: 20),
         ),
-        showMusicHistory
-            ? Center(
-          child: SfCircularChart(
-              title: ChartTitle(
-                  text: '',
-                  textStyle: const TextStyle(
-                      color: Constants.primary,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold)),
-              legend: const Legend(
-                  isVisible: true,
-                  textStyle: TextStyle(color: Constants.lightPrimary)),
-              series: <PieSeries<_PieData, String>>[
-                PieSeries<_PieData, String>(
-                    explode: true,
-                    explodeIndex: 0,
-                    dataSource: pieData2,
-                    xValueMapper: (_PieData data, _) => data.xData,
-                    yValueMapper: (_PieData data, _) => data.yData,
-                    dataLabelMapper: (_PieData data, _) => data.text,
-                    dataLabelSettings: const DataLabelSettings(
-                        isVisible: true,
-                        textStyle: TextStyle(color: Colors.white))),
-              ]),
-        )
-            : const Padding(
-          padding: EdgeInsets.only(left: 15.0, top: 5),
-          child: Text(
-            'this person hasn\'t pulled up to any events yet!',
-            textAlign: TextAlign.start,
-            style: TextStyle(color: Constants.primary, fontSize: 16),
-          ),
-        )
-      ],
+        onPressed: () {
+          isFriend = !isFriend;
+
+          if(isFriend){
+            // become friends
+            Friend friend = Dummy.getDummyFriend();
+            friend = friend.copyWith(userId: UserPreferences.myUser.id,
+              friendUserId: mUser.id,
+              isFollowing: true,
+            );
+            FirestoreHelper.pushFriend(friend);
+
+            mFriend = friend;
+
+          } else {
+            FirestoreHelper.deleteFriend(mFriend.id);
+          }
+
+          setState(() {
+                  if (!isFriend) {
+                    _buttonText = '🤍 friend';
+                  } else {
+                    _buttonText = '☠️ unfriend';
+                  }
+                  mFriend;
+                });
+        },
+        child: Text(_buttonText,
+          style: TextStyle(fontSize: 18),),
+      )
     );
   }
 

@@ -355,10 +355,9 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
                 Row(
                   children: mUsers.map((user) {
                     return Container(
-                      padding: EdgeInsets.only(left: 5.0),
+                      padding: const EdgeInsets.only(left: 5.0),
                       child: GestureDetector(
                         onTap: () {
-                          Logx.ist(_TAG, 'tag user clicked!');
                           GoRouter.of(context).pushNamed(RouteConstants.profileRouteName, params: {
                             'username': user.username,
                           });
