@@ -20,6 +20,7 @@ import 'ad_campaigns/manage_ad_campaigns_screen.dart';
 import 'celebrations/manage_celebrations_screen.dart';
 import 'challenges/manage_challenges_screen.dart';
 import 'configs/manage_configs_screen.dart';
+import 'friends/manage_friends_screen.dart';
 import 'guest_wifi_edit_screen.dart';
 import 'inventory/manage_inventory_screen.dart';
 import 'lounges/manage_lounges_screen.dart';
@@ -133,6 +134,14 @@ class ManagerServicesScreen extends StatelessWidget {
                       {
                         Navigator.of(context).push(MaterialPageRoute(
                             builder: (ctx) => ManageConfigsScreen(
+                              blocServiceId: blocService.id,
+                            )));
+                        break;
+                      }
+                    case 'friends':
+                      {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (ctx) => ManageFriendsScreen(
                               blocServiceId: blocService.id,
                             )));
                         break;

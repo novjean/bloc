@@ -57,23 +57,25 @@ class ManageAdsScreen extends StatelessWidget {
     return StreamBuilder<QuerySnapshot>(
         stream: FirestoreHelper.getAds(serviceId),
         builder: (ctx, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const LoadingWidget();
+          switch (snapshot.connectionState) {
+            case ConnectionState.waiting:
+            case ConnectionState.none:
+              return const LoadingWidget();
+            case ConnectionState.active:
+            case ConnectionState.done:
+              {
+                List<Ad> ads = [];
+                for (int i = 0; i < snapshot.data!.docs.length; i++) {
+                  DocumentSnapshot document = snapshot.data!.docs[i];
+                  Map<String, dynamic> map = document.data()! as Map<
+                      String,
+                      dynamic>;
+                  final Ad _ad = Fresh.freshAdMap(map, false);
+                  ads.add(_ad);
+                }
+                return _displayAds(context, ads);
+              }
           }
-
-          List<Ad> ads = [];
-          for (int i = 0; i < snapshot.data!.docs.length; i++) {
-            DocumentSnapshot document = snapshot.data!.docs[i];
-            Map<String, dynamic> map = document.data()! as Map<String, dynamic>;
-            final Ad _ad = Fresh.freshAdMap(map, false);
-            ads.add(_ad);
-
-            if (i == snapshot.data!.docs.length - 1) {
-              return _displayAds(context, ads);
-            }
-          }
-          Logx.i(_TAG, 'loading ads...');
-          return const LoadingWidget();
         });
   }
 

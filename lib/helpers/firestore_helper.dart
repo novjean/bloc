@@ -725,6 +725,13 @@ class FirestoreHelper {
     }
   }
 
+  static getFriends() {
+    return FirebaseFirestore.instance
+        .collection(FRIENDS)
+        .orderBy('friendshipDate', descending: true)
+        .snapshots();
+  }
+
   static pullFriends(String userId) {
     return FirebaseFirestore.instance
         .collection(FRIENDS)
@@ -2528,6 +2535,7 @@ class FirestoreHelper {
   static void deleteUserPhoto(String docId) {
     FirebaseFirestore.instance.collection(USER_PHOTOS).doc(docId).delete();
   }
+
 
 
 
