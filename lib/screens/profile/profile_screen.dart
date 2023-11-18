@@ -147,7 +147,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Constants.background,
-      body: _isPartyPhotosLoading ? const LoadingWidget() : _buildBody(context),
+      body: _buildBody(context),
     );
   }
 
@@ -241,6 +241,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
         ),
 
+        _isPartyPhotosLoading? const SizedBox():
         mPartyPhotos.isNotEmpty
             ? _showPhotosGridView(mPartyPhotos)
             : const Padding(

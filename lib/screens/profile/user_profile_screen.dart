@@ -165,7 +165,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
         ),
       ),
       backgroundColor: Constants.background,
-      body: _isUserLoading && _isPartyPhotosLoading ? const LoadingWidget():
+      body: _isUserLoading ? const LoadingWidget():
       _buildBody(context),
     );
   }
@@ -250,7 +250,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
             ),
           ),
 
-          mPartyPhotos.isNotEmpty ? _showPhotosGridView(mPartyPhotos): const SizedBox(),
+          _isPartyPhotosLoading ? const SizedBox() : mPartyPhotos.isNotEmpty ? _showPhotosGridView(mPartyPhotos): const SizedBox(),
           const Divider(),
           const Padding(
             padding: EdgeInsets.only(left: 15.0),
@@ -310,7 +310,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
               color: Colors.black
             ),
             child: isFollowing? IconButton(
-              icon: Icon(
+              icon: const Icon(
                 Icons.notifications_off,
                 color:  Constants.errorColor,),
               onPressed: () {
@@ -325,7 +325,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                 });
               },
             ) : IconButton(
-              icon: Icon(
+              icon: const Icon(
                 Icons.notifications,
                 color:  Constants.primary,),
               onPressed: () {
