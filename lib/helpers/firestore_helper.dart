@@ -2231,7 +2231,7 @@ class FirestoreHelper {
         .get();
   }
 
-  static pullUsersByTags(List<String> userIds) {
+  static pullUsersByIds(List<String> userIds) {
     return FirebaseFirestore.instance
         .collection(USERS)
         .where('id', whereIn: userIds)

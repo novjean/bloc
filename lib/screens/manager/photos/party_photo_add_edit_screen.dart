@@ -505,7 +505,7 @@ class _PartyPhotoAddEditScreenState extends State<PartyPhotoAddEditScreen> {
                   });
 
                   // check if all tagged members have usernames
-                  FirestoreHelper.pullUsersByTags(sUserIds).then((res) {
+                  FirestoreHelper.pullUsersByIds(sUserIds).then((res) {
                     if(res.docs.isNotEmpty){
                       List<User> fcmUsers = [];
 

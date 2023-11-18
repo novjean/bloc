@@ -53,7 +53,7 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
   @override
   void initState() {
     if(widget.partyPhoto.tags.isNotEmpty){
-      FirestoreHelper.pullUsersByTags(widget.partyPhoto.tags).then((res) {
+      FirestoreHelper.pullUsersByIds(widget.partyPhoto.tags).then((res) {
         if(res.docs.isNotEmpty){
           for (int i = 0; i < res.docs.length; i++) {
             DocumentSnapshot document = res.docs[i];
@@ -199,7 +199,7 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
                             right: 0,
                             child: Container(
                               color: Constants.lightPrimary.withOpacity(0.7),
-                              padding: EdgeInsets.symmetric(horizontal: 4),
+                              padding: const EdgeInsets.symmetric(horizontal: 4),
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 mainAxisAlignment: MainAxisAlignment.end,
@@ -222,7 +222,7 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
                             left: 0,
                             child: Container(
                               color: Constants.lightPrimary.withOpacity(0.7),
-                              padding: EdgeInsets.symmetric(horizontal: 4),
+                              padding: const EdgeInsets.symmetric(horizontal: 4),
                               child: Text(DateTimeUtils.getFormattedDate(
                                   widget.partyPhoto.partyDate)),
                             ),
@@ -352,7 +352,7 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
                   ),
                 ),
 
-                Row(
+                _isUsersLoading ? const SizedBox(): Row(
                   children: mUsers.map((user) {
                     return Container(
                       padding: const EdgeInsets.only(left: 5.0),
