@@ -725,9 +725,17 @@ class FirestoreHelper {
     }
   }
 
-  static getFriends() {
+  static getManageFriends() {
     return FirebaseFirestore.instance
         .collection(FRIENDS)
+        .orderBy('friendshipDate', descending: true)
+        .snapshots();
+  }
+
+  static getUserFriends(String userId) {
+    return FirebaseFirestore.instance
+        .collection(FRIENDS)
+        .where('userId', isEqualTo: userId)
         .orderBy('friendshipDate', descending: true)
         .snapshots();
   }

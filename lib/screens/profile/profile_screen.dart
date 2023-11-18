@@ -25,6 +25,7 @@ import '../../utils/file_utils.dart';
 import '../../utils/logx.dart';
 import '../../utils/number_utils.dart';
 import '../../utils/string_utils.dart';
+import '../../widgets/profile/user_friend_item.dart';
 import '../../widgets/profile_widget.dart';
 import '../../widgets/ui/blurred_image.dart';
 import '../../widgets/ui/button_widget.dart';
@@ -107,27 +108,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
           });
         }
       });
-
-      FirestoreHelper.pullFriends(UserPreferences.myUser.id).then((res) {
-        if(res.docs.isNotEmpty){
-          for (int i = 0; i < res.docs.length; i++) {
-            DocumentSnapshot document = res.docs[i];
-            Map<String, dynamic> data =
-            document.data()! as Map<String, dynamic>;
-            Friend friend = Fresh.freshFriendMap(data, false);
-            mFriends.add(friend);
-          }
-
-          setState(() {
-            _isFriendsLoading = false;
-          });
-        } else {
-          setState(() {
-            _isFriendsLoading = false;
-          });
-        }
-      });
-
     } else {
       setState(() {
         _isPartyPhotosLoading = false;
@@ -231,6 +211,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
         ),
 
+        const SizedBox(height: 24),
+        const Padding(
+          padding: EdgeInsets.only(left: 15.0, right: 15, bottom: 10),
+          child: Text(
+            'friends',
+            textAlign: TextAlign.start,
+            style: TextStyle(color: Constants.primary, fontSize: 20),
+          ),
+        ),
+        _loadFriends(context),
         const SizedBox(height: 24),
         const Padding(
           padding: EdgeInsets.only(left: 15.0, right: 15, bottom: 10),
@@ -481,6 +471,39 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 Navigator.of(ctx).pop();
               },
             ),
+
+            // TextButton(
+            //   child: const Text("😎 set profile photo"),
+            //   onPressed: () {
+            //     // delete the user photo data
+            //     PartyPhoto partyPhoto = mPartyPhotos[_currentIndex];
+            //
+            //     List<String> tags = partyPhoto.tags;
+            //     tags.remove(UserPreferences.myUser.id);
+            //     partyPhoto = partyPhoto.copyWith(tags: tags);
+            //     FirestoreHelper.pushPartyPhoto(partyPhoto);
+            //
+            //     FirestoreHelper.pullUserPhoto(
+            //         UserPreferences.myUser.id, partyPhoto.id)
+            //         .then((res) {
+            //       if (res.docs.isNotEmpty) {
+            //         DocumentSnapshot document = res.docs[0];
+            //         Map<String, dynamic> data =
+            //         document.data()! as Map<String, dynamic>;
+            //         UserPhoto userPhoto = Fresh.freshUserPhotoMap(data, false);
+            //         userPhoto = userPhoto.copyWith(isConfirmed: false);
+            //         FirestoreHelper.pushUserPhoto(userPhoto);
+            //
+            //         Logx.ist(_TAG, 'your tag has been successfully removed!');
+            //         setState(() {});
+            //       } else {
+            //         Logx.em(_TAG, 'your tag for the photo could not be found');
+            //       }
+            //     });
+            //     Navigator.of(ctx).pop();
+            //   },
+            // ),
+
             TextButton(
               child: const Text("🪂 share"),
               onPressed: () {
@@ -612,6 +635,59 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ],
         ),
       );
+
+  _loadFriends(BuildContext context) {
+    return StreamBuilder<QuerySnapshot>(
+        stream: FirestoreHelper.getUserFriends(UserPreferences.myUser.id),
+        builder: (ctx, snapshot) {
+          switch (snapshot.connectionState) {
+            case ConnectionState.waiting:
+            case ConnectionState.none:
+              return const LoadingWidget();
+            case ConnectionState.active:
+            case ConnectionState.done:
+              {
+                mFriends = [];
+
+                try {
+                  for (int i = 0; i < snapshot.data!.docs.length; i++) {
+                    DocumentSnapshot document = snapshot.data!.docs[i];
+                    Map<String, dynamic> map =
+                    document.data()! as Map<String, dynamic>;
+                    final Friend friend =
+                    Fresh.freshFriendMap(map, false);
+
+                    mFriends.add(friend);
+                  }
+
+                  return _showFriends(context);
+                } on Exception catch (e, s) {
+                  Logx.e(_TAG, e, s);
+                } catch (e) {
+                  Logx.em(_TAG, 'error loading friends : $e');
+                }
+              }
+          }
+          return const LoadingWidget();
+        });
+  }
+
+  _showFriends(BuildContext context) {
+    return Container(
+      height: 60,
+      child: ListView.builder(
+          itemCount: mFriends.length,
+          scrollDirection: Axis.horizontal,
+          shrinkWrap: true,
+          itemBuilder: (ctx, index) {
+            Friend friend = mFriends[index];
+
+            return UserFriendItem(
+              friend: friend,
+            );
+          }),
+    );
+  }
 }
 
 class _PieData {

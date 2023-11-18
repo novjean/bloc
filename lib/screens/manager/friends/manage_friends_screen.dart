@@ -52,7 +52,7 @@ class ManageFriendsScreen extends StatelessWidget {
 
   _buildFriends(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
-        stream: FirestoreHelper.getFriends(),
+        stream: FirestoreHelper.getManageFriends(),
         builder: (ctx, snapshot) {
           switch (snapshot.connectionState) {
             case ConnectionState.waiting:

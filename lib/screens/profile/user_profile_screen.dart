@@ -22,6 +22,7 @@ import '../../utils/date_time_utils.dart';
 import '../../utils/dialog_utils.dart';
 import '../../utils/file_utils.dart';
 import '../../utils/logx.dart';
+import '../../widgets/profile/user_friend_item.dart';
 import '../../widgets/profile_widget.dart';
 import '../../widgets/ui/app_bar_title.dart';
 import '../../widgets/ui/blurred_image.dart';
@@ -53,9 +54,10 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
   var _isUserLoading = true;
 
   Friend mFriend = Dummy.getDummyFriend();
-  var _isFriendLoading = true;
   bool isFriend = false;
   bool isFollowing = true;
+
+  List<Friend> mFriends = [];
 
   @override
   void dispose() {
@@ -239,6 +241,17 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
               ],
             ),
           ),
+
+          const SizedBox(height: 24),
+          const Padding(
+            padding: EdgeInsets.only(left: 15.0, right: 15, bottom: 10),
+            child: Text(
+              'friends',
+              textAlign: TextAlign.start,
+              style: TextStyle(color: Constants.primary, fontSize: 20),
+            ),
+          ),
+          _loadFriends(context),
 
           const SizedBox(height: 24),
           const Padding(
@@ -646,6 +659,71 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
       ],
     ),
   );
+
+  _loadFriends(BuildContext context) {
+    return StreamBuilder<QuerySnapshot>(
+        stream: FirestoreHelper.getUserFriends(mUser.id),
+        builder: (ctx, snapshot) {
+          switch (snapshot.connectionState) {
+            case ConnectionState.waiting:
+            case ConnectionState.none:
+              return const LoadingWidget();
+            case ConnectionState.active:
+            case ConnectionState.done:
+              {
+                mFriends = [];
+
+                try {
+                  for (int i = 0; i < snapshot.data!.docs.length; i++) {
+                    DocumentSnapshot document = snapshot.data!.docs[i];
+                    Map<String, dynamic> map =
+                    document.data()! as Map<String, dynamic>;
+                    final Friend friend =
+                    Fresh.freshFriendMap(map, false);
+
+                    mFriends.add(friend);
+                  }
+
+                  if(mFriends.isNotEmpty){
+                    return _showFriends(context);
+                  } else {
+                    return Padding(
+                      padding: const EdgeInsets.only(left: 15.0, top: 5),
+                      child: Text(
+                        '${mUser.name.toLowerCase()} is rolling solo in this story, no side characters yet!',
+                        textAlign: TextAlign.start,
+                        style: const TextStyle(color: Constants.primary, fontSize: 16),
+                      ),
+                    );
+                  }
+
+                } on Exception catch (e, s) {
+                  Logx.e(_TAG, e, s);
+                } catch (e) {
+                  Logx.em(_TAG, 'error loading friends : $e');
+                }
+              }
+          }
+          return const LoadingWidget();
+        });
+  }
+
+  _showFriends(BuildContext context) {
+    return SizedBox(
+      height: 60,
+      child: ListView.builder(
+          itemCount: mFriends.length,
+          scrollDirection: Axis.horizontal,
+          shrinkWrap: true,
+          itemBuilder: (ctx, index) {
+            Friend friend = mFriends[index];
+
+            return UserFriendItem(
+              friend: friend,
+            );
+          }),
+    );
+  }
 
 }
 
