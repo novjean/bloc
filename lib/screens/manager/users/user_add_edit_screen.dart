@@ -7,6 +7,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 
+import '../../../db/entity/friend.dart';
 import '../../../db/entity/history_music.dart';
 import '../../../db/entity/party_guest.dart';
 import '../../../db/entity/reservation.dart';
@@ -479,7 +480,19 @@ class _UserAddEditScreenState extends State<UserAddEditScreen> {
                         }
                       });
 
-                      if(widget.user.imageUrl.isNotEmpty){
+                      FirestoreHelper.pullFriendConnections(widget.user.id).then((res) {
+                        if(res.docs.isNotEmpty){
+                          for(int i=0;i<res.docs.length; i++){
+                            DocumentSnapshot document = res.docs[i];
+                            Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+                            Friend friend = Fresh.freshFriendMap(data, false);
+                            FirestoreHelper.deleteFriend(friend.id);
+                          }
+                        }
+                      });
+
+                      if(widget.user.imageUrl.isNotEmpty &&
+                          widget.user.imageUrl.contains(FirestorageHelper.USER_IMAGES)){
                         FirestorageHelper.deleteFile(widget.user.imageUrl);
                       }
 

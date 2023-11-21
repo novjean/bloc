@@ -435,13 +435,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
           actions: [
             TextButton(
-              child: const Text("close"),
+              child: const Text("❎ close"),
               onPressed: () {
                 Navigator.of(ctx).pop();
               },
             ),
             TextButton(
-              child: const Text("✖️ remove"),
+              child: const Text("🗑️️ remove"),
               onPressed: () {
                 // delete the user photo data
                 PartyPhoto partyPhoto = mPartyPhotos[_currentIndex];
@@ -472,37 +472,30 @@ class _ProfileScreenState extends State<ProfileScreen> {
               },
             ),
 
-            // TextButton(
-            //   child: const Text("😎 set profile photo"),
-            //   onPressed: () {
-            //     // delete the user photo data
-            //     PartyPhoto partyPhoto = mPartyPhotos[_currentIndex];
-            //
-            //     List<String> tags = partyPhoto.tags;
-            //     tags.remove(UserPreferences.myUser.id);
-            //     partyPhoto = partyPhoto.copyWith(tags: tags);
-            //     FirestoreHelper.pushPartyPhoto(partyPhoto);
-            //
-            //     FirestoreHelper.pullUserPhoto(
-            //         UserPreferences.myUser.id, partyPhoto.id)
-            //         .then((res) {
-            //       if (res.docs.isNotEmpty) {
-            //         DocumentSnapshot document = res.docs[0];
-            //         Map<String, dynamic> data =
-            //         document.data()! as Map<String, dynamic>;
-            //         UserPhoto userPhoto = Fresh.freshUserPhotoMap(data, false);
-            //         userPhoto = userPhoto.copyWith(isConfirmed: false);
-            //         FirestoreHelper.pushUserPhoto(userPhoto);
-            //
-            //         Logx.ist(_TAG, 'your tag has been successfully removed!');
-            //         setState(() {});
-            //       } else {
-            //         Logx.em(_TAG, 'your tag for the photo could not be found');
-            //       }
-            //     });
-            //     Navigator.of(ctx).pop();
-            //   },
-            // ),
+            TextButton(
+              child: const Text("😎 set profile photo"),
+              onPressed: () async {
+                PartyPhoto partyPhoto = mPartyPhotos[_currentIndex];
+                User user =  UserPreferences.myUser;
+
+                // check if photo already exists and in user bucket
+                if(user.imageUrl.isNotEmpty
+                    && user.imageUrl.contains(FirestorageHelper.USER_IMAGES)){
+                  await FirestorageHelper.deleteFile(user.imageUrl);
+                }
+
+                user = user.copyWith(imageUrl: partyPhoto.imageUrl);
+
+                UserPreferences.setUser(user);
+                FirestoreHelper.pushUser(user);
+
+                setState(() {});
+
+                Logx.ist(_TAG, 'your profile photo has been successfully updated!');
+
+                Navigator.of(ctx).pop();
+              },
+            ),
 
             TextButton(
               child: const Text("🪂 share"),

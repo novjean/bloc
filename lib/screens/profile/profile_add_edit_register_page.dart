@@ -503,7 +503,11 @@ class _ProfileAddEditRegisterPageState
 
                             widget.user = widget.user.copyWith(imageUrl: newImageUrl);
                             FirestoreHelper.pushUser(widget.user);
-                            FirestorageHelper.deleteFile(oldImageUrl);
+
+                            if(oldImageUrl.isNotEmpty &&
+                                oldImageUrl.contains(FirestorageHelper.USER_IMAGES)){
+                              FirestorageHelper.deleteFile(oldImageUrl);
+                            }
 
                             Toaster.shortToast('profile photo updated');
 

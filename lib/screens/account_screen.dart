@@ -1,14 +1,21 @@
 import 'package:bloc/db/shared_preferences/user_preferences.dart';
 import 'package:bloc/widgets/ui/app_bar_title.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../db/entity/user.dart' as blocUser;
+import '../db/entity/friend.dart';
+import '../db/entity/history_music.dart';
+import '../db/entity/party_guest.dart';
+import '../db/entity/reservation.dart';
+import '../db/entity/user_lounge.dart';
 import '../db/shared_preferences/table_preferences.dart';
 import '../helpers/firestorage_helper.dart';
 import '../helpers/firestore_helper.dart';
+import '../helpers/fresh.dart';
 import '../routes/route_constants.dart';
 
 import '../utils/constants.dart';
@@ -156,8 +163,73 @@ class AccountScreen extends StatelessWidget {
                 blocUser.User sUser = UserPreferences.myUser;
 
                 if (sUser.imageUrl.isNotEmpty) {
-                  await FirestorageHelper.deleteFile(sUser.imageUrl);
+                  if(sUser.imageUrl.contains(FirestorageHelper.USER_IMAGES)){
+                    await FirestorageHelper.deleteFile(sUser.imageUrl);
+                  } else {
+                    // profile photo from party photos
+                  }
                 }
+
+                // delete all friend connections
+                FirestoreHelper.pullFriendConnections(sUser.id).then((res) {
+                  if(res.docs.isNotEmpty){
+                    for(int i=0;i<res.docs.length; i++){
+                      DocumentSnapshot document = res.docs[i];
+                      Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+                      Friend friend = Fresh.freshFriendMap(data, false);
+                      FirestoreHelper.deleteFriend(friend.id);
+                    }
+                  }
+                });
+
+                FirestoreHelper.pullPartyGuestsByUser(sUser.id).then((res) {
+                  if(res.docs.isNotEmpty){
+                    for (int i = 0; i < res.docs.length; i++) {
+                      DocumentSnapshot document = res.docs[i];
+                      Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+                      final PartyGuest partyGuest = Fresh.freshPartyGuestMap(data, false);
+                      FirestoreHelper.deletePartyGuest(partyGuest.id);
+                    }
+                    Logx.i(_TAG, '${sUser.name} ${sUser.surname}\'s ${res.docs.length} guest list requests deleted');
+                  }
+                });
+
+                FirestoreHelper.pullReservationsByUser(sUser.id).then((res) {
+                  if(res.docs.isNotEmpty){
+                    for (int i = 0; i < res.docs.length; i++) {
+                      DocumentSnapshot document = res.docs[i];
+                      Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+                      final Reservation reservation = Fresh.freshReservationMap(data, false);
+                      FirestoreHelper.deleteReservation(reservation.id);
+                    }
+                    Logx.i(_TAG, '${sUser.name} ${sUser.surname}\'s ${res.docs.length} reservations deleted');
+                  }
+                });
+
+                FirestoreHelper.pullHistoryMusicByUser(sUser.id).then((res) {
+                  if(res.docs.isNotEmpty){
+                    for (int i = 0; i < res.docs.length; i++) {
+                      DocumentSnapshot document = res.docs[i];
+                      Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+                      final HistoryMusic historyMusic = Fresh.freshHistoryMusicMap(data, false);
+                      FirestoreHelper.deleteHistoryMusic(historyMusic.id);
+                    }
+                  }
+                  Logx.i(_TAG, '${sUser.name} ${sUser.surname}\'s ${res.docs.length} music history deleted');
+                });
+
+                FirestoreHelper.pullUserLounges(sUser.id).then((res) {
+                  if(res.docs.isNotEmpty){
+                    for (int i = 0; i < res.docs.length; i++) {
+                      DocumentSnapshot document = res.docs[i];
+                      Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+                      UserLounge userLounge = Fresh.freshUserLoungeMap(data, false);
+
+                      FirestoreHelper.deleteUserLounge(userLounge.id);
+                    }
+                    Logx.i(_TAG, '${sUser.name} ${sUser.surname} is removed from ${res.docs.length} lounges');
+                  }
+                });
 
                 FirestoreHelper.deleteUser(sUser.id);
                 UserPreferences.resetUser();

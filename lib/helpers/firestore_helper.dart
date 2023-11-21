@@ -756,6 +756,15 @@ class FirestoreHelper {
         .get();
   }
 
+  static pullFriendConnections(String userId) {
+    return FirebaseFirestore.instance
+        .collection(FRIENDS)
+        .where(Filter.or(
+        Filter('userId', isEqualTo: userId),
+          Filter('friendUserId', isEqualTo: userId)))
+        .get();
+  }
+
   static void deleteFriend(String docId) {
     FirebaseFirestore.instance.collection(FRIENDS).doc(docId).delete();
   }
