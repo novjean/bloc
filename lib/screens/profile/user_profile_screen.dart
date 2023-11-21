@@ -310,7 +310,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
       ),
         Positioned(
           top: 5,
-          left: 5,
+          left: 10,
           child: isFriend ? Container(
             height: 50,
             width: 50,
@@ -382,7 +382,10 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
             );
             FirestoreHelper.pushFriend(friend);
 
-            mFriend = friend;
+            setState(() {
+              mFriend = friend;
+              isFollowing = true;
+            });
 
           } else {
             FirestoreHelper.deleteFriend(mFriend.id);
@@ -398,7 +401,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                 });
         },
         child: Text(_buttonText,
-          style: TextStyle(fontSize: 18),),
+          style: const TextStyle(fontSize: 18),),
       )
     );
   }
