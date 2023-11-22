@@ -319,8 +319,22 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
 
                                   FileUtils.saveNetworkImage(
                                       widget.partyPhoto.imageUrl, fileName);
-                                  FirestoreHelper.updatePartyPhotoDownloadCount(
-                                      widget.partyPhoto.id);
+
+                                  List<String> downloaders = widget.partyPhoto.downloaders;
+                                  if(!downloaders.contains(UserPreferences.myUser.id)){
+                                    downloaders.add(UserPreferences.myUser.id);
+                                    int downloadCount = widget.partyPhoto.downloadCount+1;
+                                    widget.partyPhoto = widget.partyPhoto.copyWith(downloaders: downloaders,
+                                      downloadCount: downloadCount);
+                                    FirestoreHelper.pushPartyPhoto(widget.partyPhoto);
+
+                                    setState(() {
+                                      widget.partyPhoto;
+                                    });
+                                  } else {
+                                    FirestoreHelper.updatePartyPhotoDownloadCount(widget.partyPhoto.id);
+                                  }
+
 
                                   if ((UserPreferences.myUser.lastReviewTime <
                                       Timestamp.now().millisecondsSinceEpoch -

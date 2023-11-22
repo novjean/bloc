@@ -12,6 +12,7 @@ class PartyPhoto {
   List<String> likers;
   int initLikes;
   int downloadCount;
+  List<String> downloaders;
   int views;
 
   List<String> tags;
@@ -30,6 +31,7 @@ class PartyPhoto {
     required this.likers,
     required this.initLikes,
     required this.downloadCount,
+    required this.downloaders,
     required this.views,
     required this.tags,
   });
@@ -51,6 +53,7 @@ class PartyPhoto {
           likers == other.likers &&
           initLikes == other.initLikes &&
           downloadCount == other.downloadCount &&
+          downloaders == other.downloaders &&
           views == other.views &&
           tags == other.tags);
 
@@ -68,6 +71,7 @@ class PartyPhoto {
       likers.hashCode ^
       initLikes.hashCode ^
       downloadCount.hashCode ^
+      downloaders.hashCode ^
       views.hashCode ^
       tags.hashCode;
 
@@ -86,6 +90,7 @@ class PartyPhoto {
         ' likers: $likers,' +
         ' initLikes: $initLikes,' +
         ' downloadCount: $downloadCount,' +
+        ' downloaders: $downloaders,' +
         ' views: $views,' +
         ' tags: $tags,' +
         '}';
@@ -104,6 +109,7 @@ class PartyPhoto {
     List<String>? likers,
     int? initLikes,
     int? downloadCount,
+    List<String>? downloaders,
     int? views,
     List<String>? tags,
   }) {
@@ -120,6 +126,7 @@ class PartyPhoto {
       likers: likers ?? this.likers,
       initLikes: initLikes ?? this.initLikes,
       downloadCount: downloadCount ?? this.downloadCount,
+      downloaders: downloaders ?? this.downloaders,
       views: views ?? this.views,
       tags: tags ?? this.tags,
     );
@@ -139,6 +146,7 @@ class PartyPhoto {
       'likers': this.likers,
       'initLikes': this.initLikes,
       'downloadCount': this.downloadCount,
+      'downloaders': this.downloaders,
       'views': this.views,
       'tags': this.tags,
     };
@@ -158,6 +166,7 @@ class PartyPhoto {
       likers: map['likers'] as List<String>,
       initLikes: map['initLikes'] as int,
       downloadCount: map['downloadCount'] as int,
+      downloaders: map['downloaders'] as List<String>,
       views: map['views'] as int,
       tags: map['tags'] as List<String>,
     );

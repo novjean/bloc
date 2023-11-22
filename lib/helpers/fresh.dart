@@ -2822,6 +2822,12 @@ class Fresh {
           'party photo downloadCount not exist for id: ${partyPhoto.id}');
     }
     try {
+      fresh = fresh.copyWith(downloaders: partyPhoto.downloaders);
+    } catch (e) {
+      Logx.em(_TAG,
+          'party photo downloaders not exist for id: ${partyPhoto.id}');
+    }
+    try {
       fresh = fresh.copyWith(views: partyPhoto.views);
     } catch (e) {
       Logx.em(_TAG,
@@ -2912,6 +2918,12 @@ class Fresh {
       partyPhoto = partyPhoto.copyWith(downloadCount: map['downloadCount'] as int);
     } catch (e) {
       Logx.em(_TAG, 'partyPhoto downloadCount not exist for id: ${partyPhoto.id}');
+      isModelChanged = true;
+    }
+    try {
+      partyPhoto = partyPhoto.copyWith(downloaders: List<String>.from(map['downloaders']));
+    } catch (e) {
+      Logx.em(_TAG, 'partyPhoto downloaders not exist for id: ${partyPhoto.id}');
       isModelChanged = true;
     }
     try {

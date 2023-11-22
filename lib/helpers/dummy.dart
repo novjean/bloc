@@ -401,6 +401,7 @@ class Dummy {
         likers: [],
         initLikes: 0,
         downloadCount: 0,
+        downloaders: [],
         views: 0,
         tags: []);
     return partyPhoto;

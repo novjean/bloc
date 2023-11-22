@@ -1380,8 +1380,8 @@ class FirestoreHelper {
         .snapshots();
   }
 
-  static void updatePartyPhotoDownloadCount(String docId) {
-    FirebaseFirestore.instance
+  static Future updatePartyPhotoDownloadCount(String docId) {
+    return FirebaseFirestore.instance
         .collection(PARTY_PHOTOS)
         .doc(docId)
         .update({"downloadCount": FieldValue.increment(1)},);

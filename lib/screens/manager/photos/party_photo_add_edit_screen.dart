@@ -79,6 +79,8 @@ class _PartyPhotoAddEditScreenState extends State<PartyPhotoAddEditScreen> {
   List<User> sUsers = [];
   List<String> sUserIds = [];
 
+  List<User> downloaders = [];
+
   @override
   void initState() {
     if (widget.partyPhoto.blocServiceId.isNotEmpty) {
@@ -595,7 +597,7 @@ class _PartyPhotoAddEditScreenState extends State<PartyPhotoAddEditScreen> {
             const SizedBox(height: 24),
             ButtonWidget(
                 height: 50,
-                text: 'check connections',
+                text: 'check friendship',
                 onClicked: () async {
                   List<String> tagIds = widget.partyPhoto.tags;
 
@@ -620,6 +622,25 @@ class _PartyPhotoAddEditScreenState extends State<PartyPhotoAddEditScreen> {
                       });
                     }
                   }
+                }),
+            const SizedBox(height: 24),
+            ButtonWidget(
+                height: 50,
+                text: 'view downloaders',
+                onClicked: () async {
+                  List<String> downloaders = widget.partyPhoto.downloaders;
+
+                  FirestoreHelper.pullUsersByIds(downloaders).then((res) {
+                    if(res.docs.isNotEmpty){
+                      for (int i = 0; i < res.docs.length; i++) {
+                        DocumentSnapshot document = res.docs[i];
+                        Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+                        User user = Fresh.freshUserMap(data, false);
+
+                        Logx.ist(_TAG, '${user.name} ${user.surname} has downloaded');
+                      }
+                    }
+                  });
                 }),
             const SizedBox(height: 24),
             ButtonWidget(
