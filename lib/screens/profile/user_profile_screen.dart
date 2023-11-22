@@ -1,4 +1,3 @@
-import 'package:bloc/db/entity/friend_notification.dart';
 import 'package:bloc/db/entity/history_music.dart';
 import 'package:bloc/helpers/firestore_helper.dart';
 import 'package:bloc/widgets/ui/loading_widget.dart';
@@ -512,8 +511,8 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
               borderRadius: BorderRadius.all(Radius.circular(20.0))),
           contentPadding: const EdgeInsets.all(0.0),
           content: SizedBox(
-            height: mq.width,
-            width: mq.width,
+            height: MediaQuery.of(context).size.width,
+            width: MediaQuery.of(context).size.width,
             child: Center(
               child: CarouselSlider(
                 options: CarouselOptions(
@@ -538,7 +537,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                     ),
                 items: partyPhotoUrls.map((item) {
                   return kIsWeb
-                      ? Image.network(item, fit: BoxFit.cover, width: mq.width)
+                      ? Image.network(item, fit: BoxFit.cover, width: MediaQuery.of(context).size.width)
                       : CachedNetworkImage(
                           imageUrl: item,
                           imageBuilder: (context, imageProvider) => Container(

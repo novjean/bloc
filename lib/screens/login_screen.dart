@@ -144,28 +144,28 @@ class _LoginScreenState extends State<LoginScreen> {
             margin: const EdgeInsets.only(top: 0, right: 20, left: 20),
             child: IntlPhoneField(
               style: TextStyle(
-                  color: Theme.of(context).primaryColor, fontSize: 20),
+                  color: Constants.primary, fontSize: 20),
               decoration: InputDecoration(
                   labelText: 'phone number',
-                  labelStyle: TextStyle(color: Theme.of(context).primaryColor),
-                  hintStyle: TextStyle(color: Theme.of(context).primaryColor),
+                  labelStyle: TextStyle(color: Constants.primary),
+                  hintStyle: TextStyle(color: Constants.primary),
                   counterStyle:
-                      TextStyle(color: Theme.of(context).primaryColor),
+                      TextStyle(color: Constants.primary),
                   border: OutlineInputBorder(
                     borderSide:
-                        BorderSide(color: Theme.of(context).primaryColor),
+                        BorderSide(color: Constants.primary),
                   ),
                   enabledBorder: OutlineInputBorder(
                     // width: 0.0 produces a thin "hairline" border
                     borderSide: BorderSide(
-                        color: Theme.of(context).primaryColor, width: 0.0),
+                        color: Constants.primary, width: 0.0),
                   )),
               controller: _controller,
               initialCountryCode: 'IN',
               dropdownTextStyle: TextStyle(
-                  color: Theme.of(context).primaryColor, fontSize: 20),
+                  color: Constants.primary, fontSize: 20),
               pickerDialogStyle: PickerDialogStyle(
-                  backgroundColor: Theme.of(context).primaryColor),
+                  backgroundColor: Constants.primary),
               onChanged: (phone) {
                 Logx.i(_TAG, phone.completeNumber);
                 completePhoneNumber = phone.completeNumber;
@@ -195,14 +195,15 @@ class _LoginScreenState extends State<LoginScreen> {
                       Toaster.longToast('loading menu and events');
                       _verifyUsingSkipPhone();
                     },
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 20),
                       child: DelayedDisplay(
-                        delay: const Duration(seconds: 3),
+                        delay: Duration(seconds: 3),
                         child: Text(
                           "skip for now",
                           style: TextStyle(
-                            color: Theme.of(context).primaryColor,
+                            color: Constants.primary,
+                            fontSize: 15
                           ),
                         ),
                       ),
@@ -216,32 +217,39 @@ class _LoginScreenState extends State<LoginScreen> {
         Flexible(
           flex: 1,
           child: Container(
-            margin: const EdgeInsets.only(left: 20, right: 20, bottom: 40),
-            width: double.infinity,
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Theme.of(context).primaryColor,
-                foregroundColor: Colors.white,
-                shadowColor: Theme.of(context).shadowColor,
-                elevation: 3,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(32.0)),
-                minimumSize: const Size(100, 60),
-              ),
-              onPressed: () {
-                if (completePhoneNumber.isNotEmpty) {
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => OTPScreen(completePhoneNumber)));
-                } else {
-                  Logx.i(
-                      _TAG,
-                      'user entered invalid phone number $completePhoneNumber');
-                  Toaster.longToast('please enter a valid phone number');
-                }
-              },
-              child: const Text(
-                'next',
-                style: TextStyle(fontSize: 20),
+            margin: const EdgeInsets.only(bottom: 20),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10.0),
+              child: ElevatedButton.icon(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Constants.primary,
+                  foregroundColor: Constants.darkPrimary,
+                  shadowColor: Colors.white30,
+                  elevation: 3,
+                  minimumSize: const Size.fromHeight(50),
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(10)),
+                  ),
+                ),
+                onPressed: () {
+                  if (completePhoneNumber.isNotEmpty) {
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => OTPScreen(completePhoneNumber)));
+                  } else {
+                    Logx.i(
+                        _TAG,
+                        'user entered invalid phone number $completePhoneNumber');
+                    Toaster.longToast('please enter a valid phone number');
+                  }
+                },
+                label: const Text(
+                  'next',
+                  style: TextStyle(fontSize: 20, color: Colors.black),
+                ),
+                icon: const Icon(
+                  Icons.moped_sharp,
+                  size: 24.0,
+                ),
               ),
             ),
           ),
@@ -257,7 +265,7 @@ class _LoginScreenState extends State<LoginScreen> {
     if (kIsWeb) {
       try {
         await FirebaseAuth.instance
-            .signInWithPhoneNumber('${phone}', null)
+            .signInWithPhoneNumber(phone, null)
             .then((user) {
           signInToSkipBloc(user.verificationId);
         }).catchError((e) {
@@ -273,10 +281,10 @@ class _LoginScreenState extends State<LoginScreen> {
     } else {
       try {
         await FirebaseAuth.instance.verifyPhoneNumber(
-            phoneNumber: '${phone}',
+            phoneNumber: phone,
             verificationCompleted: (PhoneAuthCredential credential) async {
               Logx.i(_TAG,
-                  'verifyPhoneNumber: ${phone} is verified. attempting sign in with credentials...');
+                  'verifyPhoneNumber: $phone is verified. attempting sign in with credentials...');
               await FirebaseAuth.instance
                   .signInWithCredential(credential)
                   .then((value) async {

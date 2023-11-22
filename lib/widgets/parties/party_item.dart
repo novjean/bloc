@@ -50,7 +50,7 @@ class PartyItem extends StatelessWidget {
         tag: party.id,
         child: Card(
           elevation: 10,
-          color: Theme.of(context).primaryColorLight,
+          color: Constants.lightPrimary,
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
           child: SizedBox(

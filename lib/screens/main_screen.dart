@@ -207,60 +207,54 @@ class _MainScreenState extends State<MainScreen> {
         fbm.subscribeToTopic('notification_tests');
         fbm.subscribeToTopic('notification_tests_2');
       }
+
+      if (UserPreferences.isUserLoggedIn()) {
+        FirestoreHelper.pullUserLounges(UserPreferences.myUser.id).then((res) {
+          if (res.docs.isNotEmpty) {
+            List<String> userLounges = [];
+            for (int i = 0; i < res.docs.length; i++) {
+              DocumentSnapshot document = res.docs[i];
+              Map<String, dynamic> data =
+              document.data()! as Map<String, dynamic>;
+              UserLounge userLounge = Fresh.freshUserLoungeMap(data, false);
+              userLounges.add(userLounge.loungeId);
+
+              FirebaseMessaging.instance.subscribeToTopic(userLounge.loungeId);
+              Logx.d(_TAG, 'subscribed to lounge topic: ${userLounge.loungeId}');
+
+              if (userLounge.userFcmToken.isEmpty &&
+                  UserPreferences.myUser.fcmToken.isNotEmpty) {
+                userLounge = userLounge.copyWith(
+                    userFcmToken: UserPreferences.myUser.fcmToken);
+                FirestoreHelper.pushUserLounge(userLounge);
+              }
+            }
+            UserPreferences.setListLounges(userLounges);
+          }
+        });
+
+        FirestoreHelper.pullFriends(UserPreferences.myUser.id).then((res) {
+          if(res.docs.isNotEmpty){
+            for(int i=0;i<res.docs.length; i++){
+              DocumentSnapshot document = res.docs[i];
+              Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+              Friend friend = Fresh.freshFriendMap(data, false);
+
+              if(friend.isFollowing){
+                FirebaseMessaging.instance.subscribeToTopic(friend.friendUserId);
+              } else {
+                FirebaseMessaging.instance.unsubscribeFromTopic(friend.friendUserId);
+              }
+            }
+          }
+        });
+      }
+
+      // awesome notification init
+      NotificationService.initializeNotification();
     } else {
       Logx.d(_TAG, 'fcm in web mode');
-
-      // getToken();
-      //
-      // FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      //   NotificationService.handleMessage(message, false);
-      // });
     }
-
-    if (UserPreferences.isUserLoggedIn()) {
-      FirestoreHelper.pullUserLounges(UserPreferences.myUser.id).then((res) {
-        if (res.docs.isNotEmpty) {
-          List<String> userLounges = [];
-          for (int i = 0; i < res.docs.length; i++) {
-            DocumentSnapshot document = res.docs[i];
-            Map<String, dynamic> data =
-            document.data()! as Map<String, dynamic>;
-            UserLounge userLounge = Fresh.freshUserLoungeMap(data, false);
-            userLounges.add(userLounge.loungeId);
-
-            FirebaseMessaging.instance.subscribeToTopic(userLounge.loungeId);
-            Logx.d(_TAG, 'subscribed to lounge topic: ${userLounge.loungeId}');
-
-            if (userLounge.userFcmToken.isEmpty &&
-                UserPreferences.myUser.fcmToken.isNotEmpty) {
-              userLounge = userLounge.copyWith(
-                  userFcmToken: UserPreferences.myUser.fcmToken);
-              FirestoreHelper.pushUserLounge(userLounge);
-            }
-          }
-          UserPreferences.setListLounges(userLounges);
-        }
-      });
-
-      FirestoreHelper.pullFriends(UserPreferences.myUser.id).then((res) {
-        if(res.docs.isNotEmpty){
-          for(int i=0;i<res.docs.length; i++){
-            DocumentSnapshot document = res.docs[i];
-            Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-            Friend friend = Fresh.freshFriendMap(data, false);
-
-            if(friend.isFollowing){
-              FirebaseMessaging.instance.subscribeToTopic(friend.friendUserId);
-            } else {
-              FirebaseMessaging.instance.unsubscribeFromTopic(friend.friendUserId);
-            }
-          }
-        }
-      });
-    }
-
-    // awesome notification init
-    NotificationService.initializeNotification();
 
     super.initState();
   }

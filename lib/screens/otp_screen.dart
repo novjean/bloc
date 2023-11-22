@@ -39,11 +39,15 @@ class _OTPScreenState extends State<OTPScreen> {
   final formKey = GlobalKey<FormState>();
 
   String _verificationCode = '';
+  String mPin = '';
 
   @override
   void initState() {
     _verifyPhone();
     super.initState();
+
+    Logx.ilt(
+        _TAG, 'verification vibes in progress, your code\'s on the way 🚀🔑');
   }
 
   @override
@@ -99,123 +103,146 @@ class _OTPScreenState extends State<OTPScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          backgroundColor: Constants.background,
-          title: const Text(''),
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back_ios_rounded),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
+      appBar: AppBar(
+        backgroundColor: Constants.background,
+        title: const Text(''),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_rounded),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
+      ),
+      backgroundColor: Constants.background,
+      body:
+          Column(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+        Flexible(
+          flex: 1,
+          child: Container(
+            decoration: const BoxDecoration(
+              image: DecorationImage(
+                  image: AssetImage("assets/icons/logo-adaptive.png"),
+                  fit: BoxFit.fitHeight),
+            ),
           ),
         ),
-        backgroundColor: Constants.background,
-        body: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Flexible(
-                flex: 1,
-                child: Container(
-                  decoration: const BoxDecoration(
-                    image: DecorationImage(
-                        image: AssetImage("assets/icons/logo-adaptive.png"),
-                        fit: BoxFit.fitHeight
-                        ),
+        const Flexible(
+          flex: 3,
+          child: Padding(
+            padding: EdgeInsets.only(left: 20, right: 20),
+            child: Center(
+              child: SingleChildScrollView(
+                scrollDirection: Axis.vertical,
+                child: Text(
+                  'In the heart of the city, we\'re serving up sunsets, summer vibes, and that urban oasis! 🌅🌴\n\n Our global feast, crafted by the incredible Chef Ameya Mahajani, is a flavor explosion for your taste buds.\n\n Dr. Grace, our co-founder, infuses her passion into every dish and cocktail, creating unforgettable memories with each bite.\n\n At bloc, we\'re not just about food; we\'re the city\'s heartbeat for community, vibes, and epic music events that\'ll have you dancing into the night. \n\n Let\'s create unforgettable moments together! 🌐🎉🍹\n\n#blocCommunity',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Constants.lightPrimary,
+                    fontWeight: FontWeight.normal,
+                    fontSize: 16,
                   ),
                 ),
               ),
-              Flexible(
-                flex: 3,
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 20, right: 20),
-                  child: Center(
-                    child: SingleChildScrollView(
-                      scrollDirection: Axis.vertical,
-                      child: Text(
-                        'We offer you sunsets, tranquil summer days and a beachy vibe in the city.\n\n'
-                        'Our menu of global cuisine created by our celebrity Chef Ameya Mahajani '
-                        'is made with the freshest ingredients and accommodates all flavour palates.'
-                        '\n\nOur co-founder Dr. Grace is passionate about food and cocktails. She has '
-                        'worked on detailing the menu, so we feature a lot of tastes and '
-                        'textures from her travels and memories.\n\nBloc is about community, '
-                        'connection and coming together over some amazing food and drinks.',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: Theme.of(context).primaryColorLight,
-                          fontWeight: FontWeight.normal,
-                          fontSize: 16,
+            ),
+          ),
+        ),
+        Flexible(
+          flex: 1,
+          child: Padding(
+            padding: const EdgeInsets.only(left: 20, right: 20),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Center(
+                    child: Text(
+                  'enter the six digit code you received on \n${widget.phone}',
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    color: Constants.lightPrimary,
+                    fontWeight: FontWeight.normal,
+                    fontSize: 16,
+                  ),
+                )),
+                Padding(
+                  padding: const EdgeInsets.only(
+                      left: 10.0, right: 10, top: 2, bottom: 5),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      DelayedDisplay(
+                        delay: const Duration(seconds: 9),
+                        child: Text('didn\'t receive code. ',
+                            style: TextStyle(
+                              color: Theme.of(context).primaryColorLight,
+                              fontSize: 16,
+                            )),
+                      ),
+                      InkWell(
+                        onTap: () {
+                          Toaster.longToast(
+                              'please wait, your otp code is being resent...');
+                          _verifyPhone();
+                        },
+                        child: DelayedDisplay(
+                          delay: const Duration(seconds: 10),
+                          child: Text(
+                            'resend?',
+                            style: TextStyle(
+                              color: Theme.of(context).primaryColor,
+                              fontSize: 16,
+                            ),
+                          ),
                         ),
                       ),
-                    ),
-                  ),
-                ),
-              ),
-              Flexible(
-                flex: 1,
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 20, right: 20),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Center(
-                          child: Text(
-                        'enter the six digit code you received on \n${widget.phone}',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: Theme.of(context).primaryColorLight,
-                          fontWeight: FontWeight.normal,
-                          fontSize: 16,
-                        ),
-                      )),
-                      Padding(
-                        padding: const EdgeInsets.only(
-                            left: 10.0, right: 10, top: 2, bottom: 5),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            DelayedDisplay(
-                              delay: const Duration(seconds: 9),
-                              child: Text('didn\'t receive code. ',
-                                  style: TextStyle(
-                                    color: Theme.of(context).primaryColorLight,
-                                    fontSize: 16,
-                                  )),
-                            ),
-                            InkWell(
-                              onTap: () {
-                                Toaster.longToast('refreshing ');
-                                _verifyPhone();
-                              },
-                              child: DelayedDisplay(
-                                delay: const Duration(seconds: 10),
-                                child: Text(
-                                  'resend?',
-                                  style: TextStyle(
-                                    color: Theme.of(context).primaryColor,
-                                    fontSize: 16,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      )
                     ],
                   ),
+                )
+              ],
+            ),
+          ),
+        ),
+        Flexible(
+          flex: 1,
+          child: FractionallySizedBox(
+              widthFactor: 1,
+              child: OTPVerifyWidget(
+                widget.phone,
+              )),
+        ),
+        Flexible(
+          flex: 1,
+          child: Container(
+            margin: const EdgeInsets.only(bottom: 20),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10.0),
+              child: ElevatedButton.icon(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Constants.primary,
+                  foregroundColor: Constants.darkPrimary,
+                  shadowColor: Colors.white30,
+                  elevation: 3,
+                  minimumSize: const Size.fromHeight(50),
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(10)),
+                  ),
+                ),
+                onPressed: () {
+                  _verifyOtpCode();
+                },
+                label: const Text(
+                  'confirm',
+                  style: TextStyle(fontSize: 20, color: Colors.black),
+                ),
+                icon: const Icon(
+                  Icons.rocket_launch_sharp,
+                  size: 24.0,
                 ),
               ),
-              Flexible(
-                flex: 1,
-                child: Container(
-                  margin: const EdgeInsets.only(bottom: 20),
-                  child: FractionallySizedBox(
-                      widthFactor: 1,
-                      child: OTPVerifyWidget(
-                        widget.phone,
-                      )),
-                ),
-              ),
-            ]));
+            ),
+          ),
+        ),
+      ]),
+    );
   }
 
   OTPVerifyWidget(String phone) {
@@ -265,229 +292,10 @@ class _OTPScreenState extends State<OTPScreen> {
               onCompleted: (pin) async {
                 debugPrint('onCompleted: $pin');
 
-                Logx.ist(_TAG,'verifying ${widget.phone}');
-                try {
-                  await FirebaseAuth.instance
-                      .signInWithCredential(PhoneAuthProvider.credential(
-                          verificationId: _verificationCode, smsCode: pin))
-                      .then((value) async {
-                    if (value.user != null) {
-                      Logx.i(_TAG, 'user is in firebase auth');
-
-                      String? fcmToken = '';
-
-                      if (!kIsWeb) {
-                        fcmToken = await FirebaseMessaging.instance.getToken();
-                      }
-
-                      Logx.i(_TAG, 'checking for bloc registration by id ${value.user!.uid}');
-
-                      FirestoreHelper.pullUser(value.user!.uid).then((res) {
-                        if (res.docs.isEmpty) {
-
-                          Logx.i(_TAG, 'checking for bloc registration by phone ${widget.phone}');
-
-                          int phoneNumber = StringUtils.getInt(widget.phone);
-                          FirestoreHelper.pullUserByPhoneNumber(phoneNumber).then((res) {
-                            if(res.docs.isNotEmpty) {
-                              DocumentSnapshot document = res.docs[0];
-                              Map<String, dynamic> data =
-                              document.data()! as Map<String, dynamic>;
-                              blocUser.User user = Fresh.freshUserMap(data, true);
-
-                              String oldUserDocId = user.id;
-                              FirestoreHelper.deleteUser(oldUserDocId);
-
-                              FirestoreHelper.pullPromoterGuestsByBlocUserId(user.id).then((res) {
-                                    if(res.docs.isNotEmpty){
-                                      for (int i = 0; i < res.docs.length; i++) {
-                                        DocumentSnapshot document = res.docs[i];
-                                        Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-                                        PromoterGuest pg = Fresh.freshPromoterGuestMap(data, false);
-                                        pg = pg.copyWith(blocUserId: value.user!.uid);
-                                        FirestoreHelper.pushPromoterGuest(pg);
-                                      }
-                                    }
-                                  }
-                              );
-
-                              user = user.copyWith(id: value.user!.uid,
-                                  fcmToken: fcmToken);
-                              user.lastSeenAt = Timestamp.now().millisecondsSinceEpoch;
-                              if (UserPreferences.isUserLoggedIn()) {
-                                if (kIsWeb) {
-                                  user = user.copyWith(
-                                      isAppUser: false,
-                                      appVersion: Constants.appVersion
-                                  );
-                                } else {
-                                  user = user.copyWith(
-                                    isAppUser: true,
-                                    appVersion: Constants.appVersion,
-                                    isIos: Theme.of(context).platform == TargetPlatform.iOS
-                                  );
-                                }
-                              }
-
-                              // check if there is username
-                              if(user.username.isEmpty){
-                                String username = '';
-                                if(user.surname.trim().isNotEmpty){
-                                  username = '${user.name.toLowerCase()}_${user.surname.toLowerCase().trim()}';
-                                } else {
-                                  username = user.name.toLowerCase().trim();
-                                }
-
-                                //check if username is present in db
-                                FirestoreHelper.pullUserByUsername(username).then((res) {
-                                  if(res.docs.isNotEmpty){
-                                    // username is already taken
-                                    username = username + NumberUtils.generateRandomNumber(1,999).toString();
-                                    user = user.copyWith(username: username);
-                                    FirestoreHelper.pushUser(user);
-                                    UserPreferences.setUser(user);
-                                    UiPreferences.setHomePageIndex(0);
-
-                                    Logx.ist(_TAG, 'hey there, welcome to bloc! 🦖');
-
-                                    GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
-                                  } else {
-                                    user = user.copyWith(username: username);
-                                    FirestoreHelper.pushUser(user);
-                                    UserPreferences.setUser(user);
-                                    UiPreferences.setHomePageIndex(0);
-
-                                    Logx.ist(_TAG, 'hey there, welcome to bloc! 🦖');
-
-                                    GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
-                                  }
-                                });
-                              } else {
-                                FirestoreHelper.pushUser(user);
-                                UserPreferences.setUser(user);
-                                UiPreferences.setHomePageIndex(0);
-
-                                Logx.ist(_TAG, 'hey there, welcome to bloc! 🦖');
-
-                                GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
-                              }
-                            } else {
-                              Logx.i(_TAG, 'user is not already registered in bloc, registering...');
-
-                              blocUser.User registeredUser = Dummy.getDummyUser();
-                              registeredUser = registeredUser.copyWith(id: value.user!.uid,
-                                  phoneNumber: StringUtils.getInt(value.user!.phoneNumber!),
-                                  fcmToken: fcmToken!);
-
-                              if (kIsWeb) {
-                                registeredUser = registeredUser.copyWith(
-                                    isAppUser: false,
-                                    appVersion: Constants.appVersion
-                                );
-                              } else {
-                                registeredUser = registeredUser.copyWith(
-                                    isAppUser: true,
-                                    appVersion: Constants.appVersion,
-                                    isIos: Theme.of(context).platform == TargetPlatform.iOS
-                                );
-                              }
-
-                              FirestoreHelper.pushUser(registeredUser);
-                              UserPreferences.setUser(registeredUser);
-                              UiPreferences.setHomePageIndex(0);
-
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        ProfileAddEditRegisterPage(user: registeredUser, task: 'register')),
-                              );
-                            }
-                          });
-                        } else {
-                          Logx.i(_TAG,
-                              'user is a bloc member. navigating to main...');
-
-                          DocumentSnapshot document = res.docs[0];
-                          Map<String, dynamic> data =
-                              document.data()! as Map<String, dynamic>;
-
-                          blocUser.User user;
-                          if (kIsWeb) {
-                            user = Fresh.freshUserMap(data, true);
-                            user = user.copyWith(
-                                isAppUser: false,
-                                appVersion: Constants.appVersion
-                            );
-                          } else {
-                            user = Fresh.freshUserMap(data, false);
-                            user = user.copyWith(
-                                isAppUser: true,
-                                appVersion: Constants.appVersion,
-                                isIos: Theme.of(context).platform == TargetPlatform.iOS,
-                              fcmToken: fcmToken!
-                            );
-                          }
-
-                          user.lastSeenAt = Timestamp.now().millisecondsSinceEpoch;
-
-                          if(user.username.isEmpty){
-                            String username = '';
-                            if(user.surname.trim().isNotEmpty){
-                              username = '${user.name.toLowerCase()}_${user.surname.toLowerCase().trim()}';
-                            } else {
-                              username = user.name.toLowerCase().trim();
-                            }
-
-                            //check if username is present in db
-                            FirestoreHelper.pullUserByUsername(username).then((res) {
-                              if(res.docs.isNotEmpty){
-                                // username is already taken
-                                username = username + NumberUtils.generateRandomNumber(1,999).toString();
-                                user = user.copyWith(username: username);
-                                FirestoreHelper.pushUser(user);
-                                UserPreferences.setUser(user);
-                                UiPreferences.setHomePageIndex(0);
-
-                                Toaster.shortToast('hey ${user.name.toLowerCase()}, welcome back! 🦖');
-
-                                GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
-                              } else {
-                                user = user.copyWith(username: username);
-                                FirestoreHelper.pushUser(user);
-                                UserPreferences.setUser(user);
-                                UiPreferences.setHomePageIndex(0);
-
-                                Toaster.shortToast('hey ${user.name.toLowerCase()}, welcome back! 🦖');
-
-                                GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
-                              }
-                            });
-                          } else {
-                            FirestoreHelper.pushUser(user);
-                            UserPreferences.setUser(user);
-                            UiPreferences.setHomePageIndex(0);
-
-                            GoRouter.of(context)
-                                .pushNamed(RouteConstants.homeRouteName);
-
-                            Toaster.shortToast('hey ${user.name.toLowerCase()}, welcome back! 🦖');
-                          }
-                        }
-                      });
-                    }
-                  });
-                } catch (e) {
-                  Logx.em(_TAG, 'otp error $e');
-
-                  String exception = e.toString();
-                  if (exception.contains('session-expired')) {
-                    Toaster.shortToast('session got expired, trying again');
-                    _verifyPhone();
-                  } else {
-                    Toaster.shortToast('invalid otp, please try again');
-                  }
-                  FocusScope.of(context).unfocus();
-                }
+                setState(() {
+                  mPin = pin;
+                });
+                _verifyOtpCode();
               },
               onChanged: (value) {
                 debugPrint('onChanged: $value');
@@ -526,4 +334,236 @@ class _OTPScreenState extends State<OTPScreen> {
     );
   }
 
+  void _verifyOtpCode() async {
+    Logx.ist(_TAG, 'verifying ${widget.phone}');
+    try {
+      await FirebaseAuth.instance
+          .signInWithCredential(PhoneAuthProvider.credential(
+              verificationId: _verificationCode, smsCode: mPin))
+          .then((value) async {
+        if (value.user != null) {
+          Logx.i(_TAG, 'user is in firebase auth');
+
+          String? fcmToken = '';
+
+          if (!kIsWeb) {
+            fcmToken = await FirebaseMessaging.instance.getToken();
+          }
+
+          Logx.i(
+              _TAG, 'checking for bloc registration by id ${value.user!.uid}');
+
+          FirestoreHelper.pullUser(value.user!.uid).then((res) {
+            if (res.docs.isEmpty) {
+              Logx.i(_TAG,
+                  'checking for bloc registration by phone ${widget.phone}');
+
+              int phoneNumber = StringUtils.getInt(widget.phone);
+              FirestoreHelper.pullUserByPhoneNumber(phoneNumber).then((res) {
+                if (res.docs.isNotEmpty) {
+                  DocumentSnapshot document = res.docs[0];
+                  Map<String, dynamic> data =
+                      document.data()! as Map<String, dynamic>;
+                  blocUser.User user = Fresh.freshUserMap(data, true);
+
+                  String oldUserDocId = user.id;
+                  FirestoreHelper.deleteUser(oldUserDocId);
+
+                  FirestoreHelper.pullPromoterGuestsByBlocUserId(user.id)
+                      .then((res) {
+                    if (res.docs.isNotEmpty) {
+                      for (int i = 0; i < res.docs.length; i++) {
+                        DocumentSnapshot document = res.docs[i];
+                        Map<String, dynamic> data =
+                            document.data()! as Map<String, dynamic>;
+                        PromoterGuest pg =
+                            Fresh.freshPromoterGuestMap(data, false);
+                        pg = pg.copyWith(blocUserId: value.user!.uid);
+                        FirestoreHelper.pushPromoterGuest(pg);
+                      }
+                    }
+                  });
+
+                  user = user.copyWith(id: value.user!.uid, fcmToken: fcmToken);
+                  user.lastSeenAt = Timestamp.now().millisecondsSinceEpoch;
+                  if (UserPreferences.isUserLoggedIn()) {
+                    if (kIsWeb) {
+                      user = user.copyWith(
+                          isAppUser: false, appVersion: Constants.appVersion);
+                    } else {
+                      user = user.copyWith(
+                          isAppUser: true,
+                          appVersion: Constants.appVersion,
+                          isIos:
+                              Theme.of(context).platform == TargetPlatform.iOS);
+                    }
+                  }
+
+                  // check if there is username
+                  if (user.username.isEmpty) {
+                    String username = '';
+                    if (user.surname.trim().isNotEmpty) {
+                      username =
+                          '${user.name.toLowerCase()}_${user.surname.toLowerCase().trim()}';
+                    } else {
+                      username = user.name.toLowerCase().trim();
+                    }
+
+                    //check if username is present in db
+                    FirestoreHelper.pullUserByUsername(username).then((res) {
+                      if (res.docs.isNotEmpty) {
+                        // username is already taken
+                        username = username +
+                            NumberUtils.generateRandomNumber(1, 999).toString();
+                        user = user.copyWith(username: username);
+                        FirestoreHelper.pushUser(user);
+                        UserPreferences.setUser(user);
+                        UiPreferences.setHomePageIndex(0);
+
+                        Logx.ist(_TAG, 'hey there, welcome to bloc! 🦖');
+
+                        GoRouter.of(context)
+                            .pushNamed(RouteConstants.homeRouteName);
+                      } else {
+                        user = user.copyWith(username: username);
+                        FirestoreHelper.pushUser(user);
+                        UserPreferences.setUser(user);
+                        UiPreferences.setHomePageIndex(0);
+
+                        Logx.ist(_TAG, 'hey there, welcome to bloc! 🦖');
+
+                        GoRouter.of(context)
+                            .pushNamed(RouteConstants.homeRouteName);
+                      }
+                    });
+                  } else {
+                    FirestoreHelper.pushUser(user);
+                    UserPreferences.setUser(user);
+                    UiPreferences.setHomePageIndex(0);
+
+                    Logx.ist(_TAG, 'hey there, welcome to bloc! 🦖');
+
+                    GoRouter.of(context)
+                        .pushNamed(RouteConstants.homeRouteName);
+                  }
+                } else {
+                  Logx.i(_TAG,
+                      'user is not already registered in bloc, registering...');
+
+                  blocUser.User registeredUser = Dummy.getDummyUser();
+                  registeredUser = registeredUser.copyWith(
+                      id: value.user!.uid,
+                      phoneNumber: StringUtils.getInt(value.user!.phoneNumber!),
+                      fcmToken: fcmToken!);
+
+                  if (kIsWeb) {
+                    registeredUser = registeredUser.copyWith(
+                        isAppUser: false, appVersion: Constants.appVersion);
+                  } else {
+                    registeredUser = registeredUser.copyWith(
+                        isAppUser: true,
+                        appVersion: Constants.appVersion,
+                        isIos:
+                            Theme.of(context).platform == TargetPlatform.iOS);
+                  }
+
+                  FirestoreHelper.pushUser(registeredUser);
+                  UserPreferences.setUser(registeredUser);
+                  UiPreferences.setHomePageIndex(0);
+
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                        builder: (context) => ProfileAddEditRegisterPage(
+                            user: registeredUser, task: 'register')),
+                  );
+                }
+              });
+            } else {
+              Logx.i(_TAG, 'user is a bloc member. navigating to main...');
+
+              DocumentSnapshot document = res.docs[0];
+              Map<String, dynamic> data =
+                  document.data()! as Map<String, dynamic>;
+
+              blocUser.User user;
+              if (kIsWeb) {
+                user = Fresh.freshUserMap(data, true);
+                user = user.copyWith(
+                    isAppUser: false, appVersion: Constants.appVersion);
+              } else {
+                user = Fresh.freshUserMap(data, false);
+                user = user.copyWith(
+                    isAppUser: true,
+                    appVersion: Constants.appVersion,
+                    isIos: Theme.of(context).platform == TargetPlatform.iOS,
+                    fcmToken: fcmToken!);
+              }
+
+              user.lastSeenAt = Timestamp.now().millisecondsSinceEpoch;
+
+              if (user.username.isEmpty) {
+                String username = '';
+                if (user.surname.trim().isNotEmpty) {
+                  username =
+                      '${user.name.toLowerCase()}_${user.surname.toLowerCase().trim()}';
+                } else {
+                  username = user.name.toLowerCase().trim();
+                }
+
+                //check if username is present in db
+                FirestoreHelper.pullUserByUsername(username).then((res) {
+                  if (res.docs.isNotEmpty) {
+                    // username is already taken
+                    username = username +
+                        NumberUtils.generateRandomNumber(1, 999).toString();
+                    user = user.copyWith(username: username);
+                    FirestoreHelper.pushUser(user);
+                    UserPreferences.setUser(user);
+                    UiPreferences.setHomePageIndex(0);
+
+                    Toaster.shortToast(
+                        'hey ${user.name.toLowerCase()}, welcome back! 🦖');
+
+                    GoRouter.of(context)
+                        .pushNamed(RouteConstants.homeRouteName);
+                  } else {
+                    user = user.copyWith(username: username);
+                    FirestoreHelper.pushUser(user);
+                    UserPreferences.setUser(user);
+                    UiPreferences.setHomePageIndex(0);
+
+                    Toaster.shortToast(
+                        'hey ${user.name.toLowerCase()}, welcome back! 🦖');
+
+                    GoRouter.of(context)
+                        .pushNamed(RouteConstants.homeRouteName);
+                  }
+                });
+              } else {
+                FirestoreHelper.pushUser(user);
+                UserPreferences.setUser(user);
+                UiPreferences.setHomePageIndex(0);
+
+                GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
+
+                Toaster.shortToast(
+                    'hey ${user.name.toLowerCase()}, welcome back! 🦖');
+              }
+            }
+          });
+        }
+      });
+    } catch (e) {
+      Logx.em(_TAG, 'otp error $e');
+
+      String exception = e.toString();
+      if (exception.contains('session-expired')) {
+        Toaster.shortToast('session got expired, trying again');
+        _verifyPhone();
+      } else {
+        Toaster.shortToast('invalid otp, please try again');
+      }
+      FocusScope.of(context).unfocus();
+    }
+  }
 }

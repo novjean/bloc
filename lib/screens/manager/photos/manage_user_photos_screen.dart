@@ -4,7 +4,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import '../../../db/entity/party_photo.dart';
-import '../../../helpers/dummy.dart';
 import '../../../helpers/firestore_helper.dart';
 import '../../../helpers/fresh.dart';
 import '../../../main.dart';
@@ -116,13 +115,24 @@ class _ManageUserPhotosScreenState extends State<ManageUserPhotosScreen> {
                   Logx.ist(_TAG, 'user photo tag is deleted');
                 },
                 onTap: () {
-                  // Navigator.of(context).push(
-                  //   MaterialPageRoute(
-                  //       builder: (ctx) => PartyPhotoAddEditScreen(
-                  //         partyPhoto: mUserPhotos[index],
-                  //         task: 'edit',
-                  //       )),
-                  // );
+                  FirestoreHelper.pullPartyPhoto(mUserPhotos[index].partyPhotoId).then((res) {
+                    if(res.docs.isNotEmpty){
+                      DocumentSnapshot document = res.docs[0];
+                      Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+                      PartyPhoto partyPhoto = Fresh.freshPartyPhotoMap(data, false);
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                            builder: (ctx) => PartyPhotoAddEditScreen(
+                              partyPhoto: partyPhoto,
+                              task: 'edit',
+                            )),
+                      );
+                    } else {
+                      Logx.est(_TAG,'party photo could not be found!');
+                    }
+                  });
+
+
                 });
           }),
     );
