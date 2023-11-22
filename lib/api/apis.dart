@@ -17,7 +17,7 @@ class Apis{
         "to": fcmToken,
         "android_channel_id": "high importance",
         "notification": {
-          "title": title, //our name should be send
+          "title": title,
           "body": msg,
         },
         "priority": "normal"

@@ -17,6 +17,7 @@ import 'package:go_router/go_router.dart';
 import 'package:upgrader/upgrader.dart';
 
 import '../db/entity/ad.dart';
+import '../db/entity/friend.dart';
 import '../db/entity/user_lounge.dart';
 import '../db/shared_preferences/user_preferences.dart';
 import '../helpers/firestore_helper.dart';
@@ -106,21 +107,19 @@ class _MainScreenState extends State<MainScreen> {
         DocumentSnapshot document = res.docs[0];
         Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
         blocUser.User user1 = Fresh.freshUserMap(data, false);
-        user1.lastSeenAt = Timestamp.now().millisecondsSinceEpoch;
+        user1 = user1.copyWith(
+            lastSeenAt: Timestamp.now().millisecondsSinceEpoch,
+            appVersion: Constants.appVersion);
 
-        if (UserPreferences.isUserLoggedIn()) {
-          if (kIsWeb) {
-            user1 = user1.copyWith(
-              isAppUser: false,
-              appVersion: Constants.appVersion,
-            );
-          } else {
-            user1 = user1.copyWith(
-              isAppUser: true,
-              appVersion: Constants.appVersion,
-              isIos: Theme.of(context).platform == TargetPlatform.iOS,
-            );
-          }
+        if (kIsWeb) {
+          user1 = user1.copyWith(
+            isAppUser: false,
+          );
+        } else {
+          user1 = user1.copyWith(
+            isAppUser: true,
+            isIos: Theme.of(context).platform == TargetPlatform.iOS,
+          );
         }
 
         if(user1.username.isEmpty){
@@ -146,8 +145,8 @@ class _MainScreenState extends State<MainScreen> {
             }
           });
         } else {
-          FirestoreHelper.pushUser(user);
-          UserPreferences.setUser(user);
+          FirestoreHelper.pushUser(user1);
+          UserPreferences.setUser(user1);
         }
       }
     }, onError: (e, s) {
@@ -240,6 +239,22 @@ class _MainScreenState extends State<MainScreen> {
             }
           }
           UserPreferences.setListLounges(userLounges);
+        }
+      });
+
+      FirestoreHelper.pullFriends(UserPreferences.myUser.id).then((res) {
+        if(res.docs.isNotEmpty){
+          for(int i=0;i<res.docs.length; i++){
+            DocumentSnapshot document = res.docs[i];
+            Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+            Friend friend = Fresh.freshFriendMap(data, false);
+
+            if(friend.isFollowing){
+              FirebaseMessaging.instance.subscribeToTopic(friend.friendUserId);
+            } else {
+              FirebaseMessaging.instance.unsubscribeFromTopic(friend.friendUserId);
+            }
+          }
         }
       });
     }
@@ -389,6 +404,18 @@ class _MainScreenState extends State<MainScreen> {
               FirebaseMessaging.instance.unsubscribeFromTopic(userLounge.loungeId);
             }
             UserPreferences.setListLounges(userLounges);
+          }
+        });
+
+        FirestoreHelper.pullFriends(UserPreferences.myUser.id).then((res) {
+          if(res.docs.isNotEmpty){
+            for(int i=0;i<res.docs.length; i++){
+              DocumentSnapshot document = res.docs[i];
+              Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+              Friend friend = Fresh.freshFriendMap(data, false);
+
+              FirebaseMessaging.instance.unsubscribeFromTopic(friend.friendUserId);
+            }
           }
         });
       }

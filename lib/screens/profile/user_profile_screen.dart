@@ -1,4 +1,5 @@
 
+import 'package:bloc/db/entity/friend_notification.dart';
 import 'package:bloc/db/entity/history_music.dart';
 import 'package:bloc/helpers/firestore_helper.dart';
 import 'package:bloc/widgets/ui/loading_widget.dart';
@@ -9,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
+import '../../api/apis.dart';
 import '../../db/entity/friend.dart';
 import '../../db/entity/party_photo.dart';
 import '../../db/entity/user.dart' as blocUser;
@@ -381,6 +383,15 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
               isFollowing: true,
             );
             FirestoreHelper.pushFriend(friend);
+
+            //should send a friend notification
+            if(mUser.fcmToken.isNotEmpty){
+              String title = '🤍 new friend alert';
+              String message =
+                  '${UserPreferences.myUser.name} ${UserPreferences.myUser.surname} has added you as their friend!'.toLowerCase();
+
+              Apis.sendPushNotification(mUser.fcmToken, title, message);
+            }
 
             setState(() {
               mFriend = friend;

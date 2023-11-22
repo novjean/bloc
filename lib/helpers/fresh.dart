@@ -12,6 +12,7 @@ import '../db/entity/challenge.dart';
 import '../db/entity/challenge_action.dart';
 import '../db/entity/config.dart';
 import '../db/entity/friend.dart';
+import '../db/entity/friend_notification.dart';
 import '../db/entity/lounge_chat.dart';
 import '../db/entity/genre.dart';
 import '../db/entity/lounge.dart';
@@ -1425,6 +1426,94 @@ class Fresh {
     }
 
     return freshFriend;
+  }
+
+  /** friend notification **/
+  static FriendNotification freshFriendNotificationMap(Map<String, dynamic> map, bool shouldUpdate) {
+    FriendNotification friendNotification = Dummy.getDummyFriendNotification();
+
+    bool isModelChanged = false;
+
+    try {
+      friendNotification = friendNotification.copyWith(id: map['id'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'friendNotification id not exist');
+    }
+    try {
+      friendNotification = friendNotification.copyWith(title: map['title'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'friendNotification title not exist for id: ${friendNotification.id}');
+      isModelChanged = true;
+    }
+    try {
+      friendNotification = friendNotification.copyWith(message: map['message'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'friendNotification message not exist for id: ${friendNotification.id}');
+      isModelChanged = true;
+    }
+    try {
+      friendNotification = friendNotification.copyWith(imageUrl: map['imageUrl'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'friendNotification imageUrl not exist for id: ${friendNotification.id}');
+      isModelChanged = true;
+    }
+    try {
+      friendNotification = friendNotification.copyWith(topic: map['topic'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'friendNotification topic not exist for id: ${friendNotification.id}');
+      isModelChanged = true;
+    }
+    try {
+      friendNotification = friendNotification.copyWith(time: map['time'] as int);
+    } catch (e) {
+      Logx.em(_TAG, 'friendNotification time not exist for id: ${friendNotification.id}');
+      isModelChanged = true;
+    }
+
+    if (isModelChanged &&
+        shouldUpdate) {
+      Logx.i(_TAG, 'updating friend notification ${friendNotification.id}');
+      FirestoreHelper.pushFriendNotification(friendNotification);
+    }
+
+    return friendNotification;
+  }
+
+  static FriendNotification freshFriendNotification(FriendNotification friendNotification) {
+    FriendNotification fresh = Dummy.getDummyFriendNotification();
+
+    try {
+      fresh = fresh.copyWith(id: friendNotification.id);
+    } catch (e) {
+      Logx.em(_TAG, 'friendNotification id not exist');
+    }
+    try {
+      fresh = fresh.copyWith(title: friendNotification.title);
+    } catch (e) {
+      Logx.em(_TAG, 'friendNotification title not exist for id: ${friendNotification.id}');
+    }
+    try {
+      fresh = fresh.copyWith(message: friendNotification.message);
+    } catch (e) {
+      Logx.em(_TAG, 'friendNotification message not exist for id: ${friendNotification.id}');
+    }
+    try {
+      fresh = fresh.copyWith(imageUrl: friendNotification.imageUrl);
+    } catch (e) {
+      Logx.em(_TAG, 'friendNotification imageUrl not exist for id: ${friendNotification.id}');
+    }
+    try {
+      fresh = fresh.copyWith(topic: friendNotification.topic);
+    } catch (e) {
+      Logx.em(_TAG, 'friendNotification topic not exist for id: ${friendNotification.id}');
+    }
+    try {
+      fresh = fresh.copyWith(time: friendNotification.time);
+    } catch (e) {
+      Logx.em(_TAG, 'friendNotification time not exist for id: ${friendNotification.id}');
+    }
+
+    return fresh;
   }
 
   /** genre **/

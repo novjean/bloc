@@ -10,6 +10,7 @@ import 'package:bloc/db/entity/celebration.dart';
 import 'package:bloc/db/entity/challenge.dart';
 import 'package:bloc/db/entity/challenge_action.dart';
 import 'package:bloc/db/entity/config.dart';
+import 'package:bloc/db/entity/friend_notification.dart';
 import 'package:bloc/db/entity/lounge_chat.dart';
 import 'package:bloc/db/entity/genre.dart';
 import 'package:bloc/db/entity/guest_wifi.dart';
@@ -71,6 +72,7 @@ class FirestoreHelper {
   static String CITIES = 'cities';
   static String CONFIGS = 'configs';
   static String FRIENDS = 'friends';
+  static String FRIEND_NOTIFICATIONS = 'friend_notifications';
   static String GENRES = 'genres';
   static String GUEST_WIFIS = 'guest_wifis';
   static String HISTORY_MUSIC = 'history_music';
@@ -767,6 +769,26 @@ class FirestoreHelper {
 
   static void deleteFriend(String docId) {
     FirebaseFirestore.instance.collection(FRIENDS).doc(docId).delete();
+  }
+
+  /** friend notification **/
+  static void pushFriendNotification(FriendNotification friendNotification) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection(FRIEND_NOTIFICATIONS)
+          .doc(friendNotification.id)
+          .set(friendNotification.toMap());
+    } on PlatformException catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } on Exception catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } catch (e) {
+      Logx.em(_TAG, e.toString());
+    }
+  }
+
+  static void deleteFriendNotification(String docId) {
+    FirebaseFirestore.instance.collection(FRIEND_NOTIFICATIONS).doc(docId).delete();
   }
 
   /** genre **/
@@ -2222,7 +2244,6 @@ class FirestoreHelper {
         .get();
   }
 
-
   static Future<QuerySnapshot<Map<String, dynamic>>> pullUsersByLevel(
       int level) {
     return FirebaseFirestore.instance
@@ -2552,8 +2573,5 @@ class FirestoreHelper {
   static void deleteUserPhoto(String docId) {
     FirebaseFirestore.instance.collection(USER_PHOTOS).doc(docId).delete();
   }
-
-
-
 
 }

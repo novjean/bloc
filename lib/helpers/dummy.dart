@@ -22,6 +22,7 @@ import '../db/entity/celebration.dart';
 import '../db/entity/challenge_action.dart';
 import '../db/entity/config.dart';
 import '../db/entity/friend.dart';
+import '../db/entity/friend_notification.dart';
 import '../db/entity/lounge_chat.dart';
 import '../db/entity/genre.dart';
 import '../db/entity/lounge.dart';
@@ -221,6 +222,18 @@ class Dummy {
       friendshipDate: Timestamp.now().millisecondsSinceEpoch
     );
     return dummyFriend;
+  }
+
+  static FriendNotification getDummyFriendNotification() {
+    FriendNotification dummy = FriendNotification(
+        id: StringUtils.getRandomString(28),
+        title: '',
+        message: '',
+        topic: '',
+        imageUrl: '',
+        time: Timestamp.now().millisecondsSinceEpoch
+    );
+    return dummy;
   }
 
   static Genre getDummyGenre() {

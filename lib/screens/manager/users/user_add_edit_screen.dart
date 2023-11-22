@@ -216,6 +216,7 @@ class _UserAddEditScreenState extends State<UserAddEditScreen> {
                 children: [
                   Text(
                     'gender',
+                    style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                 ],
               ),

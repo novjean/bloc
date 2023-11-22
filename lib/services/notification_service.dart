@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:bloc/db/entity/friend_notification.dart';
 import 'package:bloc/db/entity/lounge_chat.dart';
 import 'package:bloc/helpers/firestore_helper.dart';
 import 'package:bloc/utils/string_utils.dart';
@@ -159,6 +160,21 @@ class NotificationService {
                 params: {
                   'id': chat.loungeId,
                 });
+          } catch (e) {
+            Logx.em(_TAG, e.toString());
+          }
+          break;
+        case 'friend_notification':
+          try {
+            FriendNotification notification = Fresh.freshFriendNotificationMap(jsonDecode(payload['data']!), false);
+
+            BuildContext? appContext = BlocApp.navigatorKey.currentContext;
+            GoRouter.of(appContext!).pushNamed(
+                RouteConstants.landingRouteName,
+                // params: {
+                //   'id': chat.loungeId,
+                // }
+                );
             Logx.d(_TAG, 'successful');
           } catch (e) {
             Logx.em(_TAG, e.toString());
@@ -205,6 +221,29 @@ class NotificationService {
 
         break;
       }
+
+      case 'friend_notifications':{
+        FriendNotification friendNotification = Fresh.freshFriendNotificationMap(jsonDecode(data['document']), false);
+        if(notificationId == friendNotification.id){
+          return;
+        } else {
+          UiPreferences.setHomePageIndex(2);
+
+          if(notificationId == friendNotification.id){
+            Logx.d(_TAG, 'same notification, not showing');
+            return;
+          } else {
+            if(UserPreferences.isUserLoggedIn()
+                && friendNotification.topic != UserPreferences.myUser.id){
+
+              NotificationService.showFriendNotification(friendNotification);
+            }
+          }
+        }
+
+        break;
+      }
+
       case 'ads':{
         Ad ad = Fresh.freshAdMap(jsonDecode(data['document']), false);
         if(notificationId == ad.id){
@@ -442,6 +481,50 @@ class NotificationService {
         payload: {
           "navigate": "true",
           "type": "chat",
+          "data": jsonString,
+        },
+        // actionButtons: [
+        //   NotificationActionButton(
+        //       key: 'DISMISS',
+        //       label: 'dismiss',
+        //       actionType: ActionType.DismissAction,
+        //       isDangerousOption: true)
+        // ]
+      );
+    }
+  }
+
+  static void showFriendNotification(FriendNotification notification) async {
+    Map<String, dynamic> objectMap = notification.toMap();
+    String jsonString = jsonEncode(objectMap);
+
+
+    if (notification.imageUrl.isEmpty) {
+      String title = '💌 ${notification.title}';
+      String body = notification.message;
+
+      await showNotification(
+        title: title,
+        body: body,
+        notificationLayout: NotificationLayout.Default,
+        payload: {
+          "navigate": "true",
+          "type": "friend_notification",
+          "data": jsonString,
+        },
+      );
+    } else {
+      String title = '💌 ${notification.title}';
+      String body = notification.message;
+
+      await showNotification(
+        title: title,
+        body: body,
+        largeIcon: notification.imageUrl,
+        notificationLayout: NotificationLayout.Default,
+        payload: {
+          "navigate": "true",
+          "type": "friend_notification",
           "data": jsonString,
         },
         // actionButtons: [

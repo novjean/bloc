@@ -131,8 +131,8 @@ class AccountScreen extends StatelessWidget {
             style: TextStyle(color: Constants.primary),
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.only(top:15.0, bottom: 5, left: 10, right: 10),
+        const Padding(
+          padding: EdgeInsets.only(top:15.0, bottom: 5, left: 10, right: 10),
           child: Text('Copyright Novatech Corp 2023. All rights reserved.',
             textAlign: TextAlign.center,
             style: TextStyle(color: Constants.primary, fontSize: 12),),

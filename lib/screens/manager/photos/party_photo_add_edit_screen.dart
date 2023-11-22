@@ -108,7 +108,6 @@ class _PartyPhotoAddEditScreenState extends State<PartyPhotoAddEditScreen> {
       }
     });
 
-
     FirestoreHelper.pullAllBlocServices().then((res) {
       Logx.i(_TAG, "successfully pulled in all bloc services ");
 
