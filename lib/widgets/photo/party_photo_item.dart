@@ -355,7 +355,19 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
                 _isUsersLoading ? const SizedBox(): Row(
                   children: mUsers.map((user) {
                     return Container(
-                      padding: const EdgeInsets.only(left: 5.0),
+                      margin: const EdgeInsets.only(left: 10.0),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(10.0), // Adjust the border radius as needed
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.5), // Set the shadow color
+                            spreadRadius: 5, // Set the spread radius
+                            blurRadius: 7, // Set the blur radius
+                            offset: Offset(0, 3), // Set the shadow offset
+                          ),
+                        ],
+                      ),
                       child: GestureDetector(
                         onTap: () {
                           GoRouter.of(context).pushNamed(RouteConstants.profileRouteName, params: {
@@ -366,14 +378,15 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
                           borderRadius: BorderRadius.circular(10),
                           child: Padding(
                             padding: const EdgeInsets.symmetric(
-                                vertical: 2, horizontal: 2),
+                                vertical: 3, horizontal: 5),
                             child: Text(
-                              '@${user.name.toLowerCase()}',
+                              '${user.gender == 'female'? '🦋': '🐉'} ${user.name.toLowerCase()}',
                               style: TextStyle(
                                 fontSize: 14,
-                                backgroundColor: Constants
-                                    .primary
-                                    .withOpacity(0.7),
+                                fontWeight: FontWeight.bold,
+                                // backgroundColor: Constants
+                                //     .primary
+                                //     .withOpacity(0.8),
                               ),
                             ),
                           ),
@@ -388,21 +401,6 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      // _showTaggedUsers(context),
-
-                      // Expanded(
-                      //   child: ListView.builder(
-                      //     scrollDirection: Axis.horizontal,
-                      //     itemCount: mUsers.length,
-                      //     itemBuilder: (BuildContext context, int index) {
-                      //       return Container(
-                      //         padding: EdgeInsets.all(8.0),
-                      //         child: Text(mUsers[index].name),
-                      //       );
-                      //     },
-                      //   ),
-                      // ),
-
                       const Text('see yourself'),
                       Padding(
                           padding:
@@ -415,8 +413,6 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
                               shape: const RoundedRectangleBorder(
                                   borderRadius: BorderRadius.all(
                                       Radius.circular(10))
-                                // only(
-                                //   topLeft: Radius.circular(10), topRight: Radius.circular(10)),
                               ),
                               elevation: 3,
                             ),

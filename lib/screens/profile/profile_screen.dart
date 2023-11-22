@@ -651,7 +651,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     friends.add(friend);
                   }
 
-                  return _showFriends(context, friends);
+                  if(friends.isNotEmpty){
+                    return _showFriends(context, friends);
+                  } else {
+                    return const Padding(
+                      padding: EdgeInsets.only(left: 15.0, top: 5),
+                      child: DelayedDisplay(
+                        delay: Duration(seconds: 1),
+                        child: Text(
+                          'you are rolling solo in this story, no side characters yet!',
+                          textAlign: TextAlign.start,
+                          style: TextStyle(
+                              color: Constants.primary, fontSize: 16),
+                        ),
+                      ),
+                    );
+                  }
                 } on Exception catch (e, s) {
                   Logx.e(_TAG, e, s);
                 } catch (e) {
@@ -664,6 +679,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   _showFriends(BuildContext context, List<Friend> friends) {
+
     return Container(
       height: 60,
       child: ListView.builder(
