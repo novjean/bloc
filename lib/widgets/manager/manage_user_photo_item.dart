@@ -1,3 +1,4 @@
+import 'package:bloc/db/entity/friend_notification.dart';
 import 'package:bloc/db/entity/party_photo.dart';
 import 'package:bloc/helpers/firestore_helper.dart';
 import 'package:bloc/widgets/ui/loading_widget.dart';
@@ -5,7 +6,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import '../../../utils/constants.dart';
-import '../../../utils/date_time_utils.dart';
 import '../../db/entity/user.dart';
 import '../../db/entity/user_photo.dart';
 import '../../helpers/dummy.dart';
@@ -82,7 +82,8 @@ class _ManageUserPhotoItemState extends State<ManageUserPhotoItem> {
             elevation: 1,
             color: Constants.lightPrimary,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-            child: _isPhotoLoading && _isUserLoading? const LoadingWidget() : Padding(
+            child: _isPhotoLoading && _isUserLoading? const LoadingWidget() :
+            Padding(
                 padding: const EdgeInsets.only(top: 2.0, left: 5, right: 5),
                 child: ListTile(
                   leading: FadeInImage(
@@ -124,6 +125,8 @@ class _ManageUserPhotoItemState extends State<ManageUserPhotoItem> {
 
                           FirestoreHelper.pushPartyPhoto(mPhoto);
                           Logx.ist(_TAG, '${mUser.name} tagged to the photo');
+
+                          _showNotifyFriendsDialog(context);
                         } else {
                           Logx.ist(_TAG, '${mUser.name} is already tagged to the photo');
                         }
@@ -138,6 +141,7 @@ class _ManageUserPhotoItemState extends State<ManageUserPhotoItem> {
                       setState(() {
                         widget.userPhoto;
                       });
+
                     },
                   ),
                 )),
@@ -146,4 +150,54 @@ class _ManageUserPhotoItemState extends State<ManageUserPhotoItem> {
       ),
     );
   }
+
+  _showNotifyFriendsDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: Constants.lightPrimary,
+          shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(20.0))),
+          contentPadding: const EdgeInsets.all(16.0),
+          title: Text(
+            'notify ${mUser.name}\'s followers',
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 22, color: Colors.black),
+          ),
+          content: const Text(
+              "are you sure you want to notify them?"),
+          actions: [
+            TextButton(
+              child: const Text("yes"),
+              onPressed: () async {
+                Navigator.of(context).pop();
+
+                FriendNotification notification = Dummy.getDummyFriendNotification();
+                notification = notification.copyWith(topic: mUser.id,
+                    imageUrl: mPhoto.imageUrl,
+                    title: '🤩 ${mUser.name} has a new photo'.toLowerCase(),
+                    message: 'Latest pic just landed, catch ${mUser.name} in the spotlight! 📸💝'.toLowerCase()
+                );
+                FirestoreHelper.pushFriendNotification(notification);
+
+                Logx.ist(_TAG, 'friend notification sent to all followers of ${mUser.name}');
+              },
+            ),
+            TextButton(
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all<Color>(
+                    Constants.darkPrimary), // Set your desired background color
+              ),
+              child: const Text("no"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            )
+          ],
+        );
+      },
+    );
+  }
+
 }

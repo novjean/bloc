@@ -6,6 +6,7 @@ import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:delayed_display/delayed_display.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
@@ -52,9 +53,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   List<PartyPhoto> mPartyPhotos = [];
   var _isPartyPhotosLoading = true;
-
-  List<Friend> mFriends = [];
-  var _isFriendsLoading = true;
 
   @override
   void dispose() {
@@ -640,7 +638,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             case ConnectionState.active:
             case ConnectionState.done:
               {
-                mFriends = [];
+                List<Friend> friends = [];
 
                 try {
                   for (int i = 0; i < snapshot.data!.docs.length; i++) {
@@ -650,10 +648,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     final Friend friend =
                     Fresh.freshFriendMap(map, false);
 
-                    mFriends.add(friend);
+                    friends.add(friend);
                   }
 
-                  return _showFriends(context);
+                  return _showFriends(context, friends);
                 } on Exception catch (e, s) {
                   Logx.e(_TAG, e, s);
                 } catch (e) {
@@ -665,15 +663,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
         });
   }
 
-  _showFriends(BuildContext context) {
+  _showFriends(BuildContext context, List<Friend> friends) {
     return Container(
       height: 60,
       child: ListView.builder(
-          itemCount: mFriends.length,
+          itemCount: friends.length,
           scrollDirection: Axis.horizontal,
-          shrinkWrap: true,
+          shrinkWrap: false,
           itemBuilder: (ctx, index) {
-            Friend friend = mFriends[index];
+            Logx.d(_TAG, 'friends length: ${friends.length}, index $index');
+
+            Friend friend = friends[index];
 
             return UserFriendItem(
               friend: friend,

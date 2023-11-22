@@ -1,6 +1,7 @@
 import 'package:bloc/helpers/firestore_helper.dart';
 import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:delayed_display/delayed_display.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -60,13 +61,19 @@ class _UserFriendItemState extends State<UserFriendItem> {
     // double conversion = friend.hits/friend.reach;
 
     String dispName = '';
+
+
     if(mFriendUser.surname.isNotEmpty){
       dispName = mFriendUser.name[0] + mFriendUser.surname[0];
     } else {
       if(mFriendUser.name.length>1){
         dispName = mFriendUser.name[0] + mFriendUser.name[1];
       } else {
-        dispName = mFriendUser.name[0];
+        if(mFriendUser.name.isNotEmpty){
+          dispName = mFriendUser.name[0];
+        } else {
+          return const SizedBox();
+        }
       }
     }
 
@@ -81,44 +88,47 @@ class _UserFriendItemState extends State<UserFriendItem> {
           Logx.est(_TAG, 'profile is not created yet!');
         }
       },
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10.0),
-        child: SizedBox(
-          width: 60.0, // Adjust the width and height for the circle size
-          height: 60.0,
-          child: _isFriendUserLoading? const SizedBox() : ClipOval(
-            child: mFriendUser.imageUrl.isNotEmpty
-                ? Image.network(
-                    mFriendUser.imageUrl, // Replace with your image URL
-                    width: 60.0,
-                    // Make sure to match the width and height of the Container
-                    height: 60.0,
-                    fit: BoxFit.cover, // Adjust the BoxFit property as needed
-                  )
-                : Container(
-                    width:
-                        60.0, // Adjust the width and height for the circle size
-                    height: 60.0,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: Constants.primary, // Set the border color
-                        width: 2.0, // Set the border width
-                      ),
-                    ),
-                    child: Center(
-                      child: Text(
-                        dispName.toLowerCase(), // Your two alphabets
-                        style: TextStyle(
-                          color: Constants.primary, // Set the text color
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+      child: DelayedDisplay(
+        delay: const Duration(seconds: 1),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10.0),
+          child: SizedBox(
+            width: 60.0, // Adjust the width and height for the circle size
+            height: 60.0,
+            child: _isFriendUserLoading? const SizedBox() : ClipOval(
+              child: mFriendUser.imageUrl.isNotEmpty
+                  ? Image.network(
+                mFriendUser.imageUrl, // Replace with your image URL
+                width: 60.0,
+                // Make sure to match the width and height of the Container
+                height: 60.0,
+                fit: BoxFit.cover, // Adjust the BoxFit property as needed
+              )
+                  : Container(
+                width:
+                60.0, // Adjust the width and height for the circle size
+                height: 60.0,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: Constants.primary, // Set the border color
+                    width: 2.0, // Set the border width
+                  ),
+                ),
+                child: Center(
+                  child: Text(
+                    dispName.toLowerCase(), // Your two alphabets
+                    style: TextStyle(
+                      color: Constants.primary, // Set the text color
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
+                ),
+              ),
+            ),
           ),
         ),
-      ),
+      )
     );
   }
 }

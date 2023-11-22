@@ -104,20 +104,30 @@ class _ManageFriendItemState extends State<ManageFriendItem> {
                   subtitle: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('following : ${widget.friend.isFollowing}'),
+                      RichText(
+                        text: TextSpan(
+                          text:
+                          '${DateTimeUtils.getFormattedDate(widget.friend.friendshipDate)} ',
+                          style: const TextStyle(
+                            fontFamily: Constants.fontDefault,
+                            color: Colors.black,
+                            fontStyle: FontStyle.italic,
+                            fontSize: 13,
+                          ),
+                        ),
+                      ),
                     ],
                   ),
-                  trailing: RichText(
-                    text: TextSpan(
-                      text:
-                      '${DateTimeUtils.getFormattedDate(widget.friend.friendshipDate)} ',
-                      style: const TextStyle(
-                        fontFamily: Constants.fontDefault,
-                        color: Colors.black,
-                        fontStyle: FontStyle.italic,
-                        fontSize: 13,
-                      ),
-                    ),
+                  trailing: Checkbox(
+                    value: widget.friend.isFollowing,
+                    onChanged: (value) {
+                      widget.friend = widget.friend.copyWith(isFollowing: value);
+                      FirestoreHelper.pushFriend(widget.friend);
+
+                      setState(() {
+                        widget.friend;
+                      });
+                    },
                   ),
                 )),
           ),

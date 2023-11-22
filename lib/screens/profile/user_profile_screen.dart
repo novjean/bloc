@@ -1,4 +1,3 @@
-
 import 'package:bloc/db/entity/friend_notification.dart';
 import 'package:bloc/db/entity/history_music.dart';
 import 'package:bloc/helpers/firestore_helper.dart';
@@ -6,6 +5,7 @@ import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:delayed_display/delayed_display.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
@@ -29,7 +29,6 @@ import '../../widgets/profile_widget.dart';
 import '../../widgets/ui/app_bar_title.dart';
 import '../../widgets/ui/blurred_image.dart';
 import '../../widgets/ui/button_widget.dart';
-
 
 class UserProfileScreen extends StatefulWidget {
   String username;
@@ -69,7 +68,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
   @override
   void initState() {
     FirestoreHelper.pullUserByUsername(widget.username).then((res) {
-      if(res.docs.isNotEmpty){
+      if (res.docs.isNotEmpty) {
         DocumentSnapshot document = res.docs[0];
         Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
         mUser = Fresh.freshUserMap(data, false);
@@ -78,8 +77,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
           _isUserLoading = false;
         });
 
-        FirestoreHelper.pullHistoryMusicByUser(mUser.id)
-            .then((res) {
+        FirestoreHelper.pullHistoryMusicByUser(mUser.id).then((res) {
           if (res.docs.isEmpty) {
             setState(() {
               showMusicHistory = false;
@@ -89,9 +87,9 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
             for (int i = 0; i < res.docs.length; i++) {
               DocumentSnapshot document = res.docs[i];
               Map<String, dynamic> data =
-              document.data()! as Map<String, dynamic>;
+                  document.data()! as Map<String, dynamic>;
               final HistoryMusic historyMusic =
-              Fresh.freshHistoryMusicMap(data, false);
+                  Fresh.freshHistoryMusicMap(data, false);
               mHistoryMusics.add(historyMusic);
             }
 
@@ -103,11 +101,11 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
         });
 
         FirestoreHelper.pullPartyPhotosByUserId(mUser.id).then((res) {
-          if(res.docs.isNotEmpty){
+          if (res.docs.isNotEmpty) {
             for (int i = 0; i < res.docs.length; i++) {
               DocumentSnapshot document = res.docs[i];
-              Map<String, dynamic> data = document.data()! as Map<String,
-                  dynamic>;
+              Map<String, dynamic> data =
+                  document.data()! as Map<String, dynamic>;
               PartyPhoto partyPhoto = Fresh.freshPartyPhotoMap(data, false);
               mPartyPhotos.add(partyPhoto);
             }
@@ -122,11 +120,13 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
           }
         });
 
-        if(UserPreferences.isUserLoggedIn()){
-          FirestoreHelper.pullFriend(UserPreferences.myUser.id, mUser.id).then((res) {
-            if(res.docs.isNotEmpty){
+        if (UserPreferences.isUserLoggedIn()) {
+          FirestoreHelper.pullFriend(UserPreferences.myUser.id, mUser.id)
+              .then((res) {
+            if (res.docs.isNotEmpty) {
               DocumentSnapshot document = res.docs[0];
-              Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+              Map<String, dynamic> data =
+                  document.data()! as Map<String, dynamic>;
               mFriend = Fresh.freshFriendMap(data, false);
 
               setState(() {
@@ -134,7 +134,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                 _buttonText = '☠️ unfriend';
                 isFollowing = mFriend.isFollowing;
               });
-            } else{
+            } else {
               setState(() {
                 isFriend = false;
                 _buttonText = '🤍 friend';
@@ -146,8 +146,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
       } else {
         // profile not found, navigate to home
         Logx.ist(_TAG, 'unfortunately, the profile could not be found');
-        GoRouter.of(context)
-            .pushNamed(RouteConstants.landingRouteName);
+        GoRouter.of(context).pushNamed(RouteConstants.landingRouteName);
       }
     });
 
@@ -169,8 +168,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
         ),
       ),
       backgroundColor: Constants.background,
-      body: _isUserLoading ? const LoadingWidget():
-      _buildBody(context),
+      body: _isUserLoading ? const LoadingWidget() : _buildBody(context),
     );
   }
 
@@ -185,8 +183,8 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
       }
     }
 
-    return Stack(
-      children: [ ListView(
+    return Stack(children: [
+      ListView(
         shrinkWrap: true,
         physics: const BouncingScrollPhysics(),
         children: [
@@ -196,7 +194,6 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
               mainAxisSize: MainAxisSize.min,
-
               children: [
                 Padding(
                   padding: const EdgeInsets.only(right: 15.0),
@@ -207,43 +204,41 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
                         buildName(mUser),
-
-                        UserPreferences.isUserLoggedIn()?
-                        Padding(
-                        padding: const EdgeInsets.only(top: 15.0),
-                        child: buildFriendUnfriendToggleButton(),
-                        ) : const SizedBox(),
+                        UserPreferences.isUserLoggedIn()
+                            ? Padding(
+                                padding: const EdgeInsets.only(top: 15.0),
+                                child: buildFriendUnfriendToggleButton(),
+                              )
+                            : const SizedBox(),
                       ],
                     ),
                   ),
                 ),
                 mUser.imageUrl.isNotEmpty
                     ? ProfileWidget(
-                  isEdit: false,
-                  imagePath: mUser.imageUrl,
-                  showEditIcon: false,
-                  onClicked: () {
-                  },
-                )
+                        isEdit: false,
+                        imagePath: mUser.imageUrl,
+                        showEditIcon: false,
+                        onClicked: () {},
+                      )
                     : ClipOval(
-                  child: Container(
-                    width: 128.0,
-                    height: 128.0,
-                    color: Constants.primary,
-                    // Optional background color for the circle
-                    child: Image.asset(
-                      mUser.gender == 'female'
-                          ? 'assets/profile_photos/12.png'
-                          : 'assets/profile_photos/1.png',
-                      // Replace with your asset image path
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                ),
+                        child: Container(
+                          width: 128.0,
+                          height: 128.0,
+                          color: Constants.primary,
+                          // Optional background color for the circle
+                          child: Image.asset(
+                            mUser.gender == 'female'
+                                ? 'assets/profile_photos/12.png'
+                                : 'assets/profile_photos/1.png',
+                            // Replace with your asset image path
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
               ],
             ),
           ),
-
           const SizedBox(height: 24),
           const Padding(
             padding: EdgeInsets.only(left: 15.0, right: 15, bottom: 10),
@@ -254,7 +249,6 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
             ),
           ),
           _loadFriends(context),
-
           const SizedBox(height: 24),
           const Padding(
             padding: EdgeInsets.only(left: 15.0, right: 15, bottom: 10),
@@ -264,8 +258,11 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
               style: TextStyle(color: Constants.primary, fontSize: 20),
             ),
           ),
-
-          _isPartyPhotosLoading ? const SizedBox() : mPartyPhotos.isNotEmpty ? _showPhotosGridView(mPartyPhotos): const SizedBox(),
+          _isPartyPhotosLoading
+              ? const SizedBox()
+              : mPartyPhotos.isNotEmpty
+                  ? _showPhotosGridView(mPartyPhotos)
+                  : const SizedBox(),
           const Divider(),
           const Padding(
             padding: EdgeInsets.only(left: 15.0),
@@ -277,144 +274,151 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
           ),
           showMusicHistory
               ? Center(
-            child: SfCircularChart(
-                title: ChartTitle(
-                    text: '',
-                    textStyle: const TextStyle(
-                        color: Constants.primary,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold)),
-                legend: const Legend(
-                    isVisible: true,
-                    textStyle: TextStyle(color: Constants.lightPrimary)),
-                series: <PieSeries<_PieData, String>>[
-                  PieSeries<_PieData, String>(
-                      explode: true,
-                      explodeIndex: 0,
-                      dataSource: pieData2,
-                      xValueMapper: (_PieData data, _) => data.xData,
-                      yValueMapper: (_PieData data, _) => data.yData,
-                      dataLabelMapper: (_PieData data, _) => data.text,
-                      dataLabelSettings: const DataLabelSettings(
+                  child: SfCircularChart(
+                      title: ChartTitle(
+                          text: '',
+                          textStyle: const TextStyle(
+                              color: Constants.primary,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold)),
+                      legend: const Legend(
                           isVisible: true,
-                          textStyle: TextStyle(color: Colors.white))),
-                ]),
-          )
+                          textStyle: TextStyle(color: Constants.lightPrimary)),
+                      series: <PieSeries<_PieData, String>>[
+                        PieSeries<_PieData, String>(
+                            explode: true,
+                            explodeIndex: 0,
+                            dataSource: pieData2,
+                            xValueMapper: (_PieData data, _) => data.xData,
+                            yValueMapper: (_PieData data, _) => data.yData,
+                            dataLabelMapper: (_PieData data, _) => data.text,
+                            dataLabelSettings: const DataLabelSettings(
+                                isVisible: true,
+                                textStyle: TextStyle(color: Colors.white))),
+                      ]),
+                )
               : Padding(
-            padding: const EdgeInsets.only(left: 15.0, top: 5),
-            child: Text(
-              '${mUser.name.toLowerCase()} hasn\'t pulled up to any events yet!',
-              textAlign: TextAlign.start,
-              style: const TextStyle(color: Constants.primary, fontSize: 16),
-            ),
-          )
+                  padding: const EdgeInsets.only(left: 15.0, top: 5),
+                  child: Text(
+                    '${mUser.name.toLowerCase()} hasn\'t pulled up to any events yet!',
+                    textAlign: TextAlign.start,
+                    style:
+                        const TextStyle(color: Constants.primary, fontSize: 16),
+                  ),
+                )
         ],
       ),
-        Positioned(
-          top: 5,
-          left: 10,
-          child: isFriend ? Container(
-            height: 50,
-            width: 50,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(
-                color: Colors.grey, // Set the border color
-                width: 2.0, // Set the border width
-              ),
-              color: Colors.black
-            ),
-            child: isFollowing? IconButton(
-              icon: const Icon(
-                Icons.notifications_off,
-                color:  Constants.errorColor,),
-              onPressed: () {
-                Logx.i(_TAG,'notification turned off!');
+      Positioned(
+        top: 5,
+        left: 10,
+        child: isFriend
+            ? Container(
+                height: 50,
+                width: 50,
+                decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: Colors.grey, // Set the border color
+                      width: 2.0, // Set the border width
+                    ),
+                    color: Colors.black),
+                child: isFollowing
+                    ? IconButton(
+                        icon: const Icon(
+                          Icons.notifications_off,
+                          color: Constants.errorColor,
+                        ),
+                        onPressed: () {
+                          Logx.i(_TAG, 'notification turned off!');
 
-                mFriend = mFriend.copyWith(isFollowing: false);
-                FirestoreHelper.pushFriend(mFriend);
+                          mFriend = mFriend.copyWith(isFollowing: false);
+                          FirestoreHelper.pushFriend(mFriend);
 
-                setState(() {
-                  isFollowing = false;
-                  mFriend;
-                });
-              },
-            ) : IconButton(
-              icon: const Icon(
-                Icons.notifications,
-                color:  Constants.primary,),
-              onPressed: () {
-                Logx.i(_TAG,'notification turned on!');
+                          setState(() {
+                            isFollowing = false;
+                            mFriend;
+                          });
+                        },
+                      )
+                    : IconButton(
+                        icon: const Icon(
+                          Icons.notifications,
+                          color: Constants.primary,
+                        ),
+                        onPressed: () {
+                          Logx.i(_TAG, 'notification turned on!');
 
-                mFriend = mFriend.copyWith(isFollowing: true);
-                FirestoreHelper.pushFriend(mFriend);
+                          mFriend = mFriend.copyWith(isFollowing: true);
+                          FirestoreHelper.pushFriend(mFriend);
 
-                setState(() {
-                  isFollowing = true;
-                  mFriend;
-                });
-              },
-            ),
-          ) : const SizedBox(),
-        )
-    ]
-    );
+                          setState(() {
+                            isFollowing = true;
+                            mFriend;
+                          });
+                        },
+                      ),
+              )
+            : const SizedBox(),
+      )
+    ]);
   }
 
   Widget buildFriendUnfriendToggleButton() {
     return Center(
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Theme.of(context).primaryColor,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(5),
-          ),
-          foregroundColor: Colors.white,
-          padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Theme.of(context).primaryColor,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(5),
         ),
-        onPressed: () {
-          isFriend = !isFriend;
+        foregroundColor: Colors.white,
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+      ),
+      onPressed: () {
+        isFriend = !isFriend;
 
-          if(isFriend){
-            // become friends
-            Friend friend = Dummy.getDummyFriend();
-            friend = friend.copyWith(userId: UserPreferences.myUser.id,
-              friendUserId: mUser.id,
-              isFollowing: true,
-            );
-            FirestoreHelper.pushFriend(friend);
+        if (isFriend) {
+          // become friends
+          Friend friend = Dummy.getDummyFriend();
+          friend = friend.copyWith(
+            userId: UserPreferences.myUser.id,
+            friendUserId: mUser.id,
+            isFollowing: true,
+          );
+          FirestoreHelper.pushFriend(friend);
 
-            //should send a friend notification
-            if(mUser.fcmToken.isNotEmpty){
-              String title = '🤍 new friend alert';
-              String message =
-                  '${UserPreferences.myUser.name} ${UserPreferences.myUser.surname} has added you as their friend!'.toLowerCase();
+          //should send a friend notification
+          if (mUser.fcmToken.isNotEmpty) {
+            String title = '🤍 new friend alert';
+            String message =
+                '${UserPreferences.myUser.name} ${UserPreferences.myUser.surname} has added you as their friend!'
+                    .toLowerCase();
 
-              Apis.sendPushNotification(mUser.fcmToken, title, message);
-            }
-
-            setState(() {
-              mFriend = friend;
-              isFollowing = true;
-            });
-
-          } else {
-            FirestoreHelper.deleteFriend(mFriend.id);
+            Apis.sendPushNotification(mUser.fcmToken, title, message);
           }
 
           setState(() {
-                  if (!isFriend) {
-                    _buttonText = '🤍 friend';
-                  } else {
-                    _buttonText = '☠️ unfriend';
-                  }
-                  mFriend;
-                });
-        },
-        child: Text(_buttonText,
-          style: const TextStyle(fontSize: 18),),
-      )
-    );
+            mFriend = friend;
+            isFollowing = true;
+          });
+        } else {
+          FirestoreHelper.deleteFriend(mFriend.id);
+        }
+
+        setState(() {
+          if (!isFriend) {
+            _buttonText = '🤍 friend';
+          } else {
+            _buttonText = '☠️ unfriend';
+          }
+          mFriend;
+        });
+      },
+      child: Text(
+        _buttonText,
+        style: const TextStyle(fontSize: 18),
+      ),
+    ));
   }
 
   _showPhotosGridView(List<PartyPhoto> photos) {
@@ -452,29 +456,35 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
               child: SizedBox(
                   height: 200,
                   width: 200,
-                  child: kIsWeb? FadeInImage(
-                    placeholder: const AssetImage('assets/icons/logo.png'),
-                    image: NetworkImage(photo.imageThumbUrl.isNotEmpty? photo.imageThumbUrl:photo.imageUrl),
-                    fit: BoxFit.cover,
-                  ): CachedNetworkImage(
-                    imageUrl: photo.imageThumbUrl.isNotEmpty? photo.imageThumbUrl:photo.imageUrl,
-                    imageBuilder: (context, imageProvider) => Container(
-                      decoration: BoxDecoration(
-                        image: DecorationImage(
-                          image: imageProvider,
+                  child: kIsWeb
+                      ? FadeInImage(
+                          placeholder:
+                              const AssetImage('assets/icons/logo.png'),
+                          image: NetworkImage(photo.imageThumbUrl.isNotEmpty
+                              ? photo.imageThumbUrl
+                              : photo.imageUrl),
                           fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
-                    placeholder: (context, url) =>
-                    const FadeInImage(
-                      placeholder: AssetImage('assets/images/logo.png'),
-                      image: AssetImage('assets/images/logo.png'),
-                      fit: BoxFit.cover,
-                    ),
-                    errorWidget: (context, url, error) => const Icon(Icons.error),
-                  )
-              ),
+                        )
+                      : CachedNetworkImage(
+                          imageUrl: photo.imageThumbUrl.isNotEmpty
+                              ? photo.imageThumbUrl
+                              : photo.imageUrl,
+                          imageBuilder: (context, imageProvider) => Container(
+                            decoration: BoxDecoration(
+                              image: DecorationImage(
+                                image: imageProvider,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
+                          placeholder: (context, url) => const FadeInImage(
+                            placeholder: AssetImage('assets/images/logo.png'),
+                            image: AssetImage('assets/images/logo.png'),
+                            fit: BoxFit.cover,
+                          ),
+                          errorWidget: (context, url, error) =>
+                              const Icon(Icons.error),
+                        )),
             );
           }
         },
@@ -483,12 +493,13 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
   }
 
   int _currentIndex = 0;
-  _showPhotosDialog(int index){
+
+  _showPhotosDialog(int index) {
     List<String> partyPhotoUrls = [];
 
     _currentIndex = index;
 
-    for(PartyPhoto partyPhoto in mPartyPhotos){
+    for (PartyPhoto partyPhoto in mPartyPhotos) {
       partyPhotoUrls.add(partyPhoto.imageUrl);
     }
 
@@ -511,7 +522,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                     autoPlay: true,
                     autoPlayInterval: const Duration(seconds: 4),
                     autoPlayAnimationDuration:
-                    const Duration(milliseconds: 750),
+                        const Duration(milliseconds: 750),
                     enlargeCenterPage: true,
                     scrollDirection: Axis.horizontal,
                     onPageChanged: (index, reason) {
@@ -521,40 +532,34 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                       PartyPhoto partyPhoto = mPartyPhotos[_currentIndex];
                       FirestoreHelper.updatePartyPhotoViewCount(partyPhoto.id);
 
-                      setState(() {
-                      });
+                      setState(() {});
                     }
-                  // aspectRatio: 1.0,
-                ),
-
-                items: partyPhotoUrls
-                    .map((item) {
-                  return kIsWeb? Image.network(item,
-                      fit: BoxFit.cover,
-                      width: mq.width) :
-                  CachedNetworkImage(
-                    imageUrl: item,
-                    imageBuilder: (context, imageProvider) => Container(
-                      decoration: BoxDecoration(
-                        image: DecorationImage(
-                          image: imageProvider,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
+                    // aspectRatio: 1.0,
                     ),
-                    placeholder: (context, url) =>
-                    const FadeInImage(
-                      placeholder: AssetImage('assets/images/logo.png'),
-                      image: AssetImage('assets/images/logo.png'),
-                      fit: BoxFit.cover,
-                    ),
-                    errorWidget: (context, url, error) => const Icon(Icons.error),
-                  );
-                }
-                ).toList(),
+                items: partyPhotoUrls.map((item) {
+                  return kIsWeb
+                      ? Image.network(item, fit: BoxFit.cover, width: mq.width)
+                      : CachedNetworkImage(
+                          imageUrl: item,
+                          imageBuilder: (context, imageProvider) => Container(
+                            decoration: BoxDecoration(
+                              image: DecorationImage(
+                                image: imageProvider,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
+                          placeholder: (context, url) => const FadeInImage(
+                            placeholder: AssetImage('assets/images/logo.png'),
+                            image: AssetImage('assets/images/logo.png'),
+                            fit: BoxFit.cover,
+                          ),
+                          errorWidget: (context, url, error) =>
+                              const Icon(Icons.error),
+                        );
+                }).toList(),
               ),
             ),
-
           ),
           actions: [
             TextButton(
@@ -573,20 +578,15 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                   PartyPhoto partyPhoto = mPartyPhotos[_currentIndex];
 
                   int fileNum = index + 1;
-                  String fileName =
-                      '${partyPhoto.partyName} $fileNum';
+                  String fileName = '${partyPhoto.partyName} $fileNum';
                   String shareText =
                       'hey. check out this photo and more of ${partyPhoto.partyName} at the official bloc app. Step into the moment. 📸 \n\n🌏 https://bloc.bar/#/\n📱 https://bloc.bar/app_store.html\n\n#blocCommunity ❤️‍🔥';
 
                   FileUtils.sharePhoto(
-                      partyPhoto.id,
-                      partyPhoto.imageUrl,
-                      fileName,
-                      shareText);
+                      partyPhoto.id, partyPhoto.imageUrl, fileName, shareText);
                 },
               ),
             ),
-
             TextButton(
               style: ButtonStyle(
                 backgroundColor: MaterialStateProperty.all<Color>(
@@ -628,51 +628,48 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
   }
 
   Widget buildName(blocUser.User mUser) => Column(
-    children: [
-      Text(
-        mUser.name.isNotEmpty
-            ? '${mUser.name.toLowerCase()} ${mUser.surname.toLowerCase()}'
-            : 'bloc star',
-        style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 26,
-            color: Theme.of(context).primaryColor),
-      ),
-      const SizedBox(height: 5),
-      // Text(
-      //   user.email.isNotEmpty ? user.email : '',
-      //   style: TextStyle(color: Theme.of(context).primaryColorLight),
-      // )
-    ],
-  );
+        children: [
+          Text(
+            mUser.name.isNotEmpty
+                ? '${mUser.name.toLowerCase()} ${mUser.surname.toLowerCase()}'
+                : 'bloc star',
+            style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 26,
+                color: Theme.of(context).primaryColor),
+          ),
+          const SizedBox(height: 5),
+          // Text(
+          //   user.email.isNotEmpty ? user.email : '',
+          //   style: TextStyle(color: Theme.of(context).primaryColorLight),
+          // )
+        ],
+      );
 
   Widget buildFollowButton() => Center(
-    child: ButtonWidget(
-      text: _buttonText,
-      onClicked: () {
-
-      },
-    ),
-  );
-
+        child: ButtonWidget(
+          text: _buttonText,
+          onClicked: () {},
+        ),
+      );
 
   Widget buildAbout(blocUser.User user) => Container(
-    padding: EdgeInsets.symmetric(horizontal: 48),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'about',
-          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+        padding: EdgeInsets.symmetric(horizontal: 48),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'about',
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              '',
+              style: TextStyle(fontSize: 16, height: 1.4),
+            ),
+          ],
         ),
-        const SizedBox(height: 16),
-        Text(
-          '',
-          style: TextStyle(fontSize: 16, height: 1.4),
-        ),
-      ],
-    ),
-  );
+      );
 
   _loadFriends(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
@@ -691,26 +688,28 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                   for (int i = 0; i < snapshot.data!.docs.length; i++) {
                     DocumentSnapshot document = snapshot.data!.docs[i];
                     Map<String, dynamic> map =
-                    document.data()! as Map<String, dynamic>;
-                    final Friend friend =
-                    Fresh.freshFriendMap(map, false);
+                        document.data()! as Map<String, dynamic>;
+                    final Friend friend = Fresh.freshFriendMap(map, false);
 
                     mFriends.add(friend);
                   }
 
-                  if(mFriends.isNotEmpty){
+                  if (mFriends.isNotEmpty) {
                     return _showFriends(context);
                   } else {
                     return Padding(
                       padding: const EdgeInsets.only(left: 15.0, top: 5),
-                      child: Text(
-                        '${mUser.name.toLowerCase()} is rolling solo in this story, no side characters yet!',
-                        textAlign: TextAlign.start,
-                        style: const TextStyle(color: Constants.primary, fontSize: 16),
+                      child: DelayedDisplay(
+                        delay: const Duration(seconds: 1),
+                        child: Text(
+                          '${mUser.name.toLowerCase()} is rolling solo in this story, no side characters yet!',
+                          textAlign: TextAlign.start,
+                          style: const TextStyle(
+                              color: Constants.primary, fontSize: 16),
+                        ),
                       ),
                     );
                   }
-
                 } on Exception catch (e, s) {
                   Logx.e(_TAG, e, s);
                 } catch (e) {
@@ -738,7 +737,6 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
           }),
     );
   }
-
 }
 
 class _PieData {
