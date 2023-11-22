@@ -21,6 +21,7 @@ import '../../../api/apis.dart';
 import '../../../db/entity/bloc_service.dart';
 
 import '../../../db/entity/friend.dart';
+import '../../../db/entity/friend_notification.dart';
 import '../../../db/entity/party_photo.dart';
 import '../../../db/entity/user.dart';
 import '../../../db/entity/user_photo.dart';
@@ -549,7 +550,7 @@ class _PartyPhotoAddEditScreenState extends State<PartyPhotoAddEditScreen> {
                         FirestoreHelper.pushUserPhoto(uPhoto);
                       }
 
-                      _showTaggedUsersDialog(context, mFcmUsers);
+                      _showNotifyTaggedUsersFollowersDialog(context, mFcmUsers);
                     } else {
                       Logx.est(_TAG, 'tagged members could not be found, tags cleared!');
                       // widget.partyPhoto = widget.partyPhoto.copyWith(tags: []);
@@ -877,7 +878,7 @@ class _PartyPhotoAddEditScreenState extends State<PartyPhotoAddEditScreen> {
     );
   }
 
-  _showTaggedUsersDialog(BuildContext context, List<User> fcmUsers) {
+  _showNotifyTaggedUsersFollowersDialog(BuildContext context, List<User> fcmUsers) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -887,7 +888,7 @@ class _PartyPhotoAddEditScreenState extends State<PartyPhotoAddEditScreen> {
               borderRadius: BorderRadius.all(Radius.circular(20.0))),
           contentPadding: const EdgeInsets.all(16.0),
           title: const Text(
-            'notify tagged members',
+            'notify tagged members and followers',
             textAlign: TextAlign.center,
             style: TextStyle(fontSize: 22, color: Colors.black),
           ),
@@ -895,7 +896,36 @@ class _PartyPhotoAddEditScreenState extends State<PartyPhotoAddEditScreen> {
               "are you sure you want to notify them?"),
           actions: [
             TextButton(
-              child: const Text("yes"),
+              child: const Text("yes everyone"),
+              onPressed: () async {
+                Navigator.of(context).pop();
+
+                for(User user in fcmUsers){
+                  String title = 'you\'ve been tagged in ${widget.partyPhoto.partyName}! 🔥';
+                  String message =
+                      'congratulations ${user.name}, your photo\'s been featured! time to check out the vibes. 📸';
+
+                  //send a notification
+                  Apis.sendPushNotification(
+                      user.fcmToken, title, message);
+                  Logx.ist(_TAG,
+                      'notification has been sent to ${user.name} ${user.surname}');
+
+                  FriendNotification notification = Dummy.getDummyFriendNotification();
+                  notification = notification.copyWith(topic: user.id,
+                      imageUrl: widget.partyPhoto.imageUrl,
+                      title: '🤩 ${user.name} has a new photo'.toLowerCase(),
+                      message: 'Latest pic just landed, catch ${user.name} in the spotlight! 📸💝'.toLowerCase()
+                  );
+                  FirestoreHelper.pushFriendNotification(notification);
+
+                  Logx.ist(_TAG, 'friend notification sent to all followers of ${user.name}');
+                }
+              },
+            ),
+
+            TextButton(
+              child: const Text("tagged"),
               onPressed: () async {
                 Navigator.of(context).pop();
 
@@ -912,6 +942,26 @@ class _PartyPhotoAddEditScreenState extends State<PartyPhotoAddEditScreen> {
                 }
               },
             ),
+
+            TextButton(
+              child: const Text("followers"),
+              onPressed: () async {
+                Navigator.of(context).pop();
+
+                for(User user in fcmUsers){
+                  FriendNotification notification = Dummy.getDummyFriendNotification();
+                  notification = notification.copyWith(topic: user.id,
+                      imageUrl: widget.partyPhoto.imageUrl,
+                      title: '🤩 ${user.name} has a new photo'.toLowerCase(),
+                      message: 'Latest pic just landed, catch ${user.name} in the spotlight! 📸💝'.toLowerCase()
+                  );
+                  FirestoreHelper.pushFriendNotification(notification);
+
+                  Logx.ist(_TAG, 'friend notification sent to all followers of ${user.name}');
+                }
+              },
+            ),
+
             TextButton(
               style: ButtonStyle(
                 backgroundColor: MaterialStateProperty.all<Color>(
