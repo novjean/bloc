@@ -1,3 +1,4 @@
+import 'package:bloc/db/entity/friend_notification.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -5,6 +6,7 @@ import '../../../db/entity/friend.dart';
 import '../../../helpers/firestore_helper.dart';
 import '../../../helpers/fresh.dart';
 import '../../../main.dart';
+import '../../../utils/logx.dart';
 import '../../../widgets/manager/manage_friend_item.dart';
 import '../../../widgets/ui/app_bar_title.dart';
 import '../../../widgets/ui/loading_widget.dart';
@@ -25,27 +27,34 @@ class ManageFriendsScreen extends StatelessWidget {
         titleSpacing: 0,
         title: AppBarTitle(title:'manage friends'),
       ),
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: () {
-      //     Navigator.of(context).push(
-      //       MaterialPageRoute(
-      //           builder: (ctx) => AdAddEditScreen(
-      //             ad: Dummy.getDummyAd(serviceId),
-      //             task: 'add',
-      //           )),
-      //     );
-      //   },
-      //   backgroundColor: Theme.of(context).primaryColor,
-      //   tooltip: 'add ad',
-      //   elevation: 5,
-      //   splashColor: Colors.grey,
-      //   child: const Icon(
-      //     Icons.add,
-      //     color: Colors.black,
-      //     size: 29,
-      //   ),
-      // ),
-      // floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          FirestoreHelper.pullFriendNotifications().then((res) {
+            if(res.docs.isNotEmpty){
+              for (int i = 0; i < res.docs.length; i++) {
+                DocumentSnapshot document = res.docs[i];
+                Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+                final FriendNotification noti = Fresh.freshFriendNotificationMap(data, false);
+                FirestoreHelper.deleteFriendNotification(noti.id);
+              }
+
+              Logx.ist(_TAG, 'deleted ${res.docs.length} friend notification docs');
+            } else {
+              Logx.ist(_TAG, 'no friend notification docs found to delete');
+            }
+          });
+        },
+        backgroundColor: Theme.of(context).primaryColor,
+        tooltip: 'clear friend notifications',
+        elevation: 5,
+        splashColor: Colors.grey,
+        child: const Icon(
+          Icons.delete_outline_outlined,
+          color: Colors.black,
+          size: 29,
+        ),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       body: _buildFriends(context),
     );
   }

@@ -794,6 +794,12 @@ class FirestoreHelper {
     }
   }
 
+  static pullFriendNotifications() {
+    return FirebaseFirestore.instance
+        .collection(FRIEND_NOTIFICATIONS)
+        .get();
+  }
+
   static void deleteFriendNotification(String docId) {
     FirebaseFirestore.instance.collection(FRIEND_NOTIFICATIONS).doc(docId).delete();
   }
@@ -2580,6 +2586,7 @@ class FirestoreHelper {
   static void deleteUserPhoto(String docId) {
     FirebaseFirestore.instance.collection(USER_PHOTOS).doc(docId).delete();
   }
+
 
 
 }
