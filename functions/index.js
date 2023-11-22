@@ -136,6 +136,50 @@ exports.chatFunction = functions
           });
     });
 
+exports.friendNotificationFunction = functions
+    .region('asia-south1')
+    .firestore
+    .document('friend_notifications/{document}')
+    .onCreate((snapshot, context) => {
+      console.log(snapshot.data());
+      const message = {
+        notification: {
+          title: snapshot.data().title,
+          body: snapshot.data().message,
+          image: snapshot.data().imageUrl,
+        },
+        android: {
+          notification: {
+            sound: 'default',
+            click_action: 'FLUTTER_NOTIFICATION_CLICK',
+          },
+        },
+        apns: {
+          payload: {
+            aps: {
+              'mutable-content': 1,
+            },
+          },
+          fcm_options: {
+            image: snapshot.data().imageUrl,
+          },
+        },
+        data: {
+          type: 'friend_notifications',
+          document: JSON.stringify(snapshot.data()),
+        },
+        topic: snapshot.data().topic,
+      };
+
+      return admin.messaging().send(message)
+          .then((response) => {
+            console.log('Successfully notified friend:', response);
+          })
+          .catch((error) => {
+            console.log('Error notifying friend:', error);
+          });
+    });
+
 exports.reservationFunction = functions
     .region('asia-south1')
     .firestore
