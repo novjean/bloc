@@ -500,7 +500,7 @@ class NotificationService {
 
 
     if (notification.imageUrl.isEmpty) {
-      String title = '💌 ${notification.title}';
+      String title = notification.title;
       String body = notification.message;
 
       await showNotification(
