@@ -20,6 +20,7 @@ import 'package:http/http.dart' as http;
 import '../../../api/apis.dart';
 import '../../../db/entity/bloc_service.dart';
 
+import '../../../db/entity/friend.dart';
 import '../../../db/entity/party_photo.dart';
 import '../../../db/entity/user.dart';
 import '../../../db/entity/user_photo.dart';
@@ -71,6 +72,7 @@ class _PartyPhotoAddEditScreenState extends State<PartyPhotoAddEditScreen> {
   DateTime sEndDateTime = DateTime.now();
 
   List<User> mUsers = [];
+  List<User> mFcmUsers = [];
   bool isUsersLoading = true;
   List<String> sUserNames = [];
   List<User> sUsers = [];
@@ -506,15 +508,13 @@ class _PartyPhotoAddEditScreenState extends State<PartyPhotoAddEditScreen> {
                   // check if all tagged members have usernames
                   FirestoreHelper.pullUsersByIds(sUserIds).then((res) {
                     if(res.docs.isNotEmpty){
-                      List<User> fcmUsers = [];
-
                       for (int i = 0; i < res.docs.length; i++) {
                         DocumentSnapshot document = res.docs[i];
                         Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
                         User user = Fresh.freshUserMap(data, false);
 
                         if(user.fcmToken.isNotEmpty){
-                          fcmUsers.add(user);
+                          mFcmUsers.add(user);
                         }
 
                         if(user.username.isEmpty){
@@ -549,7 +549,7 @@ class _PartyPhotoAddEditScreenState extends State<PartyPhotoAddEditScreen> {
                         FirestoreHelper.pushUserPhoto(uPhoto);
                       }
 
-                      _showTaggedUsersDialog(context, fcmUsers);
+                      _showTaggedUsersDialog(context, mFcmUsers);
                     } else {
                       Logx.est(_TAG, 'tagged members could not be found, tags cleared!');
                       // widget.partyPhoto = widget.partyPhoto.copyWith(tags: []);
@@ -591,6 +591,35 @@ class _PartyPhotoAddEditScreenState extends State<PartyPhotoAddEditScreen> {
                 Navigator.of(context).pop();
               },
             ),
+            const SizedBox(height: 24),
+            ButtonWidget(
+                height: 50,
+                text: 'check connections',
+                onClicked: () async {
+                  List<String> tagIds = widget.partyPhoto.tags;
+
+                  for(int i=0; i<tagIds.length; i++){
+                    for(int j=0; j<tagIds.length; j++){
+                      if(i==j){
+                        continue;
+                      }
+                      String userId = tagIds[i];
+                      String friendUserId = tagIds[j];
+
+                      String name1 = sUserNames[i];
+                      String name2 = sUserNames[j];
+
+                      await FirestoreHelper.pullFriend(userId, friendUserId).then((res) async {
+                        if(res.docs.isNotEmpty){
+                          // they are friends, nothing to do
+                        } else {
+                          Logx.ist(_TAG, '$name1 and $name2 are not friends!');
+                          await _showUsersConnectDialog(context, userId, friendUserId, name1, name2);
+                        }
+                      });
+                    }
+                  }
+                }),
             const SizedBox(height: 24),
             ButtonWidget(
                 height: 50,
@@ -898,5 +927,78 @@ class _PartyPhotoAddEditScreenState extends State<PartyPhotoAddEditScreen> {
       },
     );
   }
+
+  _showUsersConnectDialog(BuildContext context,
+      String userId, String friendUserId,
+      String name1,
+      String name2) async {
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: Constants.lightPrimary,
+          shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(20.0))),
+          contentPadding: const EdgeInsets.all(16.0),
+          title: const Text(
+            'connect tagged members',
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 22, color: Colors.black),
+          ),
+          content: Text(
+              "are you sure you want to connect $name1 and $name2?"),
+          actions: [
+            TextButton(
+              child: const Text("yes & notify"),
+              onPressed: () async {
+                Navigator.of(context).pop();
+
+                Friend friend = Dummy.getDummyFriend();
+                friend = friend.copyWith(userId: userId, friendUserId: friendUserId);
+                FirestoreHelper.pushFriend(friend);
+
+                Logx.ist(_TAG, '$name1 is now friends with $name2');
+
+                for(User user in mFcmUsers){
+                  if(user.id == friendUserId){
+                    String title = '🤍 new friend alert';
+                    String message = '$name1 has added you as their friend!'.toLowerCase();
+
+                    Apis.sendPushNotification(user.fcmToken, title, message);
+                    Logx.ist(_TAG, '$name2 is notified about the friendship');
+                    break;
+                  }
+                }
+              },
+            ),
+            TextButton(
+              child: const Text("yes"),
+              onPressed: () async {
+                Navigator.of(context).pop();
+
+                Friend friend = Dummy.getDummyFriend();
+                friend = friend.copyWith(userId: userId, friendUserId: friendUserId);
+                FirestoreHelper.pushFriend(friend);
+
+                Logx.ist(_TAG, '$name1 is now friends with $name2');
+              },
+            ),
+
+            TextButton(
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all<Color>(
+                    Constants.darkPrimary), // Set your desired background color
+              ),
+              child: const Text("no"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            )
+          ],
+        );
+      },
+    );
+  }
+
 
 }

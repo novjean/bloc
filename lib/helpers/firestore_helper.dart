@@ -758,6 +758,13 @@ class FirestoreHelper {
         .get();
   }
 
+  static pullFriendsOfUsers(List<String> tagIds) {
+    return FirebaseFirestore.instance
+        .collection(FRIENDS)
+        .where('userId', whereIn: tagIds)
+        .get();
+  }
+
   static pullFriendConnections(String userId) {
     return FirebaseFirestore.instance
         .collection(FRIENDS)
@@ -2573,5 +2580,6 @@ class FirestoreHelper {
   static void deleteUserPhoto(String docId) {
     FirebaseFirestore.instance.collection(USER_PHOTOS).doc(docId).delete();
   }
+
 
 }
