@@ -4,7 +4,7 @@ const String kAppTitle = 'bloc';
 
 class Constants {
 
-  static const String appVersion = '3.0.2';
+  static const String appVersion = '3.0.3';
 
   static const String fontDefault = 'Oswald';
 

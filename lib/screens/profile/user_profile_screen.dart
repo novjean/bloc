@@ -99,9 +99,9 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
             for (int i = 0; i < res.docs.length; i++) {
               DocumentSnapshot document = res.docs[i];
               Map<String, dynamic> data =
-              document.data()! as Map<String, dynamic>;
+                  document.data()! as Map<String, dynamic>;
               final HistoryMusic historyMusic =
-              Fresh.freshHistoryMusicMap(data, false);
+                  Fresh.freshHistoryMusicMap(data, false);
               mHistoryMusics.add(historyMusic);
             }
 
@@ -121,7 +121,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
             for (int i = 0; i < res.docs.length; i++) {
               DocumentSnapshot document = res.docs[i];
               Map<String, dynamic> data =
-              document.data()! as Map<String, dynamic>;
+                  document.data()! as Map<String, dynamic>;
               PartyPhoto partyPhoto = Fresh.freshPartyPhotoMap(data, false);
               mPartyPhotos.add(partyPhoto);
             }
@@ -169,8 +169,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                 isFollowing = false;
               });
             }
-          }
-          );
+          });
         } else {
           setState(() {
             _isFriendConnectionLoading = false;
@@ -206,8 +205,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
         ),
       ),
       backgroundColor: Constants.background,
-      body: _isUserLoading
-          ? const LoadingWidget() : _buildBody(context),
+      body: _isUserLoading ? const LoadingWidget() : _buildBody(context),
     );
   }
 
@@ -224,7 +222,6 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
 
     return Stack(children: [
       ListView(
-        shrinkWrap: true,
         physics: const BouncingScrollPhysics(),
         children: [
           const SizedBox(height: 15),
@@ -577,7 +574,9 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                     ),
                 items: partyPhotoUrls.map((item) {
                   return kIsWeb
-                      ? Image.network(item, fit: BoxFit.cover, width: MediaQuery.of(context).size.width)
+                      ? Image.network(item,
+                          fit: BoxFit.cover,
+                          width: MediaQuery.of(context).size.width)
                       : CachedNetworkImage(
                           imageUrl: item,
                           imageBuilder: (context, imageProvider) => Container(
