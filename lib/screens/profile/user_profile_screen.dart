@@ -45,7 +45,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
 
   List<HistoryMusic> mHistoryMusics = [];
   bool showMusicHistory = false;
-  bool isMusicHistoryLoading = true;
+  bool _isMusicHistoryLoading = true;
 
   List<PartyPhoto> mPartyPhotos = [];
   var _isPartyPhotosLoading = true;
@@ -56,6 +56,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
   Friend mFriend = Dummy.getDummyFriend();
   bool isFriend = false;
   bool isFollowing = true;
+  var _isFriendConnectionLoading = true;
 
   List<Friend> mFriends = [];
 
@@ -72,29 +73,25 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
         Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
         mUser = Fresh.freshUserMap(data, false);
 
-        setState(() {
-          _isUserLoading = false;
-        });
-
         FirestoreHelper.pullHistoryMusicByUser(mUser.id).then((res) {
           if (res.docs.isEmpty) {
             setState(() {
               showMusicHistory = false;
-              isMusicHistoryLoading = false;
+              _isMusicHistoryLoading = false;
             });
           } else {
             for (int i = 0; i < res.docs.length; i++) {
               DocumentSnapshot document = res.docs[i];
               Map<String, dynamic> data =
-                  document.data()! as Map<String, dynamic>;
+              document.data()! as Map<String, dynamic>;
               final HistoryMusic historyMusic =
-                  Fresh.freshHistoryMusicMap(data, false);
+              Fresh.freshHistoryMusicMap(data, false);
               mHistoryMusics.add(historyMusic);
             }
 
             setState(() {
               showMusicHistory = true;
-              isMusicHistoryLoading = false;
+              _isMusicHistoryLoading = false;
             });
           }
         });
@@ -104,7 +101,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
             for (int i = 0; i < res.docs.length; i++) {
               DocumentSnapshot document = res.docs[i];
               Map<String, dynamic> data =
-                  document.data()! as Map<String, dynamic>;
+              document.data()! as Map<String, dynamic>;
               PartyPhoto partyPhoto = Fresh.freshPartyPhotoMap(data, false);
               mPartyPhotos.add(partyPhoto);
             }
@@ -129,12 +126,14 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
               mFriend = Fresh.freshFriendMap(data, false);
 
               setState(() {
+                _isFriendConnectionLoading = false;
                 isFriend = true;
                 _buttonText = '☠️ unfriend';
                 isFollowing = mFriend.isFollowing;
               });
             } else {
               setState(() {
+                _isFriendConnectionLoading = false;
                 isFriend = false;
                 _buttonText = '🤍 friend';
                 isFollowing = false;
@@ -142,6 +141,10 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
             }
           });
         }
+
+        setState(() {
+          _isUserLoading = false;
+        });
       } else {
         // profile not found, navigate to home
         Logx.ist(_TAG, 'unfortunately, the profile could not be found');
@@ -167,7 +170,8 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
         ),
       ),
       backgroundColor: Constants.background,
-      body: _isUserLoading ? const LoadingWidget() : _buildBody(context),
+      body: _isUserLoading || _isPartyPhotosLoading || _isMusicHistoryLoading || _isFriendConnectionLoading
+          ? const LoadingWidget() : _buildBody(context),
     );
   }
 
