@@ -68,18 +68,34 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
   @override
   void initState() {
     FirestoreHelper.pullUserByUsername(widget.username).then((res) {
+      Logx.d(_TAG, 'searching user : ${widget.username}');
+
       if (res.docs.isNotEmpty) {
+        Logx.d(_TAG, 'user found');
+
         DocumentSnapshot document = res.docs[0];
         Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
         mUser = Fresh.freshUserMap(data, false);
 
+        Logx.d(_TAG, 'user is ${mUser.name}');
+
+        setState(() {
+          _isUserLoading = false;
+        });
+
         FirestoreHelper.pullHistoryMusicByUser(mUser.id).then((res) {
+          Logx.d(_TAG, 'loading music history of  ${mUser.name}');
+
           if (res.docs.isEmpty) {
+            Logx.d(_TAG, '${mUser.name} has no music history');
+
             setState(() {
               showMusicHistory = false;
               _isMusicHistoryLoading = false;
             });
           } else {
+            Logx.d(_TAG, '${mUser.name} has music history');
+
             for (int i = 0; i < res.docs.length; i++) {
               DocumentSnapshot document = res.docs[i];
               Map<String, dynamic> data =
@@ -97,7 +113,11 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
         });
 
         FirestoreHelper.pullPartyPhotosByUserId(mUser.id).then((res) {
+          Logx.d(_TAG, 'loading party photos of  ${mUser.name}');
+
           if (res.docs.isNotEmpty) {
+            Logx.d(_TAG, '${mUser.name} has photos');
+
             for (int i = 0; i < res.docs.length; i++) {
               DocumentSnapshot document = res.docs[i];
               Map<String, dynamic> data =
@@ -110,6 +130,8 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
               _isPartyPhotosLoading = false;
             });
           } else {
+            Logx.d(_TAG, '${mUser.name} has no photos');
+
             setState(() {
               _isPartyPhotosLoading = false;
             });
@@ -117,9 +139,15 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
         });
 
         if (UserPreferences.isUserLoggedIn()) {
+          Logx.d(_TAG, 'user is logged in ');
+
           FirestoreHelper.pullFriend(UserPreferences.myUser.id, mUser.id)
               .then((res) {
+            Logx.d(_TAG, 'loading music history of  ${mUser.name}');
+
             if (res.docs.isNotEmpty) {
+              Logx.d(_TAG, '${mUser.name} is a friend');
+
               DocumentSnapshot document = res.docs[0];
               Map<String, dynamic> data =
                   document.data()! as Map<String, dynamic>;
@@ -132,6 +160,8 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                 isFollowing = mFriend.isFollowing;
               });
             } else {
+              Logx.d(_TAG, '${mUser.name} is not a friend');
+
               setState(() {
                 _isFriendConnectionLoading = false;
                 isFriend = false;
@@ -139,13 +169,19 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                 isFollowing = false;
               });
             }
+          }
+          );
+        } else {
+          setState(() {
+            _isFriendConnectionLoading = false;
+            isFriend = false;
+            _buttonText = '🤍 friend';
+            isFollowing = false;
           });
         }
-
-        setState(() {
-          _isUserLoading = false;
-        });
       } else {
+        Logx.d(_TAG, '${widget.username} user could not be found');
+
         // profile not found, navigate to home
         Logx.ist(_TAG, 'unfortunately, the profile could not be found');
         GoRouter.of(context).pushNamed(RouteConstants.landingRouteName);
@@ -170,7 +206,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
         ),
       ),
       backgroundColor: Constants.background,
-      body: _isUserLoading || _isPartyPhotosLoading || _isMusicHistoryLoading || _isFriendConnectionLoading
+      body: _isUserLoading
           ? const LoadingWidget() : _buildBody(context),
     );
   }
