@@ -66,9 +66,9 @@ class _BlocSlideItemState extends State<BlocSlideItem> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        GoRouter.of(context).pushNamed(RouteConstants.menuRouteName, params: {
-          'id': mBlocService.blocId,
-        });
+        // GoRouter.of(context).pushNamed(RouteConstants.menuRouteName, params: {
+        //   'id': mBlocService.blocId,
+        // });
       },
       child: _isBlocServiceLoading
           ? const SizedBox()
@@ -120,39 +120,45 @@ class _BlocSlideItemState extends State<BlocSlideItem> {
                         )
                         ).toList(),
                       ),
+                      // Positioned(
+                      //     bottom: 0.0,
+                      //     left: 20,
+                      //     child: IconButtonWidget(
+                      //       icon: Icons.restaurant_menu_sharp,
+                      //       text: 'menu',
+                      //       height: 60,
+                      //       onClicked: () {
+                      //         GoRouter.of(context).pushNamed(
+                      //             RouteConstants.menuRouteName,
+                      //             params: {
+                      //               'id': mBlocService.blocId,
+                      //             });
+                      //       },
+                      //       fontSize: 24,
+                      //     )),
                       Positioned(
                           bottom: 0.0,
-                          left: 20,
-                          child: IconButtonWidget(
-                            icon: Icons.restaurant_menu_sharp,
-                            text: 'menu',
-                            height: 60,
-                            onClicked: () {
-                              GoRouter.of(context).pushNamed(
-                                  RouteConstants.menuRouteName,
-                                  params: {
-                                    'id': mBlocService.blocId,
-                                  });
-                            },
-                            fontSize: 24,
-                          )),
-                      Positioned(
-                          bottom: 0.0,
-                          right: 20,
-                          child: IconButtonWidget(
-                            icon: Icons.table_restaurant_rounded,
-                            text: 'reserve',
-                            height: 60,
-                            onClicked: () {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                    builder: (ctx) => ReservationAddEditScreen(
-                                        reservation: Dummy.getDummyReservation(
-                                            mBlocService.id),
-                                        task: 'add')),
-                              );
-                            },
-                            fontSize: 24,
+                          left: 0,
+                          right: 0,
+                          child: Center(
+                            child: Container(
+                              width: 250,
+                              child: IconButtonWidget(
+                                icon: Icons.table_restaurant_rounded,
+                                text: 'reserve',
+                                height: 60,
+                                onClicked: () {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                        builder: (ctx) => ReservationAddEditScreen(
+                                            reservation: Dummy.getDummyReservation(
+                                                mBlocService.id),
+                                            task: 'add')),
+                                  );
+                                },
+                                fontSize: 24,
+                              ),
+                            ),
                           ))
                     ],
                   ),

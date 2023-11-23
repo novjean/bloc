@@ -68,49 +68,49 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
   @override
   void initState() {
     FirestoreHelper.pullUserByUsername(widget.username).then((res) {
-      Logx.d(_TAG, 'searching user : ${widget.username}');
+      Logx.i(_TAG, 'searching user : ${widget.username}');
 
       if (res.docs.isNotEmpty) {
-        Logx.d(_TAG, 'user found');
+        Logx.i(_TAG, 'user found');
 
         DocumentSnapshot document = res.docs[0];
         Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
         mUser = Fresh.freshUserMap(data, false);
 
-        Logx.d(_TAG, 'user is ${mUser.name}');
+        Logx.i(_TAG, 'user is ${mUser.name}');
 
         setState(() {
           _isUserLoading = false;
         });
 
-        FirestoreHelper.pullHistoryMusicByUser(mUser.id).then((res) {
-          Logx.d(_TAG, 'loading music history of  ${mUser.name}');
-
-          if (res.docs.isEmpty) {
-            Logx.d(_TAG, '${mUser.name} has no music history');
-
-            setState(() {
-              showMusicHistory = false;
-              _isMusicHistoryLoading = false;
-            });
-          } else {
-            Logx.d(_TAG, '${mUser.name} has music history');
-
-            for (int i = 0; i < res.docs.length; i++) {
-              DocumentSnapshot document = res.docs[i];
-              Map<String, dynamic> data =
-                  document.data()! as Map<String, dynamic>;
-              final HistoryMusic historyMusic =
-                  Fresh.freshHistoryMusicMap(data, false);
-              mHistoryMusics.add(historyMusic);
-            }
-
-            setState(() {
-              showMusicHistory = true;
-              _isMusicHistoryLoading = false;
-            });
-          }
-        });
+        // FirestoreHelper.pullHistoryMusicByUser(mUser.id).then((res) {
+        //   Logx.d(_TAG, 'loading music history of  ${mUser.name}');
+        //
+        //   if (res.docs.isEmpty) {
+        //     Logx.d(_TAG, '${mUser.name} has no music history');
+        //
+        //     setState(() {
+        //       showMusicHistory = false;
+        //       _isMusicHistoryLoading = false;
+        //     });
+        //   } else {
+        //     Logx.d(_TAG, '${mUser.name} has music history');
+        //
+        //     for (int i = 0; i < res.docs.length; i++) {
+        //       DocumentSnapshot document = res.docs[i];
+        //       Map<String, dynamic> data =
+        //           document.data()! as Map<String, dynamic>;
+        //       final HistoryMusic historyMusic =
+        //           Fresh.freshHistoryMusicMap(data, false);
+        //       mHistoryMusics.add(historyMusic);
+        //     }
+        //
+        //     setState(() {
+        //       showMusicHistory = true;
+        //       _isMusicHistoryLoading = false;
+        //     });
+        //   }
+        // });
 
         FirestoreHelper.pullPartyPhotosByUserId(mUser.id).then((res) {
           Logx.d(_TAG, 'loading party photos of  ${mUser.name}');
@@ -139,11 +139,11 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
         });
 
         if (UserPreferences.isUserLoggedIn()) {
-          Logx.d(_TAG, 'user is logged in ');
+          Logx.i(_TAG, 'user is logged in ');
 
           FirestoreHelper.pullFriend(UserPreferences.myUser.id, mUser.id)
               .then((res) {
-            Logx.d(_TAG, 'loading music history of  ${mUser.name}');
+            Logx.i(_TAG, 'loading friend conenction of ${mUser.name}');
 
             if (res.docs.isNotEmpty) {
               Logx.d(_TAG, '${mUser.name} is a friend');
@@ -179,7 +179,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
           });
         }
       } else {
-        Logx.d(_TAG, '${widget.username} user could not be found');
+        Logx.em(_TAG, '${widget.username} user could not be found');
 
         // profile not found, navigate to home
         Logx.ist(_TAG, 'unfortunately, the profile could not be found');
@@ -205,20 +205,20 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
         ),
       ),
       backgroundColor: Constants.background,
-      body: _isUserLoading ? const LoadingWidget() : _buildBody(context),
+      body: _isUserLoading && _isPartyPhotosLoading  ? const LoadingWidget() : _buildBody(context),
     );
   }
 
   _buildBody(BuildContext context) {
-    List<_PieData> pieData2 = [];
-
-    if (showMusicHistory) {
-      for (HistoryMusic historyMusic in mHistoryMusics) {
-        _PieData pieData = _PieData(
-            historyMusic.genre, historyMusic.count, historyMusic.genre);
-        pieData2.add(pieData);
-      }
-    }
+    // List<_PieData> pieData2 = [];
+    //
+    // if (showMusicHistory) {
+    //   for (HistoryMusic historyMusic in mHistoryMusics) {
+    //     _PieData pieData = _PieData(
+    //         historyMusic.genre, historyMusic.count, historyMusic.genre);
+    //     pieData2.add(pieData);
+    //   }
+    // }
 
     return Stack(children: [
       ListView(
@@ -294,54 +294,55 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
               style: TextStyle(color: Constants.primary, fontSize: 20),
             ),
           ),
-          _isPartyPhotosLoading
-              ? const SizedBox()
-              : mPartyPhotos.isNotEmpty
+          // _isPartyPhotosLoading
+          //     ? const SizedBox()
+          //     :
+          mPartyPhotos.isNotEmpty
                   ? _showPhotosGridView(mPartyPhotos)
                   : const SizedBox(),
           const Divider(),
-          const Padding(
-            padding: EdgeInsets.only(left: 15.0),
-            child: Text(
-              'history',
-              textAlign: TextAlign.start,
-              style: TextStyle(color: Constants.primary, fontSize: 20),
-            ),
-          ),
-          showMusicHistory
-              ? Center(
-                  child: SfCircularChart(
-                      title: ChartTitle(
-                          text: '',
-                          textStyle: const TextStyle(
-                              color: Constants.primary,
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold)),
-                      legend: const Legend(
-                          isVisible: true,
-                          textStyle: TextStyle(color: Constants.lightPrimary)),
-                      series: <PieSeries<_PieData, String>>[
-                        PieSeries<_PieData, String>(
-                            explode: true,
-                            explodeIndex: 0,
-                            dataSource: pieData2,
-                            xValueMapper: (_PieData data, _) => data.xData,
-                            yValueMapper: (_PieData data, _) => data.yData,
-                            dataLabelMapper: (_PieData data, _) => data.text,
-                            dataLabelSettings: const DataLabelSettings(
-                                isVisible: true,
-                                textStyle: TextStyle(color: Colors.white))),
-                      ]),
-                )
-              : Padding(
-                  padding: const EdgeInsets.only(left: 15.0, top: 5),
-                  child: Text(
-                    '${mUser.name.toLowerCase()} hasn\'t pulled up to any events yet!',
-                    textAlign: TextAlign.start,
-                    style:
-                        const TextStyle(color: Constants.primary, fontSize: 16),
-                  ),
-                )
+          // const Padding(
+          //   padding: EdgeInsets.only(left: 15.0),
+          //   child: Text(
+          //     'history',
+          //     textAlign: TextAlign.start,
+          //     style: TextStyle(color: Constants.primary, fontSize: 20),
+          //   ),
+          // ),
+          // showMusicHistory
+          //     ? Center(
+          //         child: SfCircularChart(
+          //             title: ChartTitle(
+          //                 text: '',
+          //                 textStyle: const TextStyle(
+          //                     color: Constants.primary,
+          //                     fontSize: 18,
+          //                     fontWeight: FontWeight.bold)),
+          //             legend: const Legend(
+          //                 isVisible: true,
+          //                 textStyle: TextStyle(color: Constants.lightPrimary)),
+          //             series: <PieSeries<_PieData, String>>[
+          //               PieSeries<_PieData, String>(
+          //                   explode: true,
+          //                   explodeIndex: 0,
+          //                   dataSource: pieData2,
+          //                   xValueMapper: (_PieData data, _) => data.xData,
+          //                   yValueMapper: (_PieData data, _) => data.yData,
+          //                   dataLabelMapper: (_PieData data, _) => data.text,
+          //                   dataLabelSettings: const DataLabelSettings(
+          //                       isVisible: true,
+          //                       textStyle: TextStyle(color: Colors.white))),
+          //             ]),
+          //       )
+          //     : Padding(
+          //         padding: const EdgeInsets.only(left: 15.0, top: 5),
+          //         child: Text(
+          //           '${mUser.name.toLowerCase()} hasn\'t pulled up to any events yet!',
+          //           textAlign: TextAlign.start,
+          //           style:
+          //               const TextStyle(color: Constants.primary, fontSize: 16),
+          //         ),
+          //       )
         ],
       ),
       Positioned(
