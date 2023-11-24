@@ -221,58 +221,62 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
     // }
 
     return Stack(children: [
-      ListView(
-        physics: const BouncingScrollPhysics(),
+      Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        // physics: const BouncingScrollPhysics(),
         children: [
           const SizedBox(height: 15),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(right: 15.0),
-                  child: Expanded(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        buildName(mUser),
-                        UserPreferences.isUserLoggedIn()
-                            ? Padding(
-                                padding: const EdgeInsets.only(top: 15.0),
-                                child: buildFriendUnfriendToggleButton(),
-                              )
-                            : const SizedBox(),
-                      ],
+            child: Expanded(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(right: 15.0),
+                    child: Expanded(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          buildName(mUser),
+                          UserPreferences.isUserLoggedIn()
+                              ? Padding(
+                                  padding: const EdgeInsets.only(top: 15.0),
+                                  child: buildFriendUnfriendToggleButton(),
+                                )
+                              : const SizedBox(),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-                mUser.imageUrl.isNotEmpty
-                    ? ProfileWidget(
-                        isEdit: false,
-                        imagePath: mUser.imageUrl,
-                        showEditIcon: false,
-                        onClicked: () {},
-                      )
-                    : ClipOval(
-                        child: Container(
-                          width: 128.0,
-                          height: 128.0,
-                          color: Constants.primary,
-                          // Optional background color for the circle
-                          child: Image.asset(
-                            mUser.gender == 'female'
-                                ? 'assets/profile_photos/12.png'
-                                : 'assets/profile_photos/1.png',
-                            // Replace with your asset image path
-                            fit: BoxFit.cover,
+                  mUser.imageUrl.isNotEmpty
+                      ? ProfileWidget(
+                          isEdit: false,
+                          imagePath: mUser.imageUrl,
+                          showEditIcon: false,
+                          onClicked: () {},
+                        )
+                      : ClipOval(
+                          child: Container(
+                            width: 128.0,
+                            height: 128.0,
+                            color: Constants.primary,
+                            // Optional background color for the circle
+                            child: Image.asset(
+                              mUser.gender == 'female'
+                                  ? 'assets/profile_photos/12.png'
+                                  : 'assets/profile_photos/1.png',
+                              // Replace with your asset image path
+                              fit: BoxFit.cover,
+                            ),
                           ),
                         ),
-                      ),
-              ],
+                ],
+              ),
             ),
           ),
           const SizedBox(height: 24),
