@@ -52,12 +52,13 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
 
   @override
   void initState() {
-    if(widget.partyPhoto.tags.isNotEmpty){
+    if (widget.partyPhoto.tags.isNotEmpty) {
       FirestoreHelper.pullUsersByIds(widget.partyPhoto.tags).then((res) {
-        if(res.docs.isNotEmpty){
+        if (res.docs.isNotEmpty) {
           for (int i = 0; i < res.docs.length; i++) {
             DocumentSnapshot document = res.docs[i];
-            Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+            Map<String, dynamic> data =
+                document.data()! as Map<String, dynamic>;
             final User user = Fresh.freshUserMap(data, false);
             mUsers.add(user);
           }
@@ -182,6 +183,39 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
                             ],
                           ),
                         ),
+                        Positioned(
+                          bottom: 0,
+                          right: 0,
+                          child: Container(
+                            color: Constants.lightPrimary.withOpacity(0.7),
+                            padding: const EdgeInsets.symmetric(horizontal: 4),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                Text(
+                                  '${widget.partyPhoto.views} ',
+                                  style: const TextStyle(fontSize: 14),
+                                ),
+                                Image.asset(
+                                  'assets/icons/ic_third_eye.png',
+                                  width: 14,
+                                  height: 14,
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                        Positioned(
+                          top: 0,
+                          left: 0,
+                          child: Container(
+                            color: Constants.lightPrimary.withOpacity(0.7),
+                            padding: const EdgeInsets.symmetric(horizontal: 4),
+                            child: Text(DateTimeUtils.getFormattedDate(
+                                widget.partyPhoto.partyDate)),
+                          ),
+                        ),
                       ])
                     : Stack(
                         children: [
@@ -199,7 +233,8 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
                             right: 0,
                             child: Container(
                               color: Constants.lightPrimary.withOpacity(0.7),
-                              padding: const EdgeInsets.symmetric(horizontal: 4),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 4),
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 mainAxisAlignment: MainAxisAlignment.end,
@@ -222,7 +257,8 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
                             left: 0,
                             child: Container(
                               color: Constants.lightPrimary.withOpacity(0.7),
-                              padding: const EdgeInsets.symmetric(horizontal: 4),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 4),
                               child: Text(DateTimeUtils.getFormattedDate(
                                   widget.partyPhoto.partyDate)),
                             ),
@@ -250,7 +286,7 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
                             onTap: () {
                               if (UserPreferences.isUserLoggedIn()) {
                                 if (kIsWeb) {
-                                  _showDownloadAppDialog(context);
+                                  _showDownloadAppDialog(context, '🎁 spreading some love for photos');
                                 } else {
                                   if (widget.partyPhoto.likers.isEmpty) {
                                     setState(() {
@@ -293,7 +329,7 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
                               onTap: () async {
                                 if (UserPreferences.isUserLoggedIn()) {
                                   if (kIsWeb) {
-                                    _showDownloadAppDialog(context);
+                                    _showDownloadAppDialog(context, '🎁 share photos to your friends');
                                   } else {
                                     _showShareOptionsDialog(context);
                                   }
@@ -309,7 +345,7 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
                           child: ElevatedButton.icon(
                             onPressed: () {
                               if (kIsWeb) {
-                                _showDownloadAppDialog(context);
+                                _showDownloadAppDialog(context, '🎁 save your photos to gallery');
                               } else {
                                 if (UserPreferences.isUserLoggedIn()) {
                                   Logx.ist(_TAG, '🍄 saving to gallery...');
@@ -320,21 +356,28 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
                                   FileUtils.saveNetworkImage(
                                       widget.partyPhoto.imageUrl, fileName);
 
-                                  List<String> downloaders = widget.partyPhoto.downloaders;
-                                  if(!downloaders.contains(UserPreferences.myUser.id)){
+                                  List<String> downloaders =
+                                      widget.partyPhoto.downloaders;
+                                  if (!downloaders
+                                      .contains(UserPreferences.myUser.id)) {
                                     downloaders.add(UserPreferences.myUser.id);
-                                    int downloadCount = widget.partyPhoto.downloadCount+1;
-                                    widget.partyPhoto = widget.partyPhoto.copyWith(downloaders: downloaders,
-                                      downloadCount: downloadCount);
-                                    FirestoreHelper.pushPartyPhoto(widget.partyPhoto);
+                                    int downloadCount =
+                                        widget.partyPhoto.downloadCount + 1;
+                                    widget.partyPhoto = widget.partyPhoto
+                                        .copyWith(
+                                            downloaders: downloaders,
+                                            downloadCount: downloadCount);
+                                    FirestoreHelper.pushPartyPhoto(
+                                        widget.partyPhoto);
 
                                     setState(() {
                                       widget.partyPhoto;
                                     });
                                   } else {
-                                    FirestoreHelper.updatePartyPhotoDownloadCount(widget.partyPhoto.id);
+                                    FirestoreHelper
+                                        .updatePartyPhotoDownloadCount(
+                                            widget.partyPhoto.id);
                                   }
-
 
                                   if ((UserPreferences.myUser.lastReviewTime <
                                       Timestamp.now().millisecondsSinceEpoch -
@@ -366,49 +409,58 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
                   ),
                 ),
 
-                _isUsersLoading ? const SizedBox(): Row(
-                  children: mUsers.map((user) {
-                    return Container(
-                      margin: const EdgeInsets.only(left: 10.0),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(10.0), // Adjust the border radius as needed
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey.withOpacity(0.5), // Set the shadow color
-                            spreadRadius: 5, // Set the spread radius
-                            blurRadius: 7, // Set the blur radius
-                            offset: Offset(0, 3), // Set the shadow offset
-                          ),
-                        ],
-                      ),
-                      child: GestureDetector(
-                        onTap: () {
-                          GoRouter.of(context).pushNamed(RouteConstants.profileRouteName, params: {
-                            'username': user.username,
-                          });
-                        },
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(10),
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 3, horizontal: 5),
-                            child: Text(
-                              '${user.gender == 'female'? '🦋': '🐉'} ${user.name.toLowerCase()}',
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
-                                // backgroundColor: Constants
-                                //     .primary
-                                //     .withOpacity(0.8),
+                _isUsersLoading
+                    ? const SizedBox()
+                    : Row(
+                        children: mUsers.map((user) {
+                          return Container(
+                            margin: const EdgeInsets.only(left: 10.0),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(10.0),
+                              // Adjust the border radius as needed
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.grey.withOpacity(0.5),
+                                  // Set the shadow color
+                                  spreadRadius: 5,
+                                  // Set the spread radius
+                                  blurRadius: 7,
+                                  // Set the blur radius
+                                  offset: Offset(0, 3), // Set the shadow offset
+                                ),
+                              ],
+                            ),
+                            child: GestureDetector(
+                              onTap: () {
+                                if (kIsWeb) {
+                                  _showDownloadAppDialog(context, '🎁 see ${user.name}\'s profile and photos');
+                                } else {
+                                  GoRouter.of(context).pushNamed(
+                                      RouteConstants.profileRouteName,
+                                      params: {
+                                        'username': user.username,
+                                      });
+                                }
+                              },
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(10),
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 3, horizontal: 5),
+                                  child: Text(
+                                    '${user.gender == 'female' ? '🦋' : '🐉'} ${user.name.toLowerCase()}',
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
                               ),
                             ),
-                          ),
-                        ),
+                          );
+                        }).toList(),
                       ),
-                    );
-                  }).toList(),
-                ),
 
                 Padding(
                   padding: const EdgeInsets.only(left: 10, right: 10),
@@ -417,46 +469,41 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
                     children: [
                       const Text('see yourself'),
                       Padding(
-                          padding:
-                          const EdgeInsets.symmetric(horizontal: 5),
+                          padding: const EdgeInsets.symmetric(horizontal: 5),
                           child: ElevatedButton.icon(
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Constants.darkPrimary,
                               foregroundColor: Constants.primary,
                               shadowColor: Colors.white30,
                               shape: const RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.all(
-                                      Radius.circular(10))
-                              ),
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(10))),
                               elevation: 3,
                             ),
                             onPressed: () {
                               if (kIsWeb) {
-                                _showDownloadAppDialog(context);
+                                _showDownloadAppDialog(context, '🎁 tag yourself in photos');
                               } else {
                                 if (UserPreferences.isUserLoggedIn()) {
                                   Logx.ist(_TAG, 'tagging you...');
 
                                   FirestoreHelper.pullUserPhoto(
-                                      UserPreferences.myUser.id,
-                                      widget.partyPhoto.id)
+                                          UserPreferences.myUser.id,
+                                          widget.partyPhoto.id)
                                       .then((res) {
                                     if (res.docs.isEmpty) {
                                       UserPhoto userPhoto =
-                                      Dummy.getDummyUserPhoto();
+                                          Dummy.getDummyUserPhoto();
                                       userPhoto = userPhoto.copyWith(
-                                          userId:
-                                          UserPreferences.myUser.id,
-                                          partyPhotoId:
-                                          widget.partyPhoto.id);
-                                      FirestoreHelper.pushUserPhoto(
-                                          userPhoto);
+                                          userId: UserPreferences.myUser.id,
+                                          partyPhotoId: widget.partyPhoto.id);
+                                      FirestoreHelper.pushUserPhoto(userPhoto);
 
                                       Logx.ist(_TAG,
                                           'your tag request is received, and it shall be approved by the admins soon');
                                     } else {
-                                      Logx.ist(_TAG,
-                                          'your tag is present in db');
+                                      Logx.ist(
+                                          _TAG, 'your tag is present in db');
                                     }
                                   });
                                 } else {
@@ -481,7 +528,7 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
     );
   }
 
-  _showDownloadAppDialog(BuildContext context) {
+  _showDownloadAppDialog(BuildContext context, String title) {
     String message =
         '📸 Click, Share, and Party On! Download our app to access all the photos, share them on your favorite apps, and get notified with instant guest list approvals and more! 🎉📲';
 
@@ -489,8 +536,8 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
         context: context,
         builder: (BuildContext ctx) {
           return AlertDialog(
-            title: const Text(
-              '🎁 save your photos to gallery',
+            title: Text(
+              title,
               textAlign: TextAlign.center,
               style: TextStyle(fontSize: 22, color: Colors.black),
             ),
