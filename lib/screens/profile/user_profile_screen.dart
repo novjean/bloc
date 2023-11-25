@@ -83,34 +83,34 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
           _isUserLoading = false;
         });
 
-        // FirestoreHelper.pullHistoryMusicByUser(mUser.id).then((res) {
-        //   Logx.d(_TAG, 'loading music history of  ${mUser.name}');
-        //
-        //   if (res.docs.isEmpty) {
-        //     Logx.d(_TAG, '${mUser.name} has no music history');
-        //
-        //     setState(() {
-        //       showMusicHistory = false;
-        //       _isMusicHistoryLoading = false;
-        //     });
-        //   } else {
-        //     Logx.d(_TAG, '${mUser.name} has music history');
-        //
-        //     for (int i = 0; i < res.docs.length; i++) {
-        //       DocumentSnapshot document = res.docs[i];
-        //       Map<String, dynamic> data =
-        //           document.data()! as Map<String, dynamic>;
-        //       final HistoryMusic historyMusic =
-        //           Fresh.freshHistoryMusicMap(data, false);
-        //       mHistoryMusics.add(historyMusic);
-        //     }
-        //
-        //     setState(() {
-        //       showMusicHistory = true;
-        //       _isMusicHistoryLoading = false;
-        //     });
-        //   }
-        // });
+        FirestoreHelper.pullHistoryMusicByUser(mUser.id).then((res) {
+          Logx.d(_TAG, 'loading music history of  ${mUser.name}');
+
+          if (res.docs.isEmpty) {
+            Logx.d(_TAG, '${mUser.name} has no music history');
+
+            setState(() {
+              showMusicHistory = false;
+              _isMusicHistoryLoading = false;
+            });
+          } else {
+            Logx.d(_TAG, '${mUser.name} has music history');
+
+            for (int i = 0; i < res.docs.length; i++) {
+              DocumentSnapshot document = res.docs[i];
+              Map<String, dynamic> data =
+                  document.data()! as Map<String, dynamic>;
+              final HistoryMusic historyMusic =
+                  Fresh.freshHistoryMusicMap(data, false);
+              mHistoryMusics.add(historyMusic);
+            }
+
+            setState(() {
+              showMusicHistory = true;
+              _isMusicHistoryLoading = false;
+            });
+          }
+        });
 
         FirestoreHelper.pullPartyPhotosByUserId(mUser.id).then((res) {
           Logx.d(_TAG, 'loading party photos of  ${mUser.name}');
@@ -143,7 +143,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
 
           FirestoreHelper.pullFriend(UserPreferences.myUser.id, mUser.id)
               .then((res) {
-            Logx.i(_TAG, 'loading friend conenction of ${mUser.name}');
+            Logx.i(_TAG, 'loading friend connection of ${mUser.name}');
 
             if (res.docs.isNotEmpty) {
               Logx.d(_TAG, '${mUser.name} is a friend');
@@ -210,15 +210,15 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
   }
 
   _buildBody(BuildContext context) {
-    // List<_PieData> pieData2 = [];
-    //
-    // if (showMusicHistory) {
-    //   for (HistoryMusic historyMusic in mHistoryMusics) {
-    //     _PieData pieData = _PieData(
-    //         historyMusic.genre, historyMusic.count, historyMusic.genre);
-    //     pieData2.add(pieData);
-    //   }
-    // }
+    List<_PieData> pieData2 = [];
+
+    if (showMusicHistory) {
+      for (HistoryMusic historyMusic in mHistoryMusics) {
+        _PieData pieData = _PieData(
+            historyMusic.genre, historyMusic.count, historyMusic.genre);
+        pieData2.add(pieData);
+      }
+    }
 
     return Stack(children: [
       ListView(
@@ -301,48 +301,48 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                   ? _showPhotosGridView(mPartyPhotos)
                   : const SizedBox(),
           const Divider(),
-          // const Padding(
-          //   padding: EdgeInsets.only(left: 15.0),
-          //   child: Text(
-          //     'history',
-          //     textAlign: TextAlign.start,
-          //     style: TextStyle(color: Constants.primary, fontSize: 20),
-          //   ),
-          // ),
-          // showMusicHistory
-          //     ? Center(
-          //         child: SfCircularChart(
-          //             title: ChartTitle(
-          //                 text: '',
-          //                 textStyle: const TextStyle(
-          //                     color: Constants.primary,
-          //                     fontSize: 18,
-          //                     fontWeight: FontWeight.bold)),
-          //             legend: const Legend(
-          //                 isVisible: true,
-          //                 textStyle: TextStyle(color: Constants.lightPrimary)),
-          //             series: <PieSeries<_PieData, String>>[
-          //               PieSeries<_PieData, String>(
-          //                   explode: true,
-          //                   explodeIndex: 0,
-          //                   dataSource: pieData2,
-          //                   xValueMapper: (_PieData data, _) => data.xData,
-          //                   yValueMapper: (_PieData data, _) => data.yData,
-          //                   dataLabelMapper: (_PieData data, _) => data.text,
-          //                   dataLabelSettings: const DataLabelSettings(
-          //                       isVisible: true,
-          //                       textStyle: TextStyle(color: Colors.white))),
-          //             ]),
-          //       )
-          //     : Padding(
-          //         padding: const EdgeInsets.only(left: 15.0, top: 5),
-          //         child: Text(
-          //           '${mUser.name.toLowerCase()} hasn\'t pulled up to any events yet!',
-          //           textAlign: TextAlign.start,
-          //           style:
-          //               const TextStyle(color: Constants.primary, fontSize: 16),
-          //         ),
-          //       )
+          const Padding(
+            padding: EdgeInsets.only(left: 15.0),
+            child: Text(
+              'history',
+              textAlign: TextAlign.start,
+              style: TextStyle(color: Constants.primary, fontSize: 20),
+            ),
+          ),
+          showMusicHistory
+              ? Center(
+                  child: SfCircularChart(
+                      title: ChartTitle(
+                          text: '',
+                          textStyle: const TextStyle(
+                              color: Constants.primary,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold)),
+                      legend: const Legend(
+                          isVisible: true,
+                          textStyle: TextStyle(color: Constants.lightPrimary)),
+                      series: <PieSeries<_PieData, String>>[
+                        PieSeries<_PieData, String>(
+                            explode: true,
+                            explodeIndex: 0,
+                            dataSource: pieData2,
+                            xValueMapper: (_PieData data, _) => data.xData,
+                            yValueMapper: (_PieData data, _) => data.yData,
+                            dataLabelMapper: (_PieData data, _) => data.text,
+                            dataLabelSettings: const DataLabelSettings(
+                                isVisible: true,
+                                textStyle: TextStyle(color: Colors.white))),
+                      ]),
+                )
+              : Padding(
+                  padding: const EdgeInsets.only(left: 15.0, top: 5),
+                  child: Text(
+                    '${mUser.name.toLowerCase()} hasn\'t pulled up to any events yet!',
+                    textAlign: TextAlign.start,
+                    style:
+                        const TextStyle(color: Constants.primary, fontSize: 16),
+                  ),
+                )
         ],
       ),
       Positioned(
@@ -694,14 +694,14 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
 
   Widget buildAbout(blocUser.User user) => Container(
         padding: EdgeInsets.symmetric(horizontal: 48),
-        child: Column(
+        child: const Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               'about',
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: 16),
             Text(
               '',
               style: TextStyle(fontSize: 16, height: 1.4),
