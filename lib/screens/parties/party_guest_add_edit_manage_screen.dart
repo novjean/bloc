@@ -65,7 +65,7 @@ class _PartyGuestAddEditManageScreenState
     extends State<PartyGuestAddEditManageScreen> {
   static const String _TAG = 'PartyGuestAddEditManageScreen';
 
-  bool testMode = false;
+  bool testMode = true;
 
   late blocUser.User mBlocUser;
   bool hasUserChanged = false;
@@ -2453,11 +2453,7 @@ class _PartyGuestAddEditManageScreenState
                 child: const Text('close',
                     style: TextStyle(color: Constants.background)),
                 onPressed: () {
-                  Navigator.of(ctx).pop();
-
-                  GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
-                  GoRouter.of(context)
-                      .pushNamed(RouteConstants.boxOfficeRouteName);
+                  _showAdDialog(context);
                 },
               ),
               TextButton(
@@ -2650,6 +2646,36 @@ class _PartyGuestAddEditManageScreenState
             ],
           );
         });
+  }
+
+  _showAdDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext ctx) {
+        return AlertDialog(
+          content: Container(
+            width: double.maxFinite,
+            height: double.maxFinite,
+            child: Image.asset(
+              'assets/temp/ad1.jpg', // Replace with the path to your image asset
+              fit: BoxFit.cover,
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(ctx).pop();
+
+                GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
+                GoRouter.of(context)
+                    .pushNamed(RouteConstants.boxOfficeRouteName);
+              },
+              child: Text('close'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
 
