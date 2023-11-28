@@ -14,6 +14,7 @@ class PartyPhoto {
   int downloadCount;
   List<String> downloaders;
   int views;
+  final bool isFreePhoto;
 
   List<String> tags;
 
@@ -33,6 +34,7 @@ class PartyPhoto {
     required this.downloadCount,
     required this.downloaders,
     required this.views,
+    required this.isFreePhoto,
     required this.tags,
   });
 
@@ -55,6 +57,7 @@ class PartyPhoto {
           downloadCount == other.downloadCount &&
           downloaders == other.downloaders &&
           views == other.views &&
+          isFreePhoto == other.isFreePhoto &&
           tags == other.tags);
 
   @override
@@ -73,6 +76,7 @@ class PartyPhoto {
       downloadCount.hashCode ^
       downloaders.hashCode ^
       views.hashCode ^
+      isFreePhoto.hashCode ^
       tags.hashCode;
 
   @override
@@ -92,6 +96,7 @@ class PartyPhoto {
         ' downloadCount: $downloadCount,' +
         ' downloaders: $downloaders,' +
         ' views: $views,' +
+        ' isFreePhoto: $isFreePhoto,' +
         ' tags: $tags,' +
         '}';
   }
@@ -111,6 +116,7 @@ class PartyPhoto {
     int? downloadCount,
     List<String>? downloaders,
     int? views,
+    bool? isFreePhoto,
     List<String>? tags,
   }) {
     return PartyPhoto(
@@ -128,6 +134,7 @@ class PartyPhoto {
       downloadCount: downloadCount ?? this.downloadCount,
       downloaders: downloaders ?? this.downloaders,
       views: views ?? this.views,
+      isFreePhoto: isFreePhoto ?? this.isFreePhoto,
       tags: tags ?? this.tags,
     );
   }
@@ -148,6 +155,7 @@ class PartyPhoto {
       'downloadCount': this.downloadCount,
       'downloaders': this.downloaders,
       'views': this.views,
+      'isFreePhoto': this.isFreePhoto,
       'tags': this.tags,
     };
   }
@@ -168,6 +176,7 @@ class PartyPhoto {
       downloadCount: map['downloadCount'] as int,
       downloaders: map['downloaders'] as List<String>,
       views: map['views'] as int,
+      isFreePhoto: map['isFreePhoto'] as bool,
       tags: map['tags'] as List<String>,
     );
   }
