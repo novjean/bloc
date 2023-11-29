@@ -25,6 +25,7 @@ import '../screens/login_screen.dart';
 import '../screens/lounge/lounge_chat_screen.dart';
 import '../screens/parties/artist_screen.dart';
 import '../screens/privacy_policy_screen.dart';
+import '../screens/profile/new_user_profile_screen.dart';
 import '../screens/profile/user_profile_screen.dart';
 import '../screens/terms_and_conditions_screen.dart';
 import '../screens/ui/splash_screen.dart';
@@ -279,7 +280,7 @@ class BlocRouter {
           path: '/profile/:username',
           pageBuilder: (context, state) {
             return MaterialPage(
-                child: UserProfileScreen(
+                child: NewUserProfileScreen(
                   username: state.params['username']!,
                 ));
           },
