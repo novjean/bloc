@@ -564,6 +564,24 @@ class _PartyPhotoAddEditScreenState extends State<PartyPhotoAddEditScreen> {
             ),
             const SizedBox(height: 12),
             Row(
+              children: <Widget>[
+                const Text(
+                  'free photo : ',
+                  style: TextStyle(fontSize: 17.0),
+                ), //Text
+                const SizedBox(width: 10), //SizedBox
+                Checkbox(
+                  value: widget.partyPhoto.isFreePhoto,
+                  onChanged: (value) {
+                    setState(() {
+                      widget.partyPhoto = widget.partyPhoto.copyWith(isFreePhoto: value);
+                    });
+                  },
+                ), //Checkbox
+              ], //<Widget>[]
+            ),
+            const SizedBox(height: 12),
+            Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 Padding(

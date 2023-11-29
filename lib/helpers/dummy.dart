@@ -403,7 +403,9 @@ class Dummy {
         downloadCount: 0,
         downloaders: [],
         views: 0,
-        tags: []);
+        tags: [],
+      isFreePhoto: false
+    );
     return partyPhoto;
   }
 

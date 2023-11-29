@@ -126,145 +126,8 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
                 //   ),
                 // ),
                 kIsWeb
-                    ? Stack(alignment: Alignment.center, children: [
-                        BlurredImage(
-                          imageUrl: widget.partyPhoto.imageThumbUrl.isNotEmpty
-                              ? widget.partyPhoto.imageThumbUrl
-                              : widget.partyPhoto.imageUrl,
-                          blurLevel: 5,
-                        ),
-                        Positioned(
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 15.0),
-                                  child: Text(
-                                    _getRandomAppDownloadQuote(),
-                                    maxLines: 3,
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                        fontSize: 20,
-                                        backgroundColor: Constants.lightPrimary
-                                            .withOpacity(0.2)),
-                                  )),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 5.0, vertical: 10),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    DarkButtonWidget(
-                                      text: '🍎 ios',
-                                      onClicked: () {
-                                        final uri = Uri.parse(
-                                            ChallengeUtils.urlBlocAppStore);
-                                        NetworkUtils.launchInBrowser(uri);
-                                      },
-                                    ),
-                                    Padding(
-                                      padding:
-                                          const EdgeInsets.only(left: 20.0),
-                                      child: DarkButtonWidget(
-                                        text: '🤖 android',
-                                        onClicked: () {
-                                          //android download
-                                          final uri = Uri.parse(
-                                              ChallengeUtils.urlBlocPlayStore);
-                                          NetworkUtils.launchInBrowser(uri);
-                                        },
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
-                        Positioned(
-                          bottom: 0,
-                          right: 0,
-                          child: Container(
-                            color: Constants.lightPrimary.withOpacity(0.7),
-                            padding: const EdgeInsets.symmetric(horizontal: 4),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                Text(
-                                  '${widget.partyPhoto.views} ',
-                                  style: const TextStyle(fontSize: 14),
-                                ),
-                                Image.asset(
-                                  'assets/icons/ic_third_eye.png',
-                                  width: 14,
-                                  height: 14,
-                                )
-                              ],
-                            ),
-                          ),
-                        ),
-                        Positioned(
-                          top: 0,
-                          left: 0,
-                          child: Container(
-                            color: Constants.lightPrimary.withOpacity(0.7),
-                            padding: const EdgeInsets.symmetric(horizontal: 4),
-                            child: Text(DateTimeUtils.getFormattedDate(
-                                widget.partyPhoto.partyDate)),
-                          ),
-                        ),
-                      ])
-                    : Stack(
-                        children: [
-                          SizedBox(
-                            width: mq.width,
-                            child: FadeInImage(
-                              placeholder: const AssetImage(
-                                  'assets/images/logo_3x2.png'),
-                              image: NetworkImage(widget.partyPhoto.imageUrl),
-                              fit: BoxFit.contain,
-                            ),
-                          ),
-                          Positioned(
-                            bottom: 0,
-                            right: 0,
-                            child: Container(
-                              color: Constants.lightPrimary.withOpacity(0.7),
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 4),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  Text(
-                                    '${widget.partyPhoto.views} ',
-                                    style: const TextStyle(fontSize: 14),
-                                  ),
-                                  Image.asset(
-                                    'assets/icons/ic_third_eye.png',
-                                    width: 14,
-                                    height: 14,
-                                  )
-                                ],
-                              ),
-                            ),
-                          ),
-                          Positioned(
-                            top: 0,
-                            left: 0,
-                            child: Container(
-                              color: Constants.lightPrimary.withOpacity(0.7),
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 4),
-                              child: Text(DateTimeUtils.getFormattedDate(
-                                  widget.partyPhoto.partyDate)),
-                            ),
-                          ),
-                        ],
-                      ),
+                    ? widget.partyPhoto.isFreePhoto ? _showPhoto() : _showBlurredPhoto()
+                    : _showPhoto(),
                 Padding(
                   padding: const EdgeInsets.only(
                       left: 10.0, right: 8, top: 1, bottom: 0),
@@ -963,5 +826,152 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
 
     int randomNumber = NumberUtils.generateRandomNumber(0, quotes.length - 1);
     return quotes[randomNumber].toLowerCase();
+  }
+
+  _showPhoto() {
+    return Stack(
+      children: [
+        SizedBox(
+          width: mq.width,
+          child: FadeInImage(
+            placeholder: const AssetImage(
+                'assets/images/logo_3x2.png'),
+            image: NetworkImage(widget.partyPhoto.imageUrl),
+            fit: BoxFit.contain,
+          ),
+        ),
+        Positioned(
+          bottom: 0,
+          right: 0,
+          child: Container(
+            color: Constants.lightPrimary.withOpacity(0.7),
+            padding:
+            const EdgeInsets.symmetric(horizontal: 4),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Text(
+                  '${widget.partyPhoto.views} ',
+                  style: const TextStyle(fontSize: 14),
+                ),
+                Image.asset(
+                  'assets/icons/ic_third_eye.png',
+                  width: 14,
+                  height: 14,
+                )
+              ],
+            ),
+          ),
+        ),
+        Positioned(
+          top: 0,
+          left: 0,
+          child: Container(
+            color: Constants.lightPrimary.withOpacity(0.7),
+            padding:
+            const EdgeInsets.symmetric(horizontal: 4),
+            child: Text(DateTimeUtils.getFormattedDate(
+                widget.partyPhoto.partyDate)),
+          ),
+        ),
+      ],
+    );
+  }
+
+  _showBlurredPhoto() {
+    return Stack(alignment: Alignment.center, children: [
+      BlurredImage(
+        imageUrl:
+
+        widget.partyPhoto.imageThumbUrl.isNotEmpty
+            ? widget.partyPhoto.imageThumbUrl
+            : widget.partyPhoto.imageUrl,
+        blurLevel: 5,
+      ),
+      Positioned(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Padding(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 15.0),
+                child: Text(
+                  _getRandomAppDownloadQuote(),
+                  maxLines: 3,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      fontSize: 20,
+                      backgroundColor: Constants.lightPrimary
+                          .withOpacity(0.2)),
+                )),
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                  horizontal: 5.0, vertical: 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  DarkButtonWidget(
+                    text: '🍎 ios',
+                    onClicked: () {
+                      final uri = Uri.parse(
+                          ChallengeUtils.urlBlocAppStore);
+                      NetworkUtils.launchInBrowser(uri);
+                    },
+                  ),
+                  Padding(
+                    padding:
+                    const EdgeInsets.only(left: 20.0),
+                    child: DarkButtonWidget(
+                      text: '🤖 android',
+                      onClicked: () {
+                        //android download
+                        final uri = Uri.parse(
+                            ChallengeUtils.urlBlocPlayStore);
+                        NetworkUtils.launchInBrowser(uri);
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            )
+          ],
+        ),
+      ),
+      Positioned(
+        bottom: 0,
+        right: 0,
+        child: Container(
+          color: Constants.lightPrimary.withOpacity(0.7),
+          padding: const EdgeInsets.symmetric(horizontal: 4),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Text(
+                '${widget.partyPhoto.views} ',
+                style: const TextStyle(fontSize: 14),
+              ),
+              Image.asset(
+                'assets/icons/ic_third_eye.png',
+                width: 14,
+                height: 14,
+              )
+            ],
+          ),
+        ),
+      ),
+      Positioned(
+        top: 0,
+        left: 0,
+        child: Container(
+          color: Constants.lightPrimary.withOpacity(0.7),
+          padding: const EdgeInsets.symmetric(horizontal: 4),
+          child: Text(DateTimeUtils.getFormattedDate(
+              widget.partyPhoto.partyDate)),
+        ),
+      ),
+    ]);
   }
 }
