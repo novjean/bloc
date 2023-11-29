@@ -239,72 +239,73 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
             ),
           ),
           const SizedBox(height: 24),
-          const Padding(
-            padding: EdgeInsets.only(left: 15.0, right: 15, bottom: 10),
-            child: Text(
-              'friends',
-              textAlign: TextAlign.start,
-              style: TextStyle(color: Constants.primary, fontSize: 20),
-            ),
-          ),
-          _loadFriends(context),
-          const SizedBox(height: 24),
-          const Padding(
-            padding: EdgeInsets.only(left: 15.0, right: 15, bottom: 10),
-            child: Text(
-              'photos',
-              textAlign: TextAlign.start,
-              style: TextStyle(color: Constants.primary, fontSize: 20),
-            ),
-          ),
-          _isPartyPhotosLoading
-              ? const SizedBox()
-              : mPartyPhotos.isNotEmpty
-              ? _showPhotosGridView(mPartyPhotos)
-              : const SizedBox(),
-          const Divider(),
-          const Padding(
-            padding: EdgeInsets.only(left: 15.0),
-            child: Text(
-              'history',
-              textAlign: TextAlign.start,
-              style: TextStyle(color: Constants.primary, fontSize: 20),
-            ),
-          ),
-          showMusicHistory
-              ? Center(
-            child: SfCircularChart(
-                title: ChartTitle(
-                    text: '',
-                    textStyle: const TextStyle(
-                        color: Constants.primary,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold)),
-                legend: const Legend(
-                    isVisible: true,
-                    textStyle: TextStyle(color: Constants.lightPrimary)),
-                series: <PieSeries<_PieData, String>>[
-                  PieSeries<_PieData, String>(
-                      explode: true,
-                      explodeIndex: 0,
-                      dataSource: pieData2,
-                      xValueMapper: (_PieData data, _) => data.xData,
-                      yValueMapper: (_PieData data, _) => data.yData,
-                      dataLabelMapper: (_PieData data, _) => data.text,
-                      dataLabelSettings: const DataLabelSettings(
-                          isVisible: true,
-                          textStyle: TextStyle(color: Colors.white))),
-                ]),
-          )
-              : Padding(
-            padding: const EdgeInsets.only(left: 15.0, top: 5),
-            child: Text(
-              '${mUser.name.toLowerCase()} hasn\'t pulled up to any events yet!',
-              textAlign: TextAlign.start,
-              style:
-              const TextStyle(color: Constants.primary, fontSize: 16),
-            ),
-          )
+          // const Padding(
+          //   padding: EdgeInsets.only(left: 15.0, right: 15, bottom: 10),
+          //   child: Text(
+          //     'friends',
+          //     textAlign: TextAlign.start,
+          //     style: TextStyle(color: Constants.primary, fontSize: 20),
+          //   ),
+          // ),
+          // _loadFriends(context),
+          // const SizedBox(height: 24),
+          // const Padding(
+          //   padding: EdgeInsets.only(left: 15.0, right: 15, bottom: 10),
+          //   child: Text(
+          //     'photos',
+          //     textAlign: TextAlign.start,
+          //     style: TextStyle(color: Constants.primary, fontSize: 20),
+          //   ),
+          // ),
+          //
+          // _isPartyPhotosLoading
+          //     ? const SizedBox()
+          //     : mPartyPhotos.isNotEmpty
+          //     ? _showPhotosGridView(mPartyPhotos)
+          //     : const SizedBox(),
+          // const Divider(),
+          // const Padding(
+          //   padding: EdgeInsets.only(left: 15.0),
+          //   child: Text(
+          //     'history',
+          //     textAlign: TextAlign.start,
+          //     style: TextStyle(color: Constants.primary, fontSize: 20),
+          //   ),
+          // ),
+          // showMusicHistory
+          //     ? Center(
+          //   child: SfCircularChart(
+          //       title: ChartTitle(
+          //           text: '',
+          //           textStyle: const TextStyle(
+          //               color: Constants.primary,
+          //               fontSize: 18,
+          //               fontWeight: FontWeight.bold)),
+          //       legend: const Legend(
+          //           isVisible: true,
+          //           textStyle: TextStyle(color: Constants.lightPrimary)),
+          //       series: <PieSeries<_PieData, String>>[
+          //         PieSeries<_PieData, String>(
+          //             explode: true,
+          //             explodeIndex: 0,
+          //             dataSource: pieData2,
+          //             xValueMapper: (_PieData data, _) => data.xData,
+          //             yValueMapper: (_PieData data, _) => data.yData,
+          //             dataLabelMapper: (_PieData data, _) => data.text,
+          //             dataLabelSettings: const DataLabelSettings(
+          //                 isVisible: true,
+          //                 textStyle: TextStyle(color: Colors.white))),
+          //       ]),
+          // )
+          //     : Padding(
+          //   padding: const EdgeInsets.only(left: 15.0, top: 5),
+          //   child: Text(
+          //     '${mUser.name.toLowerCase()} hasn\'t pulled up to any events yet!',
+          //     textAlign: TextAlign.start,
+          //     style:
+          //     const TextStyle(color: Constants.primary, fontSize: 16),
+          //   ),
+          // )
         ],
       ),
       Positioned(
