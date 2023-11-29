@@ -280,7 +280,7 @@ class BlocRouter {
           path: '/profile/:username',
           pageBuilder: (context, state) {
             return MaterialPage(
-                child: NewUserProfileScreen(
+                child: UserProfileScreen(
                   username: state.params['username']!,
                 ));
           },

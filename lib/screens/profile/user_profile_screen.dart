@@ -7,6 +7,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:delayed_display/delayed_display.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:syncfusion_flutter_charts/charts.dart';
 
 import '../../api/apis.dart';
 import '../../db/entity/friend.dart';
@@ -75,72 +76,72 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
           _isUserLoading = false;
         });
 
-        // FirestoreHelper.pullHistoryMusicByUser(mUser.id).then((res) {
-        //   if (res.docs.isEmpty) {
-        //     setState(() {
-        //       showMusicHistory = false;
-        //       isMusicHistoryLoading = false;
-        //     });
-        //   } else {
-        //     for (int i = 0; i < res.docs.length; i++) {
-        //       DocumentSnapshot document = res.docs[i];
-        //       Map<String, dynamic> data =
-        //       document.data()! as Map<String, dynamic>;
-        //       final HistoryMusic historyMusic =
-        //       Fresh.freshHistoryMusicMap(data, false);
-        //       mHistoryMusics.add(historyMusic);
-        //     }
-        //
-        //     setState(() {
-        //       showMusicHistory = true;
-        //       isMusicHistoryLoading = false;
-        //     });
-        //   }
-        // });
-        //
-        // FirestoreHelper.pullPartyPhotosByUserId(mUser.id).then((res) {
-        //   if (res.docs.isNotEmpty) {
-        //     for (int i = 0; i < res.docs.length; i++) {
-        //       DocumentSnapshot document = res.docs[i];
-        //       Map<String, dynamic> data =
-        //       document.data()! as Map<String, dynamic>;
-        //       PartyPhoto partyPhoto = Fresh.freshPartyPhotoMap(data, false);
-        //       mPartyPhotos.add(partyPhoto);
-        //     }
-        //
-        //     setState(() {
-        //       _isPartyPhotosLoading = false;
-        //     });
-        //   } else {
-        //     setState(() {
-        //       _isPartyPhotosLoading = false;
-        //     });
-        //   }
-        // });
-        //
-        // if (UserPreferences.isUserLoggedIn()) {
-        //   FirestoreHelper.pullFriend(UserPreferences.myUser.id, mUser.id)
-        //       .then((res) {
-        //     if (res.docs.isNotEmpty) {
-        //       DocumentSnapshot document = res.docs[0];
-        //       Map<String, dynamic> data =
-        //       document.data()! as Map<String, dynamic>;
-        //       mFriend = Fresh.freshFriendMap(data, false);
-        //
-        //       setState(() {
-        //         isFriend = true;
-        //         _buttonText = '☠️ unfriend';
-        //         isFollowing = mFriend.isFollowing;
-        //       });
-        //     } else {
-        //       setState(() {
-        //         isFriend = false;
-        //         _buttonText = '🤍 friend';
-        //         isFollowing = false;
-        //       });
-        //     }
-        //   });
-        // }
+        FirestoreHelper.pullHistoryMusicByUser(mUser.id).then((res) {
+          if (res.docs.isEmpty) {
+            setState(() {
+              showMusicHistory = false;
+              isMusicHistoryLoading = false;
+            });
+          } else {
+            for (int i = 0; i < res.docs.length; i++) {
+              DocumentSnapshot document = res.docs[i];
+              Map<String, dynamic> data =
+              document.data()! as Map<String, dynamic>;
+              final HistoryMusic historyMusic =
+              Fresh.freshHistoryMusicMap(data, false);
+              mHistoryMusics.add(historyMusic);
+            }
+
+            setState(() {
+              showMusicHistory = true;
+              isMusicHistoryLoading = false;
+            });
+          }
+        });
+
+        FirestoreHelper.pullPartyPhotosByUserId(mUser.id).then((res) {
+          if (res.docs.isNotEmpty) {
+            for (int i = 0; i < res.docs.length; i++) {
+              DocumentSnapshot document = res.docs[i];
+              Map<String, dynamic> data =
+              document.data()! as Map<String, dynamic>;
+              PartyPhoto partyPhoto = Fresh.freshPartyPhotoMap(data, false);
+              mPartyPhotos.add(partyPhoto);
+            }
+
+            setState(() {
+              _isPartyPhotosLoading = false;
+            });
+          } else {
+            setState(() {
+              _isPartyPhotosLoading = false;
+            });
+          }
+        });
+
+        if (UserPreferences.isUserLoggedIn()) {
+          FirestoreHelper.pullFriend(UserPreferences.myUser.id, mUser.id)
+              .then((res) {
+            if (res.docs.isNotEmpty) {
+              DocumentSnapshot document = res.docs[0];
+              Map<String, dynamic> data =
+              document.data()! as Map<String, dynamic>;
+              mFriend = Fresh.freshFriendMap(data, false);
+
+              setState(() {
+                isFriend = true;
+                _buttonText = '☠️ unfriend';
+                isFollowing = mFriend.isFollowing;
+              });
+            } else {
+              setState(() {
+                isFriend = false;
+                _buttonText = '🤍 friend';
+                isFollowing = false;
+              });
+            }
+          });
+        }
       } else {
         // profile not found, navigate to home
         Logx.ist(_TAG, 'unfortunately, the profile could not be found');
@@ -166,7 +167,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
         ),
       ),
       backgroundColor: Constants.background,
-      body: _isUserLoading ? const LoadingWidget() : _buildNewBody(context),
+      body: _isUserLoading ? const LoadingWidget() : _buildBody(context),
     );
   }
 
@@ -181,9 +182,9 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
     //   }
     // }
 
-    return ListView(
+    return Column(
       // shrinkWrap: true,
-      physics: const BouncingScrollPhysics(),
+      // physics: const BouncingScrollPhysics(),
       children: [
         const SizedBox(height: 15),
         Padding(
@@ -321,9 +322,9 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
     }
 
     return Stack(children: [
-      ListView(
-        shrinkWrap: true,
-        physics: const BouncingScrollPhysics(),
+      Column(
+        // shrinkWrap: true,
+        // physics: const BouncingScrollPhysics(),
         children: [
           const SizedBox(height: 15),
           Padding(
@@ -377,73 +378,73 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
             ),
           ),
           const SizedBox(height: 24),
-          // const Padding(
-          //   padding: EdgeInsets.only(left: 15.0, right: 15, bottom: 10),
-          //   child: Text(
-          //     'friends',
-          //     textAlign: TextAlign.start,
-          //     style: TextStyle(color: Constants.primary, fontSize: 20),
-          //   ),
-          // ),
-          // _loadFriends(context),
-          // const SizedBox(height: 24),
-          // const Padding(
-          //   padding: EdgeInsets.only(left: 15.0, right: 15, bottom: 10),
-          //   child: Text(
-          //     'photos',
-          //     textAlign: TextAlign.start,
-          //     style: TextStyle(color: Constants.primary, fontSize: 20),
-          //   ),
-          // ),
-          //
-          // _isPartyPhotosLoading
-          //     ? const SizedBox()
-          //     : mPartyPhotos.isNotEmpty
-          //     ? _showPhotosGridView(mPartyPhotos)
-          //     : const SizedBox(),
-          // const Divider(),
-          // const Padding(
-          //   padding: EdgeInsets.only(left: 15.0),
-          //   child: Text(
-          //     'history',
-          //     textAlign: TextAlign.start,
-          //     style: TextStyle(color: Constants.primary, fontSize: 20),
-          //   ),
-          // ),
-          // showMusicHistory
-          //     ? Center(
-          //   child: SfCircularChart(
-          //       title: ChartTitle(
-          //           text: '',
-          //           textStyle: const TextStyle(
-          //               color: Constants.primary,
-          //               fontSize: 18,
-          //               fontWeight: FontWeight.bold)),
-          //       legend: const Legend(
-          //           isVisible: true,
-          //           textStyle: TextStyle(color: Constants.lightPrimary)),
-          //       series: <PieSeries<_PieData, String>>[
-          //         PieSeries<_PieData, String>(
-          //             explode: true,
-          //             explodeIndex: 0,
-          //             dataSource: pieData2,
-          //             xValueMapper: (_PieData data, _) => data.xData,
-          //             yValueMapper: (_PieData data, _) => data.yData,
-          //             dataLabelMapper: (_PieData data, _) => data.text,
-          //             dataLabelSettings: const DataLabelSettings(
-          //                 isVisible: true,
-          //                 textStyle: TextStyle(color: Colors.white))),
-          //       ]),
-          // )
-          //     : Padding(
-          //   padding: const EdgeInsets.only(left: 15.0, top: 5),
-          //   child: Text(
-          //     '${mUser.name.toLowerCase()} hasn\'t pulled up to any events yet!',
-          //     textAlign: TextAlign.start,
-          //     style:
-          //     const TextStyle(color: Constants.primary, fontSize: 16),
-          //   ),
-          // )
+          const Padding(
+            padding: EdgeInsets.only(left: 15.0, right: 15, bottom: 10),
+            child: Text(
+              'friends',
+              textAlign: TextAlign.start,
+              style: TextStyle(color: Constants.primary, fontSize: 20),
+            ),
+          ),
+          _loadFriends(context),
+          const SizedBox(height: 24),
+          const Padding(
+            padding: EdgeInsets.only(left: 15.0, right: 15, bottom: 10),
+            child: Text(
+              'photos',
+              textAlign: TextAlign.start,
+              style: TextStyle(color: Constants.primary, fontSize: 20),
+            ),
+          ),
+
+          _isPartyPhotosLoading
+              ? const SizedBox()
+              : mPartyPhotos.isNotEmpty
+              ? _showPhotosGridView(mPartyPhotos)
+              : const SizedBox(),
+          const Divider(),
+          const Padding(
+            padding: EdgeInsets.only(left: 15.0),
+            child: Text(
+              'history',
+              textAlign: TextAlign.start,
+              style: TextStyle(color: Constants.primary, fontSize: 20),
+            ),
+          ),
+          showMusicHistory
+              ? Center(
+            child: SfCircularChart(
+                title: ChartTitle(
+                    text: '',
+                    textStyle: const TextStyle(
+                        color: Constants.primary,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold)),
+                legend: const Legend(
+                    isVisible: true,
+                    textStyle: TextStyle(color: Constants.lightPrimary)),
+                series: <PieSeries<_PieData, String>>[
+                  PieSeries<_PieData, String>(
+                      explode: true,
+                      explodeIndex: 0,
+                      dataSource: pieData2,
+                      xValueMapper: (_PieData data, _) => data.xData,
+                      yValueMapper: (_PieData data, _) => data.yData,
+                      dataLabelMapper: (_PieData data, _) => data.text,
+                      dataLabelSettings: const DataLabelSettings(
+                          isVisible: true,
+                          textStyle: TextStyle(color: Colors.white))),
+                ]),
+          )
+              : Padding(
+            padding: const EdgeInsets.only(left: 15.0, top: 5),
+            child: Text(
+              '${mUser.name.toLowerCase()} hasn\'t pulled up to any events yet!',
+              textAlign: TextAlign.start,
+              style:
+              const TextStyle(color: Constants.primary, fontSize: 16),
+            ),
+          )
         ],
       ),
       Positioned(
