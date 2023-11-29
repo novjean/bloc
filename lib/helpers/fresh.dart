@@ -227,6 +227,12 @@ class Fresh {
       Logx.em(_TAG, 'adCampaign isActive not exist for ad campaign id: ${adCampaign.id}');
       isModelChanged = true;
     }
+    try {
+      adCampaign = adCampaign.copyWith(isStorySize: map['isStorySize'] as bool);
+    } catch (e) {
+      Logx.em(_TAG, 'adCampaign isStorySize not exist for ad campaign id: ${adCampaign.id}');
+      isModelChanged = true;
+    }
 
     if (isModelChanged &&
         shouldUpdate &&
@@ -270,6 +276,11 @@ class Fresh {
       fresh = fresh.copyWith(isActive: adCampaign.isActive);
     } catch (e) {
       Logx.em(_TAG, 'adCampaign isActive not exist for ad campaign id: ${adCampaign.id}');
+    }
+    try {
+      fresh = fresh.copyWith(isStorySize: adCampaign.isStorySize);
+    } catch (e) {
+      Logx.em(_TAG, 'adCampaign isStorySize not exist for ad campaign id: ${adCampaign.id}');
     }
 
     return fresh;

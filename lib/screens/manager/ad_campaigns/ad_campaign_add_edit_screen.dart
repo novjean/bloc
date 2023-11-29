@@ -31,6 +31,8 @@ class _AdCampaignAddEditScreenState extends State<AdCampaignAddEditScreen> {
 
   String newImageUrl = '';
 
+  bool isStorySize = false;
+
   @override
   void initState() {
     super.initState();
@@ -46,6 +48,9 @@ class _AdCampaignAddEditScreenState extends State<AdCampaignAddEditScreen> {
   );
 
   _buildBody(BuildContext context) {
+    double longSide = 1280;
+    double shortSide = 1024;
+
     return ListView(
       padding: const EdgeInsets.symmetric(horizontal: 32),
       physics: const BouncingScrollPhysics(),
@@ -61,10 +66,13 @@ class _AdCampaignAddEditScreenState extends State<AdCampaignAddEditScreen> {
               onClicked: () async {
                 final image = await ImagePicker().pickImage(
                     source: ImageSource.gallery,
-                    imageQuality: 95,
-                    maxHeight: 768,
-                    maxWidth: 1024);
+                    imageQuality: 99,
+                    maxHeight: isStorySize? longSide:shortSide,
+                    maxWidth: isStorySize? shortSide:longSide,);
                 if (image == null) return;
+
+                int fileSize = await image.length();
+                Logx.ist(_TAG, 'file size : ${fileSize / 1000} kb');
 
                 final directory = await getApplicationDocumentsDirectory();
                 final name = basename(image.path);
@@ -101,7 +109,7 @@ class _AdCampaignAddEditScreenState extends State<AdCampaignAddEditScreen> {
                               );
                             });
                       },
-                      child: Column(
+                      child: const Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
                           Icon(Icons.delete_forever),
@@ -112,6 +120,28 @@ class _AdCampaignAddEditScreenState extends State<AdCampaignAddEditScreen> {
                 ),
               ),
             )
+          ],
+        ),
+        const SizedBox(height: 12),
+        Row(
+          children: [
+            const Text('story size: ',
+                style: TextStyle(
+                  fontSize: 16,
+                )),
+            Checkbox(
+              value: isStorySize,
+              side: MaterialStateBorderSide.resolveWith(
+                    (states) => const BorderSide(
+                    width: 1.0),
+              ),
+              onChanged: (value) {
+                setState(() {
+                  isStorySize = value!;
+                  widget.adCampaign = widget.adCampaign.copyWith(isStorySize: value!);
+                });
+              },
+            ),
           ],
         ),
         const SizedBox(height: 24),

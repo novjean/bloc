@@ -6,6 +6,8 @@ class AdCampaign{
   int adClick;
   bool isActive;
 
+  bool isStorySize;
+
 //<editor-fold desc="Data Methods">
   AdCampaign({
     required this.id,
@@ -14,6 +16,7 @@ class AdCampaign{
     required this.linkUrl,
     required this.adClick,
     required this.isActive,
+    required this.isStorySize,
   });
 
   @override
@@ -26,7 +29,8 @@ class AdCampaign{
           imageUrls == other.imageUrls &&
           linkUrl == other.linkUrl &&
           adClick == other.adClick &&
-          isActive == other.isActive);
+          isActive == other.isActive &&
+          isStorySize == other.isStorySize);
 
   @override
   int get hashCode =>
@@ -35,7 +39,8 @@ class AdCampaign{
       imageUrls.hashCode ^
       linkUrl.hashCode ^
       adClick.hashCode ^
-      isActive.hashCode;
+      isActive.hashCode ^
+      isStorySize.hashCode;
 
   @override
   String toString() {
@@ -46,6 +51,7 @@ class AdCampaign{
         ' linkUrl: $linkUrl,' +
         ' adClick: $adClick,' +
         ' isActive: $isActive,' +
+        ' isStorySize: $isStorySize,' +
         '}';
   }
 
@@ -56,6 +62,7 @@ class AdCampaign{
     String? linkUrl,
     int? adClick,
     bool? isActive,
+    bool? isStorySize,
   }) {
     return AdCampaign(
       id: id ?? this.id,
@@ -64,6 +71,7 @@ class AdCampaign{
       linkUrl: linkUrl ?? this.linkUrl,
       adClick: adClick ?? this.adClick,
       isActive: isActive ?? this.isActive,
+      isStorySize: isStorySize ?? this.isStorySize,
     );
   }
 
@@ -75,6 +83,7 @@ class AdCampaign{
       'linkUrl': this.linkUrl,
       'adClick': this.adClick,
       'isActive': this.isActive,
+      'isStorySize': this.isStorySize,
     };
   }
 
@@ -86,6 +95,7 @@ class AdCampaign{
       linkUrl: map['linkUrl'] as String,
       adClick: map['adClick'] as int,
       isActive: map['isActive'] as bool,
+      isStorySize: map['isStorySize'] as bool,
     );
   }
 

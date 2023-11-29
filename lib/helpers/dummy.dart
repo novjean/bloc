@@ -71,7 +71,9 @@ class Dummy {
         imageUrls: [],
         adClick: 0,
         linkUrl: '',
-        isActive: false);
+        isActive: false,
+        isStorySize: false
+    );
 
     return dummy;
   }

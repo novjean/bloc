@@ -185,6 +185,7 @@ class FirestoreHelper {
     return FirebaseFirestore.instance
         .collection(AD_CAMPAIGNS)
         .where('isActive', isEqualTo: true)
+        .where('isStorySize', isEqualTo: false)
         .get();
   }
 
