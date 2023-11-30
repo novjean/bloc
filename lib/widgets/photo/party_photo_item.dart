@@ -108,23 +108,6 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
               physics: const NeverScrollableScrollPhysics(),
               shrinkWrap: true,
               children: <Widget>[
-                // Padding(
-                //   padding: const EdgeInsets.only(
-                //       left: 10.0, right: 8, top: 3, bottom: 3),
-                //   child: Row(
-                //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                //     children: [
-                //       Text(
-                //         widget.partyPhoto.partyName,
-                //         style: const TextStyle(
-                //             fontSize: 21, fontWeight: FontWeight.bold),
-                //       ),
-                //       const Spacer(),
-                //       Text(DateTimeUtils.getFormattedDate(
-                //           widget.partyPhoto.partyDate)),
-                //     ],
-                //   ),
-                // ),
                 kIsWeb
                     ? widget.partyPhoto.isFreePhoto ? _showPhoto() : _showBlurredPhoto()
                     : _showPhoto(),
@@ -296,15 +279,11 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
                             ),
                             child: GestureDetector(
                               onTap: () {
-                                if (kIsWeb) {
-                                  _showDownloadAppDialog(context, '🎁 see ${user.name}\'s profile and photos');
-                                } else {
-                                  GoRouter.of(context).pushNamed(
-                                      RouteConstants.profileRouteName,
-                                      params: {
-                                        'username': user.username,
-                                      });
-                                }
+                                GoRouter.of(context).pushNamed(
+                                    RouteConstants.profileRouteName,
+                                    params: {
+                                      'username': user.username,
+                                    });
                               },
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(10),
