@@ -15,7 +15,7 @@ import 'logx.dart';
 import 'network_utils.dart';
 
 class DialogUtils {
-  static final String _TAG = 'DialogUtils';
+  static const String _TAG = 'DialogUtils';
 
   static showDownloadAppDialog(BuildContext context) {
     String message = '📸 Click, Share, and Party On! Download our app to access all the photos, share them on your favorite apps, and get notified with instant guest list approvals and more! 🎉📲';
@@ -25,7 +25,7 @@ class DialogUtils {
         builder: (BuildContext ctx) {
           return AlertDialog(
             title: const Text(
-              '🎁 save your photos to gallery',
+              '🎁 download our app to view & save photos',
               textAlign: TextAlign.center,
               style: TextStyle(fontSize: 22, color: Colors.black),
             ),

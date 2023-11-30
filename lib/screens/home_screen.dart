@@ -205,7 +205,6 @@ class _HomeScreenState extends State<HomeScreen> {
     });
 
     super.initState();
-
   }
 
   @override
@@ -223,28 +222,6 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
     );
-
-    //   GestureDetector(
-    //   onTap: () {
-    //     FocusScopeNode currentFocus = FocusScope.of(context);
-    //     if (!currentFocus.hasPrimaryFocus) {
-    //       currentFocus.unfocus();
-    //     }
-    //   } ,
-    //   child: Scaffold(
-    //     backgroundColor: Constants.background,
-    //     resizeToAvoidBottomInset: false,
-    //     body: _isBlocsLoading && _isPartyGuestsLoading ? const LoadingWidget():
-    //     Column(
-    //       mainAxisSize: MainAxisSize.min,
-    //       mainAxisAlignment: MainAxisAlignment.start,
-    //       children: <Widget>[
-    //         _showBlocs(context),
-    //        _showPartiesAndFooter(context),
-    //       ],
-    //     ),
-    //   ),
-    // );
   }
 
   _showBlocs(context) {
@@ -305,9 +282,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ],
             ),
           );
-
-
-        }
+          }
         }
       },
     );
