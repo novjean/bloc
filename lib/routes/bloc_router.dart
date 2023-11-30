@@ -3,7 +3,6 @@ import 'package:bloc/screens/account_screen.dart';
 import 'package:bloc/screens/bloc/bloc_menu_screen.dart';
 import 'package:bloc/screens/box_office/box_office_screen.dart';
 import 'package:bloc/screens/main_screen.dart';
-import 'package:bloc/screens/parties/tix_buy_edit_screen.dart';
 import 'package:bloc/screens/parties/event_screen.dart';
 import 'package:bloc/screens/refund_policy_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -13,7 +12,6 @@ import 'package:go_router/go_router.dart';
 
 import 'package:bloc/db/entity/user.dart' as blocUser;
 
-import '../helpers/dummy.dart';
 import '../helpers/firestore_helper.dart';
 import '../helpers/fresh.dart';
 import '../main.dart';
@@ -25,7 +23,6 @@ import '../screens/login_screen.dart';
 import '../screens/lounge/lounge_chat_screen.dart';
 import '../screens/parties/artist_screen.dart';
 import '../screens/privacy_policy_screen.dart';
-import '../screens/profile/new_user_profile_screen.dart';
 import '../screens/profile/user_profile_screen.dart';
 import '../screens/terms_and_conditions_screen.dart';
 import '../screens/ui/splash_screen.dart';
