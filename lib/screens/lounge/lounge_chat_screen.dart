@@ -1,19 +1,26 @@
 import 'dart:io';
 
+import 'package:bloc/db/entity/party_guest.dart';
 import 'package:bloc/db/entity/user_lounge.dart';
 import 'package:bloc/helpers/firestore_helper.dart';
+import 'package:bloc/widgets/ui/button_widget.dart';
 import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:multi_select_flutter/dialog/multi_select_dialog_field.dart';
+import 'package:multi_select_flutter/util/multi_select_item.dart';
+import 'package:multi_select_flutter/util/multi_select_list_type.dart';
 import 'package:path/path.dart' as Path;
 import 'package:path_provider/path_provider.dart';
 
 import '../../api/apis.dart';
 import '../../db/entity/lounge_chat.dart';
 import '../../db/entity/lounge.dart';
+import '../../db/entity/party.dart';
+import '../../db/entity/user.dart';
 import '../../db/shared_preferences/user_preferences.dart';
 import '../../helpers/dummy.dart';
 import '../../helpers/firestorage_helper.dart';
@@ -50,8 +57,8 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
   List<LoungeChat> mChats = [];
 
   // var _isMembersLoading = true;
-  // List<UserLounge> mMembers = [];
-  // List<UserLounge> mFcmMembers = [];
+  List<UserLounge> mMembers = [];
+  List<UserLounge> mFcmMembers = [];
 
   //for handling message text changes
   final _textController = TextEditingController();
@@ -527,6 +534,47 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
                       },)
                     ],
                   ),
+                  const SizedBox(height: 10,),
+                  UserPreferences.myUser.clearanceLevel>=Constants.ADMIN_LEVEL?
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(right: 15.0),
+                        child: ButtonWidget(text: 'invite females', onClicked: () async {
+
+                          FirestoreHelper.pullActiveGuestListParties(Timestamp.now().millisecondsSinceEpoch).then((res) {
+                            if (res.docs.isNotEmpty) {
+                              for (int i = 0; i < res.docs.length; i++) {
+                                DocumentSnapshot document = res.docs[i];
+                                Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+                                final Party party = Fresh.freshPartyMap(data, true);
+                                mParties.add(party);
+                                mPartyNames.add('${party.name} ${party.chapter}');
+                              }
+
+                              _showPartiesAndInvite(context, true);
+                            }
+                          });
+                        },),
+                      ),
+                      ButtonWidget(text: 'invite all', onClicked: () {
+                        FirestoreHelper.pullActiveGuestListParties(Timestamp.now().millisecondsSinceEpoch).then((res) {
+                          if (res.docs.isNotEmpty) {
+                            for (int i = 0; i < res.docs.length; i++) {
+                              DocumentSnapshot document = res.docs[i];
+                              Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+                              final Party party = Fresh.freshPartyMap(data, true);
+                              mParties.add(party);
+                              mPartyNames.add('${party.name} ${party.chapter}');
+                            }
+
+                            _showPartiesAndInvite(context, false);
+                          }
+                        });
+                      },),
+                    ],
+                  ) : const SizedBox(),
                   Padding(
                     padding: const EdgeInsets.only(top: 10.0),
                     child: Text(
@@ -572,6 +620,162 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
       },
     );
   }
+
+
+  List<Party> mParties = [];
+  List<Party> sParties = [];
+
+  Party sParty = Dummy.getDummyParty('');
+  String sPartyName = 'all';
+  String sPartyId = '';
+  List<String> mPartyNames = [];
+
+  _showPartiesAndInvite(BuildContext context, bool checkFemale) {
+    return showDialog(
+      context: context,
+      builder: (BuildContext ctx) {
+        return AlertDialog(
+          contentPadding: const EdgeInsets.all(16.0),
+          content: SizedBox(
+            height: 100,
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  const Text('select move to party'),
+                  MultiSelectDialogField(
+                    items: mParties
+                        .map(
+                            (e) => MultiSelectItem(e, '${e.name} ${e.chapter}'))
+                        .toList(),
+                    initialValue: sParties.map((e) => e).toList(),
+                    listType: MultiSelectListType.CHIP,
+                    buttonIcon: Icon(
+                      Icons.arrow_drop_down,
+                      color: Colors.grey.shade700,
+                    ),
+                    title: const Text('pick a party'),
+                    buttonText: const Text(
+                      'select',
+                      style: TextStyle(color: Constants.darkPrimary),
+                    ),
+                    decoration: BoxDecoration(
+                      borderRadius: const BorderRadius.all(Radius.circular(5)),
+                      border: Border.all(
+                        width: 0.0,
+                      ),
+                    ),
+                    searchable: true,
+                    onConfirm: (values) async {
+                      sParties = values;
+
+                      if (sParties.isNotEmpty) {
+                        Party sParty = sParties.first;
+
+                        FirestoreHelper.pullPartyGuestsByPartyId(sParty.id).then((res) {
+                          List<String> partyGuestIds = [];
+
+                          if(res.docs.isNotEmpty){
+                            for (int i = 0; i < res.docs.length; i++) {
+                              DocumentSnapshot document = res.docs[i];
+                              Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+                              final PartyGuest partyGuest = Fresh.freshPartyGuestMap(data, false);
+                              partyGuestIds.add(partyGuest.guestId);
+                            }
+                          }
+
+                          FirestoreHelper.pullUserLoungeMembers(mLounge.id).then((res) async {
+                            if(res.docs.isNotEmpty){
+                              for (int i = 0; i < res.docs.length; i++) {
+                                DocumentSnapshot document = res.docs[i];
+                                Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+                                UserLounge userLounge = Fresh.freshUserLoungeMap(data, false);
+                                mMembers.add(userLounge);
+
+                                if(userLounge.userFcmToken.isNotEmpty){
+                                  mFcmMembers.add(userLounge);
+                                }
+                              }
+
+                              for(int i=0; i<mFcmMembers.length; i++){
+                                UserLounge userLounge = mFcmMembers[i];
+
+                                //check if user has already requested
+                                if(partyGuestIds.contains(userLounge.userId)){
+                                  continue;
+                                }
+
+                                await FirestoreHelper.pullUser(userLounge.userId).then((res) {
+                                  if(res.docs.isNotEmpty){
+                                    DocumentSnapshot document = res.docs[0];
+                                    Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+
+                                    final User user = Fresh.freshUserMap(data, false);
+
+                                    if(user.isAppUser && user.fcmToken.isNotEmpty){
+
+                                      if(checkFemale){
+                                        if(user.gender != 'female'){
+                                          return;
+                                        }
+                                      }
+
+                                      // notify them of invite
+                                      PartyGuest partyGuest = Dummy.getDummyPartyGuest(false);
+                                      partyGuest = partyGuest.copyWith(
+                                        partyId: sParty.id,
+                                        guestId: user.id,
+                                        name: user.name,
+                                        surname: user.surname,
+                                        phone: user.phoneNumber.toString(),
+                                        email: user.email,
+                                        gender: user.gender,
+                                        isApproved: true,
+                                        guestStatus: 'promoter',
+                                        promoterId: Constants.blocPromoterId,
+                                      );
+
+                                      FirestoreHelper.pushPartyGuest(partyGuest);
+
+                                      String title = '🎁 Congrats! You\'ve scored free invites!';
+                                      String message = 'Hey ${user.name}, you are exclusively invited to ${sParty.name} party 🎉! Entry\'s on a first come, first serve basis. Come in early or give us a call for a guaranteed spot. 💖';
+
+                                      Apis.sendPushNotification(user.fcmToken, title, message);
+
+                                      Logx.ist(_TAG, '${user.name} has been invited!');
+                                    }
+                                  }
+                                });
+                              }
+
+                            }
+                          });
+
+                        });
+
+                        Navigator.of(ctx).pop();
+                      } else {
+                        Logx.ist(_TAG, 'party needs to be selected');
+                      }
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ),
+          actions: [
+            TextButton(
+              child: const Text('cancel'),
+              onPressed: () {
+                Navigator.of(ctx).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
 
   Widget _chatInput(BuildContext context) {
     return Padding(
