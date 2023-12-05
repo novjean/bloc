@@ -1245,6 +1245,13 @@ class FirestoreHelper {
         .snapshots();
   }
 
+  static pullPartyGuestsByPartyId(String partyId) {
+    return FirebaseFirestore.instance
+        .collection(FirestoreHelper.PARTY_GUESTS)
+        .where('partyId', isEqualTo: partyId)
+        .get();
+  }
+
   static pullPartyGuestsByUser(String guestId) {
     return FirebaseFirestore.instance
         .collection(FirestoreHelper.PARTY_GUESTS)
