@@ -642,7 +642,8 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  const Text('select move to party'),
+                  const Text('select invite party'),
+
                   MultiSelectDialogField(
                     items: mParties
                         .map(
