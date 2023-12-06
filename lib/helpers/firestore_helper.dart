@@ -185,9 +185,17 @@ class FirestoreHelper {
     return FirebaseFirestore.instance
         .collection(AD_CAMPAIGNS)
         .where('isActive', isEqualTo: true)
-        .where('isStorySize', isEqualTo: false)
         .get();
   }
+
+  static pullAdCampaignByStorySize(bool isStorySize) {
+    return FirebaseFirestore.instance
+        .collection(AD_CAMPAIGNS)
+        .where('isActive', isEqualTo: true)
+        .where('isStorySize', isEqualTo: isStorySize)
+        .get();
+  }
+
 
   static getAdCampaigns() {
     return FirebaseFirestore.instance

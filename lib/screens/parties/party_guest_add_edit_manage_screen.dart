@@ -20,6 +20,7 @@ import 'package:pinput/pinput.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../../api/apis.dart';
+import '../../db/entity/ad_campaign.dart';
 import '../../db/entity/challenge.dart';
 import '../../db/entity/challenge_action.dart';
 import '../../db/entity/party.dart';
@@ -2649,33 +2650,49 @@ class _PartyGuestAddEditManageScreenState
   }
 
   _showAdDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext ctx) {
-        return AlertDialog(
-          content: Container(
-            width: double.maxFinite,
-            height: double.maxFinite,
-            child: Image.asset(
-              'assets/temp/ad1.jpg', // Replace with the path to your image asset
-              fit: BoxFit.cover,
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(ctx).pop();
+    FirestoreHelper.pullAdCampaignByStorySize(true).then((res) {
+      if(res.docs.isNotEmpty){
+        DocumentSnapshot document = res.docs[0];
+        Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+        AdCampaign adCampaign = Fresh.freshAdCampaignMap(data, false);
 
-                GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
-                GoRouter.of(context)
-                    .pushNamed(RouteConstants.boxOfficeRouteName);
-              },
-              child: Text('close'),
-            ),
-          ],
+        showDialog(
+          context: context,
+          builder: (BuildContext ctx) {
+            return AlertDialog(
+              content: SizedBox(
+                width: double.maxFinite,
+                height: double.maxFinite,
+                child: FadeInImage(
+                  placeholder: const AssetImage('assets/icons/logo.png'),
+                  image: NetworkImage(adCampaign.imageUrls[0]),
+                  fit: BoxFit.cover,
+                )
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(ctx).pop();
+
+                    GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
+                    GoRouter.of(context)
+                        .pushNamed(RouteConstants.boxOfficeRouteName);
+                  },
+                  child: Text('close'),
+                ),
+              ],
+            );
+          },
         );
-      },
-    );
+      } else {
+        // no ad campaings found
+        GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
+        GoRouter.of(context)
+            .pushNamed(RouteConstants.boxOfficeRouteName);
+      }
+    });
+
+
   }
 
 

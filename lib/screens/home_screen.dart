@@ -54,6 +54,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   AdCampaign mAdCampaign = Dummy.getDummyAdCampaign();
+  var _isAdCampaignLoading = true;
 
   @override
   void initState() {
@@ -190,21 +191,22 @@ class _HomeScreenState extends State<HomeScreen> {
       }
     });
 
-    FirestoreHelper.pullAdCampaign().then((res) {
+    super.initState();
+
+    FirestoreHelper.pullAdCampaignByStorySize(false).then((res) {
       if(res.docs.isNotEmpty){
         DocumentSnapshot document = res.docs[0];
         Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-        if(mounted){
-          setState(() {
-            mAdCampaign = Fresh.freshAdCampaignMap(data, false);
-          });
-        } else {
-          Logx.d(_TAG, 'not mounted');
-        }
+        setState(() {
+          mAdCampaign = Fresh.freshAdCampaignMap(data, false);
+          _isAdCampaignLoading = false;
+        });
+      } else {
+        setState(() {
+          _isAdCampaignLoading = false;
+        });
       }
     });
-
-    super.initState();
   }
 
   @override
@@ -320,6 +322,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 const SizedBox(height: 10.0),
 
+                _isAdCampaignLoading?const SizedBox():
                 SizedBox(
                     width: mq.width * 0.95,
                     height: mq.height * 0.25,

@@ -357,7 +357,7 @@ class Fresh {
     if (isModelChanged &&
         shouldUpdate &&
         UserPreferences.myUser.clearanceLevel >= Constants.MANAGER_LEVEL) {
-      Logx.em(_TAG, 'updating bloc ' + bloc.id);
+      Logx.em(_TAG, 'updating bloc ${bloc.id}');
       FirestoreHelper.pushBloc(bloc);
     }
 
@@ -375,27 +375,27 @@ class Fresh {
     try {
       freshBloc = freshBloc.copyWith(name: bloc.name);
     } catch (e) {
-      Logx.em(_TAG, 'bloc name not exist for bloc id: ' + bloc.id);
+      Logx.em(_TAG, 'bloc name not exist for id: ${bloc.id}');
     }
     try {
       freshBloc = freshBloc.copyWith(cityId: bloc.cityId);
     } catch (e) {
-      Logx.em(_TAG, 'bloc cityId not exist for bloc id: ' + bloc.id);
+      Logx.em(_TAG, 'bloc cityId not exist for id: ' + bloc.id);
     }
     try {
       freshBloc = freshBloc.copyWith(addressLine1: bloc.addressLine1);
     } catch (e) {
-      Logx.em(_TAG, 'bloc addressLine1 not exist for bloc id: ' + bloc.id);
+      Logx.em(_TAG, 'bloc addressLine1 not exist for id: ' + bloc.id);
     }
     try {
       freshBloc = freshBloc.copyWith(addressLine2: bloc.addressLine2);
     } catch (e) {
-      Logx.em(_TAG, 'bloc addressLine2 not exist for bloc id: ' + bloc.id);
+      Logx.em(_TAG, 'bloc addressLine2 not exist for id: ' + bloc.id);
     }
     try {
       freshBloc = freshBloc.copyWith(pinCode: bloc.pinCode);
     } catch (e) {
-      Logx.em(_TAG, 'bloc pinCode not exist for bloc id: ' + bloc.id);
+      Logx.em(_TAG, 'bloc pinCode not exist for id: ' + bloc.id);
     }
     try {
       freshBloc = freshBloc.copyWith(ownerId: bloc.ownerId);
