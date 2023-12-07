@@ -58,6 +58,18 @@ class _ManageUserPhotoItemState extends State<ManageUserPhotoItem> {
         Map<String, dynamic> map = document.data()! as Map<String, dynamic>;
         mUser = Fresh.freshUserMap(map, true);
 
+        if(mUser.username.isEmpty){
+          String username = '';
+          if(mUser.surname.trim().isNotEmpty){
+            username = '${mUser.name.trim().toLowerCase()}_${mUser.surname.trim().toLowerCase()}';
+          } else {
+            username = mUser.name.trim().toLowerCase();
+          }
+
+          mUser = mUser.copyWith(username: username);
+          FirestoreHelper.pushUser(mUser);
+        }
+
         setState(() {
           _isUserLoading = false;
         });

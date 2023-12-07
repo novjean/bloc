@@ -523,9 +523,9 @@ class _PartyPhotoAddEditScreenState extends State<PartyPhotoAddEditScreen> {
                         if(user.username.isEmpty){
                           String username = '';
                           if(user.surname.trim().isNotEmpty){
-                            username = '${user.name.toLowerCase()}_${user.surname.toLowerCase().trim()}';
+                            username = '${user.name.trim().toLowerCase()}_${user.surname.trim().toLowerCase()}';
                           } else {
-                            username = user.name.toLowerCase().trim();
+                            username = user.name.trim().toLowerCase();
                           }
 
                           FirestoreHelper.pullUserByUsername(username).then((res) {
