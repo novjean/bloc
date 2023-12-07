@@ -1715,11 +1715,6 @@ class _PartyGuestAddEditManageScreenState
                     _showDownloadAppDialog(context);
                   } else {
                     _showAdDialog(context);
-
-                    // GoRouter.of(context)
-                    //     .pushNamed(RouteConstants.homeRouteName);
-                    // GoRouter.of(context)
-                    //     .pushNamed(RouteConstants.boxOfficeRouteName);
                   }
                 },
               ),
@@ -1756,12 +1751,12 @@ class _PartyGuestAddEditManageScreenState
                         if (kIsWeb) {
                           _showDownloadAppDialog(context);
                         } else {
-                          _showAdDialog(context);
+                          // _showAdDialog(context);
 
-                          // GoRouter.of(context)
-                          //     .pushNamed(RouteConstants.homeRouteName);
-                          // GoRouter.of(context)
-                          //     .pushNamed(RouteConstants.boxOfficeRouteName);
+                          GoRouter.of(context)
+                              .pushNamed(RouteConstants.homeRouteName);
+                          GoRouter.of(context)
+                              .pushNamed(RouteConstants.boxOfficeRouteName);
                         }
                       },
                     )
@@ -1797,12 +1792,10 @@ class _PartyGuestAddEditManageScreenState
                   if (kIsWeb) {
                     _showDownloadAppDialog(context);
                   } else {
-                    _showAdDialog(context);
-
-                    // GoRouter.of(context)
-                    //     .pushNamed(RouteConstants.homeRouteName);
-                    // GoRouter.of(context)
-                    //     .pushNamed(RouteConstants.boxOfficeRouteName);
+                    GoRouter.of(context)
+                        .pushNamed(RouteConstants.homeRouteName);
+                    GoRouter.of(context)
+                        .pushNamed(RouteConstants.boxOfficeRouteName);
                   }
                 },
               ),
