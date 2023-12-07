@@ -2266,44 +2266,44 @@ class Fresh {
     try {
       freshParty = freshParty.copyWith(ticketUrl: party.ticketUrl);
     } catch (e) {
-      Logx.em(_TAG, 'party ticketUrl not exist for party id: ' + party.id);
+      Logx.em(_TAG, 'party ticketUrl not exist for id: ${party.id}');
     }
     try {
       freshParty = freshParty.copyWith(listenUrl: party.listenUrl);
     } catch (e) {
-      Logx.em(_TAG, 'party listenUrl not exist for party id: ' + party.id);
+      Logx.em(_TAG, 'party listenUrl not exist for id: ${party.id}');
     }
 
     try {
       freshParty = freshParty.copyWith(createdAt: party.createdAt);
     } catch (e) {
-      Logx.em(_TAG, 'party createdAt not exist for party id: ' + party.id);
+      Logx.em(_TAG, 'party createdAt not exist for id: ${party.id}');
     }
     try {
       freshParty = freshParty.copyWith(startTime: party.startTime);
     } catch (e) {
-      Logx.em(_TAG, 'party startTime not exist for party id: ' + party.id);
+      Logx.em(_TAG, 'party startTime not exist for id: ${party.id}');
     }
     try {
       freshParty = freshParty.copyWith(endTime: party.endTime);
     } catch (e) {
-      Logx.em(_TAG, 'party endTime not exist for party id: ' + party.id);
+      Logx.em(_TAG, 'party endTime not exist for id: ${party.id}');
     }
 
     try {
       freshParty = freshParty.copyWith(ownerId: party.ownerId);
     } catch (e) {
-      Logx.em(_TAG, 'party ownerId not exist for party id: ' + party.id);
+      Logx.em(_TAG, 'party ownerId not exist for id: ${party.id}');
     }
     try {
       freshParty = freshParty.copyWith(isTBA: party.isTBA);
     } catch (e) {
-      Logx.em(_TAG, 'party isTBA not exist for party id: ' + party.id);
+      Logx.em(_TAG, 'party isTBA not exist for id: ${party.id}');
     }
     try {
       freshParty = freshParty.copyWith(isActive: party.isActive);
     } catch (e) {
-      Logx.em(_TAG, 'party isActive not exist for party id: ' + party.id);
+      Logx.em(_TAG, 'party isActive not exist for id: ${party.id}');
     }
     try {
       freshParty = freshParty.copyWith(isBigAct: party.isBigAct);
