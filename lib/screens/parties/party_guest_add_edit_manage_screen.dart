@@ -2653,106 +2653,117 @@ class _PartyGuestAddEditManageScreenState
   _showAdDialog(BuildContext context) {
     FirestoreHelper.pullAdCampaignByStorySize(true).then((res) {
       if(res.docs.isNotEmpty){
-        DocumentSnapshot document = res.docs[0];
-        Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-        AdCampaign adCampaign = Fresh.freshAdCampaignMap(data, false);
+        AdCampaign adCampaign = Dummy.getDummyAdCampaign();
+        bool foundAd = false;
 
-        showDialog(
-          context: context,
-          builder: (BuildContext ctx) {
-            return AlertDialog(
-              contentPadding: const EdgeInsets.all(1.0),
-              backgroundColor: Constants.lightPrimary,
-              shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(20.0))),
+        for(int i=0;i<res.docs.length; i++){
+          DocumentSnapshot document = res.docs[i];
+          Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+          AdCampaign tempAd = Fresh.freshAdCampaignMap(data, false);
 
-              content: GestureDetector(
-                onTap: () {
-                  if(adCampaign.isPartyAd){
+          if(Timestamp.now().millisecondsSinceEpoch < tempAd.endTime){
+            if(tempAd.isPartyAd){
+              if(tempAd.partyId != widget.party.id) {
+                adCampaign = tempAd;
+                foundAd = true;
+                break;
+              } else {
+                // same party, need to check for more ads
+              }
+            } else {
+              // display default ad
+              adCampaign = tempAd;
+              foundAd = true;
+            }
+          }
+        }
 
-                    // we pull in party
-                    FirestoreHelper.pullParty(adCampaign.partyId).then((res) {
-                      if(res.docs.isNotEmpty){
-                        DocumentSnapshot document = res.docs[0];
-                        Map<String, dynamic> data =
-                        document.data()! as Map<String, dynamic>;
-                        final Party party = Fresh.freshPartyMap(data, false);
-                        Navigator.of(ctx).pop();
+        if(foundAd){
+          showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (BuildContext ctx) {
+              return AlertDialog(
+                contentPadding: const EdgeInsets.all(1.0),
+                backgroundColor: Constants.lightPrimary,
+                shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                content: GestureDetector(
+                  onTap: () {
+                    if(adCampaign.isPartyAd){
 
-                        // navigate to party
-                        GoRouter.of(context).pushNamed(RouteConstants.eventRouteName,
-                            params: {
-                              'partyName': party.name,
-                              'partyChapter': party.chapter
-                            });
-                      } else {
-                        Navigator.of(ctx).pop();
+                      // we pull in party
+                      FirestoreHelper.pullParty(adCampaign.partyId).then((res) {
+                        if(res.docs.isNotEmpty){
+                          DocumentSnapshot document = res.docs[0];
+                          Map<String, dynamic> data =
+                          document.data()! as Map<String, dynamic>;
+                          final Party party = Fresh.freshPartyMap(data, false);
+                          Navigator.of(ctx).pop();
 
-                        GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
-                        GoRouter.of(context)
-                            .pushNamed(RouteConstants.boxOfficeRouteName);
-                      }
-                    });
-                  }
-                },
-                child: Container(
-                  color: Colors.black,
-                  width: double.maxFinite,
-                  height: double.maxFinite,
-                  child: FadeInImage(
-                    placeholder: const AssetImage('assets/icons/logo.png'),
-                    image: NetworkImage(adCampaign.imageUrls[0]),
-                    fit: BoxFit.fitWidth,
-                  )
-                ),
-              ),
+                          GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
+                          GoRouter.of(context)
+                              .pushNamed(RouteConstants.boxOfficeRouteName);
 
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(ctx).pop();
+                          // navigate to party
+                          GoRouter.of(context).pushNamed(RouteConstants.eventRouteName,
+                              params: {
+                                'partyName': party.name,
+                                'partyChapter': party.chapter
+                              });
+                        } else {
+                          Navigator.of(ctx).pop();
 
-                    GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
-                    GoRouter.of(context)
-                        .pushNamed(RouteConstants.boxOfficeRouteName);
+                          GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
+                          GoRouter.of(context)
+                              .pushNamed(RouteConstants.boxOfficeRouteName);
+                        }
+                      });
+                    }
                   },
-                  child: const DelayedDisplay(
-                    delay: Duration(seconds: 3),
-                    child: Text(
-                      "close",
-                      style: TextStyle(
-                          color: Constants.primary,
-                          fontSize: 15
+                  child: Container(
+                      color: Colors.black,
+                      width: double.maxFinite,
+                      height: double.maxFinite,
+                      child: FadeInImage(
+                        placeholder: const AssetImage('assets/icons/logo.png'),
+                        image: NetworkImage(adCampaign.imageUrls[0]),
+                        fit: BoxFit.fitWidth,
+                      )
+                  ),
+                ),
+
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(ctx).pop();
+
+                      GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
+                      GoRouter.of(context)
+                          .pushNamed(RouteConstants.boxOfficeRouteName);
+                    },
+                    child: const DelayedDisplay(
+                      delay: Duration(seconds: 5),
+                      child: Text(
+                        "close",
+                        style: TextStyle(
+                            color: Constants.darkPrimary,
+                            fontSize: 15
+                        ),
                       ),
                     ),
+                    // child:  const Text('close'),
                   ),
-                  // child:  const Text('close'),
-                ),
-
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(ctx).pop();
-
-                    GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
-                    GoRouter.of(context)
-                        .pushNamed(RouteConstants.boxOfficeRouteName);
-                  },
-                  child: const DelayedDisplay(
-                    delay: Duration(seconds: 3),
-                    child: Text(
-                      "close",
-                      style: TextStyle(
-                          color: Constants.primary,
-                          fontSize: 15
-                      ),
-                    ),
-                  ),
-                  // child:  const Text('close'),
-                ),
-              ],
-            );
-          },
-        );
+                ],
+              );
+            },
+          );
+        } else {
+          // all story ads are expired
+          GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
+          GoRouter.of(context)
+              .pushNamed(RouteConstants.boxOfficeRouteName);
+        }
       } else {
         // no ad campaings found
         GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);

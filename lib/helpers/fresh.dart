@@ -245,6 +245,12 @@ class Fresh {
       Logx.em(_TAG, 'adCampaign partyId not exist for id: ${adCampaign.id}');
       isModelChanged = true;
     }
+    try {
+      adCampaign = adCampaign.copyWith(endTime: map['endTime'] as int);
+    } catch (e) {
+      Logx.em(_TAG, 'adCampaign endTime not exist for id: ${adCampaign.id}');
+      isModelChanged = true;
+    }
 
     if (isModelChanged &&
         shouldUpdate &&
@@ -277,33 +283,38 @@ class Fresh {
     try {
       fresh = fresh.copyWith(linkUrl: adCampaign.linkUrl);
     } catch (e) {
-      Logx.em(_TAG, 'adCampaign linkUrl not exist for ad campaign id: ${adCampaign.id}');
+      Logx.em(_TAG, 'adCampaign linkUrl not exist for id: ${adCampaign.id}');
     }
     try {
       fresh = fresh.copyWith(adClick: adCampaign.adClick);
     } catch (e) {
-      Logx.em(_TAG, 'adCampaign adClick not exist for ad campaign id: ${adCampaign.id}');
+      Logx.em(_TAG, 'adCampaign adClick not exist for id: ${adCampaign.id}');
     }
     try {
       fresh = fresh.copyWith(isActive: adCampaign.isActive);
     } catch (e) {
-      Logx.em(_TAG, 'adCampaign isActive not exist for ad campaign id: ${adCampaign.id}');
+      Logx.em(_TAG, 'adCampaign isActive not exist for id: ${adCampaign.id}');
     }
     try {
       fresh = fresh.copyWith(isStorySize: adCampaign.isStorySize);
     } catch (e) {
-      Logx.em(_TAG, 'adCampaign isStorySize not exist for ad campaign id: ${adCampaign.id}');
+      Logx.em(_TAG, 'adCampaign isStorySize not exist for id: ${adCampaign.id}');
     }
 
     try {
       fresh = fresh.copyWith(isPartyAd: adCampaign.isPartyAd);
     } catch (e) {
-      Logx.em(_TAG, 'adCampaign isPartyAd not exist for ad campaign id: ${adCampaign.id}');
+      Logx.em(_TAG, 'adCampaign isPartyAd not exist for id: ${adCampaign.id}');
     }
     try {
       fresh = fresh.copyWith(partyId: adCampaign.partyId);
     } catch (e) {
-      Logx.em(_TAG, 'adCampaign partyId not exist for ad campaign id: ${adCampaign.id}');
+      Logx.em(_TAG, 'adCampaign partyId not exist for id: ${adCampaign.id}');
+    }
+    try {
+      fresh = fresh.copyWith(endTime: adCampaign.endTime);
+    } catch (e) {
+      Logx.em(_TAG, 'adCampaign endTime not exist for id: ${adCampaign.id}');
     }
 
     return fresh;

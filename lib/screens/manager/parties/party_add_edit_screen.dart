@@ -1025,14 +1025,14 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
                           isActive: true,
                           isPartyAd: true,
                           partyId: widget.party.id,
-                          // partyName: widget.party.name,
-                          // partyChapter: widget.party.chapter
+                          endTime: widget.party.endTime
                         );
-
                         FirestoreHelper.pushAdCampaign(adCampaign);
 
-                        widget.party = widget.party.copyWith(isAdCampaignRunning: true);
-                        FirestoreHelper.pushParty(widget.party);
+                        setState(() {
+                          widget.party = widget.party.copyWith(isAdCampaignRunning: true);
+                          FirestoreHelper.pushParty(widget.party);
+                        });
 
                         Logx.ist(_TAG, 'ad campaign is now running');
                       } else {

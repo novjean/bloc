@@ -75,8 +75,7 @@ class Dummy {
         isStorySize: false,
         isPartyAd: false,
         partyId: '',
-        partyChapter: '',
-        partyName: ''
+      endTime: Timestamp.now().millisecondsSinceEpoch
     );
 
     return dummy;

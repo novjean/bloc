@@ -9,6 +9,7 @@ class AdCampaign{
   bool isStorySize;
   bool isPartyAd;
   String partyId;
+  int endTime;
 
 //<editor-fold desc="Data Methods">
   AdCampaign({
@@ -21,6 +22,7 @@ class AdCampaign{
     required this.isStorySize,
     required this.isPartyAd,
     required this.partyId,
+    required this.endTime,
   });
 
   @override
@@ -36,7 +38,8 @@ class AdCampaign{
           isActive == other.isActive &&
           isStorySize == other.isStorySize &&
           isPartyAd == other.isPartyAd &&
-          partyId == other.partyId);
+          partyId == other.partyId &&
+          endTime == other.endTime);
 
   @override
   int get hashCode =>
@@ -48,7 +51,8 @@ class AdCampaign{
       isActive.hashCode ^
       isStorySize.hashCode ^
       isPartyAd.hashCode ^
-      partyId.hashCode;
+      partyId.hashCode ^
+      endTime.hashCode;
 
   @override
   String toString() {
@@ -62,6 +66,7 @@ class AdCampaign{
         ' isStorySize: $isStorySize,' +
         ' isPartyAd: $isPartyAd,' +
         ' partyId: $partyId,' +
+        ' endTime: $endTime,' +
         '}';
   }
 
@@ -75,6 +80,7 @@ class AdCampaign{
     bool? isStorySize,
     bool? isPartyAd,
     String? partyId,
+    int? endTime,
   }) {
     return AdCampaign(
       id: id ?? this.id,
@@ -86,6 +92,7 @@ class AdCampaign{
       isStorySize: isStorySize ?? this.isStorySize,
       isPartyAd: isPartyAd ?? this.isPartyAd,
       partyId: partyId ?? this.partyId,
+      endTime: endTime ?? this.endTime,
     );
   }
 
@@ -100,6 +107,7 @@ class AdCampaign{
       'isStorySize': this.isStorySize,
       'isPartyAd': this.isPartyAd,
       'partyId': this.partyId,
+      'endTime': this.endTime,
     };
   }
 
@@ -114,6 +122,7 @@ class AdCampaign{
       isStorySize: map['isStorySize'] as bool,
       isPartyAd: map['isPartyAd'] as bool,
       partyId: map['partyId'] as String,
+      endTime: map['endTime'] as int,
     );
   }
 

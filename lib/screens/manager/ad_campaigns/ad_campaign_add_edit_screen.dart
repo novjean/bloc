@@ -9,6 +9,8 @@ import 'package:path/path.dart';
 
 import '../../../helpers/firestorage_helper.dart';
 import '../../../helpers/firestore_helper.dart';
+import '../../../utils/constants.dart';
+import '../../../utils/date_time_utils.dart';
 import '../../../utils/logx.dart';
 import '../../../utils/string_utils.dart';
 import '../../../widgets/ui/app_bar_title.dart';
@@ -23,15 +25,19 @@ class AdCampaignAddEditScreen extends StatefulWidget {
       : super(key: key);
 
   @override
-  _AdCampaignAddEditScreenState createState() => _AdCampaignAddEditScreenState();
+  _AdCampaignAddEditScreenState createState() =>
+      _AdCampaignAddEditScreenState();
 }
 
 class _AdCampaignAddEditScreenState extends State<AdCampaignAddEditScreen> {
   static const String _TAG = 'AdCampaignAddEditScreen';
 
   String newImageUrl = '';
-
   bool isStorySize = false;
+
+  DateTime sEndDateTime = DateTime.now();
+  DateTime sDate = DateTime.now();
+  TimeOfDay sTimeOfDay = TimeOfDay.now();
 
   @override
   void initState() {
@@ -40,12 +46,12 @@ class _AdCampaignAddEditScreenState extends State<AdCampaignAddEditScreen> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(
-      titleSpacing: 0,
-      title: AppBarTitle(title:'${widget.task} ad campaign'),
-    ),
-    body: _buildBody(context),
-  );
+        appBar: AppBar(
+          titleSpacing: 0,
+          title: AppBarTitle(title: '${widget.task} ad campaign'),
+        ),
+        body: _buildBody(context),
+      );
 
   _buildBody(BuildContext context) {
     double longSide = 1280;
@@ -65,10 +71,11 @@ class _AdCampaignAddEditScreenState extends State<AdCampaignAddEditScreen> {
               text: 'pick file',
               onClicked: () async {
                 final image = await ImagePicker().pickImage(
-                    source: ImageSource.gallery,
-                    imageQuality: 99,
-                    maxHeight: isStorySize? longSide:shortSide,
-                    maxWidth: isStorySize? shortSide:longSide,);
+                  source: ImageSource.gallery,
+                  imageQuality: 99,
+                  maxHeight: isStorySize ? longSide : shortSide,
+                  maxWidth: isStorySize ? shortSide : longSide,
+                );
                 if (image == null) return;
 
                 int fileSize = await image.length();
@@ -132,13 +139,13 @@ class _AdCampaignAddEditScreenState extends State<AdCampaignAddEditScreen> {
             Checkbox(
               value: widget.adCampaign.isStorySize,
               side: MaterialStateBorderSide.resolveWith(
-                    (states) => const BorderSide(
-                    width: 1.0),
+                (states) => const BorderSide(width: 1.0),
               ),
               onChanged: (value) {
                 setState(() {
                   isStorySize = value!;
-                  widget.adCampaign = widget.adCampaign.copyWith(isStorySize: value!);
+                  widget.adCampaign =
+                      widget.adCampaign.copyWith(isStorySize: value!);
                 });
               },
             ),
@@ -148,7 +155,8 @@ class _AdCampaignAddEditScreenState extends State<AdCampaignAddEditScreen> {
         TextFieldWidget(
           label: 'name *',
           text: widget.adCampaign.name,
-          onChanged: (text) => widget.adCampaign = widget.adCampaign.copyWith(name: text),
+          onChanged: (text) =>
+              widget.adCampaign = widget.adCampaign.copyWith(name: text),
         ),
         const SizedBox(height: 24),
         TextFieldWidget(
@@ -158,14 +166,14 @@ class _AdCampaignAddEditScreenState extends State<AdCampaignAddEditScreen> {
             widget.adCampaign = widget.adCampaign.copyWith(linkUrl: value);
           },
         ),
-
+        const SizedBox(height: 24),
+        dateTimeContainer(context, 'end'),
+        const SizedBox(height: 24),
         TextFieldWidget(
           label: 'click count',
           text: widget.adCampaign.adClick.toString(),
-          onChanged: (value) {
-          },
+          onChanged: (value) {},
         ),
-
         const SizedBox(height: 24),
         Row(
           children: <Widget>[
@@ -178,7 +186,8 @@ class _AdCampaignAddEditScreenState extends State<AdCampaignAddEditScreen> {
               value: widget.adCampaign.isActive,
               onChanged: (value) {
                 setState(() {
-                  widget.adCampaign = widget.adCampaign.copyWith(isActive: value);
+                  widget.adCampaign =
+                      widget.adCampaign.copyWith(isActive: value);
                 });
               },
             ), //Checkbox
@@ -189,7 +198,8 @@ class _AdCampaignAddEditScreenState extends State<AdCampaignAddEditScreen> {
         ButtonWidget(
           text: 'save',
           onClicked: () {
-            AdCampaign freshAdCampaign = Fresh.freshAdCampaign(widget.adCampaign);
+            AdCampaign freshAdCampaign =
+                Fresh.freshAdCampaign(widget.adCampaign);
             FirestoreHelper.pushAdCampaign(freshAdCampaign);
 
             Navigator.of(context).pop();
@@ -199,8 +209,8 @@ class _AdCampaignAddEditScreenState extends State<AdCampaignAddEditScreen> {
         ButtonWidget(
           text: 'delete',
           onClicked: () {
-            if(!widget.adCampaign.isPartyAd){
-              for(String imageUrl in widget.adCampaign.imageUrls){
+            if (!widget.adCampaign.isPartyAd) {
+              for (String imageUrl in widget.adCampaign.imageUrls) {
                 FirestorageHelper.deleteFile(imageUrl);
               }
             }
@@ -216,6 +226,85 @@ class _AdCampaignAddEditScreenState extends State<AdCampaignAddEditScreen> {
     );
   }
 
+  Widget dateTimeContainer(BuildContext context, String type) {
+    sEndDateTime = DateTimeUtils.getDate(widget.adCampaign.endTime);
+
+    DateTime dateTime;
+    dateTime = sEndDateTime;
+
+    return Container(
+      decoration: BoxDecoration(
+          border: Border.all(
+            color: Colors.black38,
+          ),
+          borderRadius: const BorderRadius.all(Radius.circular(20))),
+      padding: const EdgeInsets.only(left: 10, top: 5, right: 5, bottom: 5),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+              DateTimeUtils.getFormattedDateString(
+                  dateTime.millisecondsSinceEpoch),
+              style: const TextStyle(
+                fontSize: 18,
+              )),
+          const SizedBox(
+            height: 20.0,
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              foregroundColor: Constants.primary,
+              shadowColor: Constants.shadowColor,
+              elevation: 3,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(32.0)),
+              minimumSize: const Size(50, 50),
+            ),
+            onPressed: () {
+              _selectDate(context, dateTime);
+            },
+            child: const Text('end date & time'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _selectDate(BuildContext context, DateTime initDate) async {
+    final DateTime? _sDate = await showDatePicker(
+        context: context,
+        initialDate: initDate,
+        firstDate: DateTime(2023, 1),
+        lastDate: DateTime(2101));
+    if (_sDate != null) {
+      DateTime sDateTemp = DateTime(_sDate.year, _sDate.month, _sDate.day);
+
+      setState(() {
+        sDate = sDateTemp;
+        _selectTime(context);
+      });
+    }
+  }
+
+  Future<TimeOfDay> _selectTime(BuildContext context) async {
+    TimeOfDay initialTime = TimeOfDay.now();
+
+    TimeOfDay? pickedTime = await showTimePicker(
+      context: context,
+      initialTime: initialTime,
+    );
+
+    setState(() {
+      sTimeOfDay = pickedTime!;
+
+      DateTime sDateTime = DateTime(sDate.year, sDate.month, sDate.day,
+          sTimeOfDay.hour, sTimeOfDay.minute);
+      widget.adCampaign =
+          widget.adCampaign.copyWith(endTime: sDateTime.millisecondsSinceEpoch);
+    });
+    return sTimeOfDay;
+  }
+
   Widget photosListDialog() {
     return SingleChildScrollView(
       child: SizedBox(
@@ -229,17 +318,12 @@ class _AdCampaignAddEditScreenState extends State<AdCampaignAddEditScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 1),
-                  child:
-                  ClipRRect(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 5.0, vertical: 1),
+                  child: ClipRRect(
                     borderRadius: BorderRadius.circular(8),
-                    child: Image.network(
-                        widget.adCampaign.imageUrls[index],
-                        width: 100,
-                        height: 100,
-                        fit:BoxFit.fill
-
-                    ),
+                    child: Image.network(widget.adCampaign.imageUrls[index],
+                        width: 100, height: 100, fit: BoxFit.fill),
                   ),
                 ),
                 SizedBox.fromSize(
@@ -250,14 +334,16 @@ class _AdCampaignAddEditScreenState extends State<AdCampaignAddEditScreen> {
                       child: InkWell(
                         splashColor: Colors.red,
                         onTap: () {
-                          FirestorageHelper.deleteFile(widget.adCampaign.imageUrls[index]);
+                          if (!widget.adCampaign.isPartyAd) {
+                            FirestorageHelper.deleteFile(
+                                widget.adCampaign.imageUrls[index]);
+                          }
                           widget.adCampaign.imageUrls.removeAt(index);
 
                           FirestoreHelper.pushAdCampaign(widget.adCampaign);
 
                           Navigator.of(context).pop();
-                          setState(() {
-                          });
+                          setState(() {});
                         },
                         child: const Column(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -276,5 +362,4 @@ class _AdCampaignAddEditScreenState extends State<AdCampaignAddEditScreen> {
       ),
     );
   }
-
 }
