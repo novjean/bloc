@@ -18,9 +18,7 @@ class AdCampaignSlideItem extends StatelessWidget {
       onTap: () {
         final uri = Uri.parse(adCampaign.linkUrl);
         NetworkUtils.launchInBrowser(uri);
-
-        adCampaign.adClick++;
-        FirestoreHelper.pushAdCampaign(adCampaign);
+        FirestoreHelper.updateAdCampaignClickCount(adCampaign.id);
       },
       child: Hero(
         tag: adCampaign.id,

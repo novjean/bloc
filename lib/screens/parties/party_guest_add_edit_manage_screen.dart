@@ -2691,6 +2691,7 @@ class _PartyGuestAddEditManageScreenState
                 content: GestureDetector(
                   onTap: () {
                     if(adCampaign.isPartyAd){
+                      FirestoreHelper.updateAdCampaignClickCount(adCampaign.id);
 
                       // we pull in party
                       FirestoreHelper.pullParty(adCampaign.partyId).then((res) {

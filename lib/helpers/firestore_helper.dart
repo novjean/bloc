@@ -211,6 +211,13 @@ class FirestoreHelper {
         .snapshots();
   }
 
+  static void updateAdCampaignClickCount(String docId) {
+    FirebaseFirestore.instance
+        .collection(AD_CAMPAIGNS)
+        .doc(docId)
+        .update({"clickCount": FieldValue.increment(1)},);
+  }
+
   static void deleteAdCampaign(String docId) {
     FirebaseFirestore.instance.collection(AD_CAMPAIGNS).doc(docId).delete();
   }
