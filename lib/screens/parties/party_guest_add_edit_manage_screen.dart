@@ -66,7 +66,7 @@ class _PartyGuestAddEditManageScreenState
     extends State<PartyGuestAddEditManageScreen> {
   static const String _TAG = 'PartyGuestAddEditManageScreen';
 
-  bool testMode = true;
+  bool testMode = false;
 
   late blocUser.User mBlocUser;
   bool hasUserChanged = false;
