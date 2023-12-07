@@ -7,7 +7,6 @@ import '../../../helpers/dummy.dart';
 import '../../../helpers/firestore_helper.dart';
 import '../../../helpers/fresh.dart';
 import '../../../main.dart';
-import '../../../utils/logx.dart';
 import '../../../widgets/ui/app_bar_title.dart';
 import '../../../widgets/ui/loading_widget.dart';
 import 'ad_add_edit_screen.dart';
