@@ -52,6 +52,8 @@ class Party {
   int views;
   int shareCount;
 
+  final bool isAdCampaignRunning;
+
 //<editor-fold desc="Data Methods">
   Party({
     required this.id,
@@ -95,6 +97,7 @@ class Party {
     required this.loungeId,
     required this.views,
     required this.shareCount,
+    required this.isAdCampaignRunning,
   });
 
   @override
@@ -142,7 +145,8 @@ class Party {
           artistIds == other.artistIds &&
           loungeId == other.loungeId &&
           views == other.views &&
-          shareCount == other.shareCount);
+          shareCount == other.shareCount &&
+          isAdCampaignRunning == other.isAdCampaignRunning);
 
   @override
   int get hashCode =>
@@ -186,7 +190,8 @@ class Party {
       artistIds.hashCode ^
       loungeId.hashCode ^
       views.hashCode ^
-      shareCount.hashCode;
+      shareCount.hashCode ^
+      isAdCampaignRunning.hashCode;
 
   @override
   String toString() {
@@ -232,6 +237,7 @@ class Party {
         ' loungeId: $loungeId,' +
         ' views: $views,' +
         ' shareCount: $shareCount,' +
+        ' isAdCampaignRunning: $isAdCampaignRunning,' +
         '}';
   }
 
@@ -277,6 +283,7 @@ class Party {
     String? loungeId,
     int? views,
     int? shareCount,
+    bool? isAdCampaignRunning,
   }) {
     return Party(
       id: id ?? this.id,
@@ -321,6 +328,7 @@ class Party {
       loungeId: loungeId ?? this.loungeId,
       views: views ?? this.views,
       shareCount: shareCount ?? this.shareCount,
+      isAdCampaignRunning: isAdCampaignRunning ?? this.isAdCampaignRunning,
     );
   }
 
@@ -367,6 +375,7 @@ class Party {
       'loungeId': this.loungeId,
       'views': this.views,
       'shareCount': this.shareCount,
+      'isAdCampaignRunning': this.isAdCampaignRunning,
     };
   }
 
@@ -413,6 +422,7 @@ class Party {
       loungeId: map['loungeId'] as String,
       views: map['views'] as int,
       shareCount: map['shareCount'] as int,
+      isAdCampaignRunning: map['isAdCampaignRunning'] as bool,
     );
   }
 

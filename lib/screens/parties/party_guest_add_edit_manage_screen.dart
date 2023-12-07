@@ -1643,8 +1643,10 @@ class _PartyGuestAddEditManageScreenState
       if (kIsWeb) {
         _showDownloadAppDialog(context);
       } else {
-        GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
-        GoRouter.of(context).pushNamed(RouteConstants.boxOfficeRouteName);
+        _showAdDialog(context);
+
+        // GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
+        // GoRouter.of(context).pushNamed(RouteConstants.boxOfficeRouteName);
       }
     } else {
       FirestoreHelper.pullChallengeActions(challenge.id).then((res) {
@@ -1712,10 +1714,12 @@ class _PartyGuestAddEditManageScreenState
                   if (kIsWeb) {
                     _showDownloadAppDialog(context);
                   } else {
-                    GoRouter.of(context)
-                        .pushNamed(RouteConstants.homeRouteName);
-                    GoRouter.of(context)
-                        .pushNamed(RouteConstants.boxOfficeRouteName);
+                    _showAdDialog(context);
+
+                    // GoRouter.of(context)
+                    //     .pushNamed(RouteConstants.homeRouteName);
+                    // GoRouter.of(context)
+                    //     .pushNamed(RouteConstants.boxOfficeRouteName);
                   }
                 },
               ),
@@ -1752,10 +1756,12 @@ class _PartyGuestAddEditManageScreenState
                         if (kIsWeb) {
                           _showDownloadAppDialog(context);
                         } else {
-                          GoRouter.of(context)
-                              .pushNamed(RouteConstants.homeRouteName);
-                          GoRouter.of(context)
-                              .pushNamed(RouteConstants.boxOfficeRouteName);
+                          _showAdDialog(context);
+
+                          // GoRouter.of(context)
+                          //     .pushNamed(RouteConstants.homeRouteName);
+                          // GoRouter.of(context)
+                          //     .pushNamed(RouteConstants.boxOfficeRouteName);
                         }
                       },
                     )
@@ -1791,10 +1797,12 @@ class _PartyGuestAddEditManageScreenState
                   if (kIsWeb) {
                     _showDownloadAppDialog(context);
                   } else {
-                    GoRouter.of(context)
-                        .pushNamed(RouteConstants.homeRouteName);
-                    GoRouter.of(context)
-                        .pushNamed(RouteConstants.boxOfficeRouteName);
+                    _showAdDialog(context);
+
+                    // GoRouter.of(context)
+                    //     .pushNamed(RouteConstants.homeRouteName);
+                    // GoRouter.of(context)
+                    //     .pushNamed(RouteConstants.boxOfficeRouteName);
                   }
                 },
               ),
@@ -2660,15 +2668,52 @@ class _PartyGuestAddEditManageScreenState
           context: context,
           builder: (BuildContext ctx) {
             return AlertDialog(
-              content: SizedBox(
-                width: double.maxFinite,
-                height: double.maxFinite,
-                child: FadeInImage(
-                  placeholder: const AssetImage('assets/icons/logo.png'),
-                  image: NetworkImage(adCampaign.imageUrls[0]),
-                  fit: BoxFit.cover,
-                )
+              contentPadding: const EdgeInsets.all(1.0),
+              backgroundColor: Constants.lightPrimary,
+              shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(20.0))),
+
+              content: GestureDetector(
+                onTap: () {
+                  if(adCampaign.isPartyAd){
+
+                    // we pull in party
+                    FirestoreHelper.pullParty(adCampaign.partyId).then((res) {
+                      if(res.docs.isNotEmpty){
+                        DocumentSnapshot document = res.docs[0];
+                        Map<String, dynamic> data =
+                        document.data()! as Map<String, dynamic>;
+                        final Party party = Fresh.freshPartyMap(data, false);
+                        Navigator.of(ctx).pop();
+
+                        // navigate to party
+                        GoRouter.of(context).pushNamed(RouteConstants.eventRouteName,
+                            params: {
+                              'partyName': party.name,
+                              'partyChapter': party.chapter
+                            });
+                      } else {
+                        Navigator.of(ctx).pop();
+
+                        GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
+                        GoRouter.of(context)
+                            .pushNamed(RouteConstants.boxOfficeRouteName);
+                      }
+                    });
+                  }
+                },
+                child: Container(
+                  color: Colors.black,
+                  width: double.maxFinite,
+                  height: double.maxFinite,
+                  child: FadeInImage(
+                    placeholder: const AssetImage('assets/icons/logo.png'),
+                    image: NetworkImage(adCampaign.imageUrls[0]),
+                    fit: BoxFit.fitWidth,
+                  )
+                ),
               ),
+
               actions: [
                 TextButton(
                   onPressed: () {
@@ -2678,7 +2723,38 @@ class _PartyGuestAddEditManageScreenState
                     GoRouter.of(context)
                         .pushNamed(RouteConstants.boxOfficeRouteName);
                   },
-                  child: Text('close'),
+                  child: const DelayedDisplay(
+                    delay: Duration(seconds: 3),
+                    child: Text(
+                      "close",
+                      style: TextStyle(
+                          color: Constants.primary,
+                          fontSize: 15
+                      ),
+                    ),
+                  ),
+                  // child:  const Text('close'),
+                ),
+
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(ctx).pop();
+
+                    GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
+                    GoRouter.of(context)
+                        .pushNamed(RouteConstants.boxOfficeRouteName);
+                  },
+                  child: const DelayedDisplay(
+                    delay: Duration(seconds: 3),
+                    child: Text(
+                      "close",
+                      style: TextStyle(
+                          color: Constants.primary,
+                          fontSize: 15
+                      ),
+                    ),
+                  ),
+                  // child:  const Text('close'),
                 ),
               ],
             );
@@ -2691,7 +2767,6 @@ class _PartyGuestAddEditManageScreenState
             .pushNamed(RouteConstants.boxOfficeRouteName);
       }
     });
-
 
   }
 

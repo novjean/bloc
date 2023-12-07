@@ -137,13 +137,11 @@ class _BoxOfficeGuestConfirmScreenState
           Logx.i(_TAG, "successfully pulled in party for partyGuest");
 
           if (res.docs.isNotEmpty) {
-            for (int i = 0; i < res.docs.length; i++) {
-              DocumentSnapshot document = res.docs[i];
-              Map<String, dynamic> data =
-                  document.data()! as Map<String, dynamic>;
-              final Party party = Fresh.freshPartyMap(data, false);
-              mParty = party;
-            }
+            DocumentSnapshot document = res.docs[0];
+            Map<String, dynamic> data =
+            document.data()! as Map<String, dynamic>;
+            final Party party = Fresh.freshPartyMap(data, false);
+            mParty = party;
 
             setState(() {
               maxGuestsCount = mPartyGuest.guestsRemaining;

@@ -130,7 +130,7 @@ class _AdCampaignAddEditScreenState extends State<AdCampaignAddEditScreen> {
                   fontSize: 16,
                 )),
             Checkbox(
-              value: isStorySize,
+              value: widget.adCampaign.isStorySize,
               side: MaterialStateBorderSide.resolveWith(
                     (states) => const BorderSide(
                     width: 1.0),
@@ -199,9 +199,12 @@ class _AdCampaignAddEditScreenState extends State<AdCampaignAddEditScreen> {
         ButtonWidget(
           text: 'delete',
           onClicked: () {
-            for(String imageUrl in widget.adCampaign.imageUrls){
-              FirestorageHelper.deleteFile(imageUrl);
+            if(!widget.adCampaign.isPartyAd){
+              for(String imageUrl in widget.adCampaign.imageUrls){
+                FirestorageHelper.deleteFile(imageUrl);
+              }
             }
+
             FirestoreHelper.deleteAdCampaign(widget.adCampaign.id);
 
             Logx.ist(_TAG, 'ad campaign deleted');

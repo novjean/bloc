@@ -72,7 +72,11 @@ class Dummy {
         adClick: 0,
         linkUrl: '',
         isActive: false,
-        isStorySize: false
+        isStorySize: false,
+        isPartyAd: false,
+        partyId: '',
+        partyChapter: '',
+        partyName: ''
     );
 
     return dummy;
@@ -347,7 +351,9 @@ class Dummy {
         loungeId: '',
         isTicketsDisabled: false,
         views: 0,
-        shareCount: 0);
+        shareCount: 0,
+        isAdCampaignRunning: false
+    );
 
     return dummyParty;
   }

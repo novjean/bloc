@@ -230,7 +230,19 @@ class Fresh {
     try {
       adCampaign = adCampaign.copyWith(isStorySize: map['isStorySize'] as bool);
     } catch (e) {
-      Logx.em(_TAG, 'adCampaign isStorySize not exist for ad campaign id: ${adCampaign.id}');
+      Logx.em(_TAG, 'adCampaign isStorySize not exist for id: ${adCampaign.id}');
+      isModelChanged = true;
+    }
+    try {
+      adCampaign = adCampaign.copyWith(isPartyAd: map['isPartyAd'] as bool);
+    } catch (e) {
+      Logx.em(_TAG, 'adCampaign isPartyAd not exist for id: ${adCampaign.id}');
+      isModelChanged = true;
+    }
+    try {
+      adCampaign = adCampaign.copyWith(partyId: map['partyId'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'adCampaign partyId not exist for id: ${adCampaign.id}');
       isModelChanged = true;
     }
 
@@ -281,6 +293,17 @@ class Fresh {
       fresh = fresh.copyWith(isStorySize: adCampaign.isStorySize);
     } catch (e) {
       Logx.em(_TAG, 'adCampaign isStorySize not exist for ad campaign id: ${adCampaign.id}');
+    }
+
+    try {
+      fresh = fresh.copyWith(isPartyAd: adCampaign.isPartyAd);
+    } catch (e) {
+      Logx.em(_TAG, 'adCampaign isPartyAd not exist for ad campaign id: ${adCampaign.id}');
+    }
+    try {
+      fresh = fresh.copyWith(partyId: adCampaign.partyId);
+    } catch (e) {
+      Logx.em(_TAG, 'adCampaign partyId not exist for ad campaign id: ${adCampaign.id}');
     }
 
     return fresh;
@@ -336,19 +359,19 @@ class Fresh {
     try {
       bloc = bloc.copyWith(createdAt: map['createdAt'] as String);
     } catch (e) {
-      Logx.em(_TAG, 'bloc createdAt not exist for bloc id: ' + bloc.id);
+      Logx.em(_TAG, 'bloc createdAt not exist for id: ${bloc.id}');
       isModelChanged = true;
     }
     try {
       bloc = bloc.copyWith(isActive: map['isActive'] as bool);
     } catch (e) {
-      Logx.em(_TAG, 'bloc isActive not exist for bloc id: ' + bloc.id);
+      Logx.em(_TAG, 'bloc isActive not exist for id: ${bloc.id}');
       isModelChanged = true;
     }
     try {
       bloc = bloc.copyWith(imageUrls: List<String>.from(map['imageUrls']));
     } catch (e) {
-      Logx.em(_TAG, 'bloc imageUrls not exist for bloc id: ' + bloc.id);
+      Logx.em(_TAG, 'bloc imageUrls not exist for id: ${bloc.id}');
       List<String> temp = [];
       bloc = bloc.copyWith(imageUrls: temp);
       isModelChanged = true;
@@ -1971,7 +1994,7 @@ class Fresh {
     try {
       party = party.copyWith(ticketUrl: map['ticketUrl'] as String);
     } catch (e) {
-      Logx.em(_TAG, 'party ticketUrl not exist for id: ' + party.id);
+      Logx.em(_TAG, 'party ticketUrl not exist for id: ${party.id}');
       isModelChanged = true;
     }
     try {
@@ -1983,31 +2006,31 @@ class Fresh {
     try {
       party = party.copyWith(createdAt: map['createdAt'] as int);
     } catch (e) {
-      Logx.em(_TAG, 'party createdAt not exist for party id: ' + party.id);
+      Logx.em(_TAG, 'party createdAt not exist for id: ' + party.id);
       isModelChanged = true;
     }
     try {
       party = party.copyWith(startTime: map['startTime'] as int);
     } catch (e) {
-      Logx.em(_TAG, 'party startTime not exist for party id: ' + party.id);
+      Logx.em(_TAG, 'party startTime not exist for id: ' + party.id);
       isModelChanged = true;
     }
     try {
       party = party.copyWith(endTime: map['endTime'] as int);
     } catch (e) {
-      Logx.em(_TAG, 'party endTime not exist for party id: ' + party.id);
+      Logx.em(_TAG, 'party endTime not exist for id: ${party.id}');
       isModelChanged = true;
     }
     try {
       party = party.copyWith(ownerId: map['ownerId'] as String);
     } catch (e) {
-      Logx.em(_TAG, 'party ownerId not exist for party id: ' + party.id);
+      Logx.em(_TAG, 'party ownerId not exist for id: ${party.id}');
       isModelChanged = true;
     }
     try {
       party = party.copyWith(isTBA: map['isTBA'] as bool);
     } catch (e) {
-      Logx.em(_TAG, 'party isTBA not exist for party id: ' + party.id);
+      Logx.em(_TAG, 'party isTBA not exist for id: ${party.id}');
       isModelChanged = true;
     }
     try {
@@ -2174,6 +2197,15 @@ class Fresh {
       party = party.copyWith(shareCount: map['shareCount'] as int);
     } catch (e) {
       Logx.em(_TAG, 'party shareCount not exist for id: ${party.id}');
+      isModelChanged = true;
+    }
+
+    try {
+      party =
+          party.copyWith(isAdCampaignRunning: map['isAdCampaignRunning'] as bool);
+    } catch (e) {
+      Logx.em(
+          _TAG, 'party isAdCampaignRunning not exist for id: ${party.id}');
       isModelChanged = true;
     }
 
@@ -3669,7 +3701,7 @@ class Fresh {
   /** quick table **/
   static QuickTable freshQuickTableMap(Map<String, dynamic> map, bool shouldUpdate) {
     QuickTable quickTable = Dummy.getDummyQuickTable();
-    bool isModelChanged = true;
+    bool isModelChanged = false;
 
     try {
       quickTable = quickTable.copyWith(id: map['id'] as String);

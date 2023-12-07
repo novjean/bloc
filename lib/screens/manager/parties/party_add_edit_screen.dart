@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:bloc/db/entity/ad_campaign.dart';
 import 'package:bloc/db/entity/bloc_service.dart';
 import 'package:bloc/helpers/fresh.dart';
 import 'package:bloc/utils/date_time_utils.dart';
@@ -999,6 +1000,74 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
               Row(
                 children: <Widget>[
                   const Text(
+                    'ad campaign : ',
+                    style: TextStyle(fontSize: 17.0),
+                  ), //Text
+                  const SizedBox(width: 10), //SizedBox
+                  Checkbox(
+                    value: widget.party.isAdCampaignRunning,
+                    onChanged: (value) {
+
+                      if(value!){
+                        List<String> imageUrls = [];
+                        if(widget.party.storyImageUrl.isNotEmpty){
+                          imageUrls.add(widget.party.storyImageUrl);
+                        } else {
+                          imageUrls.addAll(widget.party.imageUrls);
+                        }
+
+                        // create an ad campaign
+                        AdCampaign adCampaign = Dummy.getDummyAdCampaign();
+                        adCampaign = adCampaign.copyWith(
+                            name: widget.party.name,
+                          imageUrls: imageUrls,
+                          isStorySize: true,
+                          isActive: true,
+                          isPartyAd: true,
+                          partyId: widget.party.id,
+                          // partyName: widget.party.name,
+                          // partyChapter: widget.party.chapter
+                        );
+
+                        FirestoreHelper.pushAdCampaign(adCampaign);
+
+                        widget.party = widget.party.copyWith(isAdCampaignRunning: true);
+                        FirestoreHelper.pushParty(widget.party);
+
+                        Logx.ist(_TAG, 'ad campaign is now running');
+                      } else {
+                        // delete existing ad campaign
+                        FirestoreHelper.pullAdCampaignByPartyId(widget.party.id).then((res){
+                          if(res.docs.isNotEmpty){
+                            DocumentSnapshot document = res.docs[0];
+                            Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+                            AdCampaign adCampaign = Fresh.freshAdCampaignMap(data, true);
+                            FirestoreHelper.deleteAdCampaign(adCampaign.id);
+
+                            setState(() {
+                              widget.party = widget.party.copyWith(isAdCampaignRunning: false);
+                              FirestoreHelper.pushParty(widget.party);
+
+                              Logx.ist(_TAG, 'ad campaign is deleted');
+                            });
+                          } else {
+                            setState(() {
+                              widget.party = widget.party.copyWith(isAdCampaignRunning: false);
+                              FirestoreHelper.pushParty(widget.party);
+
+                              Logx.ist(_TAG, 'ad campaign could not be found');
+                            });
+                          }
+                        });
+                      }
+                    },
+                  ), //Checkbox
+                ], //<Widget>[]
+              ),
+              const SizedBox(height: 12),
+              Row(
+                children: <Widget>[
+                  const Text(
                     'guest list active : ',
                     style: TextStyle(fontSize: 17.0),
                   ), //Text
@@ -1277,6 +1346,31 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
 
                   if (widget.party.storyImageUrl.isNotEmpty) {
                     FirestorageHelper.deleteFile(widget.party.storyImageUrl);
+                  }
+
+                  if(widget.party.isAdCampaignRunning){
+                    FirestoreHelper.pullAdCampaignByPartyId(widget.party.id).then((res){
+                      if(res.docs.isNotEmpty){
+                        DocumentSnapshot document = res.docs[0];
+                        Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+                        AdCampaign adCampaign = Fresh.freshAdCampaignMap(data, true);
+                        FirestoreHelper.deleteAdCampaign(adCampaign.id);
+
+                        setState(() {
+                          widget.party = widget.party.copyWith(isAdCampaignRunning: false);
+                          FirestoreHelper.pushParty(widget.party);
+
+                          Logx.ist(_TAG, 'ad campaign is deleted');
+                        });
+                      } else {
+                        setState(() {
+                          widget.party = widget.party.copyWith(isAdCampaignRunning: false);
+                          FirestoreHelper.pushParty(widget.party);
+
+                          Logx.ist(_TAG, 'ad campaign could not be found');
+                        });
+                      }
+                    });
                   }
 
                   FirestoreHelper.deleteParty(widget.party);

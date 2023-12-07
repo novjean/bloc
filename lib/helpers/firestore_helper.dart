@@ -196,6 +196,13 @@ class FirestoreHelper {
         .get();
   }
 
+  static pullAdCampaignByPartyId(String partyId) {
+    return FirebaseFirestore.instance
+        .collection(AD_CAMPAIGNS)
+        // .where('isActive', isEqualTo: true)
+        .where('partyId', isEqualTo: partyId)
+        .get();
+  }
 
   static getAdCampaigns() {
     return FirebaseFirestore.instance

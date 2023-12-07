@@ -7,6 +7,8 @@ class AdCampaign{
   bool isActive;
 
   bool isStorySize;
+  bool isPartyAd;
+  String partyId;
 
 //<editor-fold desc="Data Methods">
   AdCampaign({
@@ -17,6 +19,8 @@ class AdCampaign{
     required this.adClick,
     required this.isActive,
     required this.isStorySize,
+    required this.isPartyAd,
+    required this.partyId,
   });
 
   @override
@@ -30,7 +34,9 @@ class AdCampaign{
           linkUrl == other.linkUrl &&
           adClick == other.adClick &&
           isActive == other.isActive &&
-          isStorySize == other.isStorySize);
+          isStorySize == other.isStorySize &&
+          isPartyAd == other.isPartyAd &&
+          partyId == other.partyId);
 
   @override
   int get hashCode =>
@@ -40,7 +46,9 @@ class AdCampaign{
       linkUrl.hashCode ^
       adClick.hashCode ^
       isActive.hashCode ^
-      isStorySize.hashCode;
+      isStorySize.hashCode ^
+      isPartyAd.hashCode ^
+      partyId.hashCode;
 
   @override
   String toString() {
@@ -52,6 +60,8 @@ class AdCampaign{
         ' adClick: $adClick,' +
         ' isActive: $isActive,' +
         ' isStorySize: $isStorySize,' +
+        ' isPartyAd: $isPartyAd,' +
+        ' partyId: $partyId,' +
         '}';
   }
 
@@ -63,6 +73,8 @@ class AdCampaign{
     int? adClick,
     bool? isActive,
     bool? isStorySize,
+    bool? isPartyAd,
+    String? partyId,
   }) {
     return AdCampaign(
       id: id ?? this.id,
@@ -72,6 +84,8 @@ class AdCampaign{
       adClick: adClick ?? this.adClick,
       isActive: isActive ?? this.isActive,
       isStorySize: isStorySize ?? this.isStorySize,
+      isPartyAd: isPartyAd ?? this.isPartyAd,
+      partyId: partyId ?? this.partyId,
     );
   }
 
@@ -84,6 +98,8 @@ class AdCampaign{
       'adClick': this.adClick,
       'isActive': this.isActive,
       'isStorySize': this.isStorySize,
+      'isPartyAd': this.isPartyAd,
+      'partyId': this.partyId,
     };
   }
 
@@ -96,6 +112,8 @@ class AdCampaign{
       adClick: map['adClick'] as int,
       isActive: map['isActive'] as bool,
       isStorySize: map['isStorySize'] as bool,
+      isPartyAd: map['isPartyAd'] as bool,
+      partyId: map['partyId'] as String,
     );
   }
 
