@@ -323,9 +323,9 @@ class _ProfileAddEditRegisterPageState
                 if(freshUser.username.isEmpty){
                   String username = '';
                   if(freshUser.surname.trim().isNotEmpty){
-                    username = '${freshUser.name.toLowerCase()}_${freshUser.surname.toLowerCase().trim()}';
+                    username = '${freshUser.name.trim().toLowerCase()}_${freshUser.surname.trim().toLowerCase()}';
                   } else {
-                    username = freshUser.name.toLowerCase().trim();
+                    username = freshUser.name.trim().toLowerCase();
                   }
 
                   //check if username is present in db

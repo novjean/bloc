@@ -179,6 +179,13 @@ class _UserAddEditScreenState extends State<UserAddEditScreen> {
         ),
         const SizedBox(height: 24),
         TextFieldWidget(
+          label: 'username',
+          text: widget.user.username,
+          onChanged: (text) =>
+          widget.user = widget.user.copyWith(username: text),
+        ),
+        const SizedBox(height: 24),
+        TextFieldWidget(
           label: 'phone',
           text: widget.user.phoneNumber.toString(),
           maxLines: 1,
@@ -394,7 +401,8 @@ class _UserAddEditScreenState extends State<UserAddEditScreen> {
           onClicked: () {
             if (isPhotoChanged) {
               widget.user = widget.user.copyWith(imageUrl: newImageUrl);
-              if(oldImageUrl.isNotEmpty){
+              if(oldImageUrl.isNotEmpty &&
+                  oldImageUrl.contains(FirestorageHelper.USER_IMAGES)){
                   FirestorageHelper.deleteFile(oldImageUrl);
               }
             }

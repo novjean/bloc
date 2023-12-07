@@ -248,7 +248,6 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
                               }
                             },
                             icon: const Icon(Icons.save_alt, size: 24.0),
-                            // Icon to display
                             label: const Text('save'),
                           )),
                     ],

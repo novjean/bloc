@@ -404,9 +404,9 @@ class _OTPScreenState extends State<OTPScreen> {
                     String username = '';
                     if (user.surname.trim().isNotEmpty) {
                       username =
-                          '${user.name.toLowerCase()}_${user.surname.toLowerCase().trim()}';
+                          '${user.name.trim().toLowerCase()}_${user.surname.trim().toLowerCase()}';
                     } else {
-                      username = user.name.toLowerCase().trim();
+                      username = user.name.trim().toLowerCase();
                     }
 
                     //check if username is present in db
@@ -505,9 +505,9 @@ class _OTPScreenState extends State<OTPScreen> {
                 String username = '';
                 if (user.surname.trim().isNotEmpty) {
                   username =
-                      '${user.name.toLowerCase()}_${user.surname.toLowerCase().trim()}';
+                      '${user.name.trim().toLowerCase()}_${user.surname.trim().toLowerCase()}';
                 } else {
-                  username = user.name.toLowerCase().trim();
+                  username = user.name.trim().toLowerCase();
                 }
 
                 //check if username is present in db
