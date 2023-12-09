@@ -14,6 +14,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_slider_drawer/flutter_slider_drawer.dart';
 import 'package:go_router/go_router.dart';
+import 'package:phonepe_payment_sdk/phonepe_payment_sdk.dart';
 import 'package:upgrader/upgrader.dart';
 
 import '../db/entity/ad.dart';
@@ -258,7 +259,45 @@ class _MainScreenState extends State<MainScreen> {
     }
 
     super.initState();
+
+    initPhonePeSdk();
   }
+
+  /** phone pe dev start **/
+
+  String body = "";
+  String callback = "flutterDemoApp";
+  String checksum = "";
+
+  Map<String, String> headers = {};
+  Map<String, String> pgHeaders = {"Content-Type": "application/json"};
+  List<String> apiList = <String>['Container', 'PG'];
+  List<String> environmentList = <String>['UAT', 'UAT_SIM', 'PRODUCTION'];
+  String apiEndPoint = "/pg/v1/pay";
+  bool enableLogs = true;
+  Object? result;
+  String dropdownValue = 'PG';
+  String environmentValue = 'UAT_SIM';
+  String appId = "";
+  String merchantId = "BLOCKONLINE";
+  String packageName = "com.novatech.bloc";
+
+  void initPhonePeSdk() {
+    PhonePePaymentSdk.init(environmentValue, appId, merchantId, enableLogs)
+        .then((isInitialized) => {
+      setState(() {
+        result = 'PhonePe SDK Initialized - $isInitialized';
+        Logx.d(_TAG, 'PhonePe initialized -  $isInitialized');
+      })
+    })
+        .catchError((error) {
+          Logx.em(_TAG, error.toString());
+      // handleError(error);
+      return <dynamic>{};
+    });
+  }
+
+  /** phone pe dev end **/
 
   getToken() async {
     String? deviceToken = await FirebaseMessaging.instance.getToken();
