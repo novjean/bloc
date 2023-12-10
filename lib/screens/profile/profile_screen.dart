@@ -609,23 +609,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
     Logx.i(_TAG, 'user default photo added.');
   }
 
-  Widget buildAbout(blocUser.User user) => Container(
-        padding: EdgeInsets.symmetric(horizontal: 48),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'about',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              '',
-              style: TextStyle(fontSize: 16, height: 1.4),
-            ),
-          ],
-        ),
-      );
+  // Widget buildAbout(blocUser.User user) => Container(
+  //       padding: const EdgeInsets.symmetric(horizontal: 48),
+  //       child: const Column(
+  //         crossAxisAlignment: CrossAxisAlignment.start,
+  //         children: [
+  //           Text(
+  //             'about',
+  //             style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+  //           ),
+  //           SizedBox(height: 16),
+  //           Text(
+  //             '',
+  //             style: TextStyle(fontSize: 16, height: 1.4),
+  //           ),
+  //         ],
+  //       ),
+  //     );
 
   _loadFriends(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(

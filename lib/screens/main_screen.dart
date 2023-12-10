@@ -294,6 +294,9 @@ class _MainScreenState extends State<MainScreen> {
       if (isInitialized) {
         String? pkgSign = await PhonePePaymentSdk.getPackageSignatureForAndroid();
         Logx.d(_TAG, 'android package signature $pkgSign');
+
+        String? upiApps = await PhonePePaymentSdk.getInstalledUpiAppsForAndroid();
+        Logx.d(_TAG, 'upi apps $upiApps');
       }
 
       return {
