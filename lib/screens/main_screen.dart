@@ -124,19 +124,21 @@ class _MainScreenState extends State<MainScreen> {
           );
         }
 
-        if(user1.username.isEmpty){
+        if (user1.username.isEmpty) {
           String username = '';
-          if(user1.surname.trim().isNotEmpty){
-            username = '${user1.name.trim().toLowerCase()}_${user1.surname.trim().toLowerCase()}';
+          if (user1.surname.trim().isNotEmpty) {
+            username =
+                '${user1.name.trim().toLowerCase()}_${user1.surname.trim().toLowerCase()}';
           } else {
             username = user1.name.trim().toLowerCase();
           }
 
           //check if username is present in db
           FirestoreHelper.pullUserByUsername(username).then((res) {
-            if(res.docs.isNotEmpty){
+            if (res.docs.isNotEmpty) {
               // username is already taken
-              username = username + NumberUtils.generateRandomNumber(1,999).toString();
+              username = username +
+                  NumberUtils.generateRandomNumber(1, 999).toString();
               user1 = user1.copyWith(username: username);
               FirestoreHelper.pushUser(user1);
               UserPreferences.setUser(user1);
@@ -162,7 +164,7 @@ class _MainScreenState extends State<MainScreen> {
       fbm.onTokenRefresh.listen((token) {
         // Note: This callback is fired at each app startup and whenever a new
         // token is generated.
-        if(UserPreferences.isUserLoggedIn()){
+        if (UserPreferences.isUserLoggedIn()) {
           blocUser.User user = UserPreferences.myUser;
           user = user.copyWith(fcmToken: token);
           UserPreferences.setUser(user);
@@ -217,12 +219,13 @@ class _MainScreenState extends State<MainScreen> {
             for (int i = 0; i < res.docs.length; i++) {
               DocumentSnapshot document = res.docs[i];
               Map<String, dynamic> data =
-              document.data()! as Map<String, dynamic>;
+                  document.data()! as Map<String, dynamic>;
               UserLounge userLounge = Fresh.freshUserLoungeMap(data, false);
               userLounges.add(userLounge.loungeId);
 
               FirebaseMessaging.instance.subscribeToTopic(userLounge.loungeId);
-              Logx.d(_TAG, 'subscribed to lounge topic: ${userLounge.loungeId}');
+              Logx.d(
+                  _TAG, 'subscribed to lounge topic: ${userLounge.loungeId}');
 
               if (userLounge.userFcmToken.isEmpty &&
                   UserPreferences.myUser.fcmToken.isNotEmpty) {
@@ -236,16 +239,19 @@ class _MainScreenState extends State<MainScreen> {
         });
 
         FirestoreHelper.pullFriends(UserPreferences.myUser.id).then((res) {
-          if(res.docs.isNotEmpty){
-            for(int i=0;i<res.docs.length; i++){
+          if (res.docs.isNotEmpty) {
+            for (int i = 0; i < res.docs.length; i++) {
               DocumentSnapshot document = res.docs[i];
-              Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+              Map<String, dynamic> data =
+                  document.data()! as Map<String, dynamic>;
               Friend friend = Fresh.freshFriendMap(data, false);
 
-              if(friend.isFollowing){
-                FirebaseMessaging.instance.subscribeToTopic(friend.friendUserId);
+              if (friend.isFollowing) {
+                FirebaseMessaging.instance
+                    .subscribeToTopic(friend.friendUserId);
               } else {
-                FirebaseMessaging.instance.unsubscribeFromTopic(friend.friendUserId);
+                FirebaseMessaging.instance
+                    .unsubscribeFromTopic(friend.friendUserId);
               }
             }
           }
@@ -284,14 +290,20 @@ class _MainScreenState extends State<MainScreen> {
 
   void initPhonePeSdk() {
     PhonePePaymentSdk.init(environmentValue, appId, merchantId, enableLogs)
-        .then((isInitialized) => {
-      setState(() {
-        result = 'PhonePe SDK Initialized - $isInitialized';
-        Logx.d(_TAG, 'PhonePe initialized -  $isInitialized');
-      })
-    })
-        .catchError((error) {
-          Logx.em(_TAG, error.toString());
+        .then((isInitialized) async {
+      if (isInitialized) {
+        String? pkgSign = await PhonePePaymentSdk.getPackageSignatureForAndroid();
+        Logx.d(_TAG, 'android package signature $pkgSign');
+      }
+
+      return {
+        setState(() {
+          result = 'PhonePe SDK Initialized - $isInitialized';
+          Logx.d(_TAG, 'PhonePe initialized -  $isInitialized');
+        })
+      };
+    }).catchError((error) {
+      Logx.em(_TAG, error.toString());
       // handleError(error);
       return <dynamic>{};
     });
@@ -303,13 +315,14 @@ class _MainScreenState extends State<MainScreen> {
     String? deviceToken = await FirebaseMessaging.instance.getToken();
     Logx.d(_TAG, 'fcm token: ${deviceToken!}');
 
-    if(UserPreferences.isUserLoggedIn()){
+    if (UserPreferences.isUserLoggedIn()) {
       blocUser.User user = UserPreferences.myUser;
       user = user.copyWith(fcmToken: deviceToken);
       UserPreferences.setUser(user);
 
-      if(user.fcmToken != deviceToken){
-        FirestoreHelper.updateUserFcmToken(UserPreferences.myUser.id, deviceToken);
+      if (user.fcmToken != deviceToken) {
+        FirestoreHelper.updateUserFcmToken(
+            UserPreferences.myUser.id, deviceToken);
       }
     }
   }
@@ -431,24 +444,28 @@ class _MainScreenState extends State<MainScreen> {
             List<String> userLounges = [];
             for (int i = 0; i < res.docs.length; i++) {
               DocumentSnapshot document = res.docs[i];
-              Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+              Map<String, dynamic> data =
+                  document.data()! as Map<String, dynamic>;
               UserLounge userLounge = Fresh.freshUserLoungeMap(data, false);
               userLounges.add(userLounge.loungeId);
 
-              FirebaseMessaging.instance.unsubscribeFromTopic(userLounge.loungeId);
+              FirebaseMessaging.instance
+                  .unsubscribeFromTopic(userLounge.loungeId);
             }
             UserPreferences.setListLounges(userLounges);
           }
         });
 
         FirestoreHelper.pullFriends(UserPreferences.myUser.id).then((res) {
-          if(res.docs.isNotEmpty){
-            for(int i=0;i<res.docs.length; i++){
+          if (res.docs.isNotEmpty) {
+            for (int i = 0; i < res.docs.length; i++) {
               DocumentSnapshot document = res.docs[i];
-              Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+              Map<String, dynamic> data =
+                  document.data()! as Map<String, dynamic>;
               Friend friend = Fresh.freshFriendMap(data, false);
 
-              FirebaseMessaging.instance.unsubscribeFromTopic(friend.friendUserId);
+              FirebaseMessaging.instance
+                  .unsubscribeFromTopic(friend.friendUserId);
             }
           }
         });
