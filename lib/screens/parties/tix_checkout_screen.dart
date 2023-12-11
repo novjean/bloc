@@ -6,8 +6,8 @@ import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:phonepe_payment_sdk/phonepe_payment_sdk.dart';
+import 'package:http/http.dart' as http;
 
 import '../../db/entity/party.dart';
 import '../../db/entity/tix.dart';
@@ -16,7 +16,6 @@ import '../../db/shared_preferences/user_preferences.dart';
 import '../../helpers/dummy.dart';
 import '../../helpers/fresh.dart';
 import '../../main.dart';
-import '../../routes/route_constants.dart';
 import '../../utils/constants.dart';
 import '../../utils/logx.dart';
 import '../../utils/number_utils.dart';
@@ -104,6 +103,8 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
   String environment = "UAT_SIM";
   String appId = "";
   String merchantId = "PGTESTPAYUAT";
+  String transactionId = DateTime.now().millisecondsSinceEpoch.toString();
+
   bool enableLogging = true;
 
   String checksum = "";
@@ -132,14 +133,12 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
 
   getChecksum(){
     int amount = grandTotal.toInt()*100;
-    String merchantTransactionId = NumberUtils.generateRandomNumber(100000000, 999999999).toString();
-
     String merchantUserId = UserPreferences.myUser.id;
     String mobileNumber = UserPreferences.myUser.phoneNumber.toString();
 
     final requestData = {
       "merchantId": merchantId,
-      "merchantTransactionId": merchantTransactionId,
+      "merchantTransactionId": transactionId,
       "merchantUserId": merchantUserId,
       "amount": amount,
       "mobileNumber": mobileNumber,
@@ -164,24 +163,26 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
       var response = PhonePePaymentSdk.startPGTransaction(
           body, callbackUrl, checksum, pgHeaders, apiEndPoint, packageName);
       response
-          .then((val) => {
-        setState(() {
-          if(val!=null){
-            String status = val['status'].toString();
-            String error = val['error'].toString();
+          .then((val) async {
+        if(val!=null){
+          String status = val['status'].toString();
+          String error = val['error'].toString();
 
-            if(status == 'SUCCESS'){
-              result = "Flow complete - status : SUCCESS ";
-            } else {
-              result = "Flow complete - status : $status and error $error ";
-            }
+          if(status == 'SUCCESS'){
+            result = "flow complete - status : SUCCESS ";
+
+            await checkStatus();
 
           } else {
-            result = "Flow Incomplete";
+            result = "flow complete - status : $status and error $error ";
           }
 
-          result = val;
-        })
+        } else {
+          result = "flow Incomplete";
+        }
+
+        result = val;
+
       })
           .catchError((error) {
         handleError(error);
@@ -357,6 +358,44 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
     );
   }
 
+  checkStatus() async {
+    try {
+      String prodUrl = "https://api.phonepe.com/apis/hermes/pg/v1/status/$merchantId/$transactionId";
+      String url = "https://api-preprod.phonepe.com/apis/pg-sandbox/pg/v1/status/$merchantId/$transactionId";
+      
+      //SHA256("/pg/v1/status/{merchantId}/{merchantTransactionId}" + saltKey) + "###" + saltIndex
+      String concatString = "/pg/v1/status/$merchantId/$transactionId$saltKey";
+      
+      var bytes = utf8.encode(concatString);
+      var digest = sha256.convert(bytes).toString();
+      String xVerify = "$digest###$saltIndex";
+      
+      Map<String, String> headers = {
+        "Content-Type" : "application/json",
+        "X-VERIFY" : xVerify,
+        "X-MERCHANT-ID" : merchantId
+      };
+      
+      try {
+        await http.get(Uri.parse(url), headers: headers).then((value) {
+          Map<String, dynamic> res = jsonDecode(value.body);
+
+          Logx.d(_TAG, res.toString());
+      
+          if(res["success"] && res["code"] == "PAYMENT_SUCCESS" && res['data']['state'] == "COMPLETED"){
+            Logx.ilt(_TAG, res["message"]);
+          } else {
+            Logx.ist(_TAG, "something went wrong");
+          }
+        });
+      } on Exception catch (e) {
+        Logx.est(_TAG, e.toString());
+      }
+    } on Exception catch (e) {
+      Logx.est(_TAG, e.toString());
+    }
+  }
+
   _showTixTiers(BuildContext context, List<TixTier> tixTiers) {
     return SizedBox(
       child: ListView.builder(
@@ -451,5 +490,6 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
           );
         });
   }
+
 
 }
