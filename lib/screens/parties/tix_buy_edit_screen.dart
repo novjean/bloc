@@ -337,7 +337,7 @@ class _TixBuyEditScreenState extends State<TixBuyEditScreen> {
                   itemBuilder: (context, index) {
                     UPIApp upiApp = upiApps[index];
 
-                    String imageAsset = 'assets/icons/cred.png';
+                    String imageAsset = 'assets/icons/upipayment.png';
                     String appName =  upiApp.applicationName!;
 
                     if(appName.toLowerCase().contains('cred')){
@@ -348,10 +348,22 @@ class _TixBuyEditScreenState extends State<TixBuyEditScreen> {
                       imageAsset = 'assets/icons/airtel.png';
                     } else if(appName.toLowerCase().contains('groww')) {
                       imageAsset = 'assets/icons/groww.png';
-                    } else if(appName.toLowerCase().contains('hdfc')) {
+                    } else if(appName.toLowerCase().contains('hdfc bank')) {
                       imageAsset = 'assets/icons/hdfc.jpeg';
-                    } else {
-                      imageAsset = 'assets/icons/cred.png';
+                    } else if(appName.toLowerCase().contains('amazon')) {
+                      imageAsset = 'assets/icons/amazon.jpeg';
+                    } else if(appName.toLowerCase().contains('phonepe')) {
+                      imageAsset = 'assets/icons/phonepe.png';
+                    } else if(appName.toLowerCase().contains('tata neu')) {
+                      imageAsset = 'assets/icons/tata_neu.jpeg';
+                    } else if(appName.toLowerCase().contains('whatsapp')) {
+                      imageAsset = 'assets/icons/whatsapp.jpeg';
+                    } else if(appName.toLowerCase().contains('jupiter')) {
+                      imageAsset = 'assets/icons/jupiter.png';
+                    } else if(appName.toLowerCase().contains('makemytrip')) {
+                      imageAsset = 'assets/icons/makemytrip.png';
+                    }  else {
+                      imageAsset = 'assets/icons/upipayment.png';
                     }
 
                     return UpiAppWidget(imageAsset: imageAsset, name: appName,);
