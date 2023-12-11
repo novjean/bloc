@@ -265,8 +265,6 @@ class _MainScreenState extends State<MainScreen> {
     }
 
     super.initState();
-
-    initPhonePeSdk();
   }
 
   /** phone pe dev start **/
@@ -307,7 +305,6 @@ class _MainScreenState extends State<MainScreen> {
       };
     }).catchError((error) {
       Logx.em(_TAG, error.toString());
-      // handleError(error);
       return <dynamic>{};
     });
   }

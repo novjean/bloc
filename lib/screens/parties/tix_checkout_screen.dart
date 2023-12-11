@@ -1,18 +1,27 @@
+import 'dart:convert';
+
 import 'package:bloc/db/entity/tix_tier_item.dart';
 import 'package:bloc/helpers/firestore_helper.dart';
 import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:phonepe_payment_sdk/phonepe_payment_sdk.dart';
 
 import '../../db/entity/party.dart';
 import '../../db/entity/tix.dart';
+import '../../db/entity/upi_app.dart';
+import '../../db/shared_preferences/user_preferences.dart';
 import '../../helpers/dummy.dart';
 import '../../helpers/fresh.dart';
+import '../../main.dart';
 import '../../routes/route_constants.dart';
 import '../../utils/constants.dart';
 import '../../utils/logx.dart';
+import '../../utils/number_utils.dart';
 import '../../widgets/parties/party_banner.dart';
+import '../../widgets/payment/upi_app_widget.dart';
 import '../../widgets/tix/checkout_tix_tier_item.dart';
 import '../../widgets/ui/app_bar_title.dart';
 import '../../widgets/ui/dark_button_widget.dart';
@@ -86,24 +95,129 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
     );
 
     super.initState();
+
+    phonePeInit();
+    body = getChecksum().toString();
   }
+
+  /** phone pe dev **/
+  String environment = "UAT_SIM";
+  String appId = "";
+  String merchantId = "PGTESTPAYUAT";
+  bool enableLogging = true;
+
+  String checksum = "";
+  String saltKey = "099eb0cd-02cf-4e2a-8aca-3e6c6aff0399";
+  String saltIndex = "1";
+
+  String callbackUrl = "https://webhook.site/a7f51d09-7db9-433d-8a6a-45571b725e4b";
+
+  String body = "";
+  String apiEndPoint = "/pg/v1/pay";
+
+  Object? result;
+
+  void phonePeInit() {
+    PhonePePaymentSdk.init(environment, appId, merchantId, enableLogging)
+        .then((val) => {
+      setState(() {
+        Logx.d(_TAG, 'phonePe sdk init - $val ');
+        result = 'PhonePe SDK Initialized - $val';
+      })
+    }).catchError((error) {
+      handleError(error);
+      return <dynamic>{};
+    });
+  }
+
+  getChecksum(){
+    int amount = grandTotal.toInt()*100;
+    String merchantTransactionId = NumberUtils.generateRandomNumber(100000000, 999999999).toString();
+
+    String merchantUserId = UserPreferences.myUser.id;
+    String mobileNumber = UserPreferences.myUser.phoneNumber.toString();
+
+    final requestData = {
+      "merchantId": merchantId,
+      "merchantTransactionId": merchantTransactionId,
+      "merchantUserId": merchantUserId,
+      "amount": amount,
+      "mobileNumber": mobileNumber,
+      "callbackUrl": callbackUrl,
+      "paymentInstrument": {
+        "type": "PAY_PAGE",
+      },
+    };
+
+    String base64Body = base64.encode(utf8.encode(json.encode(requestData)));
+
+    checksum = '${sha256.convert(utf8.encode(base64Body+apiEndPoint+saltKey)).toString()}###$saltIndex';
+
+    return base64Body;
+  }
+
+  void startPgTransaction() async {
+    Map<String, String> pgHeaders = {};
+    String packageName = "";
+
+    try {
+      var response = PhonePePaymentSdk.startPGTransaction(
+          body, callbackUrl, checksum, pgHeaders, apiEndPoint, packageName);
+      response
+          .then((val) => {
+        setState(() {
+          if(val!=null){
+            String status = val['status'].toString();
+            String error = val['error'].toString();
+
+            if(status == 'SUCCESS'){
+              result = "Flow complete - status : SUCCESS ";
+            } else {
+              result = "Flow complete - status : $status and error $error ";
+            }
+
+          } else {
+            result = "Flow Incomplete";
+          }
+
+          result = val;
+        })
+      })
+          .catchError((error) {
+        handleError(error);
+        return <dynamic>{};
+      });
+    } catch (error) {
+      handleError(error);
+    }
+  }
+
+  void handleError(error) {
+    setState(() {
+      result = {"error" : error};
+    });
+  }
+
+  /** phone pe dev end **/
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Constants.background,
-      appBar: AppBar(
-        title: AppBarTitle(title: 'checkout'),
-        titleSpacing: 0,
+    return MaterialApp(
+      home: Scaffold(
         backgroundColor: Constants.background,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_rounded),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
+        appBar: AppBar(
+          title: AppBarTitle(title: 'checkout'),
+          titleSpacing: 0,
+          backgroundColor: Constants.background,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_ios_rounded),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
         ),
+        body: _buildBody(context),
       ),
-      body: _buildBody(context),
     );
   }
 
@@ -124,6 +238,7 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
             ),
             _showTixTiers(context, mTixTiers),
 
+            const SizedBox(height: 20),
             // widget.task == 'buy'
             //     ? _showBuyTixTiers(context)
             //     : _showTixTiers(context),
@@ -154,7 +269,7 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              Text(
+              const Text(
                 'IST',
               ),
               Text('\u20B9 ${igst.toStringAsFixed(0)}')
@@ -181,12 +296,12 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              Text(
+              const Text(
                 'grand total', style: TextStyle(fontSize: 18,
                   fontWeight: FontWeight.bold),
               ),
               Text('\u20B9 ${grandTotal.toStringAsFixed(0)}',
-                style: TextStyle(
+                style: const TextStyle(
                 fontSize: 18,
                   fontWeight: FontWeight.bold),)
             ],
@@ -200,12 +315,40 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              const Spacer(),
+              Text('Result :\n$result'),
+
               DarkButtonWidget(
                 text: 'purchase',
                 onClicked: () {
-                  Logx.ist(_TAG, 'tickets purchased, navigating to home.');
-                  GoRouter.of(context).goNamed(RouteConstants.landingRouteName);
+                  body = getChecksum().toString();
+
+                  startPgTransaction();
+
+                  // here we are gonna check what all is installed on phone
+                  // bool isIos = Theme.of(context).platform == TargetPlatform.iOS;
+                  // if (!isIos) {
+                  //   String? apps =
+                  //       await PhonePePaymentSdk.getInstalledUpiAppsForAndroid();
+                  //
+                  //   Iterable l = json.decode(apps!);
+                  //   List<UPIApp> upiApps =
+                  //       List<UPIApp>.from(l.map((model) => UPIApp.fromJson(model)));
+                  //   String appString = '';
+                  //   for (var element in upiApps) {
+                  //     appString +=
+                  //         "${element.applicationName} ${element.version} ${element.packageName}";
+                  //   }
+                  //
+                  //   Logx.d(_TAG, 'installed Upi Apps - $appString');
+                  //
+                  //   _showUpiAppsBottomSheet(context, upiApps, price);
+                  // } else {
+                  //   //ios implement pending
+                  // }
+
+
+                  // Logx.ist(_TAG, 'tickets purchased, navigating to home.');
+                  // GoRouter.of(context).goNamed(RouteConstants.landingRouteName);
                 },)
             ],
           ),
@@ -230,4 +373,83 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
           }),
     );
   }
+
+  void _showUpiAppsBottomSheet(BuildContext context, List<UPIApp> upiApps, double amount) {
+    showModalBottomSheet(
+        backgroundColor: Constants.lightPrimary,
+        context: context,
+        shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(20), topRight: Radius.circular(20))),
+        builder: (_) {
+          return ListView(
+            shrinkWrap: true,
+            padding:
+            EdgeInsets.only(top: mq.height * .03, bottom: mq.height * .05),
+            children: [
+              //pick profile picture label
+              const Text('select your payment app',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      fontSize: 20,
+                      color: Colors.black,
+                      fontWeight: FontWeight.w500)),
+
+              //for adding some space
+              SizedBox(height: mq.height * .02),
+
+              //buttons
+              Container(
+                height: 100, // Set the desired height
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: upiApps.length,
+                  itemBuilder: (context, index) {
+                    UPIApp upiApp = upiApps[index];
+
+                    String imageAsset = 'assets/icons/upipayment.png';
+                    String appName = upiApp.applicationName!;
+
+                    if (appName.toLowerCase().contains('cred')) {
+                      imageAsset = 'assets/icons/cred.png';
+                    } else if (appName.toLowerCase().contains('gpay')) {
+                      imageAsset = 'assets/icons/gpay.jpeg';
+                    } else if (appName.toLowerCase().contains('airtel')) {
+                      imageAsset = 'assets/icons/airtel.png';
+                    } else if (appName.toLowerCase().contains('groww')) {
+                      imageAsset = 'assets/icons/groww.png';
+                    } else if (appName.toLowerCase().contains('hdfc bank')) {
+                      imageAsset = 'assets/icons/hdfc.jpeg';
+                    } else if (appName.toLowerCase().contains('amazon')) {
+                      imageAsset = 'assets/icons/amazon.jpeg';
+                    } else if (appName.toLowerCase().contains('phonepe')) {
+                      imageAsset = 'assets/icons/phonepe.png';
+                    } else if (appName.toLowerCase().contains('tata neu')) {
+                      imageAsset = 'assets/icons/tata_neu.jpeg';
+                    } else if (appName.toLowerCase().contains('whatsapp')) {
+                      imageAsset = 'assets/icons/whatsapp.jpeg';
+                    } else if (appName.toLowerCase().contains('jupiter')) {
+                      imageAsset = 'assets/icons/jupiter.png';
+                    } else if (appName.toLowerCase().contains('makemytrip')) {
+                      imageAsset = 'assets/icons/makemytrip.png';
+                    } else {
+                      imageAsset = 'assets/icons/upipayment.png';
+                    }
+
+                    return GestureDetector(
+                        onTap: () {
+                          Logx.ist(_TAG, '$appName selected');
+                        },
+                        child: UpiAppWidget(
+                          imageAsset: imageAsset,
+                          name: appName,
+                        ));
+                  },
+                ),
+              ),
+            ],
+          );
+        });
+  }
+
 }

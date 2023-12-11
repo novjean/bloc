@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../utils/constants.dart';
+
 class DarkButtonWidget extends StatelessWidget {
   final String text;
   final VoidCallback onClicked;
@@ -18,7 +20,7 @@ class DarkButtonWidget extends StatelessWidget {
     height: height ?? 40,
     child: ElevatedButton(
           style: ElevatedButton.styleFrom(
-            backgroundColor: Theme.of(context).primaryColorDark,
+            backgroundColor: Constants.darkPrimary,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(5),
             ),
