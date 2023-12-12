@@ -8,8 +8,12 @@ class Tix {
   String userEmail;
 
   double total;
+
+  String merchantTransactionId;
   String transactionId;
-  int dateTime;
+  String transactionResponseCode;
+
+  int creationTime;
   bool isSuccess;
   bool isCompleted;
 
@@ -24,8 +28,10 @@ class Tix {
     required this.userPhone,
     required this.userEmail,
     required this.total,
+    required this.merchantTransactionId,
     required this.transactionId,
-    required this.dateTime,
+    required this.transactionResponseCode,
+    required this.creationTime,
     required this.isSuccess,
     required this.isCompleted,
     required this.tixTierIds,
@@ -43,8 +49,10 @@ class Tix {
           userPhone == other.userPhone &&
           userEmail == other.userEmail &&
           total == other.total &&
+          merchantTransactionId == other.merchantTransactionId &&
           transactionId == other.transactionId &&
-          dateTime == other.dateTime &&
+          transactionResponseCode == other.transactionResponseCode &&
+          creationTime == other.creationTime &&
           isSuccess == other.isSuccess &&
           isCompleted == other.isCompleted &&
           tixTierIds == other.tixTierIds);
@@ -58,8 +66,10 @@ class Tix {
       userPhone.hashCode ^
       userEmail.hashCode ^
       total.hashCode ^
+      merchantTransactionId.hashCode ^
       transactionId.hashCode ^
-      dateTime.hashCode ^
+      transactionResponseCode.hashCode ^
+      creationTime.hashCode ^
       isSuccess.hashCode ^
       isCompleted.hashCode ^
       tixTierIds.hashCode;
@@ -74,8 +84,10 @@ class Tix {
         ' userPhone: $userPhone,' +
         ' userEmail: $userEmail,' +
         ' total: $total,' +
+        ' merchantTransactionId: $merchantTransactionId,' +
         ' transactionId: $transactionId,' +
-        ' dateTime: $dateTime,' +
+        ' transactionResponseCode: $transactionResponseCode,' +
+        ' creationTime: $creationTime,' +
         ' isSuccess: $isSuccess,' +
         ' isCompleted: $isCompleted,' +
         ' tixTierIds: $tixTierIds,' +
@@ -90,8 +102,10 @@ class Tix {
     String? userPhone,
     String? userEmail,
     double? total,
+    String? merchantTransactionId,
     String? transactionId,
-    int? dateTime,
+    String? transactionResponseCode,
+    int? creationTime,
     bool? isSuccess,
     bool? isCompleted,
     List<String>? tixTierIds,
@@ -104,8 +118,12 @@ class Tix {
       userPhone: userPhone ?? this.userPhone,
       userEmail: userEmail ?? this.userEmail,
       total: total ?? this.total,
+      merchantTransactionId:
+          merchantTransactionId ?? this.merchantTransactionId,
       transactionId: transactionId ?? this.transactionId,
-      dateTime: dateTime ?? this.dateTime,
+      transactionResponseCode:
+          transactionResponseCode ?? this.transactionResponseCode,
+      creationTime: creationTime ?? this.creationTime,
       isSuccess: isSuccess ?? this.isSuccess,
       isCompleted: isCompleted ?? this.isCompleted,
       tixTierIds: tixTierIds ?? this.tixTierIds,
@@ -121,8 +139,10 @@ class Tix {
       'userPhone': this.userPhone,
       'userEmail': this.userEmail,
       'total': this.total,
+      'merchantTransactionId': this.merchantTransactionId,
       'transactionId': this.transactionId,
-      'dateTime': this.dateTime,
+      'transactionResponseCode': this.transactionResponseCode,
+      'creationTime': this.creationTime,
       'isSuccess': this.isSuccess,
       'isCompleted': this.isCompleted,
       'tixTierIds': this.tixTierIds,
@@ -138,8 +158,10 @@ class Tix {
       userPhone: map['userPhone'] as String,
       userEmail: map['userEmail'] as String,
       total: map['total'] as double,
+      merchantTransactionId: map['merchantTransactionId'] as String,
       transactionId: map['transactionId'] as String,
-      dateTime: map['dateTime'] as int,
+      transactionResponseCode: map['transactionResponseCode'] as String,
+      creationTime: map['creationTime'] as int,
       isSuccess: map['isSuccess'] as bool,
       isCompleted: map['isCompleted'] as bool,
       tixTierIds: map['tixTierIds'] as List<String>,

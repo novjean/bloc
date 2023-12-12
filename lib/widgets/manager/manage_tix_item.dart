@@ -54,7 +54,7 @@ class ManageTixItem extends StatelessWidget{
                   trailing: RichText(
                     text: TextSpan(
                       text:
-                      '${DateTimeUtils.getFormattedDate(tix.dateTime)} ',
+                      '${DateTimeUtils.getFormattedDate(tix.creationTime)} ',
                       style: const TextStyle(
                         fontFamily: Constants.fontDefault,
                         color: Colors.black,

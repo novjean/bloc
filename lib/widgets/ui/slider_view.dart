@@ -62,6 +62,8 @@ List<Menu> getMenuList() {
   menuItems.add(Menu(Icons.home, 'home'));
   if (UserPreferences.isUserLoggedIn()) {
     menuItems.add(Menu(Icons.keyboard_command_key_sharp, 'box office'));
+    menuItems.add(Menu(Icons.bookmark_added_sharp, 'reservation'));
+
     if (user.clearanceLevel == Constants.CAPTAIN_LEVEL ||
         user.clearanceLevel >= Constants.MANAGER_LEVEL) {
       menuItems.add(Menu(Icons.adjust, 'captain'));

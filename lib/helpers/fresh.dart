@@ -4126,6 +4126,13 @@ class Fresh {
       Logx.em(_TAG,
           'tix total not exist for id: ${tix.id}');
     }
+
+    try {
+      fresh = fresh.copyWith(merchantTransactionId: tix.merchantTransactionId);
+    } catch (e) {
+      Logx.em(_TAG,
+          'tix merchantTransactionId not exist for id: ${tix.id}');
+    }
     try {
       fresh = fresh.copyWith(transactionId: tix.transactionId);
     } catch (e) {
@@ -4133,10 +4140,17 @@ class Fresh {
           'tix transactionId not exist for id: ${tix.id}');
     }
     try {
-      fresh = fresh.copyWith(dateTime: tix.dateTime);
+      fresh = fresh.copyWith(transactionResponseCode: tix.transactionResponseCode);
     } catch (e) {
       Logx.em(_TAG,
-          'tix dateTime not exist for id: ${tix.id}');
+          'tix transactionResponseCode not exist for id: ${tix.id}');
+    }
+
+    try {
+      fresh = fresh.copyWith(creationTime: tix.creationTime);
+    } catch (e) {
+      Logx.em(_TAG,
+          'tix creationTime not exist for id: ${tix.id}');
     }
     try {
       fresh = fresh.copyWith(isSuccess: tix.isSuccess);
@@ -4209,17 +4223,31 @@ class Fresh {
       Logx.em(_TAG, 'tix total not exist for id: ${tix.id}');
       isModelChanged = true;
     }
+
+    try {
+      tix = tix.copyWith(merchantTransactionId: map['merchantTransactionId'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'tix merchantTransactionId not exist for id: ${tix.id}');
+      isModelChanged = true;
+    }
     try {
       tix = tix.copyWith(transactionId: map['transactionId'] as String);
     } catch (e) {
       Logx.em(_TAG, 'tix transactionId not exist for id: ${tix.id}');
       isModelChanged = true;
     }
+    try {
+      tix = tix.copyWith(transactionResponseCode: map['transactionResponseCode'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'tix transactionResponseCode not exist for id: ${tix.id}');
+      isModelChanged = true;
+    }
+
 
     try {
-      tix = tix.copyWith(dateTime: map['dateTime'] as int);
+      tix = tix.copyWith(creationTime: map['creationTime'] as int);
     } catch (e) {
-      Logx.em(_TAG, 'tix dateTime not exist for id: ${tix.id}');
+      Logx.em(_TAG, 'tix creationTime not exist for id: ${tix.id}');
       isModelChanged = true;
     }
     try {
@@ -4245,7 +4273,7 @@ class Fresh {
       isModelChanged = true;
     }
 
-    if (isModelChanged && shouldUpdate) {
+    if (isModelChanged && shouldUpdate && UserPreferences.myUser.clearanceLevel>=Constants.ADMIN_LEVEL) {
       Logx.i(_TAG, 'updating tix ${tix.id}');
       FirestoreHelper.pushTix(tix);
     }

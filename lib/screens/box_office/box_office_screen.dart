@@ -7,12 +7,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../db/entity/celebration.dart';
 import '../../db/entity/challenge.dart';
 import '../../db/entity/party.dart';
 import '../../db/entity/party_guest.dart';
 import '../../db/entity/reservation.dart';
-import '../../db/entity/user.dart';
 import '../../db/shared_preferences/user_preferences.dart';
 import '../../helpers/dummy.dart';
 import '../../helpers/firestore_helper.dart';
@@ -21,13 +19,11 @@ import '../../routes/route_constants.dart';
 import '../../utils/constants.dart';
 import '../../utils/logx.dart';
 import '../../widgets/box_office/box_office_guest_list_item.dart';
-import '../../widgets/celebrations/celebration_banner.dart';
 import '../../widgets/parties/party_guest_list_banner.dart';
 import '../../widgets/reservations/reservation_banner.dart';
 import '../../widgets/ui/loading_widget.dart';
 import '../../widgets/ui/sized_listview_block.dart';
 import '../promoter/promoter_guests_screen.dart';
-import '../user/celebration_add_edit_screen.dart';
 
 class BoxOfficeScreen extends StatefulWidget {
   const BoxOfficeScreen({super.key});
@@ -49,15 +45,17 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
   List<Challenge> challenges = [];
   bool isChallengesLoading = true;
 
+  bool showPromoterView = false;
+
   @override
   void initState() {
-    mOptions = ['guest list', 'reservations', 'celebrations'];
+    showPromoterView = UserPreferences.myUser.clearanceLevel >= Constants.PROMOTER_LEVEL;
+
+    mOptions = ['guest list', 'tickets'];
     sOption = mOptions.first;
 
     int timeNow = Timestamp.now().millisecondsSinceEpoch;
     FirestoreHelper.pullPartiesByEndTime(timeNow, true).then((res) {
-      Logx.i(_TAG, "successfully pulled in parties");
-
       if (res.docs.isNotEmpty) {
         List<Party> parties = [];
 
@@ -110,8 +108,6 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    User user = UserPreferences.myUser;
-
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.black,
@@ -132,12 +128,12 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
       ),
       backgroundColor: Constants.background,
       floatingActionButton:
-          (user.clearanceLevel >= Constants.PROMOTER_LEVEL && !kIsWeb)
+          (showPromoterView && !kIsWeb)
               ? FloatingActionButton(
                   onPressed: () {
                     ScanUtils.scanCode(context);
                   },
-                  backgroundColor: Theme.of(context).primaryColor,
+                  backgroundColor: Constants.primary,
                   tooltip: 'scan code',
                   elevation: 5,
                   splashColor: Colors.grey,
@@ -161,10 +157,28 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
+                showPromoterView?
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text('switch view', style: TextStyle(fontSize:18, color: Constants.primary),),
+                          const Divider(),
+                          ButtonWidget(text: 'promoter -> user',
+                          onClicked: () {
+                            setState(() {
+                              showPromoterView = !showPromoterView;
+                              Logx.ist(_TAG, 'promoter view $showPromoterView');
+                            });
+                          },)
+                        ],
+                      ),
+                    )
+                    : const SizedBox(),
                 _showBoxOfficeOptions(context),
                 const Divider(),
-                UserPreferences.myUser.clearanceLevel >=
-                        Constants.PROMOTER_LEVEL
+                showPromoterView
                     ? switchPromoterOptions(context)
                     : switchUserOptions(context)
               ],
@@ -175,10 +189,8 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
   switchPromoterOptions(BuildContext context  ) {
     if (sOption == 'guest list') {
       return displayGuestListParties(context);
-    } else if (sOption == 'reservations') {
-      return buildReservations(context);
-    } else if (sOption == 'celebrations') {
-      return buildCelebrations(context);
+    } else if (sOption == 'tickets') {
+      return buildTickets(context);
     } else {
       // unsupported
     }
@@ -187,10 +199,8 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
   switchUserOptions(BuildContext context) {
     if (sOption == 'guest list') {
       return buildUserPartyGuestList(context);
-    } else if (sOption == 'reservations') {
-      return buildUserReservations(context);
-    } else if (sOption == 'celebrations') {
-      return buildUserCelebrations(context);
+    } else if (sOption == 'tickets') {
+      return buildUserTickets(context);
     } else {
       // unsupported
     }
@@ -211,8 +221,8 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
                 child: SizedListViewBlock(
                   title: mOptions[index],
                   height: containerHeight,
-                  width: MediaQuery.of(context).size.width / 3,
-                  color: Theme.of(context).primaryColor,
+                  width: MediaQuery.of(context).size.width / 2,
+                  color: Constants.primary,
                 ),
                 onTap: () {
                   setState(() {
@@ -224,143 +234,72 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
     );
   }
 
-  buildReservations(BuildContext context) {
+  buildTickets(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
       stream: FirestoreHelper.getReservations(),
       builder: (ctx, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const LoadingWidget();
-        }
-        if (snapshot.hasData) {
-          List<Reservation> reservations = [];
-          if (snapshot.data!.docs.isEmpty) {
-            return showReserveTableButton();
-          } else {
-            for (int i = 0; i < snapshot.data!.docs.length; i++) {
-              DocumentSnapshot document = snapshot.data!.docs[i];
-              Map<String, dynamic> map =
-                  document.data()! as Map<String, dynamic>;
-              final Reservation reservation =
-                  Fresh.freshReservationMap(map, false);
-              reservations.add(reservation);
-
-              if (i == snapshot.data!.docs.length - 1) {
-                return displayReservations(context, reservations);
+        switch (snapshot.connectionState) {
+          case ConnectionState.waiting:
+          case ConnectionState.none:
+            return const LoadingWidget();
+          case ConnectionState.active:
+          case ConnectionState.done:{
+          if (snapshot.hasData) {
+            List<Reservation> reservations = [];
+            if (snapshot.data!.docs.isEmpty) {
+              return showReserveTableButton();
+            } else {
+              for (int i = 0; i < snapshot.data!.docs.length; i++) {
+                DocumentSnapshot document = snapshot.data!.docs[i];
+                Map<String, dynamic> map =
+                document.data()! as Map<String, dynamic>;
+                final Reservation reservation =
+                Fresh.freshReservationMap(map, false);
+                reservations.add(reservation);
               }
+              return displayReservations(context, reservations);
             }
+          } else {
+            return showReserveTableButton();
           }
-        } else {
-          return showReserveTableButton();
         }
-        return const LoadingWidget();
-      },
+        }},
     );
   }
 
-  buildUserReservations(BuildContext context) {
+  buildUserTickets(BuildContext context) {
     Logx.i(_TAG,
-        'searching for reservations for user ${UserPreferences.myUser.id}');
+        'searching for tickets for user ${UserPreferences.myUser.id}');
 
     return StreamBuilder<QuerySnapshot>(
       stream: FirestoreHelper.getReservationsByUser(UserPreferences.myUser.id),
       builder: (ctx, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const LoadingWidget();
-        }
-
-        if (snapshot.hasData) {
-          List<Reservation> reservations = [];
-          if (snapshot.data!.docs.isEmpty) {
+        switch (snapshot.connectionState) {
+          case ConnectionState.waiting:
+          case ConnectionState.none:
+            return const LoadingWidget();
+          case ConnectionState.active:
+          case ConnectionState.done:
+          if (snapshot.hasData) {
+            List<Reservation> reservations = [];
+            if (snapshot.data!.docs.isEmpty) {
+              return showReserveTableButton();
+            } else {
+              for (int i = 0; i < snapshot.data!.docs.length; i++) {
+                DocumentSnapshot document = snapshot.data!.docs[i];
+                Map<String, dynamic> map =
+                document.data()! as Map<String, dynamic>;
+                final Reservation reservation =
+                Fresh.freshReservationMap(map, false);
+                reservations.add(reservation);
+              }
+              return displayReservations(context, reservations);
+            }
+          } else {
             return showReserveTableButton();
-          } else {
-            for (int i = 0; i < snapshot.data!.docs.length; i++) {
-              DocumentSnapshot document = snapshot.data!.docs[i];
-              Map<String, dynamic> map =
-                  document.data()! as Map<String, dynamic>;
-              final Reservation reservation =
-                  Fresh.freshReservationMap(map, false);
-              reservations.add(reservation);
-
-              if (i == snapshot.data!.docs.length - 1) {
-                return displayReservations(context, reservations);
-              }
-            }
           }
-        } else {
-          return showReserveTableButton();
         }
-        return const LoadingWidget();
-      },
-    );
-  }
-
-  buildCelebrations(BuildContext context) {
-    return StreamBuilder<QuerySnapshot>(
-      stream: FirestoreHelper.getCelebrations(),
-      builder: (ctx, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const LoadingWidget();
-        }
-        if (snapshot.hasData) {
-          List<Celebration> celebrations = [];
-          if (snapshot.data!.docs.isEmpty) {
-            return showCelebrateButton();
-          } else {
-            for (int i = 0; i < snapshot.data!.docs.length; i++) {
-              DocumentSnapshot document = snapshot.data!.docs[i];
-              Map<String, dynamic> map =
-                  document.data()! as Map<String, dynamic>;
-              final Celebration celebration =
-                  Fresh.freshCelebrationMap(map, false);
-              celebrations.add(celebration);
-
-              if (i == snapshot.data!.docs.length - 1) {
-                return displayCelebrations(context, celebrations);
-              }
-            }
-          }
-        } else {
-          return showCelebrateButton();
-        }
-        return const LoadingWidget();
-      },
-    );
-  }
-
-  buildUserCelebrations(BuildContext context) {
-    Logx.i(_TAG,
-        'searching for celebrations for user ${UserPreferences.myUser.id}');
-
-    return StreamBuilder<QuerySnapshot>(
-      stream: FirestoreHelper.getCelebrationsByUser(UserPreferences.myUser.id),
-      builder: (ctx, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const LoadingWidget();
-        }
-
-        if (snapshot.hasData) {
-          List<Celebration> celebrations = [];
-          if (snapshot.data!.docs.isEmpty) {
-            return showCelebrateButton();
-          } else {
-            for (int i = 0; i < snapshot.data!.docs.length; i++) {
-              DocumentSnapshot document = snapshot.data!.docs[i];
-              Map<String, dynamic> map =
-                  document.data()! as Map<String, dynamic>;
-              final Celebration celebration =
-                  Fresh.freshCelebrationMap(map, false);
-              celebrations.add(celebration);
-
-              if (i == snapshot.data!.docs.length - 1) {
-                return displayCelebrations(context, celebrations);
-              }
-            }
-          }
-        } else {
-          return showCelebrateButton();
-        }
-        return const LoadingWidget();
-      },
+        },
     );
   }
 
@@ -393,9 +332,7 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
           }
           }
         }
-
-        return const LoadingWidget();
-      },
+        },
     );
   }
 
@@ -445,11 +382,10 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
                   party: mGuestListParties[index],
                 ),
                 onTap: () {
-                  Party _sParty = mGuestListParties[index];
-                  Logx.i(_TAG, '${_sParty.name} is selected');
+                  Party sParty = mGuestListParties[index];
 
                   Navigator.of(context).push(MaterialPageRoute(
-                      builder: (ctx) => PromoterGuestsScreen(party: _sParty)));
+                      builder: (ctx) => PromoterGuestsScreen(party: sParty)));
                 });
           }),
     );
@@ -466,7 +402,6 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
                   reservation: reservations[index],
                   isPromoter: UserPreferences.myUser.clearanceLevel >=
                       Constants.PROMOTER_LEVEL,
-                  parties: mParties,
                 ),
                 onTap: () {
                   Reservation _sReservation = reservations[index];
@@ -476,33 +411,6 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (ctx) => ReservationAddEditScreen(
                             reservation: _sReservation,
-                            task: 'edit',
-                          )));
-                });
-          }),
-    );
-  }
-
-  displayCelebrations(BuildContext context, List<Celebration> celebrations) {
-    return Expanded(
-      child: ListView.builder(
-          itemCount: celebrations.length,
-          scrollDirection: Axis.vertical,
-          itemBuilder: (ctx, index) {
-            return GestureDetector(
-                child: CelebrationBanner(
-                  celebration: celebrations[index],
-                  isPromoter: UserPreferences.myUser.clearanceLevel >=
-                      Constants.PROMOTER_LEVEL,
-                ),
-                onTap: () {
-                  Celebration _sCelebration = celebrations[index];
-                  Logx.i(
-                      _TAG, '${_sCelebration.name}\'s celebration is selected');
-
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (ctx) => CelebrationAddEditScreen(
-                            celebration: _sCelebration,
                             task: 'edit',
                           )));
                 });
@@ -575,38 +483,4 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
     );
   }
 
-  showCelebrateButton() {
-    return Expanded(
-      child: Center(
-          child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            'Step into a world of celebration and sophistication at our cocktail rooftop bar. Whether it\'s your anniversary, birthday, or a corporate event, our venue is tailor-made to accommodate large groups, ensuring a night to remember. Come and indulge in the magic of elevated celebrations! 🍾'
-                .toLowerCase(),
-            textAlign: TextAlign.center,
-            style: const TextStyle(fontSize: 22, color: Constants.primary),
-          ),
-          const SizedBox(height: 16),
-          Text(
-            'click to celebrate with us!'.toLowerCase(),
-            style: const TextStyle(fontSize: 16, color: Constants.primary),
-          ),
-          const SizedBox(height: 16),
-          ButtonWidget(
-            text: 'celebrate',
-            height: 50,
-            onClicked: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                    builder: (ctx) => CelebrationAddEditScreen(
-                        celebration: Dummy.getDummyCelebration(Constants.blocServiceId),
-                        task: 'add')),
-              );
-            },
-          ),
-        ],
-      )),
-    );
-  }
 }

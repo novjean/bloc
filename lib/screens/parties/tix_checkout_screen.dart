@@ -6,6 +6,7 @@ import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:phonepe_payment_sdk/phonepe_payment_sdk.dart';
 import 'package:http/http.dart' as http;
 
@@ -16,6 +17,7 @@ import '../../db/shared_preferences/user_preferences.dart';
 import '../../helpers/dummy.dart';
 import '../../helpers/fresh.dart';
 import '../../main.dart';
+import '../../routes/route_constants.dart';
 import '../../utils/constants.dart';
 import '../../utils/logx.dart';
 import '../../utils/number_utils.dart';
@@ -103,7 +105,7 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
   String environment = "UAT_SIM";
   String appId = "";
   String merchantId = "PGTESTPAYUAT";
-  String transactionId = DateTime.now().millisecondsSinceEpoch.toString();
+  String merchantTransactionId = DateTime.now().millisecondsSinceEpoch.toString();
 
   bool enableLogging = true;
 
@@ -138,7 +140,7 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
 
     final requestData = {
       "merchantId": merchantId,
-      "merchantTransactionId": transactionId,
+      "merchantTransactionId": merchantTransactionId,
       "merchantUserId": merchantUserId,
       "amount": amount,
       "mobileNumber": mobileNumber,
@@ -240,9 +242,6 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
             _showTixTiers(context, mTixTiers),
 
             const SizedBox(height: 20),
-            // widget.task == 'buy'
-            //     ? _showBuyTixTiers(context)
-            //     : _showTixTiers(context),
             const SizedBox(height: 70,),
           ],
         ),
@@ -252,8 +251,6 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
             right: 0,
             bottom: 0,
             child: _showTixPricePurchase(context)
-
-            // _loadTixTiers(context)
         ),
       ],
     );
@@ -360,11 +357,11 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
 
   checkStatus() async {
     try {
-      String prodUrl = "https://api.phonepe.com/apis/hermes/pg/v1/status/$merchantId/$transactionId";
-      String url = "https://api-preprod.phonepe.com/apis/pg-sandbox/pg/v1/status/$merchantId/$transactionId";
+      String prodUrl = "https://api.phonepe.com/apis/hermes/pg/v1/status/$merchantId/$merchantTransactionId";
+      String url = "https://api-preprod.phonepe.com/apis/pg-sandbox/pg/v1/status/$merchantId/$merchantTransactionId";
       
       //SHA256("/pg/v1/status/{merchantId}/{merchantTransactionId}" + saltKey) + "###" + saltIndex
-      String concatString = "/pg/v1/status/$merchantId/$transactionId$saltKey";
+      String concatString = "/pg/v1/status/$merchantId/$merchantTransactionId$saltKey";
       
       var bytes = utf8.encode(concatString);
       var digest = sha256.convert(bytes).toString();
@@ -381,11 +378,29 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
           Map<String, dynamic> res = jsonDecode(value.body);
 
           Logx.d(_TAG, res.toString());
+
+          widget.tix = widget.tix.copyWith(
+              merchantTransactionId: merchantTransactionId
+          );
       
-          if(res["success"] && res["code"] == "PAYMENT_SUCCESS" && res['data']['state'] == "COMPLETED"){
+          if(res["success"] && res["code"] == "PAYMENT_SUCCESS"
+              && res['data']['state'] == "COMPLETED"){
             Logx.ilt(_TAG, res["message"]);
+
+            widget.tix = widget.tix.copyWith(
+                merchantTransactionId: res['data']['merchantTransactionId'],
+                transactionResponseCode: res['data']['responseCode'],
+                isSuccess: true,
+                isCompleted: true,
+            );
+            FirestoreHelper.pushTix(widget.tix);
+
+            //final step
+            GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
+            GoRouter.of(context)
+                .pushNamed(RouteConstants.boxOfficeRouteName);
           } else {
-            Logx.ist(_TAG, "something went wrong");
+            Logx.ist(_TAG, "payment not successful, please try again");
           }
         });
       } on Exception catch (e) {

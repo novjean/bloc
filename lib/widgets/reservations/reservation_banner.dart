@@ -16,10 +16,9 @@ class ReservationBanner extends StatelessWidget {
   static const String _TAG = 'ReservationBanner';
   final Reservation reservation;
   final bool isPromoter;
-  final List<Party> parties;
 
   const ReservationBanner(
-      {Key? key, required this.reservation, required this.isPromoter, required this.parties})
+      {Key? key, required this.reservation, required this.isPromoter})
       : super(key: key);
 
   @override
