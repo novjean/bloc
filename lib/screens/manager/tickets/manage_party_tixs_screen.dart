@@ -543,7 +543,7 @@ class _ManagePartyTixsScreenState extends State<ManagePartyTixsScreen> {
             party: widget.party,
             isClickable: true,
           );
-        },
+          },
       ),
     );
   }

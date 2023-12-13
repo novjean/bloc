@@ -213,12 +213,8 @@ class _ManagePartiesScreenState extends State<ManagePartiesScreen> {
             Map<String, dynamic> map = document.data()! as Map<String, dynamic>;
             final Genre genre = Fresh.freshGenreMap(map, false);
             genres.add(genre);
-
-            if (i == snapshot.data!.docs.length - 1) {
-              return _displayGenres(context, genres);
-            }
           }
-          return const LoadingWidget();
+          return _displayGenres(context, genres);
         });
   }
 
@@ -255,11 +251,11 @@ class _ManagePartiesScreenState extends State<ManagePartiesScreen> {
             child: SingleChildScrollView(
               child: Column(
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 20),
+                  const Padding(
+                    padding: EdgeInsets.only(bottom: 20),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
-                      children: const [
+                      children: [
                         Text(
                           'add options',
                           style: TextStyle(fontSize: 18),

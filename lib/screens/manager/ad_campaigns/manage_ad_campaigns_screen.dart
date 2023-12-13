@@ -103,7 +103,7 @@ class ManageAdCampaignsScreen extends StatelessWidget {
                 ),
                 onTap: () {
                   AdCampaign sAdCampaign = adCampaigns[index];
-                  Logx.i(_TAG, '${sAdCampaign.name} : ${sAdCampaign.adClick}');
+                  Logx.i(_TAG, '${sAdCampaign.name} : ${sAdCampaign.clickCount}');
 
                   Navigator.of(context).push(
                     MaterialPageRoute(

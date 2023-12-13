@@ -86,7 +86,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                   _isTixTiersLoading = false;
                 });
               } else {
-                Logx.em(_TAG, 'no tix tiers found for ${mTix.partyId}');
+                Logx.em(_TAG, 'no tix tiers found for tix id ${mTix.id}');
               }
             });
       } else {

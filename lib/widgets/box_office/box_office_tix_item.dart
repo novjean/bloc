@@ -1,13 +1,11 @@
 import 'package:barcode_widget/barcode_widget.dart';
 import 'package:bloc/db/shared_preferences/user_preferences.dart';
 import 'package:bloc/helpers/firestore_helper.dart';
-import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../db/entity/challenge.dart';
-import '../../db/entity/challenge_action.dart';
 import '../../db/entity/history_music.dart';
 import '../../db/entity/party.dart';
 import '../../db/entity/party_interest.dart';
@@ -16,13 +14,10 @@ import '../../db/entity/user.dart';
 import '../../helpers/dummy.dart';
 import '../../helpers/fresh.dart';
 import '../../main.dart';
-import '../../screens/parties/party_guest_add_edit_manage_screen.dart';
 import '../../utils/constants.dart';
 import '../../utils/date_time_utils.dart';
-import '../../utils/file_utils.dart';
 import '../../utils/logx.dart';
 import '../../utils/network_utils.dart';
-import '../../utils/string_utils.dart';
 
 class BoxOfficeTixItem extends StatefulWidget {
   Tix tix;
@@ -72,12 +67,6 @@ class _BoxOfficeTixItemState extends State<BoxOfficeTixItem> {
   @override
   Widget build(BuildContext context) {
     String title = '${widget.party.name}';
-
-    // int friendsCount = widget.tix. - 1;
-    //
-    // if (friendsCount > 0) {
-    //   title += ' +$friendsCount';
-    // }
 
     return Hero(
       tag: widget.tix.id,
@@ -148,25 +137,6 @@ class _BoxOfficeTixItemState extends State<BoxOfficeTixItem> {
               const SizedBox(
                 height: 5,
               ),
-              // Row(
-              //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              //   children: [
-              //     (widget.party.ticketUrl.isNotEmpty &&
-              //         !widget.party.isTicketsDisabled)
-              //         ? _showBuyTicketButton(context)
-              //         : _showDisabledBuyTicketButton(context),
-              //     widget.tix.isApproved
-              //         ? _showApprovedButton(context)
-              //         : widget.party.isGuestListFull
-              //         ? _showGuestListFullButton(context)
-              //         : _showPendingButton(context),
-              //     widget.tix.isApproved
-              //         ? _showGuestListEntryButton(context)
-              //         : widget.party.isGuestListFull
-              //         ? const SizedBox()
-              //         : _showEditGuestListButton(context)
-              //   ],
-              // ),
             ],
           ),
         ),

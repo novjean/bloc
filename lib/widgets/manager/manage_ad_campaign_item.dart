@@ -50,7 +50,7 @@ class ManageAdCampaignItem extends StatelessWidget{
                   subtitle: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('${adCampaign.adClick} hits'),
+                      Text('${adCampaign.clickCount} hits'),
                       Text('party: ${adCampaign.isPartyAd}'),
 
                       // Text(conversion.toStringAsFixed(2), style: const TextStyle(fontWeight: FontWeight.bold),),

@@ -1,27 +1,13 @@
-import 'dart:io';
-
-import 'package:barcode_widget/barcode_widget.dart';
-import 'package:bloc/db/entity/party_guest.dart';
 import 'package:bloc/db/entity/tix.dart';
-import 'package:bloc/db/shared_preferences/user_preferences.dart';
 import 'package:bloc/helpers/firestore_helper.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:share_plus/share_plus.dart';
-import 'package:http/http.dart' as http;
 
-import '../../db/entity/challenge.dart';
 import '../../db/entity/party.dart';
-import '../../main.dart';
-import '../../screens/parties/box_office_guest_confirm_screen.dart';
-import '../../screens/parties/party_guest_add_edit_manage_screen.dart';
+import '../../db/entity/tix_tier_item.dart';
+import '../../helpers/fresh.dart';
 import '../../utils/constants.dart';
-import '../../utils/date_time_utils.dart';
-import '../../utils/file_utils.dart';
 import '../../utils/logx.dart';
-import '../../utils/network_utils.dart';
-import '../ui/toaster.dart';
 
 class PromoterTixDataItem extends StatefulWidget {
   Tix tix;
@@ -42,6 +28,34 @@ class PromoterTixDataItem extends StatefulWidget {
 class _PromoterTixDataItemState extends State<PromoterTixDataItem> {
   static const String _TAG = 'PromoterTixDataItem';
 
+  List<TixTier> mTixTiers = [];
+  var _isTixTiersLoading = true;
+
+  int tixCount = 0;
+
+  @override
+  void initState() {
+    FirestoreHelper.pullTixTiersByTixId(widget.tix.id).then((res) {
+      if (res.docs.isNotEmpty) {
+        for (int i = 0; i < res.docs.length; i++) {
+          DocumentSnapshot document = res.docs[i];
+          Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+          final TixTier tixTier = Fresh.freshTixTierMap(data, false);
+          mTixTiers.add(tixTier);
+
+          tixCount += tixTier.tixTierCount;
+        }
+
+        setState(() {
+          _isTixTiersLoading = false;
+        });
+      } else {
+        Logx.em(_TAG, 'no tix tiers found for tix id ${widget.tix.id}');
+      }
+    });
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     String title =
@@ -49,20 +63,46 @@ class _PromoterTixDataItemState extends State<PromoterTixDataItem> {
 
     return GestureDetector(
       onTap: () {
-        Navigator.of(context).push(
-          MaterialPageRoute(
-              builder: (ctx) => BoxOfficeGuestConfirmScreen(
-                partyGuestId: widget.tix.id,
-              )),
-        );
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                backgroundColor: Constants.lightPrimary,
+                shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                contentPadding: const EdgeInsets.all(16.0),
+                title: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(widget.tix.userName),
+                    Text('${widget.tix.total}'),
+                  ],
+                ),
+                content: Container(
+                  height: (100 * mTixTiers.length).toDouble(), // Change as per your requirement
+                  width: 300, // Change as per your requirement
+                  child: ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: mTixTiers.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      TixTier tixTier = mTixTiers[index];
+
+                      return ListTile(
+                        title: Text(tixTier.tixTierName),
+                        subtitle: Text('${tixTier.tixTierCount} x ${tixTier.tixTierPrice}'),
+                      );
+                    },
+                  ),
+                ),
+              );
+            });
       },
       child: Hero(
         tag: widget.tix.id,
         child: Card(
           elevation: 1,
           color: Constants.lightPrimary,
-          shape:
-          RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
           child: SizedBox(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 1),
@@ -82,6 +122,15 @@ class _PromoterTixDataItemState extends State<PromoterTixDataItem> {
                           overflow: TextOverflow.ellipsis,
                           textAlign: TextAlign.left,
                         ),
+                        _isTixTiersLoading ? const SizedBox() : Text(
+                          tixCount.toString(),
+                          style: const TextStyle(
+                            fontSize: 20.0,
+                            fontWeight: FontWeight.w800,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                          textAlign: TextAlign.right,
+                        )
                       ],
                     ),
                     Text(

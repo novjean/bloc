@@ -171,7 +171,7 @@ class _AdCampaignAddEditScreenState extends State<AdCampaignAddEditScreen> {
         const SizedBox(height: 24),
         TextFieldWidget(
           label: 'click count',
-          text: widget.adCampaign.adClick.toString(),
+          text: widget.adCampaign.clickCount.toString(),
           onChanged: (value) {},
         ),
         const SizedBox(height: 24),
