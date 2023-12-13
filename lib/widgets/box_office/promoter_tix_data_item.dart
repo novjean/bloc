@@ -70,12 +70,12 @@ class _PromoterTixDataItemState extends State<PromoterTixDataItem> {
                 backgroundColor: Constants.lightPrimary,
                 shape: const RoundedRectangleBorder(
                     borderRadius: BorderRadius.all(Radius.circular(10.0))),
-                contentPadding: const EdgeInsets.all(16.0),
+                contentPadding: const EdgeInsets.all(10.0),
                 title: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(widget.tix.userName),
-                    Text('${widget.tix.total}'),
+                    Text('\u20B9 ${widget.tix.total.toStringAsFixed(0)}'),
                   ],
                 ),
                 content: Container(

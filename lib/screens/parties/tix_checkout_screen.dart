@@ -46,6 +46,7 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
 
   double igst = 0;
   double subTotal = 0;
+  double bookingFee = 0;
   double grandTotal = 0;
 
   @override
@@ -69,18 +70,26 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
 
     FirestoreHelper.pullTixTiersByTixId(widget.tix.id).then((res) {
       if (res.docs.isNotEmpty) {
+        double tixTotal = 0;
         for (int i = 0; i < res.docs.length; i++) {
           DocumentSnapshot document = res.docs[i];
           Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
           final TixTier tixTier = Fresh.freshTixTierMap(data, false);
           mTixTiers.add(tixTier);
 
-          subTotal += tixTier.tixTierCount * tixTier.tixTierPrice;
+          tixTotal += tixTier.tixTierCount * tixTier.tixTierPrice;
         }
 
-        igst = subTotal * Constants.igstPercent;
-        subTotal += igst;
-        grandTotal = subTotal;
+        // igst 15.25%
+        // booking fee 5.9%
+
+        igst = tixTotal * Constants.igstPercent;
+        subTotal = tixTotal - igst;
+        bookingFee = tixTotal * Constants.bookingFeePercent;
+        grandTotal = subTotal + igst + bookingFee;
+
+        widget.tix = widget.tix.copyWith(igst: igst, subTotal: subTotal, bookingFee: bookingFee, total: grandTotal);
+        FirestoreHelper.pushTix(widget.tix);
 
         setState(() {
           _isTixTiersLoading = false;
@@ -199,6 +208,10 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+          fontFamily: Constants.fontDefault
+      ),
       home: Scaffold(
         backgroundColor: Constants.background,
         appBar: AppBar(
@@ -261,9 +274,9 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               const Text(
-                'IST',
+                'IGST',
               ),
-              Text('\u20B9 ${igst.toStringAsFixed(0)}')
+              Text('\u20B9 ${igst.toStringAsFixed(2)}')
             ],
           ),
         ),
@@ -277,7 +290,20 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
               const Text(
                 'sub-total',
               ),
-              Text('\u20B9 ${subTotal.toStringAsFixed(0)}')
+              Text('\u20B9 ${subTotal.toStringAsFixed(2)}')
+            ],
+          ),
+        ),
+        Container(
+          color: Constants.primary,
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              const Text(
+                'booking fee',
+              ),
+              Text('\u20B9 ${bookingFee.toStringAsFixed(2)}')
             ],
           ),
         ),
@@ -292,7 +318,7 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               Text(
-                '\u20B9 ${grandTotal.toStringAsFixed(0)}',
+                '\u20B9 ${grandTotal.toStringAsFixed(2)}',
                 style:
                     const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               )

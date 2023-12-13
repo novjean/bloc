@@ -17,16 +17,16 @@ import '../../widgets/ui/app_bar_title.dart';
 import '../../widgets/ui/dark_button_widget.dart';
 import '../routes/route_constants.dart';
 
-class CheckoutScreen extends StatefulWidget {
+class SampleCheckoutScreen extends StatefulWidget {
 
-  CheckoutScreen({key}) : super(key: key);
+  SampleCheckoutScreen({key}) : super(key: key);
 
   @override
-  State<CheckoutScreen> createState() => _CheckoutScreenState();
+  State<SampleCheckoutScreen> createState() => _SampleCheckoutScreenState();
 }
 
-class _CheckoutScreenState extends State<CheckoutScreen> {
-  static const String _TAG = 'CheckoutScreen';
+class _SampleCheckoutScreenState extends State<SampleCheckoutScreen> {
+  static const String _TAG = 'SampleCheckoutScreen';
 
   Tix mTix = Dummy.getDummyTix();
   var _isTixLoading = true;

@@ -73,6 +73,7 @@ class Constants {
   static String configQuickOrder = 'quick order';
 
   /** ticketing **/
-  static double igstPercent = 0.18;
+  static double igstPercent = 0.1525;
+  static double bookingFeePercent = 0.059;
 
 }

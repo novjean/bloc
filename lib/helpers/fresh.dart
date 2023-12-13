@@ -4121,6 +4121,23 @@ class Fresh {
     }
 
     try {
+      fresh = fresh.copyWith(igst: tix.igst);
+    } catch (e) {
+      Logx.em(_TAG,
+          'tix igst not exist for id: ${tix.id}');
+    }
+    try {
+      fresh = fresh.copyWith(subTotal: tix.subTotal);
+    } catch (e) {
+      Logx.em(_TAG,
+          'tix subTotal not exist for id: ${tix.id}');
+    }
+    try {
+      fresh = fresh.copyWith(bookingFee: tix.bookingFee);
+    } catch (e) {
+      Logx.em(_TAG, 'tix bookingFee not exist for id: ${tix.id}');
+    }
+    try {
       fresh = fresh.copyWith(total: tix.total);
     } catch (e) {
       Logx.em(_TAG,
@@ -4155,8 +4172,7 @@ class Fresh {
     try {
       fresh = fresh.copyWith(isSuccess: tix.isSuccess);
     } catch (e) {
-      Logx.em(_TAG,
-          'tix isSuccess not exist for id: ${tix.id}');
+      Logx.em(_TAG, 'tix isSuccess not exist for id: ${tix.id}');
     }
     try {
       fresh = fresh.copyWith(isCompleted: tix.isCompleted);
@@ -4217,6 +4233,24 @@ class Fresh {
       isModelChanged = true;
     }
 
+    try {
+      tix = tix.copyWith(igst: map['igst'] as double);
+    } catch (e) {
+      Logx.em(_TAG, 'tix igst not exist for id: ${tix.id}');
+      isModelChanged = true;
+    }
+    try {
+      tix = tix.copyWith(subTotal: map['subTotal'] as double);
+    } catch (e) {
+      Logx.em(_TAG, 'tix subTotal not exist for id: ${tix.id}');
+      isModelChanged = true;
+    }
+    try {
+      tix = tix.copyWith(bookingFee: map['bookingFee'] as double);
+    } catch (e) {
+      Logx.em(_TAG, 'tix bookingFee not exist for id: ${tix.id}');
+      isModelChanged = true;
+    }
     try {
       tix = tix.copyWith(total: map['total'] as double);
     } catch (e) {

@@ -387,7 +387,7 @@ class Dummy {
         id: StringUtils.getRandomString(28),
         partyId: '',
         userIds: [],
-        initCount: 1);
+        initCount: 10);
     return partyInterest;
   }
 
@@ -557,6 +557,9 @@ class Dummy {
         userName: '${UserPreferences.myUser.name} ${UserPreferences.myUser.surname}',
         userEmail: UserPreferences.myUser.email,
         userPhone: UserPreferences.myUser.phoneNumber.toString(),
+        igst: 0,
+        subTotal: 0,
+        bookingFee: 0,
         total: 0,
         merchantTransactionId: '',
         transactionId: '',

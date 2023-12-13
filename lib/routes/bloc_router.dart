@@ -15,7 +15,7 @@ import 'package:bloc/db/entity/user.dart' as blocUser;
 import '../helpers/firestore_helper.dart';
 import '../helpers/fresh.dart';
 import '../main.dart';
-import '../screens/checkout_screen.dart';
+import '../screens/sample_checkout_screen.dart';
 import '../screens/contact_us_screen.dart';
 import '../screens/delivery_policy_screen.dart';
 import '../screens/error_page.dart';
@@ -196,7 +196,7 @@ class BlocRouter {
           builder: (context, state) {
             Logx.d(_TAG, '/checkout');
 
-            return CheckoutScreen();
+            return SampleCheckoutScreen();
           },
         ),
         GoRoute(

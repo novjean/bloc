@@ -7,6 +7,9 @@ class Tix {
   String userPhone;
   String userEmail;
 
+  double igst;
+  double subTotal;
+  double bookingFee;
   double total;
 
   String merchantTransactionId;
@@ -27,6 +30,9 @@ class Tix {
     required this.userName,
     required this.userPhone,
     required this.userEmail,
+    required this.igst,
+    required this.subTotal,
+    required this.bookingFee,
     required this.total,
     required this.merchantTransactionId,
     required this.transactionId,
@@ -48,6 +54,9 @@ class Tix {
           userName == other.userName &&
           userPhone == other.userPhone &&
           userEmail == other.userEmail &&
+          igst == other.igst &&
+          subTotal == other.subTotal &&
+          bookingFee == other.bookingFee &&
           total == other.total &&
           merchantTransactionId == other.merchantTransactionId &&
           transactionId == other.transactionId &&
@@ -65,6 +74,9 @@ class Tix {
       userName.hashCode ^
       userPhone.hashCode ^
       userEmail.hashCode ^
+      igst.hashCode ^
+      subTotal.hashCode ^
+      bookingFee.hashCode ^
       total.hashCode ^
       merchantTransactionId.hashCode ^
       transactionId.hashCode ^
@@ -83,6 +95,9 @@ class Tix {
         ' userName: $userName,' +
         ' userPhone: $userPhone,' +
         ' userEmail: $userEmail,' +
+        ' igst: $igst,' +
+        ' subTotal: $subTotal,' +
+        ' bookingFee: $bookingFee,' +
         ' total: $total,' +
         ' merchantTransactionId: $merchantTransactionId,' +
         ' transactionId: $transactionId,' +
@@ -101,6 +116,9 @@ class Tix {
     String? userName,
     String? userPhone,
     String? userEmail,
+    double? igst,
+    double? subTotal,
+    double? bookingFee,
     double? total,
     String? merchantTransactionId,
     String? transactionId,
@@ -117,6 +135,9 @@ class Tix {
       userName: userName ?? this.userName,
       userPhone: userPhone ?? this.userPhone,
       userEmail: userEmail ?? this.userEmail,
+      igst: igst ?? this.igst,
+      subTotal: subTotal ?? this.subTotal,
+      bookingFee: bookingFee ?? this.bookingFee,
       total: total ?? this.total,
       merchantTransactionId:
           merchantTransactionId ?? this.merchantTransactionId,
@@ -138,6 +159,9 @@ class Tix {
       'userName': this.userName,
       'userPhone': this.userPhone,
       'userEmail': this.userEmail,
+      'igst': this.igst,
+      'subTotal': this.subTotal,
+      'bookingFee': this.bookingFee,
       'total': this.total,
       'merchantTransactionId': this.merchantTransactionId,
       'transactionId': this.transactionId,
@@ -157,6 +181,9 @@ class Tix {
       userName: map['userName'] as String,
       userPhone: map['userPhone'] as String,
       userEmail: map['userEmail'] as String,
+      igst: map['igst'] as double,
+      subTotal: map['subTotal'] as double,
+      bookingFee: map['bookingFee'] as double,
       total: map['total'] as double,
       merchantTransactionId: map['merchantTransactionId'] as String,
       transactionId: map['transactionId'] as String,
