@@ -20,6 +20,7 @@ import '../../utils/constants.dart';
 import '../../utils/logx.dart';
 import '../../widgets/box_office/box_office_guest_list_item.dart';
 import '../../widgets/box_office/box_office_tix_item.dart';
+import '../../widgets/box_office/box_office_tix_item.dart';
 import '../../widgets/parties/party_box_office_banner.dart';
 import '../../widgets/reservations/reservation_banner.dart';
 import '../../widgets/ui/loading_widget.dart';
@@ -309,7 +310,6 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
                 tix: sTix,
                 party: sParty,
                 isClickable: true,
-                challenges: challenges,
               );
             }
           }),

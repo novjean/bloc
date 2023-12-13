@@ -1,36 +1,27 @@
 import 'package:barcode_widget/barcode_widget.dart';
-import 'package:bloc/db/shared_preferences/user_preferences.dart';
 import 'package:bloc/helpers/firestore_helper.dart';
+import 'package:bloc/utils/date_time_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
-import '../../db/entity/challenge.dart';
-import '../../db/entity/history_music.dart';
 import '../../db/entity/party.dart';
-import '../../db/entity/party_interest.dart';
 import '../../db/entity/tix.dart';
-import '../../db/entity/user.dart';
-import '../../helpers/dummy.dart';
+import '../../db/entity/tix_tier_item.dart';
 import '../../helpers/fresh.dart';
 import '../../main.dart';
 import '../../utils/constants.dart';
-import '../../utils/date_time_utils.dart';
 import '../../utils/logx.dart';
-import '../../utils/network_utils.dart';
 
 class BoxOfficeTixItem extends StatefulWidget {
   Tix tix;
   final Party party;
   final bool isClickable;
-  final List<Challenge> challenges;
 
   BoxOfficeTixItem(
       {Key? key,
         required this.tix,
         required this.isClickable,
-        required this.party,
-        required this.challenges})
+        required this.party})
       : super(key: key);
 
   @override
@@ -38,104 +29,170 @@ class BoxOfficeTixItem extends StatefulWidget {
 }
 
 class _BoxOfficeTixItemState extends State<BoxOfficeTixItem> {
-  static const String _TAG = 'BoxOfficeItem';
+  static const String _TAG = 'BoxOfficeTixItem';
 
-  PartyInterest mPartyInterest = Dummy.getDummyPartyInterest();
+  List<TixTier> mTixTiers = [];
+  var _isTixTiersLoading = true;
+  int count = 0;
 
   @override
   void initState() {
-
-    super.initState();
-
-    FirestoreHelper.pullPartyInterest(widget.party.id).then((res) {
+    FirestoreHelper.pullTixTiersByTixId(widget.tix.id).then((res) {
       if (res.docs.isNotEmpty) {
-        DocumentSnapshot document = res.docs[0];
-        Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-        final PartyInterest partyInterest =
-        Fresh.freshPartyInterestMap(data, false);
-        if (mounted) {
-          setState(() {
-            mPartyInterest = partyInterest;
-          });
+
+        for (int i = 0; i < res.docs.length; i++) {
+          DocumentSnapshot document = res.docs[i];
+          Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+          final TixTier tixTier = Fresh.freshTixTierMap(data, false);
+          mTixTiers.add(tixTier);
+
+          count += tixTier.tixTierCount;
         }
+
+        setState(() {
+          _isTixTiersLoading = false;
+        });
       } else {
-        // party interest does not exist
+        Logx.em(_TAG, 'no tix tiers found for tix id ${widget.tix.id}');
+
+        setState(() {
+          _isTixTiersLoading = false;
+        });
       }
     });
+
+    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    String title = '${widget.party.name}';
-
     return Hero(
-      tag: widget.tix.id,
+      tag: widget.party.id,
       child: Card(
         elevation: 1,
         color: Constants.lightPrimary,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)),
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 5),
-          width: mq.width,
-          child: ListView(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    title,
-                    style: const TextStyle(
-                      fontSize: 24.0,
-                      fontWeight: FontWeight.w800,
+        child: SizedBox(
+          height: 200,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Flexible(
+                flex: 2,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.only(top: 3, left: 5.0, right: 0.0),
+                      child: Text(
+                        widget.party.name.toLowerCase(),
+                        style: const TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.w800,
+                        ),
+                        textAlign: TextAlign.left,
+                      ),
                     ),
-                  ),
-                  SizedBox(
-                    height: 50,
-                    width: 50,
-                    child: FadeInImage(
-                      placeholder: const AssetImage('assets/icons/logo.png'),
+                    widget.party.eventName.isNotEmpty
+                        ? Padding(
+                      padding: const EdgeInsets.only(left: 5.0, top: 5),
+                      child: Text(
+                        '$count tickets',
+                        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
+                    )
+                        : const SizedBox(),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 5.0),
+                      child: Text(
+                        widget.party.isTBA
+                            ? 'tba'
+                            : '🎊 ${DateTimeUtils.getFormattedDate(widget.party.startTime)}, ${DateTimeUtils.getFormattedTime(widget.party.startTime)}' ,
+                        style: const TextStyle(fontSize: 18),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 5.0),
+                      child: Text('🚪${DateTimeUtils.getFormattedDate(widget.party.endTime)}, ${DateTimeUtils.getFormattedTime(widget.party.endTime)}',
+                        style: const TextStyle(fontSize: 18),
+                      ),
+                    ),
+                    const Spacer(),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Expanded(
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 5),
+                              height: 60,
+                              child: ElevatedButton.icon(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Constants.background,
+                                  foregroundColor: Constants.primary,
+                                  shadowColor: Colors.white30,
+                                  minimumSize: const Size.fromHeight(60),
+                                  shape: const RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.only(
+                                        topLeft: Radius.circular(10), topRight: Radius.circular(10)),
+                                  ),
+                                  elevation: 3,
+                                ),
+                                label: const Text('save', style: TextStyle(fontSize: 18),),
+                                icon: const Icon(
+                                  Icons.file_download_sharp,
+                                  size: 24.0,
+                                ),
+                                onPressed: () {
+                                  // _handleGuestListPressed();
+                                },
+                              ),
+                            )
+                        ),
+                        Expanded(
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 5),
+                              height: 60,
+                              child: ElevatedButton.icon(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Constants.background,
+                                  foregroundColor: Constants.primary,
+                                  shadowColor: Colors.white30,
+                                  minimumSize: const Size.fromHeight(60),
+                                  shape: const RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.only(
+                                        topLeft: Radius.circular(10), topRight: Radius.circular(10)),
+                                  ),
+                                  elevation: 3,
+                                ),
+                                label: const Text('qr', style: TextStyle(fontSize: 18),),
+                                icon: const Icon(
+                                  Icons.qr_code_sharp,
+                                  size: 24.0,
+                                ),
+                                onPressed: () {
+                                  // _showTixDialog(context);
+                                },
+                              ),
+                            )
+                        ),
+
+                      ],)
+                  ],
+                ),
+              ),
+              Flexible(
+                flex: 1,
+                child: Container(
+                  height: 200,
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Constants.primary),
+                    borderRadius: const BorderRadius.all(Radius.circular(1)),
+                    image: DecorationImage(
                       image: NetworkImage(widget.party.imageUrl),
-                      fit: BoxFit.cover,
+                      fit: BoxFit.fitHeight,
                     ),
-                  )
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    widget.party.isTBA
-                        ? 'to be announced'
-                        : DateTimeUtils.getFormattedDate(
-                        widget.party.startTime),
-                    style: const TextStyle(fontSize: 18),
                   ),
-                  Text(
-                    '${widget.party.name} ${widget.party.chapter}',
-                    style: const TextStyle(
-                        fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    widget.party.isTBA
-                        ? ' '
-                        : '${DateTimeUtils.getFormattedTime(widget.party.startTime)} onwards',
-                    style: const TextStyle(fontSize: 18),
-                  ),
-                  Text(
-                    'reach by: ${DateTimeUtils.getFormattedTime(widget.party.guestListEndTime)}',
-                    style: const TextStyle(fontSize: 18),
-                  )
-                ],
-              ),
-              const SizedBox(
-                height: 5,
+                ),
               ),
             ],
           ),
@@ -144,682 +201,93 @@ class _BoxOfficeTixItemState extends State<BoxOfficeTixItem> {
     );
   }
 
-  _showTicketEntryDialog(BuildContext context) {
+  _showTixDialog(BuildContext context) {
     showDialog(
       context: context,
-      builder: (BuildContext context) {
+      barrierDismissible: false,
+      builder: (BuildContext ctx) {
+        String partyName = widget.party.name;
+
+        if(widget.party.chapter != 'I'){
+          partyName += ' ${widget.party.chapter}';
+        }
+
         return AlertDialog(
-          contentPadding: const EdgeInsets.all(16.0),
-          content: SizedBox(
-            height: mq.height * 0.5,
-            width: mq.width * 0.75,
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 20),
-                  child: Text(
-                    '${widget.party.eventName} | ${widget.party.name}',
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(fontSize: 18),
-                  ),
+          contentPadding: const EdgeInsets.all(1.0),
+          backgroundColor: Constants.lightPrimary,
+          shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(10.0))),
+          content: GestureDetector(
+            onTap: () {
+            },
+            child: Container(
+                width: mq.width * 0.75,
+                height: mq.height * 0.5,
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 20),
+                      child: Text(
+                        partyName,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(fontSize: 19, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    Center(
+                        child: BarcodeWidget(
+                          color: Constants.darkPrimary,
+                          barcode: Barcode.qrCode(),
+                          // Barcode type and settings
+                          data: widget.tix.id,
+                          // Content
+                          width: mq.width * 0.5,
+                          height: mq.width * 0.5,
+                        )),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 20),
+                      child: SingleChildScrollView(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Align(
+                              alignment: Alignment.center,
+                              child: Text(
+                                '$count tickets',
+                                style: const TextStyle(fontSize: 16),
+                              ),
+                            ),
+                            Align(
+                              alignment: Alignment.center,
+                              child: Text(
+                                'valid until ${DateTimeUtils.getFormattedTime(widget.party.endTime)}',
+                                style: const TextStyle(fontSize: 16),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-                Center(
-                    child: BarcodeWidget(
-                      color: Constants.darkPrimary,
-                      barcode: Barcode.qrCode(),
-                      // Barcode type and settings
-                      data: widget.tix.id,
-                      // Content
-                      width: mq.width * 0.5,
-                      height: mq.width * 0.5,
-                    )),
-                // Padding(
-                //   padding: const EdgeInsets.only(top: 20),
-                //   child: SingleChildScrollView(
-                //     child: Column(
-                //       mainAxisAlignment: MainAxisAlignment.start,
-                //       children: [
-                //         Align(
-                //           alignment: Alignment.centerRight,
-                //           child: Text(
-                //             '${widget.tix.guestStatus} entry. ${widget.tix.guestsRemaining} guests remaining',
-                //             style: const TextStyle(fontSize: 16),
-                //           ),
-                //         ),
-                //         Align(
-                //           alignment: Alignment.centerRight,
-                //           child: Text(
-                //             'valid until ${DateTimeUtils.getFormattedTime(widget.party.guestListEndTime)}',
-                //             style: const TextStyle(fontSize: 16),
-                //           ),
-                //         ),
-                //       ],
-                //     ),
-                //   ),
-                // ),
-              ],
             ),
           ),
+
           actions: [
             TextButton(
-              child: const Text("close"),
               onPressed: () {
-                Navigator.of(context).pop();
+                Navigator.of(ctx).pop();
               },
+              child: Text(
+                  "close",
+                  style: TextStyle(
+                      color: Constants.darkPrimary,
+                      fontSize: 15
+                  ),
+              ),
             ),
           ],
         );
       },
     );
   }
-
-  _showApprovedButton(BuildContext context) {
-    return Expanded(
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 5),
-          height: 60,
-          child: ElevatedButton.icon(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Constants.lightPrimary,
-              foregroundColor: Constants.primary,
-              shadowColor: Colors.white30,
-              minimumSize: const Size.fromHeight(60),
-              shape: const RoundedRectangleBorder(
-                borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(10), topRight: Radius.circular(10)),
-              ),
-              elevation: 3,
-            ),
-            label: const Text(
-              'approved',
-              style: TextStyle(fontSize: 14, color: Constants.darkPrimary),
-            ),
-            icon: const Icon(
-              Icons.thumb_up_off_alt_sharp,
-              size: 24.0,
-              color: Constants.darkPrimary,
-            ),
-            onPressed: () {
-              Logx.ist(_TAG,
-                  'congratulations, your guest list request has been approved. see you soon!');
-            },
-          ),
-        ));
-  }
-
-  _showGuestListFullButton(BuildContext context) {
-    return Expanded(
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 5),
-          height: 60,
-          child: ElevatedButton.icon(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Constants.lightPrimary,
-              foregroundColor: Constants.primary,
-              shadowColor: Colors.white30,
-              minimumSize: const Size.fromHeight(60),
-              shape: const RoundedRectangleBorder(
-                borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(10), topRight: Radius.circular(10)),
-              ),
-              elevation: 3,
-            ),
-            label: const Text(
-              '🚧 guest list is full',
-              style: TextStyle(fontSize: 14, color: Constants.darkPrimary),
-            ),
-            icon: const Icon(
-              Icons.stop_circle,
-              size: 24.0,
-              color: Constants.darkPrimary,
-            ),
-            onPressed: () {
-              _showGuestListFullDialog(context);
-            },
-          ),
-        ));
-  }
-
-  void _showGuestListFullDialog(BuildContext context) {
-    showDialog(
-        context: context,
-        builder: (BuildContext ctx) {
-          return AlertDialog(
-            title: const Text(
-              'limited guest list is full',
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 22, color: Colors.black),
-            ),
-            backgroundColor: Constants.lightPrimary,
-            shape: const RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(20.0))),
-            contentPadding: const EdgeInsets.all(16.0),
-            content: SizedBox(
-              width: double.maxFinite,
-              child: ListView(
-                shrinkWrap: true,
-                children: [
-                  widget.party.ticketUrl.isNotEmpty &&
-                      !widget.party.isTicketsDisabled
-                      ? Text(
-                      'due to an incredible turnout, our event guest list is completely booked. to be part of this exciting event, we kindly suggest purchasing a ticket as your only option. thank you for your interest!'
-                          .toLowerCase())
-                      : Text(
-                      'due to an incredible turnout, our event guest list is completely booked. to be part of this exciting event, we kindly suggest purchasing a ticket at the gate as your only option. thank you for understanding!'
-                          .toLowerCase()),
-                ],
-              ),
-            ),
-            actions: [
-              TextButton(
-                child: const Text('close',
-                    style: TextStyle(color: Constants.background)),
-                onPressed: () {
-                  Navigator.of(ctx).pop();
-                },
-              ),
-              widget.party.ticketUrl.isNotEmpty &&
-                  !widget.party.isTicketsDisabled
-                  ? TextButton(
-                style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all<Color>(
-                      Constants.darkPrimary),
-                ),
-                child: const Text('🎟️ buy ticket',
-                    style: TextStyle(color: Constants.primary)),
-                onPressed: () {
-                  Navigator.of(ctx).pop();
-                  _handleBuyTixPressed();
-                },
-              )
-                  : const SizedBox(),
-            ],
-          );
-        });
-  }
-
-  _showBuyTicketButton(BuildContext context) {
-    return Expanded(
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 5),
-          height: 60,
-          child: ElevatedButton.icon(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Constants.darkPrimary,
-              foregroundColor: Constants.primary,
-              shadowColor: Colors.white30,
-              minimumSize: const Size.fromHeight(60),
-              shape: const RoundedRectangleBorder(
-                borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(10), topRight: Radius.circular(10)),
-              ),
-              elevation: 3,
-            ),
-            label: const Text(
-              'buy ticket',
-              style: TextStyle(fontSize: 14),
-            ),
-            icon: const Icon(
-              Icons.star_half,
-              size: 24.0,
-            ),
-            onPressed: () {
-              _handleBuyTixPressed();
-            },
-          ),
-        ));
-  }
-
-  _showDisabledBuyTicketButton(BuildContext context) {
-    return Expanded(
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 5),
-          height: 60,
-          child: ElevatedButton.icon(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.grey,
-              foregroundColor: Constants.primary,
-              shadowColor: Colors.white30,
-              minimumSize: const Size.fromHeight(60),
-              shape: const RoundedRectangleBorder(
-                borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(10), topRight: Radius.circular(10)),
-              ),
-              elevation: 3,
-            ),
-            label: const Text(
-              'buy ticket',
-              style: TextStyle(fontSize: 14, color: Constants.darkPrimary),
-            ),
-            icon: const Icon(
-              Icons.star_border_outlined,
-              size: 24.0,
-            ),
-            onPressed: () {
-              Logx.ilt(_TAG,
-                  'unfortunately, tickets are not available for this event yet!');
-              // _handleBuyTixPressed();
-            },
-          ),
-        ));
-  }
-
-  // _showEditGuestListButton(BuildContext context) {
-  //   return Expanded(
-  //       child: Container(
-  //         padding: const EdgeInsets.symmetric(horizontal: 5),
-  //         height: 60,
-  //         child: ElevatedButton.icon(
-  //           style: ElevatedButton.styleFrom(
-  //             backgroundColor: Constants.darkPrimary,
-  //             foregroundColor: Constants.primary,
-  //             shadowColor: Colors.white30,
-  //             minimumSize: const Size.fromHeight(60),
-  //             shape: const RoundedRectangleBorder(
-  //               borderRadius: BorderRadius.only(
-  //                   topLeft: Radius.circular(10), topRight: Radius.circular(10)),
-  //             ),
-  //             elevation: 3,
-  //           ),
-  //           label: const Text(
-  //             'edit',
-  //             style: TextStyle(fontSize: 14),
-  //           ),
-  //           icon: const Icon(
-  //             Icons.mode_edit_outline_outlined,
-  //             size: 24.0,
-  //           ),
-  //           onPressed: () {
-  //             Navigator.of(context).push(MaterialPageRoute(
-  //                 builder: (ctx) => PartyGuestAddEditManageScreen(
-  //                   partyGuest: widget.tix,
-  //                   party: widget.party,
-  //                   task: 'edit',
-  //                 )));
-  //           },
-  //         ),
-  //       ));
-  // }
-
-  _showGuestListEntryButton(BuildContext context) {
-    return Expanded(
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 5),
-          height: 60,
-          child: ElevatedButton.icon(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Constants.darkPrimary,
-              foregroundColor: Constants.primary,
-              shadowColor: Colors.white30,
-              minimumSize: const Size.fromHeight(60),
-              shape: const RoundedRectangleBorder(
-                borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(10), topRight: Radius.circular(10)),
-              ),
-              elevation: 3,
-            ),
-            label: const Text(
-              'guest entry',
-              style: TextStyle(fontSize: 14),
-            ),
-            icon: const Icon(
-              Icons.qr_code_rounded,
-              size: 24.0,
-            ),
-            onPressed: () {
-              _showTicketEntryDialog(context);
-            },
-          ),
-        ));
-  }
-
-  // _showPendingButton(BuildContext context) {
-  //   String text = widget.party.ticketUrl.isNotEmpty &&
-  //       !widget.party.isTicketsDisabled
-  //       ? "your guest list is pending, which means it's waiting for approval. limited spots are only available for this event – secure yours by purchasing your ticket in advance."
-  //       : "your guest list is pending, which means it's waiting for approval. like a kid waiting for santa, you're excited but also a little bit anxious. but don't worry, our team will deliver on your request.";
-  //   return Expanded(
-  //     child: Container(
-  //       padding: const EdgeInsets.symmetric(horizontal: 5),
-  //       height: 60,
-  //       child: ElevatedButton.icon(
-  //         style: ElevatedButton.styleFrom(
-  //           backgroundColor: Constants.lightPrimary,
-  //           foregroundColor: Constants.primary,
-  //           shadowColor: Colors.white30,
-  //           minimumSize: const Size.fromHeight(60),
-  //           shape: const RoundedRectangleBorder(
-  //             borderRadius: BorderRadius.only(
-  //                 topLeft: Radius.circular(10), topRight: Radius.circular(10)),
-  //           ),
-  //           elevation: 3,
-  //         ),
-  //         label: const Text(
-  //           'pending',
-  //           style: TextStyle(fontSize: 14, color: Constants.darkPrimary),
-  //         ),
-  //         icon: const Icon(
-  //           Icons.pending,
-  //           size: 24.0,
-  //           color: Constants.darkPrimary,
-  //         ),
-  //         onPressed: () {
-  //           showDialog(
-  //             context: context,
-  //             builder: (BuildContext context) {
-  //               return AlertDialog(
-  //                 title: Text(
-  //                   '⏳ guest list is pending'.toLowerCase(),
-  //                   textAlign: TextAlign.center,
-  //                   style: const TextStyle(fontSize: 22, color: Colors.black),
-  //                 ),
-  //                 backgroundColor: Constants.lightPrimary,
-  //                 shape: const RoundedRectangleBorder(
-  //                     borderRadius: BorderRadius.all(Radius.circular(20.0))),
-  //                 contentPadding: const EdgeInsets.all(16.0),
-  //                 content: Text(text),
-  //                 actions: [
-  //                   TextButton(
-  //                     child: const Text("👍 okay"),
-  //                     onPressed: () async {
-  //                       Navigator.of(context).pop();
-  //                     },
-  //                   ),
-  //                   !widget.tix.isChallengeClicked
-  //                       ? TextButton(
-  //                     style: ButtonStyle(
-  //                       backgroundColor: MaterialStateProperty.all<Color>(
-  //                           Constants.darkPrimary),
-  //                     ),
-  //                     child: const Text(
-  //                       "🎟 win free entry",
-  //                       style: TextStyle(color: Constants.primary),
-  //                     ),
-  //                     onPressed: () {
-  //                       Navigator.of(context).pop();
-  //                       _loadChallengeDialog(context);
-  //                     },
-  //                   )
-  //                       : const SizedBox(),
-  //                 ],
-  //               );
-  //             },
-  //           );
-  //         },
-  //       ),
-  //     ),
-  //   );
-  // }
-
-  void _handleBuyTixPressed() {
-    final uri = Uri.parse(widget.party.ticketUrl);
-    NetworkUtils.launchInBrowser(uri);
-
-    if (UserPreferences.isUserLoggedIn()) {
-      User user = UserPreferences.myUser;
-
-      FirestoreHelper.pullHistoryMusic(user.id, widget.party.genre).then((res) {
-        if (res.docs.isEmpty) {
-          // no history, add new one
-          HistoryMusic historyMusic = Dummy.getDummyHistoryMusic();
-          historyMusic.userId = user.id;
-          historyMusic.genre = widget.party.genre;
-          historyMusic.count = 1;
-          FirestoreHelper.pushHistoryMusic(historyMusic);
-        } else {
-          for (int i = 0; i < res.docs.length; i++) {
-            DocumentSnapshot document = res.docs[i];
-            Map<String, dynamic> data =
-            document.data()! as Map<String, dynamic>;
-            final HistoryMusic historyMusic =
-            Fresh.freshHistoryMusicMap(data, false);
-            historyMusic.count++;
-            FirestoreHelper.pushHistoryMusic(historyMusic);
-          }
-        }
-      });
-
-      if (UserPreferences.isUserLoggedIn()) {
-        if (!mPartyInterest.userIds.contains(UserPreferences.myUser.id)) {
-          mPartyInterest.userIds.add(UserPreferences.myUser.id);
-          FirestoreHelper.pushPartyInterest(mPartyInterest);
-
-          Logx.d(_TAG, 'user added to party interest');
-        }
-      } else {
-        int initCount = mPartyInterest.initCount + 1;
-        mPartyInterest = mPartyInterest.copyWith(initCount: initCount);
-        FirestoreHelper.pushPartyInterest(mPartyInterest);
-      }
-    }
-  }
-
-  Challenge findChallenge() {
-    Challenge returnChallenge = widget.challenges.last;
-
-    if (widget.party.overrideChallengeNum > 0) {
-      for (Challenge challenge in widget.challenges) {
-        if (challenge.level == widget.party.overrideChallengeNum) {
-          return challenge;
-        }
-      }
-    } else {
-      for (Challenge challenge in widget.challenges) {
-        if (challenge.level >= UserPreferences.myUser.challengeLevel) {
-          return challenge;
-        }
-      }
-    }
-
-    return returnChallenge;
-  }
-
-  bool testMode = false;
-
-  // _loadChallengeDialog(BuildContext context) {
-  //   Challenge challenge = findChallenge();
-  //   String challengeText = challenge.description;
-  //
-  //   if (challengeText.isEmpty) {
-  //     Logx.ist(_TAG, 'all challenges are completed. congratulations!');
-  //   } else {
-  //     FirestoreHelper.pullChallengeActions(challenge.id).then((res) {
-  //       if (res.docs.isNotEmpty) {
-  //         List<ChallengeAction> cas = [];
-  //         for (int i = 0; i < res.docs.length; i++) {
-  //           DocumentSnapshot document = res.docs[i];
-  //           Map<String, dynamic> data =
-  //           document.data()! as Map<String, dynamic>;
-  //           ChallengeAction ca = Fresh.freshChallengeActionMap(data, false);
-  //
-  //           if (ca.actionType == 'instagram_url') {
-  //             ca = ca.copyWith(action: widget.party.instagramUrl);
-  //           } else if (ca.actionType == 'bloc_url') {
-  //             final url =
-  //                 'http://bloc.bar/#/event/${Uri.encodeComponent(widget.party.name)}/${widget.party.chapter}';
-  //             ca = ca.copyWith(action: url);
-  //           }
-  //           cas.add(ca);
-  //         }
-  //
-  //         _showChallengeDialog(context, challenge, cas);
-  //       } else {
-  //         _showChallengeDefaultsDialog(context, challenge);
-  //       }
-  //     });
-  //   }
-  // }
-
-  // void _showChallengeDialog(
-  //     BuildContext context, Challenge challenge, List<ChallengeAction> cas) {
-  //   showDialog(
-  //       context: context,
-  //       builder: (BuildContext ctx) {
-  //         return AlertDialog(
-  //           title: const Text(
-  //             '#blocCommunity support & win free 🎟️',
-  //             textAlign: TextAlign.center,
-  //             style: TextStyle(fontSize: 22, color: Colors.black),
-  //           ),
-  //           backgroundColor: Constants.lightPrimary,
-  //           shape: const RoundedRectangleBorder(
-  //               borderRadius: BorderRadius.all(Radius.circular(20.0))),
-  //           contentPadding: const EdgeInsets.all(16.0),
-  //           content: SizedBox(
-  //             width: double.maxFinite,
-  //             child: ListView(
-  //               shrinkWrap: true,
-  //               children: [
-  //                 Text(
-  //                   '${challenge.dialogTitle}:\n',
-  //                   style: const TextStyle(fontWeight: FontWeight.bold),
-  //                 ),
-  //                 Text(challenge.description.toLowerCase()),
-  //               ],
-  //             ),
-  //           ),
-  //           actions: [
-  //             TextButton(
-  //               child: const Text('close',
-  //                   style: TextStyle(color: Constants.background)),
-  //               onPressed: () {
-  //                 Navigator.of(ctx).pop();
-  //               },
-  //             ),
-  //             cas.length > 1
-  //                 ? TextButton(
-  //               style: ButtonStyle(
-  //                 backgroundColor: MaterialStateProperty.all<Color>(
-  //                     Constants.darkPrimary),
-  //               ),
-  //               child: Text(cas[1].buttonTitle,
-  //                   style: const TextStyle(color: Constants.primary)),
-  //               onPressed: () async {
-  //                 Logx.ist(_TAG, 'thank you for supporting us!');
-  //
-  //                 widget.tix = widget.tix
-  //                     .copyWith(isChallengeClicked: true);
-  //                 if (!testMode) {
-  //                   FirestoreHelper.pushPartyGuest(widget.tix);
-  //                   FirestoreHelper.updateChallengeClickCount(
-  //                       challenge.id);
-  //                 }
-  //
-  //                 final uri = Uri.parse(cas[1].action);
-  //                 NetworkUtils.launchInBrowser(uri);
-  //
-  //                 Navigator.of(ctx).pop();
-  //               },
-  //             )
-  //                 : const SizedBox(),
-  //             TextButton(
-  //               style: ButtonStyle(
-  //                 backgroundColor:
-  //                 MaterialStateProperty.all<Color>(Constants.darkPrimary),
-  //               ),
-  //               child: Text(cas[0].buttonTitle,
-  //                   style: const TextStyle(color: Constants.primary)),
-  //               onPressed: () async {
-  //                 Logx.ist(_TAG, 'thank you for supporting us!');
-  //
-  //                 widget.tix =
-  //                     widget.tix.copyWith(isChallengeClicked: true);
-  //                 if (!testMode) {
-  //                   FirestoreHelper.pushPartyGuest(widget.tix);
-  //                   FirestoreHelper.updateChallengeClickCount(challenge.id);
-  //                 }
-  //
-  //                 final uri = Uri.parse(cas[0].action);
-  //                 NetworkUtils.launchInBrowser(uri);
-  //
-  //                 Navigator.of(ctx).pop();
-  //               },
-  //             ),
-  //           ],
-  //         );
-  //       });
-  // }
-
-  // void _showChallengeDefaultsDialog(BuildContext context, Challenge challenge) {
-  //   showDialog(
-  //       context: context,
-  //       builder: (BuildContext ctx) {
-  //         return AlertDialog(
-  //           title: const Text(
-  //             '#blocCommunity support & win free 🎟️',
-  //             textAlign: TextAlign.center,
-  //             style: TextStyle(fontSize: 22, color: Colors.black),
-  //           ),
-  //           backgroundColor: Constants.lightPrimary,
-  //           shape: const RoundedRectangleBorder(
-  //               borderRadius: BorderRadius.all(Radius.circular(20.0))),
-  //           contentPadding: const EdgeInsets.all(16.0),
-  //           content: SizedBox(
-  //             width: double.maxFinite,
-  //             child: ListView(
-  //               shrinkWrap: true,
-  //               children: [
-  //                 Text(
-  //                   '${challenge.dialogTitle}:\n',
-  //                   style: const TextStyle(fontWeight: FontWeight.bold),
-  //                 ),
-  //                 Text(challenge.description.toLowerCase()),
-  //               ],
-  //             ),
-  //           ),
-  //           actions: [
-  //             TextButton(
-  //               child: const Text('close',
-  //                   style: TextStyle(color: Constants.background)),
-  //               onPressed: () {
-  //                 Navigator.of(ctx).pop();
-  //               },
-  //             ),
-  //             TextButton(
-  //               style: ButtonStyle(
-  //                 backgroundColor: MaterialStateProperty.all<Color>(Constants
-  //                     .darkPrimary), // Set your desired background color
-  //               ),
-  //               child: Text(challenge.dialogAcceptText,
-  //                   style: const TextStyle(color: Constants.primary)),
-  //               onPressed: () async {
-  //                 Logx.ist(_TAG, 'thank you for supporting us!');
-  //
-  //                 widget.tix =
-  //                     widget.tix.copyWith(isChallengeClicked: true);
-  //                 if (!testMode) {
-  //                   FirestoreHelper.pushPartyGuest(widget.tix);
-  //                   FirestoreHelper.updateChallengeClickCount(challenge.id);
-  //                 }
-  //
-  //                 if (widget.party.storyImageUrl.isNotEmpty ||
-  //                     widget.party.imageUrl.isNotEmpty) {
-  //                   final urlImage = widget.party.storyImageUrl.isNotEmpty
-  //                       ? widget.party.storyImageUrl
-  //                       : widget.party.imageUrl;
-  //                   if (kIsWeb) {
-  //                     FileUtils.openFileNewTabForWeb(urlImage);
-  //                   } else {
-  //                     FileUtils.sharePhoto(
-  //                         widget.party.id,
-  //                         urlImage,
-  //                         'bloc-${widget.party.name}',
-  //                         ''
-  //                             '${StringUtils.firstFewWords(widget.party.description, 15)}... '
-  //                             '\n\nhey. check out this event at the official bloc app. \n\n🌏 '
-  //                             'https://bloc.bar/#/\n📱 https://bloc.bar/app_store.html\n\n#blocCommunity ❤️‍🔥');
-  //                   }
-  //                 } else {
-  //                   final uri =
-  //                   Uri.parse('https://www.instagram.com/bloc.india/');
-  //                   NetworkUtils.launchInBrowser(uri);
-  //                 }
-  //
-  //                 Navigator.of(ctx).pop();
-  //               },
-  //             ),
-  //           ],
-  //         );
-  //       });
-  // }
 }
