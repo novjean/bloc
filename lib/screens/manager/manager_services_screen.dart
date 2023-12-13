@@ -26,7 +26,7 @@ import 'inventory/manage_inventory_screen.dart';
 import 'lounges/manage_lounges_screen.dart';
 import 'notification_tests/manage_notification_tests_screen.dart';
 import 'tables/manage_tables_screen.dart';
-import 'tickets/manage_tickets_screen.dart';
+import 'tickets/manage_tixs_screen.dart';
 
 class ManagerServicesScreen extends StatelessWidget {
   static const String _TAG = 'ManagerServicesScreen';
@@ -184,7 +184,7 @@ class ManagerServicesScreen extends StatelessWidget {
                     case 'tickets':
                       {
                         Navigator.of(context).push(MaterialPageRoute(
-                            builder: (ctx) => const ManageTicketsScreen()));
+                            builder: (ctx) => const ManageTixsScreen()));
                         break;
                       }
                     case 'orders':

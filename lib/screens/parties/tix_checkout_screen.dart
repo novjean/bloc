@@ -20,7 +20,6 @@ import '../../main.dart';
 import '../../routes/route_constants.dart';
 import '../../utils/constants.dart';
 import '../../utils/logx.dart';
-import '../../utils/number_utils.dart';
 import '../../widgets/parties/party_banner.dart';
 import '../../widgets/payment/upi_app_widget.dart';
 import '../../widgets/tix/checkout_tix_tier_item.dart';
@@ -30,8 +29,7 @@ import '../../widgets/ui/dark_button_widget.dart';
 class TixCheckoutScreen extends StatefulWidget {
   Tix tix;
 
-  TixCheckoutScreen({key, required this.tix})
-      : super(key: key);
+  TixCheckoutScreen({key, required this.tix}) : super(key: key);
 
   @override
   State<TixCheckoutScreen> createState() => _TixCheckoutScreenState();
@@ -69,31 +67,28 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
       }
     });
 
-    FirestoreHelper.pullTixTiersByTixId(widget.tix.id).then(
-        (res) {
-          if (res.docs.isNotEmpty) {
-            List<TixTier> tixTiers = [];
-            for (int i = 0; i < res.docs.length; i++) {
-              DocumentSnapshot document = res.docs[i];
-              Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-              final TixTier tixTier = Fresh.freshTixTierMap(data, false);
-              mTixTiers.add(tixTier);
+    FirestoreHelper.pullTixTiersByTixId(widget.tix.id).then((res) {
+      if (res.docs.isNotEmpty) {
+        for (int i = 0; i < res.docs.length; i++) {
+          DocumentSnapshot document = res.docs[i];
+          Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+          final TixTier tixTier = Fresh.freshTixTierMap(data, false);
+          mTixTiers.add(tixTier);
 
-              subTotal += tixTier.tixTierCount * tixTier.tixTierPrice;
-            }
-
-            igst = subTotal * Constants.igstPercent;
-            subTotal += igst;
-            grandTotal = subTotal;
-
-            setState(() {
-              _isTixTiersLoading = false;
-            });
-          } else {
-            Logx.em(_TAG, 'no tix tiers found for ${widget.tix.partyId}');
-          }
+          subTotal += tixTier.tixTierCount * tixTier.tixTierPrice;
         }
-    );
+
+        igst = subTotal * Constants.igstPercent;
+        subTotal += igst;
+        grandTotal = subTotal;
+
+        setState(() {
+          _isTixTiersLoading = false;
+        });
+      } else {
+        Logx.em(_TAG, 'no tix tiers found for ${widget.tix.partyId}');
+      }
+    });
 
     super.initState();
 
@@ -105,7 +100,8 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
   String environment = "UAT_SIM";
   String appId = "";
   String merchantId = "PGTESTPAYUAT";
-  String merchantTransactionId = DateTime.now().millisecondsSinceEpoch.toString();
+  String merchantTransactionId =
+      DateTime.now().millisecondsSinceEpoch.toString();
 
   bool enableLogging = true;
 
@@ -113,7 +109,8 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
   String saltKey = "099eb0cd-02cf-4e2a-8aca-3e6c6aff0399";
   String saltIndex = "1";
 
-  String callbackUrl = "https://webhook.site/a7f51d09-7db9-433d-8a6a-45571b725e4b";
+  String callbackUrl =
+      "https://webhook.site/a7f51d09-7db9-433d-8a6a-45571b725e4b";
 
   String body = "";
   String apiEndPoint = "/pg/v1/pay";
@@ -123,18 +120,19 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
   void phonePeInit() {
     PhonePePaymentSdk.init(environment, appId, merchantId, enableLogging)
         .then((val) => {
-      setState(() {
-        Logx.d(_TAG, 'phonePe sdk init - $val ');
-        result = 'PhonePe SDK Initialized - $val';
-      })
-    }).catchError((error) {
+              setState(() {
+                Logx.d(_TAG, 'phonePe sdk init - $val ');
+                result = 'PhonePe SDK Initialized - $val';
+              })
+            })
+        .catchError((error) {
       handleError(error);
       return <dynamic>{};
     });
   }
 
-  getChecksum(){
-    int amount = grandTotal.toInt()*100;
+  getChecksum() {
+    int amount = grandTotal.toInt() * 100;
     String merchantUserId = UserPreferences.myUser.id;
     String mobileNumber = UserPreferences.myUser.phoneNumber.toString();
 
@@ -152,7 +150,8 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
 
     String base64Body = base64.encode(utf8.encode(json.encode(requestData)));
 
-    checksum = '${sha256.convert(utf8.encode(base64Body+apiEndPoint+saltKey)).toString()}###$saltIndex';
+    checksum =
+        '${sha256.convert(utf8.encode(base64Body + apiEndPoint + saltKey)).toString()}###$saltIndex';
 
     return base64Body;
   }
@@ -164,29 +163,23 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
     try {
       var response = PhonePePaymentSdk.startPGTransaction(
           body, callbackUrl, checksum, pgHeaders, apiEndPoint, packageName);
-      response
-          .then((val) async {
-        if(val!=null){
+      response.then((val) async {
+        if (val != null) {
           String status = val['status'].toString();
           String error = val['error'].toString();
 
-          if(status == 'SUCCESS'){
+          if (status == 'SUCCESS') {
             result = "flow complete - status : SUCCESS ";
 
             await checkStatus();
-
           } else {
             result = "flow complete - status : $status and error $error ";
           }
-
         } else {
           result = "flow Incomplete";
         }
-
         result = val;
-
-      })
-          .catchError((error) {
+      }).catchError((error) {
         handleError(error);
         return <dynamic>{};
       });
@@ -197,7 +190,7 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
 
   void handleError(error) {
     setState(() {
-      result = {"error" : error};
+      result = {"error": error};
     });
   }
 
@@ -228,32 +221,32 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
     return _isPartyLoading && _isTixTiersLoading
         ? const LoadingWidget()
         : Stack(
-      children: [
-        ListView(
-          physics: const BouncingScrollPhysics(),
-          children: [
-            PartyBanner(
-              party: mParty,
-              isClickable: false,
-              shouldShowButton: false,
-              isGuestListRequested: false,
-              shouldShowInterestCount: false,
-            ),
-            _showTixTiers(context, mTixTiers),
-
-            const SizedBox(height: 20),
-            const SizedBox(height: 70,),
-          ],
-        ),
-        // Floating Container at the bottom
-        Positioned(
-            left: 0,
-            right: 0,
-            bottom: 0,
-            child: _showTixPricePurchase(context)
-        ),
-      ],
-    );
+            children: [
+              ListView(
+                physics: const BouncingScrollPhysics(),
+                children: [
+                  PartyBanner(
+                    party: mParty,
+                    isClickable: false,
+                    shouldShowButton: false,
+                    isGuestListRequested: false,
+                    shouldShowInterestCount: false,
+                  ),
+                  _showTixTiers(context, mTixTiers),
+                  const SizedBox(height: 20),
+                  const SizedBox(
+                    height: 70,
+                  ),
+                ],
+              ),
+              // Floating Container at the bottom
+              Positioned(
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  child: _showTixPricePurchase(context)),
+            ],
+          );
   }
 
   _showTixPricePurchase(BuildContext context) {
@@ -295,13 +288,14 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               const Text(
-                'grand total', style: TextStyle(fontSize: 18,
-                  fontWeight: FontWeight.bold),
+                'grand total',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
-              Text('\u20B9 ${grandTotal.toStringAsFixed(0)}',
-                style: const TextStyle(
-                fontSize: 18,
-                  fontWeight: FontWeight.bold),)
+              Text(
+                '\u20B9 ${grandTotal.toStringAsFixed(0)}',
+                style:
+                    const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              )
             ],
           ),
         ),
@@ -314,7 +308,6 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               Text('Result :\n$result'),
-
               DarkButtonWidget(
                 text: 'purchase',
                 onClicked: () {
@@ -344,10 +337,10 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
                   //   //ios implement pending
                   // }
 
-
                   // Logx.ist(_TAG, 'tickets purchased, navigating to home.');
                   // GoRouter.of(context).goNamed(RouteConstants.landingRouteName);
-                },)
+                },
+              )
             ],
           ),
         ),
@@ -357,48 +350,50 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
 
   checkStatus() async {
     try {
-      String prodUrl = "https://api.phonepe.com/apis/hermes/pg/v1/status/$merchantId/$merchantTransactionId";
-      String url = "https://api-preprod.phonepe.com/apis/pg-sandbox/pg/v1/status/$merchantId/$merchantTransactionId";
-      
+      String prodUrl =
+          "https://api.phonepe.com/apis/hermes/pg/v1/status/$merchantId/$merchantTransactionId";
+      String url =
+          "https://api-preprod.phonepe.com/apis/pg-sandbox/pg/v1/status/$merchantId/$merchantTransactionId";
+
       //SHA256("/pg/v1/status/{merchantId}/{merchantTransactionId}" + saltKey) + "###" + saltIndex
-      String concatString = "/pg/v1/status/$merchantId/$merchantTransactionId$saltKey";
-      
+      String concatString =
+          "/pg/v1/status/$merchantId/$merchantTransactionId$saltKey";
+
       var bytes = utf8.encode(concatString);
       var digest = sha256.convert(bytes).toString();
       String xVerify = "$digest###$saltIndex";
-      
+
       Map<String, String> headers = {
-        "Content-Type" : "application/json",
-        "X-VERIFY" : xVerify,
-        "X-MERCHANT-ID" : merchantId
+        "Content-Type": "application/json",
+        "X-VERIFY": xVerify,
+        "X-MERCHANT-ID": merchantId
       };
-      
+
       try {
         await http.get(Uri.parse(url), headers: headers).then((value) {
           Map<String, dynamic> res = jsonDecode(value.body);
 
           Logx.d(_TAG, res.toString());
 
-          widget.tix = widget.tix.copyWith(
-              merchantTransactionId: merchantTransactionId
-          );
-      
-          if(res["success"] && res["code"] == "PAYMENT_SUCCESS"
-              && res['data']['state'] == "COMPLETED"){
+          widget.tix =
+              widget.tix.copyWith(merchantTransactionId: merchantTransactionId);
+
+          if (res["success"] &&
+              res["code"] == "PAYMENT_SUCCESS" &&
+              res['data']['state'] == "COMPLETED") {
             Logx.ilt(_TAG, res["message"]);
 
             widget.tix = widget.tix.copyWith(
-                merchantTransactionId: res['data']['merchantTransactionId'],
-                transactionResponseCode: res['data']['responseCode'],
-                isSuccess: true,
-                isCompleted: true,
+              merchantTransactionId: res['data']['merchantTransactionId'],
+              transactionResponseCode: res['data']['responseCode'],
+              isSuccess: true,
+              isCompleted: true,
             );
             FirestoreHelper.pushTix(widget.tix);
 
             //final step
             GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
-            GoRouter.of(context)
-                .pushNamed(RouteConstants.boxOfficeRouteName);
+            GoRouter.of(context).pushNamed(RouteConstants.boxOfficeRouteName);
           } else {
             Logx.ist(_TAG, "payment not successful, please try again");
           }
@@ -428,7 +423,8 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
     );
   }
 
-  void _showUpiAppsBottomSheet(BuildContext context, List<UPIApp> upiApps, double amount) {
+  void _showUpiAppsBottomSheet(
+      BuildContext context, List<UPIApp> upiApps, double amount) {
     showModalBottomSheet(
         backgroundColor: Constants.lightPrimary,
         context: context,
@@ -439,7 +435,7 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
           return ListView(
             shrinkWrap: true,
             padding:
-            EdgeInsets.only(top: mq.height * .03, bottom: mq.height * .05),
+                EdgeInsets.only(top: mq.height * .03, bottom: mq.height * .05),
             children: [
               //pick profile picture label
               const Text('select your payment app',
@@ -505,6 +501,4 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
           );
         });
   }
-
-
 }

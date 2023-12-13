@@ -16,7 +16,7 @@ import '../../main.dart';
 import '../../utils/constants.dart';
 import '../../utils/logx.dart';
 import '../../utils/string_utils.dart';
-import '../../widgets/box_office/promoter_box_office_item.dart';
+import '../../widgets/box_office/promoter_guest_data_item.dart';
 import '../../widgets/ui/app_bar_title.dart';
 import '../../widgets/ui/dark_button_widget.dart';
 import '../../widgets/ui/loading_widget.dart';
@@ -292,7 +292,7 @@ class _PromoterGuestsScreenState extends State<PromoterGuestsScreen> {
             Logx.em(_TAG, e.toString());
           }
 
-          return PromoterBoxOfficeItem(
+          return PromoterGuestDataItem(
             partyGuest: guests[index],
             party: widget.party,
             isClickable: true,

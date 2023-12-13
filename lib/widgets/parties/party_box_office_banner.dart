@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 
 import '../../db/entity/party.dart';
 
-class PartyGuestListBanner extends StatelessWidget {
+class PartyBoxOfficeBanner extends StatelessWidget {
   final Party party;
 
-  const PartyGuestListBanner(
+  const PartyBoxOfficeBanner(
       {Key? key,
         required this.party,
       })

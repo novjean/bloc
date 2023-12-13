@@ -67,8 +67,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           }
         });
 
-        FirestoreHelper.pullTixTiersByTixId(mTix.id).then(
-                (res) {
+        FirestoreHelper.pullTixTiersByTixId(mTix.id).then((res) {
               if (res.docs.isNotEmpty) {
                 for (int i = 0; i < res.docs.length; i++) {
                   DocumentSnapshot document = res.docs[i];

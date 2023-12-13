@@ -22,14 +22,14 @@ import '../../utils/logx.dart';
 import '../../utils/network_utils.dart';
 import '../ui/toaster.dart';
 
-class PromoterBoxOfficeItem extends StatefulWidget {
+class PromoterGuestDataItem extends StatefulWidget {
   PartyGuest partyGuest;
   final Party party;
   final bool isClickable;
   final List<Challenge> challenges;
   final String promoterName;
 
-  PromoterBoxOfficeItem(
+  PromoterGuestDataItem(
       {Key? key,
       required this.partyGuest,
       required this.isClickable,
@@ -39,11 +39,11 @@ class PromoterBoxOfficeItem extends StatefulWidget {
       : super(key: key);
 
   @override
-  State<PromoterBoxOfficeItem> createState() => _PromoterBoxOfficeItemState();
+  State<PromoterGuestDataItem> createState() => _PromoterGuestDataItemState();
 }
 
-class _PromoterBoxOfficeItemState extends State<PromoterBoxOfficeItem> {
-  static const String _TAG = 'PromoterBoxOfficeItem';
+class _PromoterGuestDataItemState extends State<PromoterGuestDataItem> {
+  static const String _TAG = 'PromoterGuestDataItem';
 
   @override
   Widget build(BuildContext context) {

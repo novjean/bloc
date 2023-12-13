@@ -216,9 +216,9 @@ class Fresh {
       isModelChanged = true;
     }
     try {
-      adCampaign = adCampaign.copyWith(adClick: map['adClick'] as int);
+      adCampaign = adCampaign.copyWith(clickCount: map['clickCount'] as int);
     } catch (e) {
-      Logx.em(_TAG, 'adCampaign adClick not exist for ad campaign id: ${adCampaign.id}');
+      Logx.em(_TAG, 'adCampaign clickCount not exist for ad campaign id: ${adCampaign.id}');
       isModelChanged = true;
     }
     try {
@@ -286,9 +286,9 @@ class Fresh {
       Logx.em(_TAG, 'adCampaign linkUrl not exist for id: ${adCampaign.id}');
     }
     try {
-      fresh = fresh.copyWith(adClick: adCampaign.adClick);
+      fresh = fresh.copyWith(clickCount: adCampaign.clickCount);
     } catch (e) {
-      Logx.em(_TAG, 'adCampaign adClick not exist for id: ${adCampaign.id}');
+      Logx.em(_TAG, 'adCampaign clickCount not exist for id: ${adCampaign.id}');
     }
     try {
       fresh = fresh.copyWith(isActive: adCampaign.isActive);

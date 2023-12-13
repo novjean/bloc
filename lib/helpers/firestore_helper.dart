@@ -1139,6 +1139,14 @@ class FirestoreHelper {
         .get();
   }
 
+  static pullPartiesTicketed() {
+    return FirebaseFirestore.instance
+        .collection(FirestoreHelper.PARTIES)
+        .where('isTix', isEqualTo: true)
+        .orderBy('endTime', descending: true)
+        .get();
+  }
+
   static Future<QuerySnapshot<Map<String, dynamic>>> pullParty(String partyId) {
     return FirebaseFirestore.instance
         .collection(FirestoreHelper.PARTIES)
@@ -2184,6 +2192,14 @@ class FirestoreHelper {
         .get();
   }
 
+  static pullTixsByPartyId(String partyId) {
+    return FirebaseFirestore.instance
+        .collection(TIXS)
+        .where('partyId', isEqualTo: partyId)
+        .orderBy('userName', descending: false)
+        .get();
+  }
+
   static Stream<QuerySnapshot<Map<String, dynamic>>> getTixs() {
     return FirebaseFirestore.instance
         .collection(TIXS)
@@ -2191,10 +2207,25 @@ class FirestoreHelper {
         .snapshots();
   }
 
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getTixsByPartyId(String partyId) {
+    return FirebaseFirestore.instance
+        .collection(TIXS)
+        .where('partyId', isEqualTo: partyId)
+        .orderBy('userName', descending: false)
+        .snapshots();
+  }
+
   static Stream<QuerySnapshot<Map<String, dynamic>>> getTix(String tixId) {
     return FirebaseFirestore.instance
         .collection(TIXS)
         .where('id', isEqualTo: tixId)
+        .snapshots();
+  }
+
+  static getTixsByUser(String userId) {
+    return FirebaseFirestore.instance
+        .collection(TIXS)
+        .where('userId', isEqualTo: userId)
         .snapshots();
   }
 
@@ -2617,7 +2648,6 @@ class FirestoreHelper {
   static void deleteUserPhoto(String docId) {
     FirebaseFirestore.instance.collection(USER_PHOTOS).doc(docId).delete();
   }
-
 
 
 }

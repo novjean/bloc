@@ -10,7 +10,7 @@ import 'package:go_router/go_router.dart';
 import '../../db/entity/challenge.dart';
 import '../../db/entity/party.dart';
 import '../../db/entity/party_guest.dart';
-import '../../db/entity/reservation.dart';
+import '../../db/entity/tix.dart';
 import '../../db/shared_preferences/user_preferences.dart';
 import '../../helpers/dummy.dart';
 import '../../helpers/firestore_helper.dart';
@@ -19,11 +19,14 @@ import '../../routes/route_constants.dart';
 import '../../utils/constants.dart';
 import '../../utils/logx.dart';
 import '../../widgets/box_office/box_office_guest_list_item.dart';
-import '../../widgets/parties/party_guest_list_banner.dart';
+import '../../widgets/box_office/box_office_tix_item.dart';
+import '../../widgets/parties/party_box_office_banner.dart';
 import '../../widgets/reservations/reservation_banner.dart';
 import '../../widgets/ui/loading_widget.dart';
 import '../../widgets/ui/sized_listview_block.dart';
+import '../manager/tickets/manage_party_tixs_screen.dart';
 import '../promoter/promoter_guests_screen.dart';
+import '../promoter/promoter_party_tixs_screen.dart';
 
 class BoxOfficeScreen extends StatefulWidget {
   const BoxOfficeScreen({super.key});
@@ -37,6 +40,7 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
 
   List<Party> mParties = [];
   List<Party> mGuestListParties = [];
+  List<Party> mTixParties = [];
   var _isPartiesLoading = true;
 
   late List<String> mOptions;
@@ -49,7 +53,8 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
 
   @override
   void initState() {
-    showPromoterView = UserPreferences.myUser.clearanceLevel >= Constants.PROMOTER_LEVEL;
+    showPromoterView =
+        UserPreferences.myUser.clearanceLevel >= Constants.PROMOTER_LEVEL;
 
     mOptions = ['guest list', 'tickets'];
     sOption = mOptions.first;
@@ -66,6 +71,10 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
           parties.add(party);
           if (party.isGuestListActive) {
             mGuestListParties.add(party);
+          }
+
+          if (party.isTix) {
+            mTixParties.add(party);
           }
 
           setState(() {
@@ -127,23 +136,22 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
         ),
       ),
       backgroundColor: Constants.background,
-      floatingActionButton:
-          (showPromoterView && !kIsWeb)
-              ? FloatingActionButton(
-                  onPressed: () {
-                    ScanUtils.scanCode(context);
-                  },
-                  backgroundColor: Constants.primary,
-                  tooltip: 'scan code',
-                  elevation: 5,
-                  splashColor: Colors.grey,
-                  child: const Icon(
-                    Icons.qr_code_scanner,
-                    color: Constants.darkPrimary,
-                    size: 29,
-                  ),
-                )
-              : const SizedBox(),
+      floatingActionButton: (showPromoterView && !kIsWeb)
+          ? FloatingActionButton(
+              onPressed: () {
+                ScanUtils.scanCode(context);
+              },
+              backgroundColor: Constants.primary,
+              tooltip: 'scan code',
+              elevation: 5,
+              splashColor: Colors.grey,
+              child: const Icon(
+                Icons.qr_code_scanner,
+                color: Constants.darkPrimary,
+                size: 29,
+              ),
+            )
+          : const SizedBox(),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       body: _buildBody(context),
     );
@@ -157,24 +165,31 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                showPromoterView?
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 5.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text('switch view', style: TextStyle(fontSize:18, color: Constants.primary),),
-                          const Divider(),
-                          ButtonWidget(text: 'promoter -> user',
-                          onClicked: () {
-                            setState(() {
-                              showPromoterView = !showPromoterView;
-                              Logx.ist(_TAG, 'promoter view $showPromoterView');
-                            });
-                          },)
-                        ],
-                      ),
-                    )
+                showPromoterView
+                    ? Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'switch view',
+                              style: TextStyle(
+                                  fontSize: 18, color: Constants.primary),
+                            ),
+                            const Divider(),
+                            ButtonWidget(
+                              text: 'promoter -> user',
+                              onClicked: () {
+                                setState(() {
+                                  showPromoterView = !showPromoterView;
+                                  Logx.ist(
+                                      _TAG, 'promoter view $showPromoterView');
+                                });
+                              },
+                            )
+                          ],
+                        ),
+                      )
                     : const SizedBox(),
                 _showBoxOfficeOptions(context),
                 const Divider(),
@@ -186,11 +201,11 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
           );
   }
 
-  switchPromoterOptions(BuildContext context  ) {
+  switchPromoterOptions(BuildContext context) {
     if (sOption == 'guest list') {
       return displayGuestListParties(context);
     } else if (sOption == 'tickets') {
-      return buildTickets(context);
+      return _displayTixParties(context);
     } else {
       // unsupported
     }
@@ -198,9 +213,9 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
 
   switchUserOptions(BuildContext context) {
     if (sOption == 'guest list') {
-      return buildUserPartyGuestList(context);
+      return _buildUserPartyGuestList(context);
     } else if (sOption == 'tickets') {
-      return buildUserTickets(context);
+      return _buildUserTixs(context);
     } else {
       // unsupported
     }
@@ -234,45 +249,11 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
     );
   }
 
-  buildTickets(BuildContext context) {
-    return StreamBuilder<QuerySnapshot>(
-      stream: FirestoreHelper.getReservations(),
-      builder: (ctx, snapshot) {
-        switch (snapshot.connectionState) {
-          case ConnectionState.waiting:
-          case ConnectionState.none:
-            return const LoadingWidget();
-          case ConnectionState.active:
-          case ConnectionState.done:{
-          if (snapshot.hasData) {
-            List<Reservation> reservations = [];
-            if (snapshot.data!.docs.isEmpty) {
-              return showReserveTableButton();
-            } else {
-              for (int i = 0; i < snapshot.data!.docs.length; i++) {
-                DocumentSnapshot document = snapshot.data!.docs[i];
-                Map<String, dynamic> map =
-                document.data()! as Map<String, dynamic>;
-                final Reservation reservation =
-                Fresh.freshReservationMap(map, false);
-                reservations.add(reservation);
-              }
-              return displayReservations(context, reservations);
-            }
-          } else {
-            return showReserveTableButton();
-          }
-        }
-        }},
-    );
-  }
-
-  buildUserTickets(BuildContext context) {
-    Logx.i(_TAG,
-        'searching for tickets for user ${UserPreferences.myUser.id}');
+  _buildUserTixs(BuildContext context) {
+    Logx.i(_TAG, 'searching for tickets for user ${UserPreferences.myUser.id}');
 
     return StreamBuilder<QuerySnapshot>(
-      stream: FirestoreHelper.getReservationsByUser(UserPreferences.myUser.id),
+      stream: FirestoreHelper.getTixsByUser(UserPreferences.myUser.id),
       builder: (ctx, snapshot) {
         switch (snapshot.connectionState) {
           case ConnectionState.waiting:
@@ -280,30 +261,62 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
             return const LoadingWidget();
           case ConnectionState.active:
           case ConnectionState.done:
-          if (snapshot.hasData) {
-            List<Reservation> reservations = [];
-            if (snapshot.data!.docs.isEmpty) {
-              return showReserveTableButton();
-            } else {
-              for (int i = 0; i < snapshot.data!.docs.length; i++) {
-                DocumentSnapshot document = snapshot.data!.docs[i];
-                Map<String, dynamic> map =
-                document.data()! as Map<String, dynamic>;
-                final Reservation reservation =
-                Fresh.freshReservationMap(map, false);
-                reservations.add(reservation);
+            if (snapshot.hasData) {
+              List<Tix> tixs = [];
+              if (snapshot.data!.docs.isEmpty) {
+                return showReserveTableButton();
+              } else {
+                for (int i = 0; i < snapshot.data!.docs.length; i++) {
+                  DocumentSnapshot document = snapshot.data!.docs[i];
+                  Map<String, dynamic> map =
+                      document.data()! as Map<String, dynamic>;
+                  final Tix tix = Fresh.freshTixMap(map, false);
+                  tixs.add(tix);
+                }
+                return _showUserTixs(context, tixs);
               }
-              return displayReservations(context, reservations);
+            } else {
+              return showReserveTableButton();
             }
-          } else {
-            return showReserveTableButton();
-          }
         }
-        },
+      },
     );
   }
 
-  buildUserPartyGuestList(BuildContext context) {
+  _showUserTixs(BuildContext context, List<Tix> tixs) {
+    return Expanded(
+      child: ListView.builder(
+          itemCount: tixs.length,
+          scrollDirection: Axis.vertical,
+          itemBuilder: (ctx, index) {
+            Tix sTix = tixs[index];
+            Party sParty = Dummy.getDummyParty('');
+
+            bool foundParty = false;
+            for (Party party in mParties) {
+              if (party.id == sTix.partyId) {
+                sParty = party;
+                foundParty = true;
+                break;
+              }
+            }
+
+            if (!foundParty) {
+              // the party is ended, house cleaning logic will be needed
+              return const SizedBox();
+            } else {
+              return BoxOfficeTixItem(
+                tix: sTix,
+                party: sParty,
+                isClickable: true,
+                challenges: challenges,
+              );
+            }
+          }),
+    );
+  }
+
+  _buildUserPartyGuestList(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
       stream:
           FirestoreHelper.getPartyGuestListByUser(UserPreferences.getUser().id),
@@ -313,31 +326,34 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
           case ConnectionState.none:
             return const LoadingWidget();
           case ConnectionState.active:
-          case ConnectionState.done:{
-          if (snapshot.hasData) {
-            List<PartyGuest> partyGuestRequests = [];
-            if (snapshot.data!.docs.isEmpty) {
-              return showPartiesButton();
-            } else {
-              for (int i = 0; i < snapshot.data!.docs.length; i++) {
-                DocumentSnapshot document = snapshot.data!.docs[i];
-                Map<String, dynamic> map = document.data()! as Map<String, dynamic>;
-                final PartyGuest partyGuest = Fresh.freshPartyGuestMap(map, false);
-                partyGuestRequests.add(partyGuest);
+          case ConnectionState.done:
+            {
+              if (snapshot.hasData) {
+                List<PartyGuest> partyGuestRequests = [];
+                if (snapshot.data!.docs.isEmpty) {
+                  return showPartiesButton();
+                } else {
+                  for (int i = 0; i < snapshot.data!.docs.length; i++) {
+                    DocumentSnapshot document = snapshot.data!.docs[i];
+                    Map<String, dynamic> map =
+                        document.data()! as Map<String, dynamic>;
+                    final PartyGuest partyGuest =
+                        Fresh.freshPartyGuestMap(map, false);
+                    partyGuestRequests.add(partyGuest);
+                  }
+                  return _showUserGuestListRequests(
+                      context, partyGuestRequests);
+                }
+              } else {
+                return showPartiesButton();
               }
-              return _showGuestListRequests(context, partyGuestRequests);
             }
-          } else {
-            return showPartiesButton();
-          }
-          }
         }
-        },
+      },
     );
   }
 
-  _showGuestListRequests(
-      BuildContext context, List<PartyGuest> requests) {
+  _showUserGuestListRequests(BuildContext context, List<PartyGuest> requests) {
     return Expanded(
       child: ListView.builder(
         itemCount: requests.length,
@@ -378,7 +394,7 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
           scrollDirection: Axis.vertical,
           itemBuilder: (ctx, index) {
             return GestureDetector(
-                child: PartyGuestListBanner(
+                child: PartyBoxOfficeBanner(
                   party: mGuestListParties[index],
                 ),
                 onTap: () {
@@ -391,28 +407,20 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
     );
   }
 
-  displayReservations(BuildContext context, List<Reservation> reservations) {
+  _displayTixParties(BuildContext context) {
     return Expanded(
       child: ListView.builder(
-          itemCount: reservations.length,
+          itemCount: mTixParties.length,
           scrollDirection: Axis.vertical,
           itemBuilder: (ctx, index) {
             return GestureDetector(
-                child: ReservationBanner(
-                  reservation: reservations[index],
-                  isPromoter: UserPreferences.myUser.clearanceLevel >=
-                      Constants.PROMOTER_LEVEL,
+                child: PartyBoxOfficeBanner(
+                  party: mTixParties[index],
                 ),
                 onTap: () {
-                  Reservation _sReservation = reservations[index];
-                  Logx.i(
-                      _TAG, '${_sReservation.name}\'s reservation is selected');
-
+                  Party sParty = mTixParties[index];
                   Navigator.of(context).push(MaterialPageRoute(
-                      builder: (ctx) => ReservationAddEditScreen(
-                            reservation: _sReservation,
-                            task: 'edit',
-                          )));
+                      builder: (ctx) => PromoterPartyTixsScreen(party: sParty)));
                 });
           }),
     );
@@ -482,5 +490,4 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
       )),
     );
   }
-
 }
