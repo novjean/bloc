@@ -4367,6 +4367,12 @@ class Fresh {
           'tixTier tixTierName not exist for id: ${tixTier.id}');
     }
     try {
+      fresh = fresh.copyWith(tixTierDescription: tixTier.tixTierDescription);
+    } catch (e) {
+      Logx.em(_TAG,
+          'tixTier tixTierDescription not exist for id: ${tixTier.id}');
+    }
+    try {
       fresh = fresh.copyWith(tixTierPrice: tixTier.tixTierPrice);
     } catch (e) {
       Logx.em(_TAG,
@@ -4422,6 +4428,12 @@ class Fresh {
       tixTier = tixTier.copyWith(tixTierName: map['tixTierName'] as String);
     } catch (e) {
       Logx.em(_TAG, 'tixTier tixTierName not exist for id: ${tixTier.id}');
+      isModelChanged = true;
+    }
+    try {
+      tixTier = tixTier.copyWith(tixTierDescription: map['tixTierDescription'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'tixTier tixTierDescription not exist for id: ${tixTier.id}');
       isModelChanged = true;
     }
     try {

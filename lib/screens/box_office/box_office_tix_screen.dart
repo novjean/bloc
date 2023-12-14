@@ -1,8 +1,11 @@
+import 'dart:typed_data';
+
 import 'package:bloc/helpers/firestore_helper.dart';
 import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:screenshot/screenshot.dart';
 
 import '../../db/entity/party.dart';
 import '../../db/entity/tix.dart';
@@ -11,6 +14,7 @@ import '../../helpers/dummy.dart';
 import '../../helpers/fresh.dart';
 import '../../routes/route_constants.dart';
 import '../../utils/constants.dart';
+import '../../utils/file_utils.dart';
 import '../../utils/logx.dart';
 import '../../widgets/footer.dart';
 import '../../widgets/tix/confirm_tix_tier_item.dart';
@@ -41,6 +45,8 @@ class _BoxOfficeTixScreenState extends State<BoxOfficeTixScreen> {
 
   int totalTixCount = 0;
 
+  final ScreenshotController screenshotController = ScreenshotController();
+
   @override
   void initState() {
     FirestoreHelper.pullTix(widget.tixId).then((res) {
@@ -65,6 +71,7 @@ class _BoxOfficeTixScreenState extends State<BoxOfficeTixScreen> {
             });
           } else {
             Logx.est(_TAG, 'unfortunately, party could not be found!');
+
             setState(() {
               _isPartyLoading = false;
             });
@@ -105,7 +112,6 @@ class _BoxOfficeTixScreenState extends State<BoxOfficeTixScreen> {
       }
     });
 
-
     super.initState();
   }
 
@@ -132,128 +138,130 @@ class _BoxOfficeTixScreenState extends State<BoxOfficeTixScreen> {
   _buildBody(BuildContext context) {
     return _isPartyLoading
         ? const LoadingWidget()
-        : ListView(
-            physics: const BouncingScrollPhysics(),
-            children: [
-              TixPartyBanner(
-                tixId: mTix.id,
-                tixsCount: totalTixCount,
-                tixUserName: mTix.userName,
-                tixUserPhone: mTix.userPhone,
-                party: mParty,
-                shouldShowButton: false,
-              ),
-              const SizedBox(height: 24),
-              _showTixTiers(context, mTixTiers),
+        : Screenshot(
+      controller: screenshotController,
+          child: ListView(
+              physics: const BouncingScrollPhysics(),
+              children: [
+                TixPartyBanner(
+                  tix: mTix,
+                  tixsCount: totalTixCount,
+                  party: mParty,
+                  shouldShowButton: false,
+                ),
+                const SizedBox(height: 24),
+                _showTixTiers(context, mTixTiers),
 
-              const Divider(),
-              Container(
-                color: Constants.primary,
-                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    const Text(
-                      'IGST',
-                    ),
-                    Text('\u20B9 ${mTix.igst.toStringAsFixed(2)}')
-                  ],
+                const Divider(),
+                Container(
+                  color: Constants.primary,
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      const Text(
+                        'IGST',
+                      ),
+                      Text('\u20B9 ${mTix.igst.toStringAsFixed(2)}')
+                    ],
+                  ),
                 ),
-              ),
-              // const Divider(),
-              Container(
-                color: Constants.primary,
-                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    const Text(
-                      'sub-total',
-                    ),
-                    Text('\u20B9 ${mTix.subTotal.toStringAsFixed(2)}')
-                  ],
+                // const Divider(),
+                Container(
+                  color: Constants.primary,
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      const Text(
+                        'sub-total',
+                      ),
+                      Text('\u20B9 ${mTix.subTotal.toStringAsFixed(2)}')
+                    ],
+                  ),
                 ),
-              ),
-              Container(
-                color: Constants.primary,
-                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    const Text(
-                      'booking fee',
-                    ),
-                    Text('\u20B9 ${mTix.bookingFee.toStringAsFixed(2)}')
-                  ],
+                Container(
+                  color: Constants.primary,
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      const Text(
+                        'booking fee',
+                      ),
+                      Text('\u20B9 ${mTix.bookingFee.toStringAsFixed(2)}')
+                    ],
+                  ),
                 ),
-              ),
-              Container(
-                color: Constants.primary,
-                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    const Text(
-                      'grand total',
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                    ),
-                    Text(
-                      '\u20B9 ${mTix.total.toStringAsFixed(2)}',
-                      style:
-                      const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                    )
-                  ],
+                Container(
+                  color: Constants.primary,
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      const Text(
+                        'grand total',
+                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
+                      Text(
+                        '\u20B9 ${mTix.total.toStringAsFixed(2)}',
+                        style:
+                        const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      )
+                    ],
+                  ),
                 ),
-              ),
 
-              const SizedBox(height: 24),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 32),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    ButtonWidget(
-                      height: 50,
-                      text: 'screenshot',
-                      onClicked: () {
-                        // _captureAndSaveAsPDF(context);
-                        Navigator.of(context).pop();
-                      },
-                    ),
-                  ],
+                const SizedBox(height: 24),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 32),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      ButtonWidget(
+                        height: 50,
+                        text: '🔰 share tix',
+                        onClicked: () {
+                          _screenCaptureToImage(context);
+                          // Navigator.of(context).pop();
+                        },
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              Footer(),
-            ],
-          );
+                const SizedBox(height: 24),
+                Footer(),
+              ],
+            ),
+        );
   }
 
-  // final ScreenshotController screenshotController = ScreenshotController();
-  //
-  // Future<void> _captureAndSaveAsPDF(BuildContext context) async {
-  //   try {
-  //     Uint8List? imageBytes = await screenshotController.capture();
-  //     if (imageBytes != null) {
-  //       final pdf = pw.Document();
-  //       final image = pw.MemoryImage(imageBytes);
-  //       pdf.addPage(pw.Page(
-  //         build: (pw.Context context) {
-  //           return pw.Center(
-  //             child: pw.Image(image),
-  //           );
-  //         },
-  //       ));
-  //
-  //       final directory = await getApplicationDocumentsDirectory();
-  //       final file = File('${directory.path}/example.pdf');
-  //       await file.writeAsBytes(await pdf.save());
-  //
-  //       print('PDF saved at: ${file.path}');
-  //     }
-  //   } catch (e) {
-  //     print('Error: $e');
-  //   }
-  // }
+  Future<void> _screenCaptureToImage(BuildContext context) async {
+    screenshotController
+        .capture(delay: Duration(milliseconds: 10))
+        .then((capturedImage) async {
+          String fileName = 'tix_${mParty.name.trim()}_${mTix.userName.trim()}.pdf';
+
+          FileUtils.saveScreenshot(capturedImage, fileName);
+          // ShowCapturedWidget(context, capturedImage!);
+    }).catchError((onError) {
+      print(onError);
+    });
+  }
+
+  Future<dynamic> ShowCapturedWidget(
+      BuildContext context, Uint8List capturedImage) {
+    return showDialog(
+      useSafeArea: false,
+      context: context,
+      builder: (context) => Scaffold(
+        appBar: AppBar(
+          title: Text("Captured widget screenshot"),
+        ),
+        body: Center(child: Image.memory(capturedImage)),
+      ),
+    );
+  }
 
   _showTixTiers(BuildContext context, List<TixTier> tixTiers) {
     return SizedBox(
@@ -267,9 +275,9 @@ class _BoxOfficeTixScreenState extends State<BoxOfficeTixScreen> {
 
             return ConfirmTixTierItem(
               tixTier: tixTier,
+              isUser: true
             );
           }),
     );
   }
-
 }

@@ -4,30 +4,30 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../db/entity/party.dart';
-import '../../db/entity/tix.dart';
-import '../../db/entity/tix_tier_item.dart';
-import '../../helpers/dummy.dart';
-import '../../helpers/fresh.dart';
-import '../../routes/route_constants.dart';
-import '../../utils/constants.dart';
-import '../../utils/logx.dart';
-import '../../widgets/tix/confirm_tix_tier_item.dart';
-import '../../widgets/tix/tix_party_banner.dart';
-import '../../widgets/ui/app_bar_title.dart';
-import '../../widgets/ui/button_widget.dart';
+import '../../../db/entity/party.dart';
+import '../../../db/entity/tix.dart';
+import '../../../db/entity/tix_tier_item.dart';
+import '../../../helpers/dummy.dart';
+import '../../../helpers/fresh.dart';
+import '../../../routes/route_constants.dart';
+import '../../../utils/constants.dart';
+import '../../../utils/logx.dart';
+import '../../../widgets/tix/confirm_tix_tier_item.dart';
+import '../../../widgets/tix/tix_party_banner.dart';
+import '../../../widgets/ui/app_bar_title.dart';
+import '../../../widgets/ui/button_widget.dart';
 
-class PromoterBoxOfficeTixScreen extends StatefulWidget {
+class ManageBoxOfficeTixScreen extends StatefulWidget {
   String tixId;
 
-  PromoterBoxOfficeTixScreen({Key? key, required this.tixId}) : super(key: key);
+  ManageBoxOfficeTixScreen({Key? key, required this.tixId}) : super(key: key);
 
   @override
-  State<PromoterBoxOfficeTixScreen> createState() => _PromoterBoxOfficeTixScreenState();
+  State<ManageBoxOfficeTixScreen> createState() => _ManageBoxOfficeTixScreenState();
 }
 
-class _PromoterBoxOfficeTixScreenState extends State<PromoterBoxOfficeTixScreen> {
-  static const String _TAG = 'PromoterBoxOfficeTixScreen';
+class _ManageBoxOfficeTixScreenState extends State<ManageBoxOfficeTixScreen> {
+  static const String _TAG = 'ManageBoxOfficeTixScreen';
 
   Tix mTix = Dummy.getDummyTix();
   var _isTixLoading = true;
@@ -112,7 +112,7 @@ class _PromoterBoxOfficeTixScreenState extends State<PromoterBoxOfficeTixScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: AppBarTitle(title: 'confirm tix'),
+        title: AppBarTitle(title: 'manage tix'),
         titleSpacing: 0,
       ),
       body: _isTixLoading && _isTixTiersLoading && _isPartyLoading
@@ -257,8 +257,8 @@ class _PromoterBoxOfficeTixScreenState extends State<PromoterBoxOfficeTixScreen>
             TixTier tixTier = tixTiers[index];
 
             return ConfirmTixTierItem(
-              tixTier: tixTier,
-              isUser: false
+                tixTier: tixTier,
+                isUser: false
             );
           }),
     );

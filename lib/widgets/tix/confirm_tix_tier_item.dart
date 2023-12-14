@@ -8,8 +8,9 @@ import '../../utils/logx.dart';
 
 class ConfirmTixTierItem extends StatefulWidget {
   TixTier tixTier;
+  bool isUser;
 
-  ConfirmTixTierItem({Key? key, required this.tixTier}) : super(key: key);
+  ConfirmTixTierItem({Key? key, required this.tixTier, required this.isUser}) : super(key: key);
 
   @override
   State<ConfirmTixTierItem> createState() => _ConfirmTixTierItemState();
@@ -46,7 +47,7 @@ class _ConfirmTixTierItemState extends State<ConfirmTixTierItem> {
                   children: [
                     RichText(
                       text: TextSpan(
-                        text: widget.tixTier.tixTierName,
+                        text: '${widget.tixTier.tixTierName} ${widget.isUser? 'x ${widget.tixTier.tixTierCount}': ''} ',
                         style: const TextStyle(
                             fontFamily: Constants.fontDefault,
                             color: Colors.black,
@@ -56,7 +57,7 @@ class _ConfirmTixTierItemState extends State<ConfirmTixTierItem> {
                       ),
                     ),
                     const Spacer(),
-                    Ink(
+                    widget.isUser? const SizedBox(): Ink(
                       decoration: const ShapeDecoration(
                         color: Constants.primary,
                         shape: CircleBorder(),
@@ -78,7 +79,7 @@ class _ConfirmTixTierItemState extends State<ConfirmTixTierItem> {
                         },
                       ),
                     ),
-                    Container(
+                    widget.isUser?const SizedBox(): Container(
                       // color: primaryColor,
                       padding: const EdgeInsets.symmetric(
                           vertical: 4.0, horizontal: 10),
@@ -87,7 +88,7 @@ class _ConfirmTixTierItemState extends State<ConfirmTixTierItem> {
                         style: const TextStyle(fontSize: 18),
                       ),
                     ),
-                    Ink(
+                    widget.isUser? const SizedBox():Ink(
                       decoration: const ShapeDecoration(
                         color: Constants.primary,
                         shape: CircleBorder(),
@@ -113,27 +114,7 @@ class _ConfirmTixTierItemState extends State<ConfirmTixTierItem> {
                     ),
                   ],
                 ),
-                // subtitle: RichText(
-                //   maxLines: 1,
-                //   text: TextSpan(
-                //       text:
-                //       '${widget.tixTier.tixTierPrice.toStringAsFixed(2)} x ',
-                //       style: const TextStyle(
-                //           color: Colors.black,
-                //           fontFamily: Constants.fontDefault,
-                //           overflow: TextOverflow.ellipsis,
-                //           fontSize: 14,
-                //           fontWeight: FontWeight.normal),
-                //       children: <TextSpan>[
-                //         TextSpan(text:widget.tixTier.tixTierCount.toString(),
-                //             style: const TextStyle(
-                //                 color: Colors.black,
-                //                 fontFamily:
-                //                 Constants.fontDefault,
-                //                 fontSize: 14,
-                //                 fontWeight: FontWeight.normal)),
-                //       ]),
-                // ),
+                subtitle: Text(widget.tixTier.tixTierDescription),
                 trailing: Text('${StringUtils.rs} ${widget.tixTier.tixTierTotal.toStringAsFixed(2)}',
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),

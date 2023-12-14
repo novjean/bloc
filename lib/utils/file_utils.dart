@@ -9,6 +9,7 @@ import 'package:share_plus/share_plus.dart';
 import 'package:universal_html/html.dart' as html;
 import 'package:path_provider/path_provider.dart';
 import 'package:http/http.dart' as http;
+import 'package:pdf/widgets.dart' as pw;
 
 
 import 'logx.dart';
@@ -131,7 +132,7 @@ class FileUtils {
     }
   }
 
-  static void shareFile(String id, String path, String fileName) async {
+  static void shareFile(String path, String fileName) async {
     try{
       final files = <XFile>[];
       files.add(
@@ -140,6 +141,34 @@ class FileUtils {
       await Share.shareXFiles(files, text: '#blocCommunity');
     } catch(e){
       Logx.em(_TAG, e.toString());
+    }
+  }
+
+  static void saveScreenshot(Uint8List? imageBytes, String fileName) async {
+    try {
+      if (imageBytes != null) {
+        final pdf = pw.Document();
+        final image = pw.MemoryImage(imageBytes);
+        pdf.addPage(pw.Page(
+          build: (pw.Context context) {
+            return pw.Center(
+              child: pw.Image(image),
+            );
+          },
+        ));
+
+        final directory = await getTemporaryDirectory();
+        final path = '${directory.path}/$fileName';
+
+        File file = File(path);
+        await file.writeAsBytes(await pdf.save());
+
+    Logx.i(_TAG, 'pdf saved at: ${file.path}');
+
+    shareFile(path, fileName);
+      }
+    } catch (e) {
+    Logx.elt(_TAG, 'oops, something went wrong. error: $e');
     }
   }
 

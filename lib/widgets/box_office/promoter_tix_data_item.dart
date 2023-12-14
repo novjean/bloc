@@ -62,55 +62,49 @@ class _PromoterTixDataItemState extends State<PromoterTixDataItem> {
     String title =
         widget.tix.userName.toLowerCase();
 
-    return GestureDetector(
-      onTap: () {
-        Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) => PromoterBoxOfficeTixScreen(tixId: widget.tix.id)));
-      },
-      child: Hero(
-        tag: widget.tix.id,
-        child: Card(
-          elevation: 1,
-          color: Constants.lightPrimary,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
-          child: SizedBox(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 1),
-                child: ListView(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          title,
-                          style: const TextStyle(
-                            fontSize: 20.0,
-                            fontWeight: FontWeight.w800,
-                          ),
-                          overflow: TextOverflow.ellipsis,
-                          textAlign: TextAlign.left,
+    return Hero(
+      tag: widget.tix.id,
+      child: Card(
+        elevation: 1,
+        color: Constants.lightPrimary,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+        child: SizedBox(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 1),
+              child: ListView(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        title,
+                        style: const TextStyle(
+                          fontSize: 20.0,
+                          fontWeight: FontWeight.w800,
                         ),
-                        _isTixTiersLoading ? const SizedBox() : Text(
-                          tixCount.toString(),
-                          style: const TextStyle(
-                            fontSize: 20.0,
-                            fontWeight: FontWeight.w800,
-                          ),
-                          overflow: TextOverflow.ellipsis,
-                          textAlign: TextAlign.right,
-                        )
-                      ],
-                    ),
-                    Text(
-                      '+${widget.tix.userPhone}',
-                      style: const TextStyle(fontSize: 16),
-                    ),
-                  ],
-                ),
-              )),
-        ),
+                        overflow: TextOverflow.ellipsis,
+                        textAlign: TextAlign.left,
+                      ),
+                      _isTixTiersLoading ? const SizedBox() : Text(
+                        tixCount.toString(),
+                        style: const TextStyle(
+                          fontSize: 20.0,
+                          fontWeight: FontWeight.w800,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                        textAlign: TextAlign.right,
+                      )
+                    ],
+                  ),
+                  Text(
+                    '+${widget.tix.userPhone}',
+                    style: const TextStyle(fontSize: 16),
+                  ),
+                ],
+              ),
+            )),
       ),
     );
   }

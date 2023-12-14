@@ -2207,10 +2207,19 @@ class FirestoreHelper {
         .snapshots();
   }
 
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getAllTixsByPartyId(String partyId) {
+    return FirebaseFirestore.instance
+        .collection(TIXS)
+        .where('partyId', isEqualTo: partyId)
+        .orderBy('creationTime', descending: false)
+        .snapshots();
+  }
+
   static Stream<QuerySnapshot<Map<String, dynamic>>> getTixsByPartyId(String partyId) {
     return FirebaseFirestore.instance
         .collection(TIXS)
         .where('partyId', isEqualTo: partyId)
+        .where('isSuccess', isEqualTo: true)
         .orderBy('userName', descending: false)
         .snapshots();
   }
@@ -2226,6 +2235,8 @@ class FirestoreHelper {
     return FirebaseFirestore.instance
         .collection(TIXS)
         .where('userId', isEqualTo: userId)
+        .where('isSuccess', isEqualTo: true)
+        .orderBy('creationTime', descending: false)
         .snapshots();
   }
 

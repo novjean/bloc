@@ -102,6 +102,7 @@ dependencies:
   cached_network_image: ^3.2.3
   in_app_review: ^2.0.8
   pdf: ^3.10.7
+  screenshot: ^2.1.0
 
   # unused
 #  image_picker_web: ^3.0.0+1

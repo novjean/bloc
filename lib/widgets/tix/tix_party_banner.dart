@@ -2,26 +2,24 @@ import 'package:barcode_widget/barcode_widget.dart';
 import 'package:bloc/main.dart';
 import 'package:bloc/utils/constants.dart';
 import 'package:bloc/utils/date_time_utils.dart';
+import 'package:bloc/utils/string_utils.dart';
 import 'package:flutter/material.dart';
 
 import '../../db/entity/party.dart';
+import '../../db/entity/tix.dart';
 
 class TixPartyBanner extends StatefulWidget {
   static const String _TAG = 'PartyBanner';
 
-  String tixId;
   int tixsCount;
-  String tixUserName;
-  String tixUserPhone;
+  Tix tix;
   Party party;
   final bool shouldShowButton;
 
   TixPartyBanner(
       {Key? key,
-        required this.tixId,
+        required this.tix,
         required this.tixsCount,
-        required this.tixUserName,
-        required this.tixUserPhone,
         required this.party,
         required this.shouldShowButton})
       : super(key: key);
@@ -33,8 +31,14 @@ class TixPartyBanner extends StatefulWidget {
 class _TixPartyBannerState extends State<TixPartyBanner> {
   static const String _TAG = 'TixPartyBanner';
 
+  int merchantTransacationId = 0;
+
   @override
   void initState() {
+
+    if(widget.tix.merchantTransactionId.isNotEmpty){
+      merchantTransacationId = StringUtils.getInt(widget.tix.merchantTransactionId);
+    }
     super.initState();
   }
 
@@ -59,22 +63,22 @@ class _TixPartyBannerState extends State<TixPartyBanner> {
                     flex: 1,
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Padding(
                           padding: const EdgeInsets.only(left: 5.0, top: 5),
                           child: Text(
-                            '${widget.tixUserName}',
+                            '${widget.tix.userName}',
                             style: const TextStyle(fontSize: 19, fontWeight: FontWeight.bold),
                           ),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 5.0, top: 5),
-                          child: Text(
-                            '+${widget.tixUserPhone}',
-                            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                          ),
-                        ),
+                        // Padding(
+                        //   padding: const EdgeInsets.only(left: 5.0, top: 5),
+                        //   child: Text(
+                        //     '+${widget.tix.userPhone}',
+                        //     style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                        //   ),
+                        // ),
                         Padding(
                           padding: const EdgeInsets.only(left: 5.0),
                           child: RichText(
@@ -87,7 +91,7 @@ class _TixPartyBannerState extends State<TixPartyBanner> {
                                     fontFamily: Constants.fontDefault,
                                     overflow: TextOverflow.ellipsis,
                                     fontSize: 18,
-                                    fontWeight: FontWeight.bold),
+                                    fontWeight: FontWeight.normal),
                                 children: <TextSpan>[
                                   TextSpan(
                                       text: widget.party.chapter == 'I'
@@ -107,7 +111,7 @@ class _TixPartyBannerState extends State<TixPartyBanner> {
                           padding: const EdgeInsets.only(left: 5.0, top: 5),
                           child: Text(
                             '${widget.tixsCount} tickets',
-                            style: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+                            style: const TextStyle(fontSize: 17, fontWeight: FontWeight.normal),
                           ),
                         ),
                         const Spacer(),
@@ -117,32 +121,55 @@ class _TixPartyBannerState extends State<TixPartyBanner> {
                             widget.party.isTBA
                                 ? 'tba'
                                 : '🎊 ${DateTimeUtils.getFormattedDate(widget.party.startTime)}, ${DateTimeUtils.getFormattedTime(widget.party.startTime)}' ,
-                            style: const TextStyle(fontSize: 17),
+                            style: const TextStyle(fontSize: 16),
                           ),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 5.0),
-                          child: Text('🚪${DateTimeUtils.getFormattedDate(widget.party.endTime)}, ${DateTimeUtils.getFormattedTime(widget.party.endTime)}',
-                            style: const TextStyle(fontSize: 17),
-                          ),
-                        ),
+
+                        // Padding(
+                        //   padding: const EdgeInsets.only(left: 5.0),
+                        //   child: Text('🚪${DateTimeUtils.getFormattedDate(widget.party.endTime)}, ${DateTimeUtils.getFormattedTime(widget.party.endTime)}',
+                        //     style: const TextStyle(fontSize: 17),
+                        //   ),
+                        // ),
                       ],
                     ),
                   ),
                   Flexible(
                     flex: 1,
-                    child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: 1),
-                        height: 200,
-                        child: BarcodeWidget(
-                          color: Constants.darkPrimary,
-                          barcode: Barcode.qrCode(),
-                          // Barcode type and settings
-                          data: widget.tixId,
-                          // Content
-                          width: mq.width * 0.5,
-                          height: mq.width * 0.5,
-                        )
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children:[
+                        Padding(
+                          padding: const EdgeInsets.only(right: 10.0, top: 5),
+                          child: Text(
+                            '#${widget.tix.merchantTransactionId}' ,
+                            textAlign: TextAlign.end,
+                            style: const TextStyle(fontSize: 14),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(right: 10.0),
+                          child: Text(
+                            merchantTransacationId>0?('${DateTimeUtils.getFormattedDate(merchantTransacationId)}, ${DateTimeUtils.getFormattedTime2(merchantTransacationId)}') :
+                            'payment failure' ,
+                            textAlign: TextAlign.end,
+                            style: const TextStyle(fontSize: 14),
+                          ),
+                        ),
+                        Container(
+                        padding: EdgeInsets.all(10),
+                          height: 150,
+                          child: BarcodeWidget(
+                            color: Constants.darkPrimary,
+                            barcode: Barcode.qrCode(),
+                            // Barcode type and settings
+                            data: widget.tix.id,
+                            // Content
+                            width: mq.width * 0.35,
+                            height: mq.width * 0.35,
+                          )
+                      ),
+              ]
                     ),
                   ),
                 ],

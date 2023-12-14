@@ -183,8 +183,7 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
                               onClicked: () {
                                 setState(() {
                                   showPromoterView = !showPromoterView;
-                                  Logx.ist(
-                                      _TAG, 'promoter view $showPromoterView');
+                                  Logx.i(_TAG, 'promoter view $showPromoterView');
                                 });
                               },
                             )

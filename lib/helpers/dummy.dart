@@ -580,6 +580,7 @@ class Dummy {
       tixId: '',
       partyTixTierId: '',
       tixTierName: '',
+      tixTierDescription: '',
       tixTierPrice: 0,
       tixTierCount: 0,
       tixTierTotal: 0,

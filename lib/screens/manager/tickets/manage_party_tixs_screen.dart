@@ -18,6 +18,7 @@ import '../../../widgets/box_office/promoter_tix_data_item.dart';
 import '../../../widgets/ui/app_bar_title.dart';
 import '../../../widgets/ui/loading_widget.dart';
 import '../../../widgets/ui/sized_listview_block.dart';
+import 'manage_box_office_tix_screen.dart';
 
 class ManagePartyTixsScreen extends StatefulWidget {
   final Party party;
@@ -81,6 +82,135 @@ class _ManagePartyTixsScreenState extends State<ManagePartyTixsScreen> {
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       body: _buildBody(context),
+    );
+  }
+
+  _buildBody(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(10),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          displayBoxOfficeOptions(context),
+          const Divider(),
+          Container(
+            margin: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 0),
+            child: TextField(
+              decoration: const InputDecoration(
+                  border: InputBorder.none,
+                  hintText: 'search by name or phone',
+                  hintStyle: TextStyle(color: Constants.primary)),
+              autofocus: false,
+              style: const TextStyle(fontSize: 17, color: Constants.primary),
+              onChanged: (val) {
+                if (val.trim().isNotEmpty) {
+                  isSearching = true;
+                } else {
+                  isSearching = false;
+                }
+
+                searchList.clear();
+
+                for (var i in mTixs) {
+                  if (i.userName.toLowerCase().contains(val.toLowerCase()) ||
+                      i.userPhone.toLowerCase().contains(val.toLowerCase())) {
+                    searchList.add(i);
+                  }
+                }
+                setState(() {});
+              },
+            ),
+          ),
+          buildTixsList(context)
+        ],
+      ),
+    );
+  }
+
+  displayBoxOfficeOptions(BuildContext context) {
+    double containerHeight = MediaQuery.of(context).size.height / 20;
+
+    return SizedBox(
+      key: UniqueKey(),
+      // this height has to match with category item container height
+      height: MediaQuery.of(context).size.height / 15,
+      child: ListView.builder(
+          itemCount: mOptions.length,
+          scrollDirection: Axis.horizontal,
+          itemBuilder: (ctx, index) {
+            return GestureDetector(
+                child: SizedListViewBlock(
+                  title: mOptions[index],
+                  height: containerHeight,
+                  width: MediaQuery.of(context).size.width / 4,
+                  color: Constants.primary,
+                ),
+                onTap: () {
+                  setState(() {
+                    sOption = mOptions[index];
+                    Logx.i(_TAG, '$sOption at box office is selected');
+                  });
+                });
+          }),
+    );
+  }
+
+  buildTixsList(BuildContext context) {
+    return StreamBuilder<QuerySnapshot>(
+      stream: FirestoreHelper.getAllTixsByPartyId(widget.party.id),
+      builder: (ctx, snapshot) {
+        switch (snapshot.connectionState) {
+          case ConnectionState.waiting:
+          case ConnectionState.none:
+            return const LoadingWidget();
+          case ConnectionState.active:
+          case ConnectionState.done:
+            {
+              if (snapshot.hasData) {
+                if (snapshot.data!.docs.isEmpty) {
+                  return const Expanded(
+                      child: Center(child: Text('no tixs found!')));
+                } else {
+                  for (int i = 0; i < snapshot.data!.docs.length; i++) {
+                    DocumentSnapshot document = snapshot.data!.docs[i];
+                    Map<String, dynamic> map =
+                    document.data()! as Map<String, dynamic>;
+                    final Tix tix = Fresh.freshTixMap(map, false);
+                    mTixs.add(tix);
+                  }
+
+                  return _displayTixs(
+                      context, isSearching ? searchList : mTixs);
+                }
+              } else {
+                return const Expanded(
+                    child: Center(child: Text('no tixs found!')));
+              }
+            }
+        }
+      },
+    );
+  }
+
+  _displayTixs(BuildContext context, List<Tix> tixs) {
+    return Expanded(
+      child: ListView.builder(
+        itemCount: tixs.length,
+        scrollDirection: Axis.vertical,
+        itemBuilder: (ctx, index) {
+          return GestureDetector(
+            onTap: () {
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => ManageBoxOfficeTixScreen(tixId: tixs[index].id)));
+            },
+            child: PromoterTixDataItem(
+              tix: tixs[index],
+              party: widget.party,
+              isClickable: true,
+            ),
+          );
+        },
+      ),
     );
   }
 
@@ -424,127 +554,4 @@ class _ManagePartyTixsScreenState extends State<ManagePartyTixsScreen> {
         });
   }
 
-
-  _buildBody(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(10),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          displayBoxOfficeOptions(context),
-          const Divider(),
-          Container(
-            margin: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 0),
-            child: TextField(
-              decoration: const InputDecoration(
-                  border: InputBorder.none,
-                  hintText: 'search by name or phone',
-                  hintStyle: TextStyle(color: Constants.primary)),
-              autofocus: false,
-              style: const TextStyle(fontSize: 17, color: Constants.primary),
-              onChanged: (val) {
-                if (val.trim().isNotEmpty) {
-                  isSearching = true;
-                } else {
-                  isSearching = false;
-                }
-
-                searchList.clear();
-
-                for (var i in mTixs) {
-                  if (i.userName.toLowerCase().contains(val.toLowerCase()) ||
-                      i.userPhone.toLowerCase().contains(val.toLowerCase())) {
-                    searchList.add(i);
-                  }
-                }
-                setState(() {});
-              },
-            ),
-          ),
-          buildTixsList(context)
-        ],
-      ),
-    );
-  }
-
-  displayBoxOfficeOptions(BuildContext context) {
-    double containerHeight = MediaQuery.of(context).size.height / 20;
-
-    return SizedBox(
-      key: UniqueKey(),
-      // this height has to match with category item container height
-      height: MediaQuery.of(context).size.height / 15,
-      child: ListView.builder(
-          itemCount: mOptions.length,
-          scrollDirection: Axis.horizontal,
-          itemBuilder: (ctx, index) {
-            return GestureDetector(
-                child: SizedListViewBlock(
-                  title: mOptions[index],
-                  height: containerHeight,
-                  width: MediaQuery.of(context).size.width / 4,
-                  color: Constants.primary,
-                ),
-                onTap: () {
-                  setState(() {
-                    sOption = mOptions[index];
-                    Logx.i(_TAG, '$sOption at box office is selected');
-                  });
-                });
-          }),
-    );
-  }
-
-  buildTixsList(BuildContext context) {
-    return StreamBuilder<QuerySnapshot>(
-      stream: FirestoreHelper.getTixsByPartyId(widget.party.id),
-      builder: (ctx, snapshot) {
-        switch (snapshot.connectionState) {
-          case ConnectionState.waiting:
-          case ConnectionState.none:
-            return const LoadingWidget();
-          case ConnectionState.active:
-          case ConnectionState.done:
-            {
-              if (snapshot.hasData) {
-                if (snapshot.data!.docs.isEmpty) {
-                  return const Expanded(
-                      child: Center(child: Text('no tixs found!')));
-                } else {
-                  for (int i = 0; i < snapshot.data!.docs.length; i++) {
-                    DocumentSnapshot document = snapshot.data!.docs[i];
-                    Map<String, dynamic> map =
-                        document.data()! as Map<String, dynamic>;
-                    final Tix tix = Fresh.freshTixMap(map, false);
-                    mTixs.add(tix);
-                  }
-
-                  return _displayTixs(
-                      context, isSearching ? searchList : mTixs);
-                }
-              } else {
-                return const Expanded(
-                    child: Center(child: Text('no tixs found!')));
-              }
-            }
-        }
-      },
-    );
-  }
-
-  _displayTixs(BuildContext context, List<Tix> tixs) {
-    return Expanded(
-      child: ListView.builder(
-        itemCount: tixs.length,
-        scrollDirection: Axis.vertical,
-        itemBuilder: (ctx, index) {
-          return PromoterTixDataItem(
-            tix: tixs[index],
-            party: widget.party,
-            isClickable: true,
-          );
-          },
-      ),
-    );
-  }
 }

@@ -126,36 +126,10 @@ class _BoxOfficeTixItemState extends State<BoxOfficeTixItem> {
                       ),
                     ),
                     const Spacer(),
+
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        // Expanded(
-                        //     child: Container(
-                        //       padding: const EdgeInsets.symmetric(horizontal: 5),
-                        //       height: 60,
-                        //       child: ElevatedButton.icon(
-                        //         style: ElevatedButton.styleFrom(
-                        //           backgroundColor: Constants.background,
-                        //           foregroundColor: Constants.primary,
-                        //           shadowColor: Colors.white30,
-                        //           minimumSize: const Size.fromHeight(60),
-                        //           shape: const RoundedRectangleBorder(
-                        //             borderRadius: BorderRadius.only(
-                        //                 topLeft: Radius.circular(10), topRight: Radius.circular(10)),
-                        //           ),
-                        //           elevation: 3,
-                        //         ),
-                        //         label: const Text('save', style: TextStyle(fontSize: 18),),
-                        //         icon: const Icon(
-                        //           Icons.file_download_sharp,
-                        //           size: 24.0,
-                        //         ),
-                        //         onPressed: () async {
-                        //           // await _generateAndSavePDF(context);
-                        //         },
-                        //       ),
-                        //     )
-                        // ),
                         Expanded(
                             child: Container(
                               padding: const EdgeInsets.symmetric(horizontal: 5),
@@ -185,7 +159,6 @@ class _BoxOfficeTixItemState extends State<BoxOfficeTixItem> {
                               ),
                             )
                         ),
-
                       ],)
                   ],
                 ),
@@ -209,41 +182,5 @@ class _BoxOfficeTixItemState extends State<BoxOfficeTixItem> {
         ),
       ),
     );
-  }
-
-  Future<void> _generateAndSavePDF(BuildContext context) async {
-    final pdf = pw.Document();
-
-    // Add content to the PDF
-    pdf.addPage(pw.Page(
-      build: (pw.Context context) {
-        return pw.Center(
-        child: pw.Text('Hello World!'),
-      );
-      },
-    ));
-
-    // Get the document directory using path_provider
-    final directory = await getTemporaryDirectory();
-    String fileName = 'bloc_tix_example.pdf';
-    final path = '${directory.path}/$fileName';
-
-    // Save the PDF to the local storage
-    File file = File(path);
-    await file.writeAsBytes(await pdf.save());
-
-    FileUtils.shareFile(
-        widget.tix.id,
-        path,
-        fileName);
-
-    Logx.ist(_TAG, 'ticket saved in device');
-
-    // Open the PDF using the default PDF viewer
-    ProcessResult result = await Process.run('open', [path]);
-    if (result.exitCode != 0) {
-      // Handle the error (e.g., PDF viewer not found on the device)
-      Logx.i(_TAG, 'pdf viewer not found!');
-    }
   }
 }
