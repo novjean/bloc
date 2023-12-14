@@ -16,10 +16,12 @@ class ManageTixTiersScreen extends StatelessWidget {
   static const String _TAG = 'ManageTixTiersScreen';
 
   String partyId;
+  int partyEndTime;
 
   ManageTixTiersScreen({
     Key? key,
     required this.partyId,
+    required this.partyEndTime,
   }) : super(key: key);
 
   @override
@@ -34,7 +36,7 @@ class ManageTixTiersScreen extends StatelessWidget {
           Navigator.of(context).push(
             MaterialPageRoute(
                 builder: (ctx) => PartyTixTierAddEditScreen(
-                      tixTier: Dummy.getDummyPartyTixTier(partyId),
+                      tixTier: Dummy.getDummyPartyTixTier(partyId, partyEndTime),
                       task: 'add',
                     )),
           );

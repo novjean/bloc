@@ -1327,7 +1327,7 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
                   Navigator.of(context).push(
                     MaterialPageRoute(
                         builder: (ctx) =>
-                            ManageTixTiersScreen(partyId: widget.party.id)),
+                            ManageTixTiersScreen(partyId: widget.party.id, partyEndTime: widget.party.endTime,)),
                   );
                 },
               ),

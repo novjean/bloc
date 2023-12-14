@@ -25,12 +25,16 @@ class _PartyTixTierItemState extends State<PartyTixTierItem> {
   static const String _TAG = 'PartyTixTierItem';
 
   int quantity = 0;
+  int tixRemaining = 0;
 
   TixTier mTixTier = Dummy.getDummyTixTier();
 
   @override
   void initState() {
     mTixTier = mTixTier.copyWith(tixId: widget.tixId);
+
+    tixRemaining =
+        (widget.partyTixTier.totalTix - widget.partyTixTier.soldCount) + 1;
 
     super.initState();
   }
@@ -51,11 +55,6 @@ class _PartyTixTierItemState extends State<PartyTixTierItem> {
             child: Padding(
                 padding: const EdgeInsets.only(top: 2.0, left: 5, right: 5),
                 child: ListTile(
-                    // leading: FadeInImage(
-                    //   placeholder: const AssetImage(
-                    //       'assets/icons/logo.png'),
-                    //   image: NetworkImage(tixTier.imageUrl),
-                    //   fit: BoxFit.cover,),
                     title: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -72,122 +71,166 @@ class _PartyTixTierItemState extends State<PartyTixTierItem> {
                         ),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                          child: Text('\u20B9 ${widget.partyTixTier.tierPrice.toStringAsFixed(0)}',
-                              style: const TextStyle(fontSize: 14)),
+                          child: Text(
+                              '\u20B9 ${widget.partyTixTier.tierPrice.toStringAsFixed(0)}',
+                              style: const TextStyle(
+                                  fontSize: 15, fontWeight: FontWeight.bold)),
                         )
                       ],
                     ),
                     subtitle: Text(widget.partyTixTier.tierDescription),
-                    trailing: !widget.partyTixTier.isSoldOut
-                        ? DropdownButton<int>(
-                            value: quantity,
-                            items: List<DropdownMenuItem<int>>.generate(10,
-                                (int index) {
-                              return DropdownMenuItem<int>(
-                                value: index,
-                                child: Text((index).toString()),
-                              );
-                            }),
-                            onChanged: (newValue) {
-                              setState(() {
-                                quantity = newValue!;
-                                if (quantity > 0) {
-                                  FirestoreHelper.pullTix(widget.tixId)
-                                      .then((res) {
-                                    if (res.docs.isNotEmpty) {
-                                      DocumentSnapshot document = res.docs[0];
-                                      Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+                    trailing: !widget.partyTixTier.isSoldOut &&
+                            Timestamp.now().millisecondsSinceEpoch <
+                                widget.partyTixTier.endTime
+                        ? Container(
+                            padding: const EdgeInsets.all(5.0),
+                            decoration: BoxDecoration(
+                              border: Border.all(color: Colors.grey),
+                              // Set your desired border color
+                              borderRadius: BorderRadius.circular(8.0),
+                              color: Constants.lightPrimary,
+                            ),
+                            child: DropdownButton<int>(
+                              value: quantity,
+                              items: List<DropdownMenuItem<int>>.generate(
+                                  tixRemaining, (int index) {
+                                return DropdownMenuItem<int>(
+                                  value: index,
+                                  child: Text((index).toString()),
+                                );
+                              }),
+                              onChanged: (newValue) {
+                                setState(() {
+                                  quantity = newValue!;
+                                  if (quantity > 0) {
+                                    FirestoreHelper.pullTix(widget.tixId)
+                                        .then((res) {
+                                      if (res.docs.isNotEmpty) {
+                                        DocumentSnapshot document = res.docs[0];
+                                        Map<String, dynamic> data = document
+                                            .data()! as Map<String, dynamic>;
 
-                                      Tix tix = Fresh.freshTixMap(data, false);
-                                      if(tix.tixTierIds.contains(mTixTier.id)){
-                                        // ticket count increased, nothing to do
-                                        // TixTier info will have count
+                                        Tix tix =
+                                            Fresh.freshTixMap(data, false);
+                                        if (tix.tixTierIds
+                                            .contains(mTixTier.id)) {
+                                          // ticket count increased, nothing to do
+                                          // TixTier info will have count
 
-                                        // need to update tix tier
-                                        FirestoreHelper.pullTixTier(mTixTier.id).then(
-                                            (res) {
-                                              if(res.docs.isNotEmpty){
-                                                DocumentSnapshot document = res.docs[0];
-                                                Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-                                                TixTier tixTier = Fresh.freshTixTierMap(data, false);
+                                          // need to update tix tier
+                                          FirestoreHelper.pullTixTier(
+                                                  mTixTier.id)
+                                              .then((res) {
+                                            if (res.docs.isNotEmpty) {
+                                              DocumentSnapshot document =
+                                                  res.docs[0];
+                                              Map<String, dynamic> data =
+                                                  document.data()!
+                                                      as Map<String, dynamic>;
+                                              TixTier tixTier =
+                                                  Fresh.freshTixTierMap(
+                                                      data, false);
 
-                                                // update the quantity on this
-                                                tixTier = tixTier.copyWith(
-                                                    tixTierPrice:
-                                                    widget.partyTixTier.tierPrice,
-                                                    tixTierCount: quantity,
-                                                    tixTierTotal: widget.partyTixTier.tierPrice * quantity,
-                                                    guestsRemaining: quantity
-                                                );
-                                                FirestoreHelper.pushTixTier(tixTier);
-                                              } else {
-                                                // bad data, could not find tix tier
-                                                // add new tix tier to db
-                                                mTixTier = mTixTier.copyWith(
-                                                    partyTixTierId: widget.partyTixTier.id,
-                                                    tixTierName: widget.partyTixTier.tierName,
-                                                    tixTierPrice:
-                                                    widget.partyTixTier.tierPrice,
-                                                    tixTierCount: quantity,
-                                                    guestsRemaining: quantity,
-                                                    tixTierTotal:
-                                                    widget.partyTixTier.tierPrice *
-                                                        quantity);
-                                                FirestoreHelper.pushTixTier(mTixTier);
+                                              // update the quantity on this
+                                              tixTier = tixTier.copyWith(
+                                                  tixTierPrice: widget
+                                                      .partyTixTier.tierPrice,
+                                                  tixTierCount: quantity,
+                                                  tixTierTotal: widget
+                                                          .partyTixTier
+                                                          .tierPrice *
+                                                      quantity,
+                                                  guestsRemaining: quantity);
+                                              FirestoreHelper.pushTixTier(
+                                                  tixTier);
+                                            } else {
+                                              // bad data, could not find tix tier
+                                              // add new tix tier to db
+                                              mTixTier = mTixTier.copyWith(
+                                                  partyTixTierId:
+                                                      widget.partyTixTier.id,
+                                                  tixTierName: widget
+                                                      .partyTixTier.tierName,
+                                                  tixTierPrice: widget
+                                                      .partyTixTier.tierPrice,
+                                                  tixTierCount: quantity,
+                                                  guestsRemaining: quantity,
+                                                  tixTierTotal: widget
+                                                          .partyTixTier
+                                                          .tierPrice *
+                                                      quantity);
+                                              FirestoreHelper.pushTixTier(
+                                                  mTixTier);
 
-                                                // no need to add it to the tix since it is already present
-                                              }
+                                              // no need to add it to the tix since it is already present
                                             }
-                                        );
+                                          });
+                                        } else {
+                                          mTixTier = mTixTier.copyWith(
+                                              partyTixTierId:
+                                                  widget.partyTixTier.id,
+                                              tixTierName:
+                                                  widget.partyTixTier.tierName,
+                                              tixTierPrice:
+                                                  widget.partyTixTier.tierPrice,
+                                              tixTierCount: quantity,
+                                              guestsRemaining: quantity,
+                                              tixTierTotal: widget
+                                                      .partyTixTier.tierPrice *
+                                                  quantity);
+                                          FirestoreHelper.pushTixTier(mTixTier);
+
+                                          List<String> tixTierIds =
+                                              tix.tixTierIds;
+                                          tixTierIds.add(mTixTier.id);
+                                          tix = tix.copyWith(
+                                              tixTierIds: tixTierIds);
+
+                                          FirestoreHelper.pushTix(tix);
+                                        }
+
+                                        Logx.em(_TAG,
+                                            'tix tier data saved in firebase');
                                       } else {
-                                        mTixTier = mTixTier.copyWith(
-                                            partyTixTierId: widget.partyTixTier.id,
-                                            tixTierName: widget.partyTixTier.tierName,
-                                            tixTierPrice:
-                                            widget.partyTixTier.tierPrice,
-                                            tixTierCount: quantity,
-                                            guestsRemaining: quantity,
-                                            tixTierTotal: widget.partyTixTier.tierPrice * quantity);
-                                        FirestoreHelper.pushTixTier(mTixTier);
+                                        Logx.em(_TAG,
+                                            'tix ${widget.tixId} not found in firebase');
+                                      }
+                                    });
+                                  } else {
+                                    // item tier removed
+                                    FirestoreHelper.pullTix(widget.tixId)
+                                        .then((res) {
+                                      if (res.docs.isNotEmpty) {
+                                        DocumentSnapshot document = res.docs[0];
+                                        Map<String, dynamic> data = document
+                                            .data()! as Map<String, dynamic>;
 
-                                        List<String> tixTierIds = tix.tixTierIds;
-                                        tixTierIds.add(mTixTier.id);
-                                        tix = tix.copyWith(tixTierIds: tixTierIds);
+                                        Tix tix =
+                                            Fresh.freshTixMap(data, false);
+                                        List<String> tixTierIds =
+                                            tix.tixTierIds;
+                                        tixTierIds.remove(mTixTier.id);
+                                        tix = tix.copyWith(
+                                            tixTierIds: tixTierIds);
 
+                                        FirestoreHelper.deleteTixTier(
+                                            mTixTier.id);
                                         FirestoreHelper.pushTix(tix);
                                       }
-
-                                      Logx.em(_TAG, 'tix tier data saved in firebase');
-
-                                    } else {
-                                      Logx.em(_TAG, 'tix ${widget.tixId} not found in firebase');
-                                    }
-                                  });
-                                } else {
-                                  // item tier removed
-                                  FirestoreHelper.pullTix(widget.tixId)
-                                      .then((res) {
-                                    if (res.docs.isNotEmpty) {
-                                      DocumentSnapshot document = res.docs[0];
-                                      Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-
-                                      Tix tix = Fresh.freshTixMap(data, false);
-                                      List<String> tixTierIds = tix.tixTierIds;
-                                      tixTierIds.remove(mTixTier.id);
-                                      tix = tix.copyWith(tixTierIds: tixTierIds);
-
-                                      FirestoreHelper.deleteTixTier(mTixTier.id);
-                                      FirestoreHelper.pushTix(tix);
-                                    }
-                                      });
-                                }
-                              });
-                            },
+                                    });
+                                  }
+                                });
+                              },
+                            ),
                           )
-                        : const Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 5.0),
-                          child: Text('sold\nout'),
-                        ))),
+                        : Container(
+                            padding: EdgeInsets.symmetric(horizontal: 10.0),
+                            child: Text(
+                              'sold\nout',
+                              textAlign: TextAlign.end,
+                              style: TextStyle(fontSize: 16),
+                            ),
+                          ))),
           ),
         ),
       ),

@@ -66,40 +66,6 @@ class _PromoterTixDataItemState extends State<PromoterTixDataItem> {
       onTap: () {
         Navigator.of(context).push(MaterialPageRoute(
             builder: (context) => PromoterBoxOfficeTixScreen(tixId: widget.tix.id)));
-
-        // showDialog(
-        //     context: context,
-        //     builder: (BuildContext context) {
-        //       return AlertDialog(
-        //         backgroundColor: Constants.lightPrimary,
-        //         shape: const RoundedRectangleBorder(
-        //             borderRadius: BorderRadius.all(Radius.circular(10.0))),
-        //         contentPadding: const EdgeInsets.all(10.0),
-        //         title: Row(
-        //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        //           children: [
-        //             Text(widget.tix.userName),
-        //             Text('\u20B9 ${widget.tix.total.toStringAsFixed(0)}'),
-        //           ],
-        //         ),
-        //         content: Container(
-        //           height: (100 * mTixTiers.length).toDouble(), // Change as per your requirement
-        //           width: 300, // Change as per your requirement
-        //           child: ListView.builder(
-        //             shrinkWrap: true,
-        //             itemCount: mTixTiers.length,
-        //             itemBuilder: (BuildContext context, int index) {
-        //               TixTier tixTier = mTixTiers[index];
-        //
-        //               return ListTile(
-        //                 title: Text(tixTier.tixTierName),
-        //                 subtitle: Text('${tixTier.tixTierCount} x ${tixTier.tixTierPrice}'),
-        //               );
-        //             },
-        //           ),
-        //         ),
-        //       );
-        //     });
       },
       child: Hero(
         tag: widget.tix.id,

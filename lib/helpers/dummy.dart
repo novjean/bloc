@@ -416,17 +416,19 @@ class Dummy {
     return partyPhoto;
   }
 
-  static PartyTixTier getDummyPartyTixTier(String partyId) {
+  static PartyTixTier getDummyPartyTixTier(String partyId, int endTime) {
     PartyTixTier partyTixTier = PartyTixTier(
         id: StringUtils.getRandomString(28),
         partyId: partyId,
         tierLevel: 1,
         tierName: '',
-        tierDescription: '',
+        tierDescription: 'entry for 1 person.',
         tierPrice: 0,
         soldCount: 0,
         totalTix: 0,
-        isSoldOut: false);
+        isSoldOut: false,
+      endTime: endTime
+    );
     return partyTixTier;
   }
 

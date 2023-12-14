@@ -265,7 +265,7 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
             if (snapshot.hasData) {
               List<Tix> tixs = [];
               if (snapshot.data!.docs.isEmpty) {
-                return showReserveTableButton();
+                return showEventsButton();
               } else {
                 for (int i = 0; i < snapshot.data!.docs.length; i++) {
                   DocumentSnapshot document = snapshot.data!.docs[i];
@@ -277,7 +277,7 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
                 return _showUserTixs(context, tixs);
               }
             } else {
-              return showReserveTableButton();
+              return showEventsButton();
             }
         }
       },
@@ -456,34 +456,30 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
     );
   }
 
-  showReserveTableButton() {
+  showEventsButton() {
     return Expanded(
       child: Center(
           child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
-            'Family and food, the perfect recipe for love! Reserve a table, lay a foundation of laughter and good food, and watch your beautiful memories take shape! 💛'
+            'Uh-oh, no tickets here! 🎟️ Time to snag yours and treat your loved ones to an unforgettable experience! ✨'
                 .toLowerCase(),
             textAlign: TextAlign.center,
             style: const TextStyle(fontSize: 22, color: Constants.primary),
           ),
           const SizedBox(height: 16),
           Text(
-            'click to reserve your table!'.toLowerCase(),
+            'click to check out the events!'.toLowerCase(),
             style: const TextStyle(fontSize: 16, color: Constants.primary),
           ),
           const SizedBox(height: 16),
           ButtonWidget(
-            text: 'reserve',
+            text: 'events',
             height: 50,
             onClicked: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                    builder: (ctx) => ReservationAddEditScreen(
-                        reservation: Dummy.getDummyReservation(''),
-                        task: 'add')),
-              );
+              GoRouter.of(context)
+                  .pushNamed(RouteConstants.landingRouteName);
             },
           ),
         ],

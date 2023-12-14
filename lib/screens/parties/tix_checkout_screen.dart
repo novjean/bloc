@@ -11,6 +11,7 @@ import 'package:phonepe_payment_sdk/phonepe_payment_sdk.dart';
 import 'package:http/http.dart' as http;
 
 import '../../db/entity/party.dart';
+import '../../db/entity/party_tix_tier.dart';
 import '../../db/entity/tix.dart';
 import '../../db/entity/upi_app.dart';
 import '../../db/shared_preferences/user_preferences.dart';
@@ -180,9 +181,11 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
           if (status == 'SUCCESS') {
             result = "flow complete - status : SUCCESS ";
 
-            await checkStatus();
+            await checkPhonePePaymentStatus();
           } else {
             result = "flow complete - status : $status and error $error ";
+
+            Logx.elt(_TAG, 'payment was unsuccessful, please try again.');
           }
         } else {
           result = "flow Incomplete";
@@ -193,6 +196,8 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
         return <dynamic>{};
       });
     } catch (error) {
+      Logx.elt(_TAG, 'payment was unsuccessful, please try again.');
+
       handleError(error);
     }
   }
@@ -374,7 +379,7 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
     );
   }
 
-  checkStatus() async {
+  checkPhonePePaymentStatus() async {
     try {
       String prodUrl =
           "https://api.phonepe.com/apis/hermes/pg/v1/status/$merchantId/$merchantTransactionId";
@@ -417,18 +422,41 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
             );
             FirestoreHelper.pushTix(widget.tix);
 
+            //update the party tix tier
+            FirestoreHelper.pullPartyTixTiers(widget.tix.partyId).then((res) {
+              if(res.docs.isNotEmpty){
+                for (int i = 0; i < res.docs.length; i++) {
+                  DocumentSnapshot document = res.docs[i];
+                  Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+                  PartyTixTier partyTixTier = Fresh.freshPartyTixTierMap(data, false);
+
+                  for(TixTier tixTier in mTixTiers){
+                    if(tixTier.tixTierName == partyTixTier.tierName){
+                      int soldCount = partyTixTier.soldCount + tixTier.tixTierCount;
+                      partyTixTier = partyTixTier.copyWith(soldCount: soldCount);
+
+                      if(soldCount >= partyTixTier.totalTix){
+                        partyTixTier = partyTixTier.copyWith(isSoldOut: true);
+                      }
+                      FirestoreHelper.pushPartyTixTier(partyTixTier);
+                    }
+                  }
+                }
+              }
+            });
+
             //final step
             GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
             GoRouter.of(context).pushNamed(RouteConstants.boxOfficeRouteName);
           } else {
-            Logx.ist(_TAG, "payment not successful, please try again");
+            Logx.ist(_TAG, "payment was not successful, please try again");
           }
         });
       } on Exception catch (e) {
-        Logx.est(_TAG, e.toString());
+        Logx.est(_TAG, 'oops, something went wrong. error: $e');
       }
     } on Exception catch (e) {
-      Logx.est(_TAG, e.toString());
+      Logx.est(_TAG, 'oops, something went wrong. error: $e');
     }
   }
 

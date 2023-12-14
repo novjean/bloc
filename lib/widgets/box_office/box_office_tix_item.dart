@@ -129,6 +129,33 @@ class _BoxOfficeTixItemState extends State<BoxOfficeTixItem> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
+                        // Expanded(
+                        //     child: Container(
+                        //       padding: const EdgeInsets.symmetric(horizontal: 5),
+                        //       height: 60,
+                        //       child: ElevatedButton.icon(
+                        //         style: ElevatedButton.styleFrom(
+                        //           backgroundColor: Constants.background,
+                        //           foregroundColor: Constants.primary,
+                        //           shadowColor: Colors.white30,
+                        //           minimumSize: const Size.fromHeight(60),
+                        //           shape: const RoundedRectangleBorder(
+                        //             borderRadius: BorderRadius.only(
+                        //                 topLeft: Radius.circular(10), topRight: Radius.circular(10)),
+                        //           ),
+                        //           elevation: 3,
+                        //         ),
+                        //         label: const Text('save', style: TextStyle(fontSize: 18),),
+                        //         icon: const Icon(
+                        //           Icons.file_download_sharp,
+                        //           size: 24.0,
+                        //         ),
+                        //         onPressed: () async {
+                        //           // await _generateAndSavePDF(context);
+                        //         },
+                        //       ),
+                        //     )
+                        // ),
                         Expanded(
                             child: Container(
                               padding: const EdgeInsets.symmetric(horizontal: 5),
@@ -145,34 +172,7 @@ class _BoxOfficeTixItemState extends State<BoxOfficeTixItem> {
                                   ),
                                   elevation: 3,
                                 ),
-                                label: const Text('save', style: TextStyle(fontSize: 18),),
-                                icon: const Icon(
-                                  Icons.file_download_sharp,
-                                  size: 24.0,
-                                ),
-                                onPressed: () async {
-                                  // await _generateAndSavePDF(context);
-                                },
-                              ),
-                            )
-                        ),
-                        Expanded(
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 5),
-                              height: 60,
-                              child: ElevatedButton.icon(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Constants.background,
-                                  foregroundColor: Constants.primary,
-                                  shadowColor: Colors.white30,
-                                  minimumSize: const Size.fromHeight(60),
-                                  shape: const RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.only(
-                                        topLeft: Radius.circular(10), topRight: Radius.circular(10)),
-                                  ),
-                                  elevation: 3,
-                                ),
-                                label: const Text('qr', style: TextStyle(fontSize: 18),),
+                                label: const Text('see ticket', style: TextStyle(fontSize: 18),),
                                 icon: const Icon(
                                   Icons.qr_code_sharp,
                                   size: 24.0,

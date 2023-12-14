@@ -12,6 +12,7 @@ import '../../helpers/fresh.dart';
 import '../../routes/route_constants.dart';
 import '../../utils/constants.dart';
 import '../../utils/logx.dart';
+import '../../widgets/footer.dart';
 import '../../widgets/tix/confirm_tix_tier_item.dart';
 import '../../widgets/tix/tix_party_banner.dart';
 import '../../widgets/ui/app_bar_title.dart';
@@ -112,6 +113,7 @@ class _BoxOfficeTixScreenState extends State<BoxOfficeTixScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.black,
         title: AppBarTitle(title: 'ticket'),
         titleSpacing: 0,
       ),
@@ -212,42 +214,46 @@ class _BoxOfficeTixScreenState extends State<BoxOfficeTixScreen> {
                   children: [
                     ButtonWidget(
                       height: 50,
-                      text: 'update tix',
+                      text: 'screenshot',
                       onClicked: () {
-                        FirestoreHelper.pushTix(mTix);
-                        Navigator.of(context).pop();
-                      },
-                    ),
-                    ButtonWidget(
-                      height: 50,
-                      text: 'confirm all',
-                      onClicked: () {
-                        FirestoreHelper.pullTixTiersByTixId(widget.tixId).then((res) {
-                          if (res.docs.isNotEmpty) {
-                            for (int i = 0; i < res.docs.length; i++) {
-                              DocumentSnapshot document = res.docs[i];
-                              Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-                              TixTier tixTier = Fresh.freshTixTierMap(data, false);
-                              tixTier = tixTier.copyWith(guestsRemaining: 0);
-                              FirestoreHelper.pushTixTier(tixTier);
-                            }
-                          } else {
-                            Logx.em(_TAG, 'no tix tiers found for tix id ${widget.tixId}');
-                          }
-                        });
-
-                        mTix = mTix.copyWith(isArrived: true);
-
-                        FirestoreHelper.pushTix(mTix);
+                        // _captureAndSaveAsPDF(context);
                         Navigator.of(context).pop();
                       },
                     ),
                   ],
                 ),
-              )
+              ),
+              Footer(),
             ],
           );
   }
+
+  // final ScreenshotController screenshotController = ScreenshotController();
+  //
+  // Future<void> _captureAndSaveAsPDF(BuildContext context) async {
+  //   try {
+  //     Uint8List? imageBytes = await screenshotController.capture();
+  //     if (imageBytes != null) {
+  //       final pdf = pw.Document();
+  //       final image = pw.MemoryImage(imageBytes);
+  //       pdf.addPage(pw.Page(
+  //         build: (pw.Context context) {
+  //           return pw.Center(
+  //             child: pw.Image(image),
+  //           );
+  //         },
+  //       ));
+  //
+  //       final directory = await getApplicationDocumentsDirectory();
+  //       final file = File('${directory.path}/example.pdf');
+  //       await file.writeAsBytes(await pdf.save());
+  //
+  //       print('PDF saved at: ${file.path}');
+  //     }
+  //   } catch (e) {
+  //     print('Error: $e');
+  //   }
+  // }
 
   _showTixTiers(BuildContext context, List<TixTier> tixTiers) {
     return SizedBox(

@@ -3020,7 +3020,7 @@ class Fresh {
 
   /** party tix tier **/
   static PartyTixTier freshPartyTixTier(PartyTixTier partyTixTier) {
-    PartyTixTier fresh = Dummy.getDummyPartyTixTier(partyTixTier.partyId);
+    PartyTixTier fresh = Dummy.getDummyPartyTixTier(partyTixTier.partyId, 0);
 
     try {
       fresh = fresh.copyWith(id: partyTixTier.id);
@@ -3077,13 +3077,19 @@ class Fresh {
       Logx.em(_TAG,
           'tix tier isSoldOut not exist for id: ${partyTixTier.id}');
     }
+    try {
+      fresh = fresh.copyWith(endTime: partyTixTier.endTime);
+    } catch (e) {
+      Logx.em(_TAG,
+          'tix tier endTime not exist for id: ${partyTixTier.id}');
+    }
 
     return fresh;
   }
 
   static PartyTixTier freshPartyTixTierMap(
       Map<String, dynamic> map, bool shouldUpdate) {
-    PartyTixTier partyTixTier = Dummy.getDummyPartyTixTier('');
+    PartyTixTier partyTixTier = Dummy.getDummyPartyTixTier('', 0);
     bool isModelChanged = false;
 
     try {
@@ -3140,6 +3146,12 @@ class Fresh {
       partyTixTier = partyTixTier.copyWith(isSoldOut: map['isSoldOut'] as bool);
     } catch (e) {
       Logx.em(_TAG, 'partyTixTier isSoldOut not exist for id: ${partyTixTier.id}');
+      isModelChanged = true;
+    }
+    try {
+      partyTixTier = partyTixTier.copyWith(endTime: map['endTime'] as int);
+    } catch (e) {
+      Logx.em(_TAG, 'partyTixTier endTime not exist for id: ${partyTixTier.id}');
       isModelChanged = true;
     }
 

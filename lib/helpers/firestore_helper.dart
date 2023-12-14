@@ -2233,7 +2233,6 @@ class FirestoreHelper {
     FirebaseFirestore.instance.collection(TIXS).doc(docId).delete();
   }
 
-
   /** tix tier **/
   static void pushTixTier(TixTier tixTier) async {
     try {

@@ -11,6 +11,7 @@ class PartyTixTier {
   int totalTix;
 
   bool isSoldOut;
+  int endTime;
 
 //<editor-fold desc="Data Methods">
   PartyTixTier({
@@ -23,6 +24,7 @@ class PartyTixTier {
     required this.soldCount,
     required this.totalTix,
     required this.isSoldOut,
+    required this.endTime,
   });
 
   @override
@@ -38,7 +40,8 @@ class PartyTixTier {
           tierPrice == other.tierPrice &&
           soldCount == other.soldCount &&
           totalTix == other.totalTix &&
-          isSoldOut == other.isSoldOut);
+          isSoldOut == other.isSoldOut &&
+          endTime == other.endTime);
 
   @override
   int get hashCode =>
@@ -50,7 +53,8 @@ class PartyTixTier {
       tierPrice.hashCode ^
       soldCount.hashCode ^
       totalTix.hashCode ^
-      isSoldOut.hashCode;
+      isSoldOut.hashCode ^
+      endTime.hashCode;
 
   @override
   String toString() {
@@ -64,6 +68,7 @@ class PartyTixTier {
         ' soldCount: $soldCount,' +
         ' totalTix: $totalTix,' +
         ' isSoldOut: $isSoldOut,' +
+        ' endTime: $endTime,' +
         '}';
   }
 
@@ -77,6 +82,7 @@ class PartyTixTier {
     int? soldCount,
     int? totalTix,
     bool? isSoldOut,
+    int? endTime,
   }) {
     return PartyTixTier(
       id: id ?? this.id,
@@ -88,6 +94,7 @@ class PartyTixTier {
       soldCount: soldCount ?? this.soldCount,
       totalTix: totalTix ?? this.totalTix,
       isSoldOut: isSoldOut ?? this.isSoldOut,
+      endTime: endTime ?? this.endTime,
     );
   }
 
@@ -102,6 +109,7 @@ class PartyTixTier {
       'soldCount': this.soldCount,
       'totalTix': this.totalTix,
       'isSoldOut': this.isSoldOut,
+      'endTime': this.endTime,
     };
   }
 
@@ -116,6 +124,7 @@ class PartyTixTier {
       soldCount: map['soldCount'] as int,
       totalTix: map['totalTix'] as int,
       isSoldOut: map['isSoldOut'] as bool,
+      endTime: map['endTime'] as int,
     );
   }
 

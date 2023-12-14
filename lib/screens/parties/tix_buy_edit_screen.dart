@@ -273,12 +273,16 @@ class _TixBuyEditScreenState extends State<TixBuyEditScreen> {
               //       builder: (ctx) => PhonePePayment()),
               // );
 
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                    builder: (context) => TixCheckoutScreen(
-                          tix: widget.tix,
-                        )),
-              );
+              if(price>0){
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                      builder: (context) => TixCheckoutScreen(
+                        tix: widget.tix,
+                      )),
+                );
+              } else {
+                Logx.ilt(_TAG, 'please select quantity of tickets before proceeding.');
+              }
             },
           )
         ],
