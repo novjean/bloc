@@ -7,6 +7,8 @@ class TixTier {
   double tixTierPrice;
   int tixTierCount;
 
+  int guestsRemaining;
+
   double tixTierTotal;
 
 //<editor-fold desc="Data Methods">
@@ -17,6 +19,7 @@ class TixTier {
     required this.tixTierName,
     required this.tixTierPrice,
     required this.tixTierCount,
+    required this.guestsRemaining,
     required this.tixTierTotal,
   });
 
@@ -31,6 +34,7 @@ class TixTier {
           tixTierName == other.tixTierName &&
           tixTierPrice == other.tixTierPrice &&
           tixTierCount == other.tixTierCount &&
+          guestsRemaining == other.guestsRemaining &&
           tixTierTotal == other.tixTierTotal);
 
   @override
@@ -41,6 +45,7 @@ class TixTier {
       tixTierName.hashCode ^
       tixTierPrice.hashCode ^
       tixTierCount.hashCode ^
+      guestsRemaining.hashCode ^
       tixTierTotal.hashCode;
 
   @override
@@ -52,6 +57,7 @@ class TixTier {
         ' tixTierName: $tixTierName,' +
         ' tixTierPrice: $tixTierPrice,' +
         ' tixTierCount: $tixTierCount,' +
+        ' guestsRemaining: $guestsRemaining,' +
         ' tixTierTotal: $tixTierTotal,' +
         '}';
   }
@@ -63,6 +69,7 @@ class TixTier {
     String? tixTierName,
     double? tixTierPrice,
     int? tixTierCount,
+    int? guestsRemaining,
     double? tixTierTotal,
   }) {
     return TixTier(
@@ -72,6 +79,7 @@ class TixTier {
       tixTierName: tixTierName ?? this.tixTierName,
       tixTierPrice: tixTierPrice ?? this.tixTierPrice,
       tixTierCount: tixTierCount ?? this.tixTierCount,
+      guestsRemaining: guestsRemaining ?? this.guestsRemaining,
       tixTierTotal: tixTierTotal ?? this.tixTierTotal,
     );
   }
@@ -84,6 +92,7 @@ class TixTier {
       'tixTierName': this.tixTierName,
       'tixTierPrice': this.tixTierPrice,
       'tixTierCount': this.tixTierCount,
+      'guestsRemaining': this.guestsRemaining,
       'tixTierTotal': this.tixTierTotal,
     };
   }
@@ -96,6 +105,7 @@ class TixTier {
       tixTierName: map['tixTierName'] as String,
       tixTierPrice: map['tixTierPrice'] as double,
       tixTierCount: map['tixTierCount'] as int,
+      guestsRemaining: map['guestsRemaining'] as int,
       tixTierTotal: map['tixTierTotal'] as double,
     );
   }

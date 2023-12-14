@@ -19,6 +19,7 @@ class Tix {
   int creationTime;
   bool isSuccess;
   bool isCompleted;
+  bool isArrived;
 
   List<String> tixTierIds;
 
@@ -40,6 +41,7 @@ class Tix {
     required this.creationTime,
     required this.isSuccess,
     required this.isCompleted,
+    required this.isArrived,
     required this.tixTierIds,
   });
 
@@ -64,6 +66,7 @@ class Tix {
           creationTime == other.creationTime &&
           isSuccess == other.isSuccess &&
           isCompleted == other.isCompleted &&
+          isArrived == other.isArrived &&
           tixTierIds == other.tixTierIds);
 
   @override
@@ -84,6 +87,7 @@ class Tix {
       creationTime.hashCode ^
       isSuccess.hashCode ^
       isCompleted.hashCode ^
+      isArrived.hashCode ^
       tixTierIds.hashCode;
 
   @override
@@ -105,6 +109,7 @@ class Tix {
         ' creationTime: $creationTime,' +
         ' isSuccess: $isSuccess,' +
         ' isCompleted: $isCompleted,' +
+        ' isArrived: $isArrived,' +
         ' tixTierIds: $tixTierIds,' +
         '}';
   }
@@ -126,6 +131,7 @@ class Tix {
     int? creationTime,
     bool? isSuccess,
     bool? isCompleted,
+    bool? isArrived,
     List<String>? tixTierIds,
   }) {
     return Tix(
@@ -147,6 +153,7 @@ class Tix {
       creationTime: creationTime ?? this.creationTime,
       isSuccess: isSuccess ?? this.isSuccess,
       isCompleted: isCompleted ?? this.isCompleted,
+      isArrived: isArrived ?? this.isArrived,
       tixTierIds: tixTierIds ?? this.tixTierIds,
     );
   }
@@ -169,6 +176,7 @@ class Tix {
       'creationTime': this.creationTime,
       'isSuccess': this.isSuccess,
       'isCompleted': this.isCompleted,
+      'isArrived': this.isArrived,
       'tixTierIds': this.tixTierIds,
     };
   }
@@ -191,6 +199,7 @@ class Tix {
       creationTime: map['creationTime'] as int,
       isSuccess: map['isSuccess'] as bool,
       isCompleted: map['isCompleted'] as bool,
+      isArrived: map['isArrived'] as bool,
       tixTierIds: map['tixTierIds'] as List<String>,
     );
   }

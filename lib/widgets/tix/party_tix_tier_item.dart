@@ -116,8 +116,8 @@ class _PartyTixTierItemState extends State<PartyTixTierItem> {
                                                     tixTierPrice:
                                                     widget.partyTixTier.tierPrice,
                                                     tixTierCount: quantity,
-                                                    tixTierTotal:
-                                                    widget.partyTixTier.tierPrice * quantity
+                                                    tixTierTotal: widget.partyTixTier.tierPrice * quantity,
+                                                    guestsRemaining: quantity
                                                 );
                                                 FirestoreHelper.pushTixTier(tixTier);
                                               } else {
@@ -129,6 +129,7 @@ class _PartyTixTierItemState extends State<PartyTixTierItem> {
                                                     tixTierPrice:
                                                     widget.partyTixTier.tierPrice,
                                                     tixTierCount: quantity,
+                                                    guestsRemaining: quantity,
                                                     tixTierTotal:
                                                     widget.partyTixTier.tierPrice *
                                                         quantity);
@@ -145,9 +146,8 @@ class _PartyTixTierItemState extends State<PartyTixTierItem> {
                                             tixTierPrice:
                                             widget.partyTixTier.tierPrice,
                                             tixTierCount: quantity,
-                                            tixTierTotal:
-                                            widget.partyTixTier.tierPrice *
-                                                quantity);
+                                            guestsRemaining: quantity,
+                                            tixTierTotal: widget.partyTixTier.tierPrice * quantity);
                                         FirestoreHelper.pushTixTier(mTixTier);
 
                                         List<String> tixTierIds = tix.tixTierIds;
@@ -178,7 +178,8 @@ class _PartyTixTierItemState extends State<PartyTixTierItem> {
 
                                       FirestoreHelper.deleteTixTier(mTixTier.id);
                                       FirestoreHelper.pushTix(tix);
-                                    }});
+                                    }
+                                      });
                                 }
                               });
                             },

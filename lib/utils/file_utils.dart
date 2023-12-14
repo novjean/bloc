@@ -131,4 +131,16 @@ class FileUtils {
     }
   }
 
+  static void shareFile(String id, String path, String fileName) async {
+    try{
+      final files = <XFile>[];
+      files.add(
+          XFile(path, name: fileName));
+
+      await Share.shareXFiles(files, text: '#blocCommunity');
+    } catch(e){
+      Logx.em(_TAG, e.toString());
+    }
+  }
+
 }

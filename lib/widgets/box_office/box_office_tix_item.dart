@@ -1,16 +1,27 @@
+import 'dart:io';
+
 import 'package:barcode_widget/barcode_widget.dart';
 import 'package:bloc/helpers/firestore_helper.dart';
 import 'package:bloc/utils/date_time_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart' as pw;
 
 import '../../db/entity/party.dart';
 import '../../db/entity/tix.dart';
 import '../../db/entity/tix_tier_item.dart';
 import '../../helpers/fresh.dart';
 import '../../main.dart';
+import '../../screens/box_office/box_office_tix_screen.dart';
 import '../../utils/constants.dart';
+import '../../utils/file_utils.dart';
 import '../../utils/logx.dart';
+import '../tix/tix_party_banner.dart';
+import '../tix/tix_party_banner.dart';
+import '../tix/tix_party_banner.dart';
+import '../tix/tix_party_banner.dart';
 
 class BoxOfficeTixItem extends StatefulWidget {
   Tix tix;
@@ -39,7 +50,6 @@ class _BoxOfficeTixItemState extends State<BoxOfficeTixItem> {
   void initState() {
     FirestoreHelper.pullTixTiersByTixId(widget.tix.id).then((res) {
       if (res.docs.isNotEmpty) {
-
         for (int i = 0; i < res.docs.length; i++) {
           DocumentSnapshot document = res.docs[i];
           Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
@@ -93,15 +103,13 @@ class _BoxOfficeTixItemState extends State<BoxOfficeTixItem> {
                         textAlign: TextAlign.left,
                       ),
                     ),
-                    widget.party.eventName.isNotEmpty
-                        ? Padding(
+                    Padding(
                       padding: const EdgeInsets.only(left: 5.0, top: 5),
                       child: Text(
                         '$count tickets',
                         style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                       ),
-                    )
-                        : const SizedBox(),
+                    ),
                     Padding(
                       padding: const EdgeInsets.only(left: 5.0),
                       child: Text(
@@ -142,8 +150,8 @@ class _BoxOfficeTixItemState extends State<BoxOfficeTixItem> {
                                   Icons.file_download_sharp,
                                   size: 24.0,
                                 ),
-                                onPressed: () {
-                                  // _handleGuestListPressed();
+                                onPressed: () async {
+                                  // await _generateAndSavePDF(context);
                                 },
                               ),
                             )
@@ -171,6 +179,8 @@ class _BoxOfficeTixItemState extends State<BoxOfficeTixItem> {
                                 ),
                                 onPressed: () {
                                   // _showTixDialog(context);
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                      builder: (context) => BoxOfficeTixScreen(tixId: widget.tix.id)));
                                 },
                               ),
                             )
@@ -201,93 +211,39 @@ class _BoxOfficeTixItemState extends State<BoxOfficeTixItem> {
     );
   }
 
-  _showTixDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext ctx) {
-        String partyName = widget.party.name;
+  Future<void> _generateAndSavePDF(BuildContext context) async {
+    final pdf = pw.Document();
 
-        if(widget.party.chapter != 'I'){
-          partyName += ' ${widget.party.chapter}';
-        }
-
-        return AlertDialog(
-          contentPadding: const EdgeInsets.all(1.0),
-          backgroundColor: Constants.lightPrimary,
-          shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(10.0))),
-          content: GestureDetector(
-            onTap: () {
-            },
-            child: Container(
-                width: mq.width * 0.75,
-                height: mq.height * 0.5,
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 20),
-                      child: Text(
-                        partyName,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(fontSize: 19, fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                    Center(
-                        child: BarcodeWidget(
-                          color: Constants.darkPrimary,
-                          barcode: Barcode.qrCode(),
-                          // Barcode type and settings
-                          data: widget.tix.id,
-                          // Content
-                          width: mq.width * 0.5,
-                          height: mq.width * 0.5,
-                        )),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 20),
-                      child: SingleChildScrollView(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Align(
-                              alignment: Alignment.center,
-                              child: Text(
-                                '$count tickets',
-                                style: const TextStyle(fontSize: 16),
-                              ),
-                            ),
-                            Align(
-                              alignment: Alignment.center,
-                              child: Text(
-                                'valid until ${DateTimeUtils.getFormattedTime(widget.party.endTime)}',
-                                style: const TextStyle(fontSize: 16),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-            ),
-          ),
-
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(ctx).pop();
-              },
-              child: Text(
-                  "close",
-                  style: TextStyle(
-                      color: Constants.darkPrimary,
-                      fontSize: 15
-                  ),
-              ),
-            ),
-          ],
-        );
+    // Add content to the PDF
+    pdf.addPage(pw.Page(
+      build: (pw.Context context) {
+        return pw.Center(
+        child: pw.Text('Hello World!'),
+      );
       },
-    );
+    ));
+
+    // Get the document directory using path_provider
+    final directory = await getTemporaryDirectory();
+    String fileName = 'bloc_tix_example.pdf';
+    final path = '${directory.path}/$fileName';
+
+    // Save the PDF to the local storage
+    File file = File(path);
+    await file.writeAsBytes(await pdf.save());
+
+    FileUtils.shareFile(
+        widget.tix.id,
+        path,
+        fileName);
+
+    Logx.ist(_TAG, 'ticket saved in device');
+
+    // Open the PDF using the default PDF viewer
+    ProcessResult result = await Process.run('open', [path]);
+    if (result.exitCode != 0) {
+      // Handle the error (e.g., PDF viewer not found on the device)
+      Logx.i(_TAG, 'pdf viewer not found!');
+    }
   }
 }

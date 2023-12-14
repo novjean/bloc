@@ -4180,6 +4180,12 @@ class Fresh {
       Logx.em(_TAG,
           'tix isCompleted not exist for id: ${tix.id}');
     }
+    try {
+      fresh = fresh.copyWith(isArrived: tix.isArrived);
+    } catch (e) {
+      Logx.em(_TAG,
+          'tix isArrived not exist for id: ${tix.id}');
+    }
 
     try {
       fresh = fresh.copyWith(tixTierIds: tix.tixTierIds);
@@ -4296,6 +4302,12 @@ class Fresh {
       Logx.em(_TAG, 'tix isCompleted not exist for id: ${tix.id}');
       isModelChanged = true;
     }
+    try {
+      tix = tix.copyWith(isArrived: map['isArrived'] as bool);
+    } catch (e) {
+      Logx.em(_TAG, 'tix isArrived not exist for id: ${tix.id}');
+      isModelChanged = true;
+    }
 
     try {
       tix =
@@ -4355,6 +4367,13 @@ class Fresh {
           'tixTier tixTierCount not exist for id: ${tixTier.id}');
     }
     try {
+      fresh = fresh.copyWith(guestsRemaining: tixTier.guestsRemaining);
+    } catch (e) {
+      Logx.em(_TAG,
+          'tixTier guestsRemaining not exist for id: ${tixTier.id}');
+    }
+
+    try {
       fresh = fresh.copyWith(tixTierTotal: tixTier.tixTierTotal);
     } catch (e) {
       Logx.em(_TAG,
@@ -4405,6 +4424,13 @@ class Fresh {
       Logx.em(_TAG, 'tixTier tixTierCount not exist for id: ${tixTier.id}');
       isModelChanged = true;
     }
+    try {
+      tixTier = tixTier.copyWith(guestsRemaining: map['guestsRemaining'] as int);
+    } catch (e) {
+      Logx.em(_TAG, 'tixTier guestsRemaining not exist for id: ${tixTier.id}');
+      isModelChanged = true;
+    }
+
     try {
       tixTier = tixTier.copyWith(tixTierTotal: map['tixTierTotal'] as double);
     } catch (e) {

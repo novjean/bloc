@@ -140,8 +140,7 @@ class _BoxOfficeGuestConfirmScreenState
             DocumentSnapshot document = res.docs[0];
             Map<String, dynamic> data =
             document.data()! as Map<String, dynamic>;
-            final Party party = Fresh.freshPartyMap(data, false);
-            mParty = party;
+            mParty = Fresh.freshPartyMap(data, false);
 
             setState(() {
               maxGuestsCount = mPartyGuest.guestsRemaining;

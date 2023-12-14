@@ -567,6 +567,7 @@ class Dummy {
         creationTime: Timestamp.now().millisecondsSinceEpoch,
         isSuccess: false,
         isCompleted: false,
+        isArrived: false,
         tixTierIds: []);
     return tix;
   }
@@ -580,6 +581,7 @@ class Dummy {
       tixTierPrice: 0,
       tixTierCount: 0,
       tixTierTotal: 0,
+      guestsRemaining: 0
     );
     return tixTierItem;
   }
