@@ -1,4 +1,5 @@
 import 'package:bloc/helpers/firestore_helper.dart';
+import 'package:bloc/widgets/ui/dark_button_widget.dart';
 import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -205,11 +206,11 @@ class _ManageBoxOfficeTixScreenState extends State<ManageBoxOfficeTixScreen> {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 32),
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               ButtonWidget(
                 height: 50,
-                text: 'update tix',
+                text: '🆗 update tix',
                 onClicked: () {
                   FirestoreHelper.pushTix(mTix);
                   Navigator.of(context).pop();
@@ -217,7 +218,7 @@ class _ManageBoxOfficeTixScreenState extends State<ManageBoxOfficeTixScreen> {
               ),
               ButtonWidget(
                 height: 50,
-                text: 'confirm all',
+                text: '✅ confirm all',
                 onClicked: () {
                   FirestoreHelper.pullTixTiersByTixId(widget.tixId).then((res) {
                     if (res.docs.isNotEmpty) {
@@ -241,6 +242,59 @@ class _ManageBoxOfficeTixScreenState extends State<ManageBoxOfficeTixScreen> {
               ),
             ],
           ),
+        ),
+        const SizedBox(height: 24),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            DarkButtonWidget(text: '🛑 delete',
+              height: 50,
+              onClicked: () {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    backgroundColor: Constants.lightPrimary,
+                    shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(20.0))),
+                    contentPadding: const EdgeInsets.all(16.0),
+                    title: const Text(
+                      '📛 confirm delete tix',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 22, color: Colors.black),
+                    ),
+                    content: const Text(
+                        "deleted tix cannot be recovered, are you sure you want to delete?"),
+                    actions: [
+                      TextButton(
+                        child: const Text("yes"),
+                        onPressed: () {
+                          for(TixTier tixTier in mTixTiers){
+                            FirestoreHelper.deleteTixTier(tixTier.id);
+                          }
+                          FirestoreHelper.deleteTix(mTix.id);
+                          Logx.ist(_TAG, 'successfully deleted tix');
+
+                          Navigator.of(context).pop();
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                      TextButton(
+                        style: ButtonStyle(
+                          backgroundColor: MaterialStateProperty.all<Color>(
+                              Constants.darkPrimary), // Set your desired background color
+                        ),
+                        child: const Text("no"),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                      )
+                    ],
+                  );
+                },
+              );
+            },),
+          ],
         )
       ],
     );

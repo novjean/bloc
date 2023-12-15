@@ -40,7 +40,7 @@ class _ManagePartyTixsScreenState extends State<ManagePartyTixsScreen> {
   late String sOption;
 
   List<Tix> searchList = [];
-  bool isSearching = false;
+  bool _isSearching = false;
   String mLines = '';
   late TextEditingController controller;
 
@@ -104,9 +104,9 @@ class _ManagePartyTixsScreenState extends State<ManagePartyTixsScreen> {
               style: const TextStyle(fontSize: 17, color: Constants.primary),
               onChanged: (val) {
                 if (val.trim().isNotEmpty) {
-                  isSearching = true;
+                  _isSearching = true;
                 } else {
-                  isSearching = false;
+                  _isSearching = false;
                 }
 
                 searchList.clear();
@@ -121,7 +121,7 @@ class _ManagePartyTixsScreenState extends State<ManagePartyTixsScreen> {
               },
             ),
           ),
-          buildTixsList(context)
+          _isSearching ? _displayTixs(context, searchList) : _loadTixsList(context)
         ],
       ),
     );
@@ -155,7 +155,7 @@ class _ManagePartyTixsScreenState extends State<ManagePartyTixsScreen> {
     );
   }
 
-  buildTixsList(BuildContext context) {
+  _loadTixsList(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
       stream: FirestoreHelper.getAllTixsByPartyId(widget.party.id),
       builder: (ctx, snapshot) {
@@ -171,6 +171,8 @@ class _ManagePartyTixsScreenState extends State<ManagePartyTixsScreen> {
                   return const Expanded(
                       child: Center(child: Text('no tixs found!')));
                 } else {
+                  mTixs.clear();
+
                   for (int i = 0; i < snapshot.data!.docs.length; i++) {
                     DocumentSnapshot document = snapshot.data!.docs[i];
                     Map<String, dynamic> map =
@@ -180,7 +182,7 @@ class _ManagePartyTixsScreenState extends State<ManagePartyTixsScreen> {
                   }
 
                   return _displayTixs(
-                      context, isSearching ? searchList : mTixs);
+                      context, mTixs);
                 }
               } else {
                 return const Expanded(

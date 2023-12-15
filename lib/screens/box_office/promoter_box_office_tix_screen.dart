@@ -104,7 +104,6 @@ class _PromoterBoxOfficeTixScreenState extends State<PromoterBoxOfficeTixScreen>
       }
     });
 
-
     super.initState();
   }
 
@@ -209,7 +208,7 @@ class _PromoterBoxOfficeTixScreenState extends State<PromoterBoxOfficeTixScreen>
             children: [
               ButtonWidget(
                 height: 50,
-                text: 'update tix',
+                text: '🆗 update tix',
                 onClicked: () {
                   FirestoreHelper.pushTix(mTix);
                   Navigator.of(context).pop();
@@ -217,7 +216,7 @@ class _PromoterBoxOfficeTixScreenState extends State<PromoterBoxOfficeTixScreen>
               ),
               ButtonWidget(
                 height: 50,
-                text: 'confirm all',
+                text: '✅ confirm all',
                 onClicked: () {
                   FirestoreHelper.pullTixTiersByTixId(widget.tixId).then((res) {
                     if (res.docs.isNotEmpty) {
