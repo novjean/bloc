@@ -108,7 +108,7 @@ class _TixPartyBannerState extends State<TixPartyBanner> {
                           ),
                         ),
                         Padding(
-                          padding: const EdgeInsets.only(left: 5.0, top: 5),
+                          padding: const EdgeInsets.only(left: 5.0, top: 0),
                           child: Text(
                             '${widget.tixsCount} tickets',
                             style: const TextStyle(fontSize: 17, fontWeight: FontWeight.normal),

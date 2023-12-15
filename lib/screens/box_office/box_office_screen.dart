@@ -28,6 +28,7 @@ import '../../widgets/ui/sized_listview_block.dart';
 import '../manager/tickets/manage_party_tixs_screen.dart';
 import '../promoter/promoter_guests_screen.dart';
 import '../promoter/promoter_party_tixs_screen.dart';
+import 'box_office_tix_screen.dart';
 
 class BoxOfficeScreen extends StatefulWidget {
   const BoxOfficeScreen({super.key});
@@ -273,7 +274,7 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
                   final Tix tix = Fresh.freshTixMap(map, false);
                   tixs.add(tix);
                 }
-                return _showUserTixs(context, tixs);
+                return _displayUserTixs(context, tixs);
               }
             } else {
               return showEventsButton();
@@ -283,7 +284,7 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
     );
   }
 
-  _showUserTixs(BuildContext context, List<Tix> tixs) {
+  _displayUserTixs(BuildContext context, List<Tix> tixs) {
     return Expanded(
       child: ListView.builder(
           itemCount: tixs.length,
@@ -305,10 +306,16 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
               // the party is ended, house cleaning logic will be needed
               return const SizedBox();
             } else {
-              return BoxOfficeTixItem(
-                tix: sTix,
-                party: sParty,
-                isClickable: true,
+              return GestureDetector(
+                onTap: () {
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => BoxOfficeTixScreen(tixId: sTix.id)));
+                },
+                child: BoxOfficeTixItem(
+                  tix: sTix,
+                  party: sParty,
+                  isClickable: true,
+                ),
               );
             }
           }),

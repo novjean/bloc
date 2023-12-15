@@ -253,12 +253,34 @@ exports.partyGuestFunction = functions
       }
     });
 
+exports.tixFunction = functions
+    .region('asia-south1')
+    .firestore
+    .document('tixs/{document}')
+    .onCreate((snapshot, context) => {
+      console.log(snapshot.data());
+
+      if (!snapshot.data().isConfirmed) {
+        return admin.messaging().sendToTopic('tixs', {
+          notification: {
+            title: '🎫 tix : ' + snapshot.data().userName,
+            body: 'a ticket has been purchased for ' + snapshot.data().total,
+            clickAction: 'FLUTTER_NOTIFICATION_CLICK',
+          },
+          data: {
+            type: 'tixs',
+            document: JSON.stringify(snapshot.data()),
+          },
+        });
+      }
+    });
+
 exports.userPhotoFunction = functions
     .region('asia-south1')
     .firestore
     .document('user_photos/{document}')
     .onCreate((snapshot, context) => {
-      console.log(snapshot.data());
+      console.log('new user photo doc ' + snapshot.data().id);
 
       if (!snapshot.data().isConfirmed) {
         return admin.messaging().sendToTopic('user_photos', {

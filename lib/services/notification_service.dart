@@ -15,6 +15,7 @@ import '../db/entity/celebration.dart';
 import '../db/entity/notification_test.dart';
 import '../db/entity/party_guest.dart';
 import '../db/entity/reservation.dart';
+import '../db/entity/tix.dart';
 import '../db/entity/user_photo.dart';
 import '../db/shared_preferences/ui_preferences.dart';
 import '../db/shared_preferences/user_preferences.dart';
@@ -269,7 +270,28 @@ class NotificationService {
 
             NotificationService.showDefaultNotification(title, body);
           } else {
-            Logx.ist(_TAG, 'guest list: ${partyGuest.name} added');
+            Logx.d(_TAG, 'guest list: ${partyGuest.name} added');
+          }
+        }
+        break;
+      }
+      case 'tixs':{
+        Tix tix = Fresh.freshTixMap(jsonDecode(data['document']), false);
+        if(notificationId == tix.id){
+          return;
+        } else {
+          notificationId = tix.id;
+
+          if(tix.isSuccess){
+            String title = '🎫 tix : ${tix.userName}';
+            String body = 'a ticket has been purchased for \u20B9 ${tix.total}}';
+
+            NotificationService.showDefaultNotification(title, body);
+          } else {
+            String title = '🅾️ tix : ${tix.userName}';
+            String body = 'a ticket purchase failed for \u20B9 ${tix.total}}';
+
+            NotificationService.showDefaultNotification(title, body);
           }
         }
         break;

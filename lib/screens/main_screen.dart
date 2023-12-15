@@ -14,7 +14,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_slider_drawer/flutter_slider_drawer.dart';
 import 'package:go_router/go_router.dart';
-import 'package:phonepe_payment_sdk/phonepe_payment_sdk.dart';
 import 'package:upgrader/upgrader.dart';
 
 import '../db/entity/ad.dart';
@@ -188,6 +187,7 @@ class _MainScreenState extends State<MainScreen> {
       fbm.unsubscribeFromTopic('celebrations');
       fbm.unsubscribeFromTopic('offer');
       fbm.unsubscribeFromTopic('user_photos');
+      fbm.unsubscribeFromTopic('tixs');
       fbm.unsubscribeFromTopic('notification_tests');
       fbm.unsubscribeFromTopic('notification_tests_2');
 
@@ -208,6 +208,7 @@ class _MainScreenState extends State<MainScreen> {
       }
       if (user.clearanceLevel >= Constants.ADMIN_LEVEL) {
         fbm.subscribeToTopic('user_photos');
+        fbm.subscribeToTopic('tixs');
         fbm.subscribeToTopic('notification_tests');
         fbm.subscribeToTopic('notification_tests_2');
       }
@@ -266,50 +267,6 @@ class _MainScreenState extends State<MainScreen> {
 
     super.initState();
   }
-
-  /** phone pe dev start **/
-
-  String body = "";
-  String callback = "flutterDemoApp";
-  String checksum = "";
-
-  Map<String, String> headers = {};
-  Map<String, String> pgHeaders = {"Content-Type": "application/json"};
-  List<String> apiList = <String>['Container', 'PG'];
-  List<String> environmentList = <String>['UAT', 'UAT_SIM', 'PRODUCTION'];
-  String apiEndPoint = "/pg/v1/pay";
-  bool enableLogs = true;
-  Object? result;
-  String dropdownValue = 'PG';
-  String environmentValue = 'UAT_SIM';
-  String appId = "";
-  String merchantId = "BLOCKONLINE";
-  String packageName = "com.novatech.bloc";
-
-  void initPhonePeSdk() {
-    PhonePePaymentSdk.init(environmentValue, appId, merchantId, enableLogs)
-        .then((isInitialized) async {
-      if (isInitialized) {
-        String? pkgSign = await PhonePePaymentSdk.getPackageSignatureForAndroid();
-        Logx.d(_TAG, 'android package signature $pkgSign');
-
-        String? upiApps = await PhonePePaymentSdk.getInstalledUpiAppsForAndroid();
-        Logx.d(_TAG, 'upi apps $upiApps');
-      }
-
-      return {
-        setState(() {
-          result = 'PhonePe SDK Initialized - $isInitialized';
-          Logx.d(_TAG, 'PhonePe initialized -  $isInitialized');
-        })
-      };
-    }).catchError((error) {
-      Logx.em(_TAG, error.toString());
-      return <dynamic>{};
-    });
-  }
-
-  /** phone pe dev end **/
 
   getToken() async {
     String? deviceToken = await FirebaseMessaging.instance.getToken();
@@ -434,10 +391,11 @@ class _MainScreenState extends State<MainScreen> {
       fbm.unsubscribeFromTopic('celebrations');
       fbm.unsubscribeFromTopic('offer');
       fbm.unsubscribeFromTopic('user_photos');
+      fbm.unsubscribeFromTopic('tixs');
       fbm.unsubscribeFromTopic('notification_tests');
       fbm.unsubscribeFromTopic('notification_tests_2');
-
       fbm.unsubscribeFromTopic('lounge_chats');
+
       if (UserPreferences.isUserLoggedIn()) {
         FirestoreHelper.pullUserLounges(UserPreferences.myUser.id).then((res) {
           if (res.docs.isNotEmpty) {

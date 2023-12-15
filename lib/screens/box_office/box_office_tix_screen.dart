@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:bloc/helpers/firestore_helper.dart';
 import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:delayed_display/delayed_display.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:screenshot/screenshot.dart';
@@ -122,7 +123,18 @@ class _BoxOfficeTixScreenState extends State<BoxOfficeTixScreen> {
         backgroundColor: Colors.black,
         title: AppBarTitle(title: 'ticket'),
         titleSpacing: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_rounded),
+          onPressed: () {
+            // if (kIsWeb) {
+            //   GoRouter.of(context).pushNamed(RouteConstants.landingRouteName);
+            // } else {
+              Navigator.of(context).pop();
+            // }
+          },
+        ),
       ),
+
       backgroundColor: Constants.darkPrimary,
       body: _isTixLoading && _isTixTiersLoading && _isPartyLoading
           ? const LoadingWidget()
@@ -229,7 +241,36 @@ class _BoxOfficeTixScreenState extends State<BoxOfficeTixScreen> {
                     ],
                   ),
                 ),
-                const SizedBox(height: 24),
+                const SizedBox(height: 36),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 20),
+                  child: DelayedDisplay(
+                    delay: Duration(seconds: 3),
+                    child: Container(
+                      height: 30,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            "need some help?",
+                            style: TextStyle(
+                                color: Constants.lightPrimary,
+                                fontSize: 16
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                            child: ButtonWidget(text: 'contact us', onClicked: () {
+                              Logx.ist(_TAG, 'show dialog and text message');
+                            },),
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 2,),
                 Footer(),
               ],
             ),

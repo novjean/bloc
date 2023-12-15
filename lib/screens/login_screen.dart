@@ -143,9 +143,9 @@ class _LoginScreenState extends State<LoginScreen> {
           child: Container(
             margin: const EdgeInsets.only(top: 0, right: 20, left: 20),
             child: IntlPhoneField(
-              style: TextStyle(
+              style: const TextStyle(
                   color: Constants.primary, fontSize: 20),
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                   labelText: 'phone number',
                   labelStyle: TextStyle(color: Constants.primary),
                   hintStyle: TextStyle(color: Constants.primary),
@@ -162,7 +162,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   )),
               controller: _controller,
               initialCountryCode: 'IN',
-              dropdownTextStyle: TextStyle(
+              dropdownTextStyle: const TextStyle(
                   color: Constants.primary, fontSize: 20),
               pickerDialogStyle: PickerDialogStyle(
                   backgroundColor: Constants.primary),
@@ -239,7 +239,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     Logx.i(
                         _TAG,
                         'user entered invalid phone number $completePhoneNumber');
-                    Toaster.longToast('please enter a valid phone number');
+                    Logx.ilt(_TAG, 'please enter a valid phone number');
                   }
                 },
                 label: const Text(
