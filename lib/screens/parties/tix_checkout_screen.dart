@@ -50,6 +50,8 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
   double bookingFee = 0;
   double grandTotal = 0;
 
+  bool isTestMode = true;
+
   @override
   void initState() {
     FirestoreHelper.pullParty(widget.tix.partyId).then((res) {
@@ -111,32 +113,41 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
   }
 
   /** phone pe dev **/
-  String environment = "UAT_SIM";
+  String environment = Constants.testEnvironment;
   String appId = "";
-  String merchantId = "PGTESTPAYUAT";
+  String merchantId = Constants.testmerchantId;
   String merchantTransactionId =
       DateTime.now().millisecondsSinceEpoch.toString();
 
   bool enableLogging = true;
 
   String checksum = "";
-  String saltKey = "099eb0cd-02cf-4e2a-8aca-3e6c6aff0399";
-  String saltIndex = "1";
+  String saltKey = Constants.saltKey;
+  String saltIndex = Constants.saltIndex;
 
   String callbackUrl =
       "https://webhook.site/a7f51d09-7db9-433d-8a6a-45571b725e4b";
 
   String body = "";
-  String apiEndPoint = "/pg/v1/pay";
+  String apiEndPoint = Constants.phonePeApiEndPoint;
 
   Object? result;
 
   void phonePeInit() {
+    environment = isTestMode ? Constants.testEnvironment : Constants.environment;
+    appId = isTestMode ? "" : Constants.appId;
+    merchantId = isTestMode ? Constants.testmerchantId : Constants.merchantId;
+
     PhonePePaymentSdk.init(environment, appId, merchantId, enableLogging)
         .then((val) => {
               setState(() {
                 Logx.d(_TAG, 'phonePe sdk init - $val ');
-                result = 'PhonePe SDK Initialized - $val';
+                result = 'PhonePe SDK initialized - $val';
+
+                widget.tix = widget.tix.copyWith(
+                  result: 'PhonePe SDK initialized - $val',
+                );
+                FirestoreHelper.pushTix(widget.tix);
               })
             })
         .catchError((error) {

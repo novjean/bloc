@@ -169,7 +169,7 @@ class _EventScreenState extends State<EventScreen> {
     bool showGuestListBuyTix = false;
     if (!mParty.isTBA &&
         !mParty.isTicketsDisabled &&
-        (mParty.isTix || mParty.ticketUrl.isNotEmpty)) {
+        ((mParty.isTix && UserPreferences.myUser.clearanceLevel > Constants.ADMIN_LEVEL)|| mParty.ticketUrl.isNotEmpty)) {
       if (isGuestListActive) {
         showGuestListBuyTix = true;
       }
@@ -553,7 +553,7 @@ class _EventScreenState extends State<EventScreen> {
     bool isGuestListActive =
         mParty.isGuestListActive & (timeNow < mParty.guestListEndTime);
 
-    if (!mParty.isTBA && mParty.isTix){
+    if (!mParty.isTBA && mParty.isTix && UserPreferences.myUser.clearanceLevel > Constants.ADMIN_LEVEL){
       return Container(
         height: 50,
         width: 160,

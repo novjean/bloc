@@ -4,6 +4,7 @@ const String kAppTitle = 'bloc';
 
 class Constants {
 
+  //todo: check all isTestMode before release
   static const String appVersion = '3.9.1';
 
   static const String fontDefault = 'Oswald';
@@ -75,5 +76,19 @@ class Constants {
   /** ticketing **/
   static double igstPercent = 0.1525;
   static double bookingFeePercent = 0.059;
+
+  /** phone pe **/
+  static String saltKey = "099eb0cd-02cf-4e2a-8aca-3e6c6aff0399";
+  static String saltIndex = "1";
+  static String phonePeApiEndPoint = "/pg/v1/pay";
+
+  /** phone pe test **/
+  static String testEnvironment = "UAT_SIM";
+  static String testmerchantId = "PGTESTPAYUAT";
+
+  /** phone pe prod **/
+  static String environment = "PRODUCTION";
+  static String appId = "";
+  static String merchantId = "BLOCKONLINE";
 
 }

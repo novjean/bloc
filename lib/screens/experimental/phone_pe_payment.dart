@@ -57,7 +57,6 @@ class _PhonePePaymentState extends State<PhonePePayment> {
     super.initState();
 
     phonePeInit();
-
     body = getChecksum().toString();
   }
 
