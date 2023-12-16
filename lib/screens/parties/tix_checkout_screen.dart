@@ -89,7 +89,11 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
         bookingFee = tixTotal * Constants.bookingFeePercent;
         grandTotal = subTotal + igst + bookingFee;
 
-        widget.tix = widget.tix.copyWith(igst: igst, subTotal: subTotal, bookingFee: bookingFee, total: grandTotal);
+        widget.tix = widget.tix.copyWith(
+            igst: igst,
+            subTotal: subTotal,
+            bookingFee: bookingFee,
+            total: grandTotal);
         FirestoreHelper.pushTix(widget.tix);
 
         setState(() {
@@ -225,9 +229,7 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-          fontFamily: Constants.fontDefault
-      ),
+      theme: ThemeData(fontFamily: Constants.fontDefault),
       home: Scaffold(
         backgroundColor: Constants.background,
         appBar: AppBar(
@@ -350,7 +352,9 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              Text('Result :\n$result'),
+              UserPreferences.myUser.clearanceLevel > Constants.ADMIN_LEVEL
+                  ? Text('result :\n$result')
+                  : const SizedBox(),
               DarkButtonWidget(
                 text: 'purchase',
                 onClicked: () {
@@ -427,9 +431,9 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
             Logx.ilt(_TAG, res["message"]);
 
             String transactionResult = '';
-            try{
+            try {
               transactionResult = result as String;
-            } catch(e){
+            } catch (e) {
               Logx.em(_TAG, e.toString());
             }
 
@@ -444,18 +448,22 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
 
             //update the party tix tier
             FirestoreHelper.pullPartyTixTiers(widget.tix.partyId).then((res) {
-              if(res.docs.isNotEmpty){
+              if (res.docs.isNotEmpty) {
                 for (int i = 0; i < res.docs.length; i++) {
                   DocumentSnapshot document = res.docs[i];
-                  Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-                  PartyTixTier partyTixTier = Fresh.freshPartyTixTierMap(data, false);
+                  Map<String, dynamic> data =
+                      document.data()! as Map<String, dynamic>;
+                  PartyTixTier partyTixTier =
+                      Fresh.freshPartyTixTierMap(data, false);
 
-                  for(TixTier tixTier in mTixTiers){
-                    if(tixTier.tixTierName == partyTixTier.tierName){
-                      int soldCount = partyTixTier.soldCount + tixTier.tixTierCount;
-                      partyTixTier = partyTixTier.copyWith(soldCount: soldCount);
+                  for (TixTier tixTier in mTixTiers) {
+                    if (tixTier.tixTierName == partyTixTier.tierName) {
+                      int soldCount =
+                          partyTixTier.soldCount + tixTier.tixTierCount;
+                      partyTixTier =
+                          partyTixTier.copyWith(soldCount: soldCount);
 
-                      if(soldCount >= partyTixTier.totalTix){
+                      if (soldCount >= partyTixTier.totalTix) {
                         partyTixTier = partyTixTier.copyWith(isSoldOut: true);
                       }
                       FirestoreHelper.pushPartyTixTier(partyTixTier);
@@ -591,7 +599,8 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
         });
   }
 
-  void _showPaymentErrorDialog(BuildContext context, String status, String error) {
+  void _showPaymentErrorDialog(
+      BuildContext context, String status, String error) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -605,8 +614,7 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
             textAlign: TextAlign.center,
             style: TextStyle(fontSize: 22, color: Colors.black),
           ),
-          content: Text(
-              'status: $status \n\nerror: $error'),
+          content: Text('status: $status \n\nerror: $error'),
           actions: [
             TextButton(
               style: ButtonStyle(

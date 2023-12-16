@@ -246,6 +246,14 @@ class FirestoreHelper {
         .get();
   }
 
+  static Future<QuerySnapshot<Object?>> pullBlocById(String id) {
+    return FirebaseFirestore.instance
+        .collection(BLOCS)
+        .where('id', isEqualTo: id)
+        // .where('isActive', isEqualTo: true)
+        .get();
+  }
+
   static pullBlocsPromoter() {
     return FirebaseFirestore.instance.collection(BLOCS).get();
   }
@@ -303,7 +311,14 @@ class FirestoreHelper {
     return FirebaseFirestore.instance.collection(BLOC_SERVICES).get();
   }
 
-  static Future<QuerySnapshot<Object?>> pullBlocService(String blocId) {
+  static Future<QuerySnapshot<Object?>> pullBlocServiceById(String id) {
+    return FirebaseFirestore.instance
+        .collection(BLOC_SERVICES)
+        .where('id', isEqualTo: id)
+        .get();
+  }
+
+  static Future<QuerySnapshot<Object?>> pullBlocServiceByBlocId(String blocId) {
     return FirebaseFirestore.instance
         .collection(BLOC_SERVICES)
         .where('blocId', isEqualTo: blocId)

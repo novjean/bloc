@@ -89,11 +89,11 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
 
     mConfigQuickOrder = Dummy.getDummyConfig(widget.blocId);
 
-    FirestoreHelper.pullBlocService(widget.blocId).then((res) {
+    FirestoreHelper.pullBlocServiceByBlocId(widget.blocId).then((res) {
       if(res.docs.isNotEmpty){
         DocumentSnapshot document = res.docs[0];
         Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-        mBlocService = BlocService.fromMap(data);
+        mBlocService = Fresh.freshBlocServiceMap(data, false);
 
         if(UserPreferences.myUser.blocServiceId != mBlocService.id){
           UserPreferences.myUser = UserPreferences.myUser.copyWith(blocServiceId: mBlocService.id);

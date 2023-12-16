@@ -5,11 +5,9 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 
 import '../../db/entity/bloc.dart';
 import '../../main.dart';
-import '../../routes/route_constants.dart';
 import '../../screens/user/reservation_add_edit_screen.dart';
 import '../../utils/constants.dart';
 import '../../utils/logx.dart';
@@ -34,7 +32,7 @@ class _BlocSlideItemState extends State<BlocSlideItem> {
 
   @override
   void initState() {
-    FirestoreHelper.pullBlocService(widget.bloc.id).then((res) {
+    FirestoreHelper.pullBlocServiceByBlocId(widget.bloc.id).then((res) {
       if (res.docs.isNotEmpty) {
         List<BlocService> blocServices = [];
         for (int i = 0; i < res.docs.length; i++) {

@@ -228,7 +228,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   _showBlocs(context) {
     return SizedBox(
-      height: mq.height * 0.35,
+      height: mq.height * 0.30,
       width: mq.width * 0.99,
       child: ListView.builder(
           padding: EdgeInsets.zero,

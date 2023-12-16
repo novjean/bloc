@@ -173,10 +173,10 @@ exports.friendNotificationFunction = functions
 
       return admin.messaging().send(message)
           .then((response) => {
-            console.log('Successfully notified friend:', response);
+            console.log('successfully notified friend:', response);
           })
           .catch((error) => {
-            console.log('Error notifying friend:', error);
+            console.log('error notifying friend:', error);
           });
     });
 
@@ -269,6 +269,28 @@ exports.tixFunction = functions
           },
           data: {
             type: 'tixs',
+            document: JSON.stringify(snapshot.data()),
+          },
+        });
+      }
+    });
+
+exports.supportChatFunction = functions
+    .region('asia-south1')
+    .firestore
+    .document('support_chats/{document}')
+    .onCreate((snapshot, context) => {
+      console.log(snapshot.data());
+
+      if (!snapshot.data().isConfirmed) {
+        return admin.messaging().sendToTopic('support_chats', {
+          notification: {
+            title: '🛟 support : ' + snapshot.data().userName,
+            body: snapshot.data().message,
+            clickAction: 'FLUTTER_NOTIFICATION_CLICK',
+          },
+          data: {
+            type: 'support_chats',
             document: JSON.stringify(snapshot.data()),
           },
         });

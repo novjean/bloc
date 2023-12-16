@@ -4,7 +4,6 @@ import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:bloc/db/entity/friend_notification.dart';
 import 'package:bloc/db/entity/lounge_chat.dart';
 import 'package:bloc/helpers/firestore_helper.dart';
-import 'package:bloc/utils/string_utils.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -15,6 +14,7 @@ import '../db/entity/celebration.dart';
 import '../db/entity/notification_test.dart';
 import '../db/entity/party_guest.dart';
 import '../db/entity/reservation.dart';
+import '../db/entity/support_chat.dart';
 import '../db/entity/tix.dart';
 import '../db/entity/user_photo.dart';
 import '../db/shared_preferences/ui_preferences.dart';
@@ -203,7 +203,6 @@ class NotificationService {
 
     switch(type){
       case 'lounge_chats':{
-
         LoungeChat chat = Fresh.freshLoungeChatMap(jsonDecode(data['document']), false);
         if(notificationId == chat.id){
           return;
@@ -219,10 +218,8 @@ class NotificationService {
             }
           }
         }
-
         break;
       }
-
       case 'friend_notifications':{
         FriendNotification friendNotification = Fresh.freshFriendNotificationMap(jsonDecode(data['document']), false);
         if(notificationId == friendNotification.id){
@@ -296,6 +293,25 @@ class NotificationService {
         }
         break;
       }
+      case 'support_chats':{
+        SupportChat chat = Fresh.freshSupportChatMap(jsonDecode(data['document']), false);
+        if(notificationId == chat.id){
+          return;
+        } else {
+          UiPreferences.setHomePageIndex(2);
+
+          if(notificationId == chat.id){
+            Logx.d(_TAG, 'same notification, not showing');
+            return;
+          } else {
+            if(UserPreferences.isUserLoggedIn()
+                && chat.userId != UserPreferences.myUser.id){
+              NotificationService.showSupportChatNotification(chat);
+            }
+          }
+        }
+        break;
+      }
       case 'reservations':{
         Reservation reservation = Fresh.freshReservationMap(jsonDecode(data['document']), false);
         if(notificationId == reservation.id){
@@ -303,7 +319,7 @@ class NotificationService {
         } else {
           notificationId = reservation.id;
 
-          String title = 'request : table reservation';
+          String title = '🛎️ request : table reservation';
           String body = '${reservation.name} : ${reservation.guestsCount}';
           NotificationService.showDefaultNotification(title, body);
         }
@@ -461,32 +477,15 @@ class NotificationService {
   }
 
   static void showChatNotification(LoungeChat chat) async {
-    String photoUrl = '';
-    String photoChat = '';
-
-    if (chat.type == 'image') {
-      int firstDelimiterIndex = chat.message.indexOf('|');
-      if (firstDelimiterIndex != -1) {
-        // Use substring to split the string into two parts
-        photoChat = chat.message.substring(0, firstDelimiterIndex);
-        photoUrl = chat.message.substring(firstDelimiterIndex + 1);
-      } else {
-        // Handle the case where the delimiter is not found
-        photoUrl = chat.message;
-      }
-    }
-
     Map<String, dynamic> objectMap = chat.toMap();
     String jsonString = jsonEncode(objectMap);
 
     String title = '💌 ${chat.loungeName}';
 
-    if (chat.type == 'text') {
-      String body = chat.message;
-
+    if (chat.type == FirestoreHelper.CHAT_TYPE_TEXT) {
       await showNotification(
         title: title,
-        body: body,
+        body: chat.message,
         notificationLayout: NotificationLayout.Default,
         payload: {
           "navigate": "true",
@@ -497,8 +496,8 @@ class NotificationService {
     } else {
       await showNotification(
         title: title,
-        body: photoChat,
-        largeIcon: photoUrl,
+        body: chat.message,
+        largeIcon: chat.imageUrl,
         notificationLayout: NotificationLayout.Default,
         payload: {
           "navigate": "true",
@@ -516,10 +515,42 @@ class NotificationService {
     }
   }
 
+  static void showSupportChatNotification(SupportChat chat) async {
+    Map<String, dynamic> objectMap = chat.toMap();
+    String jsonString = jsonEncode(objectMap);
+
+    String title = '🛟 support : ${chat.userName}';
+
+    //todo: implement payload later
+    if (chat.type == FirestoreHelper.CHAT_TYPE_TEXT) {
+      await showNotification(
+        title: title,
+        body: chat.message,
+        notificationLayout: NotificationLayout.Default,
+        // payload: {
+        //   "navigate": "true",
+        //   "type": "chat",
+        //   "data": jsonString,
+        // },
+      );
+    } else {
+      await showNotification(
+        title: title,
+        body: chat.message,
+        largeIcon: chat.imageUrl,
+        notificationLayout: NotificationLayout.Default,
+        // payload: {
+        //   "navigate": "true",
+        //   "type": "chat",
+        //   "data": jsonString,
+        // },
+      );
+    }
+  }
+
   static void showFriendNotification(FriendNotification notification) async {
     Map<String, dynamic> objectMap = notification.toMap();
     String jsonString = jsonEncode(objectMap);
-
 
     if (notification.imageUrl.isEmpty) {
       String title = notification.title;

@@ -1063,7 +1063,7 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
             TextButton(
               style: ButtonStyle(
                 backgroundColor: MaterialStateProperty.all<Color>(
-                    Constants.darkPrimary), // Set your desired background color
+                    Constants.darkPrimary),
               ),
               child: const Text("🔑 request access", style: TextStyle(color: Constants.primary),),
               onPressed: () {

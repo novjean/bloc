@@ -5,6 +5,7 @@ import 'package:bloc/db/entity/ui_photo.dart';
 import '../db/entity/ad.dart';
 import '../db/entity/ad_campaign.dart';
 import '../db/entity/bloc.dart';
+import '../db/entity/bloc_service.dart';
 import '../db/entity/captain_service.dart';
 import '../db/entity/category.dart';
 import '../db/entity/celebration.dart';
@@ -454,6 +455,141 @@ class Fresh {
     }
 
     return freshBloc;
+  }
+
+  /** bloc service **/
+  static BlocService freshBlocServiceMap(Map<String, dynamic> map, bool shouldUpdate) {
+    BlocService blocService = Dummy.getDummyBlocService('');
+
+    bool isModelChanged = false;
+
+    try {
+      blocService = blocService.copyWith(id: map['id'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'bloc service id not exist');
+    }
+    try {
+      blocService = blocService.copyWith(name: map['name'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'bloc service name not exist for id: ${blocService.id}');
+      isModelChanged = true;
+    }
+
+    try {
+      blocService = blocService.copyWith(blocId: map['blocId'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'bloc service blocId not exist for id: ${blocService.id}');
+      isModelChanged = true;
+    }
+    try {
+      blocService = blocService.copyWith(type: map['type'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'bloc service type not exist for id: ${blocService.id}');
+      isModelChanged = true;
+    }
+    try {
+      blocService = blocService.copyWith(primaryPhone: map['primaryPhone'] as double);
+    } catch (e) {
+      Logx.em(_TAG, 'bloc service primaryPhone not exist for id: ${blocService.id}');
+      isModelChanged = true;
+    }
+    try {
+      blocService = blocService.copyWith(secondaryPhone: map['secondaryPhone'] as double);
+    } catch (e) {
+      Logx.em(_TAG, 'bloc service secondaryPhone not exist for id: ${blocService.id}');
+      isModelChanged = true;
+    }
+    try {
+      blocService = blocService.copyWith(emailId: map['emailId'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'bloc service emailId not exist for id: ${blocService.id}');
+      isModelChanged = true;
+    }
+    try {
+      blocService = blocService.copyWith(imageUrl: map['imageUrl'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'bloc service imageUrl not exist for id: ${blocService.id}');
+      isModelChanged = true;
+    }
+    try {
+      blocService = blocService.copyWith(ownerId: map['ownerId'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'bloc service ownerId not exist for id: ${blocService.id}');
+      isModelChanged = true;
+    }
+    try {
+      blocService = blocService.copyWith(createdAt: map['createdAt'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'bloc service createdAt not exist for id: ${blocService.id}');
+      isModelChanged = true;
+    }
+
+    if (isModelChanged &&
+        shouldUpdate &&
+        UserPreferences.myUser.clearanceLevel >= Constants.ADMIN_LEVEL) {
+      Logx.em(_TAG, 'updating bloc service ${blocService.id}');
+      FirestoreHelper.pushBlocService(blocService);
+    }
+
+    return blocService;
+  }
+
+  static BlocService freshBlocService(BlocService blocService) {
+    BlocService fresh = Dummy.getDummyBlocService('');
+
+    try {
+      fresh = fresh.copyWith(id: blocService.id);
+    } catch (e) {
+      Logx.em(_TAG, 'bloc service id not exist');
+    }
+    try {
+      fresh = fresh.copyWith(name: blocService.name);
+    } catch (e) {
+      Logx.em(_TAG, 'bloc service name not exist for id: ${blocService.id}');
+    }
+
+    try {
+      fresh = fresh.copyWith(blocId: blocService.blocId);
+    } catch (e) {
+      Logx.em(_TAG, 'bloc service blocId not exist for id: ${blocService.id}');
+    }
+    try {
+      fresh = fresh.copyWith(type: blocService.type);
+    } catch (e) {
+      Logx.em(_TAG, 'bloc service type not exist for id: ${blocService.id}');
+    }
+    try {
+      fresh = fresh.copyWith(primaryPhone: blocService.primaryPhone);
+    } catch (e) {
+      Logx.em(_TAG, 'bloc service primaryPhone not exist for id: ${blocService.id}');
+    }
+    try {
+      fresh = fresh.copyWith(secondaryPhone: blocService.secondaryPhone);
+    } catch (e) {
+      Logx.em(_TAG, 'bloc service secondaryPhone not exist for id: ${blocService.id}');
+    }
+    try {
+      fresh = fresh.copyWith(emailId: blocService.emailId);
+    } catch (e) {
+      Logx.em(_TAG, 'bloc service emailId not exist for id: ${blocService.id}');
+    }
+    try {
+      fresh = fresh.copyWith(imageUrl: blocService.imageUrl);
+    } catch (e) {
+      Logx.em(_TAG, 'bloc service imageUrl not exist for id: ${blocService.id}');
+    }
+    try {
+      fresh = fresh.copyWith(ownerId: blocService.ownerId);
+    } catch (e) {
+      Logx.em(_TAG, 'bloc service ownerId not exist for id: ${blocService.id}');
+    }
+    try {
+      fresh = fresh.copyWith(createdAt: blocService.createdAt);
+    } catch (e) {
+      Logx.em(_TAG, 'bloc service createdAt not exist for id: ${blocService.id}');
+    }
+
+    return fresh;
   }
 
   /** captain service **/

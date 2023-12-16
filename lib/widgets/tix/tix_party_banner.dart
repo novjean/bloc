@@ -1,12 +1,18 @@
 import 'package:barcode_widget/barcode_widget.dart';
+import 'package:bloc/helpers/firestore_helper.dart';
 import 'package:bloc/main.dart';
 import 'package:bloc/utils/constants.dart';
 import 'package:bloc/utils/date_time_utils.dart';
 import 'package:bloc/utils/string_utils.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
+import '../../db/entity/bloc.dart';
+import '../../db/entity/bloc_service.dart';
 import '../../db/entity/party.dart';
 import '../../db/entity/tix.dart';
+import '../../helpers/fresh.dart';
+import '../../utils/logx.dart';
 
 class TixPartyBanner extends StatefulWidget {
   static const String _TAG = 'PartyBanner';
@@ -33,13 +39,41 @@ class _TixPartyBannerState extends State<TixPartyBanner> {
 
   int merchantTransacationId = 0;
 
+  String address = '';
+  var _isAddressLoading = true;
+
   @override
   void initState() {
-
     if(widget.tix.merchantTransactionId.isNotEmpty){
       merchantTransacationId = StringUtils.getInt(widget.tix.merchantTransactionId);
     }
+
     super.initState();
+
+    FirestoreHelper.pullBlocServiceById(widget.party.blocServiceId).then((res) {
+      if(res.docs.isNotEmpty){
+        DocumentSnapshot document = res.docs[0];
+        Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+
+        BlocService blocService = Fresh.freshBlocServiceMap(data, false);
+
+        FirestoreHelper.pullBlocById(blocService.blocId).then((res) {
+          if(res.docs.isNotEmpty){
+            DocumentSnapshot document = res.docs[0];
+            Map<String, dynamic> data =
+            document.data()! as Map<String, dynamic>;
+            final Bloc bloc = Fresh.freshBlocMap(data, false);
+
+            setState(() {
+              address = '${bloc.name}, ${bloc.addressLine1}, ${bloc.addressLine2}';
+              _isAddressLoading = false;
+            });
+          }
+        });
+      } else {
+        Logx.em(_TAG, 'bloc service not found!');
+      }
+    });
   }
 
   @override
@@ -48,7 +82,7 @@ class _TixPartyBannerState extends State<TixPartyBanner> {
       padding:
       const EdgeInsets.symmetric(horizontal: 0.0, vertical: 0),
       child: ClipRRect(
-        borderRadius: BorderRadius.only(bottomLeft: Radius.circular(10), bottomRight: Radius.circular(10)),
+        borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(10), bottomRight: Radius.circular(10)),
         child: Hero(
           tag: widget.party.id,
           child: Card(
@@ -115,6 +149,15 @@ class _TixPartyBannerState extends State<TixPartyBanner> {
                           ),
                         ),
                         const Spacer(),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 5.0),
+                          child: Text(
+                            _isAddressLoading
+                                ? ''
+                                : '📍 $address, pune'.toLowerCase(),
+                            style: const TextStyle(fontSize: 16),
+                          ),
+                        ),
                         Padding(
                           padding: const EdgeInsets.only(left: 5.0),
                           child: Text(

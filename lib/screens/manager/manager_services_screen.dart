@@ -40,7 +40,7 @@ class ManagerServicesScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         titleSpacing: 0,
-        title: AppBarTitle(title: 'manager services',),
+        title: AppBarTitle(title: '${blocService.name} manager',),
       ),
       // drawer: AppDrawer(),
       body: _buildBody(context),
