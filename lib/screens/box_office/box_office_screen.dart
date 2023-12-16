@@ -1,5 +1,4 @@
 import 'package:bloc/main.dart';
-import 'package:bloc/screens/user/reservation_add_edit_screen.dart';
 import 'package:bloc/utils/scan_utils.dart';
 import 'package:bloc/widgets/ui/app_bar_title.dart';
 import 'package:bloc/widgets/ui/button_widget.dart';
@@ -20,12 +19,9 @@ import '../../utils/constants.dart';
 import '../../utils/logx.dart';
 import '../../widgets/box_office/box_office_guest_list_item.dart';
 import '../../widgets/box_office/box_office_tix_item.dart';
-import '../../widgets/box_office/box_office_tix_item.dart';
 import '../../widgets/parties/party_box_office_banner.dart';
-import '../../widgets/reservations/reservation_banner.dart';
 import '../../widgets/ui/loading_widget.dart';
 import '../../widgets/ui/sized_listview_block.dart';
-import '../manager/tickets/manage_party_tixs_screen.dart';
 import '../promoter/promoter_guests_screen.dart';
 import '../promoter/promoter_party_tixs_screen.dart';
 import 'box_office_tix_screen.dart';
@@ -58,7 +54,7 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
     showPromoterView =
         UserPreferences.myUser.clearanceLevel >= Constants.PROMOTER_LEVEL;
 
-    mOptions = ['guest list', 'tickets'];
+    mOptions = ['tickets', 'guest list'];
     sOption = mOptions.first;
 
     int timeNow = Timestamp.now().millisecondsSinceEpoch;
@@ -171,22 +167,23 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
                     ? Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 5.0),
                         child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              'switch view',
+                              'switch',
                               style: TextStyle(
                                   fontSize: 18, color: Constants.primary),
                             ),
-                            const Divider(),
-                            ButtonWidget(
-                              text: 'promoter -> user',
-                              onClicked: () {
-                                setState(() {
-                                  showPromoterView = !showPromoterView;
-                                  Logx.i(_TAG, 'promoter view $showPromoterView');
-                                });
-                              },
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 1),
+                              child: ButtonWidget(
+                                text: 'user view',
+                                onClicked: () {
+                                  setState(() {
+                                    showPromoterView = !showPromoterView;
+                                  });
+                                },
+                              ),
                             )
                           ],
                         ),

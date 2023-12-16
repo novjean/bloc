@@ -20,7 +20,6 @@ import '../../widgets/tix/party_tix_tier_item.dart';
 import '../../widgets/tix/buy_tix_tier_item.dart';
 import '../../widgets/ui/app_bar_title.dart';
 import '../../widgets/ui/dark_button_widget.dart';
-import '../experimental/phone_pe_payment.dart';
 import 'tix_checkout_screen.dart';
 
 class TixBuyEditScreen extends StatefulWidget {

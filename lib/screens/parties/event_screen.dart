@@ -169,7 +169,7 @@ class _EventScreenState extends State<EventScreen> {
     bool showGuestListBuyTix = false;
     if (!mParty.isTBA &&
         !mParty.isTicketsDisabled &&
-        mParty.ticketUrl.isNotEmpty) {
+        (mParty.isTix || mParty.ticketUrl.isNotEmpty)) {
       if (isGuestListActive) {
         showGuestListBuyTix = true;
       }
@@ -441,10 +441,10 @@ class _EventScreenState extends State<EventScreen> {
                                   tix: tix, task: 'buy')),
                         );
 
-                        GoRouter.of(context).pushNamed(RouteConstants.buyTixRouteName,
-                            params: {
-                              'partyId': mParty.id,
-                            });
+                        // GoRouter.of(context).pushNamed(RouteConstants.buyTixRouteName,
+                        //     params: {
+                        //       'partyId': mParty.id,
+                        //     });
                       },
                       child: const Padding(
                         padding:
@@ -553,7 +553,93 @@ class _EventScreenState extends State<EventScreen> {
     bool isGuestListActive =
         mParty.isGuestListActive & (timeNow < mParty.guestListEndTime);
 
-    if (!mParty.isTBA && mParty.ticketUrl.isNotEmpty) {
+    if (!mParty.isTBA && mParty.isTix){
+      return Container(
+        height: 50,
+        width: 160,
+        padding: const EdgeInsets.only(bottom: 1, top: 1),
+        child: ElevatedButton.icon(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Constants.primary,
+            foregroundColor: Constants.background,
+            shadowColor: Colors.white30,
+            elevation: 3,
+          ),
+          onPressed: () {
+            //navigate to purchase tix screen
+            Tix tix = Dummy.getDummyTix();
+            tix = tix.copyWith(partyId: mParty.id);
+
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                  builder: (context) => TixBuyEditScreen(
+                      tix: tix, task: 'buy')),
+            );
+
+            if (UserPreferences.isUserLoggedIn()) {
+              User user = UserPreferences.myUser;
+
+              FirestoreHelper.pullHistoryMusic(user.id, mParty.genre)
+                  .then((res) {
+                if (res.docs.isEmpty) {
+                  // no history, add new one
+                  HistoryMusic historyMusic = Dummy.getDummyHistoryMusic();
+                  historyMusic.userId = user.id;
+                  historyMusic.genre = mParty.genre;
+                  historyMusic.count = 1;
+                  FirestoreHelper.pushHistoryMusic(historyMusic);
+                } else {
+                  if (res.docs.length > 1) {
+                    // that means there are multiple, so consolidate
+                    HistoryMusic hm = Dummy.getDummyHistoryMusic();
+                    int totalCount = 0;
+
+                    for (int i = 0; i < res.docs.length; i++) {
+                      DocumentSnapshot document = res.docs[i];
+                      Map<String, dynamic> data =
+                      document.data()! as Map<String, dynamic>;
+                      final HistoryMusic historyMusic =
+                      Fresh.freshHistoryMusicMap(data, false);
+
+                      totalCount += historyMusic.count;
+                      if (i == 0) {
+                        hm = historyMusic;
+                      }
+                      FirestoreHelper.deleteHistoryMusic(historyMusic.id);
+                    }
+
+                    totalCount = totalCount + 1;
+                    hm = hm.copyWith(count: totalCount);
+                    FirestoreHelper.pushHistoryMusic(hm);
+                  } else {
+                    DocumentSnapshot document = res.docs[0];
+                    Map<String, dynamic> data =
+                    document.data()! as Map<String, dynamic>;
+                    HistoryMusic historyMusic =
+                    Fresh.freshHistoryMusicMap(data, false);
+                    int newCount = historyMusic.count + 1;
+
+                    historyMusic = historyMusic.copyWith(count: newCount);
+                    FirestoreHelper.pushHistoryMusic(historyMusic);
+                  }
+                }
+              });
+            }
+          },
+          label: const Text(
+            'ticket',
+            style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Constants.darkPrimary),
+          ),
+          icon: const Icon(
+            Icons.star,
+            size: 22.0,
+          ),
+        ),
+      );
+    } else if (!mParty.isTBA && mParty.ticketUrl.isNotEmpty) {
       return Container(
         height: 50,
         width: 160,

@@ -105,28 +105,29 @@ class _ReservationScreenState extends State<ReservationScreen> {
         children: [
           showPromoterView
               ? Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 5.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'switch view',
-                        style:
-                            TextStyle(fontSize: 18, color: Constants.primary),
-                      ),
-                      const Divider(),
-                      ButtonWidget(
-                        text: 'promoter -> user',
-                        onClicked: () {
-                          setState(() {
-                            showPromoterView = !showPromoterView;
-                            Logx.ist(_TAG, 'promoter view $showPromoterView');
-                          });
-                        },
-                      )
-                    ],
+            padding: const EdgeInsets.symmetric(horizontal: 5.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'switch',
+                  style: TextStyle(
+                      fontSize: 18, color: Constants.primary),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 1),
+                  child: ButtonWidget(
+                    text: 'user view',
+                    onClicked: () {
+                      setState(() {
+                        showPromoterView = !showPromoterView;
+                      });
+                    },
                   ),
                 )
+              ],
+            ),
+          )
               : const SizedBox(),
           _showBoxOfficeOptions(context),
           const Divider(),

@@ -25,6 +25,7 @@ import '../screens/parties/artist_screen.dart';
 import '../screens/privacy_policy_screen.dart';
 import '../screens/profile/user_profile_screen.dart';
 import '../screens/reservation/reservation_screen.dart';
+import '../screens/support/support_screen.dart';
 import '../screens/terms_and_conditions_screen.dart';
 import '../screens/ui/splash_screen.dart';
 import '../utils/logx.dart';
@@ -297,6 +298,14 @@ class BlocRouter {
           path: '/reservation',
           pageBuilder: (context, state) {
             return MaterialPage(child: ReservationScreen());
+          },
+        ),
+
+        GoRoute(
+          name: RouteConstants.supportRouteName,
+          path: '/support',
+          pageBuilder: (context, state) {
+            return MaterialPage(child: SupportScreen());
           },
         ),
       ],

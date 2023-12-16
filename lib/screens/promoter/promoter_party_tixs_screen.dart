@@ -179,8 +179,7 @@ class _PromoterPartyTixsScreenState extends State<PromoterPartyTixsScreen> {
                     mTixs.add(tix);
                   }
 
-                  return _displayTixs(
-                      context, mTixs);
+                  return _displayTixs(context, mTixs);
                 }
               } else {
                 return const Expanded(

@@ -164,12 +164,8 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
               ),
               InkWell(
                   onTap: () {
-                    if (UserPreferences.isUserLoggedIn()) {
-                      GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
-                    } else {
-                      GoRouter.of(context)
-                          .pushNamed(RouteConstants.landingRouteName);
-                    }
+                    GoRouter.of(context)
+                        .pushNamed(RouteConstants.landingRouteName);
                   },
                   child: const Text('bloc')),
               const Spacer(),

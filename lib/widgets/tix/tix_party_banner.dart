@@ -157,7 +157,7 @@ class _TixPartyBannerState extends State<TixPartyBanner> {
                           ),
                         ),
                         Container(
-                        padding: EdgeInsets.all(10),
+                        padding: EdgeInsets.only(top:10, left: 10, right: 5),
                           height: 150,
                           child: BarcodeWidget(
                             color: Constants.darkPrimary,

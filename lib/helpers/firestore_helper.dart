@@ -28,7 +28,6 @@ import 'package:bloc/db/entity/quick_order.dart';
 import 'package:bloc/db/entity/quick_table.dart';
 import 'package:bloc/db/entity/reservation.dart';
 import 'package:bloc/db/entity/seat.dart';
-import 'package:bloc/db/entity/ticket.dart';
 import 'package:bloc/db/entity/tix_tier_item.dart';
 import 'package:bloc/db/entity/ui_photo.dart';
 import 'package:bloc/db/entity/user.dart' as blocUser;
@@ -43,6 +42,7 @@ import '../db/entity/ad.dart';
 import '../db/entity/friend.dart';
 import '../db/entity/lounge.dart';
 import '../db/entity/party_photo.dart';
+import '../db/entity/support_chat.dart';
 import '../db/entity/tix.dart';
 import '../db/entity/product.dart';
 import '../db/entity/service_table.dart';
@@ -97,6 +97,7 @@ class FirestoreHelper {
   static String QUICK_TABLES = 'quick_tables';
   static String RESERVATIONS = 'reservations';
   static String SEATS = 'seats';
+  static String SUPPORT_CHATS = 'support_chats';
   static String SOS = 'sos';
   static String TABLES = 'tables';
   static String TIXS = 'tixs';
@@ -1951,6 +1952,37 @@ class FirestoreHelper {
     FirebaseFirestore.instance.collection(SOS).doc(sos.id).set(sos.toMap());
   }
 
+  /** support chats **/
+  static void pushSupportChat(SupportChat chat) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection(SUPPORT_CHATS)
+          .doc(chat.id)
+          .set(chat.toMap());
+    } on PlatformException catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } on Exception catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } catch (e) {
+      Logx.em(_TAG, e.toString());
+    }
+  }
+
+  static Stream<QuerySnapshot<Object?>> getSupportChats(String userId) {
+    return FirebaseFirestore.instance
+        .collection(SUPPORT_CHATS)
+        .where('userId', isEqualTo: userId)
+        .orderBy('time', descending: true)
+        .snapshots();
+  }
+
+  static getAllSupportChats() {
+    return FirebaseFirestore.instance
+        .collection(SUPPORT_CHATS)
+        .orderBy('time', descending: true)
+        .snapshots();
+  }
+
   /** tables **/
   static Future<QuerySnapshot<Map<String, dynamic>>> pullSeatTable(
       String tableId) {
@@ -2658,6 +2690,7 @@ class FirestoreHelper {
   static void deleteUserPhoto(String docId) {
     FirebaseFirestore.instance.collection(USER_PHOTOS).doc(docId).delete();
   }
+
 
 
 }

@@ -243,15 +243,15 @@ class _BoxOfficeTixScreenState extends State<BoxOfficeTixScreen> {
                 ),
                 const SizedBox(height: 36),
                 Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 20),
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: DelayedDisplay(
-                    delay: Duration(seconds: 3),
-                    child: Container(
+                    delay: const Duration(seconds: 3),
+                    child: SizedBox(
                       height: 30,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text(
+                          const Text(
                             "need some help?",
                             style: TextStyle(
                                 color: Constants.lightPrimary,
@@ -260,9 +260,10 @@ class _BoxOfficeTixScreenState extends State<BoxOfficeTixScreen> {
                             textAlign: TextAlign.center,
                           ),
                           Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                            padding: const EdgeInsets.symmetric(horizontal: 10.0),
                             child: ButtonWidget(text: 'contact us', onClicked: () {
-                              Logx.ist(_TAG, 'show dialog and text message');
+                              // navigate to support page
+                              GoRouter.of(context).pushNamed(RouteConstants.supportRouteName);
                             },),
                           )
                         ],
@@ -270,7 +271,7 @@ class _BoxOfficeTixScreenState extends State<BoxOfficeTixScreen> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 2,),
+                const SizedBox(height: 5,),
                 Footer(),
               ],
             ),
@@ -281,23 +282,23 @@ class _BoxOfficeTixScreenState extends State<BoxOfficeTixScreen> {
     screenshotController
         .capture(delay: Duration(milliseconds: 10))
         .then((capturedImage) async {
-          String fileName = 'tix_${mParty.name.trim()}_${mTix.userName.trim()}.pdf';
+          String fileName = 'tix_${mParty.name.trim()}_${mTix.id.trim()}.pdf';
 
           FileUtils.saveScreenshot(capturedImage, fileName);
-          // ShowCapturedWidget(context, capturedImage!);
+          // showCapturedWidget(context, capturedImage!);
     }).catchError((onError) {
       print(onError);
     });
   }
 
-  Future<dynamic> ShowCapturedWidget(
-      BuildContext context, Uint8List capturedImage) {
+  Future<dynamic> showCapturedWidget(BuildContext context,
+      Uint8List capturedImage) {
     return showDialog(
       useSafeArea: false,
       context: context,
       builder: (context) => Scaffold(
         appBar: AppBar(
-          title: Text("Captured widget screenshot"),
+          title: Text("captured widget screenshot"),
         ),
         body: Center(child: Image.memory(capturedImage)),
       ),

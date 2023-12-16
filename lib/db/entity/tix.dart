@@ -15,6 +15,7 @@ class Tix {
   String merchantTransactionId;
   String transactionId;
   String transactionResponseCode;
+  String result;
 
   int creationTime;
   bool isSuccess;
@@ -38,6 +39,7 @@ class Tix {
     required this.merchantTransactionId,
     required this.transactionId,
     required this.transactionResponseCode,
+    required this.result,
     required this.creationTime,
     required this.isSuccess,
     required this.isCompleted,
@@ -63,6 +65,7 @@ class Tix {
           merchantTransactionId == other.merchantTransactionId &&
           transactionId == other.transactionId &&
           transactionResponseCode == other.transactionResponseCode &&
+          result == other.result &&
           creationTime == other.creationTime &&
           isSuccess == other.isSuccess &&
           isCompleted == other.isCompleted &&
@@ -84,6 +87,7 @@ class Tix {
       merchantTransactionId.hashCode ^
       transactionId.hashCode ^
       transactionResponseCode.hashCode ^
+      result.hashCode ^
       creationTime.hashCode ^
       isSuccess.hashCode ^
       isCompleted.hashCode ^
@@ -106,6 +110,7 @@ class Tix {
         ' merchantTransactionId: $merchantTransactionId,' +
         ' transactionId: $transactionId,' +
         ' transactionResponseCode: $transactionResponseCode,' +
+        ' result: $result,' +
         ' creationTime: $creationTime,' +
         ' isSuccess: $isSuccess,' +
         ' isCompleted: $isCompleted,' +
@@ -128,6 +133,7 @@ class Tix {
     String? merchantTransactionId,
     String? transactionId,
     String? transactionResponseCode,
+    String? result,
     int? creationTime,
     bool? isSuccess,
     bool? isCompleted,
@@ -150,6 +156,7 @@ class Tix {
       transactionId: transactionId ?? this.transactionId,
       transactionResponseCode:
           transactionResponseCode ?? this.transactionResponseCode,
+      result: result ?? this.result,
       creationTime: creationTime ?? this.creationTime,
       isSuccess: isSuccess ?? this.isSuccess,
       isCompleted: isCompleted ?? this.isCompleted,
@@ -173,6 +180,7 @@ class Tix {
       'merchantTransactionId': this.merchantTransactionId,
       'transactionId': this.transactionId,
       'transactionResponseCode': this.transactionResponseCode,
+      'result': this.result,
       'creationTime': this.creationTime,
       'isSuccess': this.isSuccess,
       'isCompleted': this.isCompleted,
@@ -196,6 +204,7 @@ class Tix {
       merchantTransactionId: map['merchantTransactionId'] as String,
       transactionId: map['transactionId'] as String,
       transactionResponseCode: map['transactionResponseCode'] as String,
+      result: map['result'] as String,
       creationTime: map['creationTime'] as int,
       isSuccess: map['isSuccess'] as bool,
       isCompleted: map['isCompleted'] as bool,

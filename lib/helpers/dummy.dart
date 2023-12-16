@@ -31,6 +31,7 @@ import '../db/entity/offer.dart';
 import '../db/entity/party.dart';
 import '../db/entity/party_interest.dart';
 import '../db/entity/party_photo.dart';
+import '../db/entity/support_chat.dart';
 import '../db/entity/tix.dart';
 import '../db/entity/party_tix_tier.dart';
 import '../db/entity/product.dart';
@@ -538,6 +539,20 @@ class Dummy {
     return dummySeat;
   }
 
+  static SupportChat getDummySupportChat() {
+    SupportChat dummyChat = SupportChat(
+        id: StringUtils.getRandomString(28),
+        userId: UserPreferences.myUser.id,
+        userName: UserPreferences.myUser.name,
+        message: '',
+        imageUrl: '',
+        type: 'text',
+        time: Timestamp.now().millisecondsSinceEpoch,
+      isResponse: false
+    );
+    return dummyChat;
+  }
+
   static ServiceTable getDummyTable(String blocServiceId) {
     ServiceTable dummyTable = ServiceTable(
         id: StringUtils.getRandomString(28),
@@ -566,6 +581,7 @@ class Dummy {
         merchantTransactionId: '',
         transactionId: '',
         transactionResponseCode:'',
+        result: '',
         creationTime: Timestamp.now().millisecondsSinceEpoch,
         isSuccess: false,
         isCompleted: false,

@@ -179,26 +179,37 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
           String error = val['error'].toString();
 
           if (status == 'SUCCESS') {
-            result = "flow complete - status : SUCCESS ";
+            result = "flow complete. status : success ";
 
             await checkPhonePePaymentStatus();
           } else {
-            result = "flow complete - status : $status and error $error ";
+            result = "flow complete. status : $status and error $error";
 
-            Logx.elt(_TAG, 'payment was unsuccessful, please try again.');
+            _showPaymentErrorDialog(context, status, error);
           }
         } else {
-          result = "flow Incomplete";
+          result = "flow incomplete";
         }
         result = val;
       }).catchError((error) {
         handleError(error);
+
+        widget.tix = widget.tix.copyWith(
+          result: 'payment was not successful. error : $error',
+        );
+        FirestoreHelper.pushTix(widget.tix);
+
         return <dynamic>{};
       });
     } catch (error) {
       Logx.elt(_TAG, 'payment was unsuccessful, please try again.');
 
       handleError(error);
+
+      widget.tix = widget.tix.copyWith(
+        result: 'payment was not successful. error : $error',
+      );
+      FirestoreHelper.pushTix(widget.tix);
     }
   }
 
@@ -270,6 +281,7 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
   _showTixPricePurchase(BuildContext context) {
     return Column(
       mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.start,
       children: [
         const Divider(),
         Container(
@@ -414,9 +426,17 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
               res['data']['state'] == "COMPLETED") {
             Logx.ilt(_TAG, res["message"]);
 
+            String transactionResult = '';
+            try{
+              transactionResult = result as String;
+            } catch(e){
+              Logx.em(_TAG, e.toString());
+            }
+
             widget.tix = widget.tix.copyWith(
               merchantTransactionId: res['data']['merchantTransactionId'],
               transactionResponseCode: res['data']['responseCode'],
+              result: transactionResult,
               isSuccess: true,
               isCompleted: true,
             );
@@ -450,13 +470,28 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
             GoRouter.of(context).pushNamed(RouteConstants.boxOfficeRouteName);
           } else {
             Logx.ist(_TAG, "payment was not successful, please try again");
+
+            widget.tix = widget.tix.copyWith(
+              result: 'payment was not successful',
+            );
+            FirestoreHelper.pushTix(widget.tix);
           }
         });
       } on Exception catch (e) {
         Logx.est(_TAG, 'oops, something went wrong. error: $e');
+
+        widget.tix = widget.tix.copyWith(
+          result: 'error: $e',
+        );
+        FirestoreHelper.pushTix(widget.tix);
       }
     } on Exception catch (e) {
       Logx.est(_TAG, 'oops, something went wrong. error: $e');
+
+      widget.tix = widget.tix.copyWith(
+        result: 'error: $e',
+      );
+      FirestoreHelper.pushTix(widget.tix);
     }
   }
 
@@ -554,5 +589,38 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
             ],
           );
         });
+  }
+
+  void _showPaymentErrorDialog(BuildContext context, String status, String error) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: Constants.lightPrimary,
+          shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(20.0))),
+          contentPadding: const EdgeInsets.all(16.0),
+          title: const Text(
+            '🙆 payment was not successful',
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 22, color: Colors.black),
+          ),
+          content: Text(
+              'status: $status \n\nerror: $error'),
+          actions: [
+            TextButton(
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all<Color>(
+                    Constants.darkPrimary), // Set your desired background color
+              ),
+              child: const Text("close"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            )
+          ],
+        );
+      },
+    );
   }
 }

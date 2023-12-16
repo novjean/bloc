@@ -475,6 +475,11 @@ class _MainScreenState extends State<MainScreen> {
           GoRouter.of(context).pushNamed(RouteConstants.reservationRouteName);
           break;
         }
+      case 'support':
+        {
+          GoRouter.of(context).pushNamed(RouteConstants.supportRouteName);
+          break;
+        }
       case 'captain':
         {
           Navigator.of(context).push(

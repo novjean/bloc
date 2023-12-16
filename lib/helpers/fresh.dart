@@ -20,6 +20,7 @@ import '../db/entity/notification_test.dart';
 import '../db/entity/party.dart';
 import '../db/entity/party_interest.dart';
 import '../db/entity/party_photo.dart';
+import '../db/entity/support_chat.dart';
 import '../db/entity/tix.dart';
 import '../db/entity/party_tix_tier.dart';
 import '../db/entity/product.dart';
@@ -4091,6 +4092,126 @@ class Fresh {
     return freshUiPhoto;
   }
 
+  /** support chat **/
+  static SupportChat freshSupportChatMap(
+      Map<String, dynamic> map, bool shouldUpdate) {
+    SupportChat chat = Dummy.getDummySupportChat();
+    bool isModelChanged = false;
+
+    try {
+      chat = chat.copyWith(id: map['id'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'chat id not exist');
+    }
+    try {
+      chat = chat.copyWith(userId: map['userId'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'chat userId not exist for id: ${chat.id}');
+      isModelChanged = true;
+    }
+    try {
+      chat = chat.copyWith(userName: map['userName'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'chat userName not exist for id: ${chat.id}');
+      isModelChanged = true;
+    }
+
+    try {
+      chat = chat.copyWith(message: map['message'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'chat message not exist for id: ${chat.id}');
+      isModelChanged = true;
+    }
+    try {
+      chat = chat.copyWith(imageUrl: map['imageUrl'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'chat imageUrl not exist for id: ${chat.id}');
+      isModelChanged = true;
+    }
+    try {
+      chat = chat.copyWith(type: map['type'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'chat type not exist for id: ${chat.id}');
+      isModelChanged = true;
+    }
+    try {
+      chat = chat.copyWith(time: map['time'] as int);
+    } catch (e) {
+      Logx.em(_TAG, 'chat time not exist for id: ${chat.id}');
+      isModelChanged = true;
+    }
+
+    try {
+      chat = chat.copyWith(isResponse: map['isResponse'] as bool);
+    } catch (e) {
+      Logx.em(_TAG, 'chat isResponse not exist for id: ${chat.id}');
+      isModelChanged = true;
+    }
+
+    if (isModelChanged && shouldUpdate) {
+      Logx.i(_TAG, 'updating support chat ${chat.id}');
+      FirestoreHelper.pushSupportChat(chat);
+    }
+
+    return chat;
+  }
+
+  static SupportChat freshSupportChat(SupportChat chat) {
+    SupportChat freshChat = Dummy.getDummySupportChat();
+
+    try {
+      freshChat = freshChat.copyWith(id: chat.id);
+    } catch (e) {
+      Logx.em(_TAG, 'chat id not exist');
+    }
+
+    try {
+      freshChat = freshChat.copyWith(userId: chat.userId);
+    } catch (e) {
+      Logx.em(
+          _TAG, 'chat userId not exist for id: ${chat.id}');
+    }
+    try {
+      freshChat = freshChat.copyWith(userName: chat.userName);
+    } catch (e) {
+      Logx.em(
+          _TAG, 'chat userName not exist for id: ${chat.id}');
+    }
+
+    try {
+      freshChat = freshChat.copyWith(message: chat.message);
+    } catch (e) {
+      Logx.em(
+          _TAG, 'chat message not exist for id: ${chat.id}');
+    }
+    try {
+      freshChat = freshChat.copyWith(imageUrl: chat.imageUrl);
+    } catch (e) {
+      Logx.em(
+          _TAG, 'chat imageUrl not exist for id: ${chat.id}');
+    }
+    try {
+      freshChat = freshChat.copyWith(type: chat.type);
+    } catch (e) {
+      Logx.em(
+          _TAG, 'chat type not exist for id: ${chat.id}');
+    }
+    try {
+      freshChat = freshChat.copyWith(time: chat.time);
+    } catch (e) {
+      Logx.em(
+          _TAG, 'chat time not exist for id: ${chat.id}');
+    }
+    try {
+      freshChat = freshChat.copyWith(isResponse: chat.isResponse);
+    } catch (e) {
+      Logx.em(
+          _TAG, 'chat isResponse not exist for id: ${chat.id}');
+    }
+
+    return freshChat;
+  }
+
   /** tix **/
   static Tix freshTix(Tix tix) {
     Tix fresh = Dummy.getDummyTix();
@@ -4173,6 +4294,12 @@ class Fresh {
     } catch (e) {
       Logx.em(_TAG,
           'tix transactionResponseCode not exist for id: ${tix.id}');
+    }
+    try {
+      fresh = fresh.copyWith(result: tix.result);
+    } catch (e) {
+      Logx.em(_TAG,
+          'tix result not exist for id: ${tix.id}');
     }
 
     try {
@@ -4294,7 +4421,12 @@ class Fresh {
       Logx.em(_TAG, 'tix transactionResponseCode not exist for id: ${tix.id}');
       isModelChanged = true;
     }
-
+    try {
+      tix = tix.copyWith(result: map['result'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'tix result not exist for id: ${tix.id}');
+      isModelChanged = true;
+    }
 
     try {
       tix = tix.copyWith(creationTime: map['creationTime'] as int);
