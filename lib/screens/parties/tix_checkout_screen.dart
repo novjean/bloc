@@ -51,7 +51,7 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
   double bookingFee = 0;
   double grandTotal = 0;
 
-  bool isTestMode = true;
+  bool testMode = true;
 
   @override
   void initState() {
@@ -135,9 +135,9 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
   Object? result;
 
   void phonePeInit() {
-    environment = isTestMode ? Constants.testEnvironment : Constants.environment;
-    appId = isTestMode ? "" : Constants.appId;
-    merchantId = isTestMode ? Constants.testmerchantId : Constants.merchantId;
+    environment = testMode ? Constants.testEnvironment : Constants.environment;
+    appId = testMode ? "" : Constants.appId;
+    merchantId = testMode ? Constants.testmerchantId : Constants.merchantId;
 
     PhonePePaymentSdk.init(environment, appId, merchantId, enableLogging)
         .then((val) => {
