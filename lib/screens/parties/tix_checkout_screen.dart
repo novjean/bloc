@@ -140,17 +140,26 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
     merchantId = testMode ? Constants.testmerchantId : Constants.merchantId;
 
     PhonePePaymentSdk.init(environment, appId, merchantId, enableLogging)
-        .then((val) => {
-              setState(() {
-                Logx.d(_TAG, 'phonePe sdk init - $val ');
-                result = 'PhonePe SDK initialized - $val';
+        .then((val) async {
 
-                widget.tix = widget.tix.copyWith(
-                  result: 'PhonePe SDK initialized - $val',
-                );
-                FirestoreHelper.pushTix(widget.tix);
-              })
-            })
+          String? sign = await PhonePePaymentSdk.getPackageSignatureForAndroid();
+          Logx.d(_TAG, 'package sign : $sign');
+
+          if(UserPreferences.myUser.clearanceLevel>= Constants.ADMIN_LEVEL){
+            _showTextDialog(context, sign!);
+          }
+
+      setState(() {
+        Logx.d(_TAG, 'phonePe sdk init - $val ');
+        result = 'PhonePe SDK initialized - $val';
+
+        widget.tix = widget.tix.copyWith(
+          result: 'PhonePe SDK initialized - $val',
+        );
+        FirestoreHelper.pushTix(widget.tix);
+      });
+          return {};
+        })
         .catchError((error) {
       handleError(error);
       return <dynamic>{};
@@ -413,10 +422,10 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
 
   checkPhonePePaymentStatus() async {
     try {
-      String prodUrl =
-          "https://api.phonepe.com/apis/hermes/pg/v1/status/$merchantId/$merchantTransactionId";
-      String url =
-          "https://api-preprod.phonepe.com/apis/pg-sandbox/pg/v1/status/$merchantId/$merchantTransactionId";
+      String url = testMode ?
+          "https://api-preprod.phonepe.com/apis/pg-sandbox/pg/v1/status/$merchantId/$merchantTransactionId"
+        : "https://api.phonepe.com/apis/hermes/pg/v1/status/$merchantId/$merchantTransactionId"
+      ;
 
       //SHA256("/pg/v1/status/{merchantId}/{merchantTransactionId}" + saltKey) + "###" + saltIndex
       String concatString =
@@ -621,8 +630,8 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
         });
   }
 
-  void _showPaymentErrorDialog(
-      BuildContext context, String status, String error) {
+  void _showTextDialog(
+      BuildContext context, String text) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -632,11 +641,11 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
               borderRadius: BorderRadius.all(Radius.circular(20.0))),
           contentPadding: const EdgeInsets.all(16.0),
           title: const Text(
-            '🙆 payment was not successful',
+            'text dialog',
             textAlign: TextAlign.center,
             style: TextStyle(fontSize: 22, color: Colors.black),
           ),
-          content: Text('status: $status \n\nerror: $error'),
+          content: Text(text),
           actions: [
             TextButton(
               style: ButtonStyle(

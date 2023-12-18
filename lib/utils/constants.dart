@@ -5,7 +5,7 @@ const String kAppTitle = 'bloc';
 class Constants {
 
   //todo: check all isTestMode before release
-  static const String appVersion = '3.9.3';
+  static const String appVersion = '3.9.4';
 
   static const String fontDefault = 'Oswald';
 
@@ -88,7 +88,7 @@ class Constants {
 
   /** phone pe prod **/
   static String environment = "PRODUCTION";
-  static String appId = "BLOCKONLINE";
+  static String appId = "";
   static String merchantId = "BLOCKONLINE";
 
 }
