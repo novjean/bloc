@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:bloc/db/entity/tix_tier_item.dart';
 import 'package:bloc/helpers/firestore_helper.dart';
+import 'package:bloc/utils/number_utils.dart';
 import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:crypto/crypto.dart';
@@ -51,7 +52,7 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
   double bookingFee = 0;
   double grandTotal = 0;
 
-  bool testMode = false;
+  bool testMode = true;
 
   @override
   void initState() {
@@ -66,7 +67,7 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
           _isPartyLoading = false;
         });
       } else {
-        //party not found.
+        //party not found
         Logx.ist(_TAG, 'party could not be found');
         Navigator.of(context).pop();
       }
@@ -99,24 +100,28 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
             total: grandTotal);
         FirestoreHelper.pushTix(widget.tix);
 
+        phonePeInit();
+        // body = getChecksum().toString();
+
         setState(() {
           _isTixTiersLoading = false;
         });
       } else {
-        Logx.em(_TAG, 'no tix tiers found for ${widget.tix.partyId}');
+        Logx.em(_TAG, 'no tix tiers found for tix ${widget.tix.id}');
+        Navigator.of(context).pop();
       }
     });
 
     super.initState();
 
-    phonePeInit();
-    body = getChecksum().toString();
+    // phonePeInit();
+    // body = getChecksum().toString();
   }
 
   /** phone pe dev **/
   String environment = Constants.testEnvironment;
   String appId = "";
-  String merchantId = Constants.testmerchantId;
+  String merchantId = Constants.testMerchantId;
   String merchantTransactionId =
       DateTime.now().millisecondsSinceEpoch.toString();
 
@@ -146,7 +151,7 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
         appId = Constants.androidAppId;
       }
     }
-    merchantId = testMode ? Constants.testmerchantId : Constants.merchantId;
+    merchantId = testMode ? Constants.testMerchantId : Constants.merchantId;
 
     PhonePePaymentSdk.init(environment, appId, merchantId, enableLogging)
         .then((val) {
@@ -158,18 +163,14 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
       //   _showTextDialog(context, sign!);
       // }
 
+      Logx.d(_TAG, 'phonePe sdk init - $val ');
+      result = 'PhonePe SDK initialized - $val';
 
+      widget.tix = widget.tix.copyWith(
+        result: 'PhonePe SDK initialized - $val',
+      );
+      FirestoreHelper.pushTix(widget.tix);
 
-
-      setState(() {
-        Logx.d(_TAG, 'phonePe sdk init - $val ');
-        result = 'PhonePe SDK initialized - $val';
-
-        widget.tix = widget.tix.copyWith(
-          result: 'PhonePe SDK initialized - $val',
-        );
-        FirestoreHelper.pushTix(widget.tix);
-      });
       return {};
     }).catchError((error) {
 
@@ -185,7 +186,7 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
   }
 
   getChecksum() {
-    int amount = grandTotal.toInt() * 100;
+    int amount = (NumberUtils.roundDouble(grandTotal, 2) * 100).toInt();
     String merchantUserId = UserPreferences.myUser.id;
     String mobileNumber = UserPreferences.myUser.phoneNumber.toString();
 
@@ -213,6 +214,9 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
     Map<String, String> pgHeaders = {};
     String packageName = "";
 
+    //key_error_code:ERROR_B2B_API_RETURNED_ERROR
+    // key_error_result:{\"success\":false,\"code\":\"401\"}
+
     try {
       var response = PhonePePaymentSdk.startPGTransaction(
           body, callbackUrl, checksum, pgHeaders, apiEndPoint, packageName);
@@ -230,6 +234,13 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
 
             Logx.elt(_TAG,
                 'payment was unsuccessful. status $status and error $error');
+
+            widget.tix = widget.tix.copyWith(
+              result: 'payment was unsuccessful. status $status and error $error',
+            );
+
+            FirestoreHelper.pushTix(widget.tix);
+            FirestoreHelper.pushTixBackup(BackupUtils.getTixBackup(widget.tix));
           }
         } else {
           result = "flow incomplete";
@@ -254,6 +265,57 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
       FirestoreHelper.pushTixBackup(BackupUtils.getTixBackup(widget.tix));
     }
   }
+
+  // void startContainerTransaction() async {
+  //   try {
+  //     PhonePePaymentSdk.startContainerTransaction(
+  //         body, callbackUrl, checksum, {}, apiEndPoint)
+  //         .then((val) async {
+  //       if (val != null) {
+  //         String status = val['status'].toString();
+  //         String error = val['error'].toString();
+  //
+  //         if (status == 'SUCCESS') {
+  //           result = "flow complete. status : success ";
+  //
+  //           await checkPhonePePaymentStatus();
+  //         } else {
+  //           result = "flow complete. status : $status and error $error";
+  //
+  //           Logx.elt(_TAG,
+  //               'payment was unsuccessful. status $status and error $error');
+  //
+  //           widget.tix = widget.tix.copyWith(
+  //             result: 'payment was unsuccessful. status $status and error $error',
+  //           );
+  //
+  //           FirestoreHelper.pushTix(widget.tix);
+  //           FirestoreHelper.pushTixBackup(BackupUtils.getTixBackup(widget.tix));
+  //         }
+  //       } else {
+  //         result = "flow incomplete";
+  //       }
+  //       result = val;
+  //         })
+  //         .catchError((error) {
+  //
+  //       widget.tix = widget.tix.copyWith(
+  //         result: 'payment was unsuccessful. error : $error',
+  //       );
+  //       FirestoreHelper.pushTix(widget.tix);
+  //       FirestoreHelper.pushTixBackup(BackupUtils.getTixBackup(widget.tix));
+  //
+  //       return <dynamic>{};
+  //         });
+  //   } catch (error) {
+  //     Logx.elt(_TAG, 'payment was unsuccessful, please try again.');
+  //
+  //     widget.tix = widget.tix.copyWith(
+  //       result: 'payment was unsuccessful. error : $error',
+  //     );
+  //     FirestoreHelper.pushTix(widget.tix);
+  //     FirestoreHelper.pushTixBackup(BackupUtils.getTixBackup(widget.tix));    }
+  // }
   /** phone pe dev end **/
 
   @override
@@ -383,7 +445,7 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              UserPreferences.myUser.clearanceLevel > Constants.ADMIN_LEVEL
+              UserPreferences.myUser.clearanceLevel == Constants.ADMIN_LEVEL
                   ? Text('result :\n$result')
                   : const SizedBox(),
               DarkButtonWidget(
@@ -392,6 +454,8 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
                   body = getChecksum().toString();
 
                   startPgTransaction();
+
+                  // startContainerTransaction();
 
                   // here we are gonna check what all is installed on phone
                   // bool isIos = Theme.of(context).platform == TargetPlatform.iOS;

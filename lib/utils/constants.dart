@@ -82,9 +82,11 @@ class Constants {
   static String saltIndex = "1";
   static String phonePeApiEndPoint = "/pg/v1/pay";
 
+  static String prodHostUrl = "https://api.phonepe.com/apis/hermes";
+
   /** phone pe test **/
   static String testEnvironment = "UAT_SIM";
-  static String testmerchantId = "PGTESTPAYUAT";
+  static String testMerchantId = "PGTESTPAYUAT";
 
   /** phone pe prod **/
   static String environment = "PRODUCTION";
