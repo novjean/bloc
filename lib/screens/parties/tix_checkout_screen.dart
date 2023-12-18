@@ -51,7 +51,7 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
   double bookingFee = 0;
   double grandTotal = 0;
 
-  bool testMode = true;
+  bool testMode = false;
 
   @override
   void initState() {
@@ -140,10 +140,10 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
     if(testMode){
       appId = "";
     } else {
-      if(Theme.of(context).platform == TargetPlatform.android) {
-        appId = Constants.androidAppId;
-      } else {
+      if(UserPreferences.myUser.isIos) {
         appId = Constants.iosAppId;
+      } else {
+        appId = Constants.androidAppId;
       }
     }
     merchantId = testMode ? Constants.testmerchantId : Constants.merchantId;
@@ -158,17 +158,18 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
       //   _showTextDialog(context, sign!);
       // }
 
-      Logx.d(_TAG, 'phonePe sdk init - $val ');
-      result = 'PhonePe SDK initialized - $val';
 
-      widget.tix = widget.tix.copyWith(
-        result: 'PhonePe SDK initialized - $val',
-      );
-      FirestoreHelper.pushTix(widget.tix);
 
-      // setState(() {
-      //
-      // });
+
+      setState(() {
+        Logx.d(_TAG, 'phonePe sdk init - $val ');
+        result = 'PhonePe SDK initialized - $val';
+
+        widget.tix = widget.tix.copyWith(
+          result: 'PhonePe SDK initialized - $val',
+        );
+        FirestoreHelper.pushTix(widget.tix);
+      });
       return {};
     }).catchError((error) {
 
