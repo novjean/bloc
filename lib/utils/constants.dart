@@ -88,7 +88,8 @@ class Constants {
 
   /** phone pe prod **/
   static String environment = "PRODUCTION";
-  static String appId = "";
+  static String iosAppId = "c8cf8a00d27b450cb80491bd6e21ef5b";
+  static String androidAppId = "d4f45bc915f048e2b7eed50f0115648f";
   static String merchantId = "BLOCKONLINE";
 
 }

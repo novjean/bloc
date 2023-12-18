@@ -136,27 +136,39 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
 
   void phonePeInit() {
     environment = testMode ? Constants.testEnvironment : Constants.environment;
-    appId = testMode ? "" : Constants.appId;
+
+    if(testMode){
+      appId = "";
+    } else {
+      if(Theme.of(context).platform == TargetPlatform.android) {
+        appId = Constants.androidAppId;
+      } else {
+        appId = Constants.iosAppId;
+      }
+    }
     merchantId = testMode ? Constants.testmerchantId : Constants.merchantId;
 
     PhonePePaymentSdk.init(environment, appId, merchantId, enableLogging)
-        .then((val) async {
-      String? sign = await PhonePePaymentSdk.getPackageSignatureForAndroid();
-      Logx.d(_TAG, 'package sign : $sign');
+        .then((val) {
+
+      // String? sign = await PhonePePaymentSdk.getPackageSignatureForAndroid();
+      // Logx.d(_TAG, 'package sign : $sign');
 
       // if (UserPreferences.myUser.clearanceLevel >= Constants.ADMIN_LEVEL) {
       //   _showTextDialog(context, sign!);
       // }
 
-      setState(() {
-        Logx.d(_TAG, 'phonePe sdk init - $val ');
-        result = 'PhonePe SDK initialized - $val';
+      Logx.d(_TAG, 'phonePe sdk init - $val ');
+      result = 'PhonePe SDK initialized - $val';
 
-        widget.tix = widget.tix.copyWith(
-          result: 'PhonePe SDK initialized - $val',
-        );
-        FirestoreHelper.pushTix(widget.tix);
-      });
+      widget.tix = widget.tix.copyWith(
+        result: 'PhonePe SDK initialized - $val',
+      );
+      FirestoreHelper.pushTix(widget.tix);
+
+      // setState(() {
+      //
+      // });
       return {};
     }).catchError((error) {
 
