@@ -17,6 +17,7 @@ import '../../../widgets/tix/confirm_tix_tier_item.dart';
 import '../../../widgets/tix/tix_party_banner.dart';
 import '../../../widgets/ui/app_bar_title.dart';
 import '../../../widgets/ui/button_widget.dart';
+import '../../../widgets/ui/textfield_widget.dart';
 
 class ManageBoxOfficeTixScreen extends StatefulWidget {
   String tixId;
@@ -244,6 +245,17 @@ class _ManageBoxOfficeTixScreenState extends State<ManageBoxOfficeTixScreen> {
           ),
         ),
         const SizedBox(height: 24),
+
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 32.0),
+          child: TextFieldWidget(
+            label: 'result',
+            text: mTix.result,
+            onChanged: (text) {},
+          ),
+        ),
+
+        const SizedBox(height: 36),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [

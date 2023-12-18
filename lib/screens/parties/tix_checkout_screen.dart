@@ -141,13 +141,12 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
 
     PhonePePaymentSdk.init(environment, appId, merchantId, enableLogging)
         .then((val) async {
+      String? sign = await PhonePePaymentSdk.getPackageSignatureForAndroid();
+      Logx.d(_TAG, 'package sign : $sign');
 
-          String? sign = await PhonePePaymentSdk.getPackageSignatureForAndroid();
-          Logx.d(_TAG, 'package sign : $sign');
-
-          if(UserPreferences.myUser.clearanceLevel>= Constants.ADMIN_LEVEL){
-            _showTextDialog(context, sign!);
-          }
+      // if (UserPreferences.myUser.clearanceLevel >= Constants.ADMIN_LEVEL) {
+      //   _showTextDialog(context, sign!);
+      // }
 
       setState(() {
         Logx.d(_TAG, 'phonePe sdk init - $val ');
@@ -158,10 +157,16 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
         );
         FirestoreHelper.pushTix(widget.tix);
       });
-          return {};
-        })
-        .catchError((error) {
-      handleError(error);
+      return {};
+    }).catchError((error) {
+
+      widget.tix = widget.tix.copyWith(result: 'phone pe init failed: $error');
+      FirestoreHelper.pushTix(widget.tix);
+      FirestoreHelper.pushTixBackup(BackupUtils.getTixBackup(widget.tix));
+
+      Logx.elt(_TAG, 'payment gateway is facing issues, please try again in some time.');
+      Navigator.of(context).pop();
+
       return <dynamic>{};
     });
   }
@@ -210,17 +215,14 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
           } else {
             result = "flow complete. status : $status and error $error";
 
-            Logx.elt(_TAG, 'payment was unsuccessful. status $status and error $error');
-
-            // _showPaymentErrorDialog(context, status, error);
+            Logx.elt(_TAG,
+                'payment was unsuccessful. status $status and error $error');
           }
         } else {
           result = "flow incomplete";
         }
         result = val;
       }).catchError((error) {
-        handleError(error);
-
         widget.tix = widget.tix.copyWith(
           result: 'payment was unsuccessful. error : $error',
         );
@@ -232,8 +234,6 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
     } catch (error) {
       Logx.elt(_TAG, 'payment was unsuccessful, please try again.');
 
-      handleError(error);
-
       widget.tix = widget.tix.copyWith(
         result: 'payment was unsuccessful. error : $error',
       );
@@ -241,13 +241,6 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
       FirestoreHelper.pushTixBackup(BackupUtils.getTixBackup(widget.tix));
     }
   }
-
-  void handleError(error) {
-    setState(() {
-      result = {"error": error};
-    });
-  }
-
   /** phone pe dev end **/
 
   @override
@@ -422,10 +415,9 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
 
   checkPhonePePaymentStatus() async {
     try {
-      String url = testMode ?
-          "https://api-preprod.phonepe.com/apis/pg-sandbox/pg/v1/status/$merchantId/$merchantTransactionId"
-        : "https://api.phonepe.com/apis/hermes/pg/v1/status/$merchantId/$merchantTransactionId"
-      ;
+      String url = testMode
+          ? "https://api-preprod.phonepe.com/apis/pg-sandbox/pg/v1/status/$merchantId/$merchantTransactionId"
+          : "https://api.phonepe.com/apis/hermes/pg/v1/status/$merchantId/$merchantTransactionId";
 
       //SHA256("/pg/v1/status/{merchantId}/{merchantTransactionId}" + saltKey) + "###" + saltIndex
       String concatString =
@@ -630,8 +622,7 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
         });
   }
 
-  void _showTextDialog(
-      BuildContext context, String text) {
+  void _showTextDialog(BuildContext context, String text) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
