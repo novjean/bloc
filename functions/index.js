@@ -256,12 +256,10 @@ exports.partyGuestFunction = functions
 exports.tixFunction = functions
     .region('asia-south1')
     .firestore
-    .document('tixs/{document}')
+    .document('tix_backups/{document}')
     .onCreate((snapshot, context) => {
       console.log(snapshot.data());
-
-      if (!snapshot.data().isConfirmed) {
-        return admin.messaging().sendToTopic('tixs', {
+      return admin.messaging().sendToTopic('tixs', {
           notification: {
             title: '🎫 tix : ' + snapshot.data().userName,
             body: 'a ticket has been purchased for ' + snapshot.data().total,
@@ -272,7 +270,6 @@ exports.tixFunction = functions
             document: JSON.stringify(snapshot.data()),
           },
         });
-      }
     });
 
 exports.supportChatFunction = functions
@@ -281,9 +278,7 @@ exports.supportChatFunction = functions
     .document('support_chats/{document}')
     .onCreate((snapshot, context) => {
       console.log(snapshot.data());
-
-      if (!snapshot.data().isConfirmed) {
-        return admin.messaging().sendToTopic('support_chats', {
+      return admin.messaging().sendToTopic('support_chats', {
           notification: {
             title: '🛟 support : ' + snapshot.data().userName,
             body: snapshot.data().message,
@@ -294,7 +289,6 @@ exports.supportChatFunction = functions
             document: JSON.stringify(snapshot.data()),
           },
         });
-      }
     });
 
 exports.userPhotoFunction = functions

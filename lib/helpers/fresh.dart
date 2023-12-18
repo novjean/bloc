@@ -30,6 +30,7 @@ import '../db/entity/promoter_guest.dart';
 import '../db/entity/quick_order.dart';
 import '../db/entity/quick_table.dart';
 import '../db/entity/reservation.dart';
+import '../db/entity/tix_backup.dart';
 import '../db/entity/tix_tier_item.dart';
 import '../db/entity/user.dart';
 import '../db/entity/user_lounge.dart';
@@ -4602,6 +4603,264 @@ class Fresh {
     if (isModelChanged && shouldUpdate && UserPreferences.myUser.clearanceLevel>=Constants.ADMIN_LEVEL) {
       Logx.i(_TAG, 'updating tix ${tix.id}');
       FirestoreHelper.pushTix(tix);
+    }
+    return tix;
+  }
+
+  /** tix backup **/
+  static TixBackup freshTixBackup(TixBackup tix) {
+    TixBackup fresh = Dummy.getDummyTixBackup();
+
+    try {
+      fresh = fresh.copyWith(id: tix.id);
+    } catch (e) {
+      Logx.em(_TAG, 'tix backup id not exist');
+    }
+    try {
+      fresh = fresh.copyWith(partyId: tix.partyId);
+    } catch (e) {
+      Logx.em(_TAG,
+          'tix backup partyId not exist for id: ${tix.id}');
+    }
+    try {
+      fresh = fresh.copyWith(userId: tix.userId);
+    } catch (e) {
+      Logx.em(_TAG,
+          'tix backup userId not exist for id: ${tix.id}');
+    }
+
+    try {
+      fresh = fresh.copyWith(userName: tix.userName);
+    } catch (e) {
+      Logx.em(_TAG,
+          'tix backup userName not exist for id: ${tix.id}');
+    }
+    try {
+      fresh = fresh.copyWith(userPhone: tix.userPhone);
+    } catch (e) {
+      Logx.em(_TAG,
+          'tix backup userPhone not exist for id: ${tix.id}');
+    }
+    try {
+      fresh = fresh.copyWith(userEmail: tix.userEmail);
+    } catch (e) {
+      Logx.em(_TAG,
+          'tix backup userEmail not exist for id: ${tix.id}');
+    }
+
+    try {
+      fresh = fresh.copyWith(igst: tix.igst);
+    } catch (e) {
+      Logx.em(_TAG,
+          'tix backup igst not exist for id: ${tix.id}');
+    }
+    try {
+      fresh = fresh.copyWith(subTotal: tix.subTotal);
+    } catch (e) {
+      Logx.em(_TAG,
+          'tix backup subTotal not exist for id: ${tix.id}');
+    }
+    try {
+      fresh = fresh.copyWith(bookingFee: tix.bookingFee);
+    } catch (e) {
+      Logx.em(_TAG, 'tix backup bookingFee not exist for id: ${tix.id}');
+    }
+    try {
+      fresh = fresh.copyWith(total: tix.total);
+    } catch (e) {
+      Logx.em(_TAG,
+          'tix backup total not exist for id: ${tix.id}');
+    }
+
+    try {
+      fresh = fresh.copyWith(merchantTransactionId: tix.merchantTransactionId);
+    } catch (e) {
+      Logx.em(_TAG,
+          'tix backup merchantTransactionId not exist for id: ${tix.id}');
+    }
+    try {
+      fresh = fresh.copyWith(transactionId: tix.transactionId);
+    } catch (e) {
+      Logx.em(_TAG,
+          'tix backup transactionId not exist for id: ${tix.id}');
+    }
+    try {
+      fresh = fresh.copyWith(transactionResponseCode: tix.transactionResponseCode);
+    } catch (e) {
+      Logx.em(_TAG,
+          'tix backup transactionResponseCode not exist for id: ${tix.id}');
+    }
+    try {
+      fresh = fresh.copyWith(result: tix.result);
+    } catch (e) {
+      Logx.em(_TAG,
+          'tix backup result not exist for id: ${tix.id}');
+    }
+
+    try {
+      fresh = fresh.copyWith(creationTime: tix.creationTime);
+    } catch (e) {
+      Logx.em(_TAG,
+          'tix backup creationTime not exist for id: ${tix.id}');
+    }
+    try {
+      fresh = fresh.copyWith(isSuccess: tix.isSuccess);
+    } catch (e) {
+      Logx.em(_TAG, 'tix backup isSuccess not exist for id: ${tix.id}');
+    }
+    try {
+      fresh = fresh.copyWith(isCompleted: tix.isCompleted);
+    } catch (e) {
+      Logx.em(_TAG,
+          'tix backup isCompleted not exist for id: ${tix.id}');
+    }
+    try {
+      fresh = fresh.copyWith(isArrived: tix.isArrived);
+    } catch (e) {
+      Logx.em(_TAG,
+          'tix backup isArrived not exist for id: ${tix.id}');
+    }
+
+    try {
+      fresh = fresh.copyWith(tixTierIds: tix.tixTierIds);
+    } catch (e) {
+      Logx.em(_TAG,
+          'tix backup tixTierItemIds not exist for id: ${tix.id}');
+    }
+
+    return fresh;
+  }
+
+  static TixBackup freshTixBackupMap(
+      Map<String, dynamic> map, bool shouldUpdate) {
+    TixBackup tix = Dummy.getDummyTixBackup();
+    bool isModelChanged = false;
+
+    try {
+      tix = tix.copyWith(id: map['id'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'tix backup id not exist');
+    }
+    try {
+      tix = tix.copyWith(partyId: map['partyId'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'tix backup partyId not exist for id: ${tix.id}');
+      isModelChanged = true;
+    }
+    try {
+      tix = tix.copyWith(userId: map['userId'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'tix backup userId not exist for id: ${tix.id}');
+      isModelChanged = true;
+    }
+
+    try {
+      tix = tix.copyWith(userName: map['userName'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'tix backup userName not exist for id: ${tix.id}');
+      isModelChanged = true;
+    }
+    try {
+      tix = tix.copyWith(userPhone: map['userPhone'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'tix backup userPhone not exist for id: ${tix.id}');
+      isModelChanged = true;
+    }
+    try {
+      tix = tix.copyWith(userEmail: map['userEmail'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'tix backup userEmail not exist for id: ${tix.id}');
+      isModelChanged = true;
+    }
+
+    try {
+      tix = tix.copyWith(igst: map['igst'] as double);
+    } catch (e) {
+      Logx.em(_TAG, 'tix backup igst not exist for id: ${tix.id}');
+      isModelChanged = true;
+    }
+    try {
+      tix = tix.copyWith(subTotal: map['subTotal'] as double);
+    } catch (e) {
+      Logx.em(_TAG, 'tix backup subTotal not exist for id: ${tix.id}');
+      isModelChanged = true;
+    }
+    try {
+      tix = tix.copyWith(bookingFee: map['bookingFee'] as double);
+    } catch (e) {
+      Logx.em(_TAG, 'tix backup bookingFee not exist for id: ${tix.id}');
+      isModelChanged = true;
+    }
+    try {
+      tix = tix.copyWith(total: map['total'] as double);
+    } catch (e) {
+      Logx.em(_TAG, 'tix backup total not exist for id: ${tix.id}');
+      isModelChanged = true;
+    }
+
+    try {
+      tix = tix.copyWith(merchantTransactionId: map['merchantTransactionId'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'tix backup merchantTransactionId not exist for id: ${tix.id}');
+      isModelChanged = true;
+    }
+    try {
+      tix = tix.copyWith(transactionId: map['transactionId'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'tix backup transactionId not exist for id: ${tix.id}');
+      isModelChanged = true;
+    }
+    try {
+      tix = tix.copyWith(transactionResponseCode: map['transactionResponseCode'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'tix backup transactionResponseCode not exist for id: ${tix.id}');
+      isModelChanged = true;
+    }
+    try {
+      tix = tix.copyWith(result: map['result'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'tix backup result not exist for id: ${tix.id}');
+      isModelChanged = true;
+    }
+
+    try {
+      tix = tix.copyWith(creationTime: map['creationTime'] as int);
+    } catch (e) {
+      Logx.em(_TAG, 'tix backup creationTime not exist for id: ${tix.id}');
+      isModelChanged = true;
+    }
+    try {
+      tix = tix.copyWith(isSuccess: map['isSuccess'] as bool);
+    } catch (e) {
+      Logx.em(_TAG, 'tix backup isSuccess not exist for id: ${tix.id}');
+      isModelChanged = true;
+    }
+    try {
+      tix = tix.copyWith(isCompleted: map['isCompleted'] as bool);
+    } catch (e) {
+      Logx.em(_TAG, 'tix backup isCompleted not exist for id: ${tix.id}');
+      isModelChanged = true;
+    }
+    try {
+      tix = tix.copyWith(isArrived: map['isArrived'] as bool);
+    } catch (e) {
+      Logx.em(_TAG, 'tix backup isArrived not exist for id: ${tix.id}');
+      isModelChanged = true;
+    }
+
+    try {
+      tix =
+          tix.copyWith(tixTierIds: List<String>.from(map['tixTierIds']));
+    } catch (e) {
+      Logx.em(_TAG, 'tix backup tixTierIds not exist for id: ${tix.id}');
+      List<String> temp = [];
+      tix = tix.copyWith(tixTierIds: temp);
+      isModelChanged = true;
+    }
+
+    if (isModelChanged && shouldUpdate && UserPreferences.myUser.clearanceLevel>=Constants.ADMIN_LEVEL) {
+      Logx.i(_TAG, 'updating tix backup ${tix.id}');
+      FirestoreHelper.pushTixBackup(tix);
     }
     return tix;
   }

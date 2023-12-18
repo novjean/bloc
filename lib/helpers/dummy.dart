@@ -40,6 +40,7 @@ import '../db/entity/promoter_guest.dart';
 import '../db/entity/quick_order.dart';
 import '../db/entity/quick_table.dart';
 import '../db/entity/seat.dart';
+import '../db/entity/tix_backup.dart';
 import '../db/entity/tix_tier_item.dart';
 import '../db/entity/user.dart';
 import '../db/entity/user_lounge.dart';
@@ -568,6 +569,30 @@ class Dummy {
 
   static Tix getDummyTix() {
     Tix tix = Tix(
+        id: StringUtils.getRandomString(9),
+        partyId: '',
+        userId: UserPreferences.myUser.id,
+        userName: '${UserPreferences.myUser.name} ${UserPreferences.myUser.surname}',
+        userEmail: UserPreferences.myUser.email,
+        userPhone: UserPreferences.myUser.phoneNumber.toString(),
+        igst: 0,
+        subTotal: 0,
+        bookingFee: 0,
+        total: 0,
+        merchantTransactionId: '',
+        transactionId: '',
+        transactionResponseCode:'',
+        result: '',
+        creationTime: Timestamp.now().millisecondsSinceEpoch,
+        isSuccess: false,
+        isCompleted: false,
+        isArrived: false,
+        tixTierIds: []);
+    return tix;
+  }
+
+  static TixBackup getDummyTixBackup() {
+    TixBackup tix = TixBackup(
         id: StringUtils.getRandomString(9),
         partyId: '',
         userId: UserPreferences.myUser.id,

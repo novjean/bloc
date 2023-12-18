@@ -19,6 +19,7 @@ import '../../helpers/dummy.dart';
 import '../../helpers/fresh.dart';
 import '../../main.dart';
 import '../../routes/route_constants.dart';
+import '../../utils/backup_utils.dart';
 import '../../utils/constants.dart';
 import '../../utils/logx.dart';
 import '../../widgets/parties/party_banner.dart';
@@ -200,7 +201,9 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
           } else {
             result = "flow complete. status : $status and error $error";
 
-            _showPaymentErrorDialog(context, status, error);
+            Logx.elt(_TAG, 'payment was unsuccessful. status $status and error $error');
+
+            // _showPaymentErrorDialog(context, status, error);
           }
         } else {
           result = "flow incomplete";
@@ -210,9 +213,10 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
         handleError(error);
 
         widget.tix = widget.tix.copyWith(
-          result: 'payment was not successful. error : $error',
+          result: 'payment was unsuccessful. error : $error',
         );
         FirestoreHelper.pushTix(widget.tix);
+        FirestoreHelper.pushTixBackup(BackupUtils.getTixBackup(widget.tix));
 
         return <dynamic>{};
       });
@@ -222,9 +226,10 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
       handleError(error);
 
       widget.tix = widget.tix.copyWith(
-        result: 'payment was not successful. error : $error',
+        result: 'payment was unsuccessful. error : $error',
       );
       FirestoreHelper.pushTix(widget.tix);
+      FirestoreHelper.pushTixBackup(BackupUtils.getTixBackup(widget.tix));
     }
   }
 
@@ -456,6 +461,9 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
               isCompleted: true,
             );
             FirestoreHelper.pushTix(widget.tix);
+            FirestoreHelper.pushTixBackup(BackupUtils.getTixBackup(widget.tix));
+
+            Logx.ist(_TAG, 'payment was successful, tickets are in box office');
 
             //update the party tix tier
             FirestoreHelper.pullPartyTixTiers(widget.tix.partyId).then((res) {
@@ -488,12 +496,13 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
             GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
             GoRouter.of(context).pushNamed(RouteConstants.boxOfficeRouteName);
           } else {
-            Logx.ist(_TAG, "payment was not successful, please try again");
+            Logx.ist(_TAG, "payment was unsuccessful, please try again");
 
             widget.tix = widget.tix.copyWith(
-              result: 'payment was not successful',
+              result: 'payment was unsuccessful',
             );
             FirestoreHelper.pushTix(widget.tix);
+            FirestoreHelper.pushTixBackup(BackupUtils.getTixBackup(widget.tix));
           }
         });
       } on Exception catch (e) {
@@ -503,6 +512,7 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
           result: 'error: $e',
         );
         FirestoreHelper.pushTix(widget.tix);
+        FirestoreHelper.pushTixBackup(BackupUtils.getTixBackup(widget.tix));
       }
     } on Exception catch (e) {
       Logx.est(_TAG, 'oops, something went wrong. error: $e');
@@ -511,6 +521,7 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
         result: 'error: $e',
       );
       FirestoreHelper.pushTix(widget.tix);
+      FirestoreHelper.pushTixBackup(BackupUtils.getTixBackup(widget.tix));
     }
   }
 

@@ -47,6 +47,7 @@ import '../db/entity/tix.dart';
 import '../db/entity/product.dart';
 import '../db/entity/service_table.dart';
 import '../db/entity/sos.dart';
+import '../db/entity/tix_backup.dart';
 import '../db/entity/user_photo.dart';
 import '../db/shared_preferences/user_preferences.dart';
 import '../routes/route_constants.dart';
@@ -101,6 +102,7 @@ class FirestoreHelper {
   static String SOS = 'sos';
   static String TABLES = 'tables';
   static String TIXS = 'tixs';
+  static String TIX_BACKUPS = 'tix_backups';
   static String TIX_TIERS = 'tix_tiers';
   static String UI_PHOTOS = 'ui_photos';
   static String USERS = 'users';
@@ -113,6 +115,7 @@ class FirestoreHelper {
 
   static int TABLE_PRIVATE_TYPE_ID = 1;
   static int TABLE_COMMUNITY_TYPE_ID = 2;
+
 
 
   /** ads **/
@@ -2289,6 +2292,22 @@ class FirestoreHelper {
 
   static void deleteTix(String docId) {
     FirebaseFirestore.instance.collection(TIXS).doc(docId).delete();
+  }
+
+  /** tix backup **/
+  static void pushTixBackup(TixBackup tix) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection(TIX_BACKUPS)
+          .doc(tix.id)
+          .set(tix.toMap());
+    } on PlatformException catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } on Exception catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } catch (e) {
+      Logx.em(_TAG, e.toString());
+    }
   }
 
   /** tix tier **/
