@@ -260,16 +260,16 @@ exports.tixFunction = functions
     .onCreate((snapshot, context) => {
       console.log(snapshot.data());
       return admin.messaging().sendToTopic('tixs', {
-          notification: {
-            title: '🎫 tix : ' + snapshot.data().userName,
-            body: 'a ticket has been purchased for ' + snapshot.data().total,
-            clickAction: 'FLUTTER_NOTIFICATION_CLICK',
-          },
-          data: {
-            type: 'tixs',
-            document: JSON.stringify(snapshot.data()),
-          },
-        });
+        notification: {
+          title: '🎫 tix : ' + snapshot.data().userName,
+          body: 'a ticket has been purchased for ' + snapshot.data().total,
+          clickAction: 'FLUTTER_NOTIFICATION_CLICK',
+        },
+        data: {
+          type: 'tixs',
+          document: JSON.stringify(snapshot.data()),
+        },
+      });
     });
 
 exports.supportChatFunction = functions
@@ -279,16 +279,16 @@ exports.supportChatFunction = functions
     .onCreate((snapshot, context) => {
       console.log(snapshot.data());
       return admin.messaging().sendToTopic('support_chats', {
-          notification: {
-            title: '🛟 support : ' + snapshot.data().userName,
-            body: snapshot.data().message,
-            clickAction: 'FLUTTER_NOTIFICATION_CLICK',
-          },
-          data: {
-            type: 'support_chats',
-            document: JSON.stringify(snapshot.data()),
-          },
-        });
+        notification: {
+          title: '🛟 support : ' + snapshot.data().userName,
+          body: snapshot.data().message,
+          clickAction: 'FLUTTER_NOTIFICATION_CLICK',
+        },
+        data: {
+          type: 'support_chats',
+          document: JSON.stringify(snapshot.data()),
+        },
+      });
     });
 
 exports.userPhotoFunction = functions
