@@ -281,12 +281,12 @@ class NotificationService {
 
           if(tix.isSuccess){
             String title = '🎫 tix : ${tix.userName}';
-            String body = 'a ticket has been purchased for \u20B9 ${tix.total}}';
+            String body = 'a ticket has been purchased for \u20B9 ${tix.total}';
 
             NotificationService.showDefaultNotification(title, body);
           } else {
             String title = '🅾️ tix : ${tix.userName}';
-            String body = 'a ticket purchase failed for \u20B9 ${tix.total}}';
+            String body = 'a ticket purchase failed for \u20B9 ${tix.total}';
 
             NotificationService.showDefaultNotification(title, body);
           }
