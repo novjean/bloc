@@ -52,7 +52,7 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
   double bookingFee = 0;
   double grandTotal = 0;
 
-  bool testMode = true;
+  bool testMode = false;
 
   @override
   void initState() {
@@ -171,6 +171,10 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
       );
       FirestoreHelper.pushTix(widget.tix);
 
+      setState(() {
+        result;
+      });
+
       return {};
     }).catchError((error) {
 
@@ -202,16 +206,18 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
       },
     };
 
-    String base64Body = base64.encode(utf8.encode(json.encode(requestData)));
+    //String checksum = sha256(base64Body + apiEndPoint + salt) + ### + saltIndex;
 
-    checksum =
-        '${sha256.convert(utf8.encode(base64Body + apiEndPoint + saltKey)).toString()}###$saltIndex';
+    String base64Body = base64.encode(utf8.encode(json.encode(requestData)));
+    checksum = '${sha256.convert(utf8.encode(base64Body + apiEndPoint + saltKey)).toString()}###$saltIndex';
 
     return base64Body;
   }
 
   void startPgTransaction() async {
+    // Map<String, String> pgHeaders = {"Content-Type": "application/json"};
     Map<String, String> pgHeaders = {};
+
     String packageName = "";
 
     //key_error_code:ERROR_B2B_API_RETURNED_ERROR
@@ -699,35 +705,4 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
         });
   }
 
-  void _showTextDialog(BuildContext context, String text) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          backgroundColor: Constants.lightPrimary,
-          shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(20.0))),
-          contentPadding: const EdgeInsets.all(16.0),
-          title: const Text(
-            'text dialog',
-            textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 22, color: Colors.black),
-          ),
-          content: Text(text),
-          actions: [
-            TextButton(
-              style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all<Color>(
-                    Constants.darkPrimary), // Set your desired background color
-              ),
-              child: const Text("close"),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            )
-          ],
-        );
-      },
-    );
-  }
 }

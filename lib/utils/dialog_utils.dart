@@ -1,16 +1,12 @@
-import 'package:bloc/db/entity/party_photo.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:in_app_review/in_app_review.dart';
 
-import '../db/entity/lounge.dart';
 import '../db/entity/user.dart';
 import '../db/shared_preferences/user_preferences.dart';
 import '../helpers/firestore_helper.dart';
-import '../helpers/fresh.dart';
 import 'challenge_utils.dart';
 import 'constants.dart';
-import 'file_utils.dart';
 import 'logx.dart';
 import 'network_utils.dart';
 
@@ -147,6 +143,38 @@ class DialogUtils {
             ],
           );
         });
+  }
+
+  static showTextDialog(BuildContext context, String text) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: Constants.lightPrimary,
+          shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(20.0))),
+          contentPadding: const EdgeInsets.all(16.0),
+          title: const Text(
+            'text dialog',
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 22, color: Colors.black),
+          ),
+          content: Text(text),
+          actions: [
+            TextButton(
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all<Color>(
+                    Constants.darkPrimary), // Set your desired background color
+              ),
+              child: const Text("close"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            )
+          ],
+        );
+      },
+    );
   }
 
 }

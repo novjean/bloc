@@ -55,7 +55,7 @@ class Constants {
   static String blocCommunityLoungeId = 'HZfHfnB09xBcl5haYavd2nyvXiyF';
   static String ladiesLoungeId = 'uieGkTmtQQP4F8RKSEq57bpWezbl';
 
-  static String blocInstaHandle = 'https://www.instagram.com/bloc.india/';
+  static String blocInstaHandle = 'https://www.instagram.com/bloc.communitybar/';
   static String blocGoogleReview = 'https://g.page/r/CUPsfopXRRX8EBM/review';
   static String blocAppStoreId = '1672736309';
 
