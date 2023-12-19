@@ -144,6 +144,9 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
 
     if(testMode){
       appId = "";
+      if(UserPreferences.myUser.isIos){
+        appId = Constants.iosAppId;
+      }
     } else {
       if(UserPreferences.myUser.isIos) {
         appId = Constants.iosAppId;
@@ -158,10 +161,6 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
 
       // String? sign = await PhonePePaymentSdk.getPackageSignatureForAndroid();
       // Logx.d(_TAG, 'package sign : $sign');
-
-      // if (UserPreferences.myUser.clearanceLevel >= Constants.ADMIN_LEVEL) {
-      //   _showTextDialog(context, sign!);
-      // }
 
       Logx.d(_TAG, 'phonePe sdk init - $val ');
       result = 'PhonePe SDK initialized - $val';
