@@ -169,7 +169,7 @@ class _EventScreenState extends State<EventScreen> {
     bool showGuestListBuyTix = false;
     if (!mParty.isTBA &&
         !mParty.isTicketsDisabled &&
-        ((mParty.isTix && UserPreferences.myUser.clearanceLevel > Constants.ADMIN_LEVEL)|| mParty.ticketUrl.isNotEmpty)) {
+        (mParty.isTix|| mParty.ticketUrl.isNotEmpty)) {
       if (isGuestListActive) {
         showGuestListBuyTix = true;
       }
@@ -428,7 +428,7 @@ class _EventScreenState extends State<EventScreen> {
                       ],
                     )
                   : const SizedBox(),
-              mParty.isTix && UserPreferences.myUser.clearanceLevel>=Constants.ADMIN_LEVEL
+              mParty.isTix
                   ? InkWell(
                       onTap: () {
                         //navigate to purchase tix screen
@@ -553,7 +553,7 @@ class _EventScreenState extends State<EventScreen> {
     bool isGuestListActive =
         mParty.isGuestListActive & (timeNow < mParty.guestListEndTime);
 
-    if (!mParty.isTBA && mParty.isTix && UserPreferences.myUser.clearanceLevel > Constants.ADMIN_LEVEL){
+    if (!mParty.isTBA && mParty.isTix){
       return Container(
         height: 50,
         width: 160,

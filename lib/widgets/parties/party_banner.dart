@@ -129,8 +129,7 @@ class _PartyBannerState extends State<PartyBanner> {
     if (widget.shouldShowButton) {
       if (!widget.party.isTBA &&
           !widget.party.isTicketsDisabled &&
-          ((widget.party.isTix && UserPreferences.myUser.clearanceLevel > Constants.ADMIN_LEVEL)
-              || widget.party.ticketUrl.isNotEmpty)) {
+          (widget.party.isTix || widget.party.ticketUrl.isNotEmpty)) {
         if (isGuestListActive) {
           if (!widget.isGuestListRequested) {
             showGuestListBuyTix = true;
@@ -576,7 +575,7 @@ class _PartyBannerState extends State<PartyBanner> {
             },
           ),
         )),
-        widget.party.isTix && UserPreferences.myUser.clearanceLevel>Constants.ADMIN_LEVEL
+        widget.party.isTix
             ? Expanded(
                 child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 5),

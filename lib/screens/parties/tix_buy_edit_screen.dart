@@ -280,7 +280,7 @@ class _TixBuyEditScreenState extends State<TixBuyEditScreen> {
                       )),
                 );
               } else {
-                Logx.ilt(_TAG, 'please select quantity of tickets before proceeding.');
+                Logx.ilt(_TAG, 'please select a ticket');
               }
             },
           )

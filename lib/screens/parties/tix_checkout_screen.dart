@@ -52,7 +52,7 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
   double bookingFee = 0;
   double grandTotal = 0;
 
-  bool testMode = false;
+  bool testMode = true;
 
   @override
   void initState() {
