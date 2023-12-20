@@ -433,6 +433,36 @@ class _PartyBannerState extends State<PartyBanner> {
           ),
         ),
         onPressed: () {
+          _handleBuyTixPressed();
+        },
+        label: const Text(
+          'buy ticket',
+          style: TextStyle(fontSize: 20, color: Constants.primary),
+        ),
+        icon: const Icon(
+          Icons.star,
+          size: 24.0,
+        ),
+      ),
+    );
+  }
+
+  _showExternalBuyTixButton(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 5.0),
+      child: ElevatedButton.icon(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Constants.background,
+          foregroundColor: Constants.primary,
+          shadowColor: Colors.white30,
+          elevation: 3,
+          minimumSize: const Size.fromHeight(60),
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(10), topRight: Radius.circular(10)),
+          ),
+        ),
+        onPressed: () {
           _handleBuyExternalTixPressed();
         },
         label: const Text(
@@ -473,8 +503,12 @@ class _PartyBannerState extends State<PartyBanner> {
   _showBottomButton(BuildContext context, bool isGuestListActive) {
     if (!widget.party.isTBA &&
         !widget.party.isTicketsDisabled &&
-        widget.party.ticketUrl.isNotEmpty) {
-      return _showBuyTixButton(context);
+        (widget.party.ticketUrl.isNotEmpty || widget.party.isTix)) {
+      if(widget.party.isTix){
+        return _showBuyTixButton(context);
+      } else {
+        return _showExternalBuyTixButton(context);
+      }
     } else if (isGuestListActive) {
       if (!widget.isGuestListRequested) {
         if (widget.party.isGuestListFull) {
@@ -491,6 +525,11 @@ class _PartyBannerState extends State<PartyBanner> {
   }
 
   void _handleBuyExternalTixPressed() {
+    if(widget.party.ticketUrl.isEmpty){
+      Logx.ist(_TAG, 'tickets are available only through the bloc app');
+      return;
+    }
+
     final uri = Uri.parse(widget.party.ticketUrl);
     NetworkUtils.launchInBrowser(uri);
 
@@ -575,7 +614,7 @@ class _PartyBannerState extends State<PartyBanner> {
             },
           ),
         )),
-        widget.party.isTix
+        widget.party.isTix && !kIsWeb
             ? Expanded(
                 child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 5),
