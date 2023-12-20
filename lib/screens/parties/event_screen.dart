@@ -1,4 +1,5 @@
 import 'package:bloc/screens/parties/tix_buy_edit_screen.dart';
+import 'package:bloc/utils/dialog_utils.dart';
 import 'package:bloc/utils/file_utils.dart';
 import 'package:bloc/utils/string_utils.dart';
 import 'package:bloc/widgets/ui/loading_widget.dart';
@@ -553,7 +554,7 @@ class _EventScreenState extends State<EventScreen> {
     bool isGuestListActive =
         mParty.isGuestListActive & (timeNow < mParty.guestListEndTime);
 
-    if (!mParty.isTBA && mParty.isTix && !kIsWeb){
+    if (!mParty.isTBA && mParty.isTix){
       return Container(
         height: 50,
         width: 160,
@@ -566,15 +567,25 @@ class _EventScreenState extends State<EventScreen> {
             elevation: 3,
           ),
           onPressed: () {
-            //navigate to purchase tix screen
-            Tix tix = Dummy.getDummyTix();
-            tix = tix.copyWith(partyId: mParty.id);
+            if(kIsWeb){
+              if(mParty.ticketUrl.isNotEmpty){
+                final uri = Uri.parse(mParty.ticketUrl);
+                NetworkUtils.launchInBrowser(uri);
+              } else {
+                Logx.ilt(_TAG, 'bloc app is required to purchase this ticket');
+                DialogUtils.showDownloadAppDialog(context);
+              }
+            } else {
+              //navigate to purchase tix screen
+              Tix tix = Dummy.getDummyTix();
+              tix = tix.copyWith(partyId: mParty.id);
 
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                  builder: (context) => TixBuyEditScreen(
-                      tix: tix, task: 'buy')),
-            );
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                    builder: (context) => TixBuyEditScreen(
+                        tix: tix, task: 'buy')),
+              );
+            }
 
             if (UserPreferences.isUserLoggedIn()) {
               User user = UserPreferences.myUser;
