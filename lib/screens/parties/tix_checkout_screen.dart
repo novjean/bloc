@@ -183,7 +183,6 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
 
       widget.tix = widget.tix.copyWith(result: 'phone pe init failed: $error');
       FirestoreHelper.pushTix(widget.tix);
-      FirestoreHelper.pushTixBackup(BackupUtils.getTixBackup(widget.tix));
 
       Logx.elt(_TAG, 'payment gateway is facing issues, please try again in some time.');
       Navigator.of(context).pop();
@@ -236,15 +235,19 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
           } else {
             result = "flow complete. status : $status and error $error";
 
-            Logx.elt(_TAG,
-                'payment was unsuccessful. status $status and error $error');
+            if(UserPreferences.myUser.clearanceLevel>=Constants.ADMIN_LEVEL){
+              Logx.elt(_TAG,
+                  'payment was unsuccessful. status $status and error $error');
+            } else {
+              Logx.elt(_TAG,
+                  'payment was unsuccessful, please try again');
+            }
 
             widget.tix = widget.tix.copyWith(
               result: 'payment was unsuccessful. status $status and error $error',
             );
 
             FirestoreHelper.pushTix(widget.tix);
-            FirestoreHelper.pushTixBackup(BackupUtils.getTixBackup(widget.tix));
           }
         } else {
           result = "flow incomplete";
@@ -255,7 +258,6 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
           result: 'payment was unsuccessful. error : $error',
         );
         FirestoreHelper.pushTix(widget.tix);
-        FirestoreHelper.pushTixBackup(BackupUtils.getTixBackup(widget.tix));
 
         return <dynamic>{};
       });
@@ -266,60 +268,9 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
         result: 'payment was unsuccessful. error : $error',
       );
       FirestoreHelper.pushTix(widget.tix);
-      FirestoreHelper.pushTixBackup(BackupUtils.getTixBackup(widget.tix));
     }
   }
 
-  // void startContainerTransaction() async {
-  //   try {
-  //     PhonePePaymentSdk.startContainerTransaction(
-  //         body, callbackUrl, checksum, {}, apiEndPoint)
-  //         .then((val) async {
-  //       if (val != null) {
-  //         String status = val['status'].toString();
-  //         String error = val['error'].toString();
-  //
-  //         if (status == 'SUCCESS') {
-  //           result = "flow complete. status : success ";
-  //
-  //           await checkPhonePePaymentStatus();
-  //         } else {
-  //           result = "flow complete. status : $status and error $error";
-  //
-  //           Logx.elt(_TAG,
-  //               'payment was unsuccessful. status $status and error $error');
-  //
-  //           widget.tix = widget.tix.copyWith(
-  //             result: 'payment was unsuccessful. status $status and error $error',
-  //           );
-  //
-  //           FirestoreHelper.pushTix(widget.tix);
-  //           FirestoreHelper.pushTixBackup(BackupUtils.getTixBackup(widget.tix));
-  //         }
-  //       } else {
-  //         result = "flow incomplete";
-  //       }
-  //       result = val;
-  //         })
-  //         .catchError((error) {
-  //
-  //       widget.tix = widget.tix.copyWith(
-  //         result: 'payment was unsuccessful. error : $error',
-  //       );
-  //       FirestoreHelper.pushTix(widget.tix);
-  //       FirestoreHelper.pushTixBackup(BackupUtils.getTixBackup(widget.tix));
-  //
-  //       return <dynamic>{};
-  //         });
-  //   } catch (error) {
-  //     Logx.elt(_TAG, 'payment was unsuccessful, please try again.');
-  //
-  //     widget.tix = widget.tix.copyWith(
-  //       result: 'payment was unsuccessful. error : $error',
-  //     );
-  //     FirestoreHelper.pushTix(widget.tix);
-  //     FirestoreHelper.pushTixBackup(BackupUtils.getTixBackup(widget.tix));    }
-  // }
   /** phone pe dev end **/
 
   @override
