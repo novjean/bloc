@@ -71,6 +71,65 @@ class DialogUtils {
         });
   }
 
+  static showDownloadAppTixDialog(BuildContext context) {
+    String message = '📸 Tickets and Guest Lists! Download our app to access all the exclusive event tickets and guest list access, and get notified with approvals, updates and more! 🎉📲';
+
+    showDialog(
+        context: context,
+        builder: (BuildContext ctx) {
+          return AlertDialog(
+            title: const Text(
+              '🎁 download our app to buy tix',
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 22, color: Colors.black),
+            ),
+            backgroundColor: Constants.lightPrimary,
+            shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(20.0))),
+            contentPadding: const EdgeInsets.all(16.0),
+            content: Text(message.toLowerCase()),
+            actions: [
+              TextButton(
+                child: const Text('close',
+                    style: TextStyle(color: Constants.background)),
+                onPressed: () {
+                  Navigator.of(ctx).pop();
+                },
+              ),
+              TextButton(
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all<Color>(Constants
+                      .darkPrimary), // Set your desired background color
+                ),
+                child: const Text('🤖 android',
+                    style: TextStyle(color: Constants.primary)),
+                onPressed: () async {
+                  Navigator.of(ctx).pop();
+
+                  final uri = Uri.parse(ChallengeUtils.urlBlocPlayStore);
+                  NetworkUtils.launchInBrowser(uri);
+                },
+              ),
+              TextButton(
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all<Color>(Constants
+                      .darkPrimary), // Set your desired background color
+                ),
+                child: const Text('🍎 ios',
+                    style: TextStyle(color: Constants.primary)),
+                onPressed: () async {
+                  Navigator.of(ctx).pop();
+
+                  final uri = Uri.parse(ChallengeUtils.urlBlocAppStore);
+                  NetworkUtils.launchInBrowser(uri);
+                },
+              ),
+            ],
+          );
+        });
+  }
+
+
   static showReviewAppDialog(BuildContext context) {
     showDialog(
         context: context,
