@@ -108,6 +108,8 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
         });
       } else {
         Logx.em(_TAG, 'no tix tiers found for tix ${widget.tix.id}');
+        Logx.elt(_TAG, 'oops something went wrong, please try again');
+
         Navigator.of(context).pop();
       }
     });
@@ -140,6 +142,8 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
   Object? result;
 
   void phonePeInit() {
+    saltIndex = testMode ? Constants.testSaltIndex : Constants.saltIndex;
+    saltKey = testMode ? Constants.testSaltKey : Constants.saltKey;
     environment = testMode ? Constants.testEnvironment : Constants.environment;
 
     if(testMode){
@@ -214,13 +218,8 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
   }
 
   void startPgTransaction() async {
-    // Map<String, String> pgHeaders = {"Content-Type": "application/json"};
-    Map<String, String> pgHeaders = {};
-
+    Map<String, String> pgHeaders = {"Content-Type": "application/json"};
     String packageName = "";
-
-    //key_error_code:ERROR_B2B_API_RETURNED_ERROR
-    // key_error_result:{\"success\":false,\"code\":\"401\"}
 
     try {
       var response = PhonePePaymentSdk.startPGTransaction(
@@ -362,9 +361,8 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
                     shouldShowInterestCount: false,
                   ),
                   _showTixTiers(context, mTixTiers),
-                  const SizedBox(height: 20),
                   const SizedBox(
-                    height: 70,
+                    height:90,
                   ),
                 ],
               ),

@@ -78,8 +78,8 @@ class Constants {
   static double bookingFeePercent = 0.059;
 
   /** phone pe **/
-  static String saltKey = "099eb0cd-02cf-4e2a-8aca-3e6c6aff0399";
-  static String saltIndex = "1";
+  static String testSaltKey = "099eb0cd-02cf-4e2a-8aca-3e6c6aff0399";
+  static String testSaltIndex = "1";
   static String phonePeApiEndPoint = "/pg/v1/pay";
 
   static String prodHostUrl = "https://api.phonepe.com/apis/hermes";
@@ -89,6 +89,8 @@ class Constants {
   static String testMerchantId = "PGTESTPAYUAT";
 
   /** phone pe prod **/
+  static String saltKey = "34765f86-1b43-4395-a9cb-0bea807630d9";
+  static String saltIndex = "1";
   static String environment = "PRODUCTION";
   static String iosAppId = "c8cf8a00d27b450cb80491bd6e21ef5b";
   static String androidAppId = "d4f45bc915f048e2b7eed50f0115648f";

@@ -11,7 +11,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_slider_drawer/flutter_slider_drawer.dart';
 import 'package:go_router/go_router.dart';
 import 'package:upgrader/upgrader.dart';
@@ -226,6 +225,7 @@ class _MainScreenState extends State<MainScreen> {
               UserLounge userLounge = Fresh.freshUserLoungeMap(data, false);
               userLounges.add(userLounge.loungeId);
 
+              FirebaseMessaging.instance.unsubscribeFromTopic(userLounge.loungeId);
               FirebaseMessaging.instance.subscribeToTopic(userLounge.loungeId);
               Logx.d(
                   _TAG, 'subscribed to lounge topic: ${userLounge.loungeId}');
@@ -250,6 +250,8 @@ class _MainScreenState extends State<MainScreen> {
               Friend friend = Fresh.freshFriendMap(data, false);
 
               if (friend.isFollowing) {
+                FirebaseMessaging.instance.unsubscribeFromTopic(friend.friendUserId);
+
                 FirebaseMessaging.instance
                     .subscribeToTopic(friend.friendUserId);
               } else {
