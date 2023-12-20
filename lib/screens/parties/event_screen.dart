@@ -428,37 +428,37 @@ class _EventScreenState extends State<EventScreen> {
                       ],
                     )
                   : const SizedBox(),
-              mParty.isTix
-                  ? InkWell(
-                      onTap: () {
-                        //navigate to purchase tix screen
-                        Tix tix = Dummy.getDummyTix();
-                        tix = tix.copyWith(partyId: mParty.id);
-
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                              builder: (context) => TixBuyEditScreen(
-                                  tix: tix, task: 'buy')),
-                        );
-
-                        // GoRouter.of(context).pushNamed(RouteConstants.buyTixRouteName,
-                        //     params: {
-                        //       'partyId': mParty.id,
-                        //     });
-                      },
-                      child: const Padding(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 15, vertical: 2),
-                        child: Text(
-                          'buy tix',
-                          style: TextStyle(
-                            fontSize: 18,
-                            color: Constants.primary,
-                          ),
-                        ),
-                      ),
-                    )
-                  : const SizedBox(),
+              // mParty.isTix
+              //     ? InkWell(
+              //         onTap: () {
+              //           //navigate to purchase tix screen
+              //           Tix tix = Dummy.getDummyTix();
+              //           tix = tix.copyWith(partyId: mParty.id);
+              //
+              //           Navigator.of(context).push(
+              //             MaterialPageRoute(
+              //                 builder: (context) => TixBuyEditScreen(
+              //                     tix: tix, task: 'buy')),
+              //           );
+              //
+              //           // GoRouter.of(context).pushNamed(RouteConstants.buyTixRouteName,
+              //           //     params: {
+              //           //       'partyId': mParty.id,
+              //           //     });
+              //         },
+              //         child: const Padding(
+              //           padding:
+              //               EdgeInsets.symmetric(horizontal: 15, vertical: 2),
+              //           child: Text(
+              //             'buy tix',
+              //             style: TextStyle(
+              //               fontSize: 18,
+              //               color: Constants.primary,
+              //             ),
+              //           ),
+              //         ),
+              //       )
+              //     : const SizedBox(),
               const SizedBox(height: 15.0),
               kIsWeb ? const StoreBadgeItem() : const SizedBox(),
               const SizedBox(height: 10.0),
@@ -553,7 +553,7 @@ class _EventScreenState extends State<EventScreen> {
     bool isGuestListActive =
         mParty.isGuestListActive & (timeNow < mParty.guestListEndTime);
 
-    if (!mParty.isTBA && mParty.isTix){
+    if (!mParty.isTBA && mParty.isTix && !kIsWeb){
       return Container(
         height: 50,
         width: 160,

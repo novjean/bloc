@@ -504,10 +504,22 @@ class _PartyBannerState extends State<PartyBanner> {
     if (!widget.party.isTBA &&
         !widget.party.isTicketsDisabled &&
         (widget.party.ticketUrl.isNotEmpty || widget.party.isTix)) {
-      if(widget.party.isTix){
+      if(widget.party.isTix && !kIsWeb){
         return _showBuyTixButton(context);
-      } else {
+      } else if(widget.party.ticketUrl.isNotEmpty) {
         return _showExternalBuyTixButton(context);
+      } else if (isGuestListActive) {
+        if (!widget.isGuestListRequested) {
+          if (widget.party.isGuestListFull) {
+            return showListenOrInstaDialog(context);
+          } else {
+            return showGuestListButton(context);
+          }
+        } else {
+          return showBoxOfficeButton(context);
+        }
+      } else {
+        return showListenOrInstaDialog(context);
       }
     } else if (isGuestListActive) {
       if (!widget.isGuestListRequested) {
