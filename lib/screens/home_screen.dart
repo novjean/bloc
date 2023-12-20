@@ -12,6 +12,7 @@ import '../db/entity/bloc.dart';
 import '../db/entity/guest_wifi.dart';
 import '../db/entity/party.dart';
 import '../db/entity/party_guest.dart';
+import '../db/shared_preferences/table_preferences.dart';
 import '../db/shared_preferences/user_preferences.dart';
 import '../helpers/dummy.dart';
 import '../helpers/firestore_helper.dart';
@@ -472,6 +473,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     Constants.darkPrimary), // Set your desired background color
               ),
               onPressed: () async {
+                UserPreferences.resetUser();
+                TablePreferences.resetQuickTable();
+
                 await FirebaseAuth.instance.signOut();
 
                 GoRouter.of(context)

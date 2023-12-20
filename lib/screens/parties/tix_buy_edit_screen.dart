@@ -3,12 +3,15 @@ import 'package:bloc/db/entity/tix_tier_item.dart';
 import 'package:bloc/helpers/firestore_helper.dart';
 import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../db/entity/party.dart';
 import '../../db/entity/party_tix_tier.dart';
 import '../../db/entity/tix.dart';
+import '../../db/shared_preferences/table_preferences.dart';
+import '../../db/shared_preferences/user_preferences.dart';
 import '../../helpers/dummy.dart';
 import '../../helpers/fresh.dart';
 import '../../main.dart';
@@ -272,15 +275,29 @@ class _TixBuyEditScreenState extends State<TixBuyEditScreen> {
               //       builder: (ctx) => PhonePePayment()),
               // );
 
-              if(price>0){
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                      builder: (context) => TixCheckoutScreen(
-                        tix: widget.tix,
-                      )),
-                );
+              if(UserPreferences.isUserLoggedIn()){
+                if(price>0){
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                        builder: (context) => TixCheckoutScreen(
+                          tix: widget.tix,
+                        )),
+                  );
+                } else {
+                  Logx.ilt(_TAG, 'please select a ticket');
+                }
               } else {
-                Logx.ilt(_TAG, 'please select a ticket');
+                Logx.ilt(_TAG, 'please login to purchase tickets');
+
+                UserPreferences.resetUser();
+                TablePreferences.resetQuickTable();
+
+                await FirebaseAuth.instance.signOut();
+
+                GoRouter.of(context)
+                    .pushNamed(RouteConstants.loginRouteName, params: {
+                  'skip': 'false',
+                });
               }
             },
           )

@@ -24,12 +24,8 @@ class AppBarTitle extends StatelessWidget {
         ),
         InkWell(
             onTap: () {
-              if (UserPreferences.isUserLoggedIn()) {
-                GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
-              } else {
-                GoRouter.of(context)
-                    .pushNamed(RouteConstants.landingRouteName);
-              }
+              GoRouter.of(context)
+                  .pushNamed(RouteConstants.landingRouteName);
             },
             child: const Text('bloc.')),
         const Spacer(),
