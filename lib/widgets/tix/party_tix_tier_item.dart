@@ -182,7 +182,7 @@ class _PartyTixTierItemState extends State<PartyTixTierItem> {
               FirestoreHelper.pushTix(tix);
             }
 
-            Logx.em(_TAG, 'tix tier data saved in firebase');
+            Logx.i(_TAG, 'tix tier data saved in firebase');
           } else {
             Logx.em(_TAG, 'tix ${widget.tixId} not found in firebase');
           }
