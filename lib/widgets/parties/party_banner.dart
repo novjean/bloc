@@ -21,6 +21,7 @@ import '../../helpers/fresh.dart';
 import '../../routes/route_constants.dart';
 import '../../screens/parties/party_guest_add_edit_manage_screen.dart';
 import '../../screens/parties/tix_buy_edit_screen.dart';
+import '../../utils/dialog_utils.dart';
 import '../../utils/logx.dart';
 import 'mini_artist_item.dart';
 
@@ -504,7 +505,7 @@ class _PartyBannerState extends State<PartyBanner> {
     if (!widget.party.isTBA &&
         !widget.party.isTicketsDisabled &&
         (widget.party.ticketUrl.isNotEmpty || widget.party.isTix)) {
-      if(widget.party.isTix && !kIsWeb){
+      if(widget.party.isTix){
         return _showBuyTixButton(context);
       } else if(widget.party.ticketUrl.isNotEmpty) {
         return _showExternalBuyTixButton(context);
@@ -626,7 +627,7 @@ class _PartyBannerState extends State<PartyBanner> {
             },
           ),
         )),
-        widget.party.isTix && !kIsWeb
+        widget.party.isTix
             ? Expanded(
                 child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 5),
@@ -692,15 +693,25 @@ class _PartyBannerState extends State<PartyBanner> {
   }
 
   void _handleBuyTixPressed() {
-    //navigate to purchase tix screen
-    Tix tix = Dummy.getDummyTix();
-    tix = tix.copyWith(partyId: widget.party.id);
+    if(kIsWeb){
+      if(widget.party.ticketUrl.isNotEmpty){
+        final uri = Uri.parse(widget.party.ticketUrl);
+        NetworkUtils.launchInBrowser(uri);
+      } else {
+        Logx.ilt(_TAG, 'bloc app is required to purchase this ticket');
+        DialogUtils.showDownloadAppTixDialog(context);
+      }
+    } else{
+      //navigate to purchase tix screen
+      Tix tix = Dummy.getDummyTix();
+      tix = tix.copyWith(partyId: widget.party.id);
 
-    Navigator.of(context).push(
-      MaterialPageRoute(
-          builder: (context) => TixBuyEditScreen(
-              tix: tix, task: 'buy')),
-    );
+      Navigator.of(context).push(
+        MaterialPageRoute(
+            builder: (context) => TixBuyEditScreen(
+                tix: tix, task: 'buy')),
+      );
+    }
 
     if (UserPreferences.isUserLoggedIn()) {
       User user = UserPreferences.myUser;
