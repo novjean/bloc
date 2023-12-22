@@ -370,7 +370,37 @@ class _ManagePartyTixsScreenState extends State<ManagePartyTixsScreen> {
                       ],
                     ),
                     const SizedBox(height: 30),
-
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text('delete unsuccessful'),
+                        SizedBox.fromSize(
+                          size: const Size(50, 50),
+                          child: ClipOval(
+                            child: Material(
+                              color: Constants.darkPrimary,
+                              child: InkWell(
+                                splashColor: Constants.primary,
+                                onTap: () {
+                                  Navigator.of(ctx).pop();
+                                  _showDeleteAllUnsuccessfulTickets(context);
+                                },
+                                child: const Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: <Widget>[
+                                    Icon(
+                                      Icons.delete_forever,
+                                      color: Constants.errorColor,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                    const SizedBox(height: 30),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -555,5 +585,55 @@ class _ManagePartyTixsScreenState extends State<ManagePartyTixsScreen> {
           );
         });
   }
+
+  _showDeleteAllUnsuccessfulTickets(BuildContext context) {
+    showDialog(
+        context: context,
+        builder: (BuildContext ctx) {
+          return AlertDialog(
+            title: Text(
+              'delete all unsuccessful ${widget.party.name} tickets',
+              style: const TextStyle(color: Colors.redAccent),
+            ),
+            content: const Text(
+                'deleting all unsuccessful tickets. are you sure you want to continue?'),
+            actions: [
+              TextButton(
+                child: const Text('yes'),
+                onPressed: () {
+                  for (Tix tix in mTixs) {
+                    if(tix.transactionId.isEmpty){
+
+                    }
+
+                    // FirestoreHelper.deleteTix(tix.id);
+                    // FirestoreHelper.pullTixTiersByTixId(tix.id).then((res) {
+                    //   if (res.docs.isNotEmpty) {
+                    //     for (int i = 0; i < res.docs.length; i++) {
+                    //       DocumentSnapshot document = res.docs[i];
+                    //       Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+                    //       final TixTier tixTier = Fresh.freshTixTierMap(data, false);
+                    //       FirestoreHelper.deleteTixTier(tixTier.id);
+                    //     }
+                    //   } else {
+                    //     Logx.em(_TAG, 'no tix tiers found for ${tix.id}');
+                    //   }
+                    // });
+                  }
+                  Logx.ist(_TAG, 'deleted all ${widget.party.name} tickets!');
+                  Navigator.of(ctx).pop();
+                },
+              ),
+              TextButton(
+                child: const Text("no"),
+                onPressed: () {
+                  Navigator.of(ctx).pop();
+                },
+              )
+            ],
+          );
+        });
+  }
+
 
 }

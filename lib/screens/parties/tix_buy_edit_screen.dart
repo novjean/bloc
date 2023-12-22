@@ -289,6 +289,11 @@ class _TixBuyEditScreenState extends State<TixBuyEditScreen> {
               } else {
                 Logx.ilt(_TAG, 'please login to purchase tickets');
 
+                FirestoreHelper.deleteTix(widget.tix.id);
+                for(TixTier tixTier in mTixTiers){
+                  FirestoreHelper.deleteTixTier(tixTier.id);
+                }
+
                 UserPreferences.resetUser();
                 TablePreferences.resetQuickTable();
 

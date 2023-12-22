@@ -22,11 +22,14 @@ class UpiAppWidget extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Image.asset(
-            imageAsset,
-            width: 36, // Set the image width
-            height: 36, // Set the image height
-            // color: Colors.white, // Set the image color
+          ClipRRect(
+            borderRadius: BorderRadius.circular(10.0),
+            child: Image.asset(
+              imageAsset,
+              width: 36, // Set the image width
+              height: 36, // Set the image height
+              // color: Colors.white, // Set the image color
+            ),
           ),
           SizedBox(height: 4),
           Text(

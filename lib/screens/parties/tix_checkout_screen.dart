@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:bloc/db/entity/tix_tier_item.dart';
 import 'package:bloc/helpers/firestore_helper.dart';
 import 'package:bloc/utils/number_utils.dart';
+import 'package:bloc/widgets/ui/button_widget.dart';
 import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:crypto/crypto.dart';
@@ -51,6 +52,8 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
   double subTotal = 0;
   double bookingFee = 0;
   double grandTotal = 0;
+
+  String packageName = "";
 
   bool testMode = false;
 
@@ -101,7 +104,6 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
         FirestoreHelper.pushTix(widget.tix);
 
         phonePeInit();
-        // body = getChecksum().toString();
 
         setState(() {
           _isTixTiersLoading = false;
@@ -115,9 +117,6 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
     });
 
     super.initState();
-
-    // phonePeInit();
-    // body = getChecksum().toString();
   }
 
   /** phone pe dev **/
@@ -197,19 +196,18 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
     String mobileNumber = UserPreferences.myUser.phoneNumber.toString();
 
     final requestData = {
-      "merchantId": merchantId,
-      "merchantTransactionId": merchantTransactionId,
-      "merchantUserId": merchantUserId,
-      "amount": amount,
-      "mobileNumber": mobileNumber,
-      "callbackUrl": callbackUrl,
-      "paymentInstrument": {
-        "type": "PAY_PAGE",
-      },
-    };
+        "merchantId": merchantId,
+        "merchantTransactionId": merchantTransactionId,
+        "merchantUserId": merchantUserId,
+        "amount": amount,
+        "mobileNumber": mobileNumber,
+        "callbackUrl": callbackUrl,
+        "paymentInstrument": {
+          "type": "PAY_PAGE",
+        },
+      };
 
     //String checksum = sha256(base64Body + apiEndPoint + salt) + ### + saltIndex;
-
     String base64Body = base64.encode(utf8.encode(json.encode(requestData)));
     checksum = '${sha256.convert(utf8.encode(base64Body + apiEndPoint + saltKey)).toString()}###$saltIndex';
 
@@ -218,7 +216,6 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
 
   void startPgTransaction() async {
     Map<String, String> pgHeaders = {"Content-Type": "application/json"};
-    String packageName = "";
 
     try {
       var response = PhonePePaymentSdk.startPGTransaction(
@@ -404,37 +401,36 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
                   : const SizedBox(),
               DarkButtonWidget(
                 text: 'purchase',
-                onClicked: () {
+                onClicked: () async {
                   body = getChecksum().toString();
-
-                  startPgTransaction();
-
-                  // startContainerTransaction();
+                  // startPgTransaction();
 
                   // here we are gonna check what all is installed on phone
-                  // bool isIos = Theme.of(context).platform == TargetPlatform.iOS;
-                  // if (!isIos) {
-                  //   String? apps =
-                  //       await PhonePePaymentSdk.getInstalledUpiAppsForAndroid();
-                  //
-                  //   Iterable l = json.decode(apps!);
-                  //   List<UPIApp> upiApps =
-                  //       List<UPIApp>.from(l.map((model) => UPIApp.fromJson(model)));
-                  //   String appString = '';
-                  //   for (var element in upiApps) {
-                  //     appString +=
-                  //         "${element.applicationName} ${element.version} ${element.packageName}";
-                  //   }
-                  //
-                  //   Logx.d(_TAG, 'installed Upi Apps - $appString');
-                  //
-                  //   _showUpiAppsBottomSheet(context, upiApps, price);
-                  // } else {
-                  //   //ios implement pending
-                  // }
+                  if (!UserPreferences.myUser.isIos) {
+                    String? apps =
+                        await PhonePePaymentSdk.getInstalledUpiAppsForAndroid();
 
-                  // Logx.ist(_TAG, 'tickets purchased, navigating to home.');
-                  // GoRouter.of(context).goNamed(RouteConstants.landingRouteName);
+                    Iterable l = json.decode(apps!);
+                    List<UPIApp> upiApps =
+                        List<UPIApp>.from(l.map((model) => UPIApp.fromJson(model)));
+                    String appString = '';
+
+                    if(upiApps.isNotEmpty){
+                      for (var element in upiApps) {
+                        appString +=
+                        "${element.applicationName} ${element.version} ${element.packageName}";
+                      }
+
+                      Logx.d(_TAG, 'installed Upi Apps - $appString');
+
+                      _showUpiAppsBottomSheet(context, upiApps);
+                    } else {
+                      startPgTransaction();
+                    }
+                  } else {
+                    //ios implement pending
+                    startPgTransaction();
+                  }
                 },
               )
             ],
@@ -485,15 +481,17 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
               Logx.em(_TAG, e.toString());
             }
 
-            widget.tix = widget.tix.copyWith(
-              merchantTransactionId: res['data']['merchantTransactionId'],
-              transactionResponseCode: res['data']['responseCode'],
-              result: transactionResult,
-              isSuccess: true,
-              isCompleted: true,
-            );
-            FirestoreHelper.pushTix(widget.tix);
-            FirestoreHelper.pushTixBackup(BackupUtils.getTixBackup(widget.tix));
+            if(!testMode){
+              widget.tix = widget.tix.copyWith(
+                transactionResponseCode: res['data']['responseCode'],
+                transactionId: res['data']['transactionId'],
+                result: transactionResult,
+                isSuccess: true,
+                isCompleted: true,
+              );
+              FirestoreHelper.pushTix(widget.tix);
+              FirestoreHelper.pushTixBackup(BackupUtils.getTixBackup(widget.tix));
+            }
 
             Logx.ist(_TAG, 'payment was successful, tickets are in box office');
 
@@ -575,7 +573,7 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
   }
 
   void _showUpiAppsBottomSheet(
-      BuildContext context, List<UPIApp> upiApps, double amount) {
+      BuildContext context, List<UPIApp> upiApps) {
     showModalBottomSheet(
         backgroundColor: Constants.lightPrimary,
         context: context,
@@ -586,29 +584,27 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
           return ListView(
             shrinkWrap: true,
             padding:
-                EdgeInsets.only(top: mq.height * .03, bottom: mq.height * .05),
+                EdgeInsets.only(top: mq.height * .03, bottom: mq.height * .03),
             children: [
               //pick profile picture label
-              const Text('select your payment app',
+              const Text('select your payment method',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                       fontSize: 20,
                       color: Colors.black,
                       fontWeight: FontWeight.w500)),
 
-              //for adding some space
-              SizedBox(height: mq.height * .02),
-
               //buttons
               Container(
-                height: 100, // Set the desired height
+                height: 100,
+                padding: const EdgeInsets.only(top: 0),
                 child: ListView.builder(
                   scrollDirection: Axis.horizontal,
                   itemCount: upiApps.length,
                   itemBuilder: (context, index) {
                     UPIApp upiApp = upiApps[index];
 
-                    String imageAsset = 'assets/icons/upipayment.png';
+                    String imageAsset = 'assets/icons/rupee.png';
                     String appName = upiApp.applicationName!;
 
                     if (appName.toLowerCase().contains('cred')) {
@@ -633,13 +629,49 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
                       imageAsset = 'assets/icons/jupiter.png';
                     } else if (appName.toLowerCase().contains('makemytrip')) {
                       imageAsset = 'assets/icons/makemytrip.png';
+                    } else if (appName.toLowerCase().contains('bhim')) {
+                      imageAsset = 'assets/icons/bhim.png';
+                    } else if (appName.toLowerCase().contains('freecharge')) {
+                      imageAsset = 'assets/icons/freecharge.png';
                     } else {
-                      imageAsset = 'assets/icons/upipayment.png';
+                      imageAsset = 'assets/icons/rupee.png';
                     }
 
                     return GestureDetector(
                         onTap: () {
-                          Logx.ist(_TAG, '$appName selected');
+                          Logx.i(_TAG, '$appName selected for upi transaction');
+
+                          int amount = (NumberUtils.roundDouble(grandTotal, 2) * 100).toInt();
+                          String merchantUserId = UserPreferences.myUser.id;
+                          String mobileNumber = UserPreferences.myUser.phoneNumber.toString();
+
+                          packageName = upiApp.packageName!;
+
+                          var requestData;
+                          requestData = {
+                            "merchantId": merchantId,
+                            "merchantTransactionId": merchantTransactionId,
+                            "merchantUserId": merchantUserId,
+                            "amount": amount,
+                            "mobileNumber": mobileNumber,
+                            "callbackUrl": callbackUrl,
+                            "paymentInstrument": {
+                              "type": "UPI_INTENT",
+                              "targetApp": upiApp.packageName
+                            },
+                            "deviceContext": {
+                              "deviceOS": "ANDROID"
+                            }
+                          };
+
+                          String base64Body = base64.encode(utf8.encode(json.encode(requestData)));
+                          checksum = '${sha256.convert(utf8.encode(base64Body + apiEndPoint + saltKey)).toString()}###$saltIndex';
+
+                          body = base64Body;
+
+                          startPgTransaction();
+
+                          Navigator.of(context).pop();
                         },
                         child: UpiAppWidget(
                           imageAsset: imageAsset,
@@ -648,6 +680,19 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
                   },
                 ),
               ),
+              const Divider(),
+
+              DarkButtonWidget(text: 'more payment modes', height: 50, onClicked: () {
+                body = getChecksum().toString();
+                startPgTransaction();
+              },),
+              // Divider(),
+
+              // GestureDetector(onTap: () {
+              //   body = getChecksum().toString();
+              //   startPgTransaction();
+              // },
+              //   child: Text('other payment options'),),
             ],
           );
         });
