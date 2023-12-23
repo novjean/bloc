@@ -1,7 +1,9 @@
+import 'package:bloc/db/shared_preferences/user_preferences.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 
 import '../main.dart';
 import '../widgets/ui/toaster.dart';
+import 'constants.dart';
 
 class Logx {
   static void i(String tag, String message) {
@@ -58,5 +60,15 @@ class Logx {
     logger.d(text);
   }
 
+
+  static void alt(String tag, String message) {
+    String text = '$tag:$message';
+    logger.d(text);
+    FirebaseCrashlytics.instance.log(text);
+
+    if(UserPreferences.myUser.clearanceLevel>=Constants.ADMIN_LEVEL){
+      Toaster.longToast(message);
+    }
+  }
 
 }

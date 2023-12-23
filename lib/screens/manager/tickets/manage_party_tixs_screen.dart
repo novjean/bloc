@@ -604,23 +604,13 @@ class _ManagePartyTixsScreenState extends State<ManagePartyTixsScreen> {
                   for (Tix tix in mTixs) {
                     if(tix.transactionId.isEmpty){
 
+                      for(String tixTierId in tix.tixTierIds){
+                        FirestoreHelper.deleteTixTier(tixTierId);
+                      }
+                      FirestoreHelper.deleteTix(tix.id);
                     }
-
-                    // FirestoreHelper.deleteTix(tix.id);
-                    // FirestoreHelper.pullTixTiersByTixId(tix.id).then((res) {
-                    //   if (res.docs.isNotEmpty) {
-                    //     for (int i = 0; i < res.docs.length; i++) {
-                    //       DocumentSnapshot document = res.docs[i];
-                    //       Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-                    //       final TixTier tixTier = Fresh.freshTixTierMap(data, false);
-                    //       FirestoreHelper.deleteTixTier(tixTier.id);
-                    //     }
-                    //   } else {
-                    //     Logx.em(_TAG, 'no tix tiers found for ${tix.id}');
-                    //   }
-                    // });
                   }
-                  Logx.ist(_TAG, 'deleted all ${widget.party.name} tickets!');
+                  Logx.ist(_TAG, 'deleted all unsuccessful ${widget.party.name} tickets!');
                   Navigator.of(ctx).pop();
                 },
               ),

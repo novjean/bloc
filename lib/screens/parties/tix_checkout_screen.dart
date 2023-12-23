@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:bloc/db/entity/tix_tier_item.dart';
 import 'package:bloc/helpers/firestore_helper.dart';
+import 'package:bloc/utils/dialog_utils.dart';
 import 'package:bloc/utils/number_utils.dart';
 import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -102,8 +103,6 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
             total: grandTotal);
         FirestoreHelper.pushTix(widget.tix);
 
-        phonePeInit();
-
         setState(() {
           _isTixTiersLoading = false;
         });
@@ -116,6 +115,8 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
     });
 
     super.initState();
+
+    phonePeInit();
   }
 
   /** phone pe dev **/
@@ -143,6 +144,7 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
     saltIndex = testMode ? Constants.testSaltIndex : Constants.saltIndex;
     saltKey = testMode ? Constants.testSaltKey : Constants.saltKey;
     environment = testMode ? Constants.testEnvironment : Constants.environment;
+    merchantId = testMode ? Constants.testMerchantId : Constants.merchantId;
 
     if(testMode){
       appId = "";
@@ -156,7 +158,6 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
         appId = Constants.androidAppId;
       }
     }
-    merchantId = testMode ? Constants.testMerchantId : Constants.merchantId;
 
     PhonePePaymentSdk.init(environment, appId, merchantId, enableLogging)
         .then((val) {
@@ -182,7 +183,12 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
       widget.tix = widget.tix.copyWith(result: 'phone pe init failed: $error');
       FirestoreHelper.pushTix(widget.tix);
 
-      Logx.elt(_TAG, 'payment gateway is facing issues, please try again in some time.');
+      if(UserPreferences.myUser.clearanceLevel>=Constants.ADMIN_LEVEL) {
+        DialogUtils.showTextDialog(context, 'phonePeInit: failed. error $error');
+      } else {
+        Logx.elt(_TAG, 'payment gateway is facing issues, please try again in some time.');
+      }
+
       Navigator.of(context).pop();
 
       return <dynamic>{};
@@ -231,12 +237,10 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
           } else {
             result = "flow complete. status : $status and error $error";
 
-            if(UserPreferences.myUser.clearanceLevel>=Constants.ADMIN_LEVEL){
-              Logx.elt(_TAG,
-                  'payment was unsuccessful. status $status and error $error');
+            if(UserPreferences.myUser.clearanceLevel>=Constants.ADMIN_LEVEL) {
+              DialogUtils.showTextDialog(context, 'startPgTransaction: failed. status $status and error $error');
             } else {
-              Logx.elt(_TAG,
-                  'payment was unsuccessful, please try again');
+              Logx.elt(_TAG, 'payment was unsuccessful, please try again');
             }
 
             widget.tix = widget.tix.copyWith(
@@ -255,10 +259,20 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
         );
         FirestoreHelper.pushTix(widget.tix);
 
+        if(UserPreferences.myUser.clearanceLevel>=Constants.ADMIN_LEVEL) {
+          DialogUtils.showTextDialog(context, 'startPgTransaction: failed. error $error');
+        } else {
+          Logx.elt(_TAG, 'payment was unsuccessful, please try again');
+        }
+
         return <dynamic>{};
       });
     } catch (error) {
-      Logx.elt(_TAG, 'payment was unsuccessful, please try again.');
+      if(UserPreferences.myUser.clearanceLevel>=Constants.ADMIN_LEVEL){
+        DialogUtils.showTextDialog(context, 'startPgTransaction: failed. error $error');
+      } else {
+        Logx.elt(_TAG, 'payment was unsuccessful, please try again.');
+      }
 
       widget.tix = widget.tix.copyWith(
         result: 'payment was unsuccessful. error : $error',
@@ -480,15 +494,16 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
               Logx.em(_TAG, e.toString());
             }
 
+            widget.tix = widget.tix.copyWith(
+              transactionResponseCode: res['data']['responseCode'],
+              transactionId: testMode ? '' : res['data']['transactionId'],
+              result: transactionResult,
+              isSuccess: true,
+              isCompleted: true,
+            );
+            FirestoreHelper.pushTix(widget.tix);
+
             if(!testMode){
-              widget.tix = widget.tix.copyWith(
-                transactionResponseCode: res['data']['responseCode'],
-                transactionId: res['data']['transactionId'],
-                result: transactionResult,
-                isSuccess: true,
-                isCompleted: true,
-              );
-              FirestoreHelper.pushTix(widget.tix);
               FirestoreHelper.pushTixBackup(BackupUtils.getTixBackup(widget.tix));
             }
 
@@ -662,6 +677,8 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
                               "deviceOS": "ANDROID"
                             }
                           };
+
+                          packageName = "";
 
                           String base64Body = base64.encode(utf8.encode(json.encode(requestData)));
                           checksum = '${sha256.convert(utf8.encode(base64Body + apiEndPoint + saltKey)).toString()}###$saltIndex';
