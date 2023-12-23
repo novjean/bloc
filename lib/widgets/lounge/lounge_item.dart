@@ -86,21 +86,6 @@ class LoungeItem extends StatelessWidget {
                     document.data()! as Map<String, dynamic>;
                 final LoungeChat chat = Fresh.freshLoungeChatMap(data, false);
 
-                String photoUrl = '';
-                String photoChat = '';
-
-                if (chat.type == 'image') {
-                  int firstDelimiterIndex = chat.message.indexOf(',');
-                  if (firstDelimiterIndex != -1) {
-                    // Use substring to split the string into two parts
-                    photoUrl = chat.message.substring(0, firstDelimiterIndex);
-                    photoChat = chat.message.substring(firstDelimiterIndex + 1);
-                  } else {
-                    // Handle the case where the delimiter is not found
-                    photoUrl = chat.message;
-                  }
-                }
-
                 return Padding(
                   padding: const EdgeInsets.all(5),
                   child: SingleChildScrollView(
@@ -115,7 +100,7 @@ class LoungeItem extends StatelessWidget {
                             ),
                           )
                         : Text(
-                            '${chat.userName} : 📸 $photoChat',
+                            '${chat.userName} : 📸 ${chat.message}',
                             style: const TextStyle(
                               color: Colors.black,
                               overflow: TextOverflow.ellipsis,
