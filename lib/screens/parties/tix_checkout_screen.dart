@@ -199,6 +199,7 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
     int amount = (NumberUtils.roundDouble(grandTotal, 2) * 100).toInt();
     String merchantUserId = UserPreferences.myUser.id;
     String mobileNumber = UserPreferences.myUser.phoneNumber.toString();
+    merchantTransactionId = DateTime.now().millisecondsSinceEpoch.toString();
 
     final requestData = {
         "merchantId": merchantId,
@@ -497,15 +498,13 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
             widget.tix = widget.tix.copyWith(
               transactionResponseCode: res['data']['responseCode'],
               transactionId: testMode ? '' : res['data']['transactionId'],
+              merchantTransactionId: res['data']['merchantTransactionId'],
               result: transactionResult,
               isSuccess: true,
               isCompleted: true,
             );
             FirestoreHelper.pushTix(widget.tix);
-
-            if(!testMode){
-              FirestoreHelper.pushTixBackup(BackupUtils.getTixBackup(widget.tix));
-            }
+            FirestoreHelper.pushTixBackup(BackupUtils.getTixBackup(widget.tix));
 
             Logx.ist(_TAG, 'payment was successful, tickets are in box office');
 
@@ -658,11 +657,11 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
                           int amount = (NumberUtils.roundDouble(grandTotal, 2) * 100).toInt();
                           String merchantUserId = UserPreferences.myUser.id;
                           String mobileNumber = UserPreferences.myUser.phoneNumber.toString();
+                          merchantTransactionId = DateTime.now().millisecondsSinceEpoch.toString();
 
                           packageName = upiApp.packageName!;
 
-                          var requestData;
-                          requestData = {
+                          final requestData = {
                             "merchantId": merchantId,
                             "merchantTransactionId": merchantTransactionId,
                             "merchantUserId": merchantUserId,
@@ -678,11 +677,8 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
                             }
                           };
 
-                          packageName = "";
-
                           String base64Body = base64.encode(utf8.encode(json.encode(requestData)));
                           checksum = '${sha256.convert(utf8.encode(base64Body + apiEndPoint + saltKey)).toString()}###$saltIndex';
-
                           body = base64Body;
 
                           startPgTransaction();
