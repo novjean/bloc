@@ -36,6 +36,10 @@ class _PartyTixTierItemState extends State<PartyTixTierItem> {
     tixRemaining =
         (widget.partyTixTier.totalTix - widget.partyTixTier.soldCount) + 1;
 
+    if(tixRemaining > 11) {
+      tixRemaining = 11;
+    }
+
     super.initState();
   }
 
