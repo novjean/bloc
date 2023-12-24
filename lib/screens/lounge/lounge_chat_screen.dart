@@ -513,7 +513,7 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       showMembersCount(),
-                      DarkButtonWidget(text: 'leave lounge', onClicked: () {
+                      DarkButtonWidget(text: '🚪 leave lounge', onClicked: () {
                         FirestoreHelper.deleteUserLounge(mUserLounge.id);
 
                         List<String> exitedMembers = mLounge.exitedUserIds;
@@ -522,22 +522,20 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
                         FirestoreHelper.pushLounge(mLounge);
 
                         FirebaseMessaging.instance.unsubscribeFromTopic(mLounge.id);
+                        Logx.ilt(_TAG, 'you have has exited the lounge. bye 👋');
 
-                        Toaster.longToast('you have exited the lounge');
-                        Logx.i(_TAG, 'user has exited the lounge');
-                        GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
-
+                        GoRouter.of(context).pushNamed(RouteConstants.landingRouteName);
                       },)
                     ],
                   ),
-                  const SizedBox(height: 10,),
+                  const SizedBox(height: 15,),
                   UserPreferences.myUser.clearanceLevel>=Constants.ADMIN_LEVEL?
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Padding(
                         padding: const EdgeInsets.only(right: 15.0),
-                        child: ButtonWidget(text: 'invite females', onClicked: () async {
+                        child: ButtonWidget(text: '♀️💃🏻', onClicked: () async {
 
                           FirestoreHelper.pullActiveGuestListParties(Timestamp.now().millisecondsSinceEpoch).then((res) {
                             if (res.docs.isNotEmpty) {
@@ -549,12 +547,51 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
                                 mPartyNames.add('${party.name} ${party.chapter}');
                               }
 
-                              _showPartiesAndInvite(context, true);
+                              _showPartiesAndInvite(context, true, false, false);
                             }
                           });
                         },),
                       ),
-                      ButtonWidget(text: 'invite all', onClicked: () {
+                      Padding(
+                        padding: const EdgeInsets.only(right: 15.0),
+                        child: ButtonWidget(text: '♂️🕺🏼', onClicked: () async {
+
+                          FirestoreHelper.pullActiveGuestListParties(Timestamp.now().millisecondsSinceEpoch).then((res) {
+                            if (res.docs.isNotEmpty) {
+                              for (int i = 0; i < res.docs.length; i++) {
+                                DocumentSnapshot document = res.docs[i];
+                                Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+                                final Party party = Fresh.freshPartyMap(data, true);
+                                mParties.add(party);
+                                mPartyNames.add('${party.name} ${party.chapter}');
+                              }
+
+                              _showPartiesAndInvite(context, false, true, false);
+                            }
+                          });
+                        },),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(right: 15.0),
+                        child: ButtonWidget(text: '☿️🦄', onClicked: () async {
+
+                          FirestoreHelper.pullActiveGuestListParties(Timestamp.now().millisecondsSinceEpoch).then((res) {
+                            if (res.docs.isNotEmpty) {
+                              for (int i = 0; i < res.docs.length; i++) {
+                                DocumentSnapshot document = res.docs[i];
+                                Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+                                final Party party = Fresh.freshPartyMap(data, true);
+                                mParties.add(party);
+                                mPartyNames.add('${party.name} ${party.chapter}');
+                              }
+
+                              _showPartiesAndInvite(context, false, false, true);
+                            }
+                          });
+                        },),
+                      ),
+
+                      ButtonWidget(text: '♂️☿️♀️🧜🏻', onClicked: () {
                         FirestoreHelper.pullActiveGuestListParties(Timestamp.now().millisecondsSinceEpoch).then((res) {
                           if (res.docs.isNotEmpty) {
                             for (int i = 0; i < res.docs.length; i++) {
@@ -565,7 +602,7 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
                               mPartyNames.add('${party.name} ${party.chapter}');
                             }
 
-                            _showPartiesAndInvite(context, false);
+                            _showPartiesAndInvite(context, true, true, true);
                           }
                         });
                       },),
@@ -617,7 +654,6 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
     );
   }
 
-
   List<Party> mParties = [];
   List<Party> sParties = [];
 
@@ -626,7 +662,7 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
   String sPartyId = '';
   List<String> mPartyNames = [];
 
-  _showPartiesAndInvite(BuildContext context, bool checkFemale) {
+  _showPartiesAndInvite(BuildContext context, bool checkFemale, bool checkMale, bool checkTrans) {
     return showDialog(
       context: context,
       builder: (BuildContext ctx) {
@@ -694,6 +730,8 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
                                 }
                               }
 
+                              int count = 0;
+
                               for(int i=0; i<mFcmMembers.length; i++){
                                 UserLounge userLounge = mFcmMembers[i];
 
@@ -710,9 +748,16 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
                                     final User user = Fresh.freshUserMap(data, false);
 
                                     if(user.isAppUser && user.fcmToken.isNotEmpty){
-
-                                      if(checkFemale){
+                                      if(checkFemale) {
                                         if(user.gender != 'female'){
+                                          return;
+                                        }
+                                      } else if(checkMale) {
+                                        if(user.gender != 'male'){
+                                          return;
+                                        }
+                                      } else if(checkTrans) {
+                                        if(user.gender == 'male' || user.gender == 'female'){
                                           return;
                                         }
                                       }
@@ -736,18 +781,17 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
 
                                       String title = '🎁 Congrats! You\'ve scored free invites!';
                                       String message = 'Hey ${user.name}, you are exclusively invited to ${sParty.name} party 🎉! Entry\'s on a first come, first serve basis. Come in early or give us a call for a guaranteed spot. 💖';
-
                                       Apis.sendPushNotification(user.fcmToken, title, message);
-
                                       Logx.ist(_TAG, '${user.name} has been invited!');
+                                      count++;
                                     }
                                   }
                                 });
                               }
 
+                              Logx.ilt(_TAG, 'invited $count members for ${sParty.name}');
                             }
                           });
-
                         });
 
                         Navigator.of(ctx).pop();
