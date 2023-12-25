@@ -20,7 +20,6 @@ import '../routes/route_constants.dart';
 
 import '../utils/constants.dart';
 import '../utils/logx.dart';
-import '../widgets/footer.dart';
 import '../widgets/ui/sized_listview_block.dart';
 
 class AccountScreen extends StatelessWidget {
