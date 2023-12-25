@@ -263,7 +263,7 @@ class _PartyBannerState extends State<PartyBanner> {
                                         child: Text(
                                           interestCount > 0
                                               ? '$interestCount 🖤'
-                                              : '',
+                                              : '10 🖤',
                                           style: const TextStyle(
                                             color: Colors.black,
                                           ),

@@ -130,9 +130,16 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
           Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
           final BlocService blocService = BlocService.fromMap(data);
 
-          if (i == 0) {
-            _sBlocServiceId = blocService.id;
-            _sBlocServiceName = blocService.name;
+          if(widget.party.blocServiceId.isNotEmpty){
+            if(blocService.id == widget.party.blocServiceId){
+              _sBlocServiceId = blocService.id;
+              _sBlocServiceName = blocService.name;
+            }
+          } else {
+            if (i == 0) {
+              _sBlocServiceId = blocService.id;
+              _sBlocServiceName = blocService.name;
+            }
           }
 
           _blocServiceNames.add(blocService.name);
@@ -616,7 +623,7 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
                     ),
                     searchable: true,
                     onConfirm: (values) {
-                      sLounges = values as List<Lounge>;
+                      sLounges = values;
                       sLoungeIds = [];
                       sLoungeNames = [];
 
