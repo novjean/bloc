@@ -59,6 +59,9 @@ class Constants {
   static String blocGoogleReview = 'https://g.page/r/CUPsfopXRRX8EBM/review';
   static String blocAppStoreId = '1672736309';
 
+  static double blocLatitude = 18.537952548349075;
+  static double blocLongitude = 73.9126973030436;
+
   static String blocUuid = 'ulwX8iOEOiNrZSIkFDFS1kakRSi2';
 
   static String freqGoogleReview = 'https://g.page/r/CVIkJ_SP99KOEAI/review';

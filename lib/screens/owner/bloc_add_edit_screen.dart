@@ -14,6 +14,7 @@ import '../../db/entity/bloc.dart';
 import '../../main.dart';
 import '../../utils/logx.dart';
 import '../../utils/string_utils.dart';
+import '../../widgets/profile_widget.dart';
 import '../../widgets/ui/app_bar_title.dart';
 
 class BlocAddEditScreen extends StatefulWidget {
@@ -38,6 +39,8 @@ class _BlocAddEditScreenState extends State<BlocAddEditScreen> {
 
   List<String> mImageUrls = [];
   List<String> oldImageUrls = [];
+
+  String mapImagePath ='';
 
   @override
   void initState() {
@@ -154,6 +157,69 @@ class _BlocAddEditScreenState extends State<BlocAddEditScreen> {
             widget.bloc = widget.bloc.copyWith(pinCode: value);
           },
         ),
+        const SizedBox(height: 24),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 5.0),
+          child: ProfileWidget(
+            imagePath: mapImagePath.isEmpty? widget.bloc.mapImageUrl:mapImagePath,
+            isEdit: true,
+            onClicked: () async {
+              final image = await ImagePicker().pickImage(
+                  source: ImageSource.gallery,
+                  imageQuality: 99,
+                  maxWidth: 1024);
+              if (image == null) return;
+
+              final directory = await getApplicationDocumentsDirectory();
+              final name = basename(image.path);
+              final imageFile = File('${directory.path}/$name');
+              final newImage = await File(image.path).copy(imageFile.path);
+
+              String oldMapImage = widget.bloc.mapImageUrl;
+
+              if(oldMapImage.isNotEmpty){
+                FirestorageHelper.deleteFile(oldMapImage);
+              }
+
+              String newMapImage = await FirestorageHelper.uploadFile(
+                  FirestorageHelper.BLOCS_MAP_IMAGES,
+                  StringUtils.getRandomString(28),
+                  newImage);
+              widget.bloc =
+                  widget.bloc.copyWith(mapImageUrl: newMapImage);
+
+              setState(() {
+                mapImagePath = imageFile.path;
+              });
+            },
+          ),
+        ),
+        const SizedBox(height: 24),
+
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 32),
+          child: TextFieldWidget(
+            label: 'latitude',
+            text: widget.bloc.latitude.toString(),
+            onChanged: (text) {
+              double value = double.parse(text);
+              widget.bloc = widget.bloc.copyWith(latitude: value);
+            },
+          ),
+        ),
+        const SizedBox(height: 24),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 32),
+          child: TextFieldWidget(
+            label: 'longitude',
+            text: widget.bloc.longitude.toString(),
+            onChanged: (text) {
+              double value = double.parse(text);
+              widget.bloc = widget.bloc.copyWith(longitude: value);
+            },
+          ),
+        ),
+
         Row(
           children: <Widget>[
             const Text(
@@ -173,12 +239,13 @@ class _BlocAddEditScreenState extends State<BlocAddEditScreen> {
         ),
         const SizedBox(height: 24),
         ButtonWidget(
-          text: 'save',
+          text: '💾 save',
           onClicked: () {
             FirestoreHelper.pushBloc(widget.bloc);
             Navigator.of(context).pop();
           },
         ),
+        const SizedBox(height: 36),
       ],
     );
   }

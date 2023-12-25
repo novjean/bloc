@@ -77,8 +77,7 @@ class Dummy {
         isStorySize: false,
         isPartyAd: false,
         partyId: '',
-      endTime: Timestamp.now().millisecondsSinceEpoch
-    );
+        endTime: Timestamp.now().millisecondsSinceEpoch);
 
     return dummy;
   }
@@ -96,7 +95,10 @@ class Dummy {
         cityId: cityId,
         isActive: false,
         pinCode: '',
-        imageUrls: []);
+        imageUrls: [],
+        latitude: Constants.blocLatitude,
+        longitude: Constants.blocLongitude,
+        mapImageUrl: '');
 
     return dummyBloc;
   }
@@ -222,12 +224,11 @@ class Dummy {
 
   static Friend getDummyFriend() {
     Friend dummyFriend = Friend(
-      id: StringUtils.getRandomString(28),
-      userId: '',
-      friendUserId: '',
-      isFollowing: true,
-      friendshipDate: Timestamp.now().millisecondsSinceEpoch
-    );
+        id: StringUtils.getRandomString(28),
+        userId: '',
+        friendUserId: '',
+        isFollowing: true,
+        friendshipDate: Timestamp.now().millisecondsSinceEpoch);
     return dummyFriend;
   }
 
@@ -238,8 +239,7 @@ class Dummy {
         message: '',
         topic: '',
         imageUrl: '',
-        time: Timestamp.now().millisecondsSinceEpoch
-    );
+        time: Timestamp.now().millisecondsSinceEpoch);
     return dummy;
   }
 
@@ -353,8 +353,7 @@ class Dummy {
         isTicketsDisabled: false,
         views: 0,
         shareCount: 0,
-        isAdCampaignRunning: false
-    );
+        isAdCampaignRunning: false);
 
     return dummyParty;
   }
@@ -413,8 +412,7 @@ class Dummy {
         downloaders: [],
         views: 0,
         tags: [],
-      isFreePhoto: false
-    );
+        isFreePhoto: false);
     return partyPhoto;
   }
 
@@ -429,8 +427,7 @@ class Dummy {
         soldCount: 0,
         totalTix: 0,
         isSoldOut: false,
-      endTime: endTime
-    );
+        endTime: endTime);
     return partyTixTier;
   }
 
@@ -549,8 +546,7 @@ class Dummy {
         imageUrl: '',
         type: 'text',
         time: Timestamp.now().millisecondsSinceEpoch,
-      isResponse: false
-    );
+        isResponse: false);
     return dummyChat;
   }
 
@@ -572,7 +568,8 @@ class Dummy {
         id: StringUtils.getRandomString(9),
         partyId: '',
         userId: UserPreferences.myUser.id,
-        userName: '${UserPreferences.myUser.name} ${UserPreferences.myUser.surname}',
+        userName:
+            '${UserPreferences.myUser.name} ${UserPreferences.myUser.surname}',
         userEmail: UserPreferences.myUser.email,
         userPhone: UserPreferences.myUser.phoneNumber.toString(),
         igst: 0,
@@ -581,7 +578,7 @@ class Dummy {
         total: 0,
         merchantTransactionId: '',
         transactionId: '',
-        transactionResponseCode:'',
+        transactionResponseCode: '',
         result: '',
         creationTime: Timestamp.now().millisecondsSinceEpoch,
         isSuccess: false,
@@ -596,7 +593,8 @@ class Dummy {
         id: StringUtils.getRandomString(9),
         partyId: '',
         userId: UserPreferences.myUser.id,
-        userName: '${UserPreferences.myUser.name} ${UserPreferences.myUser.surname}',
+        userName:
+            '${UserPreferences.myUser.name} ${UserPreferences.myUser.surname}',
         userEmail: UserPreferences.myUser.email,
         userPhone: UserPreferences.myUser.phoneNumber.toString(),
         igst: 0,
@@ -605,7 +603,7 @@ class Dummy {
         total: 0,
         merchantTransactionId: '',
         transactionId: '',
-        transactionResponseCode:'',
+        transactionResponseCode: '',
         result: '',
         creationTime: Timestamp.now().millisecondsSinceEpoch,
         isSuccess: false,
@@ -617,16 +615,15 @@ class Dummy {
 
   static TixTier getDummyTixTier() {
     TixTier tixTierItem = TixTier(
-      id: StringUtils.getRandomString(28),
-      tixId: '',
-      partyTixTierId: '',
-      tixTierName: '',
-      tixTierDescription: '',
-      tixTierPrice: 0,
-      tixTierCount: 0,
-      tixTierTotal: 0,
-      guestsRemaining: 0
-    );
+        id: StringUtils.getRandomString(28),
+        tixId: '',
+        partyTixTierId: '',
+        tixTierName: '',
+        tixTierDescription: '',
+        tixTierPrice: 0,
+        tixTierCount: 0,
+        tixTierTotal: 0,
+        guestsRemaining: 0);
     return tixTierItem;
   }
 

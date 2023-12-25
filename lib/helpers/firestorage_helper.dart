@@ -15,6 +15,7 @@ class FirestorageHelper {
   static String AD_CAMPAIGN_IMAGES = 'ad_campaign_image';
   static String USERS = 'user_image';
   static String BLOCS_IMAGES = 'bloc_image';
+  static String BLOCS_MAP_IMAGES = 'bloc_map_image';
   static String BLOCS_SERVICES_IMAGES = 'bloc_service_image';
   static String CATEGORY_IMAGES = 'service_category_image';
   static String CHAT_IMAGES = 'chat_image';

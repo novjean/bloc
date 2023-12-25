@@ -2,6 +2,7 @@ import 'package:bloc/screens/parties/tix_buy_edit_screen.dart';
 import 'package:bloc/utils/dialog_utils.dart';
 import 'package:bloc/utils/file_utils.dart';
 import 'package:bloc/utils/string_utils.dart';
+import 'package:bloc/widgets/parties/venue_banner.dart';
 import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
@@ -330,6 +331,22 @@ class _EventScreenState extends State<EventScreen> {
               mParty.artistIds.isNotEmpty
                   ? _loadArtists(context)
                   : const SizedBox(),
+              const SizedBox(height: 10),
+              const Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 15.0),
+                    child: Text('venue',
+                        style: TextStyle(
+                            color: Constants.lightPrimary,
+                            overflow: TextOverflow.ellipsis,
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold)),
+                  ),
+                ],
+              ),
+              VenueBanner(blocServiceId: mParty.blocServiceId),
               const SizedBox(height: 10),
               const Row(
                 mainAxisAlignment: MainAxisAlignment.end,

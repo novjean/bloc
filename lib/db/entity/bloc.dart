@@ -1,4 +1,3 @@
-
 class Bloc {
   final String id;
   final String name;
@@ -8,8 +7,12 @@ class Bloc {
   final String pinCode;
   final String ownerId;
   final String createdAt;
-  final bool isActive;
+  final bool isActive; // not using this field yet
   final List<String> imageUrls;
+
+  final double latitude;
+  final double longitude;
+  final String mapImageUrl;
 
 //<editor-fold desc="Data Methods">
   const Bloc({
@@ -23,6 +26,9 @@ class Bloc {
     required this.createdAt,
     required this.isActive,
     required this.imageUrls,
+    required this.latitude,
+    required this.longitude,
+    required this.mapImageUrl,
   });
 
   @override
@@ -39,7 +45,10 @@ class Bloc {
           ownerId == other.ownerId &&
           createdAt == other.createdAt &&
           isActive == other.isActive &&
-          imageUrls == other.imageUrls);
+          imageUrls == other.imageUrls &&
+          latitude == other.latitude &&
+          longitude == other.longitude &&
+          mapImageUrl == other.mapImageUrl);
 
   @override
   int get hashCode =>
@@ -52,7 +61,10 @@ class Bloc {
       ownerId.hashCode ^
       createdAt.hashCode ^
       isActive.hashCode ^
-      imageUrls.hashCode;
+      imageUrls.hashCode ^
+      latitude.hashCode ^
+      longitude.hashCode ^
+      mapImageUrl.hashCode;
 
   @override
   String toString() {
@@ -67,6 +79,9 @@ class Bloc {
         ' createdAt: $createdAt,' +
         ' isActive: $isActive,' +
         ' imageUrls: $imageUrls,' +
+        ' latitude: $latitude,' +
+        ' longitude: $longitude,' +
+        ' mapImageUrl: $mapImageUrl,' +
         '}';
   }
 
@@ -81,6 +96,9 @@ class Bloc {
     String? createdAt,
     bool? isActive,
     List<String>? imageUrls,
+    double? latitude,
+    double? longitude,
+    String? mapImageUrl,
   }) {
     return Bloc(
       id: id ?? this.id,
@@ -93,6 +111,9 @@ class Bloc {
       createdAt: createdAt ?? this.createdAt,
       isActive: isActive ?? this.isActive,
       imageUrls: imageUrls ?? this.imageUrls,
+      latitude: latitude ?? this.latitude,
+      longitude: longitude ?? this.longitude,
+      mapImageUrl: mapImageUrl ?? this.mapImageUrl,
     );
   }
 
@@ -108,6 +129,9 @@ class Bloc {
       'createdAt': this.createdAt,
       'isActive': this.isActive,
       'imageUrls': this.imageUrls,
+      'latitude': this.latitude,
+      'longitude': this.longitude,
+      'mapImageUrl': this.mapImageUrl,
     };
   }
 
@@ -123,6 +147,9 @@ class Bloc {
       createdAt: map['createdAt'] as String,
       isActive: map['isActive'] as bool,
       imageUrls: map['imageUrls'] as List<String>,
+      latitude: map['latitude'] as double,
+      longitude: map['longitude'] as double,
+      mapImageUrl: map['mapImageUrl'] as String,
     );
   }
 

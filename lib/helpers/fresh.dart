@@ -391,9 +391,28 @@ class Fresh {
       isModelChanged = true;
     }
 
+    try {
+      bloc = bloc.copyWith(latitude: map['latitude'] as double);
+    } catch (e) {
+      Logx.em(_TAG, 'bloc latitude not exist for id: ${bloc.id}');
+      isModelChanged = true;
+    }
+    try {
+      bloc = bloc.copyWith(longitude: map['longitude'] as double);
+    } catch (e) {
+      Logx.em(_TAG, 'bloc longitude not exist for id: ${bloc.id}');
+      isModelChanged = true;
+    }
+    try {
+      bloc = bloc.copyWith(mapImageUrl: map['mapImageUrl'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'bloc mapImageUrl not exist for id: ${bloc.id}');
+      isModelChanged = true;
+    }
+
     if (isModelChanged &&
         shouldUpdate &&
-        UserPreferences.myUser.clearanceLevel >= Constants.MANAGER_LEVEL) {
+        UserPreferences.myUser.clearanceLevel >= Constants.ADMIN_LEVEL) {
       Logx.em(_TAG, 'updating bloc ${bloc.id}');
       FirestoreHelper.pushBloc(bloc);
     }
@@ -432,7 +451,7 @@ class Fresh {
     try {
       freshBloc = freshBloc.copyWith(pinCode: bloc.pinCode);
     } catch (e) {
-      Logx.em(_TAG, 'bloc pinCode not exist for id: ' + bloc.id);
+      Logx.em(_TAG, 'bloc pinCode not exist for id: ${bloc.id}');
     }
     try {
       freshBloc = freshBloc.copyWith(ownerId: bloc.ownerId);
@@ -452,7 +471,23 @@ class Fresh {
     try {
       freshBloc = freshBloc.copyWith(imageUrls: bloc.imageUrls);
     } catch (e) {
-      Logx.em(_TAG, 'bloc imageUrls not exist for bloc id: ' + bloc.id);
+      Logx.em(_TAG, 'bloc imageUrls not exist for id: ${bloc.id}');
+    }
+
+    try {
+      freshBloc = freshBloc.copyWith(latitude: bloc.latitude);
+    } catch (e) {
+      Logx.em(_TAG, 'bloc latitude not exist for id: ${bloc.id}');
+    }
+    try {
+      freshBloc = freshBloc.copyWith(longitude: bloc.longitude);
+    } catch (e) {
+      Logx.em(_TAG, 'bloc longitude not exist for id: ${bloc.id}');
+    }
+    try {
+      freshBloc = freshBloc.copyWith(mapImageUrl: bloc.mapImageUrl);
+    } catch (e) {
+      Logx.em(_TAG, 'bloc mapImageUrl not exist for id: ${bloc.id}');
     }
 
     return freshBloc;
