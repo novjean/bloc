@@ -49,7 +49,7 @@ class EventScreen extends StatefulWidget {
 class _EventScreenState extends State<EventScreen> {
   static const String _TAG = 'EventScreen';
 
-  Party mParty = Dummy.getDummyParty('');
+  late Party mParty;
   var _isPartyLoading = true;
 
   int mInterestCount = 0;
@@ -145,7 +145,7 @@ class _EventScreenState extends State<EventScreen> {
         appBar: AppBar(
           backgroundColor: Constants.background,
           title: AppBarTitle(
-            title: mParty.name.toLowerCase(),
+            title: widget.partyName.toLowerCase(),
           ),
           titleSpacing: 0,
           leading: IconButton(
@@ -160,7 +160,7 @@ class _EventScreenState extends State<EventScreen> {
           ),
         ),
         backgroundColor: Constants.background,
-        body: _buildBody(context));
+        body: _isPartyLoading ? const LoadingWidget(): _buildBody(context));
   }
 
   _buildBody(BuildContext context) {
@@ -397,8 +397,8 @@ class _EventScreenState extends State<EventScreen> {
                           FirestoreHelper.updatePartyShareCount(mParty.id);
                           final url =
                               'http://bloc.bar/#/event/${Uri.encodeComponent(widget.partyName)}/${widget.partyChapter}';
-                          Share.share(
-                              'Check out ${widget.partyName} on #blocCommunity $url');
+                          await Share.share(
+                              'Check this party, ${widget.partyName} out on bloc. $url');
                         },
                       ),
                     ),

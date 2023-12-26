@@ -32,7 +32,6 @@ import '../../../widgets/profile_widget.dart';
 import '../../../widgets/ui/button_widget.dart';
 import '../../../widgets/ui/dark_button_widget.dart';
 import '../../../widgets/ui/textfield_widget.dart';
-import '../../../widgets/ui/toaster.dart';
 import 'manage_tix_tiers_screen.dart';
 
 class PartyAddEditScreen extends StatefulWidget {
@@ -110,9 +109,13 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
   List<String> mImageUrls = [];
   List<String> oldImageUrls = [];
 
+  double mBookingFee = 0;
+
   @override
   void initState() {
     super.initState();
+
+    mBookingFee = widget.party.bookingFeePercent * 100;
 
     _sPartyType = widget.party.type;
 
@@ -476,6 +479,8 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
                     setState(() {
                       widget.party =
                           widget.party.copyWith(imageUrls: mImageUrls);
+                      FirestoreHelper.pushParty(widget.party);
+                      Logx.ist(_TAG, 'party is updated in firebase');
                     });
                   },
                 ),
@@ -953,7 +958,7 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
               Row(
                 children: <Widget>[
                   const Text(
-                    'to be announced : ',
+                    'tba : ',
                     style: TextStyle(fontSize: 17.0),
                   ), //Text
                   const SizedBox(width: 10), //SizedBox
@@ -989,7 +994,7 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
               Row(
                 children: <Widget>[
                   const Text(
-                    'ticketed event : ',
+                    'tix event : ',
                     style: TextStyle(fontSize: 17.0),
                   ), //Text
                   const SizedBox(width: 10), //SizedBox
@@ -1004,74 +1009,24 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
                 ], //<Widget>[]
               ),
               const SizedBox(height: 12),
-              Row(
-                children: <Widget>[
-                  const Text(
-                    'ad campaign : ',
-                    style: TextStyle(fontSize: 17.0),
-                  ), //Text
-                  const SizedBox(width: 10), //SizedBox
-                  Checkbox(
-                    value: widget.party.isAdCampaignRunning,
-                    onChanged: (value) {
+              TextFieldWidget(
+                label: 'booking fee %',
+                text: '$mBookingFee',
+                onChanged: (text) {
+                  try {
+                    double value = (double.parse(text)) / 100;
+                    widget.party =
+                        widget.party.copyWith(bookingFeePercent: value);
 
-                      if(value!){
-                        List<String> imageUrls = [];
-                        if(widget.party.storyImageUrl.isNotEmpty){
-                          imageUrls.add(widget.party.storyImageUrl);
-                        } else {
-                          imageUrls.addAll(widget.party.imageUrls);
-                        }
-
-                        // create an ad campaign
-                        AdCampaign adCampaign = Dummy.getDummyAdCampaign();
-                        adCampaign = adCampaign.copyWith(
-                            name: widget.party.name,
-                          imageUrls: imageUrls,
-                          isStorySize: true,
-                          isActive: true,
-                          isPartyAd: true,
-                          partyId: widget.party.id,
-                          endTime: widget.party.endTime
-                        );
-                        FirestoreHelper.pushAdCampaign(adCampaign);
-
-                        setState(() {
-                          widget.party = widget.party.copyWith(isAdCampaignRunning: true);
-                          FirestoreHelper.pushParty(widget.party);
-                        });
-
-                        Logx.ist(_TAG, 'ad campaign is now running');
-                      } else {
-                        // delete existing ad campaign
-                        FirestoreHelper.pullAdCampaignByPartyId(widget.party.id).then((res){
-                          if(res.docs.isNotEmpty){
-                            DocumentSnapshot document = res.docs[0];
-                            Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-                            AdCampaign adCampaign = Fresh.freshAdCampaignMap(data, true);
-                            FirestoreHelper.deleteAdCampaign(adCampaign.id);
-
-                            setState(() {
-                              widget.party = widget.party.copyWith(isAdCampaignRunning: false);
-                              FirestoreHelper.pushParty(widget.party);
-
-                              Logx.ist(_TAG, 'ad campaign is deleted');
-                            });
-                          } else {
-                            setState(() {
-                              widget.party = widget.party.copyWith(isAdCampaignRunning: false);
-                              FirestoreHelper.pushParty(widget.party);
-
-                              Logx.ist(_TAG, 'ad campaign could not be found');
-                            });
-                          }
-                        });
-                      }
-                    },
-                  ), //Checkbox
-                ], //<Widget>[]
+                    setState(() {
+                      mBookingFee = value * 100;
+                    });
+                  } catch (e) {
+                    Logx.em(_TAG, 'number format exception booking fee');
+                  }
+                },
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 24),
               Row(
                 children: <Widget>[
                   const Text(
@@ -1225,6 +1180,74 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
                 onChanged: (value) {
                   widget.party = widget.party.copyWith(clubRules: value);
                 },
+              ),
+              const SizedBox(height: 24),
+              Row(
+                children: <Widget>[
+                  const Text(
+                    'ad campaign : ',
+                    style: TextStyle(fontSize: 17.0),
+                  ), //Text
+                  const SizedBox(width: 10), //SizedBox
+                  Checkbox(
+                    value: widget.party.isAdCampaignRunning,
+                    onChanged: (value) {
+
+                      if(value!){
+                        List<String> imageUrls = [];
+                        if(widget.party.storyImageUrl.isNotEmpty){
+                          imageUrls.add(widget.party.storyImageUrl);
+                        } else {
+                          imageUrls.addAll(widget.party.imageUrls);
+                        }
+
+                        // create an ad campaign
+                        AdCampaign adCampaign = Dummy.getDummyAdCampaign();
+                        adCampaign = adCampaign.copyWith(
+                            name: widget.party.name,
+                            imageUrls: imageUrls,
+                            isStorySize: true,
+                            isActive: true,
+                            isPartyAd: true,
+                            partyId: widget.party.id,
+                            endTime: widget.party.endTime
+                        );
+                        FirestoreHelper.pushAdCampaign(adCampaign);
+
+                        setState(() {
+                          widget.party = widget.party.copyWith(isAdCampaignRunning: true);
+                          FirestoreHelper.pushParty(widget.party);
+                        });
+
+                        Logx.ist(_TAG, 'ad campaign is now running');
+                      } else {
+                        // delete existing ad campaign
+                        FirestoreHelper.pullAdCampaignByPartyId(widget.party.id).then((res){
+                          if(res.docs.isNotEmpty){
+                            DocumentSnapshot document = res.docs[0];
+                            Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+                            AdCampaign adCampaign = Fresh.freshAdCampaignMap(data, true);
+                            FirestoreHelper.deleteAdCampaign(adCampaign.id);
+
+                            setState(() {
+                              widget.party = widget.party.copyWith(isAdCampaignRunning: false);
+                              FirestoreHelper.pushParty(widget.party);
+
+                              Logx.ist(_TAG, 'ad campaign is deleted');
+                            });
+                          } else {
+                            setState(() {
+                              widget.party = widget.party.copyWith(isAdCampaignRunning: false);
+                              FirestoreHelper.pushParty(widget.party);
+
+                              Logx.ist(_TAG, 'ad campaign could not be found');
+                            });
+                          }
+                        });
+                      }
+                    },
+                  ), //Checkbox
+                ], //<Widget>[]
               ),
               const SizedBox(height: 24),
               Row(

@@ -40,8 +40,7 @@ class Party {
   final String genre;
 
   final bool isTix;
-  int tixSoldCount;
-  double tixSalesTotal;
+  final double bookingFeePercent;
 
   final bool isTicketsDisabled;
 
@@ -90,8 +89,7 @@ class Party {
     required this.overrideChallengeNum,
     required this.genre,
     required this.isTix,
-    required this.tixSoldCount,
-    required this.tixSalesTotal,
+    required this.bookingFeePercent,
     required this.isTicketsDisabled,
     required this.artistIds,
     required this.loungeId,
@@ -139,8 +137,7 @@ class Party {
           overrideChallengeNum == other.overrideChallengeNum &&
           genre == other.genre &&
           isTix == other.isTix &&
-          tixSoldCount == other.tixSoldCount &&
-          tixSalesTotal == other.tixSalesTotal &&
+          bookingFeePercent == other.bookingFeePercent &&
           isTicketsDisabled == other.isTicketsDisabled &&
           artistIds == other.artistIds &&
           loungeId == other.loungeId &&
@@ -184,8 +181,7 @@ class Party {
       overrideChallengeNum.hashCode ^
       genre.hashCode ^
       isTix.hashCode ^
-      tixSoldCount.hashCode ^
-      tixSalesTotal.hashCode ^
+      bookingFeePercent.hashCode ^
       isTicketsDisabled.hashCode ^
       artistIds.hashCode ^
       loungeId.hashCode ^
@@ -230,8 +226,7 @@ class Party {
         ' overrideChallengeNum: $overrideChallengeNum,' +
         ' genre: $genre,' +
         ' isTix: $isTix,' +
-        ' tixSoldCount: $tixSoldCount,' +
-        ' tixSalesTotal: $tixSalesTotal,' +
+        ' bookingFeePercent: $bookingFeePercent,' +
         ' isTicketsDisabled: $isTicketsDisabled,' +
         ' artistIds: $artistIds,' +
         ' loungeId: $loungeId,' +
@@ -276,8 +271,7 @@ class Party {
     int? overrideChallengeNum,
     String? genre,
     bool? isTix,
-    int? tixSoldCount,
-    double? tixSalesTotal,
+    double? bookingFeePercent,
     bool? isTicketsDisabled,
     List<String>? artistIds,
     String? loungeId,
@@ -321,8 +315,7 @@ class Party {
       overrideChallengeNum: overrideChallengeNum ?? this.overrideChallengeNum,
       genre: genre ?? this.genre,
       isTix: isTix ?? this.isTix,
-      tixSoldCount: tixSoldCount ?? this.tixSoldCount,
-      tixSalesTotal: tixSalesTotal ?? this.tixSalesTotal,
+      bookingFeePercent: bookingFeePercent ?? this.bookingFeePercent,
       isTicketsDisabled: isTicketsDisabled ?? this.isTicketsDisabled,
       artistIds: artistIds ?? this.artistIds,
       loungeId: loungeId ?? this.loungeId,
@@ -368,8 +361,7 @@ class Party {
       'overrideChallengeNum': this.overrideChallengeNum,
       'genre': this.genre,
       'isTix': this.isTix,
-      'tixSoldCount': this.tixSoldCount,
-      'tixSalesTotal': this.tixSalesTotal,
+      'bookingFeePercent': this.bookingFeePercent,
       'isTicketsDisabled': this.isTicketsDisabled,
       'artistIds': this.artistIds,
       'loungeId': this.loungeId,
@@ -415,8 +407,7 @@ class Party {
       overrideChallengeNum: map['overrideChallengeNum'] as int,
       genre: map['genre'] as String,
       isTix: map['isTix'] as bool,
-      tixSoldCount: map['tixSoldCount'] as int,
-      tixSalesTotal: map['tixSalesTotal'] as double,
+      bookingFeePercent: map['bookingFeePercent'] as double,
       isTicketsDisabled: map['isTicketsDisabled'] as bool,
       artistIds: map['artistIds'] as List<String>,
       loungeId: map['loungeId'] as String,

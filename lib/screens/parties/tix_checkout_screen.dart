@@ -17,7 +17,6 @@ import '../../db/entity/party_tix_tier.dart';
 import '../../db/entity/tix.dart';
 import '../../db/entity/upi_app.dart';
 import '../../db/shared_preferences/user_preferences.dart';
-import '../../helpers/dummy.dart';
 import '../../helpers/fresh.dart';
 import '../../main.dart';
 import '../../routes/route_constants.dart';
@@ -32,8 +31,9 @@ import '../../widgets/ui/dark_button_widget.dart';
 
 class TixCheckoutScreen extends StatefulWidget {
   Tix tix;
+  Party party;
 
-  TixCheckoutScreen({key, required this.tix}) : super(key: key);
+  TixCheckoutScreen({key, required this.tix, required this.party}) : super(key: key);
 
   @override
   State<TixCheckoutScreen> createState() => _TixCheckoutScreenState();
@@ -41,9 +41,6 @@ class TixCheckoutScreen extends StatefulWidget {
 
 class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
   static const String _TAG = 'TixCheckoutScreen';
-
-  Party mParty = Dummy.getDummyParty(Constants.blocServiceId);
-  var _isPartyLoading = true;
 
   List<TixTier> mTixTiers = [];
   var _isTixTiersLoading = true;
@@ -59,23 +56,6 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
 
   @override
   void initState() {
-    FirestoreHelper.pullParty(widget.tix.partyId).then((res) {
-      if (res.docs.isNotEmpty) {
-        DocumentSnapshot document = res.docs[0];
-        Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-        final Party party = Fresh.freshPartyMap(data, false);
-        mParty = party;
-
-        setState(() {
-          _isPartyLoading = false;
-        });
-      } else {
-        //party not found
-        Logx.ist(_TAG, 'party could not be found');
-        Navigator.of(context).pop();
-      }
-    });
-
     FirestoreHelper.pullTixTiersByTixId(widget.tix.id).then((res) {
       if (res.docs.isNotEmpty) {
         double tixTotal = 0;
@@ -89,11 +69,10 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
         }
 
         // igst 15.25%
-        // booking fee 5.9%
 
         igst = tixTotal * Constants.igstPercent;
         subTotal = tixTotal - igst;
-        bookingFee = tixTotal * Constants.bookingFeePercent;
+        bookingFee = tixTotal * widget.party.bookingFeePercent;
         grandTotal = subTotal + igst + bookingFee;
 
         widget.tix = widget.tix.copyWith(
@@ -308,7 +287,7 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
   }
 
   _buildBody(BuildContext context) {
-    return _isPartyLoading && _isTixTiersLoading
+    return _isTixTiersLoading
         ? const LoadingWidget()
         : Stack(
             children: [
@@ -316,7 +295,7 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
                 physics: const BouncingScrollPhysics(),
                 children: [
                   PartyBanner(
-                    party: mParty,
+                    party: widget.party,
                     isClickable: false,
                     shouldShowButton: false,
                     isGuestListRequested: false,

@@ -31,7 +31,7 @@ class _SampleCheckoutScreenState extends State<SampleCheckoutScreen> {
   Tix mTix = Dummy.getDummyTix();
   var _isTixLoading = true;
 
-  Party mParty = Dummy.getDummyParty(Constants.blocServiceId);
+  late Party mParty;
   var _isPartyLoading = true;
 
   List<TixTier> mTixTiers = [];

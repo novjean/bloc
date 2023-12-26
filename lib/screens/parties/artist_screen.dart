@@ -33,7 +33,7 @@ class ArtistScreen extends StatefulWidget {
 class _ArtistScreenState extends State<ArtistScreen> {
   static const String _TAG = 'ArtistScreen';
 
-  Party mParty = Dummy.getDummyParty('');
+  late Party mParty;
   var isPartyLoading = true;
 
   @override
@@ -69,7 +69,7 @@ class _ArtistScreenState extends State<ArtistScreen> {
     return Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.black,
-          title: AppBarTitle(title: mParty.name.toLowerCase()),
+          title: AppBarTitle(title: widget.name.toLowerCase()),
           titleSpacing: 0,
           leading: IconButton(
             icon: const Icon(Icons.arrow_back_ios_rounded),

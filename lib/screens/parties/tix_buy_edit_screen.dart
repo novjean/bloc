@@ -39,7 +39,7 @@ class TixBuyEditScreen extends StatefulWidget {
 class _TixBuyEditScreenState extends State<TixBuyEditScreen> {
   static const String _TAG = 'TixBuyEditScreen';
 
-  Party mParty = Dummy.getDummyParty(Constants.blocServiceId);
+  late Party mParty;
   var _isPartyLoading = true;
 
   List<PartyTixTier> mPartyTixTiers = [];
@@ -281,6 +281,7 @@ class _TixBuyEditScreenState extends State<TixBuyEditScreen> {
                     MaterialPageRoute(
                         builder: (context) => TixCheckoutScreen(
                           tix: widget.tix,
+                          party: mParty,
                         )),
                   );
                 } else {

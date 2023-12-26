@@ -448,8 +448,6 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   buildTabIcon(int index) {
-    Logx.d(_TAG, 'buildTabIcon() : $index');
-
     return IconButton(
       icon: Icon(
         icons[index],

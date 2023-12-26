@@ -2756,6 +2756,46 @@ class _PartyGuestAddEditManageScreenState
                   ),
                   adCampaign.isPartyAd
                       ? TextButton(
+                    onPressed: () {
+                      Navigator.of(ctx).pop();
+
+                      FirestoreHelper.updateAdCampaignClickCount(
+                          adCampaign.id);
+
+                      FirestoreHelper.pullParty(adCampaign.partyId)
+                          .then((res) async {
+                        if (res.docs.isNotEmpty) {
+                          DocumentSnapshot document = res.docs[0];
+                          Map<String, dynamic> data =
+                          document.data()! as Map<String, dynamic>;
+                          final Party party = Fresh.freshPartyMap(data, false);
+
+                          FirestoreHelper.updatePartyShareCount(party.id);
+                          final url =
+                              'http://bloc.bar/#/event/${Uri.encodeComponent(party.name)}/${party.chapter}';
+                          await Share.share(
+                              'Check this party, ${party.name} out on bloc. $url');
+
+                        } else {
+                          Navigator.of(ctx).pop();
+
+                          GoRouter.of(context)
+                              .pushNamed(RouteConstants.homeRouteName);
+                          GoRouter.of(context).pushNamed(
+                              RouteConstants.boxOfficeRouteName);
+                        }
+                      });
+                    },
+                    child: const Text(
+                      "💝 share",
+                      style: TextStyle(
+                          color: Constants.darkPrimary, fontSize: 15),
+                    ),
+                    // child:  const Text('close'),
+                  )
+                      : const SizedBox(),
+                  adCampaign.isPartyAd
+                      ? TextButton(
                           style: ButtonStyle(
                             backgroundColor: MaterialStateProperty.all<Color>(
                                 Constants.darkPrimary),
@@ -2800,7 +2840,7 @@ class _PartyGuestAddEditManageScreenState
                             });
                           },
                           child: Text(
-                            "💜 discover",
+                            "🎊 more info",
                             style: TextStyle(
                                 color: Constants.darkPrimary, fontSize: 15),
                           ),
