@@ -415,36 +415,37 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
                   : const SizedBox(),
               DarkButtonWidget(
                 text: 'purchase',
-                onClicked: () async {
+                onClicked: () {
                   body = getChecksum().toString();
-                  // startPgTransaction();
+                  startPgTransaction();
 
-                  // here we are gonna check what all is installed on phone
-                  if (!UserPreferences.myUser.isIos) {
-                    String? apps =
-                        await PhonePePaymentSdk.getInstalledUpiAppsForAndroid();
-
-                    Iterable l = json.decode(apps!);
-                    List<UPIApp> upiApps =
-                        List<UPIApp>.from(l.map((model) => UPIApp.fromJson(model)));
-                    String appString = '';
-
-                    if(upiApps.isNotEmpty){
-                      for (var element in upiApps) {
-                        appString +=
-                        "${element.applicationName} ${element.version} ${element.packageName}";
-                      }
-
-                      Logx.d(_TAG, 'installed Upi Apps - $appString');
-
-                      _showUpiAppsBottomSheet(context, upiApps);
-                    } else {
-                      startPgTransaction();
-                    }
-                  } else {
-                    //ios implement pending
-                    startPgTransaction();
-                  }
+                  // todo: waiting for PhonePe to fix UPI intent
+                  // // here we are gonna check what all is installed on phone
+                  // if (!UserPreferences.myUser.isIos) {
+                  //   String? apps =
+                  //       await PhonePePaymentSdk.getInstalledUpiAppsForAndroid();
+                  //
+                  //   Iterable l = json.decode(apps!);
+                  //   List<UPIApp> upiApps =
+                  //       List<UPIApp>.from(l.map((model) => UPIApp.fromJson(model)));
+                  //   String appString = '';
+                  //
+                  //   if(upiApps.isNotEmpty){
+                  //     for (var element in upiApps) {
+                  //       appString +=
+                  //       "${element.applicationName} ${element.version} ${element.packageName}";
+                  //     }
+                  //
+                  //     Logx.d(_TAG, 'installed Upi Apps - $appString');
+                  //
+                  //     _showUpiAppsBottomSheet(context, upiApps);
+                  //   } else {
+                  //     startPgTransaction();
+                  //   }
+                  // } else {
+                  //   //ios implement pending
+                  //   startPgTransaction();
+                  // }
                 },
               )
             ],
@@ -585,6 +586,7 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
     );
   }
 
+  //todo: keep this here, waiting on PhonePe
   void _showUpiAppsBottomSheet(
       BuildContext context, List<UPIApp> upiApps) {
     showModalBottomSheet(
@@ -599,7 +601,6 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
             padding:
                 EdgeInsets.only(top: mq.height * .03, bottom: mq.height * .03),
             children: [
-              //pick profile picture label
               const Text('select your payment method',
                   textAlign: TextAlign.center,
                   style: TextStyle(
@@ -693,18 +694,10 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
                 ),
               ),
               const Divider(),
-
               DarkButtonWidget(text: 'more payment modes', height: 50, onClicked: () {
                 body = getChecksum().toString();
                 startPgTransaction();
               },),
-              // Divider(),
-
-              // GestureDetector(onTap: () {
-              //   body = getChecksum().toString();
-              //   startPgTransaction();
-              // },
-              //   child: Text('other payment options'),),
             ],
           );
         });
