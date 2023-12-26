@@ -16,6 +16,7 @@ import 'package:multi_select_flutter/util/multi_select_list_type.dart';
 import 'package:path/path.dart' as Path;
 import 'package:path_provider/path_provider.dart';
 
+import '../../api/apis.dart';
 import '../../db/entity/lounge_chat.dart';
 import '../../db/entity/lounge.dart';
 import '../../db/entity/party.dart';
@@ -828,11 +829,11 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
                       promoterId: Constants.blocPromoterId,
                     );
 
-                    // FirestoreHelper.pushPartyGuest(partyGuest);
+                    FirestoreHelper.pushPartyGuest(partyGuest);
 
                     String title = '🎁 ${sParty.name}, $addTitle';
                     String message = 'Hey ${user.name}, $addMessage';
-                    // Apis.sendPushNotification(user.fcmToken, title, message);
+                    Apis.sendPushNotification(user.fcmToken, title, message);
                     Logx.ist(_TAG, '${user.name} has been invited!');
                     count++;
                   }

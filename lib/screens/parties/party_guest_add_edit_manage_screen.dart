@@ -8,7 +8,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:delayed_display/delayed_display.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:in_app_review/in_app_review.dart';
 import 'package:intl_phone_field/country_picker_dialog.dart';
@@ -134,7 +133,7 @@ class _PartyGuestAddEditManageScreenState
     } else {
       // mBlocUser = UserPreferences.myUser;
 
-      if(widget.task == 'manage'){
+      if (widget.task == 'manage') {
         mBlocUser = Dummy.getDummyUser();
       } else {
         mBlocUser = UserPreferences.myUser;
@@ -154,7 +153,8 @@ class _PartyGuestAddEditManageScreenState
       years.add(i.toString());
     }
 
-    if (mBlocUser.clearanceLevel < Constants.PROMOTER_LEVEL && widget.task!='manage') {
+    if (mBlocUser.clearanceLevel < Constants.PROMOTER_LEVEL &&
+        widget.task != 'manage') {
       _guestStatuses.removeLast();
     }
 
@@ -1219,13 +1219,14 @@ class _PartyGuestAddEditManageScreenState
                             height: 50,
                             text: 'delete',
                             onClicked: () {
-                              if(mBlocUser.fcmToken.isNotEmpty){
+                              if (mBlocUser.fcmToken.isNotEmpty) {
                                 _showGuestReviewDialog(context);
                               } else {
                                 Navigator.of(context).pop();
                                 FirestoreHelper.deletePartyGuest(
                                     widget.partyGuest.id);
-                                Logx.ist(_TAG, 'guest list request is deleted!');
+                                Logx.ist(
+                                    _TAG, 'guest list request is deleted!');
                               }
                             },
                           ),
@@ -1253,7 +1254,7 @@ class _PartyGuestAddEditManageScreenState
           if (isApproved) {
             if (widget.party.loungeId.isNotEmpty) {
               FirestoreHelper.pullUserLounge(
-                  mBlocUser.id, widget.party.loungeId)
+                      mBlocUser.id, widget.party.loungeId)
                   .then((res) {
                 if (res.docs.isEmpty) {
                   UserLounge userLounge = Dummy.getDummyUserLounge();
@@ -2603,16 +2604,16 @@ class _PartyGuestAddEditManageScreenState
               TextButton(
                 child: const Text('review bloc'),
                 onPressed: () async {
-                  if(mBlocUser.fcmToken.isNotEmpty){
+                  if (mBlocUser.fcmToken.isNotEmpty) {
                     //send a notification
-                    Apis.sendUrlData(mBlocUser.fcmToken, Apis.GoogleReviewBloc, Constants.blocGoogleReview);
+                    Apis.sendUrlData(mBlocUser.fcmToken, Apis.GoogleReviewBloc,
+                        Constants.blocGoogleReview);
                     Logx.ist(_TAG,
                         '${mBlocUser.name} ${mBlocUser.surname} has been notified for a bloc google review 🤞');
                   }
 
                   Navigator.of(ctx).pop();
-                  FirestoreHelper.deletePartyGuest(
-                      widget.partyGuest.id);
+                  FirestoreHelper.deletePartyGuest(widget.partyGuest.id);
                   Logx.ist(_TAG, 'guest list request is deleted!');
                   Navigator.of(context).pop();
                 },
@@ -2620,27 +2621,25 @@ class _PartyGuestAddEditManageScreenState
               TextButton(
                 child: const Text('review freq'),
                 onPressed: () async {
-                  if(mBlocUser.fcmToken.isNotEmpty){
+                  if (mBlocUser.fcmToken.isNotEmpty) {
                     //send a notification
-                    Apis.sendUrlData(mBlocUser.fcmToken, Apis.GoogleReviewFreq, Constants.freqGoogleReview);
+                    Apis.sendUrlData(mBlocUser.fcmToken, Apis.GoogleReviewFreq,
+                        Constants.freqGoogleReview);
                     Logx.ist(_TAG,
                         '${mBlocUser.name} ${mBlocUser.surname} has been notified for a freq google review 🤞');
                   }
 
                   Navigator.of(ctx).pop();
-                  FirestoreHelper.deletePartyGuest(
-                      widget.partyGuest.id);
+                  FirestoreHelper.deletePartyGuest(widget.partyGuest.id);
                   Logx.ist(_TAG, 'guest list request is deleted!');
                   Navigator.of(context).pop();
                 },
               ),
-
               TextButton(
                 child: const Text("cancel"),
                 onPressed: () {
                   Navigator.of(ctx).pop();
-                  FirestoreHelper.deletePartyGuest(
-                      widget.partyGuest.id);
+                  FirestoreHelper.deletePartyGuest(widget.partyGuest.id);
                   Logx.ist(_TAG, 'guest list request is deleted!');
                   Navigator.of(context).pop();
                 },
@@ -2652,18 +2651,18 @@ class _PartyGuestAddEditManageScreenState
 
   _showAdDialog(BuildContext context) {
     FirestoreHelper.pullAdCampaignByStorySize(true).then((res) {
-      if(res.docs.isNotEmpty){
+      if (res.docs.isNotEmpty) {
         AdCampaign adCampaign = Dummy.getDummyAdCampaign();
         bool foundAd = false;
 
-        for(int i=0;i<res.docs.length; i++){
+        for (int i = 0; i < res.docs.length; i++) {
           DocumentSnapshot document = res.docs[i];
           Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
           AdCampaign tempAd = Fresh.freshAdCampaignMap(data, false);
 
-          if(Timestamp.now().millisecondsSinceEpoch < tempAd.endTime){
-            if(tempAd.isPartyAd){
-              if(tempAd.partyId != widget.party.id) {
+          if (Timestamp.now().millisecondsSinceEpoch < tempAd.endTime) {
+            if (tempAd.isPartyAd) {
+              if (tempAd.partyId != widget.party.id) {
                 adCampaign = tempAd;
                 foundAd = true;
                 break;
@@ -2678,7 +2677,7 @@ class _PartyGuestAddEditManageScreenState
           }
         }
 
-        if(foundAd){
+        if (foundAd) {
           showDialog(
             context: context,
             barrierDismissible: false,
@@ -2690,24 +2689,26 @@ class _PartyGuestAddEditManageScreenState
                     borderRadius: BorderRadius.all(Radius.circular(10.0))),
                 content: GestureDetector(
                   onTap: () {
-                    if(adCampaign.isPartyAd){
+                    if (adCampaign.isPartyAd) {
                       FirestoreHelper.updateAdCampaignClickCount(adCampaign.id);
 
                       // we pull in party
                       FirestoreHelper.pullParty(adCampaign.partyId).then((res) {
-                        if(res.docs.isNotEmpty){
+                        if (res.docs.isNotEmpty) {
                           DocumentSnapshot document = res.docs[0];
                           Map<String, dynamic> data =
-                          document.data()! as Map<String, dynamic>;
+                              document.data()! as Map<String, dynamic>;
                           final Party party = Fresh.freshPartyMap(data, false);
                           Navigator.of(ctx).pop();
 
-                          GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
+                          GoRouter.of(context)
+                              .pushNamed(RouteConstants.homeRouteName);
                           GoRouter.of(context)
                               .pushNamed(RouteConstants.boxOfficeRouteName);
 
                           // navigate to party
-                          GoRouter.of(context).pushNamed(RouteConstants.eventRouteName,
+                          GoRouter.of(context).pushNamed(
+                              RouteConstants.eventRouteName,
                               params: {
                                 'partyName': party.name,
                                 'partyChapter': party.chapter
@@ -2715,7 +2716,8 @@ class _PartyGuestAddEditManageScreenState
                         } else {
                           Navigator.of(ctx).pop();
 
-                          GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
+                          GoRouter.of(context)
+                              .pushNamed(RouteConstants.homeRouteName);
                           GoRouter.of(context)
                               .pushNamed(RouteConstants.boxOfficeRouteName);
                         }
@@ -2730,16 +2732,15 @@ class _PartyGuestAddEditManageScreenState
                         placeholder: const AssetImage('assets/icons/logo.png'),
                         image: NetworkImage(adCampaign.imageUrls[0]),
                         fit: BoxFit.fitWidth,
-                      )
-                  ),
+                      )),
                 ),
-
                 actions: [
                   TextButton(
                     onPressed: () {
                       Navigator.of(ctx).pop();
 
-                      GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
+                      GoRouter.of(context)
+                          .pushNamed(RouteConstants.homeRouteName);
                       GoRouter.of(context)
                           .pushNamed(RouteConstants.boxOfficeRouteName);
                     },
@@ -2748,13 +2749,64 @@ class _PartyGuestAddEditManageScreenState
                       child: Text(
                         "close",
                         style: TextStyle(
-                            color: Constants.darkPrimary,
-                            fontSize: 15
-                        ),
+                            color: Constants.darkPrimary, fontSize: 15),
                       ),
                     ),
                     // child:  const Text('close'),
                   ),
+                  adCampaign.isPartyAd
+                      ? TextButton(
+                          style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.all<Color>(
+                                Constants.darkPrimary),
+                          ),
+                          onPressed: () {
+                            Navigator.of(ctx).pop();
+
+                            FirestoreHelper.updateAdCampaignClickCount(
+                                adCampaign.id);
+
+                            // we pull in party
+                            FirestoreHelper.pullParty(adCampaign.partyId)
+                                .then((res) {
+                              if (res.docs.isNotEmpty) {
+                                DocumentSnapshot document = res.docs[0];
+                                Map<String, dynamic> data =
+                                    document.data()! as Map<String, dynamic>;
+                                final Party party =
+                                    Fresh.freshPartyMap(data, false);
+                                Navigator.of(ctx).pop();
+
+                                GoRouter.of(context)
+                                    .pushNamed(RouteConstants.homeRouteName);
+                                GoRouter.of(context).pushNamed(
+                                    RouteConstants.boxOfficeRouteName);
+
+                                // navigate to party
+                                GoRouter.of(context).pushNamed(
+                                    RouteConstants.eventRouteName,
+                                    params: {
+                                      'partyName': party.name,
+                                      'partyChapter': party.chapter
+                                    });
+                              } else {
+                                Navigator.of(ctx).pop();
+
+                                GoRouter.of(context)
+                                    .pushNamed(RouteConstants.homeRouteName);
+                                GoRouter.of(context).pushNamed(
+                                    RouteConstants.boxOfficeRouteName);
+                              }
+                            });
+                          },
+                          child: Text(
+                            "💜 discover",
+                            style: TextStyle(
+                                color: Constants.darkPrimary, fontSize: 15),
+                          ),
+                          // child:  const Text('close'),
+                        )
+                      : const SizedBox(),
                 ],
               );
             },
@@ -2762,18 +2814,13 @@ class _PartyGuestAddEditManageScreenState
         } else {
           // all story ads are expired
           GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
-          GoRouter.of(context)
-              .pushNamed(RouteConstants.boxOfficeRouteName);
+          GoRouter.of(context).pushNamed(RouteConstants.boxOfficeRouteName);
         }
       } else {
         // no ad campaings found
         GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
-        GoRouter.of(context)
-            .pushNamed(RouteConstants.boxOfficeRouteName);
+        GoRouter.of(context).pushNamed(RouteConstants.boxOfficeRouteName);
       }
     });
-
   }
-
-
 }
