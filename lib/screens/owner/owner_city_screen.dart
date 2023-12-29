@@ -1,5 +1,5 @@
 import 'package:bloc/helpers/firestore_helper.dart';
-import 'package:bloc/widgets/bloc_item.dart';
+import 'package:bloc/widgets/ui/app_bar_title.dart';
 import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -8,10 +8,10 @@ import '../../db/entity/bloc.dart';
 import '../../db/entity/city.dart';
 import '../../helpers/dummy.dart';
 import '../../helpers/fresh.dart';
+import '../../widgets/owner/owner_bloc_item.dart';
 import 'bloc_add_edit_screen.dart';
 
 class OwnerCityScreen extends StatelessWidget {
-  static const routeName = '/city-detail';
   City city;
 
   OwnerCityScreen({key, required this.city})
@@ -21,7 +21,8 @@ class OwnerCityScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('owner | ' + city.name),
+        title: AppBarTitle(title: 'owner | ${city.name}'.toLowerCase(), ),
+        titleSpacing: 0,
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -45,44 +46,61 @@ class OwnerCityScreen extends StatelessWidget {
   }
 
   _buildBody(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          const SizedBox(height: 5.0),
-          buildBlocs(context),
-          const SizedBox(height: 5.0),
-        ],
-      ),
+    return Column(
+      children: [
+        const SizedBox(height: 5.0),
+        _buildBlocs(context),
+        const SizedBox(height: 5.0),
+      ],
     );
   }
 
-  buildBlocs(BuildContext context) {
-    return Container(
-      height: MediaQuery.of(context).size.height,
-      padding: const EdgeInsets.all(5),
-      child: StreamBuilder<QuerySnapshot>(
-        stream: FirestoreHelper.getBlocsByCityId(city.id),
-        builder: (ctx, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const LoadingWidget();
+  _buildBlocs(BuildContext context) {
+    return StreamBuilder<QuerySnapshot>(
+      stream: FirestoreHelper.getBlocsByCityId(city.id),
+      builder: (ctx, snapshot) {
+        switch (snapshot.connectionState) {
+        case ConnectionState.waiting:
+        case ConnectionState.none:
+        return const LoadingWidget();
+        case ConnectionState.active:
+        case ConnectionState.done:
+          List<Bloc> blocs = [];
+          for (int i = 0; i < snapshot.data!.docs.length; i++) {
+            DocumentSnapshot document = snapshot.data!.docs[i];
+            Map<String, dynamic> data =
+            document.data()! as Map<String, dynamic>;
+            final Bloc bloc = Fresh.freshBlocMap(data, false);
+            blocs.add(bloc);
           }
-          return GridView(
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 1,
-              childAspectRatio: 3 / 2,
-              crossAxisSpacing: 10,
-              mainAxisSpacing: 10,
-            ),
-            children: snapshot.data!.docs.map((DocumentSnapshot document) {
-              Map<String, dynamic> data =
-                  document.data()! as Map<String, dynamic>;
-              final Bloc bloc = Fresh.freshBlocMap(data, false);
 
-              return BlocItem(bloc, key: ValueKey(document.id));
-            }).toList(),
-          );
-        },
-      ),
+          return _displayBlocs(context, blocs);
+        }
+      },
     );
   }
+
+  _displayBlocs(BuildContext context, List<Bloc> blocs) {
+    return Expanded(
+      child: ListView.builder(
+          itemCount: blocs.length,
+          scrollDirection: Axis.vertical,
+          itemBuilder: (ctx, index) {
+            return GestureDetector(
+                child: OwnerBlocItem(
+                  bloc: blocs[index],
+                ),
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                        builder: (ctx) => BlocAddEditScreen(
+                          bloc: blocs[index],
+                          task: 'edit',
+                        )),
+                  );
+                });
+          }),
+    );
+  }
+
 }

@@ -63,22 +63,24 @@ class _HomeScreenState extends State<HomeScreen> {
 
     UserPreferences.myUser.clearanceLevel >= Constants.PROMOTER_LEVEL
         ? FirestoreHelper.pullBlocsPromoter().then((res) {
-            Logx.i(_TAG, "successfully pulled in blocs for promoter");
+            Logx.i(_TAG, "successfully pulled in all power and superpower blocs");
 
             if (res.docs.isNotEmpty) {
-              // found blocs
-              List<Bloc> blocs = [];
               for (int i = 0; i < res.docs.length; i++) {
                 DocumentSnapshot document = res.docs[i];
                 Map<String, dynamic> data =
                     document.data()! as Map<String, dynamic>;
                 final Bloc bloc = Fresh.freshBlocMap(data, false);
-                blocs.add(bloc);
 
-                setState(() {
-                  mBlocs = blocs;
-                  _isBlocsLoading = false;
-                });
+                if(bloc.powerBloc || bloc.superPowerBloc){
+                  mBlocs.add(bloc);
+                }
+
+                if(mounted){
+                  setState(() {
+                    _isBlocsLoading = false;
+                  });
+                }
               }
             } else {
               Logx.em(_TAG, ' no blocs found!!!');
@@ -97,18 +99,15 @@ class _HomeScreenState extends State<HomeScreen> {
             Logx.i(_TAG, "successfully pulled in blocs");
 
             if (res.docs.isNotEmpty) {
-              // found blocs
-              List<Bloc> blocs = [];
               for (int i = 0; i < res.docs.length; i++) {
                 DocumentSnapshot document = res.docs[i];
                 Map<String, dynamic> data =
                     document.data()! as Map<String, dynamic>;
                 final Bloc bloc = Fresh.freshBlocMap(data, false);
-                blocs.add(bloc);
+                mBlocs.add(bloc);
 
                 if(mounted) {
                   setState(() {
-                    mBlocs = blocs;
                     _isBlocsLoading = false;
                   });
                 }
@@ -153,12 +152,29 @@ class _HomeScreenState extends State<HomeScreen> {
         }
       } else {
         Logx.i(_TAG, 'no party guest requests found!');
-        const SizedBox();
         if(mounted){
           setState(() {
             _isPartyGuestsLoading = false;
           });
         }
+      }
+    });
+
+
+    super.initState();
+
+    FirestoreHelper.pullAdCampaignByStorySize(false).then((res) {
+      if(res.docs.isNotEmpty){
+        DocumentSnapshot document = res.docs[0];
+        Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+        setState(() {
+          mAdCampaign = Fresh.freshAdCampaignMap(data, false);
+          _isAdCampaignLoading = false;
+        });
+      } else {
+        setState(() {
+          _isAdCampaignLoading = false;
+        });
       }
     });
 
@@ -189,23 +205,6 @@ class _HomeScreenState extends State<HomeScreen> {
             _isGuestWifiDetailsLoading = false;
           });
         }
-      }
-    });
-
-    super.initState();
-
-    FirestoreHelper.pullAdCampaignByStorySize(false).then((res) {
-      if(res.docs.isNotEmpty){
-        DocumentSnapshot document = res.docs[0];
-        Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-        setState(() {
-          mAdCampaign = Fresh.freshAdCampaignMap(data, false);
-          _isAdCampaignLoading = false;
-        });
-      } else {
-        setState(() {
-          _isAdCampaignLoading = false;
-        });
       }
     });
   }
@@ -276,7 +275,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 UserPreferences.isUserLoggedIn()
                     ? _isGuestWifiDetailsLoading
                     ? const LoadingWidget()
-                    : buildWifi(context)
+                    : _buildWifi(context)
                     : const SizedBox(),
                 const SizedBox(height: 15.0),
                 kIsWeb ? const StoreBadgeItem() : const SizedBox(),
@@ -333,7 +332,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 UserPreferences.isUserLoggedIn()
                     ? _isGuestWifiDetailsLoading
                         ? const LoadingWidget()
-                        : buildWifi(context)
+                        : _buildWifi(context)
                     : const SizedBox(),
                 const SizedBox(height: 10.0),
                 kIsWeb ? const StoreBadgeItem() : const SizedBox(),
@@ -360,7 +359,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   const SizedBox(height: 10.0),
                   _isGuestWifiDetailsLoading
                       ? const LoadingWidget()
-                      : buildWifi(context),
+                      : _buildWifi(context),
                   const SizedBox(height: 10.0),
                   kIsWeb ? const StoreBadgeItem() : const SizedBox(),
                   const SizedBox(height: 10.0),
@@ -382,7 +381,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  buildWifi(BuildContext context) {
+  _buildWifi(BuildContext context) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 10),
       decoration: BoxDecoration(

@@ -98,7 +98,11 @@ class Dummy {
         imageUrls: [],
         latitude: Constants.blocLatitude,
         longitude: Constants.blocLongitude,
-        mapImageUrl: '');
+        mapImageUrl: '',
+        creationDate: Timestamp.now().millisecondsSinceEpoch,
+        orderPriority: 99,
+        powerBloc: false,
+        superPowerBloc: false);
 
     return dummyBloc;
   }

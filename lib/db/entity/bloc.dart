@@ -7,15 +7,23 @@ class Bloc {
   final String pinCode;
   final String ownerId;
   final String createdAt;
-  final bool isActive; // not using this field yet
+
+  // this field is used to determine which blocs get shown in home
+  final bool isActive;
+
   final List<String> imageUrls;
 
   final double latitude;
   final double longitude;
   final String mapImageUrl;
 
+  final int orderPriority;
+  final bool powerBloc;
+  final bool superPowerBloc;
+  final int creationDate;
+
 //<editor-fold desc="Data Methods">
-  const Bloc({
+  Bloc({
     required this.id,
     required this.name,
     required this.cityId,
@@ -29,6 +37,10 @@ class Bloc {
     required this.latitude,
     required this.longitude,
     required this.mapImageUrl,
+    required this.orderPriority,
+    required this.powerBloc,
+    required this.superPowerBloc,
+    required this.creationDate,
   });
 
   @override
@@ -48,7 +60,11 @@ class Bloc {
           imageUrls == other.imageUrls &&
           latitude == other.latitude &&
           longitude == other.longitude &&
-          mapImageUrl == other.mapImageUrl);
+          mapImageUrl == other.mapImageUrl &&
+          orderPriority == other.orderPriority &&
+          powerBloc == other.powerBloc &&
+          superPowerBloc == other.superPowerBloc &&
+          creationDate == other.creationDate);
 
   @override
   int get hashCode =>
@@ -64,7 +80,11 @@ class Bloc {
       imageUrls.hashCode ^
       latitude.hashCode ^
       longitude.hashCode ^
-      mapImageUrl.hashCode;
+      mapImageUrl.hashCode ^
+      orderPriority.hashCode ^
+      powerBloc.hashCode ^
+      superPowerBloc.hashCode ^
+      creationDate.hashCode;
 
   @override
   String toString() {
@@ -82,6 +102,10 @@ class Bloc {
         ' latitude: $latitude,' +
         ' longitude: $longitude,' +
         ' mapImageUrl: $mapImageUrl,' +
+        ' orderPriority: $orderPriority,' +
+        ' powerBloc: $powerBloc,' +
+        ' superPowerBloc: $superPowerBloc,' +
+        ' creationDate: $creationDate,' +
         '}';
   }
 
@@ -99,6 +123,10 @@ class Bloc {
     double? latitude,
     double? longitude,
     String? mapImageUrl,
+    int? orderPriority,
+    bool? powerBloc,
+    bool? superPowerBloc,
+    int? creationDate,
   }) {
     return Bloc(
       id: id ?? this.id,
@@ -114,6 +142,10 @@ class Bloc {
       latitude: latitude ?? this.latitude,
       longitude: longitude ?? this.longitude,
       mapImageUrl: mapImageUrl ?? this.mapImageUrl,
+      orderPriority: orderPriority ?? this.orderPriority,
+      powerBloc: powerBloc ?? this.powerBloc,
+      superPowerBloc: superPowerBloc ?? this.superPowerBloc,
+      creationDate: creationDate ?? this.creationDate,
     );
   }
 
@@ -132,6 +164,10 @@ class Bloc {
       'latitude': this.latitude,
       'longitude': this.longitude,
       'mapImageUrl': this.mapImageUrl,
+      'orderPriority': this.orderPriority,
+      'powerBloc': this.powerBloc,
+      'superPowerBloc': this.superPowerBloc,
+      'creationDate': this.creationDate,
     };
   }
 
@@ -150,6 +186,10 @@ class Bloc {
       latitude: map['latitude'] as double,
       longitude: map['longitude'] as double,
       mapImageUrl: map['mapImageUrl'] as String,
+      orderPriority: map['orderPriority'] as int,
+      powerBloc: map['powerBloc'] as bool,
+      superPowerBloc: map['superPowerBloc'] as bool,
+      creationDate: map['creationDate'] as int,
     );
   }
 

@@ -16,7 +16,6 @@ class OwnerScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.black,
         title: AppBarTitle(title: 'owner',),
         titleSpacing: 0,
       ),
@@ -30,7 +29,7 @@ class OwnerScreen extends StatelessWidget {
       child: Column(
         children: [
           buildCities(context),
-          SizedBox(height: 10.0),
+          const SizedBox(height: 10.0),
         ],
       ),
     );

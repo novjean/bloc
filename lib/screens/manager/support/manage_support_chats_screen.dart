@@ -39,7 +39,6 @@ class _ManageSupportChatsScreenState extends State<ManageSupportChatsScreen> {
       },
       child: Scaffold(
         appBar: AppBar(
-          backgroundColor: Constants.primary,
           titleSpacing: 0,
           title: Row(
             mainAxisAlignment: MainAxisAlignment.end,

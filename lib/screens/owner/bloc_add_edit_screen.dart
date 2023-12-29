@@ -136,6 +136,33 @@ class _BlocAddEditScreenState extends State<BlocAddEditScreen> {
         ),
         const SizedBox(height: 24),
         TextFieldWidget(
+          label: 'order priority',
+          text: widget.bloc.orderPriority.toString(),
+          onChanged: (text) {
+            int value = int.parse(text);
+            widget.bloc = widget.bloc.copyWith(orderPriority: value);
+          },
+        ),
+        const SizedBox(height: 24),
+        TextFieldWidget(
+          label: 'creation date',
+          text: widget.bloc.creationDate.toString(),
+          onChanged: (text) {
+            int value = int.parse(text);
+            widget.bloc = widget.bloc.copyWith(creationDate: value);
+          },
+        ),
+        const SizedBox(height: 24),
+        TextFieldWidget(
+          label: 'creation old',
+          text: widget.bloc.createdAt,
+          onChanged: (text) {
+            widget.bloc = widget.bloc.copyWith(createdAt: text);
+          },
+        ),
+
+        const SizedBox(height: 24),
+        TextFieldWidget(
           label: 'address line 1',
           text: widget.bloc.addressLine1,
           onChanged: (value) {
@@ -150,6 +177,7 @@ class _BlocAddEditScreenState extends State<BlocAddEditScreen> {
             widget.bloc = widget.bloc.copyWith(addressLine2: value);
           },
         ),
+        const SizedBox(height: 24),
         TextFieldWidget(
           label: 'pin code',
           text: widget.bloc.pinCode,
@@ -195,7 +223,6 @@ class _BlocAddEditScreenState extends State<BlocAddEditScreen> {
           ),
         ),
         const SizedBox(height: 24),
-
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 32),
           child: TextFieldWidget(
@@ -219,7 +246,7 @@ class _BlocAddEditScreenState extends State<BlocAddEditScreen> {
             },
           ),
         ),
-
+        const SizedBox(height: 24),
         Row(
           children: <Widget>[
             const Text(
@@ -237,6 +264,43 @@ class _BlocAddEditScreenState extends State<BlocAddEditScreen> {
             ), //Checkbox
           ], //<Widget>[]
         ),
+        const SizedBox(height: 12),
+        Row(
+          children: <Widget>[
+            const Text(
+              'power bloc : ',
+              style: TextStyle(fontSize: 17.0),
+            ), //Text
+            const SizedBox(width: 10), //SizedBox
+            Checkbox(
+              value: widget.bloc.powerBloc,
+              onChanged: (value) {
+                setState(() {
+                  widget.bloc = widget.bloc.copyWith(powerBloc: value);
+                });
+              },
+            ), //Checkbox
+          ], //<Widget>[]
+        ),
+        const SizedBox(height: 12),
+        Row(
+          children: <Widget>[
+            const Text(
+              'super power bloc : ',
+              style: TextStyle(fontSize: 17.0),
+            ), //Text
+            const SizedBox(width: 10), //SizedBox
+            Checkbox(
+              value: widget.bloc.superPowerBloc,
+              onChanged: (value) {
+                setState(() {
+                  widget.bloc = widget.bloc.copyWith(superPowerBloc: value);
+                });
+              },
+            ), //Checkbox
+          ], //<Widget>[]
+        ),
+
         const SizedBox(height: 24),
         ButtonWidget(
           text: '💾 save',

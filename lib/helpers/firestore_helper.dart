@@ -246,6 +246,7 @@ class FirestoreHelper {
     return FirebaseFirestore.instance
         .collection(BLOCS)
         .where('isActive', isEqualTo: true)
+        .orderBy('orderPriority', descending: false)
         .get();
   }
 
@@ -258,40 +259,18 @@ class FirestoreHelper {
   }
 
   static pullBlocsPromoter() {
-    return FirebaseFirestore.instance.collection(BLOCS).get();
-  }
-
-  static getBlocs() {
-    return FirebaseFirestore.instance.collection(BLOCS).snapshots();
+    return FirebaseFirestore.instance.collection(BLOCS)
+        // .where('isActive', isEqualTo: true)
+        .orderBy('orderPriority', descending: false)
+        .get();
   }
 
   static getBlocsByCityId(String cityId) {
     return FirebaseFirestore.instance
         .collection(BLOCS)
         .where('cityId', isEqualTo: cityId)
+        .orderBy('orderPriority', descending: false)
         .snapshots();
-  }
-
-  static void updateBloc(String id, File image) async {
-    try {
-      final url = await FirestorageHelper.uploadFile(
-          FirestorageHelper.BLOCS_IMAGES, id, image);
-
-      await FirebaseFirestore.instance
-          .collection(BLOCS)
-          .doc(id)
-          .update({'imageUrl': url}).then((value) {
-        Logx.i(_TAG, 'bloc image updated');
-      }).catchError((e, s) {
-        Logx.e(_TAG, e, s);
-      });
-    } on PlatformException catch (e, s) {
-      Logx.e(_TAG, e, s);
-    } on Exception catch (e, s) {
-      Logx.e(_TAG, e, s);
-    } catch (e) {
-      Logx.em(_TAG, e.toString());
-    }
   }
 
   /** bloc services **/

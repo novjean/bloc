@@ -410,8 +410,32 @@ class Fresh {
       isModelChanged = true;
     }
 
-    if (isModelChanged &&
-        shouldUpdate &&
+    try {
+      bloc = bloc.copyWith(orderPriority: map['orderPriority'] as int);
+    } catch (e) {
+      Logx.em(_TAG, 'bloc orderPriority not exist for id: ${bloc.id}');
+      isModelChanged = true;
+    }
+    try {
+      bloc = bloc.copyWith(powerBloc: map['powerBloc'] as bool);
+    } catch (e) {
+      Logx.em(_TAG, 'bloc powerBloc not exist for id: ${bloc.id}');
+      isModelChanged = true;
+    }
+    try {
+      bloc = bloc.copyWith(superPowerBloc: map['superPowerBloc'] as bool);
+    } catch (e) {
+      Logx.em(_TAG, 'bloc superPowerBloc not exist for id: ${bloc.id}');
+      isModelChanged = true;
+    }
+    try {
+      bloc = bloc.copyWith(creationDate: map['creationDate'] as int);
+    } catch (e) {
+      Logx.em(_TAG, 'bloc creationDate not exist for id: ${bloc.id}');
+      isModelChanged = true;
+    }
+
+    if (isModelChanged && shouldUpdate &&
         UserPreferences.myUser.clearanceLevel >= Constants.ADMIN_LEVEL) {
       Logx.em(_TAG, 'updating bloc ${bloc.id}');
       FirestoreHelper.pushBloc(bloc);
@@ -436,17 +460,17 @@ class Fresh {
     try {
       freshBloc = freshBloc.copyWith(cityId: bloc.cityId);
     } catch (e) {
-      Logx.em(_TAG, 'bloc cityId not exist for id: ' + bloc.id);
+      Logx.em(_TAG, 'bloc cityId not exist for id: ${bloc.id}');
     }
     try {
       freshBloc = freshBloc.copyWith(addressLine1: bloc.addressLine1);
     } catch (e) {
-      Logx.em(_TAG, 'bloc addressLine1 not exist for id: ' + bloc.id);
+      Logx.em(_TAG, 'bloc addressLine1 not exist for id: ${bloc.id}');
     }
     try {
       freshBloc = freshBloc.copyWith(addressLine2: bloc.addressLine2);
     } catch (e) {
-      Logx.em(_TAG, 'bloc addressLine2 not exist for id: ' + bloc.id);
+      Logx.em(_TAG, 'bloc addressLine2 not exist for id: ${bloc.id}');
     }
     try {
       freshBloc = freshBloc.copyWith(pinCode: bloc.pinCode);
@@ -456,17 +480,17 @@ class Fresh {
     try {
       freshBloc = freshBloc.copyWith(ownerId: bloc.ownerId);
     } catch (e) {
-      Logx.em(_TAG, 'bloc ownerId not exist for bloc id: ' + bloc.id);
+      Logx.em(_TAG, 'bloc ownerId not exist for bloc id: ${bloc.id}');
     }
     try {
       freshBloc = freshBloc.copyWith(createdAt: bloc.createdAt);
     } catch (e) {
-      Logx.em(_TAG, 'bloc createdAt not exist for bloc id: ' + bloc.id);
+      Logx.em(_TAG, 'bloc createdAt not exist for bloc id: ${bloc.id}');
     }
     try {
       freshBloc = freshBloc.copyWith(isActive: bloc.isActive);
     } catch (e) {
-      Logx.em(_TAG, 'bloc isActive not exist for bloc id: ' + bloc.id);
+      Logx.em(_TAG, 'bloc isActive not exist for bloc id: ${bloc.id}');
     }
     try {
       freshBloc = freshBloc.copyWith(imageUrls: bloc.imageUrls);
@@ -488,6 +512,27 @@ class Fresh {
       freshBloc = freshBloc.copyWith(mapImageUrl: bloc.mapImageUrl);
     } catch (e) {
       Logx.em(_TAG, 'bloc mapImageUrl not exist for id: ${bloc.id}');
+    }
+
+    try {
+      freshBloc = freshBloc.copyWith(orderPriority: bloc.orderPriority);
+    } catch (e) {
+      Logx.em(_TAG, 'bloc orderPriority not exist for id: ${bloc.id}');
+    }
+    try {
+      freshBloc = freshBloc.copyWith(powerBloc: bloc.powerBloc);
+    } catch (e) {
+      Logx.em(_TAG, 'bloc powerBloc not exist for id: ${bloc.id}');
+    }
+    try {
+      freshBloc = freshBloc.copyWith(superPowerBloc: bloc.superPowerBloc);
+    } catch (e) {
+      Logx.em(_TAG, 'bloc superPowerBloc not exist for id: ${bloc.id}');
+    }
+    try {
+      freshBloc = freshBloc.copyWith(creationDate: bloc.creationDate);
+    } catch (e) {
+      Logx.em(_TAG, 'bloc creationDate not exist for id: ${bloc.id}');
     }
 
     return freshBloc;

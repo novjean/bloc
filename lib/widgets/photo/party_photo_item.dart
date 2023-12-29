@@ -52,19 +52,22 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
 
   @override
   void initState() {
+    super.initState();
+
     if (widget.partyPhoto.tags.isNotEmpty) {
       FirestoreHelper.pullUsersByIds(widget.partyPhoto.tags).then((res) {
         if (res.docs.isNotEmpty) {
           for (int i = 0; i < res.docs.length; i++) {
             DocumentSnapshot document = res.docs[i];
             Map<String, dynamic> data =
-                document.data()! as Map<String, dynamic>;
+            document.data()! as Map<String, dynamic>;
             final User user = Fresh.freshUserMap(data, false);
             mUsers.add(user);
           }
 
           setState(() {
             _isUsersLoading = false;
+
           });
         } else {
           setState(() {
@@ -77,8 +80,6 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
         _isUsersLoading = false;
       });
     }
-
-    super.initState();
   }
 
   @override
