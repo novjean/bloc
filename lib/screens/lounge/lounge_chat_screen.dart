@@ -88,29 +88,35 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
         }
         isLoungeLoading = false;
 
-        FirestoreHelper.pullUserLounge(UserPreferences.myUser.id, widget.loungeId).then((res) {
-          if(res.docs.isNotEmpty){
+        FirestoreHelper.pullUserLounge(
+                UserPreferences.myUser.id, widget.loungeId)
+            .then((res) {
+          if (res.docs.isNotEmpty) {
             for (int i = 0; i < res.docs.length; i++) {
               DocumentSnapshot document = res.docs[i];
-              Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+              Map<String, dynamic> data =
+                  document.data()! as Map<String, dynamic>;
               mUserLounge = Fresh.freshUserLoungeMap(data, false);
             }
 
-            if(mUserLounge.isBanned){
+            if (mUserLounge.isBanned) {
               isMember = false;
               GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
             } else {
               isMember = true;
             }
 
-            if(mUserLounge.userFcmToken.isEmpty){
-              if(UserPreferences.myUser.fcmToken.isNotEmpty){
-                mUserLounge = mUserLounge.copyWith(userFcmToken: UserPreferences.myUser.fcmToken);
+            if (mUserLounge.userFcmToken.isEmpty) {
+              if (UserPreferences.myUser.fcmToken.isNotEmpty) {
+                mUserLounge = mUserLounge.copyWith(
+                    userFcmToken: UserPreferences.myUser.fcmToken);
                 FirestoreHelper.pushUserLounge(mUserLounge);
               }
             } else {
-              if(UserPreferences.myUser.fcmToken.isNotEmpty && mUserLounge.userFcmToken != UserPreferences.myUser.fcmToken){
-                mUserLounge = mUserLounge.copyWith(userFcmToken: UserPreferences.myUser.fcmToken);
+              if (UserPreferences.myUser.fcmToken.isNotEmpty &&
+                  mUserLounge.userFcmToken != UserPreferences.myUser.fcmToken) {
+                mUserLounge = mUserLounge.copyWith(
+                    userFcmToken: UserPreferences.myUser.fcmToken);
                 FirestoreHelper.pushUserLounge(mUserLounge);
               }
             }
@@ -119,14 +125,15 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
               isUserLoungeLoading = false;
             });
           } else {
-            if(UserPreferences.myUser.clearanceLevel>=Constants.MANAGER_LEVEL){
+            if (UserPreferences.myUser.clearanceLevel >=
+                Constants.MANAGER_LEVEL) {
               setState(() {
                 isMember = false;
                 isUserLoungeLoading = false;
               });
             } else {
               WidgetsBinding.instance.addPostFrameCallback((_) {
-                if(mLounge.isVip){
+                if (mLounge.isVip) {
                   _showPrivateLoungeDialog(context);
                 }
               });
@@ -176,7 +183,10 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
                   },
                   child: const Text('bloc')),
               const Spacer(),
-              Text(mLounge.name, overflow: TextOverflow.ellipsis,),
+              Text(
+                mLounge.name,
+                overflow: TextOverflow.ellipsis,
+              ),
               Padding(
                 padding: const EdgeInsets.only(left: 8.0, right: 10),
                 child: GestureDetector(
@@ -204,48 +214,50 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
           ),
         ),
         backgroundColor: Constants.background,
-        floatingActionButton: !isMember? SizedBox(
-          height: 150,
-          width: 150,
-          child: FloatingActionButton(
-            onPressed: () async {
-              UserLounge userLounge = Dummy.getDummyUserLounge();
-              userLounge = userLounge.copyWith(
-                userId: UserPreferences.myUser.id,
-                userFcmToken: UserPreferences.myUser.fcmToken,
-                  loungeId: widget.loungeId
-              );
-              FirestoreHelper.pushUserLounge(userLounge);
+        floatingActionButton: !isMember
+            ? SizedBox(
+                height: 150,
+                width: 150,
+                child: FloatingActionButton(
+                  onPressed: () async {
+                    UserLounge userLounge = Dummy.getDummyUserLounge();
+                    userLounge = userLounge.copyWith(
+                        userId: UserPreferences.myUser.id,
+                        userFcmToken: UserPreferences.myUser.fcmToken,
+                        loungeId: widget.loungeId);
+                    FirestoreHelper.pushUserLounge(userLounge);
 
-              FirebaseMessaging.instance.subscribeToTopic(widget.loungeId);
+                    FirebaseMessaging.instance
+                        .subscribeToTopic(widget.loungeId);
 
-              setState(() {
-                isMember = true;
-              });
-            },
-            backgroundColor: Theme.of(context).primaryColor,
-            tooltip: 'join lounge',
-            elevation: 5,
-            splashColor: Colors.grey,
-            shape: const BeveledRectangleBorder(
-                borderRadius: BorderRadius.zero
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.local_pizza_outlined,
-                  color: Theme.of(context).primaryColorDark,
-                  size: 28,
+                    setState(() {
+                      isMember = true;
+                    });
+                  },
+                  backgroundColor: Theme.of(context).primaryColor,
+                  tooltip: 'join lounge',
+                  elevation: 5,
+                  splashColor: Colors.grey,
+                  shape: const BeveledRectangleBorder(
+                      borderRadius: BorderRadius.zero),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.local_pizza_outlined,
+                        color: Theme.of(context).primaryColorDark,
+                        size: 28,
+                      ),
+                      const Text('join'),
+                    ],
+                  ),
                 ),
-                const Text('join'),
-              ],
-            ),
-          ),
-        ): const SizedBox(),
+              )
+            : const SizedBox(),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-
-        body: isLoungeLoading && isUserLoungeLoading ? const LoadingWidget() : _buildBody(context),
+        body: isLoungeLoading && isUserLoungeLoading
+            ? const LoadingWidget()
+            : _buildBody(context),
       ),
     );
   }
@@ -266,15 +278,12 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
         Expanded(
           child: loadMessages(),
         ),
-
         if (_isUploading)
           const Align(
               alignment: Alignment.centerRight,
               child: Padding(
-                  padding:
-                  EdgeInsets.symmetric(vertical: 8, horizontal: 20),
+                  padding: EdgeInsets.symmetric(vertical: 8, horizontal: 20),
                   child: CircularProgressIndicator(strokeWidth: 2))),
-
         _chatInput(context),
       ],
     );
@@ -309,7 +318,8 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
                   return const Center(
                       child: Text(
                     'say hi 👋',
-                    style: TextStyle(fontSize: 18, color: Constants.lightPrimary),
+                    style:
+                        TextStyle(fontSize: 18, color: Constants.lightPrimary),
                   ));
                 }
               } catch (e) {
@@ -398,13 +408,22 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
                                     child: InkWell(
                                       splashColor: Constants.darkPrimary,
                                       onTap: () {
-                                        FirestoreHelper.pullUserLounge(chat.userId, mLounge.id).then((res){
-                                          if(res.docs.isNotEmpty){
-                                            DocumentSnapshot document = res.docs[0];
-                                            Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-                                            UserLounge userLounge = Fresh.freshUserLoungeMap(data, false);
-                                            userLounge = userLounge.copyWith(isBanned: true);
-                                            FirestoreHelper.pushUserLounge(userLounge);
+                                        FirestoreHelper.pullUserLounge(
+                                                chat.userId, mLounge.id)
+                                            .then((res) {
+                                          if (res.docs.isNotEmpty) {
+                                            DocumentSnapshot document =
+                                                res.docs[0];
+                                            Map<String, dynamic> data =
+                                                document.data()!
+                                                    as Map<String, dynamic>;
+                                            UserLounge userLounge =
+                                                Fresh.freshUserLoungeMap(
+                                                    data, false);
+                                            userLounge = userLounge.copyWith(
+                                                isBanned: true);
+                                            FirestoreHelper.pushUserLounge(
+                                                userLounge);
 
                                             Logx.ist(_TAG, 'user is banned!');
                                           }
@@ -413,7 +432,8 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
                                         Navigator.of(ctx).pop();
                                       },
                                       child: const Column(
-                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
                                         children: <Widget>[
                                           Icon(Icons.cancel),
                                         ],
@@ -424,7 +444,7 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
                               )
                             ],
                           ),
-                          const SizedBox(height:10),
+                          const SizedBox(height: 10),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
@@ -437,31 +457,38 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
                                     child: InkWell(
                                       splashColor: Constants.darkPrimary,
                                       onTap: () async {
-                                        FirestoreHelper.deleteLoungeChat(chat.id);
+                                        FirestoreHelper.deleteLoungeChat(
+                                            chat.id);
 
                                         String photoUrl = '';
                                         String photoChat = '';
 
                                         if (chat.type == 'image') {
-                                          int firstDelimiterIndex = chat.message.indexOf('|');
+                                          int firstDelimiterIndex =
+                                              chat.message.indexOf('|');
                                           if (firstDelimiterIndex != -1) {
                                             // Use substring to split the string into two parts
-                                            photoChat = chat.message.substring(0, firstDelimiterIndex);
-                                            photoUrl = chat.message.substring(firstDelimiterIndex + 1);
+                                            photoChat = chat.message.substring(
+                                                0, firstDelimiterIndex);
+                                            photoUrl = chat.message.substring(
+                                                firstDelimiterIndex + 1);
                                           } else {
                                             // Handle the case where the delimiter is not found
                                             photoUrl = chat.message;
                                           }
 
                                           //need to check here to avoid deleting the party photo by mistake
-                                          if(photoUrl.contains(FirestorageHelper.CHAT_IMAGES)){
-                                            FirestorageHelper.deleteFile(photoUrl);
+                                          if (photoUrl.contains(
+                                              FirestorageHelper.CHAT_IMAGES)) {
+                                            FirestorageHelper.deleteFile(
+                                                photoUrl);
                                           }
                                         }
                                         Navigator.of(ctx).pop();
                                       },
                                       child: const Column(
-                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
                                         children: <Widget>[
                                           Icon(Icons.delete),
                                         ],
@@ -472,7 +499,7 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
                               )
                             ],
                           ),
-                          const SizedBox(height:10),
+                          const SizedBox(height: 10),
                         ],
                       ),
                     ),
@@ -520,101 +547,152 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       showMembersCount(),
-                      DarkButtonWidget(text: '🚪 leave lounge', onClicked: () {
-                        FirestoreHelper.deleteUserLounge(mUserLounge.id);
+                      DarkButtonWidget(
+                        text: '🚪 leave lounge',
+                        onClicked: () {
+                          FirestoreHelper.deleteUserLounge(mUserLounge.id);
 
-                        List<String> exitedMembers = mLounge.exitedUserIds;
-                        exitedMembers.add(mUserLounge.userId);
-                        mLounge = mLounge.copyWith(exitedUserIds: exitedMembers);
-                        FirestoreHelper.pushLounge(mLounge);
+                          List<String> exitedMembers = mLounge.exitedUserIds;
+                          exitedMembers.add(mUserLounge.userId);
+                          mLounge =
+                              mLounge.copyWith(exitedUserIds: exitedMembers);
+                          FirestoreHelper.pushLounge(mLounge);
 
-                        FirebaseMessaging.instance.unsubscribeFromTopic(mLounge.id);
-                        Logx.ilt(_TAG, 'you have has exited the lounge. bye 👋');
+                          FirebaseMessaging.instance
+                              .unsubscribeFromTopic(mLounge.id);
+                          Logx.ilt(
+                              _TAG, 'you have has exited the lounge. bye 👋');
 
-                        GoRouter.of(context).pushNamed(RouteConstants.landingRouteName);
-                      },)
+                          GoRouter.of(context)
+                              .pushNamed(RouteConstants.landingRouteName);
+                        },
+                      )
                     ],
                   ),
-                  const SizedBox(height: 15,),
-                  UserPreferences.myUser.clearanceLevel>=Constants.ADMIN_LEVEL?
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(right: 15.0),
-                        child: ButtonWidget(text: '♀️💃🏻', onClicked: () async {
+                  const SizedBox(
+                    height: 15,
+                  ),
+                  UserPreferences.myUser.clearanceLevel >= Constants.ADMIN_LEVEL
+                      ? Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(right: 15.0),
+                              child: ButtonWidget(
+                                text: '♀️💃🏻',
+                                onClicked: () async {
+                                  FirestoreHelper.pullActiveGuestListParties(
+                                          Timestamp.now()
+                                              .millisecondsSinceEpoch)
+                                      .then((res) {
+                                    if (res.docs.isNotEmpty) {
+                                      for (int i = 0;
+                                          i < res.docs.length;
+                                          i++) {
+                                        DocumentSnapshot document = res.docs[i];
+                                        Map<String, dynamic> data = document
+                                            .data()! as Map<String, dynamic>;
+                                        final Party party =
+                                            Fresh.freshPartyMap(data, true);
+                                        mParties.add(party);
+                                        mPartyNames.add(
+                                            '${party.name} ${party.chapter}');
+                                      }
 
-                          FirestoreHelper.pullActiveGuestListParties(Timestamp.now().millisecondsSinceEpoch).then((res) {
-                            if (res.docs.isNotEmpty) {
-                              for (int i = 0; i < res.docs.length; i++) {
-                                DocumentSnapshot document = res.docs[i];
-                                Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-                                final Party party = Fresh.freshPartyMap(data, true);
-                                mParties.add(party);
-                                mPartyNames.add('${party.name} ${party.chapter}');
-                              }
+                                      _showPartiesAndInvite(
+                                          context, true, false, false);
+                                    }
+                                  });
+                                },
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(right: 15.0),
+                              child: ButtonWidget(
+                                text: '♂️🕺🏼',
+                                onClicked: () async {
+                                  FirestoreHelper.pullActiveGuestListParties(
+                                          Timestamp.now()
+                                              .millisecondsSinceEpoch)
+                                      .then((res) {
+                                    if (res.docs.isNotEmpty) {
+                                      for (int i = 0;
+                                          i < res.docs.length;
+                                          i++) {
+                                        DocumentSnapshot document = res.docs[i];
+                                        Map<String, dynamic> data = document
+                                            .data()! as Map<String, dynamic>;
+                                        final Party party =
+                                            Fresh.freshPartyMap(data, true);
+                                        mParties.add(party);
+                                        mPartyNames.add(
+                                            '${party.name} ${party.chapter}');
+                                      }
 
-                              _showPartiesAndInvite(context, true, false, false);
-                            }
-                          });
-                        },),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(right: 15.0),
-                        child: ButtonWidget(text: '♂️🕺🏼', onClicked: () async {
+                                      _showPartiesAndInvite(
+                                          context, false, true, false);
+                                    }
+                                  });
+                                },
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(right: 15.0),
+                              child: ButtonWidget(
+                                text: '☿️🦄',
+                                onClicked: () async {
+                                  FirestoreHelper.pullActiveGuestListParties(
+                                          Timestamp.now()
+                                              .millisecondsSinceEpoch)
+                                      .then((res) {
+                                    if (res.docs.isNotEmpty) {
+                                      for (int i = 0;
+                                          i < res.docs.length;
+                                          i++) {
+                                        DocumentSnapshot document = res.docs[i];
+                                        Map<String, dynamic> data = document
+                                            .data()! as Map<String, dynamic>;
+                                        final Party party =
+                                            Fresh.freshPartyMap(data, true);
+                                        mParties.add(party);
+                                        mPartyNames.add(
+                                            '${party.name} ${party.chapter}');
+                                      }
 
-                          FirestoreHelper.pullActiveGuestListParties(Timestamp.now().millisecondsSinceEpoch).then((res) {
-                            if (res.docs.isNotEmpty) {
-                              for (int i = 0; i < res.docs.length; i++) {
-                                DocumentSnapshot document = res.docs[i];
-                                Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-                                final Party party = Fresh.freshPartyMap(data, true);
-                                mParties.add(party);
-                                mPartyNames.add('${party.name} ${party.chapter}');
-                              }
+                                      _showPartiesAndInvite(
+                                          context, false, false, true);
+                                    }
+                                  });
+                                },
+                              ),
+                            ),
+                            ButtonWidget(
+                              text: '♂️☿️♀️🧜🏻',
+                              onClicked: () {
+                                FirestoreHelper.pullActiveGuestListParties(
+                                        Timestamp.now().millisecondsSinceEpoch)
+                                    .then((res) {
+                                  if (res.docs.isNotEmpty) {
+                                    for (int i = 0; i < res.docs.length; i++) {
+                                      DocumentSnapshot document = res.docs[i];
+                                      Map<String, dynamic> data = document
+                                          .data()! as Map<String, dynamic>;
+                                      final Party party =
+                                          Fresh.freshPartyMap(data, true);
+                                      mParties.add(party);
+                                      mPartyNames.add(
+                                          '${party.name} ${party.chapter}');
+                                    }
 
-                              _showPartiesAndInvite(context, false, true, false);
-                            }
-                          });
-                        },),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(right: 15.0),
-                        child: ButtonWidget(text: '☿️🦄', onClicked: () async {
-
-                          FirestoreHelper.pullActiveGuestListParties(Timestamp.now().millisecondsSinceEpoch).then((res) {
-                            if (res.docs.isNotEmpty) {
-                              for (int i = 0; i < res.docs.length; i++) {
-                                DocumentSnapshot document = res.docs[i];
-                                Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-                                final Party party = Fresh.freshPartyMap(data, true);
-                                mParties.add(party);
-                                mPartyNames.add('${party.name} ${party.chapter}');
-                              }
-
-                              _showPartiesAndInvite(context, false, false, true);
-                            }
-                          });
-                        },),
-                      ),
-
-                      ButtonWidget(text: '♂️☿️♀️🧜🏻', onClicked: () {
-                        FirestoreHelper.pullActiveGuestListParties(Timestamp.now().millisecondsSinceEpoch).then((res) {
-                          if (res.docs.isNotEmpty) {
-                            for (int i = 0; i < res.docs.length; i++) {
-                              DocumentSnapshot document = res.docs[i];
-                              Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-                              final Party party = Fresh.freshPartyMap(data, true);
-                              mParties.add(party);
-                              mPartyNames.add('${party.name} ${party.chapter}');
-                            }
-
-                            _showPartiesAndInvite(context, true, true, true);
-                          }
-                        });
-                      },),
-                    ],
-                  ) : const SizedBox(),
+                                    _showPartiesAndInvite(
+                                        context, true, true, true);
+                                  }
+                                });
+                              },
+                            ),
+                          ],
+                        )
+                      : const SizedBox(),
                   Padding(
                     padding: const EdgeInsets.only(top: 10.0),
                     child: Text(
@@ -661,9 +739,11 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
     );
   }
 
-  _showPartiesAndInvite(BuildContext context, bool checkFemale, bool checkMale, bool checkTrans) {
+  _showPartiesAndInvite(
+      BuildContext context, bool checkFemale, bool checkMale, bool checkTrans) {
     String defaultTitle = 'You\'re invited!';
-    String defaultMessage = 'you are exclusively invited to this party 🎉! Entry\'s on a first come, first serve basis. Come in early or reserve a table for a guaranteed spot. 💖';
+    String defaultMessage =
+        'you are exclusively invited to this party 🎉! Entry\'s on a first come, first serve basis. Come in early or reserve a table for a guaranteed spot. 💖';
 
     return showDialog(
       context: context,
@@ -672,7 +752,8 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
           backgroundColor: Constants.lightPrimary,
           shape: const RoundedRectangleBorder(
               borderRadius: BorderRadius.all(Radius.circular(20.0))),
-          contentPadding: const EdgeInsets.all(16.0),          content: SizedBox(
+          contentPadding: const EdgeInsets.all(16.0),
+          content: SizedBox(
             height: 250,
             child: SingleChildScrollView(
               child: Column(
@@ -708,7 +789,9 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
                       });
                     },
                   ),
-                  const SizedBox(height: 15,),
+                  const SizedBox(
+                    height: 15,
+                  ),
                   TextFieldWidget(
                     label: 'description',
                     text: defaultTitle,
@@ -735,8 +818,8 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
             TextButton(
               child: const Text('send invites'),
               onPressed: () async {
-                await _sendInvites(ctx, defaultTitle, defaultMessage, checkFemale, checkMale,
-                checkTrans);
+                await _sendInvites(ctx, defaultTitle, defaultMessage,
+                    checkFemale, checkMale, checkTrans);
                 Navigator.of(ctx).pop();
               },
             ),
@@ -760,82 +843,88 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
       FirestoreHelper.pullPartyGuestsByPartyId(sParty.id).then((res) {
         List<String> partyGuestIds = [];
 
-        if(res.docs.isNotEmpty){
+        if (res.docs.isNotEmpty) {
           for (int i = 0; i < res.docs.length; i++) {
             DocumentSnapshot document = res.docs[i];
-            Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+            Map<String, dynamic> data =
+                document.data()! as Map<String, dynamic>;
             final PartyGuest partyGuest = Fresh.freshPartyGuestMap(data, false);
             partyGuestIds.add(partyGuest.guestId);
           }
         }
 
         FirestoreHelper.pullUserLoungeMembers(mLounge.id).then((res) async {
-          if(res.docs.isNotEmpty){
+          if (res.docs.isNotEmpty) {
             for (int i = 0; i < res.docs.length; i++) {
               DocumentSnapshot document = res.docs[i];
-              Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+              Map<String, dynamic> data =
+                  document.data()! as Map<String, dynamic>;
               UserLounge userLounge = Fresh.freshUserLoungeMap(data, false);
               mMembers.add(userLounge);
 
-              if(userLounge.userFcmToken.isNotEmpty){
+              if (userLounge.userFcmToken.isNotEmpty) {
                 mFcmMembers.add(userLounge);
               }
             }
 
             int count = 0;
 
-            for(int i=0; i<mFcmMembers.length; i++){
+            for (int i = 0; i < mFcmMembers.length; i++) {
               UserLounge userLounge = mFcmMembers[i];
 
               //check if user has already requested
-              if(partyGuestIds.contains(userLounge.userId)){
+              if (partyGuestIds.contains(userLounge.userId)) {
                 continue;
               }
 
               await FirestoreHelper.pullUser(userLounge.userId).then((res) {
-                if(res.docs.isNotEmpty){
+                if (res.docs.isNotEmpty) {
                   DocumentSnapshot document = res.docs[0];
-                  Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+                  Map<String, dynamic> data =
+                      document.data()! as Map<String, dynamic>;
 
                   final User user = Fresh.freshUserMap(data, false);
 
-                  if(user.isAppUser && user.fcmToken.isNotEmpty){
-                    if(checkFemale) {
-                      if(user.gender != 'female'){
-                        return;
+                  if (user.clearanceLevel == Constants.CUSTOMER_LEVEL ||
+                      user.clearanceLevel == Constants.ADMIN_LEVEL) {
+                    if (user.isAppUser && user.fcmToken.isNotEmpty) {
+                      if (checkFemale) {
+                        if (user.gender != 'female') {
+                          return;
+                        }
+                      } else if (checkMale) {
+                        if (user.gender != 'male') {
+                          return;
+                        }
+                      } else if (checkTrans) {
+                        if (user.gender == 'male' || user.gender == 'female') {
+                          return;
+                        }
                       }
-                    } else if(checkMale) {
-                      if(user.gender != 'male'){
-                        return;
-                      }
-                    } else if(checkTrans) {
-                      if(user.gender == 'male' || user.gender == 'female'){
-                        return;
-                      }
+
+                      // notify them of invite
+                      PartyGuest partyGuest = Dummy.getDummyPartyGuest(false);
+                      partyGuest = partyGuest.copyWith(
+                        partyId: sParty.id,
+                        guestId: user.id,
+                        name: user.name,
+                        surname: user.surname,
+                        phone: user.phoneNumber.toString(),
+                        email: user.email,
+                        gender: user.gender,
+                        isApproved: true,
+                        guestStatus: 'promoter',
+                        promoterId: Constants.blocPromoterId,
+                      );
+
+                      FirestoreHelper.pushPartyGuest(partyGuest);
+
+                      String title = '🎁 ${sParty.name}, $addTitle';
+                      String message = 'Hey ${user.name}, $addMessage';
+                      Apis.sendPushNotification(user.fcmToken, title, message);
+                      Logx.ist(_TAG, '${user.name} has been invited!');
+                      count++;
                     }
-
-                    // notify them of invite
-                    PartyGuest partyGuest = Dummy.getDummyPartyGuest(false);
-                    partyGuest = partyGuest.copyWith(
-                      partyId: sParty.id,
-                      guestId: user.id,
-                      name: user.name,
-                      surname: user.surname,
-                      phone: user.phoneNumber.toString(),
-                      email: user.email,
-                      gender: user.gender,
-                      isApproved: true,
-                      guestStatus: 'promoter',
-                      promoterId: Constants.blocPromoterId,
-                    );
-
-                    FirestoreHelper.pushPartyGuest(partyGuest);
-
-                    String title = '🎁 ${sParty.name}, $addTitle';
-                    String message = 'Hey ${user.name}, $addMessage';
-                    Apis.sendPushNotification(user.fcmToken, title, message);
-                    Logx.ist(_TAG, '${user.name} has been invited!');
-                    count++;
                   }
                 }
               });
@@ -869,24 +958,24 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
                   //adding some space
                   SizedBox(width: MediaQuery.of(context).size.width * .02),
                   Expanded(
-                      child: TextField(
-                    controller: _textController,
-                    style: const TextStyle(color: Constants.primary),
-                    keyboardType: TextInputType.multiline,
-                    maxLines: null,
-                    onTap: () {},
-                    decoration: const InputDecoration(
-                        hintText: 'type something...',
-                        hintStyle: TextStyle(color: Constants.primary),
-                        border: InputBorder.none),
-                  ),
+                    child: TextField(
+                      controller: _textController,
+                      style: const TextStyle(color: Constants.primary),
+                      keyboardType: TextInputType.multiline,
+                      maxLines: null,
+                      onTap: () {},
+                      decoration: const InputDecoration(
+                          hintText: 'type something...',
+                          hintStyle: TextStyle(color: Constants.primary),
+                          border: InputBorder.none),
+                    ),
                   ),
 
                   //pick image from gallery button
                   IconButton(
                       onPressed: () async {
-                        if(!kIsWeb){
-                          if(isMember){
+                        if (!kIsWeb) {
+                          if (isMember) {
                             final ImagePicker picker = ImagePicker();
                             final XFile? image = await picker.pickImage(
                                 source: ImageSource.gallery,
@@ -908,10 +997,12 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
                             //   setState(() => _isUploading = false);
                             // }
                           } else {
-                            Toaster.shortToast('have the 🍕 and join us to post photo');
+                            Toaster.shortToast(
+                                'have the 🍕 and join us to post photo');
                           }
                         } else {
-                          Toaster.shortToast('bloc app is required to be able to post photo');
+                          Toaster.shortToast(
+                              'bloc app is required to be able to post photo');
                         }
                       },
                       icon: const Icon(Icons.image,
@@ -920,8 +1011,8 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
                   //take image from camera button
                   IconButton(
                       onPressed: () async {
-                        if(!kIsWeb){
-                          if(isMember){
+                        if (!kIsWeb) {
+                          if (isMember) {
                             final ImagePicker picker = ImagePicker();
                             final XFile? image = await picker.pickImage(
                                 source: ImageSource.camera,
@@ -930,10 +1021,12 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
                                 maxWidth: 440);
                             _storePhotoChat(image);
                           } else {
-                            Toaster.longToast('have the 🍕 and join us to post photo');
+                            Toaster.longToast(
+                                'have the 🍕 and join us to post photo');
                           }
                         } else {
-                          Toaster.shortToast('bloc app is required to be able to post photo');
+                          Toaster.shortToast(
+                              'bloc app is required to be able to post photo');
                         }
                       },
                       icon: const Icon(Icons.camera_alt_rounded,
@@ -949,27 +1042,27 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
           //send message button
           MaterialButton(
             onPressed: () {
-                if(isMember) {
-                  if (_textController.text.isNotEmpty) {
-                    LoungeChat chat = Dummy.getDummyLoungeChat();
-                    chat = chat.copyWith(
-                      loungeId: mLounge.id,
-                      loungeName: mLounge.name,
-                      type: FirestoreHelper.CHAT_TYPE_TEXT,
-                      message: _textController.text,
-                      time: Timestamp.now().millisecondsSinceEpoch,
-                    );
+              if (isMember) {
+                if (_textController.text.isNotEmpty) {
+                  LoungeChat chat = Dummy.getDummyLoungeChat();
+                  chat = chat.copyWith(
+                    loungeId: mLounge.id,
+                    loungeName: mLounge.name,
+                    type: FirestoreHelper.CHAT_TYPE_TEXT,
+                    message: _textController.text,
+                    time: Timestamp.now().millisecondsSinceEpoch,
+                  );
 
-                    FirestoreHelper.pushLoungeChat(chat);
+                  FirestoreHelper.pushLoungeChat(chat);
 
-                    FirestoreHelper.updateLoungeLastChat(
-                        mLounge.id, chat.message, chat.time);
+                  FirestoreHelper.updateLoungeLastChat(
+                      mLounge.id, chat.message, chat.time);
 
-                    _textController.text = '';
-                  }
-                } else {
-                  Toaster.shortToast('have the 🍕 slice and join us to chat');
+                  _textController.text = '';
                 }
+              } else {
+                Toaster.shortToast('have the 🍕 slice and join us to chat');
+              }
             },
             minWidth: 0,
             padding:
@@ -1028,13 +1121,12 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Padding(
-                    padding:
-                    EdgeInsets.only(bottom: 10, left: 10, right: 10),
+                    padding: EdgeInsets.only(bottom: 10, left: 10, right: 10),
                     child: Text(
                       'photo chat',
                       overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                          fontSize: 20, fontWeight: FontWeight.bold),
+                      style:
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     ),
                   ),
                   // Padding(
@@ -1048,13 +1140,14 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
                   // ),
                   Center(
                       child: SizedBox(
-                        width: mq.width,
-                        child: FadeInImage(
-                          placeholder: const AssetImage('assets/images/logo_3x2.png'),
-                          image: NetworkImage(chat.imageUrl),
-                          fit: BoxFit.contain,
-                        ),
-                      )),
+                    width: mq.width,
+                    child: FadeInImage(
+                      placeholder:
+                          const AssetImage('assets/images/logo_3x2.png'),
+                      image: NetworkImage(chat.imageUrl),
+                      fit: BoxFit.contain,
+                    ),
+                  )),
                   TextFieldWidget(
                     text: '',
                     maxLines: 3,
@@ -1068,11 +1161,10 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
             ),
           ),
           actions: [
-
             TextButton(
               child: const Text("cancel"),
               onPressed: () {
-                if(chat.message.contains(FirestorageHelper.CHAT_IMAGES)){
+                if (chat.message.contains(FirestorageHelper.CHAT_IMAGES)) {
                   FirestorageHelper.deleteFile(chat.message);
                 }
 
@@ -1081,8 +1173,8 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
             ),
             TextButton(
               style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all<Color>(
-                    Constants.darkPrimary),
+                backgroundColor:
+                    MaterialStateProperty.all<Color>(Constants.darkPrimary),
               ),
               child: const Text(
                 "💌 send",
@@ -1092,7 +1184,8 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
                 chat = chat.copyWith(message: photoChatMessage);
 
                 FirestoreHelper.pushLoungeChat(chat);
-                FirestoreHelper.updateLoungeLastChat(mLounge.id, '📸 $photoChatMessage', chat.time);
+                FirestoreHelper.updateLoungeLastChat(
+                    mLounge.id, '📸 $photoChatMessage', chat.time);
 
                 setState(() => _isUploading = false);
 
@@ -1126,35 +1219,46 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
                   '${mLounge.name} ⚜️ vip lounge',
                   style: const TextStyle(fontSize: 22, color: Colors.black),
                 ),
-                const SizedBox(height: 20,),
+                const SizedBox(
+                  height: 20,
+                ),
                 Text(
-                  '🔥🌟 Welcome to the VIP vibes! You gotta score an invite, join the guest list or drop a request to join the wave, but hold tight – the admins gonna give it that golden touch before you\'re in the spotlight. It\'s all about that exclusive energy! 🚀👑'.toLowerCase(),
+                  '🔥🌟 Welcome to the VIP vibes! You gotta score an invite, join the guest list or drop a request to join the wave, but hold tight – the admins gonna give it that golden touch before you\'re in the spotlight. It\'s all about that exclusive energy! 🚀👑'
+                      .toLowerCase(),
                   textAlign: TextAlign.center,
-                    softWrap: true,
+                  softWrap: true,
                   style: const TextStyle(fontSize: 18, color: Colors.black),
                 )
               ],
             ),
           ),
           actions: [
-            mLounge.name.isNotEmpty?
-            TextButton(
-              style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all<Color>(
-                    Constants.darkPrimary),
-              ),
-              child: const Text("🔑 request access", style: TextStyle(color: Constants.primary),),
-              onPressed: () {
-                Navigator.of(context).pop();
-                UserLounge userLounge = Dummy.getDummyUserLounge();
-                userLounge = userLounge.copyWith(userId :UserPreferences.myUser.id,
-                    userFcmToken: UserPreferences.myUser.fcmToken,
-                    loungeId: mLounge.id, isAccepted: false);
-                FirestoreHelper.pushUserLounge(userLounge);
-                Logx.ist (_TAG, 'request to join the vip lounge has been sent 🫰');
-                GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
-              },
-            ): const SizedBox(),
+            mLounge.name.isNotEmpty
+                ? TextButton(
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all<Color>(
+                          Constants.darkPrimary),
+                    ),
+                    child: const Text(
+                      "🔑 request access",
+                      style: TextStyle(color: Constants.primary),
+                    ),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      UserLounge userLounge = Dummy.getDummyUserLounge();
+                      userLounge = userLounge.copyWith(
+                          userId: UserPreferences.myUser.id,
+                          userFcmToken: UserPreferences.myUser.fcmToken,
+                          loungeId: mLounge.id,
+                          isAccepted: false);
+                      FirestoreHelper.pushUserLounge(userLounge);
+                      Logx.ist(_TAG,
+                          'request to join the vip lounge has been sent 🫰');
+                      GoRouter.of(context)
+                          .pushNamed(RouteConstants.homeRouteName);
+                    },
+                  )
+                : const SizedBox(),
             TextButton(
               child: const Text("exit"),
               onPressed: () {
@@ -1182,11 +1286,13 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
               try {
                 int count = snapshot.data!.docs.length;
 
-                return Text('$count members', style: const TextStyle(
-                  color: Constants.primary,
-                  fontWeight: FontWeight.normal,
-                  fontSize: 18,
-                ),
+                return Text(
+                  '$count members',
+                  style: const TextStyle(
+                    color: Constants.primary,
+                    fontWeight: FontWeight.normal,
+                    fontSize: 18,
+                  ),
                 );
               } catch (e) {
                 Logx.em(_TAG, e.toString());

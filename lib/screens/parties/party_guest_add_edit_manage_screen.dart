@@ -1271,13 +1271,13 @@ class _PartyGuestAddEditManageScreenState
                         '🥳 yayyy! welcome to ${widget.party.name} family, your guest list for ${widget.party.name} has been approved 🎉, see you and your gang soon! 😎🍾';
 
                     //send a notification
-                    Apis.sendPushNotification(
-                        mBlocUser.fcmToken, title, message);
+                    Apis.sendPushNotification(mBlocUser.fcmToken, title, message);
                     Logx.ist(_TAG,
                         'notification has been sent to ${mBlocUser.name} ${mBlocUser.surname}');
                   } else {
                     Logx.d(_TAG,
                         'app user but no fcm token to alert guest approval');
+                    _notifyApprovalWhatsapp();
                   }
                 } else {
                   if (mBlocUser.fcmToken.isNotEmpty) {
@@ -1291,21 +1291,21 @@ class _PartyGuestAddEditManageScreenState
                     Logx.ist(_TAG,
                         'notification has been sent to ${mBlocUser.name} ${mBlocUser.surname}');
                   } else {
-                    Logx.d(_TAG,
-                        'app user but no fcm token to alert guest approval');
+                    Logx.d(_TAG, 'no fcm token, whatsapp notifying guest approval');
+                    _notifyApprovalWhatsapp();
                   }
                 }
               });
             } else {
               if (mBlocUser.fcmToken.isNotEmpty) {
                 String title = widget.party.name;
-                String message =
-                    '🥳 yayyy! your guest list for ${widget.party.name} has been approved 🎉, see you and your gang soon! 😎🍾';
+                String message = '🥳 yayyy! your guest list for ${widget.party.name} has been approved 🎉, see you and your gang soon! 😎🍾';
 
                 //send a notification
                 Apis.sendPushNotification(mBlocUser.fcmToken, title, message);
-                Logx.ist(_TAG,
-                    'notification has been sent to ${mBlocUser.name} ${mBlocUser.surname}');
+                Logx.ist(_TAG, 'notification has been sent to ${mBlocUser.name} ${mBlocUser.surname}');
+              } else {
+                _notifyApprovalWhatsapp();
               }
             }
             Logx.ist(_TAG, 'party guest ${widget.partyGuest.name} is approved');
@@ -2857,10 +2857,19 @@ class _PartyGuestAddEditManageScreenState
           GoRouter.of(context).pushNamed(RouteConstants.boxOfficeRouteName);
         }
       } else {
-        // no ad campaings found
+        // no ad campaigns found
         GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
         GoRouter.of(context).pushNamed(RouteConstants.boxOfficeRouteName);
       }
     });
+  }
+
+  void _notifyApprovalWhatsapp() {
+    String message = '🥳 congratulations ${mBlocUser.name}! your guest list for ${widget.party.name} on bloc has been approved 🎉.\n\n 🎫 passes can be found in our app, download at \nhttps://bloc.bar/app_store.html \n\n#blocCommunity💛';
+    // Encode the phone number and message for the URL
+    String url = 'https://wa.me/+${mBlocUser.phoneNumber}/?text=${Uri.encodeFull(message)}';
+    Uri uri = Uri.parse(url);
+
+    NetworkUtils.launchInBrowser(uri);
   }
 }

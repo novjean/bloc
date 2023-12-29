@@ -427,7 +427,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
       child: Text(
         _btnFollowText,
         style: TextStyle(
-            fontSize: 18, color: isFollowing ? Colors.green : Colors.red),
+            fontSize: 18, color: isFollowing ? Colors.red : Colors.green),
       ),
     ));
   }
