@@ -1161,10 +1161,10 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
         context: context,
         builder: (BuildContext ctx) {
           return AlertDialog(
-            title: Text('list of users to review'),
-            content: Container(
+            title: const Text('google review - users'),
+            content: SizedBox(
               width: double.maxFinite,
-              height: 200.0,
+              height: double.maxFinite,
               child: ListView.builder(
                 itemCount: userList.length,
                 itemBuilder: (BuildContext context, int index) {
@@ -1244,10 +1244,10 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
         context: context,
         builder: (BuildContext ctx) {
           return AlertDialog(
-            title: Text('list of users to app review'),
+            title: Text('app review - users'),
             content: Container(
               width: double.maxFinite,
-              height: 200.0,
+              height: double.maxFinite,
               child: ListView.builder(
                 itemCount: users.length,
                 itemBuilder: (BuildContext context, int index) {
