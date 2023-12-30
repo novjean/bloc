@@ -92,8 +92,6 @@ class Apis{
           body: jsonEncode(body));
       Logx.i(_TAG, 'Response status: ${res.statusCode == 200? 'success':'failure'}');
       Logx.i(_TAG, 'Response body: ${res.body}');
-
-      // Logx.i(_TAG, await read(Uri.https('example.com', 'foobar.txt')));
     } catch(e) {
       Logx.em(_TAG, e.toString());
     }
@@ -120,8 +118,6 @@ class Apis{
           body: jsonEncode(body));
       Logx.i(_TAG, 'Response status: ${res.statusCode == 200? 'success':'failure'}');
       Logx.i(_TAG, 'Response body: ${res.body}');
-
-      // Logx.i(_TAG, await read(Uri.https('example.com', 'foobar.txt')));
     } catch(e) {
       Logx.em(_TAG, e.toString());
     }

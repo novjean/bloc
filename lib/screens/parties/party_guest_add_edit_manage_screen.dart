@@ -2839,10 +2839,10 @@ class _PartyGuestAddEditManageScreenState
                               }
                             });
                           },
-                          child: Text(
+                          child: const Text(
                             "🎊 more info",
                             style: TextStyle(
-                                color: Constants.darkPrimary, fontSize: 15),
+                                color: Constants.lightPrimary, fontSize: 15),
                           ),
                           // child:  const Text('close'),
                         )

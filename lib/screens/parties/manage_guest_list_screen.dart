@@ -20,7 +20,9 @@ import '../../utils/constants.dart';
 import '../../utils/date_time_utils.dart';
 import '../../utils/file_utils.dart';
 import '../../utils/logx.dart';
+import '../../utils/network_utils.dart';
 import '../../widgets/parties/manage_guest_list_item.dart';
+import '../../widgets/ui/button_widget.dart';
 import '../../widgets/ui/loading_widget.dart';
 
 class ManageGuestListScreen extends StatefulWidget {
@@ -532,7 +534,7 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text('unapprove all'),
+                        const Text('un-approve all'),
                         SizedBox.fromSize(
                           size: const Size(50, 50),
                           child: ClipOval(
@@ -571,6 +573,34 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
                                 onTap: () async {
                                   Navigator.of(ctx).pop();
                                   _showRequestReviewFromGuests(context);
+                                },
+                                child: const Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: <Widget>[
+                                    Icon(Icons.reviews),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text('all guests review - whatsapp'),
+                        SizedBox.fromSize(
+                          size: const Size(50, 50),
+                          child: ClipOval(
+                            child: Material(
+                              color: Constants.primary,
+                              child: InkWell(
+                                splashColor: Constants.darkPrimary,
+                                onTap: () async {
+                                  Navigator.of(ctx).pop();
+                                  _showWhatsappRequestGoogleReviews(context);
                                 },
                                 child: const Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
@@ -951,6 +981,157 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
     );
   }
 
+  void _showWhatsappRequestGoogleReviews(BuildContext context) {
+    showDialog(
+        context: context,
+        builder: (BuildContext ctx) {
+          return AlertDialog(
+            title: Text(
+              'request google review from all ${sPartyName == 'all' ? '' : sPartyName} guest lists',
+              style: const TextStyle(color: Colors.redAccent),
+            ),
+            content: Text(
+                'whatsapp request for google review from ${mPartyGuests.length} guests. ask from all those who were approved?'),
+            actions: [
+              TextButton(
+                child: const Text('review bloc'),
+                onPressed: () async {
+                  Navigator.of(ctx).pop();
+
+                  List<User> reviewUsers = [];
+
+                  for (int i = 0; i<mPartyGuests.length; i++) {
+                    PartyGuest partyGuest = mPartyGuests[i];
+                    if(partyGuest.guestId.isNotEmpty && partyGuest.isApproved){
+                      await FirestoreHelper.pullUser(partyGuest.guestId).then((res) {
+                        if (res.docs.isNotEmpty) {
+                          DocumentSnapshot document = res.docs[0];
+                          Map<String, dynamic> map = document.data()! as Map<String, dynamic>;
+                          User user = Fresh.freshUserMap(map, true);
+
+                          if(user.fcmToken.isNotEmpty ){
+                            if(user.lastReviewTime < Timestamp.now().millisecondsSinceEpoch - (2 * DateTimeUtils.millisecondsWeek)){
+                                reviewUsers.add(user);
+                            } else {
+                              Logx.ist(_TAG, '${user.name} ${user.surname} has already google reviewed 🤞');
+                            }
+                          }
+
+                          if(i==mPartyGuests.length-1){
+                            if(reviewUsers.isNotEmpty){
+                              _showWhatsappRequestList(reviewUsers, Constants.blocGoogleReview);
+                            } else {
+                              Logx.ilt(_TAG, 'no users in list to review');
+                            }
+                          }
+                        } else {
+                          Logx.est(_TAG, 'user in guest list not found in db : ${partyGuest.guestId}');
+                        }
+                      });
+                    }
+                  }
+
+                  },
+              ),
+              TextButton(
+                child: const Text('review freq'),
+                onPressed: () async {
+                  Navigator.of(ctx).pop();
+
+                  List<User> reviewUsers = [];
+
+                  for (int i=0; i< mPartyGuests.length; i++) {
+                    PartyGuest partyGuest = mPartyGuests[i];
+
+                    if(partyGuest.guestId.isNotEmpty && partyGuest.isApproved){
+                      FirestoreHelper.pullUser(partyGuest.guestId).then((res) {
+                        if (res.docs.isNotEmpty) {
+                          DocumentSnapshot document = res.docs[0];
+                          Map<String, dynamic> map = document.data()! as Map<String, dynamic>;
+                          User user = Fresh.freshUserMap(map, true);
+
+                          if(user.fcmToken.isNotEmpty ){
+                            if(user.lastReviewTime < Timestamp.now().millisecondsSinceEpoch - (2 * DateTimeUtils.millisecondsWeek)){
+                                reviewUsers.add(user);
+                            } else {
+                              Logx.ist(_TAG, '${user.name} ${user.surname} has already google reviewed 🤞');
+                            }
+                          }
+
+                          if(i==mPartyGuests.length-1){
+                            if(reviewUsers.isNotEmpty){
+                              _showWhatsappRequestList(reviewUsers, Constants.freqGoogleReview);
+                            } else {
+                              Logx.ilt(_TAG, 'no users in list to review');
+                            }
+                          }
+                        } else {
+                          Logx.est(_TAG, 'user in guest list not found in db : ${partyGuest.guestId}');
+                        }
+                      });
+                    }
+                  }
+                  },
+              ),
+
+              TextButton(
+                child: const Text("cancel"),
+                onPressed: () {
+                  Navigator.of(ctx).pop();
+                },
+              )
+            ],
+          );
+        });
+  }
+
+  void _showWhatsappRequestList(List<User> userList, String reviewLink) {
+    showDialog(
+        context: context,
+        builder: (BuildContext ctx) {
+          return AlertDialog(
+            title: Text('list of users to review'),
+            content: Container(
+              width: double.maxFinite,
+              height: 200.0,
+              child: ListView.builder(
+                itemCount: userList.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return _buildWhatsappReviewItem(userList[index], reviewLink);
+                },
+              ),
+            ),
+            actions: [
+              TextButton(
+                child: const Text("close"),
+                onPressed: () {
+                  Navigator.of(ctx).pop();
+                },
+              )
+            ],
+          );
+        });
+  }
+
+  Widget _buildWhatsappReviewItem(User user, String reviewLink) {
+    return ListTile(
+      title: Text(user.name),
+      subtitle: Text('+${user.phoneNumber}'),
+      trailing: ButtonWidget(text: 'send', onClicked: () {
+        Logx.ist(_TAG, 'launching whatsapp...');
+
+        // Encode the phone number and message for the URL
+        String message = 'Hope you had a wonderful time tonight at as a guest in our community! A Google review will help us improve and ensure every night at our bar is an unforgettable experience. Please review us at the following link, thank you 😊 \n\n$reviewLink';
+        String url = 'https://wa.me/+${user.phoneNumber}/?text=${Uri.encodeFull(message)}';
+        Uri uri = Uri.parse(url);
+        NetworkUtils.launchInBrowser(uri);
+
+        user = user.copyWith(lastReviewTime: Timestamp.now().millisecondsSinceEpoch);
+        FirestoreHelper.pushUser(user);
+      }),
+    );
+  }
+
   void _showRequestReviewFromGuests(BuildContext context) {
     showDialog(
         context: context,
@@ -975,9 +1156,7 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
                           User user = Fresh.freshUserMap(map, true);
 
                           if(user.fcmToken.isNotEmpty ){
-                            if(!user.isAppReviewed &&
-                                user.lastReviewTime < Timestamp.now().millisecondsSinceEpoch - (2 * DateTimeUtils.millisecondsWeek)){
-                              //send a notification
+                            if(user.lastReviewTime < Timestamp.now().millisecondsSinceEpoch - (2 * DateTimeUtils.millisecondsWeek)){
                               Apis.sendUrlData(user.fcmToken, Apis.GoogleReviewBloc, Constants.blocGoogleReview);
                               Logx.ist(_TAG,
                                   '${user.name} ${user.surname} has been notified for a bloc google review 🤞');
@@ -1011,8 +1190,7 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
                           User user = Fresh.freshUserMap(map, true);
 
                           if(user.fcmToken.isNotEmpty){
-                            if(!user.isAppReviewed &&
-                                user.lastReviewTime < Timestamp.now().millisecondsSinceEpoch - (2 * DateTimeUtils.millisecondsWeek)){
+                            if(user.lastReviewTime < Timestamp.now().millisecondsSinceEpoch - (2 * DateTimeUtils.millisecondsWeek)){
                               //send a notification
                               Apis.sendUrlData(user.fcmToken, Apis.GoogleReviewFreq, Constants.freqGoogleReview);
                               Logx.ist(_TAG,
@@ -1105,4 +1283,11 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
       }
     }
   }
+}
+
+class WhatsappReview{
+  String name;
+  int phoneNumber;
+
+  WhatsappReview(this.name, this.phoneNumber);
 }
