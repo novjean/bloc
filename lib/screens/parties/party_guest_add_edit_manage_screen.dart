@@ -35,7 +35,6 @@ import '../../helpers/firestore_helper.dart';
 import '../../helpers/fresh.dart';
 import '../../main.dart';
 import '../../routes/route_constants.dart';
-import '../../utils/challenge_utils.dart';
 import '../../utils/constants.dart';
 import '../../utils/date_time_utils.dart';
 import '../../utils/file_utils.dart';
@@ -2469,7 +2468,7 @@ class _PartyGuestAddEditManageScreenState
                 onPressed: () async {
                   Navigator.of(ctx).pop();
 
-                  final uri = Uri.parse(ChallengeUtils.urlBlocPlayStore);
+                  final uri = Uri.parse(Constants.urlBlocPlayStore);
                   NetworkUtils.launchInBrowser(uri);
 
                   GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
@@ -2487,7 +2486,7 @@ class _PartyGuestAddEditManageScreenState
                 onPressed: () async {
                   Navigator.of(ctx).pop();
 
-                  final uri = Uri.parse(ChallengeUtils.urlBlocAppStore);
+                  final uri = Uri.parse(Constants.urlBlocAppStore);
                   NetworkUtils.launchInBrowser(uri);
 
                   GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
@@ -2864,12 +2863,12 @@ class _PartyGuestAddEditManageScreenState
     });
   }
 
-  void _notifyApprovalWhatsapp() {
+  void _notifyApprovalWhatsapp() async {
     String message = '🥳 congratulations ${mBlocUser.name}! your guest list for ${widget.party.name} on bloc has been approved 🎉.\n\n 🎫 passes can be found in our app, download at \nhttps://bloc.bar/app_store.html \n\n#blocCommunity💛';
     // Encode the phone number and message for the URL
     String url = 'https://wa.me/+${mBlocUser.phoneNumber}/?text=${Uri.encodeFull(message)}';
     Uri uri = Uri.parse(url);
 
-    NetworkUtils.launchInBrowser(uri);
+    await NetworkUtils.launchInBrowser(uri);
   }
 }

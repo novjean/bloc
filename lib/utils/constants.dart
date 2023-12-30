@@ -59,6 +59,9 @@ class Constants {
   static String blocGoogleReview = 'https://g.page/r/CUPsfopXRRX8EBM/review';
   static String blocAppStoreId = '1672736309';
 
+  static const String urlBlocPlayStore = 'https://play.google.com/store/apps/details?id=com.novatech.bloc';
+  static const String urlBlocAppStore = 'https://apps.apple.com/in/app/bloc-community/id1672736309';
+
   static double blocLatitude = 18.537952548349075;
   static double blocLongitude = 73.9126973030436;
 

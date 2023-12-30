@@ -20,7 +20,6 @@ import '../../helpers/dummy.dart';
 import '../../helpers/fresh.dart';
 import '../../main.dart';
 import '../../routes/route_constants.dart';
-import '../../utils/challenge_utils.dart';
 import '../../utils/constants.dart';
 import '../../utils/logx.dart';
 import '../../utils/network_utils.dart';
@@ -406,7 +405,7 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
                 onPressed: () async {
                   Navigator.of(ctx).pop();
 
-                  final uri = Uri.parse(ChallengeUtils.urlBlocPlayStore);
+                  final uri = Uri.parse(Constants.urlBlocPlayStore);
                   NetworkUtils.launchInBrowser(uri);
                 },
               ),
@@ -420,7 +419,7 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
                 onPressed: () async {
                   Navigator.of(ctx).pop();
 
-                  final uri = Uri.parse(ChallengeUtils.urlBlocAppStore);
+                  final uri = Uri.parse(Constants.urlBlocAppStore);
                   NetworkUtils.launchInBrowser(uri);
                 },
               ),
@@ -895,7 +894,7 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
                     text: '🍎 ios',
                     onClicked: () {
                       final uri = Uri.parse(
-                          ChallengeUtils.urlBlocAppStore);
+                          Constants.urlBlocAppStore);
                       NetworkUtils.launchInBrowser(uri);
                     },
                   ),
@@ -907,7 +906,7 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
                       onClicked: () {
                         //android download
                         final uri = Uri.parse(
-                            ChallengeUtils.urlBlocPlayStore);
+                            Constants.urlBlocPlayStore);
                         NetworkUtils.launchInBrowser(uri);
                       },
                     ),

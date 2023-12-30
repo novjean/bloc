@@ -5,7 +5,6 @@ import 'package:in_app_review/in_app_review.dart';
 import '../db/entity/user.dart';
 import '../db/shared_preferences/user_preferences.dart';
 import '../helpers/firestore_helper.dart';
-import 'challenge_utils.dart';
 import 'constants.dart';
 import 'logx.dart';
 import 'network_utils.dart';
@@ -48,7 +47,7 @@ class DialogUtils {
                 onPressed: () async {
                   Navigator.of(ctx).pop();
 
-                  final uri = Uri.parse(ChallengeUtils.urlBlocPlayStore);
+                  final uri = Uri.parse(Constants.urlBlocPlayStore);
                   NetworkUtils.launchInBrowser(uri);
                 },
               ),
@@ -62,7 +61,7 @@ class DialogUtils {
                 onPressed: () async {
                   Navigator.of(ctx).pop();
 
-                  final uri = Uri.parse(ChallengeUtils.urlBlocAppStore);
+                  final uri = Uri.parse(Constants.urlBlocAppStore);
                   NetworkUtils.launchInBrowser(uri);
                 },
               ),
@@ -106,7 +105,7 @@ class DialogUtils {
                 onPressed: () async {
                   Navigator.of(ctx).pop();
 
-                  final uri = Uri.parse(ChallengeUtils.urlBlocPlayStore);
+                  final uri = Uri.parse(Constants.urlBlocPlayStore);
                   NetworkUtils.launchInBrowser(uri);
                 },
               ),
@@ -120,7 +119,7 @@ class DialogUtils {
                 onPressed: () async {
                   Navigator.of(ctx).pop();
 
-                  final uri = Uri.parse(ChallengeUtils.urlBlocAppStore);
+                  final uri = Uri.parse(Constants.urlBlocAppStore);
                   NetworkUtils.launchInBrowser(uri);
                 },
               ),
