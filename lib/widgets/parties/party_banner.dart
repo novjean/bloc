@@ -479,24 +479,31 @@ class _PartyBannerState extends State<PartyBanner> {
   }
 
   showBoxOfficeButton(BuildContext context) {
-    return ElevatedButton.icon(
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Constants.background,
-        foregroundColor: Constants.primary,
-        shadowColor: Colors.white30,
-        elevation: 3,
-        minimumSize: const Size.fromHeight(60),
-      ),
-      onPressed: () {
-        GoRouter.of(context).pushNamed(RouteConstants.boxOfficeRouteName);
-      },
-      label: const Text(
-        'box office',
-        style: TextStyle(fontSize: 20, color: Constants.primary),
-      ),
-      icon: const Icon(
-        Icons.keyboard_command_key_sharp,
-        size: 24.0,
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 5.0),
+      child: ElevatedButton.icon(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Constants.background,
+          foregroundColor: Constants.primary,
+          shadowColor: Colors.white30,
+          elevation: 3,
+          minimumSize: const Size.fromHeight(60),
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(10), topRight: Radius.circular(10)),
+          ),
+        ),
+        onPressed: () {
+          GoRouter.of(context).pushNamed(RouteConstants.boxOfficeRouteName);
+        },
+        label: const Text(
+          'box office',
+          style: TextStyle(fontSize: 20, color: Constants.primary),
+        ),
+        icon: const Icon(
+          Icons.keyboard_command_key_sharp,
+          size: 24.0,
+        ),
       ),
     );
   }
