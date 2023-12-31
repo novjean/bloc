@@ -70,7 +70,9 @@ class _PartyGuestAddEditManageScreenState
   bool hasUserChanged = false;
   bool _isCustomerLoading = true;
 
+  bool _showNameField = true;
   bool _showSurnameField = true;
+  bool _showEmailField = true;
   bool _showYearField = true;
 
   String _sGuestStatus = 'couple';
@@ -139,11 +141,25 @@ class _PartyGuestAddEditManageScreenState
       }
     }
 
+    if (widget.partyGuest.name.isEmpty ||
+        UserPreferences.myUser.clearanceLevel >= Constants.PROMOTER_LEVEL) {
+      _showNameField = true;
+    } else {
+      _showNameField = false;
+    }
+
     if (widget.partyGuest.surname.isEmpty ||
         UserPreferences.myUser.clearanceLevel >= Constants.MANAGER_LEVEL) {
       _showSurnameField = true;
     } else {
       _showSurnameField = false;
+    }
+
+    if ((widget.partyGuest.email.isEmpty && UserPreferences.isUserLoggedIn() && widget.party.isEmailRequired) ||
+        UserPreferences.myUser.clearanceLevel >= Constants.MANAGER_LEVEL) {
+      _showEmailField = true;
+    } else {
+      _showEmailField = false;
     }
 
     _sYear = mBlocUser.birthYear.toString();
@@ -396,20 +412,27 @@ class _PartyGuestAddEditManageScreenState
                 isGuestListRequested: false,
                 shouldShowInterestCount: false,
               ),
-              const SizedBox(height: 24),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 32),
-                child: DarkTextFieldWidget(
-                  label: 'name *',
-                  text: mBlocUser.name,
-                  onChanged: (name) {
-                    mBlocUser = mBlocUser.copyWith(name: name);
-                    hasUserChanged = true;
 
-                    widget.partyGuest = widget.partyGuest.copyWith(name: name);
-                  },
-                ),
-              ),
+              _showNameField ? Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 24),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 32),
+                    child: DarkTextFieldWidget(
+                      label: 'name *',
+                      text: mBlocUser.name,
+                      onChanged: (text) {
+                        mBlocUser = mBlocUser.copyWith(name: text);
+                        hasUserChanged = true;
+
+                        widget.partyGuest = widget.partyGuest.copyWith(name: text);
+                      },
+                    ),
+                  ),
+                ],
+              ) : const SizedBox(),
               _showSurnameField
                   ? Column(
                       mainAxisSize: MainAxisSize.min,
@@ -433,7 +456,7 @@ class _PartyGuestAddEditManageScreenState
                       ],
                     )
                   : const SizedBox(),
-              !isLoggedIn
+              !UserPreferences.isUserLoggedIn()
                   ? Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 32.0),
                       child: Column(
@@ -487,22 +510,26 @@ class _PartyGuestAddEditManageScreenState
                       ),
                     )
                   : const SizedBox(),
-              !UserPreferences.isUserLoggedIn()
-                  ? const SizedBox(height: 12)
-                  : const SizedBox(height: 24),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 32),
-                child: DarkTextFieldWidget(
-                    label: 'email${widget.party.isEmailRequired ? ' *' : ''}',
-                    text: mBlocUser.email,
-                    onChanged: (email) {
-                      mBlocUser = mBlocUser.copyWith(email: email);
-                      hasUserChanged = true;
+              _showEmailField? Column(
+                children: [
+                  !UserPreferences.isUserLoggedIn()
+                      ? const SizedBox(height: 12)
+                      : const SizedBox(height: 24),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 32),
+                    child: DarkTextFieldWidget(
+                        label: 'email${widget.party.isEmailRequired ? ' *' : ''}',
+                        text: mBlocUser.email,
+                        onChanged: (email) {
+                          mBlocUser = mBlocUser.copyWith(email: email);
+                          hasUserChanged = true;
 
-                      widget.partyGuest =
-                          widget.partyGuest.copyWith(email: email);
-                    }),
-              ),
+                          widget.partyGuest =
+                              widget.partyGuest.copyWith(email: email);
+                        }),
+                  ),
+                ],
+              ) : const SizedBox(),
               const SizedBox(height: 24),
               _showYearField
                   ? Padding(
@@ -780,6 +807,18 @@ class _PartyGuestAddEditManageScreenState
                       },
                     ),
                   ],
+                ),
+              ),
+              const SizedBox(height: 24),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 32),
+                child: DarkTextFieldWidget(
+                  label: 'insta handle',
+                  text: mBlocUser.instagramLink,
+                  onChanged: (text) {
+                    mBlocUser = mBlocUser.copyWith(instagramLink: text);
+                    hasUserChanged = true;
+                  },
                 ),
               ),
 

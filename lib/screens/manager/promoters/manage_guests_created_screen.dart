@@ -38,10 +38,8 @@ class ManageGuestsCreatedScreen extends StatelessWidget {
               Navigator.of(context).pop();
             },),
           ),
-
         ],
       ),
     );
   }
-
 }

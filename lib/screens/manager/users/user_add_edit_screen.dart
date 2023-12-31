@@ -196,6 +196,15 @@ class _UserAddEditScreenState extends State<UserAddEditScreen> {
         ),
         const SizedBox(height: 24),
         TextFieldWidget(
+          label: 'instagram link',
+          text: widget.user.instagramLink,
+          maxLines: 1,
+          onChanged: (text) {
+            widget.user = widget.user.copyWith(instagramLink: text);
+          },
+        ),
+        const SizedBox(height: 24),
+        TextFieldWidget(
           label: 'email',
           text: widget.user.email,
           maxLines: 1,

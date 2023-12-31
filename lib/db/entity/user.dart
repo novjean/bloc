@@ -26,7 +26,7 @@ class User {
   final int lastReviewTime;
 
   String username;
-  String instagramHandle;
+  String instagramLink;
 
 //<editor-fold desc="Data Methods">
   User({
@@ -51,7 +51,7 @@ class User {
     required this.isAppReviewed,
     required this.lastReviewTime,
     required this.username,
-    required this.instagramHandle,
+    required this.instagramLink,
   });
 
   @override
@@ -80,7 +80,7 @@ class User {
           isAppReviewed == other.isAppReviewed &&
           lastReviewTime == other.lastReviewTime &&
           username == other.username &&
-          instagramHandle == other.instagramHandle);
+          instagramLink == other.instagramLink);
 
   @override
   int get hashCode =>
@@ -105,7 +105,7 @@ class User {
       isAppReviewed.hashCode ^
       lastReviewTime.hashCode ^
       username.hashCode ^
-      instagramHandle.hashCode;
+      instagramLink.hashCode;
 
   @override
   String toString() {
@@ -131,7 +131,7 @@ class User {
         ' isAppReviewed: $isAppReviewed,' +
         ' lastReviewTime: $lastReviewTime,' +
         ' username: $username,' +
-        ' instagramHandle: $instagramHandle,' +
+        ' instagramLink: $instagramLink,' +
         '}';
   }
 
@@ -157,7 +157,7 @@ class User {
     bool? isAppReviewed,
     int? lastReviewTime,
     String? username,
-    String? instagramHandle,
+    String? instagramLink,
   }) {
     return User(
       id: id ?? this.id,
@@ -181,7 +181,7 @@ class User {
       isAppReviewed: isAppReviewed ?? this.isAppReviewed,
       lastReviewTime: lastReviewTime ?? this.lastReviewTime,
       username: username ?? this.username,
-      instagramHandle: instagramHandle ?? this.instagramHandle,
+      instagramLink: instagramLink ?? this.instagramLink,
     );
   }
 
@@ -208,7 +208,7 @@ class User {
       'isAppReviewed': this.isAppReviewed,
       'lastReviewTime': this.lastReviewTime,
       'username': this.username,
-      'instagramHandle': this.instagramHandle,
+      'instagramLink': this.instagramLink,
     };
   }
 
@@ -235,7 +235,7 @@ class User {
       isAppReviewed: map['isAppReviewed'] as bool,
       lastReviewTime: map['lastReviewTime'] as int,
       username: map['username'] as String,
-      instagramHandle: map['instagramHandle'] as String,
+      instagramLink: map['instagramLink'] as String,
     );
   }
 

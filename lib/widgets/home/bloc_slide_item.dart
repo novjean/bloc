@@ -42,15 +42,10 @@ class _BlocSlideItemState extends State<BlocSlideItem> {
           final BlocService blocService = Fresh.freshBlocServiceMap(data, false);
           blocServices.add(blocService);
         }
-
-        if (mounted) {
-          setState(() {
-            mBlocService = blocServices.first;
-            _isBlocServiceLoading = false;
-          });
-        } else {
-          Logx.em(_TAG, 'state is not mounted');
-        }
+        setState(() {
+          mBlocService = blocServices.first;
+          _isBlocServiceLoading = false;
+        });
       } else {
         Logx.em(_TAG, 'no bloc service found for id ${widget.bloc.id}');
         setState(() {

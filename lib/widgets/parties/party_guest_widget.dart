@@ -5,6 +5,7 @@ import 'package:intl_phone_field/intl_phone_field.dart';
 import '../../db/entity/promoter.dart';
 import '../../helpers/firestore_helper.dart';
 import '../../main.dart';
+import '../../utils/constants.dart';
 import '../../utils/logx.dart';
 import '../ui/textfield_widget.dart';
 
@@ -150,8 +151,8 @@ class _PartyGuestWidgetState extends State<PartyGuestWidget> {
                             key: const ValueKey('gender_dropdown'),
                             decoration: InputDecoration(
                                 fillColor: Colors.white,
-                                errorStyle: TextStyle(
-                                    color: Theme.of(context).errorColor,
+                                errorStyle: const TextStyle(
+                                    color: Constants.errorColor,
                                     fontSize: 16.0),
                                 hintText: 'please select gender',
                                 border: OutlineInputBorder(
@@ -211,8 +212,8 @@ class _PartyGuestWidgetState extends State<PartyGuestWidget> {
                             key: const ValueKey('promoter_dropdown'),
                             decoration: InputDecoration(
                                 fillColor: Colors.white,
-                                errorStyle: TextStyle(
-                                    color: Theme.of(context).errorColor,
+                                errorStyle: const TextStyle(
+                                    color: Constants.errorColor,
                                     fontSize: 16.0),
                                 hintText: 'please select a promoter',
                                 border: OutlineInputBorder(

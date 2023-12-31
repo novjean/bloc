@@ -1,5 +1,6 @@
 import 'package:bloc/db/entity/history_music.dart';
 import 'package:bloc/helpers/firestore_helper.dart';
+import 'package:bloc/utils/network_utils.dart';
 import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
@@ -43,7 +44,6 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
   static const String _TAG = 'UserProfileScreen';
 
   String _btnFriendText = 'friend';
-  String _btnFollowText = '📵 ghost';
 
   List<HistoryMusic> mHistoryMusics = [];
   bool showMusicHistory = false;
@@ -132,13 +132,13 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
 
               setState(() {
                 isFriend = true;
-                _btnFriendText = '☠️ unfriend';
+                _btnFriendText = 'unfriend';
                 isFollowing = mFriend.isFollowing;
               });
             } else {
               setState(() {
                 isFriend = false;
-                _btnFriendText = '🤍 friend';
+                _btnFriendText = 'friend';
                 isFollowing = false;
               });
             }
@@ -192,52 +192,64 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10.0),
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Padding(
-                padding: const EdgeInsets.only(left: 10, right: 15.0),
-                child: Text(
-                  mUser.name.isNotEmpty ? mUser.name.toLowerCase() : '',
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 26,
-                      color: Theme.of(context).primaryColor),
+              Flexible(
+                flex: 1,
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 10, right: 15.0),
+                  child: Text(
+                    mUser.name.toLowerCase(),
+                    maxLines: 3,
+                    style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 24,
+                        color: Constants.primary),
+                  ),
                 ),
               ),
-              mUser.imageUrl.isNotEmpty
-                  ? ProfileWidget(
-                      isEdit: false,
-                      imagePath: mUser.imageUrl,
-                      showEditIcon: false,
-                      onClicked: () {},
-                    )
-                  : ClipOval(
-                      child: Container(
-                        width: 128.0,
-                        height: 128.0,
-                        color: Constants.primary,
-                        // Optional background color for the circle
-                        child: Image.asset(
-                          mUser.gender == 'female'
-                              ? 'assets/profile_photos/12.png'
-                              : 'assets/profile_photos/1.png',
-                          // Replace with your asset image path
-                          fit: BoxFit.cover,
+              Flexible(
+                flex: 1,
+                child: mUser.imageUrl.isNotEmpty
+                    ? ProfileWidget(
+                        isEdit: false,
+                        imagePath: mUser.imageUrl,
+                        showEditIcon: false,
+                        onClicked: () {},
+                      )
+                    : ClipOval(
+                        child: Container(
+                          width: 128.0,
+                          height: 128.0,
+                          color: Constants.primary,
+                          // Optional background color for the circle
+                          child: Image.asset(
+                            mUser.gender == 'female'
+                                ? 'assets/profile_photos/12.png'
+                                : 'assets/profile_photos/1.png',
+                            // Replace with your asset image path
+                            fit: BoxFit.cover,
+                          ),
                         ),
                       ),
-                    ),
-              Padding(
-                padding: const EdgeInsets.only(left: 15.0, right: 10),
-                child: Text(
-                  mUser.name.isNotEmpty ? mUser.surname.toLowerCase() : '',
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 26,
-                      color: Theme.of(context).primaryColor),
-                ),
+              ),
+              Flexible(
+                flex: 1,
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 15.0, right: 10),
+                  child: Text(
+                    mUser.surname.toLowerCase(),
+                    maxLines: 3,
+                    style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 24,
+                        color: Constants.primary),
+                  ),
 
-                // buildLastName(mUser),
+                  // buildLastName(mUser),
+                ),
               )
             ],
           ),
@@ -245,15 +257,29 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
         const SizedBox(height: 24),
         UserPreferences.isUserLoggedIn()
             ? Row(
-                mainAxisAlignment: isFriend
-                    ? MainAxisAlignment.spaceEvenly
-                    : MainAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  isFriend ? buildFollowUnfollowButton() : const SizedBox(),
-                  buildFriendUnfriendToggleButton(),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 10.0),
+                    child: buildFriendUnfriendToggleButton(),
+                  ),
+                  isFriend
+                      ? Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                          child: buildFollowGhostIconButton(),
+                        )
+                      : const SizedBox(),
+                  const Spacer(),
+                  mUser.instagramLink.isNotEmpty
+                      ? Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                          child: buildInstagramButton(),
+                        )
+                      : const SizedBox(),
                 ],
               )
             : const SizedBox(),
+        const Divider(),
         const SizedBox(height: 24),
         const Padding(
           padding: EdgeInsets.only(left: 15.0, right: 15, bottom: 10),
@@ -333,11 +359,11 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
     );
   }
 
-  Widget buildFriendUnfriendToggleButton() {
+  Widget buildInstagramButton() {
     return Center(
-        child: ElevatedButton(
+        child: ElevatedButton.icon(
       style: ElevatedButton.styleFrom(
-        backgroundColor: Theme.of(context).primaryColor,
+        backgroundColor: Constants.primary,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(5),
         ),
@@ -345,89 +371,126 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
         padding: const EdgeInsets.symmetric(horizontal: 20),
       ),
       onPressed: () {
-        isFriend = !isFriend;
-
-        if (isFriend) {
-          // become friends
-          Friend friend = Dummy.getDummyFriend();
-          friend = friend.copyWith(
-            userId: UserPreferences.myUser.id,
-            friendUserId: mUser.id,
-            isFollowing: true,
-          );
-          FirestoreHelper.pushFriend(friend);
-
-          //should send a friend notification
-          if (mUser.fcmToken.isNotEmpty) {
-            String title = '🤍 new friend alert';
-            String message =
-                '${UserPreferences.myUser.name} ${UserPreferences.myUser.surname} has added you as their friend!'
-                    .toLowerCase();
-
-            Apis.sendPushNotification(mUser.fcmToken, title, message);
-          }
-
-          setState(() {
-            mFriend = friend;
-            isFollowing = true;
-          });
-        } else {
-          FirestoreHelper.deleteFriend(mFriend.id);
-        }
-
-        setState(() {
-          if (!isFriend) {
-            _btnFriendText = '🤍 friend';
-          } else {
-            _btnFriendText = '☠️ unfriend';
-          }
-          mFriend;
-        });
+        Uri uri = Uri.parse(mUser.instagramLink);
+        NetworkUtils.launchInBrowser(uri);
       },
-      child: Text(
-        _btnFriendText,
-        style: TextStyle(
-            fontSize: 18, color: isFriend ? Colors.black : Colors.white),
+      label: const Text(
+        'instagram',
+        style: TextStyle(fontSize: 18, color: Constants.darkPrimary),
+      ),
+      icon: const Icon(
+        Icons.local_fire_department,
+        color: Constants.darkPrimary,
       ),
     ));
   }
 
-  Widget buildFollowUnfollowButton() {
+  Widget buildFriendUnfriendToggleButton() {
     return Center(
-        child: ElevatedButton(
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Theme.of(context).primaryColor,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(5),
+        child: ElevatedButton.icon(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Constants.primary,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(5),
+              ),
+              foregroundColor: Colors.white,
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+            ),
+            onPressed: () {
+              isFriend = !isFriend;
+
+              if (isFriend) {
+                Friend friend = Dummy.getDummyFriend();
+                friend = friend.copyWith(
+                  userId: UserPreferences.myUser.id,
+                  friendUserId: mUser.id,
+                  isFollowing: true,
+                );
+                FirestoreHelper.pushFriend(friend);
+
+                //should send a friend notification
+                if (mUser.fcmToken.isNotEmpty) {
+                  String title = '🤍 new friend alert';
+                  String message =
+                      '${UserPreferences.myUser.name} ${UserPreferences.myUser.surname} has added you as a friend 🤗! Check them out!'
+                          .toLowerCase();
+
+                  Apis.sendPushNotification(mUser.fcmToken, title, message);
+                }
+
+                setState(() {
+                  mFriend = friend;
+                  isFollowing = true;
+                });
+              } else {
+                FirestoreHelper.deleteFriend(mFriend.id);
+              }
+
+              setState(() {
+                if (!isFriend) {
+                  _btnFriendText = 'friend';
+                } else {
+                  _btnFriendText = 'unfriend';
+                }
+                mFriend;
+              });
+            },
+            label: Text(
+              _btnFriendText,
+              style:
+                  const TextStyle(fontSize: 17, color: Constants.darkPrimary),
+            ),
+            icon: Icon(
+              isFriend
+                  ? Icons.person_remove_alt_1_rounded
+                  : Icons.person_add_alt_1_rounded,
+              color: Constants.darkPrimary,
+            )));
+  }
+
+  Widget buildFollowGhostIconButton() {
+    return Center(
+        child: Container(
+      width: 40,
+      height: 40,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        border: Border.all(
+          color: Constants.primary, // Set the color of the circle border
+          width: 2.0, // Set the width of the circle border
         ),
-        foregroundColor: Colors.white,
-        padding: const EdgeInsets.symmetric(horizontal: 20),
       ),
-      onPressed: () {
-        isFollowing = !isFollowing;
+      child: IconButton(
+        color: Constants.primary,
+        icon: Icon(
+          isFollowing
+              ? Icons.notifications_active_rounded
+              : Icons.notifications_outlined,
+          size: 22.0,
+        ),
+        onPressed: () {
+          isFollowing = !isFollowing;
 
-        if (isFollowing) {
-          mFriend = mFriend.copyWith(isFollowing: true);
-          FirestoreHelper.pushFriend(mFriend);
+          if (isFollowing) {
+            mFriend = mFriend.copyWith(isFollowing: true);
+            FirestoreHelper.pushFriend(mFriend);
 
-          setState(() {
-            isFollowing = true;
-            _btnFollowText = '📵 ghost';
-          });
-        } else {
-          mFriend = mFriend.copyWith(isFollowing: false);
-          FirestoreHelper.pushFriend(mFriend);
+            Logx.ist(_TAG, 'you are now following ${mUser.name}');
 
-          setState(() {
-            isFollowing = false;
-            _btnFollowText = '🔗 link';
-          });
-        }
-      },
-      child: Text(
-        _btnFollowText,
-        style: TextStyle(
-            fontSize: 18, color: isFollowing ? Colors.red : Colors.green),
+            setState(() {
+              isFollowing = true;
+            });
+          } else {
+            mFriend = mFriend.copyWith(isFollowing: false);
+            FirestoreHelper.pushFriend(mFriend);
+
+            Logx.ist(_TAG, 'you have unfollowed ${mUser.name}');
+
+            setState(() {
+              isFollowing = false;
+            });
+          }
+        },
       ),
     ));
   }
@@ -588,8 +651,9 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                       child: const Text("😎 set profile photo"),
                       onPressed: () async {
                         PartyPhoto partyPhoto = mPartyPhotos[_currentIndex];
-                        if(mUser.imageUrl.isNotEmpty
-                            && mUser.imageUrl.contains(FirestorageHelper.USER_IMAGES)){
+                        if (mUser.imageUrl.isNotEmpty &&
+                            mUser.imageUrl
+                                .contains(FirestorageHelper.USER_IMAGES)) {
                           await FirestorageHelper.deleteFile(mUser.imageUrl);
                         }
 
@@ -597,7 +661,8 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                         FirestoreHelper.pushUser(mUser);
 
                         setState(() {});
-                        Logx.ist(_TAG, '${mUser.name}\'s profile photo has been successfully updated!');
+                        Logx.ist(_TAG,
+                            '${mUser.name}\'s profile photo has been successfully updated!');
                       },
                     ),
                   )

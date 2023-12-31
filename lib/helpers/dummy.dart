@@ -650,7 +650,7 @@ class Dummy {
         name: '',
         surname: '',
         username: '',
-        instagramHandle: '',
+        instagramLink: '',
         gender: 'male',
         birthYear: 2023,
         phoneNumber: 0,

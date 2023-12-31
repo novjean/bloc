@@ -5094,9 +5094,9 @@ class Fresh {
       isModelChanged = true;
     }
     try {
-      user = user.copyWith(instagramHandle: map['instagramHandle'] as String);
+      user = user.copyWith(instagramLink: map['instagramLink'] as String);
     } catch (e) {
-      Logx.em(_TAG, 'user instagramHandle not exist for id: ${user.id}');
+      Logx.em(_TAG, 'user instagramLink not exist for id: ${user.id}');
       isModelChanged = true;
     }
     try {
@@ -5238,9 +5238,9 @@ class Fresh {
       Logx.em(_TAG, 'user username not exist for id: ${user.id}');
     }
     try {
-      freshUser = freshUser.copyWith(instagramHandle: user.instagramHandle);
+      freshUser = freshUser.copyWith(instagramLink: user.instagramLink);
     } catch (e) {
-      Logx.em(_TAG, 'user instagramHandle not exist for id: ${user.id}');
+      Logx.em(_TAG, 'user instagramLink not exist for id: ${user.id}');
     }
     try {
       freshUser = freshUser.copyWith(gender: user.gender);

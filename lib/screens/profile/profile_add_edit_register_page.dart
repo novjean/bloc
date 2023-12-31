@@ -267,6 +267,12 @@ class _ProfileAddEditRegisterPageState
         ),
         const SizedBox(height: 24),
         DarkTextFieldWidget(
+          label: 'instagram link',
+          text: widget.user.instagramLink,
+          onChanged: (text) => widget.user = widget.user.copyWith(instagramLink: text),
+        ),
+        const SizedBox(height: 24),
+        DarkTextFieldWidget(
           label: 'email',
           text: widget.user.email,
           onChanged: (email) =>
