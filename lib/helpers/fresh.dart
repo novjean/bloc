@@ -1452,6 +1452,13 @@ class Fresh {
       isModelChanged = true;
     }
 
+    try {
+      chat = chat.copyWith(views: map['views'] as int);
+    } catch (e) {
+      Logx.em(_TAG, 'chat views not exist for id: ${chat.id}');
+      isModelChanged = true;
+    }
+
     if (isModelChanged && shouldUpdate) {
       Logx.i(_TAG, 'updating chat ${chat.id}');
       FirestoreHelper.pushLoungeChat(chat);
@@ -1541,6 +1548,13 @@ class Fresh {
     } catch (e) {
       Logx.em(
           _TAG, 'chat downVoters not exist for id: ${chat.id}');
+    }
+
+    try {
+      freshChat = freshChat.copyWith(views: chat.views);
+    } catch (e) {
+      Logx.em(
+          _TAG, 'chat views not exist for id: ${chat.id}');
     }
 
     return freshChat;

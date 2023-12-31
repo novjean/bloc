@@ -340,6 +340,7 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
           scrollDirection: Axis.vertical,
           physics: const BouncingScrollPhysics(),
           itemBuilder: (ctx, index) {
+            FirestoreHelper.updateLoungeChatViewCount(mChats[index].id);
             return GestureDetector(
               child: ChatItem(
                 chat: mChats[index],

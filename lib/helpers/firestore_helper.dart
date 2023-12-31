@@ -689,6 +689,13 @@ class FirestoreHelper {
         .snapshots();
   }
 
+  static void updateLoungeChatViewCount(String docId) {
+    FirebaseFirestore.instance
+        .collection(LOUNGE_CHATS)
+        .doc(docId)
+        .update({"views": FieldValue.increment(1)},);
+  }
+
   static void deleteLoungeChat(String docId) {
     FirebaseFirestore.instance.collection(LOUNGE_CHATS).doc(docId).delete();
   }

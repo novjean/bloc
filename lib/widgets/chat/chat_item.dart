@@ -1,3 +1,4 @@
+import 'package:bloc/db/shared_preferences/user_preferences.dart';
 import 'package:bloc/helpers/firestore_helper.dart';
 import 'package:bloc/utils/date_time_utils.dart';
 import 'package:flutter/material.dart';
@@ -94,6 +95,13 @@ class _ChatItemState extends State<ChatItem> {
                                       fontSize: 17, color: Colors.black)),
                             ],
                           ),
+                    UserPreferences.myUser.clearanceLevel==Constants.ADMIN_LEVEL ?
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [Text(
+                            '👁️‍🗨️ ${widget.chat.views}'
+                          )],
+                        ): const SizedBox()
                     // Row(
                     //   mainAxisAlignment: MainAxisAlignment.end,
                     //   children: [
