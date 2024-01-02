@@ -150,13 +150,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
           padding: const EdgeInsets.symmetric(horizontal: 10.0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.end,
-            children: [Padding(
+            children: [
+              Padding(
                 padding: const EdgeInsets.only(right: 15.0),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     buildName(user),
-
                     Padding(
                       padding: const EdgeInsets.only(top: 15.0),
                       child: buildPhotoQrToggleButton(),
@@ -229,17 +229,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
         ),
 
-        _isPartyPhotosLoading? const SizedBox():
-        mPartyPhotos.isNotEmpty
-            ? _showPhotosGridView(mPartyPhotos)
-            : const Padding(
-          padding: EdgeInsets.only(left: 15.0, top: 5),
-          child: Text(
-            'no photos to reminisce, just emptiness over here for a while.',
-            textAlign: TextAlign.start,
-            style: TextStyle(color: Constants.primary, fontSize: 16),
-          ),
-        ),
+        _isPartyPhotosLoading
+            ? const SizedBox()
+            : mPartyPhotos.isNotEmpty
+                ? _showPhotosGridView(mPartyPhotos)
+                : const Padding(
+                    padding: EdgeInsets.only(left: 15.0, top: 5),
+                    child: Text(
+                      'no photos to reminisce, just emptiness over here for a while.',
+                      textAlign: TextAlign.start,
+                      style: TextStyle(color: Constants.primary, fontSize: 16),
+                    ),
+                  ),
 
         // NumbersWidget(),
 
@@ -450,7 +451,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 FirestoreHelper.pushPartyPhoto(partyPhoto);
 
                 FirestoreHelper.pullUserPhoto(
-                      UserPreferences.myUser.id, partyPhoto.id)
+                        UserPreferences.myUser.id, partyPhoto.id)
                     .then((res) {
                   if (res.docs.isNotEmpty) {
                     DocumentSnapshot document = res.docs[0];
@@ -469,16 +470,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 Navigator.of(ctx).pop();
               },
             ),
-
             TextButton(
               child: const Text("😎 set profile photo"),
               onPressed: () async {
                 PartyPhoto partyPhoto = mPartyPhotos[_currentIndex];
-                User user =  UserPreferences.myUser;
+                User user = UserPreferences.myUser;
 
                 // check if photo already exists and in user bucket
-                if(user.imageUrl.isNotEmpty
-                    && user.imageUrl.contains(FirestorageHelper.USER_IMAGES)){
+                if (user.imageUrl.isNotEmpty &&
+                    user.imageUrl.contains(FirestorageHelper.USER_IMAGES)) {
                   await FirestorageHelper.deleteFile(user.imageUrl);
                 }
 
@@ -489,12 +489,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                 setState(() {});
 
-                Logx.ist(_TAG, 'your profile photo has been successfully updated!');
+                Logx.ist(
+                    _TAG, 'your profile photo has been successfully updated!');
 
                 Navigator.of(ctx).pop();
               },
             ),
-
             TextButton(
               child: const Text("🪂 share"),
               onPressed: () {
@@ -645,14 +645,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   for (int i = 0; i < snapshot.data!.docs.length; i++) {
                     DocumentSnapshot document = snapshot.data!.docs[i];
                     Map<String, dynamic> map =
-                    document.data()! as Map<String, dynamic>;
-                    final Friend friend =
-                    Fresh.freshFriendMap(map, false);
+                        document.data()! as Map<String, dynamic>;
+                    final Friend friend = Fresh.freshFriendMap(map, false);
 
                     friends.add(friend);
                   }
 
-                  if(friends.isNotEmpty){
+                  if (friends.isNotEmpty) {
                     return _showFriends(context, friends);
                   } else {
                     return const Padding(
@@ -662,8 +661,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         child: Text(
                           'you are rolling solo in this story, no side characters yet!',
                           textAlign: TextAlign.start,
-                          style: TextStyle(
-                              color: Constants.primary, fontSize: 16),
+                          style:
+                              TextStyle(color: Constants.primary, fontSize: 16),
                         ),
                       ),
                     );
@@ -680,7 +679,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   _showFriends(BuildContext context, List<Friend> friends) {
-
     return Container(
       height: 60,
       child: ListView.builder(

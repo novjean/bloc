@@ -59,14 +59,13 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
           for (int i = 0; i < res.docs.length; i++) {
             DocumentSnapshot document = res.docs[i];
             Map<String, dynamic> data =
-            document.data()! as Map<String, dynamic>;
+                document.data()! as Map<String, dynamic>;
             final User user = Fresh.freshUserMap(data, false);
             mUsers.add(user);
           }
 
           setState(() {
             _isUsersLoading = false;
-
           });
         } else {
           setState(() {
@@ -109,7 +108,9 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
               shrinkWrap: true,
               children: <Widget>[
                 kIsWeb
-                    ? widget.partyPhoto.isFreePhoto ? _showPhoto() : _showBlurredPhoto()
+                    ? widget.partyPhoto.isFreePhoto
+                        ? _showPhoto()
+                        : _showBlurredPhoto()
                     : _showPhoto(),
                 Padding(
                   padding: const EdgeInsets.only(
@@ -132,7 +133,8 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
                             onTap: () {
                               if (UserPreferences.isUserLoggedIn()) {
                                 if (kIsWeb) {
-                                  _showDownloadAppDialog(context, '🎁 spreading some love for photos');
+                                  _showDownloadAppDialog(context,
+                                      '🎁 spreading some love for photos');
                                 } else {
                                   if (widget.partyPhoto.likers.isEmpty) {
                                     setState(() {
@@ -175,7 +177,8 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
                               onTap: () async {
                                 if (UserPreferences.isUserLoggedIn()) {
                                   if (kIsWeb) {
-                                    _showDownloadAppDialog(context, '🎁 share photos to your friends');
+                                    _showDownloadAppDialog(context,
+                                        '🎁 share photos to your friends');
                                   } else {
                                     _showShareOptionsDialog(context);
                                   }
@@ -191,7 +194,8 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
                           child: ElevatedButton.icon(
                             onPressed: () {
                               if (kIsWeb) {
-                                _showDownloadAppDialog(context, '🎁 save your photos to gallery');
+                                _showDownloadAppDialog(
+                                    context, '🎁 save your photos to gallery');
                               } else {
                                 if (UserPreferences.isUserLoggedIn()) {
                                   Logx.ist(_TAG, '🍄 saving to gallery...');
@@ -253,7 +257,6 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
                     ],
                   ),
                 ),
-
                 _isUsersLoading
                     ? const SizedBox()
                     : Row(
@@ -302,7 +305,6 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
                           );
                         }).toList(),
                       ),
-
                 Padding(
                   padding: const EdgeInsets.only(left: 10, right: 10),
                   child: Row(
@@ -323,7 +325,8 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
                             ),
                             onPressed: () {
                               if (kIsWeb) {
-                                _showDownloadAppDialog(context, '🎁 tag yourself in photos');
+                                _showDownloadAppDialog(
+                                    context, '🎁 tag yourself in photos');
                               } else {
                                 if (UserPreferences.isUserLoggedIn()) {
                                   Logx.ist(_TAG, 'tagging you...');
@@ -813,8 +816,7 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
         SizedBox(
           width: mq.width,
           child: FadeInImage(
-            placeholder: const AssetImage(
-                'assets/images/logo_3x2.png'),
+            placeholder: const AssetImage('assets/images/logo_3x2.png'),
             image: NetworkImage(widget.partyPhoto.imageUrl),
             fit: BoxFit.contain,
           ),
@@ -824,8 +826,7 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
           right: 0,
           child: Container(
             color: Constants.lightPrimary.withOpacity(0.7),
-            padding:
-            const EdgeInsets.symmetric(horizontal: 4),
+            padding: const EdgeInsets.symmetric(horizontal: 4),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.end,
@@ -848,10 +849,9 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
           left: 0,
           child: Container(
             color: Constants.lightPrimary.withOpacity(0.7),
-            padding:
-            const EdgeInsets.symmetric(horizontal: 4),
-            child: Text(DateTimeUtils.getFormattedDate(
-                widget.partyPhoto.partyDate)),
+            padding: const EdgeInsets.symmetric(horizontal: 4),
+            child: Text(
+                DateTimeUtils.getFormattedDate(widget.partyPhoto.partyDate)),
           ),
         ),
       ],
@@ -861,9 +861,7 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
   _showBlurredPhoto() {
     return Stack(alignment: Alignment.center, children: [
       BlurredImage(
-        imageUrl:
-
-        widget.partyPhoto.imageThumbUrl.isNotEmpty
+        imageUrl: widget.partyPhoto.imageThumbUrl.isNotEmpty
             ? widget.partyPhoto.imageThumbUrl
             : widget.partyPhoto.imageUrl,
         blurLevel: 5,
@@ -874,40 +872,35 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Padding(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 15.0),
+                padding: const EdgeInsets.symmetric(horizontal: 15.0),
                 child: Text(
                   _getRandomAppDownloadQuote(),
                   maxLines: 3,
                   textAlign: TextAlign.center,
                   style: TextStyle(
                       fontSize: 20,
-                      backgroundColor: Constants.lightPrimary
-                          .withOpacity(0.2)),
+                      backgroundColor: Constants.lightPrimary.withOpacity(0.2)),
                 )),
             Padding(
-              padding: const EdgeInsets.symmetric(
-                  horizontal: 5.0, vertical: 10),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 5.0, vertical: 10),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   DarkButtonWidget(
                     text: '🍎 ios',
                     onClicked: () {
-                      final uri = Uri.parse(
-                          Constants.urlBlocAppStore);
+                      final uri = Uri.parse(Constants.urlBlocAppStore);
                       NetworkUtils.launchInBrowser(uri);
                     },
                   ),
                   Padding(
-                    padding:
-                    const EdgeInsets.only(left: 20.0),
+                    padding: const EdgeInsets.only(left: 20.0),
                     child: DarkButtonWidget(
                       text: '🤖 android',
                       onClicked: () {
                         //android download
-                        final uri = Uri.parse(
-                            Constants.urlBlocPlayStore);
+                        final uri = Uri.parse(Constants.urlBlocPlayStore);
                         NetworkUtils.launchInBrowser(uri);
                       },
                     ),
@@ -947,8 +940,8 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
         child: Container(
           color: Constants.lightPrimary.withOpacity(0.7),
           padding: const EdgeInsets.symmetric(horizontal: 4),
-          child: Text(DateTimeUtils.getFormattedDate(
-              widget.partyPhoto.partyDate)),
+          child:
+              Text(DateTimeUtils.getFormattedDate(widget.partyPhoto.partyDate)),
         ),
       ),
     ]);

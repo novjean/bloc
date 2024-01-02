@@ -9,16 +9,16 @@ class Footer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
-      borderRadius: const BorderRadius.only(topLeft: Radius.circular(15), topRight: Radius.circular(15)),
+      borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(15), topRight: Radius.circular(15)),
       child: Container(
         height: 130,
         width: MediaQuery.of(context).size.width,
         color: Colors.black,
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10),
-          child: Column(
-            children:[
-              Expanded(
+          child: Column(children: [
+            Expanded(
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -38,26 +38,24 @@ class Footer extends StatelessWidget {
                     children: [
                       InkWell(
                         onTap: () {
-                          final uri =
-                              Uri.parse(Constants.blocInstaHandle);
+                          final uri = Uri.parse(Constants.blocInstaHandle);
                           NetworkUtils.launchInBrowser(uri);
                         },
                         child: const Text(
                           'instagram',
                           style: TextStyle(
-                              fontSize: 14,
-                              color: Constants.lightPrimary),
+                              fontSize: 14, color: Constants.lightPrimary),
                         ),
                       ),
                       InkWell(
                         onTap: () {
-                          GoRouter.of(context).pushNamed(RouteConstants.contactRouteName);
+                          GoRouter.of(context)
+                              .pushNamed(RouteConstants.contactRouteName);
                         },
                         child: const Text(
                           'contact us',
                           style: TextStyle(
-                              fontSize: 14,
-                              color: Constants.lightPrimary),
+                              fontSize: 14, color: Constants.lightPrimary),
                         ),
                       ),
                     ],
@@ -69,35 +67,35 @@ class Footer extends StatelessWidget {
                     children: [
                       InkWell(
                         onTap: () {
-                          GoRouter.of(context).pushNamed(RouteConstants.privacyRouteName);
+                          GoRouter.of(context)
+                              .pushNamed(RouteConstants.privacyRouteName);
                         },
                         child: const Text(
                           'privacy policy',
                           style: TextStyle(
-                              fontSize: 14,
-                              color: Constants.lightPrimary),
+                              fontSize: 14, color: Constants.lightPrimary),
                         ),
                       ),
                       InkWell(
                         onTap: () {
-                          GoRouter.of(context).pushNamed(RouteConstants.refundRouteName);
+                          GoRouter.of(context)
+                              .pushNamed(RouteConstants.refundRouteName);
                         },
                         child: const Text(
                           'refund policy',
                           style: TextStyle(
-                              fontSize: 14,
-                              color: Constants.lightPrimary),
+                              fontSize: 14, color: Constants.lightPrimary),
                         ),
                       ),
                       InkWell(
                         onTap: () {
-                          GoRouter.of(context).pushNamed(RouteConstants.termsAndConditionsRouteName);
+                          GoRouter.of(context).pushNamed(
+                              RouteConstants.termsAndConditionsRouteName);
                         },
                         child: const Text(
                           'terms and conditions',
                           style: TextStyle(
-                              fontSize: 14,
-                              color: Constants.lightPrimary),
+                              fontSize: 14, color: Constants.lightPrimary),
                         ),
                       ),
                     ],
@@ -105,14 +103,15 @@ class Footer extends StatelessWidget {
                 ],
               ),
             ),
-              Padding(
-                padding: const EdgeInsets.only(bottom: 5, left: 10, right: 10),
-                child: Text('Copyright Novatech Corp 2024. All rights reserved.',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(color: Constants.primary, fontSize: 12),),
-              )
-          ]
-          ),
+            const Padding(
+              padding: EdgeInsets.only(bottom: 5, left: 10, right: 10),
+              child: Text(
+                'Copyright Novatech Corp 2024. All rights reserved.',
+                textAlign: TextAlign.center,
+                style: TextStyle(color: Constants.primary, fontSize: 12),
+              ),
+            )
+          ]),
         ),
       ),
     );

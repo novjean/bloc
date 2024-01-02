@@ -208,12 +208,12 @@ class _PhotosScreenState extends State<PhotosScreen> {
 
   int _currentIndex = 0;
 
-  _showPhotosDialog(int index){
+  _showPhotosDialog(int index) {
     List<String> partyPhotoUrls = [];
 
     _currentIndex = index;
 
-    for(PartyPhoto partyPhoto in mPartyPhotos){
+    for (PartyPhoto partyPhoto in mPartyPhotos) {
       partyPhotoUrls.add(partyPhoto.imageUrl);
     }
 
@@ -231,69 +231,66 @@ class _PhotosScreenState extends State<PhotosScreen> {
             child: Center(
               child: CarouselSlider(
                 options: CarouselOptions(
-                  height: 300,
+                    height: 300,
                     initialPage: index,
                     enableInfiniteScroll: true,
                     enlargeCenterPage: true,
                     autoPlay: true,
                     autoPlayInterval: const Duration(seconds: 4),
                     autoPlayAnimationDuration:
-                    const Duration(milliseconds: 750),
+                        const Duration(milliseconds: 750),
                     scrollDirection: Axis.horizontal,
                     onPageChanged: (index, reason) {
                       setState(() {
                         _currentIndex = index;
                         PartyPhoto partyPhoto = mPartyPhotos[_currentIndex];
-                        FirestoreHelper.updatePartyPhotoViewCount(partyPhoto.id);
+                        FirestoreHelper.updatePartyPhotoViewCount(
+                            partyPhoto.id);
                       });
                     }
-                  // aspectRatio: 1.0,
-                ),
-
-                items: partyPhotoUrls
-                    .map((item) {
-                  return kIsWeb? Image.network(item,
-                      fit: BoxFit.fitWidth,
-                      width: mq.width) :
-                  CachedNetworkImage(
-                    imageUrl: item,
-                    imageBuilder: (context, imageProvider) => Container(
-                      decoration: BoxDecoration(
-                        image: DecorationImage(
-                          image: imageProvider,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
+                    // aspectRatio: 1.0,
                     ),
-                    placeholder: (context, url) =>
-                    const FadeInImage(
-                      placeholder: AssetImage('assets/images/logo.png'),
-                      image: AssetImage('assets/images/logo.png'),
-                      fit: BoxFit.cover,
-                    ),
-                    errorWidget: (context, url, error) => const Icon(Icons.error),
-                  );
-                }
-                ).toList(),
+                items: partyPhotoUrls.map((item) {
+                  return kIsWeb
+                      ? Image.network(item,
+                          fit: BoxFit.fitWidth, width: mq.width)
+                      : CachedNetworkImage(
+                          imageUrl: item,
+                          imageBuilder: (context, imageProvider) => Container(
+                            decoration: BoxDecoration(
+                              image: DecorationImage(
+                                image: imageProvider,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
+                          placeholder: (context, url) => const FadeInImage(
+                            placeholder: AssetImage('assets/images/logo.png'),
+                            image: AssetImage('assets/images/logo.png'),
+                            fit: BoxFit.cover,
+                          ),
+                          errorWidget: (context, url, error) =>
+                              const Icon(Icons.error),
+                        );
+                }).toList(),
               ),
             ),
-
           ),
           actions: [
             UserPreferences.myUser.clearanceLevel >= Constants.ADMIN_LEVEL
                 ? TextButton(
-              child: const Text("advertise"),
-              onPressed: () {
-                Ad ad =
-                Dummy.getDummyAd(mPartyPhotos[_currentIndex].blocServiceId);
-                ad = ad.copyWith(
-                    imageUrl: mPartyPhotos[_currentIndex].imageUrl,
-                    isActive: true);
+                    child: const Text("advertise"),
+                    onPressed: () {
+                      Ad ad = Dummy.getDummyAd(
+                          mPartyPhotos[_currentIndex].blocServiceId);
+                      ad = ad.copyWith(
+                          imageUrl: mPartyPhotos[_currentIndex].imageUrl,
+                          isActive: true);
 
-                Navigator.of(ctx).pop();
-                _showAdDialog(context, ad);
-              },
-            )
+                      Navigator.of(ctx).pop();
+                      _showAdDialog(context, ad);
+                    },
+                  )
                 : const SizedBox(),
             TextButton(
               child: const Text("close"),

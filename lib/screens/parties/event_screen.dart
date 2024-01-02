@@ -160,7 +160,7 @@ class _EventScreenState extends State<EventScreen> {
           ),
         ),
         backgroundColor: Constants.background,
-        body: _isPartyLoading ? const LoadingWidget(): _buildBody(context));
+        body: _isPartyLoading ? const LoadingWidget() : _buildBody(context));
   }
 
   _buildBody(BuildContext context) {
@@ -171,7 +171,7 @@ class _EventScreenState extends State<EventScreen> {
     bool showGuestListBuyTix = false;
     if (!mParty.isTBA &&
         !mParty.isTicketsDisabled &&
-        (mParty.isTix|| mParty.ticketUrl.isNotEmpty)) {
+        (mParty.isTix || mParty.ticketUrl.isNotEmpty)) {
       if (isGuestListActive) {
         showGuestListBuyTix = true;
       }
@@ -541,7 +541,7 @@ class _EventScreenState extends State<EventScreen> {
     bool isGuestListActive =
         mParty.isGuestListActive & (timeNow < mParty.guestListEndTime);
 
-    if (!mParty.isTBA && mParty.isTix){
+    if (!mParty.isTBA && mParty.isTix) {
       return Container(
         height: 50,
         width: 160,
@@ -554,8 +554,8 @@ class _EventScreenState extends State<EventScreen> {
             elevation: 3,
           ),
           onPressed: () {
-            if(kIsWeb){
-              if(mParty.ticketUrl.isNotEmpty){
+            if (kIsWeb) {
+              if (mParty.ticketUrl.isNotEmpty) {
                 final uri = Uri.parse(mParty.ticketUrl);
                 NetworkUtils.launchInBrowser(uri);
               } else {
@@ -569,8 +569,8 @@ class _EventScreenState extends State<EventScreen> {
 
               Navigator.of(context).push(
                 MaterialPageRoute(
-                    builder: (context) => TixBuyEditScreen(
-                        tix: tix, task: 'buy')),
+                    builder: (context) =>
+                        TixBuyEditScreen(tix: tix, task: 'buy')),
               );
             }
 
@@ -595,9 +595,9 @@ class _EventScreenState extends State<EventScreen> {
                     for (int i = 0; i < res.docs.length; i++) {
                       DocumentSnapshot document = res.docs[i];
                       Map<String, dynamic> data =
-                      document.data()! as Map<String, dynamic>;
+                          document.data()! as Map<String, dynamic>;
                       final HistoryMusic historyMusic =
-                      Fresh.freshHistoryMusicMap(data, false);
+                          Fresh.freshHistoryMusicMap(data, false);
 
                       totalCount += historyMusic.count;
                       if (i == 0) {
@@ -612,9 +612,9 @@ class _EventScreenState extends State<EventScreen> {
                   } else {
                     DocumentSnapshot document = res.docs[0];
                     Map<String, dynamic> data =
-                    document.data()! as Map<String, dynamic>;
+                        document.data()! as Map<String, dynamic>;
                     HistoryMusic historyMusic =
-                    Fresh.freshHistoryMusicMap(data, false);
+                        Fresh.freshHistoryMusicMap(data, false);
                     int newCount = historyMusic.count + 1;
 
                     historyMusic = historyMusic.copyWith(count: newCount);
