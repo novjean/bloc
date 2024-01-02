@@ -1436,7 +1436,7 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
     final DateTime? _sDate = await showDatePicker(
         context: context,
         initialDate: initDate,
-        firstDate: DateTime(2023, 1),
+        firstDate: DateTime(2024, 1),
         lastDate: DateTime(2101));
     if (_sDate != null) {
       DateTime sDateTemp = DateTime(_sDate.year, _sDate.month, _sDate.day);

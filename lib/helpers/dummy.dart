@@ -643,7 +643,6 @@ class Dummy {
 
     User dummyUser = User(
         id: StringUtils.getRandomString(28),
-        blocServiceId: '',
         clearanceLevel: 1,
         challengeLevel: 1,
         email: '',
@@ -654,7 +653,7 @@ class Dummy {
         username: '',
         instagramLink: '',
         gender: 'male',
-        birthYear: 2023,
+        birthYear: 2024,
         phoneNumber: 0,
         isBanned: false,
         isAppUser: false,
@@ -663,7 +662,9 @@ class Dummy {
         lastReviewTime: 0,
         isIos: false,
         createdAt: millis,
-        lastSeenAt: millis);
+        lastSeenAt: millis,
+        blocServiceId: '',
+    );
     return dummyUser;
   }
 

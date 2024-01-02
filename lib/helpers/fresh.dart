@@ -5134,52 +5134,46 @@ class Fresh {
     try {
       user = user.copyWith(imageUrl: map['imageUrl'] as String);
     } catch (e) {
-      Logx.em(_TAG, 'user imageUrl not exist for user id: ' + user.id);
+      Logx.em(_TAG, 'user imageUrl not exist for id: ${user.id}');
       isModelChanged = true;
     }
     try {
       user = user.copyWith(gender: map['gender'] as String);
     } catch (e) {
-      Logx.em(_TAG, 'user gender not exist for user id: ' + user.id);
+      Logx.em(_TAG, 'user gender not exist for id: ${user.id}');
       isModelChanged = true;
     }
 
     try {
       user = user.copyWith(clearanceLevel: map['clearanceLevel'] as int);
     } catch (e) {
-      Logx.em(_TAG, 'user clearanceLevel not exist for user id: ' + user.id);
+      Logx.em(_TAG, 'user clearanceLevel not exist for id: ${user.id}');
       isModelChanged = true;
     }
     try {
       user = user.copyWith(challengeLevel: map['challengeLevel'] as int);
     } catch (e) {
-      Logx.em(_TAG, 'user challengeLevel not exist for user id: ' + user.id);
+      Logx.em(_TAG, 'user challengeLevel not exist for id: ${user.id}');
       isModelChanged = true;
     }
 
     try {
       user = user.copyWith(fcmToken: map['fcmToken'] as String);
     } catch (e) {
-      Logx.em(_TAG, 'user fcmToken not exist for user id: ' + user.id);
-      isModelChanged = true;
-    }
-    try {
-      user = user.copyWith(blocServiceId: map['blocServiceId'] as String);
-    } catch (e) {
-      Logx.em(_TAG, 'user blocServiceId not exist for user id: ' + user.id);
+      Logx.em(_TAG, 'user fcmToken not exist for id: ${user.id}');
       isModelChanged = true;
     }
 
     try {
       user = user.copyWith(createdAt: map['createdAt'] as int);
     } catch (e) {
-      Logx.em(_TAG, 'user createdAt not exist for user id: ' + user.id);
+      Logx.em(_TAG, 'user createdAt not exist for id: ${user.id}');
       isModelChanged = true;
     }
     try {
       user = user.copyWith(lastSeenAt: map['lastSeenAt'] as int);
     } catch (e) {
-      Logx.em(_TAG, 'user lastSeenAt not exist for user id: ' + user.id);
+      Logx.em(_TAG, 'user lastSeenAt not exist for id: ${user.id}');
       isModelChanged = true;
     }
 
@@ -5217,6 +5211,13 @@ class Fresh {
       user = user.copyWith(lastReviewTime: map['lastReviewTime'] as int);
     } catch (e) {
       Logx.em(_TAG, 'user lastReviewTime not exist for id: ${user.id}');
+      isModelChanged = true;
+    }
+
+    try {
+      user = user.copyWith(blocServiceId: map['blocServiceId'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'user blocServiceId not exist for id: ${user.id}');
       isModelChanged = true;
     }
 
@@ -5304,17 +5305,17 @@ class Fresh {
     try {
       freshUser = freshUser.copyWith(createdAt: user.createdAt);
     } catch (e) {
-      Logx.em(_TAG, 'user createdAt not exist for user id: ' + user.id);
+      Logx.em(_TAG, 'user createdAt not exist for id: ${user.id}');
     }
     try {
       freshUser = freshUser.copyWith(lastSeenAt: user.lastSeenAt);
     } catch (e) {
-      Logx.em(_TAG, 'user lastSeenAt not exist for user id: ' + user.id);
+      Logx.em(_TAG, 'user lastSeenAt not exist for id: ${user.id}');
     }
     try {
       freshUser = freshUser.copyWith(isBanned: user.isBanned);
     } catch (e) {
-      Logx.em(_TAG, 'user isBanned not exist for id: ' + user.id);
+      Logx.em(_TAG, 'user isBanned not exist for id: ${user.id}');
     }
     try {
       freshUser = freshUser.copyWith(isAppUser: user.isAppUser);
@@ -5340,6 +5341,12 @@ class Fresh {
       freshUser = freshUser.copyWith(lastReviewTime: user.lastReviewTime);
     } catch (e) {
       Logx.em(_TAG, 'user lastReviewTime not exist for id: ${user.id}');
+    }
+
+    try {
+      freshUser = freshUser.copyWith(blocServiceId: user.blocServiceId);
+    } catch (e) {
+      Logx.em(_TAG, 'user blocServiceId not exist for id: ${user.id}');
     }
 
     return freshUser;

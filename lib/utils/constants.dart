@@ -51,6 +51,8 @@ class Constants {
 
   // flagship store kept for ease of reference
   static String blocServiceId = 'UVU4XPqTYr3U0YhQzEhg';
+  static String freqServiceId = 'gionoUCHTeH3r5YH72c065pKgUg8';
+
   static String blocPromoterId = 'QQEck1k84xT49iLPtRaPWeKtOIhp';
   static String blocCommunityLoungeId = 'HZfHfnB09xBcl5haYavd2nyvXiyF';
   static String ladiesLoungeId = 'uieGkTmtQQP4F8RKSEq57bpWezbl';

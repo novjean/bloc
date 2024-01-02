@@ -1151,7 +1151,7 @@ class _CelebrationAddEditScreenState extends State<CelebrationAddEditScreen> {
     final DateTime? _sDate = await showDatePicker(
         context: context,
         initialDate: initDate,
-        firstDate: DateTime(2023, 1),
+        firstDate: DateTime(2024, 1),
         lastDate: DateTime(2101));
     if (_sDate != null) {
       setState(() {
