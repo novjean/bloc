@@ -70,12 +70,11 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
   //for handling message text changes
   final _textController = TextEditingController();
 
-  var showDetails = false;
-
   //isUploading -- for checking if image is uploading or not?
   bool _isUploading = false;
-
   String photoChatMessage = '';
+
+  List<String> chatViewUpdatedList = [];
 
   @override
   void initState() {
@@ -265,7 +264,6 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
   @override
   void dispose() {
     _textController.dispose();
-
     FirestoreHelper.updateUserLoungeLastAccessed(mUserLounge.id);
 
     super.dispose();
@@ -276,7 +274,7 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
         Expanded(
-          child: loadMessages(),
+          child: _loadMessages(),
         ),
         if (_isUploading)
           const Align(
@@ -289,7 +287,7 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
     );
   }
 
-  loadMessages() {
+  _loadMessages() {
     return StreamBuilder<QuerySnapshot>(
       stream: FirestoreHelper.getLoungeChats(mLounge.id),
       builder: (ctx, snapshot) {
@@ -340,23 +338,29 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
           scrollDirection: Axis.vertical,
           physics: const BouncingScrollPhysics(),
           itemBuilder: (ctx, index) {
+
+          LoungeChat chat = mChats[index];
+
+          if(!chatViewUpdatedList.contains(chat.id)){
+            chatViewUpdatedList.add(chat.id);
+            FirestoreHelper.updateLoungeChatViewCount(chat.id);
+            Logx.d(_TAG, 'chat ${chat.id} | views : ${chat.views}');
+          }
+
             return GestureDetector(
               child: ChatItem(
-                chat: mChats[index],
-                isMe: mChats[index].userId == UserPreferences.myUser.id,
+                chat: chat,
+                isMe: chat.userId == UserPreferences.myUser.id,
                 isMember: isMember,
                 // use key for better efficiency
-                key: ValueKey(mChats[index].id),
+                key: ValueKey(chat.id),
               ),
               onTap: () {
                 Logx.d(_TAG, 'chat selected: $index');
               },
               onLongPress: () {
-                if (UserPreferences.myUser.clearanceLevel >
-                    Constants.MANAGER_LEVEL) {
-                  LoungeChat chat = mChats[index];
-
-                  showActionsDialog(context, chat);
+                if (UserPreferences.myUser.clearanceLevel >= Constants.MANAGER_LEVEL) {
+                  _showActionsDialog(context, chat);
                 }
               },
             );
@@ -364,7 +368,7 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
     );
   }
 
-  showActionsDialog(BuildContext context, LoungeChat chat) {
+  _showActionsDialog(BuildContext context, LoungeChat chat) {
     return showDialog(
       context: context,
       builder: (BuildContext ctx) {
@@ -1050,11 +1054,10 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
                     loungeName: mLounge.name,
                     type: FirestoreHelper.CHAT_TYPE_TEXT,
                     message: _textController.text,
-                    time: Timestamp.now().millisecondsSinceEpoch,
                   );
 
+                  StringUtils.getRandomString(5);
                   FirestoreHelper.pushLoungeChat(chat);
-
                   FirestoreHelper.updateLoungeLastChat(
                       mLounge.id, chat.message, chat.time);
 

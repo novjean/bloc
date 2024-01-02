@@ -222,7 +222,9 @@ class Dummy {
         time: Timestamp.now().millisecondsSinceEpoch,
         vote: 0,
         upVoters: [],
-        downVoters: []);
+        downVoters: [],
+        views: 0);
+
     return dummyChat;
   }
 

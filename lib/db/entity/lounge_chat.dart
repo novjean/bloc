@@ -15,6 +15,8 @@ class LoungeChat{
   List<String> upVoters;
   List<String> downVoters;
 
+  int views;
+
 //<editor-fold desc="Data Methods">
   LoungeChat({
     required this.id,
@@ -30,6 +32,7 @@ class LoungeChat{
     required this.vote,
     required this.upVoters,
     required this.downVoters,
+    required this.views,
   });
 
   @override
@@ -49,7 +52,8 @@ class LoungeChat{
           time == other.time &&
           vote == other.vote &&
           upVoters == other.upVoters &&
-          downVoters == other.downVoters);
+          downVoters == other.downVoters &&
+          views == other.views);
 
   @override
   int get hashCode =>
@@ -65,7 +69,8 @@ class LoungeChat{
       time.hashCode ^
       vote.hashCode ^
       upVoters.hashCode ^
-      downVoters.hashCode;
+      downVoters.hashCode ^
+      views.hashCode;
 
   @override
   String toString() {
@@ -83,6 +88,7 @@ class LoungeChat{
         ' vote: $vote,' +
         ' upVoters: $upVoters,' +
         ' downVoters: $downVoters,' +
+        ' views: $views,' +
         '}';
   }
 
@@ -100,6 +106,7 @@ class LoungeChat{
     int? vote,
     List<String>? upVoters,
     List<String>? downVoters,
+    int? views,
   }) {
     return LoungeChat(
       id: id ?? this.id,
@@ -115,6 +122,7 @@ class LoungeChat{
       vote: vote ?? this.vote,
       upVoters: upVoters ?? this.upVoters,
       downVoters: downVoters ?? this.downVoters,
+      views: views ?? this.views,
     );
   }
 
@@ -133,6 +141,7 @@ class LoungeChat{
       'vote': this.vote,
       'upVoters': this.upVoters,
       'downVoters': this.downVoters,
+      'views': this.views,
     };
   }
 
@@ -151,6 +160,7 @@ class LoungeChat{
       vote: map['vote'] as int,
       upVoters: map['upVoters'] as List<String>,
       downVoters: map['downVoters'] as List<String>,
+      views: map['views'] as int,
     );
   }
 

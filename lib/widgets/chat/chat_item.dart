@@ -1,3 +1,4 @@
+import 'package:bloc/db/shared_preferences/user_preferences.dart';
 import 'package:bloc/helpers/firestore_helper.dart';
 import 'package:bloc/utils/date_time_utils.dart';
 import 'package:flutter/material.dart';
@@ -5,6 +6,8 @@ import 'package:flutter/material.dart';
 import '../../db/entity/lounge_chat.dart';
 import '../../main.dart';
 import '../../utils/constants.dart';
+import '../../utils/logx.dart';
+import '../ui/toaster.dart';
 
 class ChatItem extends StatefulWidget {
   final LoungeChat chat;
@@ -23,6 +26,8 @@ class ChatItem extends StatefulWidget {
 }
 
 class _ChatItemState extends State<ChatItem> {
+  static const String _TAG = 'ChatItem';
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -94,80 +99,101 @@ class _ChatItemState extends State<ChatItem> {
                                       fontSize: 17, color: Colors.black)),
                             ],
                           ),
-                    // Row(
-                    //   mainAxisAlignment: MainAxisAlignment.end,
-                    //   children: [
-                    //     Padding(
-                    //       padding: const EdgeInsets.only(right: 5.0),
-                    //       child: IconButton(
-                    //           icon: const Icon(Icons.keyboard_arrow_up),
-                    //           padding: EdgeInsets.zero,
-                    //           constraints: const BoxConstraints(),
-                    //           tooltip: 'up vote',
-                    //           onPressed: () {
-                    //             if(widget.isMember){
-                    //               if (widget.chat.upVoters
-                    //                   .contains(UserPreferences.myUser.id)) {
-                    //                 // nothing to do
-                    //               } else if (widget.chat.downVoters
-                    //                   .contains(UserPreferences.myUser.id)) {
-                    //                 widget.chat.downVoters
-                    //                     .remove(UserPreferences.myUser.id);
-                    //                 widget.chat.vote++;
-                    //                 FirestoreHelper.pushLoungeChat(widget.chat);
-                    //                 setState(() {});
-                    //               } else {
-                    //                 widget.chat.upVoters
-                    //                     .add(UserPreferences.myUser.id);
-                    //                 widget.chat.vote++;
-                    //                 FirestoreHelper.pushLoungeChat(widget.chat);
-                    //                 setState(() {});
-                    //               }
-                    //             } else {
-                    //               Toaster.shortToast('have a 🍕 slice and join us to vote');
-                    //             }
-                    //           },
-                    //           iconSize: 18.0),
-                    //     ),
-                    //     Text(
-                    //       widget.chat.vote.toString(),
-                    //       style: const TextStyle(
-                    //           fontSize: 12, fontWeight: FontWeight.bold),
-                    //     ),
-                    //     Padding(
-                    //       padding: const EdgeInsets.only(left: 5.0),
-                    //       child: IconButton(
-                    //           icon: const Icon(Icons.keyboard_arrow_down),
-                    //           padding: EdgeInsets.zero,
-                    //           constraints: const BoxConstraints(),
-                    //           tooltip: 'down vote',
-                    //           onPressed: () {
-                    //             if(widget.isMember){
-                    //               if (widget.chat.downVoters
-                    //                   .contains(UserPreferences.myUser.id)) {
-                    //                 // nothing to do
-                    //               } else if (widget.chat.upVoters
-                    //                   .contains(UserPreferences.myUser.id)) {
-                    //                 widget.chat.upVoters
-                    //                     .remove(UserPreferences.myUser.id);
-                    //                 widget.chat.vote--;
-                    //                 FirestoreHelper.pushLoungeChat(widget.chat);
-                    //                 setState(() {});
-                    //               } else {
-                    //                 widget.chat.downVoters
-                    //                     .add(UserPreferences.myUser.id);
-                    //                 widget.chat.vote--;
-                    //                 FirestoreHelper.pushLoungeChat(widget.chat);
-                    //                 setState(() {});
-                    //               }
-                    //             } else {
-                    //               Toaster.shortToast('have a 🍕 slice and join us to vote');
-                    //             }
-                    //           },
-                    //           iconSize: 18.0),
-                    //     ),
-                    //   ],
-                    // )
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 2.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(right: 10.0),
+                            child: IconButton(
+                                icon: const Icon(Icons.favorite, color: Colors.red, size: 24),
+                                padding: EdgeInsets.zero,
+                                constraints: const BoxConstraints(),
+                                tooltip: 'like',
+                                onPressed: () {
+                                  if(widget.isMember){
+                                    if (widget.chat.upVoters
+                                        .contains(UserPreferences.myUser.id)) {
+                                      // nothing to do
+                                      if(UserPreferences.myUser.clearanceLevel==Constants.ADMIN_LEVEL){
+                                        widget.chat.vote++;
+                                        FirestoreHelper.pushLoungeChat(widget.chat);
+                                        setState(() {});
+                                      } else {
+                                        Logx.ist(_TAG, 'your ❤️ is already there. much love, wow 🐶');
+                                      }
+                                    } else if (widget.chat.downVoters
+                                        .contains(UserPreferences.myUser.id)) {
+                                      widget.chat.downVoters
+                                          .remove(UserPreferences.myUser.id);
+                                      widget.chat.vote++;
+                                      FirestoreHelper.pushLoungeChat(widget.chat);
+                                      setState(() {});
+                                    } else {
+                                      widget.chat.upVoters
+                                          .add(UserPreferences.myUser.id);
+                                      widget.chat.vote++;
+                                      FirestoreHelper.pushLoungeChat(widget.chat);
+                                      setState(() {});
+                                    }
+                                  } else {
+                                    Toaster.shortToast('have a 🍕 slice and join us to vote');
+                                  }
+                                },
+                                iconSize: 18.0),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 5.0, right: 5, top: 4),
+                            child: Text(
+                              widget.chat.vote.toString(),
+                              style: const TextStyle(
+                                color: Constants.darkPrimary,
+                                  fontSize: 16, fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 5.0),
+                            child: IconButton(
+                                icon: const Icon(Icons.thumb_down, color: Colors.black54, size: 23,),
+                                padding: EdgeInsets.zero,
+                                constraints: const BoxConstraints(),
+                                tooltip: 'dislike',
+                                onPressed: () {
+                                  if(widget.isMember){
+                                    if (widget.chat.downVoters
+                                        .contains(UserPreferences.myUser.id)) {
+                                      // nothing to do
+                                    } else if (widget.chat.upVoters
+                                        .contains(UserPreferences.myUser.id)) {
+                                      widget.chat.upVoters
+                                          .remove(UserPreferences.myUser.id);
+                                      widget.chat.vote--;
+                                      FirestoreHelper.pushLoungeChat(widget.chat);
+                                      setState(() {});
+                                    } else {
+                                      widget.chat.downVoters
+                                          .add(UserPreferences.myUser.id);
+                                      widget.chat.vote--;
+                                      FirestoreHelper.pushLoungeChat(widget.chat);
+                                      setState(() {});
+                                    }
+                                  } else {
+                                    Toaster.shortToast('have a 🍕 slice and join us to vote');
+                                  }
+                                },
+                                iconSize: 18.0),
+                          ),
+                          const Spacer(),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 5),
+                            child: Text(
+                                '👁️‍🗨️ ${widget.chat.views}'
+                            ),
+                          )
+                        ],
+                      ),
+                    )
                   ],
                 ),
               )),
