@@ -103,4 +103,10 @@ class DateTimeUtils {
     }
   }
 
+  static String getDay(int millis) {
+    DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(millis);
+    List<String> daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+    return daysOfWeek[dateTime.weekday - 1];
+  }
+
 }

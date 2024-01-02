@@ -1193,9 +1193,11 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
           onClicked: () {
             Logx.ist(_TAG, 'launching whatsapp...');
 
+            String day = DateTimeUtils.getDay(sParty.startTime).toLowerCase();
+
             // Encode the phone number and message for the URL
             String message =
-                'Hope you had a wonderful time tonight at as a guest in our community! A Google review will help us improve and ensure every night at our bar is an unforgettable experience. Please review us at the following link, thank you 😊 \n\n$reviewLink';
+                'Hope you had a wonderful time on $day as a guest in our community! A Google review will help us improve and ensure every night at our bar is an unforgettable experience. Please review us at the following link, thank you 😊 \n\n$reviewLink';
             String url =
                 'https://wa.me/+${user.phoneNumber}/?text=${Uri.encodeFull(message)}';
             Uri uri = Uri.parse(url);
