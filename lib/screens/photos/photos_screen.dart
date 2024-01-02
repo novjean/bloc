@@ -41,7 +41,7 @@ class _PhotosScreenState extends State<PhotosScreen> {
 
   List<PartyPhoto> mPartyPhotos = [];
   var _isPartyPhotosLoading = true;
-  bool showList = true;
+  bool _showList = true;
 
   List<Lounge> sLounges = [];
   String photoChatMessage = '';
@@ -79,7 +79,7 @@ class _PhotosScreenState extends State<PhotosScreen> {
       resizeToAvoidBottomInset: false,
       body: _isPartyPhotosLoading
           ? const LoadingWidget()
-          : (showList
+          : (_showList
               ? _showPhotosListView(mPartyPhotos)
               : _showPhotosGridView(mPartyPhotos)),
     );
@@ -191,7 +191,7 @@ class _PhotosScreenState extends State<PhotosScreen> {
     return FloatingActionButton(
       onPressed: () {
         setState(() {
-          showList = !showList;
+          _showList = !_showList;
         });
       },
       backgroundColor: Constants.primary,
@@ -199,7 +199,7 @@ class _PhotosScreenState extends State<PhotosScreen> {
       elevation: 5,
       splashColor: Colors.grey,
       child: Icon(
-        showList ? Icons.grid_on_rounded : Icons.list_rounded,
+        _showList ? Icons.grid_on_rounded : Icons.list_rounded,
         color: Colors.black,
         size: 29,
       ),
@@ -207,6 +207,8 @@ class _PhotosScreenState extends State<PhotosScreen> {
   }
 
   int _currentIndex = 0;
+
+
   _showPhotosDialog(int index){
     List<String> partyPhotoUrls = [];
 
@@ -223,29 +225,27 @@ class _PhotosScreenState extends State<PhotosScreen> {
           backgroundColor: Constants.lightPrimary,
           shape: const RoundedRectangleBorder(
               borderRadius: BorderRadius.all(Radius.circular(20.0))),
-          contentPadding: const EdgeInsets.all(0.0),
-          content: SizedBox(
-            height: mq.width,
-            width: mq.width,
+          contentPadding: const EdgeInsets.all(1.0),
+          content: Container(
+            height: 400,
+            width: double.maxFinite,
             child: Center(
               child: CarouselSlider(
                 options: CarouselOptions(
+                  height: 300,
                     initialPage: index,
                     enableInfiniteScroll: true,
+                    enlargeCenterPage: true,
                     autoPlay: true,
                     autoPlayInterval: const Duration(seconds: 4),
                     autoPlayAnimationDuration:
                     const Duration(milliseconds: 750),
-                    enlargeCenterPage: true,
                     scrollDirection: Axis.horizontal,
                     onPageChanged: (index, reason) {
-                      _currentIndex = index;
-                      Logx.d(_TAG, 'index is $_currentIndex');
-
-                      PartyPhoto partyPhoto = mPartyPhotos[_currentIndex];
-                      FirestoreHelper.updatePartyPhotoViewCount(partyPhoto.id);
-
                       setState(() {
+                        _currentIndex = index;
+                        PartyPhoto partyPhoto = mPartyPhotos[_currentIndex];
+                        FirestoreHelper.updatePartyPhotoViewCount(partyPhoto.id);
                       });
                     }
                   // aspectRatio: 1.0,
@@ -254,7 +254,7 @@ class _PhotosScreenState extends State<PhotosScreen> {
                 items: partyPhotoUrls
                     .map((item) {
                   return kIsWeb? Image.network(item,
-                      fit: BoxFit.cover,
+                      fit: BoxFit.fitWidth,
                       width: mq.width) :
                   CachedNetworkImage(
                     imageUrl: item,
