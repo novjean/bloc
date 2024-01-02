@@ -208,7 +208,6 @@ class _PhotosScreenState extends State<PhotosScreen> {
 
   int _currentIndex = 0;
 
-
   _showPhotosDialog(int index){
     List<String> partyPhotoUrls = [];
 
