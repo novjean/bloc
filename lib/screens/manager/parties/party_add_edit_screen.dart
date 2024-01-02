@@ -1352,6 +1352,25 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
               ),
               const SizedBox(height: 24),
               ButtonWidget(
+                text: 'duplicate party',
+                onClicked: () {
+                  Party duplicateParty = Dummy.getDummyParty(widget.party.blocServiceId);
+                  duplicateParty = widget.party;
+                  duplicateParty = duplicateParty.copyWith(id: StringUtils.getRandomString(28),
+                    isActive: false, views: 0, createdAt: Timestamp.now().millisecondsSinceEpoch,
+                  imageUrl: '', isAdCampaignRunning: false, imageUrls: [], shareCount: 0,
+                  ticketUrl: '', storyImageUrl: '', showStoryImageUrl: false,);
+                  FirestoreHelper.pushParty(duplicateParty);
+
+                  Navigator.of(context).pop();
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (ctx) =>
+                          PartyAddEditScreen(party: duplicateParty, task: 'edit')));
+                },
+              ),
+
+              const SizedBox(height: 36),
+              ButtonWidget(
                 text: 'tix tier',
                 onClicked: () {
                   Navigator.of(context).push(
