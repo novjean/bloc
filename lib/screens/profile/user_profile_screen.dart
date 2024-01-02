@@ -61,6 +61,8 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
 
   List<Friend> mFriends = [];
 
+  int _currentIndex = 0;
+
   @override
   void dispose() {
     super.dispose();
@@ -566,8 +568,6 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
     );
   }
 
-  int _currentIndex = 0;
-
   _showPhotosDialog(int index) {
     List<String> partyPhotoUrls = [];
 
@@ -600,16 +600,13 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                     enlargeCenterPage: true,
                     scrollDirection: Axis.horizontal,
                     onPageChanged: (index, reason) {
-                      _currentIndex = index;
-                      Logx.d(_TAG, 'index is $_currentIndex');
-
-                      PartyPhoto partyPhoto = mPartyPhotos[_currentIndex];
-                      FirestoreHelper.updatePartyPhotoViewCount(partyPhoto.id);
-
-                      setState(() {});
-                    }
-                    // aspectRatio: 1.0,
-                    ),
+                      setState(() {
+                        _currentIndex = index;
+                        PartyPhoto partyPhoto = mPartyPhotos[_currentIndex];
+                        FirestoreHelper.updatePartyPhotoViewCount(
+                            partyPhoto.id);
+                      });
+                    }),
                 items: partyPhotoUrls.map((item) {
                   return kIsWeb
                       ? Image.network(item,
