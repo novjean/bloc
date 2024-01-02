@@ -42,7 +42,7 @@ class Footer extends StatelessWidget {
                               Uri.parse(Constants.blocInstaHandle);
                           NetworkUtils.launchInBrowser(uri);
                         },
-                        child: Text(
+                        child: const Text(
                           'instagram',
                           style: TextStyle(
                               fontSize: 14,

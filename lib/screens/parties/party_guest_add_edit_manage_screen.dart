@@ -1924,8 +1924,8 @@ class _PartyGuestAddEditManageScreenState
                           'bloc-${widget.party.name}',
                           ''
                               '${StringUtils.firstFewWords(widget.party.description, 15)}... '
-                              '\n\nhey. check out this event at the official bloc app. \n\n🌏 '
-                              'https://bloc.bar/#/\n📱 https://bloc.bar/app_store.html\n\n#blocCommunity ❤️‍🔥');
+                              '\n\nhey. check out this event at the official bloc app.'
+                              '\n\n🍎 ios:\n${Constants.urlBlocAppStore} \n\n🤖 android:\n${Constants.urlBlocPlayStore} \n\n🌏 web:\n${Constants.urlBlocWeb} \n\n#blocCommunity 💛');
                     }
                   } else {
                     final uri = Uri.parse(Constants.blocInstaHandle);
@@ -2914,7 +2914,8 @@ class _PartyGuestAddEditManageScreenState
 
   void _notifyApprovalWhatsapp() async {
     String message =
-        'congratulations ${mBlocUser.name}, your guest list for ${widget.party.name} on bloc has been approved 🎉.\n\n 🎫 passes can be found in our app, download at \n\n🍎 ios:\n${Constants.urlBlocAppStore}\n\n🤖 android:\n${Constants.urlBlocPlayStore}\n\n🌏 web:\nhttps://bloc.bar/app_store.html \n\nsee you soon 🥳 #blocCommunity💛';
+        'congratulations ${mBlocUser.name}, your guest list for ${widget.party.name} on bloc has been approved 🎉.\n\n 🎫 passes can be found in our app, download at '
+        '\n\n🍎 ios:\n${Constants.urlBlocAppStore}\n\n🤖 android:\n${Constants.urlBlocPlayStore}\n\n🌏 web:\n${Constants.urlBlocWeb} \n\nsee you soon 🥳 #blocCommunity 💛';
     // Encode the phone number and message for the URL
     String url =
         'https://wa.me/+${mBlocUser.phoneNumber}/?text=${Uri.encodeFull(message)}';

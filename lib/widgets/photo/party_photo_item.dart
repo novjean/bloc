@@ -504,7 +504,8 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
                                         String fileName =
                                             '${widget.partyPhoto.partyName} $fileNum';
                                         String shareText =
-                                            'hey. check out this photo and more of ${widget.partyPhoto.partyName} at the official bloc app. Step into the moment. 📸 \n\n🌏 https://bloc.bar/#/\n📱 https://bloc.bar/app_store.html\n\n#blocCommunity ❤️‍🔥';
+                                            'hey. check out this photo and more of ${widget.partyPhoto.partyName} at the official bloc app. Step into the moment. 📸'
+                                            '\n\n🍎 ios:\n${Constants.urlBlocAppStore} \n\n🤖 android:\n${Constants.urlBlocPlayStore} \n\n#blocCommunity 💛';
 
                                         FileUtils.sharePhoto(
                                             widget.partyPhoto.id,

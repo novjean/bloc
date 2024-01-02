@@ -505,7 +505,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 int fileNum = index + 1;
                 String fileName = '${partyPhoto.partyName} $fileNum';
                 String shareText =
-                    'hey. check out my photo at ${partyPhoto.partyName} and more at the official bloc app. Step into the moment. 📸 \n\n🌏 https://bloc.bar/#/\n📱 https://bloc.bar/app_store.html\n\n#blocCommunity ❤️‍🔥';
+                    'hey. check out my photo at ${partyPhoto.partyName} and more at the official bloc app. Step into the moment. 📸'
+                    '\n\n🍎 ios:\n${Constants.urlBlocAppStore} \n\n🤖 android:\n${Constants.urlBlocPlayStore} \n\n#blocCommunity 💛';
 
                 FileUtils.sharePhoto(
                     partyPhoto.id, partyPhoto.imageUrl, fileName, shareText);
