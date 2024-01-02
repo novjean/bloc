@@ -268,20 +268,25 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(fontFamily: Constants.fontDefault),
-      home: Scaffold(
-        backgroundColor: Constants.background,
-        appBar: AppBar(
-          title: AppBarTitle(title: 'checkout'),
-          titleSpacing: 0,
+      home: WillPopScope(
+        onWillPop: () async {
+          return false;
+        },
+        child: Scaffold(
           backgroundColor: Constants.background,
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back_ios_rounded),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
+          appBar: AppBar(
+            title: AppBarTitle(title: 'checkout'),
+            titleSpacing: 0,
+            backgroundColor: Constants.background,
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back_ios_rounded),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
           ),
+          body: _buildBody(context),
         ),
-        body: _buildBody(context),
       ),
     );
   }
