@@ -794,7 +794,7 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
             ),
             content: Text(
                 'request for google review from ${mPartyGuests.length} guests. '
-                    'are you sure you want to ask from those who were approved?'),
+                'are you sure you want to ask from those who were approved?'),
             actions: [
               TextButton(
                 child: const Text('review bloc'),
@@ -837,8 +837,8 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
 
             if (user.fcmToken.isNotEmpty) {
               if (user.lastReviewTime <
-                      Timestamp.now().millisecondsSinceEpoch -
-                          (2 * DateTimeUtils.millisecondsWeek)) {
+                  Timestamp.now().millisecondsSinceEpoch -
+                      (2 * DateTimeUtils.millisecondsWeek)) {
                 //send a notification
                 Apis.sendUrlData(user.fcmToken, Apis.GoogleReviewFreq,
                     Constants.freqGoogleReview);
@@ -869,8 +869,8 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
 
             if (user.fcmToken.isNotEmpty) {
               if (user.lastReviewTime <
-                      Timestamp.now().millisecondsSinceEpoch -
-                          (2 * DateTimeUtils.millisecondsWeek)) {
+                  Timestamp.now().millisecondsSinceEpoch -
+                      (2 * DateTimeUtils.millisecondsWeek)) {
                 Apis.sendUrlData(user.fcmToken, Apis.GoogleReviewBloc,
                     Constants.blocGoogleReview);
                 Logx.ist(_TAG,
@@ -1096,14 +1096,11 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
 
     for (int i = 0; i < mPartyGuests.length; i++) {
       PartyGuest partyGuest = mPartyGuests[i];
-      if (partyGuest.guestId.isNotEmpty &&
-          partyGuest.isApproved) {
-        await FirestoreHelper.pullUser(partyGuest.guestId)
-            .then((res) {
+      if (partyGuest.guestId.isNotEmpty && partyGuest.isApproved) {
+        await FirestoreHelper.pullUser(partyGuest.guestId).then((res) {
           if (res.docs.isNotEmpty) {
             DocumentSnapshot document = res.docs[0];
-            Map<String, dynamic> map =
-            document.data()! as Map<String, dynamic>;
+            Map<String, dynamic> map = document.data()! as Map<String, dynamic>;
             User user = Fresh.freshUserMap(map, true);
             reviewUsers.add(user);
 
@@ -1134,8 +1131,7 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
         await FirestoreHelper.pullUser(partyGuest.guestId).then((res) {
           if (res.docs.isNotEmpty) {
             DocumentSnapshot document = res.docs[0];
-            Map<String, dynamic> map =
-            document.data()! as Map<String, dynamic>;
+            Map<String, dynamic> map = document.data()! as Map<String, dynamic>;
             User user = Fresh.freshUserMap(map, true);
             reviewUsers.add(user);
 
@@ -1168,7 +1164,8 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
               child: ListView.builder(
                 itemCount: userList.length,
                 itemBuilder: (BuildContext context, int index) {
-                  return _buildWhatsappGoogleReviewItem(userList[index], reviewLink);
+                  return _buildWhatsappGoogleReviewItem(
+                      userList[index], reviewLink);
                 },
               ),
             ),
@@ -1216,12 +1213,10 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
     for (int i = 0; i < mPartyGuests.length; i++) {
       PartyGuest partyGuest = mPartyGuests[i];
       if (partyGuest.guestId.isNotEmpty && partyGuest.isApproved) {
-        await FirestoreHelper.pullUser(partyGuest.guestId)
-            .then((res) {
+        await FirestoreHelper.pullUser(partyGuest.guestId).then((res) {
           if (res.docs.isNotEmpty) {
             DocumentSnapshot document = res.docs[0];
-            Map<String, dynamic> map =
-            document.data()! as Map<String, dynamic>;
+            Map<String, dynamic> map = document.data()! as Map<String, dynamic>;
             User user = Fresh.freshUserMap(map, true);
             reviewUsers.add(user);
 
@@ -1256,7 +1251,7 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
                   User user = users[index];
 
                   String link = Constants.urlBlocPlayStore;
-                  if(user.isIos){
+                  if (user.isIos) {
                     link = Constants.urlBlocAppStore;
                   }
 
@@ -1286,7 +1281,8 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
           Checkbox(
             value: user.isAppReviewed,
             onChanged: (value) {
-              Logx.ist(_TAG, '${user.name} ${user.surname} has reviewed the app: $value');
+              Logx.ist(_TAG,
+                  '${user.name} ${user.surname} has reviewed the app: $value');
               user = user.copyWith(isAppReviewed: value);
               FirestoreHelper.pushUser(user);
             },
@@ -1488,6 +1484,4 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
       }
     }
   }
-
-
 }

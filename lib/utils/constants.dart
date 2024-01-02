@@ -67,6 +67,7 @@ class Constants {
 
   static String blocUuid = 'ulwX8iOEOiNrZSIkFDFS1kakRSi2';
 
+  static String freqInstaHandle = 'https://www.instagram.com/freq.club/';
   static String freqGoogleReview = 'https://g.page/r/CVIkJ_SP99KOEAI/review';
 
   static int skipPhoneNumber = 911234567890;

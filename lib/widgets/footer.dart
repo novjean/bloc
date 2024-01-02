@@ -39,7 +39,7 @@ class Footer extends StatelessWidget {
                       InkWell(
                         onTap: () {
                           final uri =
-                              Uri.parse('https://www.instagram.com/bloc.india/');
+                              Uri.parse(Constants.blocInstaHandle);
                           NetworkUtils.launchInBrowser(uri);
                         },
                         child: Text(

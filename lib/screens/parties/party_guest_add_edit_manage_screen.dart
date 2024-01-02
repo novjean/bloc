@@ -155,7 +155,9 @@ class _PartyGuestAddEditManageScreenState
       _showSurnameField = false;
     }
 
-    if ((widget.partyGuest.email.isEmpty && UserPreferences.isUserLoggedIn() && widget.party.isEmailRequired) ||
+    if ((widget.partyGuest.email.isEmpty &&
+            UserPreferences.isUserLoggedIn() &&
+            widget.party.isEmailRequired) ||
         UserPreferences.myUser.clearanceLevel >= Constants.MANAGER_LEVEL) {
       _showEmailField = true;
     } else {
@@ -412,27 +414,29 @@ class _PartyGuestAddEditManageScreenState
                 isGuestListRequested: false,
                 shouldShowInterestCount: false,
               ),
+              _showNameField
+                  ? Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(height: 24),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 32),
+                          child: DarkTextFieldWidget(
+                            label: 'name *',
+                            text: mBlocUser.name,
+                            onChanged: (text) {
+                              mBlocUser = mBlocUser.copyWith(name: text);
+                              hasUserChanged = true;
 
-              _showNameField ? Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 24),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 32),
-                    child: DarkTextFieldWidget(
-                      label: 'name *',
-                      text: mBlocUser.name,
-                      onChanged: (text) {
-                        mBlocUser = mBlocUser.copyWith(name: text);
-                        hasUserChanged = true;
-
-                        widget.partyGuest = widget.partyGuest.copyWith(name: text);
-                      },
-                    ),
-                  ),
-                ],
-              ) : const SizedBox(),
+                              widget.partyGuest =
+                                  widget.partyGuest.copyWith(name: text);
+                            },
+                          ),
+                        ),
+                      ],
+                    )
+                  : const SizedBox(),
               _showSurnameField
                   ? Column(
                       mainAxisSize: MainAxisSize.min,
@@ -510,26 +514,29 @@ class _PartyGuestAddEditManageScreenState
                       ),
                     )
                   : const SizedBox(),
-              _showEmailField? Column(
-                children: [
-                  !UserPreferences.isUserLoggedIn()
-                      ? const SizedBox(height: 12)
-                      : const SizedBox(height: 24),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 32),
-                    child: DarkTextFieldWidget(
-                        label: 'email${widget.party.isEmailRequired ? ' *' : ''}',
-                        text: mBlocUser.email,
-                        onChanged: (email) {
-                          mBlocUser = mBlocUser.copyWith(email: email);
-                          hasUserChanged = true;
+              _showEmailField
+                  ? Column(
+                      children: [
+                        !UserPreferences.isUserLoggedIn()
+                            ? const SizedBox(height: 12)
+                            : const SizedBox(height: 24),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 32),
+                          child: DarkTextFieldWidget(
+                              label:
+                                  'email${widget.party.isEmailRequired ? ' *' : ''}',
+                              text: mBlocUser.email,
+                              onChanged: (email) {
+                                mBlocUser = mBlocUser.copyWith(email: email);
+                                hasUserChanged = true;
 
-                          widget.partyGuest =
-                              widget.partyGuest.copyWith(email: email);
-                        }),
-                  ),
-                ],
-              ) : const SizedBox(),
+                                widget.partyGuest =
+                                    widget.partyGuest.copyWith(email: email);
+                              }),
+                        ),
+                      ],
+                    )
+                  : const SizedBox(),
               const SizedBox(height: 24),
               _showYearField
                   ? Padding(
@@ -1309,7 +1316,8 @@ class _PartyGuestAddEditManageScreenState
                         '🥳 yayyy! welcome to ${widget.party.name} family, your guest list for ${widget.party.name} has been approved 🎉, see you and your gang soon! 😎🍾';
 
                     //send a notification
-                    Apis.sendPushNotification(mBlocUser.fcmToken, title, message);
+                    Apis.sendPushNotification(
+                        mBlocUser.fcmToken, title, message);
                     Logx.ist(_TAG,
                         'notification has been sent to ${mBlocUser.name} ${mBlocUser.surname}');
                   } else {
@@ -1329,7 +1337,8 @@ class _PartyGuestAddEditManageScreenState
                     Logx.ist(_TAG,
                         'notification has been sent to ${mBlocUser.name} ${mBlocUser.surname}');
                   } else {
-                    Logx.d(_TAG, 'no fcm token, whatsapp notifying guest approval');
+                    Logx.d(_TAG,
+                        'no fcm token, whatsapp notifying guest approval');
                     _notifyApprovalWhatsapp();
                   }
                 }
@@ -1337,11 +1346,13 @@ class _PartyGuestAddEditManageScreenState
             } else {
               if (mBlocUser.fcmToken.isNotEmpty) {
                 String title = widget.party.name;
-                String message = '🥳 yayyy! your guest list for ${widget.party.name} has been approved 🎉, see you and your gang soon! 😎🍾';
+                String message =
+                    '🥳 yayyy! your guest list for ${widget.party.name} has been approved 🎉, see you and your gang soon! 😎🍾';
 
                 //send a notification
                 Apis.sendPushNotification(mBlocUser.fcmToken, title, message);
-                Logx.ist(_TAG, 'notification has been sent to ${mBlocUser.name} ${mBlocUser.surname}');
+                Logx.ist(_TAG,
+                    'notification has been sent to ${mBlocUser.name} ${mBlocUser.surname}');
               } else {
                 _notifyApprovalWhatsapp();
               }
@@ -1917,8 +1928,7 @@ class _PartyGuestAddEditManageScreenState
                               'https://bloc.bar/#/\n📱 https://bloc.bar/app_store.html\n\n#blocCommunity ❤️‍🔥');
                     }
                   } else {
-                    final uri =
-                        Uri.parse('https://www.instagram.com/bloc.india/');
+                    final uri = Uri.parse(Constants.blocInstaHandle);
                     NetworkUtils.launchInBrowser(uri);
                   }
 
@@ -2794,43 +2804,43 @@ class _PartyGuestAddEditManageScreenState
                   ),
                   adCampaign.isPartyAd
                       ? TextButton(
-                    onPressed: () {
-                      Navigator.of(ctx).pop();
+                          onPressed: () {
+                            Navigator.of(ctx).pop();
 
-                      FirestoreHelper.updateAdCampaignClickCount(
-                          adCampaign.id);
+                            FirestoreHelper.updateAdCampaignClickCount(
+                                adCampaign.id);
 
-                      FirestoreHelper.pullParty(adCampaign.partyId)
-                          .then((res) async {
-                        if (res.docs.isNotEmpty) {
-                          DocumentSnapshot document = res.docs[0];
-                          Map<String, dynamic> data =
-                          document.data()! as Map<String, dynamic>;
-                          final Party party = Fresh.freshPartyMap(data, false);
+                            FirestoreHelper.pullParty(adCampaign.partyId)
+                                .then((res) async {
+                              if (res.docs.isNotEmpty) {
+                                DocumentSnapshot document = res.docs[0];
+                                Map<String, dynamic> data =
+                                    document.data()! as Map<String, dynamic>;
+                                final Party party =
+                                    Fresh.freshPartyMap(data, false);
 
-                          FirestoreHelper.updatePartyShareCount(party.id);
-                          final url =
-                              'http://bloc.bar/#/event/${Uri.encodeComponent(party.name)}/${party.chapter}';
-                          await Share.share(
-                              'Check this party, ${party.name} out on bloc. $url');
+                                FirestoreHelper.updatePartyShareCount(party.id);
+                                final url =
+                                    'http://bloc.bar/#/event/${Uri.encodeComponent(party.name)}/${party.chapter}';
+                                await Share.share(
+                                    'Check this party, ${party.name} out on bloc. $url');
+                              } else {
+                                Navigator.of(ctx).pop();
 
-                        } else {
-                          Navigator.of(ctx).pop();
-
-                          GoRouter.of(context)
-                              .pushNamed(RouteConstants.homeRouteName);
-                          GoRouter.of(context).pushNamed(
-                              RouteConstants.boxOfficeRouteName);
-                        }
-                      });
-                    },
-                    child: const Text(
-                      "💝 share",
-                      style: TextStyle(
-                          color: Constants.darkPrimary, fontSize: 15),
-                    ),
-                    // child:  const Text('close'),
-                  )
+                                GoRouter.of(context)
+                                    .pushNamed(RouteConstants.homeRouteName);
+                                GoRouter.of(context).pushNamed(
+                                    RouteConstants.boxOfficeRouteName);
+                              }
+                            });
+                          },
+                          child: const Text(
+                            "💝 share",
+                            style: TextStyle(
+                                color: Constants.darkPrimary, fontSize: 15),
+                          ),
+                          // child:  const Text('close'),
+                        )
                       : const SizedBox(),
                   adCampaign.isPartyAd
                       ? TextButton(
@@ -2903,9 +2913,11 @@ class _PartyGuestAddEditManageScreenState
   }
 
   void _notifyApprovalWhatsapp() async {
-    String message = 'congratulations ${mBlocUser.name}, your guest list for ${widget.party.name} on bloc has been approved 🎉.\n\n 🎫 passes can be found in our app, download at \n\n🍎 ios:\n${Constants.urlBlocAppStore}\n\n🤖 android:\n${Constants.urlBlocPlayStore}\n\n🌏 web:\nhttps://bloc.bar/app_store.html \n\nsee you soon 🥳 #blocCommunity💛';
+    String message =
+        'congratulations ${mBlocUser.name}, your guest list for ${widget.party.name} on bloc has been approved 🎉.\n\n 🎫 passes can be found in our app, download at \n\n🍎 ios:\n${Constants.urlBlocAppStore}\n\n🤖 android:\n${Constants.urlBlocPlayStore}\n\n🌏 web:\nhttps://bloc.bar/app_store.html \n\nsee you soon 🥳 #blocCommunity💛';
     // Encode the phone number and message for the URL
-    String url = 'https://wa.me/+${mBlocUser.phoneNumber}/?text=${Uri.encodeFull(message)}';
+    String url =
+        'https://wa.me/+${mBlocUser.phoneNumber}/?text=${Uri.encodeFull(message)}';
     Uri uri = Uri.parse(url);
 
     await NetworkUtils.launchInBrowser(uri);

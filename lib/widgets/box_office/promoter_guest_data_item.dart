@@ -35,7 +35,7 @@ class PromoterGuestDataItem extends StatefulWidget {
       required this.isClickable,
       required this.party,
       required this.challenges,
-        required this.promoterName})
+      required this.promoterName})
       : super(key: key);
 
   @override
@@ -59,7 +59,7 @@ class _PromoterGuestDataItemState extends State<PromoterGuestDataItem> {
       title += ' [vip]';
     }
 
-    if(widget.partyGuest.shouldBanUser){
+    if (widget.partyGuest.shouldBanUser) {
       title += ' [banned]';
     }
 
@@ -120,8 +120,11 @@ class _PromoterGuestDataItemState extends State<PromoterGuestDataItem> {
                       overflow: TextOverflow.ellipsis,
                       textAlign: TextAlign.left,
                     ),
-                    widget.promoterName.isNotEmpty? Text(widget.promoterName)
-                        : !widget.partyGuest.isApproved? showApproveButton(context) : const SizedBox()
+                    widget.promoterName.isNotEmpty
+                        ? Text(widget.promoterName)
+                        : !widget.partyGuest.isApproved
+                            ? showApproveButton(context)
+                            : const SizedBox()
                   ],
                 ),
                 widget.partyGuest.phone != '0'
@@ -133,7 +136,7 @@ class _PromoterGuestDataItemState extends State<PromoterGuestDataItem> {
                 showGuestRemaining
                     ? widget.partyGuest.guestsRemaining != 0
                         ? Text(
-                  '${widget.partyGuest.guestStatus} : ${widget.partyGuest.guestsRemaining} guests ',
+                            '${widget.partyGuest.guestStatus} : ${widget.partyGuest.guestsRemaining} guests ',
                             style: const TextStyle(fontSize: 16),
                           )
                         : Text(
@@ -441,15 +444,13 @@ class _PromoterGuestDataItemState extends State<PromoterGuestDataItem> {
                           case 3:
                             {
                               //android download
-                              final uri = Uri.parse(
-                                  'https://play.google.com/store/apps/details?id=com.novatech.bloc');
+                              final uri = Uri.parse(Constants.urlBlocPlayStore);
                               NetworkUtils.launchInBrowser(uri);
                               break;
                             }
                           default:
                             {
-                              final uri = Uri.parse(
-                                  'https://www.instagram.com/bloc.india/');
+                              final uri = Uri.parse(Constants.blocInstaHandle);
                               NetworkUtils.launchInBrowser(uri);
                               break;
                             }
@@ -470,23 +471,20 @@ class _PromoterGuestDataItemState extends State<PromoterGuestDataItem> {
                   switch (challenge.level) {
                     case 1:
                       {
-                        final uri =
-                            Uri.parse('https://www.instagram.com/bloc.india/');
+                        final uri = Uri.parse(Constants.blocInstaHandle);
                         NetworkUtils.launchInBrowser(uri);
                         break;
                       }
                     case 2:
                       {
-                        final uri =
-                            Uri.parse('https://www.instagram.com/freq.club/');
+                        final uri = Uri.parse(Constants.freqInstaHandle);
                         NetworkUtils.launchInBrowser(uri);
                         break;
                       }
                     case 3:
                       {
                         //ios download
-                        final uri = Uri.parse(
-                            'https://apps.apple.com/in/app/bloc-community/id1672736309');
+                        final uri = Uri.parse(Constants.urlBlocAppStore);
                         NetworkUtils.launchInBrowser(uri);
                         break;
                       }
@@ -509,8 +507,6 @@ class _PromoterGuestDataItemState extends State<PromoterGuestDataItem> {
                         try {
                           if (kIsWeb) {
                             FileUtils.openFileNewTabForWeb(urlImage);
-
-                            // Image? fromPicker = await ImagePickerWeb.getImageAsWidget();
                           } else {
                             var temp = await getTemporaryDirectory();
                             final path = '${temp.path}/${widget.party.id}.jpg';
@@ -534,8 +530,7 @@ class _PromoterGuestDataItemState extends State<PromoterGuestDataItem> {
                       }
                     default:
                       {
-                        final uri =
-                            Uri.parse('https://www.instagram.com/bloc.india/');
+                        final uri = Uri.parse(Constants.blocInstaHandle);
                         NetworkUtils.launchInBrowser(uri);
                         break;
                       }

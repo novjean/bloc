@@ -837,8 +837,7 @@ class _BoxOfficeGuestListItemState extends State<BoxOfficeGuestListItem> {
                               'https://bloc.bar/#/\n📱 https://bloc.bar/app_store.html\n\n#blocCommunity ❤️‍🔥');
                     }
                   } else {
-                    final uri =
-                        Uri.parse('https://www.instagram.com/bloc.india/');
+                    final uri = Uri.parse(Constants.blocInstaHandle);
                     NetworkUtils.launchInBrowser(uri);
                   }
 
