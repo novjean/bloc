@@ -2,13 +2,16 @@ import 'package:bloc/utils/date_time_utils.dart';
 import 'package:flutter/material.dart';
 
 import '../../db/entity/party.dart';
+import '../../utils/constants.dart';
 
 class PartyBoxOfficeBanner extends StatelessWidget {
   final Party party;
+  final bool isTixView;
 
   const PartyBoxOfficeBanner(
       {Key? key,
         required this.party,
+        required this.isTixView
       })
       : super(key: key);
 
@@ -18,7 +21,7 @@ class PartyBoxOfficeBanner extends StatelessWidget {
       tag: party.id,
       child: Card(
         elevation: 1,
-        color: Theme.of(context).primaryColorLight,
+        color: Constants.lightPrimary,
         child: SizedBox(
           height: 200,
           child: Row(
@@ -72,7 +75,7 @@ class PartyBoxOfficeBanner extends StatelessWidget {
                     const Spacer(),
                     Padding(
                       padding: const EdgeInsets.only(left: 5.0),
-                      child: Text('end time: ${DateTimeUtils.getFormattedTime(party.guestListEndTime)}',
+                      child: Text('end time: ${DateTimeUtils.getFormattedTime(isTixView ? party.endTime:party.guestListEndTime)}',
                         style: const TextStyle(fontSize: 18),
                       ),
                     ),
@@ -85,8 +88,7 @@ class PartyBoxOfficeBanner extends StatelessWidget {
                 child: Container(
                   height: 200,
                   decoration: BoxDecoration(
-                    border: Border.all(color: Theme.of(context).primaryColor),
-                    borderRadius: BorderRadius.all(Radius.circular(0)),
+                    border: Border.all(color: Constants.primary),
                     image: DecorationImage(
                       image: NetworkImage(party.imageUrl),
                       fit: BoxFit.fitHeight,

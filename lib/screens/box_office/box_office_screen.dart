@@ -399,6 +399,7 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
             return GestureDetector(
                 child: PartyBoxOfficeBanner(
                   party: mGuestListParties[index],
+                  isTixView: false,
                 ),
                 onTap: () {
                   Party sParty = mGuestListParties[index];
@@ -419,6 +420,7 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
             return GestureDetector(
                 child: PartyBoxOfficeBanner(
                   party: mTixParties[index],
+                  isTixView: true,
                 ),
                 onTap: () {
                   Party sParty = mTixParties[index];

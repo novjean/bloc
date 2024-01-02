@@ -79,6 +79,7 @@ class _ManageTixsScreenState extends State<ManageTixsScreen> {
             return GestureDetector(
                 child: PartyBoxOfficeBanner(
                   party: mTixParties[index],
+                  isTixView: true,
                 ),
                 onTap: () {
                   Party sParty = mTixParties[index];
