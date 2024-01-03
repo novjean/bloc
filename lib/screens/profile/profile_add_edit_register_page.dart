@@ -12,6 +12,7 @@ import 'package:path_provider/path_provider.dart';
 
 import '../../db/entity/user.dart' as blocUser;
 import '../../db/entity/user.dart';
+import '../../db/entity/user_bloc.dart';
 import '../../db/shared_preferences/user_preferences.dart';
 import '../../helpers/dummy.dart';
 import '../../helpers/firestorage_helper.dart';
@@ -307,6 +308,16 @@ class _ProfileAddEditRegisterPageState
               FirestoreHelper.pushUser(freshUser);
 
               if(widget.task == 'register'){
+                // add them to user blocs
+                UserBloc userBlocBloc = Dummy.getDummyUserBloc();
+                userBlocBloc = userBlocBloc.copyWith(userId: widget.user.id, blocServiceId: Constants.blocServiceId);
+                FirestoreHelper.pushUserBloc(userBlocBloc);
+
+                UserBloc userBlocFreq = Dummy.getDummyUserBloc();
+                userBlocFreq = userBlocFreq.copyWith(userId: widget.user.id, blocServiceId: Constants.freqServiceId);
+                FirestoreHelper.pushUserBloc(userBlocFreq);
+
+                // adding them to blocCommunity lounge
                 UserLounge userLounge = Dummy.getDummyUserLounge();
                 userLounge = userLounge.copyWith(userId: widget.user.id,
                     userFcmToken: widget.user.fcmToken,

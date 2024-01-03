@@ -207,7 +207,7 @@ class _PartyGuestAddEditManageScreenState
             } else {
               mBlocUser = user;
 
-              if (mBlocUser.birthYear == 2024 ||
+              if (mBlocUser.birthYear == 2023 ||
                   UserPreferences.myUser.clearanceLevel >=
                       Constants.MANAGER_LEVEL) {
                 _showYearField = true;

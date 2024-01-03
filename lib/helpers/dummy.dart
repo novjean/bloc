@@ -43,6 +43,7 @@ import '../db/entity/seat.dart';
 import '../db/entity/tix_backup.dart';
 import '../db/entity/tix_tier_item.dart';
 import '../db/entity/user.dart';
+import '../db/entity/user_bloc.dart';
 import '../db/entity/user_lounge.dart';
 import '../db/entity/user_photo.dart';
 import '../db/shared_preferences/user_preferences.dart';
@@ -653,7 +654,7 @@ class Dummy {
         username: '',
         instagramLink: '',
         gender: 'male',
-        birthYear: 2024,
+        birthYear: 2023,
         phoneNumber: 0,
         isBanned: false,
         isAppUser: false,
@@ -666,6 +667,15 @@ class Dummy {
         blocServiceId: '',
     );
     return dummyUser;
+  }
+
+  static UserBloc getDummyUserBloc() {
+    UserBloc dummy = UserBloc(
+        id: StringUtils.getRandomString(28),
+        userId: '',
+        blocServiceId: '',
+        createdTime: Timestamp.now().millisecondsSinceEpoch);
+    return dummy;
   }
 
   static UserLevel getDummyUserLevel() {

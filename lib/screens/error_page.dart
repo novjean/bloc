@@ -1,6 +1,5 @@
 import 'package:bloc/widgets/ui/button_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:go_router/go_router.dart';
 
 import '../routes/route_constants.dart';
@@ -25,6 +24,7 @@ class ErrorPage extends StatelessWidget {
               Text(
                 'Uh-oh! It appears that the URL you entered is dancing to its own beat and doesn\'t want to be found. 💀'.toLowerCase(),
                 style: const TextStyle(fontSize: 22, color: Constants.primary),
+                textAlign: TextAlign.center,
               ),
               const SizedBox(height: 16),
               Text(

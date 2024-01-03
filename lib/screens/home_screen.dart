@@ -1,4 +1,5 @@
 import 'package:bloc/main.dart';
+import 'package:bloc/screens/experimental/bloc_selection_screen.dart';
 import 'package:bloc/utils/constants.dart';
 import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -12,6 +13,7 @@ import '../db/entity/bloc.dart';
 import '../db/entity/guest_wifi.dart';
 import '../db/entity/party.dart';
 import '../db/entity/party_guest.dart';
+import '../db/entity/user_bloc.dart';
 import '../db/shared_preferences/table_preferences.dart';
 import '../db/shared_preferences/user_preferences.dart';
 import '../helpers/dummy.dart';
@@ -81,6 +83,26 @@ class _HomeScreenState extends State<HomeScreen> {
                     _isBlocsLoading = false;
                   });
                 }
+
+                FirestoreHelper.pullUserBlocs(UserPreferences.myUser.id).then((res) {
+                  if(res.docs.isNotEmpty){
+                    List<String> userBlocServiceIds = [];
+                    for (int i = 0; i < res.docs.length; i++) {
+                      DocumentSnapshot document = res.docs[i];
+                      Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+                      UserBloc userBloc = Fresh.freshUserBlocMap(data, true);
+                      userBlocServiceIds.add(userBloc.blocServiceId);
+                    }
+
+                    UserPreferences.setUserBlocs(userBlocServiceIds);
+                  } else {
+                    Logx.em(_TAG, 'no blocs selected by the user ');
+
+                    Navigator.of(context).push(
+                      MaterialPageRoute(builder: (ctx) => BlocSelectionScreen()),
+                    );
+                  }
+                });
               }
             } else {
               Logx.em(_TAG, ' no blocs found!!!');
@@ -131,7 +153,6 @@ class _HomeScreenState extends State<HomeScreen> {
             }
           });
 
-
     FirestoreHelper.pullGuestListRequested(UserPreferences.myUser.id)
         .then((res) {
       Logx.i(_TAG, "successfully pulled in requested guest list");
@@ -159,7 +180,6 @@ class _HomeScreenState extends State<HomeScreen> {
         }
       }
     });
-
 
     super.initState();
 

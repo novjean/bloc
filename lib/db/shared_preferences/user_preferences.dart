@@ -49,6 +49,22 @@ class UserPreferences {
     return list;
   }
 
+  static const _keyUserBlocs = 'user_blocs';
+
+  static Future setUserBlocs(List<String> listBlocs) async {
+    await _preferences.setStringList(_keyUserBlocs, listBlocs);
+  }
+
+  static List<String> getUserBlocs() {
+    List<String> list = [];
+    try{
+      list = _preferences.getStringList(_keyUserBlocs)!;
+    } catch(e){
+      Logx.em(_TAG, e.toString());
+    }
+    return list;
+  }
+
   static var myUser = User(
       id: '',
       email: '',
@@ -56,7 +72,7 @@ class UserPreferences {
       clearanceLevel: 0,
       challengeLevel: 1,
       phoneNumber: 0,
-      birthYear: 2024,
+      birthYear: 2023,
       name: '',
       surname: '',
       username: '',
@@ -96,7 +112,7 @@ class UserPreferences {
         clearanceLevel: 0,
         challengeLevel: 1,
         phoneNumber: 0,
-        birthYear: 2024,
+        birthYear: 2023,
         name: '',
         surname: '',
         username: '',
@@ -114,6 +130,7 @@ class UserPreferences {
         appVersion: Constants.appVersion));
 
     setListLounges([]);
+    setUserBlocs([]);
   }
 
   static void setUserFcmToken(String token) {

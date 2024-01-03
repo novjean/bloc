@@ -17,6 +17,7 @@ import 'package:upgrader/upgrader.dart';
 
 import '../db/entity/ad.dart';
 import '../db/entity/friend.dart';
+import '../db/entity/user_bloc.dart';
 import '../db/entity/user_lounge.dart';
 import '../db/shared_preferences/user_preferences.dart';
 import '../helpers/firestore_helper.dart';
@@ -28,6 +29,7 @@ import '../utils/logx.dart';
 import '../utils/number_utils.dart';
 import '../widgets/ui/slider_view.dart';
 import 'captain/captain_main_screen.dart';
+import 'experimental/bloc_selection_screen.dart';
 import 'photos/photos_screen.dart';
 import 'home_screen.dart';
 import 'manager/manager_main_screen.dart';
@@ -93,6 +95,7 @@ class _MainScreenState extends State<MainScreen> {
 
         UserPreferences.setUser(user);
         FirestoreHelper.pushUser(user);
+
         Logx.i(_TAG, '${user.phoneNumber} is now registered with bloc!');
 
         // lets grab more user details
@@ -136,7 +139,7 @@ class _MainScreenState extends State<MainScreen> {
             if (res.docs.isNotEmpty) {
               // username is already taken
               username = username +
-                  NumberUtils.generateRandomNumber(1, 999).toString();
+                  NumberUtils.generateRandomNumber(1, 999).toString().trim();
               user1 = user1.copyWith(username: username);
               FirestoreHelper.pushUser(user1);
               UserPreferences.setUser(user1);
@@ -151,7 +154,7 @@ class _MainScreenState extends State<MainScreen> {
           UserPreferences.setUser(user1);
         }
       }
-    }, onError: (e, s) {
+      }, onError: (e, s) {
       Logx.ex(
           _TAG, "error retrieving users for phone : ${user.phoneNumber}", e, s);
     });
@@ -206,7 +209,7 @@ class _MainScreenState extends State<MainScreen> {
       if (user.clearanceLevel >= Constants.MANAGER_LEVEL) {
         fbm.subscribeToTopic('offer');
       }
-      if (user.clearanceLevel >= Constants.ADMIN_LEVEL) {
+      if (user.clearanceLevel == Constants.ADMIN_LEVEL) {
         fbm.subscribeToTopic('user_photos');
         fbm.subscribeToTopic('tixs');
         fbm.subscribeToTopic('support_chats');
@@ -225,7 +228,8 @@ class _MainScreenState extends State<MainScreen> {
               UserLounge userLounge = Fresh.freshUserLoungeMap(data, false);
               userLounges.add(userLounge.loungeId);
 
-              FirebaseMessaging.instance.unsubscribeFromTopic(userLounge.loungeId);
+              FirebaseMessaging.instance
+                  .unsubscribeFromTopic(userLounge.loungeId);
               FirebaseMessaging.instance.subscribeToTopic(userLounge.loungeId);
               Logx.d(
                   _TAG, 'subscribed to lounge topic: ${userLounge.loungeId}');
@@ -250,7 +254,8 @@ class _MainScreenState extends State<MainScreen> {
               Friend friend = Fresh.freshFriendMap(data, false);
 
               if (friend.isFollowing) {
-                FirebaseMessaging.instance.unsubscribeFromTopic(friend.friendUserId);
+                FirebaseMessaging.instance
+                    .unsubscribeFromTopic(friend.friendUserId);
 
                 FirebaseMessaging.instance
                     .subscribeToTopic(friend.friendUserId);
@@ -323,17 +328,43 @@ class _MainScreenState extends State<MainScreen> {
                   drawerIconColor: Constants.primary,
                   drawerIconSize: 30,
                   isTitleCenter: false,
-                  trailing: Padding(
-                    padding: const EdgeInsets.only(right: 10.0),
-                    child: IconButton(
-                      icon: const Icon(
-                        Icons.brightness_low_outlined,
-                        color: Constants.primary,
+                  trailing: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(right: 5.0),
+                        child:
+
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(builder: (ctx) => BlocSelectionScreen()),
+                            );
+                          },
+                          child: Container(
+                            height: 26,
+                            width: 26,
+                            child: Image.asset(
+                              'assets/icons/ic_cube_sugar.png',
+                              width: 26,
+                              height: 26,
+                            ),
+                          ),
+                        )
                       ),
-                      onPressed: () async {
-                        _showAdsDialog(context);
-                      },
-                    ),
+                      Padding(
+                        padding: const EdgeInsets.only(right: 10.0),
+                        child: IconButton(
+                          icon: const Icon(
+                            Icons.brightness_low_outlined,
+                            color: Constants.primary,
+                          ),
+                          onPressed: () async {
+                            _showAdsDialog(context);
+                          },
+                        ),
+                      ),
+                    ],
                   ),
                   title: const Padding(
                     padding: kIsWeb
@@ -624,5 +655,28 @@ class _MainScreenState extends State<MainScreen> {
         );
       }
     });
+  }
+}
+
+class ThreeDBoxPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final Paint paint = Paint()
+      ..color = Colors.blue
+      ..style = PaintingStyle.fill;
+
+    final Path path = Path()
+      ..moveTo(0, 0)
+      ..lineTo(size.width, 0)
+      ..lineTo(size.width, size.height)
+      ..lineTo(0, size.height)
+      ..close();
+
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) {
+    return false;
   }
 }

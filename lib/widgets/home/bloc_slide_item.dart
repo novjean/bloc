@@ -47,7 +47,7 @@ class _BlocSlideItemState extends State<BlocSlideItem> {
           _isBlocServiceLoading = false;
         });
       } else {
-        Logx.em(_TAG, 'no bloc service found for id ${widget.bloc.id}');
+        Logx.em(_TAG, 'no bloc service found for bloc id ${widget.bloc.id}');
         setState(() {
           _isBlocServiceLoading = false;
         });

@@ -48,6 +48,7 @@ import '../db/entity/product.dart';
 import '../db/entity/service_table.dart';
 import '../db/entity/sos.dart';
 import '../db/entity/tix_backup.dart';
+import '../db/entity/user_bloc.dart';
 import '../db/entity/user_photo.dart';
 import '../db/shared_preferences/user_preferences.dart';
 import '../routes/route_constants.dart';
@@ -106,6 +107,7 @@ class FirestoreHelper {
   static String TIX_TIERS = 'tix_tiers';
   static String UI_PHOTOS = 'ui_photos';
   static String USERS = 'users';
+  static String USER_BLOCS = 'user_blocs';
   static String USER_LEVELS = 'user_levels';
   static String USER_LOUNGES = 'user_lounges';
   static String USER_PHOTOS = 'user_photos';
@@ -115,7 +117,6 @@ class FirestoreHelper {
 
   static int TABLE_PRIVATE_TYPE_ID = 1;
   static int TABLE_COMMUNITY_TYPE_ID = 2;
-
 
 
   /** ads **/
@@ -2583,6 +2584,41 @@ class FirestoreHelper {
         .get();
   }
 
+  /** user bloc **/
+  static pushUserBloc(UserBloc userBloc) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection(USER_BLOCS)
+          .doc(userBloc.id)
+          .set(userBloc.toMap());
+    } on PlatformException catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } on Exception catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } catch (e) {
+      Logx.em(_TAG, e.toString());
+    }
+  }
+
+  static Future<QuerySnapshot<Object?>> pullUserBlocs(String userId) {
+    return FirebaseFirestore.instance
+        .collection(USER_BLOCS)
+        .where('userId', isEqualTo: userId)
+        .get();
+  }
+
+  static pullUserBloc(String userId, String blocServiceId) {
+    return FirebaseFirestore.instance
+        .collection(USER_BLOCS)
+        .where('userId', isEqualTo: userId)
+        .where('blocServiceId', isEqualTo: blocServiceId)
+        .get();
+  }
+
+  static void deleteUserBloc(String docId) {
+    FirebaseFirestore.instance.collection(USER_BLOCS).doc(docId).delete();
+  }
+
   /** user lounge **/
   static pushUserLounge(UserLounge userLounge) async {
     try {
@@ -2710,7 +2746,6 @@ class FirestoreHelper {
   static void deleteUserPhoto(String docId) {
     FirebaseFirestore.instance.collection(USER_PHOTOS).doc(docId).delete();
   }
-
 
 
 }

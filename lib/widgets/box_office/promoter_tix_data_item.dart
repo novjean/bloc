@@ -15,12 +15,12 @@ class PromoterTixDataItem extends StatefulWidget {
   final Party party;
   final bool isClickable;
 
-  PromoterTixDataItem(
-      {Key? key,
-        required this.tix,
-        required this.isClickable,
-        required this.party,})
-      : super(key: key);
+  PromoterTixDataItem({
+    Key? key,
+    required this.tix,
+    required this.isClickable,
+    required this.party,
+  }) : super(key: key);
 
   @override
   State<PromoterTixDataItem> createState() => _PromoterTixDataItemState();
@@ -59,52 +59,57 @@ class _PromoterTixDataItemState extends State<PromoterTixDataItem> {
 
   @override
   Widget build(BuildContext context) {
-    String title =
-        widget.tix.userName.toLowerCase();
+    String title = widget.tix.userName.toLowerCase();
 
     return Hero(
       tag: widget.tix.id,
       child: Card(
         elevation: 1,
         color: Constants.lightPrimary,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+        shape:
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
         child: SizedBox(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 1),
-              child: ListView(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
+          padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 1),
+          child: ListView(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        title,
-                        style: const TextStyle(
-                          fontSize: 20.0,
-                          fontWeight: FontWeight.w800,
-                        ),
-                        overflow: TextOverflow.ellipsis,
-                        textAlign: TextAlign.left,
-                      ),
-                      _isTixTiersLoading ? const SizedBox() : Text(
-                        tixCount.toString(),
-                        style: const TextStyle(
-                          fontSize: 20.0,
-                          fontWeight: FontWeight.w800,
-                        ),
-                        overflow: TextOverflow.ellipsis,
-                        textAlign: TextAlign.right,
-                      )
-                    ],
-                  ),
                   Text(
-                    '+${widget.tix.userPhone}',
-                    style: const TextStyle(fontSize: 16),
+                    title,
+                    style: const TextStyle(
+                      fontSize: 20.0,
+                      fontWeight: FontWeight.w800,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                    textAlign: TextAlign.left,
                   ),
+                  _isTixTiersLoading
+                      ? const SizedBox()
+                      : Text(
+                          tixCount.toString(),
+                          style: TextStyle(
+                            color: widget.tix.merchantTransactionId.isNotEmpty
+                                ? Colors.green
+                                : Colors.red,
+                            fontSize: 20.0,
+                            fontWeight: FontWeight.w800,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                          textAlign: TextAlign.right,
+                        )
                 ],
               ),
-            )),
+              Text(
+                '+${widget.tix.userPhone}',
+                style: const TextStyle(fontSize: 16),
+              ),
+            ],
+          ),
+        )),
       ),
     );
   }

@@ -207,7 +207,7 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
         });
 
       } else {
-
+        Logx.em(_TAG,  'no bloc service found for bloc id ${widget.blocId}');
       }
     });
 

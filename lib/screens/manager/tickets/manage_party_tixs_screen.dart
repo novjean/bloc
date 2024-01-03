@@ -181,8 +181,7 @@ class _ManagePartyTixsScreenState extends State<ManagePartyTixsScreen> {
                     mTixs.add(tix);
                   }
 
-                  return _displayTixs(
-                      context, mTixs);
+                  return _displayTixs(context, mTixs);
                 }
               } else {
                 return const Expanded(

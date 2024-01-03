@@ -33,6 +33,7 @@ import '../db/entity/reservation.dart';
 import '../db/entity/tix_backup.dart';
 import '../db/entity/tix_tier_item.dart';
 import '../db/entity/user.dart';
+import '../db/entity/user_bloc.dart';
 import '../db/entity/user_lounge.dart';
 import '../db/entity/user_photo.dart';
 import '../db/shared_preferences/user_preferences.dart';
@@ -5352,6 +5353,70 @@ class Fresh {
     return freshUser;
   }
 
+  /** user bloc **/
+  static UserBloc freshUserBlocMap(Map<String, dynamic> map, bool shouldUpdate) {
+    UserBloc userBloc = Dummy.getDummyUserBloc();
+    bool isModelChanged = false;
+
+    try {
+      userBloc = userBloc.copyWith(id: map['id'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'userBloc id not exist');
+    }
+    try {
+      userBloc = userBloc.copyWith(userId: map['userId'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'userBloc userId not exist for id: ${userBloc.id}');
+      isModelChanged = true;
+    }
+    try {
+      userBloc = userBloc.copyWith(blocServiceId: map['blocServiceId'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'userBloc blocServiceId not exist for id: ${userBloc.id}');
+      isModelChanged = true;
+    }
+    try {
+      userBloc = userBloc.copyWith(createdTime: map['createdTime'] as int);
+    } catch (e) {
+      Logx.em(_TAG, 'userBloc createdTime not exist for id: ${userBloc.id}');
+      isModelChanged = true;
+    }
+
+    if (isModelChanged && shouldUpdate) {
+      Logx.i(_TAG, 'updating userPhoto ${userBloc.id}');
+      FirestoreHelper.pushUserBloc(userBloc);
+    }
+
+    return userBloc;
+  }
+
+  static UserBloc freshUserBloc(UserBloc userBloc) {
+    UserBloc fresh = Dummy.getDummyUserBloc();
+
+    try {
+      fresh = fresh.copyWith(id: userBloc.id);
+    } catch (e) {
+      Logx.em(_TAG, 'userBloc id not exist');
+    }
+    try {
+      fresh = fresh.copyWith(userId: userBloc.userId);
+    } catch (e) {
+      Logx.em(_TAG, 'userBloc userId exist for id: ${userBloc.id}');
+    }
+    try {
+      fresh = fresh.copyWith(blocServiceId: userBloc.blocServiceId);
+    } catch (e) {
+      Logx.em(_TAG, 'userBloc blocServiceId exist for id: ${userBloc.id}');
+    }
+    try {
+      fresh = fresh.copyWith(createdTime: userBloc.createdTime);
+    } catch (e) {
+      Logx.em(_TAG, 'userBloc createdTime exist for id: ${userBloc.id}');
+    }
+
+    return fresh;
+  }
+
   /** user lounge **/
   static UserLounge freshUserLoungeMap(Map<String, dynamic> map, bool shouldUpdate) {
     UserLounge userLounge = Dummy.getDummyUserLounge();
@@ -5462,25 +5527,25 @@ class Fresh {
     try {
       userPhoto = userPhoto.copyWith(userId: map['userId'] as String);
     } catch (e) {
-      Logx.em(_TAG, 'userLounge userId not exist for id: ${userPhoto.id}');
+      Logx.em(_TAG, 'userPhoto userId not exist for id: ${userPhoto.id}');
       isModelChanged = true;
     }
     try {
       userPhoto = userPhoto.copyWith(partyPhotoId: map['partyPhotoId'] as String);
     } catch (e) {
-      Logx.em(_TAG, 'userLounge partyPhotoId not exist for id: ${userPhoto.id}');
+      Logx.em(_TAG, 'userPhoto partyPhotoId not exist for id: ${userPhoto.id}');
       isModelChanged = true;
     }
     try {
       userPhoto = userPhoto.copyWith(isConfirmed: map['isConfirmed'] as bool);
     } catch (e) {
-      Logx.em(_TAG, 'userLounge isConfirmed not exist for id: ${userPhoto.id}');
+      Logx.em(_TAG, 'userPhoto isConfirmed not exist for id: ${userPhoto.id}');
       isModelChanged = true;
     }
     try {
       userPhoto = userPhoto.copyWith(tagTime: map['tagTime'] as int);
     } catch (e) {
-      Logx.em(_TAG, 'userLounge tagTime not exist for id: ${userPhoto.id}');
+      Logx.em(_TAG, 'userPhoto tagTime not exist for id: ${userPhoto.id}');
       isModelChanged = true;
     }
 
@@ -5508,7 +5573,7 @@ class Fresh {
     try {
       fresh = fresh.copyWith(partyPhotoId: userPhoto.partyPhotoId);
     } catch (e) {
-      Logx.em(_TAG, 'userLounge partyPhotoId exist for id: ${userPhoto.id}');
+      Logx.em(_TAG, 'userPhoto partyPhotoId exist for id: ${userPhoto.id}');
     }
     try {
       fresh = fresh.copyWith(isConfirmed: userPhoto.isConfirmed);
