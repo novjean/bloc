@@ -820,7 +820,7 @@ class _PartyGuestAddEditManageScreenState
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 32),
                 child: DarkTextFieldWidget(
-                  label: 'insta handle',
+                  label: 'instagram link',
                   text: mBlocUser.instagramLink,
                   onChanged: (text) {
                     mBlocUser = mBlocUser.copyWith(instagramLink: text);
