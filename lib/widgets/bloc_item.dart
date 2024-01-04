@@ -30,7 +30,6 @@ class _BlocItemState extends State<BlocItem> {
   static const String _TAG = 'BlocItem';
 
   late BlocService mBlocService;
-  var _isBlocServiceLoading = true;
   bool isUserBloc = false;
 
   @override
@@ -51,14 +50,9 @@ class _BlocItemState extends State<BlocItem> {
           if(UserPreferences.getUserBlocs().contains(mBlocService.id)){
             isUserBloc = true;
           }
-
-          _isBlocServiceLoading = false;
         });
       } else {
         Logx.em(_TAG, 'no bloc service found for bloc id ${widget.bloc.id}');
-        setState(() {
-          _isBlocServiceLoading = false;
-        });
       }
     });
 
@@ -68,8 +62,53 @@ class _BlocItemState extends State<BlocItem> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
+      onTap: () async {
+        bool value = !isUserBloc;
 
+        if(value){
+          FirestoreHelper.pullUserBloc(UserPreferences.myUser.id, mBlocService.id).then((res) async {
+            if(res.docs.isEmpty) {
+              UserBloc userBloc = Dummy.getDummyUserBloc();
+              userBloc = userBloc.copyWith(userId: UserPreferences.myUser.id,
+                  blocServiceId: mBlocService.id);
+              await FirestoreHelper.pushUserBloc(userBloc);
+
+              List<String> blocIds = UserPreferences.getUserBlocs();
+
+              if(!blocIds.contains(mBlocService.id)){
+                blocIds.add(mBlocService.id);
+                UserPreferences.setUserBlocs(blocIds);
+              }
+            } else {
+              List<String> blocIds = UserPreferences.getUserBlocs();
+              if(!blocIds.contains(mBlocService.id)){
+                blocIds.add(mBlocService.id);
+                UserPreferences.setUserBlocs(blocIds);
+              } else {
+                // the correct list of blocs is already present
+              }
+            }
+          });
+        } else {
+          FirestoreHelper.pullUserBloc(UserPreferences.myUser.id, mBlocService.id).then((res) {
+            if(res.docs.isNotEmpty){
+              DocumentSnapshot document = res.docs[0];
+              Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+              UserBloc userBloc = Fresh.freshUserBlocMap(data, false);
+
+              FirestoreHelper.deleteUserBloc(userBloc.id);
+              Logx.d(_TAG, 'user bloc deleted');
+            }
+          });
+
+          List<String> blocIds = UserPreferences.getUserBlocs();
+          blocIds.remove(mBlocService.id);
+          UserPreferences.setUserBlocs(blocIds);
+        }
+
+        setState(() {
+          isUserBloc = value;
+        });
       },
       child: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -89,11 +128,21 @@ class _BlocItemState extends State<BlocItem> {
                       SizedBox(
                         height: widget.imageHeight,
                         width: mq.width,
-                        child: FadeInImage(
+                        child: isUserBloc ? FadeInImage(
                           placeholder: const AssetImage(
                               'assets/icons/logo.png'),
-                          image: NetworkImage(widget.bloc.imageUrls.first),
-                          fit: BoxFit.cover,),
+                          image: NetworkImage(widget.bloc.imageUrls.first, ),
+                          fit: BoxFit.cover,) : ColorFiltered(
+                          colorFilter: const ColorFilter.mode(
+                            Colors.grey,
+                            BlendMode.saturation,
+                          ),
+                          child: FadeInImage(
+                            placeholder: const AssetImage(
+                                'assets/icons/logo.png'),
+                            image: NetworkImage(widget.bloc.imageUrls.first, ),
+                            fit: BoxFit.cover,),
+                        ),
                       ),
 
                       Positioned(
@@ -117,10 +166,6 @@ class _BlocItemState extends State<BlocItem> {
                                     UserPreferences.setUserBlocs(blocIds);
                                   }
                                 } else {
-                                  // DocumentSnapshot document = res.docs[0];
-                                  // Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-                                  // UserBloc userBloc = Fresh.freshUserBlocMap(data, false);
-
                                   List<String> blocIds = UserPreferences.getUserBlocs();
                                   if(!blocIds.contains(mBlocService.id)){
                                     blocIds.add(mBlocService.id);
@@ -155,17 +200,17 @@ class _BlocItemState extends State<BlocItem> {
                       ),
                       Positioned(
                         bottom: 5.0,
+                        left: 5,
                         child: Container(
                             width: mq.width,
-                            padding:
-                            const EdgeInsets.only(left: 15.0, right: 15.0),
-                            child: Text('${widget.bloc.name.toLowerCase()} ',
+                            child: Text(widget.bloc.name.toLowerCase(),
                                 style: TextStyle(
                                     fontFamily: Constants.fontDefault,
                                     color: Colors.white,
-                                    backgroundColor: Constants.lightPrimary
-                                        .withOpacity(0.7),
+                                    backgroundColor: Constants.darkPrimary
+                                        .withOpacity(0.8),
                                     overflow: TextOverflow.ellipsis,
+
                                     fontSize: 26,
                                     fontWeight: FontWeight.bold))
                         ),
