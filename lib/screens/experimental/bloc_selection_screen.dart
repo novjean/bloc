@@ -1,20 +1,22 @@
 import 'package:bloc/db/shared_preferences/user_preferences.dart';
 import 'package:bloc/helpers/firestore_helper.dart';
-import 'package:bloc/widgets/ui/dark_button_widget.dart';
 import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../db/entity/bloc.dart';
 import '../../helpers/fresh.dart';
 import '../../main.dart';
+import '../../routes/route_constants.dart';
 import '../../utils/constants.dart';
 import '../../utils/logx.dart';
 import '../../widgets/bloc_item.dart';
 import '../../widgets/ui/app_bar_title.dart';
-import '../../widgets/ui/button_widget.dart';
 
 class BlocSelectionScreen extends StatefulWidget {
+  const BlocSelectionScreen({super.key});
+
   @override
   _BlocSelectionScreenState createState() => _BlocSelectionScreenState();
 }
@@ -76,7 +78,7 @@ class _BlocSelectionScreenState extends State<BlocSelectionScreen> {
               : ListView(
                   children: [
                     SizedBox(
-                      height: mq.height*0.8, // Adjust the height as needed
+                      height: mq.height * 0.8, // Adjust the height as needed
                       child: ListView.builder(
                           itemCount: mBlocs.length,
                           scrollDirection: Axis.vertical,
@@ -88,21 +90,40 @@ class _BlocSelectionScreenState extends State<BlocSelectionScreen> {
                             );
                           }),
                     ),
-
                     Padding(
-                      padding: const EdgeInsets.all(10.0),
-                      child: ButtonWidget(text: '🪀 done', height: 60, onClicked: () {
-                        _handleDone();
-                      },),
-                    )
+                      padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                      child: ElevatedButton.icon(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Constants.primary,
+                          foregroundColor: Constants.darkPrimary,
+                          shadowColor: Colors.white30,
+                          elevation: 3,
+                          minimumSize: const Size.fromHeight(50),
+                          shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(10)),
+                          ),
+                        ),
+                        onPressed: () {
+                          _handleDone();
+                        },
+                        label: const Text(
+                          'done',
+                          style: TextStyle(fontSize: 20, color: Colors.black),
+                        ),
+                        icon: const Icon(
+                          Icons.done_all_sharp,
+                          size: 24.0,
+                        ),
+                      ),
+                    ),
                   ],
                 )),
     );
   }
 
   void _handleDone() {
-    if(UserPreferences.getUserBlocs().isNotEmpty){
-      Navigator.of(context).pop();
+    if (UserPreferences.getUserBlocs().isNotEmpty) {
+      GoRouter.of(context).pushNamed(RouteConstants.landingRouteName);
     } else {
       Logx.elt(_TAG, 'please select at least one bloc.');
     }

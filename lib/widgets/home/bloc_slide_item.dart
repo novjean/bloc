@@ -1,4 +1,5 @@
 import 'package:bloc/db/entity/bloc_service.dart';
+import 'package:bloc/db/shared_preferences/user_preferences.dart';
 import 'package:bloc/helpers/dummy.dart';
 import 'package:bloc/helpers/firestore_helper.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -44,7 +45,12 @@ class _BlocSlideItemState extends State<BlocSlideItem> {
         }
         setState(() {
           mBlocService = blocServices.first;
-          _isBlocServiceLoading = false;
+          if(UserPreferences.getUserBlocs().contains(mBlocService.id)){
+            _isBlocServiceLoading = false;
+          } else {
+            // true will result in not showing
+            _isBlocServiceLoading = true;
+          }
         });
       } else {
         Logx.em(_TAG, 'no bloc service found for bloc id ${widget.bloc.id}');

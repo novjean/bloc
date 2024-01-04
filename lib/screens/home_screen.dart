@@ -281,10 +281,12 @@ class _HomeScreenState extends State<HomeScreen> {
             List<Party> parties = [];
             for (int i = 0; i < snapshot.data!.docs.length; i++) {
               DocumentSnapshot document = snapshot.data!.docs[i];
-              Map<String, dynamic> data =
-              document.data()! as Map<String, dynamic>;
-              final Party bloc = Fresh.freshPartyMap(data, false);
-              parties.add(bloc);
+              Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+              final Party party = Fresh.freshPartyMap(data, false);
+
+              if(UserPreferences.getUserBlocs().contains(party.blocServiceId)){
+                parties.add(party);
+              }
             }
             return _displayPartiesList(context, parties);
 
