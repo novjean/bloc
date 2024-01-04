@@ -11,6 +11,7 @@ import '../db/entity/category.dart';
 import '../db/entity/celebration.dart';
 import '../db/entity/challenge.dart';
 import '../db/entity/challenge_action.dart';
+import '../db/entity/city.dart';
 import '../db/entity/config.dart';
 import '../db/entity/friend.dart';
 import '../db/entity/friend_notification.dart';
@@ -781,28 +782,28 @@ class Fresh {
       category = category.copyWith(imageUrl: map['imageUrl'] as String);
     } catch (e) {
       Logx.em(
-          _TAG, 'category imageUrl not exist for category id: ' + category.id);
+          _TAG, 'category imageUrl not exist for id: ' + category.id);
       isModelChanged = true;
     }
     try {
       category = category.copyWith(ownerId: map['ownerId'] as String);
     } catch (e) {
       Logx.em(
-          _TAG, 'category ownerId not exist for category id: ' + category.id);
+          _TAG, 'category ownerId not exist for id: ' + category.id);
       isModelChanged = true;
     }
     try {
       category = category.copyWith(createdAt: map['createdAt'] as int);
     } catch (e) {
       Logx.em(
-          _TAG, 'category createdAt not exist for category id: ' + category.id);
+          _TAG, 'category createdAt not exist for id: ' + category.id);
       isModelChanged = true;
     }
     try {
       category = category.copyWith(sequence: map['sequence'] as int);
     } catch (e) {
       Logx.em(
-          _TAG, 'category sequence not exist for category id: ' + category.id);
+          _TAG, 'category sequence not exist for id: ' + category.id);
       isModelChanged = true;
     }
     try {
@@ -1559,6 +1560,74 @@ class Fresh {
     }
 
     return freshChat;
+  }
+
+  /** city **/
+  static City freshCityMap(String id, Map<String, dynamic> map, bool shouldUpdate) {
+    City city = Dummy.getDummyCity();
+
+    bool isModelChanged = false;
+
+    try {
+      city = city.copyWith(id: map['id'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'city id not exist');
+      city = city.copyWith(id: id);
+    }
+    try {
+      city = city.copyWith(name: map['name'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'city name not exist for id: ${city.id}');
+      isModelChanged = true;
+    }
+    try {
+      city = city.copyWith(ownerId: map['ownerId'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'city ownerId not exist for id: ${city.id}');
+      isModelChanged = true;
+    }
+    try {
+      city = city.copyWith(imageUrl: map['imageUrl'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'city imageUrl not exist for id: ${city.id}');
+      isModelChanged = true;
+    }
+
+    if (isModelChanged &&
+        shouldUpdate &&
+        UserPreferences.myUser.clearanceLevel == Constants.ADMIN_LEVEL) {
+      Logx.i(_TAG, 'updating config ${city.id}');
+      FirestoreHelper.pushCity(city);
+    }
+
+    return city;
+  }
+
+  static City freshCity(City city) {
+    City fresh = Dummy.getDummyCity();
+
+    try {
+      fresh = fresh.copyWith(id: city.id);
+    } catch (e) {
+      Logx.em(_TAG, 'city id not exist');
+    }
+    try {
+      fresh = fresh.copyWith(name: city.name);
+    } catch (e) {
+      Logx.em(_TAG, 'city name not exist for id: ${city.id}');
+    }
+    try {
+      fresh = fresh.copyWith(ownerId: city.ownerId);
+    } catch (e) {
+      Logx.em(_TAG, 'city ownerId not exist for id: ${city.id}');
+    }
+    try {
+      fresh = fresh.copyWith(imageUrl: city.imageUrl);
+    } catch (e) {
+      Logx.em(_TAG, 'city imageUrl not exist for id: ${city.id}');
+    }
+
+    return fresh;
   }
 
   /** config **/

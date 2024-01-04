@@ -21,7 +21,7 @@ class OwnerCityScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: AppBarTitle(title: 'owner | ${city.name}'.toLowerCase(), ),
+        title: AppBarTitle(title: city.name.toLowerCase(), ),
         titleSpacing: 0,
       ),
       floatingActionButton: FloatingActionButton(

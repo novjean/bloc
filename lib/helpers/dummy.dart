@@ -5,7 +5,6 @@ import 'package:bloc/db/entity/history_music.dart';
 import 'package:bloc/db/entity/party_guest.dart';
 import 'package:bloc/db/entity/reservation.dart';
 import 'package:bloc/db/entity/service_table.dart';
-import 'package:bloc/db/entity/ticket.dart';
 import 'package:bloc/db/entity/ui_photo.dart';
 import 'package:bloc/db/entity/user_level.dart';
 import 'package:bloc/utils/constants.dart';
@@ -20,6 +19,7 @@ import '../db/entity/bloc_service.dart';
 import '../db/entity/captain_service.dart';
 import '../db/entity/celebration.dart';
 import '../db/entity/challenge_action.dart';
+import '../db/entity/city.dart';
 import '../db/entity/config.dart';
 import '../db/entity/friend.dart';
 import '../db/entity/friend_notification.dart';
@@ -197,6 +197,15 @@ class Dummy {
         buttonCount: 1,
         buttonTitle: '',
         challengeId: challengeId);
+    return dummy;
+  }
+
+  static City getDummyCity() {
+    City dummy = City(
+        id: StringUtils.getRandomString(28),
+        name: '',
+        ownerId: '',
+        imageUrl: '');
     return dummy;
   }
 

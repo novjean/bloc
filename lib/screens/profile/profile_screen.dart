@@ -385,11 +385,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
               borderRadius: BorderRadius.all(Radius.circular(20.0))),
           contentPadding: const EdgeInsets.all(0.0),
           content: SizedBox(
-            height: mq.width,
-            width: mq.width,
+            height: 400,
+            width: double.maxFinite,
             child: Center(
               child: CarouselSlider(
                 options: CarouselOptions(
+                    height: 300,
                     initialPage: index,
                     enableInfiniteScroll: true,
                     autoPlay: true,
@@ -399,17 +400,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     enlargeCenterPage: true,
                     scrollDirection: Axis.horizontal,
                     onPageChanged: (index, reason) {
-                      _currentIndex = index;
-                      Logx.d(_TAG, 'index is $_currentIndex');
-
-                      PartyPhoto partyPhoto = mPartyPhotos[_currentIndex];
-                      FirestoreHelper.updatePartyPhotoViewCount(partyPhoto.id);
-
-                      setState(() {});
+                      setState(() {
+                        _currentIndex = index;
+                        PartyPhoto partyPhoto = mPartyPhotos[_currentIndex];
+                        FirestoreHelper.updatePartyPhotoViewCount(partyPhoto.id);
+                      });
                     }),
                 items: partyPhotoUrls.map((item) {
                   return kIsWeb
-                      ? Image.network(item, fit: BoxFit.cover, width: mq.width)
+                      ? Image.network(item, fit: BoxFit.fitWidth, width: mq.width)
                       : CachedNetworkImage(
                           imageUrl: item,
                           imageBuilder: (context, imageProvider) => Container(

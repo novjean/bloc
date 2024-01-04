@@ -39,6 +39,7 @@ import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 
 import '../db/entity/ad.dart';
+import '../db/entity/city.dart';
 import '../db/entity/friend.dart';
 import '../db/entity/lounge.dart';
 import '../db/entity/party_photo.dart';
@@ -701,7 +702,22 @@ class FirestoreHelper {
     FirebaseFirestore.instance.collection(LOUNGE_CHATS).doc(docId).delete();
   }
 
-  /** cities **/
+  /** city **/
+  static void pushCity(City city) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection(CITIES)
+          .doc(city.id)
+          .set(city.toMap());
+    } on PlatformException catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } on Exception catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } catch (e) {
+      Logx.em(_TAG, e.toString());
+    }
+  }
+
   static Stream<QuerySnapshot<Object?>> getCitiesSnapshot() {
     return FirebaseFirestore.instance.collection(CITIES).snapshots();
   }
@@ -1446,8 +1462,6 @@ class FirestoreHelper {
         .doc(docId)
         .delete();
   }
-
-
 
   /** party tix tier **/
   static void pushPartyTixTier(PartyTixTier partyTixTier) async {
