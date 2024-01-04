@@ -39,7 +39,7 @@ class ArtistBanner extends StatelessWidget {
           tag: party.id,
           child: Card(
             elevation: 1,
-            color: Theme.of(context).primaryColorLight,
+            color: Constants.lightPrimary,
             child: ClipRRect(
               borderRadius: BorderRadius.circular(15),
               child: SizedBox(

@@ -1418,9 +1418,10 @@ class FirestoreHelper {
         .get();
   }
 
-  static getPartyPhotos() {
+  static getPartyPhotos(String blocServiceId) {
     return FirebaseFirestore.instance
         .collection(PARTY_PHOTOS)
+        .where('blocServiceId', isEqualTo: blocServiceId)
         .orderBy('partyDate', descending: true)
         .snapshots();
   }

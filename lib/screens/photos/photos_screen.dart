@@ -59,7 +59,10 @@ class _PhotosScreenState extends State<PhotosScreen> {
           DocumentSnapshot document = res.docs[i];
           Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
           final PartyPhoto partyPhoto = Fresh.freshPartyPhotoMap(data, false);
-          mPartyPhotos.add(partyPhoto);
+
+          if(UserPreferences.getUserBlocs().contains(partyPhoto.blocServiceId)){
+            mPartyPhotos.add(partyPhoto);
+          }
         }
 
         setState(() {
@@ -461,6 +464,7 @@ class _PhotosScreenState extends State<PhotosScreen> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               const Text('share to lounge'),
+
                               SizedBox.fromSize(
                                 size: const Size(50, 50),
                                 child: ClipOval(

@@ -35,6 +35,7 @@ class _ManagePartyPhotosScreenState extends State<ManagePartyPhotosScreen> {
   static const String _TAG = 'ManagePartyPhotosScreen';
 
   List<PartyPhoto> mPartyPhotos = [];
+  List<PartyPhoto> sPhotos = [];
 
   @override
   Widget build(BuildContext context) {
@@ -77,7 +78,7 @@ class _ManagePartyPhotosScreenState extends State<ManagePartyPhotosScreen> {
 
   _loadPhotos(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
-        stream: FirestoreHelper.getPartyPhotos(),
+        stream: FirestoreHelper.getPartyPhotos(widget.blocServiceId),
         builder: (ctx, snapshot) {
           switch (snapshot.connectionState) {
             case ConnectionState.waiting:
@@ -120,6 +121,13 @@ class _ManagePartyPhotosScreenState extends State<ManagePartyPhotosScreen> {
             return GestureDetector(
                 child: ManagePartyPhotoItem(
                   partyPhoto: mPartyPhotos[index],
+                  onChanged: (value) {
+                    if(value){
+                      sPhotos.add(mPartyPhotos[index]);
+                    } else {
+                      sPhotos.remove(mPartyPhotos[index]);
+                    }
+                  },
                 ),
                 onTap: () {
                   Navigator.of(context).push(
@@ -210,6 +218,40 @@ class _ManagePartyPhotosScreenState extends State<ManagePartyPhotosScreen> {
                                   children: <Widget>[
                                     Icon(
                                       Icons.add_photo_alternate_rounded,
+                                      color: Constants.darkPrimary,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+
+                    const SizedBox(
+                      height: 30,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text('move photos'),
+                        SizedBox.fromSize(
+                          size: const Size(50, 50),
+                          child: ClipOval(
+                            child: Material(
+                              color: Constants.primary,
+                              child: InkWell(
+                                splashColor: Constants.darkPrimary,
+                                onTap: () {
+                                  Navigator.of(ctx).pop();
+                                  _showSelectedPhotosMove();
+                                  },
+                                child: const Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: <Widget>[
+                                    Icon(
+                                      Icons.drive_file_move_outline,
                                       color: Constants.darkPrimary,
                                     ),
                                   ],
@@ -366,7 +408,6 @@ class _ManagePartyPhotosScreenState extends State<ManagePartyPhotosScreen> {
                                   children: <Widget>[
                                     Icon(
                                       Icons.photo_size_select_large_sharp,
-                                      color: Colors.blue,
                                     ),
                                   ],
                                 ),
@@ -386,4 +427,76 @@ class _ManagePartyPhotosScreenState extends State<ManagePartyPhotosScreen> {
       ),
     );
   }
+
+  Widget _buildPhotoMoveItem(PartyPhoto photo) {
+    return ListTile(
+      leading: FadeInImage(
+        placeholder: const AssetImage(
+            'assets/icons/logo.png'),
+        image: NetworkImage(photo.imageThumbUrl.isNotEmpty? photo.imageThumbUrl: photo.imageUrl),
+        fit: BoxFit.cover,),
+      title: Text(photo.partyName),
+      subtitle: Text('${photo.likers.length} 🧡'),
+    );
+  }
+
+  void _showSelectedPhotosMove() {
+    showDialog(
+        context: context,
+        builder: (BuildContext ctx) {
+          return AlertDialog(
+            title: const Text('move photos'),
+            content: SizedBox(
+              width: double.maxFinite,
+              height: double.maxFinite,
+              child:
+              ListView.builder(
+                itemCount: sPhotos.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return _buildPhotoMoveItem(sPhotos[index]);
+                },
+              ),
+            ),
+            actions: [
+              TextButton(
+                child: const Text("close"),
+                onPressed: () {
+                  Navigator.of(ctx).pop();
+                },
+              ),
+              TextButton(
+                child: const Text("to bloc"),
+                onPressed: () {
+                  Navigator.of(ctx).pop();
+
+                  for(PartyPhoto photo in sPhotos){
+                    photo = photo.copyWith(blocServiceId: Constants.blocServiceId);
+                    FirestoreHelper.pushPartyPhoto(photo);
+                  }
+
+                  setState(() {
+                    sPhotos.clear();
+                  });
+                },
+              ),
+              TextButton(
+                child: const Text("to freq"),
+                onPressed: () {
+                  Navigator.of(ctx).pop();
+
+                  for(PartyPhoto photo in sPhotos){
+                    photo = photo.copyWith(blocServiceId: Constants.freqServiceId);
+                    FirestoreHelper.pushPartyPhoto(photo);
+                  }
+
+                  setState(() {
+                    sPhotos.clear();
+                  });
+                },
+              )
+            ],
+          );
+        });
+  }
+
 }

@@ -4,12 +4,20 @@ import '../../../db/entity/party_photo.dart';
 import '../../../utils/constants.dart';
 import '../../../utils/date_time_utils.dart';
 
-class ManagePartyPhotoItem extends StatelessWidget{
+class ManagePartyPhotoItem extends StatefulWidget{
   static const String _TAG = 'ManagePartyPhotoItem';
 
   PartyPhoto partyPhoto;
+  final ValueChanged<bool>? onChanged;
 
-  ManagePartyPhotoItem({Key? key, required this.partyPhoto}) : super(key: key);
+  ManagePartyPhotoItem({Key? key, required this.partyPhoto, required this.onChanged,}) : super(key: key);
+
+  @override
+  State<ManagePartyPhotoItem> createState() => _ManagePartyPhotoItemState();
+}
+
+class _ManagePartyPhotoItemState extends State<ManagePartyPhotoItem> {
+  bool _isChecked = false;
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +26,7 @@ class ManagePartyPhotoItem extends StatelessWidget{
       child: ClipRRect(
         borderRadius: BorderRadius.circular(15),
         child: Hero(
-          tag: partyPhoto.id,
+          tag: widget.partyPhoto.id,
           child: Card(
             elevation: 1,
             color: Constants.lightPrimary,
@@ -29,11 +37,11 @@ class ManagePartyPhotoItem extends StatelessWidget{
                   leading: FadeInImage(
                     placeholder: const AssetImage(
                         'assets/icons/logo.png'),
-                    image: NetworkImage(partyPhoto.imageThumbUrl.isNotEmpty? partyPhoto.imageThumbUrl: partyPhoto.imageUrl),
+                    image: NetworkImage(widget.partyPhoto.imageThumbUrl.isNotEmpty? widget.partyPhoto.imageThumbUrl: widget.partyPhoto.imageUrl),
                     fit: BoxFit.cover,),
                   title: RichText(
                     text: TextSpan(
-                      text: '${partyPhoto.partyName} ',
+                      text: '${widget.partyPhoto.partyName} ',
                       style: const TextStyle(
                           fontFamily: Constants.fontDefault,
                           color: Colors.black,
@@ -46,28 +54,39 @@ class ManagePartyPhotoItem extends StatelessWidget{
                   subtitle: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('${partyPhoto.views} 👁️'),
-                      Text('${partyPhoto.likers.length + partyPhoto.initLikes} 🖤'),
-                      Text('${partyPhoto.downloadCount} 💾'),
+                      Text('${widget.partyPhoto.views} 👁️'),
+                      Text('${widget.partyPhoto.likers.length + widget.partyPhoto.initLikes} 🖤'),
+                      Text('${widget.partyPhoto.downloadCount} 💾'),
                     ],
                   ),
-                  trailing: RichText(
-                    text: TextSpan(
-                      text:
-                      '${DateTimeUtils.getFormattedDate(partyPhoto.endTime)} ',
-                      style: const TextStyle(
-                        fontFamily: Constants.fontDefault,
-                        color: Colors.black,
-                        fontStyle: FontStyle.italic,
-                        fontSize: 13,
-                      ),
-                    ),
-                  ),
+                  trailing: Checkbox(
+                    value: _isChecked,
+                    onChanged: (value) {
+                      setState(() {
+                        _isChecked = value!;
+                      });
+
+                      // Trigger the callback with the new value
+                      widget.onChanged?.call(value!);
+                    },
+                  )
+
+                  // RichText(
+                  //   text: TextSpan(
+                  //     text:
+                  //     '${DateTimeUtils.getFormattedDate(partyPhoto.endTime)} ',
+                  //     style: const TextStyle(
+                  //       fontFamily: Constants.fontDefault,
+                  //       color: Colors.black,
+                  //       fontStyle: FontStyle.italic,
+                  //       fontSize: 13,
+                  //     ),
+                  //   ),
+                  // ),
                 )),
           ),
         ),
       ),
     );
   }
-
 }

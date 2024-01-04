@@ -384,8 +384,7 @@ class _EventScreenState extends State<EventScreen> {
                               mParty.id,
                               urlImage,
                               'bloc-${mParty.name}',
-                              ''
-                                  '${StringUtils.firstFewWords(mParty.description, 15)}... \n\nhey. check out this event at the official bloc app. '
+                              '${StringUtils.firstFewWords(mParty.description, 15)}... \n\nhey. check out this event on bloc. '
                                   '\n\n🍎 ios:\n${Constants.urlBlocAppStore} \n\n🤖 android:\n${Constants.urlBlocPlayStore} \n\n🌏 web:\n${Constants.urlBlocWeb} \n\n#blocCommunity 💛');
                         }
                       },
