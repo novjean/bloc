@@ -5,10 +5,12 @@ import 'package:go_router/go_router.dart';
 
 import '../../db/entity/party.dart';
 import '../../db/entity/party_guest.dart';
+import '../../db/entity/tix.dart';
 import '../../helpers/dummy.dart';
 import '../../main.dart';
 import '../../routes/route_constants.dart';
 import '../../screens/parties/party_guest_add_edit_manage_screen.dart';
+import '../../screens/parties/tix_buy_edit_screen.dart';
 import '../../utils/constants.dart';
 import '../../utils/network_utils.dart';
 
@@ -34,16 +36,10 @@ class PartyItem extends StatelessWidget {
       onTap: () {
         if (party.type == 'event') {
           GoRouter.of(context).pushNamed(RouteConstants.eventRouteName,
-              params: {
-                'partyName': party.name,
-                'partyChapter': party.chapter
-              });
+              params: {'partyName': party.name, 'partyChapter': party.chapter});
         } else {
           GoRouter.of(context).pushNamed(RouteConstants.artistRouteName,
-              params: {
-                'name': party.name,
-                'genre': party.genre
-              });
+              params: {'name': party.name, 'genre': party.genre});
         }
       },
       child: Hero(
@@ -64,40 +60,62 @@ class PartyItem extends StatelessWidget {
                       height: imageHeight,
                       width: mq.width,
                       child: FadeInImage(
-                        placeholder: const AssetImage(
-                            'assets/icons/logo.png'),
+                        placeholder: const AssetImage('assets/icons/logo.png'),
                         image: NetworkImage(party.imageUrl),
-                        fit: BoxFit.cover,),
+                        fit: BoxFit.cover,
+                      ),
                     ),
-
+                    Positioned(
+                      top: 10,
+                      right: 10,
+                      child: Text(
+                        party.type == 'artist' ? '${party.chapter}' : '',
+                        style: TextStyle(fontSize: 26),
+                      ),
+                    ),
+                    Positioned(
+                      bottom: 0,
+                      right: 0,
+                      child: Text(
+                        party.genre.isNotEmpty ? '${party.genre}' : '',
+                        style: TextStyle(fontSize: 15,
+                            color: Constants.darkPrimary,
+                            backgroundColor:
+                        Constants.lightPrimary.withOpacity(0.7)),
+                      ),
+                    ),
                     Positioned(
                       bottom: 5.0,
+                      left: 15,
                       child: Container(
                         width: mq.width,
-                        padding:
-                            const EdgeInsets.only(left: 15.0, right: 15.0),
+                        padding: const EdgeInsets.only(right: 15.0),
                         child: RichText(
                           text: TextSpan(
                               text: '${party.name.toLowerCase()} ',
                               style: TextStyle(
-                                fontFamily: Constants.fontDefault,
-                                  color: Colors.white,
-                                  backgroundColor: Constants.lightPrimary
-                                      .withOpacity(0.7),
+                                  fontFamily: Constants.fontDefault,
+                                  color: Constants.darkPrimary,
+                                  backgroundColor:
+                                      Constants.lightPrimary.withOpacity(0.7),
                                   overflow: TextOverflow.ellipsis,
                                   fontSize: 26,
                                   fontWeight: FontWeight.bold),
                               children: <TextSpan>[
-                                TextSpan(
-                                    text: party.chapter == 'I'
-                                        ? ' '
-                                        : party.chapter,
-                                    style: const TextStyle(
-                                      fontFamily: Constants.fontDefault,
-                                        color: Colors.white,
-                                        fontSize: 24,
-                                        fontWeight: FontWeight.normal,
-                                        fontStyle: FontStyle.italic)),
+                                party.type == 'event'
+                                    ? TextSpan(
+                                        text: party.chapter == 'I'
+                                            ? ' '
+                                            : party.chapter,
+                                        style: const TextStyle(
+                                            fontFamily: Constants.fontDefault,
+                                            color: Constants.darkPrimary,
+                                            fontSize: 24,
+                                            fontWeight: FontWeight.normal,
+                                            fontStyle: FontStyle.italic))
+                                    : TextSpan(
+                                        text: ' ',
+                                      )
                               ]),
                         ),
                       ),
@@ -105,42 +123,46 @@ class PartyItem extends StatelessWidget {
                   ],
                 ),
                 Padding(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 15, vertical: 5.0),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 15, vertical: 5.0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Flexible(
                         flex: 4,
                         child: party.eventName.isNotEmpty
-                            ? RichText(
-                          maxLines: 2,
-                          text: TextSpan(
-                              text: '${party.eventName.toLowerCase()} ',
-                              style: const TextStyle(
-                                  color: Colors.black,
-                                  fontFamily: Constants.fontDefault,
-                                  overflow: TextOverflow.ellipsis,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold),
-                              children: <TextSpan>[
-                                TextSpan(
-                                    text: party.genre.isNotEmpty
-                                        ? '[${party.genre}]'
-                                        : ' ',
-                                    style: const TextStyle(
-                                        color: Colors.black,
-                                        fontFamily: Constants.fontDefault,
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.normal,
-                                        fontStyle: FontStyle.italic)),
-                              ]),
-                        )
-                            : party.genre.isNotEmpty? Text(
-                                '[${party.genre}]',
-                                style: const TextStyle(fontSize: 18),
-                              ) : const SizedBox(),
-                      ),
+                            ? Text('${party.eventName.toLowerCase()} ',
+                          style: const TextStyle(
+                              color: Colors.black,
+                              fontFamily: Constants.fontDefault,
+                              overflow: TextOverflow.ellipsis,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold),):const SizedBox(),),
+
+                        // RichText(
+                        //         maxLines: 2,
+                        //         text: TextSpan(
+                        //             text:
+                        //             children: <TextSpan>[
+                        //               TextSpan(
+                        //                   text: party.genre.isNotEmpty
+                        //                       ? '[${party.genre}]'
+                        //                       : ' ',
+                        //                   style: const TextStyle(
+                        //                       color: Colors.black,
+                        //                       fontFamily: Constants.fontDefault,
+                        //                       fontSize: 16,
+                        //                       fontWeight: FontWeight.normal,
+                        //                       fontStyle: FontStyle.italic)),
+                        //             ]),
+                        //       )
+                        //     : party.genre.isNotEmpty
+                        //         ? Text(
+                        //             '[${party.genre}]',
+                        //             style: const TextStyle(fontSize: 18),
+                        //           )
+                        //         : const SizedBox(),
+                      // ),
                       Flexible(
                         flex: 1,
                         child: Text(
@@ -154,8 +176,8 @@ class PartyItem extends StatelessWidget {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 15, vertical: 5.0),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 15, vertical: 5.0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -164,15 +186,17 @@ class PartyItem extends StatelessWidget {
                         flex: 3,
                         child: Align(
                           alignment: Alignment.centerLeft,
-                          child: Text( party.description.toLowerCase(),
+                          child: Text(
+                            party.description.toLowerCase(),
                             overflow: TextOverflow.ellipsis,
                             maxLines: 3,
                             style: const TextStyle(
-                                fontSize: 15,
-                                color: Constants.darkPrimary),
+                                fontSize: 15, color: Constants.darkPrimary),
                           ),
                         ),
                       ),
+                      party.isTix?
+                      showBuyTixNowButton(context):
                       (party.ticketUrl.isNotEmpty && !party.isTicketsDisabled)
                           ? Flexible(
                               flex: 1, child: showBuyTicketNowButton(context))
@@ -215,6 +239,35 @@ class PartyItem extends StatelessWidget {
             MaterialPageRoute(
                 builder: (context) => PartyGuestAddEditManageScreen(
                     partyGuest: partyGuest, party: party, task: 'add')),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget showBuyTixNowButton(BuildContext context) {
+    return SizedBox(
+      height: 75,
+      width: 75,
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Constants.darkPrimary,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(5),
+          ),
+          foregroundColor: Colors.white,
+          padding: const EdgeInsets.symmetric(horizontal: 1, vertical: 1),
+        ),
+        child: const Text('buy\nticket\nnow'),
+        onPressed: () {
+          //navigate to purchase tix screen
+          Tix tix = Dummy.getDummyTix();
+          tix = tix.copyWith(partyId: party.id);
+
+          Navigator.of(context).push(
+            MaterialPageRoute(
+                builder: (context) => TixBuyEditScreen(
+                    tix: tix, task: 'buy')),
           );
         },
       ),

@@ -48,24 +48,21 @@ class _PartiesScreenState extends State<PartiesScreen> {
           DocumentSnapshot document = res.docs[i];
           Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
           final Party party = Fresh.freshPartyMap(data, false);
-          parties.add(party);
+
+          if(UserPreferences.getUserBlocs().contains(party.blocServiceId)){
+            parties.add(party);
+          }
         }
-        if (mounted) {
-          setState(() {
-            mParties = parties;
-            _isPartiesLoading = false;
-          });
-        }
+
+        setState(() {
+          mParties = parties;
+          _isPartiesLoading = false;
+        });
       } else {
         Logx.em(_TAG, 'no parties found!');
-        const Center(
-          child: Text('no parties assigned yet!'),
-        );
-        if (mounted) {
-          setState(() {
-            _isPartiesLoading = false;
-          });
-        }
+        setState(() {
+          _isPartiesLoading = false;
+        });
       }
     });
 
@@ -80,29 +77,22 @@ class _PartiesScreenState extends State<PartiesScreen> {
         for (int i = 0; i < res.docs.length; i++) {
           DocumentSnapshot document = res.docs[i];
           Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-          final Party bloc = Fresh.freshPartyMap(data, false);
-          parties.add(bloc);
+          final Party party = Fresh.freshPartyMap(data, false);
+
+          if(UserPreferences.getUserBlocs().contains(party.blocServiceId)){
+            parties.add(party);
+          }
         }
-        if (mounted) {
-          setState(() {
-            mPastParties = parties;
-            _isPastPartiesLoading = false;
-          });
-        } else {
-          Logx.em(_TAG, 'not mounted');
-        }
+
+        setState(() {
+          mPastParties = parties;
+          _isPastPartiesLoading = false;
+        });
       } else {
         Logx.i(_TAG, 'no past parties found!');
-        const Center(
-          child: Text('no past parties found yet!'),
-        );
-        if (mounted) {
-          setState(() {
-            _isPastPartiesLoading = false;
-          });
-        } else {
-          Logx.em(_TAG, 'not mounted');
-        }
+        setState(() {
+          _isPastPartiesLoading = false;
+        });
       }
     });
 
@@ -119,22 +109,16 @@ class _PartiesScreenState extends State<PartiesScreen> {
           final PartyGuest partyGuest = Fresh.freshPartyGuestMap(data, false);
           partyGuestRequests.add(partyGuest);
         }
-        if (mounted) {
-          setState(() {
-            mPartyGuestRequests = partyGuestRequests;
-            _isPartyGuestsLoading = false;
-          });
-        }
+        setState(() {
+          mPartyGuestRequests = partyGuestRequests;
+          _isPartyGuestsLoading = false;
+        });
       } else {
         Logx.i(_TAG, 'no party guest requests found!');
-        const SizedBox();
-        if(mounted){
-          setState(() {
-            _isPartyGuestsLoading = false;
-          });
-        } else {
-          Logx.em(_TAG, 'not mounted');
-        }
+
+        setState(() {
+          _isPartyGuestsLoading = false;
+        });
       }
     });
 
@@ -157,7 +141,7 @@ class _PartiesScreenState extends State<PartiesScreen> {
                 splashColor: Colors.grey,
                 child: Icon(
                   Icons.keyboard_command_key_sharp,
-                  color: Theme.of(context).primaryColorDark,
+                  color: Constants.darkPrimary,
                   size: 29,
                 ),
               )
@@ -175,13 +159,11 @@ class _PartiesScreenState extends State<PartiesScreen> {
 
     if (parties.isEmpty) {
       if (_showPastParties) {
-        Logx.i(_TAG, 'no upcoming parties to show');
-
         if (mParties.isNotEmpty) {
           parties = mParties;
         } else {
           return const Center(
-            child: Text('no parties yet, check back here soon'),
+            child: Text('no parties yet, check back here soon', style: TextStyle(color: Constants.primary),),
           );
         }
       } else {
@@ -190,7 +172,7 @@ class _PartiesScreenState extends State<PartiesScreen> {
           parties = mPastParties;
         } else {
           return const Center(
-            child: Text('no parties yet, check back here soon'),
+            child: Text('no parties yet, check back here soon', style: TextStyle(color: Constants.primary),),
           );
         }
       }
@@ -220,7 +202,7 @@ class _PartiesScreenState extends State<PartiesScreen> {
                       title: 'show upcoming parties',
                       height: 50,
                       width: MediaQuery.of(context).size.width,
-                      color: Theme.of(context).primaryColor,
+                      color: Constants.primary,
                     ),
                     onTap: () {
                       Logx.i(_TAG, 'show upcoming parties button clicked');
