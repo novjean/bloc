@@ -251,6 +251,7 @@ class _ManageBoxOfficeTixScreenState extends State<ManageBoxOfficeTixScreen> {
           child: TextFieldWidget(
             label: 'result',
             text: mTix.result,
+            maxLines: 3,
             onChanged: (text) {},
           ),
         ),
@@ -307,7 +308,8 @@ class _ManageBoxOfficeTixScreenState extends State<ManageBoxOfficeTixScreen> {
               );
             },),
           ],
-        )
+        ),
+        const SizedBox(height: 36),
       ],
     );
   }
