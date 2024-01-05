@@ -438,6 +438,8 @@ class _HomeScreenState extends State<HomeScreen> {
               Logx.i(_TAG,
                   "successfully pulled in all power and superpower blocs");
 
+              mBlocs.clear();
+
               for (int i = 0; i < res.docs.length; i++) {
                 DocumentSnapshot document = res.docs[i];
                 Map<String, dynamic> data =
@@ -494,12 +496,13 @@ class _HomeScreenState extends State<HomeScreen> {
             if (res.docs.isNotEmpty) {
               Logx.i(_TAG, "successfully pulled in blocs");
 
+              mBlocs.clear();
+
               for (int i = 0; i < res.docs.length; i++) {
                 DocumentSnapshot document = res.docs[i];
                 Map<String, dynamic> data =
                     document.data()! as Map<String, dynamic>;
                 final Bloc bloc = Fresh.freshBlocMap(data, false);
-                mBlocs.add(bloc);
 
                 if (bloc.powerBloc || bloc.superPowerBloc) {
                   mBlocs.add(bloc);
