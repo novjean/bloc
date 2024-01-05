@@ -31,7 +31,6 @@ class FirestorageHelper {
   static String USER_IMAGES = 'user_image';
 
 
-
   static Future<bool> deleteFile(String fileUrl) async {
     final firebaseStorage = FirebaseStorage.instance;
 

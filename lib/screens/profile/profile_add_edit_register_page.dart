@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:bloc/db/entity/user_lounge.dart';
+import 'package:bloc/helpers/bloc_helper.dart';
 import 'package:bloc/widgets/ui/app_bar_title.dart';
 import 'package:bloc/widgets/ui/toaster.dart';
 import 'package:delayed_display/delayed_display.dart';
@@ -308,14 +309,7 @@ class _ProfileAddEditRegisterPageState
               FirestoreHelper.pushUser(freshUser);
 
               if(widget.task == 'register'){
-                // add them to user blocs
-                UserBloc userBlocBloc = Dummy.getDummyUserBloc();
-                userBlocBloc = userBlocBloc.copyWith(userId: widget.user.id, blocServiceId: Constants.blocServiceId);
-                FirestoreHelper.pushUserBloc(userBlocBloc);
-
-                UserBloc userBlocFreq = Dummy.getDummyUserBloc();
-                userBlocFreq = userBlocFreq.copyWith(userId: widget.user.id, blocServiceId: Constants.freqServiceId);
-                FirestoreHelper.pushUserBloc(userBlocFreq);
+                BlocHelper.setDefaultBlocs(widget.user.id);
 
                 // adding them to blocCommunity lounge
                 UserLounge userLounge = Dummy.getDummyUserLounge();

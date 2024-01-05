@@ -1,3 +1,4 @@
+import 'package:bloc/helpers/bloc_helper.dart';
 import 'package:bloc/main.dart';
 import 'package:bloc/screens/experimental/bloc_selection_screen.dart';
 import 'package:bloc/utils/constants.dart';
@@ -50,10 +51,8 @@ class _HomeScreenState extends State<HomeScreen> {
   final ScrollController _scrollController = ScrollController();
 
   _scrollToBottom() {
-    _scrollController.animateTo(
-        _scrollController.position.maxScrollExtent,
-        duration: const Duration(seconds: 45),
-        curve: Curves.linear);
+    _scrollController.animateTo(_scrollController.position.maxScrollExtent,
+        duration: const Duration(seconds: 45), curve: Curves.linear);
   }
 
   AdCampaign mAdCampaign = Dummy.getDummyAdCampaign();
@@ -63,101 +62,13 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     Logx.d(_TAG, 'HomeScreen');
 
-    UserPreferences.myUser.clearanceLevel >= Constants.PROMOTER_LEVEL
-        ? FirestoreHelper.pullBlocsPromoter().then((res) {
-            Logx.i(_TAG, "successfully pulled in all power and superpower blocs");
-
-            if (res.docs.isNotEmpty) {
-              for (int i = 0; i < res.docs.length; i++) {
-                DocumentSnapshot document = res.docs[i];
-                Map<String, dynamic> data =
-                    document.data()! as Map<String, dynamic>;
-                final Bloc bloc = Fresh.freshBlocMap(data, false);
-
-                if(bloc.powerBloc || bloc.superPowerBloc){
-                  mBlocs.add(bloc);
-                }
-
-                if(mounted){
-                  setState(() {
-                    _isBlocsLoading = false;
-                  });
-                }
-
-                FirestoreHelper.pullUserBlocs(UserPreferences.myUser.id).then((res) {
-                  if(res.docs.isNotEmpty){
-                    List<String> userBlocServiceIds = [];
-                    for (int i = 0; i < res.docs.length; i++) {
-                      DocumentSnapshot document = res.docs[i];
-                      Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-                      UserBloc userBloc = Fresh.freshUserBlocMap(data, true);
-                      userBlocServiceIds.add(userBloc.blocServiceId);
-                    }
-
-                    UserPreferences.setUserBlocs(userBlocServiceIds);
-                  } else {
-                    Logx.em(_TAG, 'no blocs selected by the user ');
-
-                    Navigator.of(context).push(
-                      MaterialPageRoute(builder: (ctx) => BlocSelectionScreen()),
-                    );
-                  }
-                });
-              }
-            } else {
-              Logx.em(_TAG, ' no blocs found!!!');
-              //todo: need to re-attempt or check internet connection
-              setState(() {
-                _isBlocsLoading = false;
-              });
-            }
-          }).catchError((e, s) {
-            Logx.ex(_TAG, 'error loading blocs', e, s);
-            setState(() {
-              _isBlocsLoading = false;
-            });
-          })
-        : FirestoreHelper.pullBlocs().then((res) {
-            Logx.i(_TAG, "successfully pulled in blocs");
-
-            if (res.docs.isNotEmpty) {
-              for (int i = 0; i < res.docs.length; i++) {
-                DocumentSnapshot document = res.docs[i];
-                Map<String, dynamic> data =
-                    document.data()! as Map<String, dynamic>;
-                final Bloc bloc = Fresh.freshBlocMap(data, false);
-                mBlocs.add(bloc);
-
-                if(mounted) {
-                  setState(() {
-                    _isBlocsLoading = false;
-                  });
-                }
-              }
-            } else {
-              Logx.em(_TAG, 'no blocs found!!!');
-              //todo: need to re-attempt or check internet connection
-              if (mounted) {
-                setState(() {
-                  mBlocs = [];
-                  _isBlocsLoading = false;
-                });
-              }
-            }
-          }).catchError((err) {
-            Logx.em(_TAG, 'error loading blocs $err');
-            if (mounted) {
-              setState(() {
-                _isBlocsLoading = false;
-              });
-            }
-          });
+    _loadBlocsAndUserBlocs();
 
     FirestoreHelper.pullGuestListRequested(UserPreferences.myUser.id)
         .then((res) {
-      Logx.i(_TAG, "successfully pulled in requested guest list");
-
       if (res.docs.isNotEmpty) {
+        Logx.i(_TAG, "successfully pulled in requested guest list");
+
         List<PartyGuest> partyGuestRequests = [];
         for (int i = 0; i < res.docs.length; i++) {
           DocumentSnapshot document = res.docs[i];
@@ -165,7 +76,7 @@ class _HomeScreenState extends State<HomeScreen> {
           final PartyGuest partyGuest = Fresh.freshPartyGuestMap(data, false);
           partyGuestRequests.add(partyGuest);
         }
-        if(mounted) {
+        if (mounted) {
           setState(() {
             mPartyGuestRequests = partyGuestRequests;
             _isPartyGuestsLoading = false;
@@ -173,7 +84,7 @@ class _HomeScreenState extends State<HomeScreen> {
         }
       } else {
         Logx.i(_TAG, 'no party guest requests found!');
-        if(mounted){
+        if (mounted) {
           setState(() {
             _isPartyGuestsLoading = false;
           });
@@ -184,7 +95,7 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
 
     FirestoreHelper.pullAdCampaignByStorySize(false).then((res) {
-      if(res.docs.isNotEmpty){
+      if (res.docs.isNotEmpty) {
         DocumentSnapshot document = res.docs[0];
         Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
         setState(() {
@@ -234,15 +145,16 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       backgroundColor: Constants.background,
       resizeToAvoidBottomInset: false,
-      body: _isBlocsLoading && _isPartyGuestsLoading ? const LoadingWidget():
-      Column(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: <Widget>[
-          _showBlocs(context),
-          _showPartiesAndFooter(context),
-        ],
-      ),
+      body: _isBlocsLoading && _isPartyGuestsLoading
+          ? const LoadingWidget()
+          : Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: <Widget>[
+                _showBlocs(context),
+                _showPartiesAndFooter(context),
+              ],
+            ),
     );
   }
 
@@ -276,37 +188,39 @@ class _HomeScreenState extends State<HomeScreen> {
           case ConnectionState.none:
             return const LoadingWidget();
           case ConnectionState.active:
-          case ConnectionState.done:{
-          if (snapshot.hasData) {
-            List<Party> parties = [];
-            for (int i = 0; i < snapshot.data!.docs.length; i++) {
-              DocumentSnapshot document = snapshot.data!.docs[i];
-              Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-              final Party party = Fresh.freshPartyMap(data, false);
+          case ConnectionState.done:
+            {
+              if (snapshot.hasData) {
+                List<Party> parties = [];
+                for (int i = 0; i < snapshot.data!.docs.length; i++) {
+                  DocumentSnapshot document = snapshot.data!.docs[i];
+                  Map<String, dynamic> data =
+                      document.data()! as Map<String, dynamic>;
+                  final Party party = Fresh.freshPartyMap(data, false);
 
-              if(UserPreferences.getUserBlocs().contains(party.blocServiceId)){
-                parties.add(party);
+                  if (UserPreferences.getUserBlocs()
+                      .contains(party.blocServiceId)) {
+                    parties.add(party);
+                  }
+                }
+                return _displayPartiesList(context, parties);
               }
+              return Expanded(
+                child: Column(
+                  children: [
+                    UserPreferences.isUserLoggedIn()
+                        ? _isGuestWifiDetailsLoading
+                            ? const LoadingWidget()
+                            : _buildWifi(context)
+                        : const SizedBox(),
+                    const SizedBox(height: 15.0),
+                    kIsWeb ? const StoreBadgeItem() : const SizedBox(),
+                    const SizedBox(height: 10.0),
+                    Footer(),
+                  ],
+                ),
+              );
             }
-            return _displayPartiesList(context, parties);
-
-          }
-          return Expanded(
-            child: Column(
-              children: [
-                UserPreferences.isUserLoggedIn()
-                    ? _isGuestWifiDetailsLoading
-                    ? const LoadingWidget()
-                    : _buildWifi(context)
-                    : const SizedBox(),
-                const SizedBox(height: 15.0),
-                kIsWeb ? const StoreBadgeItem() : const SizedBox(),
-                const SizedBox(height: 10.0),
-                Footer(),
-              ],
-            ),
-          );
-          }
         }
       },
     );
@@ -343,14 +257,13 @@ class _HomeScreenState extends State<HomeScreen> {
                   shouldShowInterestCount: true,
                 ),
                 const SizedBox(height: 10.0),
-
-                _isAdCampaignLoading?const SizedBox():
-                SizedBox(
-                    width: mq.width * 0.95,
-                    height: mq.height * 0.25,
-                    child: AdCampaignSlideItem(adCampaign: mAdCampaign)),
+                _isAdCampaignLoading
+                    ? const SizedBox()
+                    : SizedBox(
+                        width: mq.width * 0.95,
+                        height: mq.height * 0.25,
+                        child: AdCampaignSlideItem(adCampaign: mAdCampaign)),
                 const SizedBox(height: 10.0),
-
                 UserPreferences.isUserLoggedIn()
                     ? _isGuestWifiDetailsLoading
                         ? const LoadingWidget()
@@ -451,9 +364,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: DarkButtonWidget(
                     text: 'copy password',
                     onClicked: () {
-                      if(UserPreferences.isUserLoggedIn()){
+                      if (UserPreferences.isUserLoggedIn()) {
                         Clipboard.setData(
-                            ClipboardData(text: mGuestWifi.password))
+                                ClipboardData(text: mGuestWifi.password))
                             .then((value) {
                           Logx.ist(_TAG, 'wifi password is copied 💫');
                         });
@@ -516,5 +429,125 @@ class _HomeScreenState extends State<HomeScreen> {
         );
       },
     );
+  }
+
+  void _loadBlocsAndUserBlocs() {
+    UserPreferences.myUser.clearanceLevel >= Constants.PROMOTER_LEVEL
+        ? FirestoreHelper.pullBlocsPromoter().then((res) {
+            if (res.docs.isNotEmpty) {
+              Logx.i(_TAG,
+                  "successfully pulled in all power and superpower blocs");
+
+              for (int i = 0; i < res.docs.length; i++) {
+                DocumentSnapshot document = res.docs[i];
+                Map<String, dynamic> data =
+                    document.data()! as Map<String, dynamic>;
+                final Bloc bloc = Fresh.freshBlocMap(data, false);
+
+                if (bloc.powerBloc || bloc.superPowerBloc) {
+                  mBlocs.add(bloc);
+                }
+
+                if (mounted) {
+                  setState(() {
+                    _isBlocsLoading = false;
+                  });
+                }
+
+                FirestoreHelper.pullUserBlocs(UserPreferences.myUser.id)
+                    .then((res) {
+                  if (res.docs.isNotEmpty) {
+                    List<String> userBlocServiceIds = [];
+                    for (int i = 0; i < res.docs.length; i++) {
+                      DocumentSnapshot document = res.docs[i];
+                      Map<String, dynamic> data =
+                          document.data()! as Map<String, dynamic>;
+                      UserBloc userBloc = Fresh.freshUserBlocMap(data, true);
+                      userBlocServiceIds.add(userBloc.blocServiceId);
+                    }
+
+                    UserPreferences.setUserBlocs(userBlocServiceIds);
+                  } else {
+                    Logx.em(_TAG, 'no blocs selected by the user ');
+
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                          builder: (ctx) => const BlocSelectionScreen()),
+                    );
+                  }
+                });
+              }
+            } else {
+              Logx.em(_TAG, ' no blocs found!!!');
+              //todo: need to re-attempt or check internet connection
+              setState(() {
+                _isBlocsLoading = false;
+              });
+            }
+          }).catchError((e, s) {
+            Logx.ex(_TAG, 'error loading blocs', e, s);
+            setState(() {
+              _isBlocsLoading = false;
+            });
+          })
+        : FirestoreHelper.pullBlocs().then((res) {
+            if (res.docs.isNotEmpty) {
+              Logx.i(_TAG, "successfully pulled in blocs");
+
+              for (int i = 0; i < res.docs.length; i++) {
+                DocumentSnapshot document = res.docs[i];
+                Map<String, dynamic> data =
+                    document.data()! as Map<String, dynamic>;
+                final Bloc bloc = Fresh.freshBlocMap(data, false);
+                mBlocs.add(bloc);
+
+                if (bloc.powerBloc || bloc.superPowerBloc) {
+                  mBlocs.add(bloc);
+                }
+
+                setState(() {
+                  _isBlocsLoading = false;
+                });
+
+                FirestoreHelper.pullUserBlocs(UserPreferences.myUser.id)
+                    .then((res) {
+                  if (res.docs.isNotEmpty) {
+                    List<String> userBlocServiceIds = [];
+                    for (int i = 0; i < res.docs.length; i++) {
+                      DocumentSnapshot document = res.docs[i];
+                      Map<String, dynamic> data =
+                      document.data()! as Map<String, dynamic>;
+                      UserBloc userBloc = Fresh.freshUserBlocMap(data, true);
+
+                      if(!userBlocServiceIds.contains(userBloc.blocServiceId)){
+                        userBlocServiceIds.add(userBloc.blocServiceId);
+                      } else {
+                        Logx.d(_TAG, 'duplicate user bloc found, deleting...');
+                        FirestoreHelper.deleteUserBloc(userBloc.id);
+                      }
+                    }
+
+                    UserPreferences.setUserBlocs(userBlocServiceIds);
+                  } else {
+                    Logx.em(_TAG, 'no blocs found for the user, setting default...');
+
+                    BlocHelper.setDefaultBlocs(UserPreferences.myUser.id);
+                  }
+                });
+              }
+            } else {
+              Logx.em(_TAG, 'no blocs found!!!');
+              //todo: need to re-attempt or check internet connection
+              setState(() {
+                mBlocs = [];
+                _isBlocsLoading = false;
+              });
+            }
+          }).catchError((err) {
+            Logx.em(_TAG, 'error loading blocs $err');
+            setState(() {
+              _isBlocsLoading = false;
+            });
+          });
   }
 }

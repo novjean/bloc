@@ -17,7 +17,6 @@ import 'package:upgrader/upgrader.dart';
 
 import '../db/entity/ad.dart';
 import '../db/entity/friend.dart';
-import '../db/entity/user_bloc.dart';
 import '../db/entity/user_lounge.dart';
 import '../db/shared_preferences/user_preferences.dart';
 import '../helpers/firestore_helper.dart';
@@ -105,7 +104,7 @@ class _MainScreenState extends State<MainScreen> {
                   ProfileAddEditRegisterPage(user: user, task: 'register')),
         );
       } else {
-        Logx.i(_TAG, 'user found for ${user.phoneNumber}');
+        Logx.d(_TAG, 'skipPhoneNumber logged in');
 
         DocumentSnapshot document = res.docs[0];
         Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
@@ -154,7 +153,7 @@ class _MainScreenState extends State<MainScreen> {
           UserPreferences.setUser(user1);
         }
       }
-      }, onError: (e, s) {
+    }, onError: (e, s) {
       Logx.ex(
           _TAG, "error retrieving users for phone : ${user.phoneNumber}", e, s);
     });
@@ -331,27 +330,28 @@ class _MainScreenState extends State<MainScreen> {
                   trailing: Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.only(right: 5.0),
-                        child:
-
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(builder: (ctx) => BlocSelectionScreen()),
-                            );
-                          },
-                          child: Container(
-                            height: 26,
-                            width: 26,
-                            child: Image.asset(
-                              'assets/icons/ic_cube_sugar.png',
-                              width: 26,
-                              height: 26,
-                            ),
-                          ),
-                        )
-                      ),
+                      UserPreferences.isUserLoggedIn()
+                          ? Padding(
+                              padding: const EdgeInsets.only(right: 5.0),
+                              child: GestureDetector(
+                                onTap: () {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                        builder: (ctx) =>
+                                            const BlocSelectionScreen()),
+                                  );
+                                },
+                                child: SizedBox(
+                                  height: 26,
+                                  width: 26,
+                                  child: Image.asset(
+                                    'assets/icons/ic_cube_sugar.png',
+                                    width: 26,
+                                    height: 26,
+                                  ),
+                                ),
+                              ))
+                          : const SizedBox(),
                       Padding(
                         padding: const EdgeInsets.only(right: 10.0),
                         child: IconButton(
