@@ -128,7 +128,6 @@ class DialogUtils {
         });
   }
 
-
   static showReviewAppDialog(BuildContext context) {
     showDialog(
         context: context,
@@ -203,7 +202,7 @@ class DialogUtils {
         });
   }
 
-  static showTextDialog(BuildContext context, String text) {
+  static showTextDialog(BuildContext context, String title, String message) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -212,19 +211,19 @@ class DialogUtils {
           shape: const RoundedRectangleBorder(
               borderRadius: BorderRadius.all(Radius.circular(20.0))),
           contentPadding: const EdgeInsets.all(16.0),
-          title: const Text(
-            'text dialog',
+          title: Text(
+            title,
             textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 22, color: Colors.black),
+            style: TextStyle(fontSize: 22, color: Constants.darkPrimary),
           ),
-          content: Text(text),
+          content: Text(message),
           actions: [
             TextButton(
               style: ButtonStyle(
                 backgroundColor: MaterialStateProperty.all<Color>(
                     Constants.darkPrimary), // Set your desired background color
               ),
-              child: const Text("close"),
+              child: const Text("close", style: TextStyle(color: Constants.primary),),
               onPressed: () {
                 Navigator.of(context).pop();
               },

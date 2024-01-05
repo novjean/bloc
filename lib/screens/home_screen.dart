@@ -472,10 +472,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   } else {
                     Logx.em(_TAG, 'no blocs selected by the user ');
 
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                          builder: (ctx) => const BlocSelectionScreen()),
-                    );
+                    BlocHelper.setDefaultBlocs(UserPreferences.myUser.id);
                   }
                 });
               }
