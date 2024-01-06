@@ -2915,7 +2915,7 @@ class _PartyGuestAddEditManageScreenState
   void _notifyApprovalWhatsapp() async {
     String message =
         'congratulations ${mBlocUser.name}, your guest list for ${widget.party.name} on bloc has been approved 🎉.\n\n 🎫 passes can be found in our app, download at '
-        '\n\n🍎 ios:\n${Constants.urlBlocAppStore}\n\n🤖 android:\n${Constants.urlBlocPlayStore}\n\n🌏 web:\n${Constants.urlBlocWeb} \n\nsee you soon 🥳 #blocCommunity 💛';
+        '\n\n🍎 ios:\n${Constants.urlBlocAppStore}\n\n🤖 android:\n${Constants.urlBlocPlayStore}\n\nsee you soon 🥳 #blocCommunity 💛';
     // Encode the phone number and message for the URL
     String url =
         'https://wa.me/+${mBlocUser.phoneNumber}/?text=${Uri.encodeFull(message)}';
