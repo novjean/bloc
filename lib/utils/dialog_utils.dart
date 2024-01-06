@@ -71,14 +71,14 @@ class DialogUtils {
   }
 
   static showDownloadAppTixDialog(BuildContext context) {
-    String message = '📸 Tickets and Guest Lists! Download our app to access all the exclusive event tickets and guest list access, and get notified with approvals, updates and more! 🎉📲';
+    String message = '📸 Tickets and Guest Lists! Download our app to access all the exclusive event tickets and guest lists, and get notified with approvals, updates and more! 🎉📲';
 
     showDialog(
         context: context,
         builder: (BuildContext ctx) {
           return AlertDialog(
             title: const Text(
-              '🎁 download our app to buy tix',
+              '🎁 download bloc to buy tix & more',
               textAlign: TextAlign.center,
               style: TextStyle(fontSize: 22, color: Colors.black),
             ),

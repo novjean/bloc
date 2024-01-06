@@ -132,8 +132,6 @@ class _PartyGuestAddEditManageScreenState
     if (!UserPreferences.isUserLoggedIn()) {
       mBlocUser = Dummy.getDummyUser();
     } else {
-      // mBlocUser = UserPreferences.myUser;
-
       if (widget.task == 'manage') {
         mBlocUser = Dummy.getDummyUser();
       } else {
@@ -2366,7 +2364,7 @@ class _PartyGuestAddEditManageScreenState
                           }
 
                           FirestoreHelper.pushUser(mBlocUser);
-                          Logx.i(_TAG, 'registered user ${mBlocUser.id}');
+                          Logx.i(_TAG, 'registered user ${mBlocUser.name} ${mBlocUser.surname}');
 
                           UserLounge userLounge = Dummy.getDummyUserLounge();
                           userLounge = userLounge.copyWith(
@@ -2480,6 +2478,8 @@ class _PartyGuestAddEditManageScreenState
       ),
     );
   }
+
+  /** phone registration end **/
 
   _showDownloadAppDialog(BuildContext context) {
     String message =

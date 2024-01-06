@@ -705,8 +705,15 @@ class _PartyBannerState extends State<PartyBanner> {
         final uri = Uri.parse(widget.party.ticketUrl);
         NetworkUtils.launchInBrowser(uri);
       } else {
-        Logx.ilt(_TAG, 'bloc app is required to purchase this ticket');
-        DialogUtils.showDownloadAppTixDialog(context);
+        //navigate to purchase tix screen
+        Tix tix = Dummy.getDummyTix();
+        tix = tix.copyWith(partyId: widget.party.id);
+
+        Navigator.of(context).push(
+          MaterialPageRoute(
+              builder: (context) => TixBuyEditScreen(
+                  tix: tix, task: 'buy')),
+        );
       }
     } else{
       //navigate to purchase tix screen

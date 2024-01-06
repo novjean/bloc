@@ -74,7 +74,7 @@ class _PartyGuestEntryWidgetState extends State<PartyGuestEntryWidget> {
               initialCountryCode: 'IN',
               dropdownTextStyle: const TextStyle(fontSize: 20),
               onTap: () {
-                Logx.d(_TAG, 'name is ' + user.name);
+                Logx.d(_TAG, 'name is ${user.name}');
 
                 List<String> guestNames = PartyGuestPreferences.getListGuestNames();
                 int trueIndex = widget.index-1;
