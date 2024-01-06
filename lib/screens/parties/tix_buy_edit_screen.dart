@@ -327,6 +327,17 @@ class _TixBuyEditScreenState extends State<TixBuyEditScreen> {
         Logx.ilt(_TAG, 'please select a ticket to purchase');
       }
     } else {
+      if(UserPreferences.isUserLoggedIn()){
+        widget.tix = widget.tix.copyWith(
+          total: mPrice,
+            userId: mUser.id,
+            userPhone: mUser.phoneNumber.toString(),
+            userEmail: mUser.email,
+            userName: mUser.username,
+            result: 'purchase pending: user is in web mode');
+        FirestoreHelper.pushTix(widget.tix);
+      }
+
       DialogUtils.showDownloadAppTixDialog(context);
     }
   }
