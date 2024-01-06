@@ -274,6 +274,10 @@ class _MainScreenState extends State<MainScreen> {
     }
 
     super.initState();
+
+    if(!kIsWeb){
+      getToken();
+    }
   }
 
   getToken() async {
@@ -282,10 +286,12 @@ class _MainScreenState extends State<MainScreen> {
 
     if (UserPreferences.isUserLoggedIn()) {
       blocUser.User user = UserPreferences.myUser;
+      String oldToken = user.fcmToken;
+
       user = user.copyWith(fcmToken: deviceToken);
       UserPreferences.setUser(user);
 
-      if (user.fcmToken != deviceToken) {
+      if (oldToken != deviceToken) {
         FirestoreHelper.updateUserFcmToken(
             UserPreferences.myUser.id, deviceToken);
       }
