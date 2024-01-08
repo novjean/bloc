@@ -42,6 +42,7 @@
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>app-1-328003399661-ios-17bbcd5fe7c373f94781e4</string>
+				<string>bloc.bar</string>
 			</array>
 		</dict>
 	</array>
@@ -49,6 +50,7 @@
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
+		<string>bloc.bar</string>
 		<string>paytmmp</string>
 		<string>gpay</string>
 		<string>ppemerchantsdkv1</string>
@@ -85,5 +87,6 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+
 </dict>
 </plist>
