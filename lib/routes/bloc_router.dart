@@ -59,52 +59,57 @@ class BlocRouter {
                       }
                     }
                   case ConnectionState.active:
-                  case ConnectionState.done:{
+                  case ConnectionState.done:
                     {
-                      if (userSnapshot.hasData) {
-                        final user = FirebaseAuth.instance.currentUser;
-                        CollectionReference users = FirestoreHelper.getUsersCollection();
+                      {
+                        if (userSnapshot.hasData) {
+                          final user = FirebaseAuth.instance.currentUser;
+                          CollectionReference users =
+                              FirestoreHelper.getUsersCollection();
 
-                        return FutureBuilder<DocumentSnapshot>(
-                          future: users.doc(user!.uid).get(),
-                          builder: (BuildContext ctx, AsyncSnapshot<DocumentSnapshot> snapshot) {
-                            switch (snapshot.connectionState) {
-                              case ConnectionState.waiting:
-                              case ConnectionState.none:
-                                return const LoadingWidget();
-                              case ConnectionState.active:
-                              case ConnectionState.done:
-                                {
-                                  if (snapshot.hasError) {
-                                    Logx.em(
-                                        _TAG, 'user snapshot has error: ${snapshot.error}');
-                                    return const LoginScreen(shouldTriggerSkip: false);
-                                  } else if (snapshot.hasData && !snapshot.data!.exists) {
-                                    Logx.i(_TAG,
-                                        'user snapshot has data but not registered in bloc ');
-                                    // user not registered in bloc, will be picked up in OTP screen
-                                    return const LoginScreen(shouldTriggerSkip: false);
-                                  } else {
-                                    Map<String, dynamic> data =
-                                    snapshot.data!.data() as Map<String, dynamic>;
-                                    final blocUser.User user =
-                                    Fresh.freshUserMap(data, true);
-                                    UserPreferences.setUser(user);
+                          return FutureBuilder<DocumentSnapshot>(
+                            future: users.doc(user!.uid).get(),
+                            builder: (BuildContext ctx,
+                                AsyncSnapshot<DocumentSnapshot> snapshot) {
+                              switch (snapshot.connectionState) {
+                                case ConnectionState.waiting:
+                                case ConnectionState.none:
+                                  return const LoadingWidget();
+                                case ConnectionState.active:
+                                case ConnectionState.done:
+                                  {
+                                    if (snapshot.hasError) {
+                                      Logx.em(_TAG,
+                                          'user snapshot has error: ${snapshot.error}');
+                                      return const LoginScreen(
+                                          shouldTriggerSkip: false);
+                                    } else if (snapshot.hasData &&
+                                        !snapshot.data!.exists) {
+                                      Logx.i(_TAG,
+                                          'user snapshot has data but not registered in bloc ');
+                                      // user not registered in bloc, will be picked up in OTP screen
+                                      return const LoginScreen(
+                                          shouldTriggerSkip: false);
+                                    } else {
+                                      Map<String, dynamic> data = snapshot.data!
+                                          .data() as Map<String, dynamic>;
+                                      final blocUser.User user =
+                                          Fresh.freshUserMap(data, true);
+                                      UserPreferences.setUser(user);
 
-                                    return const MainScreen();
+                                      return const MainScreen();
+                                    }
                                   }
-
-                                }
-                            }
-                          },
-                        );
-                      } else {
-                        return const LoginScreen(
-                          shouldTriggerSkip: true,
-                        );
+                              }
+                            },
+                          );
+                        } else {
+                          return const LoginScreen(
+                            shouldTriggerSkip: true,
+                          );
+                        }
                       }
                     }
-                }
                 }
               },
             );
@@ -280,8 +285,8 @@ class BlocRouter {
           pageBuilder: (context, state) {
             return MaterialPage(
                 child: UserProfileScreen(
-                  username: state.params['username']!,
-                ));
+              username: state.params['username']!,
+            ));
           },
         ),
 
@@ -306,6 +311,13 @@ class BlocRouter {
           path: '/support',
           pageBuilder: (context, state) {
             return MaterialPage(child: SupportScreen());
+          },
+        ),
+        GoRoute(
+          name: RouteConstants.errorRouteName,
+          path: '/error',
+          pageBuilder: (context, state) {
+            return MaterialPage(child: ErrorPage());
           },
         ),
       ],

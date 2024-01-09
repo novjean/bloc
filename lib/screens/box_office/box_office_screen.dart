@@ -300,7 +300,6 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
             }
 
             if (!foundParty) {
-              // the party is ended, house cleaning logic will be needed
               return const SizedBox();
             } else {
               return GestureDetector(

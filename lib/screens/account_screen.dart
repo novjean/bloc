@@ -93,7 +93,7 @@ class AccountScreen extends StatelessWidget {
               GoRouter.of(context).pushNamed(RouteConstants.termsAndConditionsRouteName);
             }),
         const Divider(),
-        UserPreferences.myUser.clearanceLevel>=Constants.PROMOTER_LEVEL?
+        UserPreferences.myUser.clearanceLevel==Constants.ADMIN_LEVEL?
         GestureDetector(
             child: SizedListViewBlock(
               title: 'checkout screen',
@@ -103,6 +103,18 @@ class AccountScreen extends StatelessWidget {
             ),
             onTap: () {
               GoRouter.of(context).pushNamed(RouteConstants.checkoutRouteName);
+            }) : const SizedBox(),
+        const Divider(),
+        UserPreferences.myUser.clearanceLevel==Constants.ADMIN_LEVEL?
+        GestureDetector(
+            child: SizedListViewBlock(
+              title: 'error screen',
+              height: 50,
+              width: MediaQuery.of(context).size.width,
+              color: Constants.primary,
+            ),
+            onTap: () {
+              GoRouter.of(context).pushNamed(RouteConstants.errorRouteName);
             }) : const SizedBox(),
         const Divider(),
         const SizedBox(height: 5.0),

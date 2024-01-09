@@ -25,4 +25,6 @@ class RouteConstants {
   static const String profileRouteName = 'profile';
 
   static String supportRouteName = 'support';
+
+  static var errorRouteName = 'error';
 }

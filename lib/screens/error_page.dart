@@ -11,6 +11,7 @@ class ErrorPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.black,
         title: AppBarTitle(title: "error"),
         titleSpacing: 0,
       ),

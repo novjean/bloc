@@ -2,6 +2,7 @@ import 'package:bloc/db/entity/bloc_service.dart';
 import 'package:bloc/db/shared_preferences/user_preferences.dart';
 import 'package:bloc/helpers/dummy.dart';
 import 'package:bloc/helpers/firestore_helper.dart';
+import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -34,6 +35,7 @@ class _BlocSlideItemState extends State<BlocSlideItem> {
 
   @override
   void initState() {
+    super.initState();
     FirestoreHelper.pullBlocServiceByBlocId(widget.bloc.id).then((res) {
       if (res.docs.isNotEmpty) {
         List<BlocService> blocServices = [];
@@ -59,23 +61,22 @@ class _BlocSlideItemState extends State<BlocSlideItem> {
         });
       }
     });
-    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return _isBlocServiceLoading
-        ? const SizedBox()
-        : Hero(
+    return Hero(
             tag: widget.bloc.id,
             child: Card(
               elevation: 3,
-              color: Constants.primary,
+              color: Constants.background,
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(15.0)),
               child: SizedBox(
                 width: mq.width * 0.99,
-                child: Stack(
+                child: _isBlocServiceLoading ?
+                Center(child: Text(widget.bloc.name, textAlign: TextAlign.center, style: TextStyle(color: Constants.primary),),):
+                Stack(
                   fit: StackFit.passthrough,
                   children: [
                     CarouselSlider(
