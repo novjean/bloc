@@ -1,0 +1,11 @@
+{
+  "applinks": {
+      "apps": [],
+      "details": [
+      {
+        "appID": "22K7858XU8.com.novatech.bloc",
+        "paths": ["*"]
+      }
+    ]
+  }
+}
