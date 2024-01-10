@@ -38,35 +38,36 @@ class BlocRouter {
   static GoRouter returnRouter(bool isAuth) {
     GoRouter router = GoRouter(
       navigatorKey: BlocApp.navigatorKey,
-      routes: [
+      // initialLocation: '/',
+      routes: <RouteBase>[
         GoRoute(
           name: RouteConstants.landingRouteName,
           path: '/',
           builder: (context, state) {
             Logx.ist(_TAG, 'bloc router: ${RouteConstants.landingRouteName}');
 
-            try {
-              if(UiPreferences.getRoute() == RouteConstants.eventRouteName){
-                Logx.ist(_TAG, 'bloc router: route selected: ${UiPreferences.getRoute()}');
-
-                String eventName = UiPreferences.getEventName();
-                String eventChapter = UiPreferences.getEventChapter();
-
-                String partyName = state.params['partyName']!;
-                String partyChapter = state.params['partyChapter']!;
-
-                Logx.ist(_TAG, 'bloc router: landing: /event/:$partyName/:$partyChapter');
-
-                UiPreferences.setRoute('');
-
-                return EventScreen(
-                  partyName: eventName,
-                  partyChapter: eventChapter,
-                );
-              }
-            } catch (e) {
-              Logx.em(_TAG, e.toString());
-            }
+            // try {
+            //   if(UiPreferences.getRoute() == RouteConstants.eventRouteName){
+            //     Logx.ist(_TAG, 'bloc router: route selected: ${UiPreferences.getRoute()}');
+            //
+            //     String eventName = UiPreferences.getEventName();
+            //     String eventChapter = UiPreferences.getEventChapter();
+            //
+            //     String partyName = state.params['partyName']!;
+            //     String partyChapter = state.params['partyChapter']!;
+            //
+            //     Logx.ist(_TAG, 'bloc router: landing: /event/:$partyName/:$partyChapter');
+            //
+            //     UiPreferences.setRoute('');
+            //
+            //     return EventScreen(
+            //       partyName: eventName,
+            //       partyChapter: eventChapter,
+            //     );
+            //   }
+            // } catch (e) {
+            //   Logx.em(_TAG, e.toString());
+            // }
 
             return StreamBuilder(
               stream: FirebaseAuth.instance.authStateChanges(),
@@ -137,25 +138,120 @@ class BlocRouter {
               },
             );
           },
-        ),
-        GoRoute(
-          name: RouteConstants.loginRouteName,
-          path: '/login/:skip',
-          pageBuilder: (context, state) {
-            String skipString = state.params['skip']!;
+          routes: <RouteBase>[
+            GoRoute(
+              name: RouteConstants.loginRouteName,
+              path: 'login/:skip',
+              pageBuilder: (context, state) {
+                String skipString = state.params['skip']!;
 
-            Logx.d(_TAG, '/login/:skip ${skipString}');
-            Logx.ist(_TAG, 'bloc router: login/:skip ${skipString}');
+                Logx.ist(_TAG, 'bloc router: login/:skip ${skipString}');
 
-            bool val = false;
-            if (skipString == 'true') {
-              val = true;
-            } else {
-              val = false;
-            }
+                bool val = false;
+                if (skipString == 'true') {
+                  val = true;
+                } else {
+                  val = false;
+                }
 
-            return MaterialPage(child: LoginScreen(shouldTriggerSkip: val));
-          },
+                return MaterialPage(child: LoginScreen(shouldTriggerSkip: val));
+              },
+            ),
+
+            GoRoute(
+              name: RouteConstants.eventRouteName,
+              path: 'event/:partyName/:partyChapter',
+              pageBuilder: (context, state) {
+
+                String partyName = state.params['partyName']!;
+                String partyChapter = state.params['partyChapter']!;
+
+                Logx.ist(_TAG, 'bloc router: event: $partyName');
+
+                // try {
+                //   UiPreferences.setRoute(RouteConstants.eventRouteName);
+                //   UiPreferences.setEventName(partyName);
+                //   UiPreferences.setEventChapter(partyChapter);
+                //
+                //   Logx.ist(_TAG, 'router: event route selected. event: $partyName');
+                // } catch (e){
+                //   Logx.em(_TAG, e.toString());
+                // }
+
+                // Logx.ist(_TAG, 'bloc router: /event/:$partyName/:$partyChapter');
+
+                return MaterialPage(
+                    child: EventScreen(
+                      partyName: partyName,
+                      partyChapter: partyChapter,
+                    ));
+              },
+            ),
+
+            GoRoute(
+              name: RouteConstants.accountRouteName,
+              path: 'account',
+              builder: (context, state) {
+                Logx.d(_TAG, '/account');
+
+                return AccountScreen();
+              },
+            ),
+            GoRoute(
+              name: RouteConstants.contactRouteName,
+              path: 'contact',
+              builder: (context, state) {
+                Logx.d(_TAG, '/contact');
+
+                return ContactUsScreen();
+              },
+            ),
+            GoRoute(
+              name: RouteConstants.termsAndConditionsRouteName,
+              path: 't&c',
+              builder: (context, state) {
+                Logx.d(_TAG, '/t&c');
+
+                return TermsAndConditionsScreen();
+              },
+            ),
+            GoRoute(
+              name: RouteConstants.privacyRouteName,
+              path: 'privacy',
+              builder: (context, state) {
+                Logx.d(_TAG, '/privacy');
+
+                return PrivacyPolicyScreen();
+              },
+            ),
+            GoRoute(
+              name: RouteConstants.deliveryRouteName,
+              path: 'delivery',
+              builder: (context, state) {
+                Logx.d(_TAG, '/delivery');
+
+                return DeliveryPolicyScreen();
+              },
+            ),
+            GoRoute(
+              name: RouteConstants.refundRouteName,
+              path: 'refund_and_cancellation',
+              builder: (context, state) {
+                Logx.d(_TAG, '/refund_and_cancellation');
+
+                return RefundPolicyScreen();
+              },
+            ),
+            GoRoute(
+              name: RouteConstants.checkoutRouteName,
+              path: 'checkout',
+              builder: (context, state) {
+                Logx.d(_TAG, '/checkout');
+
+                return SampleCheckoutScreen();
+              },
+            ),
+          ]
         ),
         GoRoute(
           name: RouteConstants.homeRouteName,
@@ -167,96 +263,35 @@ class BlocRouter {
             return const MainScreen();
           },
         ),
-        GoRoute(
-          name: RouteConstants.accountRouteName,
-          path: '/account',
-          builder: (context, state) {
-            Logx.d(_TAG, '/account');
 
-            return AccountScreen();
-          },
-        ),
-        GoRoute(
-          name: RouteConstants.contactRouteName,
-          path: '/contact',
-          builder: (context, state) {
-            Logx.d(_TAG, '/contact');
 
-            return ContactUsScreen();
-          },
-        ),
-        GoRoute(
-          name: RouteConstants.termsAndConditionsRouteName,
-          path: '/t&c',
-          builder: (context, state) {
-            Logx.d(_TAG, '/t&c');
-
-            return TermsAndConditionsScreen();
-          },
-        ),
-        GoRoute(
-          name: RouteConstants.privacyRouteName,
-          path: '/privacy',
-          builder: (context, state) {
-            Logx.d(_TAG, '/privacy');
-
-            return PrivacyPolicyScreen();
-          },
-        ),
-        GoRoute(
-          name: RouteConstants.deliveryRouteName,
-          path: '/delivery',
-          builder: (context, state) {
-            Logx.d(_TAG, '/delivery');
-
-            return DeliveryPolicyScreen();
-          },
-        ),
-        GoRoute(
-          name: RouteConstants.refundRouteName,
-          path: '/refund_and_cancellation',
-          builder: (context, state) {
-            Logx.d(_TAG, '/refund_and_cancellation');
-
-            return RefundPolicyScreen();
-          },
-        ),
-        GoRoute(
-          name: RouteConstants.checkoutRouteName,
-          path: '/checkout',
-          builder: (context, state) {
-            Logx.d(_TAG, '/checkout');
-
-            return SampleCheckoutScreen();
-          },
-        ),
-        GoRoute(
-          name: RouteConstants.eventRouteName,
-          path: '/event/:partyName/:partyChapter',
-          pageBuilder: (context, state) {
-
-            String partyName = state.params['partyName']!;
-            String partyChapter = state.params['partyChapter']!;
-
-            try {
-              UiPreferences.setRoute(RouteConstants.eventRouteName);
-              UiPreferences.setEventName(partyName);
-              UiPreferences.setEventChapter(partyChapter);
-
-              Logx.ist(_TAG, 'router: event route selected. event: $partyName');
-            } catch (e){
-              Logx.em(_TAG, e.toString());
-            }
-
-            // Logx.ist(_TAG, 'bloc router: /event/:$partyName/:$partyChapter');
-
-            return MaterialPage(
-                child: EventScreen(
-              partyName: partyName,
-              partyChapter: partyChapter,
-            ));
-          },
-        ),
+        // GoRoute(
+        //   name: RouteConstants.eventRouteName,
+        //   path: '/event/:partyName/:partyChapter',
+        //   pageBuilder: (context, state) {
+        //
+        //     String partyName = state.params['partyName']!;
+        //     String partyChapter = state.params['partyChapter']!;
+        //
+        //     try {
+        //       UiPreferences.setRoute(RouteConstants.eventRouteName);
+        //       UiPreferences.setEventName(partyName);
+        //       UiPreferences.setEventChapter(partyChapter);
+        //
+        //       Logx.ist(_TAG, 'router: event route selected. event: $partyName');
+        //     } catch (e){
+        //       Logx.em(_TAG, e.toString());
+        //     }
+        //
+        //     // Logx.ist(_TAG, 'bloc router: /event/:$partyName/:$partyChapter');
+        //
+        //     return MaterialPage(
+        //         child: EventScreen(
+        //       partyName: partyName,
+        //       partyChapter: partyChapter,
+        //     ));
+        //   },
+        // ),
 
         // GoRoute(
         //   name: RouteConstants.buyTixRouteName,
@@ -362,7 +397,6 @@ class BlocRouter {
       errorPageBuilder: (context, state) {
         return MaterialPage(child: ErrorPage());
       },
-        initialLocation: '/'
       // redirect: (context, state) {
       //   if (!isAuth &&
       //       state.location
