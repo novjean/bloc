@@ -565,7 +565,7 @@ class _MainScreenState extends State<MainScreen> {
           await FirebaseAuth.instance.signOut();
 
           GoRouter.of(context)
-              .pushNamed(RouteConstants.loginRouteName, pathParameters: {
+              .pushReplacementNamed(RouteConstants.loginRouteName, pathParameters: {
             'skip': 'false',
           });
           break;
@@ -578,14 +578,17 @@ class _MainScreenState extends State<MainScreen> {
           await FirebaseAuth.instance.signOut();
 
           GoRouter.of(context)
-              .pushNamed(RouteConstants.loginRouteName, pathParameters: {
+              .pushReplacementNamed(RouteConstants.loginRouteName, pathParameters: {
             'skip': 'false',
           });
           break;
         }
       default:
         {
-          GoRouter.of(context).goNamed(RouteConstants.landingRouteName);
+          GoRouter.of(context)
+              .pushReplacementNamed(RouteConstants.loginRouteName, pathParameters: {
+            'skip': 'false',
+          });
           break;
         }
     }
