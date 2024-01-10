@@ -64,6 +64,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
     _loadBlocsAndUserBlocs();
 
+    super.initState();
+
     FirestoreHelper.pullGuestListRequested(UserPreferences.myUser.id)
         .then((res) {
       if (res.docs.isNotEmpty) {
@@ -83,7 +85,7 @@ class _HomeScreenState extends State<HomeScreen> {
           });
         }
       } else {
-        Logx.i(_TAG, 'no party guest requests found!');
+        Logx.d(_TAG, 'no party guest requests found!');
         if (mounted) {
           setState(() {
             _isPartyGuestsLoading = false;
@@ -91,8 +93,6 @@ class _HomeScreenState extends State<HomeScreen> {
         }
       }
     });
-
-    super.initState();
 
     FirestoreHelper.pullAdCampaignByStorySize(false).then((res) {
       if (res.docs.isNotEmpty) {
