@@ -36,8 +36,9 @@ class BlocRouter {
 
   static GoRouter returnRouter(bool isAuth) {
     GoRouter router = GoRouter(
-      navigatorKey: BlocApp.navigatorKey,
-      // initialLocation: '/',
+        navigatorKey: GlobalKey<NavigatorState>(),
+        // redirectLimit: 100,
+      initialLocation: '/',
       routes: <RouteBase>[
         GoRoute(
           name: RouteConstants.landingRouteName,
