@@ -169,7 +169,7 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text(
+                            const Text(
                               'switch',
                               style: TextStyle(
                                   fontSize: 18, color: Constants.primary),

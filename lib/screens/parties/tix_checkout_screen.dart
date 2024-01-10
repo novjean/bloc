@@ -575,7 +575,7 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
             });
 
             //final step
-            GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
+            GoRouter.of(context).pushNamed(RouteConstants.landingRouteName);
             GoRouter.of(context).pushNamed(RouteConstants.boxOfficeRouteName);
           } else {
             Logx.ist(_TAG, "payment was unsuccessful, please try again.");

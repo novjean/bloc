@@ -6,6 +6,7 @@ import 'package:bloc/routes/bloc_router.dart';
 
 import 'package:bloc/db/shared_preferences/ui_preferences.dart';
 import 'package:bloc/services/firebase_api.dart';
+import 'package:bloc/utils/logx.dart';
 import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
@@ -73,6 +74,8 @@ class _BlocAppState extends State<BlocApp> {
 
   @override
   Widget build(BuildContext context) {
+    Logx.i(_TAG, 'bloc app starts');
+
     final Future<FirebaseApp> initFirebase = Firebase.initializeApp();
 
     return MultiProvider(
@@ -91,6 +94,8 @@ class _BlocAppState extends State<BlocApp> {
                 return const LoadingWidget();
               case ConnectionState.active:
               case ConnectionState.done:{
+                Logx.i(_TAG, 'firebase initialized');
+
                 return MaterialApp.router(
                 debugShowCheckedModeBanner: false,
                 title: kAppTitle,

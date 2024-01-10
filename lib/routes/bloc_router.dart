@@ -12,6 +12,7 @@ import 'package:go_router/go_router.dart';
 
 import 'package:bloc/db/entity/user.dart' as blocUser;
 
+import '../db/shared_preferences/ui_preferences.dart';
 import '../helpers/firestore_helper.dart';
 import '../helpers/fresh.dart';
 import '../main.dart';
@@ -43,6 +44,31 @@ class BlocRouter {
           name: RouteConstants.landingRouteName,
           path: '/',
           builder: (context, state) {
+            Logx.ist(_TAG, 'bloc router: ${RouteConstants.landingRouteName}');
+
+            try {
+              if(UiPreferences.getRoute() == RouteConstants.eventRouteName){
+                Logx.ist(_TAG, 'bloc router: route selected: ${UiPreferences.getRoute()}');
+
+                String eventName = UiPreferences.getEventName();
+                String eventChapter = UiPreferences.getEventChapter();
+
+                String partyName = state.params['partyName']!;
+                String partyChapter = state.params['partyChapter']!;
+
+                Logx.ist(_TAG, 'bloc router: landing: /event/:$partyName/:$partyChapter');
+
+                UiPreferences.setRoute('');
+
+                return EventScreen(
+                  partyName: eventName,
+                  partyChapter: eventChapter,
+                );
+              }
+            } catch (e) {
+              Logx.em(_TAG, e.toString());
+            }
+
             return StreamBuilder(
               stream: FirebaseAuth.instance.authStateChanges(),
               builder: (ctx, userSnapshot) {
@@ -52,62 +78,60 @@ class BlocRouter {
                   case ConnectionState.waiting:
                   case ConnectionState.none:
                     {
-                      if (!kIsWeb) {
-                        return SplashScreen();
-                      } else {
-                        return const LoadingWidget();
-                      }
+                      return const LoadingWidget();
+                      // if (!kIsWeb) {
+                      //   return SplashScreen();
+                      // } else {
+                      //   return const LoadingWidget();
+                      // }
                     }
                   case ConnectionState.active:
                   case ConnectionState.done:
                     {
-                      {
-                        if (userSnapshot.hasData) {
-                          final user = FirebaseAuth.instance.currentUser;
-                          CollectionReference users =
-                              FirestoreHelper.getUsersCollection();
+                      if (userSnapshot.hasData) {
+                        final user = FirebaseAuth.instance.currentUser;
+                        CollectionReference users =
+                        FirestoreHelper.getUsersCollection();
 
-                          return FutureBuilder<DocumentSnapshot>(
-                            future: users.doc(user!.uid).get(),
-                            builder: (BuildContext ctx,
-                                AsyncSnapshot<DocumentSnapshot> snapshot) {
-                              switch (snapshot.connectionState) {
-                                case ConnectionState.waiting:
-                                case ConnectionState.none:
-                                  return const LoadingWidget();
-                                case ConnectionState.active:
-                                case ConnectionState.done:
-                                  {
-                                    if (snapshot.hasError) {
-                                      Logx.em(_TAG,
-                                          'user snapshot has error: ${snapshot.error}');
-                                      return const LoginScreen(
-                                          shouldTriggerSkip: false);
-                                    } else if (snapshot.hasData &&
-                                        !snapshot.data!.exists) {
-                                      Logx.i(_TAG,
-                                          'user snapshot has data but not registered in bloc ');
-                                      // user not registered in bloc, will be picked up in OTP screen
-                                      return const LoginScreen(
-                                          shouldTriggerSkip: false);
-                                    } else {
-                                      Map<String, dynamic> data = snapshot.data!
-                                          .data() as Map<String, dynamic>;
-                                      final blocUser.User user =
-                                          Fresh.freshUserMap(data, true);
-                                      UserPreferences.setUser(user);
+                        return FutureBuilder<DocumentSnapshot>(
+                          future: users.doc(user!.uid).get(),
+                          builder: (BuildContext ctx,
+                              AsyncSnapshot<DocumentSnapshot> snapshot) {
+                            switch (snapshot.connectionState) {
+                              case ConnectionState.waiting:
+                              case ConnectionState.none:
+                                return const LoadingWidget();
+                              case ConnectionState.active:
+                              case ConnectionState.done:
+                                {
+                                  if (snapshot.hasError) {
+                                    Logx.em(_TAG,
+                                        'user snapshot has error: ${snapshot.error}');
+                                    return const LoginScreen(
+                                        shouldTriggerSkip: false);
+                                  } else if (snapshot.hasData &&
+                                      !snapshot.data!.exists) {
+                                    Logx.i(_TAG,
+                                        'user snapshot has data but not registered in bloc ');
+                                    // user not registered in bloc, will be picked up in OTP screen
+                                    return const LoginScreen(
+                                        shouldTriggerSkip: false);
+                                  } else {
+                                    Map<String, dynamic> data = snapshot.data!
+                                        .data() as Map<String, dynamic>;
+                                    final blocUser.User user = Fresh.freshUserMap(data, true);
+                                    UserPreferences.setUser(user);
 
-                                      return const MainScreen();
-                                    }
+                                    return const MainScreen();
                                   }
-                              }
-                            },
-                          );
-                        } else {
-                          return const LoginScreen(
-                            shouldTriggerSkip: true,
-                          );
-                        }
+                                }
+                            }
+                          },
+                        );
+                      } else {
+                        return const LoginScreen(
+                          shouldTriggerSkip: true,
+                        );
                       }
                     }
                 }
@@ -122,6 +146,7 @@ class BlocRouter {
             String skipString = state.params['skip']!;
 
             Logx.d(_TAG, '/login/:skip ${skipString}');
+            Logx.ist(_TAG, 'bloc router: login/:skip ${skipString}');
 
             bool val = false;
             if (skipString == 'true') {
@@ -138,6 +163,7 @@ class BlocRouter {
           path: '/home',
           builder: (context, state) {
             Logx.d(_TAG, '/home');
+            Logx.ist(_TAG, 'bloc router: /home');
 
             return const MainScreen();
           },
@@ -209,10 +235,21 @@ class BlocRouter {
           name: RouteConstants.eventRouteName,
           path: '/event/:partyName/:partyChapter',
           pageBuilder: (context, state) {
+
             String partyName = state.params['partyName']!;
             String partyChapter = state.params['partyChapter']!;
 
-            Logx.d(_TAG, '/event/:$partyName/:$partyChapter');
+            try {
+              UiPreferences.setRoute(RouteConstants.eventRouteName);
+              UiPreferences.setEventName(partyName);
+              UiPreferences.setEventChapter(partyChapter);
+
+              Logx.ist(_TAG, 'router: event route selected. event: $partyName');
+            } catch (e){
+              Logx.em(_TAG, e.toString());
+            }
+
+            // Logx.ist(_TAG, 'bloc router: /event/:$partyName/:$partyChapter');
 
             return MaterialPage(
                 child: EventScreen(
@@ -283,6 +320,8 @@ class BlocRouter {
           name: RouteConstants.profileRouteName,
           path: '/profile/:username',
           pageBuilder: (context, state) {
+            Logx.ist(_TAG, 'bloc router: /profile/:${state.params['username']}');
+
             return MaterialPage(
                 child: UserProfileScreen(
               username: state.params['username']!,
@@ -324,6 +363,7 @@ class BlocRouter {
       errorPageBuilder: (context, state) {
         return MaterialPage(child: ErrorPage());
       },
+        initialLocation: '/'
       // redirect: (context, state) {
       //   if (!isAuth &&
       //       state.location

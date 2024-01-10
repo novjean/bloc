@@ -143,12 +143,7 @@ class NotificationService {
                     'partyChapter': ad.partyChapter
                   });
             } else {
-              if (UserPreferences.isUserLoggedIn()) {
-                GoRouter.of(appContext!).pushNamed(RouteConstants.homeRouteName);
-              } else {
-                GoRouter.of(appContext!)
-                    .pushNamed(RouteConstants.landingRouteName);
-              }
+              GoRouter.of(appContext!).pushNamed(RouteConstants.landingRouteName);
             }
           break;
         case 'chat':
@@ -172,9 +167,6 @@ class NotificationService {
             BuildContext? appContext = BlocApp.navigatorKey.currentContext;
             GoRouter.of(appContext!).pushNamed(
                 RouteConstants.landingRouteName,
-                // params: {
-                //   'id': chat.loungeId,
-                // }
                 );
             Logx.d(_TAG, 'successful');
           } catch (e) {

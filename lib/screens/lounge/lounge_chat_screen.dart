@@ -100,7 +100,7 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
 
             if (mUserLounge.isBanned) {
               isMember = false;
-              GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
+              GoRouter.of(context).pushNamed(RouteConstants.landingRouteName);
             } else {
               isMember = true;
             }
@@ -1258,7 +1258,7 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
                       Logx.ist(_TAG,
                           'request to join the vip lounge has been sent 🫰');
                       GoRouter.of(context)
-                          .pushNamed(RouteConstants.homeRouteName);
+                          .pushNamed(RouteConstants.landingRouteName);
                     },
                   )
                 : const SizedBox(),
@@ -1266,7 +1266,7 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
               child: const Text("exit"),
               onPressed: () {
                 Navigator.of(context).pop();
-                GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
+                GoRouter.of(context).pushNamed(RouteConstants.landingRouteName);
               },
             ),
           ],

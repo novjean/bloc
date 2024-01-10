@@ -2493,43 +2493,6 @@ class FirestoreHelper {
     return FirebaseFirestore.instance.collection(USERS);
   }
 
-  static void updateUser(blocUser.User user, bool isPhotoChanged) async {
-    if (isPhotoChanged) {
-      var fileUrl = user.imageUrl;
-      try {
-        fileUrl = await FirestorageHelper.uploadFile(
-            FirestorageHelper.USERS,
-            user.name.trim() + '_' + StringUtils.getRandomString(15),
-            File(user.imageUrl));
-        user = user.copyWith(imageUrl: fileUrl);
-      } on PlatformException catch (e, s) {
-        Logx.e(_TAG, e, s);
-      } on Exception catch (e, s) {
-        Logx.e(_TAG, e, s);
-      } catch (e) {
-        Logx.em(_TAG, e.toString());
-      }
-    }
-
-    try {
-      await FirebaseFirestore.instance
-          .collection(USERS)
-          .doc(user.id)
-          .update(user.toMap())
-          .then((value) {
-        Logx.i(_TAG, "user has been updated in firebase.");
-      }).catchError((e, s) {
-        Logx.ex(_TAG, 'failed updating user in firebase', e, s);
-      });
-    } on PlatformException catch (e, s) {
-      Logx.e(_TAG, e, s);
-    } on Exception catch (e, s) {
-      Logx.e(_TAG, e, s);
-    } catch (e) {
-      Logx.em(_TAG, e.toString());
-    }
-  }
-
   static void updateUserFcmToken(String userId, String? token) async {
     try {
       await FirebaseFirestore.instance.collection(USERS).doc(userId).update({

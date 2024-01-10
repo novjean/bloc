@@ -1,5 +1,6 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../routes/route_constants.dart';
 import '../../utils/logx.dart';
 
 class UiPreferences{
@@ -24,6 +25,35 @@ class UiPreferences{
       Logx.em(_TAG, e.toString());
     }
     return index;
+  }
+
+  static const _keyRouteName = RouteConstants.landingRouteName;
+
+  static Future setRoute(String routeName) async {
+    await _preferences.setString(_keyRouteName, routeName);
+  }
+
+  static String getRoute() {
+    return _preferences.getString(_keyRouteName)!;
+  }
+
+  static const _keyEventName = '';
+
+  static Future setEventName(String eventName) async {
+    await _preferences.setString(_keyEventName, eventName);
+  }
+
+  static String getEventName() {
+    return _preferences.getString(_keyEventName)!;
+  }
+  static const _keyEventChapter = '';
+
+  static Future setEventChapter(String eventChapter) async {
+    await _preferences.setString(_keyEventChapter, eventChapter);
+  }
+
+  static String getEventChapter() {
+    return _preferences.getString(_keyEventChapter)!;
   }
 
 }

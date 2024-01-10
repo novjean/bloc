@@ -403,13 +403,13 @@ class _MainScreenState extends State<MainScreen> {
               mainAxisSize: MainAxisSize.max,
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
-                // SizedBox(width: 7),
+                SizedBox(width: 1),
                 buildTabIcon(0),
                 buildTabIcon(1),
                 buildTabIcon(2),
                 buildTabIcon(3),
                 buildTabIcon(4),
-                // SizedBox(width: 7),
+                SizedBox(width: 1),
               ],
             ),
           ),
@@ -420,7 +420,6 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   void dispose() {
-    super.dispose();
     _pageController.dispose();
 
     if (!kIsWeb) {
@@ -471,6 +470,8 @@ class _MainScreenState extends State<MainScreen> {
         });
       }
     }
+
+    super.dispose();
   }
 
   void onPageChanged(int page) {
@@ -584,7 +585,7 @@ class _MainScreenState extends State<MainScreen> {
         }
       default:
         {
-          GoRouter.of(context).goNamed(RouteConstants.homeRouteName);
+          GoRouter.of(context).goNamed(RouteConstants.landingRouteName);
           break;
         }
     }
