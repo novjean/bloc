@@ -283,7 +283,7 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
                               onTap: () {
                                 GoRouter.of(context).pushNamed(
                                     RouteConstants.profileRouteName,
-                                    params: {
+                                    pathParameters: {
                                       'username': user.username,
                                     });
                               },

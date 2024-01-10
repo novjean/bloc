@@ -262,7 +262,7 @@ class AccountScreen extends StatelessWidget {
                 await FirebaseAuth.instance.signOut();
 
                 GoRouter.of(context)
-                    .pushNamed(RouteConstants.loginRouteName, params: {
+                    .pushNamed(RouteConstants.loginRouteName, pathParameters: {
                   'skip': 'false',
                 });
               },
@@ -309,7 +309,7 @@ class AccountScreen extends StatelessWidget {
                 await FirebaseAuth.instance.signOut();
 
                 GoRouter.of(context)
-                    .pushNamed(RouteConstants.loginRouteName, params: {
+                    .pushNamed(RouteConstants.loginRouteName, pathParameters: {
                   'skip': 'false',
                 });
               },

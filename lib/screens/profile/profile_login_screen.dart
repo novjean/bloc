@@ -40,7 +40,7 @@ class ProfileLoginScreen extends StatelessWidget {
                   await FirebaseAuth.instance.signOut();
 
                   GoRouter.of(context)
-                      .pushNamed(RouteConstants.loginRouteName, params: {
+                      .pushNamed(RouteConstants.loginRouteName, pathParameters: {
                     'skip': 'false',
                   });
                 },

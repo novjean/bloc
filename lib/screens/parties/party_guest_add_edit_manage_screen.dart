@@ -2757,7 +2757,7 @@ class _PartyGuestAddEditManageScreenState
                           // navigate to party
                           GoRouter.of(context).pushNamed(
                               RouteConstants.eventRouteName,
-                              params: {
+                              pathParameters: {
                                 'partyName': party.name,
                                 'partyChapter': party.chapter
                               });
@@ -2873,7 +2873,7 @@ class _PartyGuestAddEditManageScreenState
                                 // navigate to party
                                 GoRouter.of(context).pushNamed(
                                     RouteConstants.eventRouteName,
-                                    params: {
+                                    pathParameters: {
                                       'partyName': party.name,
                                       'partyChapter': party.chapter
                                     });

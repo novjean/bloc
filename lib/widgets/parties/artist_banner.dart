@@ -25,7 +25,7 @@ class ArtistBanner extends StatelessWidget {
       onTap: () {
         if (isClickable) {
           GoRouter.of(context).pushNamed(RouteConstants.artistRouteName,
-              params: {
+              pathParameters: {
                 'name': party.name,
                 'genre': party.genre
               });

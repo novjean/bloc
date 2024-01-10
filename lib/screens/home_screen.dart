@@ -413,7 +413,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 await FirebaseAuth.instance.signOut();
 
                 GoRouter.of(context)
-                    .pushNamed(RouteConstants.loginRouteName, params: {
+                    .pushNamed(RouteConstants.loginRouteName, pathParameters: {
                   'skip': 'false',
                 });
               },

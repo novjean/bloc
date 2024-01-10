@@ -1787,7 +1787,7 @@ class FirestoreHelper {
           .doc(quickTable.id)
           .set(quickTable.toMap()).then((res) {
         GoRouter.of(context).pushNamed(RouteConstants.menuRouteName,
-            params: {
+            pathParameters: {
               'id': UserPreferences.getBlocId(),
             });
       });

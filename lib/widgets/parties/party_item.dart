@@ -36,10 +36,10 @@ class PartyItem extends StatelessWidget {
       onTap: () {
         if (party.type == 'event') {
           GoRouter.of(context).pushNamed(RouteConstants.eventRouteName,
-              params: {'partyName': party.name, 'partyChapter': party.chapter});
+              pathParameters: {'partyName': party.name, 'partyChapter': party.chapter});
         } else {
           GoRouter.of(context).pushNamed(RouteConstants.artistRouteName,
-              params: {'name': party.name, 'genre': party.genre});
+              pathParameters: {'name': party.name, 'genre': party.genre});
         }
       },
       child: Hero(

@@ -155,13 +155,13 @@ class _PartyBannerState extends State<PartyBanner> {
             //     });
 
             GoRouter.of(context).pushNamed(RouteConstants.eventRouteName,
-                params: {
+                pathParameters: {
                   'partyName': widget.party.name,
                   'partyChapter': widget.party.chapter
                 });
           } else {
             GoRouter.of(context).pushNamed(RouteConstants.artistRouteName,
-                params: {
+                pathParameters: {
                   'name': widget.party.name,
                   'genre': widget.party.genre
                 });

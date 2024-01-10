@@ -1,12 +1,10 @@
 import 'package:bloc/helpers/firestore_helper.dart';
-import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:delayed_display/delayed_display.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../utils/constants.dart';
-import '../../../utils/date_time_utils.dart';
 import '../../db/entity/friend.dart';
 import '../../db/entity/user.dart';
 import '../../helpers/dummy.dart';
@@ -81,7 +79,7 @@ class _UserFriendItemState extends State<UserFriendItem> {
       onTap: () {
 
         if(mFriendUser.username.isNotEmpty){
-          GoRouter.of(context).pushNamed(RouteConstants.profileRouteName, params: {
+          GoRouter.of(context).pushNamed(RouteConstants.profileRouteName, pathParameters: {
             'username': mFriendUser.username,
           });
         } else {

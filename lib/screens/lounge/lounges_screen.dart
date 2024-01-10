@@ -61,7 +61,7 @@ class LoungesScreen extends StatelessWidget {
                                   if(UserPreferences.isUserLoggedIn()){
                                     GoRouter.of(context).pushNamed(
                                         RouteConstants.loungeRouteName,
-                                        params: {
+                                        pathParameters: {
                                           'id': lounge.id,
                                         });
                                   } else {

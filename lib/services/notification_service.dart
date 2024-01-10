@@ -138,7 +138,7 @@ class NotificationService {
 
             if(ad.partyName.isNotEmpty && ad.partyChapter.isNotEmpty){
               GoRouter.of(appContext!).pushNamed(RouteConstants.eventRouteName,
-                  params: {
+                  pathParameters: {
                     'partyName': ad.partyName,
                     'partyChapter': ad.partyChapter
                   });
@@ -153,7 +153,7 @@ class NotificationService {
             BuildContext? appContext = BlocApp.navigatorKey.currentContext;
             GoRouter.of(appContext!).pushNamed(
                 RouteConstants.loungeRouteName,
-                params: {
+                pathParameters: {
                   'id': chat.loungeId,
                 });
           } catch (e) {

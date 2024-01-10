@@ -15,7 +15,7 @@ class MiniArtistItem extends StatelessWidget{
     return GestureDetector(
       onTap: () {
         GoRouter.of(context).pushNamed(RouteConstants.artistRouteName,
-            params: {
+            pathParameters: {
               'name': artist.name,
               'genre': artist.genre
             });

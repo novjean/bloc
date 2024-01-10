@@ -12,7 +12,6 @@ import 'package:go_router/go_router.dart';
 
 import 'package:bloc/db/entity/user.dart' as blocUser;
 
-import '../db/shared_preferences/ui_preferences.dart';
 import '../helpers/firestore_helper.dart';
 import '../helpers/fresh.dart';
 import '../main.dart';
@@ -38,7 +37,7 @@ class BlocRouter {
   static GoRouter returnRouter(bool isAuth) {
     GoRouter router = GoRouter(
       navigatorKey: BlocApp.navigatorKey,
-      // initialLocation: '/',
+      initialLocation: '/',
       routes: <RouteBase>[
         GoRoute(
           name: RouteConstants.landingRouteName,
@@ -143,7 +142,7 @@ class BlocRouter {
               name: RouteConstants.loginRouteName,
               path: 'login/:skip',
               pageBuilder: (context, state) {
-                String skipString = state.params['skip']!;
+                String skipString = state.pathParameters['skip']!;
 
                 Logx.ist(_TAG, 'bloc router: login/:skip ${skipString}');
 
@@ -163,8 +162,8 @@ class BlocRouter {
               path: 'event/:partyName/:partyChapter',
               pageBuilder: (context, state) {
 
-                String partyName = state.params['partyName']!;
-                String partyChapter = state.params['partyChapter']!;
+                String partyName = state.pathParameters['partyName']!;
+                String partyChapter = state.pathParameters['partyChapter']!;
 
                 Logx.ist(_TAG, 'bloc router: event: $partyName');
 
@@ -313,8 +312,8 @@ class BlocRouter {
           name: RouteConstants.artistRouteName,
           path: '/artist/:genre/:name',
           pageBuilder: (context, state) {
-            String name = state.params['name']!;
-            String genre = state.params['genre']!;
+            String name = state.pathParameters['name']!;
+            String genre = state.pathParameters['genre']!;
 
             Logx.d(_TAG, '/artist/:$genre/:$name');
 
@@ -329,7 +328,7 @@ class BlocRouter {
           name: RouteConstants.loungeRouteName,
           path: '/lounge/:id',
           pageBuilder: (context, state) {
-            String id = state.params['id']!;
+            String id = state.pathParameters['id']!;
 
             Logx.d(_TAG, '/lounge/$id');
 
@@ -345,7 +344,7 @@ class BlocRouter {
           pageBuilder: (context, state) {
             return MaterialPage(
                 child: BlocMenuScreen(
-              blocId: state.params['id']!,
+              blocId: state.pathParameters['id']!,
             ));
           },
         ),
@@ -354,11 +353,11 @@ class BlocRouter {
           name: RouteConstants.profileRouteName,
           path: '/profile/:username',
           pageBuilder: (context, state) {
-            Logx.ist(_TAG, 'bloc router: /profile/:${state.params['username']}');
+            Logx.ist(_TAG, 'bloc router: /profile/:${state.pathParameters['username']}');
 
             return MaterialPage(
                 child: UserProfileScreen(
-              username: state.params['username']!,
+              username: state.pathParameters['username']!,
             ));
           },
         ),
