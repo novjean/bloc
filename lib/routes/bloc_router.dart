@@ -37,7 +37,7 @@ class BlocRouter {
   static GoRouter returnRouter(bool isAuth) {
     GoRouter router = GoRouter(
       navigatorKey: BlocApp.navigatorKey,
-      initialLocation: '/',
+      // initialLocation: '/',
       routes: <RouteBase>[
         GoRoute(
           name: RouteConstants.landingRouteName,
@@ -139,6 +139,7 @@ class BlocRouter {
           },
           routes: <RouteBase>[
             GoRoute(
+              // parentNavigatorKey: BlocApp.navigatorKey,
               name: RouteConstants.loginRouteName,
               path: 'login/:skip',
               pageBuilder: (context, state) {
@@ -158,6 +159,8 @@ class BlocRouter {
             ),
 
             GoRoute(
+              // parentNavigatorKey: BlocApp.navigatorKey,
+
               name: RouteConstants.eventRouteName,
               path: 'event/:partyName/:partyChapter',
               pageBuilder: (context, state) {

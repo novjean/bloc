@@ -12,6 +12,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:go_router/go_router.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
@@ -31,6 +32,7 @@ Future<void> main() async {
   const String _TAG = 'main';
 
   WidgetsFlutterBinding.ensureInitialized();
+  // GoRouter.optionURLReflectsImperativeAPIs = true;
 
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
@@ -71,6 +73,12 @@ class BlocApp extends StatefulWidget {
 
 class _BlocAppState extends State<BlocApp> {
   static const String _TAG = 'BlocApp';
+
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -122,7 +130,8 @@ class _BlocAppState extends State<BlocApp> {
                     ),
                   ),
                 ),
-                routeInformationParser: BlocRouter.returnRouter(true).routeInformationParser,
+                  // routeInformationProvider: BlocRouter.returnRouter(true).routeInformationProvider,
+                  routeInformationParser: BlocRouter.returnRouter(true).routeInformationParser,
                 routerDelegate: BlocRouter.returnRouter(true).routerDelegate,
               );
               }

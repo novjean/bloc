@@ -336,7 +336,7 @@ class _LoginScreenState extends State<LoginScreen> {
               UserPreferences.setUser(registeredUser);
 
               GoRouter.of(context)
-                  .pushNamed(RouteConstants.homeRouteName);
+                  .pushNamed(RouteConstants.landingRouteName);
             } else {
               Logx.i(_TAG, 'user is a bloc member, navigating to main');
               try {
@@ -348,7 +348,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 UserPreferences.setUser(user);
 
                 GoRouter.of(context)
-                    .pushNamed(RouteConstants.homeRouteName);
+                    .pushNamed(RouteConstants.landingRouteName);
               } on PlatformException catch (e, s) {
                 Logx.e(_TAG, e, s);
               } on Exception catch (e, s) {
