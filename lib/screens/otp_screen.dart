@@ -423,7 +423,7 @@ class _OTPScreenState extends State<OTPScreen> {
                         Logx.ist(_TAG, 'hey there, welcome to bloc! 🦖');
 
                         GoRouter.of(context)
-                            .pushNamed(RouteConstants.landingRouteName);
+                            .pushReplacementNamed(RouteConstants.landingRouteName);
                       } else {
                         user = user.copyWith(username: username);
                         FirestoreHelper.pushUser(user);
@@ -433,7 +433,7 @@ class _OTPScreenState extends State<OTPScreen> {
                         Logx.ist(_TAG, 'hey there, welcome to bloc! 🦖');
 
                         GoRouter.of(context)
-                            .pushNamed(RouteConstants.landingRouteName);
+                            .pushReplacementNamed(RouteConstants.landingRouteName);
                       }
                     });
                   } else {
@@ -444,7 +444,7 @@ class _OTPScreenState extends State<OTPScreen> {
                     Logx.ist(_TAG, 'hey there, welcome to bloc! 🦖');
 
                     GoRouter.of(context)
-                        .pushNamed(RouteConstants.landingRouteName);
+                        .pushReplacementNamed(RouteConstants.landingRouteName);
                   }
                 } else {
                   Logx.i(_TAG,
@@ -525,7 +525,7 @@ class _OTPScreenState extends State<OTPScreen> {
                         'hey ${user.name.toLowerCase()}, welcome back! 🦖');
 
                     GoRouter.of(context)
-                        .pushNamed(RouteConstants.landingRouteName);
+                        .pushReplacementNamed(RouteConstants.landingRouteName);
                   } else {
                     user = user.copyWith(username: username);
                     FirestoreHelper.pushUser(user);
@@ -536,7 +536,7 @@ class _OTPScreenState extends State<OTPScreen> {
                         'hey ${user.name.toLowerCase()}, welcome back! 🦖');
 
                     GoRouter.of(context)
-                        .pushNamed(RouteConstants.landingRouteName);
+                        .pushReplacementNamed(RouteConstants.landingRouteName);
                   }
                 });
               } else {
@@ -544,7 +544,7 @@ class _OTPScreenState extends State<OTPScreen> {
                 UserPreferences.setUser(user);
                 UiPreferences.setHomePageIndex(0);
 
-                GoRouter.of(context).pushNamed(RouteConstants.landingRouteName);
+                GoRouter.of(context).pushReplacementNamed(RouteConstants.landingRouteName);
 
                 Toaster.shortToast(
                     'hey ${user.name.toLowerCase()}, welcome back! 🦖');

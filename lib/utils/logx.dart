@@ -60,13 +60,19 @@ class Logx {
     logger.d(text);
   }
 
+  static void dst(String tag, String message) {
+    String text = '$tag:$message';
+    logger.d(text);
+    FirebaseCrashlytics.instance.log(text);
+    Toaster.shortToast(message);
+  }
 
   static void alt(String tag, String message) {
     String text = '$tag:$message';
     logger.d(text);
     FirebaseCrashlytics.instance.log(text);
 
-    if(UserPreferences.myUser.clearanceLevel>=Constants.ADMIN_LEVEL){
+    if(UserPreferences.myUser.clearanceLevel==Constants.ADMIN_LEVEL){
       Toaster.longToast(message);
     }
   }

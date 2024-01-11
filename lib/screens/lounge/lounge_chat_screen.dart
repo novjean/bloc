@@ -568,7 +568,7 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
                               _TAG, 'you have has exited the lounge. bye 👋');
 
                           GoRouter.of(context)
-                              .pushNamed(RouteConstants.landingRouteName);
+                              .pushReplacementNamed(RouteConstants.landingRouteName);
                         },
                       )
                     ],
@@ -1258,7 +1258,7 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
                       Logx.ist(_TAG,
                           'request to join the vip lounge has been sent 🫰');
                       GoRouter.of(context)
-                          .pushNamed(RouteConstants.landingRouteName);
+                          .pushReplacementNamed(RouteConstants.landingRouteName);
                     },
                   )
                 : const SizedBox(),

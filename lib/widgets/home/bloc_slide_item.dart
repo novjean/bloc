@@ -45,7 +45,17 @@ class _BlocSlideItemState extends State<BlocSlideItem> {
           final BlocService blocService = Fresh.freshBlocServiceMap(data, false);
           blocServices.add(blocService);
         }
-        setState(() {
+        if(mounted){
+          setState(() {
+            mBlocService = blocServices.first;
+            if(UserPreferences.getUserBlocs().contains(mBlocService.id)){
+              _isBlocServiceLoading = false;
+            } else {
+              // true will result in not showing
+              _isBlocServiceLoading = true;
+            }
+          });
+        } else {
           mBlocService = blocServices.first;
           if(UserPreferences.getUserBlocs().contains(mBlocService.id)){
             _isBlocServiceLoading = false;
@@ -53,12 +63,16 @@ class _BlocSlideItemState extends State<BlocSlideItem> {
             // true will result in not showing
             _isBlocServiceLoading = true;
           }
-        });
+        }
       } else {
         Logx.em(_TAG, 'no bloc service found for bloc id ${widget.bloc.id}');
-        setState(() {
+        if(mounted){
+          setState(() {
+            _isBlocServiceLoading = false;
+          });
+        } else {
           _isBlocServiceLoading = false;
-        });
+        }
       }
     });
   }
@@ -75,7 +89,13 @@ class _BlocSlideItemState extends State<BlocSlideItem> {
               child: SizedBox(
                 width: mq.width * 0.99,
                 child: _isBlocServiceLoading ?
-                Center(child: Text(widget.bloc.name, textAlign: TextAlign.center, style: TextStyle(color: Constants.primary),),):
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      Logx.dst(_TAG, 'refreshing');
+                    });
+                  },
+                    child: Center(child: Text(widget.bloc.name, textAlign: TextAlign.center, style: TextStyle(color: Constants.primary),),)):
                 Stack(
                   fit: StackFit.passthrough,
                   children: [

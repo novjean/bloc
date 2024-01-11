@@ -1,6 +1,7 @@
 import 'package:bloc/db/entity/user.dart' as blocUser;
 import 'package:bloc/db/shared_preferences/table_preferences.dart';
 import 'package:bloc/db/shared_preferences/ui_preferences.dart';
+import 'package:bloc/screens/login_screen.dart';
 import 'package:bloc/screens/lounge/lounges_screen.dart';
 
 import 'package:bloc/screens/profile/profile_login_screen.dart';
@@ -75,88 +76,102 @@ class _MainScreenState extends State<MainScreen> {
     _page = UiPreferences.getHomePageIndex();
     _pageController = PageController(initialPage: _page);
 
-    FirestoreHelper.pullUserByPhoneNumber(user.phoneNumber).then((res) {
-      if (res.docs.isEmpty) {
-        Logx.i(_TAG, 'user not found, registering ${user.phoneNumber}');
+    // this is all part of navigation and should not be removed
+    if(UserPreferences.myUser.phoneNumber == 0){
+      GoRouter.of(context)
+          .pushReplacementNamed(RouteConstants.loginRouteName, pathParameters: {
+        'skip': 'true',
+      });
 
-        if (kIsWeb) {
-          user = user.copyWith(
-            isAppUser: false,
-            appVersion: Constants.appVersion,
-          );
-        } else {
-          user = user.copyWith(
-            isAppUser: true,
-            appVersion: Constants.appVersion,
-            isIos: Theme.of(context).platform == TargetPlatform.iOS,
-          );
-        }
+      // Navigator.of(context).push(
+      //   MaterialPageRoute(
+      //       builder: (context) =>
+      //           LoginScreen(shouldTriggerSkip: true,)),
+      // );
+    } else {
+      FirestoreHelper.pullUserByPhoneNumber(user.phoneNumber).then((res) {
+        if (res.docs.isEmpty) {
+          Logx.i(_TAG, 'user not found, registering ${user.phoneNumber}');
 
-        UserPreferences.setUser(user);
-        FirestoreHelper.pushUser(user);
-
-        Logx.i(_TAG, '${user.phoneNumber} is now registered with bloc!');
-
-        // lets grab more user details
-        Navigator.of(context).push(
-          MaterialPageRoute(
-              builder: (context) =>
-                  ProfileAddEditRegisterPage(user: user, task: 'register')),
-        );
-      } else {
-        Logx.d(_TAG, 'skipPhoneNumber logged in');
-
-        DocumentSnapshot document = res.docs[0];
-        Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-        blocUser.User user1 = Fresh.freshUserMap(data, false);
-        user1 = user1.copyWith(
-            lastSeenAt: Timestamp.now().millisecondsSinceEpoch,
-            appVersion: Constants.appVersion);
-
-        if (kIsWeb) {
-          user1 = user1.copyWith(
-            isAppUser: false,
-          );
-        } else {
-          user1 = user1.copyWith(
-            isAppUser: true,
-            isIos: Theme.of(context).platform == TargetPlatform.iOS,
-          );
-        }
-
-        if (user1.username.isEmpty) {
-          String username = '';
-          if (user1.surname.trim().isNotEmpty) {
-            username =
-                '${user1.name.trim().toLowerCase()}_${user1.surname.trim().toLowerCase()}';
+          if (kIsWeb) {
+            user = user.copyWith(
+              isAppUser: false,
+              appVersion: Constants.appVersion,
+            );
           } else {
-            username = user1.name.trim().toLowerCase();
+            user = user.copyWith(
+              isAppUser: true,
+              appVersion: Constants.appVersion,
+              isIos: Theme.of(context).platform == TargetPlatform.iOS,
+            );
           }
 
-          //check if username is present in db
-          FirestoreHelper.pullUserByUsername(username).then((res) {
-            if (res.docs.isNotEmpty) {
-              // username is already taken
-              username = username +
-                  NumberUtils.generateRandomNumber(1, 999).toString().trim();
-              user1 = user1.copyWith(username: username);
-              FirestoreHelper.pushUser(user1);
-              UserPreferences.setUser(user1);
-            } else {
-              user1 = user1.copyWith(username: username);
-              FirestoreHelper.pushUser(user1);
-              UserPreferences.setUser(user1);
-            }
-          });
+          UserPreferences.setUser(user);
+          FirestoreHelper.pushUser(user);
+
+          Logx.i(_TAG, '${user.phoneNumber} is now registered with bloc!');
+
+          // lets grab more user details
+          Navigator.of(context).push(
+            MaterialPageRoute(
+                builder: (context) =>
+                    ProfileAddEditRegisterPage(user: user, task: 'register')),
+          );
         } else {
-          FirestoreHelper.pushUser(user1);
-          UserPreferences.setUser(user1);
+          Logx.d(_TAG, 'skipPhoneNumber logged in');
+
+          DocumentSnapshot document = res.docs[0];
+          Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+          blocUser.User user1 = Fresh.freshUserMap(data, false);
+          user1 = user1.copyWith(
+              lastSeenAt: Timestamp.now().millisecondsSinceEpoch,
+              appVersion: Constants.appVersion);
+
+          if (kIsWeb) {
+            user1 = user1.copyWith(
+              isAppUser: false,
+            );
+          } else {
+            user1 = user1.copyWith(
+              isAppUser: true,
+              isIos: Theme.of(context).platform == TargetPlatform.iOS,
+            );
+          }
+
+          if (user1.username.isEmpty) {
+            String username = '';
+            if (user1.surname.trim().isNotEmpty) {
+              username =
+              '${user1.name.trim().toLowerCase()}_${user1.surname.trim().toLowerCase()}';
+            } else {
+              username = user1.name.trim().toLowerCase();
+            }
+
+            //check if username is present in db
+            FirestoreHelper.pullUserByUsername(username).then((res) {
+              if (res.docs.isNotEmpty) {
+                // username is already taken
+                username = username +
+                    NumberUtils.generateRandomNumber(1, 999).toString().trim();
+                user1 = user1.copyWith(username: username);
+                FirestoreHelper.pushUser(user1);
+                UserPreferences.setUser(user1);
+              } else {
+                user1 = user1.copyWith(username: username);
+                FirestoreHelper.pushUser(user1);
+                UserPreferences.setUser(user1);
+              }
+            });
+          } else {
+            FirestoreHelper.pushUser(user1);
+            UserPreferences.setUser(user1);
+          }
         }
-      }
-    }, onError: (e, s) {
-      Logx.ex(
-          _TAG, "error retrieving users for phone : ${user.phoneNumber}", e, s);
-    });
+      }, onError: (e, s) {
+        Logx.ex(
+            _TAG, "error retrieving users for phone : ${user.phoneNumber}", e, s);
+      });
+    }
 
     if (!kIsWeb) {
       final fbm = FirebaseMessaging.instance;
@@ -241,6 +256,8 @@ class _MainScreenState extends State<MainScreen> {
               }
             }
             UserPreferences.setListLounges(userLounges);
+          } else {
+            Logx.alt(_TAG, 'no user lounges registered');
           }
         });
 

@@ -147,8 +147,6 @@ class _PartyBannerState extends State<PartyBanner> {
         if (widget.isClickable) {
           if (widget.party.type == 'event') {
 
-            // GoRouter.of(context).go('/event',);
-
             GoRouter.of(context).pushNamed(RouteConstants.eventRouteName,
                 pathParameters: {
                   'partyName': widget.party.name,

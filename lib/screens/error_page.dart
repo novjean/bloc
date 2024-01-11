@@ -37,7 +37,7 @@ class ErrorPage extends StatelessWidget {
                 text:  'home',
                 onClicked: () {
                   GoRouter.of(context)
-                      .pushNamed(RouteConstants.landingRouteName);
+                      .pushReplacementNamed(RouteConstants.landingRouteName);
                 },
               ),
             ],

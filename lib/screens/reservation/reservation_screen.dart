@@ -68,7 +68,7 @@ class _ReservationScreenState extends State<ReservationScreen> {
           icon: const Icon(Icons.arrow_back_ios_rounded),
           onPressed: () {
             if (kIsWeb) {
-              GoRouter.of(context).pushNamed(RouteConstants.landingRouteName);
+              GoRouter.of(context).pushReplacementNamed(RouteConstants.landingRouteName);
             } else {
               Navigator.of(context).pop();
             }

@@ -149,7 +149,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
       } else {
         // profile not found, navigate to home
         Logx.ist(_TAG, 'unfortunately, the profile could not be found');
-        GoRouter.of(context).pushNamed(RouteConstants.landingRouteName);
+        GoRouter.of(context).pushReplacementNamed(RouteConstants.landingRouteName);
       }
     });
 

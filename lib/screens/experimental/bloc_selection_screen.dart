@@ -123,7 +123,7 @@ class _BlocSelectionScreenState extends State<BlocSelectionScreen> {
 
   void _handleDone() {
     if (UserPreferences.getUserBlocs().isNotEmpty) {
-      GoRouter.of(context).pushNamed(RouteConstants.landingRouteName);
+      GoRouter.of(context).pushReplacementNamed(RouteConstants.landingRouteName);
     } else {
       Logx.elt(_TAG, 'please select at least one bloc.');
     }

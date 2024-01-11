@@ -348,18 +348,18 @@ class _ProfileAddEditRegisterPageState
                       FirestoreHelper.pushUser(freshUser);
                       UserPreferences.setUser(freshUser);
 
-                      GoRouter.of(context).pushNamed(RouteConstants.landingRouteName);
+                      GoRouter.of(context).pushReplacementNamed(RouteConstants.landingRouteName);
                     } else {
                       freshUser = freshUser.copyWith(username: username);
                       FirestoreHelper.pushUser(freshUser);
                       UserPreferences.setUser(freshUser);
 
-                      GoRouter.of(context).pushNamed(RouteConstants.landingRouteName);
+                      GoRouter.of(context).pushReplacementNamed(RouteConstants.landingRouteName);
                     }
                   });
                 } else {
                   Logx.ist(_TAG, 'hey there, welcome to bloc! 🦖');
-                  GoRouter.of(context).pushNamed(RouteConstants.landingRouteName);
+                  GoRouter.of(context).pushReplacementNamed(RouteConstants.landingRouteName);
                 }
               } else {
 
