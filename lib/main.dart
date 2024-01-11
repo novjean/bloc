@@ -40,12 +40,12 @@ Future<void> main() async {
   );
   await FirebaseApi().initNotifications();
 
-  // Listen for Auth changes and .refresh the GoRouter [router]
-  FirebaseAuth.instance.authStateChanges().listen((User? user) {
-    Logx.ist(_TAG, 'main: firebase auth state change, refreshing router');
-
-    BlocRouter.returnRouter(true).refresh();
-  });
+  // // Listen for Auth changes and .refresh the GoRouter [router]
+  // FirebaseAuth.instance.authStateChanges().listen((User? user) {
+  //   Logx.ist(_TAG, 'main: firebase auth state change, refreshing router');
+  //
+  //   BlocRouter.returnRouter(true).refresh();
+  // });
 
   // Pass all uncaught "fatal" errors from the framework to Crashlytics
   FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;

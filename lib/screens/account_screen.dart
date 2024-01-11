@@ -243,7 +243,7 @@ class AccountScreen extends StatelessWidget {
                 });
 
                 FirestoreHelper.deleteUser(sUser.id);
-                UserPreferences.resetUser();
+                UserPreferences.resetUser(0);
                 TablePreferences.resetQuickTable();
 
                 Logx.i(_TAG, 'user account is deleted');

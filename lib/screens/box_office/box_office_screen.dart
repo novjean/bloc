@@ -1,3 +1,4 @@
+import 'package:bloc/db/shared_preferences/ui_preferences.dart';
 import 'package:bloc/main.dart';
 import 'package:bloc/utils/scan_utils.dart';
 import 'package:bloc/widgets/ui/app_bar_title.dart';
@@ -482,8 +483,8 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
             text: 'events',
             height: 50,
             onClicked: () {
-              GoRouter.of(context)
-                  .pushNamed(RouteConstants.landingRouteName);
+              UiPreferences.setHomePageIndex(0);
+              GoRouter.of(context).pushReplacementNamed(RouteConstants.landingRouteName);
             },
           ),
         ],

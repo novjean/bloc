@@ -71,7 +71,7 @@ class UserPreferences {
       imageUrl: '',
       clearanceLevel: 0,
       challengeLevel: 1,
-      phoneNumber: 0,
+      phoneNumber: 1,
       birthYear: 2023,
       name: '',
       surname: '',
@@ -104,14 +104,14 @@ class UserPreferences {
     return json == null ? myUser : User.fromMap(jsonDecode(json));
   }
 
-  static void resetUser() {
+  static void resetUser(int phoneNumber) {
     setUser(User(
         id: '',
         email: '',
         imageUrl: '',
         clearanceLevel: 0,
         challengeLevel: 1,
-        phoneNumber: 0,
+        phoneNumber: phoneNumber,
         birthYear: 2023,
         name: '',
         surname: '',

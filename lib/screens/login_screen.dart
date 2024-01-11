@@ -39,7 +39,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
   final TextEditingController _controller = TextEditingController();
   String completePhoneNumber = '';
-  // bool isIOS = false;
   int maxPhoneNumberLength = 10;
 
   @override
@@ -54,139 +53,82 @@ class _LoginScreenState extends State<LoginScreen> {
 
     return Scaffold(
       backgroundColor: Constants.background,
-      resizeToAvoidBottomInset : false,
-      body:
-
-      StreamBuilder(
+      resizeToAvoidBottomInset: false,
+      body: StreamBuilder(
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (ctx, userSnapshot) {
-          Logx.i(_TAG, 'checking for auth state changes...');
-
           switch (userSnapshot.connectionState) {
             case ConnectionState.waiting:
-            case ConnectionState.none:{
-              if (!kIsWeb) {
-                return SplashScreen();
-              } else {
-                return const LoadingWidget();
+            case ConnectionState.none:
+              {
+                if (!kIsWeb) {
+                  return SplashScreen();
+                } else {
+                  return const LoadingWidget();
+                }
+              }
+            case ConnectionState.active:
+            case ConnectionState.done:
+              {
+                Logx.ist(_TAG, 'login: auth state changes');
+
+                if (userSnapshot.hasData) {
+                  Logx.i(_TAG, 'user snapshot has data');
+
+                  final user = FirebaseAuth.instance.currentUser;
+                  CollectionReference users =
+                      FirestoreHelper.getUsersCollection();
+
+                  if (user!.uid.isEmpty || widget.shouldTriggerSkip == false) {
+                    Logx.i(_TAG, 'user snapshot uid is empty');
+                    return signInWidget();
+                  } else {
+                    return FutureBuilder<DocumentSnapshot>(
+                      future: users.doc(user.uid).get(),
+                      builder: (BuildContext ctx,
+                          AsyncSnapshot<DocumentSnapshot> snapshot) {
+                        switch (snapshot.connectionState) {
+                          case ConnectionState.waiting:
+                          case ConnectionState.none:
+                            return const LoadingWidget();
+                          case ConnectionState.active:
+                          case ConnectionState.done:
+                            {
+                              if (snapshot.hasError) {
+                                Logx.em(_TAG,
+                                    'user snapshot has error: ${snapshot.error}');
+                                return signInWidget();
+                              }
+
+                              if (snapshot.hasData && !snapshot.data!.exists) {
+                                Logx.i(_TAG,
+                                    'user snapshot has data but not registered in bloc ');
+                                // user not registered in bloc, will be picked up in OTP screen
+                                return signInWidget();
+                              }
+
+                              Map<String, dynamic> data =
+                                  snapshot.data!.data() as Map<String, dynamic>;
+                              final blocUser.User user =
+                                  Fresh.freshUserMap(data, true);
+                              UserPreferences.setUser(user);
+
+                              return const MainScreen();
+                            }
+                        }
+                      },
+                    );
+                  }
+                } else {
+                  if (widget.shouldTriggerSkip) {
+                    _verifyUsingSkipPhone();
+                    return const LoadingWidget();
+                  } else {
+                    return signInWidget();
+                  }
+                }
               }
           }
-          case ConnectionState.active:
-            case ConnectionState.done: {
-            if (userSnapshot.hasData) {
-              Logx.i(_TAG, 'user snapshot has data');
-
-              final user = FirebaseAuth.instance.currentUser;
-              CollectionReference users = FirestoreHelper.getUsersCollection();
-
-              if (user!.uid.isEmpty || widget.shouldTriggerSkip == false) {
-                Logx.i(_TAG, 'user snapshot uid is empty');
-                return signInWidget();
-              } else {
-                return FutureBuilder<DocumentSnapshot>(
-                  future: users.doc(user.uid).get(),
-                  builder: (BuildContext ctx,
-                      AsyncSnapshot<DocumentSnapshot> snapshot) {
-                    switch (snapshot.connectionState) {
-                      case ConnectionState.waiting:
-                      case ConnectionState.none:
-                        return const LoadingWidget();
-                      case ConnectionState.active:
-                      case ConnectionState.done: {
-                      if (snapshot.hasError) {
-                        Logx.em(_TAG, 'user snapshot has error: ${snapshot.error}');
-                        return signInWidget();
-                      }
-
-                      if (snapshot.hasData && !snapshot.data!.exists) {
-                        Logx.i(_TAG,
-                            'user snapshot has data but not registered in bloc ');
-                        // user not registered in bloc, will be picked up in OTP screen
-                        return signInWidget();
-                      }
-
-                      Map<String, dynamic> data =
-                      snapshot.data!.data() as Map<String, dynamic>;
-                      final blocUser.User user = Fresh.freshUserMap(data, true);
-                      UserPreferences.setUser(user);
-
-                      return const MainScreen();
-
-                    }
-                    }
-                  },
-                );
-              }
-            } else {
-              if (widget.shouldTriggerSkip) {
-                _verifyUsingSkipPhone();
-                return const LoadingWidget();
-              } else {
-                return signInWidget();
-              }
-            }
-          }
-          }
-
-          // if (userSnapshot.connectionState == ConnectionState.waiting) {
-          //   if (!kIsWeb) {
-          //     return SplashScreen();
-          //   } else {
-          //     return const LoadingWidget();
-          //   }
-          // }
-
-          // if (userSnapshot.hasData) {
-          //   Logx.i(_TAG, 'user snapshot has data');
-          //
-          //   final user = FirebaseAuth.instance.currentUser;
-          //   CollectionReference users = FirestoreHelper.getUsersCollection();
-          //
-          //   if (user!.uid.isEmpty || widget.shouldTriggerSkip == false) {
-          //     Logx.i(_TAG, 'user snapshot uid is empty');
-          //     return signInWidget();
-          //   } else {
-          //     return FutureBuilder<DocumentSnapshot>(
-          //       future: users.doc(user.uid).get(),
-          //       builder: (BuildContext ctx,
-          //           AsyncSnapshot<DocumentSnapshot> snapshot) {
-          //         if (snapshot.connectionState == ConnectionState.waiting) {
-          //           return const LoadingWidget();
-          //         }
-          //
-          //         if (snapshot.hasError) {
-          //           Logx.em(_TAG, 'user snapshot has error: ${snapshot.error}');
-          //           return signInWidget();
-          //         }
-          //
-          //         if (snapshot.hasData && !snapshot.data!.exists) {
-          //           Logx.i(_TAG,
-          //               'user snapshot has data but not registered in bloc ');
-          //           // user not registered in bloc, will be picked up in OTP screen
-          //           return signInWidget();
-          //         }
-          //
-          //         if (snapshot.connectionState == ConnectionState.done) {
-          //           Map<String, dynamic> data =
-          //               snapshot.data!.data() as Map<String, dynamic>;
-          //           final blocUser.User user = Fresh.freshUserMap(data, true);
-          //           UserPreferences.setUser(user);
-          //
-          //           return const MainScreen();
-          //         }
-          //         Logx.i(_TAG, 'loading user...');
-          //         return const LoadingWidget();
-          //       },
-          //     );
-          //   }
-          // } else {
-          //   if (widget.shouldTriggerSkip) {
-          //     _verifyUsingSkipPhone();
-          //     return const LoadingWidget();
-          //   } else {
-          //     return signInWidget();
-          //   }
-          // }
         },
       ),
     );
@@ -211,34 +153,30 @@ class _LoginScreenState extends State<LoginScreen> {
           child: Container(
             margin: const EdgeInsets.only(top: 0, right: 20, left: 20),
             child: IntlPhoneField(
-              style: const TextStyle(
-                  color: Constants.primary, fontSize: 20),
+              style: const TextStyle(color: Constants.primary, fontSize: 20),
               decoration: const InputDecoration(
                   labelText: 'phone number',
                   labelStyle: TextStyle(color: Constants.primary),
                   hintStyle: TextStyle(color: Constants.primary),
-                  counterStyle:
-                      TextStyle(color: Constants.primary),
+                  counterStyle: TextStyle(color: Constants.primary),
                   border: OutlineInputBorder(
-                    borderSide:
-                        BorderSide(color: Constants.primary),
+                    borderSide: BorderSide(color: Constants.primary),
                   ),
                   enabledBorder: OutlineInputBorder(
                     // width: 0.0 produces a thin "hairline" border
-                    borderSide: BorderSide(
-                        color: Constants.primary, width: 0.0),
+                    borderSide:
+                        BorderSide(color: Constants.primary, width: 0.0),
                   )),
               controller: _controller,
               initialCountryCode: 'IN',
-              dropdownTextStyle: const TextStyle(
-                  color: Constants.primary, fontSize: 20),
-              pickerDialogStyle: PickerDialogStyle(
-                  backgroundColor: Constants.primary),
+              dropdownTextStyle:
+                  const TextStyle(color: Constants.primary, fontSize: 20),
+              pickerDialogStyle:
+                  PickerDialogStyle(backgroundColor: Constants.primary),
               onChanged: (phone) {
-                Logx.i(_TAG, phone.completeNumber);
                 completePhoneNumber = phone.completeNumber;
 
-                if(phone.number.length == maxPhoneNumberLength){
+                if (phone.number.length == maxPhoneNumberLength) {
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (context) => OTPScreen(completePhoneNumber)));
                 }
@@ -260,7 +198,6 @@ class _LoginScreenState extends State<LoginScreen> {
                 children: [
                   InkWell(
                     onTap: () {
-                      Toaster.longToast('loading menu and events');
                       _verifyUsingSkipPhone();
                     },
                     child: const Padding(
@@ -269,10 +206,8 @@ class _LoginScreenState extends State<LoginScreen> {
                         delay: Duration(seconds: 3),
                         child: Text(
                           "skip for now",
-                          style: TextStyle(
-                            color: Constants.primary,
-                            fontSize: 15
-                          ),
+                          style:
+                              TextStyle(color: Constants.primary, fontSize: 15),
                         ),
                       ),
                     ),
@@ -304,8 +239,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     Navigator.of(context).push(MaterialPageRoute(
                         builder: (context) => OTPScreen(completePhoneNumber)));
                   } else {
-                    Logx.i(
-                        _TAG,
+                    Logx.i(_TAG,
                         'user entered invalid phone number $completePhoneNumber');
                     Logx.ilt(_TAG, 'please enter a valid phone number');
                   }
@@ -381,7 +315,7 @@ class _LoginScreenState extends State<LoginScreen> {
       }
     }
 
-    return LoadingWidget();
+    return const LoadingWidget();
   }
 
   void signInToSkipBloc(String verificationId) async {
@@ -396,7 +330,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
           FirestoreHelper.pullUser(value.user!.uid).then((res) {
             if (res.docs.isEmpty) {
-              Logx.i(_TAG, 'user is not already registered in bloc, registering');
+              Logx.i(
+                  _TAG, 'user is not already registered in bloc, registering');
 
               blocUser.User registeredUser = Dummy.getDummyUser();
               registeredUser.id = value.user!.uid;
@@ -417,7 +352,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 final blocUser.User user = Fresh.freshUserMap(data, false);
                 UserPreferences.setUser(user);
 
-                GoRouter.of(context).pushReplacementNamed(RouteConstants.landingRouteName);
+                GoRouter.of(context)
+                    .pushReplacementNamed(RouteConstants.landingRouteName);
               } on PlatformException catch (e, s) {
                 Logx.e(_TAG, e, s);
               } on Exception catch (e, s) {

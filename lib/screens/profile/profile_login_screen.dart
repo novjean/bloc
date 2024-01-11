@@ -34,7 +34,7 @@ class ProfileLoginScreen extends StatelessWidget {
                 height: 50,
                 text:  'login',
                 onClicked: () async {
-                  UserPreferences.resetUser();
+                  UserPreferences.resetUser(0);
                   TablePreferences.resetQuickTable();
 
                   await FirebaseAuth.instance.signOut();

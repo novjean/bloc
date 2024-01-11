@@ -46,8 +46,7 @@ class _OTPScreenState extends State<OTPScreen> {
     _verifyPhone();
     super.initState();
 
-    Logx.ilt(
-        _TAG, 'verification vibes in progress, your code\'s on the way 🚀🔑');
+    Logx.ilt(_TAG, 'your code\'s on the way 🚀🔑');
   }
 
   @override
@@ -58,12 +57,13 @@ class _OTPScreenState extends State<OTPScreen> {
   }
 
   _verifyPhone() async {
+
+
     if (kIsWeb) {
       await FirebaseAuth.instance
           .signInWithPhoneNumber(widget.phone, null)
           .then((user) {
-        Logx.i(_TAG,
-            'signInWithPhoneNumber: user verification id ${user.verificationId}');
+        Logx.i(_TAG, 'signInWithPhoneNumber: user verification id ${user.verificationId}');
         setState(() {
           _verificationCode = user.verificationId;
         });
@@ -82,18 +82,16 @@ class _OTPScreenState extends State<OTPScreen> {
           },
           codeSent: (String verificationID, int? resendToken) {
             Logx.i(_TAG, 'verification id : $verificationID');
+            _verificationCode = verificationID;
 
             if (mounted) {
-              setState(() {
-                _verificationCode = verificationID;
-              });
+              setState(() {});
             }
           },
           codeAutoRetrievalTimeout: (String verificationId) {
+            _verificationCode = verificationId;
             if (mounted) {
-              setState(() {
-                _verificationCode = verificationId;
-              });
+              setState(() {});
             }
           },
           timeout: const Duration(seconds: 60));
@@ -205,7 +203,7 @@ class _OTPScreenState extends State<OTPScreen> {
           flex: 1,
           child: FractionallySizedBox(
               widthFactor: 1,
-              child: OTPVerifyWidget(
+              child: OtpVerifyWidget(
                 widget.phone,
               )),
         ),
@@ -245,7 +243,7 @@ class _OTPScreenState extends State<OTPScreen> {
     );
   }
 
-  OTPVerifyWidget(String phone) {
+  OtpVerifyWidget(String phone) {
     const focusedBorderColor = Color.fromRGBO(222, 193, 170, 1);
     const fillColor = Color.fromRGBO(38, 50, 56, 1.0);
     const borderColor = Color.fromRGBO(211, 167, 130, 1);
@@ -269,7 +267,6 @@ class _OTPScreenState extends State<OTPScreen> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Directionality(
-            // Specify direction if desired
             textDirection: TextDirection.ltr,
             child: Pinput(
               length: 6,
@@ -280,14 +277,6 @@ class _OTPScreenState extends State<OTPScreen> {
               listenForMultipleSmsOnAndroid: true,
               defaultPinTheme: defaultPinTheme,
               closeKeyboardWhenCompleted: true,
-              // validator: (value) {
-              // print('code is ' + _verificationCode);
-              // return value == _verificationCode ? null : 'pin is incorrect';
-              // },
-              // onClipboardFound: (value) {
-              //   debugPrint('onClipboardFound: $value');
-              //   pinController.setText(value);
-              // },
               hapticFeedbackType: HapticFeedbackType.lightImpact,
               onCompleted: (pin) async {
                 debugPrint('onCompleted: $pin');
@@ -335,7 +324,7 @@ class _OTPScreenState extends State<OTPScreen> {
   }
 
   void _verifyOtpCode() async {
-    Logx.ist(_TAG, 'verifying ${widget.phone}');
+    Logx.ist(_TAG, 'contacting HQ 🀄');
     try {
       await FirebaseAuth.instance
           .signInWithCredential(PhoneAuthProvider.credential(
@@ -420,7 +409,7 @@ class _OTPScreenState extends State<OTPScreen> {
                         UserPreferences.setUser(user);
                         UiPreferences.setHomePageIndex(0);
 
-                        Logx.ist(_TAG, 'hey there, welcome to bloc! 🦖');
+                        Logx.ist(_TAG, 'yo, welcome to bloc! 🦖');
 
                         GoRouter.of(context)
                             .pushReplacementNamed(RouteConstants.landingRouteName);
@@ -430,7 +419,7 @@ class _OTPScreenState extends State<OTPScreen> {
                         UserPreferences.setUser(user);
                         UiPreferences.setHomePageIndex(0);
 
-                        Logx.ist(_TAG, 'hey there, welcome to bloc! 🦖');
+                        Logx.ist(_TAG, 'yo, welcome to bloc! 🦖');
 
                         GoRouter.of(context)
                             .pushReplacementNamed(RouteConstants.landingRouteName);
@@ -441,7 +430,7 @@ class _OTPScreenState extends State<OTPScreen> {
                     UserPreferences.setUser(user);
                     UiPreferences.setHomePageIndex(0);
 
-                    Logx.ist(_TAG, 'hey there, welcome to bloc! 🦖');
+                    Logx.ist(_TAG, 'yo, welcome to bloc! 🦖');
 
                     GoRouter.of(context)
                         .pushReplacementNamed(RouteConstants.landingRouteName);
@@ -522,7 +511,7 @@ class _OTPScreenState extends State<OTPScreen> {
                     UiPreferences.setHomePageIndex(0);
 
                     Toaster.shortToast(
-                        'hey ${user.name.toLowerCase()}, welcome back! 🦖');
+                        'yo ${user.name.toLowerCase()}, welcome back! 🦖');
 
                     GoRouter.of(context)
                         .pushReplacementNamed(RouteConstants.landingRouteName);
@@ -533,7 +522,7 @@ class _OTPScreenState extends State<OTPScreen> {
                     UiPreferences.setHomePageIndex(0);
 
                     Toaster.shortToast(
-                        'hey ${user.name.toLowerCase()}, welcome back! 🦖');
+                        'yo ${user.name.toLowerCase()}, welcome back! 🦖');
 
                     GoRouter.of(context)
                         .pushReplacementNamed(RouteConstants.landingRouteName);
@@ -547,7 +536,7 @@ class _OTPScreenState extends State<OTPScreen> {
                 GoRouter.of(context).pushReplacementNamed(RouteConstants.landingRouteName);
 
                 Toaster.shortToast(
-                    'hey ${user.name.toLowerCase()}, welcome back! 🦖');
+                    'yo ${user.name.toLowerCase()}, welcome back! 🦖');
               }
             }
           });
@@ -558,10 +547,13 @@ class _OTPScreenState extends State<OTPScreen> {
 
       String exception = e.toString();
       if (exception.contains('session-expired')) {
-        Toaster.shortToast('session got expired, trying again');
+        Toaster.longToast('session got expired, trying again.');
         _verifyPhone();
+      } else if(exception.contains('channel-error')) {
+        Toaster.longToast('something went wrong! please try again.');
+        Navigator.of(context).pop();
       } else {
-        Toaster.shortToast('invalid otp, please try again');
+        Logx.est(_TAG, 'invalid otp. please try again.');
       }
       FocusScope.of(context).unfocus();
     }

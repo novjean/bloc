@@ -7,6 +7,7 @@ import 'package:bloc/screens/refund_policy_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../db/shared_preferences/user_preferences.dart';
 import '../screens/sample_checkout_screen.dart';
 import '../screens/contact_us_screen.dart';
 import '../screens/delivery_policy_screen.dart';
@@ -36,7 +37,13 @@ class BlocRouter {
           path: '/',
           builder: (context, state) {
             Logx.ist(_TAG, 'bloc router: ${RouteConstants.landingRouteName}');
-            return const MainScreen();
+            if(UserPreferences.myUser.phoneNumber == 0) {
+              return LoginScreen(shouldTriggerSkip: false,);
+            } else if(UserPreferences.myUser.phoneNumber == 1){
+              return LoginScreen(shouldTriggerSkip: true,);
+            } else {
+              return const MainScreen();
+            }
             },
         ),
 

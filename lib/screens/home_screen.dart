@@ -98,14 +98,12 @@ class _HomeScreenState extends State<HomeScreen> {
       if (res.docs.isNotEmpty) {
         DocumentSnapshot document = res.docs[0];
         Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-        setState(() {
-          mAdCampaign = Fresh.freshAdCampaignMap(data, false);
-          _isAdCampaignLoading = false;
-        });
-      } else {
-        setState(() {
-          _isAdCampaignLoading = false;
-        });
+        mAdCampaign = Fresh.freshAdCampaignMap(data, false);
+        _isAdCampaignLoading = false;
+
+        if(mounted){
+          setState(() {});
+        }
       }
     });
 
@@ -114,13 +112,11 @@ class _HomeScreenState extends State<HomeScreen> {
         try {
           DocumentSnapshot document = res.docs[0];
           Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-          final GuestWifi wifi = GuestWifi.fromMap(data);
+          mGuestWifi = GuestWifi.fromMap(data);
+          _isGuestWifiDetailsLoading = false;
 
           if (mounted) {
-            setState(() {
-              mGuestWifi = wifi;
-              _isGuestWifiDetailsLoading = false;
-            });
+            setState(() {});
           }
         } on PlatformException catch (e, s) {
           Logx.e(_TAG, e, s);
@@ -407,7 +403,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     Constants.darkPrimary), // Set your desired background color
               ),
               onPressed: () async {
-                UserPreferences.resetUser();
+                UserPreferences.resetUser(0);
                 TablePreferences.resetQuickTable();
 
                 await FirebaseAuth.instance.signOut();
@@ -545,9 +541,7 @@ class _HomeScreenState extends State<HomeScreen> {
             }
           }).catchError((err) {
             Logx.em(_TAG, 'error loading blocs $err');
-            setState(() {
-              _isBlocsLoading = false;
-            });
+            Logx.alt(_TAG, 'error loading blocs : $err' );
           });
   }
 }
