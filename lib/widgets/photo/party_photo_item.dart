@@ -329,7 +329,7 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
                                     context, '🎁 tag yourself in photos');
                               } else {
                                 if (UserPreferences.isUserLoggedIn()) {
-                                  Logx.ist(_TAG, 'tagging you...');
+                                  Logx.ist(_TAG, '📌 tagging you...');
 
                                   FirestoreHelper.pullUserPhoto(
                                           UserPreferences.myUser.id,
@@ -344,10 +344,10 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
                                       FirestoreHelper.pushUserPhoto(userPhoto);
 
                                       Logx.ist(_TAG,
-                                          'your tag request is received, and it shall be approved by the admins soon');
+                                          '📌 your tag request is received');
                                     } else {
                                       Logx.ist(
-                                          _TAG, 'your tag is present in db');
+                                          _TAG, '📌 your tag request is received');
                                     }
                                   });
                                 } else {
@@ -735,7 +735,7 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
                   UserPreferences.setUser(user);
                   FirestoreHelper.pushUser(user);
 
-                  Logx.ist(_TAG, '🃏 thank you for already reviewing us');
+                  Logx.ist(_TAG, '🖤 thank you for already reviewing us');
                   Navigator.of(ctx).pop();
                 },
               ),

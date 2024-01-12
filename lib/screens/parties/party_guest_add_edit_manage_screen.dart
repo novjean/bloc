@@ -1182,7 +1182,7 @@ class _PartyGuestAddEditManageScreenState
                           FirestoreHelper.pushUser(freshUser);
                         }
 
-                        Logx.ist(_TAG, 'guest list has been updated');
+                        Logx.ist(_TAG, '🙌 guest list has been updated');
 
                         if ((UserPreferences.myUser.lastReviewTime <
                             Timestamp.now().millisecondsSinceEpoch -

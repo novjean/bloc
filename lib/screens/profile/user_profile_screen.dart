@@ -148,7 +148,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
         }
       } else {
         // profile not found, navigate to home
-        Logx.ist(_TAG, 'unfortunately, the profile could not be found');
+        Logx.ist(_TAG, '🤯 the profile could not be found!');
         GoRouter.of(context).pushReplacementNamed(RouteConstants.landingRouteName);
       }
     });
@@ -477,7 +477,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
             mFriend = mFriend.copyWith(isFollowing: true);
             FirestoreHelper.pushFriend(mFriend);
 
-            Logx.ist(_TAG, 'you are now following ${mUser.name}');
+            Logx.ist(_TAG, '😍 you are now following ${mUser.name}');
 
             setState(() {
               isFollowing = true;
@@ -486,7 +486,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
             mFriend = mFriend.copyWith(isFollowing: false);
             FirestoreHelper.pushFriend(mFriend);
 
-            Logx.ist(_TAG, 'you have unfollowed ${mUser.name}');
+            Logx.ist(_TAG, '😑 you have unfollowed ${mUser.name}');
 
             setState(() {
               isFollowing = false;
@@ -659,7 +659,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
 
                         setState(() {});
                         Logx.ist(_TAG,
-                            '${mUser.name}\'s profile photo has been successfully updated!');
+                            '😻 ${mUser.name}\'s profile photo has been successfully updated!');
                       },
                     ),
                   )

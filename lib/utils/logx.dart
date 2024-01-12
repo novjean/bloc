@@ -74,4 +74,12 @@ class Logx {
       Toaster.longToast(text);
     }
   }
+
+  static void ast(String tag, String message) {
+    String text = '$tag:$message';
+
+    if(UserPreferences.myUser.clearanceLevel==Constants.ADMIN_LEVEL){
+      Toaster.shortToast(text);
+    }
+  }
 }

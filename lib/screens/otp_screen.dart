@@ -324,7 +324,7 @@ class _OTPScreenState extends State<OTPScreen> {
   }
 
   void _verifyOtpCode() async {
-    Logx.ist(_TAG, 'contacting HQ 🀄');
+    Logx.ist(_TAG, '☎️ contacting HQ');
     try {
       await FirebaseAuth.instance
           .signInWithCredential(PhoneAuthProvider.credential(
@@ -409,7 +409,7 @@ class _OTPScreenState extends State<OTPScreen> {
                         UserPreferences.setUser(user);
                         UiPreferences.setHomePageIndex(0);
 
-                        Logx.ist(_TAG, 'yo, welcome to bloc! 🦖');
+                        Logx.ist(_TAG, '👽 yo, welcome to the bloc community!');
 
                         GoRouter.of(context)
                             .pushReplacementNamed(RouteConstants.landingRouteName);
@@ -419,7 +419,7 @@ class _OTPScreenState extends State<OTPScreen> {
                         UserPreferences.setUser(user);
                         UiPreferences.setHomePageIndex(0);
 
-                        Logx.ist(_TAG, 'yo, welcome to bloc! 🦖');
+                        Logx.ist(_TAG, '👽 yo, welcome to the bloc community!');
 
                         GoRouter.of(context)
                             .pushReplacementNamed(RouteConstants.landingRouteName);
@@ -430,7 +430,7 @@ class _OTPScreenState extends State<OTPScreen> {
                     UserPreferences.setUser(user);
                     UiPreferences.setHomePageIndex(0);
 
-                    Logx.ist(_TAG, 'yo, welcome to bloc! 🦖');
+                    Logx.ist(_TAG, '👽 yo, welcome to the bloc community!');
 
                     GoRouter.of(context)
                         .pushReplacementNamed(RouteConstants.landingRouteName);

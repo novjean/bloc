@@ -102,7 +102,7 @@ class _PartyGuestEntryWidgetState extends State<PartyGuestEntryWidget> {
   }
 
   void verifyPhoneNumber(String sFullNumber) async {
-    Logx.ist(_TAG, 'verifying $sFullNumber');
+    Logx.ist(_TAG, '🗃️ verifying $sFullNumber');
 
     await FirebaseAuth.instance.verifyPhoneNumber(
         phoneNumber: sFullNumber,

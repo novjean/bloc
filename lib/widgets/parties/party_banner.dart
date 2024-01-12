@@ -146,17 +146,17 @@ class _PartyBannerState extends State<PartyBanner> {
       onTap: () {
         if (widget.isClickable) {
           if (widget.party.type == 'event') {
-            context.goNamed(RouteConstants.eventRouteName,
-                pathParameters: {
-                  'partyName': widget.party.name,
-                  'partyChapter': widget.party.chapter
-                });
-
-            // GoRouter.of(context).pushNamed(RouteConstants.eventRouteName,
+            // context.goNamed(RouteConstants.eventRouteName,
             //     pathParameters: {
             //       'partyName': widget.party.name,
             //       'partyChapter': widget.party.chapter
             //     });
+
+            GoRouter.of(context).pushNamed(RouteConstants.eventRouteName,
+                pathParameters: {
+                  'partyName': widget.party.name,
+                  'partyChapter': widget.party.chapter
+                });
           } else {
             GoRouter.of(context).pushNamed(RouteConstants.artistRouteName,
                 pathParameters: {
@@ -552,7 +552,7 @@ class _PartyBannerState extends State<PartyBanner> {
 
   void _handleBuyExternalTixPressed() {
     if(widget.party.ticketUrl.isEmpty){
-      Logx.ist(_TAG, 'tickets are available only through the bloc app');
+      Logx.ist(_TAG, '📱 tickets are available only through the bloc app');
       return;
     }
 

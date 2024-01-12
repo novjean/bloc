@@ -722,7 +722,7 @@ class _BoxOfficeGuestListItemState extends State<BoxOfficeGuestListItem> {
                       child: Text(cas[1].buttonTitle,
                           style: const TextStyle(color: Constants.primary)),
                       onPressed: () async {
-                        Logx.ist(_TAG, 'thank you for supporting us!');
+                        Logx.ist(_TAG, 'thank you for supporting us! 💖');
 
                         widget.partyGuest = widget.partyGuest
                             .copyWith(isChallengeClicked: true);
@@ -747,7 +747,7 @@ class _BoxOfficeGuestListItemState extends State<BoxOfficeGuestListItem> {
                 child: Text(cas[0].buttonTitle,
                     style: const TextStyle(color: Constants.primary)),
                 onPressed: () async {
-                  Logx.ist(_TAG, 'thank you for supporting us!');
+                  Logx.ist(_TAG, 'thank you for supporting us! 💖');
 
                   widget.partyGuest =
                       widget.partyGuest.copyWith(isChallengeClicked: true);
@@ -810,7 +810,7 @@ class _BoxOfficeGuestListItemState extends State<BoxOfficeGuestListItem> {
                 child: Text(challenge.dialogAcceptText,
                     style: const TextStyle(color: Constants.primary)),
                 onPressed: () async {
-                  Logx.ist(_TAG, 'thank you for supporting us!');
+                  Logx.ist(_TAG, 'thank you for supporting us! 💖');
 
                   widget.partyGuest =
                       widget.partyGuest.copyWith(isChallengeClicked: true);

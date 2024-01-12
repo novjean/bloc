@@ -92,7 +92,7 @@ class _BlocSlideItemState extends State<BlocSlideItem> {
                 GestureDetector(
                   onTap: () {
                     setState(() {
-                      Logx.dst(_TAG, 'refreshing');
+                      Logx.ast(_TAG, 'refreshing');
                     });
                   },
                     child: Center(child: Text(widget.bloc.name, textAlign: TextAlign.center, style: TextStyle(color: Constants.primary),),)):

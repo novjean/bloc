@@ -70,7 +70,7 @@ class _LoginScreenState extends State<LoginScreen> {
             case ConnectionState.active:
             case ConnectionState.done:
               {
-                Logx.ist(_TAG, 'login: auth state changes');
+                // Logx.ast(_TAG, 'login: auth state changes');
 
                 if (userSnapshot.hasData) {
                   Logx.i(_TAG, 'user snapshot has data');

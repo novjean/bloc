@@ -221,7 +221,7 @@ class LoginUtils {
         Logx.i(_TAG,
             'signInWithPhoneNumber: user verification id ${user.verificationId}');
 
-        Logx.ist(_TAG, 'otp code has been sent to $completePhoneNumber');
+        Logx.ist(_TAG, 'otp code has been sent to $completePhoneNumber 🚀');
 
         UserPreferences.setVerificationId(user.verificationId);
       }).catchError((e, s) {
@@ -239,7 +239,7 @@ class LoginUtils {
           },
           codeSent: (String verificationID, int? resendToken) {
             Logx.i(_TAG, 'verification id : $verificationID');
-            Logx.ist(_TAG, 'otp code has been sent to $completePhoneNumber');
+            Logx.ist(_TAG, 'otp code has been sent to $completePhoneNumber 🚀');
 
             UserPreferences.setVerificationId(verificationID);
           },
@@ -332,7 +332,7 @@ class LoginUtils {
                 debugPrint('onCompleted: $pin');
 
                 String verificationCode = UserPreferences.getVerificationId();
-                Logx.ist(_TAG, 'verifying $phone, please wait.');
+                Logx.ist(_TAG, '👩‍🚀 verifying $phone, please wait.');
 
                 try {
                   await FirebaseAuth.instance
@@ -395,7 +395,7 @@ class LoginUtils {
                                   blocServiceId: UserPreferences.myUser.blocServiceId);
                               layoutUtils.showTableSelectBottomSheet();
 
-                              Logx.ist(_TAG, 'hey there, welcome to bloc! 🦖');
+                              Logx.ist(_TAG, '👽 yo, welcome to the bloc community!');
                             } else {
                               Logx.i(_TAG,
                                   'user is not already registered in bloc, registering...');
@@ -414,7 +414,7 @@ class LoginUtils {
                                   blocServiceId: UserPreferences.myUser.blocServiceId);
                               layoutUtils.showTableSelectBottomSheet();
 
-                              Logx.ist(_TAG, 'hey there, welcome to bloc! 🦖');
+                              Logx.ist(_TAG, '👽 yo, welcome to the bloc community');
                             }
                           });
                         } else {
@@ -452,11 +452,11 @@ class LoginUtils {
 
                   String exception = e.toString();
                   if (exception.contains('session-expired')) {
-                    Logx.ist(_TAG,'session got expired, trying again');
+                    Logx.ist(_TAG,'🤦 session got expired, trying again');
                     _verifyPhone(completePhoneNumber);
                     Navigator.pop(context);
                   } else {
-                    Logx.ist(_TAG, 'invalid otp, please try again');
+                    Logx.ist(_TAG, '🫠 invalid otp, please try again');
                   }
                   FocusScope.of(context).unfocus();
                 }
