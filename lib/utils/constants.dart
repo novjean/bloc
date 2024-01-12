@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-const String kAppTitle = 'bloc';
+const String kAppTitle = 'bloc.';
 
 class Constants {
 
   //todo: check all testMode before release
-  static const String appVersion = '4.2.9';
+  static const String appVersion = '4.2.10';
 
   static const String fontDefault = 'Oswald';
 

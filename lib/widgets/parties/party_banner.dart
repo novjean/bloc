@@ -93,6 +93,7 @@ class _PartyBannerState extends State<PartyBanner> {
                 mArtists.add(artist);
               }
             }
+
             if (mounted) {
               setState(() {
                 _isArtistsLoading = false;
@@ -108,7 +109,6 @@ class _PartyBannerState extends State<PartyBanner> {
           }
         });
       } else {
-        Logx.em(_TAG, 'big act but artists not mentioned!');
         setState(() {
           _isArtistsLoading = false;
         });
@@ -146,12 +146,17 @@ class _PartyBannerState extends State<PartyBanner> {
       onTap: () {
         if (widget.isClickable) {
           if (widget.party.type == 'event') {
-
-            GoRouter.of(context).pushNamed(RouteConstants.eventRouteName,
+            context.goNamed(RouteConstants.eventRouteName,
                 pathParameters: {
                   'partyName': widget.party.name,
                   'partyChapter': widget.party.chapter
                 });
+
+            // GoRouter.of(context).pushNamed(RouteConstants.eventRouteName,
+            //     pathParameters: {
+            //       'partyName': widget.party.name,
+            //       'partyChapter': widget.party.chapter
+            //     });
           } else {
             GoRouter.of(context).pushNamed(RouteConstants.artistRouteName,
                 pathParameters: {
