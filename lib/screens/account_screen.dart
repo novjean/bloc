@@ -30,10 +30,16 @@ class AccountScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.black,
+        titleSpacing: 0,
         title: AppBarTitle(
           title: 'account',
         ),
-        titleSpacing: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_rounded),
+          onPressed: () {
+            GoRouter.of(context).pushNamed(RouteConstants.landingRouteName);
+          },
+        ),
       ),
       backgroundColor: Constants.background,
       body: _buildBody(context),
