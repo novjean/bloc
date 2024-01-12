@@ -20,6 +20,7 @@ import '../../api/apis.dart';
 import '../../db/entity/lounge_chat.dart';
 import '../../db/entity/lounge.dart';
 import '../../db/entity/party.dart';
+import '../../db/entity/tix.dart';
 import '../../db/entity/user.dart';
 import '../../db/shared_preferences/user_preferences.dart';
 import '../../helpers/dummy.dart';
@@ -338,14 +339,13 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
           scrollDirection: Axis.vertical,
           physics: const BouncingScrollPhysics(),
           itemBuilder: (ctx, index) {
+            LoungeChat chat = mChats[index];
 
-          LoungeChat chat = mChats[index];
-
-          if(!chatViewUpdatedList.contains(chat.id)){
-            chatViewUpdatedList.add(chat.id);
-            FirestoreHelper.updateLoungeChatViewCount(chat.id);
-            Logx.d(_TAG, 'chat ${chat.id} | views : ${chat.views}');
-          }
+            if (!chatViewUpdatedList.contains(chat.id)) {
+              chatViewUpdatedList.add(chat.id);
+              FirestoreHelper.updateLoungeChatViewCount(chat.id);
+              Logx.d(_TAG, 'chat ${chat.id} | views : ${chat.views}');
+            }
 
             return GestureDetector(
               child: ChatItem(
@@ -359,7 +359,8 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
                 Logx.d(_TAG, 'chat selected: $index');
               },
               onLongPress: () {
-                if (UserPreferences.myUser.clearanceLevel >= Constants.MANAGER_LEVEL) {
+                if (UserPreferences.myUser.clearanceLevel >=
+                    Constants.MANAGER_LEVEL) {
                   _showActionsDialog(context, chat);
                 }
               },
@@ -567,8 +568,8 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
                           Logx.ilt(
                               _TAG, 'you have has exited the lounge. bye 👋');
 
-                          GoRouter.of(context)
-                              .pushReplacementNamed(RouteConstants.landingRouteName);
+                          GoRouter.of(context).pushReplacementNamed(
+                              RouteConstants.landingRouteName);
                         },
                       )
                     ],
@@ -745,7 +746,7 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
 
   _showPartiesAndInvite(
       BuildContext context, bool checkFemale, bool checkMale, bool checkTrans) {
-    String defaultTitle = 'You\'re invited!';
+    String defaultTitle = 'You\'re invited! 💛';
     String defaultMessage =
         'you are exclusively invited to this party 🎉! Entry\'s on a first come, first serve basis. Come in early or reserve a table for a guaranteed spot. 💖';
 
@@ -758,12 +759,21 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
               borderRadius: BorderRadius.all(Radius.circular(20.0))),
           contentPadding: const EdgeInsets.all(16.0),
           content: SizedBox(
-            height: 250,
+            height: 500,
             child: SingleChildScrollView(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  const Text('select invite party'),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      top: 5.0,
+                      bottom: 10,
+                    ),
+                    child: const Text(
+                      '🎟️ invite members to party',
+                      style: TextStyle(fontSize: 18),
+                    ),
+                  ),
                   MultiSelectDialogField(
                     items: mParties
                         .map(
@@ -797,7 +807,7 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
                     height: 15,
                   ),
                   TextFieldWidget(
-                    label: 'description',
+                    label: 'title',
                     text: defaultTitle,
                     maxLength: 200,
                     maxLines: 1,
@@ -809,7 +819,7 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
                     label: 'description',
                     text: defaultMessage,
                     maxLength: 1000,
-                    maxLines: 3,
+                    maxLines: 7,
                     onChanged: (text) {
                       defaultMessage = text;
                     },
@@ -820,17 +830,28 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
           ),
           actions: [
             TextButton(
-              child: const Text('send invites'),
-              onPressed: () async {
-                await _sendInvites(ctx, defaultTitle, defaultMessage,
-                    checkFemale, checkMale, checkTrans);
+              child: const Text('cancel'),
+              onPressed: () {
                 Navigator.of(ctx).pop();
               },
             ),
             TextButton(
-              child: const Text('cancel'),
+              style: ButtonStyle(
+                backgroundColor:
+                    MaterialStateProperty.all<Color>(Constants.darkPrimary),
+              ),
+              child: const Text(
+                'send invites',
+                style: TextStyle(color: Constants.primary),
+              ),
               onPressed: () {
-                Navigator.of(ctx).pop();
+                if (sParties.isNotEmpty) {
+                  _sendInvites(ctx, defaultTitle, defaultMessage, checkFemale,
+                      checkMale, checkTrans);
+                  Navigator.of(ctx).pop();
+                } else {
+                  Logx.ist(_TAG, 'please select a party!');
+                }
               },
             ),
           ],
@@ -841,21 +862,36 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
 
   _sendInvites(BuildContext ctx, String addTitle, String addMessage,
       bool checkFemale, bool checkMale, bool checkTrans) async {
-    if (sParties.isNotEmpty) {
-      Party sParty = sParties.first;
+    Party sParty = sParties.first;
 
-      FirestoreHelper.pullPartyGuestsByPartyId(sParty.id).then((res) {
-        List<String> partyGuestIds = [];
+    FirestoreHelper.pullPartyGuestsByPartyId(sParty.id).then((res) {
+      List<String> partyGuestIds = [];
+
+      if (res.docs.isNotEmpty) {
+        for (int i = 0; i < res.docs.length; i++) {
+          DocumentSnapshot document = res.docs[i];
+          Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+          final PartyGuest partyGuest = Fresh.freshPartyGuestMap(data, false);
+          partyGuestIds.add(partyGuest.guestId);
+        }
+      }
+      Logx.ist(_TAG, '${partyGuestIds.length} members in guest list');
+
+      FirestoreHelper.pullTixsByPartyId(sParty.id).then((res) {
+        List<String> tixUserIds = [];
 
         if (res.docs.isNotEmpty) {
           for (int i = 0; i < res.docs.length; i++) {
             DocumentSnapshot document = res.docs[i];
             Map<String, dynamic> data =
                 document.data()! as Map<String, dynamic>;
-            final PartyGuest partyGuest = Fresh.freshPartyGuestMap(data, false);
-            partyGuestIds.add(partyGuest.guestId);
+            final Tix tix = Fresh.freshTixMap(data, false);
+            if(tix.isCompleted && tix.isSuccess){
+              tixUserIds.add(tix.userId);
+            }
           }
         }
+        Logx.ist(_TAG, '${tixUserIds.length} members have tixs');
 
         FirestoreHelper.pullUserLoungeMembers(mLounge.id).then((res) async {
           if (res.docs.isNotEmpty) {
@@ -871,17 +907,20 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
               }
             }
 
-            int count = 0;
+            int successCount = 0;
+            int failCount = 0;
 
             for (int i = 0; i < mFcmMembers.length; i++) {
               UserLounge userLounge = mFcmMembers[i];
 
               //check if user has already requested
-              if (partyGuestIds.contains(userLounge.userId)) {
+              if (partyGuestIds.contains(userLounge.userId) ||
+                  tixUserIds.contains(userLounge.userId)) {
                 continue;
               }
 
-              await FirestoreHelper.pullUser(userLounge.userId).then((res) {
+              await FirestoreHelper.pullUser(userLounge.userId)
+                  .then((res) async {
                 if (res.docs.isNotEmpty) {
                   DocumentSnapshot document = res.docs[0];
                   Map<String, dynamic> data =
@@ -925,23 +964,27 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
 
                       String title = '🎁 ${sParty.name}, $addTitle';
                       String message = 'Hey ${user.name}, $addMessage';
-                      Apis.sendPushNotification(user.fcmToken, title, message);
-                      Logx.ist(_TAG, '${user.name} has been invited!');
-                      count++;
+                      bool isSuccess = await Apis.sendPushNotification(
+                          user.fcmToken, title, message);
+                      if (isSuccess) {
+                        successCount++;
+                      } else {
+                        failCount++;
+                      }
                     }
+                  } else {
+                    //internal team, no invite will be sent
                   }
                 }
               });
             }
-            Logx.ilt(_TAG, 'invited $count members for ${sParty.name}');
+            Logx.ilt(_TAG, 'invite success: $successCount | fail: $failCount');
           }
         });
       });
+    });
 
-      Navigator.of(ctx).pop();
-    } else {
-      Logx.ist(_TAG, 'party needs to be selected');
-    }
+    Navigator.of(ctx).pop();
   }
 
   Widget _chatInput(BuildContext context) {
@@ -1257,8 +1300,8 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
                       FirestoreHelper.pushUserLounge(userLounge);
                       Logx.ist(_TAG,
                           'request to join the vip lounge has been sent 🫰');
-                      GoRouter.of(context)
-                          .pushReplacementNamed(RouteConstants.landingRouteName);
+                      GoRouter.of(context).pushReplacementNamed(
+                          RouteConstants.landingRouteName);
                     },
                   )
                 : const SizedBox(),

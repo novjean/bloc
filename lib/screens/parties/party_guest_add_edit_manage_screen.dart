@@ -2468,7 +2468,7 @@ class _PartyGuestAddEditManageScreenState
               TextButton(
                 style: ButtonStyle(
                   backgroundColor: MaterialStateProperty.all<Color>(Constants
-                      .darkPrimary), // Set your desired background color
+                      .darkPrimary),
                 ),
                 child: const Text('🤖 android',
                     style: TextStyle(color: Constants.primary)),

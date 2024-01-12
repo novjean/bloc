@@ -11,7 +11,7 @@ class Apis{
   static const String GoogleReviewBloc = 'google_review_bloc';
   static const String GoogleReviewFreq = 'google_review_freq';
 
-  static Future<void> sendPushNotification(String fcmToken, String title, String msg) async {
+  static Future<bool> sendPushNotification(String fcmToken, String title, String msg) async {
     try{
       final body = {
         "to": fcmToken,
@@ -33,11 +33,14 @@ class Apis{
 
       if(res.statusCode == 200){
         Logx.i(_TAG, 'noti api response is success');
+        return true;
       } else {
         Logx.em(_TAG, 'noti api response failure: ${res.body}');
+        return false;
       }
     } catch(e) {
       Logx.em(_TAG, e.toString());
+      return false;
     }
   }
 
