@@ -27,6 +27,7 @@ import '../../db/entity/party_guest.dart';
 import '../../db/entity/party_interest.dart';
 import '../../db/entity/promoter.dart';
 import '../../db/entity/reservation.dart';
+import '../../db/entity/tix.dart';
 import '../../db/entity/user.dart' as blocUser;
 import '../../db/shared_preferences/party_guest_preferences.dart';
 import '../../db/shared_preferences/user_preferences.dart';
@@ -1286,82 +1287,38 @@ class _PartyGuestAddEditManageScreenState
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 32),
       child: ButtonWidget(
-        text: !widget.partyGuest.isApproved ? 'approve' : 'un-approve',
+        text: !widget.partyGuest.isApproved ? '👍 approve' : '👎 deny',
         onClicked: () async {
-          bool isApproved = !widget.partyGuest.isApproved;
+          if(widget.party.isTix && widget.party.isActive){
+            // need to check if the user has a ticket for the event already
+            FirestoreHelper.pullTixsByPartyId(widget.party.id).then((res) {
+              if(res.docs.isNotEmpty){
+                bool userHasTix = false;
 
-          widget.partyGuest =
-              widget.partyGuest.copyWith(isApproved: isApproved);
-          FirestoreHelper.pushPartyGuest(widget.partyGuest);
-
-          if (isApproved) {
-            if (widget.party.loungeId.isNotEmpty) {
-              FirestoreHelper.pullUserLounge(
-                      mBlocUser.id, widget.party.loungeId)
-                  .then((res) {
-                if (res.docs.isEmpty) {
-                  UserLounge userLounge = Dummy.getDummyUserLounge();
-                  userLounge = userLounge.copyWith(
-                      loungeId: widget.party.loungeId,
-                      userId: mBlocUser.id,
-                      userFcmToken: mBlocUser.fcmToken,
-                      isAccepted: true);
-                  FirestoreHelper.pushUserLounge(userLounge);
-
-                  if (mBlocUser.fcmToken.isNotEmpty) {
-                    String title = widget.party.name;
-                    String message =
-                        '🥳 yayyy! welcome to ${widget.party.name} family, your guest list for ${widget.party.name} has been approved 🎉, see you and your gang soon! 😎🍾';
-
-                    //send a notification
-                    Apis.sendPushNotification(
-                        mBlocUser.fcmToken, title, message);
-                    Logx.ist(_TAG,
-                        'notification has been sent to ${mBlocUser.name} ${mBlocUser.surname}');
-                  } else {
-                    Logx.d(_TAG,
-                        'app user but no fcm token to alert guest approval');
-                    _notifyApprovalWhatsapp();
-                  }
-                } else {
-                  if (mBlocUser.fcmToken.isNotEmpty) {
-                    String title = widget.party.name;
-                    String message =
-                        '🥳 yayyy! your guest list for ${widget.party.name} has been approved 🎉, see you and your gang soon! 😎🍾';
-
-                    //send a notification
-                    Apis.sendPushNotification(
-                        mBlocUser.fcmToken, title, message);
-                    Logx.ist(_TAG,
-                        'notification has been sent to ${mBlocUser.name} ${mBlocUser.surname}');
-                  } else {
-                    Logx.d(_TAG,
-                        'no fcm token, whatsapp notifying guest approval');
-                    _notifyApprovalWhatsapp();
+                for(int i=0;i<res.docs.length; i++){
+                  DocumentSnapshot document = res.docs[i];
+                  Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+                  final Tix tix = Fresh.freshTixMap(data, false);
+                  if(tix.userId == mBlocUser.id && tix.isSuccess && tix.isCompleted){
+                    userHasTix = true;
+                    break;
                   }
                 }
-              });
-            } else {
-              if (mBlocUser.fcmToken.isNotEmpty) {
-                String title = widget.party.name;
-                String message =
-                    '🥳 yayyy! your guest list for ${widget.party.name} has been approved 🎉, see you and your gang soon! 😎🍾';
 
-                //send a notification
-                Apis.sendPushNotification(mBlocUser.fcmToken, title, message);
-                Logx.ist(_TAG,
-                    'notification has been sent to ${mBlocUser.name} ${mBlocUser.surname}');
+                if(userHasTix){
+                  _showTixGuestApproveOverrideDialog();
+                } else {
+                  // user has not bought tix for this event, so proceed
+                  _handleGuestApprove();
+                }
               } else {
-                _notifyApprovalWhatsapp();
+                // user has not bought any ticket, so proceed with guest list
+                _handleGuestApprove();
               }
-            }
-            Logx.ist(_TAG, 'party guest ${widget.partyGuest.name} is approved');
+            });
           } else {
-            Logx.ist(
-                _TAG, 'party guest ${widget.partyGuest.name} is unapproved');
+            _handleGuestApprove();
           }
-
-          Navigator.of(context).pop();
         },
       ),
     );
@@ -2504,6 +2461,7 @@ class _PartyGuestAddEditManageScreenState
                 child: const Text('close',
                     style: TextStyle(color: Constants.background)),
                 onPressed: () {
+                  Navigator.of(context).pop();
                   _showAdDialog(context);
                 },
               ),
@@ -2922,5 +2880,125 @@ class _PartyGuestAddEditManageScreenState
     Uri uri = Uri.parse(url);
 
     await NetworkUtils.launchInBrowser(uri);
+  }
+
+  void _handleGuestApprove() {
+    bool isApproved = !widget.partyGuest.isApproved;
+
+    widget.partyGuest =
+        widget.partyGuest.copyWith(isApproved: isApproved);
+    FirestoreHelper.pushPartyGuest(widget.partyGuest);
+
+    if (isApproved) {
+      if (widget.party.loungeId.isNotEmpty) {
+        FirestoreHelper.pullUserLounge(
+            mBlocUser.id, widget.party.loungeId)
+            .then((res) {
+          if (res.docs.isEmpty) {
+            UserLounge userLounge = Dummy.getDummyUserLounge();
+            userLounge = userLounge.copyWith(
+                loungeId: widget.party.loungeId,
+                userId: mBlocUser.id,
+                userFcmToken: mBlocUser.fcmToken,
+                isAccepted: true);
+            FirestoreHelper.pushUserLounge(userLounge);
+
+            if (mBlocUser.fcmToken.isNotEmpty) {
+              String title = widget.party.name;
+              String message =
+                  '🥳 yayyy! welcome to ${widget.party.name} family, your guest list for ${widget.party.name} has been approved 🎉, see you and your gang soon! 😎🍾';
+
+              //send a notification
+              Apis.sendPushNotification(
+                  mBlocUser.fcmToken, title, message);
+              Logx.ist(_TAG,
+                  'notification has been sent to ${mBlocUser.name} ${mBlocUser.surname}');
+            } else {
+              Logx.d(_TAG,
+                  'app user but no fcm token to alert guest approval');
+              _notifyApprovalWhatsapp();
+            }
+          } else {
+            if (mBlocUser.fcmToken.isNotEmpty) {
+              String title = widget.party.name;
+              String message =
+                  '🥳 yayyy! your guest list for ${widget.party.name} has been approved 🎉, see you and your gang soon! 😎🍾';
+
+              //send a notification
+              Apis.sendPushNotification(
+                  mBlocUser.fcmToken, title, message);
+              Logx.ist(_TAG,
+                  'notification has been sent to ${mBlocUser.name} ${mBlocUser.surname}');
+            } else {
+              Logx.d(_TAG,
+                  'no fcm token, whatsapp notifying guest approval');
+              _notifyApprovalWhatsapp();
+            }
+          }
+        });
+      } else {
+        if (mBlocUser.fcmToken.isNotEmpty) {
+          String title = widget.party.name;
+          String message =
+              '🥳 yayyy! your guest list for ${widget.party.name} has been approved 🎉, see you and your gang soon! 😎🍾';
+
+          //send a notification
+          Apis.sendPushNotification(mBlocUser.fcmToken, title, message);
+          Logx.ist(_TAG,
+              'notification has been sent to ${mBlocUser.name} ${mBlocUser.surname}');
+        } else {
+          _notifyApprovalWhatsapp();
+        }
+      }
+      Logx.ist(_TAG, 'party guest ${widget.partyGuest.name} is approved');
+    } else {
+      Logx.ist(
+          _TAG, 'party guest ${widget.partyGuest.name} is unapproved');
+    }
+
+    Navigator.of(context).pop();
+  }
+
+  void _showTixGuestApproveOverrideDialog() {
+    String message =
+        '${mBlocUser.name} ${mBlocUser.surname} already has tix for the event. Do you still want to process the guest list?';
+
+    showDialog(
+        context: context,
+        builder: (BuildContext ctx) {
+          return AlertDialog(
+            title: const Text(
+              '⚠️ user has tix for the event',
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 22, color: Colors.black),
+            ),
+            backgroundColor: Constants.lightPrimary,
+            shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(20.0))),
+            contentPadding: const EdgeInsets.all(16.0),
+            content: Text(message.toLowerCase()),
+            actions: [
+              TextButton(
+                child: const Text('close',
+                    style: TextStyle(color: Constants.background)),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+              TextButton(
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all<Color>(Constants
+                      .darkPrimary),
+                ),
+                child: Text(!widget.partyGuest.isApproved ? '👍 approve' : '👎 deny',
+                    style: const TextStyle(color: Constants.primary)),
+                onPressed: () async {
+                  Navigator.of(ctx).pop();
+                  _handleGuestApprove();
+                },
+              ),
+            ],
+          );
+        });
   }
 }

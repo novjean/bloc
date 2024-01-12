@@ -105,26 +105,6 @@ class ReservationBanner extends StatelessWidget {
                                       )));
                             },
                           ),
-                          UserPreferences.myUser.clearanceLevel == Constants.ADMIN_LEVEL?
-                          Padding(
-                              padding:
-                              const EdgeInsets.only(left: 10.0),
-                              child: DarkButtonWidget(
-                                  text: 'party interest',
-                                  onClicked: () {
-                                    bool value = false;
-                                    Reservation updatedReservation =
-                                    reservation.copyWith(
-                                        isApproved: value);
-                                    Logx.i(_TAG,
-                                        'reservation for ${updatedReservation.name} approved $value');
-                                    Reservation freshReservation =
-                                    Fresh.freshReservation(
-                                        updatedReservation);
-                                    FirestoreHelper.pushReservation(
-                                        freshReservation);
-                                  }),)
-                              : const SizedBox(),
                           isPromoter
                               ? reservation.isApproved
                                   ? Padding(

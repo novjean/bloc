@@ -2248,7 +2248,7 @@ class FirestoreHelper {
     return FirebaseFirestore.instance
         .collection(TIXS)
         .where('partyId', isEqualTo: partyId)
-        .orderBy('userName', descending: false)
+        // .orderBy('userName', descending: false)
         .get();
   }
 

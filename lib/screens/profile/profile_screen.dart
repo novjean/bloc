@@ -26,6 +26,7 @@ import '../../utils/file_utils.dart';
 import '../../utils/logx.dart';
 import '../../utils/number_utils.dart';
 import '../../utils/string_utils.dart';
+import '../../widgets/footer.dart';
 import '../../widgets/profile/user_friend_item.dart';
 import '../../widgets/profile_widget.dart';
 import '../../widgets/ui/blurred_image.dart';
@@ -285,7 +286,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   textAlign: TextAlign.start,
                   style: TextStyle(color: Constants.primary, fontSize: 16),
                 ),
-              )
+              ),
+        const Divider(),
+        Footer()
 
         // const SizedBox(height: 48),
         // buildAbout(user),

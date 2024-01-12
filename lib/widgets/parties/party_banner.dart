@@ -146,12 +146,6 @@ class _PartyBannerState extends State<PartyBanner> {
       onTap: () {
         if (widget.isClickable) {
           if (widget.party.type == 'event') {
-            // context.goNamed(RouteConstants.eventRouteName,
-            //     pathParameters: {
-            //       'partyName': widget.party.name,
-            //       'partyChapter': widget.party.chapter
-            //     });
-
             GoRouter.of(context).pushNamed(RouteConstants.eventRouteName,
                 pathParameters: {
                   'partyName': widget.party.name,
@@ -291,8 +285,9 @@ class _PartyBannerState extends State<PartyBanner> {
                     Flexible(
                       flex: 1,
                       child: Stack(children: [
-                        SizedBox(
+                        Container(
                           height: 200,
+                          color: Constants.background,
                           child: kIsWeb
                               ? FadeInImage(
                                   placeholder:

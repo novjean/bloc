@@ -16,20 +16,23 @@ class Footer extends StatelessWidget {
         width: MediaQuery.of(context).size.width,
         color: Colors.black,
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10),
+          padding: const EdgeInsets.only(left: 10.0, right: 10, bottom: 10, top: 5),
           child: Column(children: [
             Expanded(
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Container(
-                    height: 40,
-                    width: 35,
-                    decoration: const BoxDecoration(
-                      image: DecorationImage(
-                          image: AssetImage("assets/icons/logo-adaptive.png"),
-                          fit: BoxFit.fitHeight),
+                  Padding(
+                    padding: const EdgeInsets.only(right: 3.0, top: 15),
+                    child: Container(
+                      height: 60,
+                      width: 40,
+                      decoration: const BoxDecoration(
+                        image: DecorationImage(
+                            image: AssetImage("assets/icons/logo-adaptive.png"),
+                            fit: BoxFit.fitHeight),
+                      ),
                     ),
                   ),
                   Column(
@@ -104,11 +107,11 @@ class Footer extends StatelessWidget {
               ),
             ),
             const Padding(
-              padding: EdgeInsets.only(bottom: 5, left: 10, right: 10),
+              padding: EdgeInsets.only(top: 10, bottom: 5, left: 10, right: 10),
               child: Text(
                 'Copyright Novatech Corp 2024. All rights reserved.',
                 textAlign: TextAlign.center,
-                style: TextStyle(color: Constants.primary, fontSize: 12),
+                style: TextStyle(color: Constants.primary, fontSize: 13),
               ),
             )
           ]),
