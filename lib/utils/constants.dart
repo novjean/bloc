@@ -5,7 +5,7 @@ const String kAppTitle = 'bloc.';
 class Constants {
 
   //todo: check all testMode before release
-  static const String appVersion = '4.2.10';
+  static const String appVersion = '4.3.0';
 
   static const String fontDefault = 'Oswald';
 
