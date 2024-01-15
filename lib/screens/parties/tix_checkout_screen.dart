@@ -286,10 +286,6 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
           content: Text(message),
           actions: [
             TextButton(
-              // style: ButtonStyle(
-              //   backgroundColor: MaterialStateProperty.all<Color>(
-              //       Constants.darkPrimary),
-              // ),
               child: const Text("close", style: TextStyle(color: Constants.darkPrimary),),
               onPressed: () {
                 Navigator.of(context).pop();
