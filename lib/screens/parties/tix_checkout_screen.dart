@@ -376,7 +376,6 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
       mainAxisSize: MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        const Divider(),
         Container(
           color: Constants.primary,
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
@@ -390,7 +389,6 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
             ],
           ),
         ),
-        // const Divider(),
         Container(
           color: Constants.primary,
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
@@ -436,7 +434,6 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
           ),
         ),
 
-        const Divider(),
         Container(
           color: Constants.primary,
           padding: const EdgeInsets.all(16.0),
