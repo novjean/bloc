@@ -8,6 +8,7 @@ import 'package:bloc/db/shared_preferences/ui_preferences.dart';
 import 'package:bloc/services/firebase_api.dart';
 import 'package:bloc/utils/logx.dart';
 import 'package:bloc/widgets/ui/loading_widget.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
@@ -17,8 +18,11 @@ import 'package:go_router/go_router.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
+import 'db/entity/user.dart' as blocUser;
 import 'db/shared_preferences/user_preferences.dart';
 import 'firebase_options.dart';
+import 'helpers/firestore_helper.dart';
+import 'helpers/fresh.dart';
 import 'providers/cart.dart';
 import 'utils/constants.dart';
 
@@ -40,12 +44,23 @@ Future<void> main() async {
   );
   await FirebaseApi().initNotifications();
 
-  // // Listen for Auth changes and .refresh the GoRouter [router]
-  // FirebaseAuth.instance.authStateChanges().listen((User? user) {
-  //   Logx.ist(_TAG, 'main: firebase auth state change, refreshing router');
-  //
-  //   BlocRouter.returnRouter(true).refresh();
-  // });
+  // Listen for Auth changes and .refresh the GoRouter [router]
+  FirebaseAuth.instance.authStateChanges().listen((User? user) {
+    Logx.ist(_TAG, 'main: firebase auth state change, refreshing router');
+
+    FirestoreHelper.pullUser(user!.uid).then((res) {
+      if(res.docs.isNotEmpty){
+        DocumentSnapshot document = res.docs[0];
+        Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+
+        final blocUser.User mUser = Fresh.freshUserMap(data, false);
+        UserPreferences.setUser(mUser);
+        BlocRouter.returnRouter(true).refresh();
+      } else {
+        Logx.em(_TAG, 'user not found.');
+      }
+    });
+  });
 
   // Pass all uncaught "fatal" errors from the framework to Crashlytics
   FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
@@ -134,6 +149,16 @@ class _BlocAppState extends State<BlocApp> {
                           borderRadius: BorderRadius.circular(20),
                         ),
                       ),
+
+                      textTheme: TextTheme(
+                        bodyLarge: TextStyle(color: Constants.darkPrimary),
+                        bodyMedium: TextStyle(color: Constants.darkPrimary),
+                        bodySmall: TextStyle(color: Constants.darkPrimary),
+                        labelLarge: TextStyle(color: Constants.darkPrimary),
+                        labelMedium: TextStyle(color: Constants.darkPrimary),
+                        labelSmall: TextStyle(color: Constants.darkPrimary),
+                        // You can customize other text styles as well
+                      )
                     ),
                     routerConfig: BlocRouter.returnRouter(true),
                   );

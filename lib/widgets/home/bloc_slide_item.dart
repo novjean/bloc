@@ -2,7 +2,6 @@ import 'package:bloc/db/entity/bloc_service.dart';
 import 'package:bloc/db/shared_preferences/user_preferences.dart';
 import 'package:bloc/helpers/dummy.dart';
 import 'package:bloc/helpers/firestore_helper.dart';
-import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -45,17 +44,7 @@ class _BlocSlideItemState extends State<BlocSlideItem> {
           final BlocService blocService = Fresh.freshBlocServiceMap(data, false);
           blocServices.add(blocService);
         }
-        if(mounted){
-          setState(() {
-            mBlocService = blocServices.first;
-            if(UserPreferences.getUserBlocs().contains(mBlocService.id)){
-              _isBlocServiceLoading = false;
-            } else {
-              // true will result in not showing
-              _isBlocServiceLoading = true;
-            }
-          });
-        } else {
+        setState(() {
           mBlocService = blocServices.first;
           if(UserPreferences.getUserBlocs().contains(mBlocService.id)){
             _isBlocServiceLoading = false;
@@ -63,16 +52,12 @@ class _BlocSlideItemState extends State<BlocSlideItem> {
             // true will result in not showing
             _isBlocServiceLoading = true;
           }
-        }
+        });
       } else {
         Logx.em(_TAG, 'no bloc service found for bloc id ${widget.bloc.id}');
-        if(mounted){
-          setState(() {
-            _isBlocServiceLoading = false;
-          });
-        } else {
+        setState(() {
           _isBlocServiceLoading = false;
-        }
+        });
       }
     });
   }

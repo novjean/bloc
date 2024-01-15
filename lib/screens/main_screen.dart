@@ -1,7 +1,6 @@
 import 'package:bloc/db/entity/user.dart' as blocUser;
 import 'package:bloc/db/shared_preferences/table_preferences.dart';
 import 'package:bloc/db/shared_preferences/ui_preferences.dart';
-import 'package:bloc/screens/login_screen.dart';
 import 'package:bloc/screens/lounge/lounges_screen.dart';
 
 import 'package:bloc/screens/profile/profile_login_screen.dart';
@@ -208,11 +207,11 @@ class _MainScreenState extends State<MainScreen> {
       }
       if (user.clearanceLevel >= Constants.MANAGER_LEVEL) {
         fbm.subscribeToTopic('offer');
+        fbm.subscribeToTopic('tixs');
+        fbm.subscribeToTopic('support_chats');
       }
       if (user.clearanceLevel == Constants.ADMIN_LEVEL) {
         fbm.subscribeToTopic('user_photos');
-        fbm.subscribeToTopic('tixs');
-        fbm.subscribeToTopic('support_chats');
         fbm.subscribeToTopic('notification_tests');
         fbm.subscribeToTopic('notification_tests_2');
       }
@@ -647,7 +646,7 @@ class _MainScreenState extends State<MainScreen> {
                             ),
                           ],
                         ),
-                        const Divider(),
+                        const Divider(color: Constants.darkPrimary),
                         const SizedBox(height: 5),
                       ],
                     );

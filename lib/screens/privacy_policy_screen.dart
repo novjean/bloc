@@ -11,6 +11,12 @@ class PrivacyPolicyScreen extends StatelessWidget {
         backgroundColor: Colors.black,
         title: AppBarTitle(title:'privacy policy'),
         titleSpacing: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_rounded, color: Constants.lightPrimary),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
       ),
       backgroundColor: Constants.background,
       body: Padding(

@@ -71,7 +71,7 @@ class _ArtistScreenState extends State<ArtistScreen> {
           title: AppBarTitle(title: widget.name.toLowerCase()),
           titleSpacing: 0,
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back_ios_rounded),
+            icon: const Icon(Icons.arrow_back_ios_rounded, color: Constants.lightPrimary,),
             onPressed: () {
               GoRouter.of(context).pushNamed(RouteConstants.landingRouteName);
             },

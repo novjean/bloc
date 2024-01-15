@@ -244,8 +244,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
 
         // NumbersWidget(),
-
-        const Divider(),
+        const SizedBox(height: 24),
         const Padding(
           padding: EdgeInsets.only(left: 15.0),
           child: Text(
@@ -287,7 +286,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   style: TextStyle(color: Constants.primary, fontSize: 16),
                 ),
               ),
-        const Divider(),
+        const SizedBox(height: 36),
+
         Footer()
 
         // const SizedBox(height: 48),

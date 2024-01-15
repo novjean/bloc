@@ -65,7 +65,7 @@ class _ReservationScreenState extends State<ReservationScreen> {
           title: 'reservations',
         ),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_rounded),
+          icon: const Icon(Icons.arrow_back_ios_rounded, color: Constants.lightPrimary),
           onPressed: () {
             if (kIsWeb) {
               GoRouter.of(context).pushReplacementNamed(RouteConstants.landingRouteName);
@@ -130,7 +130,7 @@ class _ReservationScreenState extends State<ReservationScreen> {
           )
               : const SizedBox(),
           _showBoxOfficeOptions(context),
-          const Divider(),
+          const Divider(color: Constants.darkPrimary,),
           showPromoterView
               ? switchPromoterOptions(context)
               : switchUserOptions(context)

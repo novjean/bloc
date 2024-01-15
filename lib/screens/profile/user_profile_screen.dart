@@ -164,7 +164,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
         title: AppBarTitle(title: ''),
         titleSpacing: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_rounded),
+          icon: const Icon(Icons.arrow_back_ios_rounded, color: Constants.lightPrimary),
           onPressed: () {
             GoRouter.of(context).pushNamed(RouteConstants.landingRouteName);
           },

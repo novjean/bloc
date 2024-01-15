@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:bloc/db/entity/party_guest.dart';
 import 'package:bloc/db/entity/user_lounge.dart';
 import 'package:bloc/helpers/firestore_helper.dart';
+import 'package:bloc/widgets/ui/app_bar_title.dart';
 import 'package:bloc/widgets/ui/button_widget.dart';
 import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -164,46 +165,9 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
         appBar: AppBar(
           backgroundColor: Colors.black,
           titleSpacing: 0,
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Container(
-                height: 40,
-                width: 35,
-                decoration: const BoxDecoration(
-                  image: DecorationImage(
-                      image: AssetImage("assets/icons/logo-adaptive.png"),
-                      fit: BoxFit.fitHeight),
-                ),
-              ),
-              InkWell(
-                  onTap: () {
-                    GoRouter.of(context)
-                        .pushNamed(RouteConstants.landingRouteName);
-                  },
-                  child: const Text('bloc')),
-              const Spacer(),
-              Text(
-                mLounge.name,
-                overflow: TextOverflow.ellipsis,
-              ),
-              Padding(
-                padding: const EdgeInsets.only(left: 8.0, right: 10),
-                child: GestureDetector(
-                  onTap: () {
-                    _showLoungeDetails(context);
-                  },
-                  child: CircleAvatar(
-                    backgroundImage: NetworkImage(
-                      mLounge.imageUrl,
-                    ),
-                  ),
-                ),
-              )
-            ],
-          ),
+          title: AppBarTitle(title: mLounge.name,),
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back_ios_rounded),
+            icon: const Icon(Icons.arrow_back_ios_rounded, color: Constants.lightPrimary),
             onPressed: () {
               if (kIsWeb) {
                 GoRouter.of(context).pushNamed(RouteConstants.landingRouteName);

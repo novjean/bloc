@@ -185,12 +185,12 @@ class _ChatItemState extends State<ChatItem> {
                                 iconSize: 18.0),
                           ),
                           const Spacer(),
-                          Padding(
+                          UserPreferences.myUser.clearanceLevel == Constants.ADMIN_LEVEL ? Padding(
                             padding: const EdgeInsets.only(top: 5),
                             child: Text(
                                 '👁️‍🗨️ ${widget.chat.views}'
                             ),
-                          )
+                          ) : const SizedBox()
                         ],
                       ),
                     )

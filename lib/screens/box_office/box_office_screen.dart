@@ -124,7 +124,7 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
           title: 'box office',
         ),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_rounded),
+          icon: const Icon(Icons.arrow_back_ios_rounded, color: Constants.lightPrimary),
           onPressed: () {
             if (kIsWeb) {
               GoRouter.of(context).pushNamed(RouteConstants.landingRouteName);
@@ -191,7 +191,7 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
                       )
                     : const SizedBox(),
                 _showBoxOfficeOptions(context),
-                const Divider(),
+                const Divider(color: Constants.darkPrimary),
                 showPromoterView
                     ? switchPromoterOptions(context)
                     : switchUserOptions(context)

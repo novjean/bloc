@@ -9,9 +9,12 @@ import 'package:go_router/go_router.dart';
 import '../../db/entity/user.dart' as blocUser;
 import '../db/entity/friend.dart';
 import '../db/entity/history_music.dart';
+import '../db/entity/lounge_chat.dart';
 import '../db/entity/party_guest.dart';
+import '../db/entity/party_photo.dart';
 import '../db/entity/reservation.dart';
 import '../db/entity/user_lounge.dart';
+import '../db/entity/user_photo.dart';
 import '../db/shared_preferences/table_preferences.dart';
 import '../helpers/firestorage_helper.dart';
 import '../helpers/firestore_helper.dart';
@@ -35,7 +38,7 @@ class AccountScreen extends StatelessWidget {
           title: 'account',
         ),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_rounded),
+          icon: const Icon(Icons.arrow_back_ios_rounded, color: Constants.lightPrimary,),
           onPressed: () {
             GoRouter.of(context).pushNamed(RouteConstants.landingRouteName);
           },
@@ -62,7 +65,7 @@ class AccountScreen extends StatelessWidget {
             onTap: () {
               GoRouter.of(context).pushNamed(RouteConstants.privacyRouteName);
             }),
-        const Divider(),
+        const Divider(color: Constants.darkPrimary),
         const SizedBox(height: 5.0),
         GestureDetector(
             child: SizedListViewBlock(
@@ -74,7 +77,7 @@ class AccountScreen extends StatelessWidget {
             onTap: () {
               GoRouter.of(context).pushNamed(RouteConstants.deliveryRouteName);
             }),
-        const Divider(),
+        const Divider(color: Constants.darkPrimary),
         const SizedBox(height: 5.0),
         GestureDetector(
             child: SizedListViewBlock(
@@ -86,7 +89,7 @@ class AccountScreen extends StatelessWidget {
             onTap: () {
               GoRouter.of(context).pushNamed(RouteConstants.refundRouteName);
             }),
-        const Divider(),
+        const Divider(color: Constants.darkPrimary),
         const SizedBox(height: 5.0),
         GestureDetector(
             child: SizedListViewBlock(
@@ -98,7 +101,7 @@ class AccountScreen extends StatelessWidget {
             onTap: () {
               GoRouter.of(context).pushNamed(RouteConstants.termsAndConditionsRouteName);
             }),
-        const Divider(),
+        const Divider(color: Constants.darkPrimary),
         UserPreferences.myUser.clearanceLevel==Constants.ADMIN_LEVEL?
         GestureDetector(
             child: SizedListViewBlock(
@@ -110,7 +113,7 @@ class AccountScreen extends StatelessWidget {
             onTap: () {
               GoRouter.of(context).pushNamed(RouteConstants.checkoutRouteName);
             }) : const SizedBox(),
-        const Divider(),
+        const Divider(color: Constants.darkPrimary),
         UserPreferences.myUser.clearanceLevel==Constants.ADMIN_LEVEL?
         GestureDetector(
             child: SizedListViewBlock(
@@ -122,7 +125,7 @@ class AccountScreen extends StatelessWidget {
             onTap: () {
               GoRouter.of(context).pushNamed(RouteConstants.errorRouteName);
             }) : const SizedBox(),
-        const Divider(),
+        const Divider(color: Constants.darkPrimary),
         const SizedBox(height: 5.0),
         GestureDetector(
             child: SizedListViewBlock(
@@ -138,7 +141,7 @@ class AccountScreen extends StatelessWidget {
                 _showLoginDialog(context);
               }
             }),
-        const Divider(),
+        const Divider(color: Constants.darkPrimary),
         const Spacer(),
         const Padding(
           padding: EdgeInsets.only(bottom: 10.0),
@@ -187,6 +190,28 @@ class AccountScreen extends StatelessWidget {
                   }
                 }
 
+                // delete party photo tags
+                FirestoreHelper.pullUserPhotos(sUser.id).then((res) {
+                  if(res.docs.isNotEmpty){
+                    for(int i=0;i<res.docs.length;i++){
+                      DocumentSnapshot document = res.docs[i];
+                      Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+                      UserPhoto userPhoto = Fresh.freshUserPhotoMap(data, false);
+
+                      FirestoreHelper.pullPartyPhoto(userPhoto.partyPhotoId).then((res) {
+                        if(res.docs.isNotEmpty){
+                          DocumentSnapshot document = res.docs[0];
+                          Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+                          PartyPhoto partyPhoto = Fresh.freshPartyPhotoMap(data, false);
+                          partyPhoto.tags.remove(sUser.id);
+                          FirestoreHelper.pushPartyPhoto(partyPhoto);
+                        }
+                        FirestoreHelper.deleteUserPhoto(userPhoto.id);
+                      });
+                    }
+                  }
+                });
+
                 // delete all friend connections
                 FirestoreHelper.pullFriendConnections(sUser.id).then((res) {
                   if(res.docs.isNotEmpty){
@@ -233,6 +258,23 @@ class AccountScreen extends StatelessWidget {
                     }
                   }
                   Logx.i(_TAG, '${sUser.name} ${sUser.surname}\'s ${res.docs.length} music history deleted');
+                });
+
+                FirestoreHelper.pullLoungeChatsByUserId(sUser.id).then((res) {
+                  if(res.docs.isNotEmpty){
+                    for (int i = 0; i < res.docs.length; i++) {
+                      DocumentSnapshot document = res.docs[i];
+                      Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+                      final LoungeChat chat = Fresh.freshLoungeChatMap(data, false);
+
+                      if(chat.type == FirestoreHelper.CHAT_TYPE_IMAGE){
+                        if(chat.imageUrl.contains(FirestorageHelper.CHAT_IMAGES)){
+                          FirestorageHelper.deleteFile(chat.imageUrl);
+                        }
+                      }
+                      FirestoreHelper.deleteLoungeChat(chat.id);
+                    }
+                  }
                 });
 
                 FirestoreHelper.pullUserLounges(sUser.id).then((res) {

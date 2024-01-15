@@ -332,7 +332,7 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
             titleSpacing: 0,
             backgroundColor: Constants.background,
             leading: IconButton(
-              icon: const Icon(Icons.arrow_back_ios_rounded),
+              icon: const Icon(Icons.arrow_back_ios_rounded, color: Constants.lightPrimary),
               onPressed: () {
                 Navigator.of(context).pop();
               },

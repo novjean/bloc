@@ -10,7 +10,14 @@ class RefundPolicyScreen extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Colors.black,
         title: AppBarTitle(title: 'refund policy',),
-        titleSpacing: 0,      ),
+        titleSpacing: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_rounded, color: Constants.lightPrimary),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
+      ),
       backgroundColor: Constants.background,
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 10),

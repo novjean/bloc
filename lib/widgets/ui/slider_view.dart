@@ -11,7 +11,7 @@ class SliderView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.white,
+      color: Constants.lightPrimary,
       padding: const EdgeInsets.only(top: 30),
       child: ListView(
         children: <Widget>[
@@ -107,7 +107,7 @@ class _SliderMenuItem extends StatelessWidget {
     return ListTile(
         title: Text(title,
             style: const TextStyle(
-                color: Colors.black, fontFamily: 'BalsamiqSans_Regular')),
+                color: Colors.black, fontFamily: Constants.fontDefault)),
         leading: Icon(iconData, color: Colors.black),
         onTap: () => onTap?.call(title));
   }

@@ -57,8 +57,7 @@ class _OTPScreenState extends State<OTPScreen> {
   }
 
   _verifyPhone() async {
-
-
+    Logx.i(_TAG, '_verifyPhone');
     if (kIsWeb) {
       await FirebaseAuth.instance
           .signInWithPhoneNumber(widget.phone, null)
@@ -74,8 +73,8 @@ class _OTPScreenState extends State<OTPScreen> {
       await FirebaseAuth.instance.verifyPhoneNumber(
           phoneNumber: widget.phone,
           verificationCompleted: (PhoneAuthCredential credential) async {
-            Logx.i(_TAG,
-                'verifyPhoneNumber: ${widget.phone} is verified. attempting sign in with credentials...');
+            Logx.i(_TAG, 'verifyPhoneNumber: ${widget.phone} is verified. code: ${credential.smsCode!}');
+            pinController.setText(credential.smsCode!);
           },
           verificationFailed: (FirebaseAuthException e) {
             Logx.i(_TAG, 'verificationFailed $e');
@@ -105,7 +104,7 @@ class _OTPScreenState extends State<OTPScreen> {
         backgroundColor: Constants.background,
         title: const Text(''),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_rounded),
+          icon: const Icon(Icons.arrow_back_ios_rounded, color: Constants.lightPrimary),
           onPressed: () {
             Navigator.of(context).pop();
           },
@@ -272,12 +271,13 @@ class _OTPScreenState extends State<OTPScreen> {
               length: 6,
               controller: pinController,
               focusNode: focusNode,
-              // androidSmsAutofillMethod:
-              //     AndroidSmsAutofillMethod.smsUserConsentApi,
+              androidSmsAutofillMethod: AndroidSmsAutofillMethod.none,
               listenForMultipleSmsOnAndroid: true,
               defaultPinTheme: defaultPinTheme,
+              separatorBuilder: (index) => const SizedBox(width: 8),
               closeKeyboardWhenCompleted: true,
               hapticFeedbackType: HapticFeedbackType.lightImpact,
+              pinputAutovalidateMode: PinputAutovalidateMode.onSubmit,
               onCompleted: (pin) async {
                 debugPrint('onCompleted: $pin');
 

@@ -149,7 +149,7 @@ class _EventScreenState extends State<EventScreen> {
           ),
           titleSpacing: 0,
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back_ios_rounded),
+            icon: const Icon(Icons.arrow_back_ios_rounded, color: Constants.lightPrimary,),
             onPressed: () {
               if (kIsWeb) {
                 GoRouter.of(context).pushNamed(RouteConstants.landingRouteName);
@@ -294,8 +294,7 @@ class _EventScreenState extends State<EventScreen> {
                   ],
                 ),
               ),
-              const SizedBox(height: 10),
-              const Divider(),
+              const SizedBox(height: 15),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 10),
                 width: double.infinity,
@@ -307,8 +306,7 @@ class _EventScreenState extends State<EventScreen> {
                       fontSize: 18,
                     )),
               ),
-              const SizedBox(height: 10),
-              const Divider(),
+              const SizedBox(height: 15),
               mInterestCount > 0
                   ? Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 10.0),

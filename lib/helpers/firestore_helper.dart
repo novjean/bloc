@@ -674,6 +674,13 @@ class FirestoreHelper {
         .get();
   }
 
+  static pullLoungeChatsByUserId(String userId) {
+    return FirebaseFirestore.instance
+        .collection(LOUNGE_CHATS)
+        .where('userId', isEqualTo: userId)
+        .get();
+  }
+
   static Stream<QuerySnapshot<Object?>> getLoungeChats(String loungeId) {
     return FirebaseFirestore.instance
         .collection(LOUNGE_CHATS)
@@ -2724,6 +2731,7 @@ class FirestoreHelper {
   static void deleteUserPhoto(String docId) {
     FirebaseFirestore.instance.collection(USER_PHOTOS).doc(docId).delete();
   }
+
 
 
 }

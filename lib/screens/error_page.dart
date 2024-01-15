@@ -14,6 +14,12 @@ class ErrorPage extends StatelessWidget {
         backgroundColor: Colors.black,
         title: AppBarTitle(title: "error"),
         titleSpacing: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_rounded, color: Constants.lightPrimary),
+          onPressed: () {
+            GoRouter.of(context).pushReplacementNamed(RouteConstants.landingRouteName);
+          },
+        ),
       ),
       backgroundColor: Constants.background,
       body: Padding(

@@ -115,6 +115,12 @@ class _PromoterGuestsScreenState extends State<PromoterGuestsScreen> {
               '${widget.party.name} ${widget.party.chapter == 'I' ? '' : widget.party.chapter}',
         ),
         titleSpacing: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_rounded, color: Constants.lightPrimary,),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
       ),
       floatingActionButton: !kIsWeb
           ? FloatingActionButton(

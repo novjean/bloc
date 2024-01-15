@@ -74,7 +74,7 @@ class _ManageSupportChatsScreenState extends State<ManageSupportChatsScreen> {
             ],
           ),
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back_ios_rounded),
+            icon: const Icon(Icons.arrow_back_ios_rounded, color: Constants.lightPrimary),
             onPressed: () {
               GoRouter.of(context).pushNamed(RouteConstants.landingRouteName);
             },

@@ -85,7 +85,7 @@ class _ProfileAddEditRegisterPageState
         titleSpacing: 0,
         backgroundColor: Colors.black,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_rounded),
+          icon: const Icon(Icons.arrow_back_ios_rounded, color: Constants.lightPrimary),
           onPressed: () {
             if (widget.task == 'register') {
               Logx.i(_TAG,'register back press not allowed');

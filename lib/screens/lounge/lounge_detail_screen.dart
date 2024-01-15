@@ -81,7 +81,7 @@ class _LoungeDetailScreenState extends State<LoungeDetailScreen> {
 
         // const SizedBox(height: 24),
         // NumbersWidget(),
-        const Divider(),
+        const Divider(color: Constants.darkPrimary),
 
       ],
     );

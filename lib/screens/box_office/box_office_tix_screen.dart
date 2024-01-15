@@ -124,7 +124,7 @@ class _BoxOfficeTixScreenState extends State<BoxOfficeTixScreen> {
         title: AppBarTitle(title: 'ticket'),
         titleSpacing: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_rounded),
+          icon: const Icon(Icons.arrow_back_ios_rounded, color: Constants.lightPrimary),
           onPressed: () {
             // if (kIsWeb) {
             //   GoRouter.of(context).pushNamed(RouteConstants.landingRouteName);
@@ -164,7 +164,7 @@ class _BoxOfficeTixScreenState extends State<BoxOfficeTixScreen> {
                 const SizedBox(height: 24),
                 _showTixTiers(context, mTixTiers),
 
-                const Divider(),
+                const Divider(color: Constants.darkPrimary),
                 Container(
                   color: Constants.primary,
                   padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),

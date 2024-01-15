@@ -22,7 +22,6 @@ import '../utils/constants.dart';
 import '../utils/logx.dart';
 import '../utils/string_utils.dart';
 import '../widgets/ui/toaster.dart';
-import 'main_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   final bool shouldTriggerSkip;
@@ -47,6 +46,16 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
+
+  @override
+  void initState() {
+    if(widget.shouldTriggerSkip){
+      _verifyUsingSkipPhone();
+    }
+
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     Logx.d(_TAG, 'login screen: trigger skip ${widget.shouldTriggerSkip}');
@@ -54,83 +63,7 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(
       backgroundColor: Constants.background,
       resizeToAvoidBottomInset: false,
-      body: StreamBuilder(
-        stream: FirebaseAuth.instance.authStateChanges(),
-        builder: (ctx, userSnapshot) {
-          switch (userSnapshot.connectionState) {
-            case ConnectionState.waiting:
-            case ConnectionState.none:
-              {
-                if (!kIsWeb) {
-                  return SplashScreen();
-                } else {
-                  return const LoadingWidget();
-                }
-              }
-            case ConnectionState.active:
-            case ConnectionState.done:
-              {
-                // Logx.ast(_TAG, 'login: auth state changes');
-
-                if (userSnapshot.hasData) {
-                  Logx.i(_TAG, 'user snapshot has data');
-
-                  final user = FirebaseAuth.instance.currentUser;
-                  CollectionReference users =
-                      FirestoreHelper.getUsersCollection();
-
-                  if (user!.uid.isEmpty || widget.shouldTriggerSkip == false) {
-                    Logx.i(_TAG, 'user snapshot uid is empty');
-                    return signInWidget();
-                  } else {
-                    return FutureBuilder<DocumentSnapshot>(
-                      future: users.doc(user.uid).get(),
-                      builder: (BuildContext ctx,
-                          AsyncSnapshot<DocumentSnapshot> snapshot) {
-                        switch (snapshot.connectionState) {
-                          case ConnectionState.waiting:
-                          case ConnectionState.none:
-                            return const LoadingWidget();
-                          case ConnectionState.active:
-                          case ConnectionState.done:
-                            {
-                              if (snapshot.hasError) {
-                                Logx.em(_TAG,
-                                    'user snapshot has error: ${snapshot.error}');
-                                return signInWidget();
-                              }
-
-                              if (snapshot.hasData && !snapshot.data!.exists) {
-                                Logx.i(_TAG,
-                                    'user snapshot has data but not registered in bloc ');
-                                // user not registered in bloc, will be picked up in OTP screen
-                                return signInWidget();
-                              }
-
-                              Map<String, dynamic> data =
-                                  snapshot.data!.data() as Map<String, dynamic>;
-                              final blocUser.User user =
-                                  Fresh.freshUserMap(data, true);
-                              UserPreferences.setUser(user);
-
-                              return const MainScreen();
-                            }
-                        }
-                      },
-                    );
-                  }
-                } else {
-                  if (widget.shouldTriggerSkip) {
-                    _verifyUsingSkipPhone();
-                    return const LoadingWidget();
-                  } else {
-                    return signInWidget();
-                  }
-                }
-              }
-          }
-        },
-      ),
+      body: widget.shouldTriggerSkip ? const LoadingWidget(): signInWidget()
     );
   }
 
@@ -161,6 +94,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   counterStyle: TextStyle(color: Constants.primary),
                   border: OutlineInputBorder(
                     borderSide: BorderSide(color: Constants.primary),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Constants.lightPrimary),
                   ),
                   enabledBorder: OutlineInputBorder(
                     // width: 0.0 produces a thin "hairline" border
@@ -371,7 +307,7 @@ class _LoginScreenState extends State<LoginScreen> {
       Logx.e(_TAG, e, s);
     } catch (e) {
       logger.e(e);
-      Toaster.longToast('auto login failed. $e');
+      Toaster.longToast('auto login failed with error: $e');
       FocusScope.of(context).unfocus();
     }
   }

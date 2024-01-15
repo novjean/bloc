@@ -92,7 +92,7 @@ class _SupportScreenState extends State<SupportScreen> {
             ],
           ),
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back_ios_rounded),
+            icon: const Icon(Icons.arrow_back_ios_rounded, color: Constants.lightPrimary),
             onPressed: () {
               if (kIsWeb) {
                 GoRouter.of(context).pushNamed(RouteConstants.landingRouteName);
