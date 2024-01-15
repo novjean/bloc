@@ -118,142 +118,168 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        widget.partyPhoto.partyName,
-                        style: const TextStyle(
-                            fontSize: 21, fontWeight: FontWeight.bold),
+                      Flexible(
+                        flex: 1,
+                        child: Text(
+                          widget.partyPhoto.partyName,
+                          style: const TextStyle(
+                              fontSize: 21, fontWeight: FontWeight.bold),
+                        ),
                       ),
-                      const Spacer(),
-                      Text(
-                        '${widget.partyPhoto.likers.length + widget.partyPhoto.initLikes}',
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 3.0),
-                        child: InkWell(
-                            onTap: () {
-                              if (UserPreferences.isUserLoggedIn()) {
-                                if (kIsWeb) {
-                                  _showDownloadAppDialog(context,
-                                      '🎁 spreading some love for photos');
-                                } else {
-                                  if (widget.partyPhoto.likers.isEmpty) {
-                                    setState(() {
-                                      widget.partyPhoto.likers
-                                          .add(UserPreferences.myUser.id);
-                                      FirestoreHelper.pushPartyPhoto(
-                                          widget.partyPhoto);
-                                    });
-                                  } else {
-                                    if (!isLoved) {
-                                      setState(() {
-                                        widget.partyPhoto.likers
-                                            .add(UserPreferences.myUser.id);
-                                        FirestoreHelper.pushPartyPhoto(
-                                            widget.partyPhoto);
-                                      });
+                      Flexible(
+                        flex: 1,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              InkWell(
+                                  onTap: () {
+                                    if (UserPreferences.isUserLoggedIn()) {
+                                      if (kIsWeb) {
+                                        _showDownloadAppDialog(context,
+                                            '🎁 spreading some love for photos');
+                                      } else {
+                                         if (widget.partyPhoto.likers.isEmpty) {
+                                          setState(() {
+                                            widget.partyPhoto.likers
+                                                .add(UserPreferences.myUser.id);
+                                            FirestoreHelper.pushPartyPhoto(
+                                                widget.partyPhoto);
+                                          });
+                                        } else {
+                                          if (!(widget.partyPhoto.likers.contains(UserPreferences.myUser.id))) {
+                                            setState(() {
+                                              widget.partyPhoto.likers
+                                                  .add(UserPreferences.myUser.id);
+                                              FirestoreHelper.pushPartyPhoto(
+                                                  widget.partyPhoto);
+                                            });
+                                          } else {
+                                            if(UserPreferences.myUser.clearanceLevel == Constants.ADMIN_LEVEL){
+                                              setState(() {
+                                                int initLikes = widget.partyPhoto.initLikes;
+                                                initLikes++;
+                                                widget.partyPhoto = widget.partyPhoto.copyWith(initLikes: initLikes);
+                                                FirestoreHelper.pushPartyPhoto(widget.partyPhoto);
+                                              });
+                                            } else {
+                                              String text = _getRandomLoveQuote();
+                                              Logx.ist(_TAG, '$text 😘');
+                                            }
+                                          }
+                                        }
+                                      }
                                     } else {
-                                      String text = _getRandomLoveQuote();
-                                      Logx.ist(_TAG, '$text 😘');
+                                      Logx.ist(
+                                          _TAG, 'please login to like the photo');
                                     }
-                                  }
-                                }
-                              } else {
-                                Logx.ist(
-                                    _TAG, 'please login to like the photo');
-                              }
-                            },
-                            child: isLoved
-                                ? const Icon(
+                                  },
+                                  child: isLoved
+                                      ? const Icon(
                                     Icons.favorite,
                                     size: 24.0,
                                     color: Constants.ferrari,
                                   )
-                                : const Icon(Icons.favorite_border,
-                                    size: 24.0)),
-                      ),
-                      Padding(
-                          padding: const EdgeInsets.only(left: 20.0),
-                          child: InkWell(
-                              onTap: () async {
-                                if (UserPreferences.isUserLoggedIn()) {
+                                      : const Icon(Icons.favorite_border,
+                                      size: 24.0)),
+                              Padding(
+                              padding: const EdgeInsets.only(bottom: 1.0, left: 3),
+                              child: Text(
+                                '${widget.partyPhoto.likers.length + widget.partyPhoto.initLikes}',
+                                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                          ],),
+
+                          Padding(
+                              padding: const EdgeInsets.only(left: 20.0),
+                              child: InkWell(
+                                  onTap: () async {
+                                    if (UserPreferences.isUserLoggedIn()) {
+                                      if (kIsWeb) {
+                                        _showDownloadAppDialog(context,
+                                            '🎁 share photos to your friends');
+                                      } else {
+                                        _showShareOptionsDialog(context);
+                                      }
+                                    } else {
+                                      Logx.ist(
+                                          _TAG, 'please login to share the photo');
+                                    }
+                                  },
+                                  child: const Icon(Icons.share_outlined,
+                                      size: 21.0))),
+                          Padding(
+                              padding: const EdgeInsets.only(left: 20),
+                              child: ElevatedButton.icon(
+                                onPressed: () {
                                   if (kIsWeb) {
-                                    _showDownloadAppDialog(context,
-                                        '🎁 share photos to your friends');
+                                    _showDownloadAppDialog(
+                                        context, '🎁 save your photos to gallery');
                                   } else {
-                                    _showShareOptionsDialog(context);
-                                  }
-                                } else {
-                                  Logx.ist(
-                                      _TAG, 'please login to share the photo');
-                                }
-                              },
-                              child: const Icon(Icons.share_outlined,
-                                  size: 24.0))),
-                      Padding(
-                          padding: const EdgeInsets.only(left: 20),
-                          child: ElevatedButton.icon(
-                            onPressed: () {
-                              if (kIsWeb) {
-                                _showDownloadAppDialog(
-                                    context, '🎁 save your photos to gallery');
-                              } else {
-                                if (UserPreferences.isUserLoggedIn()) {
-                                  Logx.ist(_TAG, '🍄 saving to gallery...');
-                                  int fileNum = widget.index + 1;
-                                  String fileName =
-                                      '${widget.partyPhoto.partyName} $fileNum';
+                                    if (UserPreferences.isUserLoggedIn()) {
+                                      Logx.ist(_TAG, '🍄 saving to gallery...');
+                                      int fileNum = widget.index + 1;
+                                      String fileName =
+                                          '${widget.partyPhoto.partyName} $fileNum';
 
-                                  FileUtils.saveNetworkImage(
-                                      widget.partyPhoto.imageUrl, fileName);
+                                      FileUtils.saveNetworkImage(
+                                          widget.partyPhoto.imageUrl, fileName);
 
-                                  List<String> downloaders =
-                                      widget.partyPhoto.downloaders;
-                                  if (!downloaders
-                                      .contains(UserPreferences.myUser.id)) {
-                                    downloaders.add(UserPreferences.myUser.id);
-                                    int downloadCount =
-                                        widget.partyPhoto.downloadCount + 1;
-                                    widget.partyPhoto = widget.partyPhoto
-                                        .copyWith(
+                                      List<String> downloaders =
+                                          widget.partyPhoto.downloaders;
+                                      if (!downloaders
+                                          .contains(UserPreferences.myUser.id)) {
+                                        downloaders.add(UserPreferences.myUser.id);
+                                        int downloadCount =
+                                            widget.partyPhoto.downloadCount + 1;
+                                        widget.partyPhoto = widget.partyPhoto
+                                            .copyWith(
                                             downloaders: downloaders,
                                             downloadCount: downloadCount);
-                                    FirestoreHelper.pushPartyPhoto(
-                                        widget.partyPhoto);
+                                        FirestoreHelper.pushPartyPhoto(
+                                            widget.partyPhoto);
 
-                                    setState(() {
-                                      widget.partyPhoto;
-                                    });
-                                  } else {
-                                    FirestoreHelper
-                                        .updatePartyPhotoDownloadCount(
+                                        setState(() {
+                                          widget.partyPhoto;
+                                        });
+                                      } else {
+                                        FirestoreHelper
+                                            .updatePartyPhotoDownloadCount(
                                             widget.partyPhoto.id);
-                                  }
+                                      }
 
-                                  if ((UserPreferences.myUser.lastReviewTime <
-                                      Timestamp.now().millisecondsSinceEpoch -
-                                          (2 *
-                                              DateTimeUtils
-                                                  .millisecondsWeek))) {
-                                    if (!UserPreferences.myUser.isAppReviewed) {
-                                      _showReviewAppDialog(context);
+                                      if ((UserPreferences.myUser.lastReviewTime <
+                                          Timestamp.now().millisecondsSinceEpoch -
+                                              (2 *
+                                                  DateTimeUtils
+                                                      .millisecondsWeek))) {
+                                        if (!UserPreferences.myUser.isAppReviewed) {
+                                          _showReviewAppDialog(context);
+                                        } else {
+                                          //todo: might need to implement challenge logic here
+                                          Logx.i(_TAG,
+                                              'app is reviewed, so nothing to do for now');
+                                        }
+                                      } else {
+                                        Logx.i(_TAG,
+                                            'last review time is less than two weeks, so nothing to do for now');
+                                      }
                                     } else {
-                                      //todo: might need to implement challenge logic here
-                                      Logx.i(_TAG,
-                                          'app is reviewed, so nothing to do for now');
+                                      Logx.ist(_TAG,
+                                          '🧩 please login to save the photo to your gallery');
                                     }
-                                  } else {
-                                    Logx.i(_TAG,
-                                        'last review time is less than two weeks, so nothing to do for now');
                                   }
-                                } else {
-                                  Logx.ist(_TAG,
-                                      '🧩 please login to save the photo to your gallery');
-                                }
-                              }
-                            },
-                            icon: const Icon(Icons.save_alt, size: 24.0),
-                            label: const Text('save'),
-                          )),
+                                },
+                                icon: const Icon(Icons.save_alt, size: 24.0),
+                                label: const Text('save'),
+                              )),
+                        ],
+                      ),)
+
                     ],
                   ),
                 ),

@@ -5,7 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
-import 'package:toggle_switch/toggle_switch.dart';
+// import 'package:toggle_switch/toggle_switch.dart';
 
 import '../../../db/entity/seat.dart';
 import '../../../db/entity/service_table.dart';
@@ -237,25 +237,25 @@ class _ManageSeatsScreenState extends State<ManageSeatsScreen> {
             child: Text('type: ', style: TextStyle(fontSize: 18)),
           ),
           Spacer(),
-          ToggleSwitch(
-            minWidth: 120.0,
-            minHeight: 50.0,
-            fontSize: 16.0,
-            initialLabelIndex: initialTableTypeIndex,
-            activeBgColor: [Theme.of(context).primaryColor],
-            activeFgColor: Colors.white,
-            inactiveBgColor: Colors.grey,
-            inactiveFgColor: Colors.grey[900],
-            totalSwitches: 2,
-            labels: types,
-            onToggle: (index) {
-              int tableType = FirestoreHelper.TABLE_COMMUNITY_TYPE_ID;
-              if (index == 1) {
-                tableType = FirestoreHelper.TABLE_PRIVATE_TYPE_ID;
-              }
-              FirestoreHelper.setTableType(serviceTable, tableType);
-            },
-          ),
+          // ToggleSwitch(
+          //   minWidth: 120.0,
+          //   minHeight: 50.0,
+          //   fontSize: 16.0,
+          //   initialLabelIndex: initialTableTypeIndex,
+          //   activeBgColor: [Theme.of(context).primaryColor],
+          //   activeFgColor: Colors.white,
+          //   inactiveBgColor: Colors.grey,
+          //   inactiveFgColor: Colors.grey[900],
+          //   totalSwitches: 2,
+          //   labels: types,
+          //   onToggle: (index) {
+          //     int tableType = FirestoreHelper.TABLE_COMMUNITY_TYPE_ID;
+          //     if (index == 1) {
+          //       tableType = FirestoreHelper.TABLE_PRIVATE_TYPE_ID;
+          //     }
+          //     FirestoreHelper.setTableType(serviceTable, tableType);
+          //   },
+          // ),
         ],
       ),
     );

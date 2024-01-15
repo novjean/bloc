@@ -27,6 +27,7 @@ import '../../utils/logx.dart';
 import '../../utils/number_utils.dart';
 import '../../utils/string_utils.dart';
 import '../../widgets/footer.dart';
+import '../../widgets/profile/pie_data.dart';
 import '../../widgets/profile/user_friend_item.dart';
 import '../../widgets/profile_widget.dart';
 import '../../widgets/ui/blurred_image.dart';
@@ -54,11 +55,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   List<PartyPhoto> mPartyPhotos = [];
   var _isPartyPhotosLoading = true;
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
 
   @override
   void initState() {
@@ -133,11 +129,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
   _buildBody(BuildContext context) {
     final user = UserPreferences.getUser();
 
-    List<_PieData> pieData2 = [];
+    List<PieData> pieData2 = [];
 
     if (showMusicHistory) {
       for (HistoryMusic historyMusic in mHistoryMusics) {
-        _PieData pieData = _PieData(
+        PieData pieData = PieData(
             historyMusic.genre, historyMusic.count, historyMusic.genre);
         pieData2.add(pieData);
       }
@@ -265,14 +261,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     legend: const Legend(
                         isVisible: true,
                         textStyle: TextStyle(color: Constants.lightPrimary)),
-                    series: <PieSeries<_PieData, String>>[
-                      PieSeries<_PieData, String>(
+                    series: <PieSeries<PieData, String>>[
+                      PieSeries<PieData, String>(
                           explode: true,
                           explodeIndex: 0,
                           dataSource: pieData2,
-                          xValueMapper: (_PieData data, _) => data.xData,
-                          yValueMapper: (_PieData data, _) => data.yData,
-                          dataLabelMapper: (_PieData data, _) => data.text,
+                          xValueMapper: (PieData data, _) => data.xData,
+                          yValueMapper: (PieData data, _) => data.yData,
+                          dataLabelMapper: (PieData data, _) => data.text,
                           dataLabelSettings: const DataLabelSettings(
                               isVisible: true,
                               textStyle: TextStyle(color: Colors.white))),
@@ -385,7 +381,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         return AlertDialog(
           backgroundColor: Constants.lightPrimary,
           shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(20.0))),
+              borderRadius: BorderRadius.all(Radius.circular(19.0))),
           contentPadding: const EdgeInsets.all(0.0),
           content: SizedBox(
             height: 400,
@@ -474,14 +470,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
             TextButton(
               child: const Text("😎 set profile photo"),
-              onPressed: () async {
+              onPressed: () {
                 PartyPhoto partyPhoto = mPartyPhotos[_currentIndex];
                 User user = UserPreferences.myUser;
 
                 // check if photo already exists and in user bucket
                 if (user.imageUrl.isNotEmpty &&
                     user.imageUrl.contains(FirestorageHelper.USER_IMAGES)) {
-                  await FirestorageHelper.deleteFile(user.imageUrl);
+                  FirestorageHelper.deleteFile(user.imageUrl);
                 }
 
                 user = user.copyWith(imageUrl: partyPhoto.imageUrl);
@@ -612,24 +608,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     Logx.i(_TAG, 'user default photo added.');
   }
 
-  // Widget buildAbout(blocUser.User user) => Container(
-  //       padding: const EdgeInsets.symmetric(horizontal: 48),
-  //       child: const Column(
-  //         crossAxisAlignment: CrossAxisAlignment.start,
-  //         children: [
-  //           Text(
-  //             'about',
-  //             style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-  //           ),
-  //           SizedBox(height: 16),
-  //           Text(
-  //             '',
-  //             style: TextStyle(fontSize: 16, height: 1.4),
-  //           ),
-  //         ],
-  //       ),
-  //     );
-
   _loadFriends(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
         stream: FirestoreHelper.getUserFriends(UserPreferences.myUser.id),
@@ -681,7 +659,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   _showFriends(BuildContext context, List<Friend> friends) {
-    return Container(
+    return SizedBox(
       height: 60,
       child: ListView.builder(
           itemCount: friends.length,
@@ -698,12 +676,4 @@ class _ProfileScreenState extends State<ProfileScreen> {
           }),
     );
   }
-}
-
-class _PieData {
-  _PieData(this.xData, this.yData, this.text);
-
-  final String xData;
-  final num yData;
-  final String text;
 }

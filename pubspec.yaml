@@ -93,7 +93,7 @@ dependencies:
 
   # ui
   fluttertoast: ^8.2.4
-  toggle_switch: ^2.0.1
+#  toggle_switch: ^2.0.1
   flutter_spinkit: ^5.2.0
   delayed_display: ^2.0.0
   expandable: ^5.0.1

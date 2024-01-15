@@ -790,13 +790,13 @@ class _EventScreenState extends State<EventScreen> {
       height: 40,
       width: 100,
       padding: const EdgeInsets.only(left: 5),
-      child: ElevatedButton(
+      child: ElevatedButton.icon(
         style: ElevatedButton.styleFrom(
           backgroundColor: Constants.primary,
           foregroundColor: Constants.background,
           shadowColor: Colors.white30,
-          elevation: 1,
-          // minimumSize: const Size.fromHeight(60),
+          elevation: 3,
+          padding: EdgeInsets.only(left: 5, right: 5)
         ),
         onPressed: () {
           PartyGuest partyGuest = Dummy.getDummyPartyGuest(true);
@@ -808,9 +808,11 @@ class _EventScreenState extends State<EventScreen> {
                     partyGuest: partyGuest, party: mParty, task: 'add')),
           );
         },
-        child: const Text(
-          'guest list',
-          style: TextStyle(fontSize: 17, color: Constants.darkPrimary),
+        icon: const Icon(Icons.app_registration, size: 19,),
+        label: const Text(
+          'guest',
+          maxLines: 1,
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Constants.darkPrimary),
         ),
       ),
     );

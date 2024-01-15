@@ -62,9 +62,9 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     Logx.d(_TAG, 'HomeScreen');
 
-    _loadBlocsAndUserBlocs();
-
     super.initState();
+
+    _loadBlocsAndUserBlocs();
 
     FirestoreHelper.pullGuestListRequested(UserPreferences.myUser.id)
         .then((res) {
@@ -78,19 +78,15 @@ class _HomeScreenState extends State<HomeScreen> {
           final PartyGuest partyGuest = Fresh.freshPartyGuestMap(data, false);
           partyGuestRequests.add(partyGuest);
         }
-        if (mounted) {
-          setState(() {
-            mPartyGuestRequests = partyGuestRequests;
-            _isPartyGuestsLoading = false;
-          });
-        }
+        setState(() {
+          mPartyGuestRequests = partyGuestRequests;
+          _isPartyGuestsLoading = false;
+        });
       } else {
         Logx.d(_TAG, 'no party guest requests found!');
-        if (mounted) {
-          setState(() {
-            _isPartyGuestsLoading = false;
-          });
-        }
+        setState(() {
+          _isPartyGuestsLoading = false;
+        });
       }
     });
 
@@ -141,14 +137,12 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       backgroundColor: Constants.background,
       resizeToAvoidBottomInset: false,
-      body: _isBlocsLoading && _isPartyGuestsLoading
-          ? const LoadingWidget()
-          : Column(
+      body: Column(
               mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
-                _showBlocs(context),
-                _showPartiesAndFooter(context),
+                _isBlocsLoading ? const LoadingWidget() :_showBlocs(context),
+                _isPartyGuestsLoading ? const LoadingWidget() :_showPartiesAndFooter(context),
               ],
             ),
     );
@@ -541,7 +535,6 @@ class _HomeScreenState extends State<HomeScreen> {
             }
           }).catchError((err) {
             Logx.em(_TAG, 'error loading blocs $err');
-            Logx.alt(_TAG, 'error loading blocs : $err' );
           });
   }
 }

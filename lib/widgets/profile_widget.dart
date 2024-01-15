@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 
+import '../utils/constants.dart';
+
 class ProfileWidget extends StatelessWidget {
   final String imagePath;
   final bool isEdit;
@@ -18,7 +20,6 @@ class ProfileWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = Theme.of(context).colorScheme.primary;
 
     return Center(
       child: Stack(
@@ -27,7 +28,7 @@ class ProfileWidget extends StatelessWidget {
           showEditIcon? Positioned(
             bottom: 0,
             right: 4,
-            child: buildEditIcon(color),
+            child: buildEditIcon(),
           ) : const SizedBox(),
         ],
       ),
@@ -53,11 +54,11 @@ class ProfileWidget extends StatelessWidget {
     );
   }
 
-  Widget buildEditIcon(Color color) => buildCircle(
-    color: Colors.white,
+  Widget buildEditIcon() => buildCircle(
+    color: Constants.shadowColor,
     all: 3,
     child: buildCircle(
-      color: color,
+      color: Constants.primary,
       all: 8,
       child: GestureDetector(
         onTap: onClicked,

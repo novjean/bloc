@@ -46,8 +46,6 @@ Future<void> main() async {
 
   // Listen for Auth changes and .refresh the GoRouter [router]
   FirebaseAuth.instance.authStateChanges().listen((User? user) {
-    Logx.ist(_TAG, 'main: firebase auth state change, refreshing router');
-
     FirestoreHelper.pullUser(user!.uid).then((res) {
       if(res.docs.isNotEmpty){
         DocumentSnapshot document = res.docs[0];
@@ -57,7 +55,7 @@ Future<void> main() async {
         UserPreferences.setUser(mUser);
         BlocRouter.returnRouter(true).refresh();
       } else {
-        Logx.em(_TAG, 'user not found.');
+        Logx.em(_TAG, 'user not found');
       }
     });
   });
@@ -151,14 +149,27 @@ class _BlocAppState extends State<BlocApp> {
                       ),
 
                       textTheme: TextTheme(
-                        bodyLarge: TextStyle(color: Constants.darkPrimary),
-                        bodyMedium: TextStyle(color: Constants.darkPrimary),
-                        bodySmall: TextStyle(color: Constants.darkPrimary),
-                        labelLarge: TextStyle(color: Constants.darkPrimary),
-                        labelMedium: TextStyle(color: Constants.darkPrimary),
-                        labelSmall: TextStyle(color: Constants.darkPrimary),
+                        bodyLarge: TextStyle(color: Constants.darkPrimary, fontFamily: Constants.fontDefault),
+                        bodyMedium: TextStyle(color: Constants.darkPrimary, fontFamily: Constants.fontDefault),
+                        bodySmall: TextStyle(color: Constants.darkPrimary, fontFamily: Constants.fontDefault),
+                        labelLarge: TextStyle(color: Constants.darkPrimary, fontFamily: Constants.fontDefault),
+                        labelMedium: TextStyle(color: Constants.darkPrimary, fontFamily: Constants.fontDefault),
+                        labelSmall: TextStyle(color: Constants.darkPrimary, fontFamily: Constants.fontDefault),
                         // You can customize other text styles as well
-                      )
+                      ),
+
+                      textButtonTheme: TextButtonThemeData(
+                        style: TextButton.styleFrom(
+                          foregroundColor: Constants.darkPrimary,
+                        ),
+                      ),
+
+                      elevatedButtonTheme: ElevatedButtonThemeData(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Constants.lightPrimary,
+                          foregroundColor: Constants.darkPrimary
+                        ),
+                      ),
                     ),
                     routerConfig: BlocRouter.returnRouter(true),
                   );

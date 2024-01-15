@@ -25,6 +25,7 @@ import '../../utils/date_time_utils.dart';
 import '../../utils/dialog_utils.dart';
 import '../../utils/file_utils.dart';
 import '../../utils/logx.dart';
+import '../../widgets/profile/pie_data.dart';
 import '../../widgets/profile/user_friend_item.dart';
 import '../../widgets/profile_widget.dart';
 import '../../widgets/ui/app_bar_title.dart';
@@ -176,11 +177,11 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
   }
 
   _buildBody(BuildContext context) {
-    List<_PieData> pieData2 = [];
+    List<PieData> pieData2 = [];
 
     if (showMusicHistory) {
       for (HistoryMusic historyMusic in mHistoryMusics) {
-        _PieData pieData = _PieData(
+        PieData pieData = PieData(
             historyMusic.genre, historyMusic.count, historyMusic.genre);
         pieData2.add(pieData);
       }
@@ -281,7 +282,6 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                 ],
               )
             : const SizedBox(),
-        const Divider(),
         const SizedBox(height: 24),
         const Padding(
           padding: EdgeInsets.only(left: 15.0, right: 15, bottom: 10),
@@ -314,7 +314,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                           color: Constants.primary, fontSize: 16),
                     ),
                   ),
-        const Divider(),
+        const SizedBox(height: 24,),
         const Padding(
           padding: EdgeInsets.only(left: 15.0),
           child: Text(
@@ -335,14 +335,14 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                     legend: const Legend(
                         isVisible: true,
                         textStyle: TextStyle(color: Constants.lightPrimary)),
-                    series: <PieSeries<_PieData, String>>[
-                      PieSeries<_PieData, String>(
+                    series: <PieSeries<PieData, String>>[
+                      PieSeries<PieData, String>(
                           explode: true,
                           explodeIndex: 0,
                           dataSource: pieData2,
-                          xValueMapper: (_PieData data, _) => data.xData,
-                          yValueMapper: (_PieData data, _) => data.yData,
-                          dataLabelMapper: (_PieData data, _) => data.text,
+                          xValueMapper: (PieData data, _) => data.xData,
+                          yValueMapper: (PieData data, _) => data.yData,
+                          dataLabelMapper: (PieData data, _) => data.text,
                           dataLabelSettings: const DataLabelSettings(
                               isVisible: true,
                               textStyle: TextStyle(color: Colors.white))),
@@ -583,14 +583,15 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
         return AlertDialog(
           backgroundColor: Constants.lightPrimary,
           shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(20.0))),
+              borderRadius: BorderRadius.all(Radius.circular(19.0))),
           contentPadding: const EdgeInsets.all(0.0),
           content: SizedBox(
-            height: MediaQuery.of(context).size.width,
-            width: MediaQuery.of(context).size.width,
+            height: 400,
+            width: double.maxFinite,
             child: Center(
               child: CarouselSlider(
                 options: CarouselOptions(
+                    height: 300,
                     initialPage: index,
                     enableInfiniteScroll: true,
                     autoPlay: true,
@@ -610,7 +611,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                 items: partyPhotoUrls.map((item) {
                   return kIsWeb
                       ? Image.network(item,
-                          fit: BoxFit.cover,
+                          fit: BoxFit.fitWidth,
                           width: MediaQuery.of(context).size.width)
                       : CachedNetworkImage(
                           imageUrl: item,
@@ -636,7 +637,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
           ),
           actions: [
             TextButton(
-              child: const Text("close"),
+              child: const Text("❎ close"),
               onPressed: () {
                 Navigator.of(ctx).pop();
               },
@@ -690,7 +691,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                     Constants.darkPrimary), // Set your desired background color
               ),
               child: const Text(
-                "💕 save to gallery",
+                "💕 save",
                 style: TextStyle(color: Constants.primary),
               ),
               onPressed: () {
@@ -728,24 +729,6 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
         child: ButtonWidget(
           text: _btnFriendText,
           onClicked: () {},
-        ),
-      );
-
-  Widget buildAbout(blocUser.User user) => Container(
-        padding: EdgeInsets.symmetric(horizontal: 48),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'about',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              '',
-              style: TextStyle(fontSize: 16, height: 1.4),
-            ),
-          ],
         ),
       );
 
@@ -815,12 +798,4 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
           }),
     );
   }
-}
-
-class _PieData {
-  _PieData(this.xData, this.yData, this.text);
-
-  final String xData;
-  final num yData;
-  final String text;
 }
