@@ -283,12 +283,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
               ),
         const SizedBox(height: 36),
-
         Footer()
-
-        // const SizedBox(height: 48),
-        // buildAbout(user),
-        // const SizedBox(height: 48),
       ],
     );
   }

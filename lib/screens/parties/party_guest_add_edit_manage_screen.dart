@@ -42,6 +42,7 @@ import '../../utils/file_utils.dart';
 import '../../utils/logx.dart';
 import '../../utils/network_utils.dart';
 import '../../utils/string_utils.dart';
+import '../../widgets/footer.dart';
 import '../../widgets/party_guest_entry_widget.dart';
 import '../../widgets/ui/button_widget.dart';
 import '../../widgets/ui/dark_textfield_widget.dart';
@@ -389,9 +390,15 @@ class _PartyGuestAddEditManageScreenState
     return Scaffold(
       backgroundColor: Constants.background,
       appBar: AppBar(
-        title: AppBarTitle(title: 'guest list'),
+        title: AppBarTitle(title: 'guest'),
         titleSpacing: 0,
         backgroundColor: Constants.background,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_rounded, color: Constants.lightPrimary),
+          onPressed: () {
+              Navigator.of(context).pop();
+          },
+        )
       ),
       body: _buildBody(context),
     );
@@ -1164,8 +1171,8 @@ class _PartyGuestAddEditManageScreenState
                 child: ButtonWidget(
                   height: 50,
                   text: (widget.task == 'edit' || widget.task == 'manage')
-                      ? 'save changes'
-                      : 'join list',
+                      ? 'save'
+                      : 'register',
                   onClicked: () {
                     if (widget.task == 'manage') {
                       FirestoreHelper.pushPartyGuest(widget.partyGuest);
@@ -1278,7 +1285,8 @@ class _PartyGuestAddEditManageScreenState
                       ],
                     )
                   : const SizedBox(),
-              const SizedBox(height: 48),
+              const SizedBox(height: 36),
+              Footer()
             ],
           );
   }
@@ -2586,8 +2594,7 @@ class _PartyGuestAddEditManageScreenState
                   Navigator.of(ctx).pop();
 
                   GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
-                  GoRouter.of(context)
-                      .pushNamed(RouteConstants.boxOfficeRouteName);
+                  GoRouter.of(context).pushNamed(RouteConstants.boxOfficeRouteName);
                 },
               ),
             ],

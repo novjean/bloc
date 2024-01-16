@@ -64,7 +64,8 @@ class _BlocSelectionScreenState extends State<BlocSelectionScreen> {
           backgroundColor: Constants.background,
           appBar: AppBar(
             elevation: 0.0,
-            title: AppBarTitle(title: 'select blocs'),
+            title: AppBarTitle(title: 'blocs'),
+            backgroundColor: Constants.background,
             titleSpacing: 0,
             leading: IconButton(
               icon: const Icon(Icons.arrow_back_ios_rounded, color: Constants.lightPrimary),

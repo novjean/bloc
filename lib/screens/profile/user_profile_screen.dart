@@ -25,6 +25,7 @@ import '../../utils/date_time_utils.dart';
 import '../../utils/dialog_utils.dart';
 import '../../utils/file_utils.dart';
 import '../../utils/logx.dart';
+import '../../widgets/footer.dart';
 import '../../widgets/profile/pie_data.dart';
 import '../../widgets/profile/user_friend_item.dart';
 import '../../widgets/profile_widget.dart';
@@ -356,7 +357,9 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                   style:
                       const TextStyle(color: Constants.primary, fontSize: 16),
                 ),
-              )
+              ),
+        const SizedBox(height: 36),
+        Footer()
       ],
     );
   }

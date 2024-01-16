@@ -627,7 +627,7 @@ class _PartyBannerState extends State<PartyBanner> {
               elevation: 3,
             ),
             child: const Text(
-              'guest list',
+              'guest',
               style: TextStyle(fontSize: 18),
             ),
             onPressed: () {

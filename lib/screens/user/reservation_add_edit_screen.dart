@@ -12,6 +12,7 @@ import 'package:multi_select_flutter/util/multi_select_item.dart';
 import 'package:multi_select_flutter/util/multi_select_list_type.dart';
 import 'package:pinput/pinput.dart';
 
+import '../../api/apis.dart';
 import '../../db/entity/product.dart';
 import '../../db/entity/reservation.dart';
 import '../../db/entity/user.dart' as blocUser;
@@ -24,7 +25,9 @@ import '../../routes/route_constants.dart';
 import '../../utils/constants.dart';
 import '../../utils/date_time_utils.dart';
 import '../../utils/logx.dart';
+import '../../utils/network_utils.dart';
 import '../../utils/string_utils.dart';
+import '../../widgets/footer.dart';
 import '../../widgets/ui/button_widget.dart';
 import '../../widgets/ui/dark_button_widget.dart';
 import '../../widgets/ui/dark_textfield_widget.dart';
@@ -54,6 +57,9 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
   List<String> guestCounts = [];
   late String sGuestCount;
 
+  List<String> blocs = ['bloc', 'freq'];
+  late String sBloc;
+
   List<String> ocassions = ['none', 'birthday', 'anniversary'];
   late String sOcassion;
 
@@ -63,7 +69,7 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
   String completePhoneNumber = '';
   String _verificationCode = '';
 
-  late blocUser.User bloc_user;
+  late blocUser.User mBlocUser;
   bool isEdit = false;
 
   List<Product> mBottles = [];
@@ -75,13 +81,19 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
   @override
   void initState() {
     if (!UserPreferences.isUserLoggedIn()) {
-      bloc_user = Dummy.getDummyUser();
+      mBlocUser = Dummy.getDummyUser();
     } else {
-      bloc_user = UserPreferences.myUser;
+      mBlocUser = UserPreferences.myUser;
     }
 
     if (widget.task == 'edit') {
       isEdit = true;
+    }
+
+    if(widget.reservation.blocServiceId == Constants.blocServiceId){
+      sBloc = blocs[0];
+    } else {
+      sBloc = blocs[1];
     }
 
     int i = 1;
@@ -147,6 +159,12 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
         title: AppBarTitle(
           title: 'reservation',
         ),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_rounded, color: Constants.lightPrimary),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        )
       ),
       backgroundColor: Constants.background,
       body: _buildBody(context),
@@ -155,382 +173,457 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
 
   _buildBody(BuildContext context) {
     return ListView(
-      padding: const EdgeInsets.symmetric(horizontal: 32),
+      // padding: const EdgeInsets.symmetric(horizontal: 32),
       physics: const BouncingScrollPhysics(),
       children: [
-        const SizedBox(height: 15),
-        DarkTextFieldWidget(
-            label: 'name *',
-            text: widget.reservation.name,
-            onChanged: (name) {
-              bloc_user = bloc_user.copyWith(name: name);
-
-              widget.reservation = widget.reservation.copyWith(name: name);
-            }),
-        !UserPreferences.isUserLoggedIn()
-            ? Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+        const SizedBox(height: 24),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 32),
+          child: Column(
+            children: [
+              const Row(
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  const SizedBox(height: 24),
                   Padding(
-                    padding: const EdgeInsets.only(bottom: 10),
+                    padding: EdgeInsets.only(bottom: 8.0),
                     child: Text(
-                      'phone number *',
+                      'club *',
+                      style: TextStyle(
+                          color: Constants.lightPrimary,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ],
+              ),
+              FormField<String>(
+                builder: (FormFieldState<String> state) {
+                  return InputDecorator(
+                    key: const ValueKey('location'),
+                    decoration: InputDecoration(
+                        fillColor: Colors.white,
+                        errorStyle: const TextStyle(
+                            color: Constants.errorColor, fontSize: 16.0),
+                        hintText: 'please select location',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(5.0),
+                          borderSide: BorderSide(color: Constants.primary),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Constants.primary, width: 0.0),
+                        )),
+                    isEmpty: sBloc == '',
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton<String>(
+                        style: const TextStyle(color: Constants.lightPrimary),
+                        dropdownColor: Constants.background,
+                        value: sBloc,
+                        isDense: true,
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            sBloc = newValue!;
+
+                            String sLocationId;
+                            if(sBloc == 'bloc'){
+                              sLocationId = Constants.blocServiceId;
+                            } else {
+                              sLocationId = Constants.freqServiceId;
+                            }
+
+                            widget.reservation = widget.reservation.copyWith(blocServiceId: sLocationId);
+                            state.didChange(newValue);
+                          });
+                        },
+                        items: blocs.map((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList(),
+                      ),
+                    ),
+                  );
+                },
+              ),
+              const SizedBox(height: 12),
+            ],
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 32),
+          child: !UserPreferences.isUserLoggedIn()
+              ? Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 15),
+                    DarkTextFieldWidget(
+                        label: 'name *',
+                        text: widget.reservation.name,
+                        onChanged: (name) {
+                          mBlocUser = mBlocUser.copyWith(name: name);
+
+                          widget.reservation = widget.reservation.copyWith(name: name);
+                        }),
+                    const SizedBox(height: 24),
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 10),
+                      child: Text(
+                        'phone number *',
+                        style: TextStyle(
+                            color: Theme.of(context).primaryColorLight,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    IntlPhoneField(
+                      style: TextStyle(
+                          color: Theme.of(context).primaryColor, fontSize: 18),
+                      decoration: InputDecoration(
+                          labelText: '',
+                          labelStyle:
+                              TextStyle(color: Theme.of(context).primaryColor),
+                          hintStyle:
+                              TextStyle(color: Theme.of(context).primaryColor),
+                          counterStyle:
+                              TextStyle(color: Theme.of(context).primaryColor),
+                          border: OutlineInputBorder(
+                            borderSide:
+                                BorderSide(color: Theme.of(context).primaryColor),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            // width: 0.0 produces a thin "hairline" border
+                            borderSide: BorderSide(
+                                color: Theme.of(context).primaryColor,
+                                width: 0.0),
+                          )),
+                      controller: _controller,
+                      initialCountryCode: 'IN',
+                      dropdownTextStyle: TextStyle(
+                          color: Theme.of(context).primaryColor, fontSize: 18),
+                      pickerDialogStyle: PickerDialogStyle(
+                          backgroundColor: Theme.of(context).primaryColor),
+                      onChanged: (phone) {
+                        Logx.i(_TAG, phone.completeNumber);
+                        completePhoneNumber = phone.completeNumber;
+                      },
+                      onCountryChanged: (country) {
+                        Logx.i(_TAG, 'country changed to: ${country.name}');
+                      },
+                    ),
+                  ],
+                )
+              : const SizedBox(),
+        ),
+        !UserPreferences.isUserLoggedIn()
+            ? const SizedBox(height: 12)
+            : const SizedBox(height: 24),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 32),
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 8),
+                    child: Text(
+                      'date *',
+                      style: TextStyle(
+                        color: Theme.of(context).primaryColorLight,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              dateContainer(context),
+            ],
+          ),
+        ),
+        const SizedBox(height: 24),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 32),
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 8),
+                    child: Text(
+                      'expected time of arrival',
+                      style: TextStyle(
+                        color: Theme.of(context).primaryColorLight,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              timeContainer(context),
+            ],
+          ),
+        ),
+        const SizedBox(height: 24),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 32),
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 8.0),
+                    child: Text(
+                      'number of guests *',
                       style: TextStyle(
                           color: Theme.of(context).primaryColorLight,
                           fontSize: 16,
                           fontWeight: FontWeight.bold),
                     ),
                   ),
-                  IntlPhoneField(
-                    style: TextStyle(
-                        color: Theme.of(context).primaryColor, fontSize: 18),
+                ],
+              ),
+              FormField<String>(
+                builder: (FormFieldState<String> state) {
+                  return InputDecorator(
+                    key: const ValueKey('guest_count'),
                     decoration: InputDecoration(
-                        labelText: '',
-                        labelStyle:
-                            TextStyle(color: Theme.of(context).primaryColor),
-                        hintStyle:
-                            TextStyle(color: Theme.of(context).primaryColor),
-                        counterStyle:
-                            TextStyle(color: Theme.of(context).primaryColor),
+                        fillColor: Colors.white,
+                        errorStyle: TextStyle(
+                            color: Theme.of(context).errorColor, fontSize: 16.0),
+                        hintText: 'please select guests count',
                         border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(5.0),
                           borderSide:
                               BorderSide(color: Theme.of(context).primaryColor),
                         ),
                         enabledBorder: OutlineInputBorder(
                           // width: 0.0 produces a thin "hairline" border
                           borderSide: BorderSide(
-                              color: Theme.of(context).primaryColor,
-                              width: 0.0),
+                              color: Theme.of(context).primaryColor, width: 0.0),
                         )),
-                    controller: _controller,
-                    initialCountryCode: 'IN',
-                    dropdownTextStyle: TextStyle(
-                        color: Theme.of(context).primaryColor, fontSize: 18),
-                    pickerDialogStyle: PickerDialogStyle(
-                        backgroundColor: Theme.of(context).primaryColor),
-                    onChanged: (phone) {
-                      Logx.i(_TAG, phone.completeNumber);
-                      completePhoneNumber = phone.completeNumber;
-                    },
-                    onCountryChanged: (country) {
-                      Logx.i(_TAG, 'country changed to: ${country.name}');
-                    },
-                  ),
-                ],
-              )
-            : const SizedBox(),
-        !UserPreferences.isUserLoggedIn()
-            ? const SizedBox(height: 12)
-            : const SizedBox(height: 24),
-        Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 8),
-                  child: Text(
-                    'date *',
-                    style: TextStyle(
-                      color: Theme.of(context).primaryColorLight,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            dateContainer(context),
-          ],
-        ),
-        const SizedBox(height: 24),
-        Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 8),
-                  child: Text(
-                    'expected time of arrival',
-                    style: TextStyle(
-                      color: Theme.of(context).primaryColorLight,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            timeContainer(context),
-          ],
-        ),
-        const SizedBox(height: 24),
-        Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 8.0),
-                  child: Text(
-                    'number of guests *',
-                    style: TextStyle(
-                        color: Theme.of(context).primaryColorLight,
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold),
-                  ),
-                ),
-              ],
-            ),
-            FormField<String>(
-              builder: (FormFieldState<String> state) {
-                return InputDecorator(
-                  key: const ValueKey('guest_count'),
-                  decoration: InputDecoration(
-                      fillColor: Colors.white,
-                      errorStyle: TextStyle(
-                          color: Theme.of(context).errorColor, fontSize: 16.0),
-                      hintText: 'please select guests count',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(5.0),
-                        borderSide:
-                            BorderSide(color: Theme.of(context).primaryColor),
+                    isEmpty: sGuestCount == '',
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton<String>(
+                        style:
+                            TextStyle(color: Theme.of(context).primaryColorLight),
+                        dropdownColor: Theme.of(context).backgroundColor,
+                        value: sGuestCount,
+                        isDense: true,
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            sGuestCount = newValue!;
+                            widget.reservation = widget.reservation
+                                .copyWith(guestsCount: int.parse(sGuestCount));
+                            state.didChange(newValue);
+                          });
+                        },
+                        items: guestCounts.map((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList(),
                       ),
-                      enabledBorder: OutlineInputBorder(
-                        // width: 0.0 produces a thin "hairline" border
-                        borderSide: BorderSide(
-                            color: Theme.of(context).primaryColor, width: 0.0),
-                      )),
-                  isEmpty: sGuestCount == '',
-                  child: DropdownButtonHideUnderline(
-                    child: DropdownButton<String>(
-                      style:
-                          TextStyle(color: Theme.of(context).primaryColorLight),
-                      dropdownColor: Theme.of(context).backgroundColor,
-                      value: sGuestCount,
-                      isDense: true,
-                      onChanged: (String? newValue) {
-                        setState(() {
-                          sGuestCount = newValue!;
-                          widget.reservation = widget.reservation
-                              .copyWith(guestsCount: int.parse(sGuestCount));
-                          state.didChange(newValue);
-                        });
-                      },
-                      items: guestCounts.map((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(value),
-                        );
-                      }).toList(),
                     ),
-                  ),
-                );
-              },
-            ),
-            const SizedBox(height: 24),
-          ],
-        ),
-        Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 8.0),
-                  child: Text(
-                    'special occasion',
-                    style: TextStyle(
-                        color: Theme.of(context).primaryColorLight,
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold),
-                  ),
-                ),
-              ],
-            ),
-            FormField<String>(
-              builder: (FormFieldState<String> state) {
-                return InputDecorator(
-                  key: const ValueKey('special_occasion'),
-                  decoration: InputDecoration(
-                      fillColor: Colors.white,
-                      errorStyle: TextStyle(
-                          color: Theme.of(context).errorColor, fontSize: 16.0),
-                      hintText: 'please select special occasion',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(5.0),
-                        borderSide:
-                            BorderSide(color: Theme.of(context).primaryColor),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        // width: 0.0 produces a thin "hairline" border
-                        borderSide: BorderSide(
-                            color: Theme.of(context).primaryColor, width: 0.0),
-                      )),
-                  isEmpty: sOcassion == '',
-                  child: DropdownButtonHideUnderline(
-                    child: DropdownButton<String>(
-                      style:
-                          TextStyle(color: Theme.of(context).primaryColorLight),
-                      dropdownColor: Theme.of(context).backgroundColor,
-                      value: sOcassion,
-                      isDense: true,
-                      onChanged: (String? newValue) {
-                        setState(() {
-                          sOcassion = newValue!;
-                          widget.reservation =
-                              widget.reservation.copyWith(occasion: sOcassion);
-                          state.didChange(newValue);
-                        });
-                      },
-                      items: ocassions.map((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(value),
-                        );
-                      }).toList(),
-                    ),
-                  ),
-                );
-              },
-            ),
-            const SizedBox(height: 24),
-          ],
-        ),
-        Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 8.0),
-                  child: Text(
-                    'reserve bottles',
-                    style: TextStyle(
-                        color: Theme.of(context).primaryColorLight,
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold),
-                  ),
-                ),
-              ],
-            ),
-            MultiSelectDialogField(
-              items: mBottles
-                  .map((e) => MultiSelectItem(e,
-                      '${e.name.toLowerCase()} | ${e.category.toLowerCase()}'))
-                  .toList(),
-              initialValue: sBottles.map((e) => e).toList(),
-              listType: MultiSelectListType.CHIP,
-              buttonIcon: Icon(
-                Icons.arrow_drop_down,
-                color: Colors.grey.shade700,
+                  );
+                },
               ),
-              title: const Text('select your spirit 🥂'),
-              buttonText: const Text(
-                'select',
-                style: TextStyle(color: Constants.lightPrimary),
-              ),
-              decoration: BoxDecoration(
-                color: Constants.background,
-                borderRadius: const BorderRadius.all(Radius.circular(5)),
-                border: Border.all(
-                  color: Constants.primary,
-                  width: 0.0,
-                ),
-              ),
-              searchable: true,
-              onConfirm: (values) {
-                sBottles = values as List<Product>;
-                sBottleIds = [];
-                sBottleNames = [];
-
-                for (Product product in sBottles) {
-                  sBottleIds.add(product.id);
-                  sBottleNames.add(product.name);
-                }
-
-                if (sBottleIds.isEmpty) {
-                  Logx.i(_TAG, 'no bottles selected');
-                  widget.reservation =
-                      widget.reservation.copyWith(bottleNames: []);
-                  widget.reservation =
-                      widget.reservation.copyWith(bottleProductIds: []);
-                } else {
-                  widget.reservation =
-                      widget.reservation.copyWith(bottleNames: sBottleNames);
-                  widget.reservation =
-                      widget.reservation.copyWith(bottleProductIds: sBottleIds);
-                }
-              },
-            ),
-          ],
+              const SizedBox(height: 24),
+            ],
+          ),
         ),
-        const SizedBox(height: 24),
-        DarkTextFieldWidget(
-          label: 'additional requests',
-          text: widget.reservation.specialRequest,
-          onChanged: (text) => widget.reservation =
-              widget.reservation.copyWith(specialRequest: text),
-        ),
-        const SizedBox(height: 24),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(right: 10, bottom: 5),
-              child: DelayedDisplay(
-                delay: const Duration(seconds: 1),
-                child: Text(
-                  "* required",
-                  style: TextStyle(
-                    color: Theme.of(context).primaryColor,
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-        isEdit
-            ? Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 32),
+          child: Column(
+            children: [
+              const Row(
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  ButtonWidget(
-                    height: 50,
-                    text: 'save',
-                    onClicked: () {
-                      Reservation freshReservation =
-                          Fresh.freshReservation(widget.reservation);
-                      FirestoreHelper.pushReservation(freshReservation);
-                      Toaster.shortToast('reservation changes saved');
-                      Navigator.of(context).pop();
-                    },
+                  Padding(
+                    padding: EdgeInsets.only(bottom: 8.0),
+                    child: Text(
+                      'special occasion',
+                      style: TextStyle(
+                          color: Constants.lightPrimary,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold),
+                    ),
                   ),
-                  const SizedBox(height: 36),
-                  DarkButtonWidget(
-                      height: 50,
-                      text: 'delete',
-                      onClicked: () {
-                        FirestoreHelper.deleteReservation(
-                            widget.reservation.id);
-                        Toaster.shortToast('reservation deleted');
-                        Navigator.of(context).pop();
-                      }),
                 ],
-              )
-            : ButtonWidget(
-                text: 'reserve',
-                height: 50,
-                onClicked: () {
-                  if (UserPreferences.isUserLoggedIn()) {
-                    showConfirmationDialog(context, false);
+              ),
+              FormField<String>(
+                builder: (FormFieldState<String> state) {
+                  return InputDecorator(
+                    key: const ValueKey('special_occasion'),
+                    decoration: InputDecoration(
+                        fillColor: Colors.white,
+                        errorStyle: const TextStyle(
+                            color: Constants.errorColor, fontSize: 16.0),
+                        hintText: 'please select special occasion',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(5.0),
+                          borderSide:
+                              BorderSide(color: Theme.of(context).primaryColor),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          // width: 0.0 produces a thin "hairline" border
+                          borderSide: BorderSide(
+                              color: Theme.of(context).primaryColor, width: 0.0),
+                        )),
+                    isEmpty: sOcassion == '',
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton<String>(
+                        style:
+                            TextStyle(color: Theme.of(context).primaryColorLight),
+                        dropdownColor: Constants.background,
+                        value: sOcassion,
+                        isDense: true,
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            sOcassion = newValue!;
+                            widget.reservation =
+                                widget.reservation.copyWith(occasion: sOcassion);
+                            state.didChange(newValue);
+                          });
+                        },
+                        items: ocassions.map((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList(),
+                      ),
+                    ),
+                  );
+                },
+              ),
+              const SizedBox(height: 24),
+            ],
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 32),
+          child: Column(
+            children: [
+              const Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(bottom: 8.0),
+                    child: Text(
+                      'reserve bottles',
+                      style: TextStyle(
+                          color: Constants.lightPrimary,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ],
+              ),
+              MultiSelectDialogField(
+                items: mBottles
+                    .map((e) => MultiSelectItem(e,
+                        '${e.name.toLowerCase()} | ${e.category.toLowerCase()}'))
+                    .toList(),
+                initialValue: sBottles.map((e) => e).toList(),
+                listType: MultiSelectListType.CHIP,
+                buttonIcon: Icon(
+                  Icons.arrow_drop_down,
+                  color: Colors.grey.shade700,
+                ),
+                title: const Text('select your spirit 🥂'),
+                buttonText: const Text(
+                  'select',
+                  style: TextStyle(color: Constants.lightPrimary),
+                ),
+                decoration: BoxDecoration(
+                  color: Constants.background,
+                  borderRadius: const BorderRadius.all(Radius.circular(5)),
+                  border: Border.all(
+                    color: Constants.primary,
+                    width: 0.0,
+                  ),
+                ),
+                searchable: true,
+                onConfirm: (values) {
+                  sBottles = values;
+                  sBottleIds = [];
+                  sBottleNames = [];
+
+                  for (Product product in sBottles) {
+                    sBottleIds.add(product.id);
+                    sBottleNames.add(product.name);
+                  }
+
+                  if (sBottleIds.isEmpty) {
+                    Logx.i(_TAG, 'no bottles selected');
+                    widget.reservation =
+                        widget.reservation.copyWith(bottleNames: []);
+                    widget.reservation =
+                        widget.reservation.copyWith(bottleProductIds: []);
                   } else {
-                    _verifyPhone();
+                    widget.reservation =
+                        widget.reservation.copyWith(bottleNames: sBottleNames);
+                    widget.reservation =
+                        widget.reservation.copyWith(bottleProductIds: sBottleIds);
                   }
                 },
               ),
-        const SizedBox(height: 48),
+            ],
+          ),
+        ),
+        const SizedBox(height: 24),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 32),
+          child: DarkTextFieldWidget(
+            label: 'additional requests',
+            text: widget.reservation.specialRequest,
+            onChanged: (text) => widget.reservation =
+                widget.reservation.copyWith(specialRequest: text),
+          ),
+        ),
+        const SizedBox(height: 24),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 32),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(right: 10, bottom: 5),
+                child: DelayedDisplay(
+                  delay: const Duration(seconds: 1),
+                  child: Text(
+                    "* required",
+                    style: TextStyle(
+                      color: Theme.of(context).primaryColor,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        widget.task == 'add'
+            ? Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 32),
+              child: ButtonWidget(
+                  text: 'reserve',
+                  height: 50,
+                  onClicked: () {
+                    if (UserPreferences.isUserLoggedIn()) {
+                      showConfirmationDialog(context, false);
+                    } else {
+                      _verifyPhone();
+                    }
+                  },
+                ),
+            ) : widget.task == 'edit' ? _showEditButtons()  : _showManageButtons(),
+        const SizedBox(height: 36),
+        Footer()
       ],
     );
   }
@@ -542,10 +635,7 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
       await FirebaseAuth.instance
           .signInWithPhoneNumber('${completePhoneNumber}', null)
           .then((firebaseUser) {
-        Logx.i(
-            _TAG,
-            'signInWithPhoneNumber: user verification id ' +
-                firebaseUser.verificationId);
+        Logx.i(_TAG, 'signInWithPhoneNumber: user verification id ${firebaseUser.verificationId}');
 
         showOTPDialog(context);
 
@@ -557,16 +647,16 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
       });
     } else {
       await FirebaseAuth.instance.verifyPhoneNumber(
-          phoneNumber: '${completePhoneNumber}',
+          phoneNumber: completePhoneNumber,
           verificationCompleted: (PhoneAuthCredential credential) async {
             Logx.i(_TAG,
-                'verifyPhoneNumber: ${completePhoneNumber} is verified. attempting sign in with credentials...');
+                'verifyPhoneNumber: $completePhoneNumber is verified. attempting sign in with credentials...');
           },
           verificationFailed: (FirebaseAuthException e) {
-            Logx.em(_TAG, 'verificationFailed ' + e.toString());
+            Logx.em(_TAG, 'verificationFailed $e');
           },
           codeSent: (String verificationID, int? resendToken) {
-            Logx.i(_TAG, 'verification id : ' + verificationID);
+            Logx.i(_TAG, 'verification id : $verificationID');
 
             if (mounted) {
               showOTPDialog(context);
@@ -599,14 +689,14 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 20),
+                const Padding(
+                  padding: EdgeInsets.only(bottom: 20),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Text(
                         'phone number verification',
-                        style: const TextStyle(fontSize: 18),
+                        style: TextStyle(fontSize: 18),
                       ),
                     ],
                   ),
@@ -617,14 +707,14 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
                     margin: const EdgeInsets.only(bottom: 20),
                     child: FractionallySizedBox(
                         widthFactor: 1,
-                        child: OTPVerifyWidget(
+                        child: OtpVerifyWidget(
                           completePhoneNumber,
                         )),
                   ),
                 ),
                 Center(
                     child: Text(
-                  'enter the six digit code you received on \n${completePhoneNumber}',
+                  'enter the six digit code you received on \n$completePhoneNumber',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: Theme.of(context).primaryColorDark,
@@ -681,7 +771,7 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
     );
   }
 
-  OTPVerifyWidget(String phone) {
+  OtpVerifyWidget(String phone) {
     const focusedBorderColor = Color.fromRGBO(222, 193, 170, 1);
     const fillColor = Color.fromRGBO(38, 50, 56, 1.0);
     const borderColor = Color.fromRGBO(211, 167, 130, 1);
@@ -705,7 +795,6 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Directionality(
-            // Specify direction if desired
             textDirection: TextDirection.ltr,
             child: Pinput(
               length: 6,
@@ -718,7 +807,7 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
               onCompleted: (pin) async {
                 debugPrint('onCompleted: $pin');
 
-                Toaster.shortToast('verifying ${completePhoneNumber}');
+                Logx.ist(_TAG, 'verifying ${completePhoneNumber}');
                 try {
                   await FirebaseAuth.instance
                       .signInWithCredential(PhoneAuthProvider.credential(
@@ -736,16 +825,16 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
                           Logx.i(_TAG,
                               'user is not already registered in bloc, registering...');
 
-                          bloc_user.id = value.user!.uid;
-                          bloc_user.phoneNumber =
+                          mBlocUser.id = value.user!.uid;
+                          mBlocUser.phoneNumber =
                               StringUtils.getInt(value.user!.phoneNumber!);
 
-                          FirestoreHelper.pushUser(bloc_user);
-                          Logx.i(_TAG, 'registered user ${bloc_user.id}');
+                          FirestoreHelper.pushUser(mBlocUser);
+                          Logx.i(_TAG, 'registered user ${mBlocUser.id}');
 
-                          UserPreferences.setUser(bloc_user);
+                          UserPreferences.setUser(mBlocUser);
                           widget.reservation = widget.reservation
-                              .copyWith(customerId: bloc_user.id);
+                              .copyWith(customerId: mBlocUser.id);
                           widget.reservation = widget.reservation.copyWith(
                               phone: int.tryParse(completePhoneNumber));
 
@@ -760,16 +849,16 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
                           blocUser.User user = Fresh.freshUserMap(data, true);
 
                           //update user details
-                          user = user.copyWith(name: bloc_user.name);
+                          user = user.copyWith(name: mBlocUser.name);
                           int time = Timestamp.now().millisecondsSinceEpoch;
                           user = user.copyWith(lastSeenAt: time);
                           FirestoreHelper.pushUser(user);
 
                           UserPreferences.setUser(user);
-                          bloc_user = user;
+                          mBlocUser = user;
 
                           widget.reservation = widget.reservation
-                              .copyWith(customerId: bloc_user.id);
+                              .copyWith(customerId: mBlocUser.id);
                           widget.reservation = widget.reservation.copyWith(
                               phone: int.tryParse(completePhoneNumber));
 
@@ -835,14 +924,14 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
         return AlertDialog(
           contentPadding: const EdgeInsets.all(16.0),
           content: SizedBox(
-            height: 250,
+            height: 300,
             child: Column(
               children: [
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 20),
+                const Padding(
+                  padding: EdgeInsets.only(bottom: 20),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
-                    children: const [
+                    children: [
                       Text(
                         'reservation confirmation ',
                         style: TextStyle(fontSize: 18),
@@ -897,7 +986,7 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
 
                 Navigator.of(ctx).pop();
 
-                UserPreferences.setUser(bloc_user);
+                UserPreferences.setUser(mBlocUser);
 
                 GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
                 GoRouter.of(context)
@@ -1018,6 +1107,108 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
             },
             child: const Text('pick time'),
           ),
+        ],
+      ),
+    );
+  }
+
+  _showEditButtons() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 32),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          ButtonWidget(
+            height: 50,
+            text: 'save',
+            onClicked: () {
+              Reservation freshReservation =
+              Fresh.freshReservation(widget.reservation);
+              FirestoreHelper.pushReservation(freshReservation);
+              Toaster.shortToast('reservation has been saved');
+              Navigator.of(context).pop();
+            },
+          ),
+          const SizedBox(height: 36),
+          DarkButtonWidget(
+              height: 50,
+              text: 'delete',
+              onClicked: () {
+                FirestoreHelper.deleteReservation(
+                    widget.reservation.id);
+                Toaster.shortToast('reservation deleted');
+                Navigator.of(context).pop();
+              }),
+        ],
+      ),
+    );
+  }
+
+  _showManageButtons() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 32),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          ButtonWidget(
+            height: 50,
+            text: !widget.reservation.isApproved ? '✅ approve' : '☑️ decline',
+            onClicked: () async {
+              bool val = !widget.reservation.isApproved;
+              widget.reservation = widget.reservation.copyWith(isApproved: val);
+              FirestoreHelper.pushReservation(widget.reservation);
+              Logx.ist(_TAG, 'reservation is approved: ${widget.reservation.isApproved}');
+
+              if(mBlocUser.fcmToken.isNotEmpty){
+                String title = 'Reservation has been confirmed';
+                String message =
+                    'your reservation at $sBloc is confirmed for ${DateTimeUtils.getFormattedDate2(widget.reservation.arrivalDate)} at ${widget.reservation.arrivalTime}. See you then!';
+
+                //send a notification
+                Apis.sendPushNotification(mBlocUser.fcmToken, title, message);
+                Logx.ist(_TAG,
+                    'notification has been sent to ${mBlocUser.name} ${mBlocUser.surname}');
+              } else {
+                // whatsapp notification
+                String message =
+                    'congratulations, your reservation at $sBloc is confirmed for ${DateTimeUtils.getFormattedDate2(widget.reservation.arrivalDate)} at ${widget.reservation.arrivalTime} 🎉.\n\n 🎫 reservation can be modified in our app, download at '
+                    '\n\n🍎 ios:\n${Constants.urlBlocAppStore}\n\n🤖 android:\n${Constants.urlBlocPlayStore}\n\nsee you soon 🥳 #blocCommunity 💛';
+                // Encode the phone number and message for the URL
+                String url =
+                    'https://wa.me/+${mBlocUser.phoneNumber}/?text=${Uri.encodeFull(message)}';
+                Uri uri = Uri.parse(url);
+
+                await NetworkUtils.launchInBrowser(uri);
+              }
+
+              Navigator.of(context).pop();
+            },
+          ),
+          const SizedBox(height: 24),
+
+          ButtonWidget(
+            height: 50,
+            text: '💾 save',
+            onClicked: () {
+              Reservation freshReservation =
+              Fresh.freshReservation(widget.reservation);
+              FirestoreHelper.pushReservation(freshReservation);
+              Toaster.shortToast('reservation has been saved');
+              Navigator.of(context).pop();
+            },
+          ),
+
+          const SizedBox(height: 36),
+          DarkButtonWidget(
+              height: 50,
+              text: '❌ delete',
+              onClicked: () {
+                //todo: need an alert dialog before deleting.
+                FirestoreHelper.deleteReservation(
+                    widget.reservation.id);
+                Toaster.shortToast('reservation has been deleted');
+                Navigator.of(context).pop();
+              }),
         ],
       ),
     );

@@ -53,7 +53,7 @@ Future<void> main() async {
 
         final blocUser.User mUser = Fresh.freshUserMap(data, false);
         UserPreferences.setUser(mUser);
-        BlocRouter.returnRouter(true).refresh();
+        // BlocRouter.returnRouter(true).refresh();
       } else {
         Logx.em(_TAG, 'user not found');
       }

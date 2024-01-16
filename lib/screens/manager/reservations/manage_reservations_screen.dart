@@ -4,8 +4,10 @@ import 'package:flutter/material.dart';
 
 import '../../../db/entity/reservation.dart';
 import '../../../helpers/fresh.dart';
+import '../../../utils/constants.dart';
 import '../../../utils/logx.dart';
 import '../../../widgets/reservations/reservation_item.dart';
+import '../../../widgets/ui/app_bar_title.dart';
 import '../../../widgets/ui/loading_widget.dart';
 import '../../user/reservation_add_edit_screen.dart';
 
@@ -14,9 +16,10 @@ class ManageReservationsScreen extends StatefulWidget {
   String serviceName;
   String userTitle;
 
-  ManageReservationsScreen({required this.blocServiceId,
-    required this.serviceName,
-    required this.userTitle});
+  ManageReservationsScreen(
+      {required this.blocServiceId,
+      required this.serviceName,
+      required this.userTitle});
 
   @override
   State<StatefulWidget> createState() => _ManageReservationsScreenState();
@@ -29,29 +32,38 @@ class _ManageReservationsScreenState extends State<ManageReservationsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          title: Text('manage | ${widget.serviceName}')),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          //todo: implement new booking
-          // Navigator.of(context).push(
-          //   MaterialPageRoute(
-          //       builder: (ctx) =>
-          //           NewServiceTableScreen(serviceId: widget.blocServiceId)),
-          // );
-        },
-        backgroundColor: Theme
-            .of(context)
-            .primaryColor,
-        tooltip: 'new reservation',
-        elevation: 5,
-        splashColor: Colors.grey,
-        child: const Icon(
-          Icons.add,
-          color: Colors.black,
-          size: 29,
+        title: AppBarTitle(
+          title: 'manage reservations',
+        ),
+        titleSpacing: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_rounded,
+              color: Constants.lightPrimary),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
         ),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: () {
+      //     //todo: implement new booking
+      //     // Navigator.of(context).push(
+      //     //   MaterialPageRoute(
+      //     //       builder: (ctx) =>
+      //     //           NewServiceTableScreen(serviceId: widget.blocServiceId)),
+      //     // );
+      //   },
+      //   backgroundColor: Theme.of(context).primaryColor,
+      //   tooltip: 'new reservation',
+      //   elevation: 5,
+      //   splashColor: Colors.grey,
+      //   child: const Icon(
+      //     Icons.add,
+      //     color: Colors.black,
+      //     size: 29,
+      //   ),
+      // ),
+      // floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       body: _buildBody(context),
     );
   }
@@ -73,33 +85,42 @@ class _ManageReservationsScreenState extends State<ManageReservationsScreen> {
     return StreamBuilder<QuerySnapshot>(
         stream: FirestoreHelper.getReservationsByBlocId(widget.blocServiceId),
         builder: (ctx, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const LoadingWidget();
-          }
-          List<Reservation> reservations = [];
+          switch (snapshot.connectionState) {
+            case ConnectionState.waiting:
+            case ConnectionState.none:
+              return const LoadingWidget();
+            case ConnectionState.active:
+            case ConnectionState.done:{
+            List<Reservation> reservations = [];
 
-          if (snapshot.data!.docs.isNotEmpty) {
-            try {
-              for (int i = 0; i < snapshot.data!.docs.length; i++) {
-                DocumentSnapshot document = snapshot.data!.docs[i];
-                Map<String, dynamic> map =
-                document.data()! as Map<String, dynamic>;
-                final Reservation reservation = Fresh.freshReservationMap(map, false);
-                reservations.add(reservation);
-
-                if (i == snapshot.data!.docs.length - 1) {
-                  return _displayReservations(context, reservations);
+            if (snapshot.data!.docs.isNotEmpty) {
+              try {
+                for (int i = 0; i < snapshot.data!.docs.length; i++) {
+                  DocumentSnapshot document = snapshot.data!.docs[i];
+                  Map<String, dynamic> map =
+                  document.data()! as Map<String, dynamic>;
+                  final Reservation reservation =
+                  Fresh.freshReservationMap(map, false);
+                  reservations.add(reservation);
                 }
+                return _displayReservations(context, reservations);
+
+              } on Exception catch (e, s) {
+                Logx.e(_TAG, e, s);
+              } catch (e) {
+                Logx.est(_TAG, 'error loading reservations : $e');
               }
-            } on Exception catch (e, s) {
-              Logx.e(_TAG, e, s);
-            } catch (e) {
-              Logx.em(_TAG, 'error loading reservations : $e');
+            }
+            else {
+              Logx.est(_TAG, 'no reservations could be found!');
             }
           }
+          }
+
+
 
           return const LoadingWidget();
-    });
+        });
   }
 
   _displayReservations(BuildContext context, List<Reservation> reservations) {
@@ -117,12 +138,11 @@ class _ManageReservationsScreenState extends State<ManageReservationsScreen> {
                 onTap: () {
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (ctx) => ReservationAddEditScreen(
-                        reservation: reservation,
-                        task: 'edit',
-                      )));
+                            reservation: reservation,
+                            task: 'manage',
+                          )));
                 });
           }),
     );
   }
-
 }
