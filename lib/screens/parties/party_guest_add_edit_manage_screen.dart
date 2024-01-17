@@ -66,7 +66,7 @@ class _PartyGuestAddEditManageScreenState
     extends State<PartyGuestAddEditManageScreen> {
   static const String _TAG = 'PartyGuestAddEditManageScreen';
 
-  bool testMode = false;
+  bool testMode = true;
 
   late blocUser.User mBlocUser;
   bool hasUserChanged = false;
@@ -207,7 +207,7 @@ class _PartyGuestAddEditManageScreenState
             } else {
               mBlocUser = user;
 
-              if (mBlocUser.birthYear == 2023 ||
+              if (mBlocUser.birthYear >= 2023 ||
                   UserPreferences.myUser.clearanceLevel >=
                       Constants.MANAGER_LEVEL) {
                 _showYearField = true;
@@ -822,18 +822,22 @@ class _PartyGuestAddEditManageScreenState
                   ],
                 ),
               ),
-              const SizedBox(height: 24),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 32),
-                child: DarkTextFieldWidget(
-                  label: 'instagram link',
-                  text: mBlocUser.instagramLink,
-                  onChanged: (text) {
-                    mBlocUser = mBlocUser.copyWith(instagramLink: text);
-                    hasUserChanged = true;
-                  },
+
+              mBlocUser.instagramLink.isEmpty ? Column(
+                  children : [
+                const SizedBox(height: 24),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 32),
+                  child: DarkTextFieldWidget(
+                    label: 'instagram link',
+                    text: mBlocUser.instagramLink,
+                    onChanged: (text) {
+                      mBlocUser = mBlocUser.copyWith(instagramLink: text);
+                      hasUserChanged = true;
+                    },
+                  ),
                 ),
-              ),
+              ]) : const SizedBox(),
 
               /** admin section **/
               widget.task == 'manage'
@@ -1202,14 +1206,12 @@ class _PartyGuestAddEditManageScreenState
                             Logx.i(_TAG,
                                 'app is reviewed, so nothing to do for now');
 
-                            GoRouter.of(context)
-                                .pushNamed(RouteConstants.homeRouteName);
-                            GoRouter.of(context)
-                                .pushNamed(RouteConstants.boxOfficeRouteName);
+                            GoRouter.of(context).pushNamed(RouteConstants.landingRouteName);
+                            GoRouter.of(context).pushNamed(RouteConstants.boxOfficeRouteName);
                           }
                         } else {
                           GoRouter.of(context)
-                              .pushNamed(RouteConstants.homeRouteName);
+                              .pushNamed(RouteConstants.landingRouteName);
                           GoRouter.of(context)
                               .pushNamed(RouteConstants.boxOfficeRouteName);
                         }
@@ -1600,7 +1602,7 @@ class _PartyGuestAddEditManageScreenState
                         Navigator.of(ctx).pop();
 
                         GoRouter.of(context)
-                            .pushNamed(RouteConstants.homeRouteName);
+                            .pushNamed(RouteConstants.landingRouteName);
                         GoRouter.of(context)
                             .pushNamed(RouteConstants.boxOfficeRouteName);
                       }
@@ -1609,7 +1611,7 @@ class _PartyGuestAddEditManageScreenState
                       Logx.ist(_TAG, 'guest list has already been requested!');
 
                       GoRouter.of(context)
-                          .pushNamed(RouteConstants.homeRouteName);
+                          .pushNamed(RouteConstants.landingRouteName);
                       GoRouter.of(context)
                           .pushNamed(RouteConstants.boxOfficeRouteName);
                     }
@@ -1658,7 +1660,7 @@ class _PartyGuestAddEditManageScreenState
       } else {
         _showAdDialog(context);
 
-        // GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
+        // GoRouter.of(context).pushNamed(RouteConstants.landingRouteName);
         // GoRouter.of(context).pushNamed(RouteConstants.boxOfficeRouteName);
       }
     } else {
@@ -1767,7 +1769,7 @@ class _PartyGuestAddEditManageScreenState
                           // _showAdDialog(context);
 
                           GoRouter.of(context)
-                              .pushNamed(RouteConstants.homeRouteName);
+                              .pushNamed(RouteConstants.landingRouteName);
                           GoRouter.of(context)
                               .pushNamed(RouteConstants.boxOfficeRouteName);
                         }
@@ -1806,7 +1808,7 @@ class _PartyGuestAddEditManageScreenState
                     _showDownloadAppDialog(context);
                   } else {
                     GoRouter.of(context)
-                        .pushNamed(RouteConstants.homeRouteName);
+                        .pushNamed(RouteConstants.landingRouteName);
                     GoRouter.of(context)
                         .pushNamed(RouteConstants.boxOfficeRouteName);
                   }
@@ -1851,7 +1853,7 @@ class _PartyGuestAddEditManageScreenState
                 onPressed: () {
                   Navigator.of(ctx).pop();
 
-                  GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
+                  GoRouter.of(context).pushNamed(RouteConstants.landingRouteName);
                   GoRouter.of(context)
                       .pushNamed(RouteConstants.boxOfficeRouteName);
                 },
@@ -1896,7 +1898,7 @@ class _PartyGuestAddEditManageScreenState
                   }
 
                   Navigator.of(ctx).pop();
-                  GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
+                  GoRouter.of(context).pushNamed(RouteConstants.landingRouteName);
                   GoRouter.of(context)
                       .pushNamed(RouteConstants.boxOfficeRouteName);
                 },
@@ -1916,7 +1918,7 @@ class _PartyGuestAddEditManageScreenState
               borderRadius: BorderRadius.all(Radius.circular(20.0))),
           contentPadding: const EdgeInsets.all(16.0),
           content: SizedBox(
-            height: mq.height * 0.5,
+            height: MediaQuery.of(context).size.height * 0.5,
             width: double.maxFinite,
             child: ListView(
               children: const [
@@ -1996,7 +1998,7 @@ class _PartyGuestAddEditManageScreenState
               borderRadius: BorderRadius.all(Radius.circular(20.0))),
           contentPadding: const EdgeInsets.all(16.0),
           content: SizedBox(
-            height: mq.height * 0.5,
+            height: MediaQuery.of(context).size.height * 0.5,
             width: double.maxFinite,
             child: ListView(
               children: const [
@@ -2486,9 +2488,8 @@ class _PartyGuestAddEditManageScreenState
                   final uri = Uri.parse(Constants.urlBlocPlayStore);
                   NetworkUtils.launchInBrowser(uri);
 
-                  GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
-                  GoRouter.of(context)
-                      .pushNamed(RouteConstants.boxOfficeRouteName);
+                  GoRouter.of(context).pushNamed(RouteConstants.landingRouteName);
+                  GoRouter.of(context).pushNamed(RouteConstants.boxOfficeRouteName);
                 },
               ),
               TextButton(
@@ -2504,7 +2505,7 @@ class _PartyGuestAddEditManageScreenState
                   final uri = Uri.parse(Constants.urlBlocAppStore);
                   NetworkUtils.launchInBrowser(uri);
 
-                  GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
+                  GoRouter.of(context).pushNamed(RouteConstants.landingRouteName);
                   GoRouter.of(context)
                       .pushNamed(RouteConstants.boxOfficeRouteName);
                 },
@@ -2539,7 +2540,7 @@ class _PartyGuestAddEditManageScreenState
                 onPressed: () {
                   Navigator.of(ctx).pop();
 
-                  GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
+                  GoRouter.of(context).pushNamed(RouteConstants.landingRouteName);
                   GoRouter.of(context)
                       .pushNamed(RouteConstants.boxOfficeRouteName);
                 },
@@ -2561,7 +2562,7 @@ class _PartyGuestAddEditManageScreenState
                   Logx.ist(_TAG, '🃏 thank you for already reviewing us');
                   Navigator.of(ctx).pop();
 
-                  GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
+                  GoRouter.of(context).pushNamed(RouteConstants.landingRouteName);
                   GoRouter.of(context)
                       .pushNamed(RouteConstants.boxOfficeRouteName);
                 },
@@ -2593,7 +2594,7 @@ class _PartyGuestAddEditManageScreenState
 
                   Navigator.of(ctx).pop();
 
-                  GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
+                  GoRouter.of(context).pushNamed(RouteConstants.landingRouteName);
                   GoRouter.of(context).pushNamed(RouteConstants.boxOfficeRouteName);
                 },
               ),
@@ -2702,39 +2703,12 @@ class _PartyGuestAddEditManageScreenState
                     borderRadius: BorderRadius.all(Radius.circular(10.0))),
                 content: GestureDetector(
                   onTap: () {
+                    Navigator.of(ctx).pop();
+
                     if (adCampaign.isPartyAd) {
-                      FirestoreHelper.updateAdCampaignClickCount(adCampaign.id);
-
-                      // we pull in party
-                      FirestoreHelper.pullParty(adCampaign.partyId).then((res) {
-                        if (res.docs.isNotEmpty) {
-                          DocumentSnapshot document = res.docs[0];
-                          Map<String, dynamic> data =
-                              document.data()! as Map<String, dynamic>;
-                          final Party party = Fresh.freshPartyMap(data, false);
-                          Navigator.of(ctx).pop();
-
-                          GoRouter.of(context)
-                              .pushNamed(RouteConstants.homeRouteName);
-                          GoRouter.of(context)
-                              .pushNamed(RouteConstants.boxOfficeRouteName);
-
-                          // navigate to party
-                          GoRouter.of(context).pushNamed(
-                              RouteConstants.eventRouteName,
-                              pathParameters: {
-                                'partyName': party.name,
-                                'partyChapter': party.chapter
-                              });
-                        } else {
-                          Navigator.of(ctx).pop();
-
-                          GoRouter.of(context)
-                              .pushNamed(RouteConstants.homeRouteName);
-                          GoRouter.of(context)
-                              .pushNamed(RouteConstants.boxOfficeRouteName);
-                        }
-                      });
+                      _handleAdPartyClickActions(adCampaign, false);
+                    } else {
+                      // not party ad, send them to the link or some such
                     }
                   },
                   child: Container(
@@ -2753,7 +2727,7 @@ class _PartyGuestAddEditManageScreenState
                       Navigator.of(ctx).pop();
 
                       GoRouter.of(context)
-                          .pushNamed(RouteConstants.homeRouteName);
+                          .pushNamed(RouteConstants.landingRouteName);
                       GoRouter.of(context)
                           .pushNamed(RouteConstants.boxOfficeRouteName);
                     },
@@ -2772,32 +2746,7 @@ class _PartyGuestAddEditManageScreenState
                           onPressed: () {
                             Navigator.of(ctx).pop();
 
-                            FirestoreHelper.updateAdCampaignClickCount(
-                                adCampaign.id);
-
-                            FirestoreHelper.pullParty(adCampaign.partyId)
-                                .then((res) async {
-                              if (res.docs.isNotEmpty) {
-                                DocumentSnapshot document = res.docs[0];
-                                Map<String, dynamic> data =
-                                    document.data()! as Map<String, dynamic>;
-                                final Party party =
-                                    Fresh.freshPartyMap(data, false);
-
-                                FirestoreHelper.updatePartyShareCount(party.id);
-                                final url =
-                                    'http://bloc.bar/#/event/${Uri.encodeComponent(party.name)}/${party.chapter}';
-                                await Share.share(
-                                    'Check this party, ${party.name} out on bloc. $url');
-                              } else {
-                                Navigator.of(ctx).pop();
-
-                                GoRouter.of(context)
-                                    .pushNamed(RouteConstants.homeRouteName);
-                                GoRouter.of(context).pushNamed(
-                                    RouteConstants.boxOfficeRouteName);
-                              }
-                            });
+                            _handleAdPartyClickActions(adCampaign, true);
                           },
                           child: const Text(
                             "💝 share",
@@ -2831,7 +2780,7 @@ class _PartyGuestAddEditManageScreenState
                                 Navigator.of(ctx).pop();
 
                                 GoRouter.of(context)
-                                    .pushNamed(RouteConstants.homeRouteName);
+                                    .pushNamed(RouteConstants.landingRouteName);
                                 GoRouter.of(context).pushNamed(
                                     RouteConstants.boxOfficeRouteName);
 
@@ -2846,7 +2795,7 @@ class _PartyGuestAddEditManageScreenState
                                 Navigator.of(ctx).pop();
 
                                 GoRouter.of(context)
-                                    .pushNamed(RouteConstants.homeRouteName);
+                                    .pushNamed(RouteConstants.landingRouteName);
                                 GoRouter.of(context).pushNamed(
                                     RouteConstants.boxOfficeRouteName);
                               }
@@ -2866,12 +2815,12 @@ class _PartyGuestAddEditManageScreenState
           );
         } else {
           // all story ads are expired
-          GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
+          GoRouter.of(context).pushNamed(RouteConstants.landingRouteName);
           GoRouter.of(context).pushNamed(RouteConstants.boxOfficeRouteName);
         }
       } else {
         // no ad campaigns found
-        GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
+        GoRouter.of(context).pushNamed(RouteConstants.landingRouteName);
         GoRouter.of(context).pushNamed(RouteConstants.boxOfficeRouteName);
       }
     });
@@ -3007,5 +2956,47 @@ class _PartyGuestAddEditManageScreenState
             ],
           );
         });
+  }
+
+  void _handleAdPartyClickActions(AdCampaign adCampaign, bool isShare) {
+    FirestoreHelper.updateAdCampaignClickCount(adCampaign.id);
+    FirestoreHelper.pullParty(adCampaign.partyId).then((res) async {
+      if (res.docs.isNotEmpty) {
+        DocumentSnapshot document = res.docs[0];
+        Map<String, dynamic> data =
+        document.data()! as Map<String, dynamic>;
+        final Party party = Fresh.freshPartyMap(data, false);
+
+        GoRouter.of(context)
+            .pushNamed(RouteConstants.landingRouteName);
+        GoRouter.of(context)
+            .pushNamed(RouteConstants.boxOfficeRouteName);
+
+        if(isShare){
+          FirestoreHelper.updatePartyShareCount(party.id);
+          final url =
+              'http://bloc.bar/#/event/${Uri.encodeComponent(party.name)}/${party.chapter}';
+          await Share.share(
+              'Check this party, ${party.name} out on bloc. $url');
+        } else {
+          // navigate to party
+          GoRouter.of(context).go('/event/${party.name}/${party.chapter}');
+        }
+
+        // GoRouter.of(context).pushNamed(
+        //     RouteConstants.eventRouteName,
+        //     pathParameters: {
+        //       'partyName': party.name,
+        //       'partyChapter': party.chapter
+        //     });
+      } else {
+        // Navigator.of(ctx).pop();
+
+        GoRouter.of(context)
+            .pushNamed(RouteConstants.landingRouteName);
+        GoRouter.of(context)
+            .pushNamed(RouteConstants.boxOfficeRouteName);
+      }
+    });
   }
 }

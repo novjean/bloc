@@ -62,7 +62,7 @@ class _MainScreenState extends State<MainScreen> {
     Icons.music_note_outlined,
     Icons.photo_outlined,
     Icons.theater_comedy_outlined,
-    Icons.person,
+    Icons.person_pin_circle_outlined,
   ];
 
   @override
@@ -242,7 +242,7 @@ class _MainScreenState extends State<MainScreen> {
             }
             UserPreferences.setListLounges(userLounges);
           } else {
-            Logx.alt(_TAG, 'no user lounges registered');
+            Logx.i(_TAG, 'no user lounges registered');
           }
         });
 

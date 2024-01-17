@@ -1095,7 +1095,7 @@ class _CelebrationAddEditScreenState extends State<CelebrationAddEditScreen> {
 
                 UserPreferences.setUser(bloc_user);
                 GoRouter.of(context)
-                    .pushNamed(RouteConstants.homeRouteName);
+                    .pushNamed(RouteConstants.landingRouteName);
               },
             ),
           ],

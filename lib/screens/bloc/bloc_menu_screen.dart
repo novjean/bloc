@@ -321,12 +321,8 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
           ):
           InkWell(
               onTap: () {
-                if (UserPreferences.isUserLoggedIn()) {
-                  GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
-                } else {
-                  GoRouter.of(context)
-                      .pushNamed(RouteConstants.landingRouteName);
-                }
+                GoRouter.of(context)
+                    .pushNamed(RouteConstants.landingRouteName);
               },
               child: const Text('bloc.')),
           backgroundColor: Colors.black,

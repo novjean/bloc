@@ -76,7 +76,7 @@ class _BlocItemState extends State<BlocItem> {
             color: Constants.lightPrimary,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
             child: SizedBox(
-              width: mq.width * 0.99,
+              width: MediaQuery.of(context).size.width * 0.99,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
@@ -84,7 +84,7 @@ class _BlocItemState extends State<BlocItem> {
                     children: [
                       SizedBox(
                         height: widget.imageHeight,
-                        width: mq.width,
+                        width: MediaQuery.of(context).size.width,
                         child: isUserBloc ? FadeInImage(
                           placeholder: const AssetImage(
                               'assets/icons/logo.png'),
@@ -116,7 +116,7 @@ class _BlocItemState extends State<BlocItem> {
                         bottom: 5.0,
                         left: 5,
                         child: SizedBox(
-                            width: mq.width,
+                            width: MediaQuery.of(context).size.width,
                             child: Text(widget.bloc.name.toLowerCase(),
                                 style: TextStyle(
                                     fontFamily: Constants.fontDefault,

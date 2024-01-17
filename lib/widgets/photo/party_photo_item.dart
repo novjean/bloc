@@ -601,8 +601,8 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
                   borderRadius: BorderRadius.all(Radius.circular(20.0))),
               contentPadding: const EdgeInsets.all(16.0),
               content: SizedBox(
-                height: mq.height * 0.6,
-                width: mq.width * 0.9,
+                height: MediaQuery.of(context).size.height * 0.6,
+                width: MediaQuery.of(context).size.width * 0.9,
                 child: SingleChildScrollView(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -647,7 +647,7 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
                       const SizedBox(height: 12),
                       Center(
                           child: SizedBox(
-                        width: mq.width,
+                        width: MediaQuery.of(context).size.width,
                         child: FadeInImage(
                           placeholder:
                               const AssetImage('assets/images/logo_3x2.png'),
@@ -840,7 +840,7 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
     return Stack(
       children: [
         SizedBox(
-          width: mq.width,
+          width: MediaQuery.of(context).size.width,
           child: FadeInImage(
             placeholder: const AssetImage('assets/images/logo_3x2.png'),
             image: NetworkImage(widget.partyPhoto.imageUrl),

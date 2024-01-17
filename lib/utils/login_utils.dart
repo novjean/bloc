@@ -53,8 +53,8 @@ class LoginUtils {
           shape: const RoundedRectangleBorder(
               borderRadius: BorderRadius.all(Radius.circular(20.0))),
           content: SizedBox(
-            height: mq.height * 0.4,
-            width: mq.width * 0.9,
+            height: MediaQuery.of(context).size.height * 0.4,
+            width: MediaQuery.of(context).size.width * 0.9,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -66,7 +66,7 @@ class LoginUtils {
                         fontWeight: FontWeight.w500)),
 
                 //for adding some space
-                SizedBox(height: mq.height * .02),
+                SizedBox(height: MediaQuery.of(context).size.height * .02),
 
                 Center(
                   child: Container(
@@ -105,7 +105,7 @@ class LoginUtils {
                   ),
                 ),
 
-                SizedBox(height: mq.height * .02),
+                SizedBox(height: MediaQuery.of(context).size.height * .02),
 
                 Text('please enter otp sent to $completePhoneNumber ⏳',
                     textAlign: TextAlign.center,
@@ -113,7 +113,7 @@ class LoginUtils {
                         fontSize: 20,
                         color: Constants.lightPrimary,
                         fontWeight: FontWeight.w500)),
-                SizedBox(height: mq.height * .02),
+                SizedBox(height: MediaQuery.of(context).size.height * .02),
                 Center(
                   child: Container(
                     margin: const EdgeInsets.only(top: 0, right: 20, left: 20),
@@ -141,8 +141,8 @@ class LoginUtils {
           shape: const RoundedRectangleBorder(
               borderRadius: BorderRadius.all(Radius.circular(20.0))),
           content: SizedBox(
-            height: mq.height * 0.2,
-            width: mq.width * 0.9,
+            height: MediaQuery.of(context).size.height * 0.2,
+            width: MediaQuery.of(context).size.width * 0.9,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -152,7 +152,7 @@ class LoginUtils {
                         fontSize: 20,
                         color: Constants.lightPrimary,
                         fontWeight: FontWeight.w500)),
-                SizedBox(height: mq.height * .02),
+                SizedBox(height: MediaQuery.of(context).size.height * .02),
                 Center(
                   child: Container(
                     margin: const EdgeInsets.only(top: 0, right: 20, left: 20),
@@ -260,8 +260,8 @@ class LoginUtils {
           contentPadding: const EdgeInsets.all(16.0),
           backgroundColor: Constants.background,
           content: SizedBox(
-            height: mq.height * 0.2,
-            width: mq.width * 0.9,
+            height: MediaQuery.of(context).size.height * 0.2,
+            width: MediaQuery.of(context).size.width * 0.9,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -271,7 +271,7 @@ class LoginUtils {
                         fontSize: 20,
                         color: Constants.lightPrimary,
                         fontWeight: FontWeight.w500)),
-                SizedBox(height: mq.height * .02),
+                SizedBox(height: MediaQuery.of(context).size.height * .02),
                 Center(
                   child: Container(
                     margin: const EdgeInsets.only(top: 0, right: 20, left: 20),

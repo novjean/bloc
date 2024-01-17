@@ -190,7 +190,7 @@ class _PromoterGuestDataItemState extends State<PromoterGuestDataItem> {
         return AlertDialog(
           contentPadding: const EdgeInsets.all(16.0),
           content: SizedBox(
-            height: mq.height * 0.5,
+            height: MediaQuery.of(context).size.height * 0.5,
             width: mq.width * 0.75,
             child: Column(
               children: [

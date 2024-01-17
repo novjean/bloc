@@ -79,7 +79,7 @@ class _ChatItemState extends State<ChatItem> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Container(
-                                width: mq.width * 0.75,
+                                width: MediaQuery.of(context).size.width * 0.75,
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(10.0),
                                   color: Colors.white,

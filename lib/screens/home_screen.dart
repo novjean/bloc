@@ -150,8 +150,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   _showBlocs(context) {
     return SizedBox(
-      height: mq.height * 0.30,
-      width: mq.width * 0.99,
+      height: MediaQuery.of(context).size.height * 0.30,
+      width: MediaQuery.of(context).size.width * 0.99,
       child: ListView.builder(
           padding: EdgeInsets.zero,
           shrinkWrap: true,
@@ -250,8 +250,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 _isAdCampaignLoading
                     ? const SizedBox()
                     : SizedBox(
-                        width: mq.width * 0.95,
-                        height: mq.height * 0.25,
+                        width: MediaQuery.of(context).size.width * 0.95,
+                        height: MediaQuery.of(context).size.height * 0.25,
                         child: AdCampaignSlideItem(adCampaign: mAdCampaign)),
                 const SizedBox(height: 10.0),
                 UserPreferences.isUserLoggedIn()
@@ -278,7 +278,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   const SizedBox(height: 10.0),
                   SizedBox(
-                      width: mq.width * 0.95,
+                      width: MediaQuery.of(context).size.width * 0.95,
                       height: 300,
                       child: AdCampaignSlideItem(adCampaign: mAdCampaign)),
                   const SizedBox(height: 10.0),

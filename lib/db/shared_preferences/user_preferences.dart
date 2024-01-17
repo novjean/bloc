@@ -138,7 +138,9 @@ class UserPreferences {
   }
 
   static bool isUserLoggedIn() {
-    return myUser.phoneNumber == 911234567890 || myUser.phoneNumber == 0
+    return myUser.phoneNumber == 911234567890
+        || myUser.phoneNumber == 0
+        || myUser.phoneNumber == 1
         ? false
         : true;
   }

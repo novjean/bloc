@@ -4,6 +4,7 @@ import 'package:bloc/screens/box_office/box_office_screen.dart';
 import 'package:bloc/screens/main_screen.dart';
 import 'package:bloc/screens/parties/event_screen.dart';
 import 'package:bloc/screens/refund_policy_screen.dart';
+import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -36,7 +37,7 @@ class BlocRouter {
           name: RouteConstants.landingRouteName,
           path: '/',
           builder: (context, state) {
-            Logx.ast(_TAG, 'bloc router: ${RouteConstants.landingRouteName}');
+            Logx.ist(_TAG, 'bloc router: ${RouteConstants.landingRouteName}');
             if(UserPreferences.myUser.phoneNumber == 0) {
               return LoginScreen(shouldTriggerSkip: false,);
             } else if(UserPreferences.myUser.phoneNumber == 1){
@@ -53,7 +54,7 @@ class BlocRouter {
           pageBuilder: (context, state) {
             String skipString = state.pathParameters['skip']!;
 
-            Logx.ast(_TAG, 'bloc router: login/:skip ${skipString}');
+            Logx.ist(_TAG, 'bloc router: login/:skip ${skipString}');
 
             bool val = false;
             if (skipString == 'true') {
@@ -68,21 +69,36 @@ class BlocRouter {
 
         GoRoute(
           name: RouteConstants.eventRouteName,
-          path: '/event/:partyName/:partyChapter',
+          path: '/event',
           pageBuilder: (context, state) {
 
-            String partyName = state.pathParameters['partyName']!;
-            String partyChapter = state.pathParameters['partyChapter']!;
+            Logx.ist(_TAG, 'bloc router: event');
 
-            Logx.ast(_TAG, 'bloc router: event: $partyName');
+            return const MaterialPage(
+                child: Scaffold(body: LoadingWidget(),)
+            );
+          },routes: [
+          GoRoute(
+            path: ':partyName/:partyChapter',
+            pageBuilder: (context, state) {
 
-            return MaterialPage(
+              Logx.ist(_TAG, 'bloc router: event/:partyName/:partyChapter');
+
+              String partyName = state.pathParameters['partyName']!;
+              String partyChapter = state.pathParameters['partyChapter']!;
+
+              return MaterialPage(
                 child: EventScreen(
                   partyName: partyName,
                   partyChapter: partyChapter,
-                ));
-          },
+                )
+              );
+            },
+          ),
+        ],
+
         ),
+
 
         GoRoute(
           name: RouteConstants.accountRouteName,
@@ -148,16 +164,6 @@ class BlocRouter {
           },
         ),
 
-        GoRoute(
-          name: RouteConstants.homeRouteName,
-          path: '/home',
-          builder: (context, state) {
-            Logx.ast(_TAG, 'bloc router: /home');
-
-            return const MainScreen();
-          },
-        ),
-
         // GoRoute(
         //   name: RouteConstants.buyTixRouteName,
         //   path: '/tix/:partyId',
@@ -219,7 +225,7 @@ class BlocRouter {
           name: RouteConstants.profileRouteName,
           path: '/profile/:username',
           pageBuilder: (context, state) {
-            Logx.ast(_TAG, 'bloc router: /profile/:${state.pathParameters['username']}');
+            Logx.ist(_TAG, 'bloc router: /profile/:${state.pathParameters['username']}');
 
             return MaterialPage(
                 child: UserProfileScreen(

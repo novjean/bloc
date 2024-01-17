@@ -1,5 +1,6 @@
 import 'package:bloc/db/shared_preferences/ui_preferences.dart';
 import 'package:bloc/main.dart';
+import 'package:bloc/utils/date_time_utils.dart';
 import 'package:bloc/utils/scan_utils.dart';
 import 'package:bloc/widgets/ui/app_bar_title.dart';
 import 'package:bloc/widgets/ui/button_widget.dart';
@@ -124,7 +125,8 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
           title: 'box office',
         ),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_rounded, color: Constants.lightPrimary),
+          icon: const Icon(Icons.arrow_back_ios_rounded,
+              color: Constants.lightPrimary),
           onPressed: () {
             if (kIsWeb) {
               GoRouter.of(context).pushNamed(RouteConstants.landingRouteName);
@@ -176,7 +178,8 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
                                   fontSize: 18, color: Constants.primary),
                             ),
                             Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 1),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 5.0, vertical: 1),
                               child: ButtonWidget(
                                 text: 'user view',
                                 onClicked: () {
@@ -202,7 +205,7 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
 
   switchPromoterOptions(BuildContext context) {
     if (sOption == 'guest list') {
-      return displayGuestListParties(context);
+      return _displayGuestListParties(context);
     } else if (sOption == 'tickets') {
       return _displayTixParties(context);
     } else {
@@ -263,19 +266,27 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
             if (snapshot.hasData) {
               List<Tix> tixs = [];
               if (snapshot.data!.docs.isEmpty) {
-                return showEventsButton();
+                return _showEventsButton();
               } else {
                 for (int i = 0; i < snapshot.data!.docs.length; i++) {
                   DocumentSnapshot document = snapshot.data!.docs[i];
                   Map<String, dynamic> map =
                       document.data()! as Map<String, dynamic>;
                   final Tix tix = Fresh.freshTixMap(map, false);
-                  tixs.add(tix);
+                  for (Party party in mParties) {
+                    if (party.id == tix.partyId) {
+                      tixs.add(tix);
+                    }
+                  }
                 }
-                return _displayUserTixs(context, tixs);
+                if(tixs.isNotEmpty){
+                  return _displayUserTixs(context, tixs);
+                } else {
+                  return _showEventsButton();
+                }
               }
             } else {
-              return showEventsButton();
+              return _showEventsButton();
             }
         }
       },
@@ -291,30 +302,18 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
             Tix sTix = tixs[index];
             Party sParty = Dummy.getDummyParty('');
 
-            bool foundParty = false;
-            for (Party party in mParties) {
-              if (party.id == sTix.partyId) {
-                sParty = party;
-                foundParty = true;
-                break;
-              }
-            }
-
-            if (!foundParty) {
-              return const SizedBox();
-            } else {
-              return GestureDetector(
-                onTap: () {
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => BoxOfficeTixScreen(tixId: sTix.id)));
-                },
-                child: BoxOfficeTixItem(
-                  tix: sTix,
-                  party: sParty,
-                  isClickable: true,
-                ),
-              );
-            }
+            return GestureDetector(
+              onTap: () {
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) =>
+                        BoxOfficeTixScreen(tixId: sTix.id)));
+              },
+              child: BoxOfficeTixItem(
+                tix: sTix,
+                party: sParty,
+                isClickable: true,
+              ),
+            );
           }),
     );
   }
@@ -334,7 +333,7 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
               if (snapshot.hasData) {
                 List<PartyGuest> partyGuestRequests = [];
                 if (snapshot.data!.docs.isEmpty) {
-                  return showPartiesButton();
+                  return _showPartiesButton();
                 } else {
                   for (int i = 0; i < snapshot.data!.docs.length; i++) {
                     DocumentSnapshot document = snapshot.data!.docs[i];
@@ -348,7 +347,7 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
                       context, partyGuestRequests);
                 }
               } else {
-                return showPartiesButton();
+                return _showPartiesButton();
               }
             }
         }
@@ -390,7 +389,7 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
     );
   }
 
-  displayGuestListParties(BuildContext context) {
+  _displayGuestListParties(BuildContext context) {
     return Expanded(
       child: ListView.builder(
           itemCount: mGuestListParties.length,
@@ -425,13 +424,14 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
                 onTap: () {
                   Party sParty = mTixParties[index];
                   Navigator.of(context).push(MaterialPageRoute(
-                      builder: (ctx) => PromoterPartyTixsScreen(party: sParty)));
+                      builder: (ctx) =>
+                          PromoterPartyTixsScreen(party: sParty)));
                 });
           }),
     );
   }
 
-  showPartiesButton() {
+  _showPartiesButton() {
     return Expanded(
       child: Center(
           child: Column(
@@ -461,14 +461,14 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
     );
   }
 
-  showEventsButton() {
+  _showEventsButton() {
     return Expanded(
       child: Center(
           child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
-            'Uh-oh, no tickets here! 🎟️ Time to snag yours and treat your loved ones to an unforgettable experience! ✨'
+            'Uh-oh, no tickets here! 🎟️ Time to treat yourself and your loved ones to an unforgettable experience! ✨'
                 .toLowerCase(),
             textAlign: TextAlign.center,
             style: const TextStyle(fontSize: 22, color: Constants.primary),
@@ -484,7 +484,8 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
             height: 50,
             onClicked: () {
               UiPreferences.setHomePageIndex(0);
-              GoRouter.of(context).pushReplacementNamed(RouteConstants.landingRouteName);
+              GoRouter.of(context)
+                  .pushReplacementNamed(RouteConstants.landingRouteName);
             },
           ),
         ],

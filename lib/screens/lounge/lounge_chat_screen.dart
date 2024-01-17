@@ -1124,8 +1124,8 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
               borderRadius: BorderRadius.all(Radius.circular(20.0))),
           contentPadding: const EdgeInsets.all(16.0),
           content: SizedBox(
-            height: mq.height * 0.6,
-            width: mq.width * 0.9,
+            height: MediaQuery.of(context).size.height * 0.6,
+            width: MediaQuery.of(context).size.width * 0.9,
             child: SingleChildScrollView(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -1150,7 +1150,7 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
                   // ),
                   Center(
                       child: SizedBox(
-                    width: mq.width,
+                    width: MediaQuery.of(context).size.width,
                     child: FadeInImage(
                       placeholder:
                           const AssetImage('assets/images/logo_3x2.png'),

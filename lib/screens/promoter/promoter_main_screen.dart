@@ -83,6 +83,7 @@ class _PromoterMainScreenState extends State<PromoterMainScreen> {
         appBar: AppBar(
           title: AppBarTitle(title: 'promoter'),
           titleSpacing: 0,
+          backgroundColor: Constants.background,
         ),
         backgroundColor: Constants.background,
         floatingActionButton: FloatingActionButton(

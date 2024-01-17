@@ -32,6 +32,8 @@ class _UserFriendItemState extends State<UserFriendItem> {
 
   @override
   void initState() {
+    super.initState();
+
     FirestoreHelper.pullUser(widget.friend.friendUserId).then((res) {
       if (res.docs.isNotEmpty) {
         DocumentSnapshot document = res.docs[0];
@@ -43,7 +45,7 @@ class _UserFriendItemState extends State<UserFriendItem> {
             _isFriendUserLoading = false;
           });
         } else {
-          Logx.ist(_TAG, '');
+          _isFriendUserLoading = false;
         }
       } else {
         Logx.est(_TAG,
@@ -53,11 +55,11 @@ class _UserFriendItemState extends State<UserFriendItem> {
           setState(() {
             _isFriendUserLoading = false;
           });
+        } else {
+          _isFriendUserLoading = false;
         }
       }
     });
-
-    super.initState();
   }
 
   @override

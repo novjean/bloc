@@ -72,7 +72,7 @@ class _BlocSlideItemState extends State<BlocSlideItem> {
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(15.0)),
               child: SizedBox(
-                width: mq.width * 0.99,
+                width: MediaQuery.of(context).size.width * 0.99,
                 child: _isBlocServiceLoading ?
                 GestureDetector(
                   onTap: () {
@@ -99,7 +99,7 @@ class _BlocSlideItemState extends State<BlocSlideItem> {
                       items: widget.bloc.imageUrls
                           .map((item) => kIsWeb? Image.network(item,
                               fit: BoxFit.cover,
-                              width: mq.width) :
+                              width: MediaQuery.of(context).size.width) :
                       CachedNetworkImage(
                         imageUrl: item,
                         imageBuilder: (context, imageProvider) => Container(

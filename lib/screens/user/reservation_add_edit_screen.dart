@@ -684,8 +684,8 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
         return AlertDialog(
           contentPadding: const EdgeInsets.all(16.0),
           content: SizedBox(
-            height: mq.height*0.4,
-            width: mq.width*0.8,
+            height: MediaQuery.of(context).size.height*0.4,
+            width: MediaQuery.of(context).size.width*0.8,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -966,9 +966,9 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
               onPressed: () {
                 Navigator.of(ctx).pop();
 
-                GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
+                GoRouter.of(context).pushNamed(RouteConstants.landingRouteName);
                 GoRouter.of(context)
-                    .pushNamed(RouteConstants.boxOfficeRouteName);
+                    .pushNamed(RouteConstants.reservationRouteName);
               },
             ),
             TextButton(
@@ -988,9 +988,9 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
 
                 UserPreferences.setUser(mBlocUser);
 
-                GoRouter.of(context).pushNamed(RouteConstants.homeRouteName);
+                GoRouter.of(context).pushNamed(RouteConstants.landingRouteName);
                 GoRouter.of(context)
-                    .pushNamed(RouteConstants.boxOfficeRouteName);
+                    .pushNamed(RouteConstants.reservationRouteName);
               },
             ),
           ],

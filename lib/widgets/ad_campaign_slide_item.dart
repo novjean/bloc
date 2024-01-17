@@ -45,8 +45,8 @@ class AdCampaignSlideItem extends StatelessWidget {
                     .map((item) => Center(
                         child: Image.network(item,
                             fit: BoxFit.fitHeight,
-                            // height: mq.height * 0.50,
-                            width: mq.width)))
+                            // height: MediaQuery.of(context).size.height * 0.50,
+                            width: MediaQuery.of(context).size.width)))
                     .toList(),
               ),
             ),

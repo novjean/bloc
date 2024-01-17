@@ -638,7 +638,7 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
           return ListView(
             shrinkWrap: true,
             padding:
-                EdgeInsets.only(top: mq.height * .03, bottom: mq.height * .03),
+                EdgeInsets.only(top: MediaQuery.of(context).size.height * .03, bottom: MediaQuery.of(context).size.height * .03),
             children: [
               const Text('select your payment method',
                   textAlign: TextAlign.center,

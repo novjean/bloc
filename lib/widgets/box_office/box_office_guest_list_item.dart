@@ -11,11 +11,13 @@ import '../../db/entity/challenge_action.dart';
 import '../../db/entity/history_music.dart';
 import '../../db/entity/party.dart';
 import '../../db/entity/party_interest.dart';
+import '../../db/entity/tix.dart';
 import '../../db/entity/user.dart';
 import '../../helpers/dummy.dart';
 import '../../helpers/fresh.dart';
 import '../../main.dart';
 import '../../screens/parties/party_guest_add_edit_manage_screen.dart';
+import '../../screens/parties/tix_buy_edit_screen.dart';
 import '../../utils/constants.dart';
 import '../../utils/date_time_utils.dart';
 import '../../utils/file_utils.dart';
@@ -84,7 +86,7 @@ class _BoxOfficeGuestListItemState extends State<BoxOfficeGuestListItem> {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)),
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 5),
-          width: mq.width,
+          width: MediaQuery.of(context).size.width,
           child: ListView(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
@@ -148,7 +150,7 @@ class _BoxOfficeGuestListItemState extends State<BoxOfficeGuestListItem> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  (widget.party.ticketUrl.isNotEmpty &&
+                  ((widget.party.ticketUrl.isNotEmpty || widget.party.isTix)&&
                           !widget.party.isTicketsDisabled)
                       ? _showBuyTicketButton(context)
                       : _showDisabledBuyTicketButton(context),
@@ -178,8 +180,8 @@ class _BoxOfficeGuestListItemState extends State<BoxOfficeGuestListItem> {
         return AlertDialog(
           contentPadding: const EdgeInsets.all(16.0),
           content: SizedBox(
-            height: mq.height * 0.5,
-            width: mq.width * 0.75,
+            height: MediaQuery.of(context).size.height * 0.5,
+            width: MediaQuery.of(context).size.width * 0.75,
             child: Column(
               children: [
                 Padding(
@@ -197,8 +199,8 @@ class _BoxOfficeGuestListItemState extends State<BoxOfficeGuestListItem> {
                   // Barcode type and settings
                   data: widget.partyGuest.id,
                   // Content
-                  width: mq.width * 0.5,
-                  height: mq.width * 0.5,
+                  width: MediaQuery.of(context).size.width * 0.5,
+                  height: MediaQuery.of(context).size.width * 0.5,
                 )),
                 Padding(
                   padding: const EdgeInsets.only(top: 20),
@@ -345,8 +347,8 @@ class _BoxOfficeGuestListItemState extends State<BoxOfficeGuestListItem> {
                   Navigator.of(ctx).pop();
                 },
               ),
-              widget.party.ticketUrl.isNotEmpty &&
-                      !widget.party.isTicketsDisabled
+              ((widget.party.ticketUrl.isNotEmpty || widget.party.isTix) &&
+                      !widget.party.isTicketsDisabled)
                   ? TextButton(
                       style: ButtonStyle(
                         backgroundColor: MaterialStateProperty.all<Color>(
@@ -356,7 +358,11 @@ class _BoxOfficeGuestListItemState extends State<BoxOfficeGuestListItem> {
                           style: TextStyle(color: Constants.primary)),
                       onPressed: () {
                         Navigator.of(ctx).pop();
-                        _handleBuyTixPressed();
+                        if(widget.party.isTix){
+                          _handleBuyTixPressed();
+                        } else {
+                          _handleBuyExternalTixPressed();
+                        }
                       },
                     )
                   : const SizedBox(),
@@ -386,12 +392,16 @@ class _BoxOfficeGuestListItemState extends State<BoxOfficeGuestListItem> {
           'buy ticket',
           style: TextStyle(fontSize: 14),
         ),
-        icon: const Icon(
-          Icons.star_half,
+        icon: Icon(
+          widget.party.isTix ? Icons.star_rate : Icons.star_half,
           size: 24.0,
         ),
         onPressed: () {
-          _handleBuyTixPressed();
+          if(widget.party.isTix){
+            _handleBuyTixPressed();
+          } else {
+            _handleBuyExternalTixPressed();
+          }
         },
       ),
     ));
@@ -501,8 +511,8 @@ class _BoxOfficeGuestListItemState extends State<BoxOfficeGuestListItem> {
   }
 
   _showPendingButton(BuildContext context) {
-    String text = widget.party.ticketUrl.isNotEmpty &&
-            !widget.party.isTicketsDisabled
+    bool isTicketedEvent = (widget.party.ticketUrl.isNotEmpty || widget.party.isTix) && !widget.party.isTicketsDisabled;
+    String text = isTicketedEvent
         ? "your guest list is pending, which means it's waiting for approval. limited spots are only available for this event – secure yours by purchasing your ticket in advance."
         : "your guest list is pending, which means it's waiting for approval. like a kid waiting for santa, you're excited but also a little bit anxious. but don't worry, our team will deliver on your request.";
     return Expanded(
@@ -552,7 +562,26 @@ class _BoxOfficeGuestListItemState extends State<BoxOfficeGuestListItem> {
                         Navigator.of(context).pop();
                       },
                     ),
-                    !widget.partyGuest.isChallengeClicked
+                    isTicketedEvent ?
+                    TextButton(
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all<Color>(
+                            Constants.darkPrimary),
+                      ),
+                      child: const Text(
+                        "🎟 buy tix",
+                        style: TextStyle(color: Constants.primary),
+                      ),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                        if(widget.party.isTix){
+                          _handleBuyTixPressed();
+                        } else {
+                          _handleBuyExternalTixPressed();
+                        }
+                      },
+                    )
+                    : !widget.partyGuest.isChallengeClicked
                         ? TextButton(
                             style: ButtonStyle(
                               backgroundColor: MaterialStateProperty.all<Color>(
@@ -578,7 +607,7 @@ class _BoxOfficeGuestListItemState extends State<BoxOfficeGuestListItem> {
     );
   }
 
-  void _handleBuyTixPressed() {
+  void _handleBuyExternalTixPressed() {
     final uri = Uri.parse(widget.party.ticketUrl);
     NetworkUtils.launchInBrowser(uri);
 
@@ -847,5 +876,84 @@ class _BoxOfficeGuestListItemState extends State<BoxOfficeGuestListItem> {
             ],
           );
         });
+  }
+
+  void _handleBuyTixPressed() {
+    if(kIsWeb){
+      if(widget.party.ticketUrl.isNotEmpty){
+        final uri = Uri.parse(widget.party.ticketUrl);
+        NetworkUtils.launchInBrowser(uri);
+      } else {
+        //navigate to purchase tix screen
+        Tix tix = Dummy.getDummyTix();
+        tix = tix.copyWith(partyId: widget.party.id);
+
+        Navigator.of(context).push(
+          MaterialPageRoute(
+              builder: (context) => TixBuyEditScreen(
+                  tix: tix, task: 'buy')),
+        );
+      }
+    } else{
+      //navigate to purchase tix screen
+      Tix tix = Dummy.getDummyTix();
+      tix = tix.copyWith(partyId: widget.party.id);
+
+      Navigator.of(context).push(
+        MaterialPageRoute(
+            builder: (context) => TixBuyEditScreen(
+                tix: tix, task: 'buy')),
+      );
+    }
+
+    if (UserPreferences.isUserLoggedIn()) {
+      User user = UserPreferences.myUser;
+
+      FirestoreHelper.pullHistoryMusic(user.id, widget.party.genre)
+          .then((res) {
+        if (res.docs.isEmpty) {
+          // no history, add new one
+          HistoryMusic historyMusic = Dummy.getDummyHistoryMusic();
+          historyMusic.userId = user.id;
+          historyMusic.genre = widget.party.genre;
+          historyMusic.count = 1;
+          FirestoreHelper.pushHistoryMusic(historyMusic);
+        } else {
+          if (res.docs.length > 1) {
+            // that means there are multiple, so consolidate
+            HistoryMusic hm = Dummy.getDummyHistoryMusic();
+            int totalCount = 0;
+
+            for (int i = 0; i < res.docs.length; i++) {
+              DocumentSnapshot document = res.docs[i];
+              Map<String, dynamic> data =
+              document.data()! as Map<String, dynamic>;
+              final HistoryMusic historyMusic =
+              Fresh.freshHistoryMusicMap(data, false);
+
+              totalCount += historyMusic.count;
+              if (i == 0) {
+                hm = historyMusic;
+              }
+              FirestoreHelper.deleteHistoryMusic(historyMusic.id);
+            }
+
+            totalCount = totalCount + 1;
+            hm = hm.copyWith(count: totalCount);
+            FirestoreHelper.pushHistoryMusic(hm);
+          } else {
+            DocumentSnapshot document = res.docs[0];
+            Map<String, dynamic> data =
+            document.data()! as Map<String, dynamic>;
+            HistoryMusic historyMusic =
+            Fresh.freshHistoryMusicMap(data, false);
+            int newCount = historyMusic.count + 1;
+
+            historyMusic = historyMusic.copyWith(count: newCount);
+            FirestoreHelper.pushHistoryMusic(historyMusic);
+          }
+        }
+      });
+    }
   }
 }

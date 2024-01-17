@@ -208,8 +208,8 @@ class _TixPartyBannerState extends State<TixPartyBanner> {
                             // Barcode type and settings
                             data: widget.tix.id,
                             // Content
-                            width: mq.width * 0.35,
-                            height: mq.width * 0.35,
+                            width: MediaQuery.of(context).size.width * 0.35,
+                            height: MediaQuery.of(context).size.width * 0.35,
                           )
                       ),
               ]

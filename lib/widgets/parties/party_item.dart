@@ -50,7 +50,7 @@ class PartyItem extends StatelessWidget {
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
           child: SizedBox(
-            width: mq.width,
+            width: MediaQuery.of(context).size.width,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
@@ -58,7 +58,7 @@ class PartyItem extends StatelessWidget {
                   children: [
                     SizedBox(
                       height: imageHeight,
-                      width: mq.width,
+                      width: MediaQuery.of(context).size.width,
                       child: FadeInImage(
                         placeholder: const AssetImage('assets/icons/logo.png'),
                         image: NetworkImage(party.imageUrl),
@@ -88,7 +88,7 @@ class PartyItem extends StatelessWidget {
                       bottom: 5.0,
                       left: 15,
                       child: Container(
-                        width: mq.width,
+                        width: MediaQuery.of(context).size.width,
                         padding: const EdgeInsets.only(right: 15.0),
                         child: RichText(
                           text: TextSpan(

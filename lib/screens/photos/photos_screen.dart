@@ -256,7 +256,7 @@ class _PhotosScreenState extends State<PhotosScreen> {
                 items: partyPhotoUrls.map((item) {
                   return kIsWeb
                       ? Image.network(item,
-                          fit: BoxFit.fitWidth, width: mq.width)
+                          fit: BoxFit.fitWidth, width: MediaQuery.of(context).size.width)
                       : CachedNetworkImage(
                           imageUrl: item,
                           imageBuilder: (context, imageProvider) => Container(
@@ -577,8 +577,8 @@ class _PhotosScreenState extends State<PhotosScreen> {
                   borderRadius: BorderRadius.all(Radius.circular(20.0))),
               contentPadding: const EdgeInsets.all(16.0),
               content: SizedBox(
-                height: mq.height * 0.6,
-                width: mq.width * 0.9,
+                height: MediaQuery.of(context).size.height * 0.6,
+                width: MediaQuery.of(context).size.width * 0.9,
                 child: SingleChildScrollView(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -623,7 +623,7 @@ class _PhotosScreenState extends State<PhotosScreen> {
                       const SizedBox(height: 12),
                       Center(
                           child: SizedBox(
-                        width: mq.width,
+                        width: MediaQuery.of(context).size.width,
                         child: FadeInImage(
                           placeholder:
                               const AssetImage('assets/images/logo_3x2.png'),
@@ -707,14 +707,14 @@ class _PhotosScreenState extends State<PhotosScreen> {
               borderRadius: BorderRadius.all(Radius.circular(20.0))),
           contentPadding: const EdgeInsets.all(16.0),
           content: SizedBox(
-            height: mq.height * 0.5,
-            width: mq.width * 0.9,
+            height: MediaQuery.of(context).size.height * 0.5,
+            width: MediaQuery.of(context).size.width * 0.9,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Center(
                     child: SizedBox(
-                  width: mq.width * 0.4,
+                  width: MediaQuery.of(context).size.width * 0.4,
                   child: FadeInImage(
                     placeholder: const AssetImage('assets/images/logo_3x2.png'),
                     image: NetworkImage(ad.imageUrl),

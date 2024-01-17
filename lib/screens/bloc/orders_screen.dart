@@ -58,7 +58,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
   }
 
   _showOrderOptions(BuildContext context) {
-    double containerHeight = mq.height * 0.2;
+    double containerHeight = MediaQuery.of(context).size.height * 0.2;
 
     return SizedBox(
       key: UniqueKey(),
