@@ -32,6 +32,7 @@ import '../../widgets/parties/artist_banner.dart';
 import '../../widgets/store_badge_item.dart';
 import '../../widgets/ui/app_bar_title.dart';
 import '../../widgets/ui/button_widget.dart';
+import '../manager/parties/party_add_edit_screen.dart';
 import 'party_guest_add_edit_manage_screen.dart';
 
 class EventScreen extends StatefulWidget {
@@ -446,7 +447,50 @@ class _EventScreenState extends State<EventScreen> {
                   : const SizedBox(),
               const SizedBox(height: 15.0),
               kIsWeb ? const StoreBadgeItem() : const SizedBox(),
-              const SizedBox(height: 10.0),
+              const SizedBox(height: 15.0),
+
+              UserPreferences.myUser.clearanceLevel == Constants.ADMIN_LEVEL ?
+                  Column(children: [
+                    const Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 15.0),
+                          child: Text('admin',
+                              style: TextStyle(
+                                  color: Constants.lightPrimary,
+                                  overflow: TextOverflow.ellipsis,
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.bold)),
+                        ),
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        InkWell(
+                          onTap: () {
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (ctx) =>
+                                    PartyAddEditScreen(party: mParty, task: 'edit')));                          },
+                          child: const Padding(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 15, vertical: 2),
+                            child: Text(
+                              'manage event',
+                              style: TextStyle(
+                                fontSize: 18,
+                                color: Constants.primary,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 15.0),
+                  ],)
+                  : const SizedBox(),
+
               Footer(),
             ],
           );

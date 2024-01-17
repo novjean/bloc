@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../db/entity/party.dart';
+import '../../db/shared_preferences/user_preferences.dart';
 import '../../helpers/fresh.dart';
 
 import '../../main.dart';
@@ -17,6 +18,7 @@ import '../../utils/logx.dart';
 import '../../utils/network_utils.dart';
 import '../../widgets/footer.dart';
 import '../../widgets/store_badge_item.dart';
+import '../manager/parties/party_add_edit_screen.dart';
 
 class ArtistScreen extends StatefulWidget {
   final String name;
@@ -272,7 +274,50 @@ class _ArtistScreenState extends State<ArtistScreen> {
                   : const SizedBox(),
               const SizedBox(height: 15.0),
               kIsWeb ? const StoreBadgeItem() : const SizedBox(),
-              const SizedBox(height: 10.0),
+              const SizedBox(height: 15.0),
+
+              UserPreferences.myUser.clearanceLevel == Constants.ADMIN_LEVEL ?
+              Column(children: [
+                const Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 15.0),
+                      child: Text('admin',
+                          style: TextStyle(
+                              color: Constants.lightPrimary,
+                              overflow: TextOverflow.ellipsis,
+                              fontSize: 22,
+                              fontWeight: FontWeight.bold)),
+                    ),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    InkWell(
+                      onTap: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (ctx) =>
+                                PartyAddEditScreen(party: mParty, task: 'edit')));                          },
+                      child: const Padding(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 15, vertical: 2),
+                        child: Text(
+                          'manage artist',
+                          style: TextStyle(
+                            fontSize: 18,
+                            color: Constants.primary,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 15.0),
+              ],)
+                  : const SizedBox(),
+
               Footer(),
             ],
           );

@@ -1,6 +1,5 @@
 import 'package:bloc/helpers/bloc_helper.dart';
 import 'package:bloc/main.dart';
-import 'package:bloc/screens/experimental/bloc_selection_screen.dart';
 import 'package:bloc/utils/constants.dart';
 import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -61,8 +60,6 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     Logx.d(_TAG, 'HomeScreen');
-
-    super.initState();
 
     _loadBlocsAndUserBlocs();
 
@@ -130,6 +127,9 @@ class _HomeScreenState extends State<HomeScreen> {
         }
       }
     });
+
+    super.initState();
+
   }
 
   @override
@@ -421,9 +421,9 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  void _loadBlocsAndUserBlocs() {
+  void _loadBlocsAndUserBlocs() async {
     UserPreferences.myUser.clearanceLevel >= Constants.PROMOTER_LEVEL
-        ? FirestoreHelper.pullBlocsPromoter().then((res) {
+        ? await FirestoreHelper.pullBlocsPromoter().then((res) {
             if (res.docs.isNotEmpty) {
               Logx.i(_TAG,
                   "successfully pulled in all power and superpower blocs");
@@ -479,7 +479,7 @@ class _HomeScreenState extends State<HomeScreen> {
               _isBlocsLoading = false;
             });
           })
-        : FirestoreHelper.pullBlocs().then((res) {
+        : await FirestoreHelper.pullBlocs().then((res) {
             if (res.docs.isNotEmpty) {
               Logx.i(_TAG, "successfully pulled in blocs");
 

@@ -65,6 +65,12 @@ class _ManagePartyTixsScreenState extends State<ManagePartyTixsScreen> {
               '${widget.party.name} ${widget.party.chapter == 'I' ? '' : widget.party.chapter}',
         ),
         titleSpacing: 0,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_ios_rounded, color: Constants.lightPrimary),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          )
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -91,8 +97,8 @@ class _ManagePartyTixsScreenState extends State<ManagePartyTixsScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          displayBoxOfficeOptions(context),
-          const Divider(),
+          // displayBoxOfficeOptions(context),
+          // const Divider(),
           Container(
             margin: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 0),
             child: TextField(
@@ -121,7 +127,8 @@ class _ManagePartyTixsScreenState extends State<ManagePartyTixsScreen> {
               },
             ),
           ),
-          _isSearching ? _displayTixs(context, searchList) : _loadTixsList(context)
+          _isSearching ? _displayTixs(context, searchList) : _loadTixsList(context),
+          const SizedBox(height: 48,)
         ],
       ),
     );

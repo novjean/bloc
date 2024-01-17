@@ -288,15 +288,21 @@ class _LoginScreenState extends State<LoginScreen> {
                 final blocUser.User user = Fresh.freshUserMap(data, false);
                 UserPreferences.setUser(user);
 
-                GoRouter.of(context)
-                    .pushReplacementNamed(RouteConstants.landingRouteName);
+                if(mounted) {
+                  GoRouter.of(context)
+                      .pushReplacementNamed(RouteConstants.landingRouteName);
+                }
               } on PlatformException catch (e, s) {
                 Logx.e(_TAG, e, s);
               } on Exception catch (e, s) {
                 Logx.e(_TAG, e, s);
               } catch (e) {
                 logger.e(e);
-              }
+                Logx.ist(_TAG, 'connection failed, please try signing in again.');
+                GoRouter.of(context)
+                    .pushReplacementNamed(RouteConstants.loginRouteName, pathParameters: {
+                  'skip': 'true',
+                });              }
             }
           });
         }
