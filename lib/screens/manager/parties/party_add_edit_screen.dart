@@ -27,6 +27,7 @@ import '../../../helpers/firestore_helper.dart';
 import '../../../main.dart';
 import '../../../utils/constants.dart';
 import '../../../utils/logx.dart';
+import '../../../utils/network_utils.dart';
 import '../../../utils/string_utils.dart';
 import '../../../widgets/profile_widget.dart';
 import '../../../widgets/ui/button_widget.dart';
@@ -846,20 +847,35 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
               ),
               const SizedBox(height: 12),
               Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  const Text(
-                    'disable ticket link : ',
-                    style: TextStyle(fontSize: 17.0),
-                  ), //Text
-                  const SizedBox(width: 10), //SizedBox
-                  Checkbox(
-                    value: widget.party.isTicketsDisabled,
-                    onChanged: (value) {
-                      setState(() {
-                        widget.party = widget.party.copyWith(isTicketsDisabled: value);
-                      });
-                    },
-                  ), //Checkbox
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                    const Text(
+                      'disable ticket link : ',
+                      style: TextStyle(fontSize: 17.0),
+                    ), //Text
+                    const SizedBox(width: 10), //SizedBox
+                    Checkbox(
+                      value: widget.party.isTicketsDisabled,
+                      onChanged: (value) {
+                        setState(() {
+                          widget.party = widget.party.copyWith(isTicketsDisabled: value);
+                        });
+                      },
+                    ),
+                  ],),
+                   ButtonWidget(
+                     text: 'check',
+                     onClicked: () {
+                       if(widget.party.ticketUrl.isNotEmpty){
+                         final uri = Uri.parse(widget.party.ticketUrl);
+                         NetworkUtils.launchInBrowser(uri);
+                       }
+                   },)
+                   //Checkbox
                 ], //<Widget>[]
               ),
               const SizedBox(height: 24),

@@ -922,57 +922,32 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
       context: context,
       builder: (BuildContext ctx) {
         return AlertDialog(
-          contentPadding: const EdgeInsets.all(16.0),
-          content: SizedBox(
-            height: 300,
-            child: Column(
-              children: [
-                const Padding(
-                  padding: EdgeInsets.only(bottom: 20),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Text(
-                        'reservation confirmation ',
-                        style: TextStyle(fontSize: 18),
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(
-                  height: 200,
-                  width: 300,
-                  child: SingleChildScrollView(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Text(
-                            'your table for the party of ${widget.reservation.guestsCount} '
-                            'on the ${DateTimeUtils.getFormattedDate2(widget.reservation.arrivalDate)} will be reviewed and approved soon. '
-                            '\n\nyour reservation confirmation status shall be found at the box office. '
-                            'also, our team may reach out to you for any further information. thank you.'),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
+          backgroundColor: Constants.lightPrimary,
+          shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(19.0))),
+          title: const Text(
+            '🍾 reservation confirmation',
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 22, color: Colors.black),
           ),
+          contentPadding: const EdgeInsets.all(16.0),
+          content: Text(
+              'your table for the party of ${widget.reservation.guestsCount} '
+                  'on the ${DateTimeUtils.getFormattedDate2(widget.reservation.arrivalDate)} will be reviewed and approved soon. '
+                  '\n\nyour reservation confirmation status shall be found at the reservations section. '
+                  'also, our team may reach out to you for any further information. thank you.'),
           actions: [
             TextButton(
-              child: const Text('close'),
+              child: const Text('cancel'),
               onPressed: () {
                 Navigator.of(ctx).pop();
-
-                GoRouter.of(context).pushNamed(RouteConstants.landingRouteName);
-                GoRouter.of(context)
-                    .pushNamed(RouteConstants.reservationRouteName);
               },
             ),
             TextButton(
-              child: const Text("confirm"),
+              style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.all<Color>(Constants.darkPrimary),
+              ),
+              child: const Text("👍 done", style: TextStyle(color: Constants.primary)),
               onPressed: () {
                 if (isNewUser) {
                   Reservation freshReservation =
@@ -1160,9 +1135,9 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
               Logx.ist(_TAG, 'reservation is approved: ${widget.reservation.isApproved}');
 
               if(mBlocUser.fcmToken.isNotEmpty){
-                String title = 'Reservation has been confirmed';
+                String title = '🎊 Reservation has been confirmed';
                 String message =
-                    'your reservation at $sBloc is confirmed for ${DateTimeUtils.getFormattedDate2(widget.reservation.arrivalDate)} at ${widget.reservation.arrivalTime}. See you then!';
+                    'your reservation at $sBloc is confirmed for ${DateTimeUtils.getFormattedDate2(widget.reservation.arrivalDate)} at ${widget.reservation.arrivalTime}. See you then!  🍾';
 
                 //send a notification
                 Apis.sendPushNotification(mBlocUser.fcmToken, title, message);

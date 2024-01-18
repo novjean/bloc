@@ -19,7 +19,7 @@ import '../../routes/route_constants.dart';
 import '../../utils/constants.dart';
 import '../../utils/logx.dart';
 import '../../widgets/celebrations/celebration_banner.dart';
-import '../../widgets/reservations/reservation_banner.dart';
+import '../../widgets/reservations/reservation_item.dart';
 import '../../widgets/ui/loading_widget.dart';
 import '../../widgets/ui/sized_listview_block.dart';
 import '../user/celebration_add_edit_screen.dart';
@@ -338,7 +338,7 @@ class _ReservationScreenState extends State<ReservationScreen> {
           scrollDirection: Axis.vertical,
           itemBuilder: (ctx, index) {
             return GestureDetector(
-                child: ReservationBanner(
+                child: ReservationItem(
                   reservation: reservations[index],
                   isPromoter: UserPreferences.myUser.clearanceLevel >=
                       Constants.PROMOTER_LEVEL,

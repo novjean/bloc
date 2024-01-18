@@ -6,7 +6,7 @@ import '../../../db/entity/reservation.dart';
 import '../../../helpers/fresh.dart';
 import '../../../utils/constants.dart';
 import '../../../utils/logx.dart';
-import '../../../widgets/reservations/reservation_item.dart';
+import '../../../widgets/reservations/manage_reservation_item.dart';
 import '../../../widgets/ui/app_bar_title.dart';
 import '../../../widgets/ui/loading_widget.dart';
 import '../../user/reservation_add_edit_screen.dart';
@@ -132,7 +132,7 @@ class _ManageReservationsScreenState extends State<ManageReservationsScreen> {
             Reservation reservation = reservations[index];
 
             return GestureDetector(
-                child: ReservationItem(
+                child: ManageReservationItem(
                   reservation: reservation,
                 ),
                 onTap: () {

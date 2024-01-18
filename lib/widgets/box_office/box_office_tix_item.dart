@@ -1,27 +1,16 @@
-import 'dart:io';
 
-import 'package:barcode_widget/barcode_widget.dart';
 import 'package:bloc/helpers/firestore_helper.dart';
 import 'package:bloc/utils/date_time_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:pdf/pdf.dart';
-import 'package:pdf/widgets.dart' as pw;
 
 import '../../db/entity/party.dart';
 import '../../db/entity/tix.dart';
 import '../../db/entity/tix_tier_item.dart';
 import '../../helpers/fresh.dart';
-import '../../main.dart';
 import '../../screens/box_office/box_office_tix_screen.dart';
 import '../../utils/constants.dart';
-import '../../utils/file_utils.dart';
 import '../../utils/logx.dart';
-import '../tix/tix_party_banner.dart';
-import '../tix/tix_party_banner.dart';
-import '../tix/tix_party_banner.dart';
-import '../tix/tix_party_banner.dart';
 
 class BoxOfficeTixItem extends StatefulWidget {
   Tix tix;

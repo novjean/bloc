@@ -30,4 +30,14 @@ class NetworkUtils {
     }
   }
 
+  // Function to make a phone call
+  static Future<void> makePhoneCall(String phoneNumber) async {
+    try {
+      final uri = Uri.parse(phoneNumber);
+      await launchUrl(uri);
+    } catch (e) {
+      Logx.est(_TAG, 'phone calling failed, please try again.');
+    }
+  }
+
 }

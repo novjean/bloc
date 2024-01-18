@@ -167,7 +167,7 @@ class AccountScreen extends StatelessWidget {
         return AlertDialog(
           backgroundColor: Constants.lightPrimary,
           shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(20.0))),
+              borderRadius: BorderRadius.all(Radius.circular(19.0))),
           contentPadding: const EdgeInsets.all(16.0),
           title: const Text(
             '📛 delete account',
@@ -175,7 +175,7 @@ class AccountScreen extends StatelessWidget {
             style: TextStyle(fontSize: 22, color: Colors.black),
           ),
           content: const Text(
-              "listen up: if you take that leap and say goodbye, all your data and music history vanish into the void – no coming back, no rewind. are you sure you want to delete?"),
+              "if you take this leap and say goodbye, all your data and music history vanish into the void – no coming back, no rewind. are you sure you want to delete?"),
           actions: [
             TextButton(
               child: const Text("yes"),
