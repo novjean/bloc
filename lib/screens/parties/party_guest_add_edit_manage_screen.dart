@@ -2309,7 +2309,7 @@ class _PartyGuestAddEditManageScreenState
               onCompleted: (pin) async {
                 debugPrint('onCompleted: $pin');
 
-                Logx.ist(_TAG, 'verifying $completePhoneNumber...');
+                Logx.ist(_TAG, '👩‍🚀 verifying $phone, please wait.');
                 try {
                   await FirebaseAuth.instance
                       .signInWithCredential(PhoneAuthProvider.credential(
