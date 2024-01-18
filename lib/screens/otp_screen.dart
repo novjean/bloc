@@ -62,7 +62,8 @@ class _OTPScreenState extends State<OTPScreen> {
       await FirebaseAuth.instance
           .signInWithPhoneNumber(widget.phone, null)
           .then((user) {
-        Logx.i(_TAG, 'signInWithPhoneNumber: user verification id ${user.verificationId}');
+        Logx.i(_TAG,
+            'signInWithPhoneNumber: user verification id ${user.verificationId}');
         setState(() {
           _verificationCode = user.verificationId;
         });
@@ -73,7 +74,8 @@ class _OTPScreenState extends State<OTPScreen> {
       await FirebaseAuth.instance.verifyPhoneNumber(
           phoneNumber: widget.phone,
           verificationCompleted: (PhoneAuthCredential credential) async {
-            Logx.i(_TAG, 'verifyPhoneNumber: ${widget.phone} is verified. code: ${credential.smsCode!}');
+            Logx.i(_TAG,
+                'verifyPhoneNumber: ${widget.phone} is verified. code: ${credential.smsCode!}');
             pinController.setText(credential.smsCode!);
           },
           verificationFailed: (FirebaseAuthException e) {
@@ -81,16 +83,18 @@ class _OTPScreenState extends State<OTPScreen> {
           },
           codeSent: (String verificationID, int? resendToken) {
             Logx.i(_TAG, 'verification id : $verificationID');
-            _verificationCode = verificationID;
 
             if (mounted) {
-              setState(() {});
+              setState(() {
+                _verificationCode = verificationID;
+              });
             }
           },
           codeAutoRetrievalTimeout: (String verificationId) {
-            _verificationCode = verificationId;
             if (mounted) {
-              setState(() {});
+              setState(() {
+                _verificationCode = verificationId;
+              });
             }
           },
           timeout: const Duration(seconds: 60));
@@ -104,7 +108,8 @@ class _OTPScreenState extends State<OTPScreen> {
         backgroundColor: Constants.background,
         title: const Text(''),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_rounded, color: Constants.lightPrimary),
+          icon: const Icon(Icons.arrow_back_ios_rounded,
+              color: Constants.lightPrimary),
           onPressed: () {
             Navigator.of(context).pop();
           },
@@ -112,7 +117,9 @@ class _OTPScreenState extends State<OTPScreen> {
       ),
       backgroundColor: Constants.background,
       body:
-          Column(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+          Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
         Flexible(
           flex: 1,
           child: Container(
@@ -326,6 +333,7 @@ class _OTPScreenState extends State<OTPScreen> {
   void _verifyOtpCode() async {
     Logx.ist(_TAG, '☎️ contacting HQ');
     try {
+
       await FirebaseAuth.instance
           .signInWithCredential(PhoneAuthProvider.credential(
               verificationId: _verificationCode, smsCode: mPin))
@@ -334,7 +342,6 @@ class _OTPScreenState extends State<OTPScreen> {
           Logx.i(_TAG, 'user is in firebase auth');
 
           String? fcmToken = '';
-
           if (!kIsWeb) {
             fcmToken = await FirebaseMessaging.instance.getToken();
           }
@@ -373,7 +380,7 @@ class _OTPScreenState extends State<OTPScreen> {
                     }
                   });
 
-                  user = user.copyWith(id: value.user!.uid, fcmToken: fcmToken);
+                  user = user.copyWith(id: value.user!.uid);
                   user.lastSeenAt = Timestamp.now().millisecondsSinceEpoch;
                   if (UserPreferences.isUserLoggedIn()) {
                     if (kIsWeb) {
@@ -384,11 +391,11 @@ class _OTPScreenState extends State<OTPScreen> {
                           isAppUser: true,
                           appVersion: Constants.appVersion,
                           isIos:
-                              Theme.of(context).platform == TargetPlatform.iOS);
+                              Theme.of(context).platform == TargetPlatform.iOS,
+                          fcmToken: fcmToken);
                     }
                   }
 
-                  // check if there is username
                   if (user.username.isEmpty) {
                     String username = '';
                     if (user.surname.trim().isNotEmpty) {
@@ -411,8 +418,8 @@ class _OTPScreenState extends State<OTPScreen> {
 
                         Logx.ist(_TAG, '👽 yo, welcome to the bloc community!');
 
-                        GoRouter.of(context)
-                            .pushReplacementNamed(RouteConstants.landingRouteName);
+                        GoRouter.of(context).pushReplacementNamed(
+                            RouteConstants.landingRouteName);
                       } else {
                         user = user.copyWith(username: username);
                         FirestoreHelper.pushUser(user);
@@ -421,8 +428,8 @@ class _OTPScreenState extends State<OTPScreen> {
 
                         Logx.ist(_TAG, '👽 yo, welcome to the bloc community!');
 
-                        GoRouter.of(context)
-                            .pushReplacementNamed(RouteConstants.landingRouteName);
+                        GoRouter.of(context).pushReplacementNamed(
+                            RouteConstants.landingRouteName);
                       }
                     });
                   } else {
@@ -533,7 +540,8 @@ class _OTPScreenState extends State<OTPScreen> {
                 UserPreferences.setUser(user);
                 UiPreferences.setHomePageIndex(0);
 
-                GoRouter.of(context).pushReplacementNamed(RouteConstants.landingRouteName);
+                GoRouter.of(context)
+                    .pushReplacementNamed(RouteConstants.landingRouteName);
 
                 Toaster.shortToast(
                     'yo ${user.name.toLowerCase()}, welcome back! 🦖');
@@ -549,7 +557,7 @@ class _OTPScreenState extends State<OTPScreen> {
       if (exception.contains('session-expired')) {
         Toaster.longToast('session got expired, trying again.');
         _verifyPhone();
-      } else if(exception.contains('channel-error')) {
+      } else if (exception.contains('channel-error')) {
         Toaster.longToast('something went wrong! please try again.');
         Navigator.of(context).pop();
       } else {

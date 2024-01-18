@@ -7,6 +7,7 @@ import 'package:bloc/widgets/ui/toaster.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:delayed_display/delayed_display.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:in_app_review/in_app_review.dart';
@@ -2113,7 +2114,7 @@ class _PartyGuestAddEditManageScreenState
 
   /** phone registration **/
   void _verifyPhone() async {
-    Logx.i(_TAG, '_verifyPhone: registering $completePhoneNumber');
+    Logx.i(_TAG, '_verifyPhone');
 
     if (kIsWeb) {
       await FirebaseAuth.instance
@@ -2136,7 +2137,8 @@ class _PartyGuestAddEditManageScreenState
           verificationCompleted: (PhoneAuthCredential credential) async {
             Logx.i(_TAG,
                 'verifyPhoneNumber: $completePhoneNumber is verified. attempting sign in with credentials...');
-          },
+            pinController.setText(credential.smsCode!);
+            },
           verificationFailed: (FirebaseAuthException e) {
             Logx.em(_TAG, 'verificationFailed $e');
           },
@@ -2199,8 +2201,8 @@ class _PartyGuestAddEditManageScreenState
                     child: Text(
                   'enter the six digit code you received on \n$completePhoneNumber',
                   textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Theme.of(context).primaryColorDark,
+                  style: const TextStyle(
+                    color: Constants.darkPrimary,
                     fontWeight: FontWeight.normal,
                     fontSize: 16,
                   ),
@@ -2229,7 +2231,7 @@ class _PartyGuestAddEditManageScreenState
                           child: Text(
                             'resend?',
                             style: TextStyle(
-                              color: Constants.primary,
+                              color: Constants.darkPrimary,
                               fontSize: 16,
                             ),
                           ),
@@ -2243,7 +2245,18 @@ class _PartyGuestAddEditManageScreenState
           ),
           actions: [
             TextButton(
-              child: const Text('close'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('close',
+                  style: TextStyle(color: Constants.darkPrimary)),
+            ),
+            TextButton(
+              style: ButtonStyle(
+                backgroundColor:
+                MaterialStateProperty.all<Color>(Constants.darkPrimary),
+              ),
+              child: const Text('👍 done', style: TextStyle(color: Constants.primary)),
               onPressed: () {
                 Navigator.of(context).pop();
               },
@@ -2255,9 +2268,9 @@ class _PartyGuestAddEditManageScreenState
   }
 
   _showOTPVerifyWidget(String phone) {
-    const focusedBorderColor = Color.fromRGBO(222, 193, 170, 1);
-    const fillColor = Color.fromRGBO(38, 50, 56, 1.0);
-    const borderColor = Color.fromRGBO(211, 167, 130, 1);
+    const focusedBorderColor = Color.fromRGBO(27, 26, 23, 1);
+    const fillColor = Color.fromRGBO(27, 26, 23, 1);
+    const borderColor = Color.fromRGBO(27, 26, 23, 1);
 
     final defaultPinTheme = PinTheme(
       width: 56,
@@ -2277,6 +2290,7 @@ class _PartyGuestAddEditManageScreenState
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
+
           Directionality(
             // Specify direction if desired
             textDirection: TextDirection.ltr,
@@ -2284,17 +2298,18 @@ class _PartyGuestAddEditManageScreenState
               length: 6,
               controller: pinController,
               focusNode: focusNode,
-              // androidSmsAutofillMethod:
-              //     AndroidSmsAutofillMethod.smsUserConsentApi,
+              androidSmsAutofillMethod: AndroidSmsAutofillMethod.none,
               listenForMultipleSmsOnAndroid: true,
               defaultPinTheme: defaultPinTheme,
+              separatorBuilder: (index) => const SizedBox(width: 8),
               closeKeyboardWhenCompleted: true,
               hapticFeedbackType: HapticFeedbackType.lightImpact,
+
+              pinputAutovalidateMode: PinputAutovalidateMode.onSubmit,
               onCompleted: (pin) async {
                 debugPrint('onCompleted: $pin');
 
-                Logx.ist(
-                    _TAG, 'verifying $completePhoneNumber, please wait...');
+                Logx.ist(_TAG, 'verifying $completePhoneNumber...');
                 try {
                   await FirebaseAuth.instance
                       .signInWithCredential(PhoneAuthProvider.credential(
@@ -2302,8 +2317,11 @@ class _PartyGuestAddEditManageScreenState
                       .then((value) async {
                     if (value.user != null) {
                       Logx.i(_TAG, 'user is in firebase auth');
-                      Logx.i(_TAG,
-                          'checking for bloc registration, id ${value.user!.uid}');
+
+                      String? fcmToken = '';
+                      if (!kIsWeb) {
+                        fcmToken = await FirebaseMessaging.instance.getToken();
+                      }
 
                       FirestoreHelper.pullUser(value.user!.uid).then((res) {
                         if (res.docs.isEmpty) {
@@ -2325,8 +2343,8 @@ class _PartyGuestAddEditManageScreenState
                             mBlocUser = mBlocUser.copyWith(
                               isAppUser: true,
                               appVersion: Constants.appVersion,
-                              isIos: Theme.of(context).platform ==
-                                  TargetPlatform.iOS,
+                              isIos: Theme.of(context).platform == TargetPlatform.iOS,
+                              fcmToken: fcmToken
                             );
                           }
 

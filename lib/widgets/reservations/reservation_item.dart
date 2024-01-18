@@ -1,7 +1,11 @@
+import 'package:bloc/helpers/firestore_helper.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../../db/entity/bloc_service.dart';
 import '../../db/entity/reservation.dart';
+import '../../helpers/fresh.dart';
 import '../../screens/user/reservation_add_edit_screen.dart';
 import '../../utils/constants.dart';
 import '../../utils/date_time_utils.dart';
@@ -27,14 +31,37 @@ class _ReservationItemState extends State<ReservationItem> {
 
   bool testMode = false;
 
+  late BlocService mBlocService;
+  bool _isBlocServiceLoading = true;
+
   @override
   void initState() {
     super.initState();
+
+    FirestoreHelper.pullBlocServiceById(widget.reservation.blocServiceId).then(
+        (res) {
+          if(res.docs.isNotEmpty){
+            DocumentSnapshot document = res.docs[0];
+            Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+
+            setState(() {
+              mBlocService = Fresh.freshBlocServiceMap(data, false);
+              _isBlocServiceLoading = false;
+            });
+          }
+        }
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    String title = widget.reservation.name.toLowerCase();
+
+
+    String title = '${widget.reservation.name.toLowerCase()}';
+    int guestsCount = widget.reservation.guestsCount -1;
+    if(guestsCount > 0){
+      title += ' +$guestsCount';
+    }
 
     return Hero(
       tag: widget.reservation.id,
@@ -43,7 +70,7 @@ class _ReservationItemState extends State<ReservationItem> {
         color: Constants.lightPrimary,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)),
         child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 5),
+          padding: const EdgeInsets.only(top: 1, bottom: 0, left: 5, right: 5),
           width: MediaQuery.of(context).size.width,
           child: ListView(
             shrinkWrap: true,
@@ -59,12 +86,12 @@ class _ReservationItemState extends State<ReservationItem> {
                       fontWeight: FontWeight.w800,
                     ),
                   ),
-                  const SizedBox(
+                  _isBlocServiceLoading ? const SizedBox() : SizedBox(
                     height: 50,
                     width: 50,
                     child: FadeInImage(
                       placeholder: AssetImage('assets/icons/logo.png'),
-                      image: AssetImage('assets/icons/logo.png'),
+                      image: NetworkImage(mBlocService.imageUrl),
                       fit: BoxFit.cover,
                     ),
                   )
@@ -73,7 +100,7 @@ class _ReservationItemState extends State<ReservationItem> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('${widget.reservation.guestsCount} guests',
+                  Text(_isBlocServiceLoading ? '' : '${mBlocService.name}',
                     style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                   Text(
@@ -170,7 +197,7 @@ class _ReservationItemState extends State<ReservationItem> {
               'call us',
               style: TextStyle(fontSize: 14),
             ),
-            icon: Icon(
+            icon: const Icon(
               Icons.phone,
               size: 24.0,
             ),
@@ -324,15 +351,8 @@ class _ReservationItemState extends State<ReservationItem> {
     );
   }
 
-  //todo: need to write better version of this
   void _handlePropertyCall() {
-    if(widget.reservation.blocServiceId == Constants.freqServiceId) {
-      // call freq
-      NetworkUtils.makePhoneCall('tel:+917700004327');
-    } else {
-      // call bloc
-      NetworkUtils.makePhoneCall('tel:+917700004328');
-    }
+    NetworkUtils.makePhoneCall('tel:+91${mBlocService.primaryPhone.toInt()}');
   }
 
 

@@ -27,7 +27,6 @@ import '../../widgets/tix/party_tix_tier_item.dart';
 import '../../widgets/tix/buy_tix_tier_item.dart';
 import '../../widgets/ui/app_bar_title.dart';
 import '../../widgets/ui/dark_button_widget.dart';
-import '../../widgets/ui/dark_textfield_widget.dart';
 import '../../widgets/ui/textfield_widget.dart';
 import 'tix_checkout_screen.dart';
 
@@ -74,6 +73,13 @@ class _TixBuyEditScreenState extends State<TixBuyEditScreen> {
   ];
 
   bool testMode = false;
+
+  @override
+  void dispose() {
+    pinController.dispose();
+    focusNode.dispose();
+    super.dispose();
+  }
 
   @override
   void initState() {
@@ -466,6 +472,7 @@ class _TixBuyEditScreenState extends State<TixBuyEditScreen> {
           verificationCompleted: (PhoneAuthCredential credential) async {
             Logx.i(_TAG,
                 'verifyPhoneNumber: $completePhoneNumber is verified. signing in with credentials...');
+            pinController.setText(credential.smsCode!);
           },
           verificationFailed: (FirebaseAuthException e) {
             Logx.em(_TAG, 'verificationFailed $e');
@@ -475,14 +482,18 @@ class _TixBuyEditScreenState extends State<TixBuyEditScreen> {
 
             _handleContinueLogin();
 
-            setState(() {
-              _verificationCode = verificationID;
-            });
+            if(mounted){
+              setState(() {
+                _verificationCode = verificationID;
+              });
+            }
           },
           codeAutoRetrievalTimeout: (String verificationId) {
-            setState(() {
-              _verificationCode = verificationId;
-            });
+            if(mounted){
+              setState(() {
+                _verificationCode = verificationId;
+              });
+            }
           },
           timeout: const Duration(seconds: 60));
     }
@@ -676,13 +687,12 @@ class _TixBuyEditScreenState extends State<TixBuyEditScreen> {
                                 length: 6,
                                 controller: pinController,
                                 focusNode: focusNode,
-                                // androidSmsAutofillMethod:
-                                //     AndroidSmsAutofillMethod.smsUserConsentApi,
+                                androidSmsAutofillMethod: AndroidSmsAutofillMethod.none,
                                 listenForMultipleSmsOnAndroid: true,
                                 defaultPinTheme: defaultPinTheme,
+                                separatorBuilder: (index) => const SizedBox(width: 8),
                                 closeKeyboardWhenCompleted: true,
-                                hapticFeedbackType:
-                                    HapticFeedbackType.lightImpact,
+                                hapticFeedbackType: HapticFeedbackType.lightImpact,
                                 onCompleted: (pin) async {
                                   debugPrint('onCompleted: $pin');
 
