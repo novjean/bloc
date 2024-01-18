@@ -512,7 +512,19 @@ class _EventScreenState extends State<EventScreen> {
                 artists.add(bloc);
               }
               artists.sort((a, b) => a.name.compareTo(b.name));
-              return _showArtists(context, artists);
+
+              List<Party> lineup = [];
+              List<Party> acts = [];
+              for(Party artist in artists){
+                if(artist.isBigAct){
+                  lineup.add(artist);
+                } else {
+                  acts.add(artist);
+                }
+              }
+              lineup.addAll(acts);
+
+              return _showArtists(context, lineup);
             }
         }
       },
