@@ -250,7 +250,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 _isAdCampaignLoading
                     ? const SizedBox()
                     : SizedBox(
-                        width: MediaQuery.of(context).size.width * 0.95,
+                        width: MediaQuery.of(context).size.width * 0.25,
                         height: MediaQuery.of(context).size.height * 0.25,
                         child: AdCampaignSlideItem(adCampaign: mAdCampaign)),
                 const SizedBox(height: 10.0),

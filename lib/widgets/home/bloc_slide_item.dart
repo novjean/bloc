@@ -35,31 +35,8 @@ class _BlocSlideItemState extends State<BlocSlideItem> {
   @override
   void initState() {
     super.initState();
-    FirestoreHelper.pullBlocServiceByBlocId(widget.bloc.id).then((res) {
-      if (res.docs.isNotEmpty) {
-        List<BlocService> blocServices = [];
-        for (int i = 0; i < res.docs.length; i++) {
-          DocumentSnapshot document = res.docs[i];
-          Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-          final BlocService blocService = Fresh.freshBlocServiceMap(data, false);
-          blocServices.add(blocService);
-        }
-        setState(() {
-          mBlocService = blocServices.first;
-          if(UserPreferences.getUserBlocs().contains(mBlocService.id)){
-            _isBlocServiceLoading = false;
-          } else {
-            // true will result in not showing
-            _isBlocServiceLoading = true;
-          }
-        });
-      } else {
-        Logx.em(_TAG, 'no bloc service found for bloc id ${widget.bloc.id}');
-        setState(() {
-          _isBlocServiceLoading = false;
-        });
-      }
-    });
+
+    _pullBlocService();
   }
 
   @override
@@ -74,13 +51,8 @@ class _BlocSlideItemState extends State<BlocSlideItem> {
               child: SizedBox(
                 width: MediaQuery.of(context).size.width * 0.99,
                 child: _isBlocServiceLoading ?
-                GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      Logx.ast(_TAG, 'refreshing');
-                    });
-                  },
-                    child: Center(child: Text(widget.bloc.name, textAlign: TextAlign.center, style: TextStyle(color: Constants.primary),),)):
+                Center(child: Text(widget.bloc.name, textAlign: TextAlign.center,
+                  style: TextStyle(color: Constants.primary),),):
                 Stack(
                   fit: StackFit.passthrough,
                   children: [
@@ -149,5 +121,39 @@ class _BlocSlideItemState extends State<BlocSlideItem> {
               ),
             ),
           );
+  }
+
+  void _pullBlocService() async {
+    await FirestoreHelper.pullBlocServiceByBlocId(widget.bloc.id).then((res) {
+      if (res.docs.isNotEmpty) {
+        List<BlocService> blocServices = [];
+        for (int i = 0; i < res.docs.length; i++) {
+          DocumentSnapshot document = res.docs[i];
+          Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+          final BlocService blocService = Fresh.freshBlocServiceMap(data, false);
+          blocServices.add(blocService);
+        }
+
+        if(mounted){
+          setState(() {
+            mBlocService = blocServices.first;
+            if(UserPreferences.getUserBlocs().contains(mBlocService.id)){
+              _isBlocServiceLoading = false;
+            } else {
+              // true will result in not showing
+              _isBlocServiceLoading = true;
+            }
+          });
+        }
+      } else {
+        Logx.em(_TAG, 'no bloc service found for bloc id ${widget.bloc.id}');
+        if(mounted){
+          setState(() {
+            _isBlocServiceLoading = false;
+          });
+        }
+      }
+    });
+
   }
 }
