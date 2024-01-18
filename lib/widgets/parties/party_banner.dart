@@ -704,11 +704,7 @@ class _PartyBannerState extends State<PartyBanner> {
 
   void _handleBuyTixPressed() {
     if(kIsWeb){
-      if(widget.party.ticketUrl.isNotEmpty){
-        final uri = Uri.parse(widget.party.ticketUrl);
-        NetworkUtils.launchInBrowser(uri);
-      } else {
-        //navigate to purchase tix screen
+      if(widget.party.isTix) {
         Tix tix = Dummy.getDummyTix();
         tix = tix.copyWith(partyId: widget.party.id);
 
@@ -717,6 +713,11 @@ class _PartyBannerState extends State<PartyBanner> {
               builder: (context) => TixBuyEditScreen(
                   tix: tix, task: 'buy')),
         );
+      } else if(widget.party.ticketUrl.isNotEmpty) {
+          final uri = Uri.parse(widget.party.ticketUrl);
+          NetworkUtils.launchInBrowser(uri);
+      } else {
+        Logx.ist(_TAG, 'no tickets are available at the moment!');
       }
     } else{
       //navigate to purchase tix screen

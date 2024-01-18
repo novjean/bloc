@@ -26,6 +26,7 @@ import '../../utils/file_utils.dart';
 import '../../utils/logx.dart';
 import '../../utils/number_utils.dart';
 import '../../utils/string_utils.dart';
+import '../../widgets/footer.dart';
 import '../../widgets/profile_widget.dart';
 import '../../widgets/ui/button_widget.dart';
 import '../../widgets/ui/dark_textfield_widget.dart';
@@ -370,7 +371,8 @@ class _ProfileAddEditRegisterPageState
             }
           },
         ),
-        const SizedBox(height: 24),
+        const SizedBox(height: 36),
+        Footer()
       ],
     );
   }

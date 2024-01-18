@@ -417,9 +417,6 @@ class _OTPScreenState extends State<OTPScreen> {
                         UiPreferences.setHomePageIndex(0);
 
                         Logx.ist(_TAG, '👽 yo, welcome to the bloc community!');
-
-                        GoRouter.of(context).pushReplacementNamed(
-                            RouteConstants.landingRouteName);
                       } else {
                         user = user.copyWith(username: username);
                         FirestoreHelper.pushUser(user);
@@ -427,9 +424,6 @@ class _OTPScreenState extends State<OTPScreen> {
                         UiPreferences.setHomePageIndex(0);
 
                         Logx.ist(_TAG, '👽 yo, welcome to the bloc community!');
-
-                        GoRouter.of(context).pushReplacementNamed(
-                            RouteConstants.landingRouteName);
                       }
                     });
                   } else {
@@ -438,9 +432,6 @@ class _OTPScreenState extends State<OTPScreen> {
                     UiPreferences.setHomePageIndex(0);
 
                     Logx.ist(_TAG, '👽 yo, welcome to the bloc community!');
-
-                    GoRouter.of(context)
-                        .pushReplacementNamed(RouteConstants.landingRouteName);
                   }
                 } else {
                   Logx.i(_TAG,

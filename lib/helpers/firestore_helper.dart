@@ -2556,8 +2556,9 @@ class FirestoreHelper {
     }
   }
 
-  static void deleteUser(String docId) {
-    FirebaseFirestore.instance.collection(USERS).doc(docId).delete();
+  static Future<void> deleteUser(String docId) async {
+    await FirebaseFirestore.instance.collection(USERS).doc(docId).delete();
+    return;
   }
 
   /** user level **/

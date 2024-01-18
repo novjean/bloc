@@ -290,11 +290,13 @@ class AccountScreen extends StatelessWidget {
                   }
                 });
 
-                FirestoreHelper.deleteUser(sUser.id);
+                Logx.ilt(_TAG, 'deleting your account. hope to see you soon 👋');
+
+                await FirestoreHelper.deleteUser(sUser.id);
                 UserPreferences.resetUser(0);
                 TablePreferences.resetQuickTable();
 
-                Logx.i(_TAG, 'user account is deleted');
+                Logx.ist(_TAG, 'user account is deleted');
 
                 try {
                   User? user = FirebaseAuth.instance.currentUser;
@@ -306,7 +308,6 @@ class AccountScreen extends StatelessWidget {
                 } catch (e) {
                   Logx.em(_TAG, 'account delete failed $e');
                 }
-
                 await FirebaseAuth.instance.signOut();
 
                 GoRouter.of(context)
@@ -320,7 +321,7 @@ class AccountScreen extends StatelessWidget {
                 backgroundColor: MaterialStateProperty.all<Color>(
                     Constants.darkPrimary), // Set your desired background color
               ),
-              child: const Text("no"),
+              child: const Text("no", style: TextStyle(color: Constants.primary),),
               onPressed: () {
                 Navigator.of(context).pop();
               },

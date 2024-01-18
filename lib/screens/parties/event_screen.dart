@@ -592,7 +592,16 @@ class _EventScreenState extends State<EventScreen> {
           ),
           onPressed: () {
             if (kIsWeb) {
-              if (mParty.ticketUrl.isNotEmpty) {
+              if(mParty.isTix){
+                Tix tix = Dummy.getDummyTix();
+                tix = tix.copyWith(partyId: mParty.id);
+
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                      builder: (context) => TixBuyEditScreen(
+                          tix: tix, task: 'buy')),
+                );
+              } else if (mParty.ticketUrl.isNotEmpty) {
                 final uri = Uri.parse(mParty.ticketUrl);
                 NetworkUtils.launchInBrowser(uri);
               } else {
