@@ -615,7 +615,7 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
                   height: 50,
                   onClicked: () {
                     if (UserPreferences.isUserLoggedIn()) {
-                      showConfirmationDialog(context, false);
+                      _showConfirmationDialog(context, false);
                     } else {
                       _verifyPhone();
                     }
@@ -838,7 +838,7 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
                           widget.reservation = widget.reservation.copyWith(
                               phone: int.tryParse(completePhoneNumber));
 
-                          showConfirmationDialog(context, true);
+                          _showConfirmationDialog(context, true);
                         } else {
                           Logx.i(_TAG, 'user is a bloc member, logging in...');
 
@@ -862,7 +862,7 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
                           widget.reservation = widget.reservation.copyWith(
                               phone: int.tryParse(completePhoneNumber));
 
-                          showConfirmationDialog(context, false);
+                          _showConfirmationDialog(context, false);
                         }
                       });
                     }
@@ -917,7 +917,7 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
     );
   }
 
-  showConfirmationDialog(BuildContext context, bool isNewUser) {
+  _showConfirmationDialog(BuildContext context, bool isNewUser) {
     return showDialog(
       context: context,
       builder: (BuildContext ctx) {

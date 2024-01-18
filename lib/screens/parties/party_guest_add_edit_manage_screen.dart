@@ -1919,7 +1919,7 @@ class _PartyGuestAddEditManageScreenState
               borderRadius: BorderRadius.all(Radius.circular(20.0))),
           contentPadding: const EdgeInsets.all(16.0),
           content: SizedBox(
-            height: MediaQuery.of(context).size.height * 0.5,
+            height: 350,
             width: double.maxFinite,
             child: ListView(
               children: const [
