@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:bloc/db/entity/history_music.dart';
 import 'package:bloc/db/entity/user_lounge.dart';
 import 'package:bloc/widgets/ui/app_bar_title.dart';
@@ -1610,11 +1612,9 @@ class _PartyGuestAddEditManageScreenState
                     } else {
                       //already requested
                       Logx.ist(_TAG, 'guest list has already been requested!');
+                      Navigator.of(context).pop();
 
-                      GoRouter.of(context)
-                          .pushNamed(RouteConstants.landingRouteName);
-                      GoRouter.of(context)
-                          .pushNamed(RouteConstants.boxOfficeRouteName);
+                      _showAdDialog(context);
                     }
                   });
                 }
@@ -2687,6 +2687,8 @@ class _PartyGuestAddEditManageScreenState
         AdCampaign adCampaign = Dummy.getDummyAdCampaign();
         bool foundAd = false;
 
+        List<AdCampaign> adCampaigns = [];
+
         for (int i = 0; i < res.docs.length; i++) {
           DocumentSnapshot document = res.docs[i];
           Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
@@ -2694,10 +2696,11 @@ class _PartyGuestAddEditManageScreenState
 
           if (Timestamp.now().millisecondsSinceEpoch < tempAd.endTime) {
             if (tempAd.isPartyAd) {
+
               if (tempAd.partyId != widget.party.id) {
                 adCampaign = tempAd;
+                adCampaigns.add(adCampaign);
                 foundAd = true;
-                break;
               } else {
                 // same party, need to check for more ads
               }
@@ -2710,6 +2713,12 @@ class _PartyGuestAddEditManageScreenState
         }
 
         if (foundAd) {
+          if(adCampaigns.length > 1){
+            Random random = Random();
+            int adIndex = random.nextInt(adCampaigns.length-1);
+            adCampaign = adCampaigns[adIndex];
+          }
+
           showDialog(
             context: context,
             barrierDismissible: false,
@@ -2781,8 +2790,6 @@ class _PartyGuestAddEditManageScreenState
                                 Constants.darkPrimary),
                           ),
                           onPressed: () {
-                            Navigator.of(ctx).pop();
-
                             FirestoreHelper.updateAdCampaignClickCount(
                                 adCampaign.id);
 
@@ -2795,20 +2802,11 @@ class _PartyGuestAddEditManageScreenState
                                     document.data()! as Map<String, dynamic>;
                                 final Party party =
                                     Fresh.freshPartyMap(data, false);
-                                Navigator.of(ctx).pop();
-
                                 GoRouter.of(context)
                                     .pushNamed(RouteConstants.landingRouteName);
-                                GoRouter.of(context).pushNamed(
-                                    RouteConstants.boxOfficeRouteName);
+                                GoRouter.of(context).push('/event/${party.name}/${party.chapter}');
 
-                                // navigate to party
-                                GoRouter.of(context).pushNamed(
-                                    RouteConstants.eventRouteName,
-                                    pathParameters: {
-                                      'partyName': party.name,
-                                      'partyChapter': party.chapter
-                                    });
+                                Navigator.of(ctx).pop();
                               } else {
                                 Navigator.of(ctx).pop();
 
@@ -2818,6 +2816,7 @@ class _PartyGuestAddEditManageScreenState
                                     RouteConstants.boxOfficeRouteName);
                               }
                             });
+
                           },
                           child: const Text(
                             "🎊 more info",
@@ -2987,8 +2986,6 @@ class _PartyGuestAddEditManageScreenState
 
         GoRouter.of(context)
             .pushNamed(RouteConstants.landingRouteName);
-        GoRouter.of(context)
-            .pushNamed(RouteConstants.boxOfficeRouteName);
 
         if(isShare){
           FirestoreHelper.updatePartyShareCount(party.id);
@@ -2998,18 +2995,9 @@ class _PartyGuestAddEditManageScreenState
               'Check this party, ${party.name} out on bloc. $url');
         } else {
           // navigate to party
-          GoRouter.of(context).go('/event/${party.name}/${party.chapter}');
+          GoRouter.of(context).push('/event/${party.name}/${party.chapter}');
         }
-
-        // GoRouter.of(context).pushNamed(
-        //     RouteConstants.eventRouteName,
-        //     pathParameters: {
-        //       'partyName': party.name,
-        //       'partyChapter': party.chapter
-        //     });
       } else {
-        // Navigator.of(ctx).pop();
-
         GoRouter.of(context)
             .pushNamed(RouteConstants.landingRouteName);
         GoRouter.of(context)
