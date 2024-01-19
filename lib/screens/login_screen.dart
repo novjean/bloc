@@ -117,15 +117,15 @@ class _LoginScreenState extends State<LoginScreen> {
                                     return signInWidget();
                                   }
 
+
                                   Map<String, dynamic> data = snapshot.data!
                                       .data() as Map<String, dynamic>;
                                   final blocUser.User user =
                                       Fresh.freshUserMap(data, true);
                                   UserPreferences.setUser(user);
 
-                                  // GoRouter.of(context).go('/');
+                                  Logx.ast(_TAG, 'auth state change. user ${user.name}');
 
-                                  // return const SizedBox();
                                   return const MainScreen();
                                 }
                             }
@@ -377,7 +377,7 @@ class _LoginScreenState extends State<LoginScreen> {
               } catch (e) {
                 logger.e(e);
                 Logx.ist(
-                    _TAG, 'connection failed, please try signing in again.');
+                    _TAG, '🙈 connection failed, please try signing in again.');
 
                 GoRouter.of(context).go('/login/true');
               }
