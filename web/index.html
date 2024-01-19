@@ -131,6 +131,8 @@
   // Initialize Firebase
   const app = initializeApp(firebaseConfig);
   const analytics = getAnalytics(app);
+  const appCheck = firebase.appCheck();
+  appCheck.activate('6Lc_XlYpAAAAAMf1fEA7WkNQBleWV48l1vXRb0Dx', true);
 </script>
   <style>
     .grecaptcha-badge { visibility: hidden;}
