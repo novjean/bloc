@@ -319,10 +319,8 @@ class _MainScreenState extends State<MainScreen> {
           dialogStyle: Theme.of(context).platform == TargetPlatform.iOS
               ? UpgradeDialogStyle.cupertino
               : UpgradeDialogStyle.material),
-      child: WillPopScope(
-        onWillPop: () async {
-          return false;
-        },
+      child: PopScope(
+        canPop: false,
         child: Scaffold(
           backgroundColor: Constants.background,
           body: SliderDrawer(
@@ -566,10 +564,7 @@ class _MainScreenState extends State<MainScreen> {
 
           await FirebaseAuth.instance.signOut();
 
-          GoRouter.of(context)
-              .pushReplacementNamed(RouteConstants.loginRouteName, pathParameters: {
-            'skip': 'false',
-          });
+          GoRouter.of(context).go('/login/false');
           break;
         }
       case 'logout':
@@ -579,18 +574,12 @@ class _MainScreenState extends State<MainScreen> {
 
           await FirebaseAuth.instance.signOut();
 
-          GoRouter.of(context)
-              .pushReplacementNamed(RouteConstants.loginRouteName, pathParameters: {
-            'skip': 'false',
-          });
+          GoRouter.of(context).go('/login/false');
           break;
         }
       default:
         {
-          GoRouter.of(context)
-              .pushReplacementNamed(RouteConstants.loginRouteName, pathParameters: {
-            'skip': 'false',
-          });
+          GoRouter.of(context).go('/login/false');
           break;
         }
     }

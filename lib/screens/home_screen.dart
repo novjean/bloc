@@ -94,7 +94,7 @@ class _HomeScreenState extends State<HomeScreen> {
         mAdCampaign = Fresh.freshAdCampaignMap(data, false);
         _isAdCampaignLoading = false;
 
-        if(mounted){
+        if (mounted) {
           setState(() {});
         }
       }
@@ -129,7 +129,6 @@ class _HomeScreenState extends State<HomeScreen> {
     });
 
     super.initState();
-
   }
 
   @override
@@ -138,13 +137,15 @@ class _HomeScreenState extends State<HomeScreen> {
       backgroundColor: Constants.background,
       resizeToAvoidBottomInset: false,
       body: Column(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: <Widget>[
-                _isBlocsLoading ? const LoadingWidget() :_showBlocs(context),
-                _isPartyGuestsLoading ? const LoadingWidget() :_showPartiesAndFooter(context),
-              ],
-            ),
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: <Widget>[
+          _isBlocsLoading ? const LoadingWidget() : _showBlocs(context),
+          _isPartyGuestsLoading
+              ? const LoadingWidget()
+              : _showPartiesAndFooter(context),
+        ],
+      ),
     );
   }
 
@@ -402,10 +403,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                 await FirebaseAuth.instance.signOut();
 
-                GoRouter.of(context)
-                    .pushReplacementNamed(RouteConstants.loginRouteName, pathParameters: {
-                  'skip': 'false',
-                });
+                GoRouter.of(context).go('/login/false');
               },
               child: const Text("yes"),
             ),
@@ -506,10 +504,11 @@ class _HomeScreenState extends State<HomeScreen> {
                     for (int i = 0; i < res.docs.length; i++) {
                       DocumentSnapshot document = res.docs[i];
                       Map<String, dynamic> data =
-                      document.data()! as Map<String, dynamic>;
+                          document.data()! as Map<String, dynamic>;
                       UserBloc userBloc = Fresh.freshUserBlocMap(data, true);
 
-                      if(!userBlocServiceIds.contains(userBloc.blocServiceId)){
+                      if (!userBlocServiceIds
+                          .contains(userBloc.blocServiceId)) {
                         userBlocServiceIds.add(userBloc.blocServiceId);
                       } else {
                         Logx.d(_TAG, 'duplicate user bloc found, deleting...');
@@ -519,7 +518,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
                     UserPreferences.setUserBlocs(userBlocServiceIds);
                   } else {
-                    Logx.em(_TAG, 'no blocs found for the user, setting default...');
+                    Logx.em(_TAG,
+                        'no blocs found for the user, setting default...');
 
                     BlocHelper.setDefaultBlocs(UserPreferences.myUser.id);
                   }

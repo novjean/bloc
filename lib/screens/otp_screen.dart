@@ -549,8 +549,11 @@ class _OTPScreenState extends State<OTPScreen> {
         Toaster.longToast('session got expired, trying again.');
         _verifyPhone();
       } else if (exception.contains('channel-error')) {
-        Toaster.longToast('something went wrong! please try again.');
-        Navigator.of(context).pop();
+        Logx.em(_TAG, exception.toString());
+        Toaster.longToast('🐵 Authentication server\'s taking a banana break. Try again and swing back in!');
+
+        GoRouter.of(context).go('/login/true');
+
       } else {
         Logx.est(_TAG, 'invalid otp. please try again.');
       }

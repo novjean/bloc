@@ -39,10 +39,7 @@ class ProfileLoginScreen extends StatelessWidget {
 
                   await FirebaseAuth.instance.signOut();
 
-                  GoRouter.of(context)
-                      .pushReplacementNamed(RouteConstants.loginRouteName, pathParameters: {
-                    'skip': 'false',
-                  });
+                  GoRouter.of(context).go('/login/false');
                 },
               ),
             ],

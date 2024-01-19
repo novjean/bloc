@@ -53,6 +53,9 @@ Future<void> main() async {
 
         final blocUser.User mUser = Fresh.freshUserMap(data, false);
         UserPreferences.setUser(mUser);
+
+        Logx.dst(_TAG, 'main: auth state change. user ${mUser.name}');
+
         // BlocRouter.returnRouter(true).refresh();
       } else {
         Logx.em(_TAG, 'user not found');

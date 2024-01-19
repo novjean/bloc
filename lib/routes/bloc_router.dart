@@ -50,22 +50,34 @@ class BlocRouter {
 
         GoRoute(
           name: RouteConstants.loginRouteName,
-          path: '/login/:skip',
+          path: '/login',
           pageBuilder: (context, state) {
-            String skipString = state.pathParameters['skip']!;
 
-            // Logx.ist(_TAG, 'bloc router: login/:skip ${skipString}');
+            // Logx.ist(_TAG, 'bloc router: event');
 
-            bool val = false;
-            if (skipString == 'true') {
-              val = true;
-            } else {
-              val = false;
-            }
+            return const MaterialPage(child: Scaffold(body: LoadingWidget(),)
+            );
+          },routes: [
+          GoRoute(
+            path: ':skip',
+            pageBuilder: (context, state) {
+              String skipString = state.pathParameters['skip']!;
 
-            return MaterialPage(child: LoginScreen(shouldTriggerSkip: val));
-          },
+              // Logx.ist(_TAG, 'bloc router: login/:skip ${skipString}');
+
+              bool val = false;
+              if (skipString == 'true') {
+                val = true;
+              } else {
+                val = false;
+              }
+
+              return MaterialPage(child: LoginScreen(shouldTriggerSkip: val));
+            },
+          ),
+        ],
         ),
+
 
         GoRoute(
           name: RouteConstants.eventRouteName,
@@ -96,9 +108,7 @@ class BlocRouter {
             },
           ),
         ],
-
         ),
-
 
         GoRoute(
           name: RouteConstants.accountRouteName,

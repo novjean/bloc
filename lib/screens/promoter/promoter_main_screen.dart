@@ -3,11 +3,13 @@ import 'package:bloc/screens/promoter/promoter_details_screen.dart';
 import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../db/entity/promoter.dart';
 import '../../helpers/dummy.dart';
 import '../../helpers/fresh.dart';
 import '../../main.dart';
+import '../../routes/route_constants.dart';
 import '../../utils/constants.dart';
 import '../../utils/logx.dart';
 import '../../widgets/promoter_item.dart';
@@ -84,6 +86,12 @@ class _PromoterMainScreenState extends State<PromoterMainScreen> {
           title: AppBarTitle(title: 'promoter'),
           titleSpacing: 0,
           backgroundColor: Constants.background,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_ios_rounded, color: Constants.lightPrimary,),
+            onPressed: () {
+              GoRouter.of(context).goNamed(RouteConstants.landingRouteName);
+            },
+          ),
         ),
         backgroundColor: Constants.background,
         floatingActionButton: FloatingActionButton(

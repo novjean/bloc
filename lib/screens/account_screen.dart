@@ -310,10 +310,7 @@ class AccountScreen extends StatelessWidget {
                 }
                 await FirebaseAuth.instance.signOut();
 
-                GoRouter.of(context)
-                    .pushNamed(RouteConstants.loginRouteName, pathParameters: {
-                  'skip': 'false',
-                });
+                GoRouter.of(context).go('/login/false');
               },
             ),
             TextButton(
@@ -357,10 +354,7 @@ class AccountScreen extends StatelessWidget {
               onPressed: () async {
                 await FirebaseAuth.instance.signOut();
 
-                GoRouter.of(context)
-                    .pushNamed(RouteConstants.loginRouteName, pathParameters: {
-                  'skip': 'false',
-                });
+                GoRouter.of(context).go('/login/false');
               },
               child: const Text("yes"),
             ),

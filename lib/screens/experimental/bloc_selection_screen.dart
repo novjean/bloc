@@ -56,10 +56,8 @@ class _BlocSelectionScreenState extends State<BlocSelectionScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
-        return false;
-      },
+    return PopScope(
+      canPop: false,
       child: Scaffold(
           backgroundColor: Constants.background,
           appBar: AppBar(

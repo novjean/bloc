@@ -142,22 +142,25 @@ class _EventScreenState extends State<EventScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
+    return PopScope(
+      canPop: false,
+      child: Scaffold(
+          appBar: AppBar(
+            backgroundColor: Constants.background,
+            title: AppBarTitle(
+              title: widget.partyName.toLowerCase(),
+            ),
+            titleSpacing: 0,
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back_ios_rounded, color: Constants.lightPrimary,),
+              onPressed: () {
+                GoRouter.of(context).goNamed(RouteConstants.landingRouteName);
+              },
+            ),
+          ),
           backgroundColor: Constants.background,
-          title: AppBarTitle(
-            title: widget.partyName.toLowerCase(),
-          ),
-          titleSpacing: 0,
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back_ios_rounded, color: Constants.lightPrimary,),
-            onPressed: () {
-              GoRouter.of(context).goNamed(RouteConstants.landingRouteName);
-            },
-          ),
-        ),
-        backgroundColor: Constants.background,
-        body: _isPartyLoading ? const LoadingWidget() : _buildBody(context));
+          body: _isPartyLoading ? const LoadingWidget() : _buildBody(context)),
+    );
   }
 
   _buildBody(BuildContext context) {

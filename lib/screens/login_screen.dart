@@ -22,6 +22,7 @@ import '../utils/constants.dart';
 import '../utils/logx.dart';
 import '../utils/string_utils.dart';
 import '../widgets/ui/toaster.dart';
+import 'main_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   final bool shouldTriggerSkip;
@@ -46,12 +47,11 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
-
   @override
   void initState() {
     super.initState();
 
-    if(widget.shouldTriggerSkip){
+    if (widget.shouldTriggerSkip) {
       _verifyUsingSkipPhone();
     }
   }
@@ -61,84 +61,88 @@ class _LoginScreenState extends State<LoginScreen> {
     Logx.d(_TAG, 'login screen: trigger skip ${widget.shouldTriggerSkip}');
 
     return Scaffold(
-      backgroundColor: Constants.background,
-      resizeToAvoidBottomInset: false,
-      body: StreamBuilder(
-          stream: FirebaseAuth.instance.authStateChanges(),
-          builder: (ctx, userSnapshot) {
-            Logx.i(_TAG, 'checking for auth state changes...');
-            switch (userSnapshot.connectionState) {
-              case ConnectionState.waiting:
-              case ConnectionState.none:
-                {
-                  if (!kIsWeb) {
-                    return SplashScreen();
-                  } else {
-                    return const LoadingWidget();
+        backgroundColor: Constants.background,
+        resizeToAvoidBottomInset: false,
+        body: StreamBuilder(
+            stream: FirebaseAuth.instance.authStateChanges(),
+            builder: (ctx, userSnapshot) {
+              Logx.i(_TAG, 'checking for auth state changes...');
+              switch (userSnapshot.connectionState) {
+                case ConnectionState.waiting:
+                case ConnectionState.none:
+                  {
+                    if (!kIsWeb) {
+                      return SplashScreen();
+                    } else {
+                      return const LoadingWidget();
+                    }
                   }
-                }
-              case ConnectionState.active:
-              case ConnectionState.done:{
-                if(userSnapshot.hasData) {
-                  Logx.i(_TAG, 'user snapshot has data');
+                case ConnectionState.active:
+                case ConnectionState.done:
+                  {
+                    if (userSnapshot.hasData) {
+                      Logx.i(_TAG, 'user snapshot has data');
 
-                  final user = FirebaseAuth.instance.currentUser;
-                  CollectionReference users = FirestoreHelper.getUsersCollection();
+                      final user = FirebaseAuth.instance.currentUser;
+                      CollectionReference users =
+                          FirestoreHelper.getUsersCollection();
 
-                  if (user!.uid.isEmpty || widget.shouldTriggerSkip == false) {
-                    Logx.i(_TAG, 'user snapshot uid is empty');
-                    return signInWidget();
-                  } else {
-                    return FutureBuilder<DocumentSnapshot>(
-                      future: users.doc(user.uid).get(),
-                      builder: (BuildContext ctx,
-                          AsyncSnapshot<DocumentSnapshot> snapshot) {
-                        switch (snapshot.connectionState) {
-                          case ConnectionState.waiting:
-                          case ConnectionState.none:
-                            return const LoadingWidget();
-                          case ConnectionState.active:
-                          case ConnectionState.done: {
-                            if (snapshot.hasError) {
-                              Logx.em(_TAG, 'user snapshot has error: ${snapshot.error}');
-                              return signInWidget();
+                      if (user!.uid.isEmpty ||
+                          widget.shouldTriggerSkip == false) {
+                        Logx.i(_TAG, 'user snapshot uid is empty');
+                        return signInWidget();
+                      } else {
+                        return FutureBuilder<DocumentSnapshot>(
+                          future: users.doc(user.uid).get(),
+                          builder: (BuildContext ctx,
+                              AsyncSnapshot<DocumentSnapshot> snapshot) {
+                            switch (snapshot.connectionState) {
+                              case ConnectionState.waiting:
+                              case ConnectionState.none:
+                                return const LoadingWidget();
+                              case ConnectionState.active:
+                              case ConnectionState.done:
+                                {
+                                  if (snapshot.hasError) {
+                                    Logx.em(_TAG,
+                                        'user snapshot has error: ${snapshot.error}');
+                                    return signInWidget();
+                                  }
+
+                                  if (snapshot.hasData &&
+                                      !snapshot.data!.exists) {
+                                    Logx.i(_TAG,
+                                        'user snapshot has data but not registered in bloc ');
+                                    // user not registered in bloc, will be picked up in OTP screen
+                                    return signInWidget();
+                                  }
+
+                                  Map<String, dynamic> data = snapshot.data!
+                                      .data() as Map<String, dynamic>;
+                                  final blocUser.User user =
+                                      Fresh.freshUserMap(data, true);
+                                  UserPreferences.setUser(user);
+
+                                  // GoRouter.of(context).go('/');
+
+                                  // return const SizedBox();
+                                  return const MainScreen();
+                                }
                             }
-
-                            if (snapshot.hasData && !snapshot.data!.exists) {
-                              Logx.i(_TAG,
-                                  'user snapshot has data but not registered in bloc ');
-                              // user not registered in bloc, will be picked up in OTP screen
-                              return signInWidget();
-                            }
-
-                            Map<String, dynamic> data =
-                            snapshot.data!.data() as Map<String, dynamic>;
-                            final blocUser.User user = Fresh.freshUserMap(data, true);
-                            UserPreferences.setUser(user);
-
-                            GoRouter.of(context).go('/');
-
-                            return const SizedBox();
-                            // return const MainScreen();
-                          }
-                        }
-                      },
-                    );
+                          },
+                        );
+                      }
+                    } else {
+                      if (widget.shouldTriggerSkip) {
+                        _verifyUsingSkipPhone();
+                        return const LoadingWidget();
+                      } else {
+                        return signInWidget();
+                      }
+                    }
                   }
-                } else {
-                  if (widget.shouldTriggerSkip) {
-                    _verifyUsingSkipPhone();
-                    return const LoadingWidget();
-                  } else {
-                    return signInWidget();
-                  }
-                }
-
-            }
-            }
-          }
-      )
-    );
+              }
+            }));
   }
 
   Widget signInWidget() {
@@ -362,7 +366,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 final blocUser.User user = Fresh.freshUserMap(data, false);
                 UserPreferences.setUser(user);
 
-                if(mounted) {
+                if (mounted) {
                   GoRouter.of(context)
                       .pushReplacementNamed(RouteConstants.landingRouteName);
                 }
@@ -372,11 +376,11 @@ class _LoginScreenState extends State<LoginScreen> {
                 Logx.e(_TAG, e, s);
               } catch (e) {
                 logger.e(e);
-                Logx.ist(_TAG, 'connection failed, please try signing in again.');
-                GoRouter.of(context)
-                    .pushReplacementNamed(RouteConstants.loginRouteName, pathParameters: {
-                  'skip': 'true',
-                });              }
+                Logx.ist(
+                    _TAG, 'connection failed, please try signing in again.');
+
+                GoRouter.of(context).go('/login/true');
+              }
             }
           });
         }

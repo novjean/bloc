@@ -317,10 +317,8 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(fontFamily: Constants.fontDefault),
-      home: WillPopScope(
-        onWillPop: () async {
-          return false;
-        },
+      home: PopScope(
+        canPop: false,
         child: Scaffold(
           backgroundColor: Constants.background,
           appBar: AppBar(
