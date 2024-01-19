@@ -137,11 +137,7 @@ class NotificationService {
             FirestoreHelper.updateAdHit(ad.id);
 
             if(ad.partyName.isNotEmpty && ad.partyChapter.isNotEmpty){
-              GoRouter.of(appContext!).pushNamed(RouteConstants.eventRouteName,
-                  pathParameters: {
-                    'partyName': ad.partyName,
-                    'partyChapter': ad.partyChapter
-                  });
+              GoRouter.of(appContext!).go('/event/${ad.partyName}/${ad.partyChapter}');
             } else {
               GoRouter.of(appContext!).pushNamed(RouteConstants.landingRouteName);
             }

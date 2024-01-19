@@ -45,23 +45,23 @@ Future<void> main() async {
   await FirebaseApi().initNotifications();
 
   // Listen for Auth changes and .refresh the GoRouter [router]
-  // FirebaseAuth.instance.authStateChanges().listen((User? user) {
-  //   FirestoreHelper.pullUser(user!.uid).then((res) {
-  //     if(res.docs.isNotEmpty){
-  //       DocumentSnapshot document = res.docs[0];
-  //       Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-  //
-  //       final blocUser.User mUser = Fresh.freshUserMap(data, false);
-  //       UserPreferences.setUser(mUser);
-  //
-  //       Logx.dst(_TAG, 'main: auth state change. user ${mUser.name}');
-  //
-  //       // BlocRouter.returnRouter(true).refresh();
-  //     } else {
-  //       Logx.em(_TAG, 'user not found');
-  //     }
-  //   });
-  // });
+  FirebaseAuth.instance.authStateChanges().listen((User? user) {
+    FirestoreHelper.pullUser(user!.uid).then((res) {
+      if(res.docs.isNotEmpty){
+        DocumentSnapshot document = res.docs[0];
+        Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+
+        final blocUser.User mUser = Fresh.freshUserMap(data, false);
+        UserPreferences.setUser(mUser);
+
+        Logx.dst(_TAG, 'main: auth state change. user ${mUser.name}');
+
+        BlocRouter.returnRouter(true).refresh();
+      } else {
+        Logx.em(_TAG, 'user not found');
+      }
+    });
+  });
 
   // Pass all uncaught "fatal" errors from the framework to Crashlytics
   FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;

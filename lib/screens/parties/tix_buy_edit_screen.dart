@@ -147,11 +147,7 @@ class _TixBuyEditScreenState extends State<TixBuyEditScreen> {
             }
 
             if (kIsWeb) {
-              GoRouter.of(context).pushNamed(RouteConstants.eventRouteName,
-                  pathParameters: {
-                    'partyName': mParty.name,
-                    'partyChapter': mParty.chapter
-                  });
+              GoRouter.of(context).push('/event/${mParty.name}/${mParty.chapter}');
             } else {
               Navigator.of(context).pop();
             }

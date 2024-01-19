@@ -7,7 +7,6 @@ import '../../db/entity/party.dart';
 import '../../db/entity/party_guest.dart';
 import '../../db/entity/tix.dart';
 import '../../helpers/dummy.dart';
-import '../../main.dart';
 import '../../routes/route_constants.dart';
 import '../../screens/parties/party_guest_add_edit_manage_screen.dart';
 import '../../screens/parties/tix_buy_edit_screen.dart';
@@ -35,8 +34,7 @@ class PartyItem extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         if (party.type == 'event') {
-          GoRouter.of(context).pushNamed(RouteConstants.eventRouteName,
-              pathParameters: {'partyName': party.name, 'partyChapter': party.chapter});
+          GoRouter.of(context).push('/event/${party.name}/${party.chapter}');
         } else {
           GoRouter.of(context).pushNamed(RouteConstants.artistRouteName,
               pathParameters: {'name': party.name, 'genre': party.genre});
