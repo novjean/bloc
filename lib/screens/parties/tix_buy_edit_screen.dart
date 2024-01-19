@@ -139,11 +139,13 @@ class _TixBuyEditScreenState extends State<TixBuyEditScreen> {
           icon: const Icon(Icons.arrow_back_ios_rounded, color: Constants.lightPrimary),
           onPressed: () {
             if (widget.task == 'buy') {
-              for (String tixTierId in widget.tix.tixTierIds) {
-                FirestoreHelper.deleteTixTier(tixTierId);
+              if(!UserPreferences.isUserLoggedIn()){
+                for (String tixTierId in widget.tix.tixTierIds) {
+                  FirestoreHelper.deleteTixTier(tixTierId);
+                }
+                FirestoreHelper.deleteTix(widget.tix.id);
+                Logx.d(_TAG, 'tix deleted from firebase');
               }
-              FirestoreHelper.deleteTix(widget.tix.id);
-              Logx.d(_TAG, 'tix deleted from firebase');
             }
 
             if (kIsWeb) {
