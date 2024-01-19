@@ -64,19 +64,25 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
             mUsers.add(user);
           }
 
-          setState(() {
-            _isUsersLoading = false;
-          });
+          if(mounted){
+            setState(() {
+              _isUsersLoading = false;
+            });
+          }
         } else {
-          setState(() {
-            _isUsersLoading = false;
-          });
+          if(mounted){
+            setState(() {
+              _isUsersLoading = false;
+            });
+          }
         }
       });
     } else {
-      setState(() {
-        _isUsersLoading = false;
-      });
+      if(mounted){
+        setState(() {
+          _isUsersLoading = false;
+        });
+      }
     }
   }
 
@@ -192,7 +198,7 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
                               padding: const EdgeInsets.only(bottom: 1.0, left: 3),
                               child: Text(
                                 '${widget.partyPhoto.likers.length + widget.partyPhoto.initLikes}',
-                                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                               ),
                             ),
                           ],),
@@ -412,7 +418,7 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
             title: Text(
               title,
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 22, color: Colors.black),
+              style: const TextStyle(fontSize: 22, color: Colors.black),
             ),
             backgroundColor: Constants.lightPrimary,
             shape: const RoundedRectangleBorder(

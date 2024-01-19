@@ -50,7 +50,7 @@ class _MainScreenState extends State<MainScreen> {
   final GlobalKey<SliderDrawerState> _sliderDrawerKey =
       GlobalKey<SliderDrawerState>();
 
-  late blocUser.User user;
+  late blocUser.User mBlocUser;
 
   late PageController _pageController;
   late int _page;
@@ -70,93 +70,12 @@ class _MainScreenState extends State<MainScreen> {
     Logx.d(_TAG, 'MainScreen');
 
     title = "bloc";
-    user = UserPreferences.myUser;
+    mBlocUser = UserPreferences.myUser;
 
     _page = UiPreferences.getHomePageIndex();
     _pageController = PageController(initialPage: _page);
 
-    FirestoreHelper.pullUserByPhoneNumber(user.phoneNumber).then((res) {
-      if (res.docs.isEmpty) {
-        Logx.i(_TAG, 'user not found, registering ${user.phoneNumber}');
-
-        if (kIsWeb) {
-          user = user.copyWith(
-            isAppUser: false,
-            appVersion: Constants.appVersion,
-          );
-        } else {
-          user = user.copyWith(
-            isAppUser: true,
-            appVersion: Constants.appVersion,
-            isIos: Theme.of(context).platform == TargetPlatform.iOS,
-          );
-        }
-
-        UserPreferences.setUser(user);
-        FirestoreHelper.pushUser(user);
-
-        Logx.i(_TAG, '${user.phoneNumber} is now registered with bloc!');
-
-        // lets grab more user details
-        Navigator.of(context).push(
-          MaterialPageRoute(
-              builder: (context) =>
-                  ProfileAddEditRegisterPage(user: user, task: 'register')),
-        );
-      } else {
-        Logx.d(_TAG, 'skipPhoneNumber logged in');
-
-        DocumentSnapshot document = res.docs[0];
-        Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-        blocUser.User user1 = Fresh.freshUserMap(data, false);
-        user1 = user1.copyWith(
-            lastSeenAt: Timestamp.now().millisecondsSinceEpoch,
-            appVersion: Constants.appVersion);
-
-        if (kIsWeb) {
-          user1 = user1.copyWith(
-            isAppUser: false,
-          );
-        } else {
-          user1 = user1.copyWith(
-            isAppUser: true,
-            isIos: Theme.of(context).platform == TargetPlatform.iOS,
-          );
-        }
-
-        if (user1.username.isEmpty) {
-          String username = '';
-          if (user1.surname.trim().isNotEmpty) {
-            username =
-            '${user1.name.trim().toLowerCase()}_${user1.surname.trim().toLowerCase()}';
-          } else {
-            username = user1.name.trim().toLowerCase();
-          }
-
-          //check if username is present in db
-          FirestoreHelper.pullUserByUsername(username).then((res) {
-            if (res.docs.isNotEmpty) {
-              // username is already taken
-              username = username +
-                  NumberUtils.generateRandomNumber(1, 999).toString().trim();
-              user1 = user1.copyWith(username: username);
-              FirestoreHelper.pushUser(user1);
-              UserPreferences.setUser(user1);
-            } else {
-              user1 = user1.copyWith(username: username);
-              FirestoreHelper.pushUser(user1);
-              UserPreferences.setUser(user1);
-            }
-          });
-        } else {
-          FirestoreHelper.pushUser(user1);
-          UserPreferences.setUser(user1);
-        }
-      }
-    }, onError: (e, s) {
-      Logx.ex(
-          _TAG, "error retrieving users for phone : ${user.phoneNumber}", e, s);
-    });
+    _loadUserByPhoneNumber();
 
     if (!kIsWeb) {
       final fbm = FirebaseMessaging.instance;
@@ -284,9 +203,8 @@ class _MainScreenState extends State<MainScreen> {
 
   getToken() async {
     String? deviceToken = await FirebaseMessaging.instance.getToken();
-    Logx.d(_TAG, 'fcm token: ${deviceToken!}');
-
     if (UserPreferences.isUserLoggedIn()) {
+      Logx.dst(_TAG,'${UserPreferences.myUser.name} updating fcm token: ${deviceToken!}');
       blocUser.User user = UserPreferences.myUser;
       String oldToken = user.fcmToken;
 
@@ -297,6 +215,8 @@ class _MainScreenState extends State<MainScreen> {
         FirestoreHelper.updateUserFcmToken(
             UserPreferences.myUser.id, deviceToken);
       }
+    } else {
+      Logx.dst(_TAG,'user not logged in to update fcm token');
     }
   }
 
@@ -526,7 +446,7 @@ class _MainScreenState extends State<MainScreen> {
           Navigator.of(context).push(
             MaterialPageRoute(
                 builder: (ctx) => CaptainMainScreen(
-                      blocServiceId: user.blocServiceId,
+                      blocServiceId: mBlocUser.blocServiceId,
                     )),
           );
           break;
@@ -655,6 +575,91 @@ class _MainScreenState extends State<MainScreen> {
           },
         );
       }
+    });
+  }
+
+  void _loadUserByPhoneNumber() async {
+    await FirestoreHelper.pullUserByPhoneNumber(mBlocUser.phoneNumber).then((res) async {
+      if (res.docs.isEmpty) {
+        Logx.i(_TAG, 'user not found, registering ${mBlocUser.phoneNumber}');
+
+        if (kIsWeb) {
+          mBlocUser = mBlocUser.copyWith(
+            isAppUser: false,
+            appVersion: Constants.appVersion,
+          );
+        } else {
+          mBlocUser = mBlocUser.copyWith(
+            isAppUser: true,
+            appVersion: Constants.appVersion,
+            isIos: Theme.of(context).platform == TargetPlatform.iOS,
+          );
+        }
+
+        UserPreferences.setUser(mBlocUser);
+        FirestoreHelper.pushUser(mBlocUser);
+
+        Logx.i(_TAG, '${mBlocUser.phoneNumber} is now registered with bloc!');
+
+        // lets grab more user details
+        Navigator.of(context).push(
+          MaterialPageRoute(
+              builder: (context) =>
+                  ProfileAddEditRegisterPage(user: mBlocUser, task: 'register')),
+        );
+      } else {
+        // Logx.d(_TAG, 'skipPhoneNumber logged in');
+        //
+        // DocumentSnapshot document = res.docs[0];
+        // Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+        // blocUser.User user1 = Fresh.freshUserMap(data, false);
+        // user1 = user1.copyWith(
+        //     lastSeenAt: Timestamp.now().millisecondsSinceEpoch,
+        //     appVersion: Constants.appVersion);
+        //
+        // if (kIsWeb) {
+        //   user1 = user1.copyWith(
+        //     isAppUser: false,
+        //   );
+        // } else {
+        //   user1 = user1.copyWith(
+        //     isAppUser: true,
+        //     isIos: Theme.of(context).platform == TargetPlatform.iOS,
+        //   );
+        // }
+        //
+        // if (user1.username.isEmpty) {
+        //   String username = '';
+        //   if (user1.surname.trim().isNotEmpty) {
+        //     username =
+        //     '${user1.name.trim().toLowerCase()}_${user1.surname.trim().toLowerCase()}';
+        //   } else {
+        //     username = user1.name.trim().toLowerCase();
+        //   }
+        //
+        //   //check if username is present in db
+        //   await FirestoreHelper.pullUserByUsername(username).then((res) {
+        //     if (res.docs.isNotEmpty) {
+        //       // username is already taken
+        //       username = username +
+        //           NumberUtils.generateRandomNumber(1, 999).toString().trim();
+        //       user1 = user1.copyWith(username: username);
+        //       FirestoreHelper.pushUser(user1);
+        //       UserPreferences.setUser(user1);
+        //     } else {
+        //       user1 = user1.copyWith(username: username);
+        //       FirestoreHelper.pushUser(user1);
+        //       UserPreferences.setUser(user1);
+        //     }
+        //   });
+        // } else {
+        //   FirestoreHelper.pushUser(user1);
+        //   UserPreferences.setUser(user1);
+        // }
+      }
+    }, onError: (e, s) {
+      Logx.ex(
+          _TAG, "error retrieving users for phone : ${mBlocUser.phoneNumber}", e, s);
     });
   }
 }

@@ -47,7 +47,6 @@ class _HomeScreenState extends State<HomeScreen> {
   var _isPartiesLoading = true;
 
   List<PartyGuest> mPartyGuestRequests = [];
-  var _isPartyGuestsLoading = true;
 
   final ScrollController _scrollController = ScrollController();
 
@@ -121,7 +120,7 @@ class _HomeScreenState extends State<HomeScreen> {
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
           _isBlocsLoading ? const LoadingWidget() : _displayBlocs(context),
-          _isPartiesLoading && _isPartyGuestsLoading
+          _isPartiesLoading
               ? const LoadingWidget()
               : _displayPartiesFooter(context),
         ],
@@ -243,7 +242,7 @@ class _HomeScreenState extends State<HomeScreen> {
       margin: const EdgeInsets.symmetric(horizontal: 10),
       decoration: BoxDecoration(
         border: Border.all(),
-        color: Theme.of(context).primaryColor,
+        color: Constants.primary,
         borderRadius: const BorderRadius.all(Radius.circular(15)),
       ),
       child: Column(
@@ -352,7 +351,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _loadBlocsAndUserBlocs() async {
     UserPreferences.myUser.clearanceLevel >= Constants.PROMOTER_LEVEL
-        ? await FirestoreHelper.pullBlocsPromoter().then((res) {
+        ? await FirestoreHelper.pullBlocsPromoter().then((res) async {
             if (res.docs.isNotEmpty) {
               Logx.i(_TAG,
                   "successfully pulled in all power and superpower blocs");
@@ -369,13 +368,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   mBlocs.add(bloc);
                 }
 
-                if (mounted) {
-                  setState(() {
-                    _isBlocsLoading = false;
-                  });
-                }
-
-                FirestoreHelper.pullUserBlocs(UserPreferences.myUser.id)
+                await FirestoreHelper.pullUserBlocs(UserPreferences.myUser.id)
                     .then((res) {
                   if (res.docs.isNotEmpty) {
                     List<String> userBlocServiceIds = [];
@@ -394,6 +387,12 @@ class _HomeScreenState extends State<HomeScreen> {
                     BlocHelper.setDefaultBlocs(UserPreferences.myUser.id);
                   }
                 });
+
+                if (mounted) {
+                  setState(() {
+                    _isBlocsLoading = false;
+                  });
+                }
               }
             } else {
               Logx.em(_TAG, ' no blocs found!!!');
@@ -408,7 +407,7 @@ class _HomeScreenState extends State<HomeScreen> {
               _isBlocsLoading = false;
             });
           })
-        : await FirestoreHelper.pullBlocs().then((res) {
+        : await FirestoreHelper.pullBlocs().then((res) async {
             if (res.docs.isNotEmpty) {
               Logx.i(_TAG, "successfully pulled in blocs");
 
@@ -424,11 +423,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   mBlocs.add(bloc);
                 }
 
-                setState(() {
-                  _isBlocsLoading = false;
-                });
-
-                FirestoreHelper.pullUserBlocs(UserPreferences.myUser.id)
+                await FirestoreHelper.pullUserBlocs(UserPreferences.myUser.id)
                     .then((res) {
                   if (res.docs.isNotEmpty) {
                     List<String> userBlocServiceIds = [];
@@ -455,6 +450,12 @@ class _HomeScreenState extends State<HomeScreen> {
                     BlocHelper.setDefaultBlocs(UserPreferences.myUser.id);
                   }
                 });
+
+                if(mounted){
+                  setState(() {
+                    _isBlocsLoading = false;
+                  });
+                }
               }
             } else {
               Logx.em(_TAG, 'no blocs found!!!');
@@ -482,9 +483,13 @@ class _HomeScreenState extends State<HomeScreen> {
           }
         }
 
-        setState(() {
-          _isPartiesLoading = false;
-        });
+        if(mounted){
+          setState(() {
+            _isPartiesLoading = false;
+          });
+        } else {
+          Logx.dst(_TAG, 'not mounted. parties cannot be shown!');
+        }
       } else {
         // no parties, long live bloc!
       }
@@ -505,16 +510,10 @@ class _HomeScreenState extends State<HomeScreen> {
         if(mounted){
           setState(() {
             mPartyGuestRequests = partyGuestRequests;
-            _isPartyGuestsLoading = false;
           });
         }
       } else {
-        Logx.d(_TAG, 'no party guest requests found!');
-        if(mounted){
-          setState(() {
-            _isPartyGuestsLoading = false;
-          });
-        }
+        Logx.i(_TAG, 'no party guest requests found!');
       }
     });
   }

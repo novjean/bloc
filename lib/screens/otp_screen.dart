@@ -43,8 +43,9 @@ class _OTPScreenState extends State<OTPScreen> {
 
   @override
   void initState() {
-    _verifyPhone();
     super.initState();
+
+    _verifyPhone();
 
     Logx.ilt(_TAG, 'your code\'s on the way 🚀🔑');
   }
@@ -138,7 +139,7 @@ class _OTPScreenState extends State<OTPScreen> {
               child: SingleChildScrollView(
                 scrollDirection: Axis.vertical,
                 child: Text(
-                  'In the heart of the city, we\'re serving up sunsets, summer vibes, and that urban oasis! 🌅🌴\n\n Our global feast, crafted by the incredible Chef Ameya Mahajani, is a flavor explosion for your taste buds.\n\n Dr. Grace, our co-founder, infuses her passion into every dish and cocktail, creating unforgettable memories with each bite.\n\n At bloc, we\'re not just about food; we\'re the city\'s heartbeat for community, vibes, and epic music events that\'ll have you dancing into the night. \n\n Let\'s create unforgettable moments together! 🌐🎉🍹\n\n#blocCommunity',
+                  'In the heart of the city, we\'re serving up sunsets, summer vibes, and that urban oasis! 🌅🌴\n\n Our global feast, crafted by celebrity chef Ameya Mahajani, is a flavor explosion for your taste buds.\n\n Dr. Grace, our co-founder, infuses her passion into every dish and cocktail, creating unforgettable memories with each bite.\n\n At bloc, we\'re not just about food; we\'re the city\'s heartbeat for community, vibes, and epic music events that\'ll have you dancing into the night. \n\n Let\'s create unforgettable moments together! 🌐🎉🍹\n\n#blocCommunity',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: Constants.lightPrimary,
@@ -349,13 +350,13 @@ class _OTPScreenState extends State<OTPScreen> {
           Logx.i(
               _TAG, 'checking for bloc registration by id ${value.user!.uid}');
 
-          FirestoreHelper.pullUser(value.user!.uid).then((res) {
+          await FirestoreHelper.pullUser(value.user!.uid).then((res) async {
             if (res.docs.isEmpty) {
               Logx.i(_TAG,
                   'checking for bloc registration by phone ${widget.phone}');
 
               int phoneNumber = StringUtils.getInt(widget.phone);
-              FirestoreHelper.pullUserByPhoneNumber(phoneNumber).then((res) {
+              await FirestoreHelper.pullUserByPhoneNumber(phoneNumber).then((res) async{
                 if (res.docs.isNotEmpty) {
                   DocumentSnapshot document = res.docs[0];
                   Map<String, dynamic> data =
@@ -363,9 +364,9 @@ class _OTPScreenState extends State<OTPScreen> {
                   blocUser.User user = Fresh.freshUserMap(data, true);
 
                   String oldUserDocId = user.id;
-                  FirestoreHelper.deleteUser(oldUserDocId);
+                  await FirestoreHelper.deleteUser(oldUserDocId);
 
-                  FirestoreHelper.pullPromoterGuestsByBlocUserId(user.id)
+                  await FirestoreHelper.pullPromoterGuestsByBlocUserId(user.id)
                       .then((res) {
                     if (res.docs.isNotEmpty) {
                       for (int i = 0; i < res.docs.length; i++) {
@@ -406,7 +407,7 @@ class _OTPScreenState extends State<OTPScreen> {
                     }
 
                     //check if username is present in db
-                    FirestoreHelper.pullUserByUsername(username).then((res) {
+                    await FirestoreHelper.pullUserByUsername(username).then((res) {
                       if (res.docs.isNotEmpty) {
                         // username is already taken
                         username = username +
@@ -454,7 +455,7 @@ class _OTPScreenState extends State<OTPScreen> {
                             Theme.of(context).platform == TargetPlatform.iOS);
                   }
 
-                  FirestoreHelper.pushUser(registeredUser);
+                  await FirestoreHelper.pushUser(registeredUser);
                   UserPreferences.setUser(registeredUser);
                   UiPreferences.setHomePageIndex(0);
 
@@ -498,7 +499,7 @@ class _OTPScreenState extends State<OTPScreen> {
                 }
 
                 //check if username is present in db
-                FirestoreHelper.pullUserByUsername(username).then((res) {
+                await FirestoreHelper.pullUserByUsername(username).then((res) {
                   if (res.docs.isNotEmpty) {
                     // username is already taken
                     username = username +
@@ -506,37 +507,22 @@ class _OTPScreenState extends State<OTPScreen> {
                     user = user.copyWith(username: username);
                     FirestoreHelper.pushUser(user);
                     UserPreferences.setUser(user);
-                    UiPreferences.setHomePageIndex(0);
-
-                    Toaster.shortToast(
-                        'yo ${user.name.toLowerCase()}, welcome back! 🦖');
-
-                    GoRouter.of(context)
-                        .pushReplacementNamed(RouteConstants.landingRouteName);
                   } else {
                     user = user.copyWith(username: username);
                     FirestoreHelper.pushUser(user);
                     UserPreferences.setUser(user);
-                    UiPreferences.setHomePageIndex(0);
-
-                    Toaster.shortToast(
-                        'yo ${user.name.toLowerCase()}, welcome back! 🦖');
-
-                    GoRouter.of(context)
-                        .pushReplacementNamed(RouteConstants.landingRouteName);
                   }
                 });
               } else {
-                FirestoreHelper.pushUser(user);
-                UserPreferences.setUser(user);
-                UiPreferences.setHomePageIndex(0);
-
-                GoRouter.of(context)
-                    .pushReplacementNamed(RouteConstants.landingRouteName);
-
-                Toaster.shortToast(
-                    'yo ${user.name.toLowerCase()}, welcome back! 🦖');
+                await FirestoreHelper.pushUser(user);
+                await UserPreferences.setUser(user);
               }
+
+              UiPreferences.setHomePageIndex(0);
+              Toaster.shortToast(
+                  'yo ${user.name.toLowerCase()}, welcome back! 🦖');
+
+              GoRouter.of(context).go('/');
             }
           });
         }

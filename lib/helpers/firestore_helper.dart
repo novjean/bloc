@@ -2360,12 +2360,13 @@ class FirestoreHelper {
   }
 
   /** user **/
-  static void pushUser(blocUser.User user) async {
+  static Future<void> pushUser(blocUser.User user) async {
     try {
       await FirebaseFirestore.instance
           .collection(USERS)
           .doc(user.id)
           .set(user.toMap());
+      return;
     } on PlatformException catch (e, s) {
       Logx.e(_TAG, e, s);
     } on Exception catch (e, s) {

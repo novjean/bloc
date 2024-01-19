@@ -126,7 +126,11 @@ class _LoginScreenState extends State<LoginScreen> {
 
                                   Logx.ast(_TAG, 'auth state change. user ${user.name}');
 
-                                  return const MainScreen();
+                                  // return const MainScreen();
+                                  return const Scaffold(
+                                    backgroundColor: Constants.background,
+                                    body: LoadingWidget(),
+                                  );
                                 }
                             }
                           },
@@ -342,7 +346,7 @@ class _LoginScreenState extends State<LoginScreen> {
           Logx.i(_TAG,
               'user is in firebase auth. checking for bloc registration...');
 
-          FirestoreHelper.pullUser(value.user!.uid).then((res) {
+          await FirestoreHelper.pullUser(value.user!.uid).then((res) {
             if (res.docs.isEmpty) {
               Logx.i(
                   _TAG, 'user is not already registered in bloc, registering');

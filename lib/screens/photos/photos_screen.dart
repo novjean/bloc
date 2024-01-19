@@ -228,7 +228,7 @@ class _PhotosScreenState extends State<PhotosScreen> {
           shape: const RoundedRectangleBorder(
               borderRadius: BorderRadius.all(Radius.circular(20.0))),
           contentPadding: const EdgeInsets.all(1.0),
-          content: Container(
+          content: SizedBox(
             height: 400,
             width: double.maxFinite,
             child: Center(
@@ -419,7 +419,7 @@ class _PhotosScreenState extends State<PhotosScreen> {
                   user = user.copyWith(
                       isAppReviewed: true,
                       lastReviewTime: Timestamp.now().millisecondsSinceEpoch);
-                  UserPreferences.setUser(user);
+                  // UserPreferences.setUser(user);
                   FirestoreHelper.pushUser(user);
 
                   Navigator.of(ctx).pop();
