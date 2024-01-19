@@ -19,7 +19,6 @@ import '../db/shared_preferences/user_preferences.dart';
 import '../helpers/dummy.dart';
 import '../helpers/firestore_helper.dart';
 import '../helpers/fresh.dart';
-import '../routes/route_constants.dart';
 import '../utils/logx.dart';
 import '../widgets/ad_campaign_slide_item.dart';
 import '../widgets/footer.dart';
@@ -44,6 +43,9 @@ class _HomeScreenState extends State<HomeScreen> {
   GuestWifi mGuestWifi = Dummy.getDummyGuestWifi(Constants.blocServiceId);
   var _isGuestWifiDetailsLoading = true;
 
+  List<Party> mParties = [];
+  var _isPartiesLoading = true;
+
   List<PartyGuest> mPartyGuestRequests = [];
   var _isPartyGuestsLoading = true;
 
@@ -61,31 +63,11 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     Logx.d(_TAG, 'HomeScreen');
 
+    super.initState();
+
     _loadBlocsAndUserBlocs();
 
-    FirestoreHelper.pullGuestListRequested(UserPreferences.myUser.id)
-        .then((res) {
-      if (res.docs.isNotEmpty) {
-        Logx.i(_TAG, "successfully pulled in requested guest list");
-
-        List<PartyGuest> partyGuestRequests = [];
-        for (int i = 0; i < res.docs.length; i++) {
-          DocumentSnapshot document = res.docs[i];
-          Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-          final PartyGuest partyGuest = Fresh.freshPartyGuestMap(data, false);
-          partyGuestRequests.add(partyGuest);
-        }
-        setState(() {
-          mPartyGuestRequests = partyGuestRequests;
-          _isPartyGuestsLoading = false;
-        });
-      } else {
-        Logx.d(_TAG, 'no party guest requests found!');
-        setState(() {
-          _isPartyGuestsLoading = false;
-        });
-      }
-    });
+    _loadPartiesAndGuestList();
 
     FirestoreHelper.pullAdCampaignByStorySize(false).then((res) {
       if (res.docs.isNotEmpty) {
@@ -127,8 +109,6 @@ class _HomeScreenState extends State<HomeScreen> {
         }
       }
     });
-
-    super.initState();
   }
 
   @override
@@ -140,16 +120,16 @@ class _HomeScreenState extends State<HomeScreen> {
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
-          _isBlocsLoading ? const LoadingWidget() : _showBlocs(context),
-          _isPartyGuestsLoading
+          _isBlocsLoading ? const LoadingWidget() : _displayBlocs(context),
+          _isPartiesLoading && _isPartyGuestsLoading
               ? const LoadingWidget()
-              : _showPartiesAndFooter(context),
+              : _displayPartiesFooter(context),
         ],
       ),
     );
   }
 
-  _showBlocs(context) {
+  _displayBlocs(context) {
     return SizedBox(
       height: MediaQuery.of(context).size.height * 0.30,
       width: MediaQuery.of(context).size.width * 0.99,
@@ -168,66 +148,17 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  _showPartiesAndFooter(BuildContext context) {
-    int timeNow = Timestamp.now().millisecondsSinceEpoch;
-
-    return StreamBuilder<QuerySnapshot>(
-      stream: FirestoreHelper.getUpcomingParties(timeNow),
-      builder: (ctx, snapshot) {
-        switch (snapshot.connectionState) {
-          case ConnectionState.waiting:
-          case ConnectionState.none:
-            return const LoadingWidget();
-          case ConnectionState.active:
-          case ConnectionState.done:
-            {
-              if (snapshot.hasData) {
-                List<Party> parties = [];
-                for (int i = 0; i < snapshot.data!.docs.length; i++) {
-                  DocumentSnapshot document = snapshot.data!.docs[i];
-                  Map<String, dynamic> data =
-                      document.data()! as Map<String, dynamic>;
-                  final Party party = Fresh.freshPartyMap(data, false);
-
-                  if (UserPreferences.getUserBlocs()
-                      .contains(party.blocServiceId)) {
-                    parties.add(party);
-                  }
-                }
-                return _displayPartiesList(context, parties);
-              }
-              return Expanded(
-                child: Column(
-                  children: [
-                    UserPreferences.isUserLoggedIn()
-                        ? _isGuestWifiDetailsLoading
-                            ? const LoadingWidget()
-                            : _buildWifi(context)
-                        : const SizedBox(),
-                    const SizedBox(height: 15.0),
-                    kIsWeb ? const StoreBadgeItem() : const SizedBox(),
-                    const SizedBox(height: 10.0),
-                    Footer(),
-                  ],
-                ),
-              );
-            }
-        }
-      },
-    );
-  }
-
-  _displayPartiesList(BuildContext context, List<Party> parties) {
+  _displayPartiesFooter(BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToBottom());
 
     return Expanded(
       child: ListView.builder(
         shrinkWrap: true,
-        itemCount: parties.length,
+        itemCount: mParties.length,
         controller: _scrollController,
         scrollDirection: Axis.vertical,
         itemBuilder: (BuildContext context, int index) {
-          Party party = parties[index];
+          Party party = mParties[index];
 
           bool isGuestListRequested = false;
           for (PartyGuest partyGuest in mPartyGuestRequests) {
@@ -237,7 +168,7 @@ class _HomeScreenState extends State<HomeScreen> {
             }
           }
 
-          if (parties.length == 1) {
+          if (mParties.length == 1) {
             return Column(
               children: [
                 PartyBanner(
@@ -267,7 +198,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ],
             );
           } else {
-            if (index == parties.length - 1) {
+            if (index == mParties.length - 1) {
               return Column(
                 children: [
                   PartyBanner(
@@ -536,5 +467,55 @@ class _HomeScreenState extends State<HomeScreen> {
           }).catchError((err) {
             Logx.em(_TAG, 'error loading blocs $err');
           });
+  }
+
+  void _loadPartiesAndGuestList() async {
+    await FirestoreHelper.pullUpcomingParties(Timestamp.now().millisecondsSinceEpoch).then((res) {
+      if(res.docs.isNotEmpty){
+        for (int i = 0; i < res.docs.length; i++) {
+          DocumentSnapshot document = res.docs[i];
+          Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+          final Party party = Fresh.freshPartyMap(data, false);
+
+          if(UserPreferences.getUserBlocs().contains(party.blocServiceId)){
+            mParties.add(party);
+          }
+        }
+
+        setState(() {
+          _isPartiesLoading = false;
+        });
+      } else {
+        // no parties, long live bloc!
+      }
+    });
+
+    await FirestoreHelper.pullGuestListRequested(UserPreferences.myUser.id)
+        .then((res) {
+      if (res.docs.isNotEmpty) {
+        Logx.i(_TAG, "successfully pulled in requested guest list");
+
+        List<PartyGuest> partyGuestRequests = [];
+        for (int i = 0; i < res.docs.length; i++) {
+          DocumentSnapshot document = res.docs[i];
+          Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+          final PartyGuest partyGuest = Fresh.freshPartyGuestMap(data, false);
+          partyGuestRequests.add(partyGuest);
+        }
+        if(mounted){
+          setState(() {
+            mPartyGuestRequests = partyGuestRequests;
+            _isPartyGuestsLoading = false;
+          });
+        }
+      } else {
+        Logx.d(_TAG, 'no party guest requests found!');
+        if(mounted){
+          setState(() {
+            _isPartyGuestsLoading = false;
+          });
+        }
+      }
+    });
   }
 }

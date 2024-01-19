@@ -1232,6 +1232,17 @@ class FirestoreHelper {
         .get();
   }
 
+  static Future<QuerySnapshot<Map<String, dynamic>>> pullUpcomingParties(
+      int timeNow) {
+    return FirebaseFirestore.instance
+        .collection(FirestoreHelper.PARTIES)
+        .where('endTime', isGreaterThan: timeNow)
+        .where('isActive', isEqualTo: true)
+        .where('type', isEqualTo: 'event')
+        .orderBy('endTime', descending: false)
+        .get();
+  }
+
   static Future<QuerySnapshot<Map<String, dynamic>>> pullPartyArtists() {
     return FirebaseFirestore.instance
         .collection(PARTIES)
@@ -1248,29 +1259,10 @@ class FirestoreHelper {
         .get();
   }
 
-  // static getPartyByType(String blocServiceId, String type) {
-  //   return FirebaseFirestore.instance
-  //       .collection(PARTIES)
-  //       .where('blocServiceId', isEqualTo: blocServiceId)
-  //       .where('type', isEqualTo: type)
-  //       .orderBy('name', descending: false)
-  //       .snapshots();
-  // }
-
   static getPartyArtists(List<String> artistIds) {
     return FirebaseFirestore.instance
         .collection(PARTIES)
         .where('id', whereIn: artistIds)
-        .snapshots();
-  }
-
-  static getUpcomingParties(int timeNow) {
-    return FirebaseFirestore.instance
-        .collection(FirestoreHelper.PARTIES)
-        .where('endTime', isGreaterThan: timeNow)
-        .where('isActive', isEqualTo: true)
-        .where('type', isEqualTo: 'event')
-        .orderBy('endTime', descending: false)
         .snapshots();
   }
 

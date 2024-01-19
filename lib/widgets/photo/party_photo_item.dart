@@ -110,8 +110,11 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
                 kIsWeb
                     ? widget.partyPhoto.isFreePhoto
                         ? _showPhoto()
-                        : _showBlurredPhoto()
-                    : _showPhoto(),
+                        : _showBlurredPhoto(true)
+                    : UserPreferences.isUserLoggedIn() ? _showPhoto()
+                : widget.partyPhoto.isFreePhoto
+                    ? _showPhoto()
+                    : _showBlurredPhoto(false),
                 Padding(
                   padding: const EdgeInsets.only(
                       left: 10.0, right: 8, top: 1, bottom: 0),
@@ -836,6 +839,20 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
     return quotes[randomNumber].toLowerCase();
   }
 
+  _getRandomLoginQuote() {
+    List<String> quotes = [
+      '🌟 Log in for an exclusive pass to the gallery – your visual adventure starts with a click! 🔓📷',
+      '📸 Dive into the photo extravaganza by logging in – the gallery is your VIP zone. 🚀',
+      '🎉 To catch a glimpse of the photo magic, just log in. Your front-row seat to the visual spectacle awaits!',
+      'Secure your spot in the photo wonderland by logging in – the pixels await your presence!',
+      '🌈 Log in to witness the visual magic unfold – the gallery\'s calling your name!',
+      'Don\'t miss out on the photo extravaganza – your backstage pass to the visuals is just a login away. 📷🔑'
+    ];
+
+    int randomNumber = NumberUtils.generateRandomNumber(0, quotes.length - 1);
+    return quotes[randomNumber].toLowerCase();
+  }
+
   _showPhoto() {
     return Stack(
       children: [
@@ -884,7 +901,7 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
     );
   }
 
-  _showBlurredPhoto() {
+  _showBlurredPhoto(bool showDownloadApp) {
     return Stack(alignment: Alignment.center, children: [
       BlurredImage(
         imageUrl: widget.partyPhoto.imageThumbUrl.isNotEmpty
@@ -900,14 +917,15 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
             Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 15.0),
                 child: Text(
-                  _getRandomAppDownloadQuote(),
+                  showDownloadApp ? _getRandomAppDownloadQuote()
+                      : _getRandomLoginQuote(),
                   maxLines: 3,
                   textAlign: TextAlign.center,
                   style: TextStyle(
                       fontSize: 20,
-                      backgroundColor: Constants.lightPrimary.withOpacity(0.2)),
+                      backgroundColor: Constants.lightPrimary.withOpacity(0.5)),
                 )),
-            Padding(
+            showDownloadApp ? Padding(
               padding:
                   const EdgeInsets.symmetric(horizontal: 5.0, vertical: 10),
               child: Row(
@@ -933,7 +951,7 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
                   ),
                 ],
               ),
-            )
+            ) : const SizedBox()
           ],
         ),
       ),
@@ -972,4 +990,5 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
       ),
     ]);
   }
+
 }
