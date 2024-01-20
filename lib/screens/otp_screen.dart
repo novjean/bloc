@@ -333,8 +333,8 @@ class _OTPScreenState extends State<OTPScreen> {
 
   void _verifyOtpCode() async {
     Logx.ist(_TAG, '☎️ contacting HQ');
-    try {
 
+    try {
       await FirebaseAuth.instance
           .signInWithCredential(PhoneAuthProvider.credential(
               verificationId: _verificationCode, smsCode: mPin))
@@ -539,7 +539,6 @@ class _OTPScreenState extends State<OTPScreen> {
         Toaster.longToast('🐵 Authentication server\'s taking a banana break. Try again and swing back in!');
 
         GoRouter.of(context).go('/login/true');
-
       } else {
         Logx.est(_TAG, 'invalid otp. please try again.');
       }

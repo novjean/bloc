@@ -1266,6 +1266,16 @@ class FirestoreHelper {
         .snapshots();
   }
 
+  static getUpcomingParties(int timeNow) {
+    return FirebaseFirestore.instance
+        .collection(FirestoreHelper.PARTIES)
+        .where('endTime', isGreaterThan: timeNow)
+        .where('isActive', isEqualTo: true)
+        .where('type', isEqualTo: 'event')
+        .orderBy('endTime', descending: false)
+        .snapshots();
+  }
+
   static getUpcomingGuestListParties(int timeNow) {
     return FirebaseFirestore.instance
         .collection(FirestoreHelper.PARTIES)
