@@ -181,7 +181,6 @@ class _LoginScreenState extends State<LoginScreen> {
                     borderSide: BorderSide(color: Constants.lightPrimary),
                   ),
                   enabledBorder: OutlineInputBorder(
-                    // width: 0.0 produces a thin "hairline" border
                     borderSide:
                         BorderSide(color: Constants.primary, width: 0.0),
                   )),

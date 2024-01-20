@@ -155,6 +155,8 @@ class _HomeScreenState extends State<HomeScreen> {
            Logx.d(_TAG, 'build parties is done');
 
             try {
+              mParties.clear();
+
               for (int i = 0; i < snapshot.data!.docs.length; i++) {
                 DocumentSnapshot document = snapshot.data!.docs[i];
                 Map<String, dynamic> map =
