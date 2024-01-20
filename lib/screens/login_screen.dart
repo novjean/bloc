@@ -71,11 +71,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 case ConnectionState.waiting:
                 case ConnectionState.none:
                   {
-                    if (!kIsWeb) {
-                      return SplashScreen();
-                    } else {
-                      return const LoadingWidget();
-                    }
+                    return SplashScreen();
                   }
                 case ConnectionState.active:
                 case ConnectionState.done:
@@ -99,7 +95,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             switch (snapshot.connectionState) {
                               case ConnectionState.waiting:
                               case ConnectionState.none:
-                                return const LoadingWidget();
+                                return SplashScreen();
                               case ConnectionState.active:
                               case ConnectionState.done:
                                 {
@@ -117,7 +113,6 @@ class _LoginScreenState extends State<LoginScreen> {
                                     return signInWidget();
                                   }
 
-
                                   Map<String, dynamic> data = snapshot.data!
                                       .data() as Map<String, dynamic>;
                                   final blocUser.User user =
@@ -126,11 +121,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                                   Logx.ast(_TAG, 'auth state change. user ${user.name}');
 
-                                  // return const MainScreen();
-                                  return const Scaffold(
-                                    backgroundColor: Constants.background,
-                                    body: LoadingWidget(),
-                                  );
+                                  return SplashScreen();
                                 }
                             }
                           },
@@ -139,7 +130,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     } else {
                       if (widget.shouldTriggerSkip) {
                         _verifyUsingSkipPhone();
-                        return const LoadingWidget();
+                        return SplashScreen();
                       } else {
                         return signInWidget();
                       }
@@ -386,8 +377,11 @@ class _LoginScreenState extends State<LoginScreen> {
               }
             }
           });
+        } else {
+          Logx.em(_TAG, 'signInToSkipBloc as value user came in as null!');
         }
-      });
+
+          });
     } on PlatformException catch (e, s) {
       Logx.e(_TAG, e, s);
     } on Exception catch (e, s) {
