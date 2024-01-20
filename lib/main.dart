@@ -46,13 +46,13 @@ Future<void> main() async {
   await FirebaseAppCheck.instance.activate(
     // You can also use a `ReCaptchaEnterpriseProvider` provider instance as an
     // argument for `webProvider`
-    webProvider: ReCaptchaV3Provider('recaptcha-v3-site-key'),
+    webProvider: ReCaptchaV3Provider('6Lc_XlYpAAAAAMf1fEA7WkNQBleWV48l1vXRb0Dx'),
     // Default provider for Android is the Play Integrity provider. You can use the "AndroidProvider" enum to choose
     // your preferred provider. Choose from:
     // 1. Debug provider
     // 2. Safety Net provider
     // 3. Play Integrity provider
-    androidProvider: AndroidProvider.debug,
+    androidProvider: AndroidProvider.playIntegrity,
     // Default provider for iOS/macOS is the Device Check provider. You can use the "AppleProvider" enum to choose
     // your preferred provider. Choose from:
     // 1. Debug provider
@@ -74,7 +74,7 @@ Future<void> main() async {
         final blocUser.User mUser = Fresh.freshUserMap(data, false);
         // UserPreferences.setUser(mUser);
         //
-        Logx.dst(_TAG, 'main: auth state change. user ${mUser.name}');
+        Logx.i(_TAG, 'main: auth state change. user ${mUser.name}');
         //
         // BlocRouter.returnRouter(true).refresh();
       } else {

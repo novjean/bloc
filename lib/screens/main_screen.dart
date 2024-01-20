@@ -204,7 +204,7 @@ class _MainScreenState extends State<MainScreen> {
   getToken() async {
     String? deviceToken = await FirebaseMessaging.instance.getToken();
     if (UserPreferences.isUserLoggedIn()) {
-      Logx.dst(_TAG,'${UserPreferences.myUser.name} updating fcm token: ${deviceToken!}');
+      Logx.i(_TAG,'${UserPreferences.myUser.name} updating fcm token: ${deviceToken!}');
       blocUser.User user = UserPreferences.myUser;
       String oldToken = user.fcmToken;
 
@@ -216,7 +216,7 @@ class _MainScreenState extends State<MainScreen> {
             UserPreferences.myUser.id, deviceToken);
       }
     } else {
-      Logx.dst(_TAG,'user not logged in to update fcm token');
+      Logx.em(_TAG,'user not logged in to update fcm token');
     }
   }
 

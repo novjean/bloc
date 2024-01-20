@@ -488,7 +488,7 @@ class _HomeScreenState extends State<HomeScreen> {
             _isPartiesLoading = false;
           });
         } else {
-          Logx.dst(_TAG, 'not mounted. parties cannot be shown!');
+          Logx.em(_TAG, 'not mounted. parties cannot be shown!');
         }
       } else {
         // no parties, long live bloc!

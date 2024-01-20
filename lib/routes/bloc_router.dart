@@ -37,7 +37,7 @@ class BlocRouter {
           name: RouteConstants.landingRouteName,
           path: '/',
           builder: (context, state) {
-            Logx.dst(_TAG, 'bloc router: ${RouteConstants.landingRouteName}');
+            // Logx.dst(_TAG, 'bloc router: ${RouteConstants.landingRouteName}');
             if(UserPreferences.myUser.phoneNumber == 0) {
               return LoginScreen(shouldTriggerSkip: false,);
             } else if(UserPreferences.myUser.phoneNumber == 1){
@@ -53,7 +53,7 @@ class BlocRouter {
           path: '/login',
           pageBuilder: (context, state) {
 
-            Logx.dst(_TAG, 'bloc router: event');
+            // Logx.dst(_TAG, 'bloc router: event');
 
             return const MaterialPage(child: Scaffold(body: LoadingWidget(),)
             );
@@ -63,7 +63,7 @@ class BlocRouter {
             pageBuilder: (context, state) {
               String skipString = state.pathParameters['skip']!;
 
-              Logx.dst(_TAG, 'bloc router: login/:skip ${skipString}');
+              // Logx.dst(_TAG, 'bloc router: login/:skip ${skipString}');
 
               bool val = false;
               if (skipString == 'true') {
@@ -84,7 +84,7 @@ class BlocRouter {
           path: '/event',
           pageBuilder: (context, state) {
 
-            Logx.dst(_TAG, 'bloc router: event');
+            // Logx.dst(_TAG, 'bloc router: event');
 
             return const MaterialPage(
                 child: Scaffold(body: LoadingWidget(),)
@@ -94,7 +94,7 @@ class BlocRouter {
             path: ':partyName/:partyChapter',
             pageBuilder: (context, state) {
 
-              Logx.dst(_TAG, 'bloc router: event/:partyName/:partyChapter');
+              // Logx.dst(_TAG, 'bloc router: event/:partyName/:partyChapter');
 
               String partyName = state.pathParameters['partyName']!;
               String partyChapter = state.pathParameters['partyChapter']!;
