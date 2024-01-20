@@ -44,6 +44,7 @@ class _HomeScreenState extends State<HomeScreen> {
   var _isGuestWifiDetailsLoading = true;
 
   List<Party> mParties = [];
+  var _isPartiesLoading = true;
 
   List<PartyGuest> mPartyGuestRequests = [];
 
@@ -64,6 +65,7 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
 
     _loadBlocsAndUserBlocs();
+    _loadPartiesAndGuestList();
 
     FirestoreHelper.pullAdCampaignByStorySize(false).then((res) {
       if (res.docs.isNotEmpty) {
@@ -155,14 +157,18 @@ class _HomeScreenState extends State<HomeScreen> {
            Logx.d(_TAG, 'build parties is done');
 
             try {
-              mParties.clear();
+              if(snapshot.hasData){
+                if(snapshot.data!.docs.isNotEmpty){
+                  mParties.clear();
 
-              for (int i = 0; i < snapshot.data!.docs.length; i++) {
-                DocumentSnapshot document = snapshot.data!.docs[i];
-                Map<String, dynamic> map =
-                document.data()! as Map<String, dynamic>;
-                final Party party = Fresh.freshPartyMap(map, false);
-                mParties.add(party);
+                  for (int i = 0; i < snapshot.data!.docs.length; i++) {
+                    DocumentSnapshot document = snapshot.data!.docs[i];
+                    Map<String, dynamic> map =
+                    document.data()! as Map<String, dynamic>;
+                    final Party party = Fresh.freshPartyMap(map, false);
+                    mParties.add(party);
+                  }
+                }
               }
 
               if(mParties.isNotEmpty){
@@ -502,5 +508,53 @@ class _HomeScreenState extends State<HomeScreen> {
           }).catchError((err) {
             Logx.em(_TAG, 'error loading blocs $err');
           });
+  }
+
+  void _loadPartiesAndGuestList() async {
+    await FirestoreHelper.pullUpcomingParties(Timestamp.now().millisecondsSinceEpoch).then((res) {
+      if(res.docs.isNotEmpty){
+        for (int i = 0; i < res.docs.length; i++) {
+          DocumentSnapshot document = res.docs[i];
+          Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+          final Party party = Fresh.freshPartyMap(data, false);
+
+          if(UserPreferences.getUserBlocs().contains(party.blocServiceId)){
+            mParties.add(party);
+          }
+        }
+
+        if(mounted){
+          setState(() {
+            _isPartiesLoading = false;
+          });
+        } else {
+          Logx.em(_TAG, 'not mounted. parties cannot be shown!');
+        }
+      } else {
+        // no parties, long live bloc!
+      }
+    });
+
+    await FirestoreHelper.pullGuestListRequested(UserPreferences.myUser.id)
+        .then((res) {
+      if (res.docs.isNotEmpty) {
+        Logx.i(_TAG, "successfully pulled in requested guest list");
+
+        List<PartyGuest> partyGuestRequests = [];
+        for (int i = 0; i < res.docs.length; i++) {
+          DocumentSnapshot document = res.docs[i];
+          Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+          final PartyGuest partyGuest = Fresh.freshPartyGuestMap(data, false);
+          partyGuestRequests.add(partyGuest);
+        }
+        if(mounted){
+          setState(() {
+            mPartyGuestRequests = partyGuestRequests;
+          });
+        }
+      } else {
+        Logx.i(_TAG, 'no party guest requests found!');
+      }
+    });
   }
 }
