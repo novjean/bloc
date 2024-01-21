@@ -812,10 +812,10 @@ packages:
     dependency: "direct main"
     description:
       name: phonepe_payment_sdk
-      sha256: "1029f1d0ba9dd50a9e2d9194eb1f62d4efb93e227ed04a8e8de3c2ace7ee7c9b"
+      sha256: f00b986ce05fbc655cb59929c2c29a9d39b2b21ec3ac1ad2bcf25d046c105f2e
       url: "https://pub.dev"
     source: hosted
-    version: "1.1.0"
+    version: "2.0.1"
   pinput:
     dependency: "direct main"
     description:

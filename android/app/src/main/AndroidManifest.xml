@@ -64,8 +64,8 @@
            android:name="com.google.firebase.messaging.default_notification_channel_id"
            android:value="high_importance_channel" />
 
-        <meta-data android:name="com.phonepe.android.sdk.isUAT" android:value="false"/>
-        <meta-data android:name="com.phonepe.android.sdk.isSimulator" android:value="false"/>
+<!--        <meta-data android:name="com.phonepe.android.sdk.isUAT" android:value="false"/>-->
+<!--        <meta-data android:name="com.phonepe.android.sdk.isSimulator" android:value="false"/>-->
         <meta-data android:name="com.phonepe.android.sdk.MerchantId" android:value="BLOCKONLINE"/>
         <meta-data android:name="com.phonepe.android.sdk.AppId" android:value="d4f45bc915f048e2b7eed50f0115648f"/>
     </application>

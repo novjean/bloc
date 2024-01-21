@@ -15,7 +15,7 @@ class PhonePePayment extends StatefulWidget {
 }
 
 class _PhonePePaymentState extends State<PhonePePayment> {
-  String environment = "UAT_SIM";
+  String environment = "SANDBOX";
   String appId = "";
   String merchantId = "PGTESTPAYUAT";
   bool enableLogging = true;
@@ -94,14 +94,11 @@ class _PhonePePaymentState extends State<PhonePePayment> {
   }
 
   void startPgTransaction() async {
-    Map<String, String> pgHeaders = {};
     String packageName = "";
 
-    // body = getChecksum();
-
     try {
-      var response = PhonePePaymentSdk.startPGTransaction(
-          body, callbackUrl, checksum, pgHeaders, apiEndPoint, packageName);
+      var response = PhonePePaymentSdk.startTransaction(
+          body, callbackUrl, checksum, packageName);
       response
           .then((val) => {
         setState(() {

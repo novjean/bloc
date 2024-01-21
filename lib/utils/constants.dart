@@ -95,7 +95,7 @@ class Constants {
   static String prodHostUrl = "https://api.phonepe.com/apis/hermes";
 
   /** phone pe test **/
-  static String testEnvironment = "UAT_SIM";
+  static String testEnvironment = "SANDBOX";
   static String testMerchantId = "PGTESTPAYUAT";
 
   /** phone pe prod **/

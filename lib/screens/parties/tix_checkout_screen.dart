@@ -203,7 +203,7 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
     return base64Body;
   }
 
-  void _startPgTransaction() async {
+  void _startTransaction() async {
     //check if values are all good
     if(!isTixValid()){
       Logx.est(_TAG, 'something went wrong, please try again!');
@@ -211,11 +211,11 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
       return;
     }
 
-    Map<String, String> pgHeaders = {"Content-Type": "application/json"};
+    // Map<String, String> pgHeaders = {"Content-Type": "application/json"};
 
     try {
-      var response = PhonePePaymentSdk.startPGTransaction(
-          body, callbackUrl, checksum, pgHeaders, apiEndPoint, packageName);
+      var response = PhonePePaymentSdk.startTransaction(
+          body, callbackUrl, checksum, packageName);
       response.then((val) async {
         if (val != null) {
           String status = val['status'].toString();
@@ -306,7 +306,7 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
               ),
               child: const Text("߷ retry", style: TextStyle(color: Constants.primary),),
               onPressed: () {
-                _startPgTransaction();
+                _startTransaction();
 
                 Navigator.of(context).pop();
               },
@@ -463,7 +463,7 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
                 ),
                 onPressed: () {
                   body = getChecksum().toString();
-                  _startPgTransaction();
+                  _startTransaction();
 
                   // todo: waiting for PhonePe to fix UPI intent
                   // // here we are gonna check what all is installed on phone
@@ -745,7 +745,7 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
                           checksum = '${sha256.convert(utf8.encode(base64Body + apiEndPoint + saltKey)).toString()}###$saltIndex';
                           body = base64Body;
 
-                          _startPgTransaction();
+                          _startTransaction();
 
                           Navigator.of(context).pop();
                         },
@@ -759,7 +759,7 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
               const Divider(),
               DarkButtonWidget(text: 'more payment modes', height: 50, onClicked: () {
                 body = getChecksum().toString();
-                _startPgTransaction();
+                _startTransaction();
               },),
             ],
           );
