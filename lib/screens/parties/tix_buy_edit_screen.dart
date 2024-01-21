@@ -136,10 +136,11 @@ class _TixBuyEditScreenState extends State<TixBuyEditScreen> {
         titleSpacing: 0,
         backgroundColor: Constants.background,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_rounded, color: Constants.lightPrimary),
+          icon: const Icon(Icons.arrow_back_ios_rounded,
+              color: Constants.lightPrimary),
           onPressed: () {
             if (widget.task == 'buy') {
-              if(!UserPreferences.isUserLoggedIn()){
+              if (!UserPreferences.isUserLoggedIn()) {
                 for (String tixTierId in widget.tix.tixTierIds) {
                   FirestoreHelper.deleteTixTier(tixTierId);
                 }
@@ -149,7 +150,8 @@ class _TixBuyEditScreenState extends State<TixBuyEditScreen> {
             }
 
             if (kIsWeb) {
-              GoRouter.of(context).push('/event/${mParty.name}/${mParty.chapter}');
+              GoRouter.of(context)
+                  .push('/event/${mParty.name}/${mParty.chapter}');
             } else {
               Navigator.of(context).pop();
             }
@@ -300,9 +302,19 @@ class _TixBuyEditScreenState extends State<TixBuyEditScreen> {
           Text(
             'total  \u20B9 ${mPrice.toStringAsFixed(0)}',
           ),
-          DarkButtonWidget(
-            text: 'proceed',
-            onClicked: () async {
+          ElevatedButton.icon(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Constants.background,
+              foregroundColor: Constants.primary,
+              shadowColor: Colors.white30,
+              elevation: 3,
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(
+                    Radius.circular(9),)
+                ,
+              ),
+            ),
+            onPressed: () {
               if (UserPreferences.isUserLoggedIn()) {
                 _handlePurchaseTicket();
               } else {
@@ -311,6 +323,14 @@ class _TixBuyEditScreenState extends State<TixBuyEditScreen> {
                 _showPhoneNumberEnterDialog(context);
               }
             },
+            label: const Text(
+              'proceed',
+              style: TextStyle(fontSize: 20, color: Constants.primary),
+            ),
+            icon: const Icon(
+              Icons.fast_forward,
+              size: 24.0,
+            ),
           )
         ],
       ),
@@ -318,22 +338,30 @@ class _TixBuyEditScreenState extends State<TixBuyEditScreen> {
   }
 
   void _handlePurchaseTicket() {
-    if(!kIsWeb){
+    //update the tix
+    widget.tix = widget.tix.copyWith(
+        userId: UserPreferences.myUser.id,
+        userName:
+            '${UserPreferences.myUser.name} ${UserPreferences.myUser.surname}',
+        userPhone: UserPreferences.myUser.phoneNumber.toString(),
+        userEmail: UserPreferences.myUser.email);
+
+    if (!kIsWeb) {
       if (mPrice > 0) {
         Navigator.of(context).push(
           MaterialPageRoute(
               builder: (context) => TixCheckoutScreen(
-                tix: widget.tix,
-                party: mParty,
-              )),
+                    tix: widget.tix,
+                    party: mParty,
+                  )),
         );
       } else {
         Logx.ilt(_TAG, 'please select a ticket to purchase');
       }
     } else {
-      if(UserPreferences.isUserLoggedIn()){
+      if (UserPreferences.isUserLoggedIn()) {
         widget.tix = widget.tix.copyWith(
-          total: mPrice,
+            total: mPrice,
             userId: mUser.id,
             userPhone: mUser.phoneNumber.toString(),
             userEmail: mUser.email,
@@ -480,14 +508,14 @@ class _TixBuyEditScreenState extends State<TixBuyEditScreen> {
 
             _handleContinueLogin();
 
-            if(mounted){
+            if (mounted) {
               setState(() {
                 _verificationCode = verificationID;
               });
             }
           },
           codeAutoRetrievalTimeout: (String verificationId) {
-            if(mounted){
+            if (mounted) {
               setState(() {
                 _verificationCode = verificationId;
               });
@@ -558,7 +586,9 @@ class _TixBuyEditScreenState extends State<TixBuyEditScreen> {
       builder: (BuildContext ctx) {
         return AlertDialog(
           title: Text(
-            isRegisteredUser ? '💂 enter one-time password' : '🧞 register & purchase',
+            isRegisteredUser
+                ? '💂 enter one-time password'
+                : '🧞 register & purchase',
             textAlign: TextAlign.center,
             style: const TextStyle(fontSize: 22, color: Colors.black),
           ),
@@ -584,8 +614,8 @@ class _TixBuyEditScreenState extends State<TixBuyEditScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Padding(
-                                  padding: const EdgeInsets.only(top: 10,
-                                      bottom: 10 ),
+                                  padding: const EdgeInsets.only(
+                                      top: 10, bottom: 10),
                                   child: TextFieldWidget(
                                     label: 'name *',
                                     text: mUser.name,
@@ -597,73 +627,78 @@ class _TixBuyEditScreenState extends State<TixBuyEditScreen> {
                               ],
                             )
                           : const SizedBox(),
-
-                      !isRegisteredUser ?
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: 10.0),
-                          child: Column(
-                          children: [
-                            const Padding(
-                              padding: EdgeInsets.only(bottom: 10.0),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
+                      !isRegisteredUser
+                          ? Padding(
+                              padding: const EdgeInsets.only(bottom: 10.0),
+                              child: Column(
                                 children: [
-                                  Text(
-                                    'gender *',
-                                    style: TextStyle(
-                                        color: Constants.darkPrimary,
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold),
+                                  const Padding(
+                                    padding: EdgeInsets.only(bottom: 10.0),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          'gender *',
+                                          style: TextStyle(
+                                              color: Constants.darkPrimary,
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  FormField<String>(
+                                    builder: (FormFieldState<String> state) {
+                                      return InputDecorator(
+                                        key: const ValueKey('gender_dropdown'),
+                                        decoration: InputDecoration(
+                                            fillColor: Colors.white,
+                                            errorStyle: const TextStyle(
+                                                color: Constants.errorColor,
+                                                fontSize: 16.0),
+                                            hintText: 'please select gender',
+                                            border: OutlineInputBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(19.0),
+                                              borderSide: const BorderSide(
+                                                  color: Constants.darkPrimary),
+                                            ),
+                                            enabledBorder:
+                                                const OutlineInputBorder(
+                                              borderSide: BorderSide(
+                                                  color: Constants.darkPrimary,
+                                                  width: 0.0),
+                                            )),
+                                        isEmpty: _sGender == '',
+                                        child: DropdownButtonHideUnderline(
+                                          child: DropdownButton<String>(
+                                            style: const TextStyle(
+                                                color: Constants.darkPrimary),
+                                            dropdownColor: Constants.primary,
+                                            value: _sGender,
+                                            isDense: true,
+                                            onChanged: (String? newValue) {
+                                              _sGender = newValue!;
+                                              mUser = mUser.copyWith(
+                                                  gender: _sGender);
+                                              state.didChange(newValue);
+                                            },
+                                            items: genders.map((String value) {
+                                              return DropdownMenuItem<String>(
+                                                value: value,
+                                                child: Text(value),
+                                              );
+                                            }).toList(),
+                                          ),
+                                        ),
+                                      );
+                                    },
                                   ),
                                 ],
                               ),
-                            ),
-                            FormField<String>(
-                              builder: (FormFieldState<String> state) {
-                                return InputDecorator(
-                                  key: const ValueKey('gender_dropdown'),
-                                  decoration: InputDecoration(
-                                      fillColor: Colors.white,
-                                      errorStyle: const TextStyle(
-                                          color: Constants.errorColor, fontSize: 16.0),
-                                      hintText: 'please select gender',
-                                      border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(19.0),
-                                        borderSide:
-                                        const BorderSide(color: Constants.darkPrimary),
-                                      ),
-                                      enabledBorder: const OutlineInputBorder(
-                                        borderSide: BorderSide(
-                                            color: Constants.darkPrimary, width: 0.0),
-                                      )),
-                                  isEmpty: _sGender == '',
-                                  child: DropdownButtonHideUnderline(
-                                    child: DropdownButton<String>(
-                                      style: const TextStyle(
-                                          color: Constants.darkPrimary),
-                                      dropdownColor: Constants.primary,
-                                      value: _sGender,
-                                      isDense: true,
-                                      onChanged: (String? newValue) {
-                                        _sGender = newValue!;
-                                        mUser = mUser.copyWith(gender: _sGender);
-                                        state.didChange(newValue);
-                                      },
-                                      items: genders.map((String value) {
-                                        return DropdownMenuItem<String>(
-                                          value: value,
-                                          child: Text(value),
-                                        );
-                                      }).toList(),
-                                    ),
-                                  ),
-                                );
-                              },
-                            ),
-                          ],
-                      ),
-                        ): const SizedBox(),
-
+                            )
+                          : const SizedBox(),
                       const Padding(
                         padding: EdgeInsets.symmetric(vertical: 5),
                         child: Text(
@@ -685,12 +720,15 @@ class _TixBuyEditScreenState extends State<TixBuyEditScreen> {
                                 length: 6,
                                 controller: pinController,
                                 focusNode: focusNode,
-                                androidSmsAutofillMethod: AndroidSmsAutofillMethod.none,
+                                androidSmsAutofillMethod:
+                                    AndroidSmsAutofillMethod.none,
                                 listenForMultipleSmsOnAndroid: true,
                                 defaultPinTheme: defaultPinTheme,
-                                separatorBuilder: (index) => const SizedBox(width: 8),
+                                separatorBuilder: (index) =>
+                                    const SizedBox(width: 8),
                                 closeKeyboardWhenCompleted: true,
-                                hapticFeedbackType: HapticFeedbackType.lightImpact,
+                                hapticFeedbackType:
+                                    HapticFeedbackType.lightImpact,
                                 onCompleted: (pin) async {
                                   debugPrint('onCompleted: $pin');
 
@@ -712,7 +750,8 @@ class _TixBuyEditScreenState extends State<TixBuyEditScreen> {
 
                                           mUser = mUser.copyWith(
                                             id: value.user!.uid,
-                                            phoneNumber: StringUtils.getInt(completePhoneNumber),
+                                            phoneNumber: StringUtils.getInt(
+                                                completePhoneNumber),
                                           );
 
                                           if (kIsWeb) {
@@ -733,7 +772,8 @@ class _TixBuyEditScreenState extends State<TixBuyEditScreen> {
                                             Logx.i(_TAG,
                                                 'registered user ${mUser.name} ${mUser.surname}');
 
-                                            UserPreferences.setUser(mUser);
+                                            await UserPreferences.setUser(
+                                                mUser);
                                           }
 
                                           Navigator.of(context).pop();
@@ -742,8 +782,10 @@ class _TixBuyEditScreenState extends State<TixBuyEditScreen> {
                                           Logx.d(_TAG,
                                               'user is registered. ${mUser.name} ${mUser.phoneNumber}');
 
-                                          int time = Timestamp.now().millisecondsSinceEpoch;
-                                          mUser = mUser.copyWith(lastSeenAt: time);
+                                          int time = Timestamp.now()
+                                              .millisecondsSinceEpoch;
+                                          mUser =
+                                              mUser.copyWith(lastSeenAt: time);
 
                                           if (kIsWeb) {
                                             mUser = mUser.copyWith(
@@ -763,7 +805,8 @@ class _TixBuyEditScreenState extends State<TixBuyEditScreen> {
                                             Logx.i(_TAG,
                                                 'registered user ${mUser.name} ${mUser.surname}');
 
-                                            UserPreferences.setUser(mUser);
+                                            await UserPreferences.setUser(
+                                                mUser);
                                           }
 
                                           Navigator.of(context).pop();

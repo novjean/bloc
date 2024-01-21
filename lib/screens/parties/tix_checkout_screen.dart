@@ -17,7 +17,6 @@ import '../../db/entity/tix.dart';
 import '../../db/entity/upi_app.dart';
 import '../../db/shared_preferences/user_preferences.dart';
 import '../../helpers/fresh.dart';
-import '../../main.dart';
 import '../../routes/route_constants.dart';
 import '../../utils/backup_utils.dart';
 import '../../utils/constants.dart';
@@ -55,6 +54,8 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
 
   @override
   void initState() {
+    Logx.d(_TAG, 'tix user name: ${widget.tix.userName}');
+
     FirestoreHelper.pullTixTiersByTixId(widget.tix.id).then((res) {
       if (res.docs.isNotEmpty) {
         double tixTotal = 0;
@@ -203,6 +204,13 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
   }
 
   void _startPgTransaction() async {
+    //check if values are all good
+    if(!isTixValid()){
+      Logx.est(_TAG, 'something went wrong, please try again!');
+      Navigator.of(context).pop();
+      return;
+    }
+
     Map<String, String> pgHeaders = {"Content-Type": "application/json"};
 
     try {
@@ -441,9 +449,19 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
               UserPreferences.myUser.clearanceLevel == Constants.ADMIN_LEVEL
                   ? Text('result :\n$result')
                   : const SizedBox(),
-              DarkButtonWidget(
-                text: 'purchase',
-                onClicked: () {
+              ElevatedButton.icon(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Constants.background,
+                  foregroundColor: Constants.primary,
+                  shadowColor: Colors.white30,
+                  elevation: 3,
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(9),)
+                    ,
+                  ),
+                ),
+                onPressed: () {
                   body = getChecksum().toString();
                   _startPgTransaction();
 
@@ -475,7 +493,15 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
                   //   startPgTransaction();
                   // }
                 },
-              )
+                label: const Text(
+                  'purchase',
+                  style: TextStyle(fontSize: 20, color: Constants.primary),
+                ),
+                icon: const Icon(
+                  Icons.local_play,
+                  size: 24.0,
+                ),
+              ),
             ],
           ),
         ),
@@ -738,6 +764,23 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
             ],
           );
         });
+  }
+
+  bool isTixValid() {
+    if(UserPreferences.isUserLoggedIn()){
+      if(widget.tix.userId != UserPreferences.myUser.id){
+        Logx.em(_TAG, 'tix purchase not initiating as user id is not matching');
+        return false;
+      }
+      if(widget.tix.userPhone != UserPreferences.myUser.phoneNumber.toString()){
+        Logx.em(_TAG, 'tix purchase not initiating as user phone not matching');
+        return false;
+      }
+      return true;
+    } else {
+      Logx.em(_TAG, 'user is not logged in, cannot purchase ticket!');
+      return false;
+    }
   }
 
 }
