@@ -46,8 +46,8 @@ class _PromoterPartyTixsScreenState extends State<PromoterPartyTixsScreen> {
   void initState() {
     controller = TextEditingController();
 
-    mOptions = ['arriving', 'completed'];
-    sOption = mOptions.first;
+    // mOptions = ['success', 'failed',];
+    // sOption = mOptions.first;
 
     super.initState();
   }
@@ -95,8 +95,8 @@ class _PromoterPartyTixsScreenState extends State<PromoterPartyTixsScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          displayBoxOfficeOptions(context),
-          const Divider(),
+          // displayBoxOfficeOptions(context),
+          // const Divider(),
           Container(
             margin: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 0),
             child: TextField(

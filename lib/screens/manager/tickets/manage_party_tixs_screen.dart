@@ -35,6 +35,8 @@ class _ManagePartyTixsScreenState extends State<ManagePartyTixsScreen> {
   bool testMode = false;
 
   List<Tix> mTixs = [];
+  List<Tix> mSuccessTixs = [];
+  List<Tix> mPotentialTixs = [];
 
   late List<String> mOptions;
   late String sOption;
@@ -48,7 +50,7 @@ class _ManagePartyTixsScreenState extends State<ManagePartyTixsScreen> {
   void initState() {
     controller = TextEditingController();
 
-    mOptions = ['arriving', 'completed'];
+    mOptions = ['success', 'potential'];
     sOption = mOptions.first;
 
     super.initState();
@@ -97,8 +99,8 @@ class _ManagePartyTixsScreenState extends State<ManagePartyTixsScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          // displayBoxOfficeOptions(context),
-          // const Divider(),
+          displayBoxOfficeOptions(context),
+          const Divider(),
           Container(
             margin: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 0),
             child: TextField(
@@ -186,9 +188,22 @@ class _ManagePartyTixsScreenState extends State<ManagePartyTixsScreen> {
                     document.data()! as Map<String, dynamic>;
                     final Tix tix = Fresh.freshTixMap(map, false);
                     mTixs.add(tix);
+
+                    if(tix.isSuccess && tix.isCompleted && tix.merchantTransactionId.isNotEmpty){
+                      mSuccessTixs.add(tix);
+                    } else {
+                      mPotentialTixs.add(tix);
+                    }
                   }
 
-                  return _displayTixs(context, mTixs);
+                  List<Tix> tixs = [];
+                  if(sOption == mOptions.first){
+                    tixs = mSuccessTixs;
+                  } else {
+                    tixs = mPotentialTixs;
+                  }
+
+                  return _displayTixs(context, tixs);
                 }
               } else {
                 return const Expanded(
