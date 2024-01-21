@@ -1127,42 +1127,46 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
         children: [
           ButtonWidget(
             height: 50,
-            text: !widget.reservation.isApproved ? '✅ approve' : '☑️ decline',
+            text: !widget.reservation.isApproved ? '✅ approve' : '✖️ decline',
             onClicked: () async {
               bool val = !widget.reservation.isApproved;
               widget.reservation = widget.reservation.copyWith(isApproved: val);
               FirestoreHelper.pushReservation(widget.reservation);
-              Logx.ist(_TAG, 'reservation is approved: ${widget.reservation.isApproved}');
+              if(widget.reservation.isApproved){
+                Logx.ist(_TAG, 'reservation is approved');
 
-              // find the user
-              FirestoreHelper.pullUser(widget.reservation.customerId).then((res) async {
-                if(res.docs.isNotEmpty){
-                  DocumentSnapshot document = res.docs[0];
-                  Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+                // find the user
+                FirestoreHelper.pullUser(widget.reservation.customerId).then((res) async {
+                  if(res.docs.isNotEmpty){
+                    DocumentSnapshot document = res.docs[0];
+                    Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
 
-                  final blocUser.User user = Fresh.freshUserMap(data, false);
+                    final blocUser.User user = Fresh.freshUserMap(data, false);
 
-                  String message =
-                      'congratulations, your reservation at $sBloc is confirmed for ${DateTimeUtils.getFormattedDate2(widget.reservation.arrivalDate)} at ${widget.reservation.arrivalTime} 🎉.\n\n 🎫 reservation can be viewed in our app. ';
-
-                  if(user.fcmToken.isNotEmpty){
-                    String title = '🎊 Reservation has been confirmed';
                     String message =
-                        'your reservation at $sBloc is confirmed for ${DateTimeUtils.getFormattedDate2(widget.reservation.arrivalDate)} at ${widget.reservation.arrivalTime}. See you then!  🍾';
-                    Apis.sendPushNotification(user.fcmToken, title, message);
-                    Logx.ist(_TAG,
-                        'notification has been sent to ${user.name} ${user.surname}');
-                  } else {
-                    message += 'download at\n\n🍎 ios:\n${Constants.urlBlocAppStore}\n\n🤖 android:\n${Constants.urlBlocPlayStore}\n\nsee you soon 🥳 #blocCommunity 💛';
-                  }
+                        'congratulations, your reservation at $sBloc is confirmed for ${DateTimeUtils.getFormattedDate2(widget.reservation.arrivalDate)} at ${widget.reservation.arrivalTime} 🎉.\n\n 🎫 reservation can be viewed in our app. ';
 
-                  // Encode the phone number and message for the URL
-                  String url =
-                      'https://wa.me/+${user.phoneNumber}/?text=${Uri.encodeFull(message)}';
-                  Uri uri = Uri.parse(url);
-                  await NetworkUtils.launchInBrowser(uri);
-                }
-              });
+                    if(user.fcmToken.isNotEmpty){
+                      String title = '🎊 Reservation has been confirmed';
+                      String message =
+                          'your reservation at $sBloc is confirmed for ${DateTimeUtils.getFormattedDate2(widget.reservation.arrivalDate)} at ${widget.reservation.arrivalTime}. See you then!  🍾';
+                      Apis.sendPushNotification(user.fcmToken, title, message);
+                      Logx.ist(_TAG,
+                          'notification has been sent to ${user.name} ${user.surname}');
+                    } else {
+                      message += 'download at\n\n🍎 ios:\n${Constants.urlBlocAppStore}\n\n🤖 android:\n${Constants.urlBlocPlayStore}\n\nsee you soon 🥳 #blocCommunity 💛';
+                    }
+
+                    // Encode the phone number and message for the URL
+                    String url =
+                        'https://wa.me/+${user.phoneNumber}/?text=${Uri.encodeFull(message)}';
+                    Uri uri = Uri.parse(url);
+                    await NetworkUtils.launchInBrowser(uri);
+                  }
+                });
+              } else {
+                Logx.ist(_TAG, 'reservation is declined');
+              }
 
               Navigator.of(context).pop();
             },
