@@ -82,12 +82,8 @@ class _BlocSlideItemState extends State<BlocSlideItem> {
                             ),
                           ),
                         ),
-                        placeholder: (context, url) =>
-                            const FadeInImage(
-                              placeholder: AssetImage('assets/images/logo.png'),
-                              image: AssetImage('assets/images/logo.png'),
-                              fit: BoxFit.cover,
-                            ),
+                          progressIndicatorBuilder: (context, url, downloadProgress) =>
+                              CircularProgressIndicator(value: downloadProgress.progress, color: Constants.primary),
                         errorWidget: (context, url, error) => const Icon(Icons.error),
                       )
                       ).toList(),
@@ -98,7 +94,7 @@ class _BlocSlideItemState extends State<BlocSlideItem> {
                         right: 0,
                         child: Center(
                           child: SizedBox(
-                            width: 250,
+                            width: 275,
                             child: IconButtonWidget(
                               icon: Icons.table_restaurant_rounded,
                               text: 'reserve',
