@@ -1134,27 +1134,35 @@ class _ReservationAddEditScreenState extends State<ReservationAddEditScreen> {
               FirestoreHelper.pushReservation(widget.reservation);
               Logx.ist(_TAG, 'reservation is approved: ${widget.reservation.isApproved}');
 
-              if(mBlocUser.fcmToken.isNotEmpty){
-                String title = '🎊 Reservation has been confirmed';
-                String message =
-                    'your reservation at $sBloc is confirmed for ${DateTimeUtils.getFormattedDate2(widget.reservation.arrivalDate)} at ${widget.reservation.arrivalTime}. See you then!  🍾';
+              // find the user
+              FirestoreHelper.pullUser(widget.reservation.customerId).then((res) async {
+                if(res.docs.isNotEmpty){
+                  DocumentSnapshot document = res.docs[0];
+                  Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
 
-                //send a notification
-                Apis.sendPushNotification(mBlocUser.fcmToken, title, message);
-                Logx.ist(_TAG,
-                    'notification has been sent to ${mBlocUser.name} ${mBlocUser.surname}');
-              } else {
-                // whatsapp notification
-                String message =
-                    'congratulations, your reservation at $sBloc is confirmed for ${DateTimeUtils.getFormattedDate2(widget.reservation.arrivalDate)} at ${widget.reservation.arrivalTime} 🎉.\n\n 🎫 reservation can be modified in our app, download at '
-                    '\n\n🍎 ios:\n${Constants.urlBlocAppStore}\n\n🤖 android:\n${Constants.urlBlocPlayStore}\n\nsee you soon 🥳 #blocCommunity 💛';
-                // Encode the phone number and message for the URL
-                String url =
-                    'https://wa.me/+${mBlocUser.phoneNumber}/?text=${Uri.encodeFull(message)}';
-                Uri uri = Uri.parse(url);
+                  final blocUser.User user = Fresh.freshUserMap(data, false);
 
-                await NetworkUtils.launchInBrowser(uri);
-              }
+                  String message =
+                      'congratulations, your reservation at $sBloc is confirmed for ${DateTimeUtils.getFormattedDate2(widget.reservation.arrivalDate)} at ${widget.reservation.arrivalTime} 🎉.\n\n 🎫 reservation can be viewed in our app. ';
+
+                  if(user.fcmToken.isNotEmpty){
+                    String title = '🎊 Reservation has been confirmed';
+                    String message =
+                        'your reservation at $sBloc is confirmed for ${DateTimeUtils.getFormattedDate2(widget.reservation.arrivalDate)} at ${widget.reservation.arrivalTime}. See you then!  🍾';
+                    Apis.sendPushNotification(user.fcmToken, title, message);
+                    Logx.ist(_TAG,
+                        'notification has been sent to ${user.name} ${user.surname}');
+                  } else {
+                    message += 'download at\n\n🍎 ios:\n${Constants.urlBlocAppStore}\n\n🤖 android:\n${Constants.urlBlocPlayStore}\n\nsee you soon 🥳 #blocCommunity 💛';
+                  }
+
+                  // Encode the phone number and message for the URL
+                  String url =
+                      'https://wa.me/+${user.phoneNumber}/?text=${Uri.encodeFull(message)}';
+                  Uri uri = Uri.parse(url);
+                  await NetworkUtils.launchInBrowser(uri);
+                }
+              });
 
               Navigator.of(context).pop();
             },
