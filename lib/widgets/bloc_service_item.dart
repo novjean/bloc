@@ -41,6 +41,7 @@ class BlocServiceItem extends StatelessWidget {
               MaterialPageRoute(
                   builder: (ctx) => isManager
                       ? ManagerServicesScreen(blocService: service)
+                  //todo: owner services screen needs to be implemented
                       : BlocMenuScreen(blocId: service.blocId)),
             );
           },

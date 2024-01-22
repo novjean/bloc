@@ -42,6 +42,7 @@ import '../db/entity/ad.dart';
 import '../db/entity/city.dart';
 import '../db/entity/friend.dart';
 import '../db/entity/lounge.dart';
+import '../db/entity/organizer.dart';
 import '../db/entity/party_photo.dart';
 import '../db/entity/support_chat.dart';
 import '../db/entity/tix.dart';
@@ -87,6 +88,7 @@ class FirestoreHelper {
   static String NOTIFICATION_TESTS = 'notification_tests';
   static String OFFERS = 'offers';
   static String ORDERS = 'orders';
+  static String ORGANIZERS = 'organizers';
   static String PARTIES = 'parties';
   static String PARTY_GUESTS = 'party_guests';
   static String PARTY_INTERESTS = 'party_interests';
@@ -1128,6 +1130,34 @@ class FirestoreHelper {
     } catch (e) {
       Logx.em(_TAG, e.toString());
     }
+  }
+
+  /** organizer **/
+  static void pushOrganizer(Organizer organizer) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection(ORGANIZERS)
+          .doc(organizer.id)
+          .set(organizer.toMap());
+    } on PlatformException catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } on Exception catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } catch (e) {
+      Logx.em(_TAG, e.toString());
+    }
+  }
+
+  static getOrganizers() {
+    return FirebaseFirestore.instance
+        .collection(ORGANIZERS)
+        .orderBy('createdAt', descending: true)
+        .snapshots();
+  }
+
+
+  static void deleteOrganizer(String docId) {
+    FirebaseFirestore.instance.collection(ORGANIZERS).doc(docId).delete();
   }
 
   /** party **/
@@ -2735,7 +2765,6 @@ class FirestoreHelper {
   static void deleteUserPhoto(String docId) {
     FirebaseFirestore.instance.collection(USER_PHOTOS).doc(docId).delete();
   }
-
 
 
 }

@@ -19,6 +19,7 @@ import '../db/entity/lounge_chat.dart';
 import '../db/entity/genre.dart';
 import '../db/entity/lounge.dart';
 import '../db/entity/notification_test.dart';
+import '../db/entity/organizer.dart';
 import '../db/entity/party.dart';
 import '../db/entity/party_interest.dart';
 import '../db/entity/party_photo.dart';
@@ -762,62 +763,62 @@ class Fresh {
     try {
       category = category.copyWith(name: map['name'] as String);
     } catch (e) {
-      Logx.em(_TAG, 'category name not exist for category id: ' + category.id);
+      Logx.em(_TAG, 'category name not exist for category id: ${category.id}');
       isModelChanged = true;
     }
     try {
       category = category.copyWith(type: map['type'] as String);
     } catch (e) {
-      Logx.em(_TAG, 'category type not exist for category id: ' + category.id);
+      Logx.em(_TAG, 'category type not exist for category id: ${category.id}');
       isModelChanged = true;
     }
     try {
       category = category.copyWith(serviceId: map['serviceId'] as String);
     } catch (e) {
       Logx.em(
-          _TAG, 'category serviceId not exist for category id: ' + category.id);
+          _TAG, 'category serviceId not exist for category id: ${category.id}');
       isModelChanged = true;
     }
     try {
       category = category.copyWith(imageUrl: map['imageUrl'] as String);
     } catch (e) {
       Logx.em(
-          _TAG, 'category imageUrl not exist for id: ' + category.id);
+          _TAG, 'category imageUrl not exist for id: ${category.id}');
       isModelChanged = true;
     }
     try {
       category = category.copyWith(ownerId: map['ownerId'] as String);
     } catch (e) {
       Logx.em(
-          _TAG, 'category ownerId not exist for id: ' + category.id);
+          _TAG, 'category ownerId not exist for id: ${category.id}');
       isModelChanged = true;
     }
     try {
       category = category.copyWith(createdAt: map['createdAt'] as int);
     } catch (e) {
       Logx.em(
-          _TAG, 'category createdAt not exist for id: ' + category.id);
+          _TAG, 'category createdAt not exist for id: ${category.id}');
       isModelChanged = true;
     }
     try {
       category = category.copyWith(sequence: map['sequence'] as int);
     } catch (e) {
       Logx.em(
-          _TAG, 'category sequence not exist for id: ' + category.id);
+          _TAG, 'category sequence not exist for id: ${category.id}');
       isModelChanged = true;
     }
     try {
       category = category.copyWith(description: map['description'] as String);
     } catch (e) {
       Logx.em(_TAG,
-          'category description not exist for category id: ' + category.id);
+          'category description not exist for category id: ${category.id}');
       isModelChanged = true;
     }
     try {
       category = category.copyWith(blocIds: List<String>.from(map['blocIds']));
     } catch (e) {
       Logx.em(
-          _TAG, 'category blocIds not exist for category id: ' + category.id);
+          _TAG, 'category blocIds not exist for category id: ${category.id}');
       List<String> existingBlocIds = [category.serviceId];
       category = category.copyWith(blocIds: existingBlocIds);
       isModelChanged = true;
@@ -826,7 +827,7 @@ class Fresh {
     if (isModelChanged &&
         shouldUpdate &&
         UserPreferences.myUser.clearanceLevel >= Constants.MANAGER_LEVEL) {
-      Logx.i(_TAG, 'updating category ' + category.id);
+      Logx.i(_TAG, 'updating category ${category.id}');
       FirestoreHelper.pushCategory(category);
     }
 
@@ -844,54 +845,54 @@ class Fresh {
     try {
       freshCategory = freshCategory.copyWith(name: category.name);
     } catch (e) {
-      Logx.em(_TAG, 'category name not exist for category id: ' + category.id);
+      Logx.em(_TAG, 'category name not exist for category id: ${category.id}');
     }
     try {
       freshCategory = freshCategory.copyWith(type: category.type);
     } catch (e) {
-      Logx.em(_TAG, 'category type not exist for category id: ' + category.id);
+      Logx.em(_TAG, 'category type not exist for category id: ${category.id}');
     }
     try {
       freshCategory = freshCategory.copyWith(serviceId: category.serviceId);
     } catch (e) {
       Logx.em(
-          _TAG, 'category serviceId not exist for category id: ' + category.id);
+          _TAG, 'category serviceId not exist for category id: ${category.id}');
     }
     try {
       freshCategory = freshCategory.copyWith(imageUrl: category.imageUrl);
     } catch (e) {
       Logx.em(
-          _TAG, 'category imageUrl not exist for category id: ' + category.id);
+          _TAG, 'category imageUrl not exist for category id: ${category.id}');
     }
     try {
       freshCategory = freshCategory.copyWith(ownerId: category.ownerId);
     } catch (e) {
       Logx.em(
-          _TAG, 'category ownerId not exist for category id: ' + category.id);
+          _TAG, 'category ownerId not exist for category id: ${category.id}');
     }
     try {
       freshCategory = freshCategory.copyWith(createdAt: category.createdAt);
     } catch (e) {
       Logx.em(
-          _TAG, 'category createdAt not exist for category id: ' + category.id);
+          _TAG, 'category createdAt not exist for category id: ${category.id}');
     }
     try {
       freshCategory = freshCategory.copyWith(sequence: category.sequence);
     } catch (e) {
       Logx.em(
-          _TAG, 'category sequence not exist for category id: ' + category.id);
+          _TAG, 'category sequence not exist for category id: ${category.id}');
     }
     try {
       freshCategory = freshCategory.copyWith(description: category.description);
     } catch (e) {
       Logx.em(_TAG,
-          'category description not exist for category id: ' + category.id);
+          'category description not exist for category id: ${category.id}');
     }
     try {
       freshCategory = freshCategory.copyWith(blocIds: category.blocIds);
     } catch (e) {
       Logx.em(
-          _TAG, 'category blocIds not exist for category id: ' + category.id);
+          _TAG, 'category blocIds not exist for category id: ${category.id}');
     }
 
     return freshCategory;
@@ -912,13 +913,13 @@ class Fresh {
     try {
       celebration = celebration.copyWith(name: map['name'] as String);
     } catch (e) {
-      Logx.em(_TAG, 'celebration name not exist for id: ' + celebration.id);
+      Logx.em(_TAG, 'celebration name not exist for id: ${celebration.id}');
       isModelChanged = true;
     }
     try {
       celebration = celebration.copyWith(surname: map['surname'] as String);
     } catch (e) {
-      Logx.em(_TAG, 'celebration surname not exist for id: ' + celebration.id);
+      Logx.em(_TAG, 'celebration surname not exist for id: ${celebration.id}');
       isModelChanged = true;
     }
     try {
@@ -926,7 +927,7 @@ class Fresh {
           celebration.copyWith(blocServiceId: map['blocServiceId'] as String);
     } catch (e) {
       Logx.em(_TAG,
-          'celebration blocServiceId not exist for id: ' + celebration.id);
+          'celebration blocServiceId not exist for id: ${celebration.id}');
       isModelChanged = true;
     }
     try {
@@ -934,13 +935,13 @@ class Fresh {
           celebration.copyWith(customerId: map['customerId'] as String);
     } catch (e) {
       Logx.em(
-          _TAG, 'celebration customerId not exist for id: ' + celebration.id);
+          _TAG, 'celebration customerId not exist for id: ${celebration.id}');
       isModelChanged = true;
     }
     try {
       celebration = celebration.copyWith(phone: map['phone'] as int);
     } catch (e) {
-      Logx.em(_TAG, 'celebration phone not exist for id: ' + celebration.id);
+      Logx.em(_TAG, 'celebration phone not exist for id: ${celebration.id}');
       isModelChanged = true;
     }
 
@@ -949,14 +950,14 @@ class Fresh {
           celebration.copyWith(guestsCount: map['guestsCount'] as int);
     } catch (e) {
       Logx.em(
-          _TAG, 'celebration guestsCount not exist for id: ' + celebration.id);
+          _TAG, 'celebration guestsCount not exist for id: ${celebration.id}');
       isModelChanged = true;
     }
     try {
       celebration = celebration.copyWith(createdAt: map['createdAt'] as int);
     } catch (e) {
       Logx.em(
-          _TAG, 'celebration createdAt not exist for id: ' + celebration.id);
+          _TAG, 'celebration createdAt not exist for id: ${celebration.id}');
       isModelChanged = true;
     }
     try {
@@ -964,7 +965,7 @@ class Fresh {
           celebration.copyWith(arrivalDate: map['arrivalDate'] as int);
     } catch (e) {
       Logx.em(
-          _TAG, 'celebration arrivalDate not exist for id: ' + celebration.id);
+          _TAG, 'celebration arrivalDate not exist for id: ${celebration.id}');
       isModelChanged = true;
     }
     try {
@@ -972,7 +973,7 @@ class Fresh {
           celebration.copyWith(arrivalTime: map['arrivalTime'] as String);
     } catch (e) {
       Logx.em(
-          _TAG, 'celebration arrivalTime not exist for id: ' + celebration.id);
+          _TAG, 'celebration arrivalTime not exist for id: ${celebration.id}');
       isModelChanged = true;
     }
     try {
@@ -980,7 +981,7 @@ class Fresh {
           celebration.copyWith(durationHours: map['durationHours'] as int);
     } catch (e) {
       Logx.em(_TAG,
-          'celebration durationHours not exist for id: ' + celebration.id);
+          'celebration durationHours not exist for id: ${celebration.id}');
       isModelChanged = true;
     }
 
@@ -989,7 +990,7 @@ class Fresh {
           bottleProductIds: List<String>.from(map['bottleProductIds']));
     } catch (e) {
       Logx.em(_TAG,
-          'celebration bottleProductIds not exist for id: ' + celebration.id);
+          'celebration bottleProductIds not exist for id: ${celebration.id}');
       isModelChanged = true;
     }
     try {
@@ -997,7 +998,7 @@ class Fresh {
           bottleNames: List<String>.from(map['bottleNames']));
     } catch (e) {
       Logx.em(
-          _TAG, 'celebration bottleNames not exist for id: ' + celebration.id);
+          _TAG, 'celebration bottleNames not exist for id: ${celebration.id}');
       isModelChanged = true;
     }
     try {
@@ -1005,25 +1006,25 @@ class Fresh {
           celebration.copyWith(specialRequest: map['specialRequest'] as String);
     } catch (e) {
       Logx.em(_TAG,
-          'celebration specialRequest not exist for id: ' + celebration.id);
+          'celebration specialRequest not exist for id: ${celebration.id}');
       isModelChanged = true;
     }
     try {
       celebration = celebration.copyWith(occasion: map['occasion'] as String);
     } catch (e) {
-      Logx.em(_TAG, 'reservation occasion not exist for id: ' + celebration.id);
+      Logx.em(_TAG, 'reservation occasion not exist for id: ${celebration.id}');
       isModelChanged = true;
     }
     try {
       celebration = celebration.copyWith(isApproved: map['isApproved'] as bool);
     } catch (e) {
       Logx.em(
-          _TAG, 'celebration isApproved not exist for id: ' + celebration.id);
+          _TAG, 'celebration isApproved not exist for id: ${celebration.id}');
       isModelChanged = true;
     }
 
     if (isModelChanged && shouldUpdate) {
-      Logx.i(_TAG, 'updating celebration ' + celebration.id);
+      Logx.i(_TAG, 'updating celebration ${celebration.id}');
       FirestoreHelper.pushCelebration(celebration);
     }
 
@@ -1041,91 +1042,91 @@ class Fresh {
     try {
       fresh = fresh.copyWith(name: celebration.name);
     } catch (e) {
-      Logx.em(_TAG, 'celebration name not exist for id: ' + celebration.id);
+      Logx.em(_TAG, 'celebration name not exist for id: ${celebration.id}');
     }
     try {
       fresh = fresh.copyWith(surname: celebration.surname);
     } catch (e) {
-      Logx.em(_TAG, 'celebration surname not exist for id: ' + celebration.id);
+      Logx.em(_TAG, 'celebration surname not exist for id: ${celebration.id}');
     }
     try {
       fresh = fresh.copyWith(blocServiceId: celebration.blocServiceId);
     } catch (e) {
       Logx.em(_TAG,
-          'celebration blocServiceId not exist for id: ' + celebration.id);
+          'celebration blocServiceId not exist for id: ${celebration.id}');
     }
     try {
       fresh = fresh.copyWith(customerId: celebration.customerId);
     } catch (e) {
       Logx.em(
-          _TAG, 'celebration customerId not exist for id: ' + celebration.id);
+          _TAG, 'celebration customerId not exist for id: ${celebration.id}');
     }
     try {
       fresh = fresh.copyWith(phone: celebration.phone);
     } catch (e) {
-      Logx.em(_TAG, 'celebration phone not exist for id: ' + celebration.id);
+      Logx.em(_TAG, 'celebration phone not exist for id: ${celebration.id}');
     }
 
     try {
       fresh = fresh.copyWith(guestsCount: celebration.guestsCount);
     } catch (e) {
       Logx.em(
-          _TAG, 'celebration guestsCount not exist for id: ' + celebration.id);
+          _TAG, 'celebration guestsCount not exist for id: ${celebration.id}');
     }
     try {
       fresh = fresh.copyWith(createdAt: celebration.createdAt);
     } catch (e) {
       Logx.em(
-          _TAG, 'celebration createdAt not exist for id: ' + celebration.id);
+          _TAG, 'celebration createdAt not exist for id: ${celebration.id}');
     }
     try {
       fresh = fresh.copyWith(arrivalDate: celebration.arrivalDate);
     } catch (e) {
       Logx.em(
-          _TAG, 'celebration arrivalDate not exist for id: ' + celebration.id);
+          _TAG, 'celebration arrivalDate not exist for id: ${celebration.id}');
     }
     try {
       fresh = fresh.copyWith(arrivalTime: celebration.arrivalTime);
     } catch (e) {
       Logx.em(
-          _TAG, 'celebration arrivalTime not exist for id: ' + celebration.id);
+          _TAG, 'celebration arrivalTime not exist for id: ${celebration.id}');
     }
     try {
       fresh = fresh.copyWith(durationHours: celebration.durationHours);
     } catch (e) {
       Logx.em(_TAG,
-          'celebration durationHours not exist for id: ' + celebration.id);
+          'celebration durationHours not exist for id: ${celebration.id}');
     }
 
     try {
       fresh = fresh.copyWith(bottleProductIds: celebration.bottleProductIds);
     } catch (e) {
       Logx.em(_TAG,
-          'celebration bottleProductIds not exist for id: ' + celebration.id);
+          'celebration bottleProductIds not exist for id: ${celebration.id}');
     }
     try {
       fresh = fresh.copyWith(bottleNames: celebration.bottleNames);
     } catch (e) {
       Logx.em(
-          _TAG, 'celebration bottleNames not exist for id: ' + celebration.id);
+          _TAG, 'celebration bottleNames not exist for id: ${celebration.id}');
     }
     try {
       fresh = fresh.copyWith(specialRequest: celebration.specialRequest);
     } catch (e) {
       Logx.em(_TAG,
-          'celebration specialRequest not exist for id: ' + celebration.id);
+          'celebration specialRequest not exist for id: ${celebration.id}');
     }
     try {
       fresh = fresh.copyWith(occasion: celebration.occasion);
     } catch (e) {
-      Logx.em(_TAG, 'celebration occasion not exist for id: ' + celebration.id);
+      Logx.em(_TAG, 'celebration occasion not exist for id: ${celebration.id}');
     }
 
     try {
       fresh = fresh.copyWith(isApproved: celebration.isApproved);
     } catch (e) {
       Logx.em(
-          _TAG, 'celebration isApproved not exist for id: ' + celebration.id);
+          _TAG, 'celebration isApproved not exist for id: ${celebration.id}');
     }
 
     return fresh;
@@ -1146,37 +1147,37 @@ class Fresh {
     try {
       challenge = challenge.copyWith(level: map['level'] as int);
     } catch (e) {
-      Logx.em(_TAG, 'challenge level not exist for id: ' + challenge.id);
+      Logx.em(_TAG, 'challenge level not exist for id: ${challenge.id}');
       isModelChanged = true;
     }
     try {
       challenge = challenge.copyWith(title: map['title'] as String);
     } catch (e) {
-      Logx.em(_TAG, 'challenge title not exist for id: ' + challenge.id);
+      Logx.em(_TAG, 'challenge title not exist for id: ${challenge.id}');
       isModelChanged = true;
     }
     try {
       challenge = challenge.copyWith(description: map['description'] as String);
     } catch (e) {
-      Logx.em(_TAG, 'challenge description not exist for id: ' + challenge.id);
+      Logx.em(_TAG, 'challenge description not exist for id: ${challenge.id}');
       isModelChanged = true;
     }
     try {
       challenge = challenge.copyWith(points: map['points'] as int);
     } catch (e) {
-      Logx.em(_TAG, 'challenge points not exist for id: ' + challenge.id);
+      Logx.em(_TAG, 'challenge points not exist for id: ${challenge.id}');
       isModelChanged = true;
     }
     try {
       challenge = challenge.copyWith(clickCount: map['clickCount'] as int);
     } catch (e) {
-      Logx.em(_TAG, 'challenge clickCount not exist for id: ' + challenge.id);
+      Logx.em(_TAG, 'challenge clickCount not exist for id: ${challenge.id}');
       isModelChanged = true;
     }
     try {
       challenge = challenge.copyWith(dialogTitle: map['dialogTitle'] as String);
     } catch (e) {
-      Logx.em(_TAG, 'challenge dialogTitle not exist for id: ' + challenge.id);
+      Logx.em(_TAG, 'challenge dialogTitle not exist for id: ${challenge.id}');
       isModelChanged = true;
     }
     try {
@@ -1184,7 +1185,7 @@ class Fresh {
           dialogAcceptText: map['dialogAcceptText'] as String);
     } catch (e) {
       Logx.em(
-          _TAG, 'challenge dialogAcceptText not exist for id: ' + challenge.id);
+          _TAG, 'challenge dialogAcceptText not exist for id: ${challenge.id}');
       isModelChanged = true;
     }
     try {
@@ -1192,14 +1193,14 @@ class Fresh {
           dialogAccept2Text: map['dialogAccept2Text'] as String);
     } catch (e) {
       Logx.em(_TAG,
-          'challenge dialogAccept2Text not exist for id: ' + challenge.id);
+          'challenge dialogAccept2Text not exist for id: ${challenge.id}');
       isModelChanged = true;
     }
 
     if (isModelChanged &&
         shouldUpdate &&
         UserPreferences.myUser.clearanceLevel >= Constants.MANAGER_LEVEL) {
-      Logx.i(_TAG, 'updating challenge ' + challenge.id);
+      Logx.i(_TAG, 'updating challenge ${challenge.id}');
       FirestoreHelper.pushChallenge(challenge);
     }
 
@@ -1218,20 +1219,20 @@ class Fresh {
       freshChallenge = freshChallenge.copyWith(level: challenge.level);
     } catch (e) {
       Logx.em(
-          _TAG, 'challenge level not exist for challenge id: ' + challenge.id);
+          _TAG, 'challenge level not exist for challenge id: ${challenge.id}');
     }
     try {
       freshChallenge = freshChallenge.copyWith(title: challenge.title);
     } catch (e) {
       Logx.em(
-          _TAG, 'challenge title not exist for challenge id: ' + challenge.id);
+          _TAG, 'challenge title not exist for challenge id: ${challenge.id}');
     }
     try {
       freshChallenge =
           freshChallenge.copyWith(description: challenge.description);
     } catch (e) {
       Logx.em(_TAG,
-          'challenge description not exist for challenge id: ' + challenge.id);
+          'challenge description not exist for challenge id: ${challenge.id}');
     }
     try {
       freshChallenge = freshChallenge.copyWith(points: challenge.points);
@@ -1877,14 +1878,14 @@ class Fresh {
     try {
       genre = genre.copyWith(name: map['name'] as String);
     } catch (e) {
-      Logx.em(_TAG, 'genre name not exist for id: ' + genre.id);
+      Logx.em(_TAG, 'genre name not exist for id: ${genre.id}');
       isModelChanged = true;
     }
 
     if (isModelChanged &&
         shouldUpdate &&
         UserPreferences.myUser.clearanceLevel >= Constants.MANAGER_LEVEL) {
-      Logx.i(_TAG, 'updating genre ' + genre.id);
+      Logx.i(_TAG, 'updating genre ${genre.id}');
       FirestoreHelper.pushGenre(genre);
     }
 
@@ -1902,7 +1903,7 @@ class Fresh {
     try {
       freshGenre = freshGenre.copyWith(name: genre.name);
     } catch (e) {
-      Logx.em(_TAG, 'genre name not exist for id: ' + genre.id);
+      Logx.em(_TAG, 'genre name not exist for id: ${genre.id}');
     }
 
     return freshGenre;
@@ -2226,6 +2227,93 @@ class Fresh {
     return fresh;
   }
 
+  /** organizer **/
+  static Organizer freshOrganizer(Organizer organizer) {
+    Organizer fresh = Dummy.getDummyOrganizer();
+
+    try {
+      fresh = fresh.copyWith(id: organizer.id);
+    } catch (e) {
+      Logx.em(_TAG, 'organizer id not exist');
+    }
+    try {
+      fresh = fresh.copyWith(name: organizer.name);
+    } catch (e) {
+      Logx.em(_TAG,
+          'organizer name not exist for id: ${organizer.id}');
+    }
+    try {
+      fresh = fresh.copyWith(phoneNumber: organizer.phoneNumber);
+    } catch (e) {
+      Logx.em(_TAG, 'organizer phoneNumber not exist for id: ${organizer.id}');
+    }
+    try {
+      fresh = fresh.copyWith(ownerId: organizer.ownerId);
+    } catch (e) {
+      Logx.em(_TAG, 'organizer ownerId not exist for id: ${organizer.id}');
+    }
+    try {
+      fresh = fresh.copyWith(imageUrl: organizer.imageUrl);
+    } catch (e) {
+      Logx.em(_TAG, 'organizer imageUrl not exist for id: ${organizer.id}');
+    }
+    try {
+      fresh = fresh.copyWith(createdAt: organizer.createdAt);
+    } catch (e) {
+      Logx.em(_TAG, 'organizer createdAt not exist for id: ${organizer.id}');
+    }
+
+    return fresh;
+  }
+
+  static Organizer freshOrganizerMap(Map<String, dynamic> map, bool shouldUpdate) {
+    Organizer fresh = Dummy.getDummyOrganizer();
+    bool isModelChanged = false;
+
+    try {
+      fresh = fresh.copyWith(id: map['id'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'organizer id not exist');
+    }
+    try {
+      fresh = fresh.copyWith(name: map['name'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'organizer name not exist for id: ${fresh.id}');
+      isModelChanged = true;
+    }
+    try {
+      fresh = fresh.copyWith(phoneNumber: map['phoneNumber'] as int);
+    } catch (e) {
+      Logx.em(_TAG, 'organizer phoneNumber not exist for id: ${fresh.id}');
+      isModelChanged = true;
+    }
+    try {
+      fresh = fresh.copyWith(ownerId: map['ownerId'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'organizer ownerId not exist for id: ${fresh.id}');
+      isModelChanged = true;
+    }
+    try {
+      fresh = fresh.copyWith(imageUrl: map['imageUrl'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'organizer imageUrl not exist for id: ${fresh.id}');
+      isModelChanged = true;
+    }
+    try {
+      fresh = fresh.copyWith(createdAt: map['createdAt'] as int);
+    } catch (e) {
+      Logx.em(_TAG, 'organizer createdAt not exist for id: ${fresh.id}');
+      isModelChanged = true;
+    }
+
+
+    if (isModelChanged && shouldUpdate) {
+      Logx.i(_TAG, 'updating organizer ${fresh.id}');
+      FirestoreHelper.pushOrganizer(fresh);
+    }
+    return fresh;
+  }
+
   /** party **/
   static Party freshPartyMap(Map<String, dynamic> map, bool shouldUpdate) {
     Party party = Dummy.getDummyParty(UserPreferences.myUser.blocServiceId);
@@ -2385,21 +2473,21 @@ class Fresh {
     try {
       party = party.copyWith(guestListCount: map['guestListCount'] as int);
     } catch (e) {
-      Logx.em(_TAG, 'party guestListCount not exist for id: ' + party.id);
+      Logx.em(_TAG, 'party guestListCount not exist for id: ${party.id}');
       isModelChanged = true;
     }
     try {
       party = party.copyWith(isEmailRequired: map['isEmailRequired'] as bool);
     } catch (e) {
       Logx.em(
-          _TAG, 'party isEmailRequired not exist for id: ' + party.id);
+          _TAG, 'party isEmailRequired not exist for id: ${party.id}');
       isModelChanged = true;
     }
     try {
       party = party.copyWith(guestListEndTime: map['guestListEndTime'] as int);
     } catch (e) {
       Logx.em(
-          _TAG, 'party guestListEndTime not exist for id: ' + party.id);
+          _TAG, 'party guestListEndTime not exist for id: ${party.id}');
       isModelChanged = true;
     }
     try {
@@ -2409,7 +2497,7 @@ class Fresh {
         isModelChanged = true;
       }
     } catch (e) {
-      Logx.em(_TAG, 'party guestListRules not exist for id: ' + party.id);
+      Logx.em(_TAG, 'party guestListRules not exist for id: ${party.id}');
       isModelChanged = true;
     }
     try {
@@ -2782,25 +2870,25 @@ class Fresh {
       freshGuest = freshGuest.copyWith(surname: partyGuest.surname);
     } catch (e) {
       Logx.em(_TAG,
-          'party guest surname not exist for party guest id: ' + partyGuest.id);
+          'party guest surname not exist for party guest id: ${partyGuest.id}');
     }
     try {
       freshGuest = freshGuest.copyWith(partyId: partyGuest.partyId);
     } catch (e) {
       Logx.em(_TAG,
-          'party guest partyId not exist for party guest id: ' + partyGuest.id);
+          'party guest partyId not exist for party guest id: ${partyGuest.id}');
     }
     try {
       freshGuest = freshGuest.copyWith(guestId: partyGuest.guestId);
     } catch (e) {
       Logx.em(_TAG,
-          'party guest guestId not exist for party guest id: ' + partyGuest.id);
+          'party guest guestId not exist for party guest id: ${partyGuest.id}');
     }
     try {
       freshGuest = freshGuest.copyWith(phone: partyGuest.phone);
     } catch (e) {
       Logx.em(_TAG,
-          'party guest phone not exist for party guest id: ' + partyGuest.id);
+          'party guest phone not exist for party guest id: ${partyGuest.id}');
     }
     try {
       freshGuest = freshGuest.copyWith(email: partyGuest.email);
@@ -2829,24 +2917,21 @@ class Fresh {
     } catch (e) {
       Logx.em(
           _TAG,
-          'party guest guestsRemaining not exist for party guest id: ' +
-              partyGuest.id);
+          'party guest guestsRemaining not exist for party guest id: ${partyGuest.id}');
     }
     try {
       freshGuest = freshGuest.copyWith(createdAt: partyGuest.createdAt);
     } catch (e) {
       Logx.em(
           _TAG,
-          'party guest createdAt not exist for party guest id: ' +
-              partyGuest.id);
+          'party guest createdAt not exist for party guest id: ${partyGuest.id}');
     }
     try {
       freshGuest = freshGuest.copyWith(isApproved: partyGuest.isApproved);
     } catch (e) {
       Logx.em(
           _TAG,
-          'party guest isApproved not exist for party guest id: ' +
-              partyGuest.id);
+          'party guest isApproved not exist for party guest id: ${partyGuest.id}');
     }
     try {
       freshGuest = freshGuest.copyWith(
@@ -2905,37 +2990,37 @@ class Fresh {
     try {
       partyGuest = partyGuest.copyWith(partyId: map['partyId'] as String);
     } catch (e) {
-      Logx.em(_TAG, 'partyGuest partyId not exist for id: ' + partyGuest.id);
+      Logx.em(_TAG, 'partyGuest partyId not exist for id: ${partyGuest.id}');
       isModelChanged = true;
     }
     try {
       partyGuest = partyGuest.copyWith(guestId: map['guestId'] as String);
     } catch (e) {
-      Logx.em(_TAG, 'partyGuest guestId not exist for id: ' + partyGuest.id);
+      Logx.em(_TAG, 'partyGuest guestId not exist for id: ${partyGuest.id}');
       isModelChanged = true;
     }
     try {
       partyGuest = partyGuest.copyWith(name: map['name'] as String);
     } catch (e) {
-      Logx.em(_TAG, 'partyGuest name not exist for id: ' + partyGuest.id);
+      Logx.em(_TAG, 'partyGuest name not exist for id: ${partyGuest.id}');
       isModelChanged = true;
     }
     try {
       partyGuest = partyGuest.copyWith(surname: map['surname'] as String);
     } catch (e) {
-      Logx.em(_TAG, 'partyGuest surname not exist for id: ' + partyGuest.id);
+      Logx.em(_TAG, 'partyGuest surname not exist for id: ${partyGuest.id}');
       isModelChanged = true;
     }
     try {
       partyGuest = partyGuest.copyWith(phone: map['phone'] as String);
     } catch (e) {
-      Logx.em(_TAG, 'partyGuest phone not exist for id: ' + partyGuest.id);
+      Logx.em(_TAG, 'partyGuest phone not exist for id: ${partyGuest.id}');
       isModelChanged = true;
     }
     try {
       partyGuest = partyGuest.copyWith(email: map['email'] as String);
     } catch (e) {
-      Logx.em(_TAG, 'partyGuest email not exist for id: ' + partyGuest.id);
+      Logx.em(_TAG, 'partyGuest email not exist for id: ${partyGuest.id}');
       isModelChanged = true;
     }
     try {
@@ -3475,7 +3560,7 @@ class Fresh {
       intPrice = map['price'] as int;
       product = product.copyWith(price: intPrice.toDouble());
       if (intPrice == 0) {
-        Logx.i(_TAG, 'product price not exist for product id: ' + product.id);
+        Logx.i(_TAG, 'product price not exist for product id: ${product.id}');
         isModelChanged = true;
       }
     }
@@ -3485,7 +3570,7 @@ class Fresh {
       intPrice = map['priceHighest'] as int;
       product = product.copyWith(priceHighest: intPrice.toDouble());
       Logx.em(
-          _TAG, 'product priceHighest not exist for product id: ' + product.id);
+          _TAG, 'product priceHighest not exist for product id: ${product.id}');
       isModelChanged = true;
     }
     try {
@@ -3494,7 +3579,7 @@ class Fresh {
       intPrice = map['priceLowest'] as int;
       product = product.copyWith(priceLowest: intPrice.toDouble());
       Logx.em(
-          _TAG, 'product priceLowest not exist for product id: ' + product.id);
+          _TAG, 'product priceLowest not exist for product id: ${product.id}');
       isModelChanged = true;
     }
     try {
@@ -3504,59 +3589,59 @@ class Fresh {
       intPrice = map['priceCommunity'] as int;
       product = product.copyWith(priceCommunity: intPrice.toDouble());
       Logx.em(_TAG,
-          'product priceCommunity not exist for product id: ' + product.id);
+          'product priceCommunity not exist for product id: ${product.id}');
       isModelChanged = true;
     }
     try {
       product = product.copyWith(type: map['type'] as String);
     } catch (e) {
-      Logx.em(_TAG, 'product type not exist for product id: ' + product.id);
+      Logx.em(_TAG, 'product type not exist for product id: ${product.id}');
       isModelChanged = true;
     }
     try {
       product = product.copyWith(category: map['category'] as String);
     } catch (e) {
-      Logx.em(_TAG, 'product category not exist for product id: ' + product.id);
+      Logx.em(_TAG, 'product category not exist for product id: ${product.id}');
       isModelChanged = true;
     }
     try {
       product = product.copyWith(description: map['description'] as String);
     } catch (e) {
       Logx.em(
-          _TAG, 'product description not exist for product id: ' + product.id);
+          _TAG, 'product description not exist for product id: ${product.id}');
       isModelChanged = true;
     }
     try {
       product = product.copyWith(serviceId: map['serviceId'] as String);
     } catch (e) {
       Logx.em(
-          _TAG, 'product serviceId not exist for product id: ' + product.id);
+          _TAG, 'product serviceId not exist for product id: ${product.id}');
       isModelChanged = true;
     }
     try {
       product = product.copyWith(imageUrl: map['imageUrl'] as String);
     } catch (e) {
-      Logx.em(_TAG, 'product imageUrl not exist for product id: ' + product.id);
+      Logx.em(_TAG, 'product imageUrl not exist for product id: ${product.id}');
       isModelChanged = true;
     }
     try {
       product = product.copyWith(ownerId: map['ownerId'] as String);
     } catch (e) {
-      Logx.em(_TAG, 'product ownerId not exist for product id: ' + product.id);
+      Logx.em(_TAG, 'product ownerId not exist for product id: ${product.id}');
       isModelChanged = true;
     }
     try {
       product = product.copyWith(createdAt: map['createdAt'] as int);
     } catch (e) {
       Logx.em(
-          _TAG, 'product createdAt not exist for product id: ' + product.id);
+          _TAG, 'product createdAt not exist for product id: ${product.id}');
       isModelChanged = true;
     }
     try {
       product = product.copyWith(isAvailable: map['isAvailable'] as bool);
     } catch (e) {
       Logx.em(
-          _TAG, 'product isAvailable not exist for product id: ' + product.id);
+          _TAG, 'product isAvailable not exist for product id: ${product.id}');
       isModelChanged = true;
     }
     try {
@@ -3564,7 +3649,7 @@ class Fresh {
           product.copyWith(priceHighestTime: map['priceHighestTime'] as int);
     } catch (e) {
       Logx.em(_TAG,
-          'product priceHighestTime not exist for product id: ' + product.id);
+          'product priceHighestTime not exist for product id: ${product.id}');
       isModelChanged = true;
     }
     try {
@@ -3572,26 +3657,26 @@ class Fresh {
           product.copyWith(priceLowestTime: map['priceLowestTime'] as int);
     } catch (e) {
       Logx.em(_TAG,
-          'product priceLowestTime not exist for product id: ' + product.id);
+          'product priceLowestTime not exist for product id: ${product.id}');
       isModelChanged = true;
     }
     try {
       product = product.copyWith(isOfferRunning: map['isOfferRunning'] as bool);
     } catch (e) {
       Logx.em(_TAG,
-          'product isOfferRunning not exist for product id: ' + product.id);
+          'product isOfferRunning not exist for product id: ${product.id}');
       isModelChanged = true;
     }
     try {
       product = product.copyWith(isVeg: map['isVeg'] as bool);
     } catch (e) {
-      Logx.em(_TAG, 'product isVeg not exist for product id: ' + product.id);
+      Logx.em(_TAG, 'product isVeg not exist for product id: ${product.id}');
       isModelChanged = true;
     }
     try {
       product = product.copyWith(blocIds: List<String>.from(map['blocIds']));
     } catch (e) {
-      Logx.em(_TAG, 'product blocIds not exist for product id: ' + product.id);
+      Logx.em(_TAG, 'product blocIds not exist for product id: ${product.id}');
       List<String> existingBlocIds = [product.serviceId];
       product = product.copyWith(blocIds: existingBlocIds);
       isModelChanged = true;
@@ -3600,7 +3685,7 @@ class Fresh {
       product = product.copyWith(priceBottle: map['priceBottle'] as int);
     } catch (e) {
       Logx.em(
-          _TAG, 'product priceBottle not exist for product id: ' + product.id);
+          _TAG, 'product priceBottle not exist for product id: ${product.id}');
       isModelChanged = true;
     }
 
@@ -3626,106 +3711,106 @@ class Fresh {
     try {
       freshProduct = freshProduct.copyWith(name: product.name);
     } catch (e) {
-      Logx.em(_TAG, 'product name not exist for product id: ' + product.id);
+      Logx.em(_TAG, 'product name not exist for id: ${product.id}');
     }
     try {
       freshProduct = freshProduct.copyWith(type: product.type);
     } catch (e) {
-      Logx.em(_TAG, 'product type not exist for product id: ' + product.id);
+      Logx.em(_TAG, 'product type not exist for id: ${product.id}');
     }
     try {
       freshProduct = freshProduct.copyWith(category: product.category);
     } catch (e) {
-      Logx.em(_TAG, 'product category not exist for product id: ' + product.id);
+      Logx.em(_TAG, 'product category not exist for id: ${product.id}');
     }
     try {
       freshProduct = freshProduct.copyWith(description: product.description);
     } catch (e) {
       Logx.em(
-          _TAG, 'product description not exist for product id: ' + product.id);
+          _TAG, 'product description not exist for id: ${product.id}');
     }
     try {
       freshProduct = freshProduct.copyWith(price: product.price);
     } catch (e) {
-      Logx.em(_TAG, 'product price not exist for product id: ' + product.id);
+      Logx.em(_TAG, 'product price not exist for id: ${product.id}');
     }
     try {
       freshProduct = freshProduct.copyWith(serviceId: product.serviceId);
     } catch (e) {
       Logx.em(
-          _TAG, 'product serviceId not exist for product id: ' + product.id);
+          _TAG, 'product serviceId not exist for id: ${product.id}');
     }
     try {
       freshProduct = freshProduct.copyWith(imageUrl: product.imageUrl);
     } catch (e) {
-      Logx.em(_TAG, 'product imageUrl not exist for product id: ' + product.id);
+      Logx.em(_TAG, 'product imageUrl not exist for id: ${product.id}');
     }
     try {
       freshProduct = freshProduct.copyWith(ownerId: product.ownerId);
     } catch (e) {
-      Logx.em(_TAG, 'product ownerId not exist for product id: ' + product.id);
+      Logx.em(_TAG, 'product ownerId not exist for id: ${product.id}');
     }
     try {
       freshProduct = freshProduct.copyWith(createdAt: product.createdAt);
     } catch (e) {
       Logx.em(
-          _TAG, 'product createdAt not exist for product id: ' + product.id);
+          _TAG, 'product createdAt not exist for id: ${product.id}');
     }
     try {
       freshProduct = freshProduct.copyWith(isAvailable: product.isAvailable);
     } catch (e) {
       Logx.em(
-          _TAG, 'product isAvailable not exist for product id: ' + product.id);
+          _TAG, 'product isAvailable not exist for id: ${product.id}');
     }
     try {
       freshProduct = freshProduct.copyWith(priceHighest: product.priceHighest);
     } catch (e) {
       Logx.em(
-          _TAG, 'product priceHighest not exist for product id: ' + product.id);
+          _TAG, 'product priceHighest not exist for id: ${product.id}');
     }
     try {
       freshProduct = freshProduct.copyWith(priceLowest: product.priceLowest);
     } catch (e) {
       Logx.em(
-          _TAG, 'product priceLowest not exist for product id: ' + product.id);
+          _TAG, 'product priceLowest not exist for id: ${product.id}');
     }
     try {
       freshProduct =
           freshProduct.copyWith(priceHighestTime: product.priceHighestTime);
     } catch (e) {
       Logx.em(_TAG,
-          'product priceHighestTime not exist for product id: ' + product.id);
+          'product priceHighestTime not exist for id: ${product.id}');
     }
     try {
       freshProduct =
           freshProduct.copyWith(priceLowestTime: product.priceLowestTime);
     } catch (e) {
       Logx.em(_TAG,
-          'product priceLowestTime not exist for product id: ' + product.id);
+          'product priceLowestTime not exist for id: ${product.id}');
     }
     try {
       freshProduct =
           freshProduct.copyWith(priceCommunity: product.priceCommunity);
     } catch (e) {
       Logx.em(_TAG,
-          'product priceCommunity not exist for product id: ' + product.id);
+          'product priceCommunity not exist for id: ${product.id}');
     }
     try {
       freshProduct =
           freshProduct.copyWith(isOfferRunning: product.isOfferRunning);
     } catch (e) {
       Logx.em(_TAG,
-          'product isOfferRunning not exist for product id: ' + product.id);
+          'product isOfferRunning not exist for id: ${product.id}');
     }
     try {
       freshProduct = freshProduct.copyWith(isVeg: product.isVeg);
     } catch (e) {
-      Logx.em(_TAG, 'product isVeg not exist for product id: ' + product.id);
+      Logx.em(_TAG, 'product isVeg not exist for id: ${product.id}');
     }
     try {
       freshProduct = freshProduct.copyWith(blocIds: product.blocIds);
     } catch (e) {
-      Logx.em(_TAG, 'product blocIds not exist for product id: ' + product.id);
+      Logx.em(_TAG, 'product blocIds not exist for id: ${product.id}');
     }
     try {
       freshProduct = freshProduct.copyWith(priceBottle: product.priceBottle);
@@ -3759,6 +3844,25 @@ class Fresh {
       Logx.em(_TAG, 'promoter type not exist for id: ${promoter.id}');
       isModelChanged = true;
     }
+    try {
+      promoter = promoter.copyWith(ownerId: map['ownerId'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'promoter ownerId not exist for id: ${promoter.id}');
+      isModelChanged = true;
+    }
+    try {
+      promoter = promoter.copyWith(
+          helperIds: List<String>.from(map['helperIds']));
+    } catch (e) {
+      Logx.em(_TAG, 'promoter helperIds not exist for id: ${promoter.id}');
+      isModelChanged = true;
+    }
+    try {
+      promoter = promoter.copyWith(creationDate: map['creationDate'] as int);
+    } catch (e) {
+      Logx.em(_TAG, 'promoter creationDate not exist for id: ${promoter.id}');
+      isModelChanged = true;
+    }
 
     if (isModelChanged &&
         shouldUpdate &&
@@ -3787,6 +3891,21 @@ class Fresh {
       fresh = fresh.copyWith(type: promoter.type);
     } catch (e) {
       Logx.em(_TAG, 'promoter type not exist for id: ${promoter.id}');
+    }
+    try {
+      fresh = fresh.copyWith(ownerId: promoter.ownerId);
+    } catch (e) {
+      Logx.em(_TAG, 'promoter ownerId not exist for id: ${promoter.id}');
+    }
+    try {
+      fresh = fresh.copyWith(helperIds: promoter.helperIds);
+    } catch (e) {
+      Logx.em(_TAG, 'promoter helperIds not exist for id: ${promoter.id}');
+    }
+    try {
+      fresh = fresh.copyWith(creationDate: promoter.creationDate);
+    } catch (e) {
+      Logx.em(_TAG, 'promoter creationDate not exist for id: ${promoter.id}');
     }
 
     return fresh;
@@ -4115,7 +4234,7 @@ class Fresh {
       reservation = reservation.copyWith(phone: map['phone'] as int);
     } catch (e) {
       Logx.em(_TAG,
-          'reservation phone not exist for reservation id: ' + reservation.id);
+          'reservation phone not exist for reservation id: ${reservation.id}');
       isModelChanged = true;
     }
     try {
@@ -4124,8 +4243,7 @@ class Fresh {
     } catch (e) {
       Logx.em(
           _TAG,
-          'reservation guestsCount not exist for reservation id: ' +
-              reservation.id);
+          'reservation guestsCount not exist for reservation id: ${reservation.id}');
       isModelChanged = true;
     }
     try {
@@ -4133,8 +4251,7 @@ class Fresh {
     } catch (e) {
       Logx.em(
           _TAG,
-          'reservation createdAt not exist for reservation id: ' +
-              reservation.id);
+          'reservation createdAt not exist for reservation id: ${reservation.id}');
       isModelChanged = true;
     }
     try {
@@ -4143,8 +4260,7 @@ class Fresh {
     } catch (e) {
       Logx.em(
           _TAG,
-          'reservation arrivalDate not exist for reservation id: ' +
-              reservation.id);
+          'reservation arrivalDate not exist for id: ${reservation.id}');
       isModelChanged = true;
     }
     try {
@@ -4153,8 +4269,7 @@ class Fresh {
     } catch (e) {
       Logx.em(
           _TAG,
-          'reservation arrivalTime not exist for reservation id: ' +
-              reservation.id);
+          'reservation arrivalTime not exist for id: ${reservation.id}');
       isModelChanged = true;
     }
 
@@ -4163,7 +4278,7 @@ class Fresh {
           bottleProductIds: List<String>.from(map['bottleProductIds']));
     } catch (e) {
       Logx.em(_TAG,
-          'reservation bottleProductIds not exist for id: ' + reservation.id);
+          'reservation bottleProductIds not exist for id: ${reservation.id}');
       isModelChanged = true;
     }
     try {
@@ -4171,7 +4286,7 @@ class Fresh {
           bottleNames: List<String>.from(map['bottleNames']));
     } catch (e) {
       Logx.em(
-          _TAG, 'reservation bottleNames not exist for id: ' + reservation.id);
+          _TAG, 'reservation bottleNames not exist for id: ${reservation.id}');
       isModelChanged = true;
     }
     try {
@@ -4179,13 +4294,13 @@ class Fresh {
           reservation.copyWith(specialRequest: map['specialRequest'] as String);
     } catch (e) {
       Logx.em(_TAG,
-          'reservation specialRequest not exist for id: ' + reservation.id);
+          'reservation specialRequest not exist for id: ${reservation.id}');
       isModelChanged = true;
     }
     try {
       reservation = reservation.copyWith(occasion: map['occasion'] as String);
     } catch (e) {
-      Logx.em(_TAG, 'reservation occasion not exist for id: ' + reservation.id);
+      Logx.em(_TAG, 'reservation occasion not exist for id: ${reservation.id}');
       isModelChanged = true;
     }
     try {
@@ -4193,13 +4308,12 @@ class Fresh {
     } catch (e) {
       Logx.em(
           _TAG,
-          'reservation isApproved not exist for reservation id: ' +
-              reservation.id);
+          'reservation isApproved not exist for reservation id: ${reservation.id}');
       isModelChanged = true;
     }
 
     if (isModelChanged && shouldUpdate) {
-      Logx.i(_TAG, 'updating reservation ' + reservation.id);
+      Logx.i(_TAG, 'updating reservation ${reservation.id}');
       FirestoreHelper.pushReservation(reservation);
     }
 
@@ -4219,7 +4333,7 @@ class Fresh {
       freshReservation = freshReservation.copyWith(name: reservation.name);
     } catch (e) {
       Logx.em(_TAG,
-          'reservation name not exist for reservation id: ' + reservation.id);
+          'reservation name not exist for reservation id: ${reservation.id}');
     }
     try {
       freshReservation =
@@ -4227,8 +4341,7 @@ class Fresh {
     } catch (e) {
       Logx.em(
           _TAG,
-          'reservation blocServiceId not exist for reservation id: ' +
-              reservation.id);
+          'reservation blocServiceId not exist for reservation id: ${reservation.id}');
     }
     try {
       freshReservation =
@@ -4236,14 +4349,13 @@ class Fresh {
     } catch (e) {
       Logx.em(
           _TAG,
-          'reservation customerId not exist for reservation id: ' +
-              reservation.id);
+          'reservation customerId not exist for reservation id: ${reservation.id}');
     }
     try {
       freshReservation = freshReservation.copyWith(phone: reservation.phone);
     } catch (e) {
       Logx.em(_TAG,
-          'reservation phone not exist for reservation id: ' + reservation.id);
+          'reservation phone not exist for reservation id: ${reservation.id}');
     }
     try {
       freshReservation =
@@ -4251,8 +4363,7 @@ class Fresh {
     } catch (e) {
       Logx.em(
           _TAG,
-          'reservation guestsCount not exist for reservation id: ' +
-              reservation.id);
+          'reservation guestsCount not exist for reservation id: ${reservation.id}');
     }
     try {
       freshReservation =
@@ -4260,8 +4371,7 @@ class Fresh {
     } catch (e) {
       Logx.em(
           _TAG,
-          'reservation createdAt not exist for reservation id: ' +
-              reservation.id);
+          'reservation createdAt not exist for reservation id: ${reservation.id}');
     }
     try {
       freshReservation =
@@ -4269,15 +4379,14 @@ class Fresh {
     } catch (e) {
       Logx.em(
           _TAG,
-          'reservation arrivalDate not exist for reservation id: ' +
-              reservation.id);
+          'reservation arrivalDate not exist for reservation id: ${reservation.id}');
     }
     try {
       freshReservation =
           freshReservation.copyWith(arrivalTime: reservation.arrivalTime);
     } catch (e) {
       Logx.em(
-          _TAG, 'reservation arrivalTime not exist for id: ' + reservation.id);
+          _TAG, 'reservation arrivalTime not exist for id: ${reservation.id}');
     }
 
     try {
@@ -4285,21 +4394,21 @@ class Fresh {
           bottleProductIds: reservation.bottleProductIds);
     } catch (e) {
       Logx.em(_TAG,
-          'reservation bottleProductIds not exist for id: ' + reservation.id);
+          'reservation bottleProductIds not exist for id: ${reservation.id}');
     }
     try {
       freshReservation =
           freshReservation.copyWith(bottleNames: reservation.bottleNames);
     } catch (e) {
       Logx.em(
-          _TAG, 'reservation bottleNames not exist for id: ' + reservation.id);
+          _TAG, 'reservation bottleNames not exist for id: ${reservation.id}');
     }
     try {
       freshReservation =
           freshReservation.copyWith(specialRequest: reservation.specialRequest);
     } catch (e) {
       Logx.em(_TAG,
-          'reservation specialRequest not exist for id: ' + reservation.id);
+          'reservation specialRequest not exist for id: ${reservation.id}');
     }
     try {
       freshReservation =
@@ -4337,21 +4446,21 @@ class Fresh {
     try {
       uiPhoto = uiPhoto.copyWith(name: map['name'] as String);
     } catch (e) {
-      Logx.em(_TAG, 'uiPhoto name not exist for id: ' + uiPhoto.id);
+      Logx.em(_TAG, 'uiPhoto name not exist for id: ${uiPhoto.id}');
       isModelChanged = true;
     }
     try {
       uiPhoto =
           uiPhoto.copyWith(imageUrls: List<String>.from(map['imageUrls']));
     } catch (e) {
-      Logx.em(_TAG, 'uiPhoto imageUrls not exist for id: ' + uiPhoto.id);
+      Logx.em(_TAG, 'uiPhoto imageUrls not exist for id: ${uiPhoto.id}');
       List<String> temp = [];
       uiPhoto = uiPhoto.copyWith(imageUrls: temp);
       isModelChanged = true;
     }
 
     if (isModelChanged && shouldUpdate) {
-      Logx.i(_TAG, 'updating uiPhoto ' + uiPhoto.id);
+      Logx.i(_TAG, 'updating uiPhoto ${uiPhoto.id}');
       FirestoreHelper.pushUiPhoto(uiPhoto);
     }
 
@@ -4369,12 +4478,12 @@ class Fresh {
     try {
       freshUiPhoto = freshUiPhoto.copyWith(name: uiPhoto.name);
     } catch (e) {
-      Logx.em(_TAG, 'uiPhoto name not exist for id: ' + uiPhoto.id);
+      Logx.em(_TAG, 'uiPhoto name not exist for id: ${uiPhoto.id}');
     }
     try {
       freshUiPhoto = freshUiPhoto.copyWith(imageUrls: uiPhoto.imageUrls);
     } catch (e) {
-      Logx.em(_TAG, 'uiPhoto imageUrls not exist for id: ' + uiPhoto.id);
+      Logx.em(_TAG, 'uiPhoto imageUrls not exist for id: ${uiPhoto.id}');
     }
 
     return freshUiPhoto;

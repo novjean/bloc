@@ -28,6 +28,7 @@ import '../db/entity/genre.dart';
 import '../db/entity/lounge.dart';
 import '../db/entity/notification_test.dart';
 import '../db/entity/offer.dart';
+import '../db/entity/organizer.dart';
 import '../db/entity/party.dart';
 import '../db/entity/party_interest.dart';
 import '../db/entity/party_photo.dart';
@@ -326,6 +327,16 @@ class Dummy {
     return productOffer;
   }
 
+  static Organizer getDummyOrganizer() {
+    Organizer organizer = Organizer(id: StringUtils.getRandomString(28),
+        name: '',
+        phoneNumber: 0,
+        ownerId: '',
+        imageUrl: '',
+        createdAt: Timestamp.now().millisecondsSinceEpoch);
+    return organizer;
+  }
+
   static Party getDummyParty(String blocId) {
     Party dummyParty = Party(
         id: StringUtils.getRandomString(28),
@@ -475,8 +486,13 @@ class Dummy {
   }
 
   static Promoter getDummyPromoter() {
-    Promoter dummy =
-        Promoter(id: StringUtils.getRandomString(28), name: '', type: 'brand');
+    Promoter dummy = Promoter(
+        id: StringUtils.getRandomString(28),
+        name: '',
+        type: 'brand',
+        ownerId: '',
+        helperIds: [],
+        creationDate: Timestamp.now().millisecondsSinceEpoch);
 
     return dummy;
   }
@@ -652,28 +668,28 @@ class Dummy {
     int millis = Timestamp.now().millisecondsSinceEpoch;
 
     User dummyUser = User(
-        id: StringUtils.getRandomString(28),
-        clearanceLevel: 1,
-        challengeLevel: 1,
-        email: '',
-        fcmToken: '',
-        imageUrl: '',
-        name: '',
-        surname: '',
-        username: '',
-        instagramLink: '',
-        gender: 'male',
-        birthYear: 2023,
-        phoneNumber: 0,
-        isBanned: false,
-        isAppUser: false,
-        appVersion: Constants.appVersion,
-        isAppReviewed: false,
-        lastReviewTime: 0,
-        isIos: false,
-        createdAt: millis,
-        lastSeenAt: millis,
-        blocServiceId: '',
+      id: StringUtils.getRandomString(28),
+      clearanceLevel: 1,
+      challengeLevel: 1,
+      email: '',
+      fcmToken: '',
+      imageUrl: '',
+      name: '',
+      surname: '',
+      username: '',
+      instagramLink: '',
+      gender: 'male',
+      birthYear: 2023,
+      phoneNumber: 0,
+      isBanned: false,
+      isAppUser: false,
+      appVersion: Constants.appVersion,
+      isAppReviewed: false,
+      lastReviewTime: 0,
+      isIos: false,
+      createdAt: millis,
+      lastSeenAt: millis,
+      blocServiceId: '',
     );
     return dummyUser;
   }

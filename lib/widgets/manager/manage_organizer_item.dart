@@ -1,26 +1,24 @@
+import 'package:bloc/db/entity/organizer.dart';
 import 'package:flutter/material.dart';
 
 import '../../../utils/constants.dart';
 import '../../../utils/date_time_utils.dart';
-import '../../db/entity/ad.dart';
 
-class ManageAdItem extends StatelessWidget{
-  static const String _TAG = 'ManageAdItem';
+class ManageOrganizerItem extends StatelessWidget{
+  static const String _TAG = 'ManageOrganizerItem';
 
-  Ad ad;
+  Organizer organizer;
 
-  ManageAdItem({Key? key, required this.ad}) : super(key: key);
+  ManageOrganizerItem({Key? key, required this.organizer}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    double conversion = ad.hits/ad.reach;
-
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 5.0),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(15),
         child: Hero(
-          tag: ad.id,
+          tag: organizer.id,
           child: Card(
             elevation: 1,
             color: Constants.lightPrimary,
@@ -28,15 +26,15 @@ class ManageAdItem extends StatelessWidget{
             child: Padding(
                 padding: const EdgeInsets.only(top: 2.0, left: 5, right: 5),
                 child: ListTile(
-                  leading: ad.imageUrl.isNotEmpty?
+                  leading: organizer.imageUrl.isNotEmpty?
                   FadeInImage(
                     placeholder: const AssetImage(
                         'assets/icons/logo.png'),
-                    image: NetworkImage(ad.imageUrl),
+                    image: NetworkImage(organizer.imageUrl),
                     fit: BoxFit.cover,) : const SizedBox(),
                   title: RichText(
                     text: TextSpan(
-                      text: '${ad.title} ',
+                      text: '${organizer.name} ',
                       style: const TextStyle(
                           fontFamily: Constants.fontDefault,
                           color: Colors.black,
@@ -47,18 +45,16 @@ class ManageAdItem extends StatelessWidget{
                   ),
 
                   subtitle: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      Text('${ad.reach} reach'),
-                      Text('${ad.hits} hits'),
-
-                      Text(conversion.toStringAsFixed(2), style: const TextStyle(fontWeight: FontWeight.bold),),
+                      Text('${organizer.phoneNumber}'),
+                      // Text('${organizer.hits} hits'),
                     ],
                   ),
                   trailing: RichText(
                     text: TextSpan(
                       text:
-                      '${DateTimeUtils.getFormattedDate(ad.createdAt)} ',
+                      '${DateTimeUtils.getFormattedDate(organizer.createdAt)} ',
                       style: const TextStyle(
                         fontFamily: Constants.fontDefault,
                         color: Colors.black,

@@ -132,7 +132,7 @@ class _AdAddEditScreenState extends State<AdAddEditScreen> {
         TextFieldWidget(
           label: 'title *',
           text: widget.ad.title,
-          onChanged: (title) => widget.ad = widget.ad.copyWith(title: title),
+          onChanged: (text) => widget.ad = widget.ad.copyWith(title: text),
         ),
         const SizedBox(height: 24),
         Column(

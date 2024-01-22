@@ -1,4 +1,3 @@
-
 import 'package:bloc/helpers/fresh.dart';
 import 'package:flutter/material.dart';
 import 'package:multi_select_flutter/dialog/multi_select_dialog_field.dart';
@@ -84,14 +83,13 @@ class _PromoterAddEditScreenState extends State<PromoterAddEditScreen> {
               decoration: BoxDecoration(
                 borderRadius: const BorderRadius.all(Radius.circular(5)),
                 border: Border.all(
-                  // color: Constants.primary,
                   width: 0.0,
                 ),
               ),
               searchable: true,
               onConfirm: (values) {
-                sTypes = values as List<String>;
-                widget.promoter.type = sTypes.first;
+                sTypes = values;
+                widget.promoter = widget.promoter.copyWith(type : sTypes.first);
               },
             ),
           ],
@@ -112,11 +110,11 @@ class _PromoterAddEditScreenState extends State<PromoterAddEditScreen> {
           onClicked: () {
             FirestoreHelper.deletePromoter(widget.promoter.id);
 
-            Logx.ist(_TAG, 'promoter deleted');
+            Logx.ist(_TAG, 'promoter is deleted');
             Navigator.of(context).pop();
           },
         ),
-        const SizedBox(height: 15),
+        const SizedBox(height: 36),
       ],
     );
   }

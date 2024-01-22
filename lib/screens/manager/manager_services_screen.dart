@@ -25,6 +25,7 @@ import 'guest_wifi_edit_screen.dart';
 import 'inventory/manage_inventory_screen.dart';
 import 'lounges/manage_lounges_screen.dart';
 import 'notification_tests/manage_notification_tests_screen.dart';
+import 'organizers/manage_organizers_screen.dart';
 import 'tables/manage_tables_screen.dart';
 import 'tickets/manage_tixs_screen.dart';
 
@@ -194,6 +195,13 @@ class ManagerServicesScreen extends StatelessWidget {
                                 serviceId: blocService.id,
                                 serviceName: managerService.name,
                                 userTitle: userTitle)));
+                        break;
+                      }
+                    case 'organizers':
+                      {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (ctx) => ManageOrganizersScreen(
+                                serviceId: blocService.id,)));
                         break;
                       }
                     case 'parties':

@@ -17,7 +17,9 @@ class ManagerMainScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         titleSpacing: 0,
-        title: AppBarTitle(title: 'manager',),
+        title: AppBarTitle(
+          title: 'manager',
+        ),
       ),
       // floatingActionButton: FloatingActionButton(
       //   onPressed: () async {
@@ -53,43 +55,50 @@ class ManagerMainScreen extends StatelessWidget {
   }
 
   Widget _buildBody(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          const SizedBox(height: 5.0),
-          buildBlocServices(context),
-          const SizedBox(height: 5.0),
-        ],
-      ),
+    return ListView(
+      physics: const BouncingScrollPhysics(),
+      children: [
+        const SizedBox(height: 5.0),
+        _buildBlocServices(context),
+        const SizedBox(height: 5.0),
+      ],
     );
   }
 
-  buildBlocServices(BuildContext context) {
+  _buildBlocServices(BuildContext context) {
     return Container(
       height: MediaQuery.of(context).size.height,
       padding: const EdgeInsets.fromLTRB(10.0, 0, 10.0, 0),
       child: StreamBuilder<QuerySnapshot>(
         stream: FirestoreHelper.getAllBlocServices(),
         builder: (ctx, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const LoadingWidget();
+          switch (snapshot.connectionState) {
+            case ConnectionState.waiting:
+            case ConnectionState.none:
+              return const LoadingWidget();
+            case ConnectionState.active:
+            case ConnectionState.done:
+              {
+                return GridView(
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 1,
+                    childAspectRatio: 3 / 2,
+                    crossAxisSpacing: 10,
+                    mainAxisSpacing: 10,
+                  ),
+                  children:
+                      snapshot.data!.docs.map((DocumentSnapshot document) {
+                    Map<String, dynamic> data =
+                        document.data()! as Map<String, dynamic>;
+
+                    final BlocService service = BlocService.fromMap(data);
+
+                    return BlocServiceItem(service, true,
+                        key: ValueKey(document.id));
+                  }).toList(),
+                );
+              }
           }
-          return GridView(
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 1,
-              childAspectRatio: 3 / 2,
-              crossAxisSpacing: 10,
-              mainAxisSpacing: 10,
-            ),
-            children: snapshot.data!.docs.map((DocumentSnapshot document) {
-              Map<String, dynamic> data =
-              document.data()! as Map<String, dynamic>;
-
-              final BlocService service = BlocService.fromMap(data);
-
-              return BlocServiceItem(service, true, key: ValueKey(document.id));
-            }).toList(),
-          );
         },
       ),
     );

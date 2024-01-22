@@ -73,6 +73,7 @@ List<Menu> getMenuList() {
     if (user.clearanceLevel == Constants.PROMOTER_LEVEL ||
         user.clearanceLevel >= Constants.MANAGER_LEVEL) {
       menuItems.add(Menu(Icons.adjust, 'promoter'));
+      menuItems.add(Menu(Icons.ac_unit, 'organizer'));
     }
 
     if (user.clearanceLevel >= Constants.MANAGER_LEVEL) {

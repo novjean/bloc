@@ -29,6 +29,7 @@ import '../utils/number_utils.dart';
 import '../widgets/ui/slider_view.dart';
 import 'captain/captain_main_screen.dart';
 import 'experimental/bloc_selection_screen.dart';
+import 'organizer/organizer_screen.dart';
 import 'photos/photos_screen.dart';
 import 'home_screen.dart';
 import 'manager/manager_main_screen.dart';
@@ -458,6 +459,13 @@ class _MainScreenState extends State<MainScreen> {
           );
           break;
         }
+      case 'organizer':
+        {
+          Navigator.of(context).push(
+            MaterialPageRoute(builder: (ctx) => OrganizerScreen()),
+          );
+          break;
+        }
       case 'manager':
         {
           Navigator.of(context).push(
@@ -608,54 +616,7 @@ class _MainScreenState extends State<MainScreen> {
                   ProfileAddEditRegisterPage(user: mBlocUser, task: 'register')),
         );
       } else {
-        // Logx.d(_TAG, 'skipPhoneNumber logged in');
-        //
-        // DocumentSnapshot document = res.docs[0];
-        // Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-        // blocUser.User user1 = Fresh.freshUserMap(data, false);
-        // user1 = user1.copyWith(
-        //     lastSeenAt: Timestamp.now().millisecondsSinceEpoch,
-        //     appVersion: Constants.appVersion);
-        //
-        // if (kIsWeb) {
-        //   user1 = user1.copyWith(
-        //     isAppUser: false,
-        //   );
-        // } else {
-        //   user1 = user1.copyWith(
-        //     isAppUser: true,
-        //     isIos: Theme.of(context).platform == TargetPlatform.iOS,
-        //   );
-        // }
-        //
-        // if (user1.username.isEmpty) {
-        //   String username = '';
-        //   if (user1.surname.trim().isNotEmpty) {
-        //     username =
-        //     '${user1.name.trim().toLowerCase()}_${user1.surname.trim().toLowerCase()}';
-        //   } else {
-        //     username = user1.name.trim().toLowerCase();
-        //   }
-        //
-        //   //check if username is present in db
-        //   await FirestoreHelper.pullUserByUsername(username).then((res) {
-        //     if (res.docs.isNotEmpty) {
-        //       // username is already taken
-        //       username = username +
-        //           NumberUtils.generateRandomNumber(1, 999).toString().trim();
-        //       user1 = user1.copyWith(username: username);
-        //       FirestoreHelper.pushUser(user1);
-        //       UserPreferences.setUser(user1);
-        //     } else {
-        //       user1 = user1.copyWith(username: username);
-        //       FirestoreHelper.pushUser(user1);
-        //       UserPreferences.setUser(user1);
-        //     }
-        //   });
-        // } else {
-        //   FirestoreHelper.pushUser(user1);
-        //   UserPreferences.setUser(user1);
-        // }
+        // nothing to do
       }
     }, onError: (e, s) {
       Logx.ex(

@@ -21,6 +21,7 @@ class FirestorageHelper {
   static String CHAT_IMAGES = 'chat_image';
   static String LOUNGE_IMAGES = 'lounge_image';
   static String NOTIFICATION_TEST_IMAGES = 'notification_test_image';
+  static String ORGANIZER_IMAGES = 'organizer_image';
   static String PRODUCT_IMAGES = 'product_image';
   static String PARTY_IMAGES = 'party_image';
   static String PARTY_STORY_IMAGES = 'party_story_image';
