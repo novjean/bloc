@@ -195,6 +195,9 @@ class _MainScreenState extends State<MainScreen> {
       Logx.d(_TAG, 'fcm in web mode');
     }
 
+    // need to check if user is an organizer
+    // FirestoreHelper.pullOrganizer;
+
     super.initState();
 
     if(!kIsWeb){
@@ -324,13 +327,13 @@ class _MainScreenState extends State<MainScreen> {
               mainAxisSize: MainAxisSize.max,
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
-                SizedBox(width: 1),
+                const SizedBox(width: 1),
                 buildTabIcon(0),
                 buildTabIcon(1),
                 buildTabIcon(2),
                 buildTabIcon(3),
                 buildTabIcon(4),
-                SizedBox(width: 1),
+                const SizedBox(width: 1),
               ],
             ),
           ),
@@ -341,8 +344,6 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   void dispose() {
-    _pageController.dispose();
-
     if (!kIsWeb) {
       final fbm = FirebaseMessaging.instance;
       fbm.unsubscribeFromTopic('sos');
@@ -392,6 +393,7 @@ class _MainScreenState extends State<MainScreen> {
       }
     }
 
+    _pageController.dispose();
     super.dispose();
   }
 
@@ -459,7 +461,7 @@ class _MainScreenState extends State<MainScreen> {
           );
           break;
         }
-      case 'organizer':
+      case 'organizer' :
         {
           Navigator.of(context).push(
             MaterialPageRoute(builder: (ctx) => OrganizerScreen()),

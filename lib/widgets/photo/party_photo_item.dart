@@ -822,7 +822,7 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
     ];
 
     int randomNumber =
-        NumberUtils.generateRandomNumber(0, loveQuotes.length - 1);
+        NumberUtils.getRandomNumber(0, loveQuotes.length - 1);
     return loveQuotes[randomNumber].toLowerCase();
   }
 
@@ -841,7 +841,7 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
       'A touch of grace, a world of memories. Download and cherish.'
     ];
 
-    int randomNumber = NumberUtils.generateRandomNumber(0, quotes.length - 1);
+    int randomNumber = NumberUtils.getRandomNumber(0, quotes.length - 1);
     return quotes[randomNumber].toLowerCase();
   }
 
@@ -855,7 +855,7 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
       'Don\'t miss out on the photo extravaganza – your backstage pass to the visuals is just a login away. 📷🔑'
     ];
 
-    int randomNumber = NumberUtils.generateRandomNumber(0, quotes.length - 1);
+    int randomNumber = NumberUtils.getRandomNumber(0, quotes.length - 1);
     return quotes[randomNumber].toLowerCase();
   }
 

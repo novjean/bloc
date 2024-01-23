@@ -411,7 +411,7 @@ class _OTPScreenState extends State<OTPScreen> {
                       if (res.docs.isNotEmpty) {
                         // username is already taken
                         username = username +
-                            NumberUtils.generateRandomNumber(1, 999).toString();
+                            NumberUtils.getRandomNumber(1, 999).toString();
                         user = user.copyWith(username: username);
                         FirestoreHelper.pushUser(user);
                         UserPreferences.setUser(user);
@@ -503,7 +503,7 @@ class _OTPScreenState extends State<OTPScreen> {
                   if (res.docs.isNotEmpty) {
                     // username is already taken
                     username = username +
-                        NumberUtils.generateRandomNumber(1, 999).toString();
+                        NumberUtils.getRandomNumber(1, 999).toString();
                     user = user.copyWith(username: username);
                     FirestoreHelper.pushUser(user);
                     UserPreferences.setUser(user);

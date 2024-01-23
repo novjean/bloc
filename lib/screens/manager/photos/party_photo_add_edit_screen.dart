@@ -529,7 +529,7 @@ class _PartyPhotoAddEditScreenState extends State<PartyPhotoAddEditScreen> {
                           FirestoreHelper.pullUserByUsername(username).then((res) {
                             if(res.docs.isNotEmpty){
                               // username is already taken
-                              username = username + NumberUtils.generateRandomNumber(1,999).toString();
+                              username = username + NumberUtils.getRandomNumber(1,999).toString();
                               user = user.copyWith(username: username);
                               FirestoreHelper.pushUser(user);
                               Logx.ist(_TAG, '${user.name} ${user.surname} has new username : ${user.username}');

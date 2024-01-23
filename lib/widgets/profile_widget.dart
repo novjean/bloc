@@ -24,7 +24,7 @@ class ProfileWidget extends StatelessWidget {
     return Center(
       child: Stack(
         children: [
-          imagePath.isNotEmpty? buildImage(context) : displayDefaultImage(context),
+          imagePath.isNotEmpty? _loadImage(context) : displayDefaultImage(context),
           showEditIcon? Positioned(
             bottom: 0,
             right: 4,
@@ -35,7 +35,7 @@ class ProfileWidget extends StatelessWidget {
     );
   }
 
-  Widget buildImage(BuildContext context) {
+  Widget _loadImage(BuildContext context) {
     final image = imagePath.contains('https://')
         ? NetworkImage(imagePath)
         : FileImage(File(imagePath));

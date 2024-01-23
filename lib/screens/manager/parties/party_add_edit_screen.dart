@@ -19,6 +19,7 @@ import 'package:path_provider/path_provider.dart';
 import '../../../db/entity/challenge.dart';
 import '../../../db/entity/genre.dart';
 import '../../../db/entity/lounge.dart';
+import '../../../db/entity/organizer.dart';
 import '../../../db/entity/party.dart';
 import '../../../db/entity/party_interest.dart';
 import '../../../helpers/dummy.dart';
@@ -81,18 +82,24 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
   String sGenre = '';
   List<Genre> mGenres = [];
   List<String> mGenreNames = [''];
-  bool isGenresLoading = true;
+  bool _isGenresLoading = true;
 
   List<Challenge> mChallenges = [];
   List<String> mChallengeNames = ['none'];
-  bool isChallengesLoading = true;
+  bool _isChallengesLoading = true;
   String sOverrideChallenge = 'none';
 
   List<Party> mArtists = [];
-  bool isArtistsLoading = true;
+  bool _isArtistsLoading = true;
   List<String> sArtistNames = [];
   List<Party> sArtists = [];
   List<String> sArtistIds = [];
+
+  List<Organizer> mOrganizers = [];
+  bool _isOrganizersLoading = true;
+  List<String> sOrganizerNames = [];
+  List<Organizer> sOrganizers = [];
+  List<String> sOrganizerIds = [];
 
   List<Lounge> mLounges = [];
   List<Lounge> sLounges = [];
@@ -102,7 +109,7 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
   late Lounge sLounge;
   late String sLoungeId;
   List<String> mLoungeNames = [];
-  bool isLoungesLoading = true;
+  bool _isLoungesLoading = true;
 
   PartyInterest mPartyInterest = Dummy.getDummyPartyInterest();
   bool _isPartyInterestLoading = true;
@@ -188,14 +195,14 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
 
         if (mounted) {
           setState(() {
-            isGenresLoading = false;
+            _isGenresLoading = false;
           });
         }
       } else {
         Logx.i(_TAG, 'no genres found!');
         if (mounted) {
           setState(() {
-            isGenresLoading = false;
+            _isGenresLoading = false;
           });
         }
       }
@@ -218,12 +225,12 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
         }
 
         setState(() {
-          isChallengesLoading = false;
+          _isChallengesLoading = false;
         });
       } else {
         Logx.em(_TAG, 'no challenges found, setting default');
         setState(() {
-          isChallengesLoading = false;
+          _isChallengesLoading = false;
         });
       }
     });
@@ -244,12 +251,38 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
         }
 
         setState(() {
-          isArtistsLoading = false;
+          _isArtistsLoading = false;
         });
       } else {
         Logx.em(_TAG, 'no artists found!');
         setState(() {
-          isArtistsLoading = false;
+          _isArtistsLoading = false;
+        });
+      }
+    });
+
+    sOrganizerIds = widget.party.organizerIds;
+    FirestoreHelper.pullOrganizers().then((res) {
+      if (res.docs.isNotEmpty) {
+        for (int i = 0; i < res.docs.length; i++) {
+          DocumentSnapshot document = res.docs[i];
+          Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+          final Organizer organizer = Fresh.freshOrganizerMap(data, false);
+          mOrganizers.add(organizer);
+
+          if (sOrganizerIds.contains(organizer.id)) {
+            sOrganizers.add(organizer);
+            sOrganizerNames.add(organizer.name);
+          }
+        }
+
+        setState(() {
+          _isOrganizersLoading = false;
+        });
+      } else {
+        Logx.em(_TAG, 'no organizers found!');
+        setState(() {
+          _isOrganizersLoading = false;
         });
       }
     });
@@ -288,11 +321,11 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
           }
         }
         setState(() {
-          isLoungesLoading = false;
+          _isLoungesLoading = false;
         });
       } else {
         setState(() {
-          isLoungesLoading = false;
+          _isLoungesLoading = false;
         });
       }
     });
@@ -314,11 +347,11 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
       );
 
   _buildBody(BuildContext context) {
-    return _isBlocServicesLoading &&
-            isGenresLoading &&
-            isChallengesLoading &&
-            isLoungesLoading &&
-            _isPartyInterestLoading
+    return _isBlocServicesLoading && _isGenresLoading &&
+        _isChallengesLoading && _isLoungesLoading &&
+        _isPartyInterestLoading &&
+        _isArtistsLoading &&
+        _isOrganizersLoading
         ? const LoadingWidget()
         : ListView(
             padding: const EdgeInsets.symmetric(horizontal: 32),
@@ -708,6 +741,64 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
                 onChanged: (value) {
                   widget.party = widget.party.copyWith(description: value);
                 },
+              ),
+              const SizedBox(height: 24),
+              Column(
+                children: [
+                  const Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.only(bottom: 8.0),
+                        child: Text(
+                          'organizers',
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ],
+                  ),
+                  MultiSelectDialogField(
+                    items: mOrganizers
+                        .map((e) => MultiSelectItem(e, e.name.toLowerCase()))
+                        .toList(),
+                    initialValue: sOrganizers.map((e) => e).toList(),
+                    listType: MultiSelectListType.CHIP,
+                    buttonIcon: Icon(
+                      Icons.arrow_drop_down,
+                      color: Colors.grey.shade700,
+                    ),
+                    title: const Text('organizers'),
+                    buttonText: const Text(
+                      'select',
+                    ),
+                    decoration: BoxDecoration(
+                      borderRadius: const BorderRadius.all(Radius.circular(5)),
+                      border: Border.all(
+                        width: 0.0,
+                      ),
+                    ),
+                    searchable: true,
+                    onConfirm: (values) {
+                      sOrganizers = values as List<Organizer>;
+                      sOrganizerIds = [];
+                      sOrganizerNames = [];
+
+                      for (Organizer organizer in sOrganizers) {
+                        sOrganizerIds.add(organizer.id);
+                        sOrganizerNames.add(organizer.name);
+                      }
+
+                      if (sOrganizerIds.isEmpty) {
+                        Logx.i(_TAG, 'no organizers selected');
+                        widget.party = widget.party.copyWith(organizerIds: []);
+                      } else {
+                        widget.party =
+                            widget.party.copyWith(organizerIds: sOrganizerIds);
+                      }
+                    },
+                  ),
+                ],
               ),
               const SizedBox(height: 24),
               Column(

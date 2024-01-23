@@ -41,6 +41,7 @@ import '../db/entity/user_photo.dart';
 import '../db/shared_preferences/user_preferences.dart';
 import '../utils/constants.dart';
 import '../utils/logx.dart';
+import '../utils/number_utils.dart';
 import 'dummy.dart';
 import 'firestore_helper.dart';
 
@@ -2603,11 +2604,29 @@ class Fresh {
       isModelChanged = true;
     }
 
-    if (isModelChanged &&
-        shouldUpdate &&
-        UserPreferences.myUser.clearanceLevel >= Constants.MANAGER_LEVEL) {
-      Logx.i(_TAG, 'updating party ${party.id}');
-      FirestoreHelper.pushParty(party);
+    try {
+      party = party.copyWith(organizerIds: List<String>.from(map['organizerIds']));
+    } catch (e) {
+      Logx.em(_TAG, 'party organizerIds not exist for id: ${party.id}');
+      isModelChanged = true;
+    }
+    try {
+      party = party.copyWith(isPayoutComplete: map['isPayoutComplete'] as bool);
+    } catch (e) {
+      Logx.em(_TAG, 'party isPayoutComplete not exist for id: ${party.id}');
+      isModelChanged = true;
+    }
+
+    if(isModelChanged){
+      if (shouldUpdate) {
+        Logx.i(_TAG, 'updating party ${party.id}');
+        FirestoreHelper.pushParty(party);
+      } else if(UserPreferences.myUser.clearanceLevel >= Constants.MANAGER_LEVEL){
+        if(NumberUtils.getRandomNumber(0, 10) == 9){
+          Logx.i(_TAG, 'updating party ${party.id} by luck');
+          FirestoreHelper.pushParty(party);
+        }
+      }
     }
 
     return party;
@@ -2846,6 +2865,23 @@ class Fresh {
       freshParty = freshParty.copyWith(shareCount: party.shareCount);
     } catch (e) {
       Logx.em(_TAG, 'party shareCount not exist for id: ${party.id}');
+    }
+
+    try {
+      freshParty = freshParty.copyWith(isAdCampaignRunning: party.isAdCampaignRunning);
+    } catch (e) {
+      Logx.em(_TAG, 'party isAdCampaignRunning not exist for id: ${party.id}');
+    }
+
+    try {
+      freshParty = freshParty.copyWith(organizerIds: party.organizerIds);
+    } catch (e) {
+      Logx.em(_TAG, 'party organizerIds not exist for id: ${party.id}');
+    }
+    try {
+      freshParty = freshParty.copyWith(isPayoutComplete: party.isPayoutComplete);
+    } catch (e) {
+      Logx.em(_TAG, 'party isPayoutComplete not exist for id: ${party.id}');
     }
 
     return freshParty;
@@ -5400,9 +5436,17 @@ class Fresh {
       isModelChanged = true;
     }
 
-    if (isModelChanged && shouldUpdate) {
-      Logx.i(_TAG, 'updating user ${user.id}');
-      FirestoreHelper.pushUser(user);
+    if(isModelChanged){
+      if (shouldUpdate) {
+        Logx.i(_TAG, 'updating user ${user.id}');
+        FirestoreHelper.pushUser(user);
+      } else if(UserPreferences.myUser.clearanceLevel >= Constants.MANAGER_LEVEL){
+        int luck = NumberUtils.getRandomNumber(0, 10);
+        if(luck == 9){
+          Logx.i(_TAG, 'updating user ${user.id} by luck');
+          FirestoreHelper.pushUser(user);
+        }
+      }
     }
 
     return user;

@@ -11,7 +11,7 @@ class NumberUtils {
     return ((value * mod).round().toDouble() / mod);
   }
 
-  static int generateRandomNumber(int min, int max) {
+  static int getRandomNumber(int min, int max) {
     final random = Random();
     return min + random.nextInt(max - min + 1);
   }

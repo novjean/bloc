@@ -328,7 +328,8 @@ class Dummy {
   }
 
   static Organizer getDummyOrganizer() {
-    Organizer organizer = Organizer(id: StringUtils.getRandomString(28),
+    Organizer organizer = Organizer(
+        id: StringUtils.getRandomString(28),
         name: '',
         phoneNumber: 0,
         ownerId: '',
@@ -343,7 +344,7 @@ class Dummy {
         createdAt: Timestamp.now().millisecondsSinceEpoch,
         imageUrls: [],
         imageUrl: '',
-        isSquare: true,
+        isSquare: false,
         storyImageUrl: '',
         showStoryImageUrl: false,
         name: '',
@@ -366,20 +367,22 @@ class Dummy {
         isEmailRequired: false,
         clubRules: Constants.clubRules,
         guestListRules: Constants.guestListRules,
-        type: 'artist',
+        type: 'event',
         isTix: false,
         bookingFeePercent: Constants.bookingFeePercent,
         isBigAct: true,
         genre: '',
         isChallengeActive: false,
         overrideChallengeNum: 0,
-        chapter: '',
+        chapter: 'I',
         artistIds: [],
         loungeId: '',
         isTicketsDisabled: false,
         views: 0,
         shareCount: 0,
-        isAdCampaignRunning: false);
+        isAdCampaignRunning: false,
+        organizerIds: [],
+        isPayoutComplete: false);
 
     return dummyParty;
   }

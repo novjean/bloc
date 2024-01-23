@@ -1148,6 +1148,21 @@ class FirestoreHelper {
     }
   }
 
+  static pullOrganizers() {
+    return FirebaseFirestore.instance
+        .collection(ORGANIZERS)
+        .orderBy('name', descending: false)
+        .get();
+  }
+
+
+  static pullOrganizer(String userId) {
+    return FirebaseFirestore.instance
+        .collection(ORGANIZERS)
+        .where('ownerId', isEqualTo: userId)
+        .get();
+  }
+
   static getOrganizers() {
     return FirebaseFirestore.instance
         .collection(ORGANIZERS)
@@ -1287,6 +1302,14 @@ class FirestoreHelper {
         .collection(PARTIES)
         .where('id', whereIn: artistIds)
         .get();
+  }
+
+  static getPartiesByOrganizer(String organizerId) {
+    return FirebaseFirestore.instance
+        .collection(PARTIES)
+        .where('organizerIds', arrayContains: organizerId)
+        .orderBy('endTime', descending: false)
+        .snapshots();
   }
 
   static getPartyArtists(List<String> artistIds) {
@@ -2765,6 +2788,8 @@ class FirestoreHelper {
   static void deleteUserPhoto(String docId) {
     FirebaseFirestore.instance.collection(USER_PHOTOS).doc(docId).delete();
   }
+
+
 
 
 }

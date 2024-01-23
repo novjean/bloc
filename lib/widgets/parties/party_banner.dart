@@ -3,6 +3,7 @@ import 'package:bloc/main.dart';
 import 'package:bloc/utils/constants.dart';
 import 'package:bloc/utils/date_time_utils.dart';
 import 'package:bloc/utils/network_utils.dart';
+import 'package:bloc/widgets/ui/square_icon_button.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:delayed_display/delayed_display.dart';
@@ -603,13 +604,16 @@ class _PartyBannerState extends State<PartyBanner> {
 
   _displayGuestListTicketRow() {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      crossAxisAlignment: CrossAxisAlignment.end,
       children: [
-        Expanded(
-            child: Container(
+        Flexible(
+          flex : 3,
+          child : widget.party.isTix
+            ? Container(
           padding: const EdgeInsets.symmetric(horizontal: 5),
           height: 60,
-          child: ElevatedButton(
+          child: ElevatedButton.icon(
             style: ElevatedButton.styleFrom(
               backgroundColor: Constants.background,
               foregroundColor: Constants.primary,
@@ -622,76 +626,61 @@ class _PartyBannerState extends State<PartyBanner> {
               ),
               elevation: 3,
             ),
-            child: const Text(
-              'guest',
+            label: const Text(
+              'ticket',
               style: TextStyle(fontSize: 18),
             ),
+            icon: const Icon(
+              Icons.star,
+              size: 24.0,
+            ),
             onPressed: () {
-              _handleGuestListPressed();
+              _handleBuyTixPressed();
             },
           ),
-        )),
-        widget.party.isTix
-            ? Expanded(
-                child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 5),
-                height: 60,
-                child: ElevatedButton.icon(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Constants.background,
-                    foregroundColor: Constants.primary,
-                    shadowColor: Colors.white30,
-                    minimumSize: const Size.fromHeight(60),
-                    shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(10),
-                          topRight: Radius.circular(10)),
-                    ),
-                    elevation: 3,
-                  ),
-                  label: const Text(
-                    'ticket',
-                    style: TextStyle(fontSize: 18),
-                  ),
-                  icon: const Icon(
-                    Icons.star,
-                    size: 24.0,
-                  ),
-                  onPressed: () {
-                    _handleBuyTixPressed();
-                  },
-                ),
-              ))
-            : Expanded(
-                child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 5),
-                height: 60,
-                child: ElevatedButton.icon(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Constants.background,
-                    foregroundColor: Constants.primary,
-                    shadowColor: Colors.white30,
-                    minimumSize: const Size.fromHeight(60),
-                    shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(10),
-                          topRight: Radius.circular(10)),
-                    ),
-                    elevation: 3,
-                  ),
-                  label: const Text(
-                    'ticket',
-                    style: TextStyle(fontSize: 18),
-                  ),
-                  icon: const Icon(
-                    Icons.star_half,
-                    size: 24.0,
-                  ),
-                  onPressed: () {
-                    _handleBuyExternalTixPressed();
-                  },
-                ),
-              )),
+        )
+            : Container(
+          padding: const EdgeInsets.symmetric(horizontal: 5),
+          height: 60,
+          child: ElevatedButton.icon(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Constants.background,
+              foregroundColor: Constants.primary,
+              shadowColor: Colors.white30,
+              minimumSize: const Size.fromHeight(60),
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(10),
+                    topRight: Radius.circular(10)),
+              ),
+              elevation: 3,
+            ),
+            label: const Text(
+              'ticket',
+              style: TextStyle(fontSize: 18),
+            ),
+            icon: const Icon(
+              Icons.star_half,
+              size: 24.0,
+            ),
+            onPressed: () {
+              _handleBuyExternalTixPressed();
+            },
+          ),
+        ),),
+
+        Flexible(
+          flex: 1,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 5),
+            height: 60,
+            child: SquareIconButton(
+              icon : Icons.app_registration,
+              onPressed: () {
+              _handleGuestListPressed();
+            },)
+          ),
+        ),
       ],
     );
   }

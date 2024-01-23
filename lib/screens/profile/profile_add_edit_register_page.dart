@@ -344,7 +344,7 @@ class _ProfileAddEditRegisterPageState
                   FirestoreHelper.pullUserByUsername(username).then((res) {
                     if(res.docs.isNotEmpty){
                       // username is already taken
-                      username = username + NumberUtils.generateRandomNumber(1,999).toString();
+                      username = username + NumberUtils.getRandomNumber(1,999).toString();
                       freshUser = freshUser.copyWith(username: username);
                       FirestoreHelper.pushUser(freshUser);
                       UserPreferences.setUser(freshUser);
@@ -380,7 +380,7 @@ class _ProfileAddEditRegisterPageState
   void _uploadRandomPhoto(blocUser.User user) async {
     String assetFileName = '';
 
-    int photoNum = NumberUtils.generateRandomNumber(1,5);
+    int photoNum = NumberUtils.getRandomNumber(1,5);
     if(user.gender == 'male'){
     } else {
       photoNum += 10;

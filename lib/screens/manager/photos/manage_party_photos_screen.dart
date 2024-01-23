@@ -323,7 +323,7 @@ class _ManagePartyPhotosScreenState extends State<ManagePartyPhotosScreen> {
                                   for (PartyPhoto partyPhoto in mPartyPhotos) {
                                     if (partyPhoto.initLikes == 0 && partyPhoto.views>0) {
                                       int rand =
-                                          NumberUtils.generateRandomNumber(
+                                          NumberUtils.getRandomNumber(
                                               1, partyPhoto.views<10?partyPhoto.views:10);
                                       partyPhoto =
                                           partyPhoto.copyWith(initLikes: rand);

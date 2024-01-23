@@ -53,6 +53,9 @@ class Party {
 
   final bool isAdCampaignRunning;
 
+  final List<String> organizerIds;
+  final bool isPayoutComplete;
+
 //<editor-fold desc="Data Methods">
   Party({
     required this.id,
@@ -96,6 +99,8 @@ class Party {
     required this.views,
     required this.shareCount,
     required this.isAdCampaignRunning,
+    required this.organizerIds,
+    required this.isPayoutComplete,
   });
 
   @override
@@ -143,7 +148,9 @@ class Party {
           loungeId == other.loungeId &&
           views == other.views &&
           shareCount == other.shareCount &&
-          isAdCampaignRunning == other.isAdCampaignRunning);
+          isAdCampaignRunning == other.isAdCampaignRunning &&
+          organizerIds == other.organizerIds &&
+          isPayoutComplete == other.isPayoutComplete);
 
   @override
   int get hashCode =>
@@ -187,7 +194,9 @@ class Party {
       loungeId.hashCode ^
       views.hashCode ^
       shareCount.hashCode ^
-      isAdCampaignRunning.hashCode;
+      isAdCampaignRunning.hashCode ^
+      organizerIds.hashCode ^
+      isPayoutComplete.hashCode;
 
   @override
   String toString() {
@@ -233,6 +242,8 @@ class Party {
         ' views: $views,' +
         ' shareCount: $shareCount,' +
         ' isAdCampaignRunning: $isAdCampaignRunning,' +
+        ' organizerIds: $organizerIds,' +
+        ' isPayoutComplete: $isPayoutComplete,' +
         '}';
   }
 
@@ -278,6 +289,8 @@ class Party {
     int? views,
     int? shareCount,
     bool? isAdCampaignRunning,
+    List<String>? organizerIds,
+    bool? isPayoutComplete,
   }) {
     return Party(
       id: id ?? this.id,
@@ -322,6 +335,8 @@ class Party {
       views: views ?? this.views,
       shareCount: shareCount ?? this.shareCount,
       isAdCampaignRunning: isAdCampaignRunning ?? this.isAdCampaignRunning,
+      organizerIds: organizerIds ?? this.organizerIds,
+      isPayoutComplete: isPayoutComplete ?? this.isPayoutComplete,
     );
   }
 
@@ -368,6 +383,8 @@ class Party {
       'views': this.views,
       'shareCount': this.shareCount,
       'isAdCampaignRunning': this.isAdCampaignRunning,
+      'organizerIds': this.organizerIds,
+      'isPayoutComplete': this.isPayoutComplete,
     };
   }
 
@@ -414,6 +431,8 @@ class Party {
       views: map['views'] as int,
       shareCount: map['shareCount'] as int,
       isAdCampaignRunning: map['isAdCampaignRunning'] as bool,
+      organizerIds: map['organizerIds'] as List<String>,
+      isPayoutComplete: map['isPayoutComplete'] as bool,
     );
   }
 

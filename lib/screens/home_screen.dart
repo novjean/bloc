@@ -119,7 +119,7 @@ class _HomeScreenState extends State<HomeScreen> {
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
           _isBlocsLoading ? const LoadingWidget() : _displayBlocs(context),
-          _buildParties(context)
+          _loadParties(context)
         ],
       ),
     );
@@ -144,7 +144,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  _buildParties(BuildContext context) {
+  _loadParties(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
       stream: FirestoreHelper.getUpcomingParties(Timestamp.now().millisecondsSinceEpoch),
       builder: (ctx, snapshot) {
@@ -175,11 +175,11 @@ class _HomeScreenState extends State<HomeScreen> {
                 return _displayPartiesFooter(context);
               } else {
                 Logx.em(_TAG, 'parties came in empty!');
-                return LoadingWidget();
+                return const LoadingWidget();
               }
             } catch (e) {
               Logx.em(_TAG, 'parties get failed. $e');
-              return LoadingWidget();
+              return const LoadingWidget();
             }
           }
         }

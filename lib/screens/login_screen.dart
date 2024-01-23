@@ -103,25 +103,22 @@ class _LoginScreenState extends State<LoginScreen> {
                                     Logx.em(_TAG,
                                         'user snapshot has error: ${snapshot.error}');
                                     return signInWidget();
-                                  }
-
-                                  if (snapshot.hasData &&
-                                      !snapshot.data!.exists) {
+                                  } else if (snapshot.hasData && !snapshot.data!.exists) {
                                     Logx.i(_TAG,
                                         'user snapshot has data but not registered in bloc ');
-                                    // user not registered in bloc, will be picked up in OTP screen
+                                    return signInWidget();
+                                  } else if(snapshot.hasData && snapshot.data!.exists) {
+                                    // the best case scenario
+                                    Map<String, dynamic> data = snapshot.data!
+                                        .data() as Map<String, dynamic>;
+                                    final blocUser.User user = Fresh.freshUserMap(data, true);
+                                    UserPreferences.setUser(user);
+
+                                    return SplashScreen();
+                                  } else {
+                                    Logx.i(_TAG, 'user snapshot undefined path ');
                                     return signInWidget();
                                   }
-
-                                  Map<String, dynamic> data = snapshot.data!
-                                      .data() as Map<String, dynamic>;
-                                  final blocUser.User user =
-                                      Fresh.freshUserMap(data, true);
-                                  UserPreferences.setUser(user);
-
-                                  Logx.ast(_TAG, 'auth state change. user ${user.name}');
-
-                                  return SplashScreen();
                                 }
                             }
                           },

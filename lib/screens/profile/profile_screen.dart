@@ -583,7 +583,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   void _uploadRandomPhoto(blocUser.User user) async {
     String assetFileName = '';
 
-    int photoNum = NumberUtils.generateRandomNumber(1, 5);
+    int photoNum = NumberUtils.getRandomNumber(1, 5);
     if (user.gender == 'male') {
     } else {
       photoNum += 10;

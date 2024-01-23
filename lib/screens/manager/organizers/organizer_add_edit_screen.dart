@@ -48,6 +48,7 @@ class _OrganizerAddEditScreenState extends State<OrganizerAddEditScreen> {
 
   @override
   void initState() {
+    sUserIds = [widget.organizer.ownerId];
     FirestoreHelper.pullUsersApp().then((res) {
       if(res.docs.isNotEmpty){
         for (int i = 0; i < res.docs.length; i++) {
