@@ -161,7 +161,7 @@ class _PromoterPartyTixsScreenState extends State<PromoterPartyTixsScreen> {
 
   _loadTixsList(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
-      stream: FirestoreHelper.getTixsByPartyId(widget.party.id),
+      stream: FirestoreHelper.getTixsSuccessfulByPartyId(widget.party.id),
       builder: (ctx, snapshot) {
         switch (snapshot.connectionState) {
           case ConnectionState.waiting:

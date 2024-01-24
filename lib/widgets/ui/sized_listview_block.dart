@@ -24,7 +24,7 @@ class SizedListViewBlock extends StatelessWidget {
               height: height,
               width: width,
               padding: const EdgeInsets.all(5.0),
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
@@ -43,7 +43,7 @@ class SizedListViewBlock extends StatelessWidget {
                 height: height,
                 width: width,
                 padding: const EdgeInsets.all(5),
-                constraints: BoxConstraints(
+                constraints: const BoxConstraints(
                   minWidth: 20,
                   minHeight: 20,
                 ),

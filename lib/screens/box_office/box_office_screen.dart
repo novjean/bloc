@@ -1,6 +1,5 @@
 import 'package:bloc/db/shared_preferences/ui_preferences.dart';
 import 'package:bloc/main.dart';
-import 'package:bloc/utils/date_time_utils.dart';
 import 'package:bloc/utils/scan_utils.dart';
 import 'package:bloc/widgets/ui/app_bar_title.dart';
 import 'package:bloc/widgets/ui/button_widget.dart';
@@ -118,6 +117,7 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Constants.background,
       appBar: AppBar(
         backgroundColor: Colors.black,
         titleSpacing: 0,
@@ -136,7 +136,6 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
           },
         ),
       ),
-      backgroundColor: Constants.background,
       floatingActionButton: (showPromoterView && !kIsWeb)
           ? FloatingActionButton(
               onPressed: () {

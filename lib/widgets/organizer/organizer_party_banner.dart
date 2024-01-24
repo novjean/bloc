@@ -23,6 +23,7 @@ import '../../helpers/fresh.dart';
 import '../../routes/route_constants.dart';
 import '../../screens/manager/organizers/organizer_party_add_edit_screen.dart';
 import '../../screens/manager/parties/party_add_edit_screen.dart';
+import '../../screens/organizer/organizer_party_sales_screen.dart';
 import '../../screens/parties/party_guest_add_edit_manage_screen.dart';
 import '../../screens/parties/tix_buy_edit_screen.dart';
 import '../../utils/logx.dart';
@@ -345,15 +346,18 @@ class _OrganizerPartyBannerState extends State<OrganizerPartyBanner> {
                   elevation: 3,
                 ),
                 label: const Text(
-                  'view',
+                  'sales',
                   style: TextStyle(fontSize: 18),
                 ),
                 icon: const Icon(
-                  Icons.remove_red_eye_outlined,
+                  Icons.money,
                   size: 24.0,
                 ),
                 onPressed: () {
-                  GoRouter.of(context).go('/event/${widget.party.name}/${widget.party.chapter}');
+                  // GoRouter.of(context).go('/event/${widget.party.name}/${widget.party.chapter}');
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (ctx) =>
+                          OrganizerPartySalesScreen(party: widget.party)));
                 },
               ),
             )),

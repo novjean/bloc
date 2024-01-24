@@ -2329,7 +2329,7 @@ class FirestoreHelper {
         .snapshots();
   }
 
-  static Stream<QuerySnapshot<Map<String, dynamic>>> getTixsByPartyId(String partyId) {
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getTixsSuccessfulByPartyId(String partyId) {
     return FirebaseFirestore.instance
         .collection(TIXS)
         .where('partyId', isEqualTo: partyId)
