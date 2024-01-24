@@ -1308,7 +1308,7 @@ class FirestoreHelper {
     return FirebaseFirestore.instance
         .collection(PARTIES)
         .where('organizerIds', arrayContains: organizerId)
-        .orderBy('endTime', descending: false)
+        .orderBy('endTime', descending: true)
         .snapshots();
   }
 

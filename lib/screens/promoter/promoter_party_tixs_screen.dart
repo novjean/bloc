@@ -2,18 +2,11 @@ import 'package:bloc/helpers/firestore_helper.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-import '../../../api/apis.dart';
 import '../../../db/entity/party.dart';
 import '../../../db/entity/tix.dart';
-import '../../../db/entity/tix_tier_item.dart';
-import '../../../db/entity/user.dart';
 import '../../../helpers/fresh.dart';
-import '../../../main.dart';
 import '../../../utils/constants.dart';
-import '../../../utils/date_time_utils.dart';
-import '../../../utils/file_utils.dart';
 import '../../../utils/logx.dart';
-import '../../../utils/string_utils.dart';
 import '../../../widgets/box_office/promoter_tix_data_item.dart';
 import '../../../widgets/ui/app_bar_title.dart';
 import '../../../widgets/ui/loading_widget.dart';

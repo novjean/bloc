@@ -1053,8 +1053,8 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
                         widget.party = widget.party.copyWith(isActive: value);
                       });
 
-                      if (widget.party.storyImageUrl.isNotEmpty ||
-                          widget.party.imageUrls.length > 1) {
+                      if (!value! && (widget.party.storyImageUrl.isNotEmpty ||
+                          widget.party.imageUrls.length > 1)) {
                         _showDeleteExtraPhotosDialog(context);
                       }
                     },
@@ -1661,9 +1661,9 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
       context: context,
       builder: (BuildContext ctx) {
         return AlertDialog(
-          title: const Text("delete extra photos"),
+          title: const Text("delete extra details"),
           content: const Text(
-              "would your like to delete extra post photos and story photo?"),
+              "would your like to delete extra photos?"),
           actions: [
             TextButton(
               child: const Text("yes"),
@@ -1689,6 +1689,7 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
                 Navigator.of(ctx).pop();
               },
             ),
+
             TextButton(
               child: const Text("no"),
               onPressed: () {

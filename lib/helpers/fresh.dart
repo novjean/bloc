@@ -3421,10 +3421,19 @@ class Fresh {
       isModelChanged = true;
     }
 
-    if (isModelChanged && shouldUpdate) {
-      Logx.i(_TAG, 'updating party photo ${partyPhoto.id}');
-      FirestoreHelper.pushPartyPhoto(partyPhoto);
+    if(isModelChanged){
+      if (shouldUpdate) {
+        Logx.i(_TAG, 'updating party photo ${partyPhoto.id}');
+        FirestoreHelper.pushPartyPhoto(partyPhoto);
+      } else if(UserPreferences.myUser.clearanceLevel >= Constants.MANAGER_LEVEL){
+        if(NumberUtils.getRandomNumber(0, 10) == 9){
+          Logx.i(_TAG, 'updating party photo ${partyPhoto.id} by luck');
+          FirestoreHelper.pushPartyPhoto(partyPhoto);
+        }
+      }
     }
+
+
     return partyPhoto;
   }
 

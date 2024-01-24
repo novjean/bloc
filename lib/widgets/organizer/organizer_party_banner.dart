@@ -156,7 +156,7 @@ class _OrganizerPartyBannerState extends State<OrganizerPartyBanner> {
                           Padding(
                             padding: const EdgeInsets.only(left: 5.0),
                             child: RichText(
-                              maxLines: 1,
+                              maxLines: 2,
                               text: TextSpan(
                                   text: '${widget.party.name.toLowerCase()} ',
                                   style: const TextStyle(
