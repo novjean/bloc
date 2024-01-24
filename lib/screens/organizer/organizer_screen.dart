@@ -13,7 +13,6 @@ import '../../utils/constants.dart';
 import '../../utils/logx.dart';
 import '../../widgets/footer.dart';
 import '../../widgets/organizer/organizer_party_banner.dart';
-import '../../widgets/parties/party_banner.dart';
 import '../../widgets/profile_widget.dart';
 import '../../widgets/ui/app_bar_title.dart';
 

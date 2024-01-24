@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 
+import '../../utils/constants.dart';
+
 class DarkTextFieldWidget extends StatefulWidget {
   final int maxLines;
   final String label;
   final String text;
   final ValueChanged<String> onChanged;
+  final VoidCallback? onTap;
+  bool? isReadOnly;
 
   DarkTextFieldWidget({
     Key? key,
@@ -12,6 +16,8 @@ class DarkTextFieldWidget extends StatefulWidget {
     required this.label,
     required this.text,
     required this.onChanged,
+    this.onTap,
+    this.isReadOnly
   }) : super(key: key);
 
   @override
@@ -36,15 +42,16 @@ class _DarkTextFieldWidgetState extends State<DarkTextFieldWidget> {
   }
 
   @override
-  Widget build(BuildContext context) => Column(
+  Widget build(BuildContext context) {
+    return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             widget.label,
-            style: TextStyle(
+            style: const TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 16,
-              color: Theme.of(context).primaryColorLight,
+              color: Constants.lightPrimary,
             ),
           ),
           const SizedBox(height: 8),
@@ -54,17 +61,17 @@ class _DarkTextFieldWidgetState extends State<DarkTextFieldWidget> {
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
-                enabledBorder: OutlineInputBorder(
-                  // width: 0.0 produces a thin "hairline" border
-                  borderSide: BorderSide(
-                      color: Theme.of(context).primaryColor, width: 0.0),
+                enabledBorder: const OutlineInputBorder(
+                  borderSide: BorderSide(color: Constants.primary, width: 0.0),
                 ),
-                labelStyle:
-                    TextStyle(color: Theme.of(context).primaryColorLight)),
+                labelStyle: const TextStyle(color: Constants.lightPrimary)),
             maxLines: widget.maxLines,
             onChanged: widget.onChanged,
-            style: TextStyle(color: Theme.of(context).primaryColorLight),
+            onTap: widget.onTap,
+            readOnly: widget.isReadOnly ??= false,
+            style: const TextStyle(color: Constants.lightPrimary),
           ),
         ],
       );
+  }
 }

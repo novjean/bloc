@@ -200,7 +200,7 @@ class _MainScreenState extends State<MainScreen> {
 
     super.initState();
 
-    if(!kIsWeb){
+    if (!kIsWeb) {
       getToken();
     }
   }
@@ -208,7 +208,8 @@ class _MainScreenState extends State<MainScreen> {
   getToken() async {
     String? deviceToken = await FirebaseMessaging.instance.getToken();
     if (UserPreferences.isUserLoggedIn()) {
-      Logx.i(_TAG,'${UserPreferences.myUser.name} updating fcm token: ${deviceToken!}');
+      Logx.i(_TAG,
+          '${UserPreferences.myUser.name} updating fcm token: ${deviceToken!}');
       blocUser.User user = UserPreferences.myUser;
       String oldToken = user.fcmToken;
 
@@ -220,7 +221,7 @@ class _MainScreenState extends State<MainScreen> {
             UserPreferences.myUser.id, deviceToken);
       }
     } else {
-      Logx.em(_TAG,'user not logged in to update fcm token');
+      Logx.em(_TAG, 'user not logged in to update fcm token');
     }
   }
 
@@ -461,7 +462,7 @@ class _MainScreenState extends State<MainScreen> {
           );
           break;
         }
-      case 'organizer' :
+      case 'organizer':
         {
           Navigator.of(context).push(
             MaterialPageRoute(builder: (ctx) => OrganizerScreen()),
@@ -589,7 +590,8 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   void _loadUserByPhoneNumber() async {
-    await FirestoreHelper.pullUserByPhoneNumber(mBlocUser.phoneNumber).then((res) async {
+    await FirestoreHelper.pullUserByPhoneNumber(mBlocUser.phoneNumber).then(
+        (res) async {
       if (res.docs.isEmpty) {
         Logx.i(_TAG, 'user not found, registering ${mBlocUser.phoneNumber}');
 
@@ -614,15 +616,15 @@ class _MainScreenState extends State<MainScreen> {
         // lets grab more user details
         Navigator.of(context).push(
           MaterialPageRoute(
-              builder: (context) =>
-                  ProfileAddEditRegisterPage(user: mBlocUser, task: 'register')),
+              builder: (context) => ProfileAddEditRegisterPage(
+                  user: mBlocUser, task: 'register')),
         );
       } else {
         // nothing to do
       }
     }, onError: (e, s) {
-      Logx.ex(
-          _TAG, "error retrieving users for phone : ${mBlocUser.phoneNumber}", e, s);
+      Logx.ex(_TAG,
+          "error retrieving users for phone : ${mBlocUser.phoneNumber}", e, s);
     });
   }
 }

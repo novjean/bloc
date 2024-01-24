@@ -13,7 +13,6 @@ import 'package:path_provider/path_provider.dart';
 
 import '../../db/entity/user.dart' as blocUser;
 import '../../db/entity/user.dart';
-import '../../db/entity/user_bloc.dart';
 import '../../db/shared_preferences/user_preferences.dart';
 import '../../helpers/dummy.dart';
 import '../../helpers/firestorage_helper.dart';

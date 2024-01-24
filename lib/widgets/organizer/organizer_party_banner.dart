@@ -21,6 +21,7 @@ import '../../helpers/dummy.dart';
 import '../../helpers/firestore_helper.dart';
 import '../../helpers/fresh.dart';
 import '../../routes/route_constants.dart';
+import '../../screens/manager/organizers/organizer_party_add_edit_screen.dart';
 import '../../screens/manager/parties/party_add_edit_screen.dart';
 import '../../screens/parties/party_guest_add_edit_manage_screen.dart';
 import '../../screens/parties/tix_buy_edit_screen.dart';
@@ -322,7 +323,7 @@ class _OrganizerPartyBannerState extends State<OrganizerPartyBanner> {
                 onPressed: () {
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (ctx) =>
-                          PartyAddEditScreen(party: widget.party, task: 'edit')));
+                          OrganizerPartyAddEditScreen(party: widget.party, task: 'edit')));
                 },
               ),
             )),

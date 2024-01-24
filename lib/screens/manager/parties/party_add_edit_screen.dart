@@ -780,7 +780,7 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
                     ),
                     searchable: true,
                     onConfirm: (values) {
-                      sOrganizers = values as List<Organizer>;
+                      sOrganizers = values;
                       sOrganizerIds = [];
                       sOrganizerNames = [];
 
