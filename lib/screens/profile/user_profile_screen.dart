@@ -376,7 +376,11 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
         padding: const EdgeInsets.symmetric(horizontal: 20),
       ),
       onPressed: () {
-        Uri uri = Uri.parse(mUser.instagramLink);
+        String link = '';
+        if(!mUser.instagramLink.contains('instagram.com')){
+          link = 'https://www.instagram.com/${mUser.instagramLink.trim()}/';
+        }
+        Uri uri = Uri.parse(link);
         NetworkUtils.launchInBrowser(uri);
       },
       label: const Text(
