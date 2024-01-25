@@ -361,7 +361,7 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
                     isGuestListRequested: false,
                     shouldShowInterestCount: false,
                   ),
-                  _showTixTiers(context, mTixTiers),
+                  _displayTixTiers(context, mTixTiers),
                   const SizedBox(
                     height:90,
                   ),
@@ -632,7 +632,7 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
     }
   }
 
-  _showTixTiers(BuildContext context, List<TixTier> tixTiers) {
+  _displayTixTiers(BuildContext context, List<TixTier> tixTiers) {
     return SizedBox(
       child: ListView.builder(
           padding: EdgeInsets.zero,

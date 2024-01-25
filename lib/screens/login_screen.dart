@@ -60,81 +60,84 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     Logx.d(_TAG, 'login screen: trigger skip ${widget.shouldTriggerSkip}');
 
-    return Scaffold(
-        backgroundColor: Constants.background,
-        resizeToAvoidBottomInset: false,
-        body: StreamBuilder(
-            stream: FirebaseAuth.instance.authStateChanges(),
-            builder: (ctx, userSnapshot) {
-              Logx.i(_TAG, 'checking for auth state changes...');
-              switch (userSnapshot.connectionState) {
-                case ConnectionState.waiting:
-                case ConnectionState.none:
-                  {
-                    return SplashScreen();
-                  }
-                case ConnectionState.active:
-                case ConnectionState.done:
-                  {
-                    if (userSnapshot.hasData) {
-                      Logx.i(_TAG, 'user snapshot has data');
+    return PopScope(
+      canPop: false,
+      child: Scaffold(
+          backgroundColor: Constants.background,
+          resizeToAvoidBottomInset: false,
+          body: StreamBuilder(
+              stream: FirebaseAuth.instance.authStateChanges(),
+              builder: (ctx, userSnapshot) {
+                Logx.i(_TAG, 'checking for auth state changes...');
+                switch (userSnapshot.connectionState) {
+                  case ConnectionState.waiting:
+                  case ConnectionState.none:
+                    {
+                      return SplashScreen();
+                    }
+                  case ConnectionState.active:
+                  case ConnectionState.done:
+                    {
+                      if (userSnapshot.hasData) {
+                        Logx.i(_TAG, 'user snapshot has data');
 
-                      final user = FirebaseAuth.instance.currentUser;
-                      CollectionReference users =
-                          FirestoreHelper.getUsersCollection();
+                        final user = FirebaseAuth.instance.currentUser;
+                        CollectionReference users =
+                            FirestoreHelper.getUsersCollection();
 
-                      if (user!.uid.isEmpty ||
-                          widget.shouldTriggerSkip == false) {
-                        Logx.i(_TAG, 'user snapshot uid is empty');
-                        return signInWidget();
-                      } else {
-                        return FutureBuilder<DocumentSnapshot>(
-                          future: users.doc(user.uid).get(),
-                          builder: (BuildContext ctx,
-                              AsyncSnapshot<DocumentSnapshot> snapshot) {
-                            switch (snapshot.connectionState) {
-                              case ConnectionState.waiting:
-                              case ConnectionState.none:
-                                return SplashScreen();
-                              case ConnectionState.active:
-                              case ConnectionState.done:
-                                {
-                                  if (snapshot.hasError) {
-                                    Logx.em(_TAG,
-                                        'user snapshot has error: ${snapshot.error}');
-                                    return signInWidget();
-                                  } else if (snapshot.hasData && !snapshot.data!.exists) {
-                                    Logx.i(_TAG,
-                                        'user snapshot has data but not registered in bloc ');
-                                    return signInWidget();
-                                  } else if(snapshot.hasData && snapshot.data!.exists) {
-                                    // the best case scenario
-                                    Map<String, dynamic> data = snapshot.data!
-                                        .data() as Map<String, dynamic>;
-                                    final blocUser.User user = Fresh.freshUserMap(data, true);
-                                    UserPreferences.setUser(user);
+                        if (user!.uid.isEmpty ||
+                            widget.shouldTriggerSkip == false) {
+                          Logx.i(_TAG, 'user snapshot uid is empty');
+                          return signInWidget();
+                        } else {
+                          return FutureBuilder<DocumentSnapshot>(
+                            future: users.doc(user.uid).get(),
+                            builder: (BuildContext ctx,
+                                AsyncSnapshot<DocumentSnapshot> snapshot) {
+                              switch (snapshot.connectionState) {
+                                case ConnectionState.waiting:
+                                case ConnectionState.none:
+                                  return SplashScreen();
+                                case ConnectionState.active:
+                                case ConnectionState.done:
+                                  {
+                                    if (snapshot.hasError) {
+                                      Logx.em(_TAG,
+                                          'user snapshot has error: ${snapshot.error}');
+                                      return signInWidget();
+                                    } else if (snapshot.hasData && !snapshot.data!.exists) {
+                                      Logx.i(_TAG,
+                                          'user snapshot has data but not registered in bloc ');
+                                      return signInWidget();
+                                    } else if(snapshot.hasData && snapshot.data!.exists) {
+                                      // the best case scenario
+                                      Map<String, dynamic> data = snapshot.data!
+                                          .data() as Map<String, dynamic>;
+                                      final blocUser.User user = Fresh.freshUserMap(data, true);
+                                      UserPreferences.setUser(user);
 
-                                    return SplashScreen();
-                                  } else {
-                                    Logx.i(_TAG, 'user snapshot undefined path ');
-                                    return signInWidget();
+                                      return SplashScreen();
+                                    } else {
+                                      Logx.i(_TAG, 'user snapshot undefined path ');
+                                      return signInWidget();
+                                    }
                                   }
-                                }
-                            }
-                          },
-                        );
-                      }
-                    } else {
-                      if (widget.shouldTriggerSkip) {
-                        _verifyUsingSkipPhone();
-                        return SplashScreen();
+                              }
+                            },
+                          );
+                        }
                       } else {
-                        return signInWidget();
+                        if (widget.shouldTriggerSkip) {
+                          _verifyUsingSkipPhone();
+                          return SplashScreen();
+                        } else {
+                          return signInWidget();
+                        }
                       }
                     }
-                  }
-              }
-            }));
+                }
+              })),
+    );
   }
 
   Widget signInWidget() {

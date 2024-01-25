@@ -63,6 +63,7 @@ List<Menu> getMenuList() {
   if (UserPreferences.isUserLoggedIn()) {
     menuItems.add(Menu(Icons.keyboard_command_key_sharp, 'box office'));
     menuItems.add(Menu(Icons.label_important_outline, 'reservation'));
+    menuItems.add(Menu(Icons.gamepad_outlined, 'organizer'));
     menuItems.add(Menu(Icons.support, 'support'));
 
     if (user.clearanceLevel == Constants.CAPTAIN_LEVEL ||
@@ -73,7 +74,6 @@ List<Menu> getMenuList() {
     if (user.clearanceLevel == Constants.PROMOTER_LEVEL ||
         user.clearanceLevel >= Constants.MANAGER_LEVEL) {
       menuItems.add(Menu(Icons.adjust, 'promoter'));
-      menuItems.add(Menu(Icons.ac_unit, 'organizer'));
     }
 
     if (user.clearanceLevel >= Constants.MANAGER_LEVEL) {

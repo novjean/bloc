@@ -1,49 +1,29 @@
-import 'package:bloc/db/shared_preferences/user_preferences.dart';
 import 'package:bloc/main.dart';
 import 'package:bloc/utils/constants.dart';
 import 'package:bloc/utils/date_time_utils.dart';
-import 'package:bloc/utils/network_utils.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:delayed_display/delayed_display.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 
 import '../../db/entity/bloc.dart';
 import '../../db/entity/bloc_service.dart';
-import '../../db/entity/history_music.dart';
 import '../../db/entity/party.dart';
-import '../../db/entity/party_guest.dart';
 import '../../db/entity/party_interest.dart';
-import '../../db/entity/tix.dart';
-import '../../db/entity/user.dart';
 import '../../helpers/dummy.dart';
 import '../../helpers/firestore_helper.dart';
 import '../../helpers/fresh.dart';
-import '../../routes/route_constants.dart';
 import '../../screens/manager/organizers/organizer_party_add_edit_screen.dart';
-import '../../screens/manager/parties/party_add_edit_screen.dart';
 import '../../screens/organizer/organizer_party_sales_screen.dart';
-import '../../screens/parties/party_guest_add_edit_manage_screen.dart';
-import '../../screens/parties/tix_buy_edit_screen.dart';
-import '../../utils/logx.dart';
-import '../parties/mini_artist_item.dart';
+import '../../screens/organizer/organizer_party_tixs_screen.dart';
 
 class OrganizerPartyBanner extends StatefulWidget {
-  static const String _TAG = 'OrganizerPartyBanner';
-
   Party party;
-  final bool isClickable;
-  final bool shouldShowButton;
-  final bool isGuestListRequested;
   final bool shouldShowInterestCount;
 
   OrganizerPartyBanner(
       {Key? key,
         required this.party,
-        required this.isClickable,
-        required this.shouldShowButton,
-        required this.isGuestListRequested,
         required this.shouldShowInterestCount})
       : super(key: key);
 
@@ -52,7 +32,7 @@ class OrganizerPartyBanner extends StatefulWidget {
 }
 
 class _OrganizerPartyBannerState extends State<OrganizerPartyBanner> {
-  static const String _TAG = 'PartyBanner';
+  static const String _TAG = 'OrganizerPartyBanner';
 
   late BlocService mBlocService;
   var _isBlocServiceLoading = true;
@@ -113,25 +93,13 @@ class _OrganizerPartyBannerState extends State<OrganizerPartyBanner> {
 
   @override
   Widget build(BuildContext context) {
-    int interestCount =
-        mPartyInterest.initCount + mPartyInterest.userIds.length;
+    int interestCount = mPartyInterest.initCount + mPartyInterest.userIds.length;
 
     return GestureDetector(
       onTap: () {
-
-        // if (widget.isClickable) {
-        //   if (widget.party.type == 'event') {
-        //     GoRouter.of(context).go('/event/${widget.party.name}/${widget.party.chapter}');
-        //   } else {
-        //     GoRouter.of(context).pushNamed(RouteConstants.artistRouteName,
-        //         pathParameters: {
-        //           'name': widget.party.name,
-        //           'genre': widget.party.genre
-        //         });
-        //   }
-        // } else {
-        //   Logx.i(OrganizerPartyBanner._TAG, 'party banner no click');
-        // }
+        Navigator.of(context).push(MaterialPageRoute(
+            builder: (ctx) =>
+                OrganizerPartyAddEditScreen(party: widget.party, task: 'edit')));
       },
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 3),
@@ -220,7 +188,7 @@ class _OrganizerPartyBannerState extends State<OrganizerPartyBanner> {
                             ],
                           )
                               : const SizedBox(),
-                          _displayManageViewRow()
+                          _displayTicketsSalesRow()
                         ],
                       ),
                     ),
@@ -259,27 +227,6 @@ class _OrganizerPartyBannerState extends State<OrganizerPartyBanner> {
                             const Icon(Icons.error),
                           ),
                         ),
-                        // widget.party.genre.isNotEmpty
-                        //     ? Positioned(
-                        //   bottom: 3,
-                        //   right: 3,
-                        //   child: ClipRRect(
-                        //     borderRadius: BorderRadius.circular(10),
-                        //     child: Padding(
-                        //       padding: const EdgeInsets.symmetric(
-                        //           vertical: 2, horizontal: 2),
-                        //       child: Text(
-                        //         widget.party.genre,
-                        //         style: TextStyle(
-                        //           fontSize: 14,
-                        //           backgroundColor: Constants.lightPrimary
-                        //               .withOpacity(0.7),
-                        //         ),
-                        //       ),
-                        //     ),
-                        //   ),
-                        // )
-                        //     : const SizedBox()
                       ]),
                     ),
                   ],
@@ -292,7 +239,7 @@ class _OrganizerPartyBannerState extends State<OrganizerPartyBanner> {
     );
   }
 
-  _displayManageViewRow() {
+  _displayTicketsSalesRow() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
@@ -314,17 +261,17 @@ class _OrganizerPartyBannerState extends State<OrganizerPartyBanner> {
                   elevation: 3,
                 ),
                 label: const Text(
-                  'edit',
+                  'tickets',
                   style: TextStyle(fontSize: 18),
                 ),
                 icon: const Icon(
-                  Icons.handyman_sharp,
+                  Icons.star,
                   size: 24.0,
                 ),
                 onPressed: () {
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (ctx) =>
-                          OrganizerPartyAddEditScreen(party: widget.party, task: 'edit')));
+                          OrganizerPartyTixsScreen(party: widget.party)));
                 },
               ),
             )),
@@ -354,7 +301,6 @@ class _OrganizerPartyBannerState extends State<OrganizerPartyBanner> {
                   size: 24.0,
                 ),
                 onPressed: () {
-                  // GoRouter.of(context).go('/event/${widget.party.name}/${widget.party.chapter}');
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (ctx) =>
                           OrganizerPartySalesScreen(party: widget.party)));
@@ -363,146 +309,5 @@ class _OrganizerPartyBannerState extends State<OrganizerPartyBanner> {
             )),
       ],
     );
-  }
-
-
-  void _handleBuyExternalTixPressed() {
-    if(widget.party.ticketUrl.isEmpty){
-      Logx.ist(_TAG, '📱 tickets are available only through the bloc app');
-      return;
-    }
-
-    final uri = Uri.parse(widget.party.ticketUrl);
-    NetworkUtils.launchInBrowser(uri);
-
-    if (UserPreferences.isUserLoggedIn()) {
-      User user = UserPreferences.myUser;
-
-      FirestoreHelper.pullHistoryMusic(user.id, widget.party.genre).then((res) {
-        if (res.docs.isEmpty) {
-          // no history, add new one
-          HistoryMusic historyMusic = Dummy.getDummyHistoryMusic();
-          historyMusic.userId = user.id;
-          historyMusic.genre = widget.party.genre;
-          historyMusic.count = 1;
-          FirestoreHelper.pushHistoryMusic(historyMusic);
-        } else {
-          for (int i = 0; i < res.docs.length; i++) {
-            DocumentSnapshot document = res.docs[i];
-            Map<String, dynamic> data =
-            document.data()! as Map<String, dynamic>;
-            final HistoryMusic historyMusic =
-            Fresh.freshHistoryMusicMap(data, false);
-            historyMusic.count++;
-            FirestoreHelper.pushHistoryMusic(historyMusic);
-          }
-        }
-      });
-
-      if (UserPreferences.isUserLoggedIn()) {
-        if (!mPartyInterest.userIds.contains(UserPreferences.myUser.id)) {
-          mPartyInterest.userIds.add(UserPreferences.myUser.id);
-          FirestoreHelper.pushPartyInterest(mPartyInterest);
-
-          Logx.d(_TAG, 'user added to party interest');
-        }
-      } else {
-        int initCount = mPartyInterest.initCount + 1;
-        mPartyInterest = mPartyInterest.copyWith(initCount: initCount);
-        FirestoreHelper.pushPartyInterest(mPartyInterest);
-      }
-    }
-  }
-
-  void _handleGuestListPressed() {
-    PartyGuest partyGuest = Dummy.getDummyPartyGuest(true);
-    partyGuest.partyId = widget.party.id;
-
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => PartyGuestAddEditManageScreen(
-            partyGuest: partyGuest, party: widget.party, task: 'add'),
-      ),
-    );
-  }
-
-  void _handleBuyTixPressed() {
-    if(kIsWeb){
-      if(widget.party.isTix) {
-        Tix tix = Dummy.getDummyTix();
-        tix = tix.copyWith(partyId: widget.party.id);
-
-        Navigator.of(context).push(
-          MaterialPageRoute(
-              builder: (context) => TixBuyEditScreen(
-                  tix: tix, task: 'buy')),
-        );
-      } else if(widget.party.ticketUrl.isNotEmpty) {
-        final uri = Uri.parse(widget.party.ticketUrl);
-        NetworkUtils.launchInBrowser(uri);
-      } else {
-        Logx.ist(_TAG, 'no tickets are available at the moment!');
-      }
-    } else{
-      //navigate to purchase tix screen
-      Tix tix = Dummy.getDummyTix();
-      tix = tix.copyWith(partyId: widget.party.id);
-
-      Navigator.of(context).push(
-        MaterialPageRoute(
-            builder: (context) => TixBuyEditScreen(
-                tix: tix, task: 'buy')),
-      );
-    }
-
-    if (UserPreferences.isUserLoggedIn()) {
-      User user = UserPreferences.myUser;
-
-      FirestoreHelper.pullHistoryMusic(user.id, widget.party.genre)
-          .then((res) {
-        if (res.docs.isEmpty) {
-          // no history, add new one
-          HistoryMusic historyMusic = Dummy.getDummyHistoryMusic();
-          historyMusic.userId = user.id;
-          historyMusic.genre = widget.party.genre;
-          historyMusic.count = 1;
-          FirestoreHelper.pushHistoryMusic(historyMusic);
-        } else {
-          if (res.docs.length > 1) {
-            // that means there are multiple, so consolidate
-            HistoryMusic hm = Dummy.getDummyHistoryMusic();
-            int totalCount = 0;
-
-            for (int i = 0; i < res.docs.length; i++) {
-              DocumentSnapshot document = res.docs[i];
-              Map<String, dynamic> data =
-              document.data()! as Map<String, dynamic>;
-              final HistoryMusic historyMusic =
-              Fresh.freshHistoryMusicMap(data, false);
-
-              totalCount += historyMusic.count;
-              if (i == 0) {
-                hm = historyMusic;
-              }
-              FirestoreHelper.deleteHistoryMusic(historyMusic.id);
-            }
-
-            totalCount = totalCount + 1;
-            hm = hm.copyWith(count: totalCount);
-            FirestoreHelper.pushHistoryMusic(hm);
-          } else {
-            DocumentSnapshot document = res.docs[0];
-            Map<String, dynamic> data =
-            document.data()! as Map<String, dynamic>;
-            HistoryMusic historyMusic =
-            Fresh.freshHistoryMusicMap(data, false);
-            int newCount = historyMusic.count + 1;
-
-            historyMusic = historyMusic.copyWith(count: newCount);
-            FirestoreHelper.pushHistoryMusic(historyMusic);
-          }
-        }
-      });
-    }
   }
 }

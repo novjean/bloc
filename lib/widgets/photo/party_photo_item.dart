@@ -908,18 +908,23 @@ class _PartyPhotoItemState extends State<PartyPhotoItem> {
   }
 
   _showBlurredPhoto(bool showDownloadApp) {
-    return Stack(alignment: Alignment.center, children: [
-      BlurredImage(
-        imageUrl: widget.partyPhoto.imageThumbUrl.isNotEmpty
-            ? widget.partyPhoto.imageThumbUrl
-            : widget.partyPhoto.imageUrl,
-        blurLevel: 5,
+    return Stack(
+        children: [
+      SizedBox(
+        width: MediaQuery.of(context).size.width * 0.98,
+        child: BlurredImage(
+          imageUrl: widget.partyPhoto.imageThumbUrl.isNotEmpty
+              ? widget.partyPhoto.imageThumbUrl
+              : widget.partyPhoto.imageUrl,
+          blurLevel: 5,
+
+        ),
       ),
       Positioned(
         child: Column(
-          mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            const SizedBox(height: 100,),
             Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 15.0),
                 child: Text(

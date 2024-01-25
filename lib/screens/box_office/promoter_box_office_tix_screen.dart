@@ -110,9 +110,17 @@ class _PromoterBoxOfficeTixScreenState extends State<PromoterBoxOfficeTixScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Constants.background,
       appBar: AppBar(
+        backgroundColor: Colors.black,
         title: AppBarTitle(title: 'confirm tix'),
         titleSpacing: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_rounded, color: Constants.lightPrimary),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
       ),
       body: _isTixLoading && _isTixTiersLoading && _isPartyLoading
           ? const LoadingWidget()
@@ -140,7 +148,8 @@ class _PromoterBoxOfficeTixScreenState extends State<PromoterBoxOfficeTixScreen>
         const SizedBox(height: 24),
         _showTixTiers(context, mTixTiers),
 
-        const Divider(),
+        const SizedBox(height: 48),
+
         Container(
           color: Constants.primary,
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),

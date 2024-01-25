@@ -11,7 +11,6 @@ import '../../helpers/fresh.dart';
 import '../../routes/route_constants.dart';
 import '../../utils/constants.dart';
 import '../../utils/logx.dart';
-import '../../widgets/footer.dart';
 import '../../widgets/organizer/organizer_party_banner.dart';
 import '../../widgets/profile_widget.dart';
 import '../../widgets/ui/app_bar_title.dart';
@@ -27,6 +26,7 @@ class _OrganizerScreenState extends State<OrganizerScreen> {
 
   late Organizer mOrganizer;
   var _isOrganizerLoading = true;
+  var _isUserOrganizer = false;
 
   List<Party> mParties = [];
 
@@ -39,11 +39,15 @@ class _OrganizerScreenState extends State<OrganizerScreen> {
         mOrganizer = Fresh.freshOrganizerMap(data, false);
 
         setState(() {
+          _isUserOrganizer = true;
           _isOrganizerLoading = false;
         });
       } else {
         // user is not an organizer
-        Navigator.of(context).pop();
+        setState(() {
+          _isUserOrganizer = false;
+          _isOrganizerLoading = false;
+        });
       }
     });
 
@@ -70,8 +74,10 @@ class _OrganizerScreenState extends State<OrganizerScreen> {
   }
 
   _buildBody(BuildContext context){
-    return ListView(
-      physics: const BouncingScrollPhysics(),
+    return _isUserOrganizer ? Column(
+      // physics: const BouncingScrollPhysics(),
+      crossAxisAlignment: CrossAxisAlignment.end,
+      mainAxisAlignment: MainAxisAlignment.start,
       children: [
         const SizedBox(height: 15),
         Padding(
@@ -107,11 +113,11 @@ class _OrganizerScreenState extends State<OrganizerScreen> {
         ),
         const SizedBox(height: 15,),
         _loadOrganizerEvents(context),
-
-        const SizedBox(height: 36,),
-        Footer()
+        // Footer()
       ],
-    );
+    ) : Expanded(child: Center(
+      child: Text('you are not an event organizer yet!',
+      style: TextStyle(color: Constants.primary),),),);
   }
 
   _loadOrganizerEvents(BuildContext context) {
@@ -145,11 +151,11 @@ class _OrganizerScreenState extends State<OrganizerScreen> {
                 return _displayParties(context);
               } else {
                 Logx.em(_TAG, 'parties came in empty!');
-                return Center(child: Text('no parties hosted yet!'),);
+                return const Center(child: Text('no parties hosted yet!'),);
               }
             } catch (e) {
               Logx.em(_TAG, 'parties get failed. $e');
-              return Center(child: Text('no parties found!'),);
+              return const Center(child: Text('no parties found!'),);
             }
           }
         }
@@ -160,7 +166,7 @@ class _OrganizerScreenState extends State<OrganizerScreen> {
   _displayParties(BuildContext context) {
     return Expanded(
       child: ListView.builder(
-        shrinkWrap: true,
+        key: UniqueKey(),
         itemCount: mParties.length,
         scrollDirection: Axis.vertical,
         itemBuilder: (BuildContext context, int index) {
@@ -168,10 +174,7 @@ class _OrganizerScreenState extends State<OrganizerScreen> {
 
           return OrganizerPartyBanner(
             party: party,
-            isClickable: true,
-            shouldShowButton: true,
-            isGuestListRequested: false,
-            shouldShowInterestCount: true,
+            shouldShowInterestCount: false,
           );
         },
       ),

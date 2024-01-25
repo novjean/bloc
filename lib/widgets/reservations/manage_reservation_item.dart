@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import '../../db/entity/reservation.dart';
 import '../../helpers/firestore_helper.dart';
 import '../../helpers/fresh.dart';
+import '../../utils/constants.dart';
 import '../../utils/logx.dart';
 
 class ManageReservationItem extends StatelessWidget {
@@ -17,14 +18,14 @@ class ManageReservationItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     String title =
-        '${reservation.name.toLowerCase()} | party of ${reservation.guestsCount}';
+        '${reservation.name.toLowerCase()} | ${reservation.phone}  [${reservation.guestsCount}👫]';
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 5.0),
       child: Hero(
         tag: reservation.id,
         child: Card(
-          color: Theme.of(context).primaryColorLight,
+          color: Constants.lightPrimary,
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)),
           child: SizedBox(
@@ -56,36 +57,26 @@ class ManageReservationItem extends StatelessWidget {
                     ),
                   ],
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(left: 5),
-                      child: Text('requested at: ${DateTimeUtils.getFormattedDateYear(
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 1),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text('requested at: ${DateTimeUtils.getFormattedDateYear(
                               reservation.createdAt)}'),
-                    ),
-                    Padding(
-                      padding:
-                          const EdgeInsets.only(right: 5, top: 5, bottom: 5),
-                      child: Row(
+                      Row(
                         children: [
                           const Text('approved: '),
                           Checkbox(
                             value: reservation.isApproved,
                             onChanged: (value) {
-                              Reservation updatedReservation =
-                                  reservation.copyWith(isApproved: value);
-                              Logx.i(_TAG,
-                                  'reservation for ${updatedReservation.name} approved $value');
-                              Reservation freshReservation =
-                                  Fresh.freshReservation(updatedReservation);
-                              FirestoreHelper.pushReservation(freshReservation);
+                              Logx.ist(_TAG, 'approve status cannot be changed here!');
                             },
                           ),
                         ],
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ],
             ),

@@ -15,6 +15,7 @@ class BlurredImage extends StatelessWidget {
       child: FadeInImage(
         placeholder: const AssetImage('assets/images/logo_3x2.png'),
         image: NetworkImage(imageUrl),
+        fit: BoxFit.fitHeight,
       ),
     );
   }

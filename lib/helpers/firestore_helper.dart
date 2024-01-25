@@ -1458,6 +1458,13 @@ class FirestoreHelper {
         .get();
   }
 
+  static void updatePartyInterestCount(String id) {
+    FirebaseFirestore.instance
+        .collection(PARTY_INTERESTS)
+        .doc(id)
+        .update({"initCount": FieldValue.increment(1)},);
+  }
+
   /** party photo **/
   static void pushPartyPhoto(PartyPhoto partyPhoto) async {
     try {
@@ -2788,8 +2795,4 @@ class FirestoreHelper {
   static void deleteUserPhoto(String docId) {
     FirebaseFirestore.instance.collection(USER_PHOTOS).doc(docId).delete();
   }
-
-
-
-
 }

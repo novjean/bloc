@@ -1,18 +1,17 @@
+import 'package:bloc/db/shared_preferences/user_preferences.dart';
 import 'package:bloc/helpers/firestore_helper.dart';
 import 'package:bloc/widgets/ui/app_bar_title.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import '../../db/entity/party.dart';
+import '../../db/entity/party_tix_tier.dart';
 import '../../db/entity/tix.dart';
 import '../../helpers/fresh.dart';
-import '../../main.dart';
 import '../../utils/constants.dart';
-import '../../utils/logx.dart';
-import '../../widgets/box_office/promoter_tix_data_item.dart';
+import '../../widgets/organizer/organizer_sales_tix_tier_item.dart';
+import '../../widgets/parties/party_banner.dart';
 import '../../widgets/ui/loading_widget.dart';
-import '../../widgets/ui/sized_listview_block.dart';
-import '../box_office/promoter_box_office_tix_screen.dart';
 
 class OrganizerPartySalesScreen extends StatefulWidget {
   final Party party;
@@ -26,15 +25,29 @@ class OrganizerPartySalesScreen extends StatefulWidget {
 class _OrganizerPartySalesScreenState extends State<OrganizerPartySalesScreen> {
   static const String _TAG = 'OrganizerPartySalesScreen';
 
-  late List<String> mOptions;
-  String sOption = '';
-
-  List<Tix> mTixs = [];
+  List<PartyTixTier> mPartyTixTiers = [];
+  var _isPartyTixTiersLoading = true;
 
   @override
   void initState() {
-    mOptions = ['tickets', 'sales'];
-    sOption = mOptions.first;
+    FirestoreHelper.pullPartyTixTiers(widget.party.id).then((res) {
+      if (res.docs.isNotEmpty) {
+        for (int i = 0; i < res.docs.length; i++) {
+          DocumentSnapshot document = res.docs[i];
+          Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+          final PartyTixTier partyTixTier = Fresh.freshPartyTixTierMap(data, false);
+          mPartyTixTiers.add(partyTixTier);
+        }
+        setState(() {
+          _isPartyTixTiersLoading = false;
+        });
+      } else {
+        //tix tiers are not defined
+        setState(() {
+          _isPartyTixTiersLoading = false;
+        });
+      }
+    });
 
     super.initState();
   }
@@ -59,110 +72,121 @@ class _OrganizerPartySalesScreenState extends State<OrganizerPartySalesScreen> {
   }
 
   _buildBody(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(10.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          _showDisplayOptions(context),
-          const Divider(color: Constants.darkPrimary),
-          sOption == mOptions.first ? _loadTixsList(context) :
-          // _loadSalesReport()
-          const SizedBox()
-        ],
-      ),
-    );
-  }
+    return _isPartyTixTiersLoading
+        ? const LoadingWidget()
+        : Stack(
+      children: [
+        ListView(
+          physics: const BouncingScrollPhysics(),
+          children: [
+            PartyBanner(
+              party: widget.party,
+              isClickable: false,
+              shouldShowButton: false,
+              isGuestListRequested: false,
+              shouldShowInterestCount: false,
+            ),
+            _displayTixTiers(context),
+            const SizedBox(
+              height:90,
+            ),
+          ],
+        ),
+        // Floating Container at the bottom
+        Positioned(
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: _showTixPricePurchase(context)),
+      ],
+    );  }
 
-  _showDisplayOptions(BuildContext context) {
-    double containerHeight = 50;
-
+  _displayTixTiers(BuildContext context) {
     return SizedBox(
-      key: UniqueKey(),
-      // this height has to match with category item container height
-      height: 50,
       child: ListView.builder(
-          itemCount: mOptions.length,
-          scrollDirection: Axis.horizontal,
+          padding: EdgeInsets.zero,
+          shrinkWrap: true,
+          itemCount: mPartyTixTiers.length,
+          scrollDirection: Axis.vertical,
           itemBuilder: (ctx, index) {
-            return GestureDetector(
-                child: SizedListViewBlock(
-                  title: mOptions[index],
-                  height: containerHeight,
-                  width: MediaQuery.of(context).size.width / 2,
-                  color: Constants.primary,
-                ),
-                onTap: () {
-                  Logx.i(_TAG, '$sOption at sales is selected');
-                  setState(() {
-                    sOption = mOptions[index];
-                  });
-                });
+            return OrganizerSalesTixTierItem(
+              partyTixTier: mPartyTixTiers[index],
+            );
           }),
     );
   }
 
-  _loadTixsList(BuildContext context) {
-    return StreamBuilder<QuerySnapshot>(
-      stream: FirestoreHelper.getTixsSuccessfulByPartyId(widget.party.id),
-      builder: (ctx, snapshot) {
-        switch (snapshot.connectionState) {
-          case ConnectionState.waiting:
-          case ConnectionState.none:
-            return const LoadingWidget();
-          case ConnectionState.active:
-          case ConnectionState.done:
-            {
-              if (snapshot.hasData) {
-                if (snapshot.data!.docs.isEmpty) {
-                  return const Expanded(
-                      child: Center(
-                          child: Text('no tickets have been sold yet!',
-                            style: TextStyle(color: Constants.primary),)));
-                } else {
-                  mTixs.clear();
+  _showTixPricePurchase(BuildContext context) {
+    double total = 0;
+    for(PartyTixTier partyTixTier in mPartyTixTiers){
+      total += (partyTixTier.tierPrice * partyTixTier.soldCount);
+    }
 
-                  for (int i = 0; i < snapshot.data!.docs.length; i++) {
-                    DocumentSnapshot document = snapshot.data!.docs[i];
-                    Map<String, dynamic> map =
-                    document.data()! as Map<String, dynamic>;
-                    final Tix tix = Fresh.freshTixMap(map, false);
-                    mTixs.add(tix);
-                  }
+    double bookingFee = total * widget.party.bookingFeePercent;
 
-                  return _displayTixs(context, mTixs);
-                }
-              } else {
-                return const Expanded(
-                    child: Center(
-                        child: Text('no tickets have been sold yet!',
-                      style: TextStyle(color: Constants.primary),)));
-              }
-            }
-        }
-      },
-    );
-  }
-
-  _displayTixs(BuildContext context, List<Tix> tixs) {
-    return Expanded(
-      child: ListView.builder(
-        itemCount: tixs.length,
-        scrollDirection: Axis.vertical,
-        itemBuilder: (ctx, index) {
-          return GestureDetector(
-            onTap: () {
-              Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => PromoterBoxOfficeTixScreen(tixId: tixs[index].id)));
-            },
-            child: PromoterTixDataItem(
-              tix: tixs[index],
-              party: widget.party,
-              isClickable: true,
-            ),
-          );
-        },
-      ),
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        // Container(
+        //   color: Constants.primary,
+        //   padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
+        //   child: Row(
+        //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        //     children: <Widget>[
+        //       const Text(
+        //         'IGST',
+        //       ),
+        //       Text('\u20B9 ${igst.toStringAsFixed(2)}')
+        //     ],
+        //   ),
+        // ),
+        // Container(
+        //   color: Constants.primary,
+        //   padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
+        //   child: Row(
+        //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        //     children: <Widget>[
+        //       const Text(
+        //         'sub-total',
+        //       ),
+        //       Text('\u20B9 ${subTotal.toStringAsFixed(2)}')
+        //     ],
+        //   ),
+        // ),
+        const SizedBox(height: 100,),
+        UserPreferences.myUser.clearanceLevel>=Constants.MANAGER_LEVEL ? Container(
+          color: Constants.primary,
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              const Text(
+                'booking fee',
+              ),
+              Text('\u20B9 ${bookingFee.toStringAsFixed(2)}')
+            ],
+          ),
+        ) : const SizedBox(),
+        Container(
+          color: Constants.primary,
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              const Text(
+                'total',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              Text(
+                '\u20B9 ${total.toStringAsFixed(2)}',
+                style:
+                const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              )
+            ],
+          ),
+        ),
+      ],
     );
   }
 

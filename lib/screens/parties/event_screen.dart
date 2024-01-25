@@ -103,16 +103,12 @@ class _EventScreenState extends State<EventScreen> {
 
             if (UserPreferences.isUserLoggedIn()) {
               if (!partyInterest.userIds.contains(UserPreferences.myUser.id)) {
-                partyInterest.userIds.add(UserPreferences.myUser.id);
-                FirestoreHelper.pushPartyInterest(partyInterest);
-                Logx.d(_TAG, 'user interest recorded for party');
+                FirestoreHelper.updatePartyInterestCount(partyInterest.id);
               } else {
                 Logx.d(_TAG, 'user interest previously recorded for party');
               }
             } else {
-              int initCount = partyInterest.initCount + 1;
-              partyInterest = partyInterest.copyWith(initCount: initCount);
-              FirestoreHelper.pushPartyInterest(partyInterest);
+              FirestoreHelper.updatePartyInterestCount(partyInterest.id);
             }
 
             setState(() {
@@ -122,7 +118,9 @@ class _EventScreenState extends State<EventScreen> {
           } else {
             PartyInterest partyInterest = Dummy.getDummyPartyInterest();
             partyInterest = partyInterest.copyWith(
-                partyId: mParty.id, userIds: [UserPreferences.myUser.id]);
+                partyId: mParty.id,
+                userIds: [UserPreferences.myUser.id],
+                initCount: 11);
             FirestoreHelper.pushPartyInterest(partyInterest);
 
             Logx.d(_TAG, 'party interest created for party');

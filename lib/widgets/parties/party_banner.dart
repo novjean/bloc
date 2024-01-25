@@ -22,12 +22,10 @@ import '../../helpers/fresh.dart';
 import '../../routes/route_constants.dart';
 import '../../screens/parties/party_guest_add_edit_manage_screen.dart';
 import '../../screens/parties/tix_buy_edit_screen.dart';
-import '../../utils/dialog_utils.dart';
 import '../../utils/logx.dart';
 import 'mini_artist_item.dart';
 
 class PartyBanner extends StatefulWidget {
-  static const String _TAG = 'PartyBanner';
 
   Party party;
   final bool isClickable;
@@ -156,7 +154,7 @@ class _PartyBannerState extends State<PartyBanner> {
                 });
           }
         } else {
-          Logx.i(PartyBanner._TAG, 'party banner no click');
+          Logx.i(_TAG, 'party banner no click');
         }
       },
       child: Padding(
