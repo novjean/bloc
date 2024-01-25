@@ -59,7 +59,7 @@ class _BoxOfficeScreenState extends State<BoxOfficeScreen> {
     sOption = mOptions.first;
 
     int timeNow = Timestamp.now().millisecondsSinceEpoch;
-    FirestoreHelper.pullPartiesByEndTime(timeNow, true).then((res) {
+    FirestoreHelper.pullPartiesByEndTime(timeNow, true, false).then((res) {
       if (res.docs.isNotEmpty) {
         List<Party> parties = [];
 

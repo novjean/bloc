@@ -52,7 +52,7 @@ class _AdAddEditScreenState extends State<AdAddEditScreen> {
   @override
   void initState() {
     int timeNow = Timestamp.now().millisecondsSinceEpoch;
-    FirestoreHelper.pullPartiesByEndTime(timeNow, true).then((res) {
+    FirestoreHelper.pullPartiesByEndTime(timeNow, true, false).then((res) {
       if (res.docs.isNotEmpty) {
         for (int i = 0; i < res.docs.length; i++) {
           DocumentSnapshot document = res.docs[i];

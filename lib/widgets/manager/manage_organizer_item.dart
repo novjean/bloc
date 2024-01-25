@@ -1,8 +1,10 @@
 import 'package:bloc/db/entity/organizer.dart';
+import 'package:bloc/widgets/ui/dark_button_widget.dart';
 import 'package:flutter/material.dart';
 
 import '../../../utils/constants.dart';
 import '../../../utils/date_time_utils.dart';
+import '../../screens/manager/organizers/manage_organizer_screen.dart';
 
 class ManageOrganizerItem extends StatelessWidget{
   static const String _TAG = 'ManageOrganizerItem';
@@ -51,18 +53,13 @@ class ManageOrganizerItem extends StatelessWidget{
                       // Text('${organizer.hits} hits'),
                     ],
                   ),
-                  trailing: RichText(
-                    text: TextSpan(
-                      text:
-                      '${DateTimeUtils.getFormattedDate(organizer.createdAt)} ',
-                      style: const TextStyle(
-                        fontFamily: Constants.fontDefault,
-                        color: Colors.black,
-                        fontStyle: FontStyle.italic,
-                        fontSize: 13,
-                      ),
-                    ),
-                  ),
+                  trailing: DarkButtonWidget(text: '👁️', onClicked: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(builder: (ctx) => ManageOrganizerScreen(
+                        organizer: organizer,
+                      )),
+                    );
+                  },)
                 )),
           ),
         ),

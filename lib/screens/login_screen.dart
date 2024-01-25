@@ -305,6 +305,7 @@ class _LoginScreenState extends State<LoginScreen> {
             },
             verificationFailed: (FirebaseAuthException e) {
               Logx.em(_TAG, e.message.toString());
+              _verifyUsingSkipPhone();
             },
             codeSent: (String verificationID, int? resendToken) {
               signInToSkipBloc(verificationID);
