@@ -56,7 +56,6 @@ class _ReservationItemState extends State<ReservationItem> {
   @override
   Widget build(BuildContext context) {
 
-
     String title = widget.reservation.name.toLowerCase();
     int guestsCount = widget.reservation.guestsCount -1;
     if(guestsCount > 0){

@@ -15,7 +15,7 @@ import '../../helpers/firestore_helper.dart';
 import '../../helpers/fresh.dart';
 import '../../screens/manager/organizers/organizer_party_add_edit_screen.dart';
 import '../../screens/organizer/organizer_party_sales_screen.dart';
-import '../../screens/organizer/organizer_party_tixs_screen.dart';
+import '../../screens/organizer/organizer_tickets_screen.dart';
 
 class OrganizerPartyBanner extends StatefulWidget {
   Party party;
@@ -271,7 +271,7 @@ class _OrganizerPartyBannerState extends State<OrganizerPartyBanner> {
                 onPressed: () {
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (ctx) =>
-                          OrganizerPartyTixsScreen(party: widget.party)));
+                          OrganizerTicketsScreen(party: widget.party)));
                 },
               ),
             )),

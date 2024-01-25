@@ -75,7 +75,6 @@ class _OrganizerScreenState extends State<OrganizerScreen> {
 
   _buildBody(BuildContext context){
     return _isUserOrganizer ? Column(
-      // physics: const BouncingScrollPhysics(),
       crossAxisAlignment: CrossAxisAlignment.end,
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
@@ -115,7 +114,7 @@ class _OrganizerScreenState extends State<OrganizerScreen> {
         _loadOrganizerEvents(context),
         // Footer()
       ],
-    ) : Expanded(child: Center(
+    ) : const Expanded(child: Center(
       child: Text('you are not an event organizer yet!',
       style: TextStyle(color: Constants.primary),),),);
   }

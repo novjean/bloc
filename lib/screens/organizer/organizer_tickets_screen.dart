@@ -6,8 +6,6 @@ import 'package:flutter/material.dart';
 import '../../db/entity/party.dart';
 import '../../db/entity/party_tix_tier.dart';
 import '../../db/entity/tix.dart';
-import '../../db/entity/tix_tier_item.dart';
-import '../../helpers/dummy.dart';
 import '../../helpers/fresh.dart';
 import '../../main.dart';
 import '../../utils/constants.dart';
@@ -18,17 +16,17 @@ import '../../widgets/ui/loading_widget.dart';
 import '../../widgets/ui/sized_listview_block.dart';
 import '../box_office/promoter_box_office_tix_screen.dart';
 
-class OrganizerPartyTixsScreen extends StatefulWidget {
+class OrganizerTicketsScreen extends StatefulWidget {
   final Party party;
 
-  const OrganizerPartyTixsScreen({super.key, required this.party});
+  const OrganizerTicketsScreen({super.key, required this.party});
 
   @override
-  State<OrganizerPartyTixsScreen> createState() => _OrganizerPartyTixsScreenState();
+  State<OrganizerTicketsScreen> createState() => _OrganizerTicketsScreenState();
 }
 
-class _OrganizerPartyTixsScreenState extends State<OrganizerPartyTixsScreen> {
-  static const String _TAG = 'OrganizerPartyTixsScreen';
+class _OrganizerTicketsScreenState extends State<OrganizerTicketsScreen> {
+  static const String _TAG = 'OrganizerTicketsScreen';
 
   late List<String> mOptions;
   String sOption = '';

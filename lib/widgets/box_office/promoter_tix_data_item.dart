@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import '../../db/entity/party.dart';
 import '../../db/entity/tix_tier_item.dart';
 import '../../helpers/fresh.dart';
-import '../../screens/box_office/promoter_box_office_tix_screen.dart';
 import '../../utils/constants.dart';
 import '../../utils/logx.dart';
 
@@ -54,6 +53,7 @@ class _PromoterTixDataItemState extends State<PromoterTixDataItem> {
         Logx.em(_TAG, 'no tix tiers found for tix id ${widget.tix.id}');
       }
     });
+
     super.initState();
   }
 
@@ -89,18 +89,21 @@ class _PromoterTixDataItemState extends State<PromoterTixDataItem> {
                   ),
                   _isTixTiersLoading
                       ? const SizedBox()
-                      : Text(
-                          tixCount.toString(),
-                          style: TextStyle(
-                            color: widget.tix.merchantTransactionId.isNotEmpty
-                                ? Colors.green
-                                : Colors.red,
-                            fontSize: 20.0,
-                            fontWeight: FontWeight.w800,
+                      : Padding(
+                        padding: const EdgeInsets.only(right: 5.0),
+                        child: Text(
+                            tixCount.toString(),
+                            style: TextStyle(
+                              color: widget.tix.merchantTransactionId.isNotEmpty
+                                  ? Colors.black
+                                  : Colors.red,
+                              fontSize: 18.0,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                            textAlign: TextAlign.right,
                           ),
-                          overflow: TextOverflow.ellipsis,
-                          textAlign: TextAlign.right,
-                        )
+                      )
                 ],
               ),
               Text(
