@@ -226,6 +226,13 @@ class FirestoreHelper {
         .update({"clickCount": FieldValue.increment(1)},);
   }
 
+  static void updateAdCampaignViews(String docId) {
+    FirebaseFirestore.instance
+        .collection(AD_CAMPAIGNS)
+        .doc(docId)
+        .update({"views": FieldValue.increment(1)},);
+  }
+
   static void deleteAdCampaign(String docId) {
     FirebaseFirestore.instance.collection(AD_CAMPAIGNS).doc(docId).delete();
   }

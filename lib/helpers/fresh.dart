@@ -229,6 +229,12 @@ class Fresh {
       isModelChanged = true;
     }
     try {
+      adCampaign = adCampaign.copyWith(views: map['views'] as int);
+    } catch (e) {
+      Logx.em(_TAG, 'adCampaign views not exist for ad campaign id: ${adCampaign.id}');
+      isModelChanged = true;
+    }
+    try {
       adCampaign = adCampaign.copyWith(isActive: map['isActive'] as bool);
     } catch (e) {
       Logx.em(_TAG, 'adCampaign isActive not exist for ad campaign id: ${adCampaign.id}');
@@ -296,6 +302,11 @@ class Fresh {
       fresh = fresh.copyWith(clickCount: adCampaign.clickCount);
     } catch (e) {
       Logx.em(_TAG, 'adCampaign clickCount not exist for id: ${adCampaign.id}');
+    }
+    try {
+      fresh = fresh.copyWith(views: adCampaign.views);
+    } catch (e) {
+      Logx.em(_TAG, 'adCampaign views not exist for id: ${adCampaign.id}');
     }
     try {
       fresh = fresh.copyWith(isActive: adCampaign.isActive);

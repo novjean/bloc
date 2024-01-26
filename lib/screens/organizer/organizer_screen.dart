@@ -196,7 +196,7 @@ class _OrganizerScreenState extends State<OrganizerScreen> {
                 if (mParties.isNotEmpty) {
                   return _displayParties(context);
                 } else {
-                  return Expanded(
+                  return const Expanded(
                     child: Center(
                       child: Text(
                         'you have not hosted an event yet!',

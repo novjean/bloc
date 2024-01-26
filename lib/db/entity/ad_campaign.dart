@@ -4,6 +4,7 @@ class AdCampaign{
   List<String> imageUrls;
   String linkUrl;
   int clickCount;
+  int views;
   bool isActive;
 
   bool isStorySize;
@@ -18,6 +19,7 @@ class AdCampaign{
     required this.imageUrls,
     required this.linkUrl,
     required this.clickCount,
+    required this.views,
     required this.isActive,
     required this.isStorySize,
     required this.isPartyAd,
@@ -35,6 +37,7 @@ class AdCampaign{
           imageUrls == other.imageUrls &&
           linkUrl == other.linkUrl &&
           clickCount == other.clickCount &&
+          views == other.views &&
           isActive == other.isActive &&
           isStorySize == other.isStorySize &&
           isPartyAd == other.isPartyAd &&
@@ -48,6 +51,7 @@ class AdCampaign{
       imageUrls.hashCode ^
       linkUrl.hashCode ^
       clickCount.hashCode ^
+      views.hashCode ^
       isActive.hashCode ^
       isStorySize.hashCode ^
       isPartyAd.hashCode ^
@@ -62,6 +66,7 @@ class AdCampaign{
         ' imageUrls: $imageUrls,' +
         ' linkUrl: $linkUrl,' +
         ' clickCount: $clickCount,' +
+        ' views: $views,' +
         ' isActive: $isActive,' +
         ' isStorySize: $isStorySize,' +
         ' isPartyAd: $isPartyAd,' +
@@ -76,6 +81,7 @@ class AdCampaign{
     List<String>? imageUrls,
     String? linkUrl,
     int? clickCount,
+    int? views,
     bool? isActive,
     bool? isStorySize,
     bool? isPartyAd,
@@ -88,6 +94,7 @@ class AdCampaign{
       imageUrls: imageUrls ?? this.imageUrls,
       linkUrl: linkUrl ?? this.linkUrl,
       clickCount: clickCount ?? this.clickCount,
+      views: views ?? this.views,
       isActive: isActive ?? this.isActive,
       isStorySize: isStorySize ?? this.isStorySize,
       isPartyAd: isPartyAd ?? this.isPartyAd,
@@ -103,6 +110,7 @@ class AdCampaign{
       'imageUrls': this.imageUrls,
       'linkUrl': this.linkUrl,
       'clickCount': this.clickCount,
+      'views': this.views,
       'isActive': this.isActive,
       'isStorySize': this.isStorySize,
       'isPartyAd': this.isPartyAd,
@@ -118,6 +126,7 @@ class AdCampaign{
       imageUrls: map['imageUrls'] as List<String>,
       linkUrl: map['linkUrl'] as String,
       clickCount: map['clickCount'] as int,
+      views: map['views'] as int,
       isActive: map['isActive'] as bool,
       isStorySize: map['isStorySize'] as bool,
       isPartyAd: map['isPartyAd'] as bool,

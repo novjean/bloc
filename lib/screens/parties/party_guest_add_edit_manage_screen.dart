@@ -2719,6 +2719,8 @@ class _PartyGuestAddEditManageScreenState
             adCampaign = adCampaigns[adIndex];
           }
 
+          FirestoreHelper.updateAdCampaignViews(adCampaign.id);
+
           showDialog(
             context: context,
             barrierDismissible: false,

@@ -74,6 +74,7 @@ class Dummy {
         name: '',
         imageUrls: [],
         clickCount: 0,
+        views: 0,
         linkUrl: '',
         isActive: false,
         isStorySize: false,
