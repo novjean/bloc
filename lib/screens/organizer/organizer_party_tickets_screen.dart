@@ -62,7 +62,7 @@ class _OrganizerPartyTicketsScreenState extends State<OrganizerPartyTicketsScree
             if(!kIsWeb){
               ScanUtils.scanCode(context);
             } else {
-              DialogUtils.showDownloadAppDialog(context);
+              DialogUtils.showDownloadAppDialog(context, DialogUtils.downloadOrganizer);
             }
           },
           backgroundColor: Constants.primary,

@@ -619,7 +619,7 @@ class _EventScreenState extends State<EventScreen> {
                 NetworkUtils.launchInBrowser(uri);
               } else {
                 Logx.ilt(_TAG, 'bloc app is required to purchase this ticket');
-                DialogUtils.showDownloadAppTixDialog(context);
+                DialogUtils.showDownloadAppDialog(context, DialogUtils.downloadTixGuestList);
               }
             } else {
               //navigate to purchase tix screen

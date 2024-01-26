@@ -241,6 +241,7 @@ class _OrganizerAddEditScreenState extends State<OrganizerAddEditScreen> {
               FirestorageHelper.deleteFile(widget.organizer.imageUrl);
             }
             FirestoreHelper.deleteOrganizer(widget.organizer.id);
+            Logx.ist(_TAG, '${widget.organizer.name} organizer is deleted');
             Navigator.of(context).pop();
           },
         ),

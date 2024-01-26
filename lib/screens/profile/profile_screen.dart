@@ -195,8 +195,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             // Optional background color for the circle
                             child: Image.asset(
                               user.gender == 'female'
-                                  ? 'assets/profile_photos/12.png'
-                                  : 'assets/profile_photos/1.png',
+                                  ? 'assets/profile_photos/12.jpeg'
+                                  : 'assets/profile_photos/1.jpeg',
                               // Replace with your asset image path
                               fit: BoxFit.cover,
                             ),
@@ -306,7 +306,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           if (kIsWeb) {
             return GestureDetector(
               onTap: () {
-                DialogUtils.showDownloadPhotosDialog(context);
+                DialogUtils.showDownloadAppDialog(context, DialogUtils.downloadPhotos);
               },
               child: SizedBox(
                   height: 200,
@@ -588,7 +588,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     } else {
       photoNum += 10;
     }
-    assetFileName = 'assets/profile_photos/$photoNum.png';
+    assetFileName = 'assets/profile_photos/$photoNum.jpeg';
 
     File imageFile = await FileUtils.getAssetImageAsFile(assetFileName);
     String imageUrl = await FirestorageHelper.uploadFile(

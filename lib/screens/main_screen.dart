@@ -7,6 +7,7 @@ import 'package:bloc/screens/profile/profile_login_screen.dart';
 import 'package:bloc/screens/promoter/promoter_main_screen.dart';
 import 'package:bloc/utils/constants.dart';
 import 'package:bloc/utils/date_time_utils.dart';
+import 'package:bloc/utils/dialog_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -464,9 +465,13 @@ class _MainScreenState extends State<MainScreen> {
         }
       case 'organizer':
         {
-          Navigator.of(context).push(
-            MaterialPageRoute(builder: (ctx) => OrganizerScreen()),
-          );
+          if(!kIsWeb){
+            Navigator.of(context).push(
+              MaterialPageRoute(builder: (ctx) => OrganizerScreen()),
+            );
+          } else {
+            DialogUtils.showDownloadAppDialog(context, DialogUtils.downloadOrganizer);
+          }
           break;
         }
       case 'manager':

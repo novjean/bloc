@@ -102,8 +102,8 @@ class _PhotosScreenState extends State<PhotosScreen> {
         if (kIsWeb) {
           return GestureDetector(
             onTap: () {
-              DialogUtils.showDownloadPhotosDialog(context);
-            },
+              DialogUtils.showDownloadAppDialog(context, DialogUtils.downloadPhotos);
+              },
             child: SizedBox(
                 height: 200,
                 child: BlurredImage(

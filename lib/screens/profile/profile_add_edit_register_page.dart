@@ -384,7 +384,7 @@ class _ProfileAddEditRegisterPageState
     } else {
       photoNum += 10;
     }
-    assetFileName = 'assets/profile_photos/$photoNum.png';
+    assetFileName = 'assets/profile_photos/$photoNum.jpeg';
 
     File imageFile = await FileUtils.getAssetImageAsFile(assetFileName);
     String imageUrl = await FirestorageHelper.uploadFile(

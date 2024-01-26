@@ -370,7 +370,7 @@ class _TixBuyEditScreenState extends State<TixBuyEditScreen> {
         FirestoreHelper.pushTix(widget.tix);
       }
 
-      DialogUtils.showDownloadAppTixDialog(context);
+      DialogUtils.showDownloadAppDialog(context, DialogUtils.downloadTixGuestList);
     }
   }
 

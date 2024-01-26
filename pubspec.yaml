@@ -156,6 +156,7 @@ flutter:
     - assets/icons/
     - assets/fonts/
     - assets/profile_photos/
+    - assets/organizer_photos/
     - assets/temp/
 
   # An image asset can refer to one or more resolution-specific "variants", see
