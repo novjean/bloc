@@ -400,7 +400,7 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
                     initialValue: searchText,
                     decoration: const InputDecoration(
                         border: InputBorder.none,
-                        hintText: 'search by name or phone number',
+                        hintText: 'search by name, instagram or phone number',
                         hintStyle: TextStyle(color: Constants.primary)),
                     autofocus: false,
                     style:
@@ -427,6 +427,7 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
                   for (var i in mUsers) {
                     if (i.name.toLowerCase().contains(searchText.toLowerCase())
                     || i.surname.toLowerCase().contains(searchText.toLowerCase())
+                    || i.instagramLink.toLowerCase().contains(searchText.toLowerCase())
                         || i.phoneNumber.toString().contains(searchText.toLowerCase())
                     ) {
                       searchList.add(i);

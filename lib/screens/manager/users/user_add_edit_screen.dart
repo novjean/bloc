@@ -19,6 +19,7 @@ import '../../../helpers/firestore_helper.dart';
 import '../../../helpers/fresh.dart';
 import '../../../utils/constants.dart';
 import '../../../utils/logx.dart';
+import '../../../utils/network_utils.dart';
 import '../../../utils/string_utils.dart';
 import '../../../widgets/profile_widget.dart';
 import '../../../widgets/ui/app_bar_title.dart';
@@ -203,6 +204,21 @@ class _UserAddEditScreenState extends State<UserAddEditScreen> {
             widget.user = widget.user.copyWith(instagramLink: text);
           },
         ),
+        DarkButtonWidget(text: '👁️', onClicked: () {
+          String link = '';
+          if(widget.user.instagramLink.isNotEmpty){
+            if(!widget.user.instagramLink.contains('instagram.com')){
+              link = 'https://www.instagram.com/${widget.user.instagramLink.trim()}/';
+            } else {
+              link = widget.user.instagramLink;
+            }
+            Uri uri = Uri.parse(link);
+            NetworkUtils.launchInBrowser(uri);
+          } else {
+            Logx.ist(_TAG, 'instagram link is empty');
+          }
+        },),
+
         const SizedBox(height: 24),
         TextFieldWidget(
           label: 'email',

@@ -379,6 +379,8 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
         String link = '';
         if(!mUser.instagramLink.contains('instagram.com')){
           link = 'https://www.instagram.com/${mUser.instagramLink.trim()}/';
+        } else {
+          link = mUser.instagramLink;
         }
         Uri uri = Uri.parse(link);
         NetworkUtils.launchInBrowser(uri);
