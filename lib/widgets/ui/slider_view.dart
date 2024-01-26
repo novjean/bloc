@@ -20,11 +20,12 @@ class SliderView extends StatelessWidget {
           ),
           CircleAvatar(
             radius: 65,
-            backgroundColor: Colors.grey,
+            backgroundColor: Constants.background,
             child: CircleAvatar(
               radius: 60,
-              backgroundImage:
-              Image.network(UserPreferences.myUser.imageUrl).image,
+              backgroundImage: UserPreferences.myUser.imageUrl.isNotEmpty ?
+              Image.network(UserPreferences.myUser.imageUrl).image :
+              const AssetImage('assets/icons/logo.png'),
             ),
           ),
           const SizedBox(
