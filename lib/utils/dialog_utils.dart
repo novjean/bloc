@@ -13,14 +13,72 @@ class DialogUtils {
   static const String _TAG = 'DialogUtils';
 
   static showDownloadAppDialog(BuildContext context) {
-    String message = '📸 Click, Share, and Party On! Download our app to access all the photos, share them on your favorite apps, and get notified with instant guest list approvals and more! 🎉📲';
+    String message = 'Download our app to access all the photos, manage events, reservations, purchase tickets and get notified with instant guest list approvals and more! 🎉📲';
 
     showDialog(
         context: context,
         builder: (BuildContext ctx) {
           return AlertDialog(
             title: const Text(
-              '🎁 download our app to view & save photos',
+              '💛 download the #blocCommunity app',
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 22, color: Colors.black),
+            ),
+            backgroundColor: Constants.lightPrimary,
+            shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(20.0))),
+            contentPadding: const EdgeInsets.all(16.0),
+            content: Text(message.toLowerCase()),
+            actions: [
+              TextButton(
+                child: const Text('close',
+                    style: TextStyle(color: Constants.background)),
+                onPressed: () {
+                  Navigator.of(ctx).pop();
+                },
+              ),
+              TextButton(
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all<Color>(Constants
+                      .darkPrimary),
+                ),
+                child: const Text('🤖 android',
+                    style: TextStyle(color: Constants.primary)),
+                onPressed: () async {
+                  Navigator.of(ctx).pop();
+
+                  final uri = Uri.parse(Constants.urlBlocPlayStore);
+                  NetworkUtils.launchInBrowser(uri);
+                },
+              ),
+              TextButton(
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all<Color>(Constants
+                      .darkPrimary),
+                ),
+                child: const Text('🍎 ios',
+                    style: TextStyle(color: Constants.primary)),
+                onPressed: () async {
+                  Navigator.of(ctx).pop();
+
+                  final uri = Uri.parse(Constants.urlBlocAppStore);
+                  NetworkUtils.launchInBrowser(uri);
+                },
+              ),
+            ],
+          );
+        });
+  }
+
+  static showDownloadAppTixDialog(BuildContext context) {
+    String message = '📸 Tickets and Guest Lists! Download our app to access all the exclusive event tickets and guest lists, and get notified with approvals, updates and more! 🎉📲';
+
+    showDialog(
+        context: context,
+        builder: (BuildContext ctx) {
+          return AlertDialog(
+            title: const Text(
+              '🎁 download bloc to buy tix & more',
               textAlign: TextAlign.center,
               style: TextStyle(fontSize: 22, color: Colors.black),
             ),
@@ -70,15 +128,15 @@ class DialogUtils {
         });
   }
 
-  static showDownloadAppTixDialog(BuildContext context) {
-    String message = '📸 Tickets and Guest Lists! Download our app to access all the exclusive event tickets and guest lists, and get notified with approvals, updates and more! 🎉📲';
+  static showDownloadPhotosDialog(BuildContext context) {
+    String message = '📸 Click, Share, and Party On! Download our app to access all the photos, share them on your favorite apps, and get notified about friends getting tagged and more! 🎉📲';
 
     showDialog(
         context: context,
         builder: (BuildContext ctx) {
           return AlertDialog(
             title: const Text(
-              '🎁 download bloc to buy tix & more',
+              '🎁 download our app to view & save photos',
               textAlign: TextAlign.center,
               style: TextStyle(fontSize: 22, color: Colors.black),
             ),

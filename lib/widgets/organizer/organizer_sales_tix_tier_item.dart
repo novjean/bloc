@@ -1,4 +1,5 @@
 import 'package:bloc/db/entity/party_tix_tier.dart';
+import 'package:bloc/utils/string_utils.dart';
 import 'package:flutter/material.dart';
 
 import '../../../utils/constants.dart';
@@ -27,7 +28,12 @@ class OrganizerSalesTixTierItem extends StatelessWidget{
             child: Padding(
                 padding: const EdgeInsets.only(top: 2.0, left: 5, right: 5),
                 child: ListTile(
-                  leading: Text('${partyTixTier.tierLevel}'),
+                  leading: Text('${partyTixTier.soldCount}',
+                    style: const TextStyle(
+                      fontFamily: Constants.fontDefault,
+                      color: Colors.black,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold),),
                   title: RichText(
                     text: TextSpan(
                       text: '${partyTixTier.tierName} ',
@@ -43,17 +49,17 @@ class OrganizerSalesTixTierItem extends StatelessWidget{
                   subtitle: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      Text('sold ${partyTixTier.soldCount} @ \u20B9${partyTixTier.tierPrice.toStringAsFixed(2)}'),
+                      Text('${StringUtils.rs} ${partyTixTier.tierPrice.toStringAsFixed(2)}'),
                     ],
                   ),
                   trailing: RichText(
                     text: TextSpan(
                       text:
-                      '\u20B9 ${total.toStringAsFixed(2)}',
+                      '${StringUtils.rs} ${total.toStringAsFixed(2)}',
                       style: const TextStyle(
                         fontFamily: Constants.fontDefault,
                         color: Colors.black,
-                        fontSize: 13,
+                        fontSize: 14,
                       ),
                     ),
                   ),

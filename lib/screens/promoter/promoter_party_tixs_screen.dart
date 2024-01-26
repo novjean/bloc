@@ -11,7 +11,7 @@ import '../../../widgets/box_office/promoter_tix_data_item.dart';
 import '../../../widgets/ui/app_bar_title.dart';
 import '../../../widgets/ui/loading_widget.dart';
 import '../../../widgets/ui/sized_listview_block.dart';
-import '../box_office/promoter_box_office_tix_screen.dart';
+import '../box_office/confirm_tix_screen.dart';
 
 class PromoterPartyTixsScreen extends StatefulWidget {
   final Party party;
@@ -199,7 +199,7 @@ class _PromoterPartyTixsScreenState extends State<PromoterPartyTixsScreen> {
           return GestureDetector(
             onTap: () {
               Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => PromoterBoxOfficeTixScreen(tixId: tixs[index].id)));
+                  builder: (context) => ConfirmTixScreen(tixId: tixs[index].id)));
             },
             child: PromoterTixDataItem(
               tix: tixs[index],

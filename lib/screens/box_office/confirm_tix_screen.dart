@@ -12,22 +12,23 @@ import '../../helpers/fresh.dart';
 import '../../routes/route_constants.dart';
 import '../../utils/constants.dart';
 import '../../utils/logx.dart';
+import '../../widgets/footer.dart';
 import '../../widgets/tix/confirm_tix_tier_item.dart';
 import '../../widgets/tix/tix_party_banner.dart';
 import '../../widgets/ui/app_bar_title.dart';
 import '../../widgets/ui/button_widget.dart';
 
-class PromoterBoxOfficeTixScreen extends StatefulWidget {
+class ConfirmTixScreen extends StatefulWidget {
   String tixId;
 
-  PromoterBoxOfficeTixScreen({Key? key, required this.tixId}) : super(key: key);
+  ConfirmTixScreen({Key? key, required this.tixId}) : super(key: key);
 
   @override
-  State<PromoterBoxOfficeTixScreen> createState() => _PromoterBoxOfficeTixScreenState();
+  State<ConfirmTixScreen> createState() => _ConfirmTixScreenState();
 }
 
-class _PromoterBoxOfficeTixScreenState extends State<PromoterBoxOfficeTixScreen> {
-  static const String _TAG = 'PromoterBoxOfficeTixScreen';
+class _ConfirmTixScreenState extends State<ConfirmTixScreen> {
+  static const String _TAG = 'ConfirmTixScreen';
 
   Tix mTix = Dummy.getDummyTix();
   var _isTixLoading = true;
@@ -136,8 +137,8 @@ class _PromoterBoxOfficeTixScreenState extends State<PromoterBoxOfficeTixScreen>
   _buildBody(BuildContext context) {
     return _isPartyLoading
         ? const LoadingWidget()
-        : ListView(
-      physics: const BouncingScrollPhysics(),
+        : Column(
+      // physics: const BouncingScrollPhysics(),
       children: [
         TixPartyBanner(
           tix: mTix,
@@ -249,7 +250,9 @@ class _PromoterBoxOfficeTixScreenState extends State<PromoterBoxOfficeTixScreen>
               ),
             ],
           ),
-        )
+        ),
+        const Spacer(),
+        Footer(showAll: false,),
       ],
     );
   }

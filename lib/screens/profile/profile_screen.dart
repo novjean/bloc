@@ -306,7 +306,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           if (kIsWeb) {
             return GestureDetector(
               onTap: () {
-                DialogUtils.showDownloadAppDialog(context);
+                DialogUtils.showDownloadPhotosDialog(context);
               },
               child: SizedBox(
                   height: 200,

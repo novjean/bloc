@@ -11,6 +11,7 @@ import '../../helpers/fresh.dart';
 import '../../routes/route_constants.dart';
 import '../../utils/constants.dart';
 import '../../utils/logx.dart';
+import '../../widgets/footer.dart';
 import '../../widgets/organizer/organizer_party_banner.dart';
 import '../../widgets/profile_widget.dart';
 import '../../widgets/ui/app_bar_title.dart';
@@ -112,7 +113,7 @@ class _OrganizerScreenState extends State<OrganizerScreen> {
         ),
         const SizedBox(height: 15,),
         _loadOrganizerEvents(context),
-        // Footer()
+        Footer(showAll: false,)
       ],
     ) : const Expanded(child: Center(
       child: Text('you are not an event organizer yet!',

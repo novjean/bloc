@@ -46,9 +46,13 @@ class _PromoterTixDataItemState extends State<PromoterTixDataItem> {
           tixCount += tixTier.tixTierCount;
         }
 
-        setState(() {
-          _isTixTiersLoading = false;
-        });
+        if(mounted){
+          setState(() {
+            _isTixTiersLoading = false;
+          });
+        } else {
+          Logx.em(_TAG, 'state is not mounted');
+        }
       } else {
         Logx.em(_TAG, 'no tix tiers found for tix id ${widget.tix.id}');
       }

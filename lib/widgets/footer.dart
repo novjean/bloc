@@ -6,19 +6,26 @@ import '../utils/constants.dart';
 import '../utils/network_utils.dart';
 
 class Footer extends StatelessWidget {
+  bool? showAll;
+
+  Footer({super.key, this.showAll});
+
   @override
   Widget build(BuildContext context) {
+    bool show = showAll ?? true;
+
     return ClipRRect(
       borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(15), topRight: Radius.circular(15)),
       child: Container(
-        height: 130,
+        height: show ? 130 : 50,
         width: MediaQuery.of(context).size.width,
         color: Colors.black,
         child: Padding(
           padding: const EdgeInsets.only(left: 10.0, right: 10, bottom: 10, top: 5),
-          child: Column(children: [
-            Expanded(
+          child: Column(
+              children: [
+            show ? Expanded(
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -105,7 +112,7 @@ class Footer extends StatelessWidget {
                   ),
                 ],
               ),
-            ),
+            ) : const SizedBox(),
             const Padding(
               padding: EdgeInsets.only(top: 10, bottom: 5, left: 10, right: 10),
               child: Text(

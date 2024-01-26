@@ -1,5 +1,6 @@
 import 'package:bloc/db/shared_preferences/user_preferences.dart';
 import 'package:bloc/helpers/firestore_helper.dart';
+import 'package:bloc/widgets/footer.dart';
 import 'package:bloc/widgets/ui/app_bar_title.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -186,6 +187,7 @@ class _OrganizerPartySalesScreenState extends State<OrganizerPartySalesScreen> {
             ],
           ),
         ),
+        Footer(showAll: false,)
       ],
     );
   }

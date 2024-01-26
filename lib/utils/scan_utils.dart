@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 
 import '../main.dart';
+import '../screens/box_office/confirm_tix_screen.dart';
 import '../screens/parties/box_office_guest_confirm_screen.dart';
 import '../widgets/ui/toaster.dart';
 import 'logx.dart';
@@ -18,12 +19,18 @@ class ScanUtils {
           '#ff6666', 'cancel', true, ScanMode.QR);
       Logx.i(_TAG, 'code scanned $scanCode');
       if (scanCode != '-1') {
-        Navigator.of(context).push(
-          MaterialPageRoute(
-              builder: (ctx) => BoxOfficeGuestConfirmScreen(
-                    partyGuestId: scanCode,
-                  )),
-        );
+        if(scanCode.length == 9){
+          // 9 is ticket length of tix doc id
+          Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => ConfirmTixScreen(tixId: scanCode)));
+        } else {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+                builder: (ctx) => BoxOfficeGuestConfirmScreen(
+                  partyGuestId: scanCode,
+                )),
+          );
+        }
       } else {
         Logx.i(_TAG, 'scan cancelled');
       }
