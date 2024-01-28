@@ -18,6 +18,7 @@ import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
+import 'package:upgrader/upgrader.dart';
 
 import 'db/entity/user.dart' as blocUser;
 import 'db/shared_preferences/user_preferences.dart';
@@ -39,6 +40,9 @@ Future<void> main() async {
 
   WidgetsFlutterBinding.ensureInitialized();
   GoRouter.optionURLReflectsImperativeAPIs = true;
+
+  // Only call clearSavedSettings() during testing to reset internal values.
+  await Upgrader.clearSavedSettings(); // REMOVE this for release builds
 
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
@@ -65,23 +69,24 @@ Future<void> main() async {
   await FirebaseApi().initNotifications();
 
   // Listen for Auth changes and .refresh the GoRouter [router]
-  FirebaseAuth.instance.authStateChanges().listen((User? user) {
-    FirestoreHelper.pullUser(user!.uid).then((res) {
-      if(res.docs.isNotEmpty){
-        DocumentSnapshot document = res.docs[0];
-        Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-
-        final blocUser.User mUser = Fresh.freshUserMap(data, false);
-        // UserPreferences.setUser(mUser);
-        //
-        Logx.i(_TAG, 'main: auth state change. user ${mUser.name}');
-        //
-        // BlocRouter.returnRouter(true).refresh();
-      } else {
-        Logx.em(_TAG, 'user not found');
-      }
-    });
-  });
+  // FirebaseAuth.instance.authStateChanges().listen((User? user) {
+  //
+  //   FirestoreHelper.pullUser(user!.uid).then((res) {
+  //     if(res.docs.isNotEmpty){
+  //       DocumentSnapshot document = res.docs[0];
+  //       Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+  //
+  //       final blocUser.User mUser = Fresh.freshUserMap(data, false);
+  //       // UserPreferences.setUser(mUser);
+  //       //
+  //       Logx.i(_TAG, 'main: auth state change. user ${mUser.name}');
+  //       //
+  //       // BlocRouter.returnRouter(true).refresh();
+  //     } else {
+  //       Logx.em(_TAG, 'user not found');
+  //     }
+  //   });
+  // });
 
   // Pass all uncaught "fatal" errors from the framework to Crashlytics
   FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;

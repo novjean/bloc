@@ -241,10 +241,10 @@ class _MainScreenState extends State<MainScreen> {
     ];
 
     return UpgradeAlert(
-      upgrader: Upgrader(
-          dialogStyle: Theme.of(context).platform == TargetPlatform.iOS
-              ? UpgradeDialogStyle.cupertino
-              : UpgradeDialogStyle.material),
+      dialogStyle: Theme.of(context).platform == TargetPlatform.iOS
+          ? UpgradeDialogStyle.cupertino
+          : UpgradeDialogStyle.material,
+
       child: PopScope(
         canPop: false,
         child: Scaffold(

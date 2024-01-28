@@ -82,7 +82,7 @@ dependencies:
   awesome_notifications: ^0.7.4+1
 
   #utility
-  upgrader: ^8.4.0
+  upgrader: ^9.0.0
   flutter_image_compress: ^2.0.4
   url_launcher: ^6.1.11
   universal_html: ^2.2.3
