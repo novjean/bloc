@@ -42,7 +42,7 @@ Future<void> main() async {
   GoRouter.optionURLReflectsImperativeAPIs = true;
 
   // Only call clearSavedSettings() during testing to reset internal values.
-  await Upgrader.clearSavedSettings(); // REMOVE this for release builds
+  // await Upgrader.clearSavedSettings(); // REMOVE this for release builds
 
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
