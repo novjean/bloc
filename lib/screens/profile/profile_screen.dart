@@ -661,10 +661,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           scrollDirection: Axis.horizontal,
           shrinkWrap: false,
           itemBuilder: (ctx, index) {
-            Logx.d(_TAG, 'friends length: ${friends.length}, index $index');
-
             Friend friend = friends[index];
-
             return UserFriendItem(
               friend: friend,
             );

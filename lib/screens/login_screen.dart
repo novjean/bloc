@@ -22,7 +22,6 @@ import '../utils/constants.dart';
 import '../utils/logx.dart';
 import '../utils/string_utils.dart';
 import '../widgets/ui/toaster.dart';
-import 'main_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   final bool shouldTriggerSkip;
@@ -49,11 +48,10 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   void initState() {
-    super.initState();
-
     if (widget.shouldTriggerSkip) {
       _verifyUsingSkipPhone();
     }
+    super.initState();
   }
 
   @override
@@ -72,9 +70,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 switch (userSnapshot.connectionState) {
                   case ConnectionState.waiting:
                   case ConnectionState.none:
-                    {
                       return SplashScreen();
-                    }
                   case ConnectionState.active:
                   case ConnectionState.done:
                     {
@@ -105,20 +101,24 @@ class _LoginScreenState extends State<LoginScreen> {
                                       Logx.em(_TAG,
                                           'user snapshot has error: ${snapshot.error}');
                                       return signInWidget();
-                                    } else if (snapshot.hasData && !snapshot.data!.exists) {
+                                    } else if (snapshot.hasData &&
+                                        !snapshot.data!.exists) {
                                       Logx.i(_TAG,
                                           'user snapshot has data but not registered in bloc ');
                                       return signInWidget();
-                                    } else if(snapshot.hasData && snapshot.data!.exists) {
+                                    } else if (snapshot.hasData &&
+                                        snapshot.data!.exists) {
                                       // the best case scenario
                                       Map<String, dynamic> data = snapshot.data!
                                           .data() as Map<String, dynamic>;
-                                      final blocUser.User user = Fresh.freshUserMap(data, true);
+                                      final blocUser.User user =
+                                          Fresh.freshUserMap(data, true);
                                       UserPreferences.setUser(user);
 
                                       return SplashScreen();
                                     } else {
-                                      Logx.i(_TAG, 'user snapshot undefined path ');
+                                      Logx.i(_TAG,
+                                          'user snapshot undefined path ');
                                       return signInWidget();
                                     }
                                   }
@@ -364,6 +364,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 if (mounted) {
                   GoRouter.of(context)
                       .pushReplacementNamed(RouteConstants.landingRouteName);
+                } else {
+                  Logx.dst(_TAG, 'state is not mounted');
                 }
               } on PlatformException catch (e, s) {
                 Logx.e(_TAG, e, s);
@@ -381,8 +383,7 @@ class _LoginScreenState extends State<LoginScreen> {
         } else {
           Logx.em(_TAG, 'signInToSkipBloc as value user came in as null!');
         }
-
-          });
+      });
     } on PlatformException catch (e, s) {
       Logx.e(_TAG, e, s);
     } on Exception catch (e, s) {

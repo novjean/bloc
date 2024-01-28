@@ -3,6 +3,7 @@ import 'package:bloc/db/shared_preferences/ui_preferences.dart';
 import 'package:bloc/helpers/dummy.dart';
 import 'package:bloc/screens/profile/profile_add_edit_register_page.dart';
 import 'package:bloc/utils/number_utils.dart';
+import 'package:bloc/widgets/ui/countdown_timer.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:delayed_display/delayed_display.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -16,7 +17,6 @@ import '../db/shared_preferences/user_preferences.dart';
 import '../helpers/firestore_helper.dart';
 import '../helpers/fresh.dart';
 import '../main.dart';
-import '../routes/route_constants.dart';
 import '../utils/constants.dart';
 import '../utils/logx.dart';
 import '../utils/string_utils.dart';
@@ -43,9 +43,9 @@ class _OTPScreenState extends State<OTPScreen> {
 
   @override
   void initState() {
-    super.initState();
-
     _verifyPhone();
+
+    super.initState();
 
     Logx.ilt(_TAG, 'your code\'s on the way 🚀🔑');
   }
@@ -154,7 +154,7 @@ class _OTPScreenState extends State<OTPScreen> {
         Flexible(
           flex: 1,
           child: Padding(
-            padding: const EdgeInsets.only(left: 20, right: 20),
+            padding: const EdgeInsets.symmetric(horizontal: 15),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
@@ -168,17 +168,18 @@ class _OTPScreenState extends State<OTPScreen> {
                     fontSize: 16,
                   ),
                 )),
+                CountdownTimer(),
                 Padding(
                   padding: const EdgeInsets.only(
                       left: 10.0, right: 10, top: 2, bottom: 5),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      DelayedDisplay(
-                        delay: const Duration(seconds: 9),
+                      const DelayedDisplay(
+                        delay: Duration(seconds: 9),
                         child: Text('didn\'t receive code. ',
                             style: TextStyle(
-                              color: Theme.of(context).primaryColorLight,
+                              color: Constants.lightPrimary,
                               fontSize: 16,
                             )),
                       ),
@@ -188,12 +189,12 @@ class _OTPScreenState extends State<OTPScreen> {
                               'please wait, your otp code is being resent...');
                           _verifyPhone();
                         },
-                        child: DelayedDisplay(
-                          delay: const Duration(seconds: 10),
+                        child: const DelayedDisplay(
+                          delay: Duration(seconds: 15),
                           child: Text(
                             'resend?',
                             style: TextStyle(
-                              color: Theme.of(context).primaryColor,
+                              color: Constants.primary,
                               fontSize: 16,
                             ),
                           ),

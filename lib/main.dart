@@ -5,26 +5,22 @@ import 'package:bloc/db/shared_preferences/table_preferences.dart';
 import 'package:bloc/routes/bloc_router.dart';
 
 import 'package:bloc/db/shared_preferences/ui_preferences.dart';
+import 'package:bloc/screens/ui/splash_screen.dart';
 import 'package:bloc/services/firebase_api.dart';
 import 'package:bloc/utils/logx.dart';
 import 'package:bloc/widgets/ui/loading_widget.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
-import 'package:upgrader/upgrader.dart';
 
-import 'db/entity/user.dart' as blocUser;
 import 'db/shared_preferences/user_preferences.dart';
 import 'firebase_options.dart';
-import 'helpers/firestore_helper.dart';
-import 'helpers/fresh.dart';
 import 'providers/cart.dart';
 import 'utils/constants.dart';
 
@@ -66,8 +62,6 @@ Future<void> main() async {
     appleProvider: AppleProvider.appAttest,
   );
 
-  await FirebaseApi().initNotifications();
-
   // Listen for Auth changes and .refresh the GoRouter [router]
   // FirebaseAuth.instance.authStateChanges().listen((User? user) {
   //
@@ -88,18 +82,30 @@ Future<void> main() async {
   //   });
   // });
 
-  // Pass all uncaught "fatal" errors from the framework to Crashlytics
-  FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
-  // Pass all uncaught asynchronous errors that aren't handled by the Flutter framework to Crashlytics
-  PlatformDispatcher.instance.onError = (error, stack) {
-    FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
-    return true;
-  };
+
+
+  if (!kIsWeb) {
+    await FirebaseApi().initNotifications();
+
+    if (kDebugMode) {
+      await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(false);
+    } else {
+      await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
+
+      // Pass all uncaught "fatal" errors from the framework to Crashlytics
+      FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
+      // Pass all uncaught asynchronous errors that aren't handled by the Flutter framework to Crashlytics
+      PlatformDispatcher.instance.onError = (error, stack) {
+        FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+        return true;
+      };
+    }
+  }
 
   // shared preferences initialization
   await UserPreferences.init();
   await UiPreferences.init();
-  await TablePreferences.init();
+  // await TablePreferences.init();
   await PartyGuestPreferences.init();
 
   // disabling landscape until all ui issues are resolved
@@ -128,82 +134,206 @@ class _BlocAppState extends State<BlocApp> {
   Widget build(BuildContext context) {
     Logx.i(_TAG, 'bloc app starts');
 
-    final Future<FirebaseApp> initFirebase = Firebase.initializeApp();
+    return MaterialApp.router(
+      debugShowCheckedModeBanner: false,
+      title: kAppTitle,
+      theme: ThemeData(
+        primaryColor: Constants.primary,
+        primaryColorLight: Constants.lightPrimary,
+        primaryColorDark: Constants.darkPrimary,
 
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(
-          create: (ctx) => Cart(),
+        backgroundColor: Constants.background,
+        shadowColor: const Color.fromRGBO(158, 158, 158, 1.0),
+
+        highlightColor: const Color.fromRGBO(255, 255, 255, 1.0),
+        bottomAppBarColor:
+        const Color.fromRGBO(255, 255, 255, 1.0),
+
+        // app bar and buttons by default
+        primarySwatch: Colors.brown,
+        fontFamily: Constants.fontDefault,
+
+        buttonTheme: ButtonTheme.of(context).copyWith(
+          buttonColor: Colors.red,
+          textTheme: ButtonTextTheme.primary,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
         ),
-      ],
-      child: FutureBuilder(
-          // Initialize FlutterFire:
-          future: initFirebase,
-          builder: (ctx, appSnapshot) {
-            switch (appSnapshot.connectionState) {
-              case ConnectionState.waiting:
-              case ConnectionState.none:
-                return const LoadingWidget();
-              case ConnectionState.active:
-              case ConnectionState.done:
-                {
-                  Logx.i(_TAG, 'firebase initialized');
 
-                  return MaterialApp.router(
-                    debugShowCheckedModeBanner: false,
-                    title: kAppTitle,
-                    theme: ThemeData(
-                      primaryColor: Constants.primary,
-                      primaryColorLight: Constants.lightPrimary,
-                      primaryColorDark: Constants.darkPrimary,
+        textTheme: const TextTheme(
+          bodyLarge: TextStyle(color: Constants.darkPrimary, fontFamily: Constants.fontDefault),
+          bodyMedium: TextStyle(color: Constants.darkPrimary, fontFamily: Constants.fontDefault),
+          bodySmall: TextStyle(color: Constants.darkPrimary, fontFamily: Constants.fontDefault),
+          labelLarge: TextStyle(color: Constants.darkPrimary, fontFamily: Constants.fontDefault),
+          labelMedium: TextStyle(color: Constants.darkPrimary, fontFamily: Constants.fontDefault),
+          labelSmall: TextStyle(color: Constants.darkPrimary, fontFamily: Constants.fontDefault),
+          // You can customize other text styles as well
+        ),
 
-                      backgroundColor: Constants.background,
-                      shadowColor: const Color.fromRGBO(158, 158, 158, 1.0),
+        textButtonTheme: TextButtonThemeData(
+          style: TextButton.styleFrom(
+            foregroundColor: Constants.darkPrimary,
+          ),
+        ),
 
-                      highlightColor: const Color.fromRGBO(255, 255, 255, 1.0),
-                      bottomAppBarColor:
-                          const Color.fromRGBO(255, 255, 255, 1.0),
-
-                      // app bar and buttons by default
-                      primarySwatch: Colors.brown,
-                      fontFamily: Constants.fontDefault,
-
-                      buttonTheme: ButtonTheme.of(context).copyWith(
-                        buttonColor: Colors.red,
-                        textTheme: ButtonTextTheme.primary,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                      ),
-
-                      textTheme: TextTheme(
-                        bodyLarge: TextStyle(color: Constants.darkPrimary, fontFamily: Constants.fontDefault),
-                        bodyMedium: TextStyle(color: Constants.darkPrimary, fontFamily: Constants.fontDefault),
-                        bodySmall: TextStyle(color: Constants.darkPrimary, fontFamily: Constants.fontDefault),
-                        labelLarge: TextStyle(color: Constants.darkPrimary, fontFamily: Constants.fontDefault),
-                        labelMedium: TextStyle(color: Constants.darkPrimary, fontFamily: Constants.fontDefault),
-                        labelSmall: TextStyle(color: Constants.darkPrimary, fontFamily: Constants.fontDefault),
-                        // You can customize other text styles as well
-                      ),
-
-                      textButtonTheme: TextButtonThemeData(
-                        style: TextButton.styleFrom(
-                          foregroundColor: Constants.darkPrimary,
-                        ),
-                      ),
-
-                      elevatedButtonTheme: ElevatedButtonThemeData(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Constants.lightPrimary,
-                          foregroundColor: Constants.darkPrimary
-                        ),
-                      ),
-                    ),
-                    routerConfig: BlocRouter.returnRouter(true),
-                  );
-                }
-            }
-          }),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+              backgroundColor: Constants.lightPrimary,
+              foregroundColor: Constants.darkPrimary
+          ),
+        ),
+      ),
+      routerConfig: BlocRouter.returnRouter(true),
     );
+
+    // final Future<FirebaseApp> initFirebase = Firebase.initializeApp();
+
+    // return FutureBuilder(
+    //   // Initialize FlutterFire:
+    //     future: initFirebase,
+    //     builder: (ctx, appSnapshot) {
+    //       switch (appSnapshot.connectionState) {
+    //         case ConnectionState.waiting:
+    //         case ConnectionState.none:
+    //           return SplashScreen();
+    //       // return const LoadingWidget();
+    //         case ConnectionState.active:
+    //         case ConnectionState.done:
+    //           {
+    //             Logx.i(_TAG, 'firebase initialized');
+    //
+    //             return MaterialApp.router(
+    //               debugShowCheckedModeBanner: false,
+    //               title: kAppTitle,
+    //               theme: ThemeData(
+    //                 primaryColor: Constants.primary,
+    //                 primaryColorLight: Constants.lightPrimary,
+    //                 primaryColorDark: Constants.darkPrimary,
+    //
+    //                 backgroundColor: Constants.background,
+    //                 shadowColor: const Color.fromRGBO(158, 158, 158, 1.0),
+    //
+    //                 highlightColor: const Color.fromRGBO(255, 255, 255, 1.0),
+    //                 bottomAppBarColor:
+    //                 const Color.fromRGBO(255, 255, 255, 1.0),
+    //
+    //                 // app bar and buttons by default
+    //                 primarySwatch: Colors.brown,
+    //                 fontFamily: Constants.fontDefault,
+    //
+    //                 buttonTheme: ButtonTheme.of(context).copyWith(
+    //                   buttonColor: Colors.red,
+    //                   textTheme: ButtonTextTheme.primary,
+    //                   shape: RoundedRectangleBorder(
+    //                     borderRadius: BorderRadius.circular(20),
+    //                   ),
+    //                 ),
+    //
+    //                 textTheme: const TextTheme(
+    //                   bodyLarge: TextStyle(color: Constants.darkPrimary, fontFamily: Constants.fontDefault),
+    //                   bodyMedium: TextStyle(color: Constants.darkPrimary, fontFamily: Constants.fontDefault),
+    //                   bodySmall: TextStyle(color: Constants.darkPrimary, fontFamily: Constants.fontDefault),
+    //                   labelLarge: TextStyle(color: Constants.darkPrimary, fontFamily: Constants.fontDefault),
+    //                   labelMedium: TextStyle(color: Constants.darkPrimary, fontFamily: Constants.fontDefault),
+    //                   labelSmall: TextStyle(color: Constants.darkPrimary, fontFamily: Constants.fontDefault),
+    //                   // You can customize other text styles as well
+    //                 ),
+    //
+    //                 textButtonTheme: TextButtonThemeData(
+    //                   style: TextButton.styleFrom(
+    //                     foregroundColor: Constants.darkPrimary,
+    //                   ),
+    //                 ),
+    //
+    //                 elevatedButtonTheme: ElevatedButtonThemeData(
+    //                   style: ElevatedButton.styleFrom(
+    //                       backgroundColor: Constants.lightPrimary,
+    //                       foregroundColor: Constants.darkPrimary
+    //                   ),
+    //                 ),
+    //               ),
+    //               routerConfig: BlocRouter.returnRouter(true),
+    //             );
+    //           }
+    //       }
+    //     });
+
+    // return MultiProvider(
+    //   providers: [
+    //     ChangeNotifierProvider(
+    //       create: (ctx) => Cart(),
+    //     ),
+    //   ],
+    //   child: FutureBuilder(
+    //       // Initialize FlutterFire:
+    //       future: initFirebase,
+    //       builder: (ctx, appSnapshot) {
+    //         switch (appSnapshot.connectionState) {
+    //           case ConnectionState.waiting:
+    //           case ConnectionState.none:
+    //             return SplashScreen();
+    //             // return const LoadingWidget();
+    //           case ConnectionState.active:
+    //           case ConnectionState.done:
+    //             {
+    //               Logx.i(_TAG, 'firebase initialized');
+    //
+    //               return MaterialApp.router(
+    //                 debugShowCheckedModeBanner: false,
+    //                 title: kAppTitle,
+    //                 theme: ThemeData(
+    //                   primaryColor: Constants.primary,
+    //                   primaryColorLight: Constants.lightPrimary,
+    //                   primaryColorDark: Constants.darkPrimary,
+    //
+    //                   backgroundColor: Constants.background,
+    //                   shadowColor: const Color.fromRGBO(158, 158, 158, 1.0),
+    //
+    //                   highlightColor: const Color.fromRGBO(255, 255, 255, 1.0),
+    //                   bottomAppBarColor:
+    //                       const Color.fromRGBO(255, 255, 255, 1.0),
+    //
+    //                   // app bar and buttons by default
+    //                   primarySwatch: Colors.brown,
+    //                   fontFamily: Constants.fontDefault,
+    //
+    //                   buttonTheme: ButtonTheme.of(context).copyWith(
+    //                     buttonColor: Colors.red,
+    //                     textTheme: ButtonTextTheme.primary,
+    //                     shape: RoundedRectangleBorder(
+    //                       borderRadius: BorderRadius.circular(20),
+    //                     ),
+    //                   ),
+    //
+    //                   textTheme: const TextTheme(
+    //                     bodyLarge: TextStyle(color: Constants.darkPrimary, fontFamily: Constants.fontDefault),
+    //                     bodyMedium: TextStyle(color: Constants.darkPrimary, fontFamily: Constants.fontDefault),
+    //                     bodySmall: TextStyle(color: Constants.darkPrimary, fontFamily: Constants.fontDefault),
+    //                     labelLarge: TextStyle(color: Constants.darkPrimary, fontFamily: Constants.fontDefault),
+    //                     labelMedium: TextStyle(color: Constants.darkPrimary, fontFamily: Constants.fontDefault),
+    //                     labelSmall: TextStyle(color: Constants.darkPrimary, fontFamily: Constants.fontDefault),
+    //                     // You can customize other text styles as well
+    //                   ),
+    //
+    //                   textButtonTheme: TextButtonThemeData(
+    //                     style: TextButton.styleFrom(
+    //                       foregroundColor: Constants.darkPrimary,
+    //                     ),
+    //                   ),
+    //
+    //                   elevatedButtonTheme: ElevatedButtonThemeData(
+    //                     style: ElevatedButton.styleFrom(
+    //                       backgroundColor: Constants.lightPrimary,
+    //                       foregroundColor: Constants.darkPrimary
+    //                     ),
+    //                   ),
+    //                 ),
+    //                 routerConfig: BlocRouter.returnRouter(true),
+    //               );
+    //             }
+    //         }
+    //       }),
+    // );
   }
 }

@@ -62,10 +62,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     Logx.d(_TAG, 'HomeScreen');
 
-    super.initState();
-
     _loadBlocsAndUserBlocs();
-    _loadPartiesAndGuestList();
 
     FirestoreHelper.pullAdCampaignByStorySize(false).then((res) {
       if (res.docs.isNotEmpty) {
@@ -107,6 +104,8 @@ class _HomeScreenState extends State<HomeScreen> {
         }
       }
     });
+
+    super.initState();
   }
 
   @override
@@ -145,6 +144,8 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   _loadParties(BuildContext context) {
+    Logx.d(_TAG, '_loadParties');
+
     return StreamBuilder<QuerySnapshot>(
       stream: FirestoreHelper.getUpcomingParties(Timestamp.now().millisecondsSinceEpoch),
       builder: (ctx, snapshot) {
@@ -426,6 +427,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
                     BlocHelper.setDefaultBlocs(UserPreferences.myUser.id);
                   }
+
+                  _loadPartiesAndGuestList();
                 });
 
                 if (mounted) {
@@ -528,7 +531,7 @@ class _HomeScreenState extends State<HomeScreen> {
             _isPartiesLoading = false;
           });
         } else {
-          Logx.em(_TAG, 'not mounted. parties cannot be shown!');
+          Logx.em(_TAG, 'not mounted. stream builder parties should pick it up');
         }
       } else {
         // no parties, long live bloc!

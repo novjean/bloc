@@ -26,7 +26,6 @@ import '../main.dart';
 import '../routes/route_constants.dart';
 import '../services/notification_service.dart';
 import '../utils/logx.dart';
-import '../utils/number_utils.dart';
 import '../widgets/ui/slider_view.dart';
 import 'captain/captain_main_screen.dart';
 import 'experimental/bloc_selection_screen.dart';
@@ -74,7 +73,8 @@ class _MainScreenState extends State<MainScreen> {
     title = "bloc";
     mBlocUser = UserPreferences.myUser;
 
-    _page = UiPreferences.getHomePageIndex();
+    // _page = UiPreferences.getHomePageIndex();
+    _page = 0;
     _pageController = PageController(initialPage: _page);
 
     _loadUserByPhoneNumber();
@@ -190,20 +190,21 @@ class _MainScreenState extends State<MainScreen> {
         });
       }
 
-      // awesome notification init
-      NotificationService.initializeNotification();
+      _initAwesomeNotification();
     } else {
       Logx.d(_TAG, 'fcm in web mode');
     }
-
-    // need to check if user is an organizer
-    // FirestoreHelper.pullOrganizer;
 
     super.initState();
 
     if (!kIsWeb) {
       getToken();
     }
+  }
+
+  _initAwesomeNotification() async {
+    // awesome notification init
+    await NotificationService.initializeNotification();
   }
 
   getToken() async {
