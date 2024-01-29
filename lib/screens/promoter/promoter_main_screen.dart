@@ -89,8 +89,8 @@ class _PromoterMainScreenState extends State<PromoterMainScreen> {
           leading: IconButton(
             icon: const Icon(Icons.arrow_back_ios_rounded, color: Constants.lightPrimary,),
             onPressed: () {
-              GoRouter.of(context).goNamed(RouteConstants.landingRouteName);
-            },
+              Navigator.of(context).pop();
+              },
           ),
         ),
         backgroundColor: Constants.background,
@@ -179,7 +179,7 @@ class _PromoterMainScreenState extends State<PromoterMainScreen> {
                   title: mOptions[index],
                   height: containerHeight,
                   width: MediaQuery.of(context).size.width / 3,
-                  color: Theme.of(context).primaryColor,
+                  color: Constants.primary,
                 ),
                 onTap: () {
                   setState(() {
