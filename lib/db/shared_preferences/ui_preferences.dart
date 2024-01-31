@@ -8,10 +8,11 @@ class UiPreferences{
 
   static late SharedPreferences _preferences;
 
-  static const _keyPageIndex = 'page_index';
 
   static Future init() async =>
       _preferences = await SharedPreferences.getInstance();
+
+  static const _keyPageIndex = 'page_index';
 
   static Future setHomePageIndex(int pageIndex) async {
     await _preferences.setInt(_keyPageIndex, pageIndex);
@@ -25,6 +26,22 @@ class UiPreferences{
       Logx.em(_TAG, e.toString());
     }
     return index;
+  }
+
+  static const _keyLastHomeAdTime = 'last_home_ad_time';
+
+  static Future setLastHomeAdTime(int time) async {
+    await _preferences.setInt(_keyLastHomeAdTime, time);
+  }
+
+  static int getLastHomeAdTime() {
+    int time = 0;
+    try {
+      time = _preferences.getInt(_keyLastHomeAdTime)!;
+    } catch(e) {
+      Logx.em(_TAG, 'last home ad time has not been setup');
+    }
+    return time;
   }
 
   static const _keyRouteName = RouteConstants.landingRouteName;

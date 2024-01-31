@@ -73,7 +73,6 @@ class _MainScreenState extends State<MainScreen> {
     title = "bloc";
     mBlocUser = UserPreferences.myUser;
 
-    // _page = UiPreferences.getHomePageIndex();
     _page = 0;
     _pageController = PageController(initialPage: _page);
 

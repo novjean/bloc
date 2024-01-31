@@ -365,7 +365,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   GoRouter.of(context)
                       .pushReplacementNamed(RouteConstants.landingRouteName);
                 } else {
-                  Logx.dst(_TAG, 'state is not mounted');
+                  Logx.em(_TAG, 'state is not mounted');
                 }
               } on PlatformException catch (e, s) {
                 Logx.e(_TAG, e, s);

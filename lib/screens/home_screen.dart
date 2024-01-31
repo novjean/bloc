@@ -1,12 +1,15 @@
+import 'package:bloc/db/shared_preferences/ui_preferences.dart';
 import 'package:bloc/helpers/bloc_helper.dart';
 import 'package:bloc/main.dart';
 import 'package:bloc/utils/constants.dart';
 import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:delayed_display/delayed_display.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../db/entity/ad_campaign.dart';
 import '../db/entity/bloc.dart';
@@ -20,6 +23,7 @@ import '../helpers/dummy.dart';
 import '../helpers/firestore_helper.dart';
 import '../helpers/fresh.dart';
 import '../utils/logx.dart';
+import '../utils/number_utils.dart';
 import '../widgets/ad_campaign_slide_item.dart';
 import '../widgets/footer.dart';
 import '../widgets/home/bloc_slide_item.dart';
@@ -64,15 +68,51 @@ class _HomeScreenState extends State<HomeScreen> {
 
     _loadBlocsAndUserBlocs();
 
-    FirestoreHelper.pullAdCampaignByStorySize(false).then((res) {
+    FirestoreHelper.pullAdCampaignsActive().then((res) {
       if (res.docs.isNotEmpty) {
-        DocumentSnapshot document = res.docs[0];
-        Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-        mAdCampaign = Fresh.freshAdCampaignMap(data, false);
-        _isAdCampaignLoading = false;
+        List<AdCampaign> adCampaigns = [];
+
+        for(int i=0;i<res.docs.length; i++){
+          DocumentSnapshot document = res.docs[i];
+          Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+          AdCampaign tempAd = Fresh.freshAdCampaignMap(data, false);
+
+          if(tempAd.isStorySize){
+            if (Timestamp.now().millisecondsSinceEpoch < tempAd.endTime){
+              adCampaigns.add(tempAd);
+            }
+          } else {
+            mAdCampaign = tempAd;
+          }
+        }
+
+        if(kIsWeb){
+          if(adCampaigns.isNotEmpty && adCampaigns.length > 1){
+            int randIndex = NumberUtils.getRandomNumber(0, adCampaigns.length-1);
+            AdCampaign adCampaign = adCampaigns[randIndex];
+            _showAdDialog(adCampaign, UserPreferences.isUserLoggedIn() ? 120000 : 30000);
+          } else if(adCampaigns.isNotEmpty){
+            _showAdDialog(adCampaigns[0], UserPreferences.isUserLoggedIn() ? 120000 : 30000);
+          } else {
+            Logx.d(_TAG, 'no ads to show');
+          }
+        } else {
+          if(UserPreferences.isUserLoggedIn()){
+            int timeGap = Timestamp.now().millisecondsSinceEpoch - UserPreferences.myUser.lastSeenAt;
+
+            Logx.dst(_TAG, 'time : $timeGap');
+            if(timeGap < 3000) {
+              _showAdDialog(adCampaigns[0], 600000);
+            }
+          } else {
+            _showAdDialog(adCampaigns[0], 60000);
+          }
+        }
 
         if (mounted) {
-          setState(() {});
+          setState(() {
+            _isAdCampaignLoading = false;
+          });
         }
       }
     });
@@ -107,6 +147,32 @@ class _HomeScreenState extends State<HomeScreen> {
 
     super.initState();
   }
+
+  void _handleAdPartyClickActions(AdCampaign adCampaign, bool isShare) {
+    FirestoreHelper.updateAdCampaignClickCount(adCampaign.id);
+    FirestoreHelper.pullParty(adCampaign.partyId).then((res) async {
+      if (res.docs.isNotEmpty) {
+        DocumentSnapshot document = res.docs[0];
+        Map<String, dynamic> data =
+        document.data()! as Map<String, dynamic>;
+        final Party party = Fresh.freshPartyMap(data, false);
+
+        if(isShare){
+          FirestoreHelper.updatePartyShareCount(party.id);
+          final url =
+              'http://bloc.bar/#/event/${Uri.encodeComponent(party.name)}/${party.chapter}';
+          await Share.share(
+              'Check this party, ${party.name} out on bloc. $url');
+        } else {
+          // navigate to party
+          GoRouter.of(context).push('/event/${party.name}/${party.chapter}');
+        }
+      } else {
+        Navigator.of(context).pop();
+      }
+    });
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -559,5 +625,122 @@ class _HomeScreenState extends State<HomeScreen> {
         Logx.i(_TAG, 'no party guest requests found!');
       }
     });
+  }
+
+  void _showAdDialog(AdCampaign adCampaign, int minTime) {
+    int timeNow = Timestamp.now().millisecondsSinceEpoch;
+
+    if(UiPreferences.getLastHomeAdTime() == 0){
+      UiPreferences.setLastHomeAdTime(timeNow);
+    } else {
+      if(timeNow - UiPreferences.getLastHomeAdTime() > minTime){
+        UiPreferences.setLastHomeAdTime(timeNow);
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          showDialog(
+              context: context,
+              builder: (BuildContext ctx) {
+                return DelayedDisplay(
+                  delay: const Duration(seconds: 2),
+                  child: AlertDialog(
+                    contentPadding: const EdgeInsets.all(1.0),
+                    backgroundColor: Constants.lightPrimary,
+                    shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                    content: GestureDetector(
+                      onTap: () {
+                        Navigator.of(ctx).pop();
+
+                        if (adCampaign.isPartyAd) {
+                          _handleAdPartyClickActions(adCampaign, false);
+                        } else {
+                          // not party ad, send them to the link or some such
+                        }
+                      },
+                      child: Container(
+                          color: Colors.black,
+                          width: double.maxFinite,
+                          height: double.maxFinite,
+                          child: FadeInImage(
+                            placeholder: const AssetImage('assets/icons/logo.png'),
+                            image: NetworkImage(adCampaign.imageUrls[0]),
+                            fit: BoxFit.fitWidth,
+                          )),
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(ctx).pop();
+                        },
+                        child: const DelayedDisplay(
+                          delay: Duration(seconds: 1),
+                          child: Text(
+                            "close",
+                            style: TextStyle(
+                                color: Constants.darkPrimary, fontSize: 15),
+                          ),
+                        ),
+                        // child:  const Text('close'),
+                      ),
+                      adCampaign.isPartyAd
+                          ? TextButton(
+                        onPressed: () {
+                          Navigator.of(ctx).pop();
+
+                          _handleAdPartyClickActions(adCampaign, true);
+                        },
+                        child: const Text(
+                          "💝 share",
+                          style: TextStyle(
+                              color: Constants.darkPrimary, fontSize: 15),
+                        ),
+                        // child:  const Text('close'),
+                      )
+                          : const SizedBox(),
+                      adCampaign.isPartyAd
+                          ? TextButton(
+                        style: ButtonStyle(
+                          backgroundColor: MaterialStateProperty.all<Color>(
+                              Constants.darkPrimary),
+                        ),
+                        onPressed: () {
+                          FirestoreHelper.updateAdCampaignClickCount(
+                              adCampaign.id);
+
+                          // we pull in party
+                          FirestoreHelper.pullParty(adCampaign.partyId)
+                              .then((res) {
+                            if (res.docs.isNotEmpty) {
+                              DocumentSnapshot document = res.docs[0];
+                              Map<String, dynamic> data =
+                              document.data()! as Map<String, dynamic>;
+                              final Party party =
+                              Fresh.freshPartyMap(data, false);
+
+                              GoRouter.of(context).push('/event/${party.name}/${party.chapter}');
+
+                              Navigator.of(ctx).pop();
+                            } else {
+                              Navigator.of(ctx).pop();
+                            }
+                          });
+
+                        },
+                        child: const Text(
+                          "🎊 more info",
+                          style: TextStyle(
+                              color: Constants.lightPrimary, fontSize: 15),
+                        ),
+                        // child:  const Text('close'),
+                      )
+                          : const SizedBox(),
+                    ],
+                  ),
+                );
+              });
+        });
+      } else {
+        Logx.dst(_TAG, 'not showing since less than $minTime');
+      }
+    }
   }
 }
