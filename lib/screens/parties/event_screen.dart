@@ -403,44 +403,42 @@ class _EventScreenState extends State<EventScreen> {
               ),
               const SizedBox(height: 10),
               mParty.instagramUrl.isNotEmpty
-                  ? const Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 15.0),
-                          child: Text('links',
-                              style: TextStyle(
-                                  color: Constants.lightPrimary,
-                                  overflow: TextOverflow.ellipsis,
-                                  fontSize: 22,
-                                  fontWeight: FontWeight.bold)),
+                  ? Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      const Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 15.0),
+                              child: Text('links',
+                                  style: TextStyle(
+                                      color: Constants.lightPrimary,
+                                      overflow: TextOverflow.ellipsis,
+                                      fontSize: 22,
+                                      fontWeight: FontWeight.bold)),
+                            ),
+                          ],
                         ),
-                      ],
-                    )
-                  : const SizedBox(),
-              mParty.instagramUrl.isNotEmpty
-                  ? Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        InkWell(
-                          onTap: () {
-                            final uri = Uri.parse(mParty.instagramUrl);
-                            NetworkUtils.launchInBrowser(uri);
-                          },
-                          child: const Padding(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 15, vertical: 2),
-                            child: Text(
-                              'instagram 🧡',
-                              style: TextStyle(
-                                fontSize: 18,
-                                color: Constants.primary,
-                              ),
+                      InkWell(
+                        onTap: () {
+                          final uri = Uri.parse(mParty.instagramUrl);
+                          NetworkUtils.launchInBrowser(uri);
+                        },
+                        child: const Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 15, vertical: 2),
+                          child: Text(
+                            'instagram 🧡',
+                            style: TextStyle(
+                              fontSize: 18,
+                              color: Constants.primary,
                             ),
                           ),
                         ),
-                      ],
-                    )
+                      ),
+                    ],
+                  )
                   : const SizedBox(),
               const SizedBox(height: 15.0),
               kIsWeb ? const StoreBadgeItem() : const SizedBox(),
