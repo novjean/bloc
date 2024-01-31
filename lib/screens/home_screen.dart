@@ -100,7 +100,6 @@ class _HomeScreenState extends State<HomeScreen> {
           if(UserPreferences.isUserLoggedIn()){
             int timeGap = Timestamp.now().millisecondsSinceEpoch - UserPreferences.myUser.lastSeenAt;
 
-            // Logx.dst(_TAG, 'time : $timeGap');
             if(timeGap < 3000) {
               _showAdDialog(adCampaigns[0], 600000);
             }
