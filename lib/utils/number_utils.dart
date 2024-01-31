@@ -16,4 +16,9 @@ class NumberUtils {
     return min + random.nextInt(max - min + 1);
   }
 
+  static int getRandomIndexNumber(int max) {
+    final random = Random();
+    return random.nextInt(max - 1);
+  }
+
 }

@@ -86,26 +86,27 @@ class _HomeScreenState extends State<HomeScreen> {
           }
         }
 
-        if(kIsWeb){
-          if(adCampaigns.isNotEmpty && adCampaigns.length > 1){
-            int randIndex = NumberUtils.getRandomNumber(0, adCampaigns.length-1);
-            AdCampaign adCampaign = adCampaigns[randIndex];
-            _showAdDialog(adCampaign, UserPreferences.isUserLoggedIn() ? 120000 : 30000);
-          } else if(adCampaigns.isNotEmpty){
-            _showAdDialog(adCampaigns[0], UserPreferences.isUserLoggedIn() ? 120000 : 30000);
+        AdCampaign ad;
+        if(adCampaigns.isNotEmpty){
+          ad = adCampaigns[0];
+          if(adCampaigns.length>1){
+            ad = adCampaigns[NumberUtils.getRandomIndexNumber(adCampaigns.length)];
+          }
+
+          if(kIsWeb){
+            _showAdDialog(ad, UserPreferences.isUserLoggedIn() ? 120000 : 30000);
           } else {
-            Logx.d(_TAG, 'no ads to show');
+            if(UserPreferences.isUserLoggedIn()){
+              int timeGap = Timestamp.now().millisecondsSinceEpoch - UserPreferences.myUser.lastSeenAt;
+              if(timeGap < 3000){
+                _showAdDialog(ad, 600000);
+              }
+            } else {
+              _showAdDialog(ad, 60000);
+            }
           }
         } else {
-          if(UserPreferences.isUserLoggedIn()){
-            int timeGap = Timestamp.now().millisecondsSinceEpoch - UserPreferences.myUser.lastSeenAt;
-
-            if(timeGap < 3000) {
-              _showAdDialog(adCampaigns[0], 600000);
-            }
-          } else {
-            _showAdDialog(adCampaigns[0], 60000);
-          }
+          Logx.d(_TAG, 'no ads to show');
         }
 
         if (mounted) {

@@ -32,6 +32,7 @@ import 'package:bloc/db/entity/tix_tier_item.dart';
 import 'package:bloc/db/entity/ui_photo.dart';
 import 'package:bloc/db/entity/user.dart' as blocUser;
 import 'package:bloc/db/entity/user_lounge.dart';
+import 'package:bloc/db/entity/user_organizer.dart';
 import 'package:bloc/helpers/firestorage_helper.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -113,6 +114,7 @@ class FirestoreHelper {
   static String USER_BLOCS = 'user_blocs';
   static String USER_LEVELS = 'user_levels';
   static String USER_LOUNGES = 'user_lounges';
+  static String USER_ORGANIZERS = 'user_organizers';
   static String USER_PHOTOS = 'user_photos';
 
   static String CHAT_TYPE_TEXT = 'text';
@@ -120,7 +122,6 @@ class FirestoreHelper {
 
   static int TABLE_PRIVATE_TYPE_ID = 1;
   static int TABLE_COMMUNITY_TYPE_ID = 2;
-
 
   /** ads **/
   static void pushAd(Ad ad) async {
@@ -156,17 +157,15 @@ class FirestoreHelper {
   }
 
   static void updateAdHit(String id) {
-    FirebaseFirestore.instance
-        .collection(ADS)
-        .doc(id)
-        .update({"hits": FieldValue.increment(1)},);
+    FirebaseFirestore.instance.collection(ADS).doc(id).update(
+      {"hits": FieldValue.increment(1)},
+    );
   }
 
   static void updateAdReach(String id) {
-    FirebaseFirestore.instance
-        .collection(ADS)
-        .doc(id)
-        .update({"reach": FieldValue.increment(1)},);
+    FirebaseFirestore.instance.collection(ADS).doc(id).update(
+      {"reach": FieldValue.increment(1)},
+    );
   }
 
   static void deleteAd(String docId) {
@@ -221,23 +220,19 @@ class FirestoreHelper {
   }
 
   static getAdCampaigns() {
-    return FirebaseFirestore.instance
-        .collection(AD_CAMPAIGNS)
-        .snapshots();
+    return FirebaseFirestore.instance.collection(AD_CAMPAIGNS).snapshots();
   }
 
   static void updateAdCampaignClickCount(String docId) {
-    FirebaseFirestore.instance
-        .collection(AD_CAMPAIGNS)
-        .doc(docId)
-        .update({"clickCount": FieldValue.increment(1)},);
+    FirebaseFirestore.instance.collection(AD_CAMPAIGNS).doc(docId).update(
+      {"clickCount": FieldValue.increment(1)},
+    );
   }
 
   static void updateAdCampaignViews(String docId) {
-    FirebaseFirestore.instance
-        .collection(AD_CAMPAIGNS)
-        .doc(docId)
-        .update({"views": FieldValue.increment(1)},);
+    FirebaseFirestore.instance.collection(AD_CAMPAIGNS).doc(docId).update(
+      {"views": FieldValue.increment(1)},
+    );
   }
 
   static void deleteAdCampaign(String docId) {
@@ -277,7 +272,8 @@ class FirestoreHelper {
   }
 
   static pullBlocsPromoter() {
-    return FirebaseFirestore.instance.collection(BLOCS)
+    return FirebaseFirestore.instance
+        .collection(BLOCS)
         // .where('isActive', isEqualTo: true)
         .orderBy('orderPriority', descending: false)
         .get();
@@ -383,25 +379,25 @@ class FirestoreHelper {
   }
 
   static Future<QuerySnapshot<Object?>> pullBilledCartItemsByBloc(
-      String serviceId,
-      bool isCompleted,
-      bool isBilled,
-      ) {
+    String serviceId,
+    bool isCompleted,
+    bool isBilled,
+  ) {
     return FirebaseFirestore.instance
         .collection(CART_ITEMS)
         .where('serviceId', isEqualTo: serviceId)
         .where('isCompleted', isEqualTo: isCompleted)
         .where('isBilled', isEqualTo: isBilled)
         .orderBy('createdAt',
-        descending: true) // createdAt could be used i guess
+            descending: true) // createdAt could be used i guess
         .get();
   }
 
   static Future<QuerySnapshot<Object?>> pullBilledCartItemsByUser(
-      String userId,
-      bool isCompleted,
-      bool isBilled,
-      ) {
+    String userId,
+    bool isCompleted,
+    bool isBilled,
+  ) {
     return FirebaseFirestore.instance
         .collection(CART_ITEMS)
         .where('userId', isEqualTo: userId)
@@ -412,9 +408,9 @@ class FirestoreHelper {
   }
 
   static Future<QuerySnapshot<Object?>> pullCompletedCartItemsByUser(
-      String userId,
-      bool isCompleted,
-      ) {
+    String userId,
+    bool isCompleted,
+  ) {
     return FirebaseFirestore.instance
         .collection(CART_ITEMS)
         .where('userId', isEqualTo: userId)
@@ -608,10 +604,9 @@ class FirestoreHelper {
   }
 
   static void updateChallengeClickCount(String docId) {
-    FirebaseFirestore.instance
-        .collection(CHALLENGES)
-        .doc(docId)
-        .update({"clickCount": FieldValue.increment(1)},);
+    FirebaseFirestore.instance.collection(CHALLENGES).doc(docId).update(
+      {"clickCount": FieldValue.increment(1)},
+    );
   }
 
   static Future<QuerySnapshot<Map<String, dynamic>>> pullChallenges() {
@@ -656,7 +651,10 @@ class FirestoreHelper {
   }
 
   static void deleteChallengeAction(String docId) {
-    FirebaseFirestore.instance.collection(CHALLENGE_ACTIONS).doc(docId).delete();
+    FirebaseFirestore.instance
+        .collection(CHALLENGE_ACTIONS)
+        .doc(docId)
+        .delete();
   }
 
   /** lounge chats **/
@@ -715,10 +713,9 @@ class FirestoreHelper {
   }
 
   static void updateLoungeChatViewCount(String docId) {
-    FirebaseFirestore.instance
-        .collection(LOUNGE_CHATS)
-        .doc(docId)
-        .update({"views": FieldValue.increment(1)},);
+    FirebaseFirestore.instance.collection(LOUNGE_CHATS).doc(docId).update(
+      {"views": FieldValue.increment(1)},
+    );
   }
 
   static void deleteLoungeChat(String docId) {
@@ -837,9 +834,8 @@ class FirestoreHelper {
   static pullFriendConnections(String userId) {
     return FirebaseFirestore.instance
         .collection(FRIENDS)
-        .where(Filter.or(
-        Filter('userId', isEqualTo: userId),
-          Filter('friendUserId', isEqualTo: userId)))
+        .where(Filter.or(Filter('userId', isEqualTo: userId),
+            Filter('friendUserId', isEqualTo: userId)))
         .get();
   }
 
@@ -848,7 +844,8 @@ class FirestoreHelper {
   }
 
   /** friend notification **/
-  static void pushFriendNotification(FriendNotification friendNotification) async {
+  static void pushFriendNotification(
+      FriendNotification friendNotification) async {
     try {
       await FirebaseFirestore.instance
           .collection(FRIEND_NOTIFICATIONS)
@@ -864,13 +861,14 @@ class FirestoreHelper {
   }
 
   static pullFriendNotifications() {
-    return FirebaseFirestore.instance
-        .collection(FRIEND_NOTIFICATIONS)
-        .get();
+    return FirebaseFirestore.instance.collection(FRIEND_NOTIFICATIONS).get();
   }
 
   static void deleteFriendNotification(String docId) {
-    FirebaseFirestore.instance.collection(FRIEND_NOTIFICATIONS).doc(docId).delete();
+    FirebaseFirestore.instance
+        .collection(FRIEND_NOTIFICATIONS)
+        .doc(docId)
+        .delete();
   }
 
   /** genre **/
@@ -1083,7 +1081,10 @@ class FirestoreHelper {
   }
 
   static void deleteNotificationTest(String docId) {
-    FirebaseFirestore.instance.collection(NOTIFICATION_TESTS).doc(docId).delete();
+    FirebaseFirestore.instance
+        .collection(NOTIFICATION_TESTS)
+        .doc(docId)
+        .delete();
   }
 
   /** offers **/
@@ -1162,13 +1163,18 @@ class FirestoreHelper {
     }
   }
 
+  static void updateOrganizerFollowersCount(String id, bool isIncrement) {
+    FirebaseFirestore.instance.collection(ORGANIZERS).doc(id).update(
+      {"followersCount": FieldValue.increment(isIncrement ? 1 : -1)},
+    );
+  }
+
   static pullOrganizers() {
     return FirebaseFirestore.instance
         .collection(ORGANIZERS)
         .orderBy('name', descending: false)
         .get();
   }
-
 
   static pullOrganizer(String userId) {
     return FirebaseFirestore.instance
@@ -1184,6 +1190,12 @@ class FirestoreHelper {
         .snapshots();
   }
 
+  static getPartyOrganizers(List<String> organizerIds) {
+    return FirebaseFirestore.instance
+        .collection(ORGANIZERS)
+        .where('id', whereIn: organizerIds)
+        .snapshots();
+  }
 
   static void deleteOrganizer(String docId) {
     FirebaseFirestore.instance.collection(ORGANIZERS).doc(docId).delete();
@@ -1206,17 +1218,15 @@ class FirestoreHelper {
   }
 
   static void updatePartyViewCount(String docId) {
-    FirebaseFirestore.instance
-        .collection(PARTIES)
-        .doc(docId)
-        .update({"views": FieldValue.increment(1)},);
+    FirebaseFirestore.instance.collection(PARTIES).doc(docId).update(
+      {"views": FieldValue.increment(1)},
+    );
   }
 
   static void updatePartyShareCount(String docId) {
-    FirebaseFirestore.instance
-        .collection(PARTIES)
-        .doc(docId)
-        .update({"shareCount": FieldValue.increment(1)},);
+    FirebaseFirestore.instance.collection(PARTIES).doc(docId).update(
+      {"shareCount": FieldValue.increment(1)},
+    );
   }
 
   static pullParties(String serviceId) {
@@ -1443,10 +1453,7 @@ class FirestoreHelper {
   }
 
   static void deletePartyGuest(String docId) {
-    FirebaseFirestore.instance
-        .collection(PARTY_GUESTS)
-        .doc(docId)
-        .delete();
+    FirebaseFirestore.instance.collection(PARTY_GUESTS).doc(docId).delete();
   }
 
   /** party interest **/
@@ -1473,10 +1480,9 @@ class FirestoreHelper {
   }
 
   static void updatePartyInterestCount(String id) {
-    FirebaseFirestore.instance
-        .collection(PARTY_INTERESTS)
-        .doc(id)
-        .update({"initCount": FieldValue.increment(1)},);
+    FirebaseFirestore.instance.collection(PARTY_INTERESTS).doc(id).update(
+      {"initCount": FieldValue.increment(1)},
+    );
   }
 
   /** party photo **/
@@ -1529,21 +1535,19 @@ class FirestoreHelper {
     return FirebaseFirestore.instance
         .collection(PARTY_PHOTOS)
         .doc(docId)
-        .update({"downloadCount": FieldValue.increment(1)},);
+        .update(
+      {"downloadCount": FieldValue.increment(1)},
+    );
   }
 
   static void updatePartyPhotoViewCount(String docId) {
-    FirebaseFirestore.instance
-        .collection(PARTY_PHOTOS)
-        .doc(docId)
-        .update({"views": FieldValue.increment(1)},);
+    FirebaseFirestore.instance.collection(PARTY_PHOTOS).doc(docId).update(
+      {"views": FieldValue.increment(1)},
+    );
   }
 
   static void deletePartyPhoto(String docId) {
-    FirebaseFirestore.instance
-        .collection(PARTY_PHOTOS)
-        .doc(docId)
-        .delete();
+    FirebaseFirestore.instance.collection(PARTY_PHOTOS).doc(docId).delete();
   }
 
   /** party tix tier **/
@@ -1579,10 +1583,7 @@ class FirestoreHelper {
   }
 
   static void deletePartyTixTier(String docId) {
-    FirebaseFirestore.instance
-        .collection(PARTY_TIX_TIERS)
-        .doc(docId)
-        .delete();
+    FirebaseFirestore.instance.collection(PARTY_TIX_TIERS).doc(docId).delete();
   }
 
   /** products **/
@@ -1601,7 +1602,8 @@ class FirestoreHelper {
     }
   }
 
-  static Future<QuerySnapshot<Map<String, dynamic>>>  pullProductsByType(String serviceId) {
+  static Future<QuerySnapshot<Map<String, dynamic>>> pullProductsByType(
+      String serviceId) {
     return FirebaseFirestore.instance
         .collection(FirestoreHelper.PRODUCTS)
         .where('serviceId', isEqualTo: serviceId)
@@ -1708,9 +1710,7 @@ class FirestoreHelper {
           .collection(PRODUCTS)
           .doc(productId)
           .update({'isOfferRunning': isOfferRunning}).then((value) {
-        Logx.i(
-            _TAG,
-            "product id $productId is set to offer $isOfferRunning");
+        Logx.i(_TAG, "product id $productId is set to offer $isOfferRunning");
       }).catchError((e, s) {
         Logx.ex(_TAG, 'failed to update product offer status', e, s);
       });
@@ -1757,7 +1757,6 @@ class FirestoreHelper {
         .get();
   }
 
-
   static getPromoters() {
     return FirebaseFirestore.instance
         .collection(PROMOTERS)
@@ -1786,9 +1785,7 @@ class FirestoreHelper {
   }
 
   static pullAllPromoterGuests() {
-    return FirebaseFirestore.instance
-        .collection(PROMOTER_GUESTS)
-        .get();
+    return FirebaseFirestore.instance.collection(PROMOTER_GUESTS).get();
   }
 
   static pullPromoterGuests(String promoterId) {
@@ -1822,7 +1819,8 @@ class FirestoreHelper {
       await FirebaseFirestore.instance
           .collection(QUICK_ORDERS)
           .doc(quickOrder.id)
-          .set(quickOrder.toMap()).then((res){
+          .set(quickOrder.toMap())
+          .then((res) {
         Logx.ist(_TAG, 'your order has been placed, thank you!');
       });
     } on PlatformException catch (e, s) {
@@ -1861,18 +1859,19 @@ class FirestoreHelper {
     FirebaseFirestore.instance.collection(QUICK_ORDERS).doc(docId).delete();
   }
 
-
   /** quick table **/
-  static Future<void> pushQuickTable(QuickTable quickTable, BuildContext context) async {
+  static Future<void> pushQuickTable(
+      QuickTable quickTable, BuildContext context) async {
     try {
       await FirebaseFirestore.instance
           .collection(QUICK_TABLES)
           .doc(quickTable.id)
-          .set(quickTable.toMap()).then((res) {
-        GoRouter.of(context).pushNamed(RouteConstants.menuRouteName,
-            pathParameters: {
-              'id': UserPreferences.getBlocId(),
-            });
+          .set(quickTable.toMap())
+          .then((res) {
+        GoRouter.of(context)
+            .pushNamed(RouteConstants.menuRouteName, pathParameters: {
+          'id': UserPreferences.getBlocId(),
+        });
       });
     } on PlatformException catch (e, s) {
       Logx.e(_TAG, e, s);
@@ -2200,8 +2199,7 @@ class FirestoreHelper {
           .collection(TABLES)
           .doc(table.id)
           .update({'type': newType}).then((value) {
-        Logx.i(
-            _TAG,
+        Logx.i(_TAG,
             "table ${table.tableNumber} type changed to type id $newType");
       }).catchError((e, s) {
         Logx.ex(_TAG, 'failed to change table color', e, s);
@@ -2240,9 +2238,7 @@ class FirestoreHelper {
           .collection(TABLES)
           .doc(tableId)
           .update({'isActive': isActive}).then((value) {
-        Logx.i(
-            _TAG,
-            "table id $tableId has active status of $isActive");
+        Logx.i(_TAG, "table id $tableId has active status of $isActive");
       }).catchError((e, s) {
         Logx.ex(_TAG, 'Failed to set isActive to table', e, s);
       });
@@ -2315,9 +2311,7 @@ class FirestoreHelper {
   }
 
   static pullAllTix() {
-    return FirebaseFirestore.instance
-        .collection(TIXS)
-        .get();
+    return FirebaseFirestore.instance.collection(TIXS).get();
   }
 
   static pullTix(String tixId) {
@@ -2342,7 +2336,8 @@ class FirestoreHelper {
         .snapshots();
   }
 
-  static Stream<QuerySnapshot<Map<String, dynamic>>> getAllTixsByPartyId(String partyId) {
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getAllTixsByPartyId(
+      String partyId) {
     return FirebaseFirestore.instance
         .collection(TIXS)
         .where('partyId', isEqualTo: partyId)
@@ -2350,7 +2345,8 @@ class FirestoreHelper {
         .snapshots();
   }
 
-  static Stream<QuerySnapshot<Map<String, dynamic>>> getTixsSuccessfulByPartyId(String partyId) {
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getTixsSuccessfulByPartyId(
+      String partyId) {
     return FirebaseFirestore.instance
         .collection(TIXS)
         .where('partyId', isEqualTo: partyId)
@@ -2600,7 +2596,8 @@ class FirestoreHelper {
       await FirebaseFirestore.instance.collection(USERS).doc(userId).update({
         'blocServiceId': blocServiceId,
       }).then((value) {
-        Logx.i(_TAG, '$userId user bloc service id updated to : $blocServiceId');
+        Logx.i(
+            _TAG, '$userId user bloc service id updated to : $blocServiceId');
       }).catchError((e, s) {
         Logx.ex(_TAG, 'failed to update user bloc service id', e, s);
       });
@@ -2617,7 +2614,10 @@ class FirestoreHelper {
     int timeNow = Timestamp.now().millisecondsSinceEpoch;
 
     try {
-      await FirebaseFirestore.instance.collection(USERS).doc(UserPreferences.myUser.id).update({
+      await FirebaseFirestore.instance
+          .collection(USERS)
+          .doc(UserPreferences.myUser.id)
+          .update({
         'lastReviewTime': timeNow,
       }).then((value) {
         Logx.i(_TAG, "user last review time updated}");
@@ -2759,6 +2759,34 @@ class FirestoreHelper {
 
   static void deleteUserLounge(String docId) {
     FirebaseFirestore.instance.collection(USER_LOUNGES).doc(docId).delete();
+  }
+
+  /** user organizer **/
+  static void pushUserOrganizer(UserOrganizer userOrganizer) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection(USER_ORGANIZERS)
+          .doc(userOrganizer.id)
+          .set(userOrganizer.toMap());
+    } on PlatformException catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } on Exception catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } catch (e) {
+      Logx.em(_TAG, e.toString());
+    }
+  }
+
+  static pullUserOrganizer(String userId, String organizerId) {
+    return FirebaseFirestore.instance
+        .collection(USER_ORGANIZERS)
+        .where('userId', isEqualTo: userId)
+        .where('organizerId', isEqualTo: organizerId)
+        .get();
+  }
+
+  static void deleteUserOrganizer(String docId) {
+    FirebaseFirestore.instance.collection(USER_ORGANIZERS).doc(docId).delete();
   }
 
   /** user photo **/

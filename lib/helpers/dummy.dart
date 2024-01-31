@@ -46,6 +46,7 @@ import '../db/entity/tix_tier_item.dart';
 import '../db/entity/user.dart';
 import '../db/entity/user_bloc.dart';
 import '../db/entity/user_lounge.dart';
+import '../db/entity/user_organizer.dart';
 import '../db/entity/user_photo.dart';
 import '../db/shared_preferences/user_preferences.dart';
 import 'firestore_helper.dart';
@@ -335,6 +336,7 @@ class Dummy {
         phoneNumber: 0,
         ownerId: '',
         imageUrl: '',
+        followersCount: 1,
         createdAt: Timestamp.now().millisecondsSinceEpoch);
     return organizer;
   }
@@ -724,6 +726,17 @@ class Dummy {
         isAccepted: true,
         isBanned: false);
     return dummyUserLounge;
+  }
+
+  static UserOrganizer getDummyUserOrganizer() {
+    UserOrganizer dummy = UserOrganizer(
+      id: StringUtils.getRandomString(28),
+      userId: '',
+      organizerId: '',
+      creationTime: Timestamp.now().millisecondsSinceEpoch,
+    );
+
+    return dummy;
   }
 
   static UserPhoto getDummyUserPhoto() {

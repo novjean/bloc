@@ -4,6 +4,7 @@ class Organizer {
   final int phoneNumber;
   final String ownerId;
   final String imageUrl;
+  final int followersCount;
   final int createdAt;
 
 //<editor-fold desc="Data Methods">
@@ -13,6 +14,7 @@ class Organizer {
     required this.phoneNumber,
     required this.ownerId,
     required this.imageUrl,
+    required this.followersCount,
     required this.createdAt,
   });
 
@@ -26,6 +28,7 @@ class Organizer {
           phoneNumber == other.phoneNumber &&
           ownerId == other.ownerId &&
           imageUrl == other.imageUrl &&
+          followersCount == other.followersCount &&
           createdAt == other.createdAt);
 
   @override
@@ -35,6 +38,7 @@ class Organizer {
       phoneNumber.hashCode ^
       ownerId.hashCode ^
       imageUrl.hashCode ^
+      followersCount.hashCode ^
       createdAt.hashCode;
 
   @override
@@ -45,6 +49,7 @@ class Organizer {
         ' phoneNumber: $phoneNumber,' +
         ' ownerId: $ownerId,' +
         ' imageUrl: $imageUrl,' +
+        ' followersCount: $followersCount,' +
         ' createdAt: $createdAt,' +
         '}';
   }
@@ -55,6 +60,7 @@ class Organizer {
     int? phoneNumber,
     String? ownerId,
     String? imageUrl,
+    int? followersCount,
     int? createdAt,
   }) {
     return Organizer(
@@ -63,6 +69,7 @@ class Organizer {
       phoneNumber: phoneNumber ?? this.phoneNumber,
       ownerId: ownerId ?? this.ownerId,
       imageUrl: imageUrl ?? this.imageUrl,
+      followersCount: followersCount ?? this.followersCount,
       createdAt: createdAt ?? this.createdAt,
     );
   }
@@ -74,6 +81,7 @@ class Organizer {
       'phoneNumber': this.phoneNumber,
       'ownerId': this.ownerId,
       'imageUrl': this.imageUrl,
+      'followersCount': this.followersCount,
       'createdAt': this.createdAt,
     };
   }
@@ -85,6 +93,7 @@ class Organizer {
       phoneNumber: map['phoneNumber'] as int,
       ownerId: map['ownerId'] as String,
       imageUrl: map['imageUrl'] as String,
+      followersCount: map['followersCount'] as int,
       createdAt: map['createdAt'] as int,
     );
   }

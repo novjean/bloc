@@ -37,6 +37,7 @@ import '../db/entity/tix_tier_item.dart';
 import '../db/entity/user.dart';
 import '../db/entity/user_bloc.dart';
 import '../db/entity/user_lounge.dart';
+import '../db/entity/user_organizer.dart';
 import '../db/entity/user_photo.dart';
 import '../db/shared_preferences/user_preferences.dart';
 import '../utils/constants.dart';
@@ -2270,6 +2271,11 @@ class Fresh {
       Logx.em(_TAG, 'organizer imageUrl not exist for id: ${organizer.id}');
     }
     try {
+      fresh = fresh.copyWith(followersCount: organizer.followersCount);
+    } catch (e) {
+      Logx.em(_TAG, 'organizer followersCount not exist for id: ${organizer.id}');
+    }
+    try {
       fresh = fresh.copyWith(createdAt: organizer.createdAt);
     } catch (e) {
       Logx.em(_TAG, 'organizer createdAt not exist for id: ${organizer.id}');
@@ -2312,12 +2318,17 @@ class Fresh {
       isModelChanged = true;
     }
     try {
+      fresh = fresh.copyWith(followersCount: map['followersCount'] as int);
+    } catch (e) {
+      Logx.em(_TAG, 'organizer followersCount not exist for id: ${fresh.id}');
+      isModelChanged = true;
+    }
+    try {
       fresh = fresh.copyWith(createdAt: map['createdAt'] as int);
     } catch (e) {
       Logx.em(_TAG, 'organizer createdAt not exist for id: ${fresh.id}');
       isModelChanged = true;
     }
-
 
     if (isModelChanged && shouldUpdate) {
       Logx.i(_TAG, 'updating organizer ${fresh.id}');
@@ -5754,6 +5765,70 @@ class Fresh {
     }
 
     return freshUserLounge;
+  }
+
+  /** user organizer **/
+  static UserOrganizer freshUserOrganizerMap(Map<String, dynamic> map, bool shouldUpdate) {
+    UserOrganizer userOrganizer = Dummy.getDummyUserOrganizer();
+    bool isModelChanged = false;
+
+    try {
+      userOrganizer = userOrganizer.copyWith(id: map['id'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'userOrganizer id not exist');
+    }
+    try {
+      userOrganizer = userOrganizer.copyWith(userId: map['userId'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'userPhoto userId not exist for id: ${userOrganizer.id}');
+      isModelChanged = true;
+    }
+    try {
+      userOrganizer = userOrganizer.copyWith(organizerId: map['organizerId'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'userPhoto organizerId not exist for id: ${userOrganizer.id}');
+      isModelChanged = true;
+    }
+    try {
+      userOrganizer = userOrganizer.copyWith(creationTime: map['creationTime'] as int);
+    } catch (e) {
+      Logx.em(_TAG, 'userOrganizer creationTime not exist for id: ${userOrganizer.id}');
+      isModelChanged = true;
+    }
+
+    if (isModelChanged && shouldUpdate) {
+      Logx.i(_TAG, 'updating userOrganizer ${userOrganizer.id}');
+      FirestoreHelper.pushUserOrganizer(userOrganizer);
+    }
+
+    return userOrganizer;
+  }
+
+  static UserOrganizer freshUserOrganizer(UserOrganizer userOrganizer) {
+    UserOrganizer fresh = Dummy.getDummyUserOrganizer();
+
+    try {
+      fresh = fresh.copyWith(id: userOrganizer.id);
+    } catch (e) {
+      Logx.em(_TAG, 'userOrganizer id not exist');
+    }
+    try {
+      fresh = fresh.copyWith(userId: userOrganizer.userId);
+    } catch (e) {
+      Logx.em(_TAG, 'userOrganizer userId exist for id: ${userOrganizer.id}');
+    }
+    try {
+      fresh = fresh.copyWith(organizerId: userOrganizer.organizerId);
+    } catch (e) {
+      Logx.em(_TAG, 'userOrganizer organizerId exist for id: ${userOrganizer.id}');
+    }
+    try {
+      fresh = fresh.copyWith(creationTime: userOrganizer.creationTime);
+    } catch (e) {
+      Logx.em(_TAG, 'userOrganizer creationTime not exist for id: ${userOrganizer.id}');
+    }
+
+    return fresh;
   }
 
   /** user photo **/

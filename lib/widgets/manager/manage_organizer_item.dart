@@ -34,23 +34,18 @@ class ManageOrganizerItem extends StatelessWidget{
                         'assets/icons/logo.png'),
                     image: NetworkImage(organizer.imageUrl),
                     fit: BoxFit.cover,) : const SizedBox(),
-                  title: RichText(
-                    text: TextSpan(
-                      text: '${organizer.name} ',
+                  title: Text('${organizer.name} ',
                       style: const TextStyle(
                           fontFamily: Constants.fontDefault,
                           color: Colors.black,
                           overflow: TextOverflow.ellipsis,
                           fontSize: 18,
-                          fontWeight: FontWeight.bold),
-                    ),
-                  ),
-
+                          fontWeight: FontWeight.bold)),
                   subtitle: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('${organizer.phoneNumber}'),
-                      // Text('${organizer.hits} hits'),
+                      Text('${organizer.followersCount} followers'),
+                      Text('${organizer.phoneNumber}')
                     ],
                   ),
                   trailing: DarkButtonWidget(text: '👁️', onClicked: () {

@@ -3,6 +3,7 @@ import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:flutter/material.dart';
 
 import '../../utils/constants.dart';
+import '../../utils/logx.dart';
 
 class SplashScreen extends StatefulWidget {
   @override
@@ -10,6 +11,8 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderStateMixin {
+  static const String _TAG = 'SplashScreen';
+
   late AnimationController _animationController;
   late Animation<double> _animation;
 

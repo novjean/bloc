@@ -12,6 +12,7 @@ import 'package:go_router/go_router.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../../db/entity/history_music.dart';
+import '../../db/entity/organizer.dart';
 import '../../db/entity/party.dart';
 import '../../db/entity/party_guest.dart';
 import '../../db/entity/party_interest.dart';
@@ -28,6 +29,7 @@ import '../../utils/date_time_utils.dart';
 import '../../utils/logx.dart';
 import '../../utils/network_utils.dart';
 import '../../widgets/footer.dart';
+import '../../widgets/organizer/organizer_banner.dart';
 import '../../widgets/parties/artist_banner.dart';
 import '../../widgets/store_badge_item.dart';
 import '../../widgets/ui/app_bar_title.dart';
@@ -326,6 +328,26 @@ class _EventScreenState extends State<EventScreen> {
               const SizedBox(height: 10),
               mParty.artistIds.isNotEmpty
                   ? _loadArtists(context)
+                  : const SizedBox(),
+              SizedBox(height: mParty.organizerIds.isNotEmpty ? 10 : 0),
+
+              mParty.organizerIds.isNotEmpty  ? const Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 15.0),
+                    child: Text('organizers',
+                        style: TextStyle(
+                            color: Constants.lightPrimary,
+                            overflow: TextOverflow.ellipsis,
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold)),
+                  ),
+                ],
+              ) : const SizedBox(),
+
+              mParty.organizerIds.isNotEmpty ?
+                  _loadOrganizers(context)
                   : const SizedBox(),
               const SizedBox(height: 10),
               const Row(
@@ -877,4 +899,55 @@ class _EventScreenState extends State<EventScreen> {
       ),
     );
   }
+
+  Widget _loadOrganizers(BuildContext context) {
+    return StreamBuilder<QuerySnapshot>(
+      stream: FirestoreHelper.getPartyOrganizers(mParty.organizerIds),
+      builder: (ctx, snapshot) {
+        switch (snapshot.connectionState) {
+          case ConnectionState.waiting:
+          case ConnectionState.none:
+            return const LoadingWidget();
+          case ConnectionState.active:
+          case ConnectionState.done:
+            {
+              List<Organizer> organizers = [];
+              for (int i = 0; i < snapshot.data!.docs.length; i++) {
+                DocumentSnapshot document = snapshot.data!.docs[i];
+                Map<String, dynamic> data =
+                document.data()! as Map<String, dynamic>;
+                final Organizer organizer = Fresh.freshOrganizerMap(data, false);
+                organizers.add(organizer);
+              }
+              organizers.sort((a, b) => a.name.compareTo(b.name));
+
+              return _showOrganizers(context, organizers);
+            }
+        }
+      },
+    );
+  }
+
+  _showOrganizers(BuildContext context, List<Organizer> organizers) {
+    return Container(
+      padding: const EdgeInsets.only(left: 5, right: 5, top: 2),
+      height: 83,
+      child: ListView.builder(
+        physics: const NeverScrollableScrollPhysics(),
+        reverse: true,
+        shrinkWrap: true,
+        itemCount: organizers.length,
+        scrollDirection: Axis.horizontal,
+        itemBuilder: (BuildContext context, int index) {
+          Organizer organizer = organizers[index];
+
+          return OrganizerBanner(
+            organizer: organizer,
+            isClickable: true,
+          );
+        },
+      ),
+    );
+  }
+
 }
