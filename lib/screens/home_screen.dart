@@ -645,6 +645,8 @@ class _HomeScreenState extends State<HomeScreen> {
     }
 
     if(showAd){
+      FirestoreHelper.updateAdCampaignViews(adCampaign.id);
+
       WidgetsBinding.instance.addPostFrameCallback((_) {
         showDialog(
             context: context,
