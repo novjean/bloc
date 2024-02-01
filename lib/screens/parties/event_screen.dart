@@ -933,7 +933,6 @@ class _EventScreenState extends State<EventScreen> {
       padding: const EdgeInsets.only(left: 5, right: 5, top: 2),
       height: 83,
       child: ListView.builder(
-        physics: const NeverScrollableScrollPhysics(),
         reverse: true,
         shrinkWrap: true,
         itemCount: organizers.length,

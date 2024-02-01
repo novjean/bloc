@@ -22,6 +22,7 @@ import '../db/shared_preferences/user_preferences.dart';
 import '../helpers/dummy.dart';
 import '../helpers/firestore_helper.dart';
 import '../helpers/fresh.dart';
+import '../utils/file_utils.dart';
 import '../utils/logx.dart';
 import '../utils/number_utils.dart';
 import '../widgets/ad_campaign_slide_item.dart';
@@ -655,9 +656,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 delay: const Duration(seconds: 1),
                 child: AlertDialog(
                   contentPadding: const EdgeInsets.all(1.0),
-                  backgroundColor: Constants.lightPrimary,
+                  backgroundColor: Colors.transparent,
                   shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                      borderRadius: BorderRadius.all(Radius.circular(9))),
                   content: GestureDetector(
                     onTap: () {
                       Navigator.of(ctx).pop();
@@ -669,14 +670,15 @@ class _HomeScreenState extends State<HomeScreen> {
                       }
                     },
                     child: Container(
-                        color: Colors.black,
-                        width: double.maxFinite,
-                        height: double.maxFinite,
-                        child: FadeInImage(
-                          placeholder: const AssetImage('assets/icons/logo.png'),
-                          image: NetworkImage(adCampaign.imageUrls[0]),
-                          fit: BoxFit.fitWidth,
-                        )),
+                      color: Colors.transparent,
+                      width: double.maxFinite,
+                      height: double.maxFinite,
+                      child: FadeInImage(
+                        placeholder: const AssetImage('assets/icons/logo.png'),
+                        image: NetworkImage(adCampaign.imageUrls[0]),
+                        fit: BoxFit.fitWidth,
+                      ),
+                    ),
                   ),
                   actions: [
                     TextButton(
@@ -688,63 +690,10 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: Text(
                           "close",
                           style: TextStyle(
-                              color: Constants.darkPrimary, fontSize: 15),
+                              color: Constants.lightPrimary, fontSize: 15),
                         ),
                       ),
-                      // child:  const Text('close'),
                     ),
-                    adCampaign.isPartyAd
-                        ? TextButton(
-                      onPressed: () {
-                        Navigator.of(ctx).pop();
-
-                        _handleAdPartyClickActions(adCampaign, true);
-                      },
-                      child: const Text(
-                        "💝 share",
-                        style: TextStyle(
-                            color: Constants.darkPrimary, fontSize: 15),
-                      ),
-                      // child:  const Text('close'),
-                    )
-                        : const SizedBox(),
-                    adCampaign.isPartyAd
-                        ? TextButton(
-                      style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all<Color>(
-                            Constants.darkPrimary),
-                      ),
-                      onPressed: () {
-                        FirestoreHelper.updateAdCampaignClickCount(
-                            adCampaign.id);
-
-                        // we pull in party
-                        FirestoreHelper.pullParty(adCampaign.partyId)
-                            .then((res) {
-                          if (res.docs.isNotEmpty) {
-                            DocumentSnapshot document = res.docs[0];
-                            Map<String, dynamic> data =
-                            document.data()! as Map<String, dynamic>;
-                            final Party party =
-                            Fresh.freshPartyMap(data, false);
-
-                            GoRouter.of(context).push('/event/${party.name}/${party.chapter}');
-
-                            Navigator.of(ctx).pop();
-                          } else {
-                            Navigator.of(ctx).pop();
-                          }
-                        });
-
-                      },
-                      child: const Text(
-                        "🎊 more info",
-                        style: TextStyle(
-                            color: Constants.lightPrimary, fontSize: 15),
-                      ),
-                      // child:  const Text('close'),
-                    )
-                        : const SizedBox(),
                   ],
                 ),
               );

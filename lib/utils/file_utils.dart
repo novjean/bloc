@@ -1,8 +1,10 @@
+import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:share_plus/share_plus.dart';
@@ -170,6 +172,21 @@ class FileUtils {
     } catch (e) {
     Logx.elt(_TAG, 'oops, something went wrong. error: $e');
     }
+  }
+
+  static Future<Size> calculateImageDimension(String imageUrl) {
+    Completer<Size> completer = Completer();
+    Image image = Image.network(imageUrl);
+    image.image.resolve(ImageConfiguration()).addListener(
+      ImageStreamListener(
+            (ImageInfo image, bool synchronousCall) {
+          var myImage = image.image;
+          Size size = Size(myImage.width.toDouble(), myImage.height.toDouble());
+          completer.complete(size);
+        },
+      ),
+    );
+    return completer.future;
   }
 
 }
