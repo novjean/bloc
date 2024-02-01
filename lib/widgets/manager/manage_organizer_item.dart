@@ -3,7 +3,6 @@ import 'package:bloc/widgets/ui/dark_button_widget.dart';
 import 'package:flutter/material.dart';
 
 import '../../../utils/constants.dart';
-import '../../../utils/date_time_utils.dart';
 import '../../screens/manager/organizers/manage_organizer_screen.dart';
 
 class ManageOrganizerItem extends StatelessWidget{
@@ -11,7 +10,7 @@ class ManageOrganizerItem extends StatelessWidget{
 
   Organizer organizer;
 
-  ManageOrganizerItem({Key? key, required this.organizer}) : super(key: key);
+  ManageOrganizerItem({super.key, required this.organizer});
 
   @override
   Widget build(BuildContext context) {

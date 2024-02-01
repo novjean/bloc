@@ -170,11 +170,36 @@ class _AdCampaignAddEditScreenState extends State<AdCampaignAddEditScreen> {
         dateTimeContainer(context, 'end'),
         const SizedBox(height: 24),
         TextFieldWidget(
-          label: 'click count',
+          label: 'views',
+          text: widget.adCampaign.views.toString(),
+          onChanged: (value) {},
+        ),
+        const SizedBox(height: 12),
+        TextFieldWidget(
+          label: 'clicks',
           text: widget.adCampaign.clickCount.toString(),
           onChanged: (value) {},
         ),
         const SizedBox(height: 24),
+        Row(
+          children: <Widget>[
+            const Text(
+              'party ad : ',
+              style: TextStyle(fontSize: 17.0),
+            ), //Text
+            const SizedBox(width: 10), //SizedBox
+            Checkbox(
+              value: widget.adCampaign.isPartyAd,
+              onChanged: (value) {
+                setState(() {
+                  widget.adCampaign =
+                      widget.adCampaign.copyWith(isPartyAd: value);
+                });
+              },
+            ), //Checkbox
+          ], //<Widget>[]
+        ),
+        const SizedBox(height: 12),
         Row(
           children: <Widget>[
             const Text(
@@ -263,7 +288,8 @@ class _AdCampaignAddEditScreenState extends State<AdCampaignAddEditScreen> {
             onPressed: () {
               _selectDate(context, dateTime);
             },
-            child: const Text('end date & time'),
+            child: const Text('end date & time',
+              style: TextStyle(color: Constants.darkPrimary),),
           ),
         ],
       ),

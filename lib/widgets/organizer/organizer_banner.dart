@@ -17,9 +17,7 @@ class OrganizerBanner extends StatefulWidget {
   final bool isClickable;
 
   OrganizerBanner(
-      {Key? key,
-        required this.organizer,
-        required this.isClickable})
+      {Key? key, required this.organizer, required this.isClickable})
       : super(key: key);
 
   @override
@@ -31,7 +29,6 @@ class _OrganizerBannerState extends State<OrganizerBanner> {
   Widget build(BuildContext context) {
     return SizedBox(
       width: 280,
-      // padding: const EdgeInsets.symmetric(horizontal: 1.0),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(9),
         child: Hero(
@@ -39,24 +36,24 @@ class _OrganizerBannerState extends State<OrganizerBanner> {
           child: Card(
             elevation: 1,
             color: Constants.lightPrimary,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(9)),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(9)),
             child: ListTile(
-              leading: widget.organizer.imageUrl.isNotEmpty?
-              FadeInImage(
-                placeholder: const AssetImage(
-                    'assets/icons/logo.png'),
-                image: NetworkImage(widget.organizer.imageUrl),
-                fit: BoxFit.cover,) : const SizedBox(),
-              title: Text(
-                  widget.organizer.name,
+              leading: widget.organizer.imageUrl.isNotEmpty
+                  ? FadeInImage(
+                      placeholder: const AssetImage('assets/icons/logo.png'),
+                      image: NetworkImage(widget.organizer.imageUrl),
+                      fit: BoxFit.cover,
+                    )
+                  : const SizedBox(),
+              title: Text(widget.organizer.name,
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
                       fontFamily: Constants.fontDefault,
                       color: Colors.black,
                       overflow: TextOverflow.ellipsis,
                       fontSize: 16,
-                      fontWeight: FontWeight.bold)
-              ),
+                      fontWeight: FontWeight.bold)),
               subtitle: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -64,43 +61,57 @@ class _OrganizerBannerState extends State<OrganizerBanner> {
                 ],
               ),
               trailing: IconButton(
-                icon: const Icon(Icons.event_available_outlined,
-                  color: Constants.darkPrimary,),
+                icon: const Icon(
+                  Icons.event_available_outlined,
+                  color: Constants.darkPrimary,
+                ),
                 onPressed: () {
-                  if(UserPreferences.isUserLoggedIn()){
-                    FirestoreHelper.pullUserOrganizer(UserPreferences.myUser.id, widget.organizer.id).then((res) {
-                      if(res.docs.isEmpty){
-                        UserOrganizer userOrganizer = Dummy.getDummyUserOrganizer().copyWith(
-                          userId: UserPreferences.myUser.id, organizerId: widget.organizer.id
-                        );
+                  if (UserPreferences.isUserLoggedIn()) {
+                    FirestoreHelper.pullUserOrganizer(
+                            UserPreferences.myUser.id, widget.organizer.id)
+                        .then((res) {
+                      if (res.docs.isEmpty) {
+                        UserOrganizer userOrganizer =
+                            Dummy.getDummyUserOrganizer().copyWith(
+                                userId: UserPreferences.myUser.id,
+                                organizerId: widget.organizer.id);
                         FirestoreHelper.pushUserOrganizer(userOrganizer);
 
-                        Logx.ist(OrganizerBanner._TAG, 'following ${widget.organizer.name}');
+                        Logx.ist(OrganizerBanner._TAG,
+                            'following ${widget.organizer.name}');
                         setState(() {
                           int count = widget.organizer.followersCount - 1;
-                          widget.organizer = widget.organizer.copyWith(followersCount: count);
-                          FirestoreHelper.updateOrganizerFollowersCount(widget.organizer.id, true);
+                          widget.organizer =
+                              widget.organizer.copyWith(followersCount: count);
+                          FirestoreHelper.updateOrganizerFollowersCount(
+                              widget.organizer.id, true);
                         });
                       } else {
-                        try{
+                        try {
                           DocumentSnapshot document = res.docs[0];
-                          Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-                          UserOrganizer userOrganizer = Fresh.freshUserOrganizerMap(data, false);
+                          Map<String, dynamic> data =
+                              document.data()! as Map<String, dynamic>;
+                          UserOrganizer userOrganizer =
+                              Fresh.freshUserOrganizerMap(data, false);
 
                           FirestoreHelper.deleteUserOrganizer(userOrganizer.id);
 
                           setState(() {
                             int count = widget.organizer.followersCount - 1;
-                            widget.organizer = widget.organizer.copyWith(followersCount: count);
-                            FirestoreHelper.updateOrganizerFollowersCount(widget.organizer.id, false);
+                            widget.organizer = widget.organizer
+                                .copyWith(followersCount: count);
+                            FirestoreHelper.updateOrganizerFollowersCount(
+                                widget.organizer.id, false);
                           });
-                        } catch(e) {
-                          Logx.em(OrganizerBanner._TAG, 'unfollowing organizer failed');
+                        } catch (e) {
+                          Logx.em(OrganizerBanner._TAG,
+                              'unfollowing organizer failed');
                         }
                       }
                     });
                   } else {
-                    Logx.ist(OrganizerBanner._TAG, 'please login to follow ${widget.organizer.name}');
+                    Logx.ist(OrganizerBanner._TAG,
+                        'please login to follow ${widget.organizer.name}');
                   }
                 },
               ),
@@ -111,5 +122,3 @@ class _OrganizerBannerState extends State<OrganizerBanner> {
     );
   }
 }
-
-

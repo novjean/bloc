@@ -425,7 +425,6 @@ class _ProfileAddEditRegisterPageState
             padding:
             EdgeInsets.only(top: mq.height * .03, bottom: mq.height * .05),
             children: [
-              //pick profile picture label
               const Text('pick or click 🤳 your best photo 🤩',
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 20, color: Colors.black, fontWeight: FontWeight.w500)),
@@ -448,7 +447,6 @@ class _ProfileAddEditRegisterPageState
                         if(!kIsWeb){
                           final ImagePicker picker = ImagePicker();
 
-                          // Pick an image
                           final XFile? image = await picker.pickImage(
                               source: ImageSource.gallery, imageQuality: 95, maxWidth: 300);
                           if (image != null) {
@@ -467,21 +465,24 @@ class _ProfileAddEditRegisterPageState
 
                             widget.user = widget.user.copyWith(imageUrl: newImageUrl);
                             FirestoreHelper.pushUser(widget.user);
-                            FirestorageHelper.deleteFile(oldImageUrl);
+
+                            if(oldImageUrl.isNotEmpty &&
+                                oldImageUrl.contains(FirestorageHelper.USER_IMAGES)){
+                              FirestorageHelper.deleteFile(oldImageUrl);
+                            }
 
                             Logx.ist(_TAG,'profile photo updated');
 
                             setState(() {
                               imagePath = image.path;
                             });
-
                           }
                         } else {
                           Logx.ist(_TAG, 'download our app to upload your photo and more');
                           //todo: need to add dialog to download the app
                         }
 
-                        Navigator.pop(context);
+                        Navigator.of(context).pop();
 
                       },
                       child: Image.asset('assets/images/add_image.png')),
