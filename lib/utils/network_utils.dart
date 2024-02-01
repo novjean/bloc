@@ -3,7 +3,6 @@ import 'package:url_launcher/url_launcher.dart';
 
 import 'logx.dart';
 
-
 class NetworkUtils {
   static const String _TAG = 'NetworkUtils';
 

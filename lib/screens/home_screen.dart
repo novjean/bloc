@@ -671,30 +671,36 @@ class _HomeScreenState extends State<HomeScreen> {
                     },
                     child: Container(
                       color: Colors.transparent,
-                      width: double.maxFinite,
-                      height: double.maxFinite,
-                      child: FadeInImage(
-                        placeholder: const AssetImage('assets/icons/logo.png'),
-                        image: NetworkImage(adCampaign.imageUrls[0]),
-                        fit: BoxFit.fitWidth,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          FadeInImage(
+                            placeholder: const AssetImage('assets/icons/logo.png'),
+                            image: NetworkImage(adCampaign.imageUrls[0]),
+                            fit: BoxFit.fitWidth,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.of(ctx).pop();
+                                    },
+                                    child: const DelayedDisplay(
+                                      delay: Duration(seconds: 1),
+                                      child: Text(
+                                        "close",
+                                        style: TextStyle(
+                                            color: Constants.primary, fontSize: 15),
+                                      ),
+                                    ),
+                                  ),
+                          ]),
+                        ],
                       ),
                     ),
                   ),
-                  actions: [
-                    TextButton(
-                      onPressed: () {
-                        Navigator.of(ctx).pop();
-                      },
-                      child: const DelayedDisplay(
-                        delay: Duration(seconds: 1),
-                        child: Text(
-                          "close",
-                          style: TextStyle(
-                              color: Constants.lightPrimary, fontSize: 15),
-                        ),
-                      ),
-                    ),
-                  ],
                 ),
               );
             });

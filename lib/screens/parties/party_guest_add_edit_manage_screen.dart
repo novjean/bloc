@@ -32,6 +32,7 @@ import '../../db/entity/promoter.dart';
 import '../../db/entity/reservation.dart';
 import '../../db/entity/tix.dart';
 import '../../db/entity/user.dart' as blocUser;
+import '../../db/entity/user_organizer.dart';
 import '../../db/shared_preferences/party_guest_preferences.dart';
 import '../../db/shared_preferences/user_preferences.dart';
 import '../../helpers/dummy.dart';
@@ -2865,6 +2866,19 @@ class _PartyGuestAddEditManageScreenState
     FirestoreHelper.pushPartyGuest(widget.partyGuest);
 
     if (isApproved) {
+      if (mBlocUser.fcmToken.isNotEmpty) {
+        String title = widget.party.name;
+        String message =
+            '🥳 yayyy! your guest list for ${widget.party.name} has been approved 🎉, see you and your gang soon! 😎🍾';
+
+        //send a notification
+        Apis.sendPushNotification(mBlocUser.fcmToken, title, message);
+        Logx.ist(_TAG,
+            'notification has been sent to ${mBlocUser.name} ${mBlocUser.surname}');
+      } else {
+        _notifyApprovalWhatsapp();
+      }
+
       if (widget.party.loungeId.isNotEmpty) {
         FirestoreHelper.pullUserLounge(
             mBlocUser.id, widget.party.loungeId)
@@ -2877,54 +2891,35 @@ class _PartyGuestAddEditManageScreenState
                 userFcmToken: mBlocUser.fcmToken,
                 isAccepted: true);
             FirestoreHelper.pushUserLounge(userLounge);
+          }
+        });
+      }
 
-            if (mBlocUser.fcmToken.isNotEmpty) {
-              String title = widget.party.name;
-              String message =
-                  '🥳 yayyy! welcome to ${widget.party.name} family, your guest list for ${widget.party.name} has been approved 🎉, see you and your gang soon! 😎🍾';
+      if(widget.party.organizerIds.isNotEmpty){
+        FirestoreHelper.pullUserOrganizers(UserPreferences.myUser.id).then((res) {
+          if(res.docs.isNotEmpty){
+            List<UserOrganizer> userOrganizers = [];
 
-              //send a notification
-              Apis.sendPushNotification(
-                  mBlocUser.fcmToken, title, message);
-              Logx.ist(_TAG,
-                  'notification has been sent to ${mBlocUser.name} ${mBlocUser.surname}');
-            } else {
-              Logx.d(_TAG,
-                  'app user but no fcm token to alert guest approval');
-              _notifyApprovalWhatsapp();
+            for(int i=0;i<res.docs.length;i++){
+              DocumentSnapshot document = res.docs[i];
+              Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+              UserOrganizer userOrganizer = Fresh.freshUserOrganizerMap(data, false);
+              userOrganizers.add(userOrganizer);
             }
-          } else {
-            if (mBlocUser.fcmToken.isNotEmpty) {
-              String title = widget.party.name;
-              String message =
-                  '🥳 yayyy! your guest list for ${widget.party.name} has been approved 🎉, see you and your gang soon! 😎🍾';
 
-              //send a notification
-              Apis.sendPushNotification(
-                  mBlocUser.fcmToken, title, message);
-              Logx.ist(_TAG,
-                  'notification has been sent to ${mBlocUser.name} ${mBlocUser.surname}');
-            } else {
-              Logx.d(_TAG,
-                  'no fcm token, whatsapp notifying guest approval');
-              _notifyApprovalWhatsapp();
+            for(String organizerId in widget.party.organizerIds){
+              bool isOrgPresent = userOrganizers.any((userOrg) => userOrg.organizerId == organizerId);
+
+              if(!isOrgPresent){
+                UserOrganizer newUserOrg = Dummy.getDummyUserOrganizer()
+                    .copyWith(userId: UserPreferences.myUser.id, organizerId: organizerId);
+                FirestoreHelper.pushUserOrganizer(newUserOrg);
+              }
             }
           }
         });
-      } else {
-        if (mBlocUser.fcmToken.isNotEmpty) {
-          String title = widget.party.name;
-          String message =
-              '🥳 yayyy! your guest list for ${widget.party.name} has been approved 🎉, see you and your gang soon! 😎🍾';
-
-          //send a notification
-          Apis.sendPushNotification(mBlocUser.fcmToken, title, message);
-          Logx.ist(_TAG,
-              'notification has been sent to ${mBlocUser.name} ${mBlocUser.surname}');
-        } else {
-          _notifyApprovalWhatsapp();
-        }
       }
+
       Logx.ist(_TAG, 'party guest ${widget.partyGuest.name} is approved');
     } else {
       Logx.ist(

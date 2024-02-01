@@ -2785,6 +2785,13 @@ class FirestoreHelper {
         .get();
   }
 
+  static pullUserOrganizers(String userId) {
+    return FirebaseFirestore.instance
+        .collection(USER_ORGANIZERS)
+        .where('userId', isEqualTo: userId)
+        .get();
+  }
+
   static void deleteUserOrganizer(String docId) {
     FirebaseFirestore.instance.collection(USER_ORGANIZERS).doc(docId).delete();
   }
