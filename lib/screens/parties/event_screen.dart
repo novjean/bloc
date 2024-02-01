@@ -930,7 +930,7 @@ class _EventScreenState extends State<EventScreen> {
 
   _showOrganizers(BuildContext context, List<Organizer> organizers) {
     return Container(
-      padding: const EdgeInsets.only(left: 5, right: 5, top: 2),
+      padding: const EdgeInsets.only(left: 10, right: 10, top: 2),
       height: 83,
       child: ListView.builder(
         reverse: true,
