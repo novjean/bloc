@@ -1117,6 +1117,15 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
                 'user in guest list not found in db : ${partyGuest.guestId}');
           }
         });
+      } else {
+        if (i == mPartyGuests.length - 1) {
+          if (reviewUsers.isNotEmpty) {
+            _showWhatsappGoogleRequestList(reviewUsers,
+                Constants.blocGoogleReview);
+          } else {
+            Logx.ilt(_TAG, 'no users in list to review');
+          }
+        }
       }
     }
   }
@@ -1135,6 +1144,7 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
             User user = Fresh.freshUserMap(map, true);
             reviewUsers.add(user);
 
+            Logx.d(_TAG, 'index $i - ${mPartyGuests.length}');
             if (i == mPartyGuests.length - 1) {
               if (reviewUsers.isNotEmpty) {
                 _showWhatsappGoogleRequestList(
@@ -1148,6 +1158,15 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
                 'user in guest list not found in db : ${partyGuest.guestId}');
           }
         });
+      } else {
+        if (i == mPartyGuests.length - 1) {
+          if (reviewUsers.isNotEmpty) {
+            _showWhatsappGoogleRequestList(
+                reviewUsers, Constants.freqGoogleReview);
+          } else {
+            Logx.ilt(_TAG, 'no users in list to review');
+          }
+        }
       }
     }
   }
