@@ -17,7 +17,6 @@ import '../../db/shared_preferences/user_preferences.dart';
 import '../../helpers/dummy.dart';
 import '../../helpers/fresh.dart';
 import '../../main.dart';
-import '../../routes/route_constants.dart';
 import '../../utils/constants.dart';
 import '../../utils/dialog_utils.dart';
 import '../../utils/logx.dart';
@@ -26,7 +25,6 @@ import '../../widgets/parties/party_banner.dart';
 import '../../widgets/tix/party_tix_tier_item.dart';
 import '../../widgets/tix/buy_tix_tier_item.dart';
 import '../../widgets/ui/app_bar_title.dart';
-import '../../widgets/ui/dark_button_widget.dart';
 import '../../widgets/ui/textfield_widget.dart';
 import 'tix_checkout_screen.dart';
 
@@ -300,7 +298,7 @@ class _TixBuyEditScreenState extends State<TixBuyEditScreen> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
           Text(
-            'total  \u20B9 ${mPrice.toStringAsFixed(0)}',
+            'total  ${StringUtils.rs} ${mPrice.toStringAsFixed(0)}',
           ),
           ElevatedButton.icon(
             style: ElevatedButton.styleFrom(
@@ -310,8 +308,7 @@ class _TixBuyEditScreenState extends State<TixBuyEditScreen> {
               elevation: 3,
               shape: const RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(
-                    Radius.circular(9),)
-                ,
+                    Radius.circular(9),),
               ),
             ),
             onPressed: () {
@@ -346,7 +343,7 @@ class _TixBuyEditScreenState extends State<TixBuyEditScreen> {
         userPhone: UserPreferences.myUser.phoneNumber.toString(),
         userEmail: UserPreferences.myUser.email);
 
-    if (!kIsWeb) {
+    // if (!kIsWeb) {
       if (mPrice > 0) {
         Navigator.of(context).push(
           MaterialPageRoute(
@@ -358,20 +355,21 @@ class _TixBuyEditScreenState extends State<TixBuyEditScreen> {
       } else {
         Logx.ilt(_TAG, 'please select a ticket to purchase');
       }
-    } else {
-      if (UserPreferences.isUserLoggedIn()) {
-        widget.tix = widget.tix.copyWith(
-            total: mPrice,
-            userId: mUser.id,
-            userPhone: mUser.phoneNumber.toString(),
-            userEmail: mUser.email,
-            userName: mUser.username,
-            result: 'purchase pending: user is in web mode');
-        FirestoreHelper.pushTix(widget.tix);
-      }
-
-      DialogUtils.showDownloadAppDialog(context, DialogUtils.downloadTixGuestList);
-    }
+    // } else {
+      ////old implementation
+      // if (UserPreferences.isUserLoggedIn()) {
+      //   widget.tix = widget.tix.copyWith(
+      //       total: mPrice,
+      //       userId: mUser.id,
+      //       userPhone: mUser.phoneNumber.toString(),
+      //       userEmail: mUser.email,
+      //       userName: mUser.username,
+      //       result: 'purchase pending: user is in web mode');
+      //   FirestoreHelper.pushTix(widget.tix);
+      // }
+      //
+      // DialogUtils.showDownloadAppDialog(context, DialogUtils.downloadTixGuestList);
+    // }
   }
 
   _showPhoneNumberEnterDialog(BuildContext context) {
@@ -386,7 +384,7 @@ class _TixBuyEditScreenState extends State<TixBuyEditScreen> {
           ),
           backgroundColor: Constants.lightPrimary,
           shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(20.0))),
+              borderRadius: BorderRadius.all(Radius.circular(19.0))),
           contentPadding: const EdgeInsets.all(16.0),
           content: SizedBox(
             width: double.maxFinite,

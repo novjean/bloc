@@ -22,7 +22,6 @@ import '../db/shared_preferences/user_preferences.dart';
 import '../helpers/dummy.dart';
 import '../helpers/firestore_helper.dart';
 import '../helpers/fresh.dart';
-import '../utils/file_utils.dart';
 import '../utils/logx.dart';
 import '../utils/number_utils.dart';
 import '../widgets/ad_campaign_slide_item.dart';
