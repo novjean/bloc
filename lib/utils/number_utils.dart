@@ -18,7 +18,7 @@ class NumberUtils {
 
   static int getRandomIndexNumber(int max) {
     final random = Random();
-    return random.nextInt(max - 1);
+    return random.nextInt(max);
   }
 
 }
