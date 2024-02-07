@@ -1,32 +1,29 @@
 import 'dart:convert';
+import 'package:bloc/db/ext_entity/phone_pe_api_response_data.dart';
+import 'package:bloc/utils/network_utils.dart';
 import 'package:crypto/crypto.dart';
 import 'package:dio/dio.dart';
-// import 'package:http/http.dart';
 import '../db/entity/tix.dart';
 import '../db/shared_preferences/user_preferences.dart';
 import '../utils/constants.dart';
 import '../utils/logx.dart';
-import '../utils/number_utils.dart';
 
 class HttpService {
   static const String _TAG = 'HttpService';
 
-  static String merchantId = Constants.merchantId;
-  static String merchantTransactionId = DateTime.now().millisecondsSinceEpoch.toString();
+  // static String merchantId = Constants.merchantId;
+  // static String merchantTransactionId = DateTime.now().millisecondsSinceEpoch.toString();
 
-  static String checksum = "";
-  static String saltKey = Constants.saltKey;
-  static String saltIndex = Constants.saltIndex;
+  // static String checksum = "";
+  // static String saltKey = Constants.saltKey;
+  // static String saltIndex = Constants.saltIndex;
 
   static String callbackUrl =
       "https://webhook.site/a7f51d09-7db9-433d-8a6a-45571b725e4b";
-  static String redirectUrl =
-      "https://www.bloc.bar";
+  static String redirectUrl = "https://www.bloc.bar";
 
   String body = "";
   static String apiEndPoint = Constants.phonePeApiEndPoint;
-
-  Object? result;
 
   static double igst = 0;
   static double subTotal = 0;
@@ -34,46 +31,48 @@ class HttpService {
   static double grandTotal = 0;
 
   static getChecksum(){
-    int amount = (NumberUtils.roundDouble(grandTotal, 2) * 100).toInt();
+    String merchantId = Constants.testMerchantId;
+    String saltKey = Constants.testSaltKey;
+    String saltIndex = Constants.saltIndex;
+
+    String merchantTransactionId = DateTime.now().millisecondsSinceEpoch.toString();
+    // int amount = (NumberUtils.roundDouble(grandTotal, 2) * 100).toInt();
     String merchantUserId = UserPreferences.myUser.id;
     String mobileNumber = UserPreferences.myUser.phoneNumber.toString();
-    merchantTransactionId = DateTime.now().millisecondsSinceEpoch.toString();
 
     final requestData = {
-      "merchantId": merchantId,
-      "merchantTransactionId": merchantTransactionId,
-      "merchantUserId": merchantUserId,
-      "amount": amount,
-      "redirectUrl": redirectUrl,
+      "merchantId": 'PGTESTPAYUAT',
+      "merchantTransactionId": 'MT7850590068188104',
+      "merchantUserId": 'MUID123',
+      "amount": 10000,
+      "redirectUrl": 'https://webhook.site/redirect-url',
       "redirectMode": "REDIRECT",
-      "callbackUrl": callbackUrl,
-      "mobileNumber": mobileNumber,
+      "callbackUrl": 'https://webhook.site/callback-url',
+      "mobileNumber": '9999999999',
       "paymentInstrument": {
         "type": "PAY_PAGE",
       },
     };
 
-    // saltKey = Constants.testSaltKey;
-
     //String checksum = sha256(base64Body + apiEndPoint + salt) + ### + saltIndex;
     String base64Body = base64.encode(utf8.encode(json.encode(requestData)));
-    checksum = '${sha256.convert(utf8.encode(base64Body + apiEndPoint + saltKey)).toString()}###$saltIndex';
+    String checksum = '${sha256.convert(utf8.encode(base64Body + apiEndPoint + saltKey))}###$saltIndex';
 
-    return checksum;
+    return 'd7a8e4458caa6fcd781166bbdc85fec76740c18cb9baa9a4c48cf2387d554180###1';
+    // return checksum;
   }
 
   static Future<void> startTransaction() async {
     Logx.i(_TAG, 'phone pe start web transaction');
 
-    String url = "https://api-preprod.phonepe.com/apis";
-    url = Constants.apiIntegrationTestHostUrl;
+    String url = Constants.apiIntegrationTestHostUrl;
 
-    double tixTotal = 100;
+    // double tixTotal = 100;
 
-    igst = tixTotal * Constants.igstPercent;
-    subTotal = tixTotal - igst;
-    bookingFee = tixTotal * Constants.bookingFeePercent;
-    grandTotal = subTotal + igst + bookingFee;
+    // igst = tixTotal * Constants.igstPercent;
+    // subTotal = tixTotal - igst;
+    // bookingFee = tixTotal * Constants.bookingFeePercent;
+    // grandTotal = subTotal + igst + bookingFee;
 
     Map<String, String> headers = {
       'Content-Type': 'application/json',
@@ -83,20 +82,22 @@ class HttpService {
 
     try{
       Dio dio = Dio();
-      // dio.options.headers['Access-Control-Allow-Origin'] = '*';
 
       Response res = await dio.post(url,
           options: Options(headers: headers),
-          );
+          data: {
+            "request":"ewogICJtZXJjaGFudElkIjogIlBHVEVTVFBBWVVBVCIsCiAgIm1lcmNoYW50VHJhbnNhY3Rpb25JZCI6ICJNVDc4NTA1OTAwNjgxODgxMDQiLAogICJtZXJjaGFudFVzZXJJZCI6ICJNVUlEMTIzIiwKICAiYW1vdW50IjogMTAwMDAsCiAgInJlZGlyZWN0VXJsIjogImh0dHBzOi8vd2ViaG9vay5zaXRlL3JlZGlyZWN0LXVybCIsCiAgInJlZGlyZWN0TW9kZSI6ICJSRURJUkVDVCIsCiAgImNhbGxiYWNrVXJsIjogImh0dHBzOi8vd2ViaG9vay5zaXRlL2NhbGxiYWNrLXVybCIsCiAgIm1vYmlsZU51bWJlciI6ICI5OTk5OTk5OTk5IiwKICAicGF5bWVudEluc3RydW1lbnQiOiB7CiAgICAidHlwZSI6ICJQQVlfUEFHRSIKICB9Cn0="
+      });
 
       if (res.statusCode == 200) {
-        // List<dynamic> body = jsonDecode(res.body);
+        Logx.i(_TAG, 'response code 200 success');
 
-        // List<User> posts = body
-        //     .map(
-        //       (dynamic item) => User.fromJson(item),
-        // )
-        //     .toList();
+        PhonePeApiResponseData data = PhonePeApiResponseData.fromJson(res.data['data']);
+
+        Logx.d(_TAG, 'redirect url : ${data.instrumentResponse!.redirectInfo!.url}');
+
+        final uri = Uri.parse('${data.instrumentResponse!.redirectInfo!.url}');
+        NetworkUtils.launchInBrowser(uri);
 
         return ;
       } else {
