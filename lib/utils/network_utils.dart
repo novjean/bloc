@@ -29,6 +29,15 @@ class NetworkUtils {
     }
   }
 
+  static Future<void> launchInAppBrowser(Uri url) async {
+    if (!await launchUrl(
+      url,
+      mode: LaunchMode.inAppWebView,
+    )) {
+      throw Exception('could not launch $url');
+    }
+  }
+
   // Function to make a phone call
   static Future<void> makePhoneCall(String phoneNumber) async {
     try {

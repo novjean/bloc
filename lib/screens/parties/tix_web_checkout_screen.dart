@@ -1,20 +1,18 @@
-import 'dart:convert';
 
+import 'package:bloc/services/phone_pe_api_service.dart';
 import 'package:bloc/widgets/ui/app_bar_title.dart';
+import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
 import '../../db/entity/party.dart';
 import '../../db/entity/tix.dart';
 import '../../db/entity/tix_tier_item.dart';
-import '../../db/shared_preferences/user_preferences.dart';
 import '../../helpers/firestore_helper.dart';
 import '../../helpers/fresh.dart';
 import '../../utils/constants.dart';
 import '../../utils/logx.dart';
-import '../../utils/number_utils.dart';
 
 class TixWebCheckoutScreen extends StatefulWidget {
   Tix tix;
@@ -42,7 +40,8 @@ class _TixWebCheckoutScreenState extends State<TixWebCheckoutScreen> {
   double bookingFee = 0;
   double grandTotal = 0;
 
-  String packageName = "";
+  String transactUrl = '';
+  var _isTransactUrlLoading = true;
 
   @override
   void initState() {
@@ -86,13 +85,18 @@ class _TixWebCheckoutScreenState extends State<TixWebCheckoutScreen> {
       }
     });
 
+    PhonePeApiService.startTransaction().then((res) {
+      setState(() {
+        transactUrl = res;
+        _isTransactUrlLoading = false;
+      });
+    });
+
     super.initState();
 
     phonePeInit();
   }
 
-  String environment = Constants.testEnvironment;
-  String appId = "";
   String merchantId = Constants.testMerchantId;
   String merchantTransactionId = DateTime.now().millisecondsSinceEpoch.toString();
 
@@ -117,59 +121,45 @@ class _TixWebCheckoutScreenState extends State<TixWebCheckoutScreen> {
   void phonePeInit() {
     saltIndex = testMode ? Constants.testSaltIndex : Constants.saltIndex;
     saltKey = testMode ? Constants.testSaltKey : Constants.saltKey;
-    environment = testMode ? Constants.testEnvironment : Constants.environment;
     merchantId = testMode ? Constants.testMerchantId : Constants.merchantId;
-
-    // if(testMode){
-    //   appId = "";
-    //   if(UserPreferences.myUser.isIos){
-    //     appId = Constants.iosAppId;
-    //   }
-    // } else {
-    //   if(UserPreferences.myUser.isIos) {
-    //     appId = Constants.iosAppId;
-    //   } else {
-    //     appId = Constants.androidAppId;
-    //   }
-    // }
   }
 
-  getChecksum(){
-    int amount = (NumberUtils.roundDouble(grandTotal, 2) * 100).toInt();
-    String merchantUserId = UserPreferences.myUser.id;
-    String mobileNumber = UserPreferences.myUser.phoneNumber.toString();
-    merchantTransactionId = DateTime.now().millisecondsSinceEpoch.toString();
-
-    final requestData = {
-      "merchantId": merchantId,
-      "merchantTransactionId": merchantTransactionId,
-      "merchantUserId": merchantUserId,
-      "amount": amount,
-      "redirectUrl": redirectUrl,
-      "redirectMode": "REDIRECT",
-      "callbackUrl": callbackUrl,
-      "mobileNumber": mobileNumber,
-      "paymentInstrument": {
-        "type": "PAY_PAGE",
-      },
-    };
-
-    //String checksum = sha256(base64Body + apiEndPoint + salt) + ### + saltIndex;
-    String base64Body = base64.encode(utf8.encode(json.encode(requestData)));
-    checksum = '${sha256.convert(utf8.encode(base64Body + apiEndPoint + saltKey)).toString()}###$saltIndex';
-
-    return base64Body;
-  }
+  // getChecksum(){
+  //   int amount = (NumberUtils.roundDouble(grandTotal, 2) * 100).toInt();
+  //   String merchantUserId = UserPreferences.myUser.id;
+  //   String mobileNumber = UserPreferences.myUser.phoneNumber.toString();
+  //   merchantTransactionId = DateTime.now().millisecondsSinceEpoch.toString();
+  //
+  //   final requestData = {
+  //     "merchantId": merchantId,
+  //     "merchantTransactionId": merchantTransactionId,
+  //     "merchantUserId": merchantUserId,
+  //     "amount": amount,
+  //     "redirectUrl": redirectUrl,
+  //     "redirectMode": "REDIRECT",
+  //     "callbackUrl": callbackUrl,
+  //     "mobileNumber": mobileNumber,
+  //     "paymentInstrument": {
+  //       "type": "PAY_PAGE",
+  //     },
+  //   };
+  //
+  //   //String checksum = sha256(base64Body + apiEndPoint + salt) + ### + saltIndex;
+  //   String base64Body = base64.encode(utf8.encode(json.encode(requestData)));
+  //   checksum = '${sha256.convert(utf8.encode(base64Body + apiEndPoint + saltKey)).toString()}###$saltIndex';
+  //
+  //   return base64Body;
+  // }
 
   @override
   Widget build(BuildContext context) {
-    var url = "https://api-preprod.phonepe.com/apis";
+    // var url = "https://api-preprod.phonepe.com/apis";
 
-    WebUri uri = WebUri(url);
-    Map<String, String> headers = {
-      'Content-Type': 'application/json',
-      'X-VERIFY': getChecksum(),
-    };
+    // WebUri uri = WebUri();
+    // Map<String, String> headers = {
+    //   'Content-Type': 'application/json',
+    //   'X-VERIFY': getChecksum(),
+    // };
 
     return PopScope(
       canPop: true,
@@ -188,11 +178,12 @@ class _TixWebCheckoutScreenState extends State<TixWebCheckoutScreen> {
           ),
           body: Stack(
             children: [
+              _isTransactUrlLoading ?
+              const LoadingWidget() :
               InAppWebView(
                 initialUrlRequest: URLRequest(
-                    url: uri,
-                  headers: headers,
-
+                    url: WebUri(transactUrl),
+                  // headers: headers,
                 ),
                 onWebViewCreated: (InAppWebViewController controller) {
                   inAppWebViewController = controller;

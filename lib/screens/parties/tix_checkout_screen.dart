@@ -4,7 +4,7 @@ import 'package:bloc/db/entity/tix_tier_item.dart';
 import 'package:bloc/helpers/firestore_helper.dart';
 import 'package:bloc/main.dart';
 import 'package:bloc/screens/parties/tix_web_checkout_screen.dart';
-import 'package:bloc/services/phone_pe_api.dart';
+import 'package:bloc/services/phone_pe_api_service.dart';
 import 'package:bloc/utils/number_utils.dart';
 import 'package:bloc/utils/string_utils.dart';
 import 'package:bloc/widgets/ui/loading_widget.dart';
@@ -331,19 +331,14 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
       return;
     }
 
-    // Map<String, String> pgHeaders = {"Content-Type": "application/json"};
-
     try {
-      // Navigator.of(context).push(
-      //   MaterialPageRoute(
-      //       builder: (context) => TixWebCheckoutScreen(
-      //         tix: widget.tix,
-      //         party: widget.party,
-      //       )),
-      // );
-
-      HttpService.startTransaction();
-
+      Navigator.of(context).push(
+        MaterialPageRoute(
+            builder: (context) => TixWebCheckoutScreen(
+              tix: widget.tix,
+              party: widget.party,
+            )),
+      );
     } catch (error) {
       if(UserPreferences.myUser.clearanceLevel>=Constants.ADMIN_LEVEL){
         Logx.em(_TAG, 'PhonePe transaction failed. error: $error');

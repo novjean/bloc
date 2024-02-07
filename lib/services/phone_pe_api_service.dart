@@ -8,8 +8,8 @@ import '../db/shared_preferences/user_preferences.dart';
 import '../utils/constants.dart';
 import '../utils/logx.dart';
 
-class HttpService {
-  static const String _TAG = 'HttpService';
+class PhonePeApiService {
+  static const String _TAG = 'PhonePeApiService';
 
   // static String merchantId = Constants.merchantId;
   // static String merchantTransactionId = DateTime.now().millisecondsSinceEpoch.toString();
@@ -62,7 +62,7 @@ class HttpService {
     // return checksum;
   }
 
-  static Future<void> startTransaction() async {
+  static Future<String> startTransaction() async {
     Logx.i(_TAG, 'phone pe start web transaction');
 
     String url = Constants.apiIntegrationTestHostUrl;
@@ -93,18 +93,20 @@ class HttpService {
         Logx.i(_TAG, 'response code 200 success');
 
         PhonePeApiResponseData data = PhonePeApiResponseData.fromJson(res.data['data']);
+        String transactUrl = data.instrumentResponse!.redirectInfo!.url!;
+        Logx.d(_TAG, 'transact url : $transactUrl');
 
-        Logx.d(_TAG, 'redirect url : ${data.instrumentResponse!.redirectInfo!.url}');
+        // final uri = Uri.parse(transactUrl);
+        // NetworkUtils.launchInAppBrowser(uri);
 
-        final uri = Uri.parse('${data.instrumentResponse!.redirectInfo!.url}');
-        NetworkUtils.launchInBrowser(uri);
-
-        return ;
+        return transactUrl;
       } else {
         Logx.em(_TAG, 'failed with response code : ${res.statusCode}');
+        return '';
       }
     } catch (e){
       Logx.em(_TAG, e.toString());
+      return 'e';
     }
   }
 }
