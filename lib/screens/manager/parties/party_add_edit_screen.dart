@@ -121,12 +121,8 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
 
   @override
   void initState() {
-    super.initState();
-
     mBookingFee = widget.party.bookingFeePercent * 100;
-
     _sPartyType = widget.party.type;
-
     mImageUrls.addAll(widget.party.imageUrls);
 
     FirestoreHelper.pullAllBlocServices().then((res) {
@@ -334,6 +330,8 @@ class _PartyAddEditScreenState extends State<PartyAddEditScreen> {
       guestCounts.add(i.toString());
     }
     sGuestCount = widget.party.guestListCount.toString();
+
+    super.initState();
   }
 
   @override

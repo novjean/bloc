@@ -163,8 +163,8 @@ class _TixWebCheckoutScreenState extends State<TixWebCheckoutScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // var url = "https://api-preprod.phonepe.com/apis" + "&output=embed";
     var url = "https://api-preprod.phonepe.com/apis";
+
     WebUri uri = WebUri(url);
     Map<String, String> headers = {
       'Content-Type': 'application/json',

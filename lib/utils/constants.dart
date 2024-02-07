@@ -93,6 +93,8 @@ class Constants {
   static String phonePeApiEndPoint = "/pg/v1/pay";
 
   static String prodHostUrl = "https://api.phonepe.com/apis/hermes";
+  static String apiIntegrationTestHostUrl = 'https://api-preprod.phonepe.com/apis/pg-sandbox';
+
 
   /** phone pe test **/
   static String testEnvironment = "SANDBOX";

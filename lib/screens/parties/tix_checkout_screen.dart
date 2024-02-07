@@ -4,6 +4,7 @@ import 'package:bloc/db/entity/tix_tier_item.dart';
 import 'package:bloc/helpers/firestore_helper.dart';
 import 'package:bloc/main.dart';
 import 'package:bloc/screens/parties/tix_web_checkout_screen.dart';
+import 'package:bloc/services/phone_pe_api.dart';
 import 'package:bloc/utils/number_utils.dart';
 import 'package:bloc/utils/string_utils.dart';
 import 'package:bloc/widgets/ui/loading_widget.dart';
@@ -333,62 +334,16 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
     // Map<String, String> pgHeaders = {"Content-Type": "application/json"};
 
     try {
-      Navigator.of(context).push(
-        MaterialPageRoute(
-            builder: (context) => TixWebCheckoutScreen(
-              tix: widget.tix,
-              party: widget.party,
-            )),
-      );
+      // Navigator.of(context).push(
+      //   MaterialPageRoute(
+      //       builder: (context) => TixWebCheckoutScreen(
+      //         tix: widget.tix,
+      //         party: widget.party,
+      //       )),
+      // );
 
-      // var response = PhonePePaymentSdk.startTransaction(
-      //     body, callbackUrl, checksum, packageName);
-      // response.then((val) async {
-      //   if (val != null) {
-      //     String status = val['status'].toString();
-      //     String error = val['error'].toString();
-      //
-      //     if (status == 'SUCCESS') {
-      //       result = "flow complete. status : success ";
-      //
-      //       await checkPhonePePaymentStatus();
-      //     } else {
-      //       result = "flow complete. status : $status and error $error";
-      //
-      //       if(UserPreferences.myUser.clearanceLevel>=Constants.ADMIN_LEVEL) {
-      //         Logx.em(_TAG, 'PhonePe transaction failed. \nstatus: $status\nerror: $error');
-      //         _showTransactionFailedDialog(context, 'PhonePe transaction failed', 'status: $status\nerror: $error');
-      //       } else {
-      //         Logx.em(_TAG, 'PhonePe transaction failed. \nstatus: $status\nerror: $error');
-      //         _showTransactionFailedDialog(context, 'PhonePe transaction failed', 'Unfortunately, the payment was unsuccessful. Please try again.');
-      //       }
-      //
-      //       widget.tix = widget.tix.copyWith(
-      //         result: 'PhonePe transaction failed. \nstatus: $status\nerror: $error',
-      //       );
-      //       FirestoreHelper.pushTix(widget.tix);
-      //     }
-      //   } else {
-      //     result = "flow incomplete";
-      //   }
-      //   result = val;
-      // })
-      //     .catchError((error) {
-      //   if(UserPreferences.myUser.clearanceLevel>=Constants.ADMIN_LEVEL) {
-      //     Logx.em(_TAG, 'PhonePe transaction failed. error: $error');
-      //     _showTransactionFailedDialog(context, 'PhonePe transaction failed', 'error: $error');
-      //   } else {
-      //     Logx.em(_TAG, 'PhonePe transaction failed. error: $error');
-      //     _showTransactionFailedDialog(context, 'PhonePe transaction failed', 'Unfortunately, the payment was unsuccessful. Please try again.');
-      //   }
-      //
-      //   widget.tix = widget.tix.copyWith(
-      //     result: 'PhonePe transaction failed. error: $error',
-      //   );
-      //   FirestoreHelper.pushTix(widget.tix);
-      //
-      //   return <dynamic>{};
-      // });
+      HttpService.startTransaction();
+
     } catch (error) {
       if(UserPreferences.myUser.clearanceLevel>=Constants.ADMIN_LEVEL){
         Logx.em(_TAG, 'PhonePe transaction failed. error: $error');
