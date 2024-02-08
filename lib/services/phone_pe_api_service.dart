@@ -29,7 +29,7 @@ class PhonePeApiService {
   static startTransaction(Tix tix) async {
     Logx.i(_TAG, 'phone pe web start real transaction');
 
-    final requestData = {
+    final Map<String, dynamic> requestData = {
       "merchantId": Constants.merchantId,
       "merchantTransactionId": DateTime.now().millisecondsSinceEpoch.toString(),
       "merchantUserId": UserPreferences.myUser.id,
@@ -43,7 +43,7 @@ class PhonePeApiService {
       },
     };
 
-    String request = base64.encode(utf8.encode(json.encode(requestData)));
+    String request = ApiHelper.encodeJsonToBase64(requestData);
     Logx.i(_TAG, 'request: $request');
 
     String checksum = getChecksum(request);
@@ -85,16 +85,35 @@ class PhonePeApiService {
     }
   }
 
-  static String getTestRequest() {
-    Map<String, dynamic> requestData = {
-      "merchantId": "PGTESTPAYUAT",
-      "merchantTransactionId": "MT7850590068188104",
-      "merchantUserId": "MUID123",
-      "amount": 10000,
+  // static String getTestRequest() {
+  //   Map<String, dynamic> requestData = {
+  //     "merchantId": "PGTESTPAYUAT",
+  //     "merchantTransactionId": "MT7850590068188104",
+  //     "merchantUserId": "MUID123",
+  //     "amount": 10000,
+  //     "redirectUrl": "https://webhook.site/redirect-url",
+  //     "redirectMode": "REDIRECT",
+  //     "callbackUrl": "https://webhook.site/callback-url",
+  //     "mobileNumber": "9999999999",
+  //     "paymentInstrument": {
+  //       "type": "PAY_PAGE"
+  //     },
+  //   };
+  //
+  //   String base64String = ApiHelper.encodeJsonToBase64(requestData);
+  //   return base64String;
+  // }
+
+  static String getTestTixRequest(Tix tix) {
+    final Map<String, dynamic> requestData = {
+      "merchantId": Constants.testMerchantId,
+      "merchantTransactionId": DateTime.now().millisecondsSinceEpoch.toString(),
+      "merchantUserId": UserPreferences.myUser.id,
+      "amount": (NumberUtils.roundDouble(tix.total, 2) * 100).toInt(),
       "redirectUrl": "https://webhook.site/redirect-url",
       "redirectMode": "REDIRECT",
-      "callbackUrl": "https://webhook.site/callback-url",
-      "mobileNumber": "9999999999",
+      "callbackUrl": "https://webhook.site/a7f51d09-7db9-433d-8a6a-45571b725e4b",
+      "mobileNumber": '${UserPreferences.myUser.phoneNumber}',
       "paymentInstrument": {
         "type": "PAY_PAGE"
       },
@@ -115,10 +134,10 @@ class PhonePeApiService {
     // return 'd7a8e4458caa6fcd781166bbdc85fec76740c18cb9baa9a4c48cf2387d554180###1';
   }
 
-  static Future<String> startTestTransaction() async {
+  static Future<String> startTestTransaction(Tix tix) async {
     Logx.i(_TAG, 'phone pe web start test transaction');
 
-    String request = getTestRequest();
+    String request = getTestTixRequest(tix);
     Logx.d(_TAG, 'request: $request');
 
     String checksum = getTestChecksum(request);

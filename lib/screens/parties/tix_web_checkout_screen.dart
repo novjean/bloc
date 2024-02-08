@@ -77,7 +77,7 @@ class _TixWebCheckoutScreenState extends State<TixWebCheckoutScreen> {
         //   });
         // });
 
-        PhonePeApiService.startTestTransaction().then((res) {
+        PhonePeApiService.startTestTransaction(widget.tix).then((res) {
           setState(() {
             transactUrl = res;
             _isTransactUrlLoading = false;
