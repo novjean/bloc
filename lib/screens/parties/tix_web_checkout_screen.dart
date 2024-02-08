@@ -70,19 +70,19 @@ class _TixWebCheckoutScreenState extends State<TixWebCheckoutScreen> {
             total: grandTotal);
         FirestoreHelper.pushTix(widget.tix);
 
-        PhonePeApiService.startTransaction(widget.tix).then((res) {
-          setState(() {
-            transactUrl = res;
-            _isTransactUrlLoading = false;
-          });
-        });
-
-        // PhonePeApiService.startTransaction().then((res) {
+        // PhonePeApiService.startTransaction(widget.tix).then((res) {
         //   setState(() {
         //     transactUrl = res;
         //     _isTransactUrlLoading = false;
         //   });
         // });
+
+        PhonePeApiService.startTestTransaction().then((res) {
+          setState(() {
+            transactUrl = res;
+            _isTransactUrlLoading = false;
+          });
+        });
 
         setState(() {
           _isTixTiersLoading = false;

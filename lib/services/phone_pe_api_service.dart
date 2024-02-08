@@ -4,6 +4,7 @@ import 'package:crypto/crypto.dart';
 import 'package:dio/dio.dart';
 import '../db/entity/tix.dart';
 import '../db/shared_preferences/user_preferences.dart';
+import '../helpers/api_helper.dart';
 import '../utils/constants.dart';
 import '../utils/logx.dart';
 import '../utils/number_utils.dart';
@@ -13,7 +14,7 @@ class PhonePeApiService {
 
   static String callbackUrl =
       "https://webhook.site/a7f51d09-7db9-433d-8a6a-45571b725e4b";
-  static String redirectUrl = "https://www.bloc.bar";
+  static String redirectUrl = "https://www.google.com";
 
   static getChecksum(String request){
     String saltKey = Constants.saltKey;
@@ -85,27 +86,27 @@ class PhonePeApiService {
   }
 
   static String getTestRequest() {
-    final requestData = {
-      "merchantId": 'PGTESTPAYUAT',
-      "merchantTransactionId": 'MT7850590068188104',
-      "merchantUserId": 'MUID123',
+    Map<String, dynamic> requestData = {
+      "merchantId": "PGTESTPAYUAT",
+      "merchantTransactionId": "MT7850590068188104",
+      "merchantUserId": "MUID123",
       "amount": 10000,
-      "redirectUrl": 'https://webhook.site/redirect-url',
+      "redirectUrl": "https://webhook.site/redirect-url",
       "redirectMode": "REDIRECT",
-      "callbackUrl": 'https://webhook.site/callback-url',
-      "mobileNumber": '9999999999',
+      "callbackUrl": "https://webhook.site/callback-url",
+      "mobileNumber": "9999999999",
       "paymentInstrument": {
-        "type": "PAY_PAGE",
+        "type": "PAY_PAGE"
       },
     };
 
-    String base64Body = base64.encode(utf8.encode(json.encode(requestData)));
-    return base64Body;
+    String base64String = ApiHelper.encodeJsonToBase64(requestData);
+    return base64String;
   }
 
   static String getTestChecksum(String request){
     String saltKey = Constants.testSaltKey;
-    String saltIndex = Constants.saltIndex;
+    String saltIndex = Constants.testSaltIndex;
 
     //String checksum = sha256(base64Body + apiEndPoint + salt) + ### + saltIndex;
     String checksum = '${sha256.convert(utf8.encode(request + Constants.phonePeApiEndPoint + saltKey))}###$saltIndex';
@@ -120,7 +121,7 @@ class PhonePeApiService {
     String request = getTestRequest();
     Logx.d(_TAG, 'request: $request');
 
-    String checksum = getChecksum(request);
+    String checksum = getTestChecksum(request);
     Logx.d(_TAG, 'checksum: $checksum');
 
     Map<String, String> headers = {
@@ -157,5 +158,4 @@ class PhonePeApiService {
       return 'error';
     }
   }
-
 }
