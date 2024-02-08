@@ -45,7 +45,6 @@ class _PhonePePaymentState extends State<PhonePePayment> {
     };
 
     String base64Body = base64.encode(utf8.encode(json.encode(requestData)));
-
     checksum = '${sha256.convert(utf8.encode(base64Body+apiEndPoint+saltKey)).toString()}###$saltIndex';
 
     return base64Body;

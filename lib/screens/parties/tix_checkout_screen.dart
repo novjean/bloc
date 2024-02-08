@@ -331,28 +331,13 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
       return;
     }
 
-    try {
-      Navigator.of(context).push(
-        MaterialPageRoute(
-            builder: (context) => TixWebCheckoutScreen(
-              tix: widget.tix,
-              party: widget.party,
-            )),
-      );
-    } catch (error) {
-      if(UserPreferences.myUser.clearanceLevel>=Constants.ADMIN_LEVEL){
-        Logx.em(_TAG, 'PhonePe transaction failed. error: $error');
-        _showTransactionFailedDialog(context, 'PhonePe transaction failed', 'error: $error');
-      } else {
-        Logx.em(_TAG, 'PhonePe transaction failed. error: $error');
-        _showTransactionFailedDialog(context, 'PhonePe transaction failed', 'Unfortunately, the payment was unsuccessful. Please try again.');
-      }
-
-      widget.tix = widget.tix.copyWith(
-        result: 'payment was unsuccessful. error : $error',
-      );
-      FirestoreHelper.pushTix(widget.tix);
-    }
+    Navigator.of(context).push(
+      MaterialPageRoute(
+          builder: (context) => TixWebCheckoutScreen(
+            tix: widget.tix,
+            party: widget.party,
+          )),
+    );
   }
 
   /** phone pe dev end **/
@@ -499,12 +484,13 @@ class _TixCheckoutScreenState extends State<TixCheckoutScreen> {
                   ),
                 ),
                 onPressed: () {
-                  body = getChecksum().toString();
-
                   if(!kIsWeb){
+                    body = getChecksum().toString();
                     _startTransaction();
                   } else {
-                    _startWebTransaction();
+                    if(UserPreferences.myUser.clearanceLevel>= Constants.MANAGER_LEVEL){
+                      _startWebTransaction();
+                    }
                   }
 
                   // todo: waiting for PhonePe to fix UPI intent

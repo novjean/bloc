@@ -1,45 +1,90 @@
 import 'dart:convert';
 import 'package:bloc/db/ext_entity/phone_pe_api_response_data.dart';
-import 'package:bloc/utils/network_utils.dart';
 import 'package:crypto/crypto.dart';
 import 'package:dio/dio.dart';
 import '../db/entity/tix.dart';
 import '../db/shared_preferences/user_preferences.dart';
 import '../utils/constants.dart';
 import '../utils/logx.dart';
+import '../utils/number_utils.dart';
 
 class PhonePeApiService {
   static const String _TAG = 'PhonePeApiService';
-
-  // static String merchantId = Constants.merchantId;
-  // static String merchantTransactionId = DateTime.now().millisecondsSinceEpoch.toString();
-
-  // static String checksum = "";
-  // static String saltKey = Constants.saltKey;
-  // static String saltIndex = Constants.saltIndex;
 
   static String callbackUrl =
       "https://webhook.site/a7f51d09-7db9-433d-8a6a-45571b725e4b";
   static String redirectUrl = "https://www.bloc.bar";
 
-  String body = "";
-  static String apiEndPoint = Constants.phonePeApiEndPoint;
-
-  static double igst = 0;
-  static double subTotal = 0;
-  static double bookingFee = 0;
-  static double grandTotal = 0;
-
-  static getChecksum(){
-    String merchantId = Constants.testMerchantId;
-    String saltKey = Constants.testSaltKey;
+  static getChecksum(String request){
+    String saltKey = Constants.saltKey;
     String saltIndex = Constants.saltIndex;
 
-    String merchantTransactionId = DateTime.now().millisecondsSinceEpoch.toString();
-    // int amount = (NumberUtils.roundDouble(grandTotal, 2) * 100).toInt();
-    String merchantUserId = UserPreferences.myUser.id;
-    String mobileNumber = UserPreferences.myUser.phoneNumber.toString();
+    //String checksum = sha256(base64Body + apiEndPoint + salt) + ### + saltIndex;
+    String checksum = '${sha256.convert(utf8.encode(request
+        + Constants.phonePeApiEndPoint + saltKey))}###$saltIndex';
+    return checksum;
+  }
 
+  static startTransaction(Tix tix) async {
+    Logx.i(_TAG, 'phone pe web start real transaction');
+
+    final requestData = {
+      "merchantId": Constants.merchantId,
+      "merchantTransactionId": DateTime.now().millisecondsSinceEpoch.toString(),
+      "merchantUserId": UserPreferences.myUser.id,
+      "amount": (NumberUtils.roundDouble(tix.total, 2) * 100).toInt(),
+      "redirectUrl": "https://www.bloc.bar",
+      "redirectMode": "REDIRECT",
+      "callbackUrl": "https://webhook.site/a7f51d09-7db9-433d-8a6a-45571b725e4b",
+      "mobileNumber": '${UserPreferences.myUser.phoneNumber}',
+      "paymentInstrument": {
+        "type": "PAY_PAGE",
+      },
+    };
+
+    String request = base64.encode(utf8.encode(json.encode(requestData)));
+    Logx.i(_TAG, 'request: $request');
+
+    String checksum = getChecksum(request);
+    Logx.i(_TAG, 'checksum: $checksum');
+
+    Map<String, String> headers = {
+      'Content-Type': 'application/json',
+      'X-VERIFY': checksum,
+    };
+
+    try{
+      Dio dio = Dio();
+
+      Response res = await dio.post(Constants.apiProdHostUrl,
+          options: Options(headers: headers),
+          data: {
+            "request": request
+          });
+
+      if (res.statusCode == 200) {
+        Logx.i(_TAG, 'response code 200 success');
+
+        PhonePeApiResponseData data = PhonePeApiResponseData.fromJson(res.data['data']);
+        String transactUrl = data.instrumentResponse!.redirectInfo!.url!;
+        Logx.i(_TAG, 'transact url : $transactUrl');
+
+        // final uri = Uri.parse(transactUrl);
+        // NetworkUtils.launchInAppBrowser(uri);
+
+        return transactUrl;
+      } else {
+        Logx.em(_TAG, 'failed with response code : ${res.statusCode} : ${res.toString()}');
+
+        return '${res.statusCode}';
+      }
+    } catch (e){
+      Logx.em(_TAG, e.toString());
+      return 'error';
+    }
+  }
+
+  static String getTestRequest() {
     final requestData = {
       "merchantId": 'PGTESTPAYUAT',
       "merchantTransactionId": 'MT7850590068188104',
@@ -54,39 +99,42 @@ class PhonePeApiService {
       },
     };
 
-    //String checksum = sha256(base64Body + apiEndPoint + salt) + ### + saltIndex;
     String base64Body = base64.encode(utf8.encode(json.encode(requestData)));
-    String checksum = '${sha256.convert(utf8.encode(base64Body + apiEndPoint + saltKey))}###$saltIndex';
-
-    return 'd7a8e4458caa6fcd781166bbdc85fec76740c18cb9baa9a4c48cf2387d554180###1';
-    // return checksum;
+    return base64Body;
   }
 
-  static Future<String> startTransaction() async {
-    Logx.i(_TAG, 'phone pe start web transaction');
+  static String getTestChecksum(String request){
+    String saltKey = Constants.testSaltKey;
+    String saltIndex = Constants.saltIndex;
 
-    String url = Constants.apiIntegrationTestHostUrl;
+    //String checksum = sha256(base64Body + apiEndPoint + salt) + ### + saltIndex;
+    String checksum = '${sha256.convert(utf8.encode(request + Constants.phonePeApiEndPoint + saltKey))}###$saltIndex';
+    return checksum;
 
-    // double tixTotal = 100;
+    // return 'd7a8e4458caa6fcd781166bbdc85fec76740c18cb9baa9a4c48cf2387d554180###1';
+  }
 
-    // igst = tixTotal * Constants.igstPercent;
-    // subTotal = tixTotal - igst;
-    // bookingFee = tixTotal * Constants.bookingFeePercent;
-    // grandTotal = subTotal + igst + bookingFee;
+  static Future<String> startTestTransaction() async {
+    Logx.i(_TAG, 'phone pe web start test transaction');
+
+    String request = getTestRequest();
+    Logx.d(_TAG, 'request: $request');
+
+    String checksum = getChecksum(request);
+    Logx.d(_TAG, 'checksum: $checksum');
 
     Map<String, String> headers = {
       'Content-Type': 'application/json',
-      // 'Access-Control-Allow-Origin': '*',
-      'X-VERIFY': getChecksum(),
+      'X-VERIFY': checksum,
     };
 
     try{
       Dio dio = Dio();
 
-      Response res = await dio.post(url,
+      Response res = await dio.post(Constants.apiTestHostUrl,
           options: Options(headers: headers),
           data: {
-            "request":"ewogICJtZXJjaGFudElkIjogIlBHVEVTVFBBWVVBVCIsCiAgIm1lcmNoYW50VHJhbnNhY3Rpb25JZCI6ICJNVDc4NTA1OTAwNjgxODgxMDQiLAogICJtZXJjaGFudFVzZXJJZCI6ICJNVUlEMTIzIiwKICAiYW1vdW50IjogMTAwMDAsCiAgInJlZGlyZWN0VXJsIjogImh0dHBzOi8vd2ViaG9vay5zaXRlL3JlZGlyZWN0LXVybCIsCiAgInJlZGlyZWN0TW9kZSI6ICJSRURJUkVDVCIsCiAgImNhbGxiYWNrVXJsIjogImh0dHBzOi8vd2ViaG9vay5zaXRlL2NhbGxiYWNrLXVybCIsCiAgIm1vYmlsZU51bWJlciI6ICI5OTk5OTk5OTk5IiwKICAicGF5bWVudEluc3RydW1lbnQiOiB7CiAgICAidHlwZSI6ICJQQVlfUEFHRSIKICB9Cn0="
+            "request": request
       });
 
       if (res.statusCode == 200) {
@@ -102,11 +150,12 @@ class PhonePeApiService {
         return transactUrl;
       } else {
         Logx.em(_TAG, 'failed with response code : ${res.statusCode}');
-        return '';
+        return '${res.statusCode}';
       }
     } catch (e){
       Logx.em(_TAG, e.toString());
-      return 'e';
+      return 'error';
     }
   }
+
 }

@@ -1,4 +1,3 @@
-
 import 'package:bloc/services/phone_pe_api_service.dart';
 import 'package:bloc/widgets/ui/app_bar_title.dart';
 import 'package:bloc/widgets/ui/loading_widget.dart';
@@ -71,6 +70,20 @@ class _TixWebCheckoutScreenState extends State<TixWebCheckoutScreen> {
             total: grandTotal);
         FirestoreHelper.pushTix(widget.tix);
 
+        PhonePeApiService.startTransaction(widget.tix).then((res) {
+          setState(() {
+            transactUrl = res;
+            _isTransactUrlLoading = false;
+          });
+        });
+
+        // PhonePeApiService.startTransaction().then((res) {
+        //   setState(() {
+        //     transactUrl = res;
+        //     _isTransactUrlLoading = false;
+        //   });
+        // });
+
         setState(() {
           _isTixTiersLoading = false;
         });
@@ -85,81 +98,11 @@ class _TixWebCheckoutScreenState extends State<TixWebCheckoutScreen> {
       }
     });
 
-    PhonePeApiService.startTransaction().then((res) {
-      setState(() {
-        transactUrl = res;
-        _isTransactUrlLoading = false;
-      });
-    });
-
     super.initState();
-
-    phonePeInit();
   }
-
-  String merchantId = Constants.testMerchantId;
-  String merchantTransactionId = DateTime.now().millisecondsSinceEpoch.toString();
-
-  bool enableLogging = true;
-
-  String checksum = "";
-  String saltKey = Constants.saltKey;
-  String saltIndex = Constants.saltIndex;
-
-  String callbackUrl =
-      "https://webhook.site/a7f51d09-7db9-433d-8a6a-45571b725e4b";
-  String redirectUrl =
-      "https://www.bloc.bar";
-
-  String body = "";
-  String apiEndPoint = Constants.phonePeApiEndPoint;
-
-  Object? result;
-
-  bool testMode = false;
-
-  void phonePeInit() {
-    saltIndex = testMode ? Constants.testSaltIndex : Constants.saltIndex;
-    saltKey = testMode ? Constants.testSaltKey : Constants.saltKey;
-    merchantId = testMode ? Constants.testMerchantId : Constants.merchantId;
-  }
-
-  // getChecksum(){
-  //   int amount = (NumberUtils.roundDouble(grandTotal, 2) * 100).toInt();
-  //   String merchantUserId = UserPreferences.myUser.id;
-  //   String mobileNumber = UserPreferences.myUser.phoneNumber.toString();
-  //   merchantTransactionId = DateTime.now().millisecondsSinceEpoch.toString();
-  //
-  //   final requestData = {
-  //     "merchantId": merchantId,
-  //     "merchantTransactionId": merchantTransactionId,
-  //     "merchantUserId": merchantUserId,
-  //     "amount": amount,
-  //     "redirectUrl": redirectUrl,
-  //     "redirectMode": "REDIRECT",
-  //     "callbackUrl": callbackUrl,
-  //     "mobileNumber": mobileNumber,
-  //     "paymentInstrument": {
-  //       "type": "PAY_PAGE",
-  //     },
-  //   };
-  //
-  //   //String checksum = sha256(base64Body + apiEndPoint + salt) + ### + saltIndex;
-  //   String base64Body = base64.encode(utf8.encode(json.encode(requestData)));
-  //   checksum = '${sha256.convert(utf8.encode(base64Body + apiEndPoint + saltKey)).toString()}###$saltIndex';
-  //
-  //   return base64Body;
-  // }
 
   @override
   Widget build(BuildContext context) {
-    // var url = "https://api-preprod.phonepe.com/apis";
-
-    // WebUri uri = WebUri();
-    // Map<String, String> headers = {
-    //   'Content-Type': 'application/json',
-    //   'X-VERIFY': getChecksum(),
-    // };
 
     return PopScope(
       canPop: true,

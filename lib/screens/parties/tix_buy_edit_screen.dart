@@ -244,8 +244,7 @@ class _TixBuyEditScreenState extends State<TixBuyEditScreen> {
       });
     } else {
       return const Center(
-          child: Text(
-        'pricing tier is not revealed yet!',
+          child: Text('pricing tier is not revealed yet!',
         style: TextStyle(color: Constants.primary),
       ));
     }
@@ -343,7 +342,7 @@ class _TixBuyEditScreenState extends State<TixBuyEditScreen> {
         userPhone: UserPreferences.myUser.phoneNumber.toString(),
         userEmail: UserPreferences.myUser.email);
 
-    // if (!kIsWeb) {
+    if (!kIsWeb) {
       if (mPrice > 0) {
         Navigator.of(context).push(
           MaterialPageRoute(
@@ -355,21 +354,39 @@ class _TixBuyEditScreenState extends State<TixBuyEditScreen> {
       } else {
         Logx.ilt(_TAG, 'please select a ticket to purchase');
       }
-    // } else {
-      ////old implementation
-      // if (UserPreferences.isUserLoggedIn()) {
-      //   widget.tix = widget.tix.copyWith(
-      //       total: mPrice,
-      //       userId: mUser.id,
-      //       userPhone: mUser.phoneNumber.toString(),
-      //       userEmail: mUser.email,
-      //       userName: mUser.username,
-      //       result: 'purchase pending: user is in web mode');
-      //   FirestoreHelper.pushTix(widget.tix);
-      // }
-      //
-      // DialogUtils.showDownloadAppDialog(context, DialogUtils.downloadTixGuestList);
-    // }
+    } else {
+      //test implementation
+      if (UserPreferences.isUserLoggedIn()) {
+        if(UserPreferences.myUser.clearanceLevel >= Constants.MANAGER_LEVEL){
+          if(mPrice > 0) {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                  builder: (context) => TixCheckoutScreen(
+                    tix: widget.tix,
+                    party: mParty,
+                  )),
+            );
+          } else {
+            Logx.ilt(_TAG, 'please select a ticket to purchase');
+          }
+        } else {
+          widget.tix = widget.tix.copyWith(
+              total: mPrice,
+              userId: mUser.id,
+              userPhone: mUser.phoneNumber.toString(),
+              userEmail: mUser.email,
+              userName: mUser.username,
+              result: 'purchase pending: user is in web mode');
+          FirestoreHelper.pushTix(widget.tix);
+
+          DialogUtils.showDownloadAppDialog(context, DialogUtils.downloadTixGuestList);
+        }
+      } else {
+        Logx.i(_TAG, 'user is still not logged in');
+
+        DialogUtils.showDownloadAppDialog(context, DialogUtils.downloadTixGuestList);
+      }
+    }
   }
 
   _showPhoneNumberEnterDialog(BuildContext context) {
