@@ -117,7 +117,15 @@ class _TixWebCheckoutScreenState extends State<TixWebCheckoutScreen> {
       child: SafeArea(
         child: Scaffold(
           appBar: AppBar(
+            backgroundColor: Constants.background,
             title: AppBarTitle(title: 'payment'),
+            titleSpacing: 0,
+              leading: IconButton(
+                icon: const Icon(Icons.arrow_back_ios_rounded, color: Constants.lightPrimary,),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              )
           ),
           body: Stack(
             children: [
@@ -131,6 +139,16 @@ class _TixWebCheckoutScreenState extends State<TixWebCheckoutScreen> {
                 onWebViewCreated: (InAppWebViewController controller) {
                   inAppWebViewController = controller;
                 },
+                // onCloseWindow:  (InAppWebViewController controller) {
+                //   controller.evaluateJavascript(source: "document.documentElement.innerHTML")
+                //       .then((value) async {
+                //         Logx.d(_TAG, 'script : $value');
+                //
+                //     // if(value.contains("name=\"paymentId\"")) {
+                //     //
+                //     // }
+                //   });
+                // },
                 onProgressChanged: (InAppWebViewController controller, int progress) {
                   setState(() {
                     _progress = progress/100;

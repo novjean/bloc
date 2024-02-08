@@ -34,7 +34,7 @@ class PhonePeApiService {
       "merchantTransactionId": DateTime.now().millisecondsSinceEpoch.toString(),
       "merchantUserId": UserPreferences.myUser.id,
       "amount": (NumberUtils.roundDouble(tix.total, 2) * 100).toInt(),
-      "redirectUrl": "https://www.bloc.bar",
+      "redirectUrl": "https://webhook.site/redirect-url",
       "redirectMode": "REDIRECT",
       "callbackUrl": "https://webhook.site/a7f51d09-7db9-433d-8a6a-45571b725e4b",
       "mobileNumber": '${UserPreferences.myUser.phoneNumber}',
@@ -128,7 +128,8 @@ class PhonePeApiService {
     String saltIndex = Constants.testSaltIndex;
 
     //String checksum = sha256(base64Body + apiEndPoint + salt) + ### + saltIndex;
-    String checksum = '${sha256.convert(utf8.encode(request + Constants.phonePeApiEndPoint + saltKey))}###$saltIndex';
+    String checksum = '${sha256.convert(utf8.encode(request
+        + Constants.phonePeApiEndPoint + saltKey))}###$saltIndex';
     return checksum;
 
     // return 'd7a8e4458caa6fcd781166bbdc85fec76740c18cb9baa9a4c48cf2387d554180###1';
