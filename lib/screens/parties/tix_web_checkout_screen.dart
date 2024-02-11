@@ -85,7 +85,10 @@ class _TixWebCheckoutScreenState extends State<TixWebCheckoutScreen> {
         PhonePeApiService.startTransaction(widget.tix).then((res) {
           setState(() {
             transactUrl = res;
-            _isTransactUrlLoading = false;
+
+            if(transactUrl.isNotEmpty){
+              _isTransactUrlLoading = false;
+            }
           });
 
           startPaymentStatusListener();

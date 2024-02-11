@@ -35,7 +35,7 @@ class PhonePeApiService {
       "merchantTransactionId": tix.merchantTransactionId,
       "merchantUserId": UserPreferences.myUser.id,
       "amount": (NumberUtils.roundDouble(tix.total, 2) * 100).toInt(),
-      "redirectUrl": "https://webhook.site/redirect-url",
+      "redirectUrl": "http://bloc.bar",
       "redirectMode": "REDIRECT",
       "callbackUrl": "https://webhook.site/a7f51d09-7db9-433d-8a6a-45571b725e4b",
       "mobileNumber": '${UserPreferences.myUser.phoneNumber}',
@@ -47,8 +47,12 @@ class PhonePeApiService {
     String request = ApiHelper.encodeJsonToBase64(requestData);
     Logx.i(_TAG, 'request: $request');
 
-    String checksum = getChecksum(request);
-    Logx.i(_TAG, 'checksum: $checksum');
+    String saltKey = Constants.saltKey;
+    String saltIndex = Constants.saltIndex;
+    //String checksum = sha256(base64Body + apiEndPoint + salt) + ### + saltIndex;
+    String checksum = '${sha256.convert(utf8.encode(request
+        + Constants.phonePeApiEndPoint + saltKey))}###$saltIndex';
+    Logx.d(_TAG, 'checksum: $checksum');
 
     Map<String, String> headers = {
       'Content-Type': 'application/json',
@@ -76,13 +80,14 @@ class PhonePeApiService {
 
         return transactUrl;
       } else {
-        Logx.em(_TAG, 'failed with response code : ${res.statusCode} : ${res.toString()}');
+        Logx.elt(_TAG, 'failed with response : ${res.statusCode} : ${res.toString()}');
 
-        return '${res.statusCode}';
+        return '';
       }
     } catch (e){
-      Logx.em(_TAG, e.toString());
-      return 'error';
+      Logx.elt(_TAG, 'error : ${e.toString()}');
+
+      return '';
     }
   }
 
