@@ -90,6 +90,7 @@ class Constants {
   /** phone pe **/
   static String phonePeApiEndPoint = "/pg/v1/pay";
   static String prodHostUrl = "https://api.phonepe.com/apis/hermes";
+  static String apiProdHostUrl = "https://api.phonepe.com/apis/hermes/pg/v1/pay";
 
   /** phone pe test **/
   static String testEnvironment = "SANDBOX";
@@ -99,6 +100,8 @@ class Constants {
 
   static String apiTestHostUrl = 'https://api-preprod.phonepe.com/apis/pg-sandbox/pg/v1/pay';
 
+  static String checkStatusUrl = 'https://api-preprod.phonepe.com/apis/pg-sandbox/pg/v1/status';
+
   /** phone pe prod **/
   static String saltKey = "34765f86-1b43-4395-a9cb-0bea807630d9";
   static String saltIndex = "1";
@@ -106,7 +109,5 @@ class Constants {
   static String iosAppId = "c8cf8a00d27b450cb80491bd6e21ef5b";
   static String androidAppId = "d4f45bc915f048e2b7eed50f0115648f";
   static String merchantId = "BLOCKONLINE";
-
-  static String apiProdHostUrl = 'https://api-preprod.phonepe.com/apis/hermes/pg/v1/pay';
 
 }

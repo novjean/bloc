@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:bloc/db/ext_entity/phone_pe_api_response_data.dart';
+import 'package:bloc/helpers/firestore_helper.dart';
 import 'package:crypto/crypto.dart';
 import 'package:dio/dio.dart';
 import '../db/entity/tix.dart';
@@ -31,7 +32,7 @@ class PhonePeApiService {
 
     final Map<String, dynamic> requestData = {
       "merchantId": Constants.merchantId,
-      "merchantTransactionId": DateTime.now().millisecondsSinceEpoch.toString(),
+      "merchantTransactionId": tix.merchantTransactionId,
       "merchantUserId": UserPreferences.myUser.id,
       "amount": (NumberUtils.roundDouble(tix.total, 2) * 100).toInt(),
       "redirectUrl": "https://webhook.site/redirect-url",
@@ -85,63 +86,128 @@ class PhonePeApiService {
     }
   }
 
-  // static String getTestRequest() {
-  //   Map<String, dynamic> requestData = {
-  //     "merchantId": "PGTESTPAYUAT",
-  //     "merchantTransactionId": "MT7850590068188104",
-  //     "merchantUserId": "MUID123",
-  //     "amount": 10000,
-  //     "redirectUrl": "https://webhook.site/redirect-url",
-  //     "redirectMode": "REDIRECT",
-  //     "callbackUrl": "https://webhook.site/callback-url",
-  //     "mobileNumber": "9999999999",
-  //     "paymentInstrument": {
-  //       "type": "PAY_PAGE"
-  //     },
-  //   };
-  //
-  //   String base64String = ApiHelper.encodeJsonToBase64(requestData);
-  //   return base64String;
-  // }
+  static checkStatus(Tix tix) async {
+    String merchantTransactionId = tix.merchantTransactionId;
+    String saltKey = Constants.saltKey;
+    String saltIndex = Constants.saltIndex;
 
-  static String getTestTixRequest(Tix tix) {
+    String check = '/pg/v1/status/${Constants.merchantId}/$merchantTransactionId$saltKey';
+    String checksum = '${sha256.convert(utf8.encode(check))}###$saltIndex';
+    Logx.d(_TAG, 'checkStatus checksum: $checksum');
+
+    Map<String, String> headers = {
+      'Content-Type': 'application/json',
+      'X-VERIFY': checksum,
+      'X-MERCHANT-ID': Constants.merchantId,
+    };
+
+    try{
+      Dio dio = Dio();
+
+      String checkStatusUrl = '${Constants.checkStatusUrl}/${Constants.merchantId}/$merchantTransactionId';
+
+      Response res = await dio.get(checkStatusUrl,
+          options: Options(headers: headers),
+          data: {});
+
+      if (res.statusCode == 200) {
+        Logx.i(_TAG, 'response code 200 success');
+
+        String code = res.data['code'];
+
+        if(code == 'PAYMENT_SUCCESS'){
+          Logx.i(_TAG, 'payment is success');
+
+          Map<String, dynamic> data = res.data['data'];
+
+          String state = data['state'];
+          String responseCode = data['responseCode'];
+          String transactionId = data['transactionId'];
+
+          tix = tix.copyWith(
+              isCompleted: true,
+              isSuccess: true,
+              merchantTransactionId: merchantTransactionId,
+              transactionId: transactionId,
+              transactionResponseCode: responseCode,
+              result: res.data['message']
+          );
+          await FirestoreHelper.pushTix(tix);
+          return true;
+
+        } else if(code == 'PAYMENT_ERROR') {
+          Logx.i(_TAG, 'payment error');
+
+          Map<String, dynamic> data = res.data['data'];
+
+          String transactionId = data['transactionId'];
+          String responseCode = data['responseCode'];
+
+          tix = tix.copyWith(
+              isCompleted: true,
+              isSuccess: false,
+              transactionId: transactionId,
+              transactionResponseCode: responseCode,
+              result: res.data['message']
+          );
+          await FirestoreHelper.pushTix(tix);
+          return true;
+
+        } else if(code == 'INTERNAL_SERVER_ERROR'){
+          Logx.i(_TAG, 'internal server error');
+
+          tix = tix.copyWith(
+              isCompleted: true,
+              isSuccess: false,
+              result: res.data['message']
+          );
+          await FirestoreHelper.pushTix(tix);
+
+          return true;
+        } else {
+          //nothing to do
+          Logx.i(_TAG, 'transaction is in progress...');
+          return false;
+        }
+      } else {
+        Logx.em(_TAG, 'failed with response code : ${res.statusCode} : ${res.toString()}');
+
+        return false;
+      }
+    } catch (e){
+      Logx.em(_TAG, e.toString());
+      return 'error';
+    }
+  }
+
+
+  /** test mode **/
+
+  static Future<String> startTestTransaction(Tix tix) async {
+    Logx.i(_TAG, 'phone pe web start test transaction');
+
     final Map<String, dynamic> requestData = {
       "merchantId": Constants.testMerchantId,
-      "merchantTransactionId": DateTime.now().millisecondsSinceEpoch.toString(),
+      "merchantTransactionId": tix.merchantTransactionId,
       "merchantUserId": UserPreferences.myUser.id,
       "amount": (NumberUtils.roundDouble(tix.total, 2) * 100).toInt(),
-      "redirectUrl": "https://webhook.site/redirect-url",
+      "redirectUrl": "http://bloc.bar",
       "redirectMode": "REDIRECT",
-      "callbackUrl": "https://webhook.site/a7f51d09-7db9-433d-8a6a-45571b725e4b",
+      "callbackUrl": "https://webhook.site/5c3f7757-89a5-4c06-8eae-c92e898a852c",
       "mobileNumber": '${UserPreferences.myUser.phoneNumber}',
       "paymentInstrument": {
         "type": "PAY_PAGE"
       },
     };
 
-    String base64String = ApiHelper.encodeJsonToBase64(requestData);
-    return base64String;
-  }
+    String request = ApiHelper.encodeJsonToBase64(requestData);
+    Logx.d(_TAG, 'request: $request');
 
-  static String getTestChecksum(String request){
     String saltKey = Constants.testSaltKey;
     String saltIndex = Constants.testSaltIndex;
-
     //String checksum = sha256(base64Body + apiEndPoint + salt) + ### + saltIndex;
     String checksum = '${sha256.convert(utf8.encode(request
         + Constants.phonePeApiEndPoint + saltKey))}###$saltIndex';
-    return checksum;
-
-    // return 'd7a8e4458caa6fcd781166bbdc85fec76740c18cb9baa9a4c48cf2387d554180###1';
-  }
-
-  static Future<String> startTestTransaction(Tix tix) async {
-    Logx.i(_TAG, 'phone pe web start test transaction');
-
-    String request = getTestTixRequest(tix);
-    Logx.d(_TAG, 'request: $request');
-
-    String checksum = getTestChecksum(request);
     Logx.d(_TAG, 'checksum: $checksum');
 
     Map<String, String> headers = {
@@ -176,6 +242,104 @@ class PhonePeApiService {
     } catch (e){
       Logx.em(_TAG, e.toString());
       return 'error';
+    }
+  }
+
+  static Future<bool> testCheckStatus(Tix tix) async {
+    String merchantTransactionId = tix.merchantTransactionId;
+    String saltKey = Constants.testSaltKey;
+    String saltIndex = Constants.testSaltIndex;
+
+    String check = '/pg/v1/status/${Constants.testMerchantId}/$merchantTransactionId$saltKey';
+    String checksum = '${sha256.convert(utf8.encode(check))}###$saltIndex';
+    Logx.d(_TAG, 'testCheckStatus checksum: $checksum');
+
+    Map<String, String> headers = {
+      'Content-Type': 'application/json',
+      'X-VERIFY': checksum,
+      'X-MERCHANT-ID': Constants.testMerchantId,
+    };
+
+    try{
+      Dio dio = Dio();
+
+      String checkStatusUrl  = '${Constants.checkStatusUrl}/${Constants.testMerchantId}/$merchantTransactionId';
+
+      Response res = await dio.get(checkStatusUrl,
+          options: Options(headers: headers),
+        data: {}
+      );
+
+      if (res.statusCode == 200) {
+        Logx.i(_TAG, 'response code 200 success');
+
+        String code = res.data['code'];
+
+        if(code == 'PAYMENT_SUCCESS'){
+          Map<String, dynamic> data = res.data['data'];
+
+          String state = data['state'];
+          String responseCode = data['responseCode'];
+          String transactionId = data['transactionId'];
+
+          tix = tix.copyWith(
+              isCompleted: true,
+              isSuccess: true,
+              merchantTransactionId: merchantTransactionId,
+              transactionId: transactionId,
+              transactionResponseCode: responseCode,
+              result: res.data['message']
+          );
+          await FirestoreHelper.pushTix(tix);
+          return true;
+
+        } else if(code == 'PAYMENT_ERROR') {
+          Map<String, dynamic> data = res.data['data'];
+
+          String transactionId = data['transactionId'];
+          String responseCode = data['responseCode'];
+
+          tix = tix.copyWith(
+              isCompleted: true,
+              isSuccess: false,
+              transactionId: transactionId,
+              transactionResponseCode: responseCode,
+              result: res.data['message']
+          );
+          await FirestoreHelper.pushTix(tix);
+          return true;
+
+        } else if(code == 'INTERNAL_SERVER_ERROR'){
+          tix = tix.copyWith(
+              isCompleted: true,
+              isSuccess: false,
+              result: res.data['message']
+          );
+          await FirestoreHelper.pushTix(tix);
+
+          return true;
+        } else {
+          //nothing to do
+          Logx.d(_TAG, 'transaction is in progress...');
+          return false;
+        }
+
+        // PhonePeApiResponseData data = PhonePeApiResponseData.fromJson(res.data['data']);
+        // String transactUrl = data.instrumentResponse!.redirectInfo!.url!;
+        // Logx.i(_TAG, 'transact url : $transactUrl');
+
+        // final uri = Uri.parse(transactUrl);
+        // NetworkUtils.launchInAppBrowser(uri);
+
+        // return res.toString();
+      } else {
+        Logx.em(_TAG, 'failed with response code : ${res.statusCode} : ${res.toString()}');
+
+        return false;
+      }
+    } catch (e){
+      Logx.em(_TAG, e.toString());
+      return false;
     }
   }
 }

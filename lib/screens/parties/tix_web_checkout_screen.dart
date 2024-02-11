@@ -1,15 +1,20 @@
+import 'dart:async';
+
 import 'package:bloc/services/phone_pe_api_service.dart';
 import 'package:bloc/widgets/ui/app_bar_title.dart';
 import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../db/entity/party.dart';
 import '../../db/entity/tix.dart';
 import '../../db/entity/tix_tier_item.dart';
 import '../../helpers/firestore_helper.dart';
 import '../../helpers/fresh.dart';
+import '../../routes/route_constants.dart';
 import '../../utils/constants.dart';
 import '../../utils/logx.dart';
 
@@ -42,8 +47,14 @@ class _TixWebCheckoutScreenState extends State<TixWebCheckoutScreen> {
   String transactUrl = '';
   var _isTransactUrlLoading = true;
 
+  String responseUrl = '';
+  var _isResponseUrlLoading = true;
+
+  var _isPaymentFailed = false;
+
   @override
   void initState() {
+
     FirestoreHelper.pullTixTiersByTixId(widget.tix.id).then((res) {
       if (res.docs.isNotEmpty) {
         double tixTotal = 0;
@@ -64,25 +75,30 @@ class _TixWebCheckoutScreenState extends State<TixWebCheckoutScreen> {
         grandTotal = subTotal + igst + bookingFee;
 
         widget.tix = widget.tix.copyWith(
+            merchantTransactionId : DateTime.now().millisecondsSinceEpoch.toString(),
             igst: igst,
             subTotal: subTotal,
             bookingFee: bookingFee,
             total: grandTotal);
         FirestoreHelper.pushTix(widget.tix);
 
-        // PhonePeApiService.startTransaction(widget.tix).then((res) {
-        //   setState(() {
-        //     transactUrl = res;
-        //     _isTransactUrlLoading = false;
-        //   });
-        // });
-
-        PhonePeApiService.startTestTransaction(widget.tix).then((res) {
+        PhonePeApiService.startTransaction(widget.tix).then((res) {
           setState(() {
             transactUrl = res;
             _isTransactUrlLoading = false;
           });
+
+          startPaymentStatusListener();
         });
+
+        // PhonePeApiService.startTestTransaction(widget.tix).then((res) {
+        //   setState(() {
+        //     transactUrl = res;
+        //     _isTransactUrlLoading = false;
+        //   });
+        //
+        //   startPaymentStatusListener();
+        // });
 
         setState(() {
           _isTixTiersLoading = false;
@@ -99,6 +115,43 @@ class _TixWebCheckoutScreenState extends State<TixWebCheckoutScreen> {
     });
 
     super.initState();
+
+  }
+
+  void startPaymentStatusListener() {
+    const Duration checkInterval = Duration(seconds: 5); // Set your desired interval
+
+    Timer.periodic(checkInterval, (Timer timer) {
+      PhonePeApiService.checkStatus(widget.tix).then((res) {
+        setState(() {
+          bool isCompleted = res;
+
+          if(isCompleted){
+            timer.cancel();
+
+            FirestoreHelper.pullTix(widget.tix.id).then((res) {
+              if(res.docs.isNotEmpty){
+                DocumentSnapshot document = res.docs[0];
+                Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+                widget.tix = Fresh.freshTixMap(data, false);
+
+                if(widget.tix.isCompleted){
+                  if(widget.tix.isSuccess){
+                    GoRouter.of(context).pushNamed(RouteConstants.landingRouteName);
+                    GoRouter.of(context).pushNamed(RouteConstants.boxOfficeRouteName);
+                  } else {
+                    setState(() {
+                      _isPaymentFailed = true;
+                    });
+                  }
+                }
+              }
+            });
+          }
+        });
+      });
+      // You can stop the timer when the payment is complete or implement other conditions
+    });
   }
 
   @override
@@ -127,38 +180,34 @@ class _TixWebCheckoutScreenState extends State<TixWebCheckoutScreen> {
                 },
               )
           ),
-          body: Stack(
+          body: 
+          // Expanded(child: Container(child:
+          //   _isPaymentFailed ? Center(child: Text('payment failed!'),): LoadingWidget(),) ,)
+          
+          _isPaymentFailed ? Expanded(
+            child: Center(
+              child: Text('payment failed!'),),
+          ):
+          
+          Stack(
             children: [
-              _isTransactUrlLoading ?
-              const LoadingWidget() :
-              InAppWebView(
+              _isTransactUrlLoading ? const LoadingWidget() : InAppWebView(
                 initialUrlRequest: URLRequest(
                     url: WebUri(transactUrl),
                   // headers: headers,
                 ),
                 onWebViewCreated: (InAppWebViewController controller) {
                   inAppWebViewController = controller;
+                  // PhonePeApiService.checkStatus()
                 },
-                // onCloseWindow:  (InAppWebViewController controller) {
-                //   controller.evaluateJavascript(source: "document.documentElement.innerHTML")
-                //       .then((value) async {
-                //         Logx.d(_TAG, 'script : $value');
-                //
-                //     // if(value.contains("name=\"paymentId\"")) {
-                //     //
-                //     // }
-                //   });
-                // },
                 onProgressChanged: (InAppWebViewController controller, int progress) {
                   setState(() {
                     _progress = progress/100;
                   });
                 },
               ),
-              _progress < 1 ? Container (
-                child: LinearProgressIndicator(
-                  value: _progress,
-                ),
+              _progress < 1 ? LinearProgressIndicator(
+                value: _progress,
               ) : const SizedBox()
             ],
           )
@@ -166,4 +215,6 @@ class _TixWebCheckoutScreenState extends State<TixWebCheckoutScreen> {
       ),
     );
   }
+
+
 }

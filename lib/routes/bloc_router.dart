@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../db/shared_preferences/user_preferences.dart';
+import '../screens/parties/tix_confirmation_screen.dart';
 import '../screens/sample_checkout_screen.dart';
 import '../screens/contact_us_screen.dart';
 import '../screens/delivery_policy_screen.dart';
@@ -32,27 +33,36 @@ class BlocRouter {
         navigatorKey: GlobalKey<NavigatorState>(),
         // redirectLimit: 100,
       initialLocation: '/',
+      redirect: (context, state) {
+        if(UserPreferences.myUser.phoneNumber == 0) {
+          return '/login/false';
+        } else if(UserPreferences.myUser.phoneNumber == 1){
+          return '/login/true';
+        } else {
+          // return '/';
+          return null;
+        }
+
+      },
       routes: <RouteBase>[
         GoRoute(
           name: RouteConstants.landingRouteName,
           path: '/',
           builder: (context, state) {
             // Logx.dst(_TAG, 'bloc router: ${RouteConstants.landingRouteName}');
-            if(UserPreferences.myUser.phoneNumber == 0) {
-              return LoginScreen(shouldTriggerSkip: false,);
-            } else if(UserPreferences.myUser.phoneNumber == 1){
-              return LoginScreen(shouldTriggerSkip: true,);
-            } else {
+            // if(UserPreferences.myUser.phoneNumber == 0) {
+            //   return LoginScreen(shouldTriggerSkip: false,);
+            // } else if(UserPreferences.myUser.phoneNumber == 1){
+            //   return LoginScreen(shouldTriggerSkip: true,);
+            // } else {
               return const MainScreen();
-            }
+            // }
             },
         ),
-
         GoRoute(
           name: RouteConstants.loginRouteName,
           path: '/login',
           pageBuilder: (context, state) {
-
             // Logx.dst(_TAG, 'bloc router: event');
 
             return const MaterialPage(child: Scaffold(body: LoadingWidget(),)
@@ -62,7 +72,6 @@ class BlocRouter {
             path: ':skip',
             pageBuilder: (context, state) {
               String skipString = state.pathParameters['skip']!;
-
               // Logx.dst(_TAG, 'bloc router: login/:skip ${skipString}');
 
               bool val = false;
@@ -78,12 +87,38 @@ class BlocRouter {
         ],
         ),
 
+        GoRoute(
+          name: RouteConstants.confirmationRouteName,
+          path: '/confirmation',
+          pageBuilder: (context, state) {
+            // Logx.dst(_TAG, 'bloc router: event');
+
+            return const MaterialPage(
+                child: Scaffold(body: LoadingWidget(),)
+            );
+          }, routes: [
+          GoRoute(
+            path: ':tixId',
+            pageBuilder: (context, state) {
+              // Logx.dst(_TAG, 'bloc router: event/:partyName/:partyChapter');
+
+              String tixId = state.pathParameters['tixId']!;
+
+              return MaterialPage(
+                  child: TixConfirmationScreen(
+                    tixId: tixId,
+                  )
+              );
+            },
+          ),
+        ],
+        ),
+
 
         GoRoute(
           name: RouteConstants.eventRouteName,
           path: '/event',
           pageBuilder: (context, state) {
-
             // Logx.dst(_TAG, 'bloc router: event');
 
             return const MaterialPage(
@@ -93,7 +128,6 @@ class BlocRouter {
           GoRoute(
             path: ':partyName/:partyChapter',
             pageBuilder: (context, state) {
-
               // Logx.dst(_TAG, 'bloc router: event/:partyName/:partyChapter');
 
               String partyName = state.pathParameters['partyName']!;

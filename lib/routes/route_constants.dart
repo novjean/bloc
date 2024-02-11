@@ -26,4 +26,6 @@ class RouteConstants {
   static const String supportRouteName = 'support';
 
   static const String errorRouteName = 'error';
+  static const String confirmationRouteName = 'confirmation';
+
 }

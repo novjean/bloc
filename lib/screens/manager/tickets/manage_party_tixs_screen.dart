@@ -189,7 +189,7 @@ class _ManagePartyTixsScreenState extends State<ManagePartyTixsScreen> {
                     final Tix tix = Fresh.freshTixMap(map, false);
                     mTixs.add(tix);
 
-                    if(tix.isSuccess && tix.isCompleted && tix.merchantTransactionId.isNotEmpty){
+                    if(tix.isSuccess && tix.isCompleted){
                       mSuccessTixs.add(tix);
                     } else {
                       mPotentialTixs.add(tix);

@@ -2295,7 +2295,7 @@ class FirestoreHelper {
   }
 
   /** tix **/
-  static void pushTix(Tix tix) async {
+  static Future<void> pushTix(Tix tix) async {
     try {
       await FirebaseFirestore.instance
           .collection(TIXS)
