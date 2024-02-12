@@ -1,9 +1,11 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:bloc/services/phone_pe_api_service.dart';
 import 'package:bloc/widgets/ui/app_bar_title.dart';
 import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:crypto/crypto.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
@@ -12,11 +14,14 @@ import 'package:go_router/go_router.dart';
 import '../../db/entity/party.dart';
 import '../../db/entity/tix.dart';
 import '../../db/entity/tix_tier_item.dart';
+import '../../db/shared_preferences/user_preferences.dart';
+import '../../helpers/api_helper.dart';
 import '../../helpers/firestore_helper.dart';
 import '../../helpers/fresh.dart';
 import '../../routes/route_constants.dart';
 import '../../utils/constants.dart';
 import '../../utils/logx.dart';
+import '../../utils/number_utils.dart';
 
 class TixWebCheckoutScreen extends StatefulWidget {
   Tix tix;
@@ -82,17 +87,19 @@ class _TixWebCheckoutScreenState extends State<TixWebCheckoutScreen> {
             total: grandTotal);
         FirestoreHelper.pushTix(widget.tix);
 
-        PhonePeApiService.startTransaction(widget.tix).then((res) {
-          setState(() {
-            transactUrl = res;
+        _showApiInfoDialog(context);
 
-            if(transactUrl.isNotEmpty){
-              _isTransactUrlLoading = false;
-            }
-          });
-
-          startPaymentStatusListener();
-        });
+        // PhonePeApiService.startTransaction(widget.tix, context).then((res) {
+        //   setState(() {
+        //     transactUrl = res;
+        //
+        //     if(transactUrl.isNotEmpty){
+        //       _isTransactUrlLoading = false;
+        //     }
+        //   });
+        //
+        //   startPaymentStatusListener();
+        // });
 
         // PhonePeApiService.startTestTransaction(widget.tix).then((res) {
         //   setState(() {
@@ -119,6 +126,68 @@ class _TixWebCheckoutScreenState extends State<TixWebCheckoutScreen> {
 
     super.initState();
 
+  }
+
+  _showApiInfoDialog(BuildContext context){
+    final Map<String, dynamic> requestData = {
+      "merchantId": Constants.testMerchantId,
+      "merchantTransactionId": widget.tix.merchantTransactionId,
+      "merchantUserId": UserPreferences.myUser.id,
+      "amount": (NumberUtils.roundDouble(widget.tix.total, 2) * 100).toInt(),
+      "redirectUrl": "http://bloc.bar",
+      "redirectMode": "REDIRECT",
+      "callbackUrl": "https://webhook.site/5c3f7757-89a5-4c06-8eae-c92e898a852c",
+      "mobileNumber": '${UserPreferences.myUser.phoneNumber}',
+      "paymentInstrument": {
+        "type": "PAY_PAGE"
+      },
+    };
+
+    String request = ApiHelper.encodeJsonToBase64(requestData);
+    String saltKey = Constants.testSaltKey;
+    String saltIndex = Constants.testSaltIndex;
+    //String checksum = sha256(base64Body + apiEndPoint + salt) + ### + saltIndex;
+    String checksum = '${sha256.convert(utf8.encode(request
+        + Constants.phonePeApiEndPoint + saltKey))}###$saltIndex';
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: Constants.lightPrimary,
+          shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(19.0))),
+          contentPadding: const EdgeInsets.all(16.0),
+          title: const Text(
+            'transaction api info',
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 22, color: Colors.black),
+          ),
+          content: Text(
+              'request: $request \n\nchecksum: $checksum'),
+          actions: [
+            TextButton(
+              child: const Text("continue"),
+              onPressed: () async {
+                Navigator.of(context).pop();
+
+                PhonePeApiService.startTransaction(widget.tix, context).then((res) {
+                  setState(() {
+                    transactUrl = res;
+
+                    if(transactUrl.isNotEmpty){
+                      _isTransactUrlLoading = false;
+                    }
+                  });
+
+                  startPaymentStatusListener();
+                });
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   void startPaymentStatusListener() {

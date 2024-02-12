@@ -3,6 +3,7 @@ import 'package:bloc/db/ext_entity/phone_pe_api_response_data.dart';
 import 'package:bloc/helpers/firestore_helper.dart';
 import 'package:crypto/crypto.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import '../db/entity/tix.dart';
 import '../db/shared_preferences/user_preferences.dart';
 import '../helpers/api_helper.dart';
@@ -27,7 +28,7 @@ class PhonePeApiService {
     return checksum;
   }
 
-  static startTransaction(Tix tix) async {
+  static startTransaction(Tix tix, BuildContext context) async {
     Logx.i(_TAG, 'phone pe web start real transaction');
 
     final Map<String, dynamic> requestData = {
@@ -85,7 +86,8 @@ class PhonePeApiService {
         return '';
       }
     } catch (e){
-      Logx.elt(_TAG, 'error : ${e.toString()}');
+      Logx.em(_TAG, 'error : ${e.toString()}');
+      await _showErrorDialog(context, e.toString());
 
       return '';
     }
@@ -185,7 +187,6 @@ class PhonePeApiService {
     }
   }
 
-
   /** test mode **/
 
   static Future<String> startTestTransaction(Tix tix) async {
@@ -268,7 +269,7 @@ class PhonePeApiService {
     try{
       Dio dio = Dio();
 
-      String checkStatusUrl  = '${Constants.checkStatusUrl}/${Constants.testMerchantId}/$merchantTransactionId';
+      String checkStatusUrl  = '${Constants.testCheckStatusUrl}/${Constants.testMerchantId}/$merchantTransactionId';
 
       Response res = await dio.get(checkStatusUrl,
           options: Options(headers: headers),
@@ -346,5 +347,34 @@ class PhonePeApiService {
       Logx.em(_TAG, e.toString());
       return false;
     }
+  }
+
+  static Future<void> _showErrorDialog(BuildContext context, String error) async {
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: Constants.lightPrimary,
+          shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(19.0))),
+          contentPadding: const EdgeInsets.all(16.0),
+          title: const Text(
+            'transaction api error',
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 22, color: Colors.black),
+          ),
+          content: Text(
+              'error: $error'),
+          actions: [
+            TextButton(
+              child: const Text("close"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 }
