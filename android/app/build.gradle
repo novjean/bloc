@@ -32,7 +32,7 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
-    compileSdkVersion 33
+    compileSdkVersion 34
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -50,7 +50,7 @@ android {
     defaultConfig {
         applicationId "com.novatech.bloc"
         minSdkVersion 21
-        targetSdkVersion 33
+        targetSdkVersion 34
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
         multiDexEnabled true
@@ -81,10 +81,10 @@ dependencies {
     implementation platform('com.google.firebase:firebase-bom:32.1.0')
     implementation 'com.google.firebase:firebase-auth'
     implementation 'com.google.firebase:firebase-analytics'
-    implementation "androidx.browser:browser:1.5.0"
+    implementation "androidx.browser:browser:1.7.0"
 
     //todo: updating to 1.8.0 was crashing
-    implementation 'com.google.android.material:material:1.6.0'
+    implementation 'com.google.android.material:material:1.8.0'
 }
 
 apply plugin: 'com.google.gms.google-services'
