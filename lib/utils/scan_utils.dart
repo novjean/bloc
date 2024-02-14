@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-// import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
+import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 
 import '../main.dart';
 import '../screens/box_office/confirm_tix_screen.dart';
@@ -15,9 +15,8 @@ class ScanUtils {
     String scanCode;
 
     try {
-      scanCode = 'error';
-      // await FlutterBarcodeScanner.scanBarcode(
-      //     '#ff6666', 'cancel', true, ScanMode.QR);
+      scanCode = await FlutterBarcodeScanner.scanBarcode(
+          '#ff6666', 'cancel', true, ScanMode.QR);
       Logx.i(_TAG, 'code scanned $scanCode');
       if (scanCode != '-1') {
         if(scanCode.length == 9){
