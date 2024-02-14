@@ -94,10 +94,10 @@ class _TixWebCheckoutScreenState extends State<TixWebCheckoutScreen> {
 
             if(transactUrl.isNotEmpty){
               _isTransactUrlLoading = false;
+
+              startPaymentStatusListener();
             }
           });
-
-          startPaymentStatusListener();
         });
 
         // PhonePeApiService.startTestTransaction(widget.tix).then((res) {
