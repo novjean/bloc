@@ -131,13 +131,11 @@ class PhonePeApiService {
         return transactUrl;
       } else {
         Logx.elt(_TAG, 'failed with response : ${res.statusCode} : ${res.toString()}');
-
         return '';
       }
     } catch (e){
       Logx.em(_TAG, 'error : ${e.toString()}');
       await _showErrorDialog(context, e.toString());
-
       return '';
     }
   }
@@ -232,7 +230,7 @@ class PhonePeApiService {
       }
     } catch (e){
       Logx.em(_TAG, e.toString());
-      return 'error';
+      return false;
     }
   }
 
