@@ -4,6 +4,7 @@ import 'package:bloc/helpers/firestore_helper.dart';
 import 'package:crypto/crypto.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../db/entity/tix.dart';
 import '../db/shared_preferences/user_preferences.dart';
 import '../helpers/api_helper.dart';
@@ -66,11 +67,14 @@ class PhonePeApiService {
       } else {
         Logx.elt(_TAG, 'failed with response : ${res.statusCode} : ${res.toString()}');
 
+        String msg = 'status: ${res.statusCode}';
+        await _showErrorDialog(context, request, checksum, msg);
         return '';
       }
     } catch (e){
       Logx.em(_TAG, 'error : ${e.toString()}');
-      await _showErrorDialog(context, e.toString());
+      String msg = 'error: $e';
+      await _showErrorDialog(context, request, checksum, msg);
 
       return '';
     }
@@ -131,16 +135,21 @@ class PhonePeApiService {
         return transactUrl;
       } else {
         Logx.elt(_TAG, 'failed with response : ${res.statusCode} : ${res.toString()}');
+
+        String msg = 'status: ${res.statusCode}';
+        await _showErrorDialog(context, request, checksum, msg);
         return '';
       }
     } catch (e){
       Logx.em(_TAG, 'error : ${e.toString()}');
-      await _showErrorDialog(context, e.toString());
+
+      String msg = 'error: $e';
+      await _showErrorDialog(context, request, checksum, msg);
       return '';
     }
   }
 
-  static Future<bool> checkStatus(Tix tix) async {
+  static Future<bool> checkStatus(BuildContext context, Tix tix) async {
     String merchantTransactionId = tix.merchantTransactionId;
     String saltKey = Constants.saltKey;
     String saltIndex = Constants.saltIndex;
@@ -226,10 +235,15 @@ class PhonePeApiService {
       } else {
         Logx.em(_TAG, 'failed with response code : ${res.statusCode} : ${res.toString()}');
 
+        String msg = 'status: ${res.statusCode}';
+        await _showErrorDialog(context, '', checksum, msg);
         return false;
       }
     } catch (e){
       Logx.em(_TAG, e.toString());
+
+      String msg = 'error: $e';
+      await _showErrorDialog(context, '', checksum, msg);
       return false;
     }
   }
@@ -396,7 +410,7 @@ class PhonePeApiService {
     }
   }
 
-  static Future<void> _showErrorDialog(BuildContext context, String error) async {
+  static Future<void> _showErrorDialog(BuildContext context, String request, String checksum, String error) async {
     await showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -410,9 +424,14 @@ class PhonePeApiService {
             textAlign: TextAlign.center,
             style: TextStyle(fontSize: 22, color: Colors.black),
           ),
-          content: Text(
-              'error: $error'),
+          content: Text(error),
           actions: [
+            TextButton(child: Text('request'), onPressed: () {
+              Clipboard.setData(ClipboardData(text: request));
+        }, ),
+            TextButton(child: Text('checksum'), onPressed: () {
+              Clipboard.setData(ClipboardData(text: checksum));
+            }, ),
             TextButton(
               child: const Text("close"),
               onPressed: () {

@@ -205,7 +205,7 @@ class _TixWebCheckoutScreenState extends State<TixWebCheckoutScreen> {
     const Duration checkInterval = Duration(seconds: 5); // Set your desired interval
 
     Timer.periodic(checkInterval, (Timer timer) {
-      PhonePeApiService.checkStatus(widget.tix).then((res) {
+      PhonePeApiService.checkStatus(context, widget.tix).then((res) {
         setState(() {
           bool isCompleted = res;
 
