@@ -151,6 +151,9 @@ class _TixWebCheckoutScreenState extends State<TixWebCheckoutScreen> {
     String checksum = '${sha256.convert(utf8.encode(request
         + Constants.phonePeApiEndPoint + saltKey))}###$saltIndex';
 
+    startPaymentStatusListener();
+
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -182,8 +185,7 @@ class _TixWebCheckoutScreenState extends State<TixWebCheckoutScreen> {
             TextButton(
               child: const Text("continue"),
               onPressed: () async {
-                Navigator.of(context).pop();
-                PhonePeApiService.startTransaction(widget.tix, context).then((res) {
+                PhonePeApiService.startTransaction2(context, request, checksum).then((res) {
                   setState(() {
                     transactUrl = res;
 
@@ -192,7 +194,6 @@ class _TixWebCheckoutScreenState extends State<TixWebCheckoutScreen> {
                     }
                   });
 
-                  startPaymentStatusListener();
                 });
               },
             ),

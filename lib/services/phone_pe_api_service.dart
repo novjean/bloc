@@ -28,6 +28,55 @@ class PhonePeApiService {
     return checksum;
   }
 
+  static startTransaction2(BuildContext context, String request, String checksum) async {
+    Logx.i(_TAG, 'phone pe web start real transaction');
+
+    String saltKey = Constants.saltKey;
+    String saltIndex = Constants.saltIndex;
+    //String checksum = sha256(base64Body + apiEndPoint + salt) + ### + saltIndex;
+    String checksum = '${sha256.convert(utf8.encode(request
+        + Constants.phonePeApiEndPoint + saltKey))}###$saltIndex';
+    Logx.d(_TAG, 'checksum: $checksum');
+
+    Map<String, String> headers = {
+      'Content-Type': 'application/json',
+      'X-VERIFY': checksum,
+    };
+
+    try{
+      Dio dio = Dio();
+
+      Response res = await dio.post(Constants.apiProdHostUrl,
+          options: Options(headers: headers),
+          data: {
+            "request": request
+          });
+
+      if (res.statusCode == 200) {
+        Logx.i(_TAG, 'response code 200 success');
+
+        PhonePeApiResponseData data = PhonePeApiResponseData.fromJson(res.data['data']);
+        String transactUrl = data.instrumentResponse!.redirectInfo!.url!;
+        Logx.i(_TAG, 'transact url : $transactUrl');
+
+        // final uri = Uri.parse(transactUrl);
+        // NetworkUtils.launchInAppBrowser(uri);
+
+        return transactUrl;
+      } else {
+        Logx.elt(_TAG, 'failed with response : ${res.statusCode} : ${res.toString()}');
+
+        return '';
+      }
+    } catch (e){
+      Logx.em(_TAG, 'error : ${e.toString()}');
+      await _showErrorDialog(context, e.toString());
+
+      return '';
+    }
+  }
+
+
   static startTransaction(Tix tix, BuildContext context) async {
     Logx.i(_TAG, 'phone pe web start real transaction');
 
