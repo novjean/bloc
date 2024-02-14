@@ -46,7 +46,7 @@ class PhonePeApiService {
     try{
       Dio dio = Dio();
 
-      Response res = await dio.post(Constants.apiProdHostUrl,
+      Response res = await dio.post(Constants.apiPayUrl,
           options: Options(headers: headers),
           data: {
             "request": request
@@ -77,7 +77,7 @@ class PhonePeApiService {
   }
 
 
-  static startTransaction(Tix tix, BuildContext context) async {
+  static Future<String> startTransaction(Tix tix, BuildContext context) async {
     Logx.i(_TAG, 'phone pe web start real transaction');
 
     final Map<String, dynamic> requestData = {
@@ -112,7 +112,7 @@ class PhonePeApiService {
     try{
       Dio dio = Dio();
 
-      Response res = await dio.post(Constants.apiProdHostUrl,
+      Response res = await dio.post(Constants.apiPayUrl,
           options: Options(headers: headers),
           data: {
             "request": request
@@ -142,7 +142,7 @@ class PhonePeApiService {
     }
   }
 
-  static checkStatus(Tix tix) async {
+  static Future<bool> checkStatus(Tix tix) async {
     String merchantTransactionId = tix.merchantTransactionId;
     String saltKey = Constants.saltKey;
     String saltIndex = Constants.saltIndex;
@@ -273,7 +273,7 @@ class PhonePeApiService {
     try{
       Dio dio = Dio();
 
-      Response res = await dio.post(Constants.apiTestHostUrl,
+      Response res = await dio.post(Constants.testApiPayUrl,
           options: Options(headers: headers),
           data: {
             "request": request

@@ -90,7 +90,7 @@ class Constants {
   /** phone pe **/
   static String phonePeApiEndPoint = "/pg/v1/pay";
   static String prodHostUrl = "https://api.phonepe.com/apis/hermes";
-  static String apiProdHostUrl = "https://api.phonepe.com/apis/hermes/pg/v1/pay";
+  static String apiPayUrl = "https://api.phonepe.com/apis/hermes/pg/v1/pay";
   static String checkStatusUrl = 'https://api.phonepe.com/apis/hermes/pg/v1/status';
 
   /** phone pe test **/
@@ -99,7 +99,7 @@ class Constants {
   static String testSaltKey = "099eb0cd-02cf-4e2a-8aca-3e6c6aff0399";
   static String testSaltIndex = "1";
 
-  static String apiTestHostUrl = 'https://api-preprod.phonepe.com/apis/pg-sandbox/pg/v1/pay';
+  static String testApiPayUrl = 'https://api-preprod.phonepe.com/apis/pg-sandbox/pg/v1/pay';
   static String testCheckStatusUrl = 'https://api-preprod.phonepe.com/apis/pg-sandbox/pg/v1/status';
 
   /** phone pe prod **/
