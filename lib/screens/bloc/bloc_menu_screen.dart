@@ -13,7 +13,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../db/entity/category.dart';
@@ -355,34 +354,6 @@ class _BlocMenuScreenState extends State<BlocMenuScreen>
   }
 
   /** table user **/
-  Future<void> scanTableQR(blocUser.User user) async {
-    String scanTableId;
-    // Platform messages may fail, so we use a try/catch PlatformException.
-    try {
-      scanTableId = await FlutterBarcodeScanner.scanBarcode(
-          '#ff6666', 'cancel', true, ScanMode.QR);
-      Logx.i(_TAG, 'table id scanned $scanTableId');
-    } on PlatformException catch (e, s) {
-      scanTableId = 'failed to get platform version.';
-      Logx.e(_TAG, e, s);
-    }  on Exception catch (e, s) {
-      Logx.e(_TAG, e, s);
-      scanTableId = e.toString();
-    }
-
-    // If the widget was removed from the tree while the asynchronous platform
-    // message was in flight, we want to discard the reply rather than calling
-    // setState to update our non-existent appearance.
-    if (!mounted) return;
-
-    if (scanTableId.compareTo('-1') == 0) {
-      Logx.i(_TAG, 'scan cancelled');
-      return;
-    }
-
-    updateTableWithUser(scanTableId, user.id);
-  }
-
   void updateTableWithUser(String tableId, String userId) {
     if (userId.isNotEmpty) {
       // set the table as occupied

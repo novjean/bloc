@@ -4,8 +4,6 @@ import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
-// import 'package:toggle_switch/toggle_switch.dart';
 
 import '../../../db/entity/seat.dart';
 import '../../../db/entity/service_table.dart';
@@ -181,7 +179,7 @@ class _ManageSeatsScreenState extends State<ManageSeatsScreen> {
                       },
                     );
                   } else {
-                    scanQR(seat);
+                    // scanQR(seat);
                   }
                   Logx.i(_TAG, 'seat selected : ' + seat.id);
                 });
@@ -189,35 +187,35 @@ class _ManageSeatsScreenState extends State<ManageSeatsScreen> {
     );
   }
 
-  Future<void> scanQR(Seat seat) async {
-    String scanCustId;
-    // Platform messages may fail, so we use a try/catch PlatformException.
-    try {
-      scanCustId = await FlutterBarcodeScanner.scanBarcode(
-          '#ff6666', 'Cancel', true, ScanMode.QR);
-      print(scanCustId);
-    } on PlatformException {
-      scanCustId = 'Failed to get platform version.';
-    }
-
-    // If the widget was removed from the tree while the asynchronous platform
-    // message was in flight, we want to discard the reply rather than calling
-    // setState to update our non-existent appearance.
-    if (!mounted) return;
-
-    if (scanCustId.compareTo('-1') == 0) {
-      Logx.i(_TAG, 'scan cancelled');
-      return;
-    }
-
-    seat.custId = scanCustId;
-    FirestoreHelper.updateSeat(seat.id, scanCustId);
-    FirestoreHelper.setTableOccupyStatus(widget.serviceTable.id, true);
-
-    setState(() {
-      widget.serviceTable.isOccupied = true;
-    });
-  }
+  // Future<void> scanQR(Seat seat) async {
+  //   String scanCustId;
+  //   // Platform messages may fail, so we use a try/catch PlatformException.
+  //   try {
+  //     scanCustId = await FlutterBarcodeScanner.scanBarcode(
+  //         '#ff6666', 'Cancel', true, ScanMode.QR);
+  //     print(scanCustId);
+  //   } on PlatformException {
+  //     scanCustId = 'Failed to get platform version.';
+  //   }
+  //
+  //   // If the widget was removed from the tree while the asynchronous platform
+  //   // message was in flight, we want to discard the reply rather than calling
+  //   // setState to update our non-existent appearance.
+  //   if (!mounted) return;
+  //
+  //   if (scanCustId.compareTo('-1') == 0) {
+  //     Logx.i(_TAG, 'scan cancelled');
+  //     return;
+  //   }
+  //
+  //   seat.custId = scanCustId;
+  //   FirestoreHelper.updateSeat(seat.id, scanCustId);
+  //   FirestoreHelper.setTableOccupyStatus(widget.serviceTable.id, true);
+  //
+  //   setState(() {
+  //     widget.serviceTable.isOccupied = true;
+  //   });
+  // }
 
   tableTypeToggle(BuildContext context, ServiceTable serviceTable) {
     int initialTableTypeIndex;

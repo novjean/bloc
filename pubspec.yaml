@@ -29,17 +29,17 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  cloud_firestore: ^4.14.0
+  cloud_firestore: ^4.15.4
 
   # for integrating firebase
-  firebase_core: ^2.24.2
+  firebase_core: ^2.25.4
 
   firebase_auth: ^4.16.0
   firebase_auth_web: ^5.8.13
   firebase_storage: ^11.6.0
-  firebase_messaging: ^14.7.10
+  firebase_messaging: ^14.7.15
   firebase_crashlytics: ^3.4.9
-  firebase_app_check: ^0.2.1+8
+  firebase_app_check: ^0.2.1+13
   #  recaptcha_enterprise_flutter: ^18.4.0
 
   collection: ^1.17.1
@@ -68,7 +68,7 @@ dependencies:
 
   # barcode scanner
   barcode_widget: ^2.0.2
-  flutter_barcode_scanner: ^2.0.0
+#  flutter_barcode_scanner: ^2.0.0
 
   # photo gallery
   dio: ^5.3.2
@@ -83,8 +83,8 @@ dependencies:
 
   #utility
   upgrader: ^9.0.0
-  flutter_image_compress: ^2.0.4
-  url_launcher: ^6.1.11
+  flutter_image_compress: ^2.1.0
+  url_launcher: ^6.2.4
   universal_html: ^2.2.3
   crypto: ^3.0.2
 
