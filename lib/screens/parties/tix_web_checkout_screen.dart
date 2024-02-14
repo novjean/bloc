@@ -8,6 +8,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:crypto/crypto.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:go_router/go_router.dart';
 
@@ -130,7 +131,7 @@ class _TixWebCheckoutScreenState extends State<TixWebCheckoutScreen> {
 
   _showApiInfoDialog(BuildContext context){
     final Map<String, dynamic> requestData = {
-      "merchantId": Constants.testMerchantId,
+      "merchantId": Constants.merchantId,
       "merchantTransactionId": widget.tix.merchantTransactionId,
       "merchantUserId": UserPreferences.myUser.id,
       "amount": (NumberUtils.roundDouble(widget.tix.total, 2) * 100).toInt(),
@@ -144,8 +145,8 @@ class _TixWebCheckoutScreenState extends State<TixWebCheckoutScreen> {
     };
 
     String request = ApiHelper.encodeJsonToBase64(requestData);
-    String saltKey = Constants.testSaltKey;
-    String saltIndex = Constants.testSaltIndex;
+    String saltKey = Constants.saltKey;
+    String saltIndex = Constants.saltIndex;
     //String checksum = sha256(base64Body + apiEndPoint + salt) + ### + saltIndex;
     String checksum = '${sha256.convert(utf8.encode(request
         + Constants.phonePeApiEndPoint + saltKey))}###$saltIndex';
@@ -166,11 +167,22 @@ class _TixWebCheckoutScreenState extends State<TixWebCheckoutScreen> {
           content: Text(
               'request: $request \n\nchecksum: $checksum'),
           actions: [
+            TextButton(child: Text('copy checksum'),
+            onPressed: () {
+              Clipboard.setData(ClipboardData(text: checksum));
+              Logx.ist(_TAG, 'checksum copied to clipboard');
+            },
+            ),
+            TextButton(child: Text('copy request'),
+              onPressed: () {
+                Clipboard.setData(ClipboardData(text: request));
+                Logx.ist(_TAG, 'request copied to clipboard');
+              },
+            ),
             TextButton(
               child: const Text("continue"),
               onPressed: () async {
                 Navigator.of(context).pop();
-
                 PhonePeApiService.startTransaction(widget.tix, context).then((res) {
                   setState(() {
                     transactUrl = res;

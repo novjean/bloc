@@ -38,7 +38,7 @@ class PhonePeApiService {
       "amount": (NumberUtils.roundDouble(tix.total, 2) * 100).toInt(),
       "redirectUrl": "http://bloc.bar",
       "redirectMode": "REDIRECT",
-      "callbackUrl": "https://webhook.site/a7f51d09-7db9-433d-8a6a-45571b725e4b",
+      "callbackUrl": "https://webhook.site/5c3f7757-89a5-4c06-8eae-c92e898a852c",
       "mobileNumber": '${UserPreferences.myUser.phoneNumber}',
       "paymentInstrument": {
         "type": "PAY_PAGE",
