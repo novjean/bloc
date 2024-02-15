@@ -164,6 +164,8 @@ class _ManagePartyTixsScreenState extends State<ManagePartyTixsScreen> {
     );
   }
 
+  List<Tix> vTixs = [];
+
   _loadTixsList(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
       stream: FirestoreHelper.getAllTixsByPartyId(widget.party.id),
@@ -181,6 +183,8 @@ class _ManagePartyTixsScreenState extends State<ManagePartyTixsScreen> {
                       child: Center(child: Text('no tixs found!')));
                 } else {
                   mTixs.clear();
+                  mSuccessTixs.clear();
+                  mPotentialTixs.clear();
 
                   for (int i = 0; i < snapshot.data!.docs.length; i++) {
                     DocumentSnapshot document = snapshot.data!.docs[i];
@@ -196,14 +200,14 @@ class _ManagePartyTixsScreenState extends State<ManagePartyTixsScreen> {
                     }
                   }
 
-                  List<Tix> tixs = [];
+
                   if(sOption == mOptions.first){
-                    tixs = mSuccessTixs;
+                    vTixs = mSuccessTixs;
                   } else {
-                    tixs = mPotentialTixs;
+                    vTixs = mPotentialTixs;
                   }
 
-                  return _displayTixs(context, tixs);
+                  return _displayTixs(context, vTixs);
                 }
               } else {
                 return const Expanded(
@@ -287,7 +291,7 @@ class _ManagePartyTixsScreenState extends State<ManagePartyTixsScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text('internal list'),
+                        const Text('share internal list'),
                         SizedBox.fromSize(
                           size: const Size(50, 50),
                           child: ClipOval(
@@ -297,27 +301,44 @@ class _ManagePartyTixsScreenState extends State<ManagePartyTixsScreen> {
                                 splashColor: Constants.darkPrimary,
                                 onTap: () async {
                                   Navigator.of(ctx).pop();
+                                  Logx.ist(_TAG, 'generating list...');
 
-                                  String tixText = '';
-                                  for (Tix tix in mTixs) {
+                                  String tixText = 'name, phone, count, tier name, tier price, tier description, sub-total, tax, booking fee, total\n';
+                                  int tixsCount = 0;
+                                  double grandTotal = 0;
+                                  double bookingFees = 0;
+                                  double salesTotal = 0;
+
+                                  for (Tix tix in vTixs) {
                                     await FirestoreHelper.pullTixTiersByTixId(tix.id).then((res) {
                                       if (res.docs.isNotEmpty) {
-                                        int count = 0;
-
                                         for (int i = 0; i < res.docs.length; i++) {
                                           DocumentSnapshot document = res.docs[i];
                                           Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
                                           final TixTier tixTier = Fresh.freshTixTierMap(data, false);
-                                          count += tixTier.tixTierCount;
-                                        }
-                                        tixText += '${tix.userName},${tix.userPhone},'
-                                            '+${tix.userEmail},${tix.total},$count pax,\n';
 
+                                          if(tix.isCompleted && tix.isSuccess && tixTier.tixTierCount>0) {
+                                            double tixTotal = tixTier.tixTierCount * tixTier.tixTierPrice;
+                                            double igst = tixTotal * Constants.igstPercent;
+                                            double subTotal = tixTotal - igst;
+                                            double bookingFee = tixTotal * widget.party.bookingFeePercent;
+                                            double total = subTotal + igst + bookingFee;
+
+                                            tixsCount += tixTier.tixTierCount;
+                                            grandTotal += tixTotal;
+                                            bookingFees += bookingFee;
+                                            salesTotal += total;
+
+                                            tixText += '${tix.userName},+${tix.userPhone},  ${tixTier.tixTierCount} tix,  ${tixTier.tixTierName}, ${tixTier.tixTierPrice}, ${tixTier.tixTierDescription}, ${subTotal.toStringAsFixed(2)}, ${igst.toStringAsFixed(2)}, ${bookingFee.toStringAsFixed(2)}, ${total.toStringAsFixed(2)}\n';
+                                          }
+                                        }
                                       } else {
                                         Logx.em(_TAG, 'no tix tiers found for ${tix.id}');
                                       }
                                     });
                                   }
+
+                                  tixText += '\ntixs sold, $tixsCount\ngrand total, ${grandTotal.toStringAsFixed(2)}\nbooking fees, ${bookingFees.toStringAsFixed(2)}\nsales total, ${salesTotal.toStringAsFixed(2)}';
 
                                   String rand = StringUtils.getRandomString(5);
                                   String fileName = '${widget.party.name}-$rand.csv';
@@ -341,7 +362,7 @@ class _ManagePartyTixsScreenState extends State<ManagePartyTixsScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text('share list'),
+                        const Text('share organizer list'),
                         SizedBox.fromSize(
                           size: const Size(50, 50),
                           child: ClipOval(
@@ -351,26 +372,41 @@ class _ManagePartyTixsScreenState extends State<ManagePartyTixsScreen> {
                                 splashColor: Constants.darkPrimary,
                                 onTap: () async {
                                   Navigator.of(ctx).pop();
+                                  Logx.ist(_TAG, 'generating list...');
 
-                                  String tixText = '';
-                                  for (Tix tix in mTixs) {
+                                  String tixText = 'name, phone, count, tier name, tier price, tier description, IGS tax, total\n';
+                                  int tixsCount = 0;
+                                  double grandTotal = 0;
+
+                                  for (Tix tix in vTixs) {
                                     await FirestoreHelper.pullTixTiersByTixId(tix.id).then((res) {
                                       if (res.docs.isNotEmpty) {
-                                        int count = 0;
-
+                                        TixTier tixTier;
                                         for (int i = 0; i < res.docs.length; i++) {
                                           DocumentSnapshot document = res.docs[i];
                                           Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-                                          final TixTier tixTier = Fresh.freshTixTierMap(data, false);
-                                          count += tixTier.tixTierCount;
-                                        }
-                                        tixText += '${tix.userName},+${tix.userPhone},${tix.total},$count pax,\n';
+                                          tixTier = Fresh.freshTixTierMap(data, false);
 
+                                          if(tix.isCompleted && tix.isSuccess && tixTier.tixTierCount>0) {
+                                            double tixTotal = tixTier.tixTierCount * tixTier.tixTierPrice;
+                                            double igst = tixTotal * Constants.igstPercent;
+                                            double subTotal = tixTotal - igst;
+                                            double bookingFee = tixTotal * widget.party.bookingFeePercent;
+                                            double total = subTotal + igst + bookingFee;
+
+                                            tixsCount += tixTier.tixTierCount;
+                                            grandTotal += tixTotal;
+
+                                            tixText += '${tix.userName},+${tix.userPhone},  ${tixTier.tixTierCount} tix,  ${tixTier.tixTierName}, ${tixTier.tixTierPrice}, ${tixTier.tixTierDescription}, ${igst.toStringAsFixed(2)}, ${total.toStringAsFixed(2)}\n';
+                                          }
+                                        }
                                       } else {
                                         Logx.em(_TAG, 'no tix tiers found for ${tix.id}');
                                       }
                                     });
                                   }
+
+                                  tixText += '\ntixs sold, $tixsCount\ngrand total, ${grandTotal.toStringAsFixed(2)}';
 
                                   String rand = StringUtils.getRandomString(5);
                                   String fileName = '${widget.party.name}-$rand.csv';
