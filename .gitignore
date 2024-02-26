@@ -101,3 +101,4 @@ ios/Podfile.lock
 ios/Podfile.lock
 web/firebase-messaging-sw.js
 lib/api/apis.dart
+ios/Runner/GoogleService-Info.plist
