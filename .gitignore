@@ -99,3 +99,4 @@ app.*.map.json
 .firebase/hosting.YnVpbGQvd2Vi.cache
 ios/Podfile.lock
 ios/Podfile.lock
+web/firebase-messaging-sw.js
